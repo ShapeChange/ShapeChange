@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat3="http://shapechange.net/test/flattening/cycles/test3" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/cycles/test3" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class3_FT1" substitutionGroup="gml:AbstractFeature" type="flat3:Class3_FT1Type"/>
+  <complexType name="Class3_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="p1-Class3_T1Sub1.p1" type="boolean"/>
+          <element minOccurs="0" name="p1-Class3_T1Sub1.p2.p1" type="integer"/>
+          <element minOccurs="0" name="p1-Class3_T1Sub2.p1" type="boolean"/>
+          <element minOccurs="0" name="p1-Class3_T1Sub2.p2.p1" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class3_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat3:Class3_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class3_FT2" substitutionGroup="gml:AbstractFeature" type="flat3:Class3_FT2Type"/>
+  <complexType name="Class3_FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1.p1" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class3_FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat3:Class3_FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

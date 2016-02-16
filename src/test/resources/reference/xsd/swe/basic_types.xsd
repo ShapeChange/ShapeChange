@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:swe="http://www.opengis.net/swe/2.0" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/swe/2.0" version="1">
+  <include schemaLocation="swe.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element abstract="true" name="AbstractSWE" substitutionGroup="swe:AbstractSWE" type="swe:AbstractSWEType">
+    <annotation>
+      <documentation>Base substitution groups for all SWE Common objects other than value objects</documentation>
+    </annotation>
+  </element>
+  <complexType abstract="true" name="AbstractSWEType">
+    <complexContent>
+      <extension base="swe:AbstractSWEType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="extension" type="anyType">
+            <annotation>
+              <documentation>Extension slot for future extensions to this standard.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractSWEPropertyType">
+    <sequence minOccurs="0">
+      <element ref="swe:AbstractSWE"/>
+    </sequence>
+    <attributeGroup ref="swe:AssociationAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="AbstractSWEIdentifiable" substitutionGroup="swe:AbstractSWE" type="swe:AbstractSWEIdentifiableType">
+    <annotation>
+      <documentation>Base substitution groups for all SWE Common objects with identification metadata</documentation>
+    </annotation>
+  </element>
+  <complexType abstract="true" name="AbstractSWEIdentifiableType">
+    <complexContent>
+      <extension base="swe:AbstractSWEType">
+        <sequence>
+          <element minOccurs="0" name="identifier" type="anyURI">
+            <annotation>
+              <documentation>Unique identifier of the data component. It can be used to globally identify a particular component of the dataset, a process input/output or a universal constant</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="label" type="string">
+            <annotation>
+              <documentation>Textual label for the data component . This is often used for displaying a human readable name for a dataset field or a process input/output</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="description" type="string">
+            <annotation>
+              <documentation>Textual description (i.e. human readable) of the data component usually used to clarify its nature</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractSWEIdentifiablePropertyType">
+    <sequence minOccurs="0">
+      <element ref="swe:AbstractSWEIdentifiable"/>
+    </sequence>
+    <attributeGroup ref="swe:AssociationAttributeGroup"/>
+  </complexType>
+</schema>

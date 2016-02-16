@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:test="http://shapechange.net/profiling_eps/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling_eps/test" version="1.0">
+  <include schemaLocation="test1.xsd"/>
+  <include schemaLocation="test2.xsd"/>
+  <include schemaLocation="test3.xsd"/>
+  <include schemaLocation="test4.xsd"/>
+  <include schemaLocation="test5.xsd"/>
+  <include schemaLocation="test6.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+</schema>

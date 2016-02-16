@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test</name>
+    <definition>a definition</definition>
+    <description>a note</description>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C4">
+    <name>FeatureType1</name>
+    <title>another alias</title>
+    <definition>eine Definition in Deutsch</definition>
+    <description>a description</description>
+    <example>an example</example>
+    <example>another example</example>
+    <legalBasis>the legal basis</legalBasis>
+    <code>FT1</code>
+    <characterizedBy idref="_A4_3"></characterizedBy>
+    <characterizedBy idref="_A4_19"></characterizedBy>
+    <characterizedBy idref="_AT1"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A4_3">
+    <name>string</name>
+    <example>n/a</example>
+    <example>some example</example>
+    <cardinality>1..*</cardinality>
+    <initialValue>"test"</initialValue>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_19">
+    <name>enum</name>
+    <cardinality>1</cardinality>
+    <isDerived>true</isDerived>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A9_29"></enumeratedBy>
+    <enumeratedBy idref="_A9_30"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T1">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT1"></roles>
+    <roles idref="_AS1"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT1">
+    <name>role2</name>
+    <description>a description</description>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C26" category="feature type">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T1"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS1">
+    <name>role1</name>
+    <definition>a definition</definition>
+    <cardinality>0..*</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T1"></relation>
+    <InverseRole idref="_AT1"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C26">
+    <name>FeatureType2</name>
+    <title>another alias</title>
+    <definition>a definition</definition>
+    <description>a description</description>
+    <example>an example</example>
+    <example>another example</example>
+    <legalBasis>the legal basis</legalBasis>
+    <dataCaptureStatement>a data capture statement</dataCaptureStatement>
+    <code>FT2</code>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <Value id="_A9_29">
+    <label>val1</label>
+    <code>1</code>
+    <description>a note</description>
+  </Value>
+  <Value id="_A9_30">
+    <label>val2</label>
+    <code>2</code>
+    <definition>a def</definition>
+  </Value>
+</FeatureCatalogue>

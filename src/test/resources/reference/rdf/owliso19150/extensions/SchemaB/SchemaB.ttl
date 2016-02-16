@@ -1,0 +1,31 @@
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+@prefix testA: <http://shapechange.net/testA/SchemaA#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix testB: <http://shapechange.net/testB/SchemaB#> .
+@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
+
+<http://shapechange.net/testB/SchemaB>
+        a                owl:Ontology ;
+        rdfs:label       "Schema B"@en ;
+        dc:source        "FIX_source_in_config"@en ;
+        owl:imports      <http://shapechange.net/testA/SchemaA> , <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel> , <http://www.opengis.net/ont/geosparql> , <http://def.isotc211.org/iso19150-2/2012/base> ;
+        owl:versionInfo  "1.0" .
+
+testB:featureRef  a     owl:ObjectProperty ;
+        rdfs:range      testA:FeatureType1 ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "featureRef"^^xsd:NCName ;
+        skos:prefLabel  "featureRef"@en .
+
+testB:FeatureB_1  a      owl:Class ;
+        rdfs:subClassOf  gfm:AnyFeature , iso19150-2:FeatureType , geo:Feature ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "FeatureB_1"^^xsd:NCName ;
+        skos:prefLabel   "FeatureB_1"@en .

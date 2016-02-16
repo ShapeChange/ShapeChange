@@ -1,0 +1,22 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/NilUnion.json",
+	"title":"NilUnion",
+	"type":"object",
+	"properties":{
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"value":{
+					"title":"value",
+					"$ref":"http://portele.de/ows9/test/DataType2.json"
+				},
+				"reason":{
+					"title":"reason",
+					"type":"string"
+				}
+			}
+		}
+	}
+}

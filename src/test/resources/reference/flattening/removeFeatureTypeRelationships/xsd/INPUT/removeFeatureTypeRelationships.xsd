@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:os2="http://test.org/flattening/removeFeatureTypeRelationships/os2" xmlns:t="http://test.org/flattening/removeFeatureTypeRelationships" elementFormDefault="qualified" targetNamespace="http://test.org/flattening/removeFeatureTypeRelationships" version="1.0">
+  <import namespace="http://test.org/flattening/removeFeatureTypeRelationships/os2" schemaLocation="os2.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type"/>
+  <complexType name="FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ft1Prop1" type="t:FT2PropertyType"/>
+          <element name="ft1Prop2" type="t:FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:ft2Prop1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="ft1Prop3" type="t:T1PropertyType"/>
+          <element name="ft1Prop4" type="t:T1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t1Prop1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="ft1Prop5">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractFeatureMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="t:FT2"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2" substitutionGroup="gml:AbstractFeature" type="t:FT2Type"/>
+  <complexType name="FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ft2Prop1" type="t:FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:ft1Prop2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="ft2Prop2" type="os2:OS2FTPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1" substitutionGroup="gml:AbstractGML" type="t:T1Type"/>
+  <complexType name="T1Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="t1Prop1" type="t:FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:ft1Prop4</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="t1Prop2" type="t:T2PropertyType"/>
+          <element name="t1Prop3" type="t:T2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t2Prop1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="t1Prop4">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractFeatureMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="t:FT2"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:T1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2" substitutionGroup="gml:AbstractGML" type="t:T2Type"/>
+  <complexType name="T2Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="t2Prop1" type="t:T1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t1Prop3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:T2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

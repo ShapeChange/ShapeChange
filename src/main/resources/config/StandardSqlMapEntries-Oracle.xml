@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<!-- targetType: use 'cond:' to indicate that conditional type selection needs to be performed, with the following string identifying the nature of the type mapping (e.g. 'textOrCharacterVarying'). -->
+	<!-- param: used to indicate special nature of the type, for example 'geometry' to indicate that the map entry is for a geometry type. -->
+	
+	<!-- ISO/TS 19103 -->
+	<MapEntry type="Boolean" rule="*" targetType="INTEGER" param=""/>
+	<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying"/>
+	<MapEntry type="DateTime" rule="*" targetType="TIMESTAMP" param=""/>
+	<MapEntry type="Integer" rule="*" targetType="INTEGER" param=""/>
+	<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
+	<MapEntry type="Scale" rule="*" targetType="INTEGER" param=""/>
+	
+	<!-- ISO/TS 19107 -->
+	<MapEntry type="GM_Curve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=line}"/>
+	<MapEntry type="GM_MultiCurve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multiline}"/>
+	<MapEntry type="GM_MultiPoint" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipoint}"/>
+	<MapEntry type="GM_MultiSurface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipolygon}"/>
+	<MapEntry type="GM_Object" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=collection}"/>
+	<MapEntry type="GM_Point" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=point}"/>
+	<MapEntry type="GM_Surface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=polygon}"/>
+	
+	<!-- ... more to be added as required -->
+	
+	<!-- other ISO -->
+	<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param=""/>
+	<MapEntry type="Area" rule="*" targetType="NUMBER" param=""/>
+	<MapEntry type="Length" rule="*" targetType="NUMBER" param=""/>
+	<MapEntry type="TM_PeriodDuration" rule="*" targetType="VARCHAR2(20)" param=""/>
+	<MapEntry type="Date" rule="*" targetType="DATE" param=""/>
+	<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying"/>
+</mapEntries>

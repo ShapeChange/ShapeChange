@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gm="groupmixin" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="groupmixin" version="0.1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class" substitutionGroup="gm:InfoEntity" type="gm:ClassType"/>
+  <complexType name="ClassType">
+    <complexContent>
+      <extension base="gm:InfoEntityType">
+        <sequence>
+          <group ref="gm:TestGroup"/>
+          <element name="att4" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ClassPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gm:Class"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="InfoEntity" substitutionGroup="gml:AbstractGML" type="gm:InfoEntityType"/>
+  <complexType abstract="true" name="InfoEntityType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="att1" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="InfoEntityPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gm:InfoEntity"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="TestPropertyType">
+    <choice minOccurs="0">
+      <element ref="gm:Class"/>
+      <element ref="gm:TimePointInfo"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <group name="TestGroup">
+    <sequence>
+      <element name="att0" type="boolean"/>
+    </sequence>
+  </group>
+  <complexType name="TimeInfoPropertyType">
+    <choice minOccurs="0">
+      <element ref="gm:TimePointInfo"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <group name="TimeInfoGroup">
+    <sequence>
+      <element name="att1" type="integer"/>
+      <group ref="gm:TestGroup"/>
+      <element name="att2" type="boolean"/>
+    </sequence>
+  </group>
+  <element name="TimePointInfo" substitutionGroup="gml:TimeInstant" type="gm:TimePointInfoType"/>
+  <complexType name="TimePointInfoType">
+    <complexContent>
+      <extension base="gml:TimeInstantType">
+        <sequence>
+          <group ref="gm:TimeInfoGroup"/>
+          <element name="att4" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TimePointInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gm:TimePointInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

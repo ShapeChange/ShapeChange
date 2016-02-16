@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/ade.eap"/>
+		<parameter name="appSchemaName" value="ADE Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ea/log_ADE.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ea"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="citygml-ade"/>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardNamespaces-v31.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries-v31.xml"/>
+			<xmlNamespaces>
+				<XmlNamespace nsabr="cit" ns="http://www.opengis.net/citygml/2.0" location="http://schemas.opengis.net/citygml/2.0/cityGMLBase.xsd"/>
+			</xmlNamespaces>
+			<xsdMapEntries>
+				<XsdMapEntry type="CityModel" xsdEncodingRules="*" xmlType="cit:CityModelType" xmlElement="cit:CityModel" xmlPropertyType="_P_" />
+				<XsdMapEntry type="_CityObject" xsdEncodingRules="*" xmlType="cit:AbstractCityObjectType" xmlElement="cit:_CityObject" xmlPropertyType="_P_" />
+			</xsdMapEntries>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

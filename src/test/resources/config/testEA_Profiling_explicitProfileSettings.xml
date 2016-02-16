@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+  xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+  <input>
+    <parameter name="taggedValueImplementation" value="array"/>
+    <parameter name="addTaggedValues" value="profiles"/>
+    <parameter name="inputModelType" value="EA7"/>
+    <parameter name="inputFile" value="src/test/resources/testProfiling_explicitProfileSettings.eap"/>
+    <parameter name="appSchemaName" value="Test Schema"/>
+    <parameter name="publicOnly" value="true"/>
+    <parameter name="checkingConstraints" value="enabled"/>
+    <parameter name="sortedSchemaOutput" value="true"/>
+    <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+  </input>
+  <log>
+    <parameter name="reportLevel" value="INFO"/>
+    <parameter name="logFile" value="testResults/profiling_explicitProfileSettings/log.xml"/>
+  </log>
+  <transformers>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="A_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="A"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="B_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="B"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="C_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="C"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="D_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="D"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="E_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="E"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="F_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="F"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+  </transformers>
+  <targets>
+    <TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+      inputs="A_EPS B_EPS C_EPS D_EPS E_EPS F_EPS" mode="enabled">
+      <targetParameter name="outputDirectory"
+        value="testResults/profiling_explicitProfileSettings/xsd"/>
+      <targetParameter name="sortedOutput" value="true"/>
+      <targetParameter name="defaultEncodingRule" value="gml33-with-schematron"/>
+      <targetParameter name="schematronExtension.matches.namespace"
+        value="fn:http://www.w3.org/2005/xpath-functions"/>
+      <targetParameter name="schematronExtension.matches.function"
+        value="matches($object$,$pattern$)"/>
+      <rules>
+        <EncodingRule extends="gml33" name="gml33-with-schematron">
+          <rule name="rule-xsd-pkg-schematron"/>
+        </EncodingRule>
+      </rules>
+      <xi:include href="src/main/resources/config/StandardRules.xml"/>
+      <xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+      <xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+    </TargetXmlSchema>
+    <!--<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
+      inputs="A_EPS B_EPS C_EPS D_EPS E_EPS F_EPS" mode="enabled">
+      <targetParameter name="outputDirectory"
+        value="testResults/profiling_explicitProfileSettings/html"/>
+      <targetParameter name="outputFilename" value="test"/>
+      <targetParameter name="sortedOutput" value="true"/>
+      <targetParameter name="inheritedProperties" value="false"/>
+      <targetParameter name="outputFormat" value="HTML"/>
+      <targetParameter name="name" value="'Test application schema'"/>
+      <targetParameter name="scope" value="This feature catalogue ..."/>
+      <targetParameter name="versionNumber" value="n/a"/>
+      <targetParameter name="versionDate" value="n/a"/>
+      <targetParameter name="producer" value="interactive instruments GmbH"/>
+    </Target>-->
+  </targets>
+</ShapeChangeConfiguration>

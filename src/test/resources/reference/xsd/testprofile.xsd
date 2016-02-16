@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:b="http://www.opengis.net/ows8/test/3" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:p="http://www.opengis.net/ows8/test/1" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/ows8/test/1" version="0.1">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <import namespace="http://www.opengis.net/ows8/test/3" schemaLocation="testbasetypes.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Type1" substitutionGroup="b:Type1" type="p:Type1_Type">
+    <annotation>
+      <documentation>This is type 1.</documentation>
+    </annotation>
+  </element>
+  <complexType name="Type1_Type">
+    <complexContent>
+      <extension base="b:Type1_Type">
+        <sequence>
+          <element minOccurs="0" name="att5" type="gco:Integer_PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rel" type="p:Type2_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Type1_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="p:Type1"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Type1e" substitutionGroup="b:Type1" type="p:Type1e_Type"/>
+  <complexType name="Type1e_Type">
+    <complexContent>
+      <extension base="b:Type1_Type">
+        <sequence>
+          <element minOccurs="0" name="att5" type="gco:Integer_PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rel" type="p:Type2_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Type1e_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="p:Type1e"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Type2" substitutionGroup="gco:AbstractObject" type="p:Type2_Type"/>
+  <complexType name="Type2_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="att" type="gco:CharacterString_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Type2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="p:Type2"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

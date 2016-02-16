@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/test/A" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/A" version="1.0">
+  <include schemaLocation="packageA1.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="ClassA11_1" substitutionGroup="gml:AbstractFeature" type="test:ClassA11_1Type"/>
+  <complexType name="ClassA11_1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ClassA11_1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:ClassA11_1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

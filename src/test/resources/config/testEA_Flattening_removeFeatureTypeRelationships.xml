@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/testFlattening_removeFeatureTypeRelationships.EAP" />
+		<parameter name="appSchemaName" value="TestSchema" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/flattening/removeFeatureTypeRelationships/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="F" mode="enabled">
+			<parameters>
+				<ProcessParameter name="targetNamespaceSuffix"
+					value="/flat" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-all-removeFeatureTypeRelationships" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="INPUT F" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/flattening/removeFeatureTypeRelationships/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+			<xsdMapEntries>
+				<XsdMapEntry type="OS2FT" xsdEncodingRules="iso19136_2007 gml33"
+					xmlType="os2:OS2FTType" xmlElement="os2:OS2FT" xmlPropertyType="os2:OS2FTPropertyType" />
+			</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace nsabr="os2"
+					ns="http://test.org/flattening/removeFeatureTypeRelationships/os2"
+					location="os2.xsd" />
+			</xmlNamespaces>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

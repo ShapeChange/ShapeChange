@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2">
+  <title>Schematron constraints for schema 'Test Schema'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="test" uri="http://shapechange.net/profiling_eps/test"/>
+  <ns prefix="fn" uri="http://www.w3.org/2005/xpath-functions"/>
+  <pattern>
+    <rule context="test:T4_Class1">
+      <assert test="test:attribute3[fn:matches(.,'[a-zA-Z0-9]+')]">attribute3_Type:  This is the constraint description. </assert>
+    </rule>
+  </pattern>
+</schema>

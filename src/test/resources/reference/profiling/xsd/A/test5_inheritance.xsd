@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling/test5" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling/test5" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T5_ClassInheritanceA" substitutionGroup="gml:AbstractFeature" type="test:T5_ClassInheritanceAType"/>
+  <complexType name="T5_ClassInheritanceAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5_ClassInheritanceAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T5_ClassInheritanceA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T5_ClassInheritanceB" substitutionGroup="test:T5_ClassInheritanceA" type="test:T5_ClassInheritanceBType"/>
+  <complexType name="T5_ClassInheritanceBType">
+    <complexContent>
+      <extension base="test:T5_ClassInheritanceAType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5_ClassInheritanceBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T5_ClassInheritanceB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T5_ClassInheritanceC" substitutionGroup="gml:AbstractFeature" type="test:T5_ClassInheritanceCType"/>
+  <complexType name="T5_ClassInheritanceCType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5_ClassInheritanceCPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T5_ClassInheritanceC"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

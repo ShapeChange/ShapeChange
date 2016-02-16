@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tagAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<!-- Mappings for ISO 19109:2015 -->
+	<!-- Note: definition, description, language are all identical and do not need a tag alias -->
+	<TagAlias wellknown="alias" alias="designation" />
+	<!-- Mappings for ... -->	
+	<!-- to be added as needed -->
+</tagAliases>

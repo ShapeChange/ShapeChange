@@ -1,0 +1,30 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/Union.json",
+	"title":"Union",
+	"type":"object",
+	"properties":{
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"option1":{
+					"title":"option1",
+					"type":"string",
+					"enum":["val1","val2"]
+				},
+				"option2":{
+					"title":"option2",
+					"type":"integer"
+				},
+				"option3":{
+					"title":"option3",
+					"type":"array",
+					"items":{
+						"type":"string"
+					}
+				}
+			}
+		}
+	}
+}

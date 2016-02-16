@@ -1,0 +1,1434 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://test/flattening/flat" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/flattening/flat" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="BooleanWithONINAType">
+    <restriction base="string">
+      <enumeration value="1000">
+        <annotation>
+          <documentation>false: False</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="1001">
+        <annotation>
+          <documentation>true: True</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="-999999">
+        <annotation>
+          <documentation>noInformation: No Information</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="Class1" substitutionGroup="gml:AbstractFeature" type="flat:Class1Type"/>
+  <complexType name="Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="boolean"/>
+          <element name="prop2" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="EnumerationAFeatureEntityAliasType">
+    <restriction base="string">
+      <enumeration value="1">
+        <annotation>
+          <documentation>enum1: enum1 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="2">
+        <annotation>
+          <documentation>enum2: enum2 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="3">
+        <annotation>
+          <documentation>enum3: enum3 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="-999999">
+        <annotation>
+          <documentation>noInformation: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="998">
+        <annotation>
+          <documentation>notApplicable: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="999">
+        <annotation>
+          <documentation>other: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationBGeometryMetadataAliasType">
+    <restriction base="string">
+      <enumeration value="a">
+        <annotation>
+          <documentation>enumA: EnumA of EnumerationB VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="b">
+        <annotation>
+          <documentation>enumB: EnumB of EnumerationB VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="-999999">
+        <annotation>
+          <documentation>noInformation: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="998">
+        <annotation>
+          <documentation>notApplicable: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="999">
+        <annotation>
+          <documentation>other: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationXFeatureType1AliasType">
+    <restriction base="string">
+      <enumeration value="1">
+        <annotation>
+          <documentation>enum1: enum1 of EnumerationX VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="2">
+        <annotation>
+          <documentation>enum2: enum2 of EnumerationX VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="-999999">
+        <annotation>
+          <documentation>noInformation: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="998">
+        <annotation>
+          <documentation>notApplicable: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="999">
+        <annotation>
+          <documentation>other: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationYFeatureType2AliasType">
+    <restriction base="string">
+      <enumeration value="1">
+        <annotation>
+          <documentation>enum1: enum1 of EnumerationY VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="2">
+        <annotation>
+          <documentation>enum2: enum2 of EnumerationY VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="-999999">
+        <annotation>
+          <documentation>noInformation: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="998">
+        <annotation>
+          <documentation>notApplicable: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="999">
+        <annotation>
+          <documentation>other: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="FT1Union" substitutionGroup="gml:AbstractObject" type="flat:FT1UnionType"/>
+  <complexType name="FT1UnionType">
+    <choice>
+      <element name="c" type="flat:FT1_CPropertyType"/>
+      <element name="p" type="flat:FT1_PPropertyType"/>
+      <element name="s" type="flat:FT1_SPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FT1UnionPropertyType">
+    <sequence>
+      <element ref="flat:FT1Union"/>
+    </sequence>
+  </complexType>
+  <element name="FT1_C" substitutionGroup="gml:AbstractFeature" type="flat:FT1_CType">
+    <annotation>
+      <documentation>FeatureType1_C: FEatureType1 FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT1_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT1_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT1_P" substitutionGroup="gml:AbstractFeature" type="flat:FT1_PType">
+    <annotation>
+      <documentation>FeatureType1_P: FEatureType1 FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT1_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT1_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT1_S" substitutionGroup="gml:AbstractFeature" type="flat:FT1_SType">
+    <annotation>
+      <documentation>FeatureType1_S: FEatureType1 FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT1_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT1_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2Union" substitutionGroup="gml:AbstractObject" type="flat:FT2UnionType"/>
+  <complexType name="FT2UnionType">
+    <choice>
+      <element name="c" type="flat:FT2_CPropertyType"/>
+      <element name="p" type="flat:FT2_PPropertyType"/>
+      <element name="s" type="flat:FT2_SPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FT2UnionPropertyType">
+    <sequence>
+      <element ref="flat:FT2Union"/>
+    </sequence>
+  </complexType>
+  <element name="FT2_C" substitutionGroup="gml:AbstractFeature" type="flat:FT2_CType">
+    <annotation>
+      <documentation>FeatureType2_C: FeatureType2 FC definition.
+NOTE FeatureType2 FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT2_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_1-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_2-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-curvegeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_3-curveGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop30alias" type="flat:EnumerationYFeatureType2AliasType">
+            <annotation>
+              <documentation>prop30: Prop30 AC definition
+NOTE Prop30 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop31alias" type="double">
+            <annotation>
+              <documentation>prop31: Prop31 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-s" type="double">
+            <annotation>
+              <documentation>prop32-singleValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.l" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.lowerValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.u" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.upperValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element name="prop33" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT2_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2_P" substitutionGroup="gml:AbstractFeature" type="flat:FT2_PType">
+    <annotation>
+      <documentation>FeatureType2_P: FeatureType2 FC definition.
+NOTE FeatureType2 FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT2_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_1-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_2-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.geometryalias" type="gml:PointPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-s" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-singleValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-i.l" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-intervalValue.lowerValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-pointgeomalias.prop15alias-i.u" type="double">
+            <annotation>
+              <documentation>propGeometry_3-pointGeometryInfo.prop15-intervalValue.upperValue: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop30alias" type="flat:EnumerationYFeatureType2AliasType">
+            <annotation>
+              <documentation>prop30: Prop30 AC definition
+NOTE Prop30 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop31alias" type="double">
+            <annotation>
+              <documentation>prop31: Prop31 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-s" type="double">
+            <annotation>
+              <documentation>prop32-singleValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.l" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.lowerValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.u" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.upperValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element name="prop33" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT2_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2_S" substitutionGroup="gml:AbstractFeature" type="flat:FT2_SType">
+    <annotation>
+      <documentation>FeatureType2_S: FeatureType2 FC definition.
+NOTE FeatureType2 FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT2_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop7alias" type="string">
+            <annotation>
+              <documentation>prop7: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop8alias" type="flat:BooleanWithONINAType">
+            <annotation>
+              <documentation>prop8: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
+            <annotation>
+              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3alias" type="string">
+            <annotation>
+              <documentation>prop3: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_1-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_1-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_2-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_2-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.prop12alias" type="double">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.prop12: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.propenumerationbalias" type="flat:EnumerationBGeometryMetadataAliasType">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.propEnumerationB: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.prop11alias" type="integer">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.prop11: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propgeometryalias_3-surfacegeomalias.geometryalias" type="gml:GeometryPropertyType">
+            <annotation>
+              <documentation>propGeometry_3-surfaceGeometryInfo.geometry: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_1" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_1: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_2" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_2: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_3" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_3: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_4" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_4: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propmaxocctestalias_5" type="string">
+            <annotation>
+              <documentation>propMaxOccTest_5: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop9alias" type="integer">
+            <annotation>
+              <documentation>prop9: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop10alias" type="string">
+            <annotation>
+              <documentation>prop10: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20alias" type="flat:EnumerationXFeatureType1AliasType">
+            <annotation>
+              <documentation>prop20: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21alias" type="double">
+            <annotation>
+              <documentation>prop21: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop30alias" type="flat:EnumerationYFeatureType2AliasType">
+            <annotation>
+              <documentation>prop30: Prop30 AC definition
+NOTE Prop30 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop31alias" type="double">
+            <annotation>
+              <documentation>prop31: Prop31 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-s" type="double">
+            <annotation>
+              <documentation>prop32-singleValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.l" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.lowerValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32alias-i.u" type="double">
+            <annotation>
+              <documentation>prop32-intervalValue.upperValue: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element name="prop33" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FT2_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="StandaloneEnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+      <enumeration value="enum3"/>
+    </restriction>
+  </simpleType>
+</schema>

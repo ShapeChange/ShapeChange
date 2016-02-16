@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://test.org/attributeCreation/4" elementFormDefault="qualified" targetNamespace="http://test.org/attributeCreation/4" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="NoSeqNumTestClass" substitutionGroup="gml:AbstractFeature" type="t:NoSeqNumTestClassType"/>
+  <complexType name="NoSeqNumTestClassType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFirst" type="integer"/>
+          <element name="p1" type="string"/>
+          <element name="p2" type="string"/>
+          <element name="p3" type="string"/>
+          <element name="pLast" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="NoSeqNumTestClassPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:NoSeqNumTestClass"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

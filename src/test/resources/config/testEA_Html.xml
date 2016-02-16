@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="addTaggedValues" value="appliesTo"/>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/testCatalogue.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="enabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/html/log.xml"/>
+	</log>
+	<targets>		
+		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
+			mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/html"/>
+			<targetParameter name="outputFilename" value="test"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="inheritedProperties" value="false"/>
+			<targetParameter name="outputFormat" value="HTML"/>
+			<targetParameter name="name" value="'Test application schema'"/>
+			<targetParameter name="scope" value="This feature catalogue ..."/>
+			<targetParameter name="versionNumber" value="n/a"/>
+			<targetParameter name="versionDate" value="n/a"/>
+			<targetParameter name="producer" value="interactive instruments GmbH"/>	
+			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

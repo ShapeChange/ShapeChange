@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'GML 3.3 Test Schema'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="t" uri="http://www.opengis.net/ows8/test/2"/>
+  <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
+  <pattern>
+    <rule context="t:Test">
+      <assert test="t:att1/@xlink:href = 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode/unclassified'">att1IsUnclassified:  Unclassified </assert>
+      <assert test="starts-with(t:att1/@xlink:href,'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode')">Code list value URI starts with 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode'</assert>
+      <assert test="(not contains(t:att1/@xlink:href, '#') and document(t:att1/@xlink:href)) or (contains(t:att1/@xlink:href, '#') and document(substring-before(t:att1/@xlink:href,'#'))/id(substring-after(t:att1/@xlink:href,'#')))">Code list value exists</assert>
+      <assert test="(not contains(t:att1/@xlink:href, '#') and document(t:att1/@xlink:href)/gml:Definition) or (contains(t:att1/@xlink:href, '#') and document(substring-before(t:att1/@xlink:href,'#'))/id(substring-after(t:att1/@xlink:href,'#'))[local-name()='Definiton' and namespace-uri()='http://www.opengis.net/gml/3.2'])">Code list dictionary is represented using GML 3.2</assert>
+      <assert test="starts-with(t:classification/@xlink:href,'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode')">Code list value URI starts with 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode'</assert>
+      <assert test="(not contains(t:classification/@xlink:href, '#') and document(t:classification/@xlink:href)) or (contains(t:classification/@xlink:href, '#') and document(substring-before(t:classification/@xlink:href,'#'))/id(substring-after(t:classification/@xlink:href,'#')))">Code list value exists</assert>
+      <assert test="(not contains(t:classification/@xlink:href, '#') and document(t:classification/@xlink:href)/gml:Definition) or (contains(t:classification/@xlink:href, '#') and document(substring-before(t:classification/@xlink:href,'#'))/id(substring-after(t:classification/@xlink:href,'#'))[local-name()='Definiton' and namespace-uri()='http://www.opengis.net/gml/3.2'])">Code list dictionary is represented using GML 3.2</assert>
+    </rule>
+  </pattern>
+</schema>

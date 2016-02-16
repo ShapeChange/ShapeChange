@@ -1,0 +1,559 @@
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix testA: <http://shapechange.net/testA/SchemaA#> .
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sc:    <http://shapechange.net/resources/ont/base#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+
+testA:CodeList  a        owl:Class ;
+        rdfs:subClassOf  skos:Concept , iso19150-2:Codelist ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "CodeList"^^xsd:NCName ;
+        skos:prefLabel   "CodeList"@en .
+
+testA:FeatureType2  a    owl:Class ;
+        rdfs:subClassOf  iso19150-2:FeatureType ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:FeatureType1 ;
+                           owl:onProperty     testA:FeatureType2.role1
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType2.codelist2
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:CodeList2 ;
+                           owl:onProperty     testA:FeatureType2.codelist2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType2.union
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:Union ;
+                           owl:onProperty     testA:FeatureType2.union
+                         ] ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "A definition."@en ;
+        skos:notation    "FeatureType2"^^xsd:NCName ;
+        skos:prefLabel   "FeatureType2"@en ;
+        skos:scopeNote   "A description."@en .
+
+testA:string  a          owl:DatatypeProperty ;
+        rdfs:range       xsd:string ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "This is a string."@en ;
+        skos:notation    "string"^^xsd:NCName ;
+        skos:prefLabel   "string"@en .
+
+<http://shapechange.net/testA/SchemaA/code/CodeList>
+        a               skos:ConceptScheme ;
+        dc:source       "FIX_source_in_config"@en ;
+        dct:isFormatOf  "http://shapechange.net/testA/SchemaA#CodeList" ;
+        skos:notation   "CodeList"^^xsd:NCName ;
+        skos:prefLabel  "CodeList"@en .
+
+testA:integer  a         owl:DatatypeProperty ;
+        rdfs:range       xsd:integer ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "This is an integer."@en ;
+        skos:notation    "integer"^^xsd:NCName ;
+        skos:prefLabel   "integer"@en .
+
+testA:FeatureType2.codelist2
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType2 ;
+        rdfs:range      testA:CodeList2 ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "codelist2"^^xsd:NCName ;
+        skos:prefLabel  "codelist2"@en .
+
+testA:FeatureType1.length
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      sc:Measure ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "length"^^xsd:NCName ;
+        skos:prefLabel  "length"@en .
+
+testA:FeatureType1.datatype
+        a                owl:ObjectProperty ;
+        rdfs:domain      testA:FeatureType1 ;
+        rdfs:range       testA:DataType ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "This is a data type."@en ;
+        skos:notation    "datatype"^^xsd:NCName ;
+        skos:prefLabel   "datatype"@en .
+
+testA:FeatureType1.datetime
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:dateTime ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "datetime"^^xsd:NCName ;
+        skos:prefLabel  "datetime"@en .
+
+testA:FeatureType1  a    owl:Class ;
+        rdfs:subClassOf  iso19150-2:FeatureType , testA:AbstractFeatureType ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:dateTime ;
+                           owl:onProperty     testA:FeatureType1.datetime
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.boolean
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:anyURI ;
+                           owl:onProperty     testA:FeatureType1.uri
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.uri
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.datatype
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:integer ;
+                           owl:onProperty     testA:integer
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:integer
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.measure
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:string
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:FeatureType1.label
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.time
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:date ;
+                           owl:onProperty     testA:FeatureType1.date
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:Enumeration ;
+                           owl:onProperty     testA:FeatureType1.enum
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.character
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.date
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.enum
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.secondgeometry
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.datetime
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.union2
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:DataType ;
+                           owl:onProperty     testA:FeatureType1.datatype
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:FeatureType1.length
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  sc:Measure ;
+                           owl:onProperty     testA:FeatureType1.measure
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:FeatureType2 ;
+                           owl:onProperty     testA:FeatureType1.role2
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:double ;
+                           owl:onProperty     testA:FeatureType1.decimal
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  owl:Class ;
+                           owl:onProperty     testA:FeatureType1.metadata
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:double ;
+                           owl:onProperty     testA:FeatureType1.real
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     testA:string
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:time ;
+                           owl:onProperty     testA:FeatureType1.time
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:CodeList ;
+                           owl:onProperty     testA:FeatureType1.codelist
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.codelist
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     testA:FeatureType1.character
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.metadata
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  geo:Geometry ;
+                           owl:onProperty     testA:FeatureType1.secondgeometry
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:NilUnion ;
+                           owl:onProperty     testA:FeatureType1.union2
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  sc:Measure ;
+                           owl:onProperty     testA:FeatureType1.length
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:double ;
+                           owl:onProperty     testA:FeatureType1.number
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.number
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:boolean ;
+                           owl:onProperty     testA:FeatureType1.boolean
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.decimal
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:int ;
+                           owl:onProperty   testA:FeatureType1.role2
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     testA:FeatureType1.label
+                         ] ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "This is a feature type."@en ;
+        skos:notation    "FeatureType1"^^xsd:NCName ;
+        skos:prefLabel   "FeatureType1"@en .
+
+testA:FeatureType1.union2
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      testA:NilUnion ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "union2"^^xsd:NCName ;
+        skos:prefLabel  "union2"@en .
+
+<http://shapechange.net/testA/SchemaA/code/CodeList/code2>
+        a               skos:Concept ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:inScheme   "http://shapechange.net/testA/SchemaA/code/CodeList" ;
+        skos:notation   "code2"^^xsd:NCName ;
+        skos:prefLabel  "code2"@en .
+
+testA:FeatureType2.union
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType2 ;
+        rdfs:range      testA:Union ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "union"^^xsd:NCName ;
+        skos:prefLabel  "union"@en .
+
+testA:FeatureType1.label
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:string ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "label"^^xsd:NCName ;
+        skos:prefLabel  "label"@en .
+
+testA:FeatureType2.role1
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType2 ;
+        rdfs:range      testA:FeatureType1 ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "role1"^^xsd:NCName ;
+        skos:prefLabel  "role1"@en .
+
+testA:FeatureType1.codelist
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      testA:CodeList ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "codelist"^^xsd:NCName ;
+        skos:prefLabel  "codelist"@en .
+
+testA:FeatureType1.metadata
+        a               owl:ObjectProperty ;
+        rdfs:comment    "The range is a type for which no RDF representation is known: MD_Metadata"@en ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      owl:Class ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "metadata"^^xsd:NCName ;
+        skos:prefLabel  "metadata"@en .
+
+testA:FeatureType1.character
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:string ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "character"^^xsd:NCName ;
+        skos:prefLabel  "character"@en .
+
+testA:FeatureType1.real
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:double ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "real"^^xsd:NCName ;
+        skos:prefLabel  "real"@en .
+
+<http://shapechange.net/testA/SchemaA/code/CodeList/code1>
+        a               skos:Concept ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:inScheme   "http://shapechange.net/testA/SchemaA/code/CodeList" ;
+        skos:notation   "code1"^^xsd:NCName ;
+        skos:prefLabel  "code1"@en .
+
+testA:FeatureType1.measure
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      sc:Measure ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "measure"^^xsd:NCName ;
+        skos:prefLabel  "measure"@en .
+
+testA:FeatureType1.date
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:date ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "date"^^xsd:NCName ;
+        skos:prefLabel  "date"@en .
+
+testA:DataType.datatype2
+        a                owl:ObjectProperty ;
+        rdfs:domain      testA:DataType ;
+        rdfs:range       testA:DataType2 ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:definition  "This is another data type."@en ;
+        skos:notation    "datatype2"^^xsd:NCName ;
+        skos:prefLabel   "datatype2"@en .
+
+testA:DataType.boolean
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:DataType ;
+        rdfs:range      xsd:boolean ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "boolean"^^xsd:NCName ;
+        skos:prefLabel  "boolean"@en .
+
+<http://shapechange.net/testA/SchemaA>
+        a                owl:Ontology ;
+        rdfs:comment     "A definition.\nA description."@en ;
+        rdfs:label       "Schema A"@en ;
+        dc:source        "FIX_source_in_config"@en ;
+        owl:imports      <http://shapechange.net/resources/ont/base> , <http://www.opengis.net/ont/geosparql> , <http://def.isotc211.org/iso19150-2/2012/base> ;
+        owl:versionInfo  "1.0" .
+
+testA:NilUnion  a        owl:Class ;
+        rdfs:subClassOf  iso19150-2:Union ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "NilUnion"^^xsd:NCName ;
+        skos:prefLabel   "NilUnion"@en .
+
+testA:FeatureType1.secondgeometry
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      geo:Geometry ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "secondgeometry"^^xsd:NCName ;
+        skos:prefLabel  "secondgeometry"@en .
+
+testA:DataType2  a       owl:Class ;
+        rdfs:subClassOf  iso19150-2:Datatype ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:integer ;
+                           owl:onProperty     testA:integer
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:integer
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     testA:string
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:string
+                         ] ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "DataType2"^^xsd:NCName ;
+        skos:prefLabel   "DataType2"@en .
+
+testA:AbstractFeatureType.geometry
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:AbstractFeatureType ;
+        rdfs:range      geo:Geometry ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "geometry"^^xsd:NCName ;
+        skos:prefLabel  "geometry"@en .
+
+testA:FeatureType1.uri
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:anyURI ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "uri"^^xsd:NCName ;
+        skos:prefLabel  "uri"@en .
+
+testA:CodeList2  a       owl:Class ;
+        rdfs:subClassOf  skos:Concept , iso19150-2:Codelist ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "CodeList2"^^xsd:NCName ;
+        skos:prefLabel   "CodeList2"@en .
+
+testA:FeatureType1.number
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:double ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "number"^^xsd:NCName ;
+        skos:prefLabel  "number"@en .
+
+testA:FeatureType1.boolean
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:boolean ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "boolean"^^xsd:NCName ;
+        skos:prefLabel  "boolean"@en .
+
+<http://shapechange.net/testA/SchemaA/code/CodeList2>
+        a               skos:ConceptScheme ;
+        dc:source       "FIX_source_in_config"@en ;
+        dct:isFormatOf  "http://shapechange.net/testA/SchemaA#CodeList2" ;
+        skos:notation   "CodeList2"^^xsd:NCName ;
+        skos:prefLabel  "CodeList2"@en .
+
+testA:AbstractFeatureType
+        a                      owl:Class ;
+        rdfs:subClassOf        iso19150-2:FeatureType ;
+        rdfs:subClassOf        [ a                  owl:Restriction ;
+                                 owl:allValuesFrom  geo:Geometry ;
+                                 owl:onProperty     testA:AbstractFeatureType.geometry
+                               ] ;
+        rdfs:subClassOf        [ a                owl:Restriction ;
+                                 owl:cardinality  "1"^^xsd:int ;
+                                 owl:onProperty   testA:AbstractFeatureType.geometry
+                               ] ;
+        iso19150-2:isAbstract  true ;
+        dc:source              "FIX_source_in_config"@en ;
+        skos:notation          "AbstractFeatureType"^^xsd:NCName ;
+        skos:prefLabel         "AbstractFeatureType"@en .
+
+testA:FeatureType1.role2
+        a               owl:ObjectProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      testA:FeatureType2 ;
+        dc:source       "FIX_source_in_config"@en ;
+        owl:inverseOf   testA:FeatureType2.role1 ;
+        skos:notation   "role2"^^xsd:NCName ;
+        skos:prefLabel  "role2"@en .
+
+testA:FeatureType1.time
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:time ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "time"^^xsd:NCName ;
+        skos:prefLabel  "time"@en .
+
+testA:FeatureType1.decimal
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      xsd:double ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "decimal"^^xsd:NCName ;
+        skos:prefLabel  "decimal"@en .
+
+testA:DataType  a        owl:Class ;
+        rdfs:subClassOf  iso19150-2:Datatype ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     testA:string
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  testA:DataType2 ;
+                           owl:onProperty     testA:DataType.datatype2
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:DataType.boolean
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:boolean ;
+                           owl:onProperty     testA:DataType.boolean
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:int ;
+                           owl:onProperty      testA:string
+                         ] ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "DataType"^^xsd:NCName ;
+        skos:prefLabel   "DataType"@en .
+
+testA:Enumeration  a              rdfs:Datatype ;
+        iso19150-2:isEnumeration  true ;
+        dc:source                 "FIX_source_in_config"@en ;
+        owl:oneOf                 ( "val2" "val1" ) ;
+        skos:notation             "Enumeration"^^xsd:NCName ;
+        skos:prefLabel            "Enumeration"@en .
+
+testA:Union  a           owl:Class ;
+        rdfs:subClassOf  iso19150-2:Union ;
+        dc:source        "FIX_source_in_config"@en ;
+        skos:notation    "Union"^^xsd:NCName ;
+        skos:prefLabel   "Union"@en .
+
+testA:FeatureType1.enum
+        a               owl:DatatypeProperty ;
+        rdfs:domain     testA:FeatureType1 ;
+        rdfs:range      testA:Enumeration ;
+        dc:source       "FIX_source_in_config"@en ;
+        skos:notation   "enum"^^xsd:NCName ;
+        skos:prefLabel  "enum"@en .

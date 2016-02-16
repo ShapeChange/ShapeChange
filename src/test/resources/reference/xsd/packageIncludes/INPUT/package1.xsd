@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test" version="1.0">
+  <include schemaLocation="test.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType1" substitutionGroup="gml:AbstractFeature" type="test:FeatureType1Type">
+    <annotation>
+      <documentation>This is a feature type.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureType1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="integer" type="integer">
+            <annotation>
+              <documentation>This is an integer.</documentation>
+            </annotation>
+          </element>
+          <element name="character" type="string"/>
+          <element maxOccurs="unbounded" name="string" type="string">
+            <annotation>
+              <documentation>This is a string.</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="real" type="double"/>
+          <element name="decimal" type="double"/>
+          <element name="number" type="double"/>
+          <element name="boolean" type="boolean"/>
+          <element name="uri" type="anyURI"/>
+          <element name="datetime" type="dateTime"/>
+          <element name="date" type="date"/>
+          <element name="time" type="time"/>
+          <element name="measure" type="gml:MeasureType"/>
+          <element minOccurs="0" name="length" type="gml:LengthType"/>
+          <element name="geometry" type="gml:PointPropertyType"/>
+          <element name="secondgeometry" type="gml:SurfacePropertyType"/>
+          <element name="metadata">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMetadataPropertyType">
+                  <sequence minOccurs="0">
+                    <element ref="gmd:MD_Metadata"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="datatype" type="test:DataTypePropertyType">
+            <annotation>
+              <documentation>This is a data type.</documentation>
+            </annotation>
+          </element>
+          <element name="union" type="test:NilUnionPropertyType"/>
+          <element name="enum" type="test:EnumerationType"/>
+          <element name="codelist" type="gml:CodeType"/>
+          <element name="role2" type="test:FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:role1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="test:FeatureType2Type"/>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="codelist" type="gml:CodeType"/>
+          <element name="union" type="test:UnionPropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="role1" type="test:FeatureType1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:role2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

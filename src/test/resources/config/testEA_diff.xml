@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/test.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ea/log_diff.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ea"/>
+			<targetParameter name="outputFilename" value="test_diff"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="inheritedProperties" value="false"/>
+			<targetParameter name="outputFormat" value="HTML"/>
+			<targetParameter name="name" value="'Test application schema'"/>
+			<targetParameter name="scope" value="This feature catalogue ..."/>
+			<targetParameter name="versionNumber" value="n/a"/>
+			<targetParameter name="versionDate" value="n/a"/>
+			<targetParameter name="producer" value="interactive instruments GmbH"/>
+			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>
+			<targetParameter name="xslhtmlFile" value="html.xsl"/>
+			<targetParameter name="referenceModelType" value="EA7"/>
+			<targetParameter name="referenceModelFile" value="src/test/resources/test_ref.eap"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

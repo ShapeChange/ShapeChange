@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://shapechange.net/test/flattening/inheritance" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/inheritance" version="FIXME">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T1_FT1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT1AliasType"/>
+  <complexType name="T1_FT1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T1_FT2AliasPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FT1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T1_FT1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FT1Alias_U" substitutionGroup="gml:AbstractObject" type="flat:T1_FT1Alias_UType"/>
+  <complexType name="T1_FT1Alias_UType">
+    <choice>
+      <element name="t1_FT1Alias" type="flat:T1_FT1AliasPropertyType"/>
+      <element name="t1_FT1_1Alias" type="flat:T1_FT1_1AliasPropertyType"/>
+      <element name="t1_FT1_2Alias" type="flat:T1_FT1_2AliasPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T1_FT1Alias_UPropertyType">
+    <sequence>
+      <element ref="flat:T1_FT1Alias_U"/>
+    </sequence>
+  </complexType>
+  <element name="T1_FT1_1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT1_1AliasType"/>
+  <complexType name="T1_FT1_1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T1_FT2AliasPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FT1_1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T1_FT1_1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FT1_2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT1_2AliasType"/>
+  <complexType name="T1_FT1_2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T1_FT2AliasPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FT1_2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T1_FT1_2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FT2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT2AliasType"/>
+  <complexType name="T1_FT2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FT2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T1_FT2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FT1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T2_FT1AliasType"/>
+  <complexType name="T2_FT1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FT1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T2_FT1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FT1Alias_U" substitutionGroup="gml:AbstractObject" type="flat:T2_FT1Alias_UType"/>
+  <complexType name="T2_FT1Alias_UType">
+    <choice>
+      <element name="t2_FT1Alias" type="flat:T2_FT1AliasPropertyType"/>
+      <element name="t2_FT1_1Alias" type="flat:T2_FT1_1AliasPropertyType"/>
+      <element name="t2_FT1_2Alias" type="flat:T2_FT1_2AliasPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T2_FT1Alias_UPropertyType">
+    <sequence>
+      <element ref="flat:T2_FT1Alias_U"/>
+    </sequence>
+  </complexType>
+  <element name="T2_FT1_1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T2_FT1_1AliasType"/>
+  <complexType name="T2_FT1_1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FT1_1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T2_FT1_1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FT1_2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T2_FT1_2AliasType"/>
+  <complexType name="T2_FT1_2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FT1_2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T2_FT1_2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FT2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T2_FT2AliasType"/>
+  <complexType name="T2_FT2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT2Alias_T2_FT1Alias" type="flat:T2_FT1AliasPropertyType"/>
+          <element minOccurs="0" name="pFT2Alias_T2_FT1_1Alias" type="flat:T2_FT1_1AliasPropertyType"/>
+          <element minOccurs="0" name="pFT2Alias_T2_FT1_2Alias" type="flat:T2_FT1_2AliasPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FT2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T2_FT2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_FT1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T3_FT1AliasType"/>
+  <complexType name="T3_FT1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T3_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T3_FT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_FT1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T3_FT1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_FT1Alias_U" substitutionGroup="gml:AbstractObject" type="flat:T3_FT1Alias_UType"/>
+  <complexType name="T3_FT1Alias_UType">
+    <choice>
+      <element name="t3_FT1Alias" type="flat:T3_FT1AliasPropertyType"/>
+      <element name="t3_FT1_1Alias" type="flat:T3_FT1_1AliasPropertyType"/>
+      <element name="t3_FT1_2Alias" type="flat:T3_FT1_2AliasPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T3_FT1Alias_UPropertyType">
+    <sequence>
+      <element ref="flat:T3_FT1Alias_U"/>
+    </sequence>
+  </complexType>
+  <element name="T3_FT1_1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T3_FT1_1AliasType"/>
+  <complexType name="T3_FT1_1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T3_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T3_FT1_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_FT1_1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T3_FT1_1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_FT1_2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T3_FT1_2AliasType"/>
+  <complexType name="T3_FT1_2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1Alias" type="flat:T3_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T3_FT1_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_FT1_2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T3_FT1_2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_FT2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T3_FT2AliasType"/>
+  <complexType name="T3_FT2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT2Alias_T3_FT1Alias" type="flat:T3_FT1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T3_FT1_1Alias" type="flat:T3_FT1_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T3_FT1_2Alias" type="flat:T3_FT1_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_FT2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T3_FT2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT1AliasType"/>
+  <complexType name="T4_FT1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2Alias" type="flat:T4_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_1Alias" type="flat:T4_FT2_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_2Alias" type="flat:T4_FT2_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT1Alias_U" substitutionGroup="gml:AbstractObject" type="flat:T4_FT1Alias_UType"/>
+  <complexType name="T4_FT1Alias_UType">
+    <choice>
+      <element name="t4_FT1Alias" type="flat:T4_FT1AliasPropertyType"/>
+      <element name="t4_FT1_1Alias" type="flat:T4_FT1_1AliasPropertyType"/>
+      <element name="t4_FT1_2Alias" type="flat:T4_FT1_2AliasPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T4_FT1Alias_UPropertyType">
+    <sequence>
+      <element ref="flat:T4_FT1Alias_U"/>
+    </sequence>
+  </complexType>
+  <element name="T4_FT1_1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT1_1AliasType"/>
+  <complexType name="T4_FT1_1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2Alias" type="flat:T4_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_1Alias" type="flat:T4_FT2_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_2Alias" type="flat:T4_FT2_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT1_1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT1_1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT1_2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT1_2AliasType"/>
+  <complexType name="T4_FT1_2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2Alias" type="flat:T4_FT2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_1Alias" type="flat:T4_FT2_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT1Alias_T4_FT2_2Alias" type="flat:T4_FT2_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2Alias_T4_FT1_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT1_2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT1_2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT2AliasType"/>
+  <complexType name="T4_FT2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1Alias" type="flat:T4_FT1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_1Alias" type="flat:T4_FT1_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_2Alias" type="flat:T4_FT1_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT2Alias_U" substitutionGroup="gml:AbstractObject" type="flat:T4_FT2Alias_UType"/>
+  <complexType name="T4_FT2Alias_UType">
+    <choice>
+      <element name="t4_FT2Alias" type="flat:T4_FT2AliasPropertyType"/>
+      <element name="t4_FT2_1Alias" type="flat:T4_FT2_1AliasPropertyType"/>
+      <element name="t4_FT2_2Alias" type="flat:T4_FT2_2AliasPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T4_FT2Alias_UPropertyType">
+    <sequence>
+      <element ref="flat:T4_FT2Alias_U"/>
+    </sequence>
+  </complexType>
+  <element name="T4_FT2_1Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT2_1AliasType"/>
+  <complexType name="T4_FT2_1AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1Alias" type="flat:T4_FT1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_1Alias" type="flat:T4_FT1_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_2Alias" type="flat:T4_FT1_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_1Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT2_1AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT2_1Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_FT2_2Alias" substitutionGroup="gml:AbstractFeature" type="flat:T4_FT2_2AliasType"/>
+  <complexType name="T4_FT2_2AliasType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1Alias" type="flat:T4_FT1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_1Alias" type="flat:T4_FT1_1AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2Alias_T4_FT1_2Alias" type="flat:T4_FT1_2AliasPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1Alias_T4_FT2_2Alias</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_FT2_2AliasPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:T4_FT2_2Alias"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

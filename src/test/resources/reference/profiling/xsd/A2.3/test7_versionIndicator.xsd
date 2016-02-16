@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling/test7" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling/test7" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T7_Class1" substitutionGroup="gml:AbstractFeature" type="test:T7_Class1Type"/>
+  <complexType name="T7_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attribute1" type="string"/>
+          <element name="attribute2" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T7_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T7_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

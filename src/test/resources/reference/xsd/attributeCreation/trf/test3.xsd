@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://test.org/attributeCreation/3" elementFormDefault="qualified" targetNamespace="http://test.org/attributeCreation/3" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class1" substitutionGroup="gml:AbstractFeature" type="t:Class1Type"/>
+  <complexType name="Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pSeq1" type="string"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="XYZ" nillable="true">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="t:Class2"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="pSeq3" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class2" substitutionGroup="gml:AbstractGML" type="t:Class2Type"/>
+  <complexType name="Class2Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class3_noChanges" substitutionGroup="gml:AbstractFeature" type="t:Class3_noChangesType"/>
+  <complexType name="Class3_noChangesType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class3_noChangesPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class3_noChanges"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class4" substitutionGroup="t:Class1" type="t:Class4Type"/>
+  <complexType name="Class4Type">
+    <complexContent>
+      <extension base="t:Class1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling/test6" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling/test6" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T6_AssoClass" substitutionGroup="gml:AbstractGML" type="test:T6_AssoClassType"/>
+  <complexType name="T6_AssoClassType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="propOtherType" type="test:T6_SubtypePropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propSubtype</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="propSubtype" type="test:T6_OtherTypePropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propOtherType</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_AssoClassPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_AssoClass"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Class2" substitutionGroup="gml:AbstractFeature" type="test:T6_Class2Type"/>
+  <complexType name="T6_Class2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ftProp1" type="test:T6_UnionKeepForAPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="T6_CodeListKeepForAType">
+    <union memberTypes="test:T6_CodeListKeepForAEnumerationType test:T6_CodeListKeepForAOtherType"/>
+  </simpleType>
+  <simpleType name="T6_CodeListKeepForAEnumerationType">
+    <restriction base="string">
+      <enumeration value="code1"/>
+      <enumeration value="code2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="T6_CodeListKeepForAOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="T6_DataTypeKeepForA" substitutionGroup="gml:AbstractObject" type="test:T6_DataTypeKeepForAType"/>
+  <complexType name="T6_DataTypeKeepForAType">
+    <sequence>
+      <element name="dtProp1" type="test:T6_EnumerationKeepForAType"/>
+      <element name="dtProp2" type="test:T6_CodeListKeepForAType"/>
+    </sequence>
+  </complexType>
+  <complexType name="T6_DataTypeKeepForAPropertyType">
+    <sequence>
+      <element ref="test:T6_DataTypeKeepForA"/>
+    </sequence>
+  </complexType>
+  <simpleType name="T6_EnumerationKeepForAType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="T6_OtherType" substitutionGroup="gml:AbstractGML" type="test:T6_OtherTypeType"/>
+  <complexType name="T6_OtherTypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="propOtherType" type="test:T6_AssoClassPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propSubtype</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_OtherTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_OtherType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Subtype" substitutionGroup="test:T6_Supertype" type="test:T6_SubtypeType"/>
+  <complexType name="T6_SubtypeType">
+    <complexContent>
+      <extension base="test:T6_SupertypeType">
+        <sequence>
+          <element name="propSubtype" type="test:T6_AssoClassPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propOtherType</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_SubtypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Subtype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Supersupertype" substitutionGroup="gml:AbstractGML" type="test:T6_SupersupertypeType"/>
+  <complexType name="T6_SupersupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_SupersupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Supersupertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Supertype" substitutionGroup="test:T6_Supersupertype" type="test:T6_SupertypeType"/>
+  <complexType name="T6_SupertypeType">
+    <complexContent>
+      <extension base="test:T6_SupersupertypeType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_SupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Supertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_UnionKeepForA" substitutionGroup="gml:AbstractObject" type="test:T6_UnionKeepForAType"/>
+  <complexType name="T6_UnionKeepForAType">
+    <choice>
+      <element name="choice1">
+        <complexType>
+          <complexContent>
+            <extension base="gml:AbstractMemberType">
+              <sequence minOccurs="0">
+                <element ref="test:T6_Subtype"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+            </extension>
+          </complexContent>
+        </complexType>
+      </element>
+      <element name="choice2" type="test:T6_DataTypeKeepForAPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T6_UnionKeepForAPropertyType">
+    <sequence>
+      <element ref="test:T6_UnionKeepForA"/>
+    </sequence>
+  </complexType>
+</schema>

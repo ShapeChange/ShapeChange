@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://test.org/flattening/removeObjectToFeatureTypeNavigability/flat" elementFormDefault="qualified" targetNamespace="http://test.org/flattening/removeObjectToFeatureTypeNavigability/flat" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type"/>
+  <complexType name="FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ft1Prop1" type="t:T1InfoPropertyType"/>
+          <element name="ft1Prop2" type="t:T1InfoPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1Info" substitutionGroup="gml:AbstractGML" type="t:T1InfoType"/>
+  <complexType name="T1InfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="t1Prop5" type="t:T2PropertyType"/>
+          <element name="t1Prop6" type="t:T2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t2Prop1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1InfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:T1Info"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2" substitutionGroup="gml:AbstractGML" type="t:T2Type"/>
+  <complexType name="T2Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="t2Prop1" type="t:T1InfoPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t1Prop6</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:T2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

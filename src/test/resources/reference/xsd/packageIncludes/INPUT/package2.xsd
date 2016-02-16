@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test" version="1.0">
+  <include schemaLocation="test.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="test:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="datatype" type="test:DataType2PropertyType">
+        <annotation>
+          <documentation>This is another data type.</documentation>
+        </annotation>
+      </element>
+      <element maxOccurs="unbounded" name="string" type="string"/>
+      <element minOccurs="0" name="boolean" type="boolean"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="test:DataType"/>
+    </sequence>
+  </complexType>
+  <element name="DataType2" substitutionGroup="gml:AbstractObject" type="test:DataType2Type"/>
+  <complexType name="DataType2Type">
+    <sequence>
+      <element maxOccurs="unbounded" name="string" type="string"/>
+      <element minOccurs="0" name="integer" type="integer"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataType2PropertyType">
+    <sequence>
+      <element ref="test:DataType2"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="val1"/>
+      <enumeration value="val2"/>
+    </restriction>
+  </simpleType>
+  <element name="NilUnion" substitutionGroup="gml:AbstractObject" type="test:NilUnionType"/>
+  <complexType name="NilUnionType">
+    <choice>
+      <element name="value" type="test:DataType2PropertyType"/>
+      <element name="reason" type="string"/>
+    </choice>
+  </complexType>
+  <complexType name="NilUnionPropertyType">
+    <sequence>
+      <element ref="test:NilUnion"/>
+    </sequence>
+  </complexType>
+  <element name="Union" substitutionGroup="gml:AbstractObject" type="test:UnionType"/>
+  <complexType name="UnionType">
+    <choice>
+      <element name="option1" type="test:EnumerationType"/>
+      <element name="option2" type="integer"/>
+      <element maxOccurs="unbounded" minOccurs="0" name="option3" type="string"/>
+    </choice>
+  </complexType>
+  <complexType name="UnionPropertyType">
+    <sequence>
+      <element ref="test:Union"/>
+    </sequence>
+  </complexType>
+</schema>

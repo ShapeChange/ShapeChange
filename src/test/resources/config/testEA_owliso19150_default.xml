@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+  xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+  <input>
+    <parameter name="inputModelType" value="EA7"/>
+    <parameter name="inputFile" value="src/test/resources/test_owl.eap"/>
+    <parameter name="publicOnly" value="true"/>
+    <parameter name="checkingConstraints" value="enabled"/>
+    <parameter name="sortedSchemaOutput" value="true"/>
+    <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+  </input>
+  <log>
+    <parameter name="reportLevel" value="INFO"/>
+    <parameter name="logFile" value="testResults/ea/log_owliso19150.xml"/>
+  </log>
+  <targets>
+    <TargetOwl class="de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150"
+      mode="enabled">
+      <targetParameter name="outputDirectory" value="testResults/ea/owl/default"/>
+      <targetParameter name="defaultEncodingRule" value="iso19150_2014"/>
+      <targetParameter name="source" value="FIX_source_in_config"/>
+      <targetParameter name="globalProperties" value="string,integer"/>
+      <xi:include href="src/main/resources/config/StandardStereotypeMappings-owl.xml"/>
+      <xi:include href="src/main/resources/config/StandardNamespaces-owl.xml"/>
+      <xi:include href="src/main/resources/config/StandardMapEntries-owl.xml"/>
+    </TargetOwl>
+  </targets>
+</ShapeChangeConfiguration>

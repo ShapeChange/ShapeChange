@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling_eps/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling_eps/test" version="1.0">
+  <include schemaLocation="testProfilingEPS.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T4_Class1" substitutionGroup="gml:AbstractFeature" type="test:T4_Class1Type">
+    <annotation>
+      <documentation>DT: datatype definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T4_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="attribute3" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T4_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4_Class3" substitutionGroup="gml:AbstractFeature" type="test:T4_Class3Type">
+    <annotation>
+      <documentation>DT: datatype definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T4_Class3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="attribute1" type="string">
+            <annotation>
+              <documentation>This is another data type.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attribute3" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_Class3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T4_Class3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

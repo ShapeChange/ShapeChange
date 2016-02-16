@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://test/flattening/flat" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/flattening/flat" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AbstractSupertype" substitutionGroup="gml:AbstractFeature" type="flat:AbstractSupertypeType"/>
+  <complexType name="AbstractSupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop01.valueOrReason" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractSupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:AbstractSupertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="BooleanWithONINAType">
+    <restriction base="string">
+      <enumeration value="false">
+        <annotation>
+          <documentation>1000: False</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="true">
+        <annotation>
+          <documentation>1001: True</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="noInformation">
+        <annotation>
+          <documentation>-999999: No Information</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="Class1" substitutionGroup="gml:AbstractFeature" type="flat:Class1Type"/>
+  <complexType name="Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop41">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractFeatureMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="flat:AbstractSupertype"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="prop42" type="flat:FeatureEntityUnionPropertyType"/>
+          <element name="prop43" type="flat:FeatureType1UnionPropertyType"/>
+          <element name="prop44" type="flat:FeatureType2UnionPropertyType"/>
+          <element name="prop45" type="flat:FeatureType3UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="EnumerationB_GeometryMetadataType">
+    <restriction base="string">
+      <enumeration value="enumA"/>
+      <enumeration value="enumB"/>
+      <enumeration value="noInformation">
+        <annotation>
+          <documentation>-999999: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="notApplicable">
+        <annotation>
+          <documentation>998: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="other">
+        <annotation>
+          <documentation>999: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="FeatureEntityUnion" substitutionGroup="gml:AbstractObject" type="flat:FeatureEntityUnionType"/>
+  <complexType name="FeatureEntityUnionType">
+    <choice>
+      <element name="c" type="flat:FeatureEntity_CPropertyType"/>
+      <element name="mp" type="flat:FeatureEntity_MPPropertyType"/>
+      <element name="mso" type="flat:FeatureEntity_MSoPropertyType"/>
+      <element name="p" type="flat:FeatureEntity_PPropertyType"/>
+      <element name="s" type="flat:FeatureEntity_SPropertyType"/>
+      <element name="so" type="flat:FeatureEntity_SoPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureEntityUnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureEntityUnion"/>
+    </sequence>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_C" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_CType"/>
+  <complexType abstract="true" name="FeatureEntity_CType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_MP" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_MPType"/>
+  <complexType abstract="true" name="FeatureEntity_MPType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_MPPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_MP"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_MSo" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_MSoType"/>
+  <complexType abstract="true" name="FeatureEntity_MSoType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_MSoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_MSo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_P" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_PType"/>
+  <complexType abstract="true" name="FeatureEntity_PType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_S" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_SType"/>
+  <complexType abstract="true" name="FeatureEntity_SType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity_So" substitutionGroup="flat:AbstractSupertype" type="flat:FeatureEntity_SoType"/>
+  <complexType abstract="true" name="FeatureEntity_SoType">
+    <complexContent>
+      <extension base="flat:AbstractSupertypeType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntity_SoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity_So"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1Union" substitutionGroup="gml:AbstractObject" type="flat:FeatureType1UnionType"/>
+  <complexType name="FeatureType1UnionType">
+    <choice>
+      <element name="c" type="flat:FeatureType1_CPropertyType"/>
+      <element name="mp" type="flat:FeatureType1_MPPropertyType"/>
+      <element name="mso" type="flat:FeatureType1_MSoPropertyType"/>
+      <element name="p" type="flat:FeatureType1_PPropertyType"/>
+      <element name="s" type="flat:FeatureType1_SPropertyType"/>
+      <element name="so" type="flat:FeatureType1_SoPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureType1UnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureType1Union"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType1_C" substitutionGroup="flat:FeatureEntity_C" type="flat:FeatureType1_CType"/>
+  <complexType name="FeatureType1_CType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_CType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1_MP" substitutionGroup="flat:FeatureEntity_MP" type="flat:FeatureType1_MPType"/>
+  <complexType name="FeatureType1_MPType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_MPType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_MPPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_MP"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1_MSo" substitutionGroup="flat:FeatureEntity_MSo" type="flat:FeatureType1_MSoType"/>
+  <complexType name="FeatureType1_MSoType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_MSoType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_MSoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_MSo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1_P" substitutionGroup="flat:FeatureEntity_P" type="flat:FeatureType1_PType"/>
+  <complexType name="FeatureType1_PType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_PType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1_S" substitutionGroup="flat:FeatureEntity_S" type="flat:FeatureType1_SType"/>
+  <complexType name="FeatureType1_SType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_SType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1_So" substitutionGroup="flat:FeatureEntity_So" type="flat:FeatureType1_SoType"/>
+  <complexType name="FeatureType1_SoType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_SoType">
+        <sequence>
+          <element minOccurs="0" name="prop11.valueOrReason" type="double"/>
+          <element name="prop12" type="flat:FeatureType2UnionPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_SoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1_So"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2Union" substitutionGroup="gml:AbstractObject" type="flat:FeatureType2UnionType"/>
+  <complexType name="FeatureType2UnionType">
+    <choice>
+      <element name="c" type="flat:FeatureType2_CPropertyType"/>
+      <element name="mp" type="flat:FeatureType2_MPPropertyType"/>
+      <element name="mso" type="flat:FeatureType2_MSoPropertyType"/>
+      <element name="p" type="flat:FeatureType2_PPropertyType"/>
+      <element name="s" type="flat:FeatureType2_SPropertyType"/>
+      <element name="so" type="flat:FeatureType2_SoPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureType2UnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureType2Union"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType2_C" substitutionGroup="flat:FeatureEntity_C" type="flat:FeatureType2_CType"/>
+  <complexType name="FeatureType2_CType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_CType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_MP" substitutionGroup="flat:FeatureEntity_MP" type="flat:FeatureType2_MPType"/>
+  <complexType name="FeatureType2_MPType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_MPType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_MPPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_MP"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_MSo" substitutionGroup="flat:FeatureEntity_MSo" type="flat:FeatureType2_MSoType"/>
+  <complexType name="FeatureType2_MSoType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_MSoType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_MSoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_MSo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_P" substitutionGroup="flat:FeatureEntity_P" type="flat:FeatureType2_PType"/>
+  <complexType name="FeatureType2_PType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_PType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_S" substitutionGroup="flat:FeatureEntity_S" type="flat:FeatureType2_SType"/>
+  <complexType name="FeatureType2_SType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_SType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_So" substitutionGroup="flat:FeatureEntity_So" type="flat:FeatureType2_SoType"/>
+  <complexType name="FeatureType2_SoType">
+    <complexContent>
+      <extension base="flat:FeatureEntity_SoType">
+        <sequence>
+          <element name="propX1.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop21.valueOrReason" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_SoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_So"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3Union" substitutionGroup="gml:AbstractObject" type="flat:FeatureType3UnionType"/>
+  <complexType name="FeatureType3UnionType">
+    <choice>
+      <element name="c" type="flat:FeatureType3_CPropertyType"/>
+      <element name="mp" type="flat:FeatureType3_MPPropertyType"/>
+      <element name="mso" type="flat:FeatureType3_MSoPropertyType"/>
+      <element name="p" type="flat:FeatureType3_PPropertyType"/>
+      <element name="s" type="flat:FeatureType3_SPropertyType"/>
+      <element name="so" type="flat:FeatureType3_SoPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureType3UnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureType3Union"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType3_C" substitutionGroup="flat:FeatureType1_C" type="flat:FeatureType3_CType"/>
+  <complexType name="FeatureType3_CType">
+    <complexContent>
+      <extension base="flat:FeatureType1_CType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_MP" substitutionGroup="flat:FeatureType1_MP" type="flat:FeatureType3_MPType"/>
+  <complexType name="FeatureType3_MPType">
+    <complexContent>
+      <extension base="flat:FeatureType1_MPType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_MPPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_MP"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_MSo" substitutionGroup="flat:FeatureType1_MSo" type="flat:FeatureType3_MSoType"/>
+  <complexType name="FeatureType3_MSoType">
+    <complexContent>
+      <extension base="flat:FeatureType1_MSoType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_MSoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_MSo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_P" substitutionGroup="flat:FeatureType1_P" type="flat:FeatureType3_PType"/>
+  <complexType name="FeatureType3_PType">
+    <complexContent>
+      <extension base="flat:FeatureType1_PType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_S" substitutionGroup="flat:FeatureType1_S" type="flat:FeatureType3_SType"/>
+  <complexType name="FeatureType3_SType">
+    <complexContent>
+      <extension base="flat:FeatureType1_SType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_So" substitutionGroup="flat:FeatureType1_So" type="flat:FeatureType3_SoType"/>
+  <complexType name="FeatureType3_SoType">
+    <complexContent>
+      <extension base="flat:FeatureType1_SoType">
+        <sequence>
+          <element name="prop31.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiCurveGeometryInfo.geometry" type="gml:MultiCurvePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiPointGeometryInfo.geometry" type="gml:MultiPointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSolidGeometryInfo.geometry" type="gml:MultiSolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-multiSurfaceGeometryInfo.geometry" type="gml:MultiSurfacePropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason" type="flat:BooleanWithONINAType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-solidGeometryInfo.geometry" type="gml:SolidPropertyType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason" type="double"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason" type="flat:EnumerationB_GeometryMetadataType"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason" type="integer"/>
+          <element minOccurs="0" name="prop32.valueOrReason-surfaceGeometryInfo.geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_SoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_So"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="FeatureTypeXPropertyType">
+    <choice minOccurs="0">
+      <element ref="flat:FeatureType2_C"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

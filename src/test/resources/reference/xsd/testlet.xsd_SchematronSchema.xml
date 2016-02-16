@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'LetTest'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="t" uri="http://www.opengis.net/ows8/test/2"/>
+  <pattern>
+    <rule context="t:LetTest">
+      <let name="A" value="t:att1"/>
+      <let name="B" value="t:att3/*/t:attx"/>
+      <let name="C" value="t:att2"/>
+      <assert test="not($A) or not($B) or $A != $B">att1DifferentFromAttx:  att1 must be different from associated attx.</assert>
+      <assert test="not($A) or 0 &lt; $A and $A &lt; count($C)">att1PositiveAndLtSizeOfAtt2:  att1 must be greater 0 and less than the cardinality of att2. </assert>
+      <assert test="not($A) or $C[. = $A] and not($C[. = (preceding::*|ancestor::*)[count(.|$C)=count($C)]])">att2ContainsAtt1AndIsUnique:  att2 contains att1 and is unique. </assert>
+      <assert test="(//t:LetTest1)[0 &lt;= t:attx and t:attx &lt; 2 * $A]">existLetTest1NumRelate:  There need to exist LetTest1 objects, which numerically relate to the current object.</assert>
+    </rule>
+  </pattern>
+</schema>

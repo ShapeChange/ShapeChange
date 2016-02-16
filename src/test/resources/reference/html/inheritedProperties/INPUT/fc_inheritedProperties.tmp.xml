@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P3">
+    <name>TestSchema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C3">
+    <name>Class1</name>
+    <characterizedBy idref="_A3_1"></characterizedBy>
+    <characterizedBy idref="_A3_2"></characterizedBy>
+    <characterizedBy idref="_A3_3"></characterizedBy>
+    <package idref="_P3"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A3_1">
+    <name>prop1C1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3_2">
+    <name>prop2C1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3_3">
+    <name>prop3C1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C4">
+    <name>Class2</name>
+    <subtypeOf idref="_C3">Class1</subtypeOf>
+    <characterizedBy idref="_A3_1"></characterizedBy>
+    <characterizedBy idref="_A3_2"></characterizedBy>
+    <characterizedBy idref="_A3_3"></characterizedBy>
+    <characterizedBy idref="_A4_4"></characterizedBy>
+    <characterizedBy idref="_A4_5"></characterizedBy>
+    <package idref="_P3"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A4_4">
+    <name>prop1C2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_5">
+    <name>prop2C2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C5">
+    <name>Class3</name>
+    <subtypeOf idref="_C4">Class2</subtypeOf>
+    <characterizedBy idref="_A3_1"></characterizedBy>
+    <characterizedBy idref="_A3_2"></characterizedBy>
+    <characterizedBy idref="_A3_3"></characterizedBy>
+    <characterizedBy idref="_A4_4"></characterizedBy>
+    <characterizedBy idref="_A4_5"></characterizedBy>
+    <characterizedBy idref="_A5_6"></characterizedBy>
+    <characterizedBy idref="_A5_9"></characterizedBy>
+    <package idref="_P3"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A5_6">
+    <name>prop1C3</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A5_9">
+    <name>prop2C3</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C6">
+    <name>Class4</name>
+    <subtypeOf idref="_C4">Class2</subtypeOf>
+    <characterizedBy idref="_A3_1"></characterizedBy>
+    <characterizedBy idref="_A3_2"></characterizedBy>
+    <characterizedBy idref="_A3_3"></characterizedBy>
+    <characterizedBy idref="_A4_4"></characterizedBy>
+    <characterizedBy idref="_A4_5"></characterizedBy>
+    <characterizedBy idref="_A6_7"></characterizedBy>
+    <characterizedBy idref="_A6_8"></characterizedBy>
+    <package idref="_P3"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A6_7">
+    <name>prop1C4</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A6_8">
+    <name>prop2C4</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+</FeatureCatalogue>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling/test3" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling/test3" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T3_ClassAssociationA" substitutionGroup="gml:AbstractFeature" type="test:T3_ClassAssociationAType"/>
+  <complexType name="T3_ClassAssociationAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_ClassAssociationAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T3_ClassAssociationA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_ClassAssociationB" substitutionGroup="gml:AbstractFeature" type="test:T3_ClassAssociationBType"/>
+  <complexType name="T3_ClassAssociationBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_ClassAssociationBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T3_ClassAssociationB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

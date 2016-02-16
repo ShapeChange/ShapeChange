@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cit="http://www.opengis.net/citygml/2.0" xmlns:gml="http://www.opengis.net/gml" xmlns:testade="http://shapechange.net/testade" elementFormDefault="qualified" targetNamespace="http://shapechange.net/testade" version="1.0">
+  <import namespace="http://www.opengis.net/citygml/2.0" schemaLocation="http://schemas.opengis.net/citygml/2.0/cityGMLBase.xsd"/>
+  <import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="CityObject" substitutionGroup="cit:_CityObject" type="testade:CityObjectType"/>
+  <complexType name="CityObjectType">
+    <complexContent>
+      <extension base="cit:AbstractCityObjectType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="int" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CityObjectPropertyType">
+    <sequence minOccurs="0">
+      <element ref="testade:CityObject"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+  </complexType>
+  <element name="int" substitutionGroup="cit:_GenericApplicationPropertyOfCityModel" type="integer"/>
+</schema>

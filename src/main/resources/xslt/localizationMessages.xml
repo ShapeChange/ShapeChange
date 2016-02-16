@@ -1,0 +1,439 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- (c) 2001-2013 interactive instruments GmbH, Bonn -->
+<messages>
+  <message id="fc.Abstract">
+    <text lang="de">Abstrakt</text>
+    <text lang="en">Abstract</text>
+    <text lang="nl">Korte inhoud</text>
+    <text lang="fr">Résumé</text>
+  </message>
+  <message id="fc.ApplicationSchema">
+    <text lang="de">Anwendungsschema</text>
+    <text lang="en">Application schema</text>
+    <text lang="nl">Applicatieschema</text>
+    <text lang="fr">Schéma d'application</text>
+  </message>
+  <message id="fc.AssociationClass">
+    <text lang="de">Assoziationsklasse</text>
+    <text lang="en">Association class</text>
+    <text lang="nl">Associatieklasse</text>
+    <text lang="fr">Classe d'association</text>
+  </message>
+  <message id="fc.AssociationRole">
+    <text lang="de">Assoziationsrolle</text>
+    <text lang="en">Association role</text>
+    <text lang="nl">Associatierol</text>
+    <text lang="fr">Rôle d'association</text>
+  </message>
+  <message id="fc.Attribute">
+    <text lang="de">Attribut</text>
+    <text lang="en">Attribute</text>
+    <text lang="nl">Attribuut</text>
+    <text lang="fr">Attribut</text>
+  </message>
+  <message id="fc.backToPackage">
+    <text lang="de">zurück zu Paket</text>
+    <text lang="en">back to package</text>
+    <text lang="nl">terug naar pakket</text>
+    <text lang="fr">retour au paquetage</text>
+  </message>
+  <message id="fc.backToTOC">
+    <text lang="de">zurück zur Übersicht</text>
+    <text lang="en">back to overview</text>
+    <text lang="nl">terug naar overzicht</text>
+    <text lang="fr">retour au sommaire</text>
+  </message>
+  <message id="fc.Code">
+    <text lang="de">Code</text>
+    <text lang="en">Code</text>
+    <text lang="nl">Code</text>
+    <text lang="fr">Code</text>
+  </message>
+  <message id="fc.Constraint">
+    <text lang="de">Bedingung</text>
+    <text lang="en">Constraint</text>
+    <text lang="nl">Voorwaarde</text>
+    <text lang="fr">Contrainte</text>
+  </message>
+  <message id="fc.DataCaptureStatement">
+    <text lang="de">Erfassungskriterien</text>
+    <text lang="en">Data Capture Statements</text>
+    <text lang="nl">Data Capture Statements</text>
+    <text lang="fr">Data Capture Statements</text>
+  </message>
+  <message id="fc.DataType">
+    <text lang="de">Datentyp</text>
+    <text lang="en">Data type</text>
+    <text lang="nl">Datatype</text>
+    <text lang="fr">Data type</text>
+  </message>
+  <message id="fc.DataTypes">
+    <text lang="de">Datentypen</text>
+    <text lang="en">Data types</text>
+    <text lang="nl">Datatypes</text>
+    <text lang="fr">Data types</text>
+  </message>
+  <message id="fc.Date">
+    <text lang="de">Datum</text>
+    <text lang="en">Date</text>
+    <text lang="nl">Datum</text>
+    <text lang="fr">Date</text>
+  </message>
+  <message id="fc.Definition">
+    <text lang="de">Definition</text>
+    <text lang="en">Definition</text>
+    <text lang="nl">Definitie</text>
+    <text lang="fr">Définition</text>
+  </message>
+  <message id="fc.Derived">
+    <text lang="de">Abgeleitet</text>
+    <text lang="en">Derived</text>
+    <text lang="nl">Afgeleide</text>
+    <text lang="fr">Dérivé</text>
+  </message>
+  <message id="fc.Description">
+    <text lang="de">Beschreibung</text>
+    <text lang="en">Description</text>
+    <text lang="nl">Omschrijving</text>
+    <text lang="fr">Description</text>
+  </message>
+  <message id="fc.Diagram">
+    <text lang="de">Diagramm</text>
+    <text lang="en">Diagram</text>
+    <text lang="nl">Diagram</text>
+    <text lang="fr">Diagramme</text>
+  </message>
+  <message id="fc.Diagrams">
+    <text lang="de">Diagramm(e)</text>
+    <text lang="en">Diagram(s)</text>
+    <text lang="nl">Diagram(men)</text>
+    <text lang="fr">Diagramme(s)</text>
+  </message>
+  <message id="fc.Documentation">
+    <text lang="de">Dokumentierung</text>
+    <text lang="en">Documentation</text>
+    <text lang="nl">Documentatie</text>
+    <text lang="fr">Documentation</text>
+  </message>
+  <message id="fc.Example">
+    <text lang="de">Beispiele</text>
+    <text lang="en">Examples</text>
+    <text lang="nl">Voorbeelden</text>
+    <text lang="fr">Exemples</text>
+  </message>
+  <message id="fc.Expression">
+    <text lang="de">Ausdruck</text>
+    <text lang="en">Expression</text>
+    <text lang="nl">Uitdrukking</text>
+    <text lang="fr">Expression</text>
+  </message>
+  <message id="fc.false">
+    <text lang="de">nein</text>
+    <text lang="en">false</text>
+    <text lang="nl">vals</text>
+    <text lang="fr">faux</text>
+  </message>
+  <message id="fc.FeatureCatalogue">
+    <text lang="de">Objektartenkatalog</text>
+    <text lang="en">Feature Catalogue</text>
+    <text lang="nl">Objectcataloog</text>
+    <text lang="fr">Catalogue d'entités</text>
+  </message>
+  <message id="fc.FeatureType">
+    <text lang="de">Objektart</text>
+    <text lang="en">Feature type</text>
+    <text lang="nl">Feature type</text>
+    <text lang="fr">Feature type</text>
+  </message>
+  <message id="fc.FeatureTypes">
+    <text lang="de">Objektarten (feature)</text>
+    <text lang="en">Feature types</text>
+    <text lang="nl">Feature types</text>
+    <text lang="fr">Feature types</text>
+  </message>
+  <message id="fc.FullName">
+    <text lang="de">Vollständiger Name</text>
+    <text lang="en">Full name</text>
+    <text lang="nl">Volledige naam</text>
+    <text lang="fr">Nom complet</text>
+  </message>
+  <message id="fc.GeneratedBy">
+    <text lang="de">Dieser Objektartenkatalog wurde generiert mit</text>
+    <text lang="en">This feature catalogue was generated by</text>
+    <text lang="nl">Deze objectcataloog werd gegenereerd m.b.v.</text>
+    <text lang="fr">Ce catalogue d'entités a été généré par</text>
+  </message>
+  <message id="fc.GeneratedOn">
+    <text lang="de">Generiert am</text>
+    <text lang="en">Generated on</text>
+    <text lang="nl">Gegenereerd op</text>
+    <text lang="fr">Généré le</text>
+  </message>
+  <message id="fc.InitialValue">
+    <text lang="de">Initialwert</text>
+    <text lang="en">Initial value</text>
+    <text lang="nl">Beginwaarde</text>
+    <text lang="fr">Valeur initiale</text>
+  </message>
+  <message id="fc.Language">
+    <text lang="de">Sprache</text>
+    <text lang="en">Language</text>
+    <text lang="nl">Taal</text>
+    <text lang="fr">Langue</text>
+  </message>
+  <message id="fc.LegalBasis">
+    <text lang="de">Rechtsgrundlage</text>
+    <text lang="en">Legal Basis</text>
+    <text lang="nl">Rechtsgrondslag</text>
+    <text lang="fr">Base juridique</text>
+  </message>
+  <message id="fc.Multiplicity">
+    <text lang="de">Multiplizität</text>
+    <text lang="en">Multiplicity</text>
+    <text lang="nl">Multipliciteit</text>
+    <text lang="fr">Multiplicité</text>
+  </message>
+  <message id="fc.Name">
+    <text lang="de">Name</text>
+    <text lang="en">Name</text>
+    <text lang="nl">Naam</text>
+    <text lang="fr">Nom</text>
+  </message>
+  <message id="fc.ObjectType">
+    <text lang="de">Objektart</text>
+    <text lang="en">Object type</text>
+    <text lang="nl">Objecttype</text>
+    <text lang="fr">Object type</text>
+  </message>
+  <message id="fc.ObjectTypes">
+    <text lang="de">Objektarten (sonstige)</text>
+    <text lang="en">Object types</text>
+    <text lang="nl">Objecttypes</text>
+    <text lang="fr">Object types</text>
+  </message>
+  <message id="fc.Operation">
+    <text lang="de">Operation</text>
+    <text lang="en">Operation</text>
+    <text lang="nl">Methode</text>
+    <text lang="fr">Opération</text>
+  </message>
+  <message id="fc.Package">
+    <text lang="de">Paket</text>
+    <text lang="en">Package</text>
+    <text lang="nl">Pakket</text>
+    <text lang="fr">Paquetage</text>
+  </message>
+  <message id="fc.Packages">
+    <text lang="de">Pakete</text>
+    <text lang="en">Packages</text>
+    <text lang="nl">Pakketten</text>
+    <text lang="fr">Paquetages</text>
+  </message>
+  <message id="fc.Parent">
+    <text lang="de">Teil von</text>
+    <text lang="en">Parent</text>
+    <text lang="nl">Onderdeel van</text>
+    <text lang="fr">Parent</text>
+  </message>
+  <message id="fc.ParentPackage">
+    <text lang="de">Übergeordnetes Paket</text>
+    <text lang="en">Parent package</text>
+    <text lang="nl">Deel van pakket</text>
+    <text lang="fr">Paquetage parent</text>
+  </message>
+  <message id="fc.ResponsibleOrganization">
+    <text lang="de">Verantwortliche Organisation</text>
+    <text lang="en">Responsible organisation</text>
+    <text lang="nl">Verantwoordelijke organisatie</text>
+    <text lang="fr">Organisation responsable</text>
+  </message>
+  <message id="fc.Scope">
+    <text lang="de">Anwendungsbereich</text>
+    <text lang="en">Scope</text>
+    <text lang="nl">Scope</text>
+    <text lang="fr">Champ d'application</text>
+  </message>
+  <message id="fc.SubPackage">
+    <text lang="de">Untergeordnet</text>
+    <text lang="en">Sub-package</text>
+    <text lang="nl">Subpakket</text>
+    <text lang="fr">Sous-paquetage</text>
+  </message>
+  <message id="fc.SubtypeOf">
+    <text lang="de">Abgeleitet aus</text>
+    <text lang="en">Subtype of</text>
+    <text lang="nl">Subtype van</text>
+    <text lang="fr">Sous-classe de</text>
+  </message>
+  <message id="fc.SupertypeOf">
+    <text lang="de">Oberklasse von</text>
+    <text lang="en">Supertype of</text>
+    <text lang="nl">Supertype van</text>
+    <text lang="fr">Classe mère de</text>
+  </message>
+  <message id="fc.Title">
+    <text lang="de">Begriff</text>
+    <text lang="en">Title</text>
+    <text lang="nl">Titel</text>
+    <text lang="fr">Titre</text>
+  </message>
+  <message id="fc.Toc">
+    <text lang="de">Liste der Objektarten</text>
+    <text lang="en">Table of contents</text>
+    <text lang="nl">Inhoudstafel</text>
+    <text lang="fr">Table des matières</text>
+  </message>
+  <message id="fc.Type">
+    <text lang="de">Typ</text>
+    <text lang="en">Type</text>
+    <text lang="nl">Type</text>
+    <text lang="fr">Type</text>
+  </message>
+  <message id="fc.true">
+    <text lang="de">ja</text>
+    <text lang="en">true</text>
+    <text lang="nl">waar</text>
+    <text lang="fr">vrai</text>
+  </message>
+  <message id="fc.UnionType">
+    <text lang="de">Union-Datentyp</text>
+    <text lang="en">Union type</text>
+    <text lang="nl">Union type</text>
+    <text lang="fr">Union type</text>
+  </message>
+  <message id="fc.UnionTypes">
+    <text lang="de">Union-Datentypen</text>
+    <text lang="en">Union types</text>
+    <text lang="nl">Union types</text>
+    <text lang="fr">Union types</text>
+  </message>
+  <message id="fc.unnamed">
+    <text lang="de">unbenannt</text>
+    <text lang="en">unnamed</text>
+    <text lang="nl">onbenoemd</text>
+    <text lang="fr">Sans nom</text>
+  </message>
+  <message id="fc.Values">
+    <text lang="de">Werte</text>
+    <text lang="en">Values</text>
+    <text lang="nl">Waarden</text>
+    <text lang="fr">Valeurs</text>
+  </message>
+  <message id="fc.ValueType">
+    <text lang="de">Typ</text>
+    <text lang="en">Value type</text>
+    <text lang="nl">Waardetype</text>
+    <text lang="fr">Value type</text>
+  </message>
+  <message id="fc.Version">
+    <text lang="de">Version</text>
+    <text lang="en">Version</text>
+    <text lang="nl">Versie</text>
+    <text lang="fr">Version</text>
+  </message>
+  <message id="fc.Voidable">
+    <text lang="de">Voidable</text>
+    <text lang="en">Voidable</text>
+    <text lang="nl">Leeglaten toegestaan (voidable)</text>
+    <text lang="fr">Voidable</text>
+  </message>
+  <message id="fc.frame.Alert">
+    <text lang="de">Frame Warnung</text>
+    <text lang="en">Frame Alert</text>
+    <text lang="nl">Framewaarschuwing</text>
+    <text lang="fr">Fenêtre d'alerte</text>
+  </message>
+  <message id="fc.frame.AlertText">
+    <text lang="de">Das Design dieses Dokuments basiert auf HTML frames. Wenn Sie diese Nachricht
+      sehen nutzen Sie einen Browser der nicht frame-kompatibel ist.</text>
+    <text lang="en">This document is designed to be viewed using the frames feature. If you see this
+      message, you are using a non-frame-capable web client.</text>
+    <text lang="nl">Dit document maakt gebruik van HTML-frames. Als u dit bericht ziet, dan worden frames niet door uw webbrowser ondersteund.</text>
+    <text lang="fr">Ce document est basé sur du HTML. Si vous voyez ce message, 
+      c'est que votre navigateur web n'est pas compatible.</text>
+  </message>
+  <message id="fc.frame.AllTypes">
+    <text lang="de">Alle Objektarten</text>
+    <text lang="en">All Types</text>
+    <text lang="nl">Alle objecttypes</text>
+    <text lang="fr">Tout types</text>
+  </message>
+  <message id="fc.frame.ApplicationSchemaPackages">
+    <text lang="de">Pakete im Anwendungsschema</text>
+    <text lang="en">Application Schema Packages</text>
+    <text lang="nl">Applicatieschema-pakketten</text>
+    <text lang="fr">Paquetages du schéma d'application</text>
+  </message>
+  <message id="fc.frame.AttributesAndAssociationRoles">
+    <text lang="de">Attribute und Assoziationsrollenabstract</text>
+    <text lang="en">Attributes and association roles</text>
+    <text lang="nl">Attributen en associatierollen</text>
+    <text lang="fr">Attributs et rôles d'association</text>
+  </message>
+  <message id="fc.frame.HideListedValues">
+    <text lang="de">Verberge Werteliste</text>
+    <text lang="en">Hide listed values</text>
+    <text lang="nl">Verberg opgelijste waarden</text>
+    <text lang="fr">Masquer les valeurs listées</text>
+  </message>
+  <message id="fc.frame.JavaScriptDisabled">
+    <text lang="de">JavaScript wird von Ihrem Browser nicht ausgeführt.</text>
+    <text lang="en">JavaScript is disabled on your browser.</text>
+    <text lang="nl">JavaScript is uitgeschakeld in uw webbrowser.</text>
+    <text lang="fr">Javascript est désactivé dans votre navigateur web.</text>
+  </message>
+  <message id="fc.frame.LinkTo">
+    <text lang="de">Link zur</text>
+    <text lang="en">Link to</text>
+    <text lang="nl">Link naar</text>
+    <text lang="fr">Lien vers</text>
+  </message>
+  <message id="fc.frame.none">
+    <text lang="de">keine</text>
+    <text lang="en">none</text>
+    <text lang="nl">geen</text>
+    <text lang="fr">aucun</text>
+  </message>
+  <message id="fc.frame.NonFrameVersion">
+    <text lang="de">Nicht frame-basierten Version.</text>
+    <text lang="en">Non-frame version.</text>
+    <text lang="nl">Niet-framegebaseerde versie.</text>
+    <text lang="fr">Version hors cadre.</text>
+  </message>
+  <message id="fc.frame.NoRelevantTypes">
+    <text lang="de">Keine relevanten Objektarten</text>
+    <text lang="en">No relevant types</text>
+    <text lang="nl">Niet-relevante objecttypes</text>
+    <text lang="fr">Aucun type pertinent</text>
+  </message>
+  <message id="fc.frame.Overview">
+    <text lang="de">Übersicht</text>
+    <text lang="en">Overview</text>
+    <text lang="nl">Overzicht</text>
+    <text lang="fr">Vue d'ensemble</text>
+  </message>
+  <message id="fc.frame.OverviewOfCharacteristics">
+    <text lang="de">Übersicht der Charakteristika</text>
+    <text lang="en">Overview of characteristics</text>
+    <text lang="nl">Overzicht van eigenschappen</text>
+    <text lang="fr">Vue d'ensemble des caractéristiques</text>
+  </message>
+  <message id="fc.frame.RelevantTypes">
+    <text lang="de">Relevante Objektarten</text>
+    <text lang="en">Relevant types</text>
+    <text lang="nl">Relevante objecttypes</text>
+    <text lang="fr">Types pertinents</text>
+  </message>
+  <message id="fc.frame.SeeListedValues">
+    <text lang="de">Zeige Werteliste</text>
+    <text lang="en">See listed values</text>
+    <text lang="nl">Zie opgelijste waarden</text>
+    <text lang="fr">Voir les valeurs listées</text>
+  </message>
+  <message id="fc.frame.ValueName">
+    <text lang="de">Wertname</text>
+    <text lang="en">Value Name</text>
+    <text lang="nl">Waardenaam</text>
+    <text lang="fr">Nom de la valeur</text>
+  </message>
+</messages>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:test="http://shapechange.net/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test" version="1.0">
+  <include schemaLocation="package1.xsd"/>
+  <include schemaLocation="package2.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+</schema>

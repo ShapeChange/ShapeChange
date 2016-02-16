@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<descriptorSources xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<DescriptorSource descriptor="documentation" source="ea:notes"/>
+	<DescriptorSource descriptor="alias" source="sc:extract" token="Name"/>
+	<DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+	<DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+	<DescriptorSource descriptor="example" source="none"/>
+	<DescriptorSource descriptor="legalBasis" source="none"/>
+	<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+	<DescriptorSource descriptor="language" source="none"/>
+</descriptorSources>

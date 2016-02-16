@@ -1,0 +1,3269 @@
+<?xml version="1.0" encoding="Windows-1252"?><?xml-stylesheet type='text/xsl' href='./html.xsl'?><!--Feature catalogue created using ShapeChange--><FeatureCatalogue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FC.xsd">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P45">
+    <name>AppSchema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues/>
+  </ApplicationSchema>
+  <Package id="_P62">
+    <name>AppFeatureTypes</name>
+    <parent idref="_P45"/>
+  </Package>
+  <Package id="_P46">
+    <name>Foundation</name>
+    <parent idref="_P45"/>
+  </Package>
+  <Package id="_P153">
+    <name>Datatypes</name>
+    <parent idref="_P46"/>
+  </Package>
+  <Package id="_P155">
+    <name>BasicTypes</name>
+    <parent idref="_P153"/>
+  </Package>
+  <Package id="_P43">
+    <name>Entity</name>
+    <parent idref="_P46"/>
+  </Package>
+  <Package id="_P76">
+    <name>Geometry</name>
+    <parent idref="_P46"/>
+  </Package>
+  <FeatureType id="_C16362">
+    <name>AbstractSupertype</name>
+    <characterizedBy idref="_A16362_50931.16282_50891"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16362_50931.16282_50891">
+    <name>prop01.valueOrReason</name>
+    <title>prop01.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16366">
+    <name>Class1</name>
+    <characterizedBy idref="_A16366_50935"/>
+    <characterizedBy idref="_A16366_50936"/>
+    <characterizedBy idref="_A16366_50937"/>
+    <characterizedBy idref="_A16366_50938"/>
+    <characterizedBy idref="_A16366_50939"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16366_50935">
+    <name>prop41</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16362">AbstractSupertype</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16366_50936">
+    <name>prop42</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C154_union">FeatureEntityUnion</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16366_50937">
+    <name>prop43</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3729_union">FeatureType1Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16366_50938">
+    <name>prop44</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16366_50939">
+    <name>prop45</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C16363_union">FeatureType3Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C154_union">
+    <name>FeatureEntityUnion</name>
+    <title>FT_U</title>
+    <characterizedBy idref="_A154_union_choice1"/>
+    <characterizedBy idref="_A154_union_choice2"/>
+    <characterizedBy idref="_A154_union_choice3"/>
+    <characterizedBy idref="_A154_union_choice4"/>
+    <characterizedBy idref="_A154_union_choice5"/>
+    <characterizedBy idref="_A154_union_choice6"/>
+    <package idref="_P43"/>
+    <type>Union Data Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_union_choice1">
+    <name>c</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_C">FeatureEntity_C</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_union_choice2">
+    <name>mp</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_MP">FeatureEntity_MP</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_union_choice3">
+    <name>mso</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_MSo">FeatureEntity_MSo</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_union_choice4">
+    <name>p</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_P">FeatureEntity_P</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_union_choice5">
+    <name>s</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_S">FeatureEntity_S</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_union_choice6">
+    <name>so</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C154_So">FeatureEntity_So</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C154_C">
+    <name>FeatureEntity_C</name>
+    <title>FT_C</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor154_C"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor154_C"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor154_C"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice1.8641_49287_copyFor154_C"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor154_C"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor154_C">
+    <name>propGeometry.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor154_C">
+    <name>propGeometry.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor154_C">
+    <name>propGeometry.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice1.8641_49287_copyFor154_C">
+    <name>propGeometry.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor154_C">
+    <name>propGeometry.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureType id="_C154_MP">
+    <name>FeatureEntity_MP</name>
+    <title>FT_MP</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor154_MP"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor154_MP"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor154_MP"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice3.8638_49283_copyFor154_MP"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor154_MP">
+    <name>propGeometry.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor154_MP">
+    <name>propGeometry.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor154_MP">
+    <name>propGeometry.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice3.8638_49283_copyFor154_MP">
+    <name>propGeometry.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C154_MSo">
+    <name>FeatureEntity_MSo</name>
+    <title>FT_MSo</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor154_MSo"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor154_MSo"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor154_MSo"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice4.8634_49278_copyFor154_MSo"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor154_MSo">
+    <name>propGeometry.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor154_MSo">
+    <name>propGeometry.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor154_MSo">
+    <name>propGeometry.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice4.8634_49278_copyFor154_MSo">
+    <name>propGeometry.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C154_P">
+    <name>FeatureEntity_P</name>
+    <title>FT_P</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor154_P"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor154_P"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor154_P"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice6.8643_49294_copyFor154_P"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor154_P"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor154_P">
+    <name>propGeometry.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor154_P">
+    <name>propGeometry.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor154_P">
+    <name>propGeometry.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice6.8643_49294_copyFor154_P">
+    <name>propGeometry.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor154_P">
+    <name>propGeometry.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureType id="_C154_S">
+    <name>FeatureEntity_S</name>
+    <title>FT_S</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor154_S"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor154_S"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor154_S"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice8.8644_49297_copyFor154_S"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor154_S">
+    <name>propGeometry.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor154_S">
+    <name>propGeometry.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor154_S">
+    <name>propGeometry.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice8.8644_49297_copyFor154_S">
+    <name>propGeometry.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C154_So">
+    <name>FeatureEntity_So</name>
+    <title>FT_So</title>
+    <isAbstract>1</isAbstract>
+    <subtypeOf idref="_C16362">AbstractSupertype</subtypeOf>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor154_So"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor154_So"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor154_So"/>
+    <characterizedBy idref="_A154_115.8651_49309.8647_union_choice7.8629_49248_copyFor154_So"/>
+    <package idref="_P43"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor154_So">
+    <name>propGeometry.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor154_So">
+    <name>propGeometry.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor154_So">
+    <name>propGeometry.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>propGeometryAlias.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A154_115.8651_49309.8647_union_choice7.8629_49248_copyFor154_So">
+    <name>propGeometry.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>propGeometryAlias.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..*</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_union">
+    <name>FeatureType1Union</name>
+    <title>FT1_U</title>
+    <characterizedBy idref="_A3729_union_choice1"/>
+    <characterizedBy idref="_A3729_union_choice2"/>
+    <characterizedBy idref="_A3729_union_choice3"/>
+    <characterizedBy idref="_A3729_union_choice4"/>
+    <characterizedBy idref="_A3729_union_choice5"/>
+    <characterizedBy idref="_A3729_union_choice6"/>
+    <package idref="_P62"/>
+    <type>Union Data Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_union_choice1">
+    <name>c</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_C">FeatureType1_C</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_union_choice2">
+    <name>mp</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_MP">FeatureType1_MP</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_union_choice3">
+    <name>mso</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_MSo">FeatureType1_MSo</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_union_choice4">
+    <name>p</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_P">FeatureType1_P</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_union_choice5">
+    <name>s</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_S">FeatureType1_S</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_union_choice6">
+    <name>so</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3729_So">FeatureType1_So</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_C">
+    <name>FeatureType1_C</name>
+    <title>FT1_C</title>
+    <subtypeOf idref="_C154_C">FeatureEntity_C</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_C"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_C"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_C">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_C">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_MP">
+    <name>FeatureType1_MP</name>
+    <title>FT1_MP</title>
+    <subtypeOf idref="_C154_MP">FeatureEntity_MP</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_MP"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_MP"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_MP">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_MP">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_MSo">
+    <name>FeatureType1_MSo</name>
+    <title>FT1_MSo</title>
+    <subtypeOf idref="_C154_MSo">FeatureEntity_MSo</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_MSo"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_MSo"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_MSo">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_MSo">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_P">
+    <name>FeatureType1_P</name>
+    <title>FT1_P</title>
+    <subtypeOf idref="_C154_P">FeatureEntity_P</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_P"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_P"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_P">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_P">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_S">
+    <name>FeatureType1_S</name>
+    <title>FT1_S</title>
+    <subtypeOf idref="_C154_S">FeatureEntity_S</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_S"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_S"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_S">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_S">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3729_So">
+    <name>FeatureType1_So</name>
+    <title>FT1_So</title>
+    <subtypeOf idref="_C154_So">FeatureEntity_So</subtypeOf>
+    <characterizedBy idref="_A3729_19832.16295_50911_copyFor3729_So"/>
+    <characterizedBy idref="_A3729_50940_copyFor3729_So"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3729_19832.16295_50911_copyFor3729_So">
+    <name>prop11.valueOrReason</name>
+    <title>prop21Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3729_50940_copyFor3729_So">
+    <name>prop12</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="union data type" idref="_C3477_union">FeatureType2Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_union">
+    <name>FeatureType2Union</name>
+    <title>FT2_U</title>
+    <characterizedBy idref="_A3477_union_choice1"/>
+    <characterizedBy idref="_A3477_union_choice2"/>
+    <characterizedBy idref="_A3477_union_choice3"/>
+    <characterizedBy idref="_A3477_union_choice4"/>
+    <characterizedBy idref="_A3477_union_choice5"/>
+    <characterizedBy idref="_A3477_union_choice6"/>
+    <package idref="_P62"/>
+    <type>Union Data Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_union_choice1">
+    <name>c</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_C">FeatureType2_C</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3477_union_choice2">
+    <name>mp</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_MP">FeatureType2_MP</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3477_union_choice3">
+    <name>mso</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_MSo">FeatureType2_MSo</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3477_union_choice4">
+    <name>p</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_P">FeatureType2_P</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3477_union_choice5">
+    <name>s</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_S">FeatureType2_S</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A3477_union_choice6">
+    <name>so</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C3477_So">FeatureType2_So</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_C">
+    <name>FeatureType2_C</name>
+    <title>FT2_C</title>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <subtypeOf idref="_C154_C">FeatureEntity_C</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_C"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_C">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_MP">
+    <name>FeatureType2_MP</name>
+    <title>FT2_MP</title>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <subtypeOf idref="_C154_MP">FeatureEntity_MP</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_MP"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_MP">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_MSo">
+    <name>FeatureType2_MSo</name>
+    <title>FT2_MSo</title>
+    <subtypeOf idref="_C154_MSo">FeatureEntity_MSo</subtypeOf>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_MSo"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_MSo">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_P">
+    <name>FeatureType2_P</name>
+    <title>FT2_P</title>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <subtypeOf idref="_C154_P">FeatureEntity_P</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_P"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_P">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_S">
+    <name>FeatureType2_S</name>
+    <title>FT2_S</title>
+    <subtypeOf idref="_C154_S">FeatureEntity_S</subtypeOf>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_S"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_S">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C3477_So">
+    <name>FeatureType2_So</name>
+    <title>FT2_So</title>
+    <subtypeOf idref="_C16364">FeatureTypeX</subtypeOf>
+    <subtypeOf idref="_C154_So">FeatureEntity_So</subtypeOf>
+    <characterizedBy idref="_A3477_18327.16284_50894_copyFor3477_So"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A3477_18327.16284_50894_copyFor3477_So">
+    <name>prop21.valueOrReason</name>
+    <title>prop31Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_union">
+    <name>FeatureType3Union</name>
+    <title>FeatureType3Union</title>
+    <characterizedBy idref="_A16363_union_choice1"/>
+    <characterizedBy idref="_A16363_union_choice2"/>
+    <characterizedBy idref="_A16363_union_choice3"/>
+    <characterizedBy idref="_A16363_union_choice4"/>
+    <characterizedBy idref="_A16363_union_choice5"/>
+    <characterizedBy idref="_A16363_union_choice6"/>
+    <package idref="_P62"/>
+    <type>Union Data Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_union_choice1">
+    <name>c</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_C">FeatureType3_C</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_union_choice2">
+    <name>mp</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_MP">FeatureType3_MP</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_union_choice3">
+    <name>mso</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_MSo">FeatureType3_MSo</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_union_choice4">
+    <name>p</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_P">FeatureType3_P</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_union_choice5">
+    <name>s</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_S">FeatureType3_S</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_union_choice6">
+    <name>so</name>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="feature type" idref="_C16363_So">FeatureType3_So</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_C">
+    <name>FeatureType3_C</name>
+    <title>FeatureType3_C</title>
+    <subtypeOf idref="_C3729_C">FeatureType1_C</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_C"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_C"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_C">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_C">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_C">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_C">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_C">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_C">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_C">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_C">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_C">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_C">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_C">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_C">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_C">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_MP">
+    <name>FeatureType3_MP</name>
+    <title>FeatureType3_MP</title>
+    <subtypeOf idref="_C3729_MP">FeatureType1_MP</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_MP"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_MP"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_MP">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_MP">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_MP">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_MP">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_MP">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_MP">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_MP">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MP">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MP">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_MP">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_MP">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_MSo">
+    <name>FeatureType3_MSo</name>
+    <title>FeatureType3_MSo</title>
+    <subtypeOf idref="_C3729_MSo">FeatureType1_MSo</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_MSo"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_MSo"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_MSo">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_MSo">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_MSo">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_MSo">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_MSo">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_MSo">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_MSo">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_MSo">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_MSo">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_MSo">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_MSo">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_P">
+    <name>FeatureType3_P</name>
+    <title>FeatureType3_P</title>
+    <subtypeOf idref="_C3729_P">FeatureType1_P</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_P"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_P"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_P">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_P">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_P">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_P">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_P">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_P">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_P">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_P">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_P">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_P">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_P">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_P">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_P">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_S">
+    <name>FeatureType3_S</name>
+    <title>FeatureType3_S</title>
+    <subtypeOf idref="_C3729_S">FeatureType1_S</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_S"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_S"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_S">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_S">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_S">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_S">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_S">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_S">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_S">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_S">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_S">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_S">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_S">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_S">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_S">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16363_So">
+    <name>FeatureType3_So</name>
+    <title>FeatureType3_So</title>
+    <subtypeOf idref="_C3729_So">FeatureType1_So</subtypeOf>
+    <characterizedBy idref="_A16363_50932.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_So"/>
+    <characterizedBy idref="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_So"/>
+    <package idref="_P62"/>
+    <type>Feature Type</type>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16363_50932.16286_50895_copyFor16363_So">
+    <name>prop31.valueOrReason</name>
+    <title>prop31.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49302_copyFromGeometryInfoToCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-curveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8647_49303_copyFromGeometryInfoToCurveGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-curveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49287_copyFor16363_So">
+    <name>prop32.valueOrReason-curveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-curveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Curve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice1.8641_49288.16281_50890_copyFor16363_So">
+    <name>prop32.valueOrReason-curveGeometryInfo.propC1.valueOrReason</name>
+    <title>prop32.valueOrReason-curveGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49302_copyFromGeometryInfoToMultiCurveGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8647_49303_copyFromGeometryInfoToMultiCurveGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice2.8649_49307_copyFor16363_So">
+    <name>prop32.valueOrReason-multiCurveGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiCurveGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiCurve</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49302_copyFromGeometryInfoToMultiPointGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8647_49303_copyFromGeometryInfoToMultiPointGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice3.8638_49283_copyFor16363_So">
+    <name>prop32.valueOrReason-multiPointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiPointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiPoint</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49302_copyFromGeometryInfoToMultiSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8647_49303_copyFromGeometryInfoToMultiSolidGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice4.8634_49278_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSolidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSolidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSolid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49302_copyFromGeometryInfoToMultiSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8647_49303_copyFromGeometryInfoToMultiSurfaceGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice5.8630_49249_copyFor16363_So">
+    <name>prop32.valueOrReason-multiSurfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-multiSurfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_MultiSurface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49302_copyFromGeometryInfoToPointGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-pointGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8647_49303_copyFromGeometryInfoToPointGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-pointGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49294_copyFor16363_So">
+    <name>prop32.valueOrReason-pointGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-pointGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice6.8643_49295.16281_50890_copyFor16363_So">
+    <name>prop32.valueOrReason-pointGeometryInfo.propP1.valueOrReason</name>
+    <title>prop32.valueOrReason-pointGeomAlias.prop15Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">BooleanWithONINA</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16294_ONINARep_false"/>
+    <enumeratedBy idref="_A16294_ONINARep_true"/>
+    <enumeratedBy idref="_A16294_ONINARep_noInformation"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49302_copyFromGeometryInfoToSolidGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-solidGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8647_49303_copyFromGeometryInfoToSolidGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-solidGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-solidGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice7.8629_49248_copyFor16363_So">
+    <name>prop32.valueOrReason-solidGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-solidGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Solid</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49251.16284_50894_copyFor16363_So">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop12.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop12Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49302_copyFromGeometryInfoToSurfaceGeometryInfo.8631_49252.8636_49281_copyFor16363_So">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.propEnumerationB.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.propEnumerationBAlias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A8628_49244"/>
+    <enumeratedBy idref="_A8628_49245"/>
+    <enumeratedBy idref="_A8628_noInformation"/>
+    <enumeratedBy idref="_A8628_notApplicable"/>
+    <enumeratedBy idref="_A8628_other"/>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8647_49303_copyFromGeometryInfoToSurfaceGeometryInfo.16286_50895_copyFor16363_So">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.prop11.valueOrReason</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.prop11Alias.valueOrReason</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16363_50934.8651_49309.8647_union_choice8.8644_49297_copyFor16363_So">
+    <name>prop32.valueOrReason-surfaceGeometryInfo.geometry</name>
+    <title>prop32.valueOrReason-surfaceGeomAlias.geometryAlias</title>
+    <cardinality>0..1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16364">
+    <name>FeatureTypeX</name>
+    <isAbstract>1</isAbstract>
+    <characterizedBy idref="_A16364_50933.16295_50911"/>
+    <package idref="_P62"/>
+    <taggedValues/>
+  </FeatureType>
+  <FeatureAttribute id="_A16364_50933.16295_50911">
+    <name>propX1.valueOrReason</name>
+    <title>propX1.valueOrReason</title>
+    <cardinality>1</cardinality>
+    <taggedValues/>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <Value id="_A8628_49244">
+    <label>A</label>
+    <code>enumA</code>
+  </Value>
+  <Value id="_A8628_49245">
+    <label>B</label>
+    <code>enumB</code>
+  </Value>
+  <Value id="_A8628_noInformation">
+    <label>-999999</label>
+    <code>noInformation</code>
+    <definition>No Information</definition>
+  </Value>
+  <Value id="_A8628_notApplicable">
+    <label>998</label>
+    <code>notApplicable</code>
+    <definition>Not Applicable</definition>
+  </Value>
+  <Value id="_A8628_other">
+    <label>999</label>
+    <code>other</code>
+    <definition>Other</definition>
+  </Value>
+  <Value id="_A16294_ONINARep_false">
+    <label>1000</label>
+    <code>false</code>
+    <definition>False</definition>
+  </Value>
+  <Value id="_A16294_ONINARep_true">
+    <label>1001</label>
+    <code>true</code>
+    <definition>True</definition>
+  </Value>
+  <Value id="_A16294_ONINARep_noInformation">
+    <label>-999999</label>
+    <code>noInformation</code>
+    <definition>No Information</definition>
+  </Value>
+</FeatureCatalogue>

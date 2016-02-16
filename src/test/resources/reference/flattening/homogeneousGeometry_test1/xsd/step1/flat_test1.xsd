@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://test.org/flattening/homogeneousgeometryrule/test1/flat" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test.org/flattening/homogeneousgeometryrule/test1/flat" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType2Union" substitutionGroup="gml:AbstractObject" type="flat:FeatureType2UnionType"/>
+  <complexType name="FeatureType2UnionType">
+    <choice>
+      <element name="p" type="flat:FeatureType2_PPropertyType"/>
+      <element name="s" type="flat:FeatureType2_SPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureType2UnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureType2Union"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType2_P" substitutionGroup="gml:AbstractFeature" type="flat:FeatureType2_PType"/>
+  <complexType name="FeatureType2_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="boolean"/>
+          <element name="prop3" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop4_C" type="flat:FeatureType_CPropertyType"/>
+          <element minOccurs="0" name="prop4_P" type="flat:FeatureType_PPropertyType"/>
+          <element minOccurs="0" name="prop5_C" type="flat:FeatureType_CPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop6_P</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop5_P" type="flat:FeatureType_PPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop6_P</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2_S" substitutionGroup="gml:AbstractFeature" type="flat:FeatureType2_SType"/>
+  <complexType name="FeatureType2_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="boolean"/>
+          <element name="prop2" type="gml:SurfacePropertyType"/>
+          <element minOccurs="0" name="prop4_C" type="flat:FeatureType_CPropertyType"/>
+          <element minOccurs="0" name="prop4_P" type="flat:FeatureType_PPropertyType"/>
+          <element minOccurs="0" name="prop5_C" type="flat:FeatureType_CPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop6_S</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop5_P" type="flat:FeatureType_PPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop6_S</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3Union" substitutionGroup="gml:AbstractObject" type="flat:FeatureType3UnionType"/>
+  <complexType name="FeatureType3UnionType">
+    <choice>
+      <element name="c" type="flat:FeatureType3_CPropertyType"/>
+      <element name="p" type="flat:FeatureType3_PPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureType3UnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureType3Union"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType3_C" substitutionGroup="flat:FeatureType_C" type="flat:FeatureType3_CType"/>
+  <complexType name="FeatureType3_CType">
+    <complexContent>
+      <extension base="flat:FeatureType_CType">
+        <sequence>
+          <element name="propFT3" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3_P" substitutionGroup="flat:FeatureType_P" type="flat:FeatureType3_PType"/>
+  <complexType name="FeatureType3_PType">
+    <complexContent>
+      <extension base="flat:FeatureType_PType">
+        <sequence>
+          <element name="propFT3" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType3_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeUnion" substitutionGroup="gml:AbstractObject" type="flat:FeatureTypeUnionType"/>
+  <complexType name="FeatureTypeUnionType">
+    <choice>
+      <element name="c" type="flat:FeatureType_CPropertyType"/>
+      <element name="p" type="flat:FeatureType_PPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="FeatureTypeUnionPropertyType">
+    <sequence>
+      <element ref="flat:FeatureTypeUnion"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType_C" substitutionGroup="gml:AbstractFeature" type="flat:FeatureType_CType"/>
+  <complexType name="FeatureType_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="string"/>
+          <element name="prop2" type="flat:TypePropertyType"/>
+          <element name="prop3" type="flat:TypePropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:typeProp3_C</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="prop4" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop6_P" type="flat:FeatureType2_PPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop5_C</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop6_S" type="flat:FeatureType2_SPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop5_C</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop7_P" type="flat:FeatureType2_PPropertyType"/>
+          <element minOccurs="0" name="prop7_S" type="flat:FeatureType2_SPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType_P" substitutionGroup="gml:AbstractFeature" type="flat:FeatureType_PType"/>
+  <complexType name="FeatureType_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="string"/>
+          <element name="prop2" type="flat:TypePropertyType"/>
+          <element name="prop3" type="flat:TypePropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:typeProp3_P</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="prop5" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop6_P" type="flat:FeatureType2_PPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop5_P</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop6_S" type="flat:FeatureType2_SPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop5_P</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop7_P" type="flat:FeatureType2_PPropertyType"/>
+          <element minOccurs="0" name="prop7_S" type="flat:FeatureType2_SPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Type" substitutionGroup="gml:AbstractGML" type="flat:TypeType"/>
+  <complexType name="TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="typeProp1" type="double"/>
+          <element minOccurs="0" name="typeProp2_C" type="flat:FeatureType_CPropertyType"/>
+          <element minOccurs="0" name="typeProp2_P" type="flat:FeatureType_PPropertyType"/>
+          <element minOccurs="0" name="typeProp3_C" type="flat:FeatureType_CPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="typeProp3_P" type="flat:FeatureType_PPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:prop3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

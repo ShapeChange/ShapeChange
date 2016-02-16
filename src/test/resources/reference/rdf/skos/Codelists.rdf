@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="Windows-1252"?><!--Created using ShapeChange - http://shapechange.net/--><RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cl="http://shapechange.net/tmp/skos#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xml:base="http://shapechange.net/tmp/skos">
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Specificatie van het hoofdgebruiksdoel van het wegdeel.</definition>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_OV_baan">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">OV-baan</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel dat uitsluitend is bestemd en gemarkeerd voor openbaar vervoer en afgescheiden is van de andere wegdelen niet uitsluitend door markering.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_overweg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">overweg</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een gelijkvloerse kruising van een wegdeel en een wegdeel type ov-baan met spoor type trein of sneltram.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_spoorbaan">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">spoorbaan</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Gebaand gedeelte voor het verkeer over rails.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_baan_voor_vliegverkeer">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">baan voor vliegverkeer</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel uitsluitend bedoeld voor vliegverkeer.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_rijbaan_autosnelweg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">rijbaan autosnelweg</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel dat onderdeel is van een weg uitsluitend bestemd voor snelverkeer en met gescheiden rijbanen en ongelijkvloerse kruisingen, daartoe aangeduid met het betreffende verkeersbord.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_rijbaan_autoweg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">rijbaan autoweg</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel dat onderdeel is van een weg uitsluitend bestemd voor snelverkeer, daartoe aangeduid met het betreffende verkeersbord.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_rijbaan_regionale_weg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">rijbaan regionale weg</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel dat onderdeel is van een weg die een verbinding vormt tussen bewoonde oorden of tussen wijken binnen een dorp of stad.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_rijbaan_lokale_weg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">rijbaan lokale weg</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel dat onderdeel is van een weg van lokaal belang.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_fietspad">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">fietspad</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel met name bestemd voor fietsers en, indien toegestaan, bromfietsers en dat afgescheiden is van de andere wegdelen niet uitsluitend door markering.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_voetpad">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">voetpad</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel waar voetgangers gebruik van moeten maken.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_voetpad_op_trap">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">voetpad op trap</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Voetpad op verkeersinfrastructurele voorziening bestaande uit een constructie van treden, waarop men een hoger of lager gelegen plaats kan bereiken.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_ruiterpad">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">ruiterpad</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een wegdeel primair aangelegd voor het gebruik door ruiters.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_parkeervlak">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">parkeervlak</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel bestemd voor het parkeren van motorvoertuigen.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_voetgangersgebied">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">voetgangersgebied</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel alleen voor het gebruik door voetgangers, waarbij het door voetgangers te gebruiken gebied de volle breedte van de weg beslaat en het gebied een nadrukkelijk openbaar karakter heeft.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_inrit">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">inrit</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Toegangswegen, oprijlanen en dergelijke met verkeersfunctie die leiden naar afgelegen erven en terreinen.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_woonerf">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">woonerf</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Wegdeel waar de verblijfsfunctie (lopen, spelen, ontmoeten enzovoorts) prioriteit heeft boven de verkeersfunctie.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWeg_transitie">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">transitie</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">De waarde is tijdens transitie niet bekend.</definition>
+    <inScheme rdf:resource="#FunctieWeg"/>
+  </Concept>
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWegPlus">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Specificatie van het hoofdgebruiksdoel van het wegdeel, nadere classificatie.</definition>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWegPlus_verbindingsweg">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">verbindingsweg</prefLabel>
+    <broader rdf:resource="#FunctieWeg_rijbaan_autosnelweg"/>
+    <broader rdf:resource="#FunctieWeg_rijbaan_autoweg"/>
+    <broader rdf:resource="#FunctieWeg_rijbaan_regionale_weg"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een verbindingsweg is (in principe) een eenrichtingsweg, gelegen binnen een knooppunt of aansluiting, die onderdeel is van de wijze waarop de ongelijkvloersheid is gerealiseerd.</definition>
+    <inScheme rdf:resource="#FunctieWegPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWegPlus_calamiteitendoorsteek">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">calamiteitendoorsteek</prefLabel>
+    <broader rdf:resource="#FunctieWeg_rijbaan_autosnelweg"/>
+    <broader rdf:resource="#FunctieWeg_rijbaan_autoweg"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een (Calamiteiten doorsteek) CADO heeft tot doel het verkeer op een rijbaan via een doorsteek van de weg te kunnen geleiden in geval van een calamiteit of werkzaamheden op de rijbaan. Een tweede doel is het faciliteren van toegang tot rijbanen voor hulpdiensten vanaf andere rijbanen of van een parallelweg.</definition>
+    <inScheme rdf:resource="#FunctieWegPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#FunctieWegPlus_verkeersdrempel">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">verkeersdrempel</prefLabel>
+    <broader rdf:resource="#FunctieWeg_rijbaan_regionale_weg"/>
+    <broader rdf:resource="#FunctieWeg_rijbaan_lokale_weg"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Verhoging in een regionale rijbaan, bedoeld om het gemotoriseerde verkeer met een lage snelheid te laten rijden.</definition>
+    <inScheme rdf:resource="#FunctieWegPlus"/>
+  </Concept>
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePut">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePut_niet_bgt">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">niet-bgt</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Het object is geen BGT object.</definition>
+    <inScheme rdf:resource="#TypePut"/>
+  </Concept>
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_benzine_olieput">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">benzine- / olieput</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Putdeksel die toegang geeft tot een benzine- of olietank ten behoeve van vullen, onderhoud of inspectie.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_brandkraan_put">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">brandkraan / -put</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Op de drinkwaterleiding aangesloten kraan, of een put voor het plaatsen van een brandkraan, op of nabij de openbare weg, voor brandbestrijding.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_drainageput">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">drainageput</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Put welke toegang geeft naar een poreuze of geperforeerde buisleiding, aangebracht onder de grond om de afwatering van de grond te verbeteren.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_gasput">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">gasput</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Put met afsluitkraan ten behoeve van het ondergrondse leidingenstelsel voor gastransport.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_inspectie_rioolput">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">inspectie- / rioolput</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Put die toegang geeft tot een (riool)leiding.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_kolk">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">kolk</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Op het riool aangesloten voorziening voor de opvang van hemel- en afvalwater afkomstig van erop aangesloten oppervlakken.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypePutPlus_waterleidingput">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">waterleidingput</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Put met afsluitkraan ten behoeve van het ondergrondse leidingenstelsel voor watertransport.</definition>
+    <inScheme rdf:resource="#TypePutPlus"/>
+  </Concept>
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Specificatie van het soort Water.</definition>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater_zee">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">zee</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Uitgestrekt oppervlak zout water.</definition>
+    <inScheme rdf:resource="#TypeWater"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater_waterloop">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">waterloop</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een voor de waterbeheersing bestemde geul die meestal permanent water bevat (zoals rivier, kanaal, beek, sloot, gracht).</definition>
+    <inScheme rdf:resource="#TypeWater"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater_watervlakte">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">watervlakte</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Alle oppervlakken die vrij permanent met zoet water zijn bedekt. (zoals meer, plas, ven, vijver).</definition>
+    <inScheme rdf:resource="#TypeWater"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater_greppel_droge_sloot">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">greppel, droge sloot</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een ten behoeve van de waterbeheersing gegraven geul die al dan niet met water bedekt is.</definition>
+    <inScheme rdf:resource="#TypeWater"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWater_transitie">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">transitie</prefLabel>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">De waarde is tijdens transitie niet bekend.</definition>
+    <inScheme rdf:resource="#TypeWater"/>
+  </Concept>
+  <ConceptScheme xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Specificatie van het soort Water, nadere classificatie.</definition>
+  </ConceptScheme>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_rivier">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">rivier</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Het water, dat ten atmosferische neerslag op hellende terreinen valt, vloeit, voor zover het niet verdampt of door planten wordt opgenomen, tezamen tot een waterloop en stroomt naar laaggelegen streken. Zulk een natuurlijke afvloeiing heet een rivier.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_sloot">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">sloot</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Algemene benaming voor een waterloop van beperkte breedte die stilstaand of slechts langzaam stromend water bevat.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_kanaal">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">kanaal</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een gegraven grote waterloop die dient voor scheepvaart en/of watertransport.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_beek">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">beek</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een natuurlijke smalle waterloop zonder getij.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_gracht">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">gracht</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een gracht is een gegraven greppel met water, die hoofdzakelijk voorkomt in oude steden.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_bron">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">bron</prefLabel>
+    <broader rdf:resource="#TypeWater_waterloop"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Grondwater dat op natuurlijke wijze uit het aardoppervlak tevoorschijn komt.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_haven">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">haven</prefLabel>
+    <broader rdf:resource="#TypeWater_watervlakte"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een tot ligplaats van schepen geschikt, natuurlijk of gegraven waterbekken aan zee of aan de oever van een rivier of binnenwater, dat beschutting biedt tegen wind en golven.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+  <Concept xmlns="http://www.w3.org/2004/02/skos/core#" rdf:about="#TypeWaterPlus_meer_plas_ven_vijver">
+    <type xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">meer, plas, ven, vijver</prefLabel>
+    <broader rdf:resource="#TypeWater_watervlakte"/>
+    <definition rdf:datatype="http://www.w3.org/2001/XMLSchema#string" xml:lang="nl">Een massa stilstaand landoppervlaktewater.</definition>
+    <inScheme rdf:resource="#TypeWaterPlus"/>
+  </Concept>
+</RDF>

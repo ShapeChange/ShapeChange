@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat2="http://shapechange.net/test/flattening/cycles/test2" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/cycles/test2" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class2_FT1" substitutionGroup="gml:AbstractFeature" type="flat2:Class2_FT1Type"/>
+  <complexType name="Class2_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT1.p1" type="string"/>
+          <element name="pFT1.p2" type="boolean"/>
+          <element name="pFT1.pT1" type="flat2:Class2_FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat2:pFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class2_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat2:Class2_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling/test6" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling/test6" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T6_Class1" substitutionGroup="gml:AbstractFeature" type="test:T6_Class1Type"/>
+  <complexType name="T6_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ftProp1">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractFeatureMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="test:T6_Class2"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="ftProp2">
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="test:T6_Type"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="ftProp3" type="test:T6_DataTypePropertyType"/>
+          <element name="ftProp4" type="test:T6_EnumerationType"/>
+          <element name="ftProp5" type="test:T6_UnionPropertyType"/>
+          <element name="ftProp6" type="test:T6_CodeListType"/>
+          <element maxOccurs="unbounded" name="ftPropCompositionOfDT" type="test:T6_DataTypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Class2" substitutionGroup="gml:AbstractFeature" type="test:T6_Class2Type"/>
+  <complexType name="T6_Class2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="T6_CodeListType">
+    <union memberTypes="test:T6_CodeListEnumerationType test:T6_CodeListOtherType"/>
+  </simpleType>
+  <simpleType name="T6_CodeListEnumerationType">
+    <restriction base="string">
+      <enumeration value="code1"/>
+      <enumeration value="code2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="T6_CodeListOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="T6_DataType" substitutionGroup="gml:AbstractObject" type="test:T6_DataTypeType"/>
+  <complexType name="T6_DataTypeType">
+    <sequence>
+      <element name="dtProp1" type="boolean"/>
+      <element name="dtProp2" type="double"/>
+    </sequence>
+  </complexType>
+  <complexType name="T6_DataTypePropertyType">
+    <sequence>
+      <element ref="test:T6_DataType"/>
+    </sequence>
+  </complexType>
+  <simpleType name="T6_EnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="T6_Type" substitutionGroup="gml:AbstractGML" type="test:T6_TypeType"/>
+  <complexType name="T6_TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="tProp1" type="gml:GeometryPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Union" substitutionGroup="gml:AbstractObject" type="test:T6_UnionType"/>
+  <complexType name="T6_UnionType">
+    <choice>
+      <element name="choice1" type="string"/>
+      <element name="choice2" type="integer"/>
+    </choice>
+  </complexType>
+  <complexType name="T6_UnionPropertyType">
+    <sequence>
+      <element ref="test:T6_Union"/>
+    </sequence>
+  </complexType>
+</schema>

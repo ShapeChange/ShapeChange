@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://www.opengis.net/ows8/test/2" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/ows8/test/2" version="0.1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="LetTest" substitutionGroup="gml:AbstractFeature" type="t:LetTestType"/>
+  <complexType name="LetTestType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="att1" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="integer"/>
+          <element name="att3" type="t:LetTest1PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="LetTestPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:LetTest"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="LetTest1" substitutionGroup="gml:AbstractObject" type="t:LetTest1Type"/>
+  <complexType name="LetTest1Type">
+    <sequence>
+      <element minOccurs="0" name="attx" type="integer"/>
+    </sequence>
+  </complexType>
+  <complexType name="LetTest1PropertyType">
+    <sequence>
+      <element ref="t:LetTest1"/>
+    </sequence>
+  </complexType>
+</schema>

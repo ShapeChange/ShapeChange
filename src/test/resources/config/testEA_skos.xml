@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/skos.eap"/>
+		<parameter name="appSchemaName" value="Codelists"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ea/log_skos.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ontology.RDF" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ea/skos"/>
+			<targetParameter name="language" value="nl"/>
+			<targetParameter name="codeListOnly" value="true"/>
+			<targetParameter name="idReplacePattern" value="[\s/,_:\-]+"/>
+			<targetParameter name="idReplaceChar" value="_"/>
+			<targetParameter name="defaultEncodingRule" value="skos"/>
+			<rules>
+				<EncodingRule name="skos" extends="*">
+					<rule name="rule-rdf-prop-parent" />
+				</EncodingRule>
+			</rules>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

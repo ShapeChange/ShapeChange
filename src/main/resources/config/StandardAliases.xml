@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<!-- NOTE: case for stereotype names is ignored! Thus the aliases "Schema" and "schema" would map to the same wellknown stereotype -->
+	<!-- Mappings for stereotypes of packages -->
+	<StereotypeAlias wellknown="Application Schema" alias="applicationSchema" />
+	<StereotypeAlias wellknown="Application Schema" alias="requirementsClass" />
+	<StereotypeAlias wellknown="Application Schema" alias="schema" />	
+	<StereotypeAlias wellknown="" alias="bundle" />	
+	<StereotypeAlias wellknown="" alias="leaf" />
+	<!-- Mappings for stereotypes of classes -->
+	<StereotypeAlias wellknown="" alias="abstract" />
+	<StereotypeAlias wellknown="CodeList" alias="conceptScheme" />
+	<StereotypeAlias wellknown="CodeList" alias="vocabulary" />
+	<StereotypeAlias wellknown="DataType" alias="request" />
+	<StereotypeAlias wellknown="DataType" alias="response" />
+	<StereotypeAlias wellknown="FeatureType" alias="feature" />	
+	<StereotypeAlias wellknown="Type" alias="interface" />
+	<!-- Mappings for stereotypes of properties -->
+	<StereotypeAlias wellknown="" alias="property" />
+</stereotypeAliases>

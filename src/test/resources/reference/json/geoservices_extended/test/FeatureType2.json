@@ -1,0 +1,41 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/FeatureType2.json",
+	"title":"FeatureType2",
+	"type":"object",
+	"properties":{
+		"entityType":{
+			"title":"feature/object type",
+			"type":"string",
+			"default":"FeatureType2"
+		},
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"codelist":{
+					"title":"codelist",
+					"type":["string","null"],
+					"format":"uri",
+					"required":true
+				},
+				"codelist_nullReason":{
+					"title":"Reason for null value in property codelist",
+					"type":"string"
+				},
+				"union":{
+					"title":"union",
+					"$ref":"http://portele.de/ows9/test/Union.json"
+				},
+				"role1":{
+					"title":"role1",
+					"type":"array",
+					"items":{
+						"type":"string",
+						"format":"uri"
+					}
+				}
+			}
+		}
+	}
+}

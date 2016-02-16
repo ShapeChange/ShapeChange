@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://test.org/attributeCreation/1" elementFormDefault="qualified" targetNamespace="http://test.org/attributeCreation/1" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class_fromBundle" substitutionGroup="gml:AbstractFeature" type="t:Class_fromBundleType"/>
+  <complexType name="Class_fromBundleType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class_fromBundlePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class_fromBundle"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class_fromLeafNoChanges" substitutionGroup="gml:AbstractFeature" type="t:Class_fromLeafNoChangesType"/>
+  <complexType name="Class_fromLeafNoChangesType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class_fromLeafNoChangesPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class_fromLeafNoChanges"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class_fromTest1" substitutionGroup="gml:AbstractFeature" type="t:Class_fromTest1Type"/>
+  <complexType name="Class_fromTest1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="GMLID" type="string">
+            <annotation>
+              <documentation>Alias: abcdefghijklmn</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class_fromTest1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class_fromTest1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class_fromTest2" substitutionGroup="gml:AbstractFeature" type="t:Class_fromTest2Type"/>
+  <complexType name="Class_fromTest2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="GMLID" type="string">
+            <annotation>
+              <documentation>Alias: abcdefghijklmn</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class_fromTest2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Class_fromTest2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/profiling_eps/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/profiling_eps/test" version="1.0">
+  <include schemaLocation="testProfilingEPS.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T6_ClassKeepAssociationA" substitutionGroup="gml:AbstractFeature" type="test:T6_ClassKeepAssociationAType"/>
+  <complexType name="T6_ClassKeepAssociationAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propCA" type="test:T6_ClassKeepAssociationBPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propCB</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_ClassKeepAssociationAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_ClassKeepAssociationA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_ClassKeepAssociationB" substitutionGroup="gml:AbstractFeature" type="test:T6_ClassKeepAssociationBType"/>
+  <complexType name="T6_ClassKeepAssociationBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propCB" type="test:T6_ClassKeepAssociationAPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:propCA</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_ClassKeepAssociationBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:T6_ClassKeepAssociationB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
