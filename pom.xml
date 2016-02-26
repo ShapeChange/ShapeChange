@@ -13,7 +13,7 @@
 		<repository>
 		    <id>ShapeChange</id>
 		    <name>ShapeChange (plus additional components) release repository</name>
-		    <url>http://shapechange.net/resources/</url>
+		    <url>http://shapechange.net/resources/dist/</url>
 		</repository>
 	</repositories>
 	<dependencies>
