@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,20 +85,15 @@ public class EADocument extends ModelImpl implements Model {
 
 	/** Caches for all classes and packages */
 	// Id to classes ...
-	HashMap<String, ClassInfoEA> fClassById = new HashMap<String, ClassInfoEA>(
-			500);
+	SortedMap<String, ClassInfoEA> fClassById = new TreeMap<String, ClassInfoEA>();
 	// Name to classes ...
-	HashMap<String, ClassInfoEA> fClassByName = new HashMap<String, ClassInfoEA>(
-			500);
+	SortedMap<String, ClassInfoEA> fClassByName = new TreeMap<String, ClassInfoEA>();
 	// Id to packages ...
-	HashMap<String, PackageInfoEA> fPackageById = new HashMap<String, PackageInfoEA>(
-			100);
+	SortedMap<String, PackageInfoEA> fPackageById = new TreeMap<String, PackageInfoEA>();
 	// ElmtId to packages ...
-	HashMap<String, PackageInfoEA> fPackageByElmtId = new HashMap<String, PackageInfoEA>(
-			100);
+	SortedMap<String, PackageInfoEA> fPackageByElmtId = new TreeMap<String, PackageInfoEA>();
 	// AssociationId to associations ...
-	HashMap<String, AssociationInfoEA> fAssociationById = new HashMap<String, AssociationInfoEA>(
-			100);
+	SortedMap<String, AssociationInfoEA> fAssociationById = new TreeMap<String, AssociationInfoEA>();
 
 	protected Set<String> excludedPackageNames = null;
 
@@ -287,6 +283,7 @@ public class EADocument extends ModelImpl implements Model {
 		 * derivation hierarchy and all other associations between classes.
 		 */
 		for (ClassInfoEA ci : fClassById.values()) {
+			
 			// Generalization - class derivation hierarchy
 			ci.establishClassDerivationHierarchy();
 			// Other associations where the class is source or target
