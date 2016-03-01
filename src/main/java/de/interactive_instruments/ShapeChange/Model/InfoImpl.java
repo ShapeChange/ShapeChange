@@ -66,17 +66,17 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		String other = i.id();
 		return my.hashCode() - other.hashCode();
 	}
-	
+
 	public Stereotypes stereotypes() {
 		validateStereotypesCache();
 		// Return copy of cache
 		return options().stereotypesFactory(stereotypesCache);
 	} // stereotypes()
-		
+
 	public boolean stereotype(String stereotype) {
 		Stereotypes stereotypes = stereotypes();
 		String st;
-		if (stereotype!=null)
+		if (stereotype != null)
 			st = model().options().normalizeStereotype(stereotype);
 		else
 			st = "";
@@ -87,56 +87,56 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		}
 		if (st.isEmpty() && stereotypes.isEmpty())
 			return true;
-		
+
 		return false;
 	}
 
 	public TaggedValues taggedValuesForTagList(String tagList) {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
-		
+
 		// create clone
-		TaggedValues copy = options().taggedValueFactory(taggedValuesCache,tagList);		
+		TaggedValues copy = options().taggedValueFactory(taggedValuesCache, tagList);
 		return copy;
 	}
 
 	public TaggedValues taggedValuesAll() {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
-		
+
 		// create clone
-		TaggedValues copy = options().taggedValueFactory(taggedValuesCache);		
+		TaggedValues copy = options().taggedValueFactory(taggedValuesCache);
 		return copy;
 	}
-	
+
 	public String taggedValue(String tag) {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
-		
+
 		String[] values = taggedValuesCache.get(tag);
-		if (values==null || values.length==0)
+		if (values == null || values.length == 0)
 			return null;
-		else if (values.length>1)
-			for (int i=1; i < values.length; i++) {
+		else if (values.length > 1)
+			for (int i = 1; i < values.length; i++) {
 				MessageContext mc = model().result().addWarning(this, 201, tag, values[0], values[i]);
-				addContextDetails(mc);				
+				addContextDetails(mc);
 			}
 
 		return options().internalize(values[0]);
-	} // taggedValue()	
-	
+	} // taggedValue()
+
 	private void addContextDetails(MessageContext mc) {
-		
+
 		/*
 		 * we want to provide as much information as possible to locate the
 		 * element in the model
 		 */
-		if(this instanceof PropertyInfo) {
-			
-			PropertyInfo pi = (PropertyInfo)this;
-			
+		if (this instanceof PropertyInfo) {
+
+			PropertyInfo pi = (PropertyInfo) this;
+
 			mc.addDetail(this, 1, pi.name(), pi.inClass().name());
-			
+
 		} else {
 			mc.addDetail(this, 0, this.toString(), this.name());
 		}
@@ -145,52 +145,52 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	public String[] taggedValuesForTag(String tag) {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
-		
+
 		return taggedValuesCache.get(tag);
-	} // taggedValuesAll()	
-	
+	} // taggedValuesAll()
+
 	public String taggedValueInLanguage(String tag, String language) {
 		validateTaggedValuesCache();
 
 		String[] values = taggedValuesCache.get(tag);
-		if (values==null || values.length==0)
+		if (values == null || values.length == 0)
 			return null;
-		
+
 		String result = null;
 		for (String value : values) {
-			if (value==null || value.length()==0)
+			if (value == null || value.length() == 0)
 				continue;
 			Matcher m = langPattern.matcher(value);
-			if(m.matches()) {
+			if (m.matches()) {
 				String lang = m.group(2);
 				if (!lang.equalsIgnoreCase(language))
 					continue;
 				value = m.group(1);
 			}
-			if (result==null)
+			if (result == null)
 				result = value;
 			else {
 				MessageContext mc = model().result().addWarning(this, 202, tag, language, result, value);
 				addContextDetails(mc);
 			}
 		}
-		
+
 		return options().internalize(result);
 	}
-	
+
 	public String[] taggedValuesInLanguage(String tag, String language) {
 		validateTaggedValuesCache();
 
 		String[] values = taggedValuesCache.get(tag);
-		if (values==null || values.length==0)
+		if (values == null || values.length == 0)
 			return new String[0];
-		
+
 		List<String> result = new ArrayList<String>();
 		for (String value : values) {
-			if (value==null || value.length()==0)
+			if (value == null || value.length() == 0)
 				continue;
 			Matcher m = langPattern.matcher(value);
-			if(m.matches()) {
+			if (m.matches()) {
 				String text = m.group(1);
 				String lang = m.group(2);
 				if (lang.equalsIgnoreCase(language))
@@ -201,80 +201,81 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		}
 		return result.toArray(new String[result.size()]);
 	}
-	
+
 	protected String descriptorSource(String descriptor) {
 		String source = null;
-		
-		if (model().type()==Options.GENERIC) {
+
+		if (model().type() == Options.GENERIC) {
 			/*
-			 * special treatment for generic models, which always store the 
+			 * special treatment for generic models, which always store the
 			 * descriptor values directly
 			 */
-			source = "sc:internal"; 
+			source = "sc:internal";
 		} else {
 			source = options().descriptorSource(descriptor);
 
 			// if nothing has been configured, use defaults
-			if (source==null) {
-				if (model().type()==Options.EA7) {
+			if (source == null) {
+				if (model().type() == Options.EA7) {
 					if (descriptor.equalsIgnoreCase(Options.Descriptor.DOCUMENTATION.toString()))
-						source = "ea:notes"; 
+						source = "ea:notes";
 					else if (descriptor.equalsIgnoreCase(Options.Descriptor.ALIAS.toString()))
-						source = "ea:alias"; 
+						source = "ea:alias";
 					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DEFINITION.toString()))
-						source = "sc:extract#PROLOG"; 
+						source = "sc:extract#PROLOG";
 					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DESCRIPTION.toString()))
-						source = "none"; 
+						source = "none";
 					else
-						source = "tag#"+descriptor;
-				} else if (model().type()==Options.XMI10 || model().type()==Options.GSIP) {
-						if (descriptor.equalsIgnoreCase(Options.Descriptor.DOCUMENTATION.toString()))
-							source = "tag#documentation;description"; 
-						else if (descriptor.equalsIgnoreCase(Options.Descriptor.ALIAS.toString()))
-							source = "tag#alias"; 
-						else if (descriptor.equalsIgnoreCase(Options.Descriptor.DEFINITION.toString()))
-							source = "sc:extract#PROLOG"; 
-						else if (descriptor.equalsIgnoreCase(Options.Descriptor.DESCRIPTION.toString()))
-							source = "none"; 
-						else
-							source = "tag#"+descriptor;
+						source = "tag#" + descriptor;
+				} else if (model().type() == Options.XMI10 || model().type() == Options.GSIP) {
+					if (descriptor.equalsIgnoreCase(Options.Descriptor.DOCUMENTATION.toString()))
+						source = "tag#documentation;description";
+					else if (descriptor.equalsIgnoreCase(Options.Descriptor.ALIAS.toString()))
+						source = "tag#alias";
+					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DEFINITION.toString()))
+						source = "sc:extract#PROLOG";
+					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DESCRIPTION.toString()))
+						source = "none";
+					else
+						source = "tag#" + descriptor;
 				} else {
-					source = "tag#"+descriptor;
+					source = "tag#" + descriptor;
 				}
 			}
 		}
-		
+
 		return source;
 	}
-	
+
 	private String descriptorValue(String descriptor, boolean language) {
 		String value = null;
 		String source = descriptorSource(descriptor);
 		if (source.startsWith("tag#")) {
-			String[] tags = source.replace("tag#","").split(";");
+			String[] tags = source.replace("tag#", "").split(";");
 			for (String tag : tags) {
 				if (language)
-					value = taggedValueInLanguage(tag,options().language());
+					value = taggedValueInLanguage(tag, options().language());
 				else
 					value = taggedValue(tag);
-				if (value!=null && !value.isEmpty())
-					break;				
+				if (value != null && !value.isEmpty())
+					break;
 			}
-		} else if (source.equals("ea:alias") && model().type()==Options.EA7) {
+		} else if (source.equals("ea:alias") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
-		} else if (source.equals("ea:notes") && model().type()==Options.EA7) {
+		} else if (source.equals("ea:notes") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
 		} else if (source.startsWith("sc:extract#")) {
-			String token = source.replace("sc:extract#","");
+			String token = source.replace("sc:extract#", "");
 			String doc = documentation();
-			
+
 			if (doc == null || doc.trim().length() == 0) {
 				// nothing to extract from ...
 			} else {
 				String[] ss = doc.split(options().extractSeparator());
 				boolean found = false;
 				if (token.equals("PROLOG"))
-					// PROLOG is the start of the documentation before the first separator
+					// PROLOG is the start of the documentation before the first
+					// separator
 					found = true;
 				for (String s : ss) {
 					if (found) {
@@ -284,68 +285,70 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 						found = true;
 					}
 				}
-			}			
-		}		
-		
+			}
+		}
+
 		/*
 		 * For backwards compatibility, the default differs by descriptor
-		 */		
-		if (value==null)
-			if (descriptor.equals(Options.Descriptor.DOCUMENTATION.toString()) || descriptor.equals(Options.Descriptor.DEFINITION.toString()))
+		 */
+		if (value == null)
+			if (descriptor.equals(Options.Descriptor.DOCUMENTATION.toString())
+					|| descriptor.equals(Options.Descriptor.DEFINITION.toString()))
 				value = "";
-		
+
 		return value;
 	}
-	
+
 	private String[] descriptorValues(String descriptor, boolean language) {
 		String[] values = new String[0];
 		String source = descriptorSource(descriptor);
 		if (source.startsWith("tag#")) {
-			String[] tags = source.replace("tag#","").split(";");
+			String[] tags = source.replace("tag#", "").split(";");
 			for (String tag : tags) {
 				if (language)
-					values = taggedValuesInLanguage(tag,options().language());
+					values = taggedValuesInLanguage(tag, options().language());
 				else
 					values = taggedValuesForTag(tag);
-				if (values!=null && values.length>0)
-					break;				
+				if (values != null && values.length > 0)
+					break;
 			}
-		} else if (source.equals("ea:alias") && model().type()==Options.EA7) {
+		} else if (source.equals("ea:alias") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
-		} else if (source.equals("ea:notes") && model().type()==Options.EA7) {
+		} else if (source.equals("ea:notes") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
 		} else if (source.startsWith("sc:extract#")) {
-			String token = source.replace("sc:extract#","");
+			String token = source.replace("sc:extract#", "");
 			String doc = documentation();
-			
+
 			if (doc == null || doc.trim().length() == 0) {
 				// nothing to extract from ...
 			} else {
 				String[] ss = doc.split(options().extractSeparator());
 				boolean found = false;
 				if (token.equals("PROLOG"))
-					// PROLOG is the start of the documentation before the first separator
+					// PROLOG is the start of the documentation before the first
+					// separator
 					found = true;
 				for (String s : ss) {
 					if (found) {
-						values = new String[]{s.trim()};
+						values = new String[] { s.trim() };
 						break;
 					} else if (s.trim().equalsIgnoreCase(token)) {
 						found = true;
 					}
 				}
-			}			
-		}	
-		
+			}
+		}
+
 		return values;
 	}
-	
+
 	public String primaryCode() {
-		if (primaryCode==null)
+		if (primaryCode == null)
 			primaryCode = options().internalize(descriptorValue(Options.Descriptor.PRIMARYCODE.toString(), true));
-		return primaryCode;		
+		return primaryCode;
 	}
-	
+
 	public String derivedDocumentation(String template, String novalue) {
 		String tmp = (template == null ? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE : template);
 		String nov = (novalue == null ? Options.DERIVED_DOCUMENTATION_DEFAULT_NOVALUE : novalue);
@@ -354,71 +357,71 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		Pattern pattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
 		Matcher matcher = pattern.matcher(tmp);
 
-		//populate the replacements map ...
-		HashMap<String,String> replacements = new HashMap<String,String>();
+		// populate the replacements map ...
+		HashMap<String, String> replacements = new HashMap<String, String>();
 
 		String s = this.definition();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("definition", s.trim());
-		
+
 		s = this.description();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("description", s.trim());
-		
+
 		s = this.aliasName();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("alias", s.trim());
-		
+
 		s = this.primaryCode();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("primaryCode", s.trim());
-		
+
 		s = this.legalBasis();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("legalBasis", s.trim());
 
 		s = this.language();
-		if (s==null || s.trim().isEmpty())
+		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("language", s.trim());
-		
+
 		String[] sa = this.examples();
-		if (sa!=null && sa.length>0) {
+		if (sa != null && sa.length > 0) {
 			s = "";
 			for (String e : sa)
-				s += e.trim()+lf+lf;
+				s += e.trim() + lf + lf;
 			if (s.trim().isEmpty())
-				s = nov;			
+				s = nov;
 		} else
-			s = nov;			
+			s = nov;
 		replacements.put("examples", s.trim());
 
 		sa = this.dataCaptureStatements();
-		if (sa!=null && sa.length>0) {
+		if (sa != null && sa.length > 0) {
 			s = "";
 			for (String e : sa)
-				s += e.trim()+lf+lf;
+				s += e.trim() + lf + lf;
 			if (s.trim().isEmpty())
-				s = nov;			
+				s = nov;
 		} else
-			s = nov;			
-		replacements.put("dataCaptureStatements", s.trim());		
-		
+			s = nov;
+		replacements.put("dataCaptureStatements", s.trim());
+
 		StringBuilder builder = new StringBuilder();
 		int i = 0;
 		while (matcher.find()) {
-		    String replacement = replacements.get(matcher.group(1));
-		    builder.append(doc.substring(i, matcher.start()));
-		    if (replacement == null)
-		        builder.append(matcher.group(0));
-		    else
-		        builder.append(replacement);
-		    i = matcher.end();
+			String replacement = replacements.get(matcher.group(1));
+			builder.append(doc.substring(i, matcher.start()));
+			if (replacement == null)
+				builder.append(matcher.group(0));
+			else
+				builder.append(replacement);
+			i = matcher.end();
 		}
 		builder.append(doc.substring(i, doc.length()));
 		return builder.toString();
@@ -428,111 +431,106 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	 * @return an empty string if no documentation exists
 	 */
 	public String documentation() {
-		if (documentation==null)
+		if (documentation == null)
 			documentation = options().internalize(descriptorValue(Options.Descriptor.DOCUMENTATION.toString(), true));
-		return documentation;		
+		return documentation;
 	}
 
 	/**
-	 * Retrieve the part of a documentation of an information item that is considered a definition
+	 * Retrieve the part of a documentation of an information item that is
+	 * considered a definition
+	 * 
 	 * @return the definition or an empty string if none exists
 	 */
 	public String definition() {
-		if (definition==null)
+		if (definition == null)
 			definition = options().internalize(descriptorValue(Options.Descriptor.DEFINITION.toString(), true));
-		return definition;		
+		return definition;
 	}
 
 	/**
-	 * Retrieve the part of a documentation of an information item that is considered an informative description
+	 * Retrieve the part of a documentation of an information item that is
+	 * considered an informative description
+	 * 
 	 * @return the description or null if none exists
 	 */
 	public String description() {
-		if (description==null)
+		if (description == null)
 			description = options().internalize(descriptorValue(Options.Descriptor.DESCRIPTION.toString(), true));
-		return description;		
+		return description;
 	}
 
 	public String legalBasis() {
-		if (legalBasis==null)
+		if (legalBasis == null)
 			legalBasis = options().internalize(descriptorValue(Options.Descriptor.LEGALBASIS.toString(), true));
-		return legalBasis;		
+		return legalBasis;
 	}
 
 	public String language() {
-		if (language==null)
+		if (language == null)
 			language = options().internalize(descriptorValue(Options.Descriptor.LANGUAGE.toString(), true));
-		return language;		
+		return language;
 	}
 
 	public String[] dataCaptureStatements() {
-		if (dataCaptureStatements==null)
-			dataCaptureStatements = options().internalize(descriptorValues(Options.Descriptor.DATACAPTURESTATEMENT.toString(), true));
-		return dataCaptureStatements;		
+		if (dataCaptureStatements == null)
+			dataCaptureStatements = options()
+					.internalize(descriptorValues(Options.Descriptor.DATACAPTURESTATEMENT.toString(), true));
+		return dataCaptureStatements;
 	}
 
 	public String[] examples() {
-		if (examples==null)
+		if (examples == null)
 			examples = options().internalize(descriptorValues(Options.Descriptor.EXAMPLE.toString(), true));
-		return examples;		
+		return examples;
 	}
-		
+
 	public String aliasName() {
 		// it is important not to set any default alias as this blocks other
 		// aliases, e.g. from EA
-		if (aliasName==null)
+		if (aliasName == null)
 			aliasName = options().internalize(descriptorValue(Options.Descriptor.ALIAS.toString(), true));
-		return aliasName;	
-	}	
-	
+		return aliasName;
+	}
+
 	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty()
-				|| options().ignoreEncodingRuleTaggedValues()) {
+		if (s == null || s.isEmpty() || options().ignoreEncodingRuleTaggedValues()) {
 			// JE TBD: create enumeration with valid platforms for global use
 			if (platform.equalsIgnoreCase("xsd")) {
-				s = options().parameter(Options.TargetXmlSchemaClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetXmlSchemaClass, "defaultEncodingRule");
 				if (s == null)
 					s = Options.ISO19136_2007;
 			} else if (platform.equalsIgnoreCase("json")) {
-				s = options().parameter(Options.TargetJsonSchemaClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetJsonSchemaClass, "defaultEncodingRule");
 				if (s == null)
 					s = "geoservices";
 			} else if (platform.equalsIgnoreCase("rdf")) {
-				s = options().parameter(Options.TargetRDFClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetRDFClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("fc")) {
-				s = options().parameter(Options.TargetFeatureCatalogueClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetFeatureCatalogueClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("sql")) {
-				s = options().parameter(Options.TargetSQLClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetSQLClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("owl")) {
-				s = options().parameter(Options.TargetOWLISO19150Class,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetOWLISO19150Class, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("arcgis")) {
-				s = options().parameter(Options.TargetArcGISWorkspaceClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetArcGISWorkspaceClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("sch")) {
-				s = options().parameter(Options.TargetFOL2SchematronClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetFOL2SchematronClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("rep")) {
-				s = options().parameter(Options.TargetReplicationSchemaClass,
-						"defaultEncodingRule");
+				s = options().parameter(Options.TargetReplicationSchemaClass, "defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			}
@@ -566,14 +564,12 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		 * recommendations.
 		 */
 		if (ra[0].equals("rule") && !ra[1].equals("all")) {
-			if (!options().targetMode(options().targetClassName(rule))
-					.equals("enabled"))
+			if (!options().targetMode(options().targetClassName(rule)).equals("enabled"))
 				return false;
 		}
 
 		if (ra[0].matches("re[cq]") && !ra[1].equals("all")) {
-			if (options().targetMode(options().targetClassName(rule))
-					.equals("disabled"))
+			if (options().targetMode(options().targetClassName(rule)).equals("disabled"))
 				return false;
 		}
 
@@ -603,33 +599,23 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		 * support
 		 */
 		String param;
-		if (rule.equals("rule-xsd-all-no-documentation")) {
-			param = options().parameter(Options.TargetXmlSchemaClass,
-					"includeDocumentation");
-			if (param != null && param.equals("false"))
-				return true;
-		}
 		if (rule.equals("rule-xsd-cls-local-enumeration")) {
-			param = options().parameter(Options.TargetXmlSchemaClass,
-					"enumStyle");
+			param = options().parameter(Options.TargetXmlSchemaClass, "enumStyle");
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-cls-local-basictype")) {
-			param = options().parameter(Options.TargetXmlSchemaClass,
-					"basicTypeStyle");
+			param = options().parameter(Options.TargetXmlSchemaClass, "basicTypeStyle");
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-pkg-schematron")) {
-			param = options().parameter(Options.TargetXmlSchemaClass,
-					"schematron");
+			param = options().parameter(Options.TargetXmlSchemaClass, "schematron");
 			if (param != null && param.equalsIgnoreCase("true"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-prop-exclude-derived")) {
-			param = options().parameter(Options.TargetXmlSchemaClass,
-					"includeDerivedProperties");
+			param = options().parameter(Options.TargetXmlSchemaClass, "includeDerivedProperties");
 			if (param != null && param.equalsIgnoreCase("false"))
 				return true;
 		}
@@ -662,10 +648,41 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 				res = res || options().hasRule(rule, encRule);
 
 			return res;
+
 		} else {
+
+			// determine if the applicable encoding rule contains the given rule
 			encRule = encodingRule(ra[1]).toLowerCase();
+
 			if (encRule != null) {
-				return options().hasRule(rule, encRule);
+
+				boolean encRuleHasRule = options().hasRule(rule, encRule);
+
+				if (encRuleHasRule) {
+
+					// now cover cases in which a rule may be overwritten by a
+					// parameter
+					if (rule.equals("rule-xsd-all-no-documentation")) {
+
+						// if the XML Schema target parameter
+						// 'includeDocumentation' is set to true the rule is
+						// overwritten
+						param = options().parameter(Options.TargetXmlSchemaClass, "includeDocumentation");
+						if (param != null && param.equalsIgnoreCase("true"))
+							return false;
+						else
+							return true;
+					}
+
+					// no special case applies:
+					return true;
+
+				} else {
+
+					// if the encoding rule does not contain the given rule then
+					// there is no match
+					return false;
+				}
 			}
 			// TODO do something else if we do not find an encoding rule?
 		}
@@ -682,7 +699,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	 * here, the more specific rules are all validated in the subclasses.
 	 */
 	public void postprocessAfterLoadingAndValidate() {
-		// We don't look at postprocessed, this will be handled in the subclasses.
+		// We don't look at postprocessed, this will be handled in the
+		// subclasses.
 	}
 
 	/**
@@ -708,7 +726,7 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 
 		return taggedValuesCache.getFirstValues();
 	} // taggedValues()
-	
+
 	/**
 	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
 	 */
