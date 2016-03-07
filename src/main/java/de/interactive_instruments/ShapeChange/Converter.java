@@ -61,6 +61,9 @@ public class Converter {
 	public static final int STATUS_TARGET_INITSTART = 201;
 	public static final int STATUS_TARGET_PROCESS = 202;
 	public static final int STATUS_TARGET_WRITE = 203;
+	public static final int STATUS_TARGET_WRITEALL = 204;
+	public static final int STATUS_TARGET_DEFERRED_WRITE = 205;
+	public static final int STATUS_TRANSFORMER_PROCESS = 206;
 
 	/** Result object. */
 	protected ShapeChangeResult result = null;
@@ -254,6 +257,9 @@ public class Converter {
 						.newInstance();
 
 				dowTarget.initialise(options, result);
+
+				StatusBoard.getStatusBoard()
+						.statusChanged(STATUS_TARGET_DEFERRED_WRITE);
 				dowTarget.writeOutput();
 
 				dowTarget = null;
@@ -352,12 +358,11 @@ public class Converter {
 
 					TransformationManager trfManager = new TransformationManager();
 
-					// TBD
-					// StatusBoard.getStatusBoard().statusChanged(STATUS_TARGET_INITSTART);
+					StatusBoard.getStatusBoard()
+							.statusChanged(STATUS_TRANSFORMER_PROCESS);
+
 					modelOutput = trfManager.process(modelInput, options, trf,
 							result);
-							// TBD
-							// StatusBoard.getStatusBoard().statusChanged(STATUS_TARGET_PROCESS);
 
 					/*
 					 * Release the original model now if: 1) a GenericModel copy
@@ -509,7 +514,10 @@ public class Converter {
 					StatusBoard.getStatusBoard()
 							.statusChanged(STATUS_TARGET_WRITE);
 					target.write();
-					StatusBoard.getStatusBoard().statusChanged(0);
+					/*
+					 * 2016-03-05 JE: does not seem to be used by StatusReaders
+					 * StatusBoard.getStatusBoard().statusChanged(0);
+					 */
 				}
 
 				target = null;
@@ -530,9 +538,21 @@ public class Converter {
 				if (isSingleTarget) {
 					SingleTarget starget = (SingleTarget) theClass
 							.newInstance();
+
+					/*
+					 * announce target class-wide so that StatusReaders can
+					 * inspect it ...
+					 */
+					target = starget;
 					if (starget != null) {
+						StatusBoard.getStatusBoard()
+								.statusChanged(STATUS_TARGET_WRITEALL);
 						starget.writeAll(result);
 					}
+					/*
+					 * ... now we no longer need to keep track of the target
+					 */
+					target = null;
 				}
 			}
 			result.addInfo(null, 504, tgt.getClassName(), modelProviderId);
@@ -688,7 +708,6 @@ public class Converter {
 		}
 	}
 
-	// 2015-05-21 JE: unused code?
 	public int getCurrentTargetID() {
 		if (target == null)
 			return 0;
