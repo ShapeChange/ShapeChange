@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://shapechange.net/targets/ApplicationSchemaMetadata"
+  xmlns:asm="http://shapechange.net/targets/ApplicationSchemaMetadata">
+
+  <xs:element name="ApplicationSchemaMetadata">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1">
+        <xs:element maxOccurs="unbounded" name="schema">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ApplicationSchema">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element minOccurs="1" name="targetNamespace" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metadata">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element ref="asm:AbstractMetadata"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element abstract="true" name="AbstractMetadata"/>
+  <xs:element name="ProfilesMetadata" substitutionGroup="asm:AbstractMetadata">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="containedProfile" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Name of a profile to which at least one element of the application schema belongs.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
