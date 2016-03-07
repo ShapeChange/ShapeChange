@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test Schema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img1" idAsInt="0" name="Test Schema" height="258" width="964" relPath="images/Test_Schema/img1.jpg"></image>
+    </images>
+  </ApplicationSchema>
+  <Package id="_P7">
+    <name>Package1</name>
+    <parent idref="_P4"></parent>
+    <images>
+      <image id="img6" idAsInt="2" name="Package1" height="652" width="776" relPath="images/Test_Schema/Package1/img6.jpg"></image>
+    </images>
+  </Package>
+  <Package id="_P8">
+    <name>Package2</name>
+    <parent idref="_P4"></parent>
+    <images>
+      <image id="img12" idAsInt="4" name="Package2" height="808" width="1046" relPath="images/Test_Schema/Package2/img12.jpg"></image>
+    </images>
+  </Package>
+  <Package id="_P9">
+    <name>Common</name>
+    <parent idref="_P4"></parent>
+    <images>
+      <image id="img13" idAsInt="6" name="Common" height="180" width="558" relPath="images/Test_Schema/Common/img13.jpg"></image>
+    </images>
+  </Package>
+  <FeatureType id="_C29">
+    <name>AbstractFeatureType</name>
+    <isAbstract>1</isAbstract>
+    <package idref="_P8"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img7" idAsInt="8" name="Context: AbstractFeatureType" height="524" width="500" relPath="images/Test_Schema/Package2/img7.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureType id="_C6">
+    <name>DataType</name>
+    <title>DT</title>
+    <definition>datatype definition</definition>
+    <characterizedBy idref="_A6_21"></characterizedBy>
+    <characterizedBy idref="_A6_22"></characterizedBy>
+    <characterizedBy idref="_A6_23"></characterizedBy>
+    <package idref="_P7"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img2" idAsInt="10" name="Context: DataType" height="210" width="734" relPath="images/Test_Schema/Package1/img2.jpg"></image>
+      <image id="img3" idAsInt="12" name="Context: DataType2" height="180" width="352" relPath="images/Test_Schema/Package1/img3.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A6_21">
+    <name>datatype</name>
+    <definition>This is another data type.</definition>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C10" category="data type">DataType2</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A6_22">
+    <name>string</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A6_23">
+    <name>boolean</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C10">
+    <name>DataType2</name>
+    <characterizedBy idref="_A10_24"></characterizedBy>
+    <characterizedBy idref="_A10_25"></characterizedBy>
+    <package idref="_P7"></package>
+    <type>Data Type</type>
+    <constraint>
+      <name>pattern</name>
+      <description>This is the constraint description.</description>
+      <expression>inv: self.string-&gt;exists(o | o.matches('[a-zA-Z0-9]+') )</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img3" idAsInt="14" name="Context: DataType2" height="180" width="352" relPath="images/Test_Schema/Package1/img3.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A10_24">
+    <name>string</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A10_25">
+    <name>integer</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C4">
+    <name>FeatureType1</name>
+    <definition>This is a feature type.</definition>
+    <characterizedBy idref="_A4_1"></characterizedBy>
+    <characterizedBy idref="_A4_2"></characterizedBy>
+    <characterizedBy idref="_A4_3"></characterizedBy>
+    <characterizedBy idref="_A4_4"></characterizedBy>
+    <characterizedBy idref="_A4_5"></characterizedBy>
+    <characterizedBy idref="_A4_6"></characterizedBy>
+    <characterizedBy idref="_A4_7"></characterizedBy>
+    <characterizedBy idref="_A4_8"></characterizedBy>
+    <characterizedBy idref="_A4_9"></characterizedBy>
+    <characterizedBy idref="_A4_10"></characterizedBy>
+    <characterizedBy idref="_A4_11"></characterizedBy>
+    <characterizedBy idref="_A4_12"></characterizedBy>
+    <characterizedBy idref="_A4_13"></characterizedBy>
+    <characterizedBy idref="_A4_14"></characterizedBy>
+    <characterizedBy idref="_A4_15"></characterizedBy>
+    <characterizedBy idref="_A4_16"></characterizedBy>
+    <characterizedBy idref="_A4_17"></characterizedBy>
+    <characterizedBy idref="_A4_18"></characterizedBy>
+    <characterizedBy idref="_A4_19"></characterizedBy>
+    <characterizedBy idref="_A4_20"></characterizedBy>
+    <characterizedBy idref="_AT1"></characterizedBy>
+    <package idref="_P7"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img4" idAsInt="16" name="Context: FeatureType1" height="920" width="766" relPath="images/Test_Schema/Package1/img4.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A4_1">
+    <name>integer</name>
+    <definition>This is an integer.</definition>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_2">
+    <name>character</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Character</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_3">
+    <name>string</name>
+    <definition>This is a string.</definition>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_4">
+    <name>real</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_5">
+    <name>decimal</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Decimal</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_6">
+    <name>number</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Number</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_7">
+    <name>boolean</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_8">
+    <name>uri</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>URI</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_9">
+    <name>datetime</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>DateTime</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_10">
+    <name>date</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Date</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_11">
+    <name>time</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Time</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_12">
+    <name>measure</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Measure</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_13">
+    <name>length</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Length</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_14">
+    <name>geometry</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_15">
+    <name>secondgeometry</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_16">
+    <name>metadata</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>MD_Metadata</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_17">
+    <name>datatype</name>
+    <definition>This is a data type.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C6" category="data type">DataType</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_18">
+    <name>union</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C7" category="union data type">NilUnion</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_19">
+    <name>enum</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A9_29"></enumeratedBy>
+    <enumeratedBy idref="_A9_30"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_20">
+    <name>codelist</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="code list">CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T1">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT1"></roles>
+    <roles idref="_AS1"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT1">
+    <name>role2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T1"></relation>
+    <InverseRole idref="_AS1"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS1">
+    <name>role1</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T1"></relation>
+    <InverseRole idref="_AT1"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C5">
+    <name>FeatureType2</name>
+    <characterizedBy idref="_A5_26"></characterizedBy>
+    <characterizedBy idref="_A5_31"></characterizedBy>
+    <characterizedBy idref="_AS1"></characterizedBy>
+    <package idref="_P8"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img8" idAsInt="18" name="Context: FeatureType2" height="698" width="428" relPath="images/Test_Schema/Package2/img8.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A5_26">
+    <name>codelist</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>true</voidable>
+    <ValueDataType category="code list">CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A5_31">
+    <name>union</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C11" category="union data type">Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C30">
+    <name>FeatureType3</name>
+    <subtypeOf idref="_C29">AbstractFeatureType</subtypeOf>
+    <characterizedBy idref="_A30_47"></characterizedBy>
+    <characterizedBy idref="_AT41"></characterizedBy>
+    <package idref="_P8"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img9" idAsInt="20" name="Context: FeatureType3" height="496" width="886" relPath="images/Test_Schema/Package2/img9.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A30_47">
+    <name>integer</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T41">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT41"></roles>
+    <roles idref="_AS41"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT41">
+    <name>external</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C34" category="feature type">ExternalType</FeatureTypeIncluded>
+    <relation idref="__T41"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS41">
+    <name>role_S41</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C30" category="feature type">FeatureType3</FeatureTypeIncluded>
+    <relation idref="__T41"></relation>
+    <InverseRole idref="_AT41"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C7">
+    <name>NilUnion</name>
+    <characterizedBy idref="_A7_27"></characterizedBy>
+    <characterizedBy idref="_A7_28"></characterizedBy>
+    <package idref="_P7"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img5" idAsInt="22" name="Context: NilUnion" height="370" width="352" relPath="images/Test_Schema/Package1/img5.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A7_27">
+    <name>value</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C10" category="data type">DataType2</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A7_28">
+    <name>reason</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C32">
+    <name>TypeA</name>
+    <characterizedBy idref="_A32_48"></characterizedBy>
+    <package idref="_P8"></package>
+    <type>Object Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img10" idAsInt="24" name="Context: TypeA" height="180" width="302" relPath="images/Test_Schema/Package2/img10.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A32_48">
+    <name>string</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C11">
+    <name>Union</name>
+    <characterizedBy idref="_A11_32"></characterizedBy>
+    <characterizedBy idref="_A11_33"></characterizedBy>
+    <characterizedBy idref="_A11_34"></characterizedBy>
+    <package idref="_P8"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+    <images>
+      <image id="img11" idAsInt="26" name="Context: Union" height="490" width="374" relPath="images/Test_Schema/Package2/img11.jpg"></image>
+    </images>
+  </FeatureType>
+  <FeatureAttribute id="_A11_32">
+    <name>option1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A9_29"></enumeratedBy>
+    <enumeratedBy idref="_A9_30"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A11_33">
+    <name>option2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A11_34">
+    <name>option3</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <Value id="_A9_29">
+    <label>1</label>
+    <code>val1</code>
+  </Value>
+  <Value id="_A9_30">
+    <label>2</label>
+    <code>val2</code>
+  </Value>
+</FeatureCatalogue>
