@@ -1,0 +1,1253 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test Schema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <Package id="_Prefmodel_14" mode="DELETE">
+    <name mode="DELETE">Deleted Package</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_Prefmodel_30" mode="DELETE">
+    <name mode="DELETE">Deleted Subpackage</name>
+    <parent idref="_Prefmodel_14"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_105" mode="DELETE">
+    <name mode="DELETE">DelSubPKG_FeatureType</name>
+    <package idref="_Prefmodel_30"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_Crefmodel_106" mode="DELETE">
+    <name mode="DELETE">DelSubPKG_FeatureType2</name>
+    <subtypeOf idref="_Crefmodel_105" mode="DELETE">DelSubPKG_FeatureType</subtypeOf>
+    <package idref="_Prefmodel_30"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_Crefmodel_43" mode="DELETE">
+    <name mode="DELETE">DelPKG_FeatureType1</name>
+    <characterizedBy idref="_Arefmodel_43_51" mode="DELETE"></characterizedBy>
+    <package idref="_Prefmodel_14"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_Arefmodel_43_51" mode="DELETE">
+    <name mode="DELETE">prop</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">Integer</ValueDataType>
+  </FeatureAttribute>
+  <Package id="_P15">
+    <name>Package</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_Prefmodel_29" mode="DELETE">
+    <name mode="DELETE">Deleted Package No Two</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_103" mode="DELETE">
+    <name mode="DELETE">DPNT_FeatureType</name>
+    <package idref="_Prefmodel_29"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <Package id="_P13">
+    <name>Feature Types</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_58" mode="DELETE">
+    <name mode="DELETE">DeletedFeatureType</name>
+    <characterizedBy idref="_Arefmodel_58_65" mode="DELETE"></characterizedBy>
+    <characterizedBy idref="_Arefmodel_T44" mode="DELETE"></characterizedBy>
+    <package idref="_P13"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_Arefmodel_58_65" mode="DELETE">
+    <name mode="DELETE">prop</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__refmodel_T44" mode="DELETE">
+    <name>(unbestimmt)</name>
+    <roles idref="_Arefmodel_T44" mode="DELETE"></roles>
+    <roles idref="_Arefmodel_S44" mode="DELETE"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_Arefmodel_T44" mode="DELETE">
+    <name mode="DELETE">roleDeletedFT</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__refmodel_T44"></relation>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_Arefmodel_S44" mode="DELETE">
+    <name mode="DELETE">role_S44</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <isNavigable mode="DELETE">false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_Crefmodel_58" category="feature type" mode="DELETE">DeletedFeatureType</FeatureTypeIncluded>
+    <relation idref="__refmodel_T44"></relation>
+    <InverseRole idref="_Arefmodel_T44" mode="DELETE"></InverseRole>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <Package id="_P16">
+    <name>Types</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_61" mode="DELETE">
+    <name mode="DELETE">DeletedType</name>
+    <characterizedBy idref="_Arefmodel_61_71" mode="DELETE"></characterizedBy>
+    <package idref="_P16"></package>
+    <type mode="DELETE">Object Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_Arefmodel_61_71" mode="DELETE">
+    <name mode="DELETE">prop</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <Package id="_P17">
+    <name>Unions</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_62" mode="DELETE">
+    <name mode="DELETE">DeletedUnion</name>
+    <characterizedBy idref="_Arefmodel_62_72" mode="DELETE"></characterizedBy>
+    <characterizedBy idref="_Arefmodel_62_73" mode="DELETE"></characterizedBy>
+    <package idref="_P17"></package>
+    <type mode="DELETE">Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_Arefmodel_62_72" mode="DELETE">
+    <name mode="DELETE">option1</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_Arefmodel_62_73" mode="DELETE">
+    <name mode="DELETE">option2</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">Real</ValueDataType>
+  </FeatureAttribute>
+  <Package id="_P18">
+    <name>CodeLists</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <Package id="_P19">
+    <name>DataTypes</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_55" mode="DELETE">
+    <name mode="DELETE">DeletedDatatype</name>
+    <characterizedBy idref="_Arefmodel_55_62" mode="DELETE"></characterizedBy>
+    <package idref="_P19"></package>
+    <type mode="DELETE">Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_Arefmodel_55_62" mode="DELETE">
+    <name mode="DELETE">prop</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType mode="DELETE">CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <Package id="_P20">
+    <name>Enumerations</name>
+    <parent idref="_P15"></parent>
+  </Package>
+  <Package id="_P21">
+    <name>Generalization_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P24">
+    <name>Multiplicity_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P25">
+    <name>TextualChanges_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P26">
+    <name>ValueTypeChange_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P27">
+    <name>EnumChanges_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P28">
+    <name>StereotypeChanges_Test</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P30" mode="INSERT">
+    <name mode="INSERT">Inserted Package</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <Package id="_P31">
+    <name>N[[del]]ame_Test[[/del]][[ins]]AME_TEST[[/ins]]</name>
+    <parent idref="_P4"></parent>
+  </Package>
+  <FeatureType id="_Crefmodel_111" mode="DELETE">
+    <name mode="DELETE">NT_DeletedFeatureType</name>
+    <characterizedBy idref="_Arefmodel_T70" mode="DELETE"></characterizedBy>
+    <package idref="_P31"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__refmodel_T70" mode="DELETE">
+    <name>(unbestimmt)</name>
+    <roles idref="_Arefmodel_T70" mode="DELETE"></roles>
+    <roles idref="_Arefmodel_S70" mode="DELETE"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_Arefmodel_T70" mode="DELETE">
+    <name mode="DELETE">deletedRole_ÄÖÜ</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_C114" category="feature type" mode="DELETE">NT_FEATURETYPE_ÄÖÜ</FeatureTypeIncluded>
+    <relation idref="__refmodel_T70"></relation>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_Arefmodel_S70" mode="DELETE">
+    <name mode="DELETE">role_S70</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <isNavigable mode="DELETE">false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_Crefmodel_111" category="feature type" mode="DELETE">NT_DeletedFeatureType</FeatureTypeIncluded>
+    <relation idref="__refmodel_T70"></relation>
+    <InverseRole idref="_Arefmodel_T70" mode="DELETE"></InverseRole>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C54">
+    <name>DataType</name>
+    <characterizedBy idref="_A54_61"></characterizedBy>
+    <package idref="_P19"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A54_61">
+    <name>prop1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C95">
+    <name>EC_FeatureType</name>
+    <characterizedBy idref="_A95_90"></characterizedBy>
+    <characterizedBy idref="_A95_91"></characterizedBy>
+    <package idref="_P27"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A95_90">
+    <name>codelist</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="code list">EC_CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A96_86"></enumeratedBy>
+    <enumeratedBy idref="_A96_94"></enumeratedBy>
+    <enumeratedBy idref="_Arefmodel_96_87"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A95_91">
+    <name>enumeration</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">EC_Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A97_88"></enumeratedBy>
+    <enumeratedBy idref="_A97_95"></enumeratedBy>
+    <enumeratedBy idref="_Arefmodel_97_89"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureType id="_C56">
+    <name>FeatureType1</name>
+    <characterizedBy idref="_A56_98" mode="INSERT"></characterizedBy>
+    <characterizedBy idref="_A56_63"></characterizedBy>
+    <characterizedBy idref="_AT45"></characterizedBy>
+    <characterizedBy idref="_Arefmodel_56_66" mode="DELETE"></characterizedBy>
+    <characterizedBy idref="_Arefmodel_T43" mode="DELETE"></characterizedBy>
+    <package idref="_P13"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A56_98" mode="INSERT">
+    <name mode="INSERT">insertedProperty</name>
+    <cardinality mode="INSERT">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="INSERT">false</voidable>
+    <ValueDataType mode="INSERT">CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A56_63">
+    <name>prop</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T45">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT45"></roles>
+    <roles idref="_AS45"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT45">
+    <name>roleFT1_2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C57" category="feature type">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T45"></relation>
+    <InverseRole idref="_AS45"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS45">
+    <name>roleFT2_1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C56" category="feature type">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T45"></relation>
+    <InverseRole idref="_AT45"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureAttribute id="_Arefmodel_56_66" mode="DELETE">
+    <name mode="DELETE">prop2</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <ValueDataType idref="_Crefmodel_54" category="data type" mode="DELETE">DataType</ValueDataType>
+    <ValueDomainType mode="DELETE">0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__refmodel_T43" mode="DELETE">
+    <name>(unbestimmt)</name>
+    <roles idref="_Arefmodel_T43" mode="DELETE"></roles>
+    <roles idref="_Arefmodel_S43" mode="DELETE"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_Arefmodel_T43" mode="DELETE">
+    <name mode="DELETE">roleFT1_1</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_Crefmodel_58" category="feature type" mode="DELETE">DeletedFeatureType</FeatureTypeIncluded>
+    <relation idref="__refmodel_T43"></relation>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_Arefmodel_S43" mode="DELETE">
+    <name mode="DELETE">role_S43</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <isNavigable mode="DELETE">false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__refmodel_T43"></relation>
+    <InverseRole idref="_Arefmodel_T43" mode="DELETE"></InverseRole>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C57">
+    <name>FeatureType2</name>
+    <characterizedBy idref="_A57_64"></characterizedBy>
+    <characterizedBy idref="_A57_67"></characterizedBy>
+    <characterizedBy idref="_AT68" mode="INSERT"></characterizedBy>
+    <characterizedBy idref="_AS45"></characterizedBy>
+    <characterizedBy idref="_AT63"></characterizedBy>
+    <characterizedBy idref="_Arefmodel_T64" mode="DELETE"></characterizedBy>
+    <package idref="_P13"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A57_64">
+    <name>prop</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A57_67">
+    <name>prop2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="code list">CodeList1</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A49_52"></enumeratedBy>
+    <enumeratedBy idref="_A49_53"></enumeratedBy>
+    <enumeratedBy idref="_A49_54"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T68" mode="INSERT">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT68" mode="INSERT"></roles>
+    <roles idref="_AS68" mode="INSERT"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT68" mode="INSERT">
+    <name mode="INSERT">inserted_roleFT2_4</name>
+    <cardinality mode="INSERT">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="INSERT">false</voidable>
+    <FeatureTypeIncluded idref="_C107" category="feature type" mode="INSERT">InsertedFeatureType</FeatureTypeIncluded>
+    <relation idref="__T68"></relation>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS68" mode="INSERT">
+    <name mode="INSERT">role_S68</name>
+    <cardinality mode="INSERT">1</cardinality>
+    <isNavigable mode="INSERT">false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable mode="INSERT">false</voidable>
+    <FeatureTypeIncluded idref="_C57" category="feature type" mode="INSERT">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T68"></relation>
+    <InverseRole idref="_AT68" mode="INSERT"></InverseRole>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T63">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT63"></roles>
+    <roles idref="_AS63"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT63">
+    <name>roleFT2_2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C56" category="feature type">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T63"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS63">
+    <name>role_S63</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C57" category="feature type">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T63"></relation>
+    <InverseRole idref="_AT63"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__refmodel_T64" mode="DELETE">
+    <name>(unbestimmt)</name>
+    <roles idref="_Arefmodel_T64" mode="DELETE"></roles>
+    <roles idref="_Arefmodel_S64" mode="DELETE"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_Arefmodel_T64" mode="DELETE">
+    <name mode="DELETE">deleted_roleFT2_3</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
+    <relation idref="__refmodel_T64"></relation>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_Arefmodel_S64" mode="DELETE">
+    <name mode="DELETE">role_S64</name>
+    <cardinality mode="DELETE">1</cardinality>
+    <isNavigable mode="DELETE">false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable mode="DELETE">false</voidable>
+    <FeatureTypeIncluded idref="_C57" category="feature type" mode="DELETE">FeatureType2</FeatureTypeIncluded>
+    <relation idref="__refmodel_T64"></relation>
+    <InverseRole idref="_Arefmodel_T64" mode="DELETE"></InverseRole>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C64">
+    <name>GT_FeatureType1</name>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C65">
+    <name>GT_FeatureType2</name>
+    <subtypeOf idref="_C64">GT_FeatureType1</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C68">
+    <name>GT_FeatureType21</name>
+    <subtypeOf idref="_C65">GT_FeatureType2</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C69">
+    <name>GT_FeatureType22DeletedGeneralisation</name>
+    <subtypeOf idref="_C65" mode="DELETE">[[del]]GT_FeatureType2[[/del]]</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C70">
+    <name>GT_FeatureType23InsertedGeneralisation</name>
+    <subtypeOf idref="_C65" mode="INSERT">GT_FeatureType2</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C72">
+    <name>GT_FeatureType31</name>
+    <subtypeOf idref="_C66">GT_FeatureType3DeletedGeneralisation</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C73">
+    <name>GT_FeatureType32DeletedGeneralisation</name>
+    <subtypeOf idref="_C66" mode="DELETE">[[del]]GT_FeatureType3DeletedGeneralisation[[/del]]</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C74">
+    <name>GT_FeatureType33InsertedGeneralisation</name>
+    <subtypeOf idref="_C66" mode="INSERT">GT_FeatureType3DeletedGeneralisation</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C66">
+    <name>GT_FeatureType3DeletedGeneralisation</name>
+    <subtypeOf idref="_C64" mode="DELETE">[[del]]GT_FeatureType1[[/del]]</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C76">
+    <name>GT_FeatureType41</name>
+    <subtypeOf idref="_C67">GT_FeatureType4InsertedGeneralisation</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C77">
+    <name>GT_FeatureType42DeletedGeneralisation</name>
+    <subtypeOf idref="_C67" mode="DELETE">[[del]]GT_FeatureType4InsertedGeneralisation[[/del]]</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C78">
+    <name>GT_FeatureType43InsertedGeneralisation</name>
+    <subtypeOf idref="_C67" mode="INSERT">GT_FeatureType4InsertedGeneralisation</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C67">
+    <name>GT_FeatureType4InsertedGeneralisation</name>
+    <subtypeOf idref="_C64" mode="INSERT">GT_FeatureType1</subtypeOf>
+    <package idref="_P21"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C103" mode="INSERT">
+    <name mode="INSERT">ISPKG_FeatureType</name>
+    <package idref="_P30"></package>
+    <type mode="INSERT">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C105" mode="INSERT">
+    <name mode="INSERT">InsertedDataType</name>
+    <package idref="_P19"></package>
+    <type mode="INSERT">Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C107" mode="INSERT">
+    <name mode="INSERT">InsertedFeatureType</name>
+    <package idref="_P13"></package>
+    <type mode="INSERT">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C108" mode="INSERT">
+    <name mode="INSERT">InsertedType</name>
+    <package idref="_P16"></package>
+    <type mode="INSERT">Object Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C109" mode="INSERT">
+    <name mode="INSERT">InsertedUnion</name>
+    <characterizedBy idref="_A109_99" mode="INSERT"></characterizedBy>
+    <characterizedBy idref="_A109_100" mode="INSERT"></characterizedBy>
+    <package idref="_P17"></package>
+    <type mode="INSERT">Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A109_99" mode="INSERT">
+    <name mode="INSERT">optionA</name>
+    <cardinality mode="INSERT">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="INSERT">false</voidable>
+    <ValueDataType mode="INSERT">Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A109_100" mode="INSERT">
+    <name mode="INSERT">optionB</name>
+    <cardinality mode="INSERT">1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable mode="INSERT">false</voidable>
+    <ValueDataType mode="INSERT">Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C80">
+    <name>MT_FeatureType1</name>
+    <characterizedBy idref="_A80_74"></characterizedBy>
+    <characterizedBy idref="_A80_82"></characterizedBy>
+    <characterizedBy idref="_A80_78"></characterizedBy>
+    <characterizedBy idref="_A80_75"></characterizedBy>
+    <characterizedBy idref="_A80_79"></characterizedBy>
+    <characterizedBy idref="_A80_77"></characterizedBy>
+    <characterizedBy idref="_A80_80"></characterizedBy>
+    <characterizedBy idref="_A80_76"></characterizedBy>
+    <package idref="_P24"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A80_74">
+    <name>one</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_82">
+    <name>zeroOrOneChanged</name>
+    <cardinality>[[del]]0..1[[/del]][[ins]]1..*[[/ins]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_78">
+    <name>oneChanged</name>
+    <cardinality>[[del]]1[[/del]][[ins]]0..*[[/ins]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_75">
+    <name>oneOrMany</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_79">
+    <name>oneOrManyChanged</name>
+    <cardinality>[[del]]1[[/del]][[ins]]0[[/ins]]..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_77">
+    <name>zeroOrMany</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_80">
+    <name>zeroOrManyChanged</name>
+    <cardinality>[[del]]0[[/del]][[ins]]1[[/ins]]..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A80_76">
+    <name>zeroOrOne</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C81">
+    <name>MT_FeatureType2</name>
+    <characterizedBy idref="_AT54"></characterizedBy>
+    <characterizedBy idref="_AT55"></characterizedBy>
+    <characterizedBy idref="_AT56"></characterizedBy>
+    <characterizedBy idref="_AT57"></characterizedBy>
+    <characterizedBy idref="_AT58"></characterizedBy>
+    <characterizedBy idref="_AT59"></characterizedBy>
+    <characterizedBy idref="_AT60"></characterizedBy>
+    <characterizedBy idref="_AT61"></characterizedBy>
+    <package idref="_P24"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T54">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT54"></roles>
+    <roles idref="_AS54"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT54">
+    <name>oneChanged</name>
+    <cardinality>[[del]]1[[/del]][[ins]]0..*[[/ins]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T54"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS54">
+    <name>role_S54</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T54"></relation>
+    <InverseRole idref="_AT54"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T55">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT55"></roles>
+    <roles idref="_AS55"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT55">
+    <name>zeroOrOne</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T55"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS55">
+    <name>role_S55</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T55"></relation>
+    <InverseRole idref="_AT55"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T56">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT56"></roles>
+    <roles idref="_AS56"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT56">
+    <name>zeroOrMany</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T56"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS56">
+    <name>role_S56</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T56"></relation>
+    <InverseRole idref="_AT56"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T57">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT57"></roles>
+    <roles idref="_AS57"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT57">
+    <name>zeroOrManyChanged</name>
+    <cardinality>0..[[del]]*[[/del]][[ins]]1[[/ins]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T57"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS57">
+    <name>role_S57</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T57"></relation>
+    <InverseRole idref="_AT57"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T58">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT58"></roles>
+    <roles idref="_AS58"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT58">
+    <name>oneOrManyChanged</name>
+    <cardinality>1[[del]]..*[[/del]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T58"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS58">
+    <name>role_S58</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T58"></relation>
+    <InverseRole idref="_AT58"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T59">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT59"></roles>
+    <roles idref="_AS59"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT59">
+    <name>one</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T59"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS59">
+    <name>role_S59</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T59"></relation>
+    <InverseRole idref="_AT59"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T60">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT60"></roles>
+    <roles idref="_AS60"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT60">
+    <name>zeroOrOneChanged</name>
+    <cardinality>0..[[del]]1[[/del]][[ins]]*[[/ins]]</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T60"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS60">
+    <name>role_S60</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T60"></relation>
+    <InverseRole idref="_AT60"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T61">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT61"></roles>
+    <roles idref="_AS61"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT61">
+    <name>oneOrMany</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T61"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS61">
+    <name>role_S61</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T61"></relation>
+    <InverseRole idref="_AT61"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C114">
+    <name>NT_F[[del]]EATURETYPE_ÄÖÜ[[/del]][[ins]]eaturetype_äöü[[/ins]]</name>
+    <characterizedBy idref="_A114_101"></characterizedBy>
+    <characterizedBy idref="_AT69"></characterizedBy>
+    <package idref="_P31"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A114_101">
+    <name>[[del]]att[[/del]][[ins]]ATT[[/ins]]</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType category="enumeration">[[del]]NT_ENUMER[[/del]][[ins]]nt_enumer[[/ins]]ation</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A115_102"></enumeratedBy>
+    <enumeratedBy idref="_A115_103"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T69">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT69"></roles>
+    <roles idref="_AS69"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT69">
+    <name>[[del]]role[[/del]][[ins]]ROLE[[/ins]]</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C114" category="feature type">NT_F[[del]]EATURETYPE_ÄÖÜ[[/del]][[ins]]eaturetype_äöü[[/ins]]</FeatureTypeIncluded>
+    <relation idref="__T69"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS69">
+    <name>role_S69</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C114" category="feature type">NT_Featuretype_äöü</FeatureTypeIncluded>
+    <relation idref="__T69"></relation>
+    <InverseRole idref="_AT69"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C99">
+    <name>SC_FeatureType</name>
+    <package idref="_P28"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C111">
+    <name>SC_Type</name>
+    <package idref="_P28"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C85">
+    <name>TC_DataType</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <package idref="_P25"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C83">
+    <name>TC_FeatureType</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <characterizedBy idref="_A83_83"></characterizedBy>
+    <characterizedBy idref="_AT65"></characterizedBy>
+    <package idref="_P25"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A83_83">
+    <name>prop</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T65">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT65"></roles>
+    <roles idref="_AS65"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT65">
+    <name>role</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C83" category="feature type">TC_FeatureType</FeatureTypeIncluded>
+    <relation idref="__T65"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS65">
+    <name>role_S65</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C83" category="feature type">TC_FeatureType</FeatureTypeIncluded>
+    <relation idref="__T65"></relation>
+    <InverseRole idref="_AT65"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C84">
+    <name>TC_Type</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <package idref="_P25"></package>
+    <type>Object Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C86">
+    <name>TC_Union</name>
+    <title>[[ins]]new [[/ins]]alias</title>
+    <definition>definition</definition>
+    <definition>definition[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</definition>
+    <definition>[[ins]]new [[/ins]]definition[[del]]_deleted[[/del]]</definition>
+    <description>description</description>
+    <description>description[[del]]_[[/del]][[ins]] is [[/ins]]changed[[ins]] now[[/ins]]</description>
+    <description>[[ins]]new [[/ins]]de[[del]]scrip[[/del]][[ins]]fini[[/ins]]tion[[del]]_deleted[[/del]]</description>
+    <legalBasis>XYZ[[ins]]ABC[[/ins]]</legalBasis>
+    <code>[[ins]]ABC[[/ins]]XYZ</code>
+    <package idref="_P25"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C59">
+    <name>Type</name>
+    <characterizedBy idref="_A59_68"></characterizedBy>
+    <package idref="_P16"></package>
+    <type>Object Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A59_68">
+    <name>prop</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType idref="_C60" category="union data type">Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C60">
+    <name>Union</name>
+    <characterizedBy idref="_A60_69"></characterizedBy>
+    <characterizedBy idref="_A60_70"></characterizedBy>
+    <package idref="_P17"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A60_69">
+    <name>option1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A60_70">
+    <name>option2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C91">
+    <name>VTC_FeatureType1</name>
+    <characterizedBy idref="_A91_84"></characterizedBy>
+    <characterizedBy idref="_A91_85"></characterizedBy>
+    <characterizedBy idref="_AT66"></characterizedBy>
+    <characterizedBy idref="_AT67"></characterizedBy>
+    <package idref="_P26"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A91_84">
+    <name>prop</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A91_85">
+    <name>prop_changedVT</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <ValueDataType>[[del]]In[[/del]][[ins]]Charac[[/ins]]te[[del]]ge[[/del]]r[[ins]]String[[/ins]]</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T66">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT66"></roles>
+    <roles idref="_AS66"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT66">
+    <name>role</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C92" category="feature type">VTC_FeatureType2</FeatureTypeIncluded>
+    <relation idref="__T66"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS66">
+    <name>role_S66</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C91" category="feature type">VTC_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T66"></relation>
+    <InverseRole idref="_AT66"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureRelationship id="__T67">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT67"></roles>
+    <roles idref="_AS67"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT67">
+    <name>roleChangedVT</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C93" category="feature type">VTC_FeatureType[[del]]2[[/del]][[ins]]3[[/ins]]</FeatureTypeIncluded>
+    <relation idref="__T67"></relation>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <RelationshipRole id="_AS67">
+    <name>role_S67</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <FeatureTypeIncluded idref="_C91" category="feature type">VTC_FeatureType1</FeatureTypeIncluded>
+    <relation idref="__T67"></relation>
+    <InverseRole idref="_AT67"></InverseRole>
+    <orderIndicator>0</orderIndicator>
+  </RelationshipRole>
+  <FeatureType id="_C92">
+    <name>VTC_FeatureType2</name>
+    <package idref="_P26"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C93">
+    <name>VTC_FeatureType3</name>
+    <package idref="_P26"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <ApplicationSchema id="_P32">
+    <name>Test Schema2</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_Crefmodel_114" mode="DELETE">
+    <name mode="DELETE">DeletedFeatureType</name>
+    <subtypeOf idref="_C118" mode="DELETE">FeatureType</subtypeOf>
+    <package idref="_P32"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C118">
+    <name>FeatureType</name>
+    <package idref="_P32"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C119" mode="INSERT">
+    <name mode="INSERT">InsertedFeatureType</name>
+    <subtypeOf idref="_C118" mode="INSERT">FeatureType</subtypeOf>
+    <package idref="_P32"></package>
+    <type mode="INSERT">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <Value id="_A49_52">
+    <label>code1</label>
+    <code>code1</code>
+  </Value>
+  <Value id="_A49_53">
+    <label>code2</label>
+    <code>code2</code>
+  </Value>
+  <Value id="_A49_54">
+    <label>code3</label>
+    <code>code3</code>
+  </Value>
+  <Value id="_A96_86">
+    <label>code</label>
+    <code>code</code>
+  </Value>
+  <Value id="_A96_94" mode="INSERT">
+    <label mode="INSERT">insertedCode</label>
+    <code mode="INSERT">insertedCode</code>
+  </Value>
+  <Value id="_Arefmodel_96_87" mode="DELETE">
+    <label mode="DELETE">deletedCode</label>
+    <code mode="DELETE">deletedCode</code>
+  </Value>
+  <Value id="_A97_88">
+    <label>enum</label>
+    <code>enum</code>
+  </Value>
+  <Value id="_A97_95" mode="INSERT">
+    <label mode="INSERT">insertedEnum</label>
+    <code mode="INSERT">insertedEnum</code>
+  </Value>
+  <Value id="_Arefmodel_97_89" mode="DELETE">
+    <label mode="DELETE">deletedEnum</label>
+    <code mode="DELETE">deletedEnum</code>
+  </Value>
+  <Value id="_A115_102">
+    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]1</label>
+    <code>ENUM1</code>
+  </Value>
+  <Value id="_A115_103">
+    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]2</label>
+    <code>ENUM2</code>
+  </Value>
+</FeatureCatalogue>

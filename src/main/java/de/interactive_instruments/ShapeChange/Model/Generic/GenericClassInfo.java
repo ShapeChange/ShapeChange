@@ -287,7 +287,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -296,7 +298,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -305,7 +309,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -314,7 +320,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -323,7 +331,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -332,7 +342,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -341,7 +353,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -350,7 +364,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -359,12 +375,14 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * In the generic model, always return an empty string, the other descriptors should be used instead.
+	 * In the generic model, always return an empty string, the other
+	 * descriptors should be used instead.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
 	public String documentation() {
-		return ""; 
+		return "";
 	}
 
 	/**
@@ -419,7 +437,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setAliasName(String aliasName) {
@@ -427,7 +445,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDefinition(String definition) {
@@ -435,7 +453,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDescription(String description) {
@@ -443,7 +461,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLanguage(String language) {
@@ -451,7 +469,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setPrimaryCode(String primaryCode) {
@@ -459,7 +477,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLegalBasis(String legalBasis) {
@@ -467,7 +485,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setExamples(String[] examples) {
@@ -475,7 +493,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDataCaptureStatements(String[] dataCaptureStatements) {
@@ -675,7 +693,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		} else if (tvName.equalsIgnoreCase("documentation")) {
 
 			// we map this to the descriptor 'definition'
-			this.setDefinition(tvValue);			
+			this.setDefinition(tvValue);
 
 		} else if (tvName.equalsIgnoreCase("suppress")) {
 
@@ -1012,8 +1030,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 			this.model.genPropertiesById.put(newProperty.id(), newProperty);
 
-		} else
-			if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
+		} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
 
 			// add but log a warning
 			result.addWarning(null, 30200, newProperty.name(), this.name());
@@ -1030,8 +1047,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 			result.addWarning(null, 30201, newProperty.name(), this.name());
 
-		} else
-			if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
+		} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
 
 			/*
 			 * alright, we do not add the new property to the properties of this
@@ -1115,8 +1131,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 					this.model.genPropertiesById.put(newProperty.id(),
 							newProperty);
 
-				} else
-					if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
+				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
 
 					// add but log a warning
 					result.addWarning(null, 30200, newProperty.name(),
@@ -1137,8 +1152,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 					result.addWarning(null, 30201, newProperty.name(),
 							this.name());
 
-				} else
-					if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
+				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
 
 					/*
 					 * alright, we do not add the new property to the properties
@@ -1657,6 +1671,38 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		if (updateFields) {
 			updateFieldsForTaggedValue(tvName, tvValue);
+		}
+	}
+
+	/**
+	 * Adds the prefix to the 'id' of this class as well as the 'subtypes' (if
+	 * not <code>null</code>) and the 'supertypes' (if not <code>null</code>).
+	 * Does NOT update the 'globalId'.
+	 * 
+	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
+	 * IDs used in a reference model are unique to that model and do not get
+	 * mixed up with the IDs of the input model.
+	 * 
+	 * @param prefix
+	 */
+	public void addPrefixToModelElementIDs(String prefix) {
+
+		this.id = prefix + id;
+
+		if (subtypes != null) {
+			TreeSet<String> tmp_subtypes = new TreeSet<String>();
+			for (String id : subtypes) {
+				tmp_subtypes.add(prefix + id);
+			}
+			this.subtypes = tmp_subtypes;
+		}
+
+		if (supertypes != null) {
+			TreeSet<String> tmp_supertypes = new TreeSet<String>();
+			for (String id : supertypes) {
+				tmp_supertypes.add(prefix + id);
+			}
+			this.supertypes = tmp_supertypes;
 		}
 	}
 }

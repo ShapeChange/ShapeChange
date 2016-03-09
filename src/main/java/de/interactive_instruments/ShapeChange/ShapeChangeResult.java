@@ -781,6 +781,7 @@ public class ShapeChangeResult {
 		case 204:
 			return "??Outdated tagged value '$1$' used in property '$2$'.";
 
+			// FeatureCatalogue related messages (TBC)
 		case 301:
 			return "File '$1$' is not readable, processing of $2$ is skipped.";
 		case 303:
@@ -793,6 +794,8 @@ public class ShapeChangeResult {
 			return "XSLFO-File '$1$' does not exist, PDF generation is skipped.";
 		case 307:
 			return "File '$1$' is not writable, processing of $2$ is skipped.";
+		case 308:
+			return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
 
 		case 400:
 			return "Context: $1$ '$2$'";

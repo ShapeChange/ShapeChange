@@ -46,12 +46,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -91,7 +94,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
-import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -108,8 +110,10 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
+import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.Operation;
 import de.interactive_instruments.ShapeChange.ModelDiff.Differ;
 import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
@@ -130,6 +134,8 @@ public class FeatureCatalogue
 	public static final int STATUS_WRITE_HTML = 23;
 	public static final int STATUS_WRITE_XML = 24;
 	public static final int STATUS_WRITE_RTF = 25;
+	public static final int STATUS_WRITE_FRAMEHTML = 26;
+	public static final int STATUS_WRITE_DOCX = 27;
 
 	/**
 	 * Default URI defining the location of the localizationMessages.xml file in
@@ -178,7 +184,26 @@ public class FeatureCatalogue
 	private static String Package = "";
 	private static TreeSet<ClassInfo> additionalClasses = new TreeSet<ClassInfo>();
 	private static TreeSet<ClassInfo> enumerations = new TreeSet<ClassInfo>();
-	private static Model refModel = null;
+
+	/*
+	 * NOTE: refModel, refPackage, diffs and differ are relevant for processing
+	 * classes and during write all. They are not needed when the output is
+	 * actually written during writeOutput(). Therefore, they are not
+	 * initialized when the converter executes deferrable output writers.
+	 * 
+	 */
+	private static GenericModel refModel = null;
+	private static PackageInfo refPackage = null;
+	private static SortedMap<Info, SortedSet<DiffElement>> diffs = new TreeMap<Info, SortedSet<DiffElement>>();
+	private static Differ differ = null;
+
+	/**
+	 * key: (lowercase!) full name (in schema) of the class contained as value
+	 * 
+	 * value: a class from the input schema
+	 */
+	private static Map<String, ClassInfo> inputSchemaClassesByFullNameInSchema = null;
+
 	private static Boolean Inherit = false;
 	private static TreeSet<PropertyInfo> exportedRoles = new TreeSet<PropertyInfo>();
 	private static TreeSet<PropertyInfo> exportedProperties = new TreeSet<PropertyInfo>();
@@ -192,6 +217,7 @@ public class FeatureCatalogue
 	private static String xslfofileName = "pdf.xsl";
 	private static String xslTransformerFactory = null;
 	private static String xslhtmlfileName = "html.xsl";
+	private static final String DEFAULT_XSL_HTML_DIFF_FILE_NAME = "html_diff.xsl";
 	private static String xslframeHtmlFileName = "frameHtml.xsl";
 	private static String cssFileName = "stylesheet.css";
 	private static String xslrtffileName = "rtf.xsl";
@@ -291,6 +317,12 @@ public class FeatureCatalogue
 		includeTitle = true;
 		deleteXmlFile = false;
 		dontTransform = false;
+
+		refModel = null;
+		refPackage = null;
+		diffs = new TreeMap<Info, SortedSet<DiffElement>>();
+		differ = null;
+		inputSchemaClassesByFullNameInSchema = null;
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
@@ -381,34 +413,28 @@ public class FeatureCatalogue
 
 				String s = null;
 
-				refModel = getReferenceModel();
-				if (refModel != null) {
-					Differ differ = new Differ();
-					SortedSet<PackageInfo> set = refModel.schemas(p.name());
-					if (set.size() == 1) {
-						TreeMap<Info, HashSet<DiffElement>> diffs = differ
-								.diff(p, set.iterator().next());
-						for (Entry<Info, HashSet<DiffElement>> me : diffs
-								.entrySet()) {
-							MessageContext mc = result
-									.addInfo("Model difference - "
-											+ me.getKey().fullName().replace(
-													p.fullName(), p.name()));
-							for (DiffElement diff : me.getValue()) {
-								s = diff.change + " " + diff.subElementType;
-								if (diff.subElementType == ElementType.TAG)
-									s += "(" + diff.tag + ")";
-								if (diff.subElement != null)
-									s += " " + diff.subElement.name();
-								else if (diff.diff != null)
-									s += " " + (new diff_match_patch())
-											.diff_prettyHtml(diff.diff);
-								else
-									s += " ???";
-								mc.addDetail(s);
-							}
-						}
-					}
+				Model refModel_tmp = getReferenceModel();
+
+				if (refModel_tmp != null) {
+
+					/*
+					 * Ensure that IDs used in the reference model are unique to
+					 * that model and do not get mixed up with the IDs of the
+					 * input model.
+					 * 
+					 * REQUIREMENT for model diff: two objects with equal ID
+					 * must represent the same model element. If a model element
+					 * is deleted in the reference model, then a new model
+					 * element in the input model must not have the same ID.
+					 * 
+					 * It looks like this cannot be guaranteed. Therefore we add
+					 * a prefix to the IDs of the model elements in the
+					 * reference model.
+					 */
+					refModel = new GenericModel(refModel_tmp);
+					refModel_tmp.shutdown();
+
+					refModel.addPrefixToModelElementIDs("refmodel_");					
 				}
 
 				String xmlName = outputFilename + ".tmp.xml";
@@ -465,7 +491,7 @@ public class FeatureCatalogue
 				s = options.parameter(this.getClass().getName(), "scope");
 
 				if (s != null && s.length() > 0)
-					PrintLineByLine(s, "scope");
+					PrintLineByLine(s, "scope", null);
 				else {
 					writer.dataElement("scope", "unknown");
 				}
@@ -488,6 +514,74 @@ public class FeatureCatalogue
 					writer.dataElement("producer", s);
 				else
 					writer.dataElement("producer", "unknown");
+			}
+			
+			// we need to compute the diff for each application schema
+			if(refModel != null) {
+				
+				SortedSet<PackageInfo> set = refModel.schemas(p.name());
+
+				if (set.size() == 1) {
+
+					/*
+					 * Get the full names of classes (in lower case) from
+					 * the input schema so that later we can look them up by
+					 * their full name (within the schema, not in the
+					 * model).
+					 */
+					inputSchemaClassesByFullNameInSchema = new HashMap<String, ClassInfo>();
+					for (ClassInfo ci : model.classes(pi)) {
+						inputSchemaClassesByFullNameInSchema
+								.put(ci.fullNameInSchema()
+										.toLowerCase(Locale.ENGLISH), ci);
+					}
+
+					// compute diffs
+					differ = new Differ();
+					refPackage = set.iterator().next();
+					SortedMap<Info,SortedSet<DiffElement>> pi_diffs = differ.diff(p, refPackage);
+					
+					// merge diffs for pi with existing diffs (from other schemas)
+					differ.merge(diffs, pi_diffs);
+
+					// log the diffs found for pi
+					for (Entry<Info, SortedSet<DiffElement>> me : pi_diffs
+							.entrySet()) {
+
+						MessageContext mc = result
+								.addInfo("Model difference - "
+										+ me.getKey().fullName().replace(
+												p.fullName(), p.name()));
+
+						for (DiffElement diff : me.getValue()) {
+							String s = diff.change + " " + diff.subElementType;
+							if (diff.subElementType == ElementType.TAG)
+								s += "(" + diff.tag + ")";
+							if (diff.subElement != null)
+								s += " " + diff.subElement.name();
+							else if (diff.diff != null)
+								s += " " + (new diff_match_patch())
+										.diff_prettyHtml(diff.diff);
+							else
+								s += " ???";
+							mc.addDetail(s);
+						}
+					}
+										
+
+					/*
+					 * switch to default xslt for html diff - unless the
+					 * configuration explicitly names an XSLT file to use
+					 */
+					if (options.parameter(this.getClass().getName(),
+							"xslhtmlFile") == null) {
+						xslhtmlfileName = DEFAULT_XSL_HTML_DIFF_FILE_NAME;
+					}
+
+				} else {
+					result.addWarning(null, 308, p.name());
+					refModel = null;
+				}
 			}
 
 			writer.startElement("ApplicationSchema", "id", "_P" + pi.id());
@@ -515,11 +609,11 @@ public class FeatureCatalogue
 
 			String s = pi.definition();
 			if (s != null && s.length() > 0) {
-				PrintLineByLine(s, "definition");
+				PrintLineByLine(s, "definition", null);
 			}
 			s = pi.description();
 			if (s != null && s.length() > 0) {
-				PrintLineByLine(s, "description");
+				PrintLineByLine(s, "description", null);
 			}
 
 			s = pi.version();
@@ -545,11 +639,33 @@ public class FeatureCatalogue
 
 			writer.endElement("ApplicationSchema");
 
-			for (PackageInfo pix : pi.containedPackages()) {
-				if (!pix.isSchema()) {
-					PrintPackage(pix);
+			/*
+			 * Check if there are any deletions of classes or packages that are
+			 * owned by the application schema package.
+			 */
+
+			if (hasDiff(pi, ElementType.SUBPACKAGE, Operation.DELETE)) {
+
+				Set<DiffElement> pkgdiffs = getDiffs(pi, ElementType.SUBPACKAGE,
+						Operation.DELETE);
+
+				for (DiffElement diff : pkgdiffs) {
+
+					// child package was deleted
+					PrintPackage((PackageInfo) diff.subElement,
+							Operation.DELETE);
 				}
+
 			}
+
+			printContainedPackages(pi);
+
+			/*
+			 * NOTE: inserted or unchanged classes are handled in
+			 * process(ClassInfo) method
+			 */
+			printDeletedClasses(pi);
+
 		} catch (Exception e) {
 
 			String msg = e.getMessage();
@@ -557,6 +673,38 @@ public class FeatureCatalogue
 				result.addError(msg);
 			}
 			e.printStackTrace(System.err);
+		}
+	}
+
+	private void printDeletedClasses(PackageInfo pix) {
+
+		if (hasDiff(pix, ElementType.CLASS, Operation.DELETE)) {
+
+			Set<DiffElement> classdiffs = getDiffs(pix, ElementType.CLASS,
+					Operation.DELETE);
+
+			for (DiffElement diff : classdiffs) {
+
+				// child class was deleted
+				ClassInfo deletedCi = (ClassInfo) diff.subElement;
+
+				/*
+				 * Print the class if it is not a code list or enumeration
+				 * (because these categories are not printed).
+				 */
+				if (deletedCi.category() != Options.CODELIST
+						&& deletedCi.category() != Options.ENUMERATION) {
+
+					PrintClass(deletedCi, true, Operation.DELETE, pix);
+				}
+			}
+
+		} else {
+
+			/*
+			 * inserted and unchanged classes are handled in process(ClassInfo)
+			 * method
+			 */
 		}
 	}
 
@@ -602,10 +750,11 @@ public class FeatureCatalogue
 	}
 
 	private Model getReferenceModel() {
+
 		String imt = options.parameter(this.getClass().getName(),
 				"referenceModelType");
 		String mdl = options.parameter(this.getClass().getName(),
-				"referenceModelFile");
+				"referenceModelFileNameOrConnectionString");
 
 		if (imt == null || imt.isEmpty())
 			return null;
@@ -657,64 +806,196 @@ public class FeatureCatalogue
 		return m;
 	}
 
-	private void PrintDescriptors(Info i, boolean isClass) throws SAXException {
+	private void PrintDescriptors(Info i, boolean isClass, Operation op)
+			throws SAXException {
 		String s;
 		String[] sa;
 
-		writer.dataElement("name", PrepareToPrint(i.name()));
+		s = i.name();
+		s = checkDiff(s, i, ElementType.NAME);
+		writer.dataElement("name", PrepareToPrint(s), op);
 
-		if (includeTitle && i.aliasName() != null
-				&& i.aliasName().length() > 0) {
-			// calling the element that holds the 'alias' value
-			// TODO note that 'title' is legacy, it should be called 'alias'
-			writer.dataElement("title", i.aliasName());
+		s = i.aliasName();
+		/*
+		 * Always include the alias if a diff exists for it; otherwise only
+		 * include the alias if requested via parameter and if it has a value
+		 */
+		if (hasDiff(i, ElementType.ALIAS)) {
+
+			// get the diff
+			Set<DiffElement> diffs = getDiffs(i, ElementType.ALIAS);
+			// there can only be one change to the alias
+			s = differ.diff_toString(diffs.iterator().next().diff);
+
+			writer.dataElement("title", PrepareToPrint(s), op);
+
+		} else {
+
+			if (includeTitle && i.aliasName() != null
+					&& i.aliasName().length() > 0) {
+				// calling the element that holds the 'alias' value
+				// TODO note that 'title' is legacy, it should be called 'alias'
+				writer.dataElement("title", s, op);
+			}
 		}
 
 		s = i.definition();
+		s = checkDiff(s, i, ElementType.DEFINITION);
 		if (s != null && s.length() > 0) {
-			PrintLineByLine(s, "definition");
+			PrintLineByLine(s, "definition", op);
 		}
+
 		s = i.description();
+		s = checkDiff(s, i, ElementType.DESCRIPTION);
 		if (s != null && s.length() > 0) {
-			PrintLineByLine(s, "description");
+			PrintLineByLine(s, "description", op);
 		}
 
 		sa = i.examples();
+		// TODO compute and check diffs
 		if (sa != null) {
 			Arrays.sort(sa);
 			for (String s2 : sa)
 				if (s2 != null)
-					PrintLineByLine(s2, "example");
+					PrintLineByLine(s2, "example", null);
 		}
 
 		s = i.legalBasis();
+		s = checkDiff(s, i, ElementType.LEGALBASIS);
 		if (s != null && s.length() > 0) {
-			PrintLineByLine(s, "legalBasis");
+			PrintLineByLine(s, "legalBasis", op);
 		}
 
 		sa = i.dataCaptureStatements();
+		// TODO compute and check diffs
 		if (sa != null) {
 			Arrays.sort(sa);
 			for (String s2 : sa)
 				if (s2 != null)
-					PrintLineByLine(s2, "dataCaptureStatement");
+					PrintLineByLine(s2, "dataCaptureStatement", null);
 		}
 
 		s = i.primaryCode();
+		s = checkDiff(s, i, ElementType.PRIMARYCODE);
 		if (s != null && s.length() > 0) {
-			writer.dataElement("code", PrepareToPrint(s));
+			writer.dataElement("code", PrepareToPrint(s), op);
 		}
 	}
 
+	/**
+	 * @param i
+	 * @param type
+	 * @return the diffs with the given ElementType for the given Info object,
+	 *         if such diffs exist; can be empty but not <code>null</code>
+	 */
+	private SortedSet<DiffElement> getDiffs(Info i, ElementType type) {
+
+		SortedSet<DiffElement> result = new TreeSet<DiffElement>();
+
+		if (diffs != null && diffs.get(i) != null) {
+
+			for (DiffElement diff : diffs.get(i)) {
+				if (diff.subElementType == type) {
+					result.add(diff);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param i
+	 * @param type
+	 * @param op
+	 * @return the diffs with the given ElementType and Operation for the given
+	 *         Info object, if such diffs exist; can be empty but not
+	 *         <code>null</code>
+	 */
+	private SortedSet<DiffElement> getDiffs(Info i, ElementType type, Operation op) {
+
+		SortedSet<DiffElement> result = new TreeSet<DiffElement>();
+
+		if (diffs != null && diffs.get(i) != null) {
+
+			for (DiffElement diff : diffs.get(i)) {
+				if (diff.subElementType == type && diff.change == op) {
+					result.add(diff);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param i
+	 * @param type
+	 * @return <code>true</code> if at least one diff with the given type exists
+	 *         for the given Info object; else <code>false</code>
+	 */
+	private boolean hasDiff(Info i, ElementType type) {
+
+		if (diffs != null && diffs.get(i) != null) {
+			for (DiffElement diff : diffs.get(i)) {
+				if (diff.subElementType == type) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if a diff with the given ElementType exists for the given Info
+	 * object. If so, the string representation of the diff is returned.
+	 * Otherwise the given String is returned.
+	 * 
+	 * @param s
+	 *            original String
+	 * @param i
+	 *            Info object for which a diff might exist
+	 * @param type
+	 *            the type of element for which a diff shall be looked up
+	 * @return the diff with the given ElementType for the given Info object, if
+	 *         it exists - otherwise the original String
+	 */
+	private String checkDiff(String s, Info i, ElementType type) {
+
+		if (diffs != null && diffs.get(i) != null) {
+			for (DiffElement diff : diffs.get(i)) {
+				if (diff.subElementType == type) {
+					return differ.diff_toString(diff.diff);
+				}
+			}
+		}
+
+		return s;
+	}
+
 	// FIXME package structure
-	private void PrintPackage(PackageInfo pix) throws Exception {
+	private void PrintPackage(PackageInfo pix, Operation op) throws Exception {
+
 		if (packageInPackage(pix)) {
 
-			writer.startElement("Package", "id", "_P" + pix.id());
+			writer.startElement("Package", "id", "_P" + pix.id(), op);
 
-			PrintDescriptors(pix, false);
+			PrintDescriptors(pix, false, op);
 
-			writer.emptyElement("parent", "idref", "_P" + pix.owner().id());
+			String pixOwnerId = pix.owner().id();
+
+			/*
+			 * if pix was deleted, use the id from the according diff as owner
+			 * id
+			 */
+			Info ownerOfInputModel = getInfoWithDiff(ElementType.SUBPACKAGE,
+					Operation.DELETE, pix);
+			if (ownerOfInputModel != null) {
+				pixOwnerId = ownerOfInputModel.id();
+			}
+
+			writer.emptyElement("parent", "idref", "_P" + pixOwnerId);
 
 			if (pix.getDiagrams() != null) {
 				appendImageInfo(pix.getDiagrams());
@@ -723,21 +1004,129 @@ public class FeatureCatalogue
 			writer.endElement("Package");
 		}
 
-		for (PackageInfo pix2 : pix.containedPackages()) {
-			if (!pix2.isSchema())
-				PrintPackage(pix2);
+		// now handle contained packages and potentially deleted classes
+
+		// check if package pix has been deleted
+		if (op != null && op == Operation.DELETE) {
+
+			// package has been deleted: print all its classes and packages
+
+			for (PackageInfo delpi : pix.containedPackages()) {
+
+				if (!delpi.isSchema()) {
+					PrintPackage(delpi, Operation.DELETE);
+				}
+			}
+
+			for (ClassInfo delci : pix.containedClasses()) {
+
+				PrintClass(delci, true, Operation.DELETE, pix);
+			}
+
+		} else {
+
+			// pix itself has not been deleted; handle its content
+
+			// check if subpackages of pix have been deleted
+			if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.DELETE)) {
+
+				Set<DiffElement> pkgdiffs = getDiffs(pix,
+						ElementType.SUBPACKAGE, Operation.DELETE);
+
+				for (DiffElement diff : pkgdiffs) {
+
+					// child package was deleted
+					PrintPackage((PackageInfo) diff.subElement,
+							Operation.DELETE);
+				}
+
+			}
+
+			printContainedPackages(pix);
+
+			/*
+			 * NOTE: inserted or unchanged classes are handled in
+			 * process(ClassInfo) method
+			 */
+			printDeletedClasses(pix);
 		}
 	}
 
-	private void PrintLineByLine(String s, String ename) throws SAXException {
-		String[] lines = s.replace("[NEWLINE]", "\n").split("\n");
+	private void printContainedPackages(PackageInfo pix) throws Exception {
+
+		for (PackageInfo pix2 : pix.containedPackages()) {
+
+			if (!pix2.isSchema()) {
+
+				/*
+				 * Check for diffs concerning the children of the given package
+				 * (pix).
+				 */
+				if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.INSERT,
+						pix2)) {
+
+					// child package was inserted
+					PrintPackage(pix2, Operation.INSERT);
+
+				} else {
+
+					/*
+					 * child package has not been deleted (this is checked
+					 * elsewhere) or inserted
+					 */
+					PrintPackage(pix2, null);
+				}
+			}
+		}
+	}
+
+	private void PrintLineByLine(String s, String ename, Operation op)
+			throws SAXException {
+
+		boolean ins = false;
+		boolean del = false;
+
+		String[] lines = s.replace("[NEWLINE]", "\n").replace("\r\n", "\n")
+				.replace("\r", "\n").split("\n");
+
 		for (String line : lines) {
 
 			String text = PrepareToPrint(line);
+
+			if (ins) {
+				text = "[[ins]]" + line;
+				ins = false;
+			} else if (del) {
+				text = "[[del]]" + line;
+				del = false;
+			}
+
+			if (countSubstringInString(text,
+					"[[ins]]") > countSubstringInString(text, "[[/ins]]")) {
+				ins = true;
+				text += "[[/ins]]";
+			} else if (countSubstringInString(text,
+					"[[del]]") > countSubstringInString(text, "[[/del]]")) {
+				del = true;
+				text += "[[/del]]";
+			}
+
 			text = options.internalize(text);
 
-			writer.dataElement(ename, text);
+			writer.dataElement(ename, text, op);
 		}
+	}
+
+	private int countSubstringInString(String str, String substr) {
+
+		int count = 0;
+		int idx = 0;
+		while ((idx = str.indexOf(substr, idx)) != -1) {
+			idx++;
+			count++;
+		}
+
+		return count;
 	}
 
 	private String PrepareToPrint(String s) {
@@ -793,22 +1182,52 @@ public class FeatureCatalogue
 		if (!packageInPackage(ci.pkg()))
 			return;
 
+		// determine diff operation for ci
+		Operation op = null;
+		if (diffs != null && diffs.get(ci.pkg()) != null)
+			for (DiffElement diff : diffs.get(ci.pkg())) {
+				if (diff.subElementType == ElementType.CLASS
+						&& ((ClassInfo) diff.subElement) == ci
+						&& diff.change == Operation.INSERT) {
+					op = Operation.INSERT;
+					break;
+				}
+			}
+		if (op == null) {
+			PackageInfo pix = ci.pkg();
+			while (pix != null) {
+				if (diffs != null && pix.owner() != null
+						&& diffs.get(pix.owner()) != null)
+					for (DiffElement diff : diffs.get(pix.owner())) {
+						if (diff.subElementType == ElementType.SUBPACKAGE
+								&& ((PackageInfo) diff.subElement) == pix
+								&& diff.change == Operation.INSERT) {
+							op = Operation.INSERT;
+							pix = null;
+							break;
+						}
+					}
+				if (pix != null)
+					pix = pix.owner();
+			}
+		}
+
 		int cat = ci.category();
 		switch (cat) {
 		case Options.OKSTRAFID:
 		case Options.FEATURE:
 		case Options.OBJECT:
-			PrintClass(ci, true);
+			PrintClass(ci, true, op, ci.pkg());
 			break;
 		case Options.MIXIN:
 			if (!Inherit)
-				PrintClass(ci, true);
+				PrintClass(ci, true, op, ci.pkg());
 			break;
 		case Options.OKSTRAKEY:
 		case Options.DATATYPE:
 		case Options.UNION:
 		case Options.BASICTYPE:
-			PrintClass(ci, true);
+			PrintClass(ci, true, op, ci.pkg());
 			for (String t : ci.supertypes()) {
 				ClassInfo cix = model.classById(t);
 				if (cix != null) {
@@ -823,7 +1242,46 @@ public class FeatureCatalogue
 		}
 	}
 
-	private void PrintValues(ClassInfo ci) throws SAXException {
+	private void PrintValue(PropertyInfo propi, Operation op)
+			throws SAXException {
+
+		String propiid = "_A" + propi.id();
+		propiid = options.internalize(propiid);
+
+		writer.startElement("Value", "id", propiid, op);
+
+		String s = propi.aliasName();
+		s = checkDiff(s, propi, ElementType.ALIAS);
+		if (s == null || s.length() == 0) {
+			s = propi.name();
+			s = checkDiff(s, propi, ElementType.NAME);
+		}
+		writer.dataElement("label", s, op);
+
+		s = propi.initialValue();
+		if (s == null || s.length() == 0)
+			s = propi.name();
+
+		s = options.internalize(s);
+
+		writer.dataElement("code", PrepareToPrint(s), op);
+
+		s = propi.definition();
+		s = checkDiff(s, propi, ElementType.DEFINITION);
+		if (s != null && s.length() > 0) {
+			PrintLineByLine(s, "definition", op);
+		}
+		s = propi.description();
+		s = checkDiff(s, propi, ElementType.DESCRIPTION);
+		if (s != null && s.length() > 0) {
+			PrintLineByLine(s, "description", op);
+		}
+
+		// FIXME PrintStandardElements(propi);
+		writer.endElement("Value");
+	}
+
+	private void PrintValues(ClassInfo ci, Operation op) throws SAXException {
 
 		for (PropertyInfo propi : ci.properties().values()) {
 			if (propi == null)
@@ -831,35 +1289,22 @@ public class FeatureCatalogue
 			if (!ExportValue(propi))
 				continue;
 
-			String propiid = "_A" + propi.id();
-			propiid = options.internalize(propiid);
-
-			writer.startElement("Value", "id", propiid);
-
-			String s = propi.aliasName();
-			if (s == null || s.length() == 0)
-				s = propi.name();
-			writer.dataElement("label", s);
-
-			s = propi.initialValue();
-			if (s == null || s.length() == 0)
-				s = propi.name();
-
-			s = options.internalize(s);
-
-			writer.dataElement("code", PrepareToPrint(s));
-
-			s = propi.definition();
-			if (s != null && s.length() > 0) {
-				PrintLineByLine(s, "definition");
-			}
-			s = propi.description();
-			if (s != null && s.length() > 0) {
-				PrintLineByLine(s, "description");
+			Operation top = op;
+			if (hasDiff(ci, ElementType.ENUM, Operation.INSERT, propi)) {
+				top = Operation.INSERT;
 			}
 
-			// FIXME PrintStandardElements(propi);
-			writer.endElement("Value");
+			PrintValue(propi, top);
+		}
+
+		if (diffs != null && diffs.get(ci) != null) {
+			for (DiffElement diff : diffs.get(ci)) {
+				if (diff.subElementType == ElementType.ENUM
+						&& diff.change == Operation.DELETE) {
+					PrintValue((PropertyInfo) diff.subElement,
+							Operation.DELETE);
+				}
+			}
 		}
 	}
 
@@ -882,18 +1327,23 @@ public class FeatureCatalogue
 		return ExportItem(propi);
 	}
 
-	private boolean ExportClass(ClassInfo ci, Boolean onlyProperties) {
-		if (!ci.inSchema(pi) && !onlyProperties)
+	private boolean ExportClass(ClassInfo ci, Boolean onlyProperties,
+			Operation op) {
+
+		if (!ci.inSchema(pi) && !onlyProperties && op != Operation.DELETE)
 			return false;
 
-		if (!packageInPackage(ci.pkg()) && !onlyProperties)
+		if (!packageInPackage(ci.pkg()) && !onlyProperties
+				&& op != Operation.DELETE)
 			return false;
 
 		return ExportItem(ci);
 	}
 
-	private void PrintClass(ClassInfo ci, boolean onlyProperties) {
-		if (!ExportClass(ci, onlyProperties))
+	private void PrintClass(ClassInfo ci, boolean onlyProperties, Operation op,
+			PackageInfo pix) {
+
+		if (!ExportClass(ci, onlyProperties, op))
 			return;
 
 		try {
@@ -903,33 +1353,78 @@ public class FeatureCatalogue
 				String ciid = "_C" + ci.id();
 				ciid = options.internalize(ciid);
 
-				writer.startElement("FeatureType", "id", ciid);
+				writer.startElement("FeatureType", "id", ciid, op);
 
-				PrintDescriptors(ci, true);
+				PrintDescriptors(ci, true, op);
 
+				// NOTE: the Differ currently does not check abstractness
 				if (ci.isAbstract()) {
 					writer.dataElement("isAbstract", "1");
 				}
 
 				for (String t : ci.supertypes()) {
-					ClassInfo cix = model.classById(t);
-					if (cix != null
-							&& (!Inherit || cix.category() != Options.MIXIN)) {
+
+					ClassInfo cix = lookupClassById(t);
+
+					if (cix != null) {
+
+						String name = cix.name();
 
 						String cixid = "_C" + cix.id();
 						cixid = options.internalize(cixid);
 
-						writer.dataElement("subtypeOf", cix.name(), "idref",
-								cixid);
+						// check for insertion
+						boolean inserted = false;
+						Operation opForGeneralization = op;
+						if (hasDiff(ci, ElementType.SUPERTYPE, Operation.INSERT,
+								cix)) {
+							name = "[[ins]]" + name + "[[/ins]]";
+							inserted = true;
+							opForGeneralization = Operation.INSERT;
+						}
+
+						if (inserted || !Inherit
+								|| cix.category() != Options.MIXIN) {
+
+							name = options.internalize(name);
+
+							writer.dataElement("subtypeOf", cix.name(), "idref",
+									cixid, opForGeneralization);
+						}
+					}
+				}
+				// Diff: check for potential deletions of supertypes
+				if (hasDiff(ci, ElementType.SUPERTYPE, Operation.DELETE)) {
+
+					for (DiffElement diff : getDiffs(ci, ElementType.SUPERTYPE,
+							Operation.DELETE)) {
+
+						String nameOfDeletedSupertype = "[[del]]"
+								+ diff.subElement.name() + "[[/del]]";
+
+						String supertypeId = diff.subElement.id();
+
+						/*
+						 * Don't simply use the id from the diff's subElement as
+						 * reference. Rather, try to look up the class in the
+						 * input model.
+						 */
+						ClassInfo supertype = lookupClassById(supertypeId);
+
+						String cixid = "_C" + supertype.id();
+						cixid = options.internalize(cixid);
+
+						writer.dataElement("subtypeOf", nameOfDeletedSupertype,
+								"idref", cixid, Operation.DELETE);
 					}
 				}
 
-				PrintProperties(ci, true);
+				PrintProperties(ci, true, op);
 				/*
 				 * TODO PrintOperations true;
 				 */
 
-				writer.emptyElement("package", "idref", "_P" + ci.pkg().id());
+				writer.emptyElement("package", "idref", "_P" + pix.id());
 
 				switch (ci.category()) {
 				case Options.FEATURE:
@@ -938,17 +1433,18 @@ public class FeatureCatalogue
 					String text = featureTerm + " Type";
 					text = options.internalize(text);
 
-					writer.dataElement("type", text);
+					writer.dataElement("type", text, op);
+
 					break;
 				case Options.OBJECT:
-					writer.dataElement("type", "Object Type");
+					writer.dataElement("type", "Object Type", op);
 					break;
 				case Options.OKSTRAKEY:
 				case Options.DATATYPE:
-					writer.dataElement("type", "Data Type");
+					writer.dataElement("type", "Data Type", op);
 					break;
 				case Options.UNION:
-					writer.dataElement("type", "Union Data Type");
+					writer.dataElement("type", "Union Data Type", op);
 					break;
 				}
 
@@ -1007,7 +1503,7 @@ public class FeatureCatalogue
 
 				s = ci.taggedValue("name");
 				if (s != null && s.trim().length() > 0) {
-					writer.dataElement("name", PrepareToPrint(s));
+					writer.dataElement("name", PrepareToPrint(s), op);
 				}
 				writer.endElement("taggedValues");
 
@@ -1018,7 +1514,7 @@ public class FeatureCatalogue
 				writer.endElement("FeatureType");
 			}
 
-			PrintProperties(ci, false);
+			PrintProperties(ci, false, op);
 			/*
 			 * TODO PrintOperations false;
 			 */
@@ -1033,7 +1529,63 @@ public class FeatureCatalogue
 		}
 	}
 
-	private void PrintProperties(ClassInfo ci, boolean listOnly)
+	private boolean hasDiff(Info i, ElementType subElementType,
+			Operation diffChange, Info diffSubelement) {
+
+		if (diffs != null && diffs.get(i) != null) {
+
+			for (DiffElement diff : diffs.get(i)) {
+
+				if (diff.subElementType == subElementType
+						&& diff.change == diffChange
+						&& diff.subElement == diffSubelement) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private Info getInfoWithDiff(ElementType subElementType,
+			Operation diffChange, Info diffSubelement) {
+
+		if (diffs != null) {
+
+			for (Info i : diffs.keySet()) {
+
+				for (DiffElement diff : diffs.get(i)) {
+
+					if (diff.subElementType == subElementType
+							&& diff.change == diffChange
+							&& diff.subElement == diffSubelement) {
+						return i;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private boolean hasDiff(Info i, ElementType subElementType,
+			Operation diffChange) {
+
+		if (diffs != null && diffs.get(i) != null) {
+
+			for (DiffElement diff : diffs.get(i)) {
+
+				if (diff.subElementType == subElementType
+						&& diff.change == diffChange) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private void PrintProperties(ClassInfo ci, boolean listOnly, Operation op)
 			throws SAXException {
 
 		/*
@@ -1045,30 +1597,53 @@ public class FeatureCatalogue
 			for (String cid : ci.supertypes()) {
 				ClassInfo cix = model.classById(cid);
 				if (cix != null)
-					PrintProperties(cix, listOnly);
+					PrintProperties(cix, listOnly, op);
 			}
 		}
 
 		for (PropertyInfo propi : ci.properties().values()) {
+
+			Operation top = op;
+			if (hasDiff(ci, ElementType.PROPERTY, Operation.INSERT, propi)) {
+				top = Operation.INSERT;
+			}
+
 			if (listOnly)
-				PrintPropertyRef(propi);
+				PrintPropertyRef(propi, top);
 			else
-				PrintProperty(propi);
+				PrintProperty(propi, top);
+		}
+
+		// also check deletions
+		if (diffs != null && diffs.get(ci) != null) {
+			for (DiffElement diff : diffs.get(ci)) {
+				if (diff.subElementType == ElementType.PROPERTY
+						&& diff.change == Operation.DELETE) {
+					if (listOnly)
+						PrintPropertyRef((PropertyInfo) diff.subElement,
+								Operation.DELETE);
+					else
+						PrintProperty((PropertyInfo) diff.subElement,
+								Operation.DELETE);
+				}
+			}
 		}
 	}
 
-	private void PrintPropertyRef(PropertyInfo propi) throws SAXException {
+	private void PrintPropertyRef(PropertyInfo propi, Operation op)
+			throws SAXException {
 
 		if (ExportProperty(propi)) {
 
 			String propiid = "_A" + propi.id();
 			propiid = options.internalize(propiid);
 
-			writer.emptyElement("characterizedBy", "idref", propiid);
+			writer.emptyElement("characterizedBy", "idref", propiid, op);
 		}
 	}
 
-	private void PrintProperty(PropertyInfo propi) throws SAXException {
+	private void PrintProperty(PropertyInfo propi, Operation op)
+			throws SAXException {
 		if (!ExportProperty(propi))
 			return;
 
@@ -1077,9 +1652,11 @@ public class FeatureCatalogue
 
 		String assocId = "__FIXME";
 		if (!propi.isAttribute()) {
+
 			if (!exportedRoles.contains(propi)) {
 				assocId = "__" + propi.id();
-				writer.startElement("FeatureRelationship", "id", assocId);
+
+				writer.startElement("FeatureRelationship", "id", assocId, op);
 
 				writer.dataElement("name", PrepareToPrint("(unbestimmt)"));
 
@@ -1092,7 +1669,7 @@ public class FeatureCatalogue
 						aciid = options.internalize(aciid);
 
 						writer.dataElement("associationClass",
-								PrepareToPrint(aci.name()), "idref", aciid);
+								PrepareToPrint(aci.name()), "idref", aciid, op);
 					}
 				}
 
@@ -1100,7 +1677,7 @@ public class FeatureCatalogue
 				propiid = options.internalize(propiid);
 
 				// SAX Note: print roles first, then their details
-				writer.emptyElement("roles", "idref", propiid);
+				writer.emptyElement("roles", "idref", propiid, op);
 
 				PropertyInfo propi2 = propi.reverseProperty();
 				if (propi2 != null) {
@@ -1109,20 +1686,20 @@ public class FeatureCatalogue
 						String propi2id = "_A" + propi2.id();
 						propi2id = options.internalize(propi2id);
 
-						writer.emptyElement("roles", "idref", propi2id);
+						writer.emptyElement("roles", "idref", propi2id, op);
 					}
 				}
 
 				writer.endElement("FeatureRelationship");
 
 				// now print the property details
-				PrintPropertyDetail(propi, assocId);
+				PrintPropertyDetail(propi, assocId, op);
 				exportedRoles.add(propi);
 
 				if (propi2 != null) {
 					if (ExportProperty(propi2)) {
 
-						PrintPropertyDetail(propi2, assocId);
+						PrintPropertyDetail(propi2, assocId, op);
 					}
 					exportedRoles.add(propi2);
 				}
@@ -1134,63 +1711,56 @@ public class FeatureCatalogue
 				}
 			}
 		} else {
-			PrintPropertyDetail(propi, assocId);
+			PrintPropertyDetail(propi, assocId, op);
 		}
 
 		exportedProperties.add(propi);
 	}
 
-	private void PrintPropertyDetail(PropertyInfo propi, String assocId)
-			throws SAXException {
+	private void PrintPropertyDetail(PropertyInfo propi, String assocId,
+			Operation op) throws SAXException {
 
 		String propiid = "_A" + propi.id();
 		propiid = options.internalize(propiid);
 
 		if (propi.isAttribute()) {
-			writer.startElement("FeatureAttribute", "id", propiid);
+			writer.startElement("FeatureAttribute", "id", propiid, op);
 		} else {
-			writer.startElement("RelationshipRole", "id", propiid);
+			writer.startElement("RelationshipRole", "id", propiid, op);
 		}
 
-		PrintDescriptors(propi, false);
+		PrintDescriptors(propi, false, op);
 
-		String s;
-		Multiplicity m = propi.cardinality();
-		if (m.maxOccurs == m.minOccurs)
-			s = "" + m.minOccurs;
-		else if (m.maxOccurs == Integer.MAX_VALUE)
-			s = "" + m.minOccurs + ".." + "*";
-		else
-			s = "" + m.minOccurs + ".." + m.maxOccurs;
-
+		String s = propi.cardinality().toString();
+		s = checkDiff(s, propi, ElementType.MULTIPLICITY);
 		String cardinalityText = PrepareToPrint(s);
 		cardinalityText = options.internalize(cardinalityText);
 
-		writer.dataElement("cardinality", cardinalityText);
+		writer.dataElement("cardinality", cardinalityText, op);
 
 		if (!propi.isAttribute() && !propi.isNavigable()) {
-			PrintLineByLine("false", "isNavigable");
+			PrintLineByLine("false", "isNavigable", op);
 		}
 
 		if (propi.isDerived()) {
-			PrintLineByLine("true", "isDerived");
+			PrintLineByLine("true", "isDerived", op);
 		}
 
 		s = propi.initialValue();
 		if (propi.isAttribute() && s != null && s.length() > 0) {
-			PrintLineByLine(PrepareToPrint(s), "initialValue");
+			PrintLineByLine(PrepareToPrint(s), "initialValue", op);
 		}
 
 		writer.startElement("taggedValues");
 
 		s = propi.taggedValue("name");
 		if (s != null && s.trim().length() > 0) {
-			writer.dataElement("name", PrepareToPrint(s));
+			writer.dataElement("name", PrepareToPrint(s), op);
 		}
 		String[] tags = propi.taggedValuesForTag("length");
 		if (tags != null && tags.length > 0) {
 			for (String tag : tags) {
-				writer.dataElement("length", PrepareToPrint(tag));
+				writer.dataElement("length", PrepareToPrint(tag), op);
 			}
 		}
 
@@ -1198,9 +1768,9 @@ public class FeatureCatalogue
 
 		if (includeVoidable) {
 			if (propi.voidable()) {
-				writer.dataElement("voidable", "true");
+				writer.dataElement("voidable", "true", op);
 			} else {
-				writer.dataElement("voidable", "false");
+				writer.dataElement("voidable", "false", op);
 			}
 		}
 
@@ -1210,17 +1780,18 @@ public class FeatureCatalogue
 
 				AttributesImpl atts = new AttributesImpl();
 
-				ClassInfo cix = model.classById(ti.id);
+				ClassInfo cix = lookupClassById(ti.id);
 				if (cix != null) {
-					String tiid = "_C" + ti.id;
+					String tiid = "_C" + cix.id();
 					tiid = options.internalize(tiid);
 
 					atts.addAttribute("", "idref", "", "CDATA", tiid);
 				}
 				atts.addAttribute("", "category", "", "CDATA",
 						featureTerm.toLowerCase() + " type");
+				addOperationToAttributes(op, atts);
 				writer.dataElement("", "FeatureTypeIncluded", "", atts,
-						ti.name);
+						checkDiff(ti.name, propi, ElementType.VALUETYPE));
 			}
 			writer.emptyElement("relation", "idref", assocId);
 
@@ -1231,22 +1802,30 @@ public class FeatureCatalogue
 				String propi2id = "_A" + propi2.id();
 				propi2id = options.internalize(propi2id);
 
-				writer.emptyElement("InverseRole", "idref", propi2id);
+				writer.emptyElement("InverseRole", "idref", propi2id, op);
 			}
 			if (propi.isOrdered()) {
-				writer.dataElement("orderIndicator", "1");
+				writer.dataElement("orderIndicator", "1", op);
 			} else {
-				writer.dataElement("orderIndicator", "0");
+				writer.dataElement("orderIndicator", "0", op);
 			}
 
 		} else {
 			if (ti != null) {
-				ClassInfo cix = model.classById(ti.id);
+
+				ClassInfo cix;
+
+				if (op != Operation.DELETE) {
+					cix = model.classById(ti.id);
+				} else {
+					cix = refModel.classById(ti.id);
+				}
 
 				if (cix != null) {
 
 					int cat = cix.category();
 					String cixname = cix.name();
+					cixname = checkDiff(cixname, propi, ElementType.VALUETYPE);
 					cixname = options.internalize(cixname);
 
 					switch (cat) {
@@ -1263,11 +1842,12 @@ public class FeatureCatalogue
 							atts.addAttribute("", "category", "", "CDATA",
 									"enumeration");
 						}
+						addOperationToAttributes(op, atts);
 						writer.dataElement("", "ValueDataType", "", atts,
 								PrepareToPrint(cixname));
 
 						if (!cixname.equals("Boolean")) {
-							writer.dataElement("ValueDomainType", "1");
+							writer.dataElement("ValueDomainType", "1", op);
 							for (PropertyInfo ei : cix.properties().values()) {
 								if (ei != null && ExportValue(ei)) {
 
@@ -1278,10 +1858,32 @@ public class FeatureCatalogue
 											eiid);
 								}
 							}
+
+							if (diffs != null && diffs.get(cix) != null) {
+								for (DiffElement diff : diffs.get(cix)) {
+									if (diff.subElementType == ElementType.ENUM
+											&& diff.change == Operation.DELETE) {
+
+										writer.emptyElement("enumeratedBy",
+												"idref",
+												"_A" + ((PropertyInfo) diff.subElement)
+														.id());
+									}
+								}
+							}
+
+							if (op != Operation.DELETE) {
+								if (cix.inSchema(propi.inClass().pkg()))
+									enumerations.add(cix);
+							} else {
+								if (cix.inSchema(refPackage))
+									enumerations.add(cix);
+							}
+
 							// FIXME if (cix.inSchema(propi.inClass().pkg()))
-							enumerations.add(cix);
+							// enumerations.add(cix);
 						} else {
-							writer.dataElement("ValueDomainType", "0");
+							writer.dataElement("ValueDomainType", "0", op);
 						}
 						break;
 					default:
@@ -1312,20 +1914,23 @@ public class FeatureCatalogue
 							atts2.addAttribute("", "category", "", "CDATA",
 									"basic type");
 						}
+						addOperationToAttributes(op, atts2);
 						writer.dataElement("", "ValueDataType", "", atts2,
 								PrepareToPrint(cixname));
 
-						writer.dataElement("ValueDomainType", "0");
+						writer.dataElement("ValueDomainType", "0", op);
 						break;
 					}
 				} else {
 					String tiname = ti.name;
+					tiname = checkDiff(tiname, propi, ElementType.VALUETYPE);
 					tiname = options.internalize(tiname);
 
-					writer.dataElement("ValueDataType", PrepareToPrint(tiname));
+					writer.dataElement("ValueDataType", PrepareToPrint(tiname),
+							op);
 				}
 			} else {
-				writer.dataElement("ValueDataType", "(unknown)");
+				writer.dataElement("ValueDataType", "(unknown)", op);
 			}
 		}
 
@@ -1333,6 +1938,68 @@ public class FeatureCatalogue
 			writer.endElement("FeatureAttribute");
 		} else {
 			writer.endElement("RelationshipRole");
+		}
+	}
+
+	/**
+	 * Looks up a class as follows: at first we search the class in the input
+	 * model (this is the usual case).
+	 * 
+	 * If the input model does not contain a class with the given id, then we
+	 * search in the reference model (which is supplied when a schema diff shall
+	 * be computed). If the class was found there, we try to look up the
+	 * corresponding class in the input model via the full name (in schema). If
+	 * it is found, the ClassInfo from the input model is returned; otherwise
+	 * the one from the reference model.
+	 * 
+	 * We do all this so that references to the class point to the class that
+	 * exists in the input model rather than in the reference model (NOTE: when
+	 * a diff is computed, then the IDs in the reference model are made unique
+	 * by prepending a prefix).
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private ClassInfo lookupClassById(String id) {
+
+		ClassInfo ci = null;
+
+		if (id != null) {
+
+			// look up class in the input model
+			ci = model.classById(id);
+
+			if (ci == null) {
+
+				// is it contained in the reference model?
+				if (refModel != null) {
+
+					ci = refModel.classById(id);
+				}
+
+				/*
+				 * If we found it in the reference model, can we identify the
+				 * class in the input model by its full name?
+				 */
+				String fullnamelowercase = ci.fullNameInSchema()
+						.toLowerCase(Locale.ENGLISH);
+				if (ci != null && inputSchemaClassesByFullNameInSchema
+						.containsKey(fullnamelowercase)) {
+
+					// then we'll use the class from the input model
+					ci = (ClassInfo) inputSchemaClassesByFullNameInSchema
+							.get(fullnamelowercase);
+				}
+			}
+		}
+
+		return ci;
+	}
+
+	private void addOperationToAttributes(Operation op, AttributesImpl atts) {
+
+		if (atts != null && op != null) {
+			atts.addAttribute("", "mode", "", "CDATA", op.toString());
 		}
 	}
 
@@ -1355,10 +2022,15 @@ public class FeatureCatalogue
 		try {
 
 			for (ClassInfo cix : additionalClasses) {
-				PrintClass(cix, false);
+
+				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS,
+						cix);
+				PrintClass(cix, false, top, cix.pkg());
 			}
 			for (ClassInfo cix : enumerations) {
-				PrintValues(cix);
+				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS,
+						cix);
+				PrintValues(cix, top);
 			}
 
 			writer.endElement("FeatureCatalogue");
@@ -1366,12 +2038,15 @@ public class FeatureCatalogue
 			writer.close();
 
 		} catch (Exception e) {
+
 			String m = e.getMessage();
 			if (m != null) {
 				result.addError(m);
 			}
 			e.printStackTrace(System.err);
+
 		} finally {
+
 			if (writer != null) {
 				try {
 					writer.close();
@@ -1383,6 +2058,11 @@ public class FeatureCatalogue
 					e.printStackTrace(System.err);
 				}
 			}
+
+			if (refModel != null) {
+				refModel.shutdown();
+				refModel = null;
+			}
 		}
 
 		// TODO add an option to delete the temporary file
@@ -1393,11 +2073,34 @@ public class FeatureCatalogue
 		printed = true;
 	}
 
+	/**
+	 * @param i
+	 * @param diffSubElementType
+	 * @param diffSubElement
+	 * @return if a diff exists for i with the given diffSubElementType and
+	 *         diffSubElement, the according diff Operation (i.e., the kind of
+	 *         change) is returned - else <code>null</code>
+	 */
+	private Operation getDiffChange(Info i, ElementType diffSubElementType,
+			Info diffSubElement) {
+
+		if (diffs != null && diffs.get(i) != null) {
+			for (DiffElement diff : diffs.get(i)) {
+				if (diff.subElementType == diffSubElementType
+						&& diff.subElement == diffSubElement) {
+					return diff.change;
+				}
+			}
+		}
+		return null;
+	}
+
 	private void writePDF(String xmlName, String outfileBasename) {
-		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_PDF);
 
 		if (!OutputFormat.toLowerCase().contains("pdf"))
 			return;
+
+		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_PDF);
 
 		String pdffileName = outfileBasename + ".pdf";
 		String mime = MimeConstants.MIME_PDF;
@@ -1410,7 +2113,6 @@ public class FeatureCatalogue
 	}
 
 	private void writeHTML(String xmlName, String outfileBasename) {
-		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_HTML);
 
 		if (!OutputFormat.toLowerCase().contains("html"))
 			return;
@@ -1418,6 +2120,8 @@ public class FeatureCatalogue
 		String htmlfileName = outfileBasename + ".html";
 
 		if (OutputFormat.toLowerCase().contains("framehtml")) {
+
+			StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_FRAMEHTML);
 
 			transformationParameters.put("outputdir", outfileBasename);
 
@@ -1455,7 +2159,26 @@ public class FeatureCatalogue
 						outputDir.getAbsolutePath());
 			}
 
+			if (includeDiagrams) {
+
+				/*
+				 * Copy content of temporary images folder to output folder
+				 */
+				File tmpImgDir = options.imageTmpDir();
+
+				try {
+
+					FileUtils.copyDirectoryToDirectory(tmpImgDir, outputDir);
+
+				} catch (IOException e) {
+					result.addError(this, 28, tmpImgDir.getAbsolutePath(),
+							outputDir.getAbsolutePath(), e.getMessage());
+				}
+			}
+
 		} else {
+
+			StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_HTML);
 
 			if (xmlName != null && xmlName.length() > 0
 					&& xslhtmlfileName != null && xslhtmlfileName.length() > 0
@@ -1478,12 +2201,13 @@ public class FeatureCatalogue
 	 *            Base name of the output file, without file type ending.
 	 */
 	private void writeDOCX(String xmlName, String outfileBasename) {
-		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_HTML);
-
-		ZipHandler zipHandler = new ZipHandler();
 
 		if (!OutputFormat.toLowerCase().contains("docx"))
 			return;
+
+		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_DOCX);
+
+		ZipHandler zipHandler = new ZipHandler();
 
 		String docxfileName = outfileBasename + ".docx";
 
@@ -1743,10 +2467,11 @@ public class FeatureCatalogue
 	}
 
 	private void writeRTF(String xmlName, String outfileBasename) {
-		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_RTF);
 
 		if (!OutputFormat.toLowerCase().contains("rtf"))
 			return;
+
+		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_RTF);
 
 		String rtffileName = outfileBasename + ".rtf";
 
@@ -1758,10 +2483,11 @@ public class FeatureCatalogue
 	}
 
 	private void writeXML(String xmlName, String outfileBasename) {
-		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_XML);
 
 		if (!OutputFormat.toLowerCase().contains("xml"))
 			return;
+
+		StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_XML);
 
 		String xmloutFileName = outfileBasename + ".xml";
 
@@ -2212,7 +2938,8 @@ public class FeatureCatalogue
 		this.transformationParameters.put("featureTypeSynonym",
 				featureTerm + " Type");
 		this.transformationParameters.put("lang", lang);
-		this.transformationParameters.put("noAlphabeticSortingForProperties", noAlphabeticSortingForProperties);
+		this.transformationParameters.put("noAlphabeticSortingForProperties",
+				noAlphabeticSortingForProperties);
 	}
 
 	private void initialiseFromOptions() {
@@ -2344,8 +3071,9 @@ public class FeatureCatalogue
 		s = options.parameter(this.getClass().getName(), "lang");
 		if (s != null && s.length() > 0)
 			lang = s;
-		
-		s = options.parameter(this.getClass().getName(), "noAlphabeticSortingForProperties");
+
+		s = options.parameter(this.getClass().getName(),
+				"noAlphabeticSortingForProperties");
 		if (s != null && s.trim().length() > 0)
 			noAlphabeticSortingForProperties = s.trim();
 
@@ -2444,6 +3172,8 @@ public class FeatureCatalogue
 			return "Invoking external JRE with command: $1$";
 		case 27:
 			return "Message from external java executable: $1$";
+		case 28:
+			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
 
 		}
 		return null;

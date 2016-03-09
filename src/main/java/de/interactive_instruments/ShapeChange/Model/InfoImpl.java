@@ -44,7 +44,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public abstract class InfoImpl
-		implements Info, Comparable<InfoImpl>, MessageSource {
+		implements Info, MessageSource {
 
 	boolean postprocessed = false;
 	private String lf = System.getProperty("line.separator");
@@ -63,7 +63,7 @@ public abstract class InfoImpl
 	private static final Pattern langPattern = Pattern
 			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
 
-	public int compareTo(InfoImpl i) {
+	public int compareTo(Info i) {
 		String my = id();
 		String other = i.id();
 		return my.hashCode() - other.hashCode();

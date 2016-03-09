@@ -38,18 +38,27 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 
 import name.fraser.neil.plaintext.diff_match_patch.Diff;
 
-public class DiffElement {
+/**
+ * 
+ * TODO How to diff elements with multiple strings as value, for example
+ * {@link Info#dataCaptureStatements()} and {@link Info#examples()}?
+ *
+ */
+public class DiffElement implements Comparable<DiffElement> {
 
 	// type of change
 	public Operation change;
-	
+
 	public enum Operation {
 		DELETE, INSERT, CHANGE;
 		public String toString() {
 			switch (this) {
-			case DELETE: return "DELETE";
-			case INSERT: return "INSERT";
-			case CHANGE: return "CHANGE";
+			case DELETE:
+				return "DELETE";
+			case INSERT:
+				return "INSERT";
+			case CHANGE:
+				return "CHANGE";
 			}
 			return "(unknown)";
 		}
@@ -57,38 +66,87 @@ public class DiffElement {
 
 	// the sub-element that has changed
 	public ElementType subElementType;
-	
+
 	public enum ElementType {
-		NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, AAAMODELLART, AAAGRUNDDATENBESTAND;
+		NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, LEGALBASIS, AAAMODELLART, AAAGRUNDDATENBESTAND;
 		public String toString() {
 			switch (this) {
-			case NAME: return "NAME";
-			case DOCUMENTATION: return "DOCUMENTATION";
-			case MULTIPLICITY: return "MULTIPLICITY";
-			case VALUETYPE: return "VALUETYPE";
-			case CLASS: return "CLASS";
-			case SUPERTYPE: return "SUPERTYPE";
-			case SUBPACKAGE: return "SUBPACKAGE";
-			case PROPERTY: return "PROPERTY";
-			case ENUM: return "ENUM";
-			case STEREOTYPE: return "STEREOTYPE";
-			case TAG: return "TAG";
-			case ALIAS: return "ALIAS";
-			case DEFINITION: return "DEFINITION";
-			case DESCRIPTION: return "DESCRIPTION";
-			case AAAMODELLART: return "AAAMODELLART";
-			case AAAGRUNDDATENBESTAND: return "AAAGRUNDDATENBESTAND";
+			case NAME:
+				return "NAME";
+			case DOCUMENTATION:
+				return "DOCUMENTATION";
+			case MULTIPLICITY:
+				return "MULTIPLICITY";
+			case VALUETYPE:
+				return "VALUETYPE";
+			case CLASS:
+				return "CLASS";
+			case SUPERTYPE:
+				return "SUPERTYPE";
+			case SUBPACKAGE:
+				return "SUBPACKAGE";
+			case PROPERTY:
+				return "PROPERTY";
+			case ENUM:
+				return "ENUM";
+			case STEREOTYPE:
+				return "STEREOTYPE";
+			case TAG:
+				return "TAG";
+			case ALIAS:
+				return "ALIAS";
+			case DEFINITION:
+				return "DEFINITION";
+			case DESCRIPTION:
+				return "DESCRIPTION";
+			case LEGALBASIS:
+				return "LEGALBASIS";
+			case PRIMARYCODE:
+				return "PRIMARYCODE";
+			case AAAMODELLART:
+				return "AAAMODELLART";
+			case AAAGRUNDDATENBESTAND:
+				return "AAAGRUNDDATENBESTAND";
 			}
 			return "(unknown)";
 		}
 	}
-	
+
 	// for CHANGE and String-valued Elements
 	public LinkedList<Diff> diff = null;
-	
+
 	// for Info-valued Elements
-	public Info subElement = null;	
-	
+	public Info subElement = null;
+
 	// for TAGs
-	public String tag = null;	
+	public String tag = null;
+
+	@Override
+	public int compareTo(DiffElement o) {
+
+		if (this.change != o.change) {
+			/* compare based on change */
+			return this.change.toString().compareTo(o.change.toString());
+
+		} else {
+
+			if (this.subElementType != o.subElementType) {
+
+				return this.subElementType.toString()
+						.compareTo(o.subElementType.toString());
+			} else {
+				
+				// compare based on subElement if not null, otherwise the tag
+				if(this.subElement != null && o.subElement != null) {
+					return this.subElement.compareTo(o.subElement);
+				} else if (this.tag != null && o.tag != null){
+					return this.tag.compareTo(o.tag);
+				} else if (this.subElement != null) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		}
+	}
 }

@@ -43,14 +43,13 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -113,7 +112,7 @@ public class CodelistRegister implements SingleTarget {
 	private static String xslTransformerFactory = null;
 	private static String outputDirectory = ".";
 	private static TreeMap<String, Document> documentMap = new TreeMap<String, Document>();
-	private static TreeMap<Info,HashSet<DiffElement>> diffs = null;
+	private static SortedMap<Info,SortedSet<DiffElement>> diffs = null;
 	private static Differ differ = null;
 	private static Model refModel = null;
 	private static PackageInfo refPackage = null;
@@ -238,7 +237,7 @@ public class CodelistRegister implements SingleTarget {
 					refPackage = set.iterator().next();
 					refVersion = refPackage.version();
 					diffs = differ.diff(p, refPackage);
-					for (Entry<Info,HashSet<DiffElement>> me : diffs.entrySet()) {
+					for (Entry<Info,SortedSet<DiffElement>> me : diffs.entrySet()) {
 						MessageContext mc = result.addInfo("Model difference - "+me.getKey().fullName().replace(p.fullName(),p.name()));
 						if (mc!=null) {
 							for (DiffElement diff : me.getValue()) {

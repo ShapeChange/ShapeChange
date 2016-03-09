@@ -72,7 +72,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected SortedSet<GenericClassInfo> classes = null;
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -81,7 +83,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -90,7 +94,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -99,7 +105,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -108,7 +116,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -117,7 +127,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -126,7 +138,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -135,7 +149,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -144,12 +160,14 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * In the generic model, always return an empty string, the other descriptors should be used instead.
+	 * In the generic model, always return an empty string, the other
+	 * descriptors should be used instead.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
 	public String documentation() {
-		return ""; 
+		return "";
 	}
 
 	/**
@@ -299,7 +317,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setAliasName(String aliasName) {
@@ -307,7 +325,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDefinition(String definition) {
@@ -315,7 +333,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDescription(String description) {
@@ -323,7 +341,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLanguage(String language) {
@@ -331,7 +349,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setPrimaryCode(String primaryCode) {
@@ -339,7 +357,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLegalBasis(String legalBasis) {
@@ -347,7 +365,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setExamples(String[] examples) {
@@ -355,7 +373,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDataCaptureStatements(String[] dataCaptureStatements) {
@@ -452,22 +470,24 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	/** Save the (normalized) stereotypes in the cache. */
 	public void validateStereotypesCache() {
 		// create cache, if necessary
-		if (stereotypesCache == null) 
+		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
 
-		// do nothing else, stereotypes have to be set explicitly using setStereotypes
-		
+		// do nothing else, stereotypes have to be set explicitly using
+		// setStereotypes
+
 	} // validateStereotypesCache
-	
+
 	/**
 	 * @param stereotypeSet
 	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
-		if (stereotypeSet!=null && !stereotypeSet.isEmpty()) {
+		if (stereotypeSet != null && !stereotypeSet.isEmpty()) {
 			for (String st : stereotypeSet.asArray()) {
-				stereotypesCache.add(options.internalize(options.normalizeStereotype(st)));
+				stereotypesCache.add(
+						options.internalize(options.normalizeStereotype(st)));
 			}
 		}
 	}
@@ -478,8 +498,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
-		if (stereotype!=null) {
-			stereotypesCache.add(options.internalize(options.normalizeStereotype(stereotype)));
+		if (stereotype != null) {
+			stereotypesCache.add(options
+					.internalize(options.normalizeStereotype(stereotype)));
 		}
 	}
 
@@ -493,10 +514,11 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 	public void validateTaggedValuesCache() {
 		// create cache, if necessary
-		if (taggedValuesCache==null)
+		if (taggedValuesCache == null)
 			taggedValuesCache = options().taggedValueFactory();
 
-		// do nothing else, tagged values have to be set explicitly using setTaggedValues
+		// do nothing else, tagged values have to be set explicitly using
+		// setTaggedValues
 	}
 
 	/**
@@ -527,7 +549,8 @@ public class GenericPackageInfo extends PackageInfoImpl {
 				// executed
 				if (key.equalsIgnoreCase("targetNamespace")) {
 
-					this.setTargetNamespace(taggedValuesCache.getFirstValue(key));
+					this.setTargetNamespace(
+							taggedValuesCache.getFirstValue(key));
 
 				} else if (key.equalsIgnoreCase("version")) {
 
@@ -543,7 +566,10 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 				} else if (key.equalsIgnoreCase("gmlProfileSchema")) {
 
-					this.setGmlProfileSchema(taggedValuesCache.getFirstValue(key)); // FIXME multiple values
+					this.setGmlProfileSchema(
+							taggedValuesCache.getFirstValue(key)); // FIXME
+																	// multiple
+																	// values
 
 				} else if (key.equalsIgnoreCase("alias")) {
 
@@ -671,7 +697,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 			return targetNamespace;
 		} else {
 			PackageInfo o = owner();
-			if(o != null) {
+			if (o != null) {
 				return owner().targetNamespace();
 			} else {
 				return null;
@@ -688,7 +714,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 			return version;
 		} else {
 			PackageInfo o = owner();
-			if(o != null) {
+			if (o != null) {
 				return owner().version();
 			} else {
 				return null;
@@ -739,8 +765,8 @@ public class GenericPackageInfo extends PackageInfoImpl {
 			sb.append(indent + "packages:\n");
 			for (PackageInfo pi : childPi) {
 				if (pi instanceof GenericPackageInfo) {
-					sb.append(((GenericPackageInfo) pi).toString(indent
-							+ indent));
+					sb.append(((GenericPackageInfo) pi)
+							.toString(indent + indent));
 				} else {
 					sb.append(indent + indent + pi.name()
 							+ "(not a GenericPackageInfo\n");
@@ -779,6 +805,34 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	void removeChild(GenericPackageInfo piToRemove) {
 		if (piToRemove != null)
 			this.childPi.remove(piToRemove);
+	}
+
+	/**
+	 * Adds the prefix to the 'id' of this package as well as the 'schemaId' (if
+	 * not <code>null</code>) and the 'supplierIds' (if not <code>null</code>).
+	 * 
+	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
+	 * IDs used in a reference model are unique to that model and do not get
+	 * mixed up with the IDs of the input model.
+	 * 
+	 * @param prefix
+	 */
+	public void addPrefixToModelElementIDs(String prefix) {
+
+		this.id = prefix + id;
+
+		if (schemaId != null) {
+			this.schemaId = prefix + schemaId;
+		}
+
+		if (supplierIds != null) {
+			SortedSet<String> tmp_supplierIds = new TreeSet<String>();
+			for (String id : supplierIds) {
+				tmp_supplierIds.add(prefix + id);
+			}
+			this.supplierIds = tmp_supplierIds;
+		}
+
 	}
 
 }

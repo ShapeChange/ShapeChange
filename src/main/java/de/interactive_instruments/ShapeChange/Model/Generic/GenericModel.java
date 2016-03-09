@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -87,16 +88,16 @@ public class GenericModel extends ModelImpl {
 		 * Indicates that properties copied to a class shall be placed at the
 		 * top of the sequence of existing properties.
 		 */
-		PROPERTY_COPY_TOP, /**
-							 * Indicates that properties copied to a class shall
-							 * be merged into the sequence of existing
-							 * properties according to their sequence number.
-							 */
-		PROPERTY_COPY_INSEQUENCE, /**
-									 * Indicates that properties copied to a
-									 * class shall be placed at the bottom of
-									 * the sequence of existing properties.
-									 */
+		PROPERTY_COPY_TOP,
+		/**
+		 * Indicates that properties copied to a class shall be merged into the
+		 * sequence of existing properties according to their sequence number.
+		 */
+		PROPERTY_COPY_INSEQUENCE,
+		/**
+		 * Indicates that properties copied to a class shall be placed at the
+		 * bottom of the sequence of existing properties.
+		 */
 		PROPERTY_COPY_BOTTOM
 	}
 
@@ -116,22 +117,24 @@ public class GenericModel extends ModelImpl {
 		 * NOTE: this ignores the isRestriction setting in the existing
 		 * property.
 		 */
-		IGNORE, /**
-				 * Indicates that the copy shall be ignored. The existing
-				 * property with the same name is kept.
-				 * 
-				 * NOTE: In case that the existing property is a restriction, it
-				 * is set to not being a restriction.
-				 */
-		IGNORE_UNRESTRICT, /**
-							 * Indicates that the copy shall be added to the
-							 * content model, resulting in two properties with
-							 * the same name.
-							 */
-		ADD, /**
-				 * Indicates that the copy shall overwrite the existing property
-				 * with the same name.
-				 */
+		IGNORE,
+		/**
+		 * Indicates that the copy shall be ignored. The existing property with
+		 * the same name is kept.
+		 * 
+		 * NOTE: In case that the existing property is a restriction, it is set
+		 * to not being a restriction.
+		 */
+		IGNORE_UNRESTRICT,
+		/**
+		 * Indicates that the copy shall be added to the content model,
+		 * resulting in two properties with the same name.
+		 */
+		ADD,
+		/**
+		 * Indicates that the copy shall overwrite the existing property with
+		 * the same name.
+		 */
 		OVERWRITE
 	}
 
@@ -256,7 +259,8 @@ public class GenericModel extends ModelImpl {
 		// create properties for all GenericClassInfos identified before
 		for (GenericClassInfo genCi : genClassInfosById.values()) {
 
-			SortedMap<StructuredNumber, PropertyInfo> classProperties = genCi.properties();
+			SortedMap<StructuredNumber, PropertyInfo> classProperties = genCi
+					.properties();
 
 			if (classProperties == null) {
 				continue;
@@ -380,18 +384,20 @@ public class GenericModel extends ModelImpl {
 			if (!genPropertiesById.containsKey(ai.end1().id())
 					&& !additionalPropsFromAssociationEnds
 							.containsKey(ai.end1().id())) {
-				
-				GenericPropertyInfo genEnd1Prop = this.createAssociationEndCopy(ai.end1());
-								
+
+				GenericPropertyInfo genEnd1Prop = this
+						.createAssociationEndCopy(ai.end1());
+
 				additionalPropsFromAssociationEnds.put(genEnd1Prop.id(),
 						genEnd1Prop);
 			}
 			if (!genPropertiesById.containsKey(ai.end2().id())
 					&& !additionalPropsFromAssociationEnds
 							.containsKey(ai.end2().id())) {
-				
-				GenericPropertyInfo genEnd2Prop = this.createAssociationEndCopy(ai.end2());
-				
+
+				GenericPropertyInfo genEnd2Prop = this
+						.createAssociationEndCopy(ai.end2());
+
 				additionalPropsFromAssociationEnds.put(genEnd2Prop.id(),
 						genEnd2Prop);
 			}
@@ -444,7 +450,8 @@ public class GenericModel extends ModelImpl {
 			ClassInfo baseClass = gci.baseClass();
 			gci.setBaseClass(updateClassInfo(baseClass));
 
-			SortedMap<StructuredNumber, PropertyInfo> properties = gci.properties();
+			SortedMap<StructuredNumber, PropertyInfo> properties = gci
+					.properties();
 			SortedMap<StructuredNumber, PropertyInfo> propertiesC = new TreeMap<StructuredNumber, PropertyInfo>();
 
 			/*
@@ -544,18 +551,18 @@ public class GenericModel extends ModelImpl {
 		}
 	}
 
-	private GenericPropertyInfo createAssociationEndCopy(PropertyInfo assocEnd) {
+	private GenericPropertyInfo createAssociationEndCopy(
+			PropertyInfo assocEnd) {
 
-		GenericPropertyInfo copy = this.createCopy(assocEnd,
-				assocEnd.id());
+		GenericPropertyInfo copy = this.createCopy(assocEnd, assocEnd.id());
 		/*
-		 * Ensure that tagged value "sequenceNumber" of copy reflects
-		 * the value from its sequenceNumber field - covering the case
-		 * that there was a mismatch in the input model
+		 * Ensure that tagged value "sequenceNumber" of copy reflects the value
+		 * from its sequenceNumber field - covering the case that there was a
+		 * mismatch in the input model
 		 */
-		copy.setTaggedValue("sequenceNumber",
-				copy.sequenceNumber().getString(), false);
-		
+		copy.setTaggedValue("sequenceNumber", copy.sequenceNumber().getString(),
+				false);
+
 		return copy;
 	}
 
@@ -652,7 +659,7 @@ public class GenericModel extends ModelImpl {
 
 					} else if (genCon.contextModelElmtType().equals(
 
-					Constraint.ModelElmtContextType.CLASS)) {
+							Constraint.ModelElmtContextType.CLASS)) {
 
 						GenericClassInfo genCi = this.genClassInfosById
 								.get(contextModelElement.id());
@@ -692,7 +699,7 @@ public class GenericModel extends ModelImpl {
 
 					} else if (genCon.contextModelElmtType().equals(
 
-					Constraint.ModelElmtContextType.CLASS)) {
+							Constraint.ModelElmtContextType.CLASS)) {
 
 						GenericClassInfo genCi = this.genClassInfosById
 								.get(contextModelElement.id());
@@ -1034,25 +1041,6 @@ public class GenericModel extends ModelImpl {
 		}
 	}
 
-	
-	/**
-	 * @param taggedValues
-	 * @return
-	 */
-	/* FIXME no longer needed?
-	public TreeMap<String, String> copy(SortedMap<String, String> hm) {
-
-		if (hm == null)
-			return null;
-
-		TreeMap<String, String> res = new TreeMap<String, String>();
-		for (String key : hm.keySet()) {
-			res.put(key, hm.get(key));
-		}
-		return res;
-	}
-	*/
-
 	public boolean isInAppSchema(PackageInfo pi) {
 		if (this.selectedSchemaPackageIds.contains(pi.id())) {
 			return true;
@@ -1085,8 +1073,8 @@ public class GenericModel extends ModelImpl {
 
 			return true;
 
-		} else
-			if (parentCi.subtypes() == null || parentCi.subtypes().isEmpty()) {
+		} else if (parentCi.subtypes() == null
+				|| parentCi.subtypes().isEmpty()) {
 
 			return false;
 
@@ -1958,7 +1946,8 @@ public class GenericModel extends ModelImpl {
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
 
 		// add property copies to toClass
-		SortedMap<StructuredNumber, PropertyInfo> properties = fromClass.properties();
+		SortedMap<StructuredNumber, PropertyInfo> properties = fromClass
+				.properties();
 
 		// check that the fromClass has properties before copying them
 		if (properties != null && !properties.isEmpty()) {
@@ -2232,7 +2221,8 @@ public class GenericModel extends ModelImpl {
 				}
 
 				// remove any child packages this package may contain
-				SortedSet<PackageInfo> genPiChildren = genPi.containedPackages();
+				SortedSet<PackageInfo> genPiChildren = genPi
+						.containedPackages();
 
 				if (genPiChildren != null && !genPiChildren.isEmpty()) {
 					this.remove(genPiChildren);
@@ -2425,7 +2415,8 @@ public class GenericModel extends ModelImpl {
 
 		for (GenericPackageInfo selectedSchema : selectedSchemas()) {
 
-			SortedSet<ClassInfo> cisOfSelectedSchema = this.classes(selectedSchema);
+			SortedSet<ClassInfo> cisOfSelectedSchema = this
+					.classes(selectedSchema);
 
 			for (ClassInfo ci : cisOfSelectedSchema) {
 				/*
@@ -2583,5 +2574,68 @@ public class GenericModel extends ModelImpl {
 		if (genPi != null) {
 			this.genPropertiesById.put(genPi.id(), genPi);
 		}
+	}
+
+	/**
+	 * Adds the given prefix to the IDs of all model elements and updates all
+	 * fields where the ID is relevant.
+	 * 
+	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
+	 * IDs used in a reference model are unique to that model and do not get
+	 * mixed up with the IDs of the input model.
+	 * 
+	 * @param prefix
+	 */
+	public void addPrefixToModelElementIDs(String prefix) {
+
+		if (prefix == null) {
+			return;
+		}
+
+		// update selectedSchemaPackageIds
+		Set<String> tmp_selectedSchemaPackageIds = new HashSet<String>();
+		for (String id : selectedSchemaPackageIds) {
+			tmp_selectedSchemaPackageIds.add(prefix + id);
+		}
+		selectedSchemaPackageIds = tmp_selectedSchemaPackageIds;
+
+		// update genPropertiesById
+		Map<String, GenericPropertyInfo> tmp_genPropertiesById = new HashMap<String, GenericPropertyInfo>();
+		for (Entry<String, GenericPropertyInfo> e : genPropertiesById
+				.entrySet()) {
+			String newId = prefix + e.getKey();
+			e.getValue().addPrefixToModelElementIDs(prefix);
+			tmp_genPropertiesById.put(newId, e.getValue());
+		}
+		genPropertiesById = tmp_genPropertiesById;
+
+		// update genAssociationInfosById
+		Map<String, GenericAssociationInfo> tmp_genAssociationInfosById = new HashMap<String, GenericAssociationInfo>();
+		for (Entry<String, GenericAssociationInfo> e : genAssociationInfosById
+				.entrySet()) {
+			String newId = prefix + e.getKey();
+			e.getValue().addPrefixToModelElementIDs(prefix);
+			tmp_genAssociationInfosById.put(newId, e.getValue());
+		}
+		genAssociationInfosById = tmp_genAssociationInfosById;
+
+		// update genClassInfosById
+		Map<String, GenericClassInfo> tmp_genClassInfosById = new HashMap<String, GenericClassInfo>();
+		for (Entry<String, GenericClassInfo> e : genClassInfosById.entrySet()) {
+			String newId = prefix + e.getKey();
+			e.getValue().addPrefixToModelElementIDs(prefix);
+			tmp_genClassInfosById.put(newId, e.getValue());
+		}
+		genClassInfosById = tmp_genClassInfosById;
+
+		// update genPackageInfosById
+		Map<String, GenericPackageInfo> tmp_genPackageInfosById = new HashMap<String, GenericPackageInfo>();
+		for (Entry<String, GenericPackageInfo> e : genPackageInfosById
+				.entrySet()) {
+			String newId = prefix + e.getKey();
+			e.getValue().addPrefixToModelElementIDs(prefix);
+			tmp_genPackageInfosById.put(newId, e.getValue());
+		}
+		genPackageInfosById = tmp_genPackageInfosById;
 	}
 }
