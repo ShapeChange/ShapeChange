@@ -47,6 +47,8 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.NamespaceSupport;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.Operation;
+
 /**
  * This class was adapted from the XMLWriter and DataWriter classes written by
  * David Megginson, which are in the public domain.
@@ -531,8 +533,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                handler further down the filter chain raises an exception.
 	 * @see org.xml.sax.ContentHandler#startElement
 	 */
-	public void startElement(String uri, String localName, String qName,
-			Attributes atts) throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
 		sb = new StringBuilder();
 
@@ -572,14 +573,36 @@ public class XMLWriter extends XMLFilterImpl {
 	 * @param attributeValue
 	 * @throws SAXException
 	 */
-	public void startElement(String localName, String attributeName,
-			String attributeValue) throws SAXException {
+	public void startElement(String localName, String attributeName, String attributeValue) throws SAXException {
 
 		AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
 
 		startElement("", localName, "", atts);
 	}
+	
+	/**
+	 * Convenience method: start an element with only local name and a single
+	 * attribute. Optionally, add information about the operation.
+	 * 
+	 * @param localName
+	 * @param attributeName
+	 * @param attributeValue
+	 * @param op
+	 * @throws SAXException
+	 */
+	public void startElement(String localName, String attributeName, String attributeValue, Operation op) throws SAXException {
+
+		AttributesImpl atts = new AttributesImpl();
+		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
+		
+		if(op != null) {
+			atts.addAttribute("", "mode", "", "CDATA", op.toString());
+		}
+
+		startElement("", localName, "", atts);
+	}
+
 
 	private void newLine() throws SAXException {
 
@@ -611,8 +634,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                further down the filter chain raises an exception.
 	 * @see org.xml.sax.ContentHandler#endElement
 	 */
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 
 		depth--;
 
@@ -730,8 +752,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                handler further down the filter chain raises an exception.
 	 * @see org.xml.sax.ContentHandler#ignorableWhitespace
 	 */
-	public void ignorableWhitespace(char ch[], int start, int length)
-			throws SAXException {
+	public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
 
 		// writeEsc(ch, start, length, false);
 
@@ -752,8 +773,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                further down the filter chain raises an exception.
 	 * @see org.xml.sax.ContentHandler#processingInstruction
 	 */
-	public void processingInstruction(String target, String data)
-			throws SAXException {
+	public void processingInstruction(String target, String data) throws SAXException {
 
 		write("<?");
 		write(target);
@@ -785,7 +805,7 @@ public class XMLWriter extends XMLFilterImpl {
 		write("<!--");
 		write(comment);
 		write("-->");
-		
+
 		newLine();
 	}
 
@@ -923,8 +943,7 @@ public class XMLWriter extends XMLFilterImpl {
 		prefix = doneDeclTable.get(uri);
 
 		if (prefix != null
-				&& ((!isElement || defaultNS != null) && "".equals(prefix)
-						|| nsSupport.getURI(prefix) != null)) {
+				&& ((!isElement || defaultNS != null) && "".equals(prefix) || nsSupport.getURI(prefix) != null)) {
 			prefix = null;
 		}
 
@@ -933,8 +952,7 @@ public class XMLWriter extends XMLFilterImpl {
 			prefix = prefixTable.get(uri);
 
 			if (prefix != null
-					&& ((!isElement || defaultNS != null) && "".equals(prefix)
-							|| nsSupport.getURI(prefix) != null)) {
+					&& ((!isElement || defaultNS != null) && "".equals(prefix) || nsSupport.getURI(prefix) != null)) {
 				prefix = null;
 			}
 		}
@@ -953,9 +971,7 @@ public class XMLWriter extends XMLFilterImpl {
 		}
 
 		// TODO JE: what purpose does this have exactly - setting the prefix?
-		for (; prefix == null
-				|| nsSupport.getURI(prefix) != null; prefix = "__NS"
-						+ ++prefixCounter)
+		for (; prefix == null || nsSupport.getURI(prefix) != null; prefix = "__NS" + ++prefixCounter)
 			;
 		nsSupport.declarePrefix(prefix, uri);
 		doneDeclTable.put(uri, prefix);
@@ -1017,8 +1033,7 @@ public class XMLWriter extends XMLFilterImpl {
 			char ch[] = atts.getValue(i).toCharArray();
 
 			write(' ');
-			writeName(atts.getURI(i), atts.getLocalName(i), atts.getQName(i),
-					false);
+			writeName(atts.getURI(i), atts.getLocalName(i), atts.getQName(i), false);
 			write("=\"");
 			writeEsc(ch, 0, ch.length, true);
 			write('"');
@@ -1040,8 +1055,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                If there is an error writing the characters, this method
 	 *                will throw an IOException wrapped in a SAXException.
 	 */
-	private void writeEsc(char ch[], int start, int length, boolean isAttVal)
-			throws SAXException {
+	private void writeEsc(char ch[], int start, int length, boolean isAttVal) throws SAXException {
 
 		for (int i = start; i < start + length; i++) {
 			switch (ch[i]) {
@@ -1062,10 +1076,11 @@ public class XMLWriter extends XMLFilterImpl {
 				}
 				break;
 			default:
-				// if (ch[i] > '\u007f') { // write("&#"); // // // write(Integer.toString(ch[i]));
-																	// // //
-																	// write(';');
-																	// } else {
+				// if (ch[i] > '\u007f') { // write("&#"); // // //
+				// write(Integer.toString(ch[i]));
+				// // //
+				// write(';');
+				// } else {
 				write(ch[i]);
 				// }
 			}
@@ -1127,8 +1142,7 @@ public class XMLWriter extends XMLFilterImpl {
 	 *                This method will throw an IOException wrapped in a
 	 *                SAXException if there is an error writing the name.
 	 */
-	private void writeName(String uri, String localName, String qName,
-			boolean isElement) throws SAXException {
+	private void writeName(String uri, String localName, String qName, boolean isElement) throws SAXException {
 
 		String prefix = doPrefix(uri, qName, isElement);
 
@@ -1171,29 +1185,38 @@ public class XMLWriter extends XMLFilterImpl {
 	 * @see #characters(String)
 	 * @see #endElement(String, String, String)
 	 */
-	public void dataElement(String uri, String localName, String qName,
-			Attributes atts, String content) throws SAXException {
+	public void dataElement(String uri, String localName, String qName, Attributes atts, String content)
+			throws SAXException {
 		startElement(uri, localName, qName, atts);
 		characters(content);
 		endElement(uri, localName, qName);
 	}
 
-	public void emptyElement(String localName, Attributes atts)
-			throws SAXException {
+	public void emptyElement(String localName, Attributes atts) throws SAXException {
 		emptyElement("", localName, "", atts);
 	}
 
-	public void emptyElement(String localName, String attributeName,
-			String attributeValue) throws SAXException {
+	public void emptyElement(String localName, String attributeName, String attributeValue) throws SAXException {
 
 		AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
 
 		emptyElement(localName, atts);
 	}
+	
+	public void emptyElement(String localName, String attributeName, String attributeValue, Operation op) throws SAXException {
 
-	public void emptyElement(String uri, String localName, String qName,
-			Attributes atts) throws SAXException {
+		AttributesImpl atts = new AttributesImpl();
+		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
+		
+		if(op != null) {
+			atts.addAttribute("", "mode", "", "CDATA", op.toString());
+		}
+
+		emptyElement(localName, atts);
+	}
+
+	public void emptyElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		startElement(uri, localName, qName, atts);
 		endElement(uri, localName, qName);
 	}
@@ -1227,11 +1250,10 @@ public class XMLWriter extends XMLFilterImpl {
 	 * @see #characters(String)
 	 * @see #endElement(String, String, String)
 	 */
-	public void dataElement(String uri, String localName, String content)
-			throws SAXException {
+	public void dataElement(String uri, String localName, String content) throws SAXException {
 		dataElement(uri, localName, "", EMPTY_ATTS, content);
 	}
-
+	
 	/**
 	 * Write an element with character data content but no attributes or
 	 * Namespace URI.
@@ -1261,16 +1283,36 @@ public class XMLWriter extends XMLFilterImpl {
 	 * @see #characters(String)
 	 * @see #endElement(String, String, String)
 	 */
-	public void dataElement(String localName, String content)
-			throws SAXException {
+	public void dataElement(String localName, String content) throws SAXException {
 		dataElement("", localName, "", EMPTY_ATTS, content);
 	}
 	
-	public void dataElement(String localName, String content, String attributeName,
-			String attributeValue) throws SAXException {
+	public void dataElement(String localName, String content, Operation op) throws SAXException {
+		if(op != null) {
+			dataElement(localName, content, "mode", op.toString());
+		} else {
+			dataElement("", localName, "", EMPTY_ATTS, content);
+		}
+	}
+
+	public void dataElement(String localName, String content, String attributeName, String attributeValue)
+			throws SAXException {
 
 		AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
+
+		dataElement("", localName, "", atts, content);
+	}
+	
+	public void dataElement(String localName, String content, String attributeName, String attributeValue, Operation op)
+			throws SAXException {
+
+		AttributesImpl atts = new AttributesImpl();
+		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
+		
+		if(op != null) {
+			atts.addAttribute("", "mode", "", "CDATA", op.toString());
+		}
 
 		dataElement("", localName, "", atts, content);
 	}

@@ -42,6 +42,10 @@ package de.interactive_instruments.ShapeChange;
  *
  */
 public enum TargetIdentification {
+	/*
+	 * Note: ID '0' is used by the Converter in getCurrentTargetID() in case
+	 * that the target is null.
+	 */
 	RESERVED_0("-reserved-", 0), XML_SCHEMA("XML Schema", 1), RESERVED_2(
 			"-reserved-", 2), RDF("RDF", 3), DEFINITIONS("Definitions",
 					4), EXCEL_MAPPING("Excel Mapping", 5), KML_XSLT("KML XSLT",
@@ -57,23 +61,25 @@ public enum TargetIdentification {
 																			"Replication XML Schema",
 																			13), APP_SCHEMA_STATISTICS(
 																					"Application Schema Statistics",
-																					14), CODELIST_REGISTER(
-																							"Codelist register",
-																							19), OWLISO19150(
-																									"ISO 19150-2 OWL Ontology",
-																									20), SQLDDL(
-																											"SQL DDL",
-																											30), UML_MODEL(
-																													"UML Model",
-																													67), ARCGIS_WORKSPACE(
-																															"ArcGIS Workspace",
-																															111), OBJEKTARTENKATALOG(
-																																	"Objektartenkatalog",
-																																	401), AAA_PROFIL(
-																																			"AAA-Profil (3AP)",
-																																			402), AAA_MODELLART(
-																																					"AAA-Modellart (3AM)",
-																																					404);
+																					14), APP_SCHEMA_METADATA(
+																							"Application Schema Metadata",
+																							15), CODELIST_REGISTER(
+																									"Codelist register",
+																									19), OWLISO19150(
+																											"ISO 19150-2 OWL Ontology",
+																											20), SQLDDL(
+																													"SQL DDL",
+																													30), UML_MODEL(
+																															"UML Model",
+																															67), ARCGIS_WORKSPACE(
+																																	"ArcGIS Workspace",
+																																	111), OBJEKTARTENKATALOG(
+																																			"Objektartenkatalog",
+																																			401), AAA_PROFIL(
+																																					"AAA-Profil (3AP)",
+																																					402), AAA_MODELLART(
+																																							"AAA-Modellart (3AM)",
+																																							404);
 
 	private final String name;
 	private final int id;

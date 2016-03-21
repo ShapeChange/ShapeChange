@@ -37,7 +37,8 @@ import java.util.Map;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
-public interface Info {
+public interface Info extends Comparable<Info> {
+	
 	public Options options();
 
 	public ShapeChangeResult result();

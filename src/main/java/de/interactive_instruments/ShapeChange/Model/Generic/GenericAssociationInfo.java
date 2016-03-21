@@ -81,7 +81,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -90,7 +92,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -99,7 +103,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -108,7 +114,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -117,7 +125,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -126,7 +136,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -135,7 +147,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -144,7 +158,9 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, the values are actively managed and stored in the model elements.
+	 * In the generic model, the values are actively managed and stored in the
+	 * model elements.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
@@ -153,12 +169,14 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * In the generic model, always return an empty string, the other descriptors should be used instead.
+	 * In the generic model, always return an empty string, the other
+	 * descriptors should be used instead.
+	 * 
 	 * @return locally stored descriptor value
 	 */
 	@Override
 	public String documentation() {
-		return ""; 
+		return "";
 	}
 
 	/**
@@ -168,7 +186,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	public String id() {
 		return id;
 	}
-	
+
 	@Override
 	public String globalId() {
 		return globalId;
@@ -207,7 +225,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setAliasName(String aliasName) {
@@ -215,7 +233,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDefinition(String definition) {
@@ -223,7 +241,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDescription(String description) {
@@ -231,7 +249,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLanguage(String language) {
@@ -239,7 +257,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setPrimaryCode(String primaryCode) {
@@ -247,7 +265,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setLegalBasis(String legalBasis) {
@@ -255,7 +273,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setExamples(String[] examples) {
@@ -263,7 +281,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates 
+	 * Set the value of this descriptor in the generic model. This invalidates
 	 * the derived documentation so that it is derived again when needed
 	 */
 	public void setDataCaptureStatements(String[] dataCaptureStatements) {
@@ -277,7 +295,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		this.id = id;
 
 	}
-	
+
 	/**
 	 * @param globalId
 	 */
@@ -319,22 +337,24 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	/** Save the (normalized) stereotypes in the cache. */
 	public void validateStereotypesCache() {
 		// create cache, if necessary
-		if (stereotypesCache == null) 
+		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
 
-		// do nothing else, stereotypes have to be set explicitly using setStereotypes
-		
+		// do nothing else, stereotypes have to be set explicitly using
+		// setStereotypes
+
 	} // validateStereotypesCache
-	
+
 	/**
 	 * @param stereotypeSet
 	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
-		if (stereotypeSet!=null && !stereotypeSet.isEmpty()) {
+		if (stereotypeSet != null && !stereotypeSet.isEmpty()) {
 			for (String st : stereotypeSet.asArray()) {
-				stereotypesCache.add(options.internalize(options.normalizeStereotype(st)));
+				stereotypesCache.add(
+						options.internalize(options.normalizeStereotype(st)));
 			}
 		}
 	}
@@ -345,17 +365,19 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
-		if (stereotype!=null) {
-			stereotypesCache.add(options.internalize(options.normalizeStereotype(stereotype)));
+		if (stereotype != null) {
+			stereotypesCache.add(options
+					.internalize(options.normalizeStereotype(stereotype)));
 		}
 	}
 
 	public void validateTaggedValuesCache() {
 		// create cache, if necessary
-		if (taggedValuesCache==null)
+		if (taggedValuesCache == null)
 			taggedValuesCache = options().taggedValueFactory();
 
-		// do nothing else, tagged values have to be set explicitly using setTaggedValues
+		// do nothing else, tagged values have to be set explicitly using
+		// setTaggedValues
 	}
 
 	/**
@@ -389,7 +411,20 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	public ClassInfo assocClass() {
 		return assocClass;
 	}
-	
-	
+
+	/**
+	 * Adds the prefix to the 'id' of this class. Does NOT update the
+	 * 'globalId'.
+	 * 
+	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
+	 * IDs used in a reference model are unique to that model and do not get
+	 * mixed up with the IDs of the input model.
+	 * 
+	 * @param prefix
+	 */
+	public void addPrefixToModelElementIDs(String prefix) {
+		
+		this.id = prefix + id;
+	}
 
 }

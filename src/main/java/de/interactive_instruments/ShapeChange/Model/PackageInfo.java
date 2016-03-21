@@ -45,10 +45,12 @@ public interface PackageInfo extends Info {
 	 */
 	public String targetNamespace();
 
-	/** Determine the namespace abbreviation of the GML applications schema to 
-	 * be generated. The item is used from the configuration or - if not present
+	/**
+	 * Determine the namespace abbreviation of the GML applications schema to be
+	 * generated. The item is used from the configuration or - if not present
 	 * there - from the tagged value either on this package or one of its
-	 * ancestors. */
+	 * ancestors.
+	 */
 	public String xmlns();
 
 	public String xsdDocument();
@@ -93,14 +95,21 @@ public interface PackageInfo extends Info {
 	 */
 	public SortedSet<PackageInfo> containedPackages();
 
+	/**
+	 * @return the set of classes that are directly contained in this package
+	 *         (thus excluding classes from subpackages); can be empty but not
+	 *         <code>null</code>
+	 */
+	public SortedSet<ClassInfo> containedClasses();
+
 	public SortedSet<String> supplierIds();
-	
+
 	/**
 	 * @return metadata about the diagrams relevant for this package,
 	 *         <code>null</code> if no diagrams are available
 	 */
 	public List<ImageMetadata> getDiagrams();
-	
+
 	/**
 	 * @param diagrams
 	 *            metadata about the diagrams relevant for this class

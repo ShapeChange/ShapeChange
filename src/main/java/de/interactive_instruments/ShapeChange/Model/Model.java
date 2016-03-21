@@ -40,7 +40,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 public interface Model {
-	
+
 	public Options options();
 
 	public ShapeChangeResult result();
@@ -73,6 +73,10 @@ public interface Model {
 	/**
 	 * Return all ClassInfo objects contained in the given package and in sub-
 	 * packages, which belong to the same targetNamespace as the given package.
+	 * 
+	 * @return set of classes contained in the given package and in sub-packages
+	 *         of the same targetNamespace; can be empty but not
+	 *         <code>null</code>
 	 */
 	public SortedSet<ClassInfo> classes(PackageInfo pi);
 
@@ -99,9 +103,18 @@ public interface Model {
 
 	/**
 	 * 
-	 * @return all {@link PackageInfo} objects contained in the model
+	 * @return all {@link PackageInfo} objects contained in the model; can be
+	 *         empty but not <code>null</code>.
 	 */
 	public HashSet<PackageInfo> packages();
+
+	/**
+	 * @param schema
+	 * @return all packages in the model that have the same targetNamespace as
+	 *         the given package. Can be empty (if the given package does not
+	 *         have a targetNamespace) but not <code>null</code>.
+	 */
+	public SortedSet<PackageInfo> packages(PackageInfo pkg);
 
 	/**
 	 * Load additional model information from external sources, such as

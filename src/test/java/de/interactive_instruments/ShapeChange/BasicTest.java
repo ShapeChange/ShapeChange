@@ -165,35 +165,51 @@ public class BasicTest {
 			 * Test the descriptor functionality
 			 */
 			multiTest("src/test/resources/config/testEA_descriptors_fc_en.xml",
-					new String[] { "xml","html" }, "testResults/html/descriptors/INPUT",
+					new String[] { "xml", "html" },
+					"testResults/html/descriptors/INPUT",
 					"src/test/resources/reference/html/descriptors");
 
 			multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
-					new String[] { "xml","html" }, "testResults/html/descriptors/INPUT",
+					new String[] { "xml", "html" },
+					"testResults/html/descriptors/INPUT",
 					"src/test/resources/reference/html/descriptors");
-			
-			multiTest("src/test/resources/config/testEA_descriptors_inspire.xml",
-					new String[] { "xml","html" }, "testResults/html/descriptors/INPUT",
+
+			multiTest(
+					"src/test/resources/config/testEA_descriptors_inspire.xml",
+					new String[] { "xml", "html" },
+					"testResults/html/descriptors/INPUT",
 					"src/test/resources/reference/html/descriptors");
-			
+
 			multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
-					new String[] { "xml","html" }, "testResults/html/descriptors/INPUT",
+					new String[] { "xml", "html" },
+					"testResults/html/descriptors/INPUT",
 					"src/test/resources/reference/html/descriptors");
 
 			multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
-					new String[] { "xml","html" }, "testResults/html/descriptors/INPUT",
+					new String[] { "xml", "html" },
+					"testResults/html/descriptors/INPUT",
 					"src/test/resources/reference/html/descriptors");
-			
+
 			/*
 			 * Test creation of an HTML feature catalogue with
 			 * inheritedProperties=true and noAlphabeticSortingForProperties =
 			 * true
 			 */
-			multiTest("src/test/resources/config/testEA_fc_inheritedProperties.xml",
+			multiTest(
+					"src/test/resources/config/testEA_fc_inheritedProperties.xml",
 					new String[] { "xml", "html" },
 					"testResults/html/inheritedProperties/INPUT",
 					"src/test/resources/reference/html/inheritedProperties/INPUT");
-			
+
+			/*
+			 * Test derivation of application schema differences (output as
+			 * single page HTML feature catalogue).
+			 */
+			multiTest("src/test/resources/config/testEA_model_diff.xml",
+					new String[] { "xml", "html" },
+					"testResults/html/diff/INPUT",
+					"src/test/resources/reference/html/diff/INPUT");
+
 			/*
 			 * SQL - basic text
 			 */

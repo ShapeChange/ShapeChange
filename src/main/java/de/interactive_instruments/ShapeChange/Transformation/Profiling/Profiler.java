@@ -65,6 +65,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileIdentifier.IdentifierPattern;
+import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
  * Creates a profile of the base model by removing all classes and properties
@@ -78,6 +79,13 @@ import de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileId
  *         <dot> de)
  */
 public class Profiler implements Transformer {
+
+	/* Profiler status codes */
+	public static final int STATUS_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK = 200100;
+	public static final int STATUS_PREPROCESSING_MODELCONSISTENCYCHECK = 200101;	
+	public static final int STATUS_PROCESSING_PROFILING = 200130;
+	public static final int STATUS_POSTPROCESSING_REMOVERESIDUALTYPES = 200170;
+	public static final int STATUS_POSTPROCESSING_REMOVEEMPTYPACKAGES = 200171;
 
 	/* Profiler rule identifiers */
 	public static final String RULE_TRF_PROFILING_PREPROCESSING_MODELCONSISTENCYCHECK = "rule-trf-profiling-preprocessing-modelConsistencyCheck";
@@ -245,6 +253,10 @@ public class Profiler implements Transformer {
 		// 1. Execute any preprocessing
 		if (rules.contains(
 				RULE_TRF_PROFILING_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK)) {
+
+			StatusBoard.getStatusBoard().statusChanged(
+					STATUS_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK);
+
 			/*
 			 * Check that the values of the 'profiles' tagged value in classes
 			 * are consistent:
@@ -325,6 +337,9 @@ public class Profiler implements Transformer {
 
 		if (rules.contains(
 				RULE_TRF_PROFILING_PREPROCESSING_MODELCONSISTENCYCHECK)) {
+
+			StatusBoard.getStatusBoard()
+					.statusChanged(STATUS_PREPROCESSING_MODELCONSISTENCYCHECK);
 
 			// TBD This could be moved to a separate Transformer class
 			/*
@@ -444,6 +459,9 @@ public class Profiler implements Transformer {
 		}
 
 		// 2. Execute profiling
+
+		StatusBoard.getStatusBoard().statusChanged(STATUS_PROCESSING_PROFILING);
+
 		/*
 		 * For each class in the generic model:
 		 * 
@@ -602,7 +620,7 @@ public class Profiler implements Transformer {
 						 */
 						GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
-					List<Constraint> genPiConstraints = genPi.constraints();
+						List<Constraint> genPiConstraints = genPi.constraints();
 
 						genPi.setConstraints(this.validateConstraintContext(
 								genPiConstraints, genPi, result, genModel));
@@ -637,7 +655,7 @@ public class Profiler implements Transformer {
 								} else {
 									newConstraints.add(con);
 								}
-								
+
 							} else {
 								newConstraints.add(con);
 							}
@@ -655,6 +673,9 @@ public class Profiler implements Transformer {
 		// 3. Execute any postprocessing
 		if (rules.contains(
 				RULE_TRF_PROFILING_POSTPROCESSING_REMOVERESIDUALTYPES)) {
+
+			StatusBoard.getStatusBoard()
+					.statusChanged(STATUS_POSTPROCESSING_REMOVERESIDUALTYPES);
 
 			// key: classid
 			HashSet<GenericClassInfo> genCis = genModel.selectedSchemaClasses();
@@ -701,6 +722,9 @@ public class Profiler implements Transformer {
 
 		if (rules.contains(
 				RULE_TRF_PROFILING_POSTPROCESSING_REMOVEEMPTYPACKAGES)) {
+
+			StatusBoard.getStatusBoard()
+					.statusChanged(STATUS_POSTPROCESSING_REMOVEEMPTYPACKAGES);
 
 			// If, after profiling, there is no class in a package (or its
 			// child-packages), remove it.
@@ -1038,8 +1062,8 @@ public class Profiler implements Transformer {
 	 * @return
 	 */
 	private Vector<Constraint> validateConstraintContext(
-			List<Constraint> constraints, Info owner,
-			ShapeChangeResult result, GenericModel genModel) {
+			List<Constraint> constraints, Info owner, ShapeChangeResult result,
+			GenericModel genModel) {
 
 		Vector<Constraint> results = new Vector<Constraint>();
 

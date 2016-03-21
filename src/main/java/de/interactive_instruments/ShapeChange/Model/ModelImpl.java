@@ -57,7 +57,8 @@ public abstract class ModelImpl implements Model {
 	/*
 	 * the list of tagged values specified by ISO 19109 (2015)
 	 * 
-	 * note: designation is not included, it is considered to be the same as alias
+	 * note: designation is not included, it is considered to be the same as
+	 * alias
 	 */
 	protected static String[] iso19109Tags = { "language", "definition",
 			"description" };
@@ -65,13 +66,13 @@ public abstract class ModelImpl implements Model {
 	/*
 	 * the list of tagged values specified by the GML encoding rule
 	 */
-	protected static String[] gmlTags = { "targetNamespace", "xmlns",
-			"version", "xsdDocument", "gmlProfileSchema", "sequenceNumber",
+	protected static String[] gmlTags = { "targetNamespace", "xmlns", "version",
+			"xsdDocument", "gmlProfileSchema", "sequenceNumber",
 			"noPropertyType", "byValuePropertyType", "isCollection",
 			"asDictionary", "inlineOrByReference", "isMetadata",
-			"defaultCodeSpace", "xmlSchemaType", "documentation",
-			"resourceURI", "codeList" };
-	// TODO clean-up list
+			"defaultCodeSpace", "xmlSchemaType", "documentation", "resourceURI",
+			"codeList" };
+			// TODO clean-up list
 
 	/*
 	 * the list of tagged values specified by the JSON encoding rule
@@ -87,20 +88,19 @@ public abstract class ModelImpl implements Model {
 			"maxLength", "base", "rangeMinimum", "rangeMaximum", "default",
 			"nilReasonAllowed", "gmlImplementedByNilReason", "primaryCode",
 			"secondaryCode", "oclExpressions", "schPatterns", "unitMeasure",
-			"voidable", "infoURL", "alias",
-			"gmlAsCharacterString", "gmlMixin", "nillable", "suppress",
-			"codeList", "codeListValuePattern", "codeListRepresentation",
-			"uomResourceURI", "uomResourceValuePattern",
-			"uomResourceRepresentation", "physicalQuantity",
-			"recommendedMeasure", "noncomparableMeasure", "asXMLAttribute",
-			"soft-typed", "parent", "AAA:Kennung", "AAA:Datum",
-			"AAA:Organisation", "AAA:Modellart", "AAA:Profile",
+			"voidable", "infoURL", "alias", "gmlAsCharacterString", "gmlMixin",
+			"nillable", "suppress", "codeList", "codeListValuePattern",
+			"codeListRepresentation", "uomResourceURI",
+			"uomResourceValuePattern", "uomResourceRepresentation",
+			"physicalQuantity", "recommendedMeasure", "noncomparableMeasure",
+			"asXMLAttribute", "soft-typed", "parent", "AAA:Kennung",
+			"AAA:Datum", "AAA:Organisation", "AAA:Modellart", "AAA:Profile",
 			"AAA:Grunddatenbestand", "AAA:Nutzungsart",
 			"AAA:Nutzungsartkennung", "AAA:objektbildend", "AAA:Themen",
 			"AAA:Revisionsnummer", "reverseRoleNAS", "allowedTypesNAS",
-			"gmlArrayProperty", "gmlListProperty", "example", 
-			"dataCaptureStatement", "legalBasis" };
-	// TODO update this with missing tags from other targets?
+			"gmlArrayProperty", "gmlListProperty", "example",
+			"dataCaptureStatement", "legalBasis", "profiles" };
+			// TODO update this with missing tags from other targets?
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -127,9 +127,8 @@ public abstract class ModelImpl implements Model {
 		if (postprocessed)
 			return;
 
-		if (options().parameter("checkingConstraints") == null
-				|| options().parameter("checkingConstraints").equalsIgnoreCase(
-						"enabled")) {
+		if (options().parameter("checkingConstraints") == null || options()
+				.parameter("checkingConstraints").equalsIgnoreCase("enabled")) {
 			postprocessFolConstraints();
 		}
 
@@ -181,8 +180,8 @@ public abstract class ModelImpl implements Model {
 
 						FolConstraint folCon = (FolConstraint) con;
 
-						if (folCon.sourceType().equals(
-								SbvrConstants.FOL_SOURCE_TYPE)) {
+						if (folCon.sourceType()
+								.equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 
 							folCon.setComments(new String[] { folCon.text() });
 
@@ -231,8 +230,8 @@ public abstract class ModelImpl implements Model {
 		// load SBVR constraint info from excel file
 		// NOTE: can also be done via ConstraintLoader transformation
 
-		String sbvrFileLocation = options().parameter(
-				Options.PARAM_CONSTRAINT_EXCEL_FILE);
+		String sbvrFileLocation = options()
+				.parameter(Options.PARAM_CONSTRAINT_EXCEL_FILE);
 
 		if (sbvrFileLocation != null) {
 
@@ -275,8 +274,8 @@ public abstract class ModelImpl implements Model {
 			String xsdDocName = pi.xsdDocument();
 			if (xsdDocName != null && !xsdDocName.trim().isEmpty()) {
 				if (xsdDocNames.contains(xsdDocName)) {
-					MessageContext mc = result()
-							.addError(null, 162, xsdDocName);
+					MessageContext mc = result().addError(null, 162,
+							xsdDocName);
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", pi.fullName());
 				} else
@@ -356,14 +355,16 @@ public abstract class ModelImpl implements Model {
 				allowedTags.add(s);
 			for (String s : shapeChangeTags)
 				allowedTags.add(s);
-			for (String s : options().parameter("representTaggedValues").split("\\,"))
+			for (String s : options().parameter("representTaggedValues")
+					.split("\\,"))
 				allowedTags.add(s.trim());
 			for (String s : options().parameter("addTaggedValues").split("\\,"))
 				allowedTags.add(s.trim());
 		}
 
 		// Note: UML tools may have their own way of naming tagged values.
-		// Therefore, tool specific mappings are included here, too. Currently specific
+		// Therefore, tool specific mappings are included here, too. Currently
+		// specific
 		// support exists for Rational Rose and Enterprise Architect.
 		if (tag.startsWith("RationalRose$UGAS:")) {
 			tag = tag.substring(18);
@@ -390,19 +391,19 @@ public abstract class ModelImpl implements Model {
 			return "gmlAsGroup";
 		if (tag.equals("implementedByNilReason"))
 			return "gmlImplementedByNilReason";
-		
+
 		// Now check tag aliases provided in the configuration
 		String s = options().normalizeTag(tag);
 		if (!s.equalsIgnoreCase(tag))
 			return s;
-		
+
 		// None of these, return null
 		return null;
 	}
 
 	public void initialise(ShapeChangeResult r, Options o,
-			String repositoryFileNameOrConnectionString, String user, String pwd)
-			throws ShapeChangeAbortException {
+			String repositoryFileNameOrConnectionString, String user,
+			String pwd) throws ShapeChangeAbortException {
 
 		throw new ShapeChangeAbortException(
 				"Initialization of repository with username and password not supported for this type of input model.");
@@ -413,7 +414,8 @@ public abstract class ModelImpl implements Model {
 	 */
 	public boolean isInSelectedSchemas(ClassInfo ci) {
 
-		SortedSet<? extends PackageInfo> selectedSchemas = this.selectedSchemas();
+		SortedSet<? extends PackageInfo> selectedSchemas = this
+				.selectedSchemas();
 
 		if (selectedSchemas == null || selectedSchemas.isEmpty()) {
 
@@ -431,5 +433,27 @@ public abstract class ModelImpl implements Model {
 			// ci is not part of any of the selected schemas
 			return false;
 		}
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.Model#packages(de.interactive_instruments.ShapeChange.Model.PackageInfo)
+	 */
+	public SortedSet<PackageInfo> packages(PackageInfo pkg) {
+
+		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
+
+		if (pkg.targetNamespace() != null) {
+
+			HashSet<PackageInfo> allPackages = this.packages();
+
+			for (PackageInfo pi : allPackages) {
+				if (pi.targetNamespace() != null
+						&& pi.targetNamespace().equals(pkg.targetNamespace())) {
+					result.add(pi);
+				}
+			}
+		}
+
+		return result;
 	}
 }

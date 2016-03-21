@@ -1019,4 +1019,23 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			}
 		}
 	}
+
+	/**
+	 * Adds the prefix to the 'id' of this class. Also updates the id of the
+	 * 'typeInfo' (if not <code>null</code>). Does NOT update the 'globalId'.
+	 * 
+	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
+	 * IDs used in a reference model are unique to that model and do not get
+	 * mixed up with the IDs of the input model.
+	 * 
+	 * @param prefix
+	 */
+	public void addPrefixToModelElementIDs(String prefix) {
+
+		this.id = prefix + id;
+
+		if (typeInfo.id != null) {
+			typeInfo.id = prefix + typeInfo.id;
+		}
+	}
 }

@@ -12,7 +12,7 @@
   <!-- =============== -->
   <!-- Output settings -->
   <!-- =============== -->
-  <xsl:output indent="no" method="html"/>
+  <xsl:output indent="yes" method="html"/>
 
   <!-- ================= -->
   <!-- Catalogue content -->

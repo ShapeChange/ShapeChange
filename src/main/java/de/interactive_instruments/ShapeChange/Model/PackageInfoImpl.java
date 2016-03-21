@@ -33,25 +33,27 @@
 package de.interactive_instruments.ShapeChange.Model;
 
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 	protected List<ImageMetadata> diagrams = null;
-	
+
 	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang==null || lang.isEmpty()) {
+		if (lang == null || lang.isEmpty()) {
 			if (this.isSchema())
 				return null;
 			PackageInfo pi = this.owner();
-			if (pi!=null)
+			if (pi != null)
 				return pi.language();
 		} else
 			return lang;
-		
+
 		return null;
 	}
 
@@ -432,5 +434,23 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		this.diagrams = diagrams;
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#containedClasses()
+	 */
+	public SortedSet<ClassInfo> containedClasses() {
+
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+		SortedSet<ClassInfo> classes = this.model().classes(this);
+
+		for (ClassInfo ci : classes) {
+			if (ci.pkg() == this) {
+				result.add(ci);
+			}
+		}
+
+		return result;
 	}
 }

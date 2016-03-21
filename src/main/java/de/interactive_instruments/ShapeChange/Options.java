@@ -115,6 +115,7 @@ public class Options {
 	public static final String TargetSQLClass = "de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl";
 	public static final String TargetArcGISWorkspaceClass = "de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace";
 	public static final String TargetReplicationSchemaClass = "de.interactive_instruments.ShapeChange.Target.ReplicationSchema.ReplicationXmlSchema";
+	public static final String TargetApplicationSchemaMetadata = "de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -2897,6 +2898,11 @@ public class Options {
 		addRule("rule-rep-prop-exclude-derived");
 		addRule("rule-rep-cls-generate-objectidentifier");
 		addRule("rule-rep-prop-maxLength-from-size");
+		
+		/*
+		 * Application schema metadata rules
+		 */
+		addRule("rule-asm-all-identify-profiles");
 
 		// // ==================
 		// // Transformer rules
@@ -3011,6 +3017,8 @@ public class Options {
 			return Options.TargetArcGISWorkspaceClass;
 		else if (ra[1].equals("rep"))
 			return Options.TargetReplicationSchemaClass;
+		else if (ra[1].equals("asm"))
+			return Options.TargetApplicationSchemaMetadata;
 
 		return null;
 	}

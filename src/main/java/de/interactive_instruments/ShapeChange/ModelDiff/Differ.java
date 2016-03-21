@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -56,32 +57,32 @@ public class Differ {
 
 	private boolean aaaModel = false;
 	private String[] maArrRef = new String[0];
-	private diff_match_patch strDiffer = new diff_match_patch();		
+	private diff_match_patch strDiffer = new diff_match_patch();
 	private HashSet<ClassInfo> processed = new HashSet<ClassInfo>();
 
-	public Differ () {
+	public Differ() {
 	}
-	
-	public Differ (boolean aaa, String[] maArr) {
+
+	public Differ(boolean aaa, String[] maArr) {
 		aaaModel = true;
 		maArrRef = maArr;
 	}
-	
+
 	private boolean MatchingMA(Info i) {
 		if (!aaaModel)
 			return true;
 
 		String malist = i.taggedValue("AAA:Modellart");
-		
-		if (malist==null)
+
+		if (malist == null)
 			return true;
 
 		malist = malist.trim();
-		
-		if (malist.length()==0)
+
+		if (malist.length() == 0)
 			return true;
-		
-		if (maArrRef.length==0)
+
+		if (maArrRef.length == 0)
 			return true;
 
 		for (String ma : malist.split(",")) {
@@ -92,86 +93,100 @@ public class Differ {
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
-	private void merge(TreeMap<Info,HashSet<DiffElement>> diffs, TreeMap<Info,HashSet<DiffElement>> diffs2) {
-		for (Entry<Info,HashSet<DiffElement>> me : diffs2.entrySet()) {
+
+	/**
+	 * Adds the content from diff2 to diffs.
+	 * 
+	 * @param diffs
+	 * @param diffs2
+	 */
+	public void merge(SortedMap<Info, SortedSet<DiffElement>> diffs,
+			SortedMap<Info, SortedSet<DiffElement>> diffs2) {
+		
+		for (Entry<Info, SortedSet<DiffElement>> me : diffs2.entrySet()) {
 			if (diffs.containsKey(me.getKey())) {
 				diffs.get(me.getKey()).addAll(me.getValue());
 			} else {
-				diffs.put(me.getKey(),me.getValue());
+				diffs.put(me.getKey(), me.getValue());
 			}
 		}
 	}
-	
-	public TreeMap<Info,HashSet<DiffElement>> diff(PackageInfo curr, PackageInfo ref) {
-		TreeMap<Info,HashSet<DiffElement>> diffs = baseDiff(curr, ref);
-		
-		Info[] infoArr, infoArrRef;
-		TreeMap<Info,HashSet<DiffElement>> diffs2;
 
+	/**
+	 * @param curr
+	 * @param ref
+	 * @return map with set of diff elements per Info object; can be empty but
+	 *         not <code>null</code>
+	 */
+	public SortedMap<Info, SortedSet<DiffElement>> diff(PackageInfo curr,
+			PackageInfo ref) {
+
+		SortedMap<Info, SortedSet<DiffElement>> diffs = baseDiff(curr, ref);
+
+		Info[] infoArr, infoArrRef;
+		SortedMap<Info, SortedSet<DiffElement>> diffs2;
+
+		// diff on subpackages
 		SortedSet<PackageInfo> sub = curr.containedPackages();
 		infoArr = new Info[sub.size()];
 		sub.toArray(infoArr);
 		SortedSet<PackageInfo> subRef = ref.containedPackages();
 		infoArrRef = new Info[subRef.size()];
 		subRef.toArray(infoArrRef);
-		diffs2 = infoDiffs(curr,ElementType.SUBPACKAGE,infoArr,infoArrRef);
+
+		diffs2 = infoDiffs(curr, ElementType.SUBPACKAGE, infoArr, infoArrRef);
 		merge(diffs, diffs2);
-		
-		for (Entry<Info,HashSet<DiffElement>> me : diffs2.entrySet()) {
-			if (diffs.containsKey(me.getKey())) {
-				diffs.get(me.getKey()).addAll(me.getValue());
-			} else {
-				diffs.put(me.getKey(),me.getValue());
-			}
-		}
-		
-		SortedSet<ClassInfo> temp = curr.model().classes(curr);;		
+
+		// diff on contained classes
+		SortedSet<ClassInfo> temp = curr.model().classes(curr);
+
 		SortedSet<ClassInfo> cls = new TreeSet<ClassInfo>();
 		for (ClassInfo ci : temp) {
-			if (ci.pkg()==curr && MatchingMA(ci))
+			if (ci.pkg() == curr && MatchingMA(ci))
 				cls.add(ci);
 		}
 		infoArr = new Info[cls.size()];
 		cls.toArray(infoArr);
 		temp = ref.model().classes(ref);
-		HashSet<ClassInfo> clsRef = new HashSet<ClassInfo>();		
+		HashSet<ClassInfo> clsRef = new HashSet<ClassInfo>();
 		for (ClassInfo ci : temp) {
-			if (ci.pkg()==ref && MatchingMA(ci))
+			if (ci.pkg() == ref && MatchingMA(ci))
 				clsRef.add(ci);
 		}
 		infoArrRef = new Info[clsRef.size()];
 		clsRef.toArray(infoArrRef);
-		diffs2 = infoDiffs(curr,ElementType.CLASS,infoArr,infoArrRef);
+		diffs2 = infoDiffs(curr, ElementType.CLASS, infoArr, infoArrRef);
 		merge(diffs, diffs2);
-		
+
 		return diffs;
-	}	
-	
-	public TreeMap<Info,HashSet<DiffElement>> diff(ClassInfo curr, ClassInfo ref) {
+	}
+
+	public SortedMap<Info, SortedSet<DiffElement>> diff(ClassInfo curr,
+			ClassInfo ref) {
 		if (processed.contains(curr))
-			return new TreeMap<Info,HashSet<DiffElement>>();
-		
-		TreeMap<Info,HashSet<DiffElement>> diffs = baseDiff(curr, ref);
-		
+			return new TreeMap<Info, SortedSet<DiffElement>>();
+
+		SortedMap<Info, SortedSet<DiffElement>> diffs = baseDiff(curr, ref);
+
 		Info[] infoArr, infoArrRef;
-		TreeMap<Info,HashSet<DiffElement>> diffs2;
-		
+		SortedMap<Info, SortedSet<DiffElement>> diffs2;
+
 		Collection<PropertyInfo> prop = curr.properties().values();
 		infoArr = new Info[prop.size()];
 		prop.toArray(infoArr);
 		Collection<PropertyInfo> propRef = ref.properties().values();
 		infoArrRef = new Info[propRef.size()];
 		propRef.toArray(infoArrRef);
-		if (curr.category()==Options.ENUMERATION || curr.category()==Options.CODELIST)
-			diffs2 = infoDiffs(curr,ElementType.ENUM,infoArr,infoArrRef);
+		if (curr.category() == Options.ENUMERATION
+				|| curr.category() == Options.CODELIST)
+			diffs2 = infoDiffs(curr, ElementType.ENUM, infoArr, infoArrRef);
 		else
-			diffs2 = infoDiffs(curr,ElementType.PROPERTY,infoArr,infoArrRef);
-		merge(diffs,diffs2);	
-		
+			diffs2 = infoDiffs(curr, ElementType.PROPERTY, infoArr, infoArrRef);
+		merge(diffs, diffs2);
+
 		SortedSet<String> cls = curr.supertypes();
 		infoArr = new Info[cls.size()];
 		int i = 0;
@@ -184,42 +199,46 @@ public class Differ {
 		for (String id : clsRef) {
 			infoArrRef[i++] = ref.model().classById(id);
 		}
-		diffs2 = infoDiffs(curr,ElementType.SUPERTYPE,infoArr,infoArrRef);
-		merge(diffs,diffs2);	
-		
+		diffs2 = infoDiffs(curr, ElementType.SUPERTYPE, infoArr, infoArrRef);
+		merge(diffs, diffs2);
+
 		processed.add(curr);
-		
+
 		return diffs;
-	}	
-	
-	public TreeMap<Info,HashSet<DiffElement>> diff(PropertyInfo curr, PropertyInfo ref) {
-		TreeMap<Info,HashSet<DiffElement>> diffs = baseDiff(curr, ref);
+	}
+
+	public SortedMap<Info, SortedSet<DiffElement>> diff(PropertyInfo curr,
+			PropertyInfo ref) {
+		SortedMap<Info, SortedSet<DiffElement>> diffs = baseDiff(curr, ref);
 
 		DiffElement diff;
-		
-		diff = stringDiff(ElementType.MULTIPLICITY, ref.cardinality().toString(), curr.cardinality().toString());
-		if (diff!=null) {
+
+		diff = stringDiff(ElementType.MULTIPLICITY,
+				ref.cardinality().toString(), curr.cardinality().toString());
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
-		diff = stringDiff(ElementType.VALUETYPE, ref.typeInfo().name, curr.typeInfo().name);
-		if (diff!=null) {
+
+		diff = stringDiff(ElementType.VALUETYPE, ref.typeInfo().name,
+				curr.typeInfo().name);
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
-		return diffs;
-	}	
-	
-	public TreeMap<Info,HashSet<DiffElement>> diffEnum(PropertyInfo curr, PropertyInfo ref) {
-		TreeMap<Info,HashSet<DiffElement>> diffs = baseDiff(curr, ref);
 
 		return diffs;
-	}	
-	
+	}
+
+	public SortedMap<Info, SortedSet<DiffElement>> diffEnum(PropertyInfo curr,
+			PropertyInfo ref) {
+		SortedMap<Info, SortedSet<DiffElement>> diffs = baseDiff(curr, ref);
+
+		return diffs;
+	}
+
 	protected LinkedList<Diff> aaaDocumentation(String ref, String curr) {
 		String[] sa = curr.split("-==-");
 		String[] saRef = ref.split("-==-");
@@ -242,13 +261,22 @@ public class Differ {
 					}
 				}
 			} else {
-				if (sRef!=null) {
-					strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-"+head+"-==-"));						
+				if (sRef != null) {
+					strdiffs.add(
+							new name.fraser.neil.plaintext.diff_match_patch.Diff(
+									name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL,
+									"-==-" + head + "-==-"));
 					strdiffs.addAll(strDiffer.diff_main(sRef, s1));
 					sRef = null;
 				} else if (!first && !s1.isEmpty()) {
-					strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-"+head+"-==-"));						
-					strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(name.fraser.neil.plaintext.diff_match_patch.Operation.INSERT, s1));						
+					strdiffs.add(
+							new name.fraser.neil.plaintext.diff_match_patch.Diff(
+									name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL,
+									"-==-" + head + "-==-"));
+					strdiffs.add(
+							new name.fraser.neil.plaintext.diff_match_patch.Diff(
+									name.fraser.neil.plaintext.diff_match_patch.Operation.INSERT,
+									s1));
 				}
 			}
 			heading = !heading;
@@ -273,72 +301,95 @@ public class Differ {
 					}
 				}
 			} else {
-				if (!first && sRef==null && !s2.isEmpty()) {
-					strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-"+head+"-==-"));						
-					strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(name.fraser.neil.plaintext.diff_match_patch.Operation.DELETE, s2));						
+				if (!first && sRef == null && !s2.isEmpty()) {
+					strdiffs.add(
+							new name.fraser.neil.plaintext.diff_match_patch.Diff(
+									name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL,
+									"-==-" + head + "-==-"));
+					strdiffs.add(
+							new name.fraser.neil.plaintext.diff_match_patch.Diff(
+									name.fraser.neil.plaintext.diff_match_patch.Operation.DELETE,
+									s2));
 				}
 			}
 			heading = !heading;
 			first = false;
-		}		
+		}
 		return strdiffs;
 	}
-	
-	protected DiffElement stringDiff(ElementType type, String ref, String curr) {
+
+	protected DiffElement stringDiff(ElementType type, String ref,
+			String curr) {
+
 		LinkedList<Diff> strdiffs;
-		if (aaaModel && type==ElementType.DOCUMENTATION) {
+
+		if (aaaModel && type == ElementType.DOCUMENTATION) {
 			strdiffs = aaaDocumentation(ref, curr);
-		} else
+		} else {
 			strdiffs = strDiffer.diff_main(ref, curr);
+		}
 
 		strDiffer.diff_cleanupEfficiency(strdiffs);
-		if (strDiffer.diff_levenshtein(strdiffs)==0)
+
+		if (strDiffer.diff_levenshtein(strdiffs) == 0)
 			return null;
-		
+
 		DiffElement diff = new DiffElement();
 		diff.change = Operation.CHANGE;
 		diff.subElementType = type;
 		diff.diff = strdiffs;
 		return diff;
 	}
-	
+
 	@SuppressWarnings("incomplete-switch")
-	protected TreeMap<Info,HashSet<DiffElement>> infoDiffs(Info base, ElementType type, Info[] currs, Info[] refs) {
-		TreeMap<Info,HashSet<DiffElement>> diffs = new TreeMap<Info,HashSet<DiffElement>>();
+	protected SortedMap<Info, SortedSet<DiffElement>> infoDiffs(Info base,
+			ElementType type, Info[] currs, Info[] refs) {
+
+		SortedMap<Info, SortedSet<DiffElement>> diffs = new TreeMap<Info, SortedSet<DiffElement>>();
+
 		DiffElement diff;
-		TreeMap<Info,HashSet<DiffElement>> diffs2;
+		SortedMap<Info, SortedSet<DiffElement>> diffs2;
+
 		for (Info i : currs) {
-			if (type!=ElementType.SUBPACKAGE && !MatchingMA(i))
+
+			if (type != ElementType.SUBPACKAGE && !MatchingMA(i))
 				continue;
+
 			boolean found = false;
+
 			for (Info iRef : refs) {
-				if (type!=ElementType.SUBPACKAGE && !MatchingMA(iRef))
+
+				if (type != ElementType.SUBPACKAGE && !MatchingMA(iRef))
 					continue;
+
 				boolean eq = i.name().equalsIgnoreCase(iRef.name());
-				if (type==ElementType.ENUM) {
-					String s1 = ((PropertyInfo)i).initialValue();
-					String s2 = ((PropertyInfo)iRef).initialValue();
-					if (s1!=null && s2!=null)
+
+				if (type == ElementType.ENUM) {
+					String s1 = ((PropertyInfo) i).initialValue();
+					String s2 = ((PropertyInfo) iRef).initialValue();
+					if (s1 != null && s2 != null)
 						eq = s1.equalsIgnoreCase(s2);
 				}
+
 				if (eq) {
 					switch (type) {
-						case SUBPACKAGE:
-							diffs2=diff((PackageInfo)i,(PackageInfo)iRef);
-							merge(diffs,diffs2);
-							break;
-						case CLASS:
-							diffs2=diff((ClassInfo)i,(ClassInfo)iRef);
-							merge(diffs,diffs2);
-							break;
-						case PROPERTY:
-							diffs2=diff((PropertyInfo)i,(PropertyInfo)iRef);
-							merge(diffs,diffs2);
-							break;
-						case ENUM:
-							diffs2=diffEnum((PropertyInfo)i,(PropertyInfo)iRef);
-							merge(diffs,diffs2);
-							break;
+					case SUBPACKAGE:
+						diffs2 = diff((PackageInfo) i, (PackageInfo) iRef);
+						merge(diffs, diffs2);
+						break;
+					case CLASS:
+						diffs2 = diff((ClassInfo) i, (ClassInfo) iRef);
+						merge(diffs, diffs2);
+						break;
+					case PROPERTY:
+						diffs2 = diff((PropertyInfo) i, (PropertyInfo) iRef);
+						merge(diffs, diffs2);
+						break;
+					case ENUM:
+						diffs2 = diffEnum((PropertyInfo) i,
+								(PropertyInfo) iRef);
+						merge(diffs, diffs2);
+						break;
 					}
 					found = true;
 					break;
@@ -350,162 +401,225 @@ public class Differ {
 				diff.subElementType = type;
 				diff.subElement = i;
 				if (!diffs.containsKey(base))
-					diffs.put(base,new HashSet<DiffElement>());
+					diffs.put(base, new TreeSet<DiffElement>());
 				diffs.get(base).add(diff);
 			}
 		}
 		for (Info iRef : refs) {
+
 			if (!MatchingMA(iRef))
 				continue;
+
 			boolean found = false;
+
 			for (Info i : currs) {
+
 				if (!MatchingMA(i))
 					continue;
+
 				boolean eq = i.name().equalsIgnoreCase(iRef.name());
-				if (type==ElementType.ENUM) {
-					String s1 = ((PropertyInfo)i).initialValue();
-					String s2 = ((PropertyInfo)iRef).initialValue();
-					if (s1!=null && s2!=null)
+
+				if (type == ElementType.ENUM) {
+					String s1 = ((PropertyInfo) i).initialValue();
+					String s2 = ((PropertyInfo) iRef).initialValue();
+					if (s1 != null && s2 != null)
 						eq = s1.equalsIgnoreCase(s2);
 				}
+
 				if (eq) {
 					found = true;
 					break;
 				}
 			}
+
 			if (!found) {
 				diff = new DiffElement();
 				diff.change = Operation.DELETE;
 				diff.subElementType = type;
 				diff.subElement = iRef;
 				if (!diffs.containsKey(base))
-					diffs.put(base,new HashSet<DiffElement>());
+					diffs.put(base, new TreeSet<DiffElement>());
 				diffs.get(base).add(diff);
 			}
-		}		
+		}
 		return diffs;
 	}
-	
+
 	private String addConstraints(ClassInfo ci, String doc) {
 		for (Constraint ocl : ci.constraints()) {
-			
+
 			// Ignore constraints on supertypes
 			if (!ocl.contextModelElmt().id().equals(ci.id()))
 				continue;
-			
+
 			doc += "\n\n-==- Konsistenzbedingung ";
 			if (!ocl.name().equalsIgnoreCase("alle"))
-				doc += ocl.name()+" ";
+				doc += ocl.name() + " ";
 			doc += "-==-\n";
 			String[] sa = ocl.text().split("/\\*");
-			for (String sc: sa) {
+			for (String sc : sa) {
 				sc = sc.trim();
 				if (sc.isEmpty())
 					continue;
 				if (sc.contains("*/")) {
-					sc = sc.replaceAll("\\*/.*","");
+					sc = sc.replaceAll("\\*/.*", "");
 					sc = sc.trim();
 				}
-				doc += "\n"+sc;
+				doc += "\n" + sc;
 			}
-		}						
+		}
 		return doc;
 	}
-	
-	public TreeMap<Info,HashSet<DiffElement>> baseDiff(Info curr, Info ref) {
-		TreeMap<Info,HashSet<DiffElement>> diffs = new TreeMap<Info,HashSet<DiffElement>>();
+
+	/**
+	 * @param curr
+	 * @param ref
+	 * @return map with set of diff elements per Info object; can be empty but
+	 *         not <code>null</code>
+	 */
+	public SortedMap<Info, SortedSet<DiffElement>> baseDiff(Info curr, Info ref) {
+
+		SortedMap<Info, SortedSet<DiffElement>> diffs = new TreeMap<Info, SortedSet<DiffElement>>();
 		DiffElement diff;
-		
-		// TODO change "documentation" to the specific descriptors, at least for the non-AAA case
+
+		/*
+		 * TODO change "documentation" to the specific descriptors, at least for
+		 * the non-AAA case
+		 * 
+		 * Done for legalBasis and primaryCode; TBD: example and
+		 * dataCaptureStatement
+		 */
 		if (aaaModel && curr instanceof ClassInfo) {
-			String currdoc = addConstraints((ClassInfo)curr,curr.documentation());
-			String refdoc = addConstraints((ClassInfo)ref,ref.documentation());
+			String currdoc = addConstraints((ClassInfo) curr,
+					curr.documentation());
+			String refdoc = addConstraints((ClassInfo) ref,
+					ref.documentation());
 			diff = stringDiff(ElementType.DOCUMENTATION, refdoc, currdoc);
-		} else
-			diff = stringDiff(ElementType.DOCUMENTATION, ref.documentation(), curr.documentation());
-		if (diff!=null) {
+		} else {
+			diff = stringDiff(ElementType.DOCUMENTATION, ref.documentation(),
+					curr.documentation());
+		}
+
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
+
+		// perform diff for the name
 		diff = stringDiff(ElementType.NAME, ref.name(), curr.name());
-		if (diff!=null) {
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
+
+		// perform diff for the alias
 		String s1 = ref.aliasName();
-		if (s1==null)
+		if (s1 == null)
 			s1 = "";
 		String s2 = curr.aliasName();
-		if (s2==null)
+		if (s2 == null)
 			s2 = "";
 		diff = stringDiff(ElementType.ALIAS, s1, s2);
-		if (diff!=null) {
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
+
+		// perform diff for the definition
 		s1 = ref.definition();
-		if (s1==null)
+		if (s1 == null)
 			s1 = "";
 		s2 = curr.definition();
-		if (s2==null)
+		if (s2 == null)
 			s2 = "";
 		diff = stringDiff(ElementType.DEFINITION, s1, s2);
-		if (diff!=null) {
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
+
+		// perform diff for the description
 		s1 = ref.description();
-		if (s1==null)
+		if (s1 == null)
 			s1 = "";
 		s2 = curr.description();
-		if (s2==null)
+		if (s2 == null)
 			s2 = "";
 		diff = stringDiff(ElementType.DESCRIPTION, s1, s2);
-		if (diff!=null) {
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
-		diff = stringDiff(ElementType.STEREOTYPE, 
-				ref.stereotypes().toString().replace("[", "").replace("]", ""), 
-				curr.stereotypes().toString().replace("[", "").replace("]", ""));
-		if (diff!=null) {
+
+		// perform diff for the legal basis
+		s1 = ref.legalBasis();
+		if (s1 == null)
+			s1 = "";
+		s2 = curr.legalBasis();
+		if (s2 == null)
+			s2 = "";
+		diff = stringDiff(ElementType.LEGALBASIS, s1, s2);
+		if (diff != null) {
 			if (!diffs.containsKey(curr))
-				diffs.put(curr,new HashSet<DiffElement>());
+				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
-		
+
+		// perform diff for the primary code
+		s1 = ref.primaryCode();
+		if (s1 == null)
+			s1 = "";
+		s2 = curr.primaryCode();
+		if (s2 == null)
+			s2 = "";
+		diff = stringDiff(ElementType.PRIMARYCODE, s1, s2);
+		if (diff != null) {
+			if (!diffs.containsKey(curr))
+				diffs.put(curr, new TreeSet<DiffElement>());
+			diffs.get(curr).add(diff);
+		}
+
+		// perform diff for the stereotype
+		diff = stringDiff(ElementType.STEREOTYPE,
+				ref.stereotypes().toString().replace("[", "").replace("]", ""),
+				curr.stereotypes().toString().replace("[", "").replace("]",
+						""));
+		if (diff != null) {
+			if (!diffs.containsKey(curr))
+				diffs.put(curr, new TreeSet<DiffElement>());
+			diffs.get(curr).add(diff);
+		}
+
+		// perform diff for the tagged values
+		// TODO handle tags with multiple values
 		String taglist = curr.options().parameter("representTaggedValues");
 		Map<String, String> taggedValues = curr.taggedValues(taglist);
-		Map<String, String> taggedValuesRef = ref .taggedValues(taglist);
-		
-		for (Map.Entry<String, String> entry: taggedValues.entrySet()) {
+		Map<String, String> taggedValuesRef = ref.taggedValues(taglist);
+
+		for (Map.Entry<String, String> entry : taggedValues.entrySet()) {
 			String key = entry.getKey();
 			String val = entry.getValue();
-			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart") || key.equalsIgnoreCase("AAA:Grunddatenbestand"))) { 
+			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
+					|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
 				String valref = null;
 				if (taggedValuesRef.containsKey(key)) {
 					valref = taggedValuesRef.get(key);
 				}
-				if (key.equalsIgnoreCase("AAA:Modellart")) { 
-					if (val==null || val.isEmpty())
-						val = "Alle"; 
-					if (valref==null || valref.isEmpty())
-						valref = "Alle"; 
+				if (key.equalsIgnoreCase("AAA:Modellart")) {
+					if (val == null || val.isEmpty())
+						val = "Alle";
+					if (valref == null || valref.isEmpty())
+						valref = "Alle";
 				} else {
-					if (val==null)
-						val = ""; 
-					if (valref==null)
-						valref = ""; 
+					if (val == null)
+						val = "";
+					if (valref == null)
+						valref = "";
 				}
 				for (String ma : val.split(",")) {
 					ma = ma.trim();
@@ -528,7 +642,7 @@ public class Differ {
 									diff.subElementType = ElementType.AAAGRUNDDATENBESTAND;
 								diff.tag = ma;
 								if (!diffs.containsKey(curr))
-									diffs.put(curr,new HashSet<DiffElement>());
+									diffs.put(curr, new TreeSet<DiffElement>());
 								diffs.get(curr).add(diff);
 							}
 						}
@@ -541,32 +655,33 @@ public class Differ {
 				} else {
 					diff = stringDiff(ElementType.TAG, "", val);
 				}
-				if (diff!=null) {
+				if (diff != null) {
 					diff.tag = key;
 					if (!diffs.containsKey(curr))
-						diffs.put(curr,new HashSet<DiffElement>());
+						diffs.put(curr, new TreeSet<DiffElement>());
 					diffs.get(curr).add(diff);
 				}
 			}
 		}
-		for (Map.Entry<String, String> entry: taggedValuesRef.entrySet()) {
+		for (Map.Entry<String, String> entry : taggedValuesRef.entrySet()) {
 			String key = entry.getKey();
-			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart") || key.equalsIgnoreCase("AAA:Grunddatenbestand"))) { 
+			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
+					|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
 				String valref = taggedValuesRef.get(key);
 				String val = null;
 				if (taggedValues.containsKey(key)) {
 					val = taggedValues.get(key);
 				}
-				if (key.equalsIgnoreCase("AAA:Modellart")) { 
-					if (val==null || val.isEmpty())
-						val = "Alle"; 
-					if (valref==null || valref.isEmpty())
-						val = "Alle"; 
+				if (key.equalsIgnoreCase("AAA:Modellart")) {
+					if (val == null || val.isEmpty())
+						val = "Alle";
+					if (valref == null || valref.isEmpty())
+						val = "Alle";
 				} else {
-					if (val==null)
-						val = ""; 
-					if (valref==null)
-						val = ""; 
+					if (val == null)
+						val = "";
+					if (valref == null)
+						val = "";
 				}
 				for (String ma : valref.split(",")) {
 					ma = ma.trim();
@@ -589,7 +704,7 @@ public class Differ {
 									diff.subElementType = ElementType.AAAGRUNDDATENBESTAND;
 								diff.tag = ma;
 								if (!diffs.containsKey(curr))
-									diffs.put(curr,new HashSet<DiffElement>());
+									diffs.put(curr, new TreeSet<DiffElement>());
 								diffs.get(curr).add(diff);
 							}
 						}
@@ -598,19 +713,19 @@ public class Differ {
 			} else {
 				if (!taggedValues.containsKey(key)) {
 					diff = stringDiff(ElementType.TAG, entry.getValue(), "");
-					if (diff!=null) {
+					if (diff != null) {
 						diff.tag = key;
 						if (!diffs.containsKey(curr))
-							diffs.put(curr,new HashSet<DiffElement>());
+							diffs.put(curr, new TreeSet<DiffElement>());
 						diffs.get(curr).add(diff);
 					}
 				}
 			}
 		}
-		
+
 		return diffs;
-	}		
-	
+	}
+
 	public String diff_toString(LinkedList<Diff> diffs) {
 		StringBuilder res = new StringBuilder();
 		for (Diff aDiff : diffs) {

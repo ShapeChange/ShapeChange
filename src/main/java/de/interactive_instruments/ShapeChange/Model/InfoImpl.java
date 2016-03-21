@@ -43,7 +43,8 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
-public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSource {
+public abstract class InfoImpl
+		implements Info, MessageSource {
 
 	boolean postprocessed = false;
 	private String lf = System.getProperty("line.separator");
@@ -59,9 +60,10 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	protected String[] dataCaptureStatements = null;
 	protected TaggedValues taggedValuesCache = null;
 	protected Stereotypes stereotypesCache = null;
-	private static final Pattern langPattern = Pattern.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
+	private static final Pattern langPattern = Pattern
+			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
 
-	public int compareTo(InfoImpl i) {
+	public int compareTo(Info i) {
 		String my = id();
 		String other = i.id();
 		return my.hashCode() - other.hashCode();
@@ -96,7 +98,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		validateTaggedValuesCache();
 
 		// create clone
-		TaggedValues copy = options().taggedValueFactory(taggedValuesCache, tagList);
+		TaggedValues copy = options().taggedValueFactory(taggedValuesCache,
+				tagList);
 		return copy;
 	}
 
@@ -118,7 +121,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
-				MessageContext mc = model().result().addWarning(this, 201, tag, values[0], values[i]);
+				MessageContext mc = model().result().addWarning(this, 201, tag,
+						values[0], values[i]);
 				addContextDetails(mc);
 			}
 
@@ -146,8 +150,9 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
-		return taggedValuesCache.get(tag);
-	} // taggedValuesAll()
+		String[] result = taggedValuesCache.get(tag);
+		return result == null ? new String[] {} : result;
+	}
 
 	public String taggedValueInLanguage(String tag, String language) {
 		validateTaggedValuesCache();
@@ -170,7 +175,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 			if (result == null)
 				result = value;
 			else {
-				MessageContext mc = model().result().addWarning(this, 202, tag, language, result, value);
+				MessageContext mc = model().result().addWarning(this, 202, tag,
+						language, result, value);
 				addContextDetails(mc);
 			}
 		}
@@ -217,24 +223,33 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 			// if nothing has been configured, use defaults
 			if (source == null) {
 				if (model().type() == Options.EA7) {
-					if (descriptor.equalsIgnoreCase(Options.Descriptor.DOCUMENTATION.toString()))
+					if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DOCUMENTATION.toString()))
 						source = "ea:notes";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.ALIAS.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.ALIAS.toString()))
 						source = "ea:alias";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DEFINITION.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DEFINITION.toString()))
 						source = "sc:extract#PROLOG";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DESCRIPTION.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DESCRIPTION.toString()))
 						source = "none";
 					else
 						source = "tag#" + descriptor;
-				} else if (model().type() == Options.XMI10 || model().type() == Options.GSIP) {
-					if (descriptor.equalsIgnoreCase(Options.Descriptor.DOCUMENTATION.toString()))
+				} else if (model().type() == Options.XMI10
+						|| model().type() == Options.GSIP) {
+					if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DOCUMENTATION.toString()))
 						source = "tag#documentation;description";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.ALIAS.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.ALIAS.toString()))
 						source = "tag#alias";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DEFINITION.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DEFINITION.toString()))
 						source = "sc:extract#PROLOG";
-					else if (descriptor.equalsIgnoreCase(Options.Descriptor.DESCRIPTION.toString()))
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.DESCRIPTION.toString()))
 						source = "none";
 					else
 						source = "tag#" + descriptor;
@@ -293,7 +308,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		 */
 		if (value == null)
 			if (descriptor.equals(Options.Descriptor.DOCUMENTATION.toString())
-					|| descriptor.equals(Options.Descriptor.DEFINITION.toString()))
+					|| descriptor
+							.equals(Options.Descriptor.DEFINITION.toString()))
 				value = "";
 
 		return value;
@@ -345,13 +361,16 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 
 	public String primaryCode() {
 		if (primaryCode == null)
-			primaryCode = options().internalize(descriptorValue(Options.Descriptor.PRIMARYCODE.toString(), true));
+			primaryCode = options().internalize(descriptorValue(
+					Options.Descriptor.PRIMARYCODE.toString(), true));
 		return primaryCode;
 	}
 
 	public String derivedDocumentation(String template, String novalue) {
-		String tmp = (template == null ? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE : template);
-		String nov = (novalue == null ? Options.DERIVED_DOCUMENTATION_DEFAULT_NOVALUE : novalue);
+		String tmp = (template == null
+				? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE : template);
+		String nov = (novalue == null
+				? Options.DERIVED_DOCUMENTATION_DEFAULT_NOVALUE : novalue);
 		String doc = tmp;
 
 		Pattern pattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
@@ -432,7 +451,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	 */
 	public String documentation() {
 		if (documentation == null)
-			documentation = options().internalize(descriptorValue(Options.Descriptor.DOCUMENTATION.toString(), true));
+			documentation = options().internalize(descriptorValue(
+					Options.Descriptor.DOCUMENTATION.toString(), true));
 		return documentation;
 	}
 
@@ -444,7 +464,8 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	 */
 	public String definition() {
 		if (definition == null)
-			definition = options().internalize(descriptorValue(Options.Descriptor.DEFINITION.toString(), true));
+			definition = options().internalize(descriptorValue(
+					Options.Descriptor.DEFINITION.toString(), true));
 		return definition;
 	}
 
@@ -456,32 +477,36 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 	 */
 	public String description() {
 		if (description == null)
-			description = options().internalize(descriptorValue(Options.Descriptor.DESCRIPTION.toString(), true));
+			description = options().internalize(descriptorValue(
+					Options.Descriptor.DESCRIPTION.toString(), true));
 		return description;
 	}
 
 	public String legalBasis() {
 		if (legalBasis == null)
-			legalBasis = options().internalize(descriptorValue(Options.Descriptor.LEGALBASIS.toString(), true));
+			legalBasis = options().internalize(descriptorValue(
+					Options.Descriptor.LEGALBASIS.toString(), true));
 		return legalBasis;
 	}
 
 	public String language() {
 		if (language == null)
-			language = options().internalize(descriptorValue(Options.Descriptor.LANGUAGE.toString(), true));
+			language = options().internalize(descriptorValue(
+					Options.Descriptor.LANGUAGE.toString(), true));
 		return language;
 	}
 
 	public String[] dataCaptureStatements() {
 		if (dataCaptureStatements == null)
-			dataCaptureStatements = options()
-					.internalize(descriptorValues(Options.Descriptor.DATACAPTURESTATEMENT.toString(), true));
+			dataCaptureStatements = options().internalize(descriptorValues(
+					Options.Descriptor.DATACAPTURESTATEMENT.toString(), true));
 		return dataCaptureStatements;
 	}
 
 	public String[] examples() {
 		if (examples == null)
-			examples = options().internalize(descriptorValues(Options.Descriptor.EXAMPLE.toString(), true));
+			examples = options().internalize(descriptorValues(
+					Options.Descriptor.EXAMPLE.toString(), true));
 		return examples;
 	}
 
@@ -489,48 +514,64 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		// it is important not to set any default alias as this blocks other
 		// aliases, e.g. from EA
 		if (aliasName == null)
-			aliasName = options().internalize(descriptorValue(Options.Descriptor.ALIAS.toString(), true));
+			aliasName = options().internalize(
+					descriptorValue(Options.Descriptor.ALIAS.toString(), true));
 		return aliasName;
 	}
 
 	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty() || options().ignoreEncodingRuleTaggedValues()) {
+		if (s == null || s.isEmpty()
+				|| options().ignoreEncodingRuleTaggedValues()) {
 			// JE TBD: create enumeration with valid platforms for global use
 			if (platform.equalsIgnoreCase("xsd")) {
-				s = options().parameter(Options.TargetXmlSchemaClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetXmlSchemaClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = Options.ISO19136_2007;
 			} else if (platform.equalsIgnoreCase("json")) {
-				s = options().parameter(Options.TargetJsonSchemaClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetJsonSchemaClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "geoservices";
 			} else if (platform.equalsIgnoreCase("rdf")) {
-				s = options().parameter(Options.TargetRDFClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetRDFClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("fc")) {
-				s = options().parameter(Options.TargetFeatureCatalogueClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetFeatureCatalogueClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("sql")) {
-				s = options().parameter(Options.TargetSQLClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetSQLClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("owl")) {
-				s = options().parameter(Options.TargetOWLISO19150Class, "defaultEncodingRule");
+				s = options().parameter(Options.TargetOWLISO19150Class,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("arcgis")) {
-				s = options().parameter(Options.TargetArcGISWorkspaceClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetArcGISWorkspaceClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("sch")) {
-				s = options().parameter(Options.TargetFOL2SchematronClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetFOL2SchematronClass,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("rep")) {
-				s = options().parameter(Options.TargetReplicationSchemaClass, "defaultEncodingRule");
+				s = options().parameter(Options.TargetReplicationSchemaClass,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
+			} else if (platform.equalsIgnoreCase("asm")) {
+				s = options().parameter(Options.TargetApplicationSchemaMetadata,
+						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
 			}
@@ -564,12 +605,14 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		 * recommendations.
 		 */
 		if (ra[0].equals("rule") && !ra[1].equals("all")) {
-			if (!options().targetMode(options().targetClassName(rule)).equals("enabled"))
+			if (!options().targetMode(options().targetClassName(rule))
+					.equals("enabled"))
 				return false;
 		}
 
 		if (ra[0].matches("re[cq]") && !ra[1].equals("all")) {
-			if (options().targetMode(options().targetClassName(rule)).equals("disabled"))
+			if (options().targetMode(options().targetClassName(rule))
+					.equals("disabled"))
 				return false;
 		}
 
@@ -600,22 +643,26 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 		 */
 		String param;
 		if (rule.equals("rule-xsd-cls-local-enumeration")) {
-			param = options().parameter(Options.TargetXmlSchemaClass, "enumStyle");
+			param = options().parameter(Options.TargetXmlSchemaClass,
+					"enumStyle");
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-cls-local-basictype")) {
-			param = options().parameter(Options.TargetXmlSchemaClass, "basicTypeStyle");
+			param = options().parameter(Options.TargetXmlSchemaClass,
+					"basicTypeStyle");
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-pkg-schematron")) {
-			param = options().parameter(Options.TargetXmlSchemaClass, "schematron");
+			param = options().parameter(Options.TargetXmlSchemaClass,
+					"schematron");
 			if (param != null && param.equalsIgnoreCase("true"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-prop-exclude-derived")) {
-			param = options().parameter(Options.TargetXmlSchemaClass, "includeDerivedProperties");
+			param = options().parameter(Options.TargetXmlSchemaClass,
+					"includeDerivedProperties");
 			if (param != null && param.equalsIgnoreCase("false"))
 				return true;
 		}
@@ -667,7 +714,9 @@ public abstract class InfoImpl implements Info, Comparable<InfoImpl>, MessageSou
 						// if the XML Schema target parameter
 						// 'includeDocumentation' is set to true the rule is
 						// overwritten
-						param = options().parameter(Options.TargetXmlSchemaClass, "includeDocumentation");
+						param = options().parameter(
+								Options.TargetXmlSchemaClass,
+								"includeDocumentation");
 						if (param != null && param.equalsIgnoreCase("true"))
 							return false;
 						else
