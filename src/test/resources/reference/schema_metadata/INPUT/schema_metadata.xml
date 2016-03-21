@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><ApplicationSchemaMetadata xmlns="http://shapechange.net/targets/ApplicationSchemaMetadata">
+  <!--Created by ShapeChange - http://shapechange.net/-->
+  <schema>
+    <ApplicationSchema>
+      <name>Test Schema1</name>
+      <targetNamespace>http://shapechange.net/test/appSchemaMetadata/schema1</targetNamespace>
+      <metadata>
+        <ProfilesMetadata>
+          <containedProfile>A</containedProfile>
+          <containedProfile>B</containedProfile>
+          <containedProfile>C</containedProfile>
+        </ProfilesMetadata>
+      </metadata>
+    </ApplicationSchema>
+  </schema>
+  <schema>
+    <ApplicationSchema>
+      <name>Test Schema2</name>
+      <targetNamespace>http://shapechange.net/test/appSchemaMetadata/schema2</targetNamespace>
+      <metadata>
+        <ProfilesMetadata>
+          <containedProfile>X</containedProfile>
+          <containedProfile>Y</containedProfile>
+          <containedProfile>Z</containedProfile>
+        </ProfilesMetadata>
+      </metadata>
+    </ApplicationSchema>
+  </schema>
+</ApplicationSchemaMetadata>

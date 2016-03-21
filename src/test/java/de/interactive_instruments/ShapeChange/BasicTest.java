@@ -191,6 +191,14 @@ public class BasicTest {
 					"src/test/resources/reference/html/descriptors");
 
 			/*
+			 * Test derivation of application schema metadata.
+			 */
+			multiTest("src/test/resources/config/testEA_schema_metadata.xml",
+					new String[] { "xml" },
+					"testResults/schema_metadata/INPUT",
+					"src/test/resources/reference/schema_metadata/INPUT");
+			
+			/*
 			 * Test creation of an HTML feature catalogue with
 			 * inheritedProperties=true and noAlphabeticSortingForProperties =
 			 * true

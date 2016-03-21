@@ -161,8 +161,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			if (outputDirectory == null)
 				outputDirectory = options.parameter(".");
 
-			outputFilename = schemaPi.name().replace("/", "_").replace(" ", "_")
-					+ ".xml";
+			outputFilename = "schema_metadata.xml";
 
 			// Check if we can use the output directory; create it if it
 			// does not exist
