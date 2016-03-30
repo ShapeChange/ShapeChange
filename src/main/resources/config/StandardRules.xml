@@ -74,28 +74,6 @@
 		<rule name="rule-xsd-prop-att-map-entry"/>
 		<rule name="rule-xsd-pkg-schematron"/>
 		<rule name="rule-xsd-all-tagged-values"/>
-	</EncodingRule>
-	<EncodingRule name="gsip" extends="iso19136_2007">
-		<rule name="req-xsd-cls-mixin-supertypes"/>
-		<rule name="req-xsd-cls-codelist-no-supertypes"/>
-		<rule name="rule-xsd-cls-union-asCharacterString"/>
-		<rule name="rule-xsd-cls-union-asGroup"/>
-		<rule name="rule-xsd-cls-enum-supertypes"/>
-		<rule name="rule-xsd-cls-enum-subtypes"/>
-		<rule name="rule-xsd-cls-basictype"/>
-		<rule name="rule-xsd-cls-union-direct"/>		
-		<rule name="rule-xsd-cls-codelist-constraints"/>
-		<rule name="rule-xsd-cls-mixin-classes-as-group"/>
-		<rule name="rule-xsd-cls-mixin-classes"/>
-		<rule name="rule-xsd-prop-exclude-derived"/>
-		<rule name="rule-xsd-prop-length-size-pattern"/>
-		<rule name="rule-xsd-prop-xsdAsAttribute"/>
-		<rule name="rule-xsd-prop-nillable"/>
-		<rule name="rule-xsd-prop-nilReasonAllowed"/>
-		<rule name="rule-xsd-prop-initialValue"/>		
-		<rule name="rule-xsd-prop-att-map-entry"/>
-		<rule name="rule-xsd-pkg-schematron"/>
-		<rule name="rule-xsd-all-tagged-values"/>
 	</EncodingRule>   
 	<EncodingRule name="external" extends="*">
 		<rule name="rule-xsd-all-notEncoded"/>
