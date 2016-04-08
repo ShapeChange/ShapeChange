@@ -33,6 +33,7 @@
 			<targetParameter name="outputFilename" value="inspire"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>
+			<targetParameter name="includeCodelistURI" value="false"/>
 			<targetParameter name="outputFormat" value="HTML"/>
 			<targetParameter name="name" value="'Test application schema'"/>
 			<targetParameter name="scope" value="This feature catalogue ..."/>

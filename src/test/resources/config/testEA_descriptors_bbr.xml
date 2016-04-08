@@ -33,6 +33,7 @@
 			<targetParameter name="outputDirectory" value="testResults/html/descriptors"/>
 			<targetParameter name="outputFilename" value="bbr"/>
 			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="includeCodelistURI" value="false"/>
 			<targetParameter name="inheritedProperties" value="false"/>
 			<targetParameter name="outputFormat" value="HTML"/>
 			<targetParameter name="xslTransformerFactory"

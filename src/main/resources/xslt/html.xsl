@@ -942,6 +942,23 @@
                     </xsl:choose>
                   </a>
                 </xsl:when>
+                <xsl:when test="$line/@codeList">
+                  <a href="{$line/@codeList}" target="_blank">
+                    
+                    <!-- If this entry is about the type of a feature type, localize the $line. -->
+                    <!-- This is a workaround for avoiding the #RTREEFRAG issue when using call-template inside a with-param. -->
+                    <xsl:choose>
+                      <xsl:when test="$title = $fc.Type">
+                        <xsl:call-template name="typename">
+                          <xsl:with-param name="type" select="$line"/>
+                        </xsl:call-template>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of disable-output-escaping="yes" select="."/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </a>
+                </xsl:when>
                 <xsl:otherwise>
                   <!-- If this entry is about the type of a feature type, localize the $line. -->
                   <!-- This is a workaround for avoiding the #RTREEFRAG issue when using call-template inside a with-param. -->
