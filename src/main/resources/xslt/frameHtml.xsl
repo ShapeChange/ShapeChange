@@ -446,7 +446,7 @@
           <ul>
             <li>
               <a href="{concat($backpath,$path,'/package-summary.html')}" target="classFrame"
-                >Overview</a>
+                ><xsl:value-of select="$fc.frame.Overview"/></a>
             </li>
           </ul>
           <xsl:if
@@ -1193,6 +1193,23 @@
                     </xsl:choose>
                   </a>
                 </xsl:when>
+                <xsl:when test="$line/@codeList">
+                  <a href="{$line/@codeList}" target="_blank">
+
+                    <!-- If this entry is about the type of a feature type, localize the $line. -->
+                    <!-- This is a workaround for avoiding the #RTREEFRAG issue when using call-template inside a with-param. -->
+                    <xsl:choose>
+                      <xsl:when test="$title = $fc.Type">
+                        <xsl:call-template name="typename">
+                          <xsl:with-param name="type" select="$line"/>
+                        </xsl:call-template>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of disable-output-escaping="yes" select="."/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </a>
+                </xsl:when>
                 <xsl:otherwise>
                   <!-- If this entry is about the type of a feature type, localize the $line. -->
                   <!-- This is a workaround for avoiding the #RTREEFRAG issue when using call-template inside a with-param. -->
@@ -1422,11 +1439,15 @@
         <p>
           <h2>
             <a name="{$featureAtt/@id}">
-              <xsl:value-of select="$fc.Attribute"/>: </a>
+              <xsl:value-of select="$fc.Attribute"/>
+              <xsl:text>: </xsl:text>
+            </a>
           </h2>
         </p>
         <p class="small">
-          <a href="#top">back to top</a>
+          <a href="#top">
+            <xsl:value-of select="$fc.backToTop"/>
+          </a>
         </p>
         <table>
           <xsl:call-template name="attentry">
@@ -1683,6 +1704,11 @@
                 test="$property/ValueDataType/@idref and key('modelElement', $property/ValueDataType/@idref)">
                 <a
                   href="{concat($backpath,$packages[id = key('modelElement',$property/ValueDataType/@idref,$catalog)/package/@idref]/path,'/',key('modelElement',$property/ValueDataType/@idref,$catalog)/name,'.html')}">
+                  <xsl:value-of select="ValueDataType"/>
+                </a>
+              </xsl:when>
+              <xsl:when test="$property/ValueDataType/@codeList">
+                <a href="{$property/ValueDataType/@codeList}" target="_blank">
                   <xsl:value-of select="ValueDataType"/>
                 </a>
               </xsl:when>

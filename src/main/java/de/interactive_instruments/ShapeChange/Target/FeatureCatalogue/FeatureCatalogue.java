@@ -162,6 +162,15 @@ public class FeatureCatalogue
 	public static final String PARAM_DONT_TRANSFORM = "dontTransform";
 
 	/**
+	 * If set to <code>false</code>, the URI of code lists (available via tagged
+	 * value 'codeList' or 'vocabulary') won't be encoded as hyperlink on the
+	 * name of a code list type in the feature catalogue. This can be useful for
+	 * example when the overall linking to external code lists is not ready for
+	 * publication yet.
+	 */
+	public static final String PARAM_INCLUDE_CODELIST_URI = "includeCodelistURI";
+
+	/**
 	 * Path to a java executable (usually 64bit). This parameter should be used
 	 * whenever the feature catalogue to produce will be very large (hundreds of
 	 * megabytes to gigabytes). Set the options for execution - especially 'Xmx'
@@ -232,6 +241,7 @@ public class FeatureCatalogue
 	private static String noAlphabeticSortingForProperties = "false";
 	private static boolean includeVoidable = true;
 	private static boolean includeTitle = true;
+	private static boolean includeCodelistURI = true;
 	private static boolean deleteXmlFile = false;
 
 	private static boolean includeDiagrams = false;
@@ -315,6 +325,7 @@ public class FeatureCatalogue
 		featureTerm = "Feature";
 		includeVoidable = true;
 		includeTitle = true;
+		includeCodelistURI = true;
 		deleteXmlFile = false;
 		dontTransform = false;
 
@@ -328,7 +339,7 @@ public class FeatureCatalogue
 	// FIXME New diagnostics-only flag is to be considered
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 		pi = p;
 		model = m;
 		options = o;
@@ -434,7 +445,7 @@ public class FeatureCatalogue
 					refModel = new GenericModel(refModel_tmp);
 					refModel_tmp.shutdown();
 
-					refModel.addPrefixToModelElementIDs("refmodel_");					
+					refModel.addPrefixToModelElementIDs("refmodel_");
 				}
 
 				String xmlName = outputFilename + ".tmp.xml";
@@ -515,43 +526,43 @@ public class FeatureCatalogue
 				else
 					writer.dataElement("producer", "unknown");
 			}
-			
+
 			// we need to compute the diff for each application schema
-			if(refModel != null) {
-				
+			if (refModel != null) {
+
 				SortedSet<PackageInfo> set = refModel.schemas(p.name());
 
 				if (set.size() == 1) {
 
 					/*
-					 * Get the full names of classes (in lower case) from
-					 * the input schema so that later we can look them up by
-					 * their full name (within the schema, not in the
-					 * model).
+					 * Get the full names of classes (in lower case) from the
+					 * input schema so that later we can look them up by their
+					 * full name (within the schema, not in the model).
 					 */
 					inputSchemaClassesByFullNameInSchema = new HashMap<String, ClassInfo>();
 					for (ClassInfo ci : model.classes(pi)) {
-						inputSchemaClassesByFullNameInSchema
-								.put(ci.fullNameInSchema()
-										.toLowerCase(Locale.ENGLISH), ci);
+						inputSchemaClassesByFullNameInSchema.put(ci
+								.fullNameInSchema().toLowerCase(Locale.ENGLISH),
+								ci);
 					}
 
 					// compute diffs
 					differ = new Differ();
 					refPackage = set.iterator().next();
-					SortedMap<Info,SortedSet<DiffElement>> pi_diffs = differ.diff(p, refPackage);
-					
-					// merge diffs for pi with existing diffs (from other schemas)
+					SortedMap<Info, SortedSet<DiffElement>> pi_diffs = differ
+							.diff(p, refPackage);
+
+					// merge diffs for pi with existing diffs (from other
+					// schemas)
 					differ.merge(diffs, pi_diffs);
 
 					// log the diffs found for pi
 					for (Entry<Info, SortedSet<DiffElement>> me : pi_diffs
 							.entrySet()) {
 
-						MessageContext mc = result
-								.addInfo("Model difference - "
-										+ me.getKey().fullName().replace(
-												p.fullName(), p.name()));
+						MessageContext mc = result.addInfo(
+								"Model difference - " + me.getKey().fullName()
+										.replace(p.fullName(), p.name()));
 
 						for (DiffElement diff : me.getValue()) {
 							String s = diff.change + " " + diff.subElementType;
@@ -567,7 +578,6 @@ public class FeatureCatalogue
 							mc.addDetail(s);
 						}
 					}
-										
 
 					/*
 					 * switch to default xslt for html diff - unless the
@@ -912,7 +922,8 @@ public class FeatureCatalogue
 	 *         Info object, if such diffs exist; can be empty but not
 	 *         <code>null</code>
 	 */
-	private SortedSet<DiffElement> getDiffs(Info i, ElementType type, Operation op) {
+	private SortedSet<DiffElement> getDiffs(Info i, ElementType type,
+			Operation op) {
 
 		SortedSet<DiffElement> result = new TreeSet<DiffElement>();
 
@@ -1837,6 +1848,18 @@ public class FeatureCatalogue
 						if (cat == Options.CODELIST) {
 							atts.addAttribute("", "category", "", "CDATA",
 									"code list");
+
+							if (includeCodelistURI) {
+								String cl = cix.taggedValue("codeList");
+								if (cl == null || cl.isEmpty()) {
+									cl = cix.taggedValue("vocabulary");
+								}
+								if (cl != null && !cl.isEmpty()) {
+									atts.addAttribute("", "codeList", "",
+											"CDATA", options.internalize(cl));
+								}
+							}
+
 						} else if (cat == Options.ENUMERATION
 								&& !cixname.equals("Boolean")) {
 							atts.addAttribute("", "category", "", "CDATA",
@@ -2999,6 +3022,11 @@ public class FeatureCatalogue
 		s = options.parameter(this.getClass().getName(), PARAM_DONT_TRANSFORM);
 		if (s != null && s.equals("true"))
 			dontTransform = true;
+
+		s = options.parameter(this.getClass().getName(),
+				PARAM_INCLUDE_CODELIST_URI);
+		if (s != null && s.equalsIgnoreCase("false"))
+			includeCodelistURI = false;
 
 		// TBD: one could check that input has actually loaded the diagrams;
 		// however, in future a transformation could create images as well
