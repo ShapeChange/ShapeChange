@@ -1844,6 +1844,7 @@ public class Options {
 		setParameter("sortedSchemaOutput", "true");
 		setParameter("sortedOutput", "true");
 		setParameter("oclConstraintTypeRegex", "(OCL|Invariant)");
+		setParameter("folConstraintTypeRegex", "(SBVR)");
 		setParameter(Options.TargetXmlSchemaClass, "defaultEncodingRule",
 				Options.ISO19136_2007);
 		setParameter(Options.TargetXmlSchemaClass, "gmlVersion", "3.2");
