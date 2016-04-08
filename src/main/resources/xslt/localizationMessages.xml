@@ -43,6 +43,12 @@
     <text lang="nl">terug naar overzicht</text>
     <text lang="fr">retour au sommaire</text>
   </message>
+    <message id="fc.backToTop">
+    <text lang="de">zurück nach oben</text>
+    <text lang="en">back to top</text>
+    <text lang="nl">terug naar boven</text>
+    <text lang="fr">retour au sommet</text>
+  </message>
   <message id="fc.Code">
     <text lang="de">Code</text>
     <text lang="en">Code</text>

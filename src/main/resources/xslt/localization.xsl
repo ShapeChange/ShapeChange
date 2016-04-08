@@ -22,6 +22,7 @@
   <xsl:variable name="fc.Attribute"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Attribute']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.backToPackage"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.backToPackage']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.backToToc"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.backToToc']/text[contains(@lang,$lang)]"/></xsl:variable>
+  <xsl:variable name="fc.backToTop"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.backToTop']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Code"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Code']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Constraint"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Constraint']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.DataCaptureStatement"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.DataCaptureStatement']/text[contains(@lang,$lang)]"/></xsl:variable>
