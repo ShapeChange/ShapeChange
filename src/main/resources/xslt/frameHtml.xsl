@@ -1301,7 +1301,9 @@
           </h2>
         </p>
         <p class="small">
-          <a href="#top">back to top</a>
+          <a href="#top">
+            <xsl:value-of select="$fc.backToTop"/>
+          </a>
         </p>
         <table>
           <xsl:call-template name="attentry">
@@ -1395,7 +1397,9 @@
           </h2>
         </p>
         <p class="small">
-          <a href="#top">back to top</a>
+          <a href="#top">
+            <xsl:value-of select="$fc.backToTop"/>
+          </a>
         </p>
         <table>
           <xsl:call-template name="attentry">
