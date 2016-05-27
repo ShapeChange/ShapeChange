@@ -27,7 +27,7 @@
 		</TargetXmlSchema>
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/ea"/>
+			<targetParameter name="outputDirectory" value="testResults/ea/prop"/>
 			<targetParameter name="outputFilename" value="test_prop"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>
@@ -39,6 +39,11 @@
 			<targetParameter name="producer" value="interactive instruments GmbH"/>
 			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>
 			<targetParameter name="xslhtmlFile" value="html.xsl"/>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel"
+			mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ea/prop"/>
+			<targetParameter name="modelFilename" value="test_prop_out.eap"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

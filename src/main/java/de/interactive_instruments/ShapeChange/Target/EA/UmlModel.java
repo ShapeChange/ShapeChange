@@ -459,6 +459,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
+			e.SetOrdering(i.isOrdered() ? 1 : 0);
+			if (!e.Update()) {
+				result.addError("EA-Fehler: " + e.GetLastError());
+			}
+			e.SetAllowDuplicates(!i.isUnique());
+			if (!e.Update()) {
+				result.addError("EA-Fehler: " + e.GetLastError());
+			}
 			
 			if(i.reverseProperty() != null) {
 				if(i.reverseProperty().isAggregation()) {
