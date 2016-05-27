@@ -26,6 +26,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A3_2">
@@ -33,6 +35,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A3_3">
@@ -40,6 +44,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4">
@@ -59,6 +65,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4_5">
@@ -66,6 +74,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Real</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C5">
@@ -87,6 +97,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A5_9">
@@ -94,6 +106,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C6">
@@ -115,6 +129,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A6_8">
@@ -122,6 +138,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
 </FeatureCatalogue>

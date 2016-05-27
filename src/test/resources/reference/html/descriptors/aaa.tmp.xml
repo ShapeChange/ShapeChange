@@ -160,6 +160,8 @@
     <code>NAM</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4789_11726">
@@ -168,6 +170,8 @@
     <code>URI</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>URI</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4798">
@@ -189,6 +193,8 @@
     <code>ART</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>URI</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4798_11760">
@@ -197,6 +203,8 @@
     <code>FDO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4789" category="union data type">AA_Fachdatenobjekt</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -216,6 +224,8 @@
     <code>FLA</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_PolyhedralSurface</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4865_11908">
@@ -223,6 +233,8 @@
     <code>FLG</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_MultiSurface</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4797">
@@ -245,6 +257,8 @@
     <code>BEG</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4797_11758">
@@ -257,6 +271,8 @@
     <code>END</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4866">
@@ -274,6 +290,8 @@
     <code>LIN</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Curve</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4866_11910">
@@ -281,6 +299,8 @@
     <code>ZLI</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_CompositeCurve</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4799">
@@ -302,6 +322,8 @@
     <code>STM</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AA_AdVStandardModell</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A4796_11737"></enumeratedBy>
@@ -331,6 +353,8 @@
     <code>SOM</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">AA_WeitereModellart</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A4896_12222"></enumeratedBy>
@@ -376,6 +400,8 @@
     <code>OID</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4795" category="union data type">AA_UUID</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -385,6 +411,8 @@
     <code>LZI</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4797" category="data type">AA_Lebenszeitintervall</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -399,6 +427,8 @@
     <code>MAT</code>
     <cardinality>1..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4799" category="union data type">AA_Modellart</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -408,6 +438,8 @@
     <code>ANL</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>0</uniquenessIndicator>
     <ValueDataType category="code list">AA_Anlassart</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A4894_11944"></enumeratedBy>
@@ -598,6 +630,8 @@
     <code>FDV</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4798" category="data type">AA_Fachdatenverbindung</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -611,9 +645,10 @@
     <code>00001-03000</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4791" category="feature type">AA_ZUSO</FeatureTypeIncluded>
     <relation idref="__S7064"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AT7064">
     <name>bestehtAus</name>
@@ -621,10 +656,11 @@
     <cardinality>1..*</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4793" category="feature type">AA_Objekt</FeatureTypeIncluded>
     <relation idref="__S7064"></relation>
     <InverseRole idref="_AS7064"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C4788">
     <name>AA_ObjektOhneRaumbezug</name>
@@ -655,6 +691,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4792_11728">
@@ -662,6 +700,8 @@
     <code>BES</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4792_11729">
@@ -670,6 +710,8 @@
     <code>MBB</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Envelope</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4869">
@@ -687,6 +729,8 @@
     <code>NAM</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4877">
@@ -706,6 +750,8 @@
     <code>PKT</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Point</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4877_11918">
@@ -713,6 +759,8 @@
     <code>PHA</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_MultiPoint</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4794">
@@ -741,9 +789,10 @@
     <code>02000.1-02000.2</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4794" category="feature type">AA_REO</FeatureTypeIncluded>
     <relation idref="__T7043"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS7043">
     <name>traegtBeiZu</name>
@@ -752,10 +801,11 @@
     <cardinality>0..*</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4794" category="feature type">AA_REO</FeatureTypeIncluded>
     <relation idref="__T7043"></relation>
     <InverseRole idref="_AT7043"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T7046">
     <name>(unbestimmt)</name>
@@ -767,19 +817,21 @@
     <code>02000.5-02000.6</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4794" category="feature type">AA_REO</FeatureTypeIncluded>
     <relation idref="__T7046"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS7046">
     <name>role_S7046</name>
     <cardinality>0..*</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4794" category="feature type">AA_REO</FeatureTypeIncluded>
     <relation idref="__T7046"></relation>
     <InverseRole idref="_AT7046"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C4795">
     <name>AA_UUID</name>
@@ -798,6 +850,8 @@
     <code>UID</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4795_11736">
@@ -806,6 +860,8 @@
     <code>UIT</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4791">
@@ -835,6 +891,8 @@
     <code>GPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4865" category="union data type">AA_Flaechengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -855,6 +913,8 @@
     <code>PKT</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_PointRef</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4802_11766">
@@ -863,6 +923,8 @@
     <code>LIN</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_CompositeCurve</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4802_11767">
@@ -871,6 +933,8 @@
     <code>FLA</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4865" category="union data type">AA_Flaechengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -891,6 +955,8 @@
     <code>GPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_CompositeCurve</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4801">
@@ -910,6 +976,8 @@
     <code>GPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4802" category="union data type">AG_Geometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -936,9 +1004,10 @@
     <code>02200-02004</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4869" category="feature type">AA_PunktLinienThema</FeatureTypeIncluded>
     <relation idref="__S6923"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AT6923">
     <name>element</name>
@@ -946,10 +1015,11 @@
     <cardinality>0..*</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4867" category="feature type">AG_ObjektMitGemeinsamerGeometrie</FeatureTypeIncluded>
     <relation idref="__S6923"></relation>
     <InverseRole idref="_AS6923"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C4803">
     <name>AG_Punktobjekt</name>
@@ -968,6 +1038,8 @@
     <code>GPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_PointRef</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4872">
@@ -987,6 +1059,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4865" category="union data type">AA_Flaechengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1008,6 +1082,8 @@
     <code>PGE</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Point</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4878_11920">
@@ -1016,6 +1092,8 @@
     <code>LGE</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4866" category="union data type">AA_Liniengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1025,6 +1103,8 @@
     <code>LIN</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_MultiCurve</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4878_11922">
@@ -1033,6 +1113,8 @@
     <code>FGE</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4865" category="union data type">AA_Flaechengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1054,6 +1136,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4866" category="union data type">AA_Liniengeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1074,6 +1158,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_MultiCurve</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4873">
@@ -1093,6 +1179,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4878" category="union data type">AU_Geometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1125,6 +1213,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C4877" category="union data type">AA_Punktgeometrie</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1145,6 +1235,8 @@
     <code>UPO</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Point</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11906">
@@ -1195,6 +1287,8 @@
     <code>BKT</code>
     <cardinality>1..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Bahnkategorie</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11880_52278"></enumeratedBy>
@@ -1217,6 +1311,8 @@
     <code>ELK</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Elektrifizierung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11894_52349"></enumeratedBy>
@@ -1228,6 +1324,8 @@
     <code>GLS</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_AnzahlDerStreckengleise</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11915_52429"></enumeratedBy>
@@ -1239,6 +1337,8 @@
     <code>NRB</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11906_52385">
@@ -1247,6 +1347,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11906_52386">
@@ -1255,6 +1357,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11906_52387">
@@ -1263,6 +1367,8 @@
     <code>SPW</code>
     <cardinality>1..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Spurweite</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11889_52324"></enumeratedBy>
@@ -1276,6 +1382,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11895_52351"></enumeratedBy>
@@ -1320,6 +1428,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Bahnverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11882_52300"></enumeratedBy>
@@ -1331,6 +1441,8 @@
     <code>BKT</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Bahnkategorie</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11880_52278"></enumeratedBy>
@@ -1353,6 +1465,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11890_52331">
@@ -1361,6 +1475,8 @@
     <code>NRB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11890_52332">
@@ -1369,6 +1485,8 @@
     <code>ZNM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11890_52333">
@@ -1377,6 +1495,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Bahnverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11887_52320"></enumeratedBy>
@@ -1410,6 +1530,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11832_51930">
@@ -1418,6 +1540,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11832_51931">
@@ -1426,6 +1550,8 @@
     <code>AGT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Abbaugut_Bergbaubetrieb</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11850_52093"></enumeratedBy>
@@ -1470,6 +1596,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Bergbaubetrieb</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11844_52019"></enumeratedBy>
@@ -1481,6 +1609,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Bergbaubetrieb</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11865_52226"></enumeratedBy>
@@ -1512,6 +1642,8 @@
     <code>BFS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_BesondereFahrstreifen</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11885_52308"></enumeratedBy>
@@ -1524,6 +1656,8 @@
     <code>BRF</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Length</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11916_52433">
@@ -1532,6 +1666,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Fahrbahnachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11897_52354"></enumeratedBy>
@@ -1542,6 +1678,8 @@
     <code>FSZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11916_52435">
@@ -1550,6 +1688,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11895_52351"></enumeratedBy>
@@ -1561,6 +1701,8 @@
     <code>OFM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Oberflaechenmaterial_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11899_52363"></enumeratedBy>
@@ -1574,6 +1716,8 @@
     <code>FAR</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11908">
@@ -1644,6 +1788,8 @@
     <code>BEF</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Befestigung_Fahrwegachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11888_52322"></enumeratedBy>
@@ -1655,6 +1801,8 @@
     <code>BRV</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11908_52392">
@@ -1663,6 +1811,8 @@
     <code>MKG</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Markierung_Wegachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11904_52377"></enumeratedBy>
@@ -1674,6 +1824,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11908_52394">
@@ -1682,6 +1834,8 @@
     <code>FKT</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Wegachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11902_52371"></enumeratedBy>
@@ -1695,6 +1849,8 @@
     <code>STS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11908_52396">
@@ -1703,6 +1859,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11908_52397">
@@ -1711,6 +1869,8 @@
     <code>BFK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Befahrbarkeit_Fahrwegachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11919_52447"></enumeratedBy>
@@ -1722,6 +1882,8 @@
     <code>FAR</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11908_52399">
@@ -1730,6 +1892,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11846">
@@ -1763,6 +1927,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_FlaecheBesondererFunktionalerPraegung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11839_51951"></enumeratedBy>
@@ -1784,6 +1950,8 @@
     <code>BEB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_ArtDerBebauung_FlaecheBesondererFunktionalerPraegung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11863_52221"></enumeratedBy>
@@ -1795,6 +1963,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11846_52069">
@@ -1803,6 +1973,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_FlaecheBesondererFunktionalerPraegung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11830_51913"></enumeratedBy>
@@ -1831,6 +2003,8 @@
     <code>BEB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_ArtDerBebauung_FlaecheGemischterNutzung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11835_51942"></enumeratedBy>
@@ -1842,6 +2016,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_FlaecheGemischterNutzung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11831_51915"></enumeratedBy>
@@ -1865,6 +2041,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11837_51949">
@@ -1873,6 +2051,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_FlaecheGemischterNutzung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11851_52128"></enumeratedBy>
@@ -1926,6 +2106,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Fliessgewaesser</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11812_51857"></enumeratedBy>
@@ -1943,6 +2125,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11821_51888">
@@ -1951,6 +2135,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Kanal</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11804_51820"></enumeratedBy>
@@ -1962,6 +2148,8 @@
     <code>HYD</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_HydrologischesMerkmal_Fliessgewaesser</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11809_51847"></enumeratedBy>
@@ -2012,6 +2200,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Flugverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11900_52367"></enumeratedBy>
@@ -2022,6 +2212,8 @@
     <code>ART</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Art_Flugverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11893_52342"></enumeratedBy>
@@ -2038,6 +2230,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11914_52425">
@@ -2046,6 +2240,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11914_52426">
@@ -2054,6 +2250,8 @@
     <code>NTZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Nutzung_Flugverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11909_52400"></enumeratedBy>
@@ -2066,6 +2264,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Flugverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11905_52379"></enumeratedBy>
@@ -2077,6 +2277,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11834">
@@ -2109,6 +2311,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Friedhof</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11853_52133"></enumeratedBy>
@@ -2123,6 +2327,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11834_51941">
@@ -2131,6 +2337,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Friedhof</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11855_52139"></enumeratedBy>
@@ -2162,6 +2370,8 @@
     <code>VEG</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Vegetationsmerkmal_Gehoelz</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11866_52227"></enumeratedBy>
@@ -2172,6 +2382,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11872_52260">
@@ -2180,6 +2392,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Gehoelz</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11876_52272"></enumeratedBy>
@@ -2258,6 +2472,8 @@
     <code>BRG</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11823_51895">
@@ -2266,6 +2482,8 @@
     <code>HYD</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_HydrologischesMerkmal_Gewaesserachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11815_51870"></enumeratedBy>
@@ -2277,6 +2495,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Gewaesserachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11824_51899"></enumeratedBy>
@@ -2287,6 +2507,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Gewaesserachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11816_51872"></enumeratedBy>
@@ -2298,6 +2520,8 @@
     <code>FLR</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11825">
@@ -2329,6 +2553,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Hafenbecken</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11826_51904"></enumeratedBy>
@@ -2339,6 +2565,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11825_51902">
@@ -2347,6 +2575,8 @@
     <code>NTZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Nutzung_Hafenbecken</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11819_51882"></enumeratedBy>
@@ -2359,6 +2589,8 @@
     <code>SKZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11864">
@@ -2387,6 +2619,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11864_52224">
@@ -2395,6 +2629,8 @@
     <code>LGT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Lagergut_Halde</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11857_52142"></enumeratedBy>
@@ -2412,6 +2648,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Halde</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11842_52012"></enumeratedBy>
@@ -2447,6 +2685,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11847">
@@ -2499,6 +2739,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_IndustrieUndGewerbeflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11859_52155"></enumeratedBy>
@@ -2566,6 +2808,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11847_52072">
@@ -2574,6 +2818,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11847_52073">
@@ -2582,6 +2828,8 @@
     <code>FGT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Foerdergut_IndustrieUndGewerbeflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11833_51934"></enumeratedBy>
@@ -2596,6 +2844,8 @@
     <code>LGT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Lagergut_IndustrieUndGewerbeflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11841_52003"></enumeratedBy>
@@ -2614,6 +2864,8 @@
     <code>PEG</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Primaerenergie_IndustrieUndGewerbeflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11849_52081"></enumeratedBy>
@@ -2635,6 +2887,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_IndustrieUndGewerbeflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11852_52130"></enumeratedBy>
@@ -2663,6 +2917,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11806_51829">
@@ -2671,6 +2927,8 @@
     <code>WDM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Widmung_Kanal</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11827_51905"></enumeratedBy>
@@ -2685,6 +2943,8 @@
     <code>GWK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11806_51831">
@@ -2693,6 +2953,8 @@
     <code>IDN</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11806_51832">
@@ -2701,6 +2963,8 @@
     <code>SFK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Schifffahrtskategorie_Kanal</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11810_51848"></enumeratedBy>
@@ -2713,6 +2977,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11806_51834">
@@ -2721,6 +2987,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11879">
@@ -2762,6 +3030,8 @@
     <code>VEG</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Vegetationsmerkmal_Landwirtschaft</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11870_52237"></enumeratedBy>
@@ -2786,6 +3056,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11811">
@@ -2829,6 +3101,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Meer</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11814_51869"></enumeratedBy>
@@ -2839,6 +3113,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11811_51853">
@@ -2847,6 +3123,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11811_51854">
@@ -2855,6 +3133,8 @@
     <code>TID</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Tidemerkmal_Meer</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11817_51874"></enumeratedBy>
@@ -2865,6 +3145,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11811_51856">
@@ -2873,6 +3155,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11877">
@@ -2910,6 +3194,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11917">
@@ -2952,6 +3238,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Platz</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11892_52336"></enumeratedBy>
@@ -2967,6 +3255,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11917_52440">
@@ -2975,6 +3265,8 @@
     <code>STS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11917_52441">
@@ -2983,6 +3275,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11917_52442">
@@ -2991,6 +3285,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11912">
@@ -3019,6 +3315,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Schiffsverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11910_52403"></enumeratedBy>
@@ -3033,6 +3331,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11912_52414">
@@ -3041,6 +3341,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Schiffsverkehr</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11891_52334"></enumeratedBy>
@@ -3076,6 +3378,8 @@
     <code>BEB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_ArtDerBebauung_Siedlungsflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11861_52215"></enumeratedBy>
@@ -3087,6 +3391,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11848_52080">
@@ -3095,6 +3401,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Siedlungsflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11854_52138"></enumeratedBy>
@@ -3105,6 +3413,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11862">
@@ -3142,6 +3452,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_SportFreizeitUndErholungsflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11840_51963"></enumeratedBy>
@@ -3191,6 +3503,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11862_52219">
@@ -3199,6 +3513,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_SportFreizeitUndErholungsflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11836_51944"></enumeratedBy>
@@ -3210,6 +3526,8 @@
     <code>BEZ</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11807">
@@ -3256,6 +3574,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_StehendesGewaesser</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11805_51822"></enumeratedBy>
@@ -3271,6 +3591,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11807_51837">
@@ -3279,6 +3601,8 @@
     <code>SKZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11807_51838">
@@ -3287,6 +3611,8 @@
     <code>HYD</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_HydrologischesMerkmal_StehendesGewaesser</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11820_51885"></enumeratedBy>
@@ -3297,6 +3623,8 @@
     <code>WDM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Widmung_StehendesGewaesser</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11822_51890"></enumeratedBy>
@@ -3310,6 +3638,8 @@
     <code>SFK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Schifffahrtskategorie</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11808_51844"></enumeratedBy>
@@ -3322,6 +3652,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11807_51842">
@@ -3330,6 +3662,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11807_51843">
@@ -3338,6 +3672,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11898">
@@ -3385,6 +3721,8 @@
     <code>FTR</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Fahrbahntrennung_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11896_52353"></enumeratedBy>
@@ -3395,6 +3733,8 @@
     <code>IBD</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_InternationaleBedeutung_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11884_52307"></enumeratedBy>
@@ -3405,6 +3745,8 @@
     <code>BEZ</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11898_52358">
@@ -3413,6 +3755,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11898_52360">
@@ -3421,6 +3765,8 @@
     <code>WDM</code>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Widmung_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11913_52415"></enumeratedBy>
@@ -3437,6 +3783,8 @@
     <code>STS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11898_52361">
@@ -3445,6 +3793,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11898_52362">
@@ -3453,6 +3803,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11886">
@@ -3505,6 +3857,8 @@
     <code>BVB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_BesondereVerkehrsbedeutung</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11883_52302"></enumeratedBy>
@@ -3519,6 +3873,8 @@
     <code>BFS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_BesondereFahrstreifen</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11885_52308"></enumeratedBy>
@@ -3531,6 +3887,8 @@
     <code>BRF</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Length</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11886_52314">
@@ -3539,6 +3897,8 @@
     <code>BRV</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11886_52315">
@@ -3547,6 +3907,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Strassenachse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11907_52389"></enumeratedBy>
@@ -3557,6 +3919,8 @@
     <code>FSZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11886_52318">
@@ -3565,6 +3929,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11895_52351"></enumeratedBy>
@@ -3576,6 +3942,8 @@
     <code>OFM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Oberflaechenmaterial_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11899_52363"></enumeratedBy>
@@ -3589,6 +3957,8 @@
     <code>FAR</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11918">
@@ -3618,6 +3988,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11911_52408"></enumeratedBy>
@@ -3631,6 +4003,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11918_52445">
@@ -3639,6 +4013,8 @@
     <code>ZNM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11918_52446">
@@ -3647,6 +4023,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Strasse</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11903_52375"></enumeratedBy>
@@ -3689,6 +4067,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11858">
@@ -3727,6 +4107,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11858_52151">
@@ -3735,6 +4117,8 @@
     <code>AGT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Abbaugut_TagebauGrubeSteinbruch</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11845_52021"></enumeratedBy>
@@ -3789,6 +4173,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_TagebauGrubeSteinbruch</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11860_52213"></enumeratedBy>
@@ -3800,6 +4186,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11858_52154">
@@ -3808,6 +4196,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_TagebauGrubeSteinbruch</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11838_51950"></enumeratedBy>
@@ -3839,6 +4229,8 @@
     <code>DLU</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11799_51819">
@@ -3847,6 +4239,8 @@
     <code>DAQ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_DQMitDatenerhebung</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11869">
@@ -3884,6 +4278,8 @@
     <code>OFM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Oberflaechenmaterial_UnlandVegetationsloseFlaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11871_52252"></enumeratedBy>
@@ -3899,6 +4295,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11869_52236">
@@ -3907,6 +4305,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_UnlandVegetationsloseFlaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11875_52266"></enumeratedBy>
@@ -3952,6 +4352,8 @@
     <code>VEG</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Vegetationsmerkmal_Wald</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11868_52229"></enumeratedBy>
@@ -3966,6 +4368,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11873_52263">
@@ -3974,6 +4378,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11873_52264">
@@ -3982,6 +4388,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Wald</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11878_52274"></enumeratedBy>
@@ -4009,6 +4417,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11818_51876">
@@ -4018,6 +4428,8 @@
     <code>GWK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11818_51877">
@@ -4026,6 +4438,8 @@
     <code>IDN</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11818_51878">
@@ -4034,6 +4448,8 @@
     <code>SFK</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Schifffahrtskategorie</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11808_51844"></enumeratedBy>
@@ -4046,6 +4462,8 @@
     <code>WDM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Widmung_Wasserlauf</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11813_51865"></enumeratedBy>
@@ -4059,6 +4477,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11818_51881">
@@ -4067,6 +4487,8 @@
     <code>RGS</code>
     <cardinality>0..2</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11901">
@@ -4087,6 +4509,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Weg</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11881_52291"></enumeratedBy>
@@ -4105,6 +4529,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>AX_Lagebezeichnung</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11901_52370">
@@ -4113,6 +4539,8 @@
     <code>BEZ</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C11843">
@@ -4139,6 +4567,8 @@
     <code>BEB</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_ArtDerBebauung_Wohnbauflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11829_51911"></enumeratedBy>
@@ -4150,6 +4580,8 @@
     <code>NAM</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11843_52016">
@@ -4158,6 +4590,8 @@
     <code>ZUS</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Zustand_Wohnbauflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11828_51909"></enumeratedBy>
@@ -4169,6 +4603,8 @@
     <code>ZNM</code>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A11843_52018">
@@ -4177,6 +4613,8 @@
     <code>FKT</code>
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AX_Funktion_Wohnbauflaeche</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A11856_52141"></enumeratedBy>

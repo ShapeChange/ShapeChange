@@ -79,6 +79,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 		private String initialValue;
 		private boolean isDerived;
 		private boolean isOrdered;
+		private boolean isUnique;
 		private boolean isReadOnly;
 		private String name;
 		private Multiplicity multiplicity;
@@ -127,6 +128,13 @@ public class AttributeCreator implements Transformer, MessageSource {
 		 */
 		public boolean isOrdered() {
 			return isOrdered;
+		}
+
+		/**
+		 * @return the isUnique
+		 */
+		public boolean isUnique() {
+			return isUnique;
 		}
 
 		/**
@@ -210,6 +218,14 @@ public class AttributeCreator implements Transformer, MessageSource {
 		 */
 		public void setOrdered(boolean isOrdered) {
 			this.isOrdered = isOrdered;
+		}
+
+		/**
+		 * @param isUnique
+		 *            the isUnique to set
+		 */
+		public void setUnique(boolean isUnique) {
+			this.isUnique = isUnique;
 		}
 
 		/**
@@ -364,6 +380,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 						genPi.setInitialValue(attDef.getInitialValue());
 						genPi.setDerived(attDef.isDerived());
 						genPi.setOrdered(attDef.isOrdered());
+						genPi.setUnique(attDef.isUnique());
 						genPi.setReadOnly(attDef.isReadOnly());
 						genPi.setCardinality(attDef.getMultiplicity());
 						genPi.setTypeInfo(attDef.getType());
@@ -664,6 +681,18 @@ public class AttributeCreator implements Transformer, MessageSource {
 				}
 			}
 			ad.setOrdered(isOrdered);
+
+			// parse isUnique
+			boolean isUnique = true;
+			Element isUniqueE = getFirstElement(attDefE, "isUnique");
+			if (isUniqueE != null) {
+				String isUniqueS = isUniqueE.getTextContent().trim();
+				if (isUniqueS.equalsIgnoreCase("false")
+						|| isUniqueS.equals("0")) {
+					isUnique = false;
+				}
+			}
+			ad.setUnique(isUnique);
 
 			// parse isReadOnly
 			boolean isReadOnly = false;

@@ -43,6 +43,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C5149" category="data type">Identifier</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -53,6 +55,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13556_18429">
@@ -61,6 +65,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Area</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13556_18434">
@@ -70,6 +76,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13556_18435">
@@ -79,6 +87,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13556_18430">
@@ -87,6 +97,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13556_18431">
@@ -95,6 +107,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C13553">
@@ -119,6 +133,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13553_18410">
@@ -127,6 +143,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13553_18411">
@@ -136,6 +154,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Length</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13553_18412">
@@ -144,6 +164,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Curve</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13553_18413">
@@ -153,6 +175,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C5149" category="data type">Identifier</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -162,6 +186,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13553_18415">
@@ -170,6 +196,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T16291">
@@ -183,9 +211,10 @@
     <cardinality>1..2</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13554" category="feature type">CadastralParcel</FeatureTypeIncluded>
     <relation idref="__T16291"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS16291">
     <name>role_S16291</name>
@@ -193,10 +222,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13553" category="feature type">CadastralBoundary</FeatureTypeIncluded>
     <relation idref="__T16291"></relation>
     <InverseRole idref="_AT16291"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C13554">
     <name>CadastralParcel</name>
@@ -227,6 +257,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Area</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18417">
@@ -235,6 +267,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18418">
@@ -243,6 +277,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18419">
@@ -253,6 +289,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Object</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18420">
@@ -262,6 +300,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C5149" category="data type">Identifier</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -274,6 +314,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18422">
@@ -283,6 +325,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18423">
@@ -292,6 +336,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Point</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18424">
@@ -301,6 +347,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13554_18425">
@@ -310,6 +358,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T16293">
@@ -323,9 +373,10 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13552" category="feature type">CadastralZoning</FeatureTypeIncluded>
     <relation idref="__T16293"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS16293">
     <name>role_S16293</name>
@@ -333,10 +384,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13554" category="feature type">CadastralParcel</FeatureTypeIncluded>
     <relation idref="__T16293"></relation>
     <InverseRole idref="_AT16293"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T16288">
     <name>(unbestimmt)</name>
@@ -349,9 +401,10 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13556" category="feature type">BasicPropertyUnit</FeatureTypeIncluded>
     <relation idref="__T16288"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS16288">
     <name>role_S16288</name>
@@ -359,10 +412,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13554" category="feature type">CadastralParcel</FeatureTypeIncluded>
     <relation idref="__T16288"></relation>
     <InverseRole idref="_AT16288"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C13552">
     <name>CadastralZoning</name>
@@ -397,6 +451,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18396">
@@ -405,6 +461,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18397">
@@ -414,6 +472,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Length</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18398">
@@ -422,6 +482,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_MultiSurface</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18399">
@@ -432,6 +494,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C5149" category="data type">Identifier</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -444,6 +508,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18401">
@@ -452,6 +518,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">CadastralZoningLevelValue</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A13555_18426"></enumeratedBy>
@@ -465,6 +533,8 @@
     <cardinality>1..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>LocalisedCharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18403">
@@ -478,6 +548,8 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GeographicalName</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18404">
@@ -487,6 +559,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18405">
@@ -496,6 +570,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18407">
@@ -504,6 +580,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18406">
@@ -513,6 +591,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>GM_Point</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A13552_18408">
@@ -521,6 +601,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>DateTime</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T16292">
@@ -534,9 +616,10 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13552" category="feature type">CadastralZoning</FeatureTypeIncluded>
     <relation idref="__T16292"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS16292">
     <name>role_S16292</name>
@@ -544,10 +627,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C13552" category="feature type">CadastralZoning</FeatureTypeIncluded>
     <relation idref="__T16292"></relation>
     <InverseRole idref="_AT16292"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <ApplicationSchema id="_P1658">
     <name>Test2</name>

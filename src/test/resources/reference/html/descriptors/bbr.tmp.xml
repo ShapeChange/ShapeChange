@@ -61,6 +61,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16294" category="union data type">BooleanReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -77,6 +79,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -85,6 +89,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -107,6 +113,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16289" category="union data type">CI_CitationReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -123,6 +131,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C15877" category="data type">CI_Citation</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -131,6 +141,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -153,6 +165,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16280" category="union data type">CharacterStringReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -169,6 +183,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16019">CharacterString</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -177,6 +193,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -199,6 +217,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -207,6 +227,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16364" category="data type">Class2</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -223,6 +245,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16019">CharacterString</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -231,6 +255,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16019">CharacterString</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -247,6 +273,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16313" category="union data type">CodeReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -263,6 +291,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">Code</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
   </FeatureAttribute>
@@ -271,6 +301,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -298,6 +330,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16148">GM_Curve</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -308,6 +342,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16292" category="data type">MeasureIntervalMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -324,6 +360,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C149" category="union data type">EnumerationA_FeatureEntityReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -340,6 +378,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -354,6 +394,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">EnumerationA_FeatureEntity</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A157_129"></enumeratedBy>
@@ -373,6 +415,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8646" category="union data type">EnumerationB_GeometryMetadataReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -389,6 +433,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -403,6 +449,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">EnumerationB_GeometryMetadata</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A8628_49244"></enumeratedBy>
@@ -421,6 +469,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C3291" category="union data type">EnumerationX_FeatureType1Reason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -437,6 +487,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -451,6 +503,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">EnumerationX_FeatureType1</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A3414_18004"></enumeratedBy>
@@ -469,6 +523,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C3696" category="union data type">EnumerationY_FeatureType2Reason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -485,6 +541,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -499,6 +557,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">EnumerationY_FeatureType2</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A3684_19513"></enumeratedBy>
@@ -521,6 +581,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8656">SourceInfo</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -560,6 +622,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C159">Information</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -570,6 +634,8 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C173" category="data type">EnumerationA_FeatureEntityMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -580,6 +646,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16282" category="data type">CharacterStringMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -590,6 +658,8 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8651" category="data type">GeometryInfoMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -601,6 +671,8 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16282" category="data type">CharacterStringMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -612,6 +684,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8656">SourceInfo</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -647,6 +721,8 @@
       <name>Full name of prop20.</name>
     </taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C3316" category="data type">EnumerationX_FeatureType1Meta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -659,6 +735,8 @@
       <name>Full name of prop21.</name>
     </taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16295" category="data type">RealMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -703,6 +781,8 @@
       <name>Full name of prop30.</name>
     </taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C3416" category="data type">EnumerationY_FeatureType2Meta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -715,6 +795,8 @@
       <name>Full name of prop31.</name>
     </taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16284" category="data type">MeasureMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -728,6 +810,8 @@
       <name>Full name of prop32.</name>
     </taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16292" category="data type">MeasureIntervalMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -736,6 +820,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">ExternalCodeList</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
   </FeatureAttribute>
@@ -758,6 +844,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8631" category="data type">GeometryMetadata</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -768,6 +856,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16286" category="data type">IntegerMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -784,6 +874,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8639" category="union data type">GeometryInfoReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -800,6 +892,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -814,6 +908,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8647">GeometryInfo</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -833,6 +929,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16284" category="data type">MeasureMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -843,6 +941,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C8636" category="data type">EnumerationB_GeometryMetadataMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -863,6 +963,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16296" category="data type">CI_CitationMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -873,6 +975,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16281" category="data type">BooleanMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -889,6 +993,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16287" category="union data type">IntegerReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -905,6 +1011,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16016">Integer</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -913,6 +1021,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -936,6 +1046,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C15939">Measure</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -945,6 +1057,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C15939">Measure</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -961,6 +1075,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16290" category="union data type">MeasureIntervalReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -977,6 +1093,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16293" category="union data type">MeasureIntervalUnion</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -985,6 +1103,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -1008,6 +1128,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C15939">Measure</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1017,6 +1139,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16288" category="data type">MeasureInterval</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1033,6 +1157,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16283" category="union data type">MeasureReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1049,6 +1175,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C15939">Measure</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1057,6 +1185,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -1082,6 +1212,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16113">GM_MultiCurve</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1101,6 +1233,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16118">GM_MultiPoint</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1120,6 +1254,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16116">GM_MultiSolid</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1139,6 +1275,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16114">GM_MultiSurface</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1160,6 +1298,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16131">GM_Point</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1170,6 +1310,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16292" category="data type">MeasureIntervalMeta</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1186,6 +1328,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16291" category="union data type">RealReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1202,6 +1346,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16012">Real</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1210,6 +1356,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">ValueNilReason</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A16279_50882"></enumeratedBy>
@@ -1235,6 +1383,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16143">GM_Solid</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1265,6 +1415,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16287" category="union data type">IntegerReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1276,6 +1428,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16313" category="union data type">CodeReason</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1296,6 +1450,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C16145">GM_Surface</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1317,9 +1473,10 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C8679" category="feature type">FeatureAttMetadata</FeatureTypeIncluded>
     <relation idref="__T50234"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS50234">
     <name>role_S50234</name>
@@ -1327,10 +1484,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C16285" category="feature type">TypeMeta</FeatureTypeIncluded>
     <relation idref="__T50234"></relation>
     <InverseRole idref="_AT50234"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <Value id="_A157_129">
     <label>1</label>

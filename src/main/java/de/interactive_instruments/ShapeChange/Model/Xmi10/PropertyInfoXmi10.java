@@ -313,6 +313,11 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		}
 	};
 
+	public boolean isUnique() {
+		// does not seem to be implemented in XMI 1.0
+		return true;
+	};
+
 	public boolean isComposition() {
 		if (attribute)
 			return true;
