@@ -528,7 +528,7 @@ public class XsdDocument implements MessageSource {
 			}
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
-			return options.internalize((qualified ? ci.qname() : ci.name()) + "Type");
+			return options.internalize((qualified ? ci.qname() : ci.name()) + (ci.name().endsWith("Property") ? "_" : "") + "Type");
 		} else {
 			MessageContext mc = result.addError(null, 154, "type", ci.name());
 			if (mc != null)
@@ -554,7 +554,7 @@ public class XsdDocument implements MessageSource {
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
 			String propertyTypeName = (qualified ? ci.qname() : ci.name())
-					+ "PropertyType";
+					+ (ci.name().endsWith("Property") ? "_" : "") + "PropertyType";
 			propertyTypeName = options.internalize(propertyTypeName);			
 			return propertyTypeName;
 		} else {
@@ -1120,7 +1120,7 @@ public class XsdDocument implements MessageSource {
 		Element e1, e2, e3, e4, e5, e6, e7, e8, e9, e10;
 		e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 		document.getDocumentElement().appendChild(e1);
-		addAttribute(e1, "name", ci.name() + "PropertyType");
+		addAttribute(e1, "name", ci.name() + (ci.name().endsWith("Property") ? "_" : "") + "PropertyType");
 		e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
 		e1.appendChild(e2);
 		e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");

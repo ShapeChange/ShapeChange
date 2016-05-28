@@ -37,12 +37,12 @@
       <enumeration value="val2"/>
     </restriction>
   </simpleType>
-  <element name="FeatureType1" substitutionGroup="gml:AbstractFeature" type="test:FeatureType1Type">
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeType">
     <annotation>
       <documentation>This is a feature type.</documentation>
     </annotation>
   </element>
-  <complexType name="FeatureType1Type">
+  <complexType name="FeatureTypeType">
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
@@ -92,7 +92,7 @@
           <element name="role2" type="gml:ReferenceType">
             <annotation>
               <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:FeatureType2</targetElement>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:FeatureTypeProperty</targetElement>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:role1</reversePropertyName>
               </appinfo>
             </annotation>
@@ -101,15 +101,15 @@
       </extension>
     </complexContent>
   </complexType>
-  <complexType name="FeatureType1PropertyType">
+  <complexType name="FeatureTypePropertyType">
     <sequence minOccurs="0">
-      <element ref="test:FeatureType1"/>
+      <element ref="test:FeatureType"/>
     </sequence>
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
-  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="test:FeatureType2Type"/>
-  <complexType name="FeatureType2Type">
+  <element name="FeatureTypeProperty" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeProperty_Type"/>
+  <complexType name="FeatureTypeProperty_Type">
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
@@ -123,7 +123,7 @@
             </annotation>
             <complexType>
               <sequence>
-                <element ref="test:FeatureType1"/>
+                <element ref="test:FeatureType"/>
               </sequence>
               <attributeGroup ref="gml:OwnershipAttributeGroup"/>
             </complexType>
@@ -132,9 +132,9 @@
       </extension>
     </complexContent>
   </complexType>
-  <complexType name="FeatureType2PropertyType">
+  <complexType name="FeatureTypeProperty_PropertyType">
     <sequence minOccurs="0">
-      <element ref="test:FeatureType2"/>
+      <element ref="test:FeatureTypeProperty"/>
     </sequence>
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>

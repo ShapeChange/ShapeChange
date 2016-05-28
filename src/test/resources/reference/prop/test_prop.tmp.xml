@@ -77,7 +77,7 @@
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C4">
-    <name>FeatureType1</name>
+    <name>FeatureType</name>
     <definition>This is a feature type.</definition>
     <characterizedBy idref="_A4_1"></characterizedBy>
     <characterizedBy idref="_A4_2"></characterizedBy>
@@ -305,7 +305,7 @@
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
-    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureType2</FeatureTypeIncluded>
+    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
     <relation idref="__T1"></relation>
     <InverseRole idref="_AS1"></InverseRole>
   </RelationshipRole>
@@ -316,12 +316,12 @@
     <voidable>false</voidable>
     <orderIndicator>1</orderIndicator>
     <uniquenessIndicator>0</uniquenessIndicator>
-    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType1</FeatureTypeIncluded>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
     <relation idref="__T1"></relation>
     <InverseRole idref="_AT1"></InverseRole>
   </RelationshipRole>
   <FeatureType id="_C5">
-    <name>FeatureType2</name>
+    <name>FeatureTypeProperty</name>
     <characterizedBy idref="_A5_26"></characterizedBy>
     <characterizedBy idref="_A5_31"></characterizedBy>
     <characterizedBy idref="_AS1"></characterizedBy>
