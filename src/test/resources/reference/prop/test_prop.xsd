@@ -97,6 +97,7 @@
               </appinfo>
             </annotation>
           </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="role3" type="test:FeatureTypeProperty_PropertyType"/>
         </sequence>
       </extension>
     </complexContent>
@@ -150,6 +151,21 @@
     <sequence>
       <element ref="test:NilUnion"/>
     </sequence>
+  </complexType>
+  <element name="Subtype" substitutionGroup="test:FeatureTypeProperty" type="test:SubtypeType"/>
+  <complexType name="SubtypeType">
+    <complexContent>
+      <extension base="test:FeatureTypeProperty_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubtypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Subtype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
   <element name="Union" substitutionGroup="gml:AbstractObject" type="test:UnionType"/>
   <complexType name="UnionType">

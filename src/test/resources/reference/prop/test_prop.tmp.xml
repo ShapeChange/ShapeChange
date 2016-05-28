@@ -100,6 +100,7 @@
     <characterizedBy idref="_A4_19"></characterizedBy>
     <characterizedBy idref="_A4_20"></characterizedBy>
     <characterizedBy idref="_AT1"></characterizedBy>
+    <characterizedBy idref="_AT40"></characterizedBy>
     <package idref="_P4"></package>
     <type>Feature Type</type>
     <taggedValues></taggedValues>
@@ -320,6 +321,33 @@
     <relation idref="__T1"></relation>
     <InverseRole idref="_AT1"></InverseRole>
   </RelationshipRole>
+  <FeatureRelationship id="__T40">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT40"></roles>
+    <roles idref="_AS40"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT40">
+    <name>role3</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
+    <relation idref="__T40"></relation>
+  </RelationshipRole>
+  <RelationshipRole id="_AS40">
+    <name>role_S40</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
+    <relation idref="__T40"></relation>
+    <InverseRole idref="_AT40"></InverseRole>
+  </RelationshipRole>
   <FeatureType id="_C5">
     <name>FeatureTypeProperty</name>
     <characterizedBy idref="_A5_26"></characterizedBy>
@@ -376,6 +404,13 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
+  <FeatureType id="_C27">
+    <name>Subtype</name>
+    <subtypeOf idref="_C5">FeatureTypeProperty</subtypeOf>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
   <FeatureType id="_C11">
     <name>Union</name>
     <characterizedBy idref="_A11_32"></characterizedBy>
