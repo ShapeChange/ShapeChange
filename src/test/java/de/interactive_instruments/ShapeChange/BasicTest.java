@@ -133,6 +133,12 @@ public class BasicTest {
 					"src/test/resources/reference/xsd");
 
 			/*
+			 * Test property options: ordered, uniqueness and inline/byReference
+			 */
+			multiTest("src/test/resources/config/testEA_prop.xml", new String[] { "xsd", "xml", "html" },
+					"testResults/ea/prop/INPUT", "src/test/resources/reference/prop");
+
+			/*
 			 * Test multiple tagged values and stereotypes
 			 */
 			HashMap<String, String> replace2 = new HashMap<String, String>();
@@ -325,7 +331,7 @@ public class BasicTest {
 					"src/test/resources/reference/xsd");
 
 			/*
-			 * An association class and the GML 3.3 code list values
+			 * Test the mixin options
 			 */
 			String[] xsdmixin = { "testgroupmixin" };
 			xsdTest("src/test/resources/config/testEA_groupmixin.xml", xsdmixin,

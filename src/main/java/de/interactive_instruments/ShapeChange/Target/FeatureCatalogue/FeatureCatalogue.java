@@ -1785,6 +1785,17 @@ public class FeatureCatalogue
 			}
 		}
 
+		if (propi.isOrdered()) {
+			writer.dataElement("orderIndicator", "1", op);
+		} else {
+			writer.dataElement("orderIndicator", "0", op);
+		}
+		if (propi.isUnique()) {
+			writer.dataElement("uniquenessIndicator", "1", op);
+		} else {
+			writer.dataElement("uniquenessIndicator", "0", op);
+		}
+
 		Type ti = propi.typeInfo();
 		if (!propi.isAttribute() && !propi.isComposition()) {
 			if (ti != null) {
@@ -1814,11 +1825,6 @@ public class FeatureCatalogue
 				propi2id = options.internalize(propi2id);
 
 				writer.emptyElement("InverseRole", "idref", propi2id, op);
-			}
-			if (propi.isOrdered()) {
-				writer.dataElement("orderIndicator", "1", op);
-			} else {
-				writer.dataElement("orderIndicator", "0", op);
 			}
 
 		} else {

@@ -30,9 +30,10 @@
     </complexContent>
   </complexType>
   <complexType name="InfoEntityPropertyType">
-    <sequence minOccurs="0">
+    <choice minOccurs="0">
       <element ref="gm:InfoEntity"/>
-    </sequence>
+      <element ref="gm:TimePointInfo"/>
+    </choice>
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>

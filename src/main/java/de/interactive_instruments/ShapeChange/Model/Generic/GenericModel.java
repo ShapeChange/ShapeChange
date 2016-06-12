@@ -309,6 +309,7 @@ public class GenericModel extends ModelImpl {
 				genPi.copyTypeInfo(pi.typeInfo());
 				genPi.setNavigable(pi.isNavigable());
 				genPi.setOrdered(pi.isOrdered());
+				genPi.setUnique(pi.isUnique());
 				genPi.setComposition(pi.isComposition());
 				genPi.setAggregation(pi.isAggregation());
 				Multiplicity mult = pi.cardinality();
@@ -2158,6 +2159,7 @@ public class GenericModel extends ModelImpl {
 		copy.copyTypeInfo(pi.typeInfo());
 		copy.setNavigable(pi.isNavigable());
 		copy.setOrdered(pi.isOrdered());
+		copy.setUnique(pi.isUnique());
 		copy.setComposition(pi.isComposition());
 		copy.setAggregation(pi.isAggregation());
 		copy.setCardinality(new Multiplicity(pi.cardinality().toString()));

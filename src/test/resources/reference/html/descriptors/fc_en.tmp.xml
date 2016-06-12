@@ -37,6 +37,8 @@
     <initialValue>"test"</initialValue>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A4_19">
@@ -45,6 +47,8 @@
     <isDerived>true</isDerived>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">Enumeration</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A9_29"></enumeratedBy>
@@ -61,9 +65,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C26" category="feature type">FeatureType2</FeatureTypeIncluded>
     <relation idref="__T1"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS1">
     <name>role1</name>
@@ -72,10 +77,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType1</FeatureTypeIncluded>
     <relation idref="__T1"></relation>
     <InverseRole idref="_AT1"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C26">
     <name>FeatureType2</name>

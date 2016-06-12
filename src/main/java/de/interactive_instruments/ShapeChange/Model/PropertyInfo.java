@@ -97,9 +97,14 @@ public interface PropertyInfo extends Info {
 	public boolean isNavigable();
 
 	/**
-	 * Find out if the property represents an ordered collection.
+	 * Find out if the property represents an ordered collection. Default is false in UML 2.4.1.
 	 */
 	public boolean isOrdered();
+
+	/**
+	 * Find out if the property allows duplicates in the values or if only unique values are allowed. Default is true in UML 2.4.1.
+	 */
+	public boolean isUnique();
 
 	/**
 	 * @return true if the attribute may not be written to after initialization,

@@ -123,6 +123,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	/** Cache for ordering in property */
 	protected Boolean isOrderedCache = null;
 
+	/** Cache for uniqueness in property */
+	protected Boolean isUniqueCache = null;
+
 	/** Cache set for stereotypes */
 	// this map is already defined in InfoImpl
 
@@ -619,7 +622,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			if (isAttribute()) {
 				// Inquire from Attribute
 				isOrderedCache = eaAttribute.GetIsOrdered();
-				;
 			} else {
 				// Inquire from ConnectorEnd
 				int ordering = eaConnectorEnd.GetOrdering();
@@ -629,6 +631,25 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		}
 		return isOrderedCache;
 	} // isOrdered()
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isUnique()
+	 */
+	public boolean isUnique() {
+		if (isUniqueCache == null) {
+			isUniqueCache = new Boolean(true);
+			if (isAttribute()) {
+				// Inquire from Attribute
+				isUniqueCache = !eaAttribute.GetAllowDuplicates();
+			} else {
+				// Inquire from ConnectorEnd
+				boolean uniqueness = !eaConnectorEnd.GetAllowDuplicates();
+				if (!uniqueness)
+					isUniqueCache = false;
+			}
+		}
+		return isUniqueCache;
+	} // isUnique()
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#reverseProperty()
