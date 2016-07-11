@@ -133,11 +133,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	public static final String PARAM_WORKSPACE_TEMPLATE = "workspaceTemplate";
 	public static final String WORKSPACE_TEMPLATE_URL = "http://shapechange.net/resources/templates/ArcGISWorkspace_template.eap";
 	/**
-	 * Optional changes to the default documentation template and the default strings for descriptors without value
+	 * Optional changes to the default documentation template and the default
+	 * strings for descriptors without value
 	 */
 	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
-	
+
 	/* --------------------------------------------------------------- */
 	/* --- Constants for elements of the ArcGIS workspace template --- */
 	/* --------------------------------------------------------------- */
@@ -322,7 +323,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * Pattern to parse length constraints for property values, i.e. the
 	 * property name and maximum length.
 	 * <p>
-	 * (?:self\.|\s)?(\w+)\.[\w\.]*?size\(\)\D*(\d+)
+	 * (?:self\.)?(\w+)[\.\w+]*\.size\(\)\D*(\d+)
 	 * 
 	 * <p>
 	 * <ul>
@@ -331,7 +332,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * </ul>
 	 */
 	private Pattern lengthConstraintPattern = Pattern
-			.compile("(?:self\\.|\\s)?(\\w+)\\.[\\w\\.]*?size\\(\\)\\D*(\\d+)");
+			.compile("(?:self\\.)?(\\w+)[\\.\\w+]*\\.size\\(\\)\\D*(\\d+)");
+	
 
 	/**
 	 * Pattern to parse the lower boundary information from a numeric range
@@ -394,7 +396,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		appSchemaPkg = p;
 		model = m;
@@ -671,10 +673,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				result.addError(this, 12);
 			}
 		}
-		
+
 		// change the default documentation template?
-		documentationTemplate = options.parameter(this.getClass().getName(), PARAM_DOCUMENTATION_TEMPLATE);
-		documentationNoValue = options.parameter(this.getClass().getName(), PARAM_DOCUMENTATION_NOVALUE);
+		documentationTemplate = options.parameter(this.getClass().getName(),
+				PARAM_DOCUMENTATION_TEMPLATE);
+		documentationNoValue = options.parameter(this.getClass().getName(),
+				PARAM_DOCUMENTATION_NOVALUE);
 	}
 
 	public void process(ClassInfo ci) {
@@ -960,11 +964,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		EAModelUtil.setEAStereotype(e, "CodedValueDomain");
 
-		String description = ci.description() == null
-				|| ci.description().trim().length() == 0
-						? "<no description available>" : ci.description();
+		
+		String documentation = ci.derivedDocumentation(documentationTemplate,
+				"<no description available>");
+				
 		EAModelUtil.setTaggedValue(e,
-				new EATaggedValue("description", description, true));
+				new EATaggedValue("description", documentation, true));
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAModelUtil.createEAAttribute(e, "FieldType", null, null, null, null,
@@ -1000,8 +1005,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				}
 
 				EAModelUtil.createEAAttribute(e, pi.name(), null,
-						pi.derivedDocumentation(documentationTemplate, documentationNoValue), enumStereotype, null, false, false,
-						initialValue, new Multiplicity(1, 1), null, null);
+						pi.derivedDocumentation(documentationTemplate,
+								documentationNoValue),
+						enumStereotype, null, false, false, initialValue,
+						new Multiplicity(1, 1), null, null);
 			}
 		}
 	}
@@ -1477,7 +1484,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			}
 		}
 
-		String s = ci.derivedDocumentation(documentationTemplate, documentationNoValue);
+		String s = ci.derivedDocumentation(documentationTemplate,
+				documentationNoValue);
 		if (s != null) {
 			try {
 				EAModelUtil.setEANotes(s, e);
@@ -1926,7 +1934,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						try {
 							createField(eaClass, normalizedPiName,
-									normalizedPiAlias, pi.derivedDocumentation(documentationTemplate, documentationNoValue),
+									normalizedPiAlias,
+									pi.derivedDocumentation(
+											documentationTemplate,
+											documentationNoValue),
 									numericRange.GetName(), "0", "0", "0",
 									numericRange.GetElementID());
 
@@ -1981,7 +1992,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						try {
 							createField(eaClass, normalizedPiName,
-									normalizedPiAlias, pi.derivedDocumentation(documentationTemplate, documentationNoValue),
+									normalizedPiAlias,
+									pi.derivedDocumentation(
+											documentationTemplate,
+											documentationNoValue),
 									eaTargetType, "" + computeLength(pi),
 									"" + computePrecision(pi),
 									"" + computeScale(pi),
@@ -2044,8 +2058,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					try {
 						createField(eaClass, normalizedPiName,
-								normalizedPiAlias, pi.derivedDocumentation(documentationTemplate, documentationNoValue), eaType,
-								"0", "0", "0", eaClassifierId);
+								normalizedPiAlias,
+								pi.derivedDocumentation(documentationTemplate,
+										documentationNoValue),
+								eaType, "0", "0", "0", eaClassifierId);
 					} catch (EAException e) {
 						result.addError(this, 10003, pi.name(), ci.name(),
 								e.getMessage());
@@ -2958,7 +2974,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	private Attribute createField(Element e, String name, String alias,
 			String documentation, String eaType, String tvLength,
 			String tvPrecision, String tvScale, Integer eaClassifierId)
-					throws EAException {
+			throws EAException {
 
 		List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
 
@@ -2976,6 +2992,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("Field");
 
+		// TODO: set initial value?
 		return EAModelUtil.createEAAttribute(e, name, alias, documentation,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				eaType, eaClassifierId);
