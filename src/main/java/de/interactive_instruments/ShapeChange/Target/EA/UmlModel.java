@@ -332,6 +332,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!att.Update()) {
 				result.addError("EA-Fehler: " + att.GetLastError());
 			}
+			att.SetAllowDuplicates(!propi.isUnique());
+			if (!att.Update()) {
+				result.addError("EA-Fehler: " + att.GetLastError());
+			}
 			att.SetDefault(propi.initialValue());
 			if (!att.Update()) {
 				result.addError("EA-Fehler: " + att.GetLastError());
@@ -452,6 +456,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
 			e.SetStereotype(stereotypesCSV(i.stereotypes()));
+			if (!e.Update()) {
+				result.addError("EA-Fehler: " + e.GetLastError());
+			}
+			e.SetOrdering(i.isOrdered() ? 1 : 0);
+			if (!e.Update()) {
+				result.addError("EA-Fehler: " + e.GetLastError());
+			}
+			e.SetAllowDuplicates(!i.isUnique());
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}

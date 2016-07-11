@@ -68,6 +68,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected Type typeInfo = null;
 	protected boolean isNavigable = true;
 	protected boolean isOrdered = false;
+	protected boolean isUnique = true;
 	protected boolean isComposition = false;
 	protected boolean isAggregation = false;
 	protected Multiplicity cardinality = null;
@@ -182,6 +183,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	@Override
 	public boolean isOrdered() {
 		return isOrdered;
+	}
+
+	@Override
+	public boolean isUnique() {
+		return isUnique;
 	}
 
 	public boolean hasConstraints() {
@@ -382,6 +388,14 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setOrdered(boolean isOrdered) {
 		this.isOrdered = isOrdered;
+	}
+
+	/**
+	 * @param isUnique
+	 *            the isUnique to set
+	 */
+	public void setUnique(boolean isUnique) {
+		this.isUnique = isUnique;
 	}
 
 	/**
@@ -842,6 +856,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.copyTypeInfo(this.typeInfo);
 		copy.setNavigable(isNavigable);
 		copy.setOrdered(isOrdered);
+		copy.setUnique(isUnique);
 		copy.setComposition(isComposition);
 		copy.setAggregation(isAggregation);
 		copy.setCardinality(new Multiplicity(cardinality.toString()));

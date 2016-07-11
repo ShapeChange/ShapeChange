@@ -528,7 +528,7 @@ public class XsdDocument implements MessageSource {
 			}
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
-			return options.internalize((qualified ? ci.qname() : ci.name()) + "Type");
+			return options.internalize((qualified ? ci.qname() : ci.name()) + (ci.name().endsWith("Property") ? "_" : "") + "Type");
 		} else {
 			MessageContext mc = result.addError(null, 154, "type", ci.name());
 			if (mc != null)
@@ -554,7 +554,7 @@ public class XsdDocument implements MessageSource {
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
 			String propertyTypeName = (qualified ? ci.qname() : ci.name())
-					+ "PropertyType";
+					+ (ci.name().endsWith("Property") ? "_" : "") + "PropertyType";
 			propertyTypeName = options.internalize(propertyTypeName);			
 			return propertyTypeName;
 		} else {
@@ -935,6 +935,27 @@ public class XsdDocument implements MessageSource {
 		return res;
 	}
 
+	/**
+	 * Walk down the subtype tree to find the first instantiable types for any mixin subtype
+	 */
+	private HashSet<ClassInfo> subtypesOfMixins(ClassInfo ci, boolean inMixin) {
+		HashSet<ClassInfo> res = new HashSet<ClassInfo>();
+		if (ci.subtypes() != null) {
+			for (Iterator<String> i = ci.subtypes().iterator(); i.hasNext();) {
+				ClassInfo cix = model.classById(i.next());
+				if (cix != null && (cix.category() == Options.MIXIN
+						|| (cix.matches("rule-xsd-cls-no-abstract-classes")
+								&& cix.isAbstract()))) {
+					res.addAll(subtypesOfMixins(cix, true));
+				} else {
+					if (inMixin)
+						res.add(cix);
+				}
+			}
+		}
+		return res;
+	}
+
 	public void pPropertyTypeWithSubtypes(ClassInfo ci) {
 
 		if (ci.matches("rule-xsd-cls-noPropertyType")
@@ -979,12 +1000,21 @@ public class XsdDocument implements MessageSource {
 				.matches("rule-xsd-cls-standard-19139-property-types");
 		boolean rswe = ci.matches("rule-xsd-cls-standard-swe-property-types");
 
+		HashSet<ClassInfo> instatiableMixinSubclasses = null;
+		if (ci.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+			instatiableMixinSubclasses = subtypesOfMixins(ci, false);
+		}		
+		
 		Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
 				"complexType");
 		document.getDocumentElement().appendChild(e1);
 		addAttribute(e1, "name", propertyTypeName(ci, false));
-		Element e4 = document.createElementNS(Options.W3C_XML_SCHEMA,
-				"sequence");
+		Element e4;
+		if (instatiableMixinSubclasses!=null && !instatiableMixinSubclasses.isEmpty()) {
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
+		} else {
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
+		}
 		e1.appendChild(e4);
 		Element e3 = document.createElementNS(Options.W3C_XML_SCHEMA,
 				"element");
@@ -992,6 +1022,9 @@ public class XsdDocument implements MessageSource {
 		String s = elementName(ci, true);
 		if (s != null)
 			addAttribute(e3, "ref", s);
+		if (instatiableMixinSubclasses!=null && !instatiableMixinSubclasses.isEmpty()) {
+			addElements(e4, instatiableMixinSubclasses);
+		}
 		if (rgml && !rnobase) {
 			if (classHasIdentity(ci)) {
 				addAttribute(e4, "minOccurs", "0");
@@ -1087,7 +1120,7 @@ public class XsdDocument implements MessageSource {
 		Element e1, e2, e3, e4, e5, e6, e7, e8, e9, e10;
 		e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 		document.getDocumentElement().appendChild(e1);
-		addAttribute(e1, "name", ci.name() + "PropertyType");
+		addAttribute(e1, "name", ci.name() + (ci.name().endsWith("Property") ? "_" : "") + "PropertyType");
 		e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
 		e1.appendChild(e2);
 		e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");

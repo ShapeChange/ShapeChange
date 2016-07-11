@@ -45,6 +45,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">Integer</ValueDataType>
   </FeatureAttribute>
   <Package id="_P15">
@@ -78,6 +80,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__refmodel_T44" mode="DELETE">
@@ -90,9 +94,10 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
     <relation idref="__refmodel_T44"></relation>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_Arefmodel_S44" mode="DELETE">
     <name mode="DELETE">role_S44</name>
@@ -100,10 +105,11 @@
     <isNavigable mode="DELETE">false</isNavigable>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_Crefmodel_58" category="feature type" mode="DELETE">DeletedFeatureType</FeatureTypeIncluded>
     <relation idref="__refmodel_T44"></relation>
     <InverseRole idref="_Arefmodel_T44" mode="DELETE"></InverseRole>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <Package id="_P16">
     <name>Types</name>
@@ -121,6 +127,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">CharacterString</ValueDataType>
   </FeatureAttribute>
   <Package id="_P17">
@@ -140,6 +148,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">Real</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_Arefmodel_62_73" mode="DELETE">
@@ -147,6 +157,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">Real</ValueDataType>
   </FeatureAttribute>
   <Package id="_P18">
@@ -169,6 +181,8 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType mode="DELETE">CharacterString</ValueDataType>
   </FeatureAttribute>
   <Package id="_P20">
@@ -224,9 +238,10 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C114" category="feature type" mode="DELETE">NT_FEATURETYPE_ÄÖÜ</FeatureTypeIncluded>
     <relation idref="__refmodel_T70"></relation>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_Arefmodel_S70" mode="DELETE">
     <name mode="DELETE">role_S70</name>
@@ -234,10 +249,11 @@
     <isNavigable mode="DELETE">false</isNavigable>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_Crefmodel_111" category="feature type" mode="DELETE">NT_DeletedFeatureType</FeatureTypeIncluded>
     <relation idref="__refmodel_T70"></relation>
     <InverseRole idref="_Arefmodel_T70" mode="DELETE"></InverseRole>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C54">
     <name>DataType</name>
@@ -251,6 +267,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C95">
@@ -266,6 +284,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">EC_CodeList</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A96_86"></enumeratedBy>
@@ -277,6 +297,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">EC_Enumeration</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A97_88"></enumeratedBy>
@@ -299,6 +321,8 @@
     <cardinality mode="INSERT">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="INSERT">false</voidable>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+    <uniquenessIndicator mode="INSERT">1</uniquenessIndicator>
     <ValueDataType mode="INSERT">CharacterString</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A56_63">
@@ -306,6 +330,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Real</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T45">
@@ -318,26 +344,30 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C57" category="feature type">FeatureType2</FeatureTypeIncluded>
     <relation idref="__T45"></relation>
     <InverseRole idref="_AS45"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS45">
     <name>roleFT2_1</name>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C56" category="feature type">FeatureType1</FeatureTypeIncluded>
     <relation idref="__T45"></relation>
     <InverseRole idref="_AT45"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureAttribute id="_Arefmodel_56_66" mode="DELETE">
     <name mode="DELETE">prop2</name>
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <ValueDataType idref="_Crefmodel_54" category="data type" mode="DELETE">DataType</ValueDataType>
     <ValueDomainType mode="DELETE">0</ValueDomainType>
   </FeatureAttribute>
@@ -351,9 +381,10 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_Crefmodel_58" category="feature type" mode="DELETE">DeletedFeatureType</FeatureTypeIncluded>
     <relation idref="__refmodel_T43"></relation>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_Arefmodel_S43" mode="DELETE">
     <name mode="DELETE">role_S43</name>
@@ -361,10 +392,11 @@
     <isNavigable mode="DELETE">false</isNavigable>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
     <relation idref="__refmodel_T43"></relation>
     <InverseRole idref="_Arefmodel_T43" mode="DELETE"></InverseRole>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C57">
     <name>FeatureType2</name>
@@ -383,6 +415,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A57_67">
@@ -390,6 +424,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">CodeList1</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A49_52"></enumeratedBy>
@@ -406,9 +442,10 @@
     <cardinality mode="INSERT">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="INSERT">false</voidable>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+    <uniquenessIndicator mode="INSERT">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C107" category="feature type" mode="INSERT">InsertedFeatureType</FeatureTypeIncluded>
     <relation idref="__T68"></relation>
-    <orderIndicator mode="INSERT">0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS68" mode="INSERT">
     <name mode="INSERT">role_S68</name>
@@ -416,10 +453,11 @@
     <isNavigable mode="INSERT">false</isNavigable>
     <taggedValues></taggedValues>
     <voidable mode="INSERT">false</voidable>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+    <uniquenessIndicator mode="INSERT">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C57" category="feature type" mode="INSERT">FeatureType2</FeatureTypeIncluded>
     <relation idref="__T68"></relation>
     <InverseRole idref="_AT68" mode="INSERT"></InverseRole>
-    <orderIndicator mode="INSERT">0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T63">
     <name>(unbestimmt)</name>
@@ -431,9 +469,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C56" category="feature type">FeatureType1</FeatureTypeIncluded>
     <relation idref="__T63"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS63">
     <name>role_S63</name>
@@ -441,10 +480,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C57" category="feature type">FeatureType2</FeatureTypeIncluded>
     <relation idref="__T63"></relation>
     <InverseRole idref="_AT63"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__refmodel_T64" mode="DELETE">
     <name>(unbestimmt)</name>
@@ -456,9 +496,10 @@
     <cardinality mode="DELETE">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C56" category="feature type" mode="DELETE">FeatureType1</FeatureTypeIncluded>
     <relation idref="__refmodel_T64"></relation>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_Arefmodel_S64" mode="DELETE">
     <name mode="DELETE">role_S64</name>
@@ -466,10 +507,11 @@
     <isNavigable mode="DELETE">false</isNavigable>
     <taggedValues></taggedValues>
     <voidable mode="DELETE">false</voidable>
+    <orderIndicator mode="DELETE">0</orderIndicator>
+    <uniquenessIndicator mode="DELETE">1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C57" category="feature type" mode="DELETE">FeatureType2</FeatureTypeIncluded>
     <relation idref="__refmodel_T64"></relation>
     <InverseRole idref="_Arefmodel_T64" mode="DELETE"></InverseRole>
-    <orderIndicator mode="DELETE">0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C64">
     <name>GT_FeatureType1</name>
@@ -598,6 +640,8 @@
     <cardinality mode="INSERT">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="INSERT">false</voidable>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+    <uniquenessIndicator mode="INSERT">1</uniquenessIndicator>
     <ValueDataType mode="INSERT">Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A109_100" mode="INSERT">
@@ -605,6 +649,8 @@
     <cardinality mode="INSERT">1</cardinality>
     <taggedValues></taggedValues>
     <voidable mode="INSERT">false</voidable>
+    <orderIndicator mode="INSERT">0</orderIndicator>
+    <uniquenessIndicator mode="INSERT">1</uniquenessIndicator>
     <ValueDataType mode="INSERT">Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C80">
@@ -626,6 +672,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_82">
@@ -633,6 +681,8 @@
     <cardinality>[[del]]0..1[[/del]][[ins]]1..*[[/ins]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_78">
@@ -640,6 +690,8 @@
     <cardinality>[[del]]1[[/del]][[ins]]0..*[[/ins]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_75">
@@ -647,6 +699,8 @@
     <cardinality>1..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_79">
@@ -654,6 +708,8 @@
     <cardinality>[[del]]1[[/del]][[ins]]0[[/ins]]..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_77">
@@ -661,6 +717,8 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_80">
@@ -668,6 +726,8 @@
     <cardinality>[[del]]0[[/del]][[ins]]1[[/ins]]..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A80_76">
@@ -675,6 +735,8 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C81">
@@ -701,9 +763,10 @@
     <cardinality>[[del]]1[[/del]][[ins]]0..*[[/ins]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T54"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS54">
     <name>role_S54</name>
@@ -711,10 +774,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T54"></relation>
     <InverseRole idref="_AT54"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T55">
     <name>(unbestimmt)</name>
@@ -726,9 +790,10 @@
     <cardinality>0..1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T55"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS55">
     <name>role_S55</name>
@@ -736,10 +801,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T55"></relation>
     <InverseRole idref="_AT55"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T56">
     <name>(unbestimmt)</name>
@@ -751,9 +817,10 @@
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T56"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS56">
     <name>role_S56</name>
@@ -761,10 +828,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T56"></relation>
     <InverseRole idref="_AT56"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T57">
     <name>(unbestimmt)</name>
@@ -776,9 +844,10 @@
     <cardinality>0..[[del]]*[[/del]][[ins]]1[[/ins]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T57"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS57">
     <name>role_S57</name>
@@ -786,10 +855,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T57"></relation>
     <InverseRole idref="_AT57"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T58">
     <name>(unbestimmt)</name>
@@ -801,9 +871,10 @@
     <cardinality>1[[del]]..*[[/del]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T58"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS58">
     <name>role_S58</name>
@@ -811,10 +882,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T58"></relation>
     <InverseRole idref="_AT58"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T59">
     <name>(unbestimmt)</name>
@@ -826,9 +898,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T59"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS59">
     <name>role_S59</name>
@@ -836,10 +909,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T59"></relation>
     <InverseRole idref="_AT59"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T60">
     <name>(unbestimmt)</name>
@@ -851,9 +925,10 @@
     <cardinality>0..[[del]]1[[/del]][[ins]]*[[/ins]]</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T60"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS60">
     <name>role_S60</name>
@@ -861,10 +936,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T60"></relation>
     <InverseRole idref="_AT60"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T61">
     <name>(unbestimmt)</name>
@@ -876,9 +952,10 @@
     <cardinality>1..*</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C80" category="feature type">MT_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T61"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS61">
     <name>role_S61</name>
@@ -886,10 +963,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C81" category="feature type">MT_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T61"></relation>
     <InverseRole idref="_AT61"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C114">
     <name>NT_F[[del]]EATURETYPE_ÄÖÜ[[/del]][[ins]]eaturetype_äöü[[/ins]]</name>
@@ -904,6 +982,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">[[del]]NT_ENUMER[[/del]][[ins]]nt_enumer[[/ins]]ation</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
     <enumeratedBy idref="_A115_102"></enumeratedBy>
@@ -919,9 +999,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C114" category="feature type">NT_F[[del]]EATURETYPE_ÄÖÜ[[/del]][[ins]]eaturetype_äöü[[/ins]]</FeatureTypeIncluded>
     <relation idref="__T69"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS69">
     <name>role_S69</name>
@@ -929,10 +1010,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C114" category="feature type">NT_Featuretype_äöü</FeatureTypeIncluded>
     <relation idref="__T69"></relation>
     <InverseRole idref="_AT69"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C99">
     <name>SC_FeatureType</name>
@@ -992,6 +1074,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T65">
@@ -1013,9 +1097,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C83" category="feature type">TC_FeatureType</FeatureTypeIncluded>
     <relation idref="__T65"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS65">
     <name>role_S65</name>
@@ -1023,10 +1108,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C83" category="feature type">TC_FeatureType</FeatureTypeIncluded>
     <relation idref="__T65"></relation>
     <InverseRole idref="_AT65"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C84">
     <name>TC_Type</name>
@@ -1070,6 +1156,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType idref="_C60" category="union data type">Union</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
@@ -1086,6 +1174,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A60_70">
@@ -1093,6 +1183,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Boolean</ValueDataType>
   </FeatureAttribute>
   <FeatureType id="_C91">
@@ -1110,6 +1202,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
   <FeatureAttribute id="_A91_85">
@@ -1117,6 +1211,8 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>[[del]]In[[/del]][[ins]]Charac[[/ins]]te[[del]]ge[[/del]]r[[ins]]String[[/ins]]</ValueDataType>
   </FeatureAttribute>
   <FeatureRelationship id="__T66">
@@ -1129,9 +1225,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C92" category="feature type">VTC_FeatureType2</FeatureTypeIncluded>
     <relation idref="__T66"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS66">
     <name>role_S66</name>
@@ -1139,10 +1236,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C91" category="feature type">VTC_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T66"></relation>
     <InverseRole idref="_AT66"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureRelationship id="__T67">
     <name>(unbestimmt)</name>
@@ -1154,9 +1252,10 @@
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C93" category="feature type">VTC_FeatureType[[del]]2[[/del]][[ins]]3[[/ins]]</FeatureTypeIncluded>
     <relation idref="__T67"></relation>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <RelationshipRole id="_AS67">
     <name>role_S67</name>
@@ -1164,10 +1263,11 @@
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C91" category="feature type">VTC_FeatureType1</FeatureTypeIncluded>
     <relation idref="__T67"></relation>
     <InverseRole idref="_AT67"></InverseRole>
-    <orderIndicator>0</orderIndicator>
   </RelationshipRole>
   <FeatureType id="_C92">
     <name>VTC_FeatureType2</name>

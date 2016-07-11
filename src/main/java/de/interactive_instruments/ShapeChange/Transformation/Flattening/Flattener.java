@@ -5646,6 +5646,7 @@ public class Flattener implements Transformer {
 		enumPi.setTypeInfo(enumPiType);
 		enumPi.setNavigable(true);
 		enumPi.setOrdered(false);
+		enumPi.setUnique(true);
 		enumPi.setComposition(false);
 		enumPi.setAggregation(false);
 		Multiplicity mult = new Multiplicity();
