@@ -217,7 +217,7 @@ public class OntologyDocumentRDFXML implements OntologyDocument, MessageSource {
 
 		String path;
 
-		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_PATH_IN_ONTOLOGY_NAME)) {
+		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_WITH_PATH)) {
 			path = computePath(mpackage);
 		} else {
 			path = "/" + normalizedName(mpackage);

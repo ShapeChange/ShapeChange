@@ -55,6 +55,8 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 
 /**
+ * UML to RDF/OWL (based on ISO 19150-2)
+ * 
  * @author Johannes Echterhoff
  * 
  */
@@ -70,7 +72,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150-2/2012/base#";
 	public static final String RDF_NS_OGC_GEOSPARQL = "http://www.opengis.net/ont/geosparql#";
 	public static final String RDF_NS_ISO_GFM = "http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#";
-	
+
 	public static final String PREFIX_ISO_19150_2 = "iso19150-2";
 
 	public static final String NS_XMLNS = "http://www.w3.org/2000/xmlns/";
@@ -79,7 +81,16 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * If this rule is enabled, ontologies will be created for selected schema,
 	 * but not for all of their child packages.
 	 */
+	// in use
 	public static final String RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA = "rule-owl-pkg-singleOntologyPerSchema";
+
+	/*
+	 * Rules related to the ontology name
+	 */
+
+	// in use
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_BY_TAGGED_VALUE = "rule-owl-pkg-ontologyName-byTaggedValue";
+
 	/**
 	 * If this rule is enabled, ontology names will be constructed using the
 	 * path of packages (usually from a leaf package to its main schema
@@ -87,7 +98,19 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * {@value #RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA} is not in effect
 	 * (because otherwise child packages will not be considered).
 	 */
-	public static final String RULE_OWL_PKG_PATH_IN_ONTOLOGY_NAME = "rule-owl-pkg-pathInOntologyName";
+	// in use
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_WITH_PATH = "rule-owl-pkg-ontologyName-withPath";
+
+	// in use
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_APP_SCHEMA_CODE = "rule-owl-pkg-ontologyName-appSchemaCode";
+
+	/**
+	 * If this rule is included and a package that is converted into an
+	 * ontology has version information, then the versionIRI of the ontology is constructed
+	 * as follows: 'rdfNamespace' + 'version'.
+	 */
+	// in use
+	public static final String RULE_OWL_PKG_VERSION_IRI = "rule-owl-pkg-versionIRI";
 
 	/**
 	 * If this rule is included, the target will create constraint definitions.
@@ -100,6 +123,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * If this rule is included, each feature type definition gets a subClassOf
 	 * declaration to the GeoSPARQL defined FeatureType class.
 	 */
+	// TODO - no longer needed if map entries allow specification of subClassOf declarations
 	public static final String RULE_OWL_CLS_GEOSPARQL_FEATURES = "rule-owl-cls-geosparql-features";
 
 	/**
@@ -107,7 +131,19 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * declaration to the ISO 19150-2 defined FeatureType class (which defines
 	 * the according stereotype) as well as AnyFeature.
 	 */
+	// TODO - no longer needed if map entries allow specification of subClassOf declarations
 	public static final String RULE_OWL_CLS_19150_2_FEATURES = "rule-owl-cls-19150-2-features";
+	
+	// in use
+	public static final String RULE_OWL_CLS_19150_2_ISABSTRACT = "rule-owl-cls-iso191502IsAbstract";
+
+	/**
+	 * If this rule is included, the base ontology defined by ISO 19150-2 with
+	 * IRI http://def.isotc211.org/iso19150-2/2012/base# is imported by each
+	 * ontology.
+	 */
+	// in use - TBD: should there be a generic configuration mechanism for adding imports?
+	public static final String RULE_OWL_PKG_IMPORT_191502BASE = "rule-owl-pkg-importISO191502Base";
 
 	/**
 	 * If this rule is included, allValuesFrom restrictions are not included in
@@ -122,28 +158,40 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RULE_OWL_PROP_SUPPRESS_CARDINALITY_RESTRICTIONS = "rule-owl-prop-suppress-cardinality-restrictions";
 
 	/**
-	 * If this rule is included, minCardinality is set to 0 for voidable properties
+	 * If this rule is included, minCardinality is set to 0 for voidable
+	 * properties
 	 */
 	public static final String RULE_OWL_PROP_VOIDABLE_AS_MINCARDINALITY0 = "rule-owl-prop-voidable-as-minCardinality0";
+
+	// in use
+	public static final String RULE_OWL_PROP_ISO191502_ASSOCIATION_NAME = "rule-owl-prop-iso191502AssociationName";
+
+	// in use
+	public static final String RULE_OWL_PROP_INVERSEOF = "rule-owl-prop-inverseOf";
+	
+	// in use
+	public static final String RULE_OWL_PROP_ISO191502_AGGREGATION = "rule-owl-prop-iso191502Aggregation";
 	
 	/**
-	 * If this rule is included, association names are not included in
-	 * the ontology
+	 * If this rule is included, dc:source in not included except on the
+	 * ontology subject
 	 */
-	public static final String RULE_OWL_PROP_SUPPRESS_ASSOCIATION_NAMES = "rule-owl-prop-suppress-asociation-names";
-
-	/**
-	 * If this rule is included, dc:source in not included except on the ontology subject
-	 */
+	// TODO - no longer needed
 	public static final String RULE_OWL_ALL_SUPPRESS_DC_SOURCE = "rule-owl-all-suppress-dc-source";
 
+	public static final String RULE_OWL_PKG_DCT_SOURCE_TITLE = "rule-owl-pkg-dctSourceTitle";
 	/**
-	 * If this rule is included, code lists are not represented as part of the RDF vocabulary and where available
-	 * the vocabulary or codelist tagged value is used for the rdfs:range. If not set, owl:Class is used.
+	 * If this rule is included, code lists are not represented as part of the
+	 * RDF vocabulary and where available the vocabulary or codelist tagged
+	 * value is used for the rdfs:range. If not set, owl:Class is used.
 	 */
 	public static final String RULE_OWL_CLS_CODELIST_EXTERNAL = "rule-owl-cls-codelist-external";
+	
+	// TBD: implement
+	public static final String RULE_OWL_CLS_ENUMERATION_AS_CODELIST = "rule-owl-cls-enumerationAsCodelist";
 
-	public static final String RULE_OWL_PKG_APP_SCHEMA_CODE = "rule-owl-pkg-app-schema-code";
+	// in use
+	public static final String RULE_OWL_CLS_GENERALIZATION = "rule-owl-cls-generalization";
 	
 	public static final String PARAM_VERSIONINFO = "versionInfo";
 	/**
@@ -161,21 +209,18 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	/**
 	 * Defines the global URIbase for construction of the ontologyName (see
-	 * 19150-2owl:ontologyName).
-	 * <p>
-	 * The ontologyName is defined via the following rules, in descending
-	 * priority:
-	 * <ul>
-	 * <li>If the configuration parameter
-	 * {@value #PARAM_ONTOLOGYNAME_TAGGED_VALUE_NAME} is set and an according
-	 * tagged value is set for the package its value is used.</li>
-	 * <li>If the configuration parameter {@value #PARAM_URIBASE} is set its
-	 * value is used for constructing the ontologyName as per
-	 * 19150-2owl:ontologyName</li>
-	 * <li>Otherwise the targetNamespace of the package is used as URIbase</li>
-	 * </ul>
+	 * 19150-2package:ontologyName). If this parameter is not configured or
+	 * empty, the target namespace of the application schema is used as URIbase.
 	 */
 	public static String PARAM_URIBASE = "URIbase";
+
+	/**
+	 * Per 19150-2package:rdfNamespace, the default separator that is appended
+	 * to the 'ontologyName' when creating the 'rdfNamespace' is '#'. If this
+	 * parameter is included in the configuration, a different separator can be
+	 * used (e.g. '/'), even the empty string.
+	 */
+	public static String PARAM_RDF_NAMESPACE_SEPARATOR = "rdfNamespaceSeparator";
 
 	/**
 	 * Name of the parameter whose value provides the name of the tagged value
@@ -245,8 +290,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String source = null;
 	private static String sourceTaggedValue = null;
 	private static String uriBase = null;
+	private static String rdfNamespaceSeparator = "#";
 	private static String language = "en";
-	private static String ontologyNameTaggedValue = null;
+	private static String ontologyNameTaggedValue = "ontologyName";
 	private static Set<String> globalPropertyNames = new HashSet<String>();
 
 	public int getTargetID() {
@@ -270,8 +316,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			throw new ShapeChangeAbortException();
 		}
 
-		// we need to retrieve the output directory this way because the
-		// converter may modify the output directory location
+		/*
+		 * We need to retrieve the output directory this way - rather than
+		 * directly from the configuration - because the converter may modify
+		 * the output directory location.
+		 */
 		outputDirectory = options.parameter(this.getClass().getName(),
 				"outputDirectory");
 		if (outputDirectory == null)
@@ -301,6 +350,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			uriBase = uriBaseFromConfig;
 		}
 
+		String rdfNamespaceSeparatorFromConfig = config
+				.getParameterValue(PARAM_RDF_NAMESPACE_SEPARATOR);
+		if (rdfNamespaceSeparatorFromConfig != null) {
+			rdfNamespaceSeparator = rdfNamespaceSeparatorFromConfig.trim();
+		}
+
 		String langFromConfig = config.getParameterValue(PARAM_LANGUAGE);
 		if (langFromConfig != null) {
 			language = langFromConfig;
@@ -312,32 +367,42 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			ontologyNameTaggedValue = ontologyNameTaggedValueNameFromConfig;
 		}
 
-		String[] globalPropertyNamesFromConfig = config.getParameterValues(PARAM_GLOBALPROPERTIES);
+		String[] globalPropertyNamesFromConfig = config
+				.getParameterValues(PARAM_GLOBALPROPERTIES);
 		if (globalPropertyNamesFromConfig != null) {
 			for (String s : globalPropertyNamesFromConfig) {
 				globalPropertyNames.add(s);
 			}
 		}
 
-		// initialize an ontology for the package and - unless stated
-		// otherwise via a rule - for the sub-packages in the same target
-		// namespace
+		/*
+		 * Initialize an ontology for the package and - unless stated otherwise
+		 * via a rule - for the sub-packages in the same target namespace.
+		 */
 
 		// create new ontology / ontologies
 		String xmlPrefixOfMainSchema = p.xmlns();
 
-		// OntologyDocument od = new OntologyDocumentRDFXML(p, m, o, r, xmlPrefixOfMainSchema, this);
-		OntologyDocument od = new OntologyModel(p, m, o, r, xmlPrefixOfMainSchema, this);
-		
+		// OntologyDocument od = new OntologyDocumentRDFXML(p, m, o, r,
+		// xmlPrefixOfMainSchema, this);
+		OntologyDocument od = new OntologyModel(p, m, o, r,
+				xmlPrefixOfMainSchema, this);
+
 		ontologyByPiMap.put(p, od);
 		ontologyByRdfNs.put(od.getRdfNamespace(), od);
 		ontologyByCodeNs.put(od.getCodeNamespace(), od);
 
-		if (!p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+		if (p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+
+			// nothing more to do in this case
+
+		} else {
+
+			// DEFAULT BEHAVIOR
 
 			/*
-			 * also create ontologies for all sub packages that are in the same
-			 * target namespace
+			 * Create ontologies for all sub packages that are in the same
+			 * target namespace.
 			 * 
 			 * Future work: exclude packages that contain no classes
 			 */
@@ -347,7 +412,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			for (PackageInfo subPi : subPkgsInSameTNS) {
 				String xmlprefix = xmlPrefixOfMainSchema + counter;
 				counter++;
-				OntologyDocument odSub = new OntologyModel(subPi, m, o, r, xmlprefix, this);
+				OntologyDocument odSub = new OntologyModel(subPi, m, o, r,
+						xmlprefix, this);
 				ontologyByPiMap.put(subPi, odSub);
 
 				ontologyByRdfNs.put(odSub.getRdfNamespace(), odSub);
@@ -479,8 +545,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		case 1:
 			return "Could not find an ontology document for package '$1$', which was determined to be the relevant one for class '$2$'.";
 		case 2:
-			return "Rule '"
-					+ RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA
+			return "Rule '" + RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA
 					+ "' is in effect, but no schema package was found for class '$1$'.";
 		case 3:
 			return "Unsupported class category ($1$).";
@@ -545,7 +610,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.ontologyByCodeNs = new HashMap<String, OntologyDocument>();
 		OWLISO19150.ontologyByPiMap = new HashMap<PackageInfo, OntologyDocument>();
 		OWLISO19150.ontologyByRdfNs = new HashMap<String, OntologyDocument>();
-		OWLISO19150.ontologyNameTaggedValue = null;
+		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
 		OWLISO19150.outputDirectory = null;
 		OWLISO19150.printed = false;
 		OWLISO19150.processedAssociations = new HashSet<AssociationInfo>();
@@ -555,6 +620,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.source = null;
 		OWLISO19150.sourceTaggedValue = null;
 		OWLISO19150.uriBase = null;
+		OWLISO19150.rdfNamespaceSeparator = "#";
 		OWLISO19150.versionInfo = null;
 		OWLISO19150.globalPropertyNames = new HashSet<String>();
 	}
@@ -567,7 +633,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	}
 
 	/**
-	 * Computes the value for the dc:source that qualifies an ontology element.
+	 * Computes the value for the dct:source that qualifies an ontology element.
 	 * The value is computed according to the following instructions, in
 	 * descending order:
 	 * <ul>
@@ -642,6 +708,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public String getUriBase() {
 		return uriBase;
+	}
+
+	/**
+	 * @return the rdfNamespaceSeparator
+	 */
+	public String getRdfNamespaceSeparator() {
+		return rdfNamespaceSeparator;
 	}
 
 	/**

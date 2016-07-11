@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2015 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,29 +43,53 @@ import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
-import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
- * Parses First Order Logic expressions from constraints contained in the model.
- * This is especially useful if constraints have been loaded via the
- * ConstraintLoader transformation (which does not parse the constraints).
+ * Parses and validates constraints contained in the model (more specifically:
+ * the schemas selected for processing) to ensure that they are valid in the
+ * context of that model.
  * <p>
- * At the moment parsing is only supported for FOL constraints of type 'SBVR'.
+ * This can be useful if the model has been modified - especially through the
+ * Profiler transformation - and in case that constraints have not been parsed
+ * and validated yet. The latter is the case for profile constraints and FOL
+ * constraints.
+ * <p>
+ * Via the ConstraintParserAndValidator, the functionality to parse/validate
+ * constraints is available in a single piece of code that can be executed at
+ * any place in the transformation process of ShapeChange.
+ * <p>
+ * By default, the transformation parses and valdiates all types of constraints.
+ * If a profile constraint is encountered, it is converted according to its type
+ * before parsing and validating it. The transformation parameters named
+ * <i>xxx</i>ConstraintTypeRegex influence to which type the constraint is
+ * converted.
  * 
  * @author Johannes Echterhoff
  *
  */
-public class FolConstraintParsing implements Transformer {
-
+public class ConstraintParserAndValidator implements Transformer {
+	
+	public static final String PARAM_OCL_TYPE_REGEX_NAME = "oclConstraintTypeRegex";
+	public static final String PARAM_FOL_TYPE_REGEX_NAME = "oclConstraintTypeRegex";
+	
+	public static final String PARAM_OCL_TYPE_REGEX_DEFAULT = "ocl|invariant";
+	public static final String PARAM_FOL_TYPE_REGEX_DEFAULT = SbvrConstants.FOL_SOURCE_TYPE;
+	
 	@Override
 	public void process(GenericModel m, Options o,
 			TransformerConfiguration trfConfig, ShapeChangeResult r)
-			throws ShapeChangeAbortException {
+					throws ShapeChangeAbortException {
+		
+//		trfConfig.hasParameter(paramName)
+		
+		
 
 		/*
 		 * First order logic expressions can be parsed from different sources.
@@ -74,9 +98,15 @@ public class FolConstraintParsing implements Transformer {
 		 */
 		Sbvr2FolParser sbvrParser = new Sbvr2FolParser(m);
 
-		for (PackageInfo pi : m.selectedSchemas()) {
+		for (GenericPackageInfo pi : m.selectedSchemas()) {
 
-			for (ClassInfo ci : m.classes(pi)) {
+			for (ClassInfo tmp : m.classes(pi)) {
+
+				/*
+				 * Cast should be safe, because all classes of 'pi' - which is a
+				 * GenericPackageInfo - are GenericClassInfos.
+				 */
+				GenericClassInfo ci = (GenericClassInfo) tmp;
 
 				/*
 				 * Ignore constraints on AIXM <<extension>> types
@@ -104,8 +134,8 @@ public class FolConstraintParsing implements Transformer {
 
 						FolConstraint folCon = (FolConstraint) con;
 
-						if (folCon.sourceType().equals(
-								SbvrConstants.FOL_SOURCE_TYPE)) {
+						if (folCon.sourceType()
+								.equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 
 							folCon.setComments(new String[] { folCon.text() });
 
