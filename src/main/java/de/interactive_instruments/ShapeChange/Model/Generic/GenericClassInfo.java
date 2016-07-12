@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1552,6 +1553,27 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
+	/**
+	 * Adds the given property to this class. Its sequence
+	 * number is shifted so that the property is placed
+	 * after the existing properties, at the "bottom" of the list of class
+	 * properties.
+	 * 
+	 * The behavior for adding a property that has the same name as an existing
+	 * one is determined by a parameter.
+	 * 
+	 * @param newProps
+	 * @param duplicateHandling
+	 */
+	public void addPropertyAtBottom(GenericPropertyInfo newProp,
+			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
+		
+		List<GenericPropertyInfo> newProps = new ArrayList<GenericPropertyInfo>();
+		newProps.add(newProp);
+		
+		addPropertiesAtBottom(newProps,duplicateHandling);
+	}
+	
 	/**
 	 * Adds the given list of new properties to this class. Their sequence
 	 * numbers are shifted so that the sequence/list of new properties is placed

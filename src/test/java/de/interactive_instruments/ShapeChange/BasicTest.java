@@ -510,6 +510,14 @@ public class BasicTest {
 					new String[] { "xml" },
 					"testResults/fol/fromSbvr/sch/step3",
 					"src/test/resources/reference/sch/fromSbvr");
+			
+			/*
+			 * Test the GML 3.3 based transformation of association classes.
+			 */
+			multiTest("src/test/resources/config/testEA_associationClassMapper.xml",
+					new String[] { "xsd" },
+					"testResults/associationClassTransform/associationClassMapper",
+					"src/test/resources/reference/associationClassTransform/associationClassMapper");
 		}
 	}
 

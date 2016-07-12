@@ -678,7 +678,7 @@ public class Profiler implements Transformer {
 					.statusChanged(STATUS_POSTPROCESSING_REMOVERESIDUALTYPES);
 
 			// key: classid
-			HashSet<GenericClassInfo> genCis = genModel.selectedSchemaClasses();
+			SortedSet<GenericClassInfo> genCis = genModel.selectedSchemaClasses();
 
 			if (genCis != null && !genCis.isEmpty()) {
 

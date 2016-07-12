@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:act1="http://test/associationClassTransformation/1" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/associationClassTransformation/1" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AS1_1" substitutionGroup="gml:AbstractFeature" type="act1:AS1_1Type">
+    <annotation>
+      <documentation>Name of AS1_1: Definition of AS1_1
+NOTE Description of AS1_1</documentation>
+    </annotation>
+  </element>
+  <complexType name="AS1_1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p_as1_1" type="boolean"/>
+          <element maxOccurs="unbounded" name="as1_2" type="act1:AssociationClass1_APropertyType">
+            <annotation>
+              <documentation>Name of as1_2: Definition of as1_2
+NOTE Description of as1_2</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_2" substitutionGroup="gml:AbstractFeature" type="act1:AS1_2Type">
+    <annotation>
+      <documentation>Name of AS1_2: Definition of AS1_2
+NOTE Description of AS1_2</documentation>
+    </annotation>
+  </element>
+  <complexType name="AS1_2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p_as1_2" type="double"/>
+          <element maxOccurs="unbounded" name="as1_1" type="act1:AssociationClass1_APropertyType">
+            <annotation>
+              <documentation>Name of as1_1: Definition of as1_1
+NOTE Description of as1_1</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_3" substitutionGroup="gml:AbstractFeature" type="act1:AS1_3Type"/>
+  <complexType name="AS1_3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="as1_4" type="act1:AssociationClass1_BPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_4" substitutionGroup="gml:AbstractFeature" type="act1:AS1_4Type"/>
+  <complexType name="AS1_4Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_5" substitutionGroup="gml:AbstractFeature" type="act1:AS1_5Type"/>
+  <complexType name="AS1_5Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="ext1_1">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:as1_5</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="act1:AssociationClass1_C"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_5PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_5"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_6" substitutionGroup="gml:AbstractFeature" type="act1:AS1_6Type"/>
+  <complexType name="AS1_6Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="ext1_2">
+            <complexType>
+              <sequence>
+                <element ref="act1:AssociationClass1_D"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_6PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_6"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_7" substitutionGroup="gml:AbstractFeature" type="act1:AS1_7Type"/>
+  <complexType name="AS1_7Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="ext1_3" type="AssociationClassExt1_APropertyType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">AssociationClassExt1_A</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:as1_7</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_7PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_7"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_8" substitutionGroup="gml:AbstractFeature" type="act1:AS1_8Type"/>
+  <complexType name="AS1_8Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_8PropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_8"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AS1_X" substitutionGroup="gml:AbstractFeature" type="act1:AS1_XType"/>
+  <complexType name="AS1_XType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="assocClass1_A" type="act1:AssociationClass1_APropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_x</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AS1_XPropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AS1_X"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AssociationClass1_A" substitutionGroup="act1:AssociationClass1_A_Supertype" type="act1:AssociationClass1_AType">
+    <annotation>
+      <documentation>Name of AssociationClass1_A: Definition of AssociationClass1_A
+NOTE Description of AssociationClass1_A</documentation>
+    </annotation>
+  </element>
+  <complexType name="AssociationClass1_AType">
+    <complexContent>
+      <extension base="act1:AssociationClass1_A_SupertypeType">
+        <sequence>
+          <element name="p_ac1_a" type="string"/>
+          <element name="as1_x" type="act1:AS1_XPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:assocClass1_A</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="as1_1" type="act1:AS1_1PropertyType">
+            <annotation>
+              <documentation>Name of as1_1: Definition of as1_1
+NOTE Description of as1_1</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="as1_2" type="act1:AS1_2PropertyType">
+            <annotation>
+              <documentation>Name of as1_2: Definition of as1_2
+NOTE Description of as1_2</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClass1_APropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AssociationClass1_A"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AssociationClass1_A_Supertype" substitutionGroup="gml:AbstractFeature" type="act1:AssociationClass1_A_SupertypeType"/>
+  <complexType name="AssociationClass1_A_SupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClass1_A_SupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AssociationClass1_A_Supertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AssociationClass1_B" substitutionGroup="gml:AbstractFeature" type="act1:AssociationClass1_BType"/>
+  <complexType name="AssociationClass1_BType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="as1_4" type="act1:AS1_4PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClass1_BPropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AssociationClass1_B"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AssociationClass1_C" substitutionGroup="gml:AbstractFeature" type="act1:AssociationClass1_CType"/>
+  <complexType name="AssociationClass1_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="as1_5">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:ext1_1</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="act1:AS1_5"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+            </complexType>
+          </element>
+          <element name="ext1_1" type="EXT1_1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:as1_5</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClass1_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AssociationClass1_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="AssociationClass1_D" substitutionGroup="gml:AbstractFeature" type="act1:AssociationClass1_DType"/>
+  <complexType name="AssociationClass1_DType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ext1_2" type="EXT1_2PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClass1_DPropertyType">
+    <sequence minOccurs="0">
+      <element ref="act1:AssociationClass1_D"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
