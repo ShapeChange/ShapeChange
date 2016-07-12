@@ -197,6 +197,14 @@ public class BasicTest {
 					"src/test/resources/reference/html/descriptors");
 
 			/*
+			 * Test rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed.
+			 */
+			multiTest("src/test/resources/config/testEA_codeAbsenceInModel.xml",
+					new String[] { "xml" },
+					"testResults/codeAbsenceInModel/input",
+					"src/test/resources/reference/xsd/codeAbsenceInModel/input");
+			
+			/*
 			 * Test derivation of application schema metadata.
 			 */
 			multiTest("src/test/resources/config/testEA_schema_metadata.xml",

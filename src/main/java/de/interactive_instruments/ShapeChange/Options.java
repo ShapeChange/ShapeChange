@@ -2799,6 +2799,7 @@ public class Options {
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
+		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 		addRule("rule-xsd-cls-enum-subtypes");
 		addRule("rule-xsd-cls-enum-supertypes");
 		addRule("rule-xsd-cls-mixin-classes-as-group");

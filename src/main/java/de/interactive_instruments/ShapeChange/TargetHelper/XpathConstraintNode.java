@@ -2275,11 +2275,13 @@ public abstract class XpathConstraintNode {
 					value = val ? "true()" : "false()";
 					type = XpathType.BOOLEAN;
 				} else {
-					// Check whether there is a resourceURI tag on the property
-					String resuri = litex.umlProperty.taggedValue( "resourceURI" );
-					// If there is, this is going to be it
-					if( resuri!=null && resuri.length()>0 )
-						value = resuri;
+					if(litex.umlProperty != null) {
+						// Check whether there is a resourceURI tag on the property
+						String resuri = litex.umlProperty.taggedValue( "resourceURI" );
+						// If there is, this is going to be it
+						if( resuri!=null && resuri.length()>0 )
+							value = resuri;
+					}
 					// Make literal value
 					value = "'" + value + "'";
 				}

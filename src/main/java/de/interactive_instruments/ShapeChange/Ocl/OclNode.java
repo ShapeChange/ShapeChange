@@ -922,12 +922,17 @@ public abstract class OclNode {
 	/**
 	 * <p>A EnumerationLiteralExp represents a property of a enumeration or
 	 * codelist class from the model. The possible values of such a literal
-	 * expression are properties of classes.</p> 
+	 * expression are properties of classes (which, in some cases, may not
+	 * be modeled explicitly).</p> 
 	 */
 	public static class EnumerationLiteralExp extends LiteralExp {
 		
 		// Constituents
+		/**
+		 * WARNING: this may be null if enums/codes are not modeled
+		 */
 		public PropertyInfo umlProperty;
+		public String literalName;
 		
 		/**
 		 * Initialize from the model.
@@ -935,6 +940,18 @@ public abstract class OclNode {
 		EnumerationLiteralExp( PropertyInfo pi ) {
 			dataType = new DataType( pi.inClass() );
 			umlProperty = pi;
+			this.literalName = pi.name();
+		}
+		
+		/**
+		 * Initialize with just enumeration class and literal name (for case in 
+		 * which the literal is not actually modeled as an attribute of the 
+		 * enumeration but is used in OCL expressions).
+		 */
+		EnumerationLiteralExp( String literalName, ClassInfo enumeration ) {
+			dataType = new DataType( enumeration );
+			umlProperty = null;
+			this.literalName = literalName;
 		}
 		
 		/**
@@ -943,7 +960,7 @@ public abstract class OclNode {
 		 */
 		public void debugPrintContent( PrintWriter stream ) {
 			stream.print( "#" );
-			stream.print( umlProperty.name() );
+			stream.print( literalName );
 		}
 
 		/**
@@ -951,7 +968,7 @@ public abstract class OclNode {
 		 * @return String value
 		 */
 		public String asString() {
-			return umlProperty.name();
+			return literalName;
 		}
 	}
 	
