@@ -202,6 +202,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * 
 	 */
 	public static final String PARAM_LANGUAGE = "language";
+	
+	public static final String PARAM_OUTPUTFORMAT = "outputFormat";
+	
 	/**
 	 * 
 	 */
@@ -292,6 +295,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String uriBase = null;
 	private static String rdfNamespaceSeparator = "#";
 	private static String language = "en";
+	private static String outputFormat = "TURTLE";
 	private static String ontologyNameTaggedValue = "ontologyName";
 	private static Set<String> globalPropertyNames = new HashSet<String>();
 
@@ -359,6 +363,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		String langFromConfig = config.getParameterValue(PARAM_LANGUAGE);
 		if (langFromConfig != null) {
 			language = langFromConfig;
+		}
+		
+		String outputFormatFromConfig = config.getParameterValue(PARAM_OUTPUTFORMAT);
+		if (outputFormatFromConfig != null) {
+			outputFormat = outputFormatFromConfig;
 		}
 
 		String ontologyNameTaggedValueNameFromConfig = config
@@ -612,6 +621,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.ontologyByRdfNs = new HashMap<String, OntologyDocument>();
 		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
 		OWLISO19150.outputDirectory = null;
+		OWLISO19150.outputFormat = "TURTLE";
 		OWLISO19150.printed = false;
 		OWLISO19150.processedAssociations = new HashSet<AssociationInfo>();
 		OWLISO19150.rdfNsByPrefix = new HashMap<String, String>();
@@ -722,6 +732,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public String getLanguage() {
 		return language;
+	}
+	
+	public String getOutputFormat() {
+		return outputFormat;
 	}
 
 	/**

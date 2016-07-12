@@ -87,19 +87,8 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
 			<type>pom</type>
-			<version>2.11.1</version>
-<!-- 			<version>3.1.0</version> -->
+			<version>3.1.0</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 		    <groupId>com.github.jsonld-java</groupId> -->
-<!-- 		    <artifactId>jsonld-java</artifactId> -->
-<!-- 		    <version>0.8.3</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 		    <groupId>com.github.jsonld-java</groupId> -->
-<!-- 		    <artifactId>jsonld-java-jena</artifactId> -->
-<!-- 		    <version>0.4.1</version> -->
-<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>

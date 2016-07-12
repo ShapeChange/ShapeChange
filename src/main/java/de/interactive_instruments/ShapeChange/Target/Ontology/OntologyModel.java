@@ -36,7 +36,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,30 +44,32 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Ontology;
-import com.hp.hpl.jena.ontology.UnionClass;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFList;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.reasoner.ValidityReport;
-import com.hp.hpl.jena.vocabulary.DC;
-import com.hp.hpl.jena.vocabulary.DCTerms;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.ontology.OntResource;
+import org.apache.jena.ontology.Ontology;
+import org.apache.jena.ontology.UnionClass;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.reasoner.ValidityReport;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.vocabulary.DC;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.OWL2;
+import org.apache.jena.vocabulary.RDFS;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -89,7 +90,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
- * @author Clemens Portele
+ * @author Clemens Portele, Johannes Echterhoff
  * 
  */
 public class OntologyModel implements OntologyDocument, MessageSource {
@@ -99,7 +100,7 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 	protected Ontology ontology = null;
 
 	// ontology for classes and properties used in map entries
-	protected static com.hp.hpl.jena.rdf.model.Model refmodel = ModelFactory
+	protected static org.apache.jena.rdf.model.Model refmodel = ModelFactory
 			.createDefaultModel();
 
 	protected Options options = null;
@@ -113,6 +114,7 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 	protected String targetNamespace = null;
 
 	protected String name;
+	protected RDFFormat rdfFormat = RDFFormat.TURTLE;
 	protected String fileName;
 	protected String rdfNamespace;
 	protected String prefix;
@@ -150,14 +152,49 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 
 		this.name = computeOntologyName();
 
+		// determine the output format and according file extension
+		String f = owliso19150.getOutputFormat();
+
+		String fileNameExtension = ".ttl";
+
+		if (f.equalsIgnoreCase("NTRIPLES")) {
+			this.rdfFormat = RDFFormat.NTRIPLES;
+			fileNameExtension = ".nt";
+		} else if (f.equalsIgnoreCase("RDFXML")) {
+			this.rdfFormat = RDFFormat.RDFXML;
+			fileNameExtension = ".rdf";
+		} else if (f.equalsIgnoreCase("JSONLD")) {
+			this.rdfFormat = RDFFormat.JSONLD;
+			fileNameExtension = ".jsonld";
+		} else if (f.equalsIgnoreCase("RDFJSON")) {
+			this.rdfFormat = RDFFormat.RDFJSON;
+			fileNameExtension = ".rj";
+		} else if (f.equalsIgnoreCase("TRIG")) {
+			this.rdfFormat = RDFFormat.TRIG;
+			fileNameExtension = ".trig";
+		} else if (f.equalsIgnoreCase("NQUADS")) {
+			this.rdfFormat = RDFFormat.NQUADS;
+			fileNameExtension = ".nq";
+		} else if (f.equalsIgnoreCase("TRIX")) {
+			this.rdfFormat = RDFFormat.TRIX;
+			fileNameExtension = ".trix";
+		} else if (f.equalsIgnoreCase("RDFTHRFIT")) {
+			this.rdfFormat = RDFFormat.RDF_THRIFT;
+			fileNameExtension = ".trdf";
+		} else {
+			// default is turtle
+			this.rdfFormat = RDFFormat.TURTLE;
+			fileNameExtension = ".ttl";
+		}
+
 		if (mpackage
 				.matches(OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)
 				&& mpackage.matches(
 						OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_APP_SCHEMA_CODE)) {
-			this.fileName = pi.xmlns() + ".ttl";
+			this.fileName = pi.xmlns() + fileNameExtension;
 			this.path = "";
 		} else {
-			this.fileName = normalizedName(pi) + ".ttl";
+			this.fileName = normalizedName(pi) + fileNameExtension;
 			this.path = computePath(pi);
 		}
 
@@ -1569,12 +1606,10 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 
 			OutputStream fout = new FileOutputStream(outFile);
 			OutputStream bout = new BufferedOutputStream(fout);
-			OutputStreamWriter outputWriter = new OutputStreamWriter(bout,
-					"UTF-8");
+			// OutputStreamWriter outputWriter = new OutputStreamWriter(bout,
+			// "UTF-8");
 
-			ontmodel.write(outputWriter, "TTL");
-//			JenaJSONLD.init();
-//			ontmodel.write(outputWriter, "JSON-LD");
+			RDFDataMgr.write(bout, ontmodel, this.rdfFormat);
 			// ontmodel.write(outputWriter ,"RDF/XML-ABBREV");
 			r.addResult(owliso19150.getTargetID(), outDirForOntology,
 					getFileName(), getName());
