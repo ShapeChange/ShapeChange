@@ -33,6 +33,8 @@ package de.interactive_instruments.ShapeChange.Transformation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +44,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,17 +56,25 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
+import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
+import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
+import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
 
 /**
  * Manages the transformation of a model, executing common pre- and
@@ -75,6 +86,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 public class TransformationManager {
 
 	public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
+	public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -82,7 +94,7 @@ public class TransformationManager {
 
 	public GenericModel process(GenericModel genModel, Options o,
 			TransformerConfiguration trfConfig, ShapeChangeResult r)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		this.options = o;
 		this.result = r;
@@ -116,6 +128,7 @@ public class TransformationManager {
 		}
 
 		// execute common pre-processing tasks
+
 		this.preprocess(genModel, trfConfig);
 
 		// execute actual processing
@@ -347,6 +360,129 @@ public class TransformationManager {
 			setTaggedValues(genModel, trfConfig.getTaggedValues());
 		}
 
+		if (!trfConfig.getAllRules()
+				.contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
+
+			result.addInfo(null, 20109);
+
+			Sbvr2FolParser sbvrParser = new Sbvr2FolParser(genModel,true);
+
+			/*
+			 * Handle actual constraints
+			 */
+			for (GenericPackageInfo pkg : genModel.selectedSchemas()) {
+
+				for (ClassInfo tmp : genModel.classes(pkg)) {
+
+					/*
+					 * Cast should be safe, because all classes of 'pkg' are
+					 * GenericClassInfos.
+					 */
+					GenericClassInfo genCi = (GenericClassInfo) tmp;
+
+					/*
+					 * Ignore constraints on AIXM <<extension>> types
+					 */
+					if (genCi.category() == Options.AIXMEXTENSION) {
+						continue;
+					}
+
+					List<Constraint> ciCons = genCi.constraints();
+
+					if (ciCons != null) {
+
+						// sort the constraints by name
+						Collections.sort(ciCons, ConstraintComparators.NAME);
+
+						Vector<Constraint> newConstraints = new Vector<Constraint>();
+
+						for (Constraint con : ciCons) {
+
+							if (con instanceof OclConstraint) {
+
+								OclConstraint oclCon = (OclConstraint) con;
+
+								newConstraints.add(parse(oclCon, genCi));
+
+							} else if (con instanceof FolConstraint) {
+
+								FolConstraint folCon = (FolConstraint) con;
+
+								newConstraints
+										.add(parse(folCon, sbvrParser, genCi));
+							} else {
+
+								/*
+								 * for all other cases, simply add the
+								 * constraint
+								 */
+								
+								result.addInfo(null, 20111, con.name(),
+										genCi.fullNameInSchema());
+								
+								newConstraints.add(con);
+							}
+						}
+
+						genCi.setConstraints(newConstraints);
+
+					}
+
+					// check constraints on properties
+					if (genCi.properties() != null) {
+
+						for (PropertyInfo pi : genCi.properties().values()) {
+
+							/*
+							 * Cast should be safe, because all properties of
+							 * 'genCi' are GenericPropertyInfos.
+							 */
+							GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+
+							List<Constraint> piCons = genPi.constraints();
+
+							if (piCons != null) {
+
+								// sort the constraints by name
+								Collections.sort(piCons,
+										ConstraintComparators.NAME);
+
+								Vector<Constraint> newConstraints = new Vector<Constraint>();
+
+								for (Constraint con : piCons) {
+
+									if (con instanceof OclConstraint) {
+
+										OclConstraint oclCon = (OclConstraint) con;
+
+										newConstraints
+												.add(parse(oclCon, genPi));
+
+									} else {
+
+										/*
+										 * For all other cases, simply add the
+										 * constraint.
+										 * 
+										 * 2016-07-12 JE: at the moment,
+										 * FolConstraints are only created with
+										 * classes as context element. Therefore
+										 * there is no need to handle
+										 * FolConstraints here.
+										 */
+
+										result.addInfo(null, 20111, con.name(),
+												genPi.fullNameInSchema());
+
+										newConstraints.add(con);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -623,5 +759,116 @@ public class TransformationManager {
 			genPi.setTaggedValues(genPiTVs, false);
 		}
 
+	}
+
+	protected Constraint parse(FolConstraint con, Sbvr2FolParser parser,
+			GenericClassInfo genCi) {
+
+		if (con.sourceType().equals(SbvrConstants.FOL_SOURCE_TYPE)) {
+
+			con.setComments(new String[] { con.text() });
+
+			FolExpression folExpr = parser.parse(con);
+
+			if (folExpr != null) {
+
+				con.setFolExpression(folExpr);
+				return con;
+
+			} else {
+				/*
+				 * The parser already logged why the expression was not created;
+				 * use a text constraint as fallback.
+				 */
+
+				result.addWarning(null, 20110, con.name(),
+						genCi.fullNameInSchema());
+
+				return new GenericTextConstraint(genCi, con);
+			}
+
+		} else {
+
+			/*
+			 * Apparently a new source for FOL constraints exists - add parsing
+			 * it here; in the meantime, log this as an error and create a text
+			 * constraint as fallback.
+			 */
+			MessageContext ctx = result.addError(null, 38, con.sourceType());
+			ctx.addDetail(null, 39, con.name(),
+					con.contextModelElmt().fullNameInSchema());
+
+			return new GenericTextConstraint(genCi, con);
+		}
+	}
+
+	/**
+	 * @param con
+	 *            constraint to validate
+	 * 
+	 * @param genCi
+	 *            context of the constraint
+	 * 
+	 */
+	protected Constraint parse(OclConstraint con, GenericClassInfo genCi) {
+
+		GenericOclConstraint validated = new GenericOclConstraint(genCi, con);
+
+		if (validated.syntaxTree() != null) {
+			/*
+			 * Parsing succeeded
+			 */
+			return validated;
+
+		} else {
+
+			/*
+			 * The reason why parsing the constraint failed has already been
+			 * logged; use a text constraint as fallback.
+			 */
+
+			result.addWarning(null, 20110, con.name(),
+					genCi.fullNameInSchema());
+
+			GenericTextConstraint fallback = new GenericTextConstraint(genCi,
+					con);
+			return fallback;
+		}
+	}
+
+	protected Constraint parse(OclConstraint con, GenericPropertyInfo genPi) {
+
+		GenericOclConstraint validated = new GenericOclConstraint(genPi, con);
+
+		if (validated.syntaxTree() != null) {
+			/*
+			 * Parsing succeeded
+			 */
+			return validated;
+
+		} else {
+
+			/*
+			 * The reason why parsing the constraint failed has already been
+			 * logged; use a text constraint as fallback.
+			 */
+
+			result.addWarning(null, 20110, con.name(),
+					genPi.fullNameInSchema());
+
+			GenericTextConstraint fallback = new GenericTextConstraint(genPi,
+					con);
+			return fallback;
+		}
+	}
+
+	protected static class ConstraintComparators {
+
+		public static Comparator<Constraint> NAME = new Comparator<Constraint>() {
+			@Override
+			public int compare(Constraint o1, Constraint o2) {
+				return o1.name().compareTo(o2.name());
+			}
+		};
 	}
 }

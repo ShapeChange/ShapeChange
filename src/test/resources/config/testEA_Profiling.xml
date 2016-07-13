@@ -8,6 +8,7 @@
     <parameter name="addTaggedValues" value="profiles"/>
     <parameter name="inputModelType" value="EA7"/>
     <parameter name="inputFile" value="src/test/resources/testProfiling.eap"/>
+    <parameter name="appSchemaNameRegex" value="Test[1-7].*"/>
     <parameter name="publicOnly" value="true"/>
     <parameter name="checkingConstraints" value="enabled"/>
     <parameter name="sortedSchemaOutput" value="true"/>

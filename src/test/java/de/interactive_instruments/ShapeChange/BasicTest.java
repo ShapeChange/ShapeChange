@@ -488,11 +488,17 @@ public class BasicTest {
 			/*
 			 * Test the profiling functionality
 			 */
-
 			multiTest("src/test/resources/config/testEA_Profiling.xml",
 					new String[] { "xsd", "xml" }, "testResults/profiling/xsd",
 					"src/test/resources/reference/profiling/xsd");
 
+			/*
+			 * Test the constraint validation functionality
+			 */
+			multiTest("src/test/resources/config/testEA_Profiling_withConstraintValidation.xml",
+					new String[] { "xml" }, "testResults/profiling/constraintValidation/results",
+					"src/test/resources/reference/profiling/constraintValidation/results");
+			
 			/*
 			 * Test the profiling functionality - with explicit profile settings
 			 * behavior

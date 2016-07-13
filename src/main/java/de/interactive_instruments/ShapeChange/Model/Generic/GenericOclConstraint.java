@@ -33,12 +33,14 @@ package de.interactive_instruments.ShapeChange.Model.Generic;
 
 import java.io.StringReader;
 
+import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.OclConstraintImpl;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Ocl.MessageCollection;
 import de.interactive_instruments.ShapeChange.Ocl.OclParser;
 
 /**
@@ -95,13 +97,12 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	}
 
 	private void initializeNonContextFields(String constrName,
-			String constrStatus, String constrText,
-			Info contextModelElement) {
+			String constrStatus, String constrText, Info contextModelElement) {
 
 		constraintName = constrName;
 		constraintStatus = constrStatus;
 		constraintText = constrText;
-		
+
 		syntaxTree = null;
 		Readable instream = new StringReader(constraintText);
 		OclParser parse = new OclParser();
@@ -112,6 +113,39 @@ public class GenericOclConstraint extends OclConstraintImpl {
 			conditionType = syntaxTree.expressionType;
 
 		comments = parse.getComments();
+
+		// Output error messages as a warning, if there are ones
+		if (parse.getNumberOfMessages() > 0) {
+
+			String ctx, ctxType;
+			if (this.contextModelElmtType == ModelElmtContextType.CLASS) {
+				ctx = contextModelElement.name();
+				ctxType = "class";
+			} else {
+				ctx = contextClass.name() + contextModelElement.name();
+				ctxType = "property";
+			}
+
+			ShapeChangeResult.MessageContext messctx = contextModelElement
+					.result()
+					.addWarning(null, 133, ctx, constraintName, ctxType);
+
+			if (messctx != null) {
+				MessageCollection messages = parse.getMessageCollection();
+				MessageCollection.Message[] msg = messages.getMessages();
+				for (MessageCollection.Message m : msg) {
+					final String[] del = { "/", "-", "," };
+					String sr = m.getFormattedSourceReferences(1, 1, del);
+					String ms = m.getMessageText();
+					messctx.addDetail(null, 134, sr, ms);
+				}
+				String includeConstraintInMessages = contextModelElement
+						.options().parameter("includeConstraintInMessages");
+				if (includeConstraintInMessages != null
+						&& includeConstraintInMessages.equals("true"))
+					messctx.addDetail("Constraint: " + constraintText);
+			}
+		}
 	}
 
 	/**
@@ -166,8 +200,24 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	 * Used to initialize a copy of the given constraint. This constructor is
 	 * used while establishing the generic model. The context is not set when
 	 * initializing the constraint with this constructor. It needs to be set
-	 * explicitly via the setContext method. However, the constraint itself is
-	 * parsed anew.
+	 * explicitly via the setContext method.
+	 * <p>
+	 * The constraint is NOT parsed again when creating a GenericModel and the
+	 * syntax tree is set to <code>null</code>, for the following reason(s):
+	 * <ul>
+	 * <li>Save processing resources: parsing constraints each time a model is
+	 * transformed can be costly, especially if the model is large and contains
+	 * many constraints.
+	 * <p>
+	 * NOTE: When postprocessing a transformed model, the TransformationManager
+	 * parses and validates OCL and FOL constraints by default. However, the
+	 * TransformationManager has a rule with which this can be skipped if
+	 * required.</li>
+	 * <li>Avoid reference to previous model: a parsed expression usually
+	 * references elements from the model that was used while parsing the
+	 * constraint. If the expression from the original constraint was kept
+	 * as-is, then this can lead to incorrect references.</li>
+	 * <ul>
 	 * 
 	 * @param constr
 	 */
@@ -177,8 +227,14 @@ public class GenericOclConstraint extends OclConstraintImpl {
 		contextModelElmt = constr.contextModelElmt();
 		contextModelElmtType = constr.contextModelElmtType();
 
-		this.initializeNonContextFields(constr.name(), constr.status(),
-				constr.text(), contextModelElmt);
+		constraintName = constr.name();
+		constraintStatus = constr.status();
+		constraintText = constr.text();
+
+		syntaxTree = null;
+		conditionType = null;
+
+		comments = constr.comments();
 	}
 
 	public void setContext(ClassInfo contextClass, Info contextModelElement) {

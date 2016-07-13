@@ -68,15 +68,32 @@ public class GenericFolConstraint extends FolConstraintImpl {
 	}
 
 	/**
-	 * Constraints a generic FOL constraint from the given one.
-	 * 
-	 * NOTE: after construction this constraint uses the references of the given
-	 * constraint as-is (applies to contextModelElmt and folExpr); they must be
-	 * updated to reference the correct objects
+	 * Used to initialize a copy of the given constraint. This constructor is
+	 * used while establishing the generic model. After construction this
+	 * constraint uses the contextModelElmt of the given constraint as-is. It
+	 * must be updated to reference the correct object.
+	 * <p>
+	 * The constraint itself is NOT parsed again when creating a GenericModel
+	 * and fol expression is set to <code>null</code>, for the following
+	 * reason(s):
+	 * <ul>
+	 * <li>Save processing resources: parsing constraints each time a model is
+	 * transformed can be costly, especially if the model is large and contains
+	 * many constraints.
+	 * <p>
+	 * NOTE: When postprocessing a transformed model, the TransformationManager
+	 * parses and validates OCL and FOL constraints by default. However, the
+	 * TransformationManager has a rule with which this can be skipped if
+	 * required.</li>
+	 * <li>Avoid reference to previous model: a parsed expression usually
+	 * references elements from the model that was used while parsing the
+	 * constraint. If the expression from the original constraint was kept
+	 * as-is, then this can lead to incorrect references.</li>
+	 * <ul>
 	 * 
 	 * @param con
 	 */
-	public GenericFolConstraint(FolConstraint con) {
+	GenericFolConstraint(FolConstraint con) {
 
 		contextModelElmtType = con.contextModelElmtType();
 		contextModelElmt = con.contextModelElmt();
@@ -89,12 +106,7 @@ public class GenericFolConstraint extends FolConstraintImpl {
 		sourceType = con.sourceType();
 
 		comments = con.comments();
-		/*
-		 * 2015-04-21 JE: reusing the first order logic expression as-is is
-		 * probably the best approach right now. A transformation must be very
-		 * advanced if it updated the model and then tried to update constraints
-		 * as well to keep them in synch with the model.
-		 */
-		folExpr = con.folExpression();
+
+		folExpr = null;
 	}
 }

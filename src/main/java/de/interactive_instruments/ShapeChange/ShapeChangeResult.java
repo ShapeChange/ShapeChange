@@ -938,7 +938,15 @@ public class ShapeChangeResult {
 			return "Navigable via property '$1$' of class '$2$'.";
 		case 20108:
 			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
-
+		case 20109:
+			return "---------- TransformationManager postprocessing: validating constraints ----------";
+		case 20110:
+			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
+		case 20111:
+			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+			 
+			
+			
 		case 20201:
 			return "(Profiler.java) The profile identifier '$1$' in class '$2$' is not well-formed: $3$";
 		case 20202:
