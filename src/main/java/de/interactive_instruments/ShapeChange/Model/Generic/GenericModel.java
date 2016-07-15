@@ -246,6 +246,8 @@ public class GenericModel extends ModelImpl {
 				genCi.setConstraints(copy(ci.constraints()));
 				genCi.setSuppressed(ci.suppressed());
 				genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
+				
+				genCi.setDiagrams(ci.getDiagrams());
 
 				genericClassInfos.add(genCi);
 
@@ -339,7 +341,7 @@ public class GenericModel extends ModelImpl {
 				genPi.setAssociation(pi.association());
 				genPi.setRestriction(pi.isRestriction());
 				genPi.setNilReasonAllowed(pi.nilReasonAllowed());
-
+				
 				genPropertiesById.put(genPi.id, genPi);
 			}
 		}
@@ -997,6 +999,8 @@ public class GenericModel extends ModelImpl {
 
 			genPi.setIsAppSchema(pi.isAppSchema());
 			genPi.setIsSchema(pi.isSchema());
+			
+			genPi.setDiagrams(pi.getDiagrams());
 
 			SortedSet<GenericPackageInfo> genChildPi = new TreeSet<GenericPackageInfo>();
 			for (PackageInfo childPi : pi.containedPackages()) {
@@ -2080,6 +2084,8 @@ public class GenericModel extends ModelImpl {
 		genCi.setConstraints(copy(ci.constraints()));
 		genCi.setSuppressed(ci.suppressed());
 		genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
+		
+		genCi.setDiagrams(ci.getDiagrams());
 
 		return genCi;
 	}
