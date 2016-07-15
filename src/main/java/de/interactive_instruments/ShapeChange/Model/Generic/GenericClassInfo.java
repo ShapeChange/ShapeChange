@@ -1303,6 +1303,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		copy.setSupertypes((TreeSet<String>) supertypes.clone());
 		copy.setSubtypes((TreeSet<String>) subtypes.clone());
 		copy.setBaseClass(baseClass);
+		
+		copy.setDiagrams(diagrams);
 
 		TreeMap<StructuredNumber, PropertyInfo> copyProperties = new TreeMap<StructuredNumber, PropertyInfo>();
 
