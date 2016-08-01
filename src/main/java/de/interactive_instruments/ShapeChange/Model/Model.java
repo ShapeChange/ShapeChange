@@ -47,7 +47,7 @@ public interface Model {
 
 	public void initialise(ShapeChangeResult r, Options o,
 			String repositoryFileNameOrConnectionString)
-					throws ShapeChangeAbortException;
+			throws ShapeChangeAbortException;
 
 	public void initialise(ShapeChangeResult r, Options o,
 			String repositoryFileNameOrConnectionString, String username,
@@ -137,4 +137,18 @@ public interface Model {
 	 *         selected schemas, otherwise <code>false</code>
 	 */
 	public boolean isInSelectedSchemas(ClassInfo ci);
+
+	/**
+	 * Identifies the nearest schema or application schema package in which the
+	 * class is a child. A schema is identified using
+	 * {@link PackageInfo#isSchema()}, while an application schema is identified
+	 * using {@link PackageInfo#isAppSchema()}.
+	 * 
+	 * @param ci
+	 *            Class to check
+	 * @return The package that represents the schema or application schema of
+	 *         the class. If the class is not a child of such a package, then
+	 *         the result is <code>null</code> .
+	 */
+	public PackageInfo schemaPackage(ClassInfo ci);
 }

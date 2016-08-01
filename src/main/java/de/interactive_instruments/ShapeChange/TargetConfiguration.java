@@ -142,6 +142,11 @@ public class TargetConfiguration extends ProcessConfiguration {
 		return namespaces;
 	}
 
+	/**
+	 * @param namespace
+	 * @return The abbreviation for the given namespace, or <code>null</code> if
+	 *         the namespace is unknown.
+	 */
 	public String nsabrForNamespace(String namespace) {
 
 		if (namespaceByNamespace.containsKey(namespace)) {
@@ -151,6 +156,11 @@ public class TargetConfiguration extends ProcessConfiguration {
 		}
 	}
 
+	/**
+	 * @param abbreviation
+	 * @return the namespace for the given abbreviation, or <code>null</code> if
+	 *         the abbreviation is unknown
+	 */
 	public String fullNamespace(String abbreviation) {
 
 		if (namespaceByAbbreviation.containsKey(abbreviation)) {
@@ -158,6 +168,10 @@ public class TargetConfiguration extends ProcessConfiguration {
 		} else {
 			return null;
 		}
+	}
+
+	public boolean hasNamespaceWithAbbreviation(String abbrev) {
+		return fullNamespace(abbrev) != null;
 	}
 
 	/**

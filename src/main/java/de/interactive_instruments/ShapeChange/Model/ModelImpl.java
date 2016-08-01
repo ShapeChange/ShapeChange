@@ -72,7 +72,7 @@ public abstract class ModelImpl implements Model {
 			"asDictionary", "inlineOrByReference", "isMetadata",
 			"defaultCodeSpace", "xmlSchemaType", "documentation", "resourceURI",
 			"codeList" };
-			// TODO clean-up list
+	// TODO clean-up list
 
 	/*
 	 * the list of tagged values specified by the JSON encoding rule
@@ -100,7 +100,7 @@ public abstract class ModelImpl implements Model {
 			"AAA:Revisionsnummer", "reverseRoleNAS", "allowedTypesNAS",
 			"gmlArrayProperty", "gmlListProperty", "example",
 			"dataCaptureStatement", "legalBasis", "profiles" };
-			// TODO update this with missing tags from other targets?
+	// TODO update this with missing tags from other targets?
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -433,6 +433,24 @@ public abstract class ModelImpl implements Model {
 			// ci is not part of any of the selected schemas
 			return false;
 		}
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.Model#schemaPackage(de.interactive_instruments.ShapeChange.Model.ClassInfo)
+	 */
+	public PackageInfo schemaPackage(ClassInfo ci) {
+
+		PackageInfo p = ci.pkg();
+		
+		do {
+			if(p.isSchema() || p.isAppSchema()) {
+				return p;
+			} else {
+				p = p.owner();
+			}
+		} while(p != null);
+		
+		return null;
 	}
 
 	/**

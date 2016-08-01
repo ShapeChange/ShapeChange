@@ -103,7 +103,7 @@ NOTE Description of as1_1</documentation>
           <element maxOccurs="unbounded" minOccurs="0" name="ext1_1">
             <annotation>
               <appinfo>
-                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:as1_5</reversePropertyName>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">act1:as1_5</reversePropertyName>
               </appinfo>
             </annotation>
             <complexType>

@@ -75,9 +75,9 @@
           <enumeration value="leaf"/>
           <enumeration value="Schluesseltabelle"/>
           <enumeration value="Type"/>
-          <enumeration value="Union"/>   
-          <enumeration value="valueConcept"/> 
-          <enumeration value="version"/>      
+          <enumeration value="Union"/>
+          <enumeration value="valueConcept"/>
+          <enumeration value="version"/>
           <enumeration value="voidable"/>
         </restriction>
       </simpleType>
@@ -418,7 +418,12 @@
     <attribute name="modelElementName" type="string"/>
     <attribute name="applicationSchemaName" type="string"/>
   </complexType>
-  <element name="TargetOwl" type="sc:TargetOwlType"/>
+  <element name="TargetOwl" type="sc:TargetOwlType">
+    <unique name="uniqueConstraintType">
+      <selector xpath=".//sc:ConstraintMapping"/>
+      <field xpath="@constraintType"/>
+    </unique>
+  </element>
   <complexType name="TargetOwlType">
     <complexContent>
       <extension base="sc:TargetBaseType">
@@ -426,9 +431,11 @@
           <element ref="sc:targetParameter"/>
           <element ref="sc:targetParameters"/>
           <element ref="sc:rules"/>
-          <element ref="sc:mapEntries"/>
+          <element ref="sc:rdfMapEntries"/>
+          <element ref="sc:rdfConversionParameters"/>
           <element ref="sc:namespaces"/>
-          <element ref="sc:stereotypeMappings"/>
+          <element ref="sc:descriptorTargets"/>
+          <element ref="sc:constraintMappings"/>
           <element ref="xi:include"/>
         </choice>
       </extension>
@@ -536,6 +543,253 @@
     <complexType>
       <attribute name="nameRegex"/>
       <attribute name="stereotypeRegex"/>
+    </complexType>
+  </element>
+  <element name="rdfMapEntries">
+    <complexType>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element ref="sc:RdfTypeMapEntry"/>
+        <element ref="sc:RdfPropertyMapEntry"/>
+        <element ref="sc:rdfMapEntries"/>
+      </choice>
+    </complexType>
+  </element>
+  <element name="RdfTypeMapEntry" type="sc:RdfTypeMapEntryType"/>
+  <complexType name="RdfTypeMapEntryType">
+    <sequence/>
+    <attribute name="type" type="string" use="required">
+      <annotation>
+        <documentation>Name of a UML type</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="schema" type="string">
+      <annotation>
+        <documentation>The name of the application schema package to which the UML type belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="target" type="string" use="required">
+      <annotation>
+        <documentation>IRI of the RDFS/OWL class or datatype to which the UML type shall be mapped
+          (e.g. "ex1:A"). Note: the value is expected to be given as a QName, with the namespace
+          prefix matching the namespace abbreviation of a namespace declared in the
+          configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute default="class" name="targetType">
+      <annotation>
+        <documentation>Type of the target (class or datatype) to which the UML type will be
+          mapped.</documentation>
+      </annotation>
+      <simpleType>
+        <restriction base="string">
+          <pattern value="datatype"/>
+          <pattern value="class"/>
+        </restriction>
+      </simpleType>
+    </attribute>
+    <attribute name="rule" type="string" use="optional" default="*">
+      <annotation>
+        <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
+          the mapping applies to all encoding rules.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="RdfPropertyMapEntry" type="sc:RdfPropertyMapEntryType"/>
+  <complexType name="RdfPropertyMapEntryType">
+    <sequence/>
+    <attribute name="property" type="string" use="required">
+      <annotation>
+        <documentation>Name of a UML property, optionally scoped to a class from the application schema (example: FeatureX::propertyY).</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="schema" type="string">
+      <annotation>
+        <documentation>The names of the application schema package to which the UML property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="target" type="string" use="required">
+      <annotation>
+        <documentation>IRI of the RDF/OWL property to which the UML property shall be mapped (e.g. "ex1:propZ"). Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="range" type="string">
+      <annotation>
+        <documentation>Range to use in class expressions involving the target (RDF/OWL) property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="rule" type="string" use="optional" default="*">
+      <annotation>
+        <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
+          the mapping applies to all encoding rules.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="rdfConversionParameters">
+    <complexType>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element ref="sc:StereotypeConversionParameter"/>
+        <element ref="sc:TypeConversionParameter"/>
+        <element ref="sc:PropertyConversionParameter"/>
+        <element ref="sc:rdfConversionParameters"/>
+      </choice>
+    </complexType>
+  </element>
+  <element name="StereotypeConversionParameter" type="sc:StereotypeConversionParameterType"/>
+  <complexType name="StereotypeConversionParameterType">
+    <sequence/>
+    <attribute name="wellknown" use="required">
+      <annotation>
+        <documentation>Stereotype that is well-known to ShapeChange</documentation>
+      </annotation>
+      <simpleType>
+        <restriction base="string">
+          <enumeration value="DataType"/>
+          <enumeration value="FeatureType"/>
+          <enumeration value="Enumeration"/>
+          <enumeration value="CodeList"/>
+          <enumeration value="Union"/>
+          <enumeration value="Type"/>
+        </restriction>
+      </simpleType>
+    </attribute>
+    <attribute name="subClassOf" type="string" use="required">
+      <annotation>
+        <documentation>IRIs of classes of which UML types with this stereotype shall be subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="rule" type="string" use="optional" default="*">
+      <annotation>
+        <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="TypeConversionParameter" type="sc:TypeConversionParameterType"/>
+  <complexType name="TypeConversionParameterType">
+    <sequence/>
+    <attribute name="type" type="string" use="required">
+      <annotation>
+        <documentation>Name of a UML type</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="schema" type="string">
+      <annotation>
+        <documentation>The name of the application schema package to which the UML type belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="subClassOf" type="string" use="required">
+      <annotation>
+        <documentation>IRIs of classes of which the UML type shall be a subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="rule" type="string" use="optional" default="*">
+      <annotation>
+        <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="PropertyConversionParameter" type="sc:PropertyConversionParameterType"/>
+  <complexType name="PropertyConversionParameterType">
+    <sequence/>
+    <attribute name="property" type="string" use="required">
+      <annotation>
+        <documentation>Name of a UML property, optionally scoped to a class from the application schema (example: FeatureX::propertyY).</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="schema" type="string">
+      <annotation>
+        <documentation>The name of the application schema package to which the UML property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+      </annotation>
+    </attribute>
+    <attribute default="false" name="global" type="boolean">
+      <annotation>
+        <documentation>Specifies if the UML property shall be encoded as a global
+          property</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="subPropertyOf" type="string">
+      <annotation>
+        <documentation>IRIs of RDF/OWL properties of which the RDF/OWL implementation of the UML property shall be a subPropertyOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="target" type="string">
+      <annotation>
+        <documentation>Name of the target UML property (NOT scoped to a class), whose RDF/OWL implementation will be used to implement this property.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="targetSchema" type="string">
+      <annotation>
+        <documentation>The name of the application schema package to which the target property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="rule" type="string" use="optional" default="*">
+      <annotation>
+        <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="descriptorTargets">
+    <complexType>
+      <sequence>
+        <element maxOccurs="unbounded" minOccurs="0" name="DescriptorTarget">
+          <complexType>
+            <attribute name="target" type="string" use="required"/>
+            <attribute name="template" type="string" use="required"/>
+            <attribute default="langString" name="format">
+              <simpleType>
+                <restriction base="string">
+                  <enumeration value="langString"/>
+                  <enumeration value="IRI"/>
+                  <enumeration value="string"/>
+                </restriction>
+              </simpleType>
+            </attribute>
+            <attribute default="ignore" name="noValueBehavior">
+              <simpleType>
+                <restriction base="string">
+                  <enumeration value="ignore"/>
+                  <enumeration value="populateOnce"/>
+                </restriction>
+              </simpleType>
+            </attribute>
+            <attribute default="" name="noValueText" type="string"/>
+            <attribute default="connectInSingleTarget" name="multiValueBehavior">
+              <simpleType>
+                <restriction base="string">
+                  <enumeration value="connectInSingleTarget"/>
+                  <enumeration value="splitToMultipleTargets"/>
+                </restriction>
+              </simpleType>
+            </attribute>
+            <attribute default=" " name="multiValueConnectorToken" type="string"/>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="constraintMappings">
+    <complexType>
+      <sequence>
+        <element maxOccurs="unbounded" minOccurs="0" name="ConstraintMapping">
+          <complexType>
+            <attribute name="constraintType" use="required">
+              <simpleType>
+                <restriction base="string">
+                  <enumeration value="Text"/>
+                  <enumeration value="FOL"/>
+                  <enumeration value="OCL"/>
+                </restriction>
+              </simpleType>
+            </attribute>
+            <attribute default="iso19150-2:constraint" name="target" type="string"/>
+            <attribute name="template" type="string" use="required"/>
+            <attribute default="" name="noValue" type="string"/>
+            <attribute default=" " name="multiValueConnectorToken" type="string"/>
+          </complexType>
+        </element>
+      </sequence>
     </complexType>
   </element>
 </schema>

@@ -62,6 +62,9 @@ public interface PackageInfo extends Info {
 	 * It is taken either from the configuration (more specifically: a
 	 * PackageInfo element) or from a tagged value on this package or any of its
 	 * ancestors (even outside the schema).
+	 * 
+	 * @return the version of the package, or <code>null</code> if no version
+	 *         information is available
 	 */
 	public String version();
 

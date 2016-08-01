@@ -52,6 +52,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
@@ -158,6 +160,21 @@ public class Flattener implements Transformer {
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
 	public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
+	/**
+	 * If this parameter is set to <code>true</code>, then properties that
+	 * originate from flattening a specific union will be tagged (with tag '
+	 * {@link #UNION_SET_TAG_NAME}'). This allows identifying which properties
+	 * belong to the union after it has been flattened - just by looking at the
+	 * tagged values. Properties from a union that are copied into another union
+	 * will not be tracked.
+	 */
+	public static final String PARAM_INCLUDE_UNION_IDENTIFIER_TV = "includeUnionIdentifierTaggedValue";
+	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
+	/**
+	 * If set to <code>true</code>, then descriptors of properties will be
+	 * merged during type flattening.
+	 */
+	public static final String PARAM_MERGE_DESCRIPTORS = "mergeDescriptors";
 
 	/**
 	 * If this parameter is set to true, then type flattening is not performed
@@ -244,6 +261,8 @@ public class Flattener implements Transformer {
 	 */
 	public static final String RULE_TRF_CLS_DISSOLVE_MIXINS = "rule-trf-cls-dissolve-mixins";
 
+	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
+
 	// =============================
 	/* Flattener requirements */
 	// =============================
@@ -283,6 +302,7 @@ public class Flattener implements Transformer {
 	 */
 	public static final String TAGGED_VALUE_IS_FLAT_TARGET = "isFlatTarget";
 
+	public static final String UNION_SET_TAG_NAME = "SC_UNION_SET";
 	// =============================
 	/* internal */
 	// =============================
@@ -346,7 +366,7 @@ public class Flattener implements Transformer {
 
 	public void process(GenericModel genModel, Options options,
 			TransformerConfiguration trfConfig, ShapeChangeResult result)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		this.options = options;
 		this.result = result;
@@ -588,6 +608,12 @@ public class Flattener implements Transformer {
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_MULTIPLICITY)) {
 			result.addInfo(null, 20103, RULE_TRF_PROP_FLATTEN_MULTIPLICITY);
 			applyRuleMultiplicity(genModel, trfConfig);
+		}
+
+		if (rules.contains(RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES);
+			applyRuleUnionReplace(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPES)) {
@@ -1132,10 +1158,10 @@ public class Flattener implements Transformer {
 								genCi.name() + separatorForGeometryTypeSuffix
 										+ mapEntry.getParam(),
 								Options.FEATURE);
-								/*
-								 * NOTE: we have not added the properties of the
-								 * copy to the model yet
-								 */
+						/*
+						 * NOTE: we have not added the properties of the copy to
+						 * the model yet
+						 */
 
 						// keep track of the new copy
 						ftCopiesByGeometryTypeSuffix.put(mapEntry.getParam(),
@@ -2347,6 +2373,179 @@ public class Flattener implements Transformer {
 		return code;
 	}
 
+	private void applyRuleUnionReplace(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		// compute some general parameter values
+		boolean includeUnionIdentifierTV = false;
+		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
+			String tmp = trfConfig
+					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				includeUnionIdentifierTV = true;
+			}
+		}
+
+		// identify all union classes
+		SortedSet<GenericClassInfo> unionsToProcess = new TreeSet<GenericClassInfo>();
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+			if (genCi.category() == Options.UNION) {
+				unionsToProcess.add(genCi);
+			}
+		}
+
+		/*
+		 * identify union classes that were used to replace properties, so that
+		 * they can be removed at the end if they are no longer used in the
+		 * model
+		 */
+		Map<String, GenericClassInfo> processedUnionsById = new HashMap<String, GenericClassInfo>();
+
+		for (GenericClassInfo union : unionsToProcess) {
+
+			List<GenericPropertyInfo> propsToAdd = new ArrayList<GenericPropertyInfo>();
+			Set<GenericPropertyInfo> propsToRemove = new HashSet<GenericPropertyInfo>();
+
+			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+				if (genCi == union) {
+					continue;
+				}
+
+				int countPropsWithUnionAsValueType = 0;
+				GenericPropertyInfo relPi = null;
+
+				for (PropertyInfo pi : genCi.properties().values()) {
+
+					if (!pi.isNavigable()) {
+						continue;
+					}
+
+					if (pi.typeInfo().id.equals(union.id())) {
+						countPropsWithUnionAsValueType++;
+						if (pi.cardinality().maxOccurs == 1) {
+							relPi = (GenericPropertyInfo) pi;
+						}
+					}					
+				}
+
+				if (countPropsWithUnionAsValueType == 1 && relPi != null) {
+
+					/*
+					 * replace the relevant property with copies of the union
+					 * options
+					 */
+
+					processedUnionsById.put(union.id(), union);
+
+					int seqNumIndex = 1;
+					for (PropertyInfo uPi : union.properties().values()) {
+
+						GenericPropertyInfo uGPi = (GenericPropertyInfo) uPi;
+
+						UUID id = UUID.randomUUID();
+
+						GenericPropertyInfo copy = uGPi
+								.createCopy(id.toString());
+
+						copy.setInClass(genCi);
+
+						// merge global identifier information
+						if (genCi.globalId() == null) {
+							/*
+							 * globalId from uGPi can be used as-is, which is
+							 * the default for the copy
+							 */
+						} else if (uGPi.globalId() == null) {
+
+							// use the global id from genPi
+							copy.setGlobalId(relPi.globalId());
+
+						} else {
+
+							// merge global ids
+							copy.setGlobalId(
+									relPi.globalId() + "." + uGPi.globalId());
+						}
+
+						/* handle derived properties */
+						if (relPi.isDerived()) {
+							copy.setDerived(true);
+						}
+
+						/*
+						 * ensure that the copy is not counted as an association
+						 * role
+						 */
+						copy.setAttribute(true);
+						copy.setAssociation(null);
+
+						/*
+						 * set union identifier if so configured and if the
+						 * class that the property is copied to is not a union
+						 * itself
+						 */
+						if (includeUnionIdentifierTV
+								&& !(genCi.category() == Options.UNION)) {
+							TaggedValues tvs = copy.taggedValuesAll();
+							tvs.put(UNION_SET_TAG_NAME, relPi.name());
+							copy.setTaggedValues(tvs, false);
+						}
+
+						/*
+						 * ensure that "sequenceNumber" tagged value is also
+						 * updated
+						 */
+						copy.setSequenceNumber(relPi.sequenceNumber()
+								.createCopyWithSuffix(seqNumIndex), true);
+						seqNumIndex++;
+
+						int minOccurs = relPi.cardinality().minOccurs
+								* uGPi.cardinality().minOccurs;
+						int genPiMaxOccurs = relPi.cardinality().maxOccurs;
+						int typeGPiMaxOccurs = uGPi.cardinality().maxOccurs;
+						int maxOccurs = 0;
+						if (genPiMaxOccurs == Integer.MAX_VALUE
+								|| typeGPiMaxOccurs == Integer.MAX_VALUE) {
+							maxOccurs = Integer.MAX_VALUE;
+						} else {
+							maxOccurs = genPiMaxOccurs * typeGPiMaxOccurs;
+						}
+						copy.setCardinality(
+								new Multiplicity(minOccurs, maxOccurs));
+						propsToAdd.add(copy);
+					}
+					// remove the replaced property
+					propsToRemove.add(relPi);
+				}				
+			}
+
+			// add new properties, if any, to inClass and model, ignoring
+			// already existing ones
+			genModel.add(propsToAdd,
+					PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+			// remove properties of the current class which have been
+			// processed from both the class and the model
+			for (GenericPropertyInfo propToRemove : propsToRemove) {
+				genModel.remove(propToRemove, false);
+			}
+		}
+
+		// remove processed unions that are no longer used by properties of the
+		// selected schemas
+
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+			if (processedUnionsById.containsKey(genPi.typeInfo().id)) {
+				processedUnionsById.remove(genPi.typeInfo().id);
+			}
+		}
+
+		for (GenericClassInfo unusedUnion : processedUnionsById.values()) {
+			genModel.remove(unusedUnion);
+		}
+	}
+
 	/**
 	 *
 	 * NOTE: removes all unions and potentially also data and object types (can
@@ -2402,6 +2601,32 @@ public class Flattener implements Transformer {
 				 * computeTypesToProcessForFlattenTypes
 				 */
 				idsOfDataTypesToProcess.add(typeCi.id());
+			}
+		}
+
+		// compute some general parameter values
+		boolean includeUnionIdentifierTV = false;
+		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
+			String tmp = trfConfig
+					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				includeUnionIdentifierTV = true;
+			}
+		}
+		boolean setMinCardinalityToZeroWhenMergingUnion = true;
+		if (trfConfig.hasParameter(
+				PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION)) {
+			String tmp = trfConfig.getParameterValue(
+					PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION);
+			if (tmp.trim().equalsIgnoreCase("false")) {
+				setMinCardinalityToZeroWhenMergingUnion = false;
+			}
+		}
+		boolean mergeDescriptors = false;
+		if (trfConfig.hasParameter(PARAM_MERGE_DESCRIPTORS)) {
+			String tmp = trfConfig.getParameterValue(PARAM_MERGE_DESCRIPTORS);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				mergeDescriptors = true;
 			}
 		}
 
@@ -2577,35 +2802,58 @@ public class Flattener implements Transformer {
 							copy.setAttribute(true);
 							copy.setAssociation(null);
 
-							// JE: not needed because we keep the documentation,
-							// definition and description from the lowest level
-							// only
 							/*
-							 * Merge the documentation of the property that will
-							 * be flattened with the properties of its type and
-							 * the property copy.
+							 * handle descriptors (except name and alias)
 							 */
-							// String genPiDoc = genPi.documentation() != null ?
-							// genPi
-							// .documentation() : "";
-							// String copyDoc = copy.documentation() != null ?
-							// copy
-							// .documentation() : "";
-							// copy.setDocumentation(genPiDoc + copyDoc);
-
-							// Reset the documentation for the copy if it is
-							// empty.
-							String s = copy.derivedDocumentation(
-									"[[definition]][[description]]", "");
-							if (s == null || s.length() == 0) {
-								copy.setDefinition(genPi.definition());
-								copy.setDescription(genPi.description());
-								copy.setPrimaryCode(genPi.primaryCode());
-								copy.setLanguage(genPi.language());
-								copy.setLegalBasis(genPi.legalBasis());
-								copy.setDataCaptureStatements(
-										genPi.dataCaptureStatements());
-								copy.setExamples(genPi.examples());
+							if (mergeDescriptors) {
+								copy.setDefinition(
+										StringUtils.join(
+												new String[] {
+														genPi.definition(),
+														copy.definition() },
+												" "));
+								copy.setDescription(
+										StringUtils.join(
+												new String[] {
+														genPi.description(),
+														copy.description() },
+												" "));
+								copy.setPrimaryCode(
+										StringUtils.join(
+												new String[] {
+														genPi.primaryCode(),
+														copy.primaryCode() },
+												" "));
+								// TBD: would it make sense to merge the
+								// language()?
+								copy.setLegalBasis(
+										StringUtils.join(
+												new String[] {
+														genPi.legalBasis(),
+														copy.legalBasis() },
+												" "));
+								copy.setDataCaptureStatements(ArrayUtils.addAll(
+										genPi.dataCaptureStatements(),
+										copy.dataCaptureStatements()));
+								copy.setExamples(ArrayUtils.addAll(
+										genPi.examples(), copy.examples()));
+							} else {
+								// (NOTE: for backwards compatibility after
+								// mergeDescriptors has been introduced) Reset
+								// the documentation for the copy if it is
+								// empty.
+								String s = copy.derivedDocumentation(
+										"[[definition]][[description]]", "");
+								if (s == null || s.length() == 0) {
+									copy.setDefinition(genPi.definition());
+									copy.setDescription(genPi.description());
+									copy.setPrimaryCode(genPi.primaryCode());
+									copy.setLanguage(genPi.language());
+									copy.setLegalBasis(genPi.legalBasis());
+									copy.setDataCaptureStatements(
+											genPi.dataCaptureStatements());
+									copy.setExamples(genPi.examples());
+								}
 							}
 
 							/*
@@ -2764,6 +3012,62 @@ public class Flattener implements Transformer {
 							 */
 
 							copy.setInClass(genCi);
+
+							if (includeUnionIdentifierTV) {
+
+								if (typeToProcess.category() == Options.UNION
+										&& genCi.category() == Options.UNION) {
+									// nothing to do
+								} else if (genCi.category() == Options.UNION) {
+									/*
+									 * remove potentially existing union
+									 * identifier tag from the copy
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+									tvs.remove(UNION_SET_TAG_NAME);
+									copy.setTaggedValues(tvs, false);
+								} else if (typeToProcess
+										.category() == Options.UNION) {
+									/*
+									 * set union identifier tag in the copy;
+									 * handle the case where a union was used in
+									 * a union
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+
+									String setName;
+									int lastIndexOfUnionSeparator = pi.name()
+											.lastIndexOf(
+													separatorForPropertyFromUnion);
+									int lastIndexOfNonUnionSeparator = pi.name()
+											.lastIndexOf(
+													separatorForPropertyFromNonUnion);
+
+									if (lastIndexOfUnionSeparator > lastIndexOfNonUnionSeparator) {
+										// last merge was a union property, just
+										// like now
+										setName = pi.name().substring(0,
+												lastIndexOfUnionSeparator);
+									} else {
+										setName = pi.name();
+									}
+
+									tvs.put(UNION_SET_TAG_NAME, setName);
+									copy.setTaggedValues(tvs, false);
+								} else if (copy.taggedValue(
+										UNION_SET_TAG_NAME) != null) {
+									/*
+									 * extend union identifier tag in the copy
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+									String tmp = tvs
+											.getFirstValue(UNION_SET_TAG_NAME);
+									tvs.put(UNION_SET_TAG_NAME,
+											pi.name() + separator + tmp);
+									copy.setTaggedValues(tvs, false);
+								}
+							}
+
 							/*
 							 * ensure that "sequenceNumber" tagged value is also
 							 * updated
@@ -2774,7 +3078,8 @@ public class Flattener implements Transformer {
 
 							int minOccurs;
 
-							if (typeToProcess.category() == Options.UNION) {
+							if (typeToProcess.category() == Options.UNION
+									&& setMinCardinalityToZeroWhenMergingUnion) {
 								minOccurs = 0;
 							} else {
 								minOccurs = (pi
@@ -2854,7 +3159,9 @@ public class Flattener implements Transformer {
 		 * is true or if they match the inclusion regex. Remove data types
 		 * unless they have been excluded (via configuration parameter).
 		 */
-		if (this.excludeDataTypePattern != null) {
+		if (this.excludeDataTypePattern != null)
+
+		{
 
 			/*
 			 * TODO this does not remove data types that were not used by
@@ -3465,7 +3772,7 @@ public class Flattener implements Transformer {
 											|| end2.categoryOfValue() == Options.OBJECT
 											|| end2.categoryOfValue() == Options.MIXIN))
 
-			)) {
+					)) {
 				// alright, then we keep this association as is
 				continue;
 			}
