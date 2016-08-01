@@ -142,7 +142,7 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				GenericPropertyInfo other_a = m.createCopy(other,
 						other.id() + idSuffix + "_a");
 				other_a.setInClass(assocCi);
-
+				
 				if (other_a.isNavigable()) {
 					other_a.setCardinality(new Multiplicity());
 					/*
@@ -161,6 +161,9 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 
 				nav_a.setAssociation(ai_a);
 				other_a.setAssociation(ai_a);
+				
+				nav_a.setReverseProperty(other_a);
+				other_a.setReverseProperty(nav_a);
 
 				if (ai_a.end1() == navigableRole) {
 					ai_a.setEnd1(nav_a);
@@ -204,6 +207,9 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 
 				nav_b.setAssociation(ai_b);
 				other_b.setAssociation(ai_b);
+				
+				nav_b.setReverseProperty(other_b);
+				other_b.setReverseProperty(nav_b);
 
 				if (ai_b.end1() == navigableRole) {
 					ai_b.setEnd1(nav_b);

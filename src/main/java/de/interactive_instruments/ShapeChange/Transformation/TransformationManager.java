@@ -67,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
@@ -410,6 +411,12 @@ public class TransformationManager {
 
 								newConstraints
 										.add(parse(folCon, sbvrParser, genCi));
+								
+							} else if (con instanceof TextConstraint) {
+								/*
+								 * this can be ignored, because TextConstraint
+								 * is not validated
+								 */
 							} else {
 
 								/*
@@ -457,7 +464,12 @@ public class TransformationManager {
 
 										newConstraints
 												.add(parse(oclCon, genPi));
-
+										
+									} else if (con instanceof TextConstraint) {
+										/*
+										 * this can be ignored, because TextConstraint
+										 * is not validated
+										 */
 									} else {
 
 										/*
