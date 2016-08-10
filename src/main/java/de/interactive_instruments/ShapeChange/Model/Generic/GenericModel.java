@@ -2319,7 +2319,7 @@ public class GenericModel extends ModelImpl {
 
 		// update in property type info
 		for (GenericPropertyInfo genPi : getGenProperties().values()) {
-			if (genPi.typeInfo().name.equals(oldName)) {
+			if (genPi.typeInfo().id.equals(genCi.id())) {
 				genPi.typeInfo().name = newName;
 			}
 		}

@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -214,6 +215,7 @@ public class Options {
 	 */
 	public static final String PARAM_CONSTRAINT_EXCEL_FILE = "constraintExcelFile";
 
+	public static final String PARAM_IGNORE_ENCODING_RULE_TVS = "ignoreEncodingRuleTaggedValues";
 	public static final String PARAM_ONLY_DEFERRABLE_OUTPUT_WRITE = "onlyDeferrableOutputWrite";
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
@@ -1552,7 +1554,7 @@ public class Options {
 			 * TODO add documentation
 			 */
 			String ignoreEncodingRuleTaggedValues = parameter(
-					"ignoreEncodingRuleTaggedValues");
+					PARAM_IGNORE_ENCODING_RULE_TVS);
 
 			if (ignoreEncodingRuleTaggedValues != null) {
 				if (ignoreEncodingRuleTaggedValues.trim()
@@ -1995,7 +1997,7 @@ public class Options {
 								tgtE);
 						Map<String, List<RdfPropertyMapEntry>> rdfPropertyMapEntries = parseRdfPropertyMapEntries(
 								tgtE);
-						Map<String, List<StereotypeConversionParameter>> stereotypeConversionParameters = parseStereotypeConversionParameters(
+						SortedMap<String, List<StereotypeConversionParameter>> stereotypeConversionParameters = parseStereotypeConversionParameters(
 								tgtE);
 						Map<String, List<TypeConversionParameter>> typeConversionParameters = parseTypeConversionParameters(
 								tgtE);
@@ -2080,7 +2082,7 @@ public class Options {
 	 *         identifier of wellknown stereotype, and value: list of conversion
 	 *         parameters with that identifier as 'wellknown'
 	 */
-	private Map<String, List<StereotypeConversionParameter>> parseStereotypeConversionParameters(
+	private SortedMap<String, List<StereotypeConversionParameter>> parseStereotypeConversionParameters(
 			Element targetElement) {
 
 		NodeList scpNl = targetElement
@@ -2088,7 +2090,7 @@ public class Options {
 		Node scpN;
 		Element scpE;
 
-		Map<String, List<StereotypeConversionParameter>> result = new TreeMap<String, List<StereotypeConversionParameter>>();
+		SortedMap<String, List<StereotypeConversionParameter>> result = new TreeMap<String, List<StereotypeConversionParameter>>();
 
 		if (scpNl != null && scpNl.getLength() != 0) {
 

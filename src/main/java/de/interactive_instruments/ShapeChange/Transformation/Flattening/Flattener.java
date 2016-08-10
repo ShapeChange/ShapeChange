@@ -166,9 +166,23 @@ public class Flattener implements Transformer {
 	 * {@link #UNION_SET_TAG_NAME}'). This allows identifying which properties
 	 * belong to the union after it has been flattened - just by looking at the
 	 * tagged values. Properties from a union that are copied into another union
-	 * will not be tracked.
+	 * will not be tracked. Also, tracking information will be removed / not
+	 * created if union options replace a property with max multiplicity > 1
+	 * (because then the union semantics will become irrelevant, as that
+	 * property can have values from more than one union option).
 	 */
 	public static final String PARAM_INCLUDE_UNION_IDENTIFIER_TV = "includeUnionIdentifierTaggedValue";
+	/**
+	 * If, during execution of {@value #RULE_TRF_PROP_FLATTEN_TYPES}, a union is
+	 * flattened, then by default the minimum multiplicity of the flattened
+	 * property is set to 0. However, if the replaced property has a maximum
+	 * multiplicity of 1 and {@value #PARAM_INCLUDE_UNION_IDENTIFIER_TV} is set
+	 * to true, then the union semantics can be represented in the model. In
+	 * that case, setting the minimum multiplicity of the flattened property to
+	 * 0 would unnecessarily reduce valuable information. To prevent this from
+	 * happening, set this parameter to <code>false</code> (the default is
+	 * <code>true</code>).
+	 */
 	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
 	/**
 	 * If set to <code>true</code>, then descriptors of properties will be
@@ -2225,7 +2239,6 @@ public class Flattener implements Transformer {
 
 				genModel.updateClassName(genCi, code);
 			}
-
 		}
 
 		// update property names - also for any reverse properties
@@ -2426,7 +2439,7 @@ public class Flattener implements Transformer {
 						if (pi.cardinality().maxOccurs == 1) {
 							relPi = (GenericPropertyInfo) pi;
 						}
-					}					
+					}
 				}
 
 				if (countPropsWithUnionAsValueType == 1 && relPi != null) {
@@ -2483,7 +2496,8 @@ public class Flattener implements Transformer {
 						/*
 						 * set union identifier if so configured and if the
 						 * class that the property is copied to is not a union
-						 * itself
+						 * itself; we have already checked that max multiplicity
+						 * of the property that is being replaced is 1
 						 */
 						if (includeUnionIdentifierTV
 								&& !(genCi.category() == Options.UNION)) {
@@ -2517,13 +2531,12 @@ public class Flattener implements Transformer {
 					}
 					// remove the replaced property
 					propsToRemove.add(relPi);
-				}				
+				}
 			}
 
 			// add new properties, if any, to inClass and model, ignoring
 			// already existing ones
-			genModel.add(propsToAdd,
-					PropertyCopyDuplicatBehaviorIndicator.ADD);
+			genModel.add(propsToAdd, PropertyCopyDuplicatBehaviorIndicator.ADD);
 
 			// remove properties of the current class which have been
 			// processed from both the class and the model
@@ -2613,6 +2626,7 @@ public class Flattener implements Transformer {
 				includeUnionIdentifierTV = true;
 			}
 		}
+
 		boolean setMinCardinalityToZeroWhenMergingUnion = true;
 		if (trfConfig.hasParameter(
 				PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION)) {
@@ -3015,7 +3029,12 @@ public class Flattener implements Transformer {
 
 							if (includeUnionIdentifierTV) {
 
-								if (typeToProcess.category() == Options.UNION
+								if (genPi.cardinality().maxOccurs > 1) {
+									TaggedValues tvs = copy.taggedValuesAll();
+									tvs.remove(UNION_SET_TAG_NAME);
+									copy.setTaggedValues(tvs, false);
+								} else if (typeToProcess
+										.category() == Options.UNION
 										&& genCi.category() == Options.UNION) {
 									// nothing to do
 								} else if (genCi.category() == Options.UNION) {
@@ -3079,15 +3098,12 @@ public class Flattener implements Transformer {
 							int minOccurs;
 
 							if (typeToProcess.category() == Options.UNION
-									&& setMinCardinalityToZeroWhenMergingUnion) {
+									&& (setMinCardinalityToZeroWhenMergingUnion
+											|| pi.cardinality().maxOccurs > 1)) {
 								minOccurs = 0;
 							} else {
-								minOccurs = (pi
-										.cardinality().minOccurs < typeGPi
-												.cardinality().minOccurs)
-														? pi.cardinality().minOccurs
-														: typeGPi
-																.cardinality().minOccurs;
+								minOccurs = pi.cardinality().minOccurs
+										* typeGPi.cardinality().minOccurs;
 							}
 
 							int piMaxOccurs = pi.cardinality().maxOccurs;
@@ -3277,7 +3293,7 @@ public class Flattener implements Transformer {
 									type.name)
 							.getTargetType();
 
-					result.addWarning(null, 20318, targetTypeName, genPi.name(),
+					result.addDebug(null, 20318, targetTypeName, genPi.name(),
 							genPi.inClass().name());
 
 					type.id = UNKNOWN;
@@ -3330,7 +3346,7 @@ public class Flattener implements Transformer {
 						// type.name = targetTypeName;
 						//
 						// } else {
-						MessageContext mc = result.addWarning(null, 20301,
+						MessageContext mc = result.addDebug(null, 20301,
 								genPi.inClass().name() + "." + genPi.name(),
 								type.name);
 						if (mc != null)

@@ -64,7 +64,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 */
 	private Map<String, RdfTypeMapEntry> rdfTypeMapEntries = new HashMap<String, RdfTypeMapEntry>();
 	private Map<String, RdfPropertyMapEntry> rdfPropertyMapEntries = new HashMap<String, RdfPropertyMapEntry>();
-	private Map<String, List<StereotypeConversionParameter>> stereotypeConversionParameters;
+	private SortedMap<String, List<StereotypeConversionParameter>> stereotypeConversionParameters;
 	private Map<String, TypeConversionParameter> typeConversionParameters = new HashMap<String, TypeConversionParameter>();
 	private Map<String, PropertyConversionParameter> propertyConversionParameters = new HashMap<String, PropertyConversionParameter>();
 	private List<DescriptorTarget> descriptorTargets;
@@ -108,7 +108,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 			List<Namespace> namespaces, Element advancedProcessConfigurations,
 			Map<String, List<RdfTypeMapEntry>> rdfTypeMapEntries,
 			Map<String, List<RdfPropertyMapEntry>> rdfPropertyMapEntries,
-			Map<String, List<StereotypeConversionParameter>> stereotypeConversionParameters,
+			SortedMap<String, List<StereotypeConversionParameter>> stereotypeConversionParameters,
 			Map<String, List<TypeConversionParameter>> typeConversionParameters,
 			Map<String, List<PropertyConversionParameter>> propertyConversionParameters,
 			List<DescriptorTarget> descriptorTargets,
@@ -459,7 +459,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 *         parameters with that identifier as 'wellknown' (the list can be
 	 *         empty but not <code>null</code>)
 	 */
-	public Map<String, List<StereotypeConversionParameter>> getStereotypeConversionParameters() {
+	public SortedMap<String, List<StereotypeConversionParameter>> getStereotypeConversionParameters() {
 		return stereotypeConversionParameters;
 	}
 

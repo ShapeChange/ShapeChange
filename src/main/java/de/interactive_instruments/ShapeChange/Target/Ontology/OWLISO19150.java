@@ -36,10 +36,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -263,7 +259,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	/**
 	 * key: a package, value: the according ontology object
 	 */
-	protected static Map<PackageInfo, OntologyModel> ontologyByPiMap = new HashMap<PackageInfo, OntologyModel>();
+	protected static SortedMap<PackageInfo, OntologyModel> ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
 
 	/**
 	 * key: rdf namespace of an ontology document; value: the ontology document
@@ -275,19 +271,19 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	/**
 	 * key: targetNamespace, value: main schema package
 	 */
-	protected static Map<String, PackageInfo> schemaByTargetNamespace = new HashMap<String, PackageInfo>();
+	protected static SortedMap<String, PackageInfo> schemaByTargetNamespace = new TreeMap<String, PackageInfo>();
 
 	/**
 	 * key: xml prefix value, value: current counter (used to establish unique
 	 * xml prefixes for referencing elements from the same target namespace
 	 * [which might be contained in different ontologies])
 	 */
-	protected static Map<String, Integer> counterByXmlprefix = new HashMap<String, Integer>();
+	protected static SortedMap<String, Integer> counterByXmlprefix = new TreeMap<String, Integer>();
 
 	/**
 	 * key: namespace abbreviation / prefix; value: RDF namespace
 	 */
-	protected static Map<String, String> rdfNsByPrefix = new HashMap<String, String>();
+	protected static SortedMap<String, String> rdfNsByPrefix = new TreeMap<String, String>();
 
 	protected static String codeNamespace = null;
 	protected static String codeNamespaceForEnumerations = null;
@@ -328,7 +324,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * 
 	 * key: property-name '#' schema-name
 	 */
-	private static Map<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
+	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
 
 	public int getTargetID() {
 		return TargetIdentification.OWLISO19150.getId();
@@ -509,7 +505,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		if (p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
-			Set<ClassInfo> ontclasses = new HashSet<ClassInfo>();
+			SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
 			ontclasses.addAll(model.classes(p));
 			createAdditionalOntologyModels(ontclasses, od.getPrefix(),
 					od.getRdfNamespace(), od.getName(), od.getPath(),
@@ -525,7 +521,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			 * 
 			 * Future work: exclude packages that contain no classes
 			 */
-			Set<PackageInfo> subPkgsInSameTNS = subPackagesInSameTNS(p);
+			SortedSet<PackageInfo> subPkgsInSameTNS = subPackagesInSameTNS(p);
 
 			int counter = 1;
 			for (PackageInfo subPi : subPkgsInSameTNS) {
@@ -539,7 +535,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 				// if the package contains a code list or enumeration, create
 				// additional OntologyModels as necessary
-				Set<ClassInfo> ontclasses = new HashSet<ClassInfo>();
+				SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
 				ontclasses.addAll(p.containedClasses());
 				createAdditionalOntologyModels(ontclasses, odSub.getPrefix(),
 						odSub.getRdfNamespace(), odSub.getName(),
@@ -555,7 +551,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		schemaByTargetNamespace.put(p.targetNamespace(), p);
 	}
 
-	private void createAdditionalOntologyModels(Set<ClassInfo> classes,
+	private void createAdditionalOntologyModels(SortedSet<ClassInfo> classes,
 			String basePrefix, String baseRdfns, String baseName, String path,
 			String baseFileName, String version)
 			throws ShapeChangeAbortException {
@@ -931,7 +927,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		 * interfaces, and datatypes)
 		 */
 
-		ontologyByPropertyConversionTargetReference = new HashMap<String, OntologyModel>();
+		ontologyByPropertyConversionTargetReference = new TreeMap<String, OntologyModel>();
 
 		outer: for (PackageInfo schema : model.selectedSchemas()) {
 
@@ -1051,7 +1047,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	public void reset() {
 
-		OWLISO19150.counterByXmlprefix = new HashMap<String, Integer>();
+		OWLISO19150.counterByXmlprefix = new TreeMap<String, Integer>();
 		OWLISO19150.error = false;
 		OWLISO19150.ontologyByRdfNs = new TreeMap<String, OntologyModel>();
 		OWLISO19150.ontologyByCi = new TreeMap<ClassInfo, OntologyModel>();
@@ -1062,9 +1058,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.rdfFormat = RDFFormat.TURTLE;
 		OWLISO19150.fileNameExtension = ".ttl";
 		OWLISO19150.printed = false;
-		OWLISO19150.rdfNsByPrefix = new HashMap<String, String>();
+		OWLISO19150.rdfNsByPrefix = new TreeMap<String, String>();
 		OWLISO19150.result = null;
-		OWLISO19150.schemaByTargetNamespace = new HashMap<String, PackageInfo>();
+		OWLISO19150.schemaByTargetNamespace = new TreeMap<String, PackageInfo>();
 		OWLISO19150.source = null;
 		OWLISO19150.skosConceptSchemeSuffix = "";
 		OWLISO19150.skosConceptSchemeSubclassSuffix = "";

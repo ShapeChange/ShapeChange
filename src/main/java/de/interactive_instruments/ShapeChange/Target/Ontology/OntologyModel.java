@@ -33,13 +33,9 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -140,7 +136,7 @@ public class OntologyModel implements MessageSource {
 	 * key: ontology name of property (so a URI); value: OwlProperty (a pair of
 	 * Jena Property and PropertyInfo)
 	 */
-	protected Map<String, OwlProperty> properties = new HashMap<String, OwlProperty>();
+	protected SortedMap<String, OwlProperty> properties = new TreeMap<String, OwlProperty>();
 
 	/**
 	 * Map to keep track of the RDF implementation of a ClassInfo. Can be a
@@ -156,14 +152,14 @@ public class OntologyModel implements MessageSource {
 	 */
 	protected SortedMap<ClassInfo, OntClass> ontClassByClassInfo = new TreeMap<ClassInfo, OntClass>();
 
-	protected Map<PropertyInfo, OntProperty> ontPropertyByPropertyInfo = new HashMap<PropertyInfo, OntProperty>();
+	protected SortedMap<PropertyInfo, OntProperty> ontPropertyByPropertyInfo = new TreeMap<PropertyInfo, OntProperty>();
 
-	protected Map<PropertyInfo, Resource> rangeByPropertyInfo = new HashMap<PropertyInfo, Resource>();
+	protected SortedMap<PropertyInfo, Resource> rangeByPropertyInfo = new TreeMap<PropertyInfo, Resource>();
 
 	protected ConstraintMapping defaultConstraintMapping = new ConstraintMapping(
 			null, "iso19150-2:constraint", "[[name]]: [[text]]", "", " ");
 
-	protected Set<String> uniquePropertyNames = new HashSet<String>();
+	protected SortedSet<String> uniquePropertyNames = new TreeSet<String>();
 
 	class OwlProperty {
 		protected PropertyInfo pi;
@@ -284,7 +280,7 @@ public class OntologyModel implements MessageSource {
 		} else {
 			relevantClasses = mpackage.containedClasses();
 		}
-		Set<String> encounteredPropertyNames = new HashSet<String>();
+		SortedSet<String> encounteredPropertyNames = new TreeSet<String>();
 		for (ClassInfo ci : relevantClasses) {
 			for (PropertyInfo prop : ci.properties().values()) {
 				if (encounteredPropertyNames.contains(prop.name())) {
@@ -1688,7 +1684,7 @@ public class OntologyModel implements MessageSource {
 			return;
 		}
 
-		Map<String, List<StereotypeConversionParameter>> stereotypeMappings = owliso19150
+		SortedMap<String, List<StereotypeConversionParameter>> stereotypeMappings = owliso19150
 				.getConfig().getStereotypeConversionParameters();
 
 		if (stereotypeMappings.containsKey(catID)) {
@@ -1934,7 +1930,7 @@ public class OntologyModel implements MessageSource {
 		OntProperty mappedProperty = mapProperty(pi);
 
 		if (mappedProperty != null) {
-			MessageContext mc = result.addInfo(this, 21, pi.name(),
+			MessageContext mc = result.addDebug(this, 21, pi.name(),
 					mappedProperty.getURI());
 			if (mc != null) {
 				mc.addDetail(this, 10001, pi.fullName());
@@ -2306,7 +2302,7 @@ public class OntologyModel implements MessageSource {
 
 		if (rtme != null) {
 			Resource r = mapClass(rtme.getTarget());
-			MessageContext mc = result.addInfo(this, 22, ci.name(), r.getURI());
+			MessageContext mc = result.addDebug(this, 22, ci.name(), r.getURI());
 			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
