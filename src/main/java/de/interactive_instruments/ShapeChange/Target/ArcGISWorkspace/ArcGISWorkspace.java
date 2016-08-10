@@ -246,7 +246,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * &lt;&lt;ArcGIS&gt;&gt; workspace package that represents the application
 	 * schema package.
 	 */
-	// protected Package workspacePkg;
 	protected Integer workspacePkgId;
 
 	/**
@@ -254,7 +253,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * supported ArcGIS geometry are stored (in package itself or sub-packages
 	 * according to package hierarchy in the application schema).
 	 */
-	// protected Package features;
 	protected Integer featuresPkgId;
 
 	/**
@@ -262,14 +260,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * stored (in package itself or sub-packages according to package hierarchy
 	 * in the application schema).
 	 */
-	// protected Package tables;
 	protected Integer tablesPkgId;
 
 	/**
 	 * Package where all association classes used to represent n:m relationships
 	 * are stored.
 	 */
-	// protected Package assocClasses;
 	protected Integer assocClassesPkgId;
 
 	/**
@@ -277,16 +273,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * itself or sub-packages according to package hierarchy in the application
 	 * schema).
 	 */
-	// protected Package domains;
 	protected Integer domainsPkgId;
 
 	/**
 	 * key: workspace sub package; value: {key: application schema package;
 	 * value: corresponding EA package within the workspace sub package}
 	 */
-	// protected Map<Package, Map<PackageInfo, Package>>
-	// eaPkgByModelPkg_byWorkspaceSubPkg = new HashMap<Package, Map<PackageInfo,
-	// Package>>();
 	protected Map<Integer, Map<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
 
 	/**
@@ -388,8 +380,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	/**
 	 * key: name of the class element; value: the range domain element
 	 */
-	// private Map<String, Element> numericRangeElementsByClassName = new
-	// HashMap<String, Element>();
 	private Map<String, Integer> numericRangeElementIdsByClassName = new HashMap<String, Integer>();
 
 	// TODO Unit Test
@@ -955,7 +945,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
-		// classes.put(ci, e);
 		elementIdByClassInfo.put(ci, e.GetElementID());
 		elementNameByClassInfo.put(ci, name);
 
@@ -1082,7 +1071,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
-		// classes.put(ci, e);
 		elementIdByClassInfo.put(ci, e.GetElementID());
 		elementNameByClassInfo.put(ci, name);
 
@@ -1320,7 +1308,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
-		// classes.put(ci, e);
 		elementIdByClassInfo.put(ci, e.GetElementID());
 		elementNameByClassInfo.put(ci, name);
 
@@ -1583,7 +1570,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		// loop through properties - in order determined by sequence numbers
 		for (PropertyInfo pi : allPis.values()) {
-			// for (PropertyInfo pi : ci.properties().values()) {
 
 			Type t = pi.typeInfo();
 
@@ -1628,7 +1614,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		boolean geomPropFound = false;
 
-		// for (PropertyInfo pi : ci.properties().values()) {
 		for (PropertyInfo pi : allPis.values()) {
 
 			Type t = pi.typeInfo();
@@ -1719,9 +1704,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			ClassInfo ci1 = entry.getKey();
 			ClassInfo ci2 = entry.getValue();
 
-			// Element c1 = classes.get(entry.getKey());
-			// Element c2 = classes.get(entry.getValue());
-
 			if (!elementIdByClassInfo.containsKey(ci1))
 				result.addWarning(this, 207, ci1.name(), ci2.name());
 			else if (!elementIdByClassInfo.containsKey(ci2))
@@ -1763,6 +1745,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				}
 
 				Type typeInfo = pi.typeInfo();
+				String mappedTypeName = typeInfo.name;
 
 				// omit reflexive relationships
 				if (typeInfo.id.equals(ci.id())) {
@@ -1955,13 +1938,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 						ClassInfo targetTypeCi = this.model
 								.classByName(pme.getTargetType());
 
-						if (targetTypeCi != null) {
-							typeInfo.id = targetTypeCi.id();
-						} else {
-							// no meaningful value available
-							typeInfo.id = null;
-						}
-						typeInfo.name = pme.getTargetType();
+						mappedTypeName = pme.getTargetType();
 
 						/*
 						 * now try to find the target type in the class map - if
@@ -1996,9 +1973,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 									pi.derivedDocumentation(
 											documentationTemplate,
 											documentationNoValue),
-									eaTargetType, "" + computeLength(pi),
-									"" + computePrecision(pi),
-									"" + computeScale(pi),
+									eaTargetType, "" + computeLength(pi,mappedTypeName),
+									"" + computePrecision(pi,mappedTypeName),
+									"" + computeScale(pi,mappedTypeName),
 									eaTargetClassifierId);
 
 						} catch (EAException e) {
@@ -2227,9 +2204,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		int targetElementId = elementIdByClassInfo.get(target);
 		Element eaClassTarget = rep.GetElementByID(targetElementId);
 
-		// Element eaClassSource = this.classes.get(source);
-		// Element eaClassTarget = this.classes.get(target);
-
 		if (eaClassSource == null || eaClassTarget == null) {
 
 			result.addError(this, 225, source.name(), target.name());
@@ -2264,14 +2238,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			int sourceElementId_ = elementIdByClassInfo.get(source_);
 			Element sourceElmt = rep.GetElementByID(sourceElementId_);
 
-			// Element sourceElmt = classes.get(source_);
-
 			for (ClassInfo target_ : targets) {
 
 				int targetElementId_ = elementIdByClassInfo.get(target_);
 				Element targetElmt = rep.GetElementByID(targetElementId_);
-
-				// Element targetElmt = classes.get(target_);
 
 				if (sourceElmt == null) {
 					result.addError(this, 239, source.name(), target.name(),
@@ -2632,13 +2602,11 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			int sourceElementId_ = elementIdByClassInfo.get(source_);
 			Element sourceElmt = rep.GetElementByID(sourceElementId_);
-			// Element sourceElmt = classes.get(source_);
 
 			for (ClassInfo target_ : targets) {
 
 				int targetElementId_ = elementIdByClassInfo.get(target_);
 				Element targetElmt = rep.GetElementByID(targetElementId_);
-				// Element targetElmt = classes.get(target_);
 
 				if (sourceElmt == null) {
 					result.addError(this, 238, source.name(), target.name(),
@@ -2904,14 +2872,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		return directNonAbstractSubtypes;
 	}
 
-	private Integer computeScale(PropertyInfo pi) {
-
-		Type ti = pi.typeInfo();
+	private Integer computeScale(PropertyInfo pi, String valueTypeName) {
 
 		// if the property type is known, use the known value
-		if (this.scaleMappingByTypeName.containsKey(ti.name)) {
+		if (this.scaleMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.scaleMappingByTypeName.get(ti.name);
+			return this.scaleMappingByTypeName.get(valueTypeName);
 
 		} else {
 
@@ -2920,14 +2886,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
-	private Integer computePrecision(PropertyInfo pi) {
-
-		Type ti = pi.typeInfo();
+	private Integer computePrecision(PropertyInfo pi, String valueTypeName) {
 
 		// if the property type is known, use the known value
-		if (this.precisionMappingByTypeName.containsKey(ti.name)) {
+		if (this.precisionMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.precisionMappingByTypeName.get(ti.name);
+			return this.precisionMappingByTypeName.get(valueTypeName);
 
 		} else {
 
@@ -2936,14 +2900,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
-	private int computeLength(PropertyInfo pi) {
-
-		Type ti = pi.typeInfo();
+	private int computeLength(PropertyInfo pi, String valueTypeName) {
 
 		// if the property type is known, use the known value
-		if (this.lengthMappingByTypeName.containsKey(ti.name)) {
+		if (this.lengthMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.lengthMappingByTypeName.get(ti.name);
+			return this.lengthMappingByTypeName.get(valueTypeName);
 
 		} else {
 
