@@ -238,7 +238,6 @@ public class Options {
 	 */
 	public static final String PARAM_LOAD_GLOBAL_IDENTIFIERS = "loadGlobalIdentifiers";
 	
-	public static final String PARAM_USE_MIXINS = "useMixins";
 	public static final String PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES = "dontConstructAssociationNames";
 
 	/**
@@ -492,7 +491,6 @@ public class Options {
 	protected boolean ignoreEncodingRuleTaggedValues = false;
 
 	protected boolean useStringInterning = false;
-	protected boolean useMixins = false;
 	protected boolean dontConstructAssociationNames = false;
 	protected boolean loadGlobalIds = false;
 	protected String language = "en";
@@ -1568,17 +1566,9 @@ public class Options {
 
 			if (useStringInterning_value != null && useStringInterning_value
 					.trim().equalsIgnoreCase("true")) {
-				this.useStringInterning = true;
+				this.useStringInterning = true; 
 			}
-			
-			String useMixins_value = parameter(
-					PARAM_USE_MIXINS);
-
-			if (useMixins_value != null && useMixins_value
-					.trim().equalsIgnoreCase("true")) {
-				this.useMixins = true;
-			}
-			
+						
 			String dontConstructAssociationNames_value = parameter(
 					PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES);
 
@@ -1643,7 +1633,6 @@ public class Options {
 
 		// reset fields
 
-		fTargets = new HashMap<String, String>();
 		fParameters = new HashMap<String, String>();
 		fTypeMap = new HashMap<String, MapEntry>();
 		fBaseMap = new HashMap<String, MapEntry>();
@@ -1658,7 +1647,6 @@ public class Options {
 		fPackages = new HashMap<String, MapEntry>();
 		fSchemaLocations = new HashMap<String, String>();
 		fAllRules = new HashSet<String>();
-		fRulesInEncRule = new HashSet<String>();
 		fExtendsEncRule = new HashMap<String, String>();
 
 		// repopulate fields
@@ -1733,10 +1721,6 @@ public class Options {
 					setParameter(currentProcessConfig.getClassName(), name,
 							currentProcessConfig.getParameters().get(name));
 				}
-
-				// add target mode
-				addTarget(currentProcessConfig.getClassName(),
-						currentProcessConfig.getProcessMode().name());
 
 				// add encoding rules
 				for (ProcessRuleSet prs : currentProcessConfig.getRuleSets()
@@ -3333,6 +3317,7 @@ public class Options {
 		addRule("rule-sql-prop-exclude-derived");
 		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
+		addRule("rule-sql-all-exclude-abstract");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
@@ -3700,11 +3685,7 @@ public class Options {
 
 		return this.useStringInterning;
 	}
-	
-	public boolean useMixins() {
-		return this.useMixins;
-	}
-	
+		
 	public boolean dontConstructAssociationNames() {
 		return this.dontConstructAssociationNames;
 	}

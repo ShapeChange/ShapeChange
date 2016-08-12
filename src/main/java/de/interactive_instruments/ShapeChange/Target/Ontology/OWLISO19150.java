@@ -269,11 +269,6 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	protected static SortedMap<ClassInfo, OntologyModel> ontologyByCi = new TreeMap<ClassInfo, OntologyModel>();
 
 	/**
-	 * key: targetNamespace, value: main schema package
-	 */
-	protected static SortedMap<String, PackageInfo> schemaByTargetNamespace = new TreeMap<String, PackageInfo>();
-
-	/**
 	 * key: xml prefix value, value: current counter (used to establish unique
 	 * xml prefixes for referencing elements from the same target namespace
 	 * [which might be contained in different ontologies])
@@ -500,6 +495,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OntologyModel od = new OntologyModel(p, m, o, r, xmlPrefixOfMainSchema,
 				this);
 
+		if (ontologyByRdfNs.containsKey(od.getRdfNamespace())) {
+			/*
+			 * can happen if multiple schemas are merged into a single ontology
+			 * by setting a common URI base; we re-use the existing
+			 * OntologyModel
+			 */
+			od = ontologyByRdfNs.get(od.getRdfNamespace());
+		}
+
 		ontologyByPiMap.put(p, od);
 		ontologyByRdfNs.put(od.getRdfNamespace(), od);
 
@@ -536,19 +540,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				// if the package contains a code list or enumeration, create
 				// additional OntologyModels as necessary
 				SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
-				ontclasses.addAll(p.containedClasses());
+				ontclasses.addAll(subPi.containedClasses());
 				createAdditionalOntologyModels(ontclasses, odSub.getPrefix(),
 						odSub.getRdfNamespace(), odSub.getName(),
 						odSub.getPath(), odSub.getFileName(), subPi.version());
 
 			}
 		}
-
-		/*
-		 * keep track of main schema packages so that we can look them up by
-		 * targetNamespace
-		 */
-		schemaByTargetNamespace.put(p.targetNamespace(), p);
 	}
 
 	private void createAdditionalOntologyModels(SortedSet<ClassInfo> classes,
@@ -739,7 +737,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
-			relevantPi = schemaByTargetNamespace.get(pCi.targetNamespace());
+			relevantPi = model.schemaPackage(ci);
 
 		} else {
 			/*
@@ -801,7 +799,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 			if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
-				relevantPi = schemaByTargetNamespace.get(pCi.targetNamespace());
+				relevantPi = model.schemaPackage(ci);
 
 			} else {
 				/*
@@ -924,7 +922,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		/*
 		 * identify properties to encode as global ones (only for feature types,
-		 * interfaces, and datatypes)
+		 * interfaces, datatypes and basictypes)
 		 */
 
 		ontologyByPropertyConversionTargetReference = new TreeMap<String, OntologyModel>();
@@ -936,7 +934,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				if (ci.category() == Options.FEATURE
 						|| ci.category() == Options.OBJECT
 						|| ci.category() == Options.DATATYPE
-						|| ci.category() == Options.MIXIN) {
+						|| ci.category() == Options.MIXIN
+						|| ci.category() == Options.BASICTYPE) {
 
 					for (PropertyInfo prop : ci.properties().values()) {
 
@@ -1047,31 +1046,46 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	public void reset() {
 
-		OWLISO19150.counterByXmlprefix = new TreeMap<String, Integer>();
-		OWLISO19150.error = false;
+		OWLISO19150.ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
 		OWLISO19150.ontologyByRdfNs = new TreeMap<String, OntologyModel>();
 		OWLISO19150.ontologyByCi = new TreeMap<ClassInfo, OntologyModel>();
-		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
-		OWLISO19150.ontologyNameCode = null;
-		OWLISO19150.outputDirectory = null;
-		OWLISO19150.outputFormat = "TURTLE";
-		OWLISO19150.rdfFormat = RDFFormat.TURTLE;
-		OWLISO19150.fileNameExtension = ".ttl";
-		OWLISO19150.printed = false;
+		OWLISO19150.counterByXmlprefix = new TreeMap<String, Integer>();
 		OWLISO19150.rdfNsByPrefix = new TreeMap<String, String>();
+
+		OWLISO19150.codeNamespace = null;
+		OWLISO19150.codeNamespaceForEnumerations = null;
+		OWLISO19150.codeListOwlClassNamespace = null;
+		OWLISO19150.codeListOwlClassNamespaceForEnumerations = null;
+		OWLISO19150.prefixCodeNamespace = "c";
+		OWLISO19150.prefixCodeNamespaceForEnumerations = "e";
+		OWLISO19150.prefixCodeListOwlClassNamespace = "cc";
+		OWLISO19150.prefixCodeListOwlClassNamespaceForEnumerations = "ce";
+
+		OWLISO19150.error = false;
+		OWLISO19150.printed = false;
+
+		OWLISO19150.outputDirectory = null;
+
+		OWLISO19150.config = null;
+
 		OWLISO19150.result = null;
-		OWLISO19150.schemaByTargetNamespace = new TreeMap<String, PackageInfo>();
-		OWLISO19150.source = null;
+		OWLISO19150.model = null;
+
 		OWLISO19150.skosConceptSchemeSuffix = "";
 		OWLISO19150.skosConceptSchemeSubclassSuffix = "";
-		OWLISO19150.config = null;
-		OWLISO19150.ontologyByPropertyConversionTargetReference = null;
+		OWLISO19150.source = null;
 		OWLISO19150.sourceTaggedValue = null;
 		OWLISO19150.uriBase = null;
 		OWLISO19150.rdfNamespaceSeparator = "#";
-		OWLISO19150.model = null;
-		OWLISO19150.codeNamespace = null;
-		OWLISO19150.codeNamespaceForEnumerations = null;
+		OWLISO19150.language = "en";
+		OWLISO19150.outputFormat = "TURTLE";
+		OWLISO19150.rdfFormat = RDFFormat.TURTLE;
+		OWLISO19150.fileNameExtension = ".ttl";
+		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
+		OWLISO19150.ontologyNameCode = null;
+		OWLISO19150.defaultTypeImplementation = null;
+
+		OWLISO19150.ontologyByPropertyConversionTargetReference = null;
 	}
 
 	/**

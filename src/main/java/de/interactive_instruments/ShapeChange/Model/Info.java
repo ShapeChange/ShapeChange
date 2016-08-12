@@ -37,6 +37,11 @@ import java.util.Map;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
+/**
+ * Note: this class (more precisely: InfoImpl, which implements compareTo(..)
+ * globally) has a natural ordering that is inconsistent with equals.
+ *
+ */
 public interface Info extends Comparable<Info> {
 
 	public Options options();

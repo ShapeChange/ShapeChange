@@ -49,6 +49,7 @@ import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
@@ -168,9 +169,14 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	public RdfTypeMapEntry getTypeMapEntry(ClassInfo ci) {
 		if (ci == null)
 			return null;
-		else
-			return getTypeMapEntry(ci.name(),
-					ci.model().schemaPackage(ci).name());
+		else {
+			PackageInfo pkg = ci.model().schemaPackage(ci);
+			if (pkg == null) {
+				return getTypeMapEntry(ci.name());
+			} else {
+				return getTypeMapEntry(ci.name(), pkg.name());
+			}
+		}
 	}
 
 	public RdfTypeMapEntry getTypeMapEntry(String typeName) {

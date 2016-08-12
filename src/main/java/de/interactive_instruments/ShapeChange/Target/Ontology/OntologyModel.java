@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -95,48 +96,46 @@ import de.interactive_instruments.ShapeChange.StereotypeConversionParameter;
  */
 public class OntologyModel implements MessageSource {
 
-	protected OntModel ontmodel = ModelFactory
+	private OntModel ontmodel = ModelFactory
 			.createOntologyModel(OntModelSpec.OWL_MEM);
-	protected Ontology ontology = null;
-	protected static OntModel refmodel = ModelFactory
+	private Ontology ontology = null;
+	private OntModel refmodel = ModelFactory
 			.createOntologyModel(OntModelSpec.OWL_MEM);
 
-	protected Options options = null;
+	private Options options = null;
 	public ShapeChangeResult result = null;
 
-	protected Model model = null;
-	protected PackageInfo mpackage = null;
+	private Model model = null;
+	private PackageInfo mpackage = null;
 
-	protected boolean printed = false;
+	private boolean printed = false;
 
 	/**
 	 * group 0: the whole input string group 1: the string to use as separator
 	 * of multiple values; can be <code>null</code> group 2: the name of the
 	 * tagged value; cannot be <code>null</code>
 	 */
-	protected Pattern descriptorTargetTaggedValuePattern = Pattern
+	private Pattern descriptorTargetTaggedValuePattern = Pattern
 			.compile("TV(\\(.+?\\))?:(.+)");
 
-	protected String targetNamespace = null;
+	private String name;
+	private String fileName;
+	private String rdfNamespace;
+	private String prefix;
+	private OWLISO19150 owliso19150;
+	private boolean finalized = false;
+	private String path;
 
-	protected String name;
-	protected String fileName;
-	protected String rdfNamespace;
-	protected String prefix;
-	protected OWLISO19150 owliso19150;
-	protected boolean finalized = false;
-	protected String path;
+	private SortedSet<ClassInfo> classInfos = new TreeSet<ClassInfo>();
+	private Resource defaultTypeImplementation;
 
-	protected SortedSet<ClassInfo> classInfos = new TreeSet<ClassInfo>();
-	protected Resource defaultTypeImplementation;
-
-	protected TargetOwlConfiguration config;
+	private TargetOwlConfiguration config;
 
 	/**
 	 * key: ontology name of property (so a URI); value: OwlProperty (a pair of
 	 * Jena Property and PropertyInfo)
 	 */
-	protected SortedMap<String, OwlProperty> properties = new TreeMap<String, OwlProperty>();
+	private SortedMap<String, OwlProperty> properties = new TreeMap<String, OwlProperty>();
 
 	/**
 	 * Map to keep track of the RDF implementation of a ClassInfo. Can be a
@@ -150,16 +149,16 @@ public class OntologyModel implements MessageSource {
 	/**
 	 * Map to keep track of the ClassInfos that were converted to OWL classes.
 	 */
-	protected SortedMap<ClassInfo, OntClass> ontClassByClassInfo = new TreeMap<ClassInfo, OntClass>();
+	private SortedMap<ClassInfo, OntClass> ontClassByClassInfo = new TreeMap<ClassInfo, OntClass>();
 
-	protected SortedMap<PropertyInfo, OntProperty> ontPropertyByPropertyInfo = new TreeMap<PropertyInfo, OntProperty>();
+	private SortedMap<PropertyInfo, OntProperty> ontPropertyByPropertyInfo = new TreeMap<PropertyInfo, OntProperty>();
 
-	protected SortedMap<PropertyInfo, Resource> rangeByPropertyInfo = new TreeMap<PropertyInfo, Resource>();
+	private SortedMap<PropertyInfo, Resource> rangeByPropertyInfo = new TreeMap<PropertyInfo, Resource>();
 
-	protected ConstraintMapping defaultConstraintMapping = new ConstraintMapping(
+	private ConstraintMapping defaultConstraintMapping = new ConstraintMapping(
 			null, "iso19150-2:constraint", "[[name]]: [[text]]", "", " ");
 
-	protected SortedSet<String> uniquePropertyNames = new TreeSet<String>();
+	private SortedSet<String> uniquePropertyNames = new TreeSet<String>();
 
 	class OwlProperty {
 		protected PropertyInfo pi;
@@ -587,6 +586,7 @@ public class OntologyModel implements MessageSource {
 				case Options.FEATURE:
 				case Options.OBJECT:
 				case Options.MIXIN:
+				case Options.BASICTYPE:
 				case Options.DATATYPE:
 					addClassDefinition(ci);
 					break;
@@ -630,7 +630,7 @@ public class OntologyModel implements MessageSource {
 					this.resourceByClassInfo.put(ci, defaultTypeImplementation);
 					MessageContext mc = result.addError(this, 5, "" + cat);
 					if (mc != null) {
-						mc.addDetail(this, 30000, ci.fullName());
+						mc.addDetail(this, 10000, ci.fullName());
 					}
 				}
 			}
@@ -648,6 +648,7 @@ public class OntologyModel implements MessageSource {
 			case Options.OBJECT:
 			case Options.MIXIN:
 			case Options.DATATYPE:
+			case Options.BASICTYPE:
 			case Options.UNION:
 				createNormalProperties(ci);
 				break;
@@ -685,10 +686,10 @@ public class OntologyModel implements MessageSource {
 			if (pi.isNavigable()) {
 
 				OntProperty p = addPropertyDeclaration(pi);
-				ontPropertyByPropertyInfo.put(pi, p);
+				this.ontPropertyByPropertyInfo.put(pi, p);
 
 				Resource range = computeRange(pi);
-				rangeByPropertyInfo.put(pi, range);
+				this.rangeByPropertyInfo.put(pi, range);
 			}
 		}
 	}
@@ -854,13 +855,45 @@ public class OntologyModel implements MessageSource {
 			}
 
 			if (ci.subtypes() != null && !ci.subtypes().isEmpty()
+					&& ci.subtypes().size() > 1
 					&& ci.matches(OWLISO19150.RULE_OWL_CLS_DISJOINT_CLASSES)) {
+
+				SortedMap<String, Resource> subtypeResources = new TreeMap<String, Resource>();
 
 				for (String ciId : ci.subtypes()) {
 
 					ClassInfo subtype = model.classById(ciId);
 
-					mapAndAddDisjointWith(ci, c, subtype);
+					Resource mappedResource = map(subtype);
+
+					if (mappedResource == null) {
+						MessageContext mc = result.addError(this, 28,
+								subtype.name(), ci.name());
+						if (mc != null) {
+							mc.addDetail(this, 10000, ci.fullName());
+						}
+					} else {
+
+						subtypeResources.put(mappedResource.getURI(),
+								mappedResource);
+					}
+				}
+
+				if (subtypeResources.size() == 2) {
+
+					Iterator<Resource> it = subtypeResources.values()
+							.iterator();
+					Resource r1 = it.next();
+					Resource r2 = it.next();
+					r1.addProperty(OWL2.disjointWith, r2);
+
+				} else {
+
+					OntClass adw = ontmodel.createClass();
+					adw.setRDFType(OWL2.AllDisjointClasses);
+					for (Resource subtype : subtypeResources.values()) {
+						adw.addProperty(OWL2.members, subtype);
+					}
 				}
 			}
 
@@ -885,9 +918,9 @@ public class OntologyModel implements MessageSource {
 						addAllValuesFrom(c, pi, p);
 					}
 				}
-
-				addUnionSemantics(ci, c);
 			}
+
+			addUnionSemantics(ci, c);
 		}
 	}
 
@@ -1403,23 +1436,6 @@ public class OntologyModel implements MessageSource {
 		}
 	}
 
-	private void mapAndAddDisjointWith(ClassInfo ci, OntClass c,
-			ClassInfo subtype) {
-
-		Resource mappedResource = map(subtype);
-
-		if (mappedResource == null) {
-			MessageContext mc = result.addError(this, 28, subtype.name(),
-					ci.name());
-			if (mc != null) {
-				mc.addDetail(this, 10000, ci.fullName());
-			}
-
-		} else {
-			c.addDisjointWith(mappedResource);
-		}
-	}
-
 	private void applyDescriptorTargets(OntResource c, Info i) {
 
 		for (DescriptorTarget dt : this.config.getDescriptorTargets()) {
@@ -1665,6 +1681,9 @@ public class OntologyModel implements MessageSource {
 		case Options.MIXIN:
 		case Options.OBJECT:
 			catID = "type";
+			break;
+		case Options.BASICTYPE:
+			catID = "basictype";
 			break;
 		case Options.DATATYPE:
 			catID = "datatype";
@@ -2302,7 +2321,8 @@ public class OntologyModel implements MessageSource {
 
 		if (rtme != null) {
 			Resource r = mapClass(rtme.getTarget());
-			MessageContext mc = result.addDebug(this, 22, ci.name(), r.getURI());
+			MessageContext mc = result.addDebug(this, 22, ci.name(),
+					r.getURI());
 			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
@@ -2908,7 +2928,7 @@ public class OntologyModel implements MessageSource {
 		SortedMap<StructuredNumber, PropertyInfo> enumPis = ci.properties();
 
 		if (!enumPis.isEmpty()) {
-			
+
 			List<Literal> enums = new ArrayList<Literal>();
 			for (PropertyInfo pi : enumPis.values()) {
 				Literal en = ontmodel.createLiteral(pi.name());

@@ -201,7 +201,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	} // asCharacterString()
 
 	private boolean isMixin() {
-		if (options().useMixins() || matches("rule-xsd-cls-mixin-classes")) {
+		if (matches("rule-xsd-cls-mixin-classes")) {
 			String tv = taggedValue("gmlMixin");
 			if (tv != null && tv.equalsIgnoreCase("true"))
 				return true;
@@ -210,7 +210,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	private boolean isGMLMixinSetToFalse() {
-		if (options().useMixins() || matches("rule-xsd-cls-mixin-classes")) {
+		if (matches("rule-xsd-cls-mixin-classes")) {
 			String tv = taggedValue("gmlMixin");
 			if (tv != null && tv.equalsIgnoreCase("false"))
 				return true;
@@ -246,11 +246,11 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		} else if (stereotype("type")) {
 			category = Options.OBJECT;
 			if ((isMixin()
-					|| (isAbstract() && (options().useMixins() || matches("rule-xsd-cls-mixin-classes")))
+					|| (isAbstract() && matches("rule-xsd-cls-mixin-classes"))
 							&& !isGMLMixinSetToFalse()))
 				category = Options.MIXIN;
 		} else if (stereotype("interface")
-				&& (options().useMixins() || matches("rule-xsd-cls-mixin-classes"))) {
+				&& matches("rule-xsd-cls-mixin-classes")) {
 			category = Options.MIXIN;
 		} else if (stereotype("basictype")
 				&& matches("rule-xsd-cls-basictype")) {
@@ -820,7 +820,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 							}
 						}
 					} else if (cat == Options.MIXIN
-							&& (options().useMixins() || matches("rule-xsd-cls-mixin-classes"))) {
+							&& matches("rule-xsd-cls-mixin-classes")) {
 						// nothing to do
 					} else {
 

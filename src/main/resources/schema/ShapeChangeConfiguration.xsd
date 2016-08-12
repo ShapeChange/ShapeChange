@@ -649,6 +649,7 @@
           <enumeration value="CodeList"/>
           <enumeration value="Union"/>
           <enumeration value="Type"/>
+          <enumeration value="BasicType"/>
         </restriction>
       </simpleType>
     </attribute>
