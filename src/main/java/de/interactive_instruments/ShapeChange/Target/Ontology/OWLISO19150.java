@@ -113,6 +113,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION = "rule-owl-pkg-ontologyName-appendVersion";
 
 	/**
+	 * If {@value #RULE_OWL_PKG_VERSION_IRI} and
+	 * {@value #RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION} are both enabled, and
+	 * the package has version information, then this rule prevents the version
+	 * to be appended again to the versionIRI (because it will already be added
+	 * to the RDF namespace).
+	 */
+	public static final String RULE_OWL_PKG_VERSION_IRI_AVOID_DUPLICATE_VERSION = "rule-owl-pkg-versionIRI-avoid-duplicate-version";
+
+	/**
 	 * If this rule is included and a package that is converted into an ontology
 	 * has version information, then the versionIRI of the ontology is
 	 * constructed as follows: 'rdfNamespace' + 'version'.
@@ -184,6 +193,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RULE_OWL_CLS_GENERALIZATION = "rule-owl-cls-generalization";
 
 	public static final String RULE_OWL_CLS_DISJOINT_CLASSES = "rule-owl-cls-disjoint-classes";
+	
+	public static final String RULE_OWL_CLS_ENCODE_FEATURETYPES = "rule-owl-cls-encode-featuretypes";
+	public static final String RULE_OWL_CLS_ENCODE_OBJECTTYPES = "rule-owl-cls-encode-objecttypes";
+	public static final String RULE_OWL_CLS_ENCODE_MIXINTYPES = "rule-owl-cls-encode-mixintypes";
+	public static final String RULE_OWL_CLS_ENCODE_DATATYPES = "rule-owl-cls-encode-datatypes";
+	public static final String RULE_OWL_CLS_ENCODE_BASICTYPES = "rule-owl-cls-encode-basictypes";
 
 	public static final String RULE_OWL_CLS_UNION = "rule-owl-cls-union";
 	/**

@@ -33,6 +33,8 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -332,8 +334,15 @@ public class OntologyModel implements MessageSource {
 				&& mpackage.version() != null
 				&& !mpackage.version().trim().isEmpty()) {
 
-			ontology.addProperty(OWL2.versionIRI,
-					name + "/" + mpackage.version());
+			if (mpackage.matches(
+					OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION)
+					&& mpackage.matches(
+							OWLISO19150.RULE_OWL_PKG_VERSION_IRI_AVOID_DUPLICATE_VERSION)) {
+				ontology.addProperty(OWL2.versionIRI, name);
+			} else {
+				ontology.addProperty(OWL2.versionIRI,
+						name + "/" + mpackage.version());
+			}
 		}
 
 		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_IMPORT_191502BASE)) {
@@ -584,11 +593,33 @@ public class OntologyModel implements MessageSource {
 
 				switch (cat) {
 				case Options.FEATURE:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_FEATURETYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
 				case Options.OBJECT:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_OBJECTTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
 				case Options.MIXIN:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_MIXINTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
 				case Options.BASICTYPE:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_BASICTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
 				case Options.DATATYPE:
-					addClassDefinition(ci);
+					if (ci.matches(OWLISO19150.RULE_OWL_CLS_ENCODE_DATATYPES)) {
+						addClassDefinition(ci);
+					}
 					break;
 				case Options.UNION:
 					if (ci.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
@@ -2506,6 +2537,12 @@ public class OntologyModel implements MessageSource {
 
 		if (cons.isEmpty())
 			return;
+
+		Collections.sort(cons, new Comparator<Constraint>() {
+			public int compare(Constraint c1, Constraint c2) {
+				return c1.name().compareTo(c2.name());
+			}
+		});
 
 		if (i.matches(
 				OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_HUMAN_READABLE_TEXT_ONLY)) {

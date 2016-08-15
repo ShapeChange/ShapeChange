@@ -3340,7 +3340,8 @@ public class Options {
 		addRule("rule-owl-pkg-ontologyName-iso191502");
 		addRule("rule-owl-pkg-versionInfo");
 		addRule("rule-owl-pkg-versionIRI");
-		addRule("rule-owl-pkg-singleOntologyPerSchema");
+		addRule("rule-owl-pkg-versionIRI-avoid-duplicate-version");
+		addRule("rule-owl-pkg-singleOntologyPerSchema");		
 
 		addRule("rule-owl-cls-codelist-external");
 		addRule("rule-owl-cls-codelist-19150-2");
@@ -3351,6 +3352,12 @@ public class Options {
 		addRule("rule-owl-cls-codelist-19150-2-skos-collection");
 		addRule("rule-owl-cls-disjoint-classes");
 		addRule("rule-owl-cls-iso191502Enumeration");
+		
+		addRule("rule-owl-cls-encode-featuretypes");
+		addRule("rule-owl-cls-encode-basictypes");
+		addRule("rule-owl-cls-encode-datatypes");
+		addRule("rule-owl-cls-encode-mixintypes");
+		addRule("rule-owl-cls-encode-objecttypes");
 		addRule("rule-owl-cls-enumerationAsCodelist");
 		addRule("rule-owl-cls-generalization");
 		addRule("rule-owl-cls-iso191502IsAbstract");		
@@ -3395,31 +3402,6 @@ public class Options {
 		 * Application schema metadata rules
 		 */
 		addRule("rule-asm-all-identify-profiles");
-
-		// // ==================
-		// // Transformer rules
-		// // ==================
-		//
-		// /*
-		// * Flattener rules
-		// */
-		// addRule("rule-trf-all-removeType");
-		// addRule("rule-trf-prop-flatten-ONINAs");
-		// addRule("rule-trf-prop-optionality");
-		// addRule("rule-trf-cls-flatten-inheritance");
-		// addRule("rule-trf-prop-flatten-multiplicity");
-		// addRule("rule-trf-prop-flatten-types");
-		// addRule("rule-trf-all-flatten-name");
-		// addRule("rule-trf-all-flatten-constraints");
-		// addRule("rule-trf-prop-remove-name-and-alias-component");
-		// addRule("rule-trf-prop-flatten-homogeneousgeometries");
-		//
-		// /*
-		// * Profiler rules
-		// */
-		// addRule("rule-trf-profiling-preprocessing-profilesValueConsistencyCheck");
-		// addRule("rule-trf-profiling-preprocessing-modelConsistencyCheck");
-		// addRule("rule-trf-profiling-postprocessing-removeEmptyPackages");
 
 	}
 
