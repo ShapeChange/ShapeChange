@@ -46,7 +46,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2456,10 +2455,8 @@ public class Flattener implements Transformer {
 
 						GenericPropertyInfo uGPi = (GenericPropertyInfo) uPi;
 
-						UUID id = UUID.randomUUID();
-
-						GenericPropertyInfo copy = uGPi
-								.createCopy(id.toString());
+						GenericPropertyInfo copy = uGPi.createCopy(relPi.id()
+								+ "_replacedByUnionProperty_" + uGPi.name());
 
 						copy.setInClass(genCi);
 
@@ -2781,10 +2778,10 @@ public class Flattener implements Transformer {
 							 */
 							GenericPropertyInfo typeGPi = (GenericPropertyInfo) typePi;
 
-							UUID id = UUID.randomUUID();
+							String id = genPi.id() + "_replacedBy_"
+									+ typeGPi.name();
 
-							GenericPropertyInfo copy = typeGPi
-									.createCopy(id.toString());
+							GenericPropertyInfo copy = typeGPi.createCopy(id);
 
 							// merge global identifier information
 							if (genCi.globalId() == null) {
@@ -4018,9 +4015,6 @@ public class Flattener implements Transformer {
 	private void applyRuleInheritance(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
 
-		// Map<String, GenericClassInfo> genClasses =
-		// genModel.selectedSchemaClasses();
-
 		// key: class id, value: class
 		Map<String, GenericClassInfo> genSuperclassesById = new HashMap<String, GenericClassInfo>();
 		Map<String, GenericClassInfo> genLeafclassesById = new HashMap<String, GenericClassInfo>();
@@ -4314,8 +4308,8 @@ public class Flattener implements Transformer {
 			PropertyInfo pi1 = genAi.end1();
 			PropertyInfo pi2 = genAi.end2();
 
-			String name1 = pi1.inClass().name();
-			String name2 = pi2.inClass().name();
+			String namePi1InClass = pi1.inClass().name();
+			String namePi2InClass = pi2.inClass().name();
 
 			/*
 			 * check that at least one end of the association belongs to a
@@ -4348,17 +4342,21 @@ public class Flattener implements Transformer {
 						&& pi1.inClass() instanceof GenericClassInfo)) {
 
 					result.addWarning(null, 20336,
-							(name1.compareTo(name2) <= 0) ? name1 : name2,
-							(name1.compareTo(name2) <= 0) ? name2 : name1,
-							name1);
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi1InClass : namePi2InClass,
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi2InClass : namePi1InClass,
+							namePi1InClass);
 
 				} else {
 
 					// pi2 is not an instance of GenericPropertyInfo
 					result.addWarning(null, 20336,
-							(name1.compareTo(name2) <= 0) ? name1 : name2,
-							(name1.compareTo(name2) <= 0) ? name2 : name1,
-							name2);
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi1InClass : namePi2InClass,
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi2InClass : namePi1InClass,
+							namePi2InClass);
 				}
 
 				continue;
@@ -4377,6 +4375,13 @@ public class Flattener implements Transformer {
 			GenericPropertyInfo genPi2Orig = (GenericPropertyInfo) pi2;
 
 			/*
+			 * Note on cast: should be safe because we checked before that the
+			 * inClasses of pi1 and pi2 are instances of GenericClassInfo
+			 */
+			GenericClassInfo genPi1InClass = (GenericClassInfo) pi1.inClass();
+			GenericClassInfo genPi2InClass = (GenericClassInfo) pi2.inClass();
+
+			/*
 			 * compute new names and aliases for genPi1Orig and genPi2Orig
 			 * (WARNING: NOT for the subtype specific property copies) which
 			 * will be set later on, depending on the actual case
@@ -4386,21 +4391,17 @@ public class Flattener implements Transformer {
 			String newGenPi2OrigName = pi2.name() + separator
 					+ pi1.inClass().name();
 
-			String newAliasPi1Orig = (hasCode(pi1))
-					? getCode(pi1) + separator + (hasCode(pi2.inClass())
-							? getCode(pi2.inClass()) : pi2.inClass().name())
-					: null;
-			String newAliasPi2Orig = (hasCode(pi2))
-					? getCode(pi2) + separator + (hasCode(pi1.inClass())
-							? getCode(pi1.inClass()) : pi1.inClass().name())
-					: null;
+			String codePi1 = hasCode(pi1) ? getCode(pi1) : pi1.name();
+			String codePi2 = hasCode(pi2) ? getCode(pi2) : pi2.name();
+			String codePi1InClass = hasCode(genPi1InClass)
+					? getCode(genPi1InClass) : genPi1InClass.name();
+			String codePi2InClass = hasCode(genPi2InClass)
+					? getCode(genPi2InClass) : genPi2InClass.name();
 
-			/*
-			 * Note on cast: should be safe because we checked before that the
-			 * inClasses of pi1 and pi2 are instances of GenericClassInfo
-			 */
-			GenericClassInfo genPi1InClass = (GenericClassInfo) pi1.inClass();
-			GenericClassInfo genPi2InClass = (GenericClassInfo) pi2.inClass();
+			String newAliasPi1Orig = (hasCode(pi1) || hasCode(genPi2InClass))
+					? codePi1 + separator + codePi2InClass : null;
+			String newAliasPi2Orig = (hasCode(pi2) || hasCode(genPi1InClass))
+					? codePi2 + separator + codePi1InClass : null;
 
 			/*
 			 * now create the new associations; first handle case of subtypes on
@@ -4462,18 +4463,25 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ subclassPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(subclassPi2InClass)
-												? getCode(subclassPi2InClass)
-												: subclassPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(subclassPi1InClass)
-												? getCode(subclassPi1InClass)
-												: subclassPi1InClass.name())
-								: null;
+						String codesubclassPi1InClass = hasCode(
+								subclassPi1InClass)
+										? getCode(subclassPi1InClass)
+										: subclassPi1InClass.name();
+						String codesubclassPi2InClass = hasCode(
+								subclassPi2InClass)
+										? getCode(subclassPi2InClass)
+										: subclassPi2InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(subclassPi2InClass))
+										? codePi1 + separator
+												+ codesubclassPi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(subclassPi1InClass))
+										? codePi2 + separator
+												+ codesubclassPi1InClass
+										: null;
 
 						StructuredNumber newSnPi1 = pi1.sequenceNumber()
 								.createCopyWithSuffix(sequenceNumberIndex);
@@ -4514,18 +4522,20 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ genPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(subclassPi2InClass)
-												? getCode(subclassPi2InClass)
-												: subclassPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(genPi1InClass)
-												? getCode(genPi1InClass)
-												: genPi1InClass.name())
-								: null;
+						String codesubclassPi2InClass = hasCode(
+								subclassPi2InClass)
+										? getCode(subclassPi2InClass)
+										: subclassPi2InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(subclassPi2InClass))
+										? codePi1 + separator
+												+ codesubclassPi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(genPi1InClass))
+										? codePi2 + separator + codePi1InClass
+										: null;
 
 						StructuredNumber newSnPi1 = pi1.sequenceNumber()
 								.createCopyWithSuffix(sequenceNumberIndex);
@@ -4569,18 +4579,20 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ subclassPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(genPi2InClass)
-												? getCode(genPi2InClass)
-												: genPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(subclassPi1InClass)
-												? getCode(subclassPi1InClass)
-												: subclassPi1InClass.name())
-								: null;
+						String codesubclassPi1InClass = hasCode(
+								subclassPi1InClass)
+										? getCode(subclassPi1InClass)
+										: subclassPi1InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(genPi2InClass))
+										? codePi1 + separator + codePi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(subclassPi1InClass))
+										? codePi2 + separator
+												+ codesubclassPi1InClass
+										: null;
 
 						/*
 						 * the value type of pi1 is always pi2.inClass() - by
@@ -4649,13 +4661,16 @@ public class Flattener implements Transformer {
 							String newNamePi2 = pi2.name() + separator
 									+ subclassPi1InClass.name();
 
-							String newAliasPi2 = (hasCode(pi2))
-									? getCode(pi2) + separator
-											+ (hasCode(subclassPi1InClass)
-													? getCode(
-															subclassPi1InClass)
-													: subclassPi1InClass.name())
-									: null;
+							String codesubclassPi1InClass = hasCode(
+									subclassPi1InClass)
+											? getCode(subclassPi1InClass)
+											: subclassPi1InClass.name();
+
+							String newAliasPi2 = (hasCode(pi2)
+									|| hasCode(subclassPi1InClass))
+											? codePi2 + separator
+													+ codesubclassPi1InClass
+											: null;
 
 							/*
 							 * the value type of pi1 is always pi2.inClass() -
@@ -4722,13 +4737,16 @@ public class Flattener implements Transformer {
 							String newNamePi1 = pi1.name() + separator
 									+ subclassPi2InClass.name();
 
-							String newAliasPi1 = (hasCode(pi1))
-									? getCode(pi1) + separator
-											+ (hasCode(subclassPi2InClass)
-													? getCode(
-															subclassPi2InClass)
-													: subclassPi2InClass.name())
-									: null;
+							String codesubclassPi2InClass = hasCode(
+									subclassPi2InClass)
+											? getCode(subclassPi2InClass)
+											: subclassPi2InClass.name();
+
+							String newAliasPi1 = (hasCode(pi1)
+									|| hasCode(subclassPi2InClass))
+											? codePi1 + separator
+													+ codesubclassPi2InClass
+											: null;
 
 							StructuredNumber newSnPi1 = pi1.sequenceNumber()
 									.createCopyWithSuffix(sequenceNumberIndex);

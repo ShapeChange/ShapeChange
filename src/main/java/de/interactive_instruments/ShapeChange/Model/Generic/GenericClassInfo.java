@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.Vector;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -1323,9 +1322,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			 */
 			GenericPropertyInfo genProp = (GenericPropertyInfo) propI;
 
-			// String newId = genProp.id() + "_copyFor" + copyId;
-			UUID id = UUID.randomUUID();
-			String newId = id.toString();
+			String newId = genProp.name() + "_propertyCopyFor_" + copyId;
 
 			GenericPropertyInfo propCopy = genProp.createCopy(newId);
 

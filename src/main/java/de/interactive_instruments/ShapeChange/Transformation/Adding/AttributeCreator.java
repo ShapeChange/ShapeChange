@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -306,7 +305,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 	@Override
 	public void process(GenericModel m, Options o,
 			TransformerConfiguration trfConfig, ShapeChangeResult r)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		this.result = r;
 		this.options = o;
@@ -370,7 +369,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 							continue;
 						}
 
-						UUID id = UUID.randomUUID();
+						String id = attDef.getName() + "_addedToClass_"
+								+ genCi.id();
 
 						GenericPropertyInfo genPi = new GenericPropertyInfo(
 								model, id.toString(), attDef.getName(),
@@ -425,8 +425,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 							} else {
 
-								tvsForPi.add("sequenceNumber", ""
-										+ genPi.getNextNumberForAttributeWithoutExplicitSequenceNumber());
+								tvsForPi.add("sequenceNumber", "" + genPi
+										.getNextNumberForAttributeWithoutExplicitSequenceNumber());
 							}
 
 						} else {
@@ -474,7 +474,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 										}
 									}
 									sn = sn.createCopyWithSuffix(newComponent);
-									tvsForPi.put("sequenceNumber", sn.getString());
+									tvsForPi.put("sequenceNumber",
+											sn.getString());
 								}
 							}
 
