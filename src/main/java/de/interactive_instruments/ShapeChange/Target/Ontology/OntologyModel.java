@@ -33,8 +33,6 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1769,7 +1767,7 @@ public class OntologyModel implements MessageSource {
 	 * @param uri
 	 *            location of the ontology to import
 	 */
-	protected void addImport(String rdfns, String uri) {
+	public void addImport(String rdfns, String uri) {
 
 		if (rdfns == null || rdfns.equals(this.rdfNamespace)) {
 			return;
@@ -2538,12 +2536,6 @@ public class OntologyModel implements MessageSource {
 		if (cons.isEmpty())
 			return;
 
-		Collections.sort(cons, new Comparator<Constraint>() {
-			public int compare(Constraint c1, Constraint c2) {
-				return c1.name().compareTo(c2.name());
-			}
-		});
-
 		if (i.matches(
 				OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_HUMAN_READABLE_TEXT_ONLY)) {
 
@@ -2837,6 +2829,7 @@ public class OntologyModel implements MessageSource {
 
 				String clvUri = classURI + "/" + pi.name();
 				Individual clv = ontmodelIndi.createIndividual(clvUri, c);
+				ontmodelIndi.setNsPrefix(this.prefix, this.rdfNamespace);
 
 				codesByUri.put(clvUri, clv);
 

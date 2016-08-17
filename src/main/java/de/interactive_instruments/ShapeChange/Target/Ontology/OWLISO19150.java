@@ -815,6 +815,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
 				relevantPi = model.schemaPackage(ci);
+				
+				if(relevantPi == null) {
+					/*
+					 * can happen if, for example, the inClass of a reverse
+					 * property is in a schema that was not selected for
+					 * processing
+					 */
+					return null;
+				}
 
 			} else {
 				/*
@@ -823,7 +832,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				 */
 				relevantPi = pCi;
 			}
-
+			
 			OntologyModel om = ontologyByPiMap.get(relevantPi);
 
 			if (isEncodedAsCodeList(ci)) {

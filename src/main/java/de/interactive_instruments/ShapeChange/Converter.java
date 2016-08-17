@@ -736,7 +736,7 @@ public class Converter {
 		else if (imt.equalsIgnoreCase("xmi10"))
 			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
 		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
+			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
 
 		// Transformations of the model are only supported for EA models
 		if (imt.equals(
