@@ -156,7 +156,8 @@ public class OntologyModel implements MessageSource {
 	private SortedMap<PropertyInfo, Resource> rangeByPropertyInfo = new TreeMap<PropertyInfo, Resource>();
 
 	private ConstraintMapping defaultConstraintMapping = new ConstraintMapping(
-			null, "iso19150-2:constraint", "[[name]]: [[text]]", "", " ");
+			null, "iso19150-2:constraint", "[[name]]: [[text]]", "", " ",
+			ConstraintMapping.Format.STRING);
 
 	private SortedSet<String> uniquePropertyNames = new TreeSet<String>();
 
@@ -1978,14 +1979,21 @@ public class OntologyModel implements MessageSource {
 		OntProperty mappedProperty = mapProperty(pi);
 
 		if (mappedProperty != null) {
-			MessageContext mc = result.addDebug(this, 21, pi.name(),
-					mappedProperty.getURI());
-			if (mc != null) {
-				mc.addDetail(this, 10001, pi.fullName());
-			}
-			return mappedProperty;
-			// }
-
+//			if (mappedProperty.getURI()
+//					.equals(computeReference("sc", "null"))) {
+//				MessageContext mc = result.addInfo(this, 20, pi.name());
+//				if (mc != null)
+//					mc.addDetail(this, 10001, pi.fullName());
+//				return null;
+//			} else {
+				MessageContext mc = result.addDebug(this, 21, pi.name(),
+						mappedProperty.getURI());
+				if (mc != null) {
+					mc.addDetail(this, 10001, pi.fullName());
+				}
+				return mappedProperty;
+				// }
+//			}
 		} else if (pi.isAttribute() && pi
 				.matches(OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES)) {
 			/*
@@ -2451,6 +2459,11 @@ public class OntologyModel implements MessageSource {
 			// get QName
 			String qname = pme.getTarget();
 
+//			if (qname.isEmpty()) {
+//				// property to be dropped
+//				qname = "sc:null";
+//			}
+
 			String[] qnamePars = qname.split(":");
 			String prefix = qnamePars[0];
 			String refName = qnamePars[1];
@@ -2460,8 +2473,9 @@ public class OntologyModel implements MessageSource {
 			String location = config.locationOfNamespace(rdfNs);
 
 			// also add import for the namespace
-			// if (!qname.equalsIgnoreCase("sc:null"))
-			addImport(rdfNs, location);
+//			if (!qname.equalsIgnoreCase("sc:null")) {
+				addImport(rdfNs, location);
+//			}
 
 			// return property, create if needed
 			String propAbout = computeReference(prefix, refName);
@@ -2707,7 +2721,13 @@ public class OntologyModel implements MessageSource {
 
 				Property prop = ontmodel.createProperty(propertyIRI);
 
-				r.addProperty(prop, builder.toString());
+				if (cm.getFormat() == ConstraintMapping.Format.LANG_STRING) {
+					r.addProperty(prop, builder.toString(),
+							owliso19150.getLanguage());
+				} else {
+					// cm.getFormat() == ConstraintMapping.Format.STRING
+					r.addProperty(prop, builder.toString());
+				}
 			}
 		}
 	}

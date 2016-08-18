@@ -2408,9 +2408,19 @@ public class Options {
 					String mvct = cmE.hasAttribute("multiValueConnectorToken")
 							? cmE.getAttribute("multiValueConnectorToken")
 							: " ";
+							
+					ConstraintMapping.Format format = ConstraintMapping.Format.STRING;
+					if (cmE.hasAttribute("format")) {
+						String tmp2 = cmE.getAttribute("format");
+						if (tmp2.trim().equalsIgnoreCase("string")) {
+							format = ConstraintMapping.Format.STRING;
+						} else {
+							format = ConstraintMapping.Format.LANG_STRING;
+						}
+					}
 
 					ConstraintMapping cm = new ConstraintMapping(constraintType,
-							target, template, noValue, mvct);
+							target, template, noValue, mvct, format);
 
 					/*
 					 * NOTE: constraints defined in the XSD for TargetOwl ensure

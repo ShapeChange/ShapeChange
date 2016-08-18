@@ -42,7 +42,12 @@ public class ConstraintMapping {
 		OCL, FOL, TEXT
 	}
 
+	public enum Format {
+		STRING, LANG_STRING
+	}
+
 	private ConstraintType constraintType;
+	private Format format;
 	private String target;
 	private String template;
 	private String noValue;
@@ -56,13 +61,15 @@ public class ConstraintMapping {
 	 * @param multiValueConnectorToken
 	 */
 	public ConstraintMapping(ConstraintType constraintType, String target,
-			String template, String noValue, String multiValueConnectorToken) {
+			String template, String noValue, String multiValueConnectorToken,
+			Format format) {
 		super();
 		this.constraintType = constraintType;
 		this.target = target;
 		this.template = template;
 		this.noValue = noValue;
 		this.multiValueConnectorToken = multiValueConnectorToken;
+		this.format = format;
 	}
 
 	/**
@@ -115,5 +122,19 @@ public class ConstraintMapping {
 	 */
 	public String getMultiValueConnectorToken() {
 		return multiValueConnectorToken;
+	}
+
+	/**
+	 * @return Defines the format of the target property value:
+	 *         <ul>
+	 *         <li>langString: language tagged string; the configuration
+	 *         parameter "language" (in the ontology target configuration)
+	 *         provides the value of the language tag</li>
+	 *         <li>string: string without language tag</li>
+	 *         </ul>
+	 * 
+	 */
+	public Format getFormat() {
+		return format;
 	}
 }

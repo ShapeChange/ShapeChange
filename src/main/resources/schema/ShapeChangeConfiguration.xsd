@@ -788,6 +788,14 @@
             <attribute name="template" type="string" use="required"/>
             <attribute default="" name="noValue" type="string"/>
             <attribute default=" " name="multiValueConnectorToken" type="string"/>
+            <attribute default="string" name="format">
+              <simpleType>
+                <restriction base="string">
+                  <enumeration value="langString"/>
+                  <enumeration value="string"/>
+                </restriction>
+              </simpleType>
+            </attribute>
           </complexType>
         </element>
       </sequence>
