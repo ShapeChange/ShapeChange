@@ -1474,7 +1474,7 @@ public class OntologyModel implements MessageSource {
 
 			String doc = template;
 
-			Pattern pattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
+			Pattern pattern = Pattern.compile("\\[\\[([^\\[].*?)\\]\\]");
 			// TV(\(.+?\))?:(.+) -> "TV(\\(.+?\\))?:(.+)"
 			Matcher matcher = pattern.matcher(template);
 
@@ -2614,7 +2614,7 @@ public class OntologyModel implements MessageSource {
 
 				String doc = template;
 
-				Pattern pattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
+				Pattern pattern = Pattern.compile("\\[\\[([^\\[].*?)\\]\\]");
 				Matcher matcher = pattern.matcher(template);
 
 				StringBuilder builder = new StringBuilder();
