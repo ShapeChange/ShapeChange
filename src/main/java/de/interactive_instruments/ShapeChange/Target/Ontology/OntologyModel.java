@@ -1979,21 +1979,21 @@ public class OntologyModel implements MessageSource {
 		OntProperty mappedProperty = mapProperty(pi);
 
 		if (mappedProperty != null) {
-//			if (mappedProperty.getURI()
-//					.equals(computeReference("sc", "null"))) {
-//				MessageContext mc = result.addInfo(this, 20, pi.name());
-//				if (mc != null)
-//					mc.addDetail(this, 10001, pi.fullName());
-//				return null;
-//			} else {
-				MessageContext mc = result.addDebug(this, 21, pi.name(),
-						mappedProperty.getURI());
-				if (mc != null) {
-					mc.addDetail(this, 10001, pi.fullName());
-				}
-				return mappedProperty;
-				// }
-//			}
+			// if (mappedProperty.getURI()
+			// .equals(computeReference("sc", "null"))) {
+			// MessageContext mc = result.addInfo(this, 20, pi.name());
+			// if (mc != null)
+			// mc.addDetail(this, 10001, pi.fullName());
+			// return null;
+			// } else {
+			MessageContext mc = result.addDebug(this, 21, pi.name(),
+					mappedProperty.getURI());
+			if (mc != null) {
+				mc.addDetail(this, 10001, pi.fullName());
+			}
+			return mappedProperty;
+			// }
+			// }
 		} else if (pi.isAttribute() && pi
 				.matches(OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES)) {
 			/*
@@ -2459,10 +2459,10 @@ public class OntologyModel implements MessageSource {
 			// get QName
 			String qname = pme.getTarget();
 
-//			if (qname.isEmpty()) {
-//				// property to be dropped
-//				qname = "sc:null";
-//			}
+			// if (qname.isEmpty()) {
+			// // property to be dropped
+			// qname = "sc:null";
+			// }
 
 			String[] qnamePars = qname.split(":");
 			String prefix = qnamePars[0];
@@ -2473,9 +2473,9 @@ public class OntologyModel implements MessageSource {
 			String location = config.locationOfNamespace(rdfNs);
 
 			// also add import for the namespace
-//			if (!qname.equalsIgnoreCase("sc:null")) {
-				addImport(rdfNs, location);
-//			}
+			// if (!qname.equalsIgnoreCase("sc:null")) {
+			addImport(rdfNs, location);
+			// }
 
 			// return property, create if needed
 			String propAbout = computeReference(prefix, refName);
@@ -2918,14 +2918,15 @@ public class OntologyModel implements MessageSource {
 				}
 			}
 
-			if (ci.category() == Options.ENUMERATION && ci.matches(
-					OWLISO19150.RULE_OWL_CLS_CODELIST_191502_OBJECTONEOFFORENUMERATION)) {
+			if (ci.category() == Options.ENUMERATION
+					&& !ci.properties().isEmpty() && ci.matches(
+							OWLISO19150.RULE_OWL_CLS_CODELIST_191502_OBJECTONEOFFORENUMERATION)) {
 
 				c.addProperty(OWL2.oneOf,
 						ontmodel.createList(codesByUri.values().iterator()));
 			}
 
-			if (ci.matches(
+			if (!ci.properties().isEmpty() && ci.matches(
 					OWLISO19150.RULE_OWL_CLS_CODELIST_191502_DIFFERENTINDIVIDUALS)) {
 
 				ontmodelIndi.createAllDifferent(ontmodelIndi

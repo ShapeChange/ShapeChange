@@ -193,7 +193,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RULE_OWL_CLS_GENERALIZATION = "rule-owl-cls-generalization";
 
 	public static final String RULE_OWL_CLS_DISJOINT_CLASSES = "rule-owl-cls-disjoint-classes";
-	
+
 	public static final String RULE_OWL_CLS_ENCODE_FEATURETYPES = "rule-owl-cls-encode-featuretypes";
 	public static final String RULE_OWL_CLS_ENCODE_OBJECTTYPES = "rule-owl-cls-encode-objecttypes";
 	public static final String RULE_OWL_CLS_ENCODE_MIXINTYPES = "rule-owl-cls-encode-mixintypes";
@@ -627,6 +627,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				if (ci.matches(
 						OWLISO19150.RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE)) {
 
+					if (codeListOwlClassNamespace != null
+							&& codeListOwlClassNamespaceForEnumerations != null) {
+						// rule does not have any effect
+						result.addWarning(this, 9);
+					}
+
 					if (ci.category() == Options.ENUMERATION
 							&& codeListOwlClassNamespaceForEnumerations != null) {
 						/*
@@ -649,6 +655,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 									"", "enumerations", this);
 							ontologyByRdfNs.put(rdfns, om);
 						}
+						
 					} else if (codeListOwlClassNamespace != null) {
 
 						/*
@@ -670,11 +677,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 									"code_lists", this);
 							ontologyByRdfNs.put(rdfns, om);
 						}
-
-					} else {
-						// rule does not have any effect
-						result.addWarning(this, 9);
 					}
+
 				} else {
 					/*
 					 * the class itself will be added to the OntologyModel to
@@ -683,6 +687,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -815,8 +820,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
 				relevantPi = model.schemaPackage(ci);
-				
-				if(relevantPi == null) {
+
+				if (relevantPi == null) {
 					/*
 					 * can happen if, for example, the inClass of a reverse
 					 * property is in a schema that was not selected for
@@ -832,7 +837,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				 */
 				relevantPi = pCi;
 			}
-			
+
 			OntologyModel om = ontologyByPiMap.get(relevantPi);
 
 			if (isEncodedAsCodeList(ci)) {
