@@ -1470,6 +1470,17 @@ public class OntologyModel implements MessageSource {
 
 		for (DescriptorTarget dt : this.config.getDescriptorTargets()) {
 
+			if (!dt.getAppliesTo().isEmpty()
+					&& ((dt.getAppliesTo().equalsIgnoreCase("package")
+							&& !(i instanceof PackageInfo))
+							|| (dt.getAppliesTo().equalsIgnoreCase("class")
+									&& !(i instanceof ClassInfo))
+							|| (dt.getAppliesTo().equalsIgnoreCase("property")
+									&& !(i instanceof PropertyInfo)))) {
+				// Descriptor target does not apply to the Info object
+				return;
+			}
+
 			String template = dt.getTemplate();
 
 			String doc = template;

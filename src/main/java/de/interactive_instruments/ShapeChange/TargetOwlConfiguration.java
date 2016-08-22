@@ -511,6 +511,16 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 
 		for (DescriptorTarget dt : this.descriptorTargets) {
 
+			/* Check appliesTo */
+			String appliesTo = dt.getAppliesTo();
+			if (!appliesTo.isEmpty()
+					&& !(appliesTo.matches("(?i:package|class|property)"))) {
+				messages.add(
+						"Value of 'appliesTo' attribute in DescriptorTarget configuration element for 'target' "
+								+ dt.getTarget()
+								+ " must be empty or one of: 'package', 'class', 'property'.");
+			}
+
 			/* Check template */
 			Matcher matcher = templatePattern.matcher(dt.getTemplate());
 			while (matcher.find()) {

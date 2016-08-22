@@ -736,6 +736,7 @@
       <sequence>
         <element maxOccurs="unbounded" minOccurs="0" name="DescriptorTarget">
           <complexType>
+            <attribute name="appliesTo" type="string"/>
             <attribute name="target" type="string" use="required"/>
             <attribute name="template" type="string" use="required"/>
             <attribute default="langString" name="format">

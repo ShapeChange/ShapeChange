@@ -50,6 +50,7 @@ public class DescriptorTarget {
 		CONNECT_IN_SINGLE_TARGET, SPLIT_TO_MULTIPLE_TARGETS
 	}
 
+	private String appliesTo;
 	private String target;
 	private String template;
 	private Format format;
@@ -59,6 +60,7 @@ public class DescriptorTarget {
 	private String multiValueConnectorToken;
 
 	/**
+	 * @param appliesTo
 	 * @param target
 	 * @param template
 	 * @param format
@@ -67,11 +69,12 @@ public class DescriptorTarget {
 	 * @param multiValueBehavior
 	 * @param multiValueConnectorToken
 	 */
-	public DescriptorTarget(String target, String template, Format format,
-			NoValueBehavior noValueBehavior, String noValueText,
+	public DescriptorTarget(String appliesTo, String target, String template,
+			Format format, NoValueBehavior noValueBehavior, String noValueText,
 			MultiValueBehavior multiValueBehavior,
 			String multiValueConnectorToken) {
 		super();
+		this.appliesTo = appliesTo != null ? appliesTo : "";
 		this.target = target;
 		this.template = template;
 		this.format = format;
@@ -79,6 +82,13 @@ public class DescriptorTarget {
 		this.noValueText = noValueText;
 		this.multiValueBehavior = multiValueBehavior;
 		this.multiValueConnectorToken = multiValueConnectorToken;
+	}
+
+	/**
+	 * @return describes to which model elements the descriptor applies
+	 */
+	public String getAppliesTo() {
+		return appliesTo;
 	}
 
 	/**

@@ -237,7 +237,7 @@ public class Options {
 	 * elements shall be loaded ("true") or not. Default is to not load them.
 	 */
 	public static final String PARAM_LOAD_GLOBAL_IDENTIFIERS = "loadGlobalIdentifiers";
-	
+
 	public static final String PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES = "dontConstructAssociationNames";
 
 	/**
@@ -1566,14 +1566,15 @@ public class Options {
 
 			if (useStringInterning_value != null && useStringInterning_value
 					.trim().equalsIgnoreCase("true")) {
-				this.useStringInterning = true; 
+				this.useStringInterning = true;
 			}
-						
+
 			String dontConstructAssociationNames_value = parameter(
 					PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES);
 
-			if (dontConstructAssociationNames_value != null && dontConstructAssociationNames_value
-					.trim().equalsIgnoreCase("true")) {
+			if (dontConstructAssociationNames_value != null
+					&& dontConstructAssociationNames_value.trim()
+							.equalsIgnoreCase("true")) {
 				this.dontConstructAssociationNames = true;
 			}
 
@@ -2408,7 +2409,7 @@ public class Options {
 					String mvct = cmE.hasAttribute("multiValueConnectorToken")
 							? cmE.getAttribute("multiValueConnectorToken")
 							: " ";
-							
+
 					ConstraintMapping.Format format = ConstraintMapping.Format.STRING;
 					if (cmE.hasAttribute("format")) {
 						String tmp2 = cmE.getAttribute("format");
@@ -2497,11 +2498,14 @@ public class Options {
 						}
 					}
 
+					String appliesTo = dtE.hasAttribute("appliesTo")
+							? dtE.getAttribute("appliesTo").trim() : "";
+
 					String mvct = dtE.hasAttribute("multiValueConnectorToken")
 							? dtE.getAttribute("multiValueConnectorToken")
 							: " ";
 
-					DescriptorTarget dt = new DescriptorTarget(target, template,
+					DescriptorTarget dt = new DescriptorTarget(appliesTo, target, template,
 							format, noValueBehavior, noValueText,
 							multiValueBehavior, mvct);
 
@@ -3351,7 +3355,7 @@ public class Options {
 		addRule("rule-owl-pkg-versionInfo");
 		addRule("rule-owl-pkg-versionIRI");
 		addRule("rule-owl-pkg-versionIRI-avoid-duplicate-version");
-		addRule("rule-owl-pkg-singleOntologyPerSchema");		
+		addRule("rule-owl-pkg-singleOntologyPerSchema");
 
 		addRule("rule-owl-cls-codelist-external");
 		addRule("rule-owl-cls-codelist-19150-2");
@@ -3362,7 +3366,7 @@ public class Options {
 		addRule("rule-owl-cls-codelist-19150-2-skos-collection");
 		addRule("rule-owl-cls-disjoint-classes");
 		addRule("rule-owl-cls-iso191502Enumeration");
-		
+
 		addRule("rule-owl-cls-encode-featuretypes");
 		addRule("rule-owl-cls-encode-basictypes");
 		addRule("rule-owl-cls-encode-datatypes");
@@ -3370,7 +3374,7 @@ public class Options {
 		addRule("rule-owl-cls-encode-objecttypes");
 		addRule("rule-owl-cls-enumerationAsCodelist");
 		addRule("rule-owl-cls-generalization");
-		addRule("rule-owl-cls-iso191502IsAbstract");		
+		addRule("rule-owl-cls-iso191502IsAbstract");
 		addRule("rule-owl-cls-union");
 		addRule("rule-owl-cls-unionSets");
 
@@ -3677,7 +3681,7 @@ public class Options {
 
 		return this.useStringInterning;
 	}
-		
+
 	public boolean dontConstructAssociationNames() {
 		return this.dontConstructAssociationNames;
 	}
