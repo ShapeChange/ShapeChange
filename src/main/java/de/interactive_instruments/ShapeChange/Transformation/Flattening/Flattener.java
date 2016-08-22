@@ -159,6 +159,24 @@ public class Flattener implements Transformer {
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
 	public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
+
+	// Parameters for RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES
+	/**
+	 * Alias: none
+	 * <p>
+	 * Type: String (with Java compliant regular expression)
+	 * <p>
+	 * Default Value: none
+	 * <p>
+	 * Behavior: This parameter identifies the unions that shall NOT be
+	 * flattened. The value of this parameter contains a (Java compliant)
+	 * regular expression which, if it matches the name of a union, marks it to
+	 * be excluded by the Flattener.
+	 * <p>
+	 * Applies to Rule(s): rule-trf-cls-replace-with-union-properties
+	 */
+	public static final String PARAM_REPLACE_UNION_EXCLUDE_REGEX = "replaceUnionExcludeRegex";
+
 	/**
 	 * If this parameter is set to <code>true</code>, then properties that
 	 * originate from flattening a specific union will be tagged (with tag '
@@ -2398,11 +2416,38 @@ public class Flattener implements Transformer {
 			}
 		}
 
+		Pattern replaceUnionExcludePattern = null;
+		if (trfConfig.hasParameter(PARAM_REPLACE_UNION_EXCLUDE_REGEX)) {
+			String replaceUnionExcludeRegex = trfConfig
+					.getParameterValue(PARAM_REPLACE_UNION_EXCLUDE_REGEX);
+			replaceUnionExcludePattern = Pattern
+					.compile(replaceUnionExcludeRegex);
+		}
+
 		// identify all union classes
 		SortedSet<GenericClassInfo> unionsToProcess = new TreeSet<GenericClassInfo>();
+
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
 			if (genCi.category() == Options.UNION) {
-				unionsToProcess.add(genCi);
+
+				if (replaceUnionExcludePattern != null) {
+
+					Matcher m = replaceUnionExcludePattern
+							.matcher(genCi.name());
+
+					if (m.matches()) {
+						/*
+						 * alright, then the type shall be excluded from
+						 * processing
+						 */
+					} else {
+						unionsToProcess.add(genCi);
+					}
+
+				} else {
+					unionsToProcess.add(genCi);
+				}
 			}
 		}
 
@@ -2542,8 +2587,11 @@ public class Flattener implements Transformer {
 			}
 		}
 
-		// remove processed unions that are no longer used by properties of the
-		// selected schemas
+		/*
+		 * remove processed unions that are no longer used by properties of the
+		 * selected schemas; to do so, first identify which of the processed
+		 * unions are still in use
+		 */
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 			if (processedUnionsById.containsKey(genPi.typeInfo().id)) {
@@ -3172,9 +3220,7 @@ public class Flattener implements Transformer {
 		 * is true or if they match the inclusion regex. Remove data types
 		 * unless they have been excluded (via configuration parameter).
 		 */
-		if (this.excludeDataTypePattern != null)
-
-		{
+		if (this.excludeDataTypePattern != null) {
 
 			/*
 			 * TODO this does not remove data types that were not used by
