@@ -1478,7 +1478,7 @@ public class OntologyModel implements MessageSource {
 							|| (dt.getAppliesTo().equalsIgnoreCase("property")
 									&& !(i instanceof PropertyInfo)))) {
 				// Descriptor target does not apply to the Info object
-				return;
+				continue;
 			}
 
 			String template = dt.getTemplate();
