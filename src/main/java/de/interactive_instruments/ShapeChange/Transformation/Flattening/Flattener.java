@@ -228,6 +228,9 @@ public class Flattener implements Transformer {
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
 
+	// Parameters for RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP
+	public static final String PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX = "removeInheritanceIncludeRegex";
+
 	// =============================
 	/* Flattener rule identifiers */
 	// =============================
@@ -291,6 +294,14 @@ public class Flattener implements Transformer {
 	 * Does NOT copy associations!
 	 */
 	public static final String RULE_TRF_CLS_DISSOLVE_MIXINS = "rule-trf-cls-dissolve-mixins";
+
+	/**
+	 * Removes inheritance relationships of classes to the classes whose name
+	 * matches the regular expression provided by parameter. NOTE: Applies to
+	 * classes in the whole model!
+	 * {@value #PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX}
+	 */
+	public static final String RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP = "rule-trf-cls-remove-inheritance-relationship";
 
 	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
 
@@ -679,6 +690,12 @@ public class Flattener implements Transformer {
 			applyRulePropUnionDirectOptionality(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
+			applyRuleRemoveInheritanceRelationship(genModel, trfConfig);
+		}
+
 		// postprocessing
 		result.addInfo(null, 20317, "postprocessing");
 
@@ -755,6 +772,78 @@ public class Flattener implements Transformer {
 		for (GenericClassInfo mixin : mixinsToRemove) {
 
 			genModel.remove(mixin);
+		}
+	}
+
+	/**
+	 * @see #RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP
+	 * @param genModel
+	 * @param trfConfig
+	 */
+	private void applyRuleRemoveInheritanceRelationship(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		if (!trfConfig.hasParameter(PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+				|| trfConfig
+						.getParameterValue(
+								PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+						.trim().isEmpty()) {
+			result.addWarning(null, 20343,
+					PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX,
+					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
+			return;
+		}
+
+		String includeRegex = trfConfig
+				.getParameterValue(PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+				.trim();
+
+		/*
+		 * identify the supertypes in the model that shall be disconnected from
+		 * their subtypes
+		 */
+		Pattern includePattern = Pattern.compile(includeRegex);
+
+		Set<String> idsOfRelevantSupertypes = new HashSet<String>();
+
+		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+
+			Matcher m = includePattern.matcher(genCi.name());
+
+			if (m.matches()) {
+				idsOfRelevantSupertypes.add(genCi.id());
+				
+				genCi.setSubtypes(null);
+			}
+		}
+
+		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+
+			if (genCi.baseClass() != null && idsOfRelevantSupertypes
+					.contains(genCi.baseClass().id())) {
+				genCi.setBaseClass(null);
+			}
+
+			TreeSet<String> idsOfSupertypesToKeep = new TreeSet<String>();
+
+			for (String supertypeId : genCi.supertypes()) {
+				if (idsOfRelevantSupertypes.contains(supertypeId)) {
+					/*
+					 * alright, we won't add this supertype to the set of
+					 * supertypes to keep
+					 */
+				} else {
+					idsOfSupertypesToKeep.add(supertypeId);
+				}
+			}
+
+			genCi.setSupertypes(idsOfSupertypesToKeep);
+
+			if (idsOfSupertypesToKeep.size() == 1) {
+				GenericClassInfo base = genModel.getGenClasses()
+						.get(idsOfSupertypesToKeep.first());
+				genCi.setBaseClass(base);
+			}
 		}
 	}
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:ri="http://shapechange.net/test/flattening/removeInheritance" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/removeInheritance" version="FIXME">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="CurvePositionInfo" substitutionGroup="gml:AbstractGML" type="ri:CurvePositionInfoType"/>
+  <complexType name="CurvePositionInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="pPositionInfo" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CurvePositionInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ri:CurvePositionInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="PointPositionInfo" substitutionGroup="gml:AbstractGML" type="ri:PointPositionInfoType"/>
+  <complexType name="PointPositionInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="pPositionInfo" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PointPositionInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ri:PointPositionInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

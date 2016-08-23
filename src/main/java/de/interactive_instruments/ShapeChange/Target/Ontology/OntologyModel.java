@@ -3119,7 +3119,7 @@ public class OntologyModel implements MessageSource {
 		case 36:
 			return "Property shall be mapped to global property '$1$' in schema '$2$', but this global property could not be found. The range will be computed based upon the given property.";
 		case 37:
-			return "??No RdfTypeMapEntry is defined for the value type of property '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
+			return "??No RdfTypeMapEntry is defined for the value type '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
 		case 38:
 			return "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
 

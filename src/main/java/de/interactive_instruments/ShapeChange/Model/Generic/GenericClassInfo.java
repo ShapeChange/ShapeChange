@@ -762,7 +762,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * NOTE: does NOT return a shallow copy, thus modifications of the returned
 	 * set will modify the subtype information for this class
 	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#subtypes()
+	 * @return Set with the ids of all direct subtypes of this class. Can be
+	 *         empty but not <code>null</code>.
 	 */
 	public TreeSet<String> subtypes() {
 
@@ -1645,7 +1646,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 					StructuredNumber snNewProp = newProp.sequenceNumber();
 
-					snNewProp.components[0] = maxMajorComponentExistingProps + 1;
+					snNewProp.components[0] = maxMajorComponentExistingProps
+							+ 1;
 				}
 
 				this.addProperty(newProp, duplicateHandling);

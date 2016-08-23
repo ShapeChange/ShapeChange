@@ -1062,6 +1062,8 @@ public class ShapeChangeResult {
 			return "(Flattener.java) Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
 		case 20342:
 			return "(Flattener.java) Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
+		case 20343:
+			return "(Flattener.java) Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
 
 			/* Generic Model related messages */
 			// (30000-30099) Messages used in multiple generic model classes

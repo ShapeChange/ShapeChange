@@ -449,6 +449,13 @@ public class BasicTest {
 					"src/test/resources/reference/flattening/inheritance");
 
 			/*
+			 * Flattening transformation - removing inheritance
+			 */
+			multiTest("src/test/resources/config/testEA_Flattening_removeInheritance.xml",
+					new String[] { "xsd" }, "testResults/flattening/removeInheritance/xsd",
+					"src/test/resources/reference/flattening/removeInheritance/xsd");
+			
+			/*
 			 * Flattening transformation - cycles (and isFlatTarget setting)
 			 */
 			multiTest("src/test/resources/config/testEA_Flattening_cycles.xml",
