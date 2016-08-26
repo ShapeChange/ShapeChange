@@ -81,6 +81,10 @@ public class RdfPropertyMapEntry {
 	public boolean hasSchema() {
 		return schema != null;
 	}
+	
+	public boolean hasTarget() {
+		return target != null;
+	}
 
 	/**
 	 * @return IRI of the RDF/OWL property to which the UML property shall be

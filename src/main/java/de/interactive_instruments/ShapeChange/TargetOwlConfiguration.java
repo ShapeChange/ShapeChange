@@ -511,16 +511,6 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 
 		for (DescriptorTarget dt : this.descriptorTargets) {
 
-			/* Check appliesTo */
-			String appliesTo = dt.getAppliesTo();
-			if (!appliesTo.isEmpty()
-					&& !(appliesTo.matches("(?i:package|class|property)"))) {
-				messages.add(
-						"Value of 'appliesTo' attribute in DescriptorTarget configuration element for 'target' "
-								+ dt.getTarget()
-								+ " must be empty or one of: 'package', 'class', 'property'.");
-			}
-
 			/* Check template */
 			Matcher matcher = templatePattern.matcher(dt.getTemplate());
 			while (matcher.find()) {
@@ -659,17 +649,23 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 			 * check that 'target' is a QName with prefix matching one of the
 			 * namespaces declared in the configuration
 			 */
-			String target = rpme.getTarget();
-			if (!target.contains(":") || target.startsWith(":")
-					|| target.endsWith(":")
-					|| !this.hasNamespaceWithAbbreviation(
-							target.split(":")[0])) {
-				messages.add("Value '" + target
-						+ "' of attribute 'target' in the RdfPropertyMapEntry configuration element (for property '"
-						+ property + "'"
-						+ (rpme.hasSchema()
-								? " in schema '" + rpme.getSchema() + "'" : "")
-						+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
+			if (rpme.hasTarget()) {
+
+				String target = rpme.getTarget();
+
+				if (!target.contains(":") || target.startsWith(":")
+						|| target.endsWith(":")
+						|| !this.hasNamespaceWithAbbreviation(
+								target.split(":")[0])) {
+					messages.add(
+							"Value '" + target
+									+ "' of attribute 'target' in the RdfPropertyMapEntry configuration element (for property '"
+									+ property + "'" + (rpme.hasSchema()
+											? " in schema '" + rpme.getSchema()
+													+ "'"
+											: "")
+									+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
+				}
 			}
 
 			/*

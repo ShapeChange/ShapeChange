@@ -2337,7 +2337,11 @@ public class Options {
 					String schema = rpmeE.hasAttribute("schema")
 							? rpmeE.getAttribute("schema").trim() : null;
 
-					String target = rpmeE.getAttribute("target").trim();
+					String target = rpmeE.hasAttribute("target")
+							? rpmeE.getAttribute("target").trim() : null;
+					if (target != null && target.isEmpty()) {
+						target = null;
+					}
 
 					String range = rpmeE.hasAttribute("range")
 							? rpmeE.getAttribute("range").trim() : null;
@@ -2498,16 +2502,34 @@ public class Options {
 						}
 					}
 
-					String appliesTo = dtE.hasAttribute("appliesTo")
-							? dtE.getAttribute("appliesTo").trim() : "";
+					DescriptorTarget.AppliesTo appliesTo = DescriptorTarget.AppliesTo.ALL;
+					if (dtE.hasAttribute("appliesTo")) {
+						String tmp = dtE.getAttribute("appliesTo");
+						if (tmp.trim()
+								.equalsIgnoreCase("ontology")) {
+							appliesTo = DescriptorTarget.AppliesTo.ONTOLOGY;
+						} else if (tmp.trim()
+								.equalsIgnoreCase("class")) {
+							appliesTo = DescriptorTarget.AppliesTo.CLASS;
+						} else if (tmp.trim()
+								.equalsIgnoreCase("conceptscheme")) {
+							appliesTo = DescriptorTarget.AppliesTo.CONCEPT_SCHEME;
+						} else if (tmp.trim()
+								.equalsIgnoreCase("property")) {
+							appliesTo = DescriptorTarget.AppliesTo.PROPERTY;
+						} else {
+							appliesTo = DescriptorTarget.AppliesTo.ALL;
+						}
+					}
 
 					String mvct = dtE.hasAttribute("multiValueConnectorToken")
 							? dtE.getAttribute("multiValueConnectorToken")
 							: " ";
 
-					DescriptorTarget dt = new DescriptorTarget(appliesTo, target, template,
-							format, noValueBehavior, noValueText,
-							multiValueBehavior, mvct);
+							
+					DescriptorTarget dt = new DescriptorTarget(appliesTo,
+							target, template, format, noValueBehavior,
+							noValueText, multiValueBehavior, mvct);
 
 					result.add(dt);
 				}

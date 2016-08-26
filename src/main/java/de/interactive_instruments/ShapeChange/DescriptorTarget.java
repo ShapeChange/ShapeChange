@@ -49,8 +49,12 @@ public class DescriptorTarget {
 	public enum MultiValueBehavior {
 		CONNECT_IN_SINGLE_TARGET, SPLIT_TO_MULTIPLE_TARGETS
 	}
+	
+	public enum AppliesTo {
+		ONTOLOGY, CLASS, CONCEPT_SCHEME, PROPERTY, ALL
+	}
 
-	private String appliesTo;
+	private AppliesTo appliesTo;
 	private String target;
 	private String template;
 	private Format format;
@@ -69,12 +73,12 @@ public class DescriptorTarget {
 	 * @param multiValueBehavior
 	 * @param multiValueConnectorToken
 	 */
-	public DescriptorTarget(String appliesTo, String target, String template,
+	public DescriptorTarget(AppliesTo appliesTo, String target, String template,
 			Format format, NoValueBehavior noValueBehavior, String noValueText,
 			MultiValueBehavior multiValueBehavior,
 			String multiValueConnectorToken) {
 		super();
-		this.appliesTo = appliesTo != null ? appliesTo : "";
+		this.appliesTo = appliesTo;
 		this.target = target;
 		this.template = template;
 		this.format = format;
@@ -87,7 +91,7 @@ public class DescriptorTarget {
 	/**
 	 * @return describes to which model elements the descriptor applies
 	 */
-	public String getAppliesTo() {
+	public AppliesTo getAppliesTo() {
 		return appliesTo;
 	}
 

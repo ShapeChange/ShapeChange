@@ -357,7 +357,8 @@ public class OntologyModel implements MessageSource {
 					owliso19150.getLanguage());
 		}
 
-		applyDescriptorTargets(ontology, mpackage);
+		applyDescriptorTargets(ontology, mpackage,
+				DescriptorTarget.AppliesTo.ONTOLOGY);
 	}
 
 	/**
@@ -1433,7 +1434,7 @@ public class OntologyModel implements MessageSource {
 		this.ontClassByClassInfo.put(ci, c);
 		this.resourceByClassInfo.put(ci, c);
 
-		applyDescriptorTargets(c, ci);
+		applyDescriptorTargets(c, ci, DescriptorTarget.AppliesTo.CLASS);
 
 		if (ci.isAbstract()
 				&& ci.matches(OWLISO19150.RULE_OWL_CLS_19150_2_ISABSTRACT)) {
@@ -1466,17 +1467,25 @@ public class OntologyModel implements MessageSource {
 		}
 	}
 
-	private void applyDescriptorTargets(OntResource c, Info i) {
+	private void applyDescriptorTargets(OntResource c, Info i,
+			DescriptorTarget.AppliesTo appliesTo) {
 
 		for (DescriptorTarget dt : this.config.getDescriptorTargets()) {
 
-			if (!dt.getAppliesTo().isEmpty()
-					&& ((dt.getAppliesTo().equalsIgnoreCase("package")
-							&& !(i instanceof PackageInfo))
-							|| (dt.getAppliesTo().equalsIgnoreCase("class")
-									&& !(i instanceof ClassInfo))
-							|| (dt.getAppliesTo().equalsIgnoreCase("property")
-									&& !(i instanceof PropertyInfo)))) {
+			if (!appliesTo.equals(DescriptorTarget.AppliesTo.ALL)
+					&& (((i instanceof PackageInfo) && !dt.getAppliesTo()
+							.equals(DescriptorTarget.AppliesTo.ONTOLOGY))
+							|| ((i instanceof ClassInfo) && !((dt.getAppliesTo()
+									.equals(DescriptorTarget.AppliesTo.CLASS)
+									&& appliesTo
+											.equals(DescriptorTarget.AppliesTo.CLASS))
+									|| (dt.getAppliesTo()
+											.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME)
+											&& appliesTo
+													.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME))))
+							|| ((i instanceof PropertyInfo)
+									&& !dt.getAppliesTo().equals(
+											DescriptorTarget.AppliesTo.PROPERTY)))) {
 				// Descriptor target does not apply to the Info object
 				continue;
 			}
@@ -1990,21 +1999,20 @@ public class OntologyModel implements MessageSource {
 		OntProperty mappedProperty = mapProperty(pi);
 
 		if (mappedProperty != null) {
-			// if (mappedProperty.getURI()
-			// .equals(computeReference("sc", "null"))) {
-			// MessageContext mc = result.addInfo(this, 20, pi.name());
-			// if (mc != null)
-			// mc.addDetail(this, 10001, pi.fullName());
-			// return null;
-			// } else {
-			MessageContext mc = result.addDebug(this, 21, pi.name(),
-					mappedProperty.getURI());
-			if (mc != null) {
-				mc.addDetail(this, 10001, pi.fullName());
+			if (mappedProperty.getURI()
+					.equals(computeReference("sc", "null"))) {
+				MessageContext mc = result.addInfo(this, 20, pi.name());
+				if (mc != null)
+					mc.addDetail(this, 10001, pi.fullName());
+				return null;
+			} else {
+				MessageContext mc = result.addDebug(this, 21, pi.name(),
+						mappedProperty.getURI());
+				if (mc != null) {
+					mc.addDetail(this, 10001, pi.fullName());
+				}
+				return mappedProperty;
 			}
-			return mappedProperty;
-			// }
-			// }
 		} else if (pi.isAttribute() && pi
 				.matches(OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES)) {
 			/*
@@ -2110,7 +2118,7 @@ public class OntologyModel implements MessageSource {
 			p = op.asProperty();
 		}
 
-		applyDescriptorTargets(p, pi);
+		applyDescriptorTargets(p, pi, DescriptorTarget.AppliesTo.PROPERTY);
 		addConstraintDeclarations(p, pi);
 		addCustomSubPropertyOf(p, pi);
 
@@ -2468,12 +2476,14 @@ public class OntologyModel implements MessageSource {
 			// The property shall be mapped via RdfPropertyMapEntry
 
 			// get QName
-			String qname = pme.getTarget();
+			String qname;
 
-			// if (qname.isEmpty()) {
-			// // property to be dropped
-			// qname = "sc:null";
-			// }
+			if (pme.hasTarget()) {
+				qname = pme.getTarget();
+			} else {
+				// property to be dropped
+				qname = "sc:null";
+			}
 
 			String[] qnamePars = qname.split(":");
 			String prefix = qnamePars[0];
@@ -2484,9 +2494,9 @@ public class OntologyModel implements MessageSource {
 			String location = config.locationOfNamespace(rdfNs);
 
 			// also add import for the namespace
-			// if (!qname.equalsIgnoreCase("sc:null")) {
-			addImport(rdfNs, location);
-			// }
+			if (!qname.equalsIgnoreCase("sc:null")) {
+				addImport(rdfNs, location);
+			}
 
 			// return property, create if needed
 			String propAbout = computeReference(prefix, refName);
@@ -2804,7 +2814,7 @@ public class OntologyModel implements MessageSource {
 			OntClass c = ontmodel.createClass(classURI);
 			this.resourceByClassInfo.put(ci, c);
 
-			applyDescriptorTargets(c, ci);
+			applyDescriptorTargets(c, ci, DescriptorTarget.AppliesTo.CLASS);
 			addConstraintDeclarations(c, ci);
 			c.addSuperClass(SKOS.Concept);
 			addCustomSubClassOf(c, ci);
@@ -2845,6 +2855,8 @@ public class OntologyModel implements MessageSource {
 						SKOS.ConceptScheme);
 			}
 			cs.addProperty(DCTerms.isFormatOf, c);
+			applyDescriptorTargets(cs, ci,
+					DescriptorTarget.AppliesTo.CONCEPT_SCHEME);
 
 			// now add the individual concept definitions
 			SortedMap<StructuredNumber, PropertyInfo> clPis = ci.properties();
@@ -2873,7 +2885,8 @@ public class OntologyModel implements MessageSource {
 							broaderListedValue);
 				}
 
-				applyDescriptorTargets(clv, pi);
+				applyDescriptorTargets(clv, pi,
+						DescriptorTarget.AppliesTo.PROPERTY);
 				clv.addProperty(SKOS.inScheme, cs);
 			}
 
@@ -2981,7 +2994,7 @@ public class OntologyModel implements MessageSource {
 
 		this.resourceByClassInfo.put(ci, e);
 
-		applyDescriptorTargets(e, ci);
+		applyDescriptorTargets(e, ci, DescriptorTarget.AppliesTo.CLASS);
 		addConstraintDeclarations(e, ci);
 
 		// assign stereotype information
@@ -3083,9 +3096,9 @@ public class OntologyModel implements MessageSource {
 		case 19:
 			return "Property mapping with potentially inconsistent alias names. Alias of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
 		case 20:
-			return "??Property '$1$' has been dropped as specified in the configuration.";
+			return "Property '$1$' has been dropped as specified in the configuration.";
 		case 21:
-			return "??Property '$1$' has been mapped to '$2$' as specified in the configuration.";
+			return "Property '$1$' has been mapped to '$2$' as specified in the configuration.";
 		case 22:
 			return "??Class '$1$' has been mapped to '$2$' as specified in the configuration.";
 		case 23:
