@@ -922,9 +922,8 @@ public class OntologyModel implements MessageSource {
 
 					OntClass adw = ontmodel.createClass();
 					adw.setRDFType(OWL2.AllDisjointClasses);
-					for (Resource subtype : subtypeResources.values()) {
-						adw.addProperty(OWL2.members, subtype);
-					}
+					adw.addProperty(OWL2.members, ontmodel
+							.createList(subtypeResources.values().iterator()));
 				}
 			}
 

@@ -297,12 +297,29 @@ public class Flattener implements Transformer {
 
 	/**
 	 * Removes inheritance relationships of classes to the classes whose name
-	 * matches the regular expression provided by parameter. NOTE: Applies to
+	 * matches the regular expression provided by parameter
+	 * {@value #PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX}. NOTE: Applies to
 	 * classes in the whole model!
-	 * {@value #PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX}
+	 * 
 	 */
 	public static final String RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP = "rule-trf-cls-remove-inheritance-relationship";
 
+	/**
+	 * If only a single property (A) of a non-union type (e.g. a datatype) has a
+	 * specific union as value type, and if that property has maximum
+	 * multiplicity 1, then copies of the union properties replace property A.
+	 * The sequenceNumbers of the property copies will be adjusted, so that the
+	 * union property copies are correctly positioned within their new class.
+	 * Their multiplicity is also adjusted: minimum occurrence is the product of
+	 * the minimum occurrence of property A and the original union property,
+	 * while the maximum occurrence is "*" if the maximum occurrence of one of
+	 * the two properties is "*", otherwise it is the product of the maximum
+	 * occurrences.
+	 * 
+	 * Finally, those unions that 1) have been processed by this rule and 2) are
+	 * no longer used by properties of the selected schemas are removed from the
+	 * model.
+	 */
 	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
 
 	// =============================
@@ -812,7 +829,7 @@ public class Flattener implements Transformer {
 
 			if (m.matches()) {
 				idsOfRelevantSupertypes.add(genCi.id());
-				
+
 				genCi.setSubtypes(null);
 			}
 		}
