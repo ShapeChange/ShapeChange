@@ -401,18 +401,23 @@ public class BasicTest {
 					"src/test/resources/reference/rdf/skos");
 
 			/*
-			 * OWL 19150-2 ontologies
+			 * Ontology (based on ISO 19150-2) - single ontology per schema 
 			 */
-			String[] rdfowl = { "SchemaA/SchemaA", "SchemaB/SchemaB" };
-			// FIXME text comparison does not work, order changes each time,
-			// compare ttl files on a triple level (with Jena?)
-			// ttlTest("src/test/resources/config/testEA_owliso19150_default.xml",
-			// rdfowl, "testResults/ea/owl/default/INPUT",
-			// "src/test/resources/reference/rdf/owliso19150/default");
-			// ttlTest("src/test/resources/config/testEA_owliso19150_extensions.xml",
-			// rdfowl, "testResults/ea/owl/extensions/INPUT",
-			// "src/test/resources/reference/rdf/owliso19150/extensions");
-
+			multiTest(
+					"src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml",
+					new String[] { "ttl" },
+					"testResults/owl/singleOntologyPerSchema/owl",
+					"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
+			
+			/*
+			 * Ontology (based on ISO 19150-2) - multiple ontologies - one per package 
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_owliso_multipleOntologiesPerSchema.xml",
+					new String[] { "ttl" },
+					"testResults/owl/multipleOntologiesPerSchema/owl",
+					"src/test/resources/reference/owl/multipleOntologiesPerSchema/owl");
+			
 			/*
 			 * Flattening transformation
 			 */

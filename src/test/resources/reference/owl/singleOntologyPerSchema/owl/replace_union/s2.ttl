@@ -1,0 +1,77 @@
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix gml:   <http://www.opengis.net/ont/gml#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
+@prefix sc:    <http://shapechange.net/resources/ont/base#> .
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix sf:    <http://www.opengis.net/ont/sf#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix locn:  <https://www.w3.org/ns/locn#> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix s2:    <http://ontology.base.uri/s2#> .
+@prefix ex1:   <http://example.org/1#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+<http://ontology.base.uri/s2>
+        a                 owl:Ontology ;
+        rdfs:comment      "TV char: A, TV num: 1" , "TV char: C, TV num: 1" , "TV char: A, TV num: 3" , "TV char: C, TV num: 2" , "TV char: B, TV num: 1" , "TV char: B, TV num: 2" , "TV char: B, TV num: 3" , "TV char: A, TV num: 2" , "TV char: C, TV num: 3" ;
+        rdfs:isDefinedBy  <http://information.resource.uri/schema2> ;
+        rdfs:label        "Schema2 alias"@en ;
+        dct:source        "source by config"@en ;
+        owl:imports       <http://www.opengis.net/ont/geosparql> , <http://example.org/1> ;
+        owl:versionIRI    "http://ontology.base.uri/s2/1.2.3" ;
+        owl:versionInfo   "1.2.3" ;
+        skos:altLabel     "Schema2 label3"@en , "Schema2 label2"@en , "Schema2 label1"@en ;
+        skos:note         "TV char: A, B, C, TV num: 1, 2, 3" ;
+        skos:prefLabel    "Schema2 name by tagged value"@en .
+
+s2:TP6_Class3.tp6p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s2:TP6_Class3 ;
+        rdfs:range   xsd:boolean .
+
+s2:T4_Class1  a          owl:Class ;
+        rdfs:subClassOf  geo:Feature .
+
+s2:TP3_Class1  a         owl:Class ;
+        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s2:TP3_Class1.t3c1p1
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   ex1:propCommon
+                         ] .
+
+s2:TP3_Class1.t3c1p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s2:TP3_Class1 ;
+        rdfs:range   xsd:string .
+
+s2:TP6_Class3.tp6p2  a  owl:DatatypeProperty ;
+        rdfs:domain  s2:TP6_Class3 ;
+        rdfs:range   xsd:boolean .
+
+s2:TP6_Class3  a         owl:Class ;
+        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s2:TP6_Class3.tp6p3
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s2:TP6_Class3.tp6p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s2:TP6_Class3.tp6p1
+                         ] .
+
+s2:TP6_Class3.tp6p3  a      owl:DatatypeProperty ;
+        rdfs:domain         s2:TP6_Class3 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propD .

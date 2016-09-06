@@ -1068,7 +1068,7 @@ public class OntologyModel implements MessageSource {
 
 									// lower >= 1 and 1<=upper<*
 									// we need to represent this case in the
-									// intersection as a union of restrictions
+									// intersection as an intersection of restrictions
 
 									OntClass restriction_lower = createMinCardinalityRestriction(
 											p, lower);
@@ -1080,7 +1080,7 @@ public class OntologyModel implements MessageSource {
 									pi_main_restrictions.add(restriction_upper);
 
 									restriction = this.ontmodel
-											.createUnionClass(null,
+											.createIntersectionClass(null,
 													this.ontmodel.createList(
 															pi_main_restrictions
 																	.iterator()));
@@ -1108,7 +1108,7 @@ public class OntologyModel implements MessageSource {
 
 									// lower >= 1 and 1<=upper<*
 									// we need to represent this case in the
-									// intersection as a union of restrictions
+									// intersection as an intersection of restrictions
 
 									OntClass restriction_lower = createQMinCardinalityRestriction(
 											p, lower, range);
@@ -1120,7 +1120,7 @@ public class OntologyModel implements MessageSource {
 									pi_main_restrictions.add(restriction_upper);
 
 									restriction = this.ontmodel
-											.createUnionClass(null,
+											.createIntersectionClass(null,
 													this.ontmodel.createList(
 															pi_main_restrictions
 																	.iterator()));
@@ -1471,7 +1471,8 @@ public class OntologyModel implements MessageSource {
 
 		for (DescriptorTarget dt : this.config.getDescriptorTargets()) {
 
-			if (!appliesTo.equals(DescriptorTarget.AppliesTo.ALL)
+			if (!dt.getAppliesTo().equals(DescriptorTarget.AppliesTo.ALL)
+					&& !appliesTo.equals(DescriptorTarget.AppliesTo.ALL)
 					&& (((i instanceof PackageInfo) && !dt.getAppliesTo()
 							.equals(DescriptorTarget.AppliesTo.ONTOLOGY))
 							|| ((i instanceof ClassInfo) && !((dt.getAppliesTo()
@@ -2822,7 +2823,7 @@ public class OntologyModel implements MessageSource {
 			OntologyModel ontForIndividuals = owliso19150
 					.computeRelevantOntologyForIndividuals(ci);
 			OntModel ontmodelIndi = ontForIndividuals.getOntologyModel();
-
+			
 			// create ConceptScheme <SKOS>
 			String schemeURI = ontForIndividuals.getRdfNamespace()
 					+ normalizedName(ci)
@@ -2867,9 +2868,12 @@ public class OntologyModel implements MessageSource {
 			// is defined for a property
 			SortedMap<String, String> broaderListedValueByPropertyName = new TreeMap<String, String>();
 
+			String indiBaseURI = ontForIndividuals.getRdfNamespace()
+					+ normalizedName(ci);
+			
 			for (PropertyInfo pi : clPis.values()) {
 
-				String clvUri = classURI + "/" + pi.name();
+				String clvUri = indiBaseURI + "/" + pi.name();
 				Individual clv = ontmodelIndi.createIndividual(clvUri, c);
 				ontmodelIndi.setNsPrefix(this.prefix, this.rdfNamespace);
 

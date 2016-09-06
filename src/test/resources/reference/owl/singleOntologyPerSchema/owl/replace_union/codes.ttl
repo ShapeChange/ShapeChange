@@ -1,0 +1,108 @@
+@prefix cc:    <http://my.org/codelists#> .
+@prefix c:     <http://my.org/codes#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix gml:   <http://www.opengis.net/ont/gml#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
+@prefix sc:    <http://shapechange.net/resources/ont/base#> .
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix sf:    <http://www.opengis.net/ont/sf#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix locn:  <https://www.w3.org/ns/locn#> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix ex1:   <http://example.org/1#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+[ a                    owl:AllDifferent ;
+  owl:distinctMembers  ( <http://my.org/codes#T8_CodeList3/code1> <http://my.org/codes#T8_CodeList3/code2> )
+] .
+
+<http://my.org/codes#T8_CodeList3/code2>
+        a                  cc:T8_CodeList3 ;
+        skos:definition    "Definition code2"@en ;
+        skos:inScheme      c:T8_CodeList3_Scheme ;
+        skos:topConceptOf  c:T8_CodeList3_Scheme .
+
+<http://my.org/codes#T8_CodeList5/code3>
+        a              cc:T8_CodeList5 ;
+        skos:broader   <http://my.org/codes#T8_CodeList5/code1> ;
+        skos:inScheme  c:T8_CodeList5_Scheme .
+
+c:T8_CodeList3_Scheme
+        a                c:T8_CodeList3_SchemeSubclassSuffix ;
+        dct:isFormatOf   cc:T8_CodeList3 ;
+        skos:definition  "Definition code list 3"@en .
+
+<http://my.org/codes>
+        a       owl:Ontology .
+
+c:T8_CodeList3_SchemeSubclassSuffix
+        a                owl:Class ;
+        rdfs:subClassOf  skos:ConceptScheme .
+
+<http://my.org/codes#T8_CodeList3/code1>
+        a                  cc:T8_CodeList3 ;
+        skos:definition    "Definition code1"@en ;
+        skos:inScheme      c:T8_CodeList3_Scheme ;
+        skos:topConceptOf  c:T8_CodeList3_Scheme .
+
+c:T8_CodeList4_SchemeCollection
+        a            skos:Collection ;
+        skos:member  <http://my.org/codes#T8_CodeList4/code2> , <http://my.org/codes#T8_CodeList4/code1> .
+
+<http://my.org/codes#T8_CodeList5/code2>
+        a                  cc:T8_CodeList5 ;
+        skos:inScheme      c:T8_CodeList5_Scheme ;
+        skos:topConceptOf  c:T8_CodeList5_Scheme .
+
+<http://my.org/codes#T8_CodeList5/code1>
+        a                  cc:T8_CodeList5 ;
+        skos:inScheme      c:T8_CodeList5_Scheme ;
+        skos:topConceptOf  c:T8_CodeList5_Scheme .
+
+c:T8_CodeList3_SchemeCollection
+        a            skos:Collection ;
+        skos:member  <http://my.org/codes#T8_CodeList3/code2> , <http://my.org/codes#T8_CodeList3/code1> .
+
+<http://my.org/conceptSchemes/scheme1>
+        a                owl:Class ;
+        rdfs:subClassOf  skos:ConceptScheme .
+
+[ a                    owl:AllDifferent ;
+  owl:distinctMembers  ( <http://my.org/codes#T8_CodeList5/code1> <http://my.org/codes#T8_CodeList5/code2> <http://my.org/codes#T8_CodeList5/code3> )
+] .
+
+<http://my.org/codes#T8_CodeList4/code2>
+        a                  cc:T8_CodeList4 ;
+        skos:inScheme      c:T8_CodeList4_Scheme ;
+        skos:topConceptOf  c:T8_CodeList4_Scheme .
+
+c:T8_CodeList5_Scheme
+        a               c:T8_CodeList5_SchemeSubclassSuffix ;
+        dct:isFormatOf  cc:T8_CodeList5 .
+
+c:T8_CodeList5_SchemeSubclassSuffix
+        a                owl:Class ;
+        rdfs:subClassOf  skos:ConceptScheme .
+
+<http://my.org/codes#T8_CodeList4/code1>
+        a                  cc:T8_CodeList4 ;
+        skos:inScheme      c:T8_CodeList4_Scheme ;
+        skos:topConceptOf  c:T8_CodeList4_Scheme .
+
+c:T8_CodeList4_Scheme
+        a               <http://my.org/conceptSchemes/scheme1> ;
+        dct:isFormatOf  cc:T8_CodeList4 .
+
+[ a                    owl:AllDifferent ;
+  owl:distinctMembers  ( <http://my.org/codes#T8_CodeList4/code1> <http://my.org/codes#T8_CodeList4/code2> )
+] .
+
+c:T8_CodeList5_SchemeCollection
+        a            skos:Collection ;
+        skos:member  <http://my.org/codes#T8_CodeList5/code3> , <http://my.org/codes#T8_CodeList5/code2> , <http://my.org/codes#T8_CodeList5/code1> .

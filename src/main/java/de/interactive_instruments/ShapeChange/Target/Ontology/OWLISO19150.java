@@ -627,8 +627,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				if (ci.matches(
 						OWLISO19150.RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE)) {
 
-					if (codeListOwlClassNamespace != null
-							&& codeListOwlClassNamespaceForEnumerations != null) {
+					if (codeListOwlClassNamespace == null
+							&& codeListOwlClassNamespaceForEnumerations == null) {
 						// rule does not have any effect
 						result.addWarning(this, 9);
 					}

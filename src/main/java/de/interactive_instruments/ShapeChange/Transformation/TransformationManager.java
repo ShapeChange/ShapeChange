@@ -417,6 +417,7 @@ public class TransformationManager {
 								 * this can be ignored, because TextConstraint
 								 * is not validated
 								 */
+								newConstraints.add(con);
 							} else {
 
 								/*

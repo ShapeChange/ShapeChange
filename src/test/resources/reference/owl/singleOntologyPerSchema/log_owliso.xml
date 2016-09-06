@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml" end="Tue Sep 06 14:01:09 CEST 2016" resultCode="0" start="Tue Sep 06 14:00:57 CEST 2016" version="2.1.1-SNAPSHOT">
+  <Messages>
+    <Info message="Application schema found, package name: 'Schema2', target namespace: 'http://target.namespace/schema2'"/>
+    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Schema1', target namespace: 'http://target.namespace/schema1'"/>
+    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'replace_union' for input ID: 'INPUT'."/>
+    <Info message="(Flattener.java) ========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-cls-replace-with-union-properties ----------"/>
+    <Info message="(Flattener.java) ========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'replace_union' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Schema2', target namespace: 'http://target.namespace/schema2'"/>
+    <Info message="(Converter.java) Now processing target 'ISO 19150-2 OWL Ontology' for input 'replace_union'."/>
+    <Info message="Application schema found, package name: 'Schema1', target namespace: 'http://target.namespace/schema1'"/>
+    <Info message="(Converter.java) Now processing target 'ISO 19150-2 OWL Ontology' for input 'replace_union'."/>
+    <Warning message="Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.">
+      <Detail message="--- Context - Property: Schema1::class_tests::Test8 code lists::T8_CodeList5::code2"/>
+    </Warning>
+    <Info message="Property 'p1' is mapped to global property 'http://ontology.base.uri/s1#p1' as specified in the configuration.">
+      <Detail message="--- Context - Property: Model::Test Model::Schema1::property_tests::TestP4 global properties::TP4_Class1::p1"/>
+    </Info>
+    <Info message="Property 'p1' is mapped to global property 'http://ontology.base.uri/s1#p1' as specified in the configuration.">
+      <Detail message="--- Context - Property: Model::Test Model::Schema1::property_tests::TestP4 global properties::TP4_Class2::p1"/>
+    </Info>
+    <Info message="Property 'p2' is mapped to global property 'http://ontology.base.uri/s1#p2' as specified in the configuration.">
+      <Detail message="--- Context - Property: Model::Test Model::Schema1::property_tests::TestP4 global properties::TP4_Class4::p2"/>
+    </Info>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150' for input ID: 'replace_union'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Schema2', target namespace: 'http://target.namespace/schema2'"/>
+    <Info message="(Converter.java) Now processing target 'Feature Catalogue' for input 'replace_union'."/>
+    <Info message="Application schema found, package name: 'Schema1', target namespace: 'http://target.namespace/schema1'"/>
+    <Info message="(Converter.java) Now processing target 'Feature Catalogue' for input 'replace_union'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' for input ID: 'replace_union'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Executed deferred output write for target class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' for input ID: 'replace_union'."/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/xsd/INPUT/s2.xsd" scope="http://target.namespace/schema2" target="XML Schema">s2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/xsd/INPUT/s1.xsd" scope="http://target.namespace/schema1" target="XML Schema">s1.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/code_lists.ttl" scope="http://my.org/codelists" target="ISO 19150-2 OWL Ontology">code_lists.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/codes.ttl" scope="http://my.org/codes" target="ISO 19150-2 OWL Ontology">codes.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/enumerations.ttl" scope="http://my.org/enumerations" target="ISO 19150-2 OWL Ontology">enumerations.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/enums.ttl" scope="http://my.org/enums" target="ISO 19150-2 OWL Ontology">enums.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/s1.ttl" scope="http://ontology.base.uri/s1" target="ISO 19150-2 OWL Ontology">s1.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/owl/replace_union/s2.ttl" scope="http://ontology.base.uri/s2" target="ISO 19150-2 OWL Ontology">s2.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/singleOntologyPerSchema/html/replace_union/test.html" target="Feature Catalogue">test.html</Result>
+  </Results>
+</ShapeChangeResult>

@@ -1548,9 +1548,6 @@ public class Options {
 				}
 			}
 
-			/*
-			 * TODO add documentation
-			 */
 			String ignoreEncodingRuleTaggedValues = parameter(
 					PARAM_IGNORE_ENCODING_RULE_TVS);
 
