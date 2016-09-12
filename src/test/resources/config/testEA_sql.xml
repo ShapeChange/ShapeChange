@@ -5,7 +5,7 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
-		<parameter name="addTaggedValues" value="maxOccurs,code,size,formcols,formrows,validate,Reiter" />
+		<parameter name="addTaggedValues" value="code" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile" value="src/test/resources/test_sql.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test(2)?" />

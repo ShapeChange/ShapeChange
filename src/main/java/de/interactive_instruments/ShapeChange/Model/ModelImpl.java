@@ -88,19 +88,23 @@ public abstract class ModelImpl implements Model {
 			"maxLength", "base", "rangeMinimum", "rangeMaximum", "default",
 			"nilReasonAllowed", "gmlImplementedByNilReason", "primaryCode",
 			"secondaryCode", "oclExpressions", "schPatterns", "unitMeasure",
-			"voidable", "infoURL", "alias", "gmlAsCharacterString", "gmlMixin",
-			"nillable", "suppress", "codeList", "codeListValuePattern",
-			"codeListRepresentation", "uomResourceURI",
-			"uomResourceValuePattern", "uomResourceRepresentation",
-			"physicalQuantity", "recommendedMeasure", "noncomparableMeasure",
-			"asXMLAttribute", "soft-typed", "parent", "AAA:Kennung",
-			"AAA:Datum", "AAA:Organisation", "AAA:Modellart", "AAA:Profile",
+			"voidable", "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
+			"suppress", "codeListValuePattern", "codeListRepresentation",
+			"uomResourceURI", "uomResourceValuePattern",
+			"uomResourceRepresentation", "physicalQuantity",
+			"recommendedMeasure", "noncomparableMeasure", "asXMLAttribute",
+			"soft-typed", "parent", "AAA:Kennung", "AAA:Datum",
+			"AAA:Organisation", "AAA:Modellart", "AAA:Profile",
 			"AAA:Grunddatenbestand", "AAA:Nutzungsart",
 			"AAA:Nutzungsartkennung", "AAA:objektbildend", "AAA:Themen",
 			"AAA:Revisionsnummer", "reverseRoleNAS", "allowedTypesNAS",
 			"gmlArrayProperty", "gmlListProperty", "example",
-			"dataCaptureStatement", "legalBasis", "profiles" };
-	// TODO update this with missing tags from other targets?
+			"dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL",
+			"broaderListedValue", "skosConceptSchemeSubclassName", "size",
+			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
+			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
+			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
+			"vocabulary", "associativeTable" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -441,15 +445,15 @@ public abstract class ModelImpl implements Model {
 	public PackageInfo schemaPackage(ClassInfo ci) {
 
 		PackageInfo p = ci.pkg();
-		
+
 		do {
-			if(p.isSchema() || p.isAppSchema()) {
+			if (p.isSchema() || p.isAppSchema()) {
 				return p;
 			} else {
 				p = p.owner();
 			}
-		} while(p != null);
-		
+		} while (p != null);
+
 		return null;
 	}
 
