@@ -65,7 +65,6 @@ import org.apache.jena.vocabulary.OWL2;
 import de.interactive_instruments.ShapeChange.DescriptorTarget;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
-import de.interactive_instruments.ShapeChange.Namespace;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
 import de.interactive_instruments.ShapeChange.RdfPropertyMapEntry;
@@ -107,8 +106,6 @@ public class OntologyModel implements MessageSource {
 
 	private Model model = null;
 	private PackageInfo mpackage = null;
-
-	private boolean printed = false;
 
 	/**
 	 * group 0: the whole input string group 1: the string to use as separator
@@ -171,17 +168,36 @@ public class OntologyModel implements MessageSource {
 		}
 	}
 
+	private OntologyModel(Model m, Options o, ShapeChangeResult r,
+			String xmlprefix, OWLISO19150 owliso19150) {
+
+		this.model = m;
+		this.options = o;
+		this.result = r;
+		this.prefix = xmlprefix;
+		this.owliso19150 = owliso19150;
+		this.config = this.owliso19150.getConfig();
+
+		this.ontmodel.setNsPrefix("rdf", OWLISO19150.RDF_NS_W3C_RDF);
+		this.ontmodel.setNsPrefix("rdfs", OWLISO19150.RDF_NS_W3C_RDFS);
+		this.ontmodel.setNsPrefix("owl", OWLISO19150.RDF_NS_W3C_OWL);
+		this.ontmodel.setNsPrefix("xsd", OWLISO19150.RDF_NS_W3C_XML_SCHEMA);
+
+		if (owliso19150.getDefaultTypeImplementation() == null) {
+			defaultTypeImplementation = OWL.Class;
+		} else {
+			defaultTypeImplementation = mapClass(
+					owliso19150.getDefaultTypeImplementation());
+		}
+	}
+
 	public OntologyModel(PackageInfo pi, Model m, Options o,
 			ShapeChangeResult r, String xmlprefix, OWLISO19150 owliso19150)
 			throws ShapeChangeAbortException {
 
-		this.options = o;
-		this.result = r;
-		this.model = m;
+		this(m, o, r, xmlprefix, owliso19150);
+
 		this.mpackage = pi;
-		this.prefix = xmlprefix;
-		this.owliso19150 = owliso19150;
-		this.config = this.owliso19150.getConfig();
 
 		String ontologyName = null;
 
@@ -262,13 +278,6 @@ public class OntologyModel implements MessageSource {
 			this.path = computePath(pi);
 		}
 
-		if (owliso19150.getDefaultTypeImplementation() == null) {
-			defaultTypeImplementation = OWL.Class;
-		} else {
-			defaultTypeImplementation = mapClass(
-					owliso19150.getDefaultTypeImplementation());
-		}
-
 		/*
 		 * identify properties that have a unique name amongst the properties of
 		 * classes that belong to the ontology
@@ -299,26 +308,6 @@ public class OntologyModel implements MessageSource {
 		 */
 		this.rdfNamespace = name + owliso19150.getRdfNamespaceSeparator();
 
-		/*
-		 * MODEL SETUP
-		 */
-
-		// load all namespaces from the configuration
-		if (this.config.getNamespaces() != null) {
-			for (Namespace ns : this.config.getNamespaces()) {
-				this.ontmodel.setNsPrefix(ns.getNsabr(), ns.getNs());
-			}
-		}
-
-		this.ontmodel.setNsPrefix("rdf", OWLISO19150.RDF_NS_W3C_RDF);
-		this.ontmodel.setNsPrefix("rdfs", OWLISO19150.RDF_NS_W3C_RDFS);
-		this.ontmodel.setNsPrefix("owl", OWLISO19150.RDF_NS_W3C_OWL);
-		this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
-		this.ontmodel.setNsPrefix("dc", OWLISO19150.RDF_NS_DC);
-		this.ontmodel.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
-		this.ontmodel.setNsPrefix("xsd", OWLISO19150.RDF_NS_W3C_XML_SCHEMA);
-		this.ontmodel.setNsPrefix(OWLISO19150.PREFIX_ISO_19150_2,
-				OWLISO19150.RDF_NS_ISO_19150_2);
 		this.ontmodel.setNsPrefix(prefix, rdfNamespace);
 
 		ontology = ontmodel.createOntology(name);
@@ -345,13 +334,12 @@ public class OntologyModel implements MessageSource {
 		}
 
 		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_IMPORT_191502BASE)) {
-			ontmodel.setNsPrefix(OWLISO19150.PREFIX_ISO_19150_2,
-					OWLISO19150.RDF_NS_ISO_19150_2);
 			addImport(OWLISO19150.RDF_NS_ISO_19150_2,
 					config.locationOfNamespace(OWLISO19150.RDF_NS_ISO_19150_2));
 		}
 
 		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_DCT_SOURCE_TITLE)) {
+			ontmodel.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
 			ontology.addProperty(DCTerms.source,
 					owliso19150.computeSource(mpackage),
 					owliso19150.getLanguage());
@@ -381,44 +369,13 @@ public class OntologyModel implements MessageSource {
 			String rdfns, String name, String path, String fileName,
 			OWLISO19150 owliso19150) throws ShapeChangeAbortException {
 
-		this.options = o;
-		this.result = r;
-		this.model = m;
-		this.prefix = prefix;
-		this.owliso19150 = owliso19150;
-		this.config = this.owliso19150.getConfig();
+		this(m, o, r, prefix, owliso19150);
 
 		this.name = name;
 		this.path = path;
 		this.fileName = fileName;
 
-		if (owliso19150.getDefaultTypeImplementation() == null) {
-			defaultTypeImplementation = OWL.Class;
-		} else {
-			defaultTypeImplementation = mapClass(
-					owliso19150.getDefaultTypeImplementation());
-		}
-
 		this.rdfNamespace = rdfns;
-
-		/*
-		 * MODEL SETUP
-		 */
-
-		// load all namespaces from the configuration
-		if (this.config.getNamespaces() != null) {
-			for (Namespace ns : this.config.getNamespaces()) {
-				this.ontmodel.setNsPrefix(ns.getNsabr(), ns.getNs());
-			}
-		}
-
-		this.ontmodel.setNsPrefix("rdf", OWLISO19150.RDF_NS_W3C_RDF);
-		this.ontmodel.setNsPrefix("rdfs", OWLISO19150.RDF_NS_W3C_RDFS);
-		this.ontmodel.setNsPrefix("owl", OWLISO19150.RDF_NS_W3C_OWL);
-		this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
-		this.ontmodel.setNsPrefix("dc", OWLISO19150.RDF_NS_DC);
-		this.ontmodel.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
-		this.ontmodel.setNsPrefix("xsd", OWLISO19150.RDF_NS_W3C_XML_SCHEMA);
 
 		this.ontmodel.setNsPrefix(prefix, rdfNamespace);
 
@@ -633,6 +590,7 @@ public class OntologyModel implements MessageSource {
 									OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
 						this.resourceByClassInfo.put(ci,
 								defaultTypeImplementation);
+
 						break;
 					} else if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
@@ -1068,7 +1026,8 @@ public class OntologyModel implements MessageSource {
 
 									// lower >= 1 and 1<=upper<*
 									// we need to represent this case in the
-									// intersection as an intersection of restrictions
+									// intersection as an intersection of
+									// restrictions
 
 									OntClass restriction_lower = createMinCardinalityRestriction(
 											p, lower);
@@ -1108,7 +1067,8 @@ public class OntologyModel implements MessageSource {
 
 									// lower >= 1 and 1<=upper<*
 									// we need to represent this case in the
-									// intersection as an intersection of restrictions
+									// intersection as an intersection of
+									// restrictions
 
 									OntClass restriction_lower = createQMinCardinalityRestriction(
 											p, lower, range);
@@ -1377,6 +1337,9 @@ public class OntologyModel implements MessageSource {
 						String aiName = ai.name();
 						if (aiName != null && aiName.length() > 0 && pi.matches(
 								OWLISO19150.RULE_OWL_PROP_ISO191502_ASSOCIATION_NAME)) {
+							this.ontmodel.setNsPrefix(
+									OWLISO19150.PREFIX_ISO_19150_2,
+									OWLISO19150.RDF_NS_ISO_19150_2);
 							p.addProperty(ISO19150_2.associationName, aiName);
 						}
 
@@ -1384,9 +1347,15 @@ public class OntologyModel implements MessageSource {
 								&& pi.matches(
 										OWLISO19150.RULE_OWL_PROP_ISO191502_AGGREGATION)) {
 							if (pi.isComposition()) {
+								this.ontmodel.setNsPrefix(
+										OWLISO19150.PREFIX_ISO_19150_2,
+										OWLISO19150.RDF_NS_ISO_19150_2);
 								p.addProperty(ISO19150_2.aggregationType,
 										"partOfCompositeAggregation");
 							} else if (pi.isAggregation()) {
+								this.ontmodel.setNsPrefix(
+										OWLISO19150.PREFIX_ISO_19150_2,
+										OWLISO19150.RDF_NS_ISO_19150_2);
 								p.addProperty(ISO19150_2.aggregationType,
 										"partOfSharedAggregation");
 							} else {
@@ -1437,6 +1406,8 @@ public class OntologyModel implements MessageSource {
 
 		if (ci.isAbstract()
 				&& ci.matches(OWLISO19150.RULE_OWL_CLS_19150_2_ISABSTRACT)) {
+			this.ontmodel.setNsPrefix(OWLISO19150.PREFIX_ISO_19150_2,
+					OWLISO19150.RDF_NS_ISO_19150_2);
 			c.addLiteral(ISO19150_2.isAbstract,
 					ontmodel.createTypedLiteral(true));
 		}
@@ -1694,6 +1665,8 @@ public class OntologyModel implements MessageSource {
 			} else {
 
 				String target = dt.getTarget();
+				addNamespaceDeclaration(target);
+
 				String propertyIRI = computeReference(target);
 
 				Property prop = ontmodel.createProperty(propertyIRI);
@@ -1782,11 +1755,38 @@ public class OntologyModel implements MessageSource {
 		}
 	}
 
+	public void addNamespaceDeclaration(String qname) {
+
+		if (qname == null || !qname.contains(":")
+				|| qname.substring(0, qname.indexOf(":")).length() == 0) {
+			return;
+		}
+
+		String prefix = qname.substring(0, qname.indexOf(":"));
+
+		if (config.hasNamespaceWithAbbreviation(prefix)) {
+
+			String ns = config.fullNamespace(prefix);
+			// add namespace declaration
+			String s = ontmodel.getNsPrefixURI(prefix);
+			if (s == null)
+				ontmodel.setNsPrefix(prefix, ns);
+			else if (!s.equals(ns))
+				result.addError(this, 11, getName(), prefix, ns, s);
+
+		} else {
+
+			result.addError(this, 39, prefix);
+		}
+	}
+
 	/**
 	 * @param rdfns
 	 *            full namespace of the ontology to import
 	 * @param uri
-	 *            location of the ontology to import
+	 *            location of the ontology to import, can be <code>null</code>
+	 *            to indicate that the location is unknown (in that case, an
+	 *            import is not created)
 	 */
 	public void addImport(String rdfns, String uri) {
 
@@ -2274,6 +2274,10 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
+	 * Retrieves a resource identified by the given QName from the reference
+	 * model. The resource is created if necessary. Also creates an import for
+	 * the resource.
+	 * 
 	 * @param qname
 	 *            identifies a resource
 	 * @return resource identified by the qname
@@ -2310,6 +2314,7 @@ public class OntologyModel implements MessageSource {
 	 * @return ontology class identified by the qname
 	 */
 	private Resource mapClass(String qname) {
+
 		String[] qnamePars = qname.split(":");
 		String prefix = qnamePars[0];
 		String resourceName = qnamePars[1];
@@ -2332,11 +2337,17 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
+	 * Creates an ontology property (in the internal {@link #refmodel} - unless
+	 * it already exists in the refmodel), with namespace identified by looking
+	 * up the prefix of the QName in the configuration of namespaces. Also
+	 * creates an import of that namespace.
+	 * 
 	 * @param qname
 	 *            identifies a property
 	 * @return property identified by the qname
 	 */
 	private Property mapProperty(String qname) {
+
 		String[] qnamePars = qname.split(":");
 		String prefix = qnamePars[0];
 		String propertyName = qnamePars[1];
@@ -2457,6 +2468,8 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
+	 * NOTE: also imports the namespace of a mapped property
+	 * 
 	 * @param pi
 	 * @return The RDF/OWL property implementation to which the given
 	 *         PropertyInfo is mapped, or <code>null</code> if there is no
@@ -2728,6 +2741,8 @@ public class OntologyModel implements MessageSource {
 				builder.append(doc.substring(index, doc.length()));
 
 				String target = cm.getTarget();
+				addNamespaceDeclaration(target);
+
 				String propertyIRI = computeReference(target);
 
 				/*
@@ -2805,6 +2820,8 @@ public class OntologyModel implements MessageSource {
 
 		} else if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)) {
 
+			this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
+
 			String classURI = computeReference(getPrefix(), normalizedName(ci));
 
 			/*
@@ -2823,7 +2840,9 @@ public class OntologyModel implements MessageSource {
 			OntologyModel ontForIndividuals = owliso19150
 					.computeRelevantOntologyForIndividuals(ci);
 			OntModel ontmodelIndi = ontForIndividuals.getOntologyModel();
-			
+			ontmodelIndi.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
+			ontmodelIndi.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
+
 			// create ConceptScheme <SKOS>
 			String schemeURI = ontForIndividuals.getRdfNamespace()
 					+ normalizedName(ci)
@@ -2854,6 +2873,7 @@ public class OntologyModel implements MessageSource {
 				cs = ontmodelIndi.createIndividual(schemeURI,
 						SKOS.ConceptScheme);
 			}
+
 			cs.addProperty(DCTerms.isFormatOf, c);
 			applyDescriptorTargets(cs, ci,
 					DescriptorTarget.AppliesTo.CONCEPT_SCHEME);
@@ -2870,12 +2890,12 @@ public class OntologyModel implements MessageSource {
 
 			String indiBaseURI = ontForIndividuals.getRdfNamespace()
 					+ normalizedName(ci);
-			
+
 			for (PropertyInfo pi : clPis.values()) {
 
 				String clvUri = indiBaseURI + "/" + pi.name();
-				Individual clv = ontmodelIndi.createIndividual(clvUri, c);
 				ontmodelIndi.setNsPrefix(this.prefix, this.rdfNamespace);
+				Individual clv = ontmodelIndi.createIndividual(clvUri, c);
 
 				codesByUri.put(clvUri, clv);
 
@@ -3138,6 +3158,8 @@ public class OntologyModel implements MessageSource {
 			return "??No RdfTypeMapEntry is defined for the value type '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
 		case 38:
 			return "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
+		case 39:
+			return "??No namespace configured for namespace abbreviation '$1$'. Cannot create an import and namespace declaration.";
 
 		case 10000:
 			return "--- Context - Class: $1$";

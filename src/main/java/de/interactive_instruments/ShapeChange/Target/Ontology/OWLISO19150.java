@@ -85,6 +85,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	public static final String NS_XMLNS = "http://www.w3.org/2000/xmlns/";
 
+	/**
+	 * NOTE: this tagged value is usually set by ShapeChange internally; if it
+	 * is explicitly set in the model for whatever reason, then it needs to be
+	 * made known to ShapeChange via the "addTaggedValues" or
+	 * "representTaggedValues" configuration parameters.
+	 */
 	public static final String TV_UNION_SET = "SC_UNION_SET";
 	public static final String TV_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME = "skosConceptSchemeSubclassName";
 	public static final String TV_BROADER_LISTED_VALUE = "broaderListedValue";
@@ -655,7 +661,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 									"", "enumerations", this);
 							ontologyByRdfNs.put(rdfns, om);
 						}
-						
+
 					} else if (codeListOwlClassNamespace != null) {
 
 						/*
