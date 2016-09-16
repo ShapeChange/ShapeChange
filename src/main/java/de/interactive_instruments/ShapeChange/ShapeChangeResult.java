@@ -818,7 +818,19 @@ public class ShapeChangeResult {
 			return "(Converter.java) Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
 		case 507:
 			return "(Converter.java) None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
-
+		case 508:
+			return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
+		case 509:
+			return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
+		case 510: 
+			return "---------- Semantic validation of ShapeChange configuration: START ----------"; 
+		case 511: 
+			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"; 
+		case 512:
+			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
+		case 513:
+			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"+Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG+"' to 'true'.";
+			
 		// 600 - 699 Messages known to be used by multiple targets			
 		case 600:
 			return "File could not be deleted. Exception message: '$1$'.";

@@ -105,7 +105,7 @@ public class Flattener implements Transformer {
 	/* ------------------------------------------- */
 
 	public static final String TRANSFORMER_NAMESPACE_SUFFIX_PARAMETER = "targetNamespaceSuffix";
-	public static final String TRANSFORMER_REMOVE_TYPE_PARAMETER = "removeType";
+	public static final String PARAM_REMOVE_TYPE = "removeType";
 
 	// lower case alias for properties is kept for backward compatibility
 	public static final String TRANSFORMER_LOWER_CASE_ALIAS_FOR_PROPERTIES = "lowerCaseAliasForProperties";
@@ -959,7 +959,7 @@ public class Flattener implements Transformer {
 		// First identify if the removeType parameter exists and if so, which -
 		// if any - types shall be removed from the model.
 		String[] typesToRemove = trfConfig
-				.getListParameterValue(TRANSFORMER_REMOVE_TYPE_PARAMETER);
+				.getListParameterValue(PARAM_REMOVE_TYPE);
 
 		if (typesToRemove == null || typesToRemove.length == 0) {
 			result.addWarning(null, 20324);

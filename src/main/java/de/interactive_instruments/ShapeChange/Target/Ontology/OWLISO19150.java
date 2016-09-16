@@ -213,7 +213,6 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public static final String RULE_OWL_CLS_UNION_SETS = "rule-owl-cls-unionSets";
 
-	public static final String PARAM_VERSIONINFO = "versionInfo";
 	/**
 	 * 
 	 */

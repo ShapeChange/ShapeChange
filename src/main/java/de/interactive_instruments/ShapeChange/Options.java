@@ -219,6 +219,10 @@ public class Options {
 	public static final String PARAM_ONLY_DEFERRABLE_OUTPUT_WRITE = "onlyDeferrableOutputWrite";
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
+	/**
+	 * If 'true', semantic validation of the ShapeChange configuration will not be performed.
+	 */
+	public static final String PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG = "skipSemanticValidationOfShapeChangeConfiguration";
 
 	/**
 	 * If set to “array”, ShapeChange will use a memory optimized implementation
@@ -516,6 +520,11 @@ public class Options {
 	 */
 	private boolean resetUponLoadFlag = true;
 	private List<TargetConfiguration> targetConfigs = null;
+	/**
+	 * key: 'id' assigned to the transformer; value: the transformer
+	 * configuration
+	 */
+	private Map<String, TransformerConfiguration> transformerConfigs = null;
 
 	protected File imageTmpDir = null;
 
@@ -1311,8 +1320,7 @@ public class Options {
 
 			// Load transformer configurations (if any are provided in the
 			// configuration file)
-			Map<String, TransformerConfiguration> transformerConfigs = parseTransformerConfigurations(
-					document);
+			this.transformerConfigs = parseTransformerConfigurations(document);
 
 			// Load target configurations
 			this.targetConfigs = parseTargetConfigurations(document);
@@ -1902,6 +1910,12 @@ public class Options {
 		return result;
 	}
 
+	/**
+	 * @param configurationDocument
+	 * @return list with target configurations, can be empty but not
+	 *         <code>null</code>
+	 * @throws ShapeChangeAbortException
+	 */
 	private List<TargetConfiguration> parseTargetConfigurations(
 			Document configurationDocument) throws ShapeChangeAbortException {
 
@@ -2502,17 +2516,14 @@ public class Options {
 					DescriptorTarget.AppliesTo appliesTo = DescriptorTarget.AppliesTo.ALL;
 					if (dtE.hasAttribute("appliesTo")) {
 						String tmp = dtE.getAttribute("appliesTo");
-						if (tmp.trim()
-								.equalsIgnoreCase("ontology")) {
+						if (tmp.trim().equalsIgnoreCase("ontology")) {
 							appliesTo = DescriptorTarget.AppliesTo.ONTOLOGY;
-						} else if (tmp.trim()
-								.equalsIgnoreCase("class")) {
+						} else if (tmp.trim().equalsIgnoreCase("class")) {
 							appliesTo = DescriptorTarget.AppliesTo.CLASS;
 						} else if (tmp.trim()
 								.equalsIgnoreCase("conceptscheme")) {
 							appliesTo = DescriptorTarget.AppliesTo.CONCEPT_SCHEME;
-						} else if (tmp.trim()
-								.equalsIgnoreCase("property")) {
+						} else if (tmp.trim().equalsIgnoreCase("property")) {
 							appliesTo = DescriptorTarget.AppliesTo.PROPERTY;
 						} else {
 							appliesTo = DescriptorTarget.AppliesTo.ALL;
@@ -2523,7 +2534,6 @@ public class Options {
 							? dtE.getAttribute("multiValueConnectorToken")
 							: " ";
 
-							
 					DescriptorTarget dt = new DescriptorTarget(appliesTo,
 							target, template, format, noValueBehavior,
 							noValueText, multiValueBehavior, mvct);
@@ -2802,6 +2812,8 @@ public class Options {
 	 * ShapeChangeConfiguration document.
 	 *
 	 * @param configurationDocument
+	 * @return map with key: 'id' assigned to the transformer, value: the
+	 *         transformer configuration; can be empty but not <code>null</code>
 	 * @throws ShapeChangeAbortException
 	 *
 	 */
@@ -3566,6 +3578,10 @@ public class Options {
 
 	public List<TargetConfiguration> getTargetConfigurations() {
 		return this.targetConfigs;
+	}
+
+	public Map<String, TransformerConfiguration> getTransformerConfigs() {
+		return this.transformerConfigs;
 	}
 
 	/**

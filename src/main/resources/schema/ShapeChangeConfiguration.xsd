@@ -716,7 +716,7 @@
   </attribute>
   <attribute name="target" type="string">
    <annotation>
-    <documentation>Name of the target UML property (NOT scoped to a class), whose RDF/OWL implementation will be used to implement this property.</documentation>
+    <documentation>Name of the target UML property (scoped to a class from the application schema - example: FeatureX::propertyY), whose RDF/OWL implementation will be used to implement this property.</documentation>
    </annotation>
   </attribute>
   <attribute name="targetSchema" type="string">
