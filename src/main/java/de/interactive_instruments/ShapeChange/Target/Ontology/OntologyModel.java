@@ -185,9 +185,11 @@ public class OntologyModel implements MessageSource {
 
 		if (owliso19150.getDefaultTypeImplementation() == null) {
 			defaultTypeImplementation = OWL.Class;
+			result.addInfo(this, 40, "owl:Class");
 		} else {
-			defaultTypeImplementation = mapClass(
-					owliso19150.getDefaultTypeImplementation());
+			String dti = owliso19150.getDefaultTypeImplementation();
+			defaultTypeImplementation = mapClass(dti);
+			result.addInfo(this, 40, dti);
 		}
 	}
 
@@ -590,6 +592,10 @@ public class OntologyModel implements MessageSource {
 									OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
 						this.resourceByClassInfo.put(ci,
 								defaultTypeImplementation);
+						MessageContext mc = result.addWarning(this, 41, ci.name());
+						if(mc != null) {
+							mc.addDetail(this, 10000, ci.fullName());
+						}
 
 						break;
 					} else if (ci.matches(
@@ -620,6 +626,10 @@ public class OntologyModel implements MessageSource {
 					MessageContext mc = result.addError(this, 5, "" + cat);
 					if (mc != null) {
 						mc.addDetail(this, 10000, ci.fullName());
+					}
+					MessageContext mc2 = result.addWarning(this, 41, ci.name());
+					if(mc2 != null) {
+						mc2.addDetail(this, 10000, ci.fullName());
 					}
 				}
 			}
@@ -769,6 +779,10 @@ public class OntologyModel implements MessageSource {
 		if (range == null) {
 			// use default range
 			range = defaultTypeImplementation;
+			MessageContext mc = result.addWarning(this, 42, pi.name());
+			if(mc != null) {
+				mc.addDetail(this, 10001, pi.fullName());
+			}
 		}
 
 		this.rangeByPropertyInfo.put(pi, range);
@@ -2817,6 +2831,10 @@ public class OntologyModel implements MessageSource {
 			 * be encoded under RULE_OWL_CLS_CODELIST_EXTERNAL
 			 */
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
+			MessageContext mc = result.addWarning(this, 41, ci.name());
+			if(mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
 
 		} else if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)) {
 
@@ -2984,6 +3002,10 @@ public class OntologyModel implements MessageSource {
 
 			// none of the code list encoding rules matches
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
+			MessageContext mc = result.addWarning(this, 41, ci.name());
+			if(mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
 		}
 	}
 
@@ -3160,6 +3182,12 @@ public class OntologyModel implements MessageSource {
 			return "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
 		case 39:
 			return "??No namespace configured for namespace abbreviation '$1$'. Cannot create an import and namespace declaration.";
+		case 40:
+			return "??The default type implementation is '$1$'.";
+		case 41:
+			return "??Default type implementation is used to implement type '$1$'.";
+		case 42:
+			return "Default type implementation is used as range of property '$1$'.";
 
 		case 10000:
 			return "--- Context - Class: $1$";
