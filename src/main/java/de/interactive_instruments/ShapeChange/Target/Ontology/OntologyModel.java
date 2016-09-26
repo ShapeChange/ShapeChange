@@ -590,13 +590,7 @@ public class OntologyModel implements MessageSource {
 							OWLISO19150.RULE_OWL_CLS_ENUMERATION_AS_CODELIST)
 							&& !ci.matches(
 									OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
-						this.resourceByClassInfo.put(ci,
-								defaultTypeImplementation);
-						MessageContext mc = result.addWarning(this, 41, ci.name());
-						if(mc != null) {
-							mc.addDetail(this, 10000, ci.fullName());
-						}
-
+						// this class shall not be encoded
 						break;
 					} else if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
@@ -619,7 +613,11 @@ public class OntologyModel implements MessageSource {
 						 */
 					}
 				case Options.CODELIST:
-					addCodelist(ci);
+					if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)
+							|| ci.matches(
+									OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL)) {
+						addCodelist(ci);
+					}
 					break;
 				default:
 					this.resourceByClassInfo.put(ci, defaultTypeImplementation);
@@ -628,7 +626,7 @@ public class OntologyModel implements MessageSource {
 						mc.addDetail(this, 10000, ci.fullName());
 					}
 					MessageContext mc2 = result.addWarning(this, 41, ci.name());
-					if(mc2 != null) {
+					if (mc2 != null) {
 						mc2.addDetail(this, 10000, ci.fullName());
 					}
 				}
@@ -780,7 +778,7 @@ public class OntologyModel implements MessageSource {
 			// use default range
 			range = defaultTypeImplementation;
 			MessageContext mc = result.addWarning(this, 42, pi.name());
-			if(mc != null) {
+			if (mc != null) {
 				mc.addDetail(this, 10001, pi.fullName());
 			}
 		}
@@ -2832,7 +2830,7 @@ public class OntologyModel implements MessageSource {
 			 */
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
 			MessageContext mc = result.addWarning(this, 41, ci.name());
-			if(mc != null) {
+			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
 
@@ -3003,7 +3001,7 @@ public class OntologyModel implements MessageSource {
 			// none of the code list encoding rules matches
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
 			MessageContext mc = result.addWarning(this, 41, ci.name());
-			if(mc != null) {
+			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
 		}
@@ -3115,7 +3113,7 @@ public class OntologyModel implements MessageSource {
 		case 6:
 			return "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
 		case 7:
-			return "Could not find a type mapping and also no class within the model to map class '$1$'.";
+			return "??Could not find a type mapping and also no class within the model to map class '$1$'.";
 		case 8:
 			return "No stereotype mapping defined for class '$1$' (a $2$).";
 		case 9:
