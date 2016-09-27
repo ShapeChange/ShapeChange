@@ -193,7 +193,9 @@ public class JsonSchema implements Target, MessageSource {
 	}
 
 	public void process(ClassInfo ci) {
+		
 		int cat = ci.category();
+		
 		if (options.matchesEncRule(ci.encodingRule("json"),"geoservices")) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT) {
 				return;
@@ -204,7 +206,7 @@ public class JsonSchema implements Target, MessageSource {
 				return;
 			}
 		}
-
+		
 		Context ctx = new Context();
 		try {
 			
@@ -433,18 +435,30 @@ public class JsonSchema implements Target, MessageSource {
 							format = "uri";
 						}					
 					} else if (cat==Options.DATATYPE || cat==Options.UNION) {
+						
 						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+							
 							flatten = true;
 							verifyNoGeometry(cix);
+							
 						} else if (options.matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
-							String refBaseURI = cix.pkg().rootPackage().taggedValue("jsonBaseURI");
+							
+							PackageInfo rootPackage = cix.pkg().rootPackage();
+							
+							String refBaseURI = null;
+							if(rootPackage != null) 
+								refBaseURI = rootPackage.taggedValue("jsonBaseURI");
 							if (refBaseURI == null)
 								refBaseURI = baseURI;
-							String refDir = cix.pkg().rootPackage().taggedValue("jsonDirectory");
-							if (refDir==null)
-								refDir = cix.pkg().rootPackage().xmlns();
+							
+							String refDir = null;
+							if(rootPackage != null)
+								refDir = rootPackage.taggedValue("jsonDirectory");
+							if (refDir==null && rootPackage != null)
+								refDir = rootPackage.xmlns();
 							if (refDir==null)
 								refDir = "default";
+							
 							ref = refBaseURI+"/"+refDir+"/"+cix.name()+".json";
 						}					
 					}
@@ -570,6 +584,7 @@ public class JsonSchema implements Target, MessageSource {
 					}				
 				}
 			} else {
+				// TODO 2016-09-26: is the message misleading? The property is not encoded at all.
 				result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
 			}
 		}
@@ -713,7 +728,7 @@ public class JsonSchema implements Target, MessageSource {
 		case 103:
 			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'string' will be used.";
 		case 104:
-			return "??No JSON representation known for type '$2$' which is a subtype of '$1$'. The supertype is ignored.";
+			return "??No JSON representation known for type '$2$' which is a supertype of '$1$'. The supertype is ignored.";
 		case 105:
 			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'any' will be used.";
 		case 106: 
