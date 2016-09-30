@@ -1,541 +1,815 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
-  xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-  attributeFormDefault="unqualified" version="1.1.0b1">
-  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
-  <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
-  <complexType name="ShapeChangeConfigurationType">
-    <choice minOccurs="0" maxOccurs="unbounded">
-      <element ref="sc:ShapeChangeConfiguration"/>
-      <element ref="sc:input"/>
-      <element ref="sc:dialog"/>
-      <element ref="sc:log"/>
-      <element ref="sc:transformers"/>
-      <element ref="sc:targets"/>
-    </choice>
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+ xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+ attributeFormDefault="unqualified" version="1.1.0b1">
+ <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
+ <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
+ <complexType name="ShapeChangeConfigurationType">
+  <choice minOccurs="0" maxOccurs="unbounded">
+   <element ref="sc:ShapeChangeConfiguration"/>
+   <element ref="sc:input"/>
+   <element ref="sc:dialog"/>
+   <element ref="sc:log"/>
+   <element ref="sc:transformers"/>
+   <element ref="sc:targets"/>
+  </choice>
+ </complexType>
+ <element name="input">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:parameter"/>
+    <element ref="sc:stereotypeAliases"/>
+    <element ref="sc:tagAliases"/>
+    <element ref="sc:descriptorSources"/>
+    <element ref="sc:packages"/>
+    <element ref="sc:language"/>
+    <element ref="xi:include"/>
+   </choice>
+   <attribute name="id" type="ID"/>
   </complexType>
-  <element name="input">
-    <complexType>
-      <choice minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:parameter"/>
-        <element ref="sc:stereotypeAliases"/>
-        <element ref="sc:tagAliases"/>
-        <element ref="sc:descriptorSources"/>
-        <element ref="sc:packages"/>
-        <element ref="sc:language"/>
-        <element ref="xi:include"/>
-      </choice>
-      <attribute name="id" type="ID"/>
-    </complexType>
-  </element>
-  <element name="parameter">
-    <complexType>
-      <attribute name="name" type="string" use="required"/>
-      <attribute name="value" type="string" use="required"/>
-    </complexType>
-  </element>
-  <element name="language">
-    <complexType>
-      <attribute name="default" type="string" use="required"/>
-    </complexType>
-  </element>
-  <element name="stereotypeAliases">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:StereotypeAlias"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="StereotypeAlias" type="sc:StereotypeAliasType"/>
-  <complexType name="StereotypeAliasType">
-    <sequence/>
-    <attribute name="wellknown" use="required">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value=""/>
-          <enumeration value="Abstract"/>
-          <enumeration value="ADEElement"/>
-          <enumeration value="AIXMExtension"/>
-          <enumeration value="Application Schema"/>
-          <enumeration value="attributeConcept"/>
-          <enumeration value="BasicType"/>
-          <enumeration value="bundle"/>
-          <enumeration value="CodeList"/>
-          <enumeration value="DataType"/>
-          <enumeration value="disjoint"/>
-          <enumeration value="Enumeration"/>
-          <enumeration value="FachId"/>
-          <enumeration value="featureConcept"/>
-          <enumeration value="FeatureType"/>
-          <enumeration value="import"/>
-          <enumeration value="include"/>
-          <enumeration value="Interface"/>
-          <enumeration value="leaf"/>
-          <enumeration value="Schluesseltabelle"/>
-          <enumeration value="Type"/>
-          <enumeration value="Union"/>   
-          <enumeration value="valueConcept"/> 
-          <enumeration value="version"/>      
-          <enumeration value="voidable"/>
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="alias" type="string" use="required"/>
+ </element>
+ <element name="parameter">
+  <complexType>
+   <attribute name="name" type="string" use="required"/>
+   <attribute name="value" type="string" use="required"/>
   </complexType>
-  <element name="tagAliases">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:TagAlias"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="TagAlias" type="sc:TagAliasType"/>
-  <complexType name="TagAliasType">
-    <sequence/>
-    <attribute name="wellknown" use="required">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value="documentation"/>
-          <enumeration value="definition"/>
-          <enumeration value="description"/>
-          <enumeration value="example"/>
-          <enumeration value="alias"/>
-          <enumeration value="legalBasis"/>
-          <enumeration value="dataCaptureStatement"/>
-          <enumeration value="primaryCode"/>
-          <enumeration value="language"/>
-          <!-- more will be added incrementally -->
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="alias" type="string" use="required"/>
+ </element>
+ <element name="language">
+  <complexType>
+   <attribute name="default" type="string" use="required"/>
   </complexType>
-  <element name="descriptorSources">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:DescriptorSource"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="DescriptorSource" type="sc:DescriptorSourceType"/>
-  <complexType name="DescriptorSourceType">
-    <sequence/>
-    <attribute name="descriptor" use="required">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value="documentation"/>
-          <enumeration value="definition"/>
-          <enumeration value="description"/>
-          <enumeration value="example"/>
-          <enumeration value="alias"/>
-          <enumeration value="legalBasis"/>
-          <enumeration value="dataCaptureStatement"/>
-          <enumeration value="primaryCode"/>
-          <enumeration value="language"/>
-          <!-- more descriptors may be added as needed -->
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="source" use="required">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value="tag"/>
-          <enumeration value="ea:notes"/>
-          <enumeration value="ea:alias"/>
-          <enumeration value="sc:extract"/>
-          <enumeration value="none"/>
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="token" type="string"/>
-    <attribute name="tag" type="string"/>
+ </element>
+ <element name="stereotypeAliases">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:StereotypeAlias"/>
+   </sequence>
   </complexType>
-  <element name="packages">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:PackageInfo"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="PackageInfo" type="sc:PackageInfoType"/>
-  <complexType name="PackageInfoType">
-    <sequence/>
-    <attribute name="packageName" type="string" use="required"/>
-    <attribute name="nsabr" type="string"/>
-    <attribute name="ns" type="string"/>
-    <attribute name="xsdDocument" type="string"/>
-    <attribute name="version" type="string"/>
-  </complexType>
-  <element name="dialog">
-    <complexType>
-      <choice minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:parameter"/>
-      </choice>
-    </complexType>
-  </element>
-  <element name="log">
-    <complexType>
-      <choice minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:parameter"/>
-      </choice>
-    </complexType>
-  </element>
-  <simpleType name="ProcessMode">
+ </element>
+ <element name="StereotypeAlias" type="sc:StereotypeAliasType"/>
+ <complexType name="StereotypeAliasType">
+  <sequence/>
+  <attribute name="wellknown" use="required">
+   <simpleType>
     <restriction base="string">
-      <enumeration value="enabled"/>
-      <enumeration value="disabled"/>
-      <enumeration value="diagnostics-only"/>
+     <enumeration value=""/>
+     <enumeration value="Abstract"/>
+     <enumeration value="ADEElement"/>
+     <enumeration value="AIXMExtension"/>
+     <enumeration value="Application Schema"/>
+     <enumeration value="attributeConcept"/>
+     <enumeration value="BasicType"/>
+     <enumeration value="bundle"/>
+     <enumeration value="CodeList"/>
+     <enumeration value="DataType"/>
+     <enumeration value="disjoint"/>
+     <enumeration value="Enumeration"/>
+     <enumeration value="FachId"/>
+     <enumeration value="featureConcept"/>
+     <enumeration value="FeatureType"/>
+     <enumeration value="import"/>
+     <enumeration value="include"/>
+     <enumeration value="Interface"/>
+     <enumeration value="leaf"/>
+     <enumeration value="Schluesseltabelle"/>
+     <enumeration value="Type"/>
+     <enumeration value="Union"/>
+     <enumeration value="valueConcept"/>
+     <enumeration value="version"/>
+     <enumeration value="voidable"/>
     </restriction>
-  </simpleType>
-  <complexType name="ProcessBaseType">
-    <sequence>
-      <element minOccurs="0" ref="sc:advancedProcessConfigurations"/>
-    </sequence>
-    <attribute name="class" type="string" use="required"/>
-    <attribute name="mode" type="sc:ProcessMode" default="enabled"/>
+   </simpleType>
+  </attribute>
+  <attribute name="alias" type="string" use="required"/>
+ </complexType>
+ <element name="tagAliases">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:TagAlias"/>
+   </sequence>
   </complexType>
-  <element name="ProcessParameter" type="sc:ProcessParameterType"/>
-  <complexType name="ProcessParameterType">
-    <attribute name="name" type="string" use="required"/>
-    <attribute name="value" type="string" use="required"/>
+ </element>
+ <element name="TagAlias" type="sc:TagAliasType"/>
+ <complexType name="TagAliasType">
+  <sequence/>
+  <attribute name="wellknown" use="required">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="documentation"/>
+     <enumeration value="definition"/>
+     <enumeration value="description"/>
+     <enumeration value="example"/>
+     <enumeration value="alias"/>
+     <enumeration value="legalBasis"/>
+     <enumeration value="dataCaptureStatement"/>
+     <enumeration value="primaryCode"/>
+     <enumeration value="language"/>
+     <!-- more will be added incrementally -->
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="alias" type="string" use="required"/>
+ </complexType>
+ <element name="descriptorSources">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:DescriptorSource"/>
+   </sequence>
   </complexType>
-  <element name="ProcessRuleSet" type="sc:ProcessRuleSetType"/>
-  <complexType name="ProcessRuleSetType">
+ </element>
+ <element name="DescriptorSource" type="sc:DescriptorSourceType"/>
+ <complexType name="DescriptorSourceType">
+  <sequence/>
+  <attribute name="descriptor" use="required">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="documentation"/>
+     <enumeration value="definition"/>
+     <enumeration value="description"/>
+     <enumeration value="example"/>
+     <enumeration value="alias"/>
+     <enumeration value="legalBasis"/>
+     <enumeration value="dataCaptureStatement"/>
+     <enumeration value="primaryCode"/>
+     <enumeration value="language"/>
+     <!-- more descriptors may be added as needed -->
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="source" use="required">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="tag"/>
+     <enumeration value="ea:notes"/>
+     <enumeration value="ea:alias"/>
+     <enumeration value="sc:extract"/>
+     <enumeration value="none"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="token" type="string"/>
+  <attribute name="tag" type="string"/>
+ </complexType>
+ <element name="packages">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:PackageInfo"/>
+   </sequence>
+  </complexType>
+ </element>
+ <element name="PackageInfo" type="sc:PackageInfoType"/>
+ <complexType name="PackageInfoType">
+  <sequence/>
+  <attribute name="packageName" type="string" use="required"/>
+  <attribute name="nsabr" type="string"/>
+  <attribute name="ns" type="string"/>
+  <attribute name="xsdDocument" type="string"/>
+  <attribute name="version" type="string"/>
+ </complexType>
+ <element name="dialog">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:parameter"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="log">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:parameter"/>
+   </choice>
+  </complexType>
+ </element>
+ <simpleType name="ProcessMode">
+  <restriction base="string">
+   <enumeration value="enabled"/>
+   <enumeration value="disabled"/>
+   <enumeration value="diagnostics-only"/>
+  </restriction>
+ </simpleType>
+ <complexType name="ProcessBaseType">
+  <sequence>
+   <element minOccurs="0" ref="sc:advancedProcessConfigurations"/>
+  </sequence>
+  <attribute name="class" type="string" use="required"/>
+  <attribute name="mode" type="sc:ProcessMode" default="enabled"/>
+ </complexType>
+ <element name="ProcessParameter" type="sc:ProcessParameterType"/>
+ <complexType name="ProcessParameterType">
+  <attribute name="name" type="string" use="required"/>
+  <attribute name="value" type="string" use="required"/>
+ </complexType>
+ <element name="ProcessRuleSet" type="sc:ProcessRuleSetType"/>
+ <complexType name="ProcessRuleSetType">
+  <choice maxOccurs="unbounded" minOccurs="0">
+   <element name="rule" type="sc:RuleRefType"/>
+  </choice>
+  <attribute name="name" type="string" use="required"/>
+  <attribute name="extends" type="string"/>
+ </complexType>
+ <element name="ProcessMapEntry" type="sc:MapEntryType"/>
+ <complexType name="TransformerType">
+  <complexContent>
+   <extension base="sc:ProcessBaseType">
     <choice maxOccurs="unbounded" minOccurs="0">
-      <element name="rule" type="sc:RuleRefType"/>
+     <element name="parameters">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessParameter"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="rules">
+      <complexType>
+       <choice maxOccurs="unbounded" minOccurs="1">
+        <element ref="sc:ProcessRuleSet"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="mapEntries">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessMapEntry"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="taggedValues">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:TaggedValue"/>
+       </choice>
+      </complexType>
+     </element>
+     <element ref="xi:include"/>
     </choice>
-    <attribute name="name" type="string" use="required"/>
-    <attribute name="extends" type="string"/>
+    <attribute name="id" type="ID" use="required"/>
+    <attribute name="input" type="IDREF"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="transformers">
+  <complexType>
+   <sequence maxOccurs="unbounded" minOccurs="1">
+    <element ref="sc:Transformer"/>
+   </sequence>
   </complexType>
-  <element name="ProcessMapEntry" type="sc:MapEntryType"/>
-  <complexType name="TransformerType">
-    <complexContent>
-      <extension base="sc:ProcessBaseType">
-        <choice maxOccurs="unbounded" minOccurs="0">
-          <element name="parameters">
-            <complexType>
-              <choice maxOccurs="unbounded">
-                <element ref="sc:ProcessParameter"/>
-              </choice>
-            </complexType>
-          </element>
-          <element name="rules">
-            <complexType>
-              <choice maxOccurs="unbounded" minOccurs="1">
-                <element ref="sc:ProcessRuleSet"/>
-              </choice>
-            </complexType>
-          </element>
-          <element name="mapEntries">
-            <complexType>
-              <choice maxOccurs="unbounded">
-                <element ref="sc:ProcessMapEntry"/>
-              </choice>
-            </complexType>
-          </element>
-          <element name="taggedValues">
-            <complexType>
-              <choice maxOccurs="unbounded">
-                <element ref="sc:TaggedValue"/>
-              </choice>
-            </complexType>
-          </element>
-          <element ref="xi:include"/>
-        </choice>
-        <attribute name="id" type="ID" use="required"/>
-        <attribute name="input" type="IDREF"/>
-      </extension>
-    </complexContent>
+ </element>
+ <element name="Transformer" type="sc:TransformerType"/>
+ <element name="targets">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:Target"/>
+    <element ref="sc:TargetXmlSchema"/>
+    <element ref="sc:TargetOwl"/>
+   </choice>
   </complexType>
-  <element name="transformers">
-    <complexType>
-      <sequence maxOccurs="unbounded" minOccurs="1">
-        <element ref="sc:Transformer"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="Transformer" type="sc:TransformerType"/>
-  <element name="targets">
-    <complexType>
-      <choice minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:Target"/>
-        <element ref="sc:TargetXmlSchema"/>
-        <element ref="sc:TargetOwl"/>
-      </choice>
-    </complexType>
-  </element>
-  <element name="Target" type="sc:TargetType"/>
-  <complexType name="TargetType">
-    <complexContent>
-      <extension base="sc:TargetBaseType">
-        <choice minOccurs="0" maxOccurs="unbounded">
-          <element ref="sc:targetParameter"/>
-          <element ref="sc:targetParameters"/>
-          <element ref="sc:rules"/>
-          <element ref="sc:mapEntries"/>
-          <element ref="sc:namespaces"/>
-          <element ref="xi:include"/>
-        </choice>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="targetParameter">
-    <complexType>
-      <attribute name="name" type="string" use="required"/>
-      <attribute name="value" type="string" use="required"/>
-    </complexType>
-  </element>
-  <element name="mapEntries" type="sc:MapEntriesType"/>
-  <complexType name="MapEntriesType">
+ </element>
+ <element name="Target" type="sc:TargetType"/>
+ <complexType name="TargetType">
+  <complexContent>
+   <extension base="sc:TargetBaseType">
     <choice minOccurs="0" maxOccurs="unbounded">
-      <element ref="sc:MapEntry"/>
-      <element ref="sc:mapEntries"/>
+     <element ref="sc:targetParameter"/>
+     <element ref="sc:targetParameters"/>
+     <element ref="sc:rules"/>
+     <element ref="sc:mapEntries"/>
+     <element ref="sc:namespaces"/>
+     <element ref="xi:include"/>
     </choice>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="targetParameter">
+  <complexType>
+   <attribute name="name" type="string" use="required"/>
+   <attribute name="value" type="string" use="required"/>
   </complexType>
-  <element name="MapEntry" type="sc:MapEntryType"/>
-  <complexType name="MapEntryType">
-    <attribute name="type" type="string" use="required"/>
-    <attribute name="rule" type="string" use="required"/>
-    <attribute name="targetType" type="string"/>
-    <attribute name="param" type="string"/>
+ </element>
+ <element name="mapEntries" type="sc:MapEntriesType"/>
+ <complexType name="MapEntriesType">
+  <choice minOccurs="0" maxOccurs="unbounded">
+   <element ref="sc:MapEntry"/>
+   <element ref="sc:mapEntries"/>
+  </choice>
+ </complexType>
+ <element name="MapEntry" type="sc:MapEntryType"/>
+ <complexType name="MapEntryType">
+  <attribute name="type" type="string" use="required"/>
+  <attribute name="rule" type="string" use="required"/>
+  <attribute name="targetType" type="string"/>
+  <attribute name="param" type="string"/>
+ </complexType>
+ <element name="TargetXmlSchema" type="sc:TargetXmlSchemaType"/>
+ <complexType name="TargetXmlSchemaType">
+  <complexContent>
+   <extension base="sc:TargetBaseType">
+    <choice minOccurs="0" maxOccurs="unbounded">
+     <element ref="sc:targetParameter"/>
+     <element ref="sc:targetParameters"/>
+     <element ref="sc:rules"/>
+     <element ref="sc:xsdMapEntries"/>
+     <element ref="sc:xmlNamespaces"/>
+     <element ref="xi:include"/>
+    </choice>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="namespaces">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:Namespace"/>
+   </sequence>
   </complexType>
-  <element name="TargetXmlSchema" type="sc:TargetXmlSchemaType"/>
-  <complexType name="TargetXmlSchemaType">
-    <complexContent>
-      <extension base="sc:TargetBaseType">
-        <choice minOccurs="0" maxOccurs="unbounded">
-          <element ref="sc:targetParameter"/>
-          <element ref="sc:targetParameters"/>
-          <element ref="sc:rules"/>
-          <element ref="sc:xsdMapEntries"/>
-          <element ref="sc:xmlNamespaces"/>
-          <element ref="xi:include"/>
-        </choice>
-      </extension>
-    </complexContent>
+ </element>
+ <element name="Namespace" type="sc:NamespaceType"/>
+ <complexType name="NamespaceType">
+  <sequence/>
+  <attribute name="nsabr" type="string" use="required"/>
+  <attribute name="ns" type="string" use="required"/>
+  <attribute name="location" type="string" use="optional"/>
+ </complexType>
+ <element name="xmlNamespaces">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:XmlNamespace"/>
+   </sequence>
   </complexType>
-  <element name="namespaces">
+ </element>
+ <element name="XmlNamespace" type="sc:XmlNamespaceType"/>
+ <complexType name="XmlNamespaceType">
+  <sequence/>
+  <attribute name="nsabr" type="string" use="required"/>
+  <attribute name="ns" type="string" use="required"/>
+  <attribute name="location" type="string" use="optional"/>
+  <attribute name="packageName" type="string"/>
+ </complexType>
+ <element name="xsdMapEntries">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:XsdMapEntry"/>
+    <element ref="sc:xsdMapEntries"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="XsdMapEntry" type="sc:XsdMapEntryType"/>
+ <complexType name="XsdMapEntryType">
+  <sequence/>
+  <attribute name="type" type="string" use="required"/>
+  <attribute name="xsdEncodingRules" use="required">
+   <simpleType>
+    <list itemType="string"/>
+   </simpleType>
+  </attribute>
+  <attribute name="xmlType" type="string"/>
+  <attribute name="xmlTypeContent" default="complex">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="simple"/>
+     <enumeration value="complex"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="xmlTypeType" default="complex">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="simple"/>
+     <enumeration value="complex"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="xmlTypeNilReason" type="boolean"/>
+  <attribute name="xmlElement" type="string"/>
+  <attribute name="xmlPropertyType" type="string"/>
+  <attribute name="xmlAttribute" type="string"/>
+  <attribute name="xmlAttributeGroup" type="string"/>
+  <attribute name="nsabr" type="string"/>
+ </complexType>
+ <element name="rules">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element name="EncodingRule" type="sc:EncodingRuleType"/>
+   </sequence>
+  </complexType>
+ </element>
+ <complexType name="RuleRefType">
+  <attribute name="name" type="string" use="required"/>
+ </complexType>
+ <complexType name="EncodingRuleType">
+  <sequence minOccurs="0" maxOccurs="unbounded">
+   <element name="rule" type="sc:RuleRefType"/>
+  </sequence>
+  <attribute name="name" type="string" use="required"/>
+  <attribute name="extends" type="string"/>
+ </complexType>
+ <element name="targetParameters">
+  <complexType>
+   <choice maxOccurs="unbounded" minOccurs="0">
+    <element ref="sc:targetParameter"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="TaggedValue" type="sc:TaggedValueType"/>
+ <complexType name="TaggedValueType">
+  <attribute name="name" type="string" use="required"/>
+  <attribute name="value" type="string"/>
+  <attribute name="modelElementStereotype" type="string"/>
+  <attribute name="modelElementName" type="string"/>
+  <attribute name="applicationSchemaName" type="string"/>
+ </complexType>
+ <element name="TargetOwl" type="sc:TargetOwlType">
+  <unique name="uniqueConstraintType">
+   <selector xpath=".//sc:ConstraintMapping"/>
+   <field xpath="@constraintType"/>
+  </unique>
+ </element>
+ <complexType name="TargetOwlType">
+  <complexContent>
+   <extension base="sc:TargetBaseType">
+    <choice minOccurs="0" maxOccurs="unbounded">
+     <element ref="sc:targetParameter"/>
+     <element ref="sc:targetParameters"/>
+     <element ref="sc:rules"/>
+     <element ref="sc:rdfMapEntries"/>
+     <element ref="sc:rdfConversionParameters"/>
+     <element ref="sc:namespaces"/>
+     <element ref="sc:descriptorTargets"/>
+     <element ref="sc:constraintMappings"/>
+     <element ref="xi:include"/>
+    </choice>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="stereotypeMappings">
+  <complexType>
+   <sequence minOccurs="0" maxOccurs="unbounded">
+    <element name="StereotypeMapping" type="sc:StereotypeMappingType"/>
+   </sequence>
+  </complexType>
+ </element>
+ <complexType name="StereotypeMappingType">
+  <sequence/>
+  <attribute name="wellknown" use="required">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value=""/>
+     <enumeration value="Abstract"/>
+     <enumeration value="DataType"/>
+     <enumeration value="FeatureType"/>
+     <enumeration value="Enumeration"/>
+     <enumeration value="CodeList"/>
+     <enumeration value="Union"/>
+     <enumeration value="BasicType"/>
+     <enumeration value="Interface"/>
+     <enumeration value="Type"/>
+     <enumeration value="Union"/>
+     <enumeration value="Application Schema"/>
+     <enumeration value="Leaf"/>
+     <enumeration value="Schluesseltabelle"/>
+     <enumeration value="FachId"/>
+     <enumeration value="ADEElement"/>
+     <enumeration value="import"/>
+     <enumeration value="include"/>
+     <enumeration value="disjoint"/>
+     <enumeration value="voidable"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="mapsTo" type="string" use="required"/>
+ </complexType>
+ <complexType name="TargetBaseType">
+  <complexContent>
+   <extension base="sc:ProcessBaseType">
+    <attribute name="inputs" type="IDREFS"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="advancedProcessConfigurations">
+  <complexType>
+   <choice maxOccurs="unbounded">
+    <element maxOccurs="1" ref="sc:AttributeDefinition"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="AttributeDefinition" type="sc:AttributeDefinitionType"/>
+ <complexType name="AttributeDefinitionType">
+  <sequence>
+   <element name="classSelection">
     <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:Namespace"/>
-      </sequence>
+     <sequence>
+      <element ref="sc:PackageSelector"/>
+      <element ref="sc:ClassSelector"/>
+     </sequence>
     </complexType>
-  </element>
-  <element name="Namespace" type="sc:NamespaceType"/>
-  <complexType name="NamespaceType">
-    <sequence/>
-    <attribute name="nsabr" type="string" use="required"/>
-    <attribute name="ns" type="string" use="required"/>
-    <attribute name="location" type="string" use="optional"/>
-  </complexType>
-  <element name="xmlNamespaces">
+   </element>
+   <element maxOccurs="1" minOccurs="0" name="aliasName" type="string"/>
+   <element minOccurs="0" name="initialValue" type="string"/>
+   <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
+   <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
+   <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
+   <element name="name" type="string"/>
+   <element default="1" minOccurs="0" name="multiplicity" type="string"/>
+   <element minOccurs="0" name="stereotypes">
     <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:XmlNamespace"/>
-      </sequence>
+     <sequence>
+      <element maxOccurs="unbounded" name="Stereotype" type="string"/>
+     </sequence>
     </complexType>
-  </element>
-  <element name="XmlNamespace" type="sc:XmlNamespaceType"/>
-  <complexType name="XmlNamespaceType">
-    <sequence/>
-    <attribute name="nsabr" type="string" use="required"/>
-    <attribute name="ns" type="string" use="required"/>
-    <attribute name="location" type="string" use="optional"/>
-    <attribute name="packageName" type="string"/>
-  </complexType>
-  <element name="xsdMapEntries">
+   </element>
+   <element minOccurs="0" name="taggedValues">
     <complexType>
-      <choice minOccurs="0" maxOccurs="unbounded">
-        <element ref="sc:XsdMapEntry"/>
-        <element ref="sc:xsdMapEntries"/>
-      </choice>
-    </complexType>
-  </element>
-  <element name="XsdMapEntry" type="sc:XsdMapEntryType"/>
-  <complexType name="XsdMapEntryType">
-    <sequence/>
-    <attribute name="type" type="string" use="required"/>
-    <attribute name="xsdEncodingRules" use="required">
-      <simpleType>
-        <list itemType="string"/>
-      </simpleType>
-    </attribute>
-    <attribute name="xmlType" type="string"/>
-    <attribute name="xmlTypeContent" default="complex">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value="simple"/>
-          <enumeration value="complex"/>
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="xmlTypeType" default="complex">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value="simple"/>
-          <enumeration value="complex"/>
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="xmlTypeNilReason" type="boolean"/>
-    <attribute name="xmlElement" type="string"/>
-    <attribute name="xmlPropertyType" type="string"/>
-    <attribute name="xmlAttribute" type="string"/>
-    <attribute name="xmlAttributeGroup" type="string"/>
-    <attribute name="nsabr" type="string"/>
-  </complexType>
-  <element name="rules">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element name="EncodingRule" type="sc:EncodingRuleType"/>
-      </sequence>
-    </complexType>
-  </element>
-  <complexType name="RuleRefType">
-    <attribute name="name" type="string" use="required"/>
-  </complexType>
-  <complexType name="EncodingRuleType">
-    <sequence minOccurs="0" maxOccurs="unbounded">
-      <element name="rule" type="sc:RuleRefType"/>
-    </sequence>
-    <attribute name="name" type="string" use="required"/>
-    <attribute name="extends" type="string"/>
-  </complexType>
-  <element name="targetParameters">
-    <complexType>
-      <choice maxOccurs="unbounded" minOccurs="0">
-        <element ref="sc:targetParameter"/>
-      </choice>
-    </complexType>
-  </element>
-  <element name="TaggedValue" type="sc:TaggedValueType"/>
-  <complexType name="TaggedValueType">
-    <attribute name="name" type="string" use="required"/>
-    <attribute name="value" type="string"/>
-    <attribute name="modelElementStereotype" type="string"/>
-    <attribute name="modelElementName" type="string"/>
-    <attribute name="applicationSchemaName" type="string"/>
-  </complexType>
-  <element name="TargetOwl" type="sc:TargetOwlType"/>
-  <complexType name="TargetOwlType">
-    <complexContent>
-      <extension base="sc:TargetBaseType">
-        <choice minOccurs="0" maxOccurs="unbounded">
-          <element ref="sc:targetParameter"/>
-          <element ref="sc:targetParameters"/>
-          <element ref="sc:rules"/>
-          <element ref="sc:mapEntries"/>
-          <element ref="sc:namespaces"/>
-          <element ref="sc:stereotypeMappings"/>
-          <element ref="xi:include"/>
-        </choice>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="stereotypeMappings">
-    <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
-        <element name="StereotypeMapping" type="sc:StereotypeMappingType"/>
-      </sequence>
-    </complexType>
-  </element>
-  <complexType name="StereotypeMappingType">
-    <sequence/>
-    <attribute name="wellknown" use="required">
-      <simpleType>
-        <restriction base="string">
-          <enumeration value=""/>
-          <enumeration value="Abstract"/>
-          <enumeration value="DataType"/>
-          <enumeration value="FeatureType"/>
-          <enumeration value="Enumeration"/>
-          <enumeration value="CodeList"/>
-          <enumeration value="Union"/>
-          <enumeration value="BasicType"/>
-          <enumeration value="Interface"/>
-          <enumeration value="Type"/>
-          <enumeration value="Union"/>
-          <enumeration value="Application Schema"/>
-          <enumeration value="Leaf"/>
-          <enumeration value="Schluesseltabelle"/>
-          <enumeration value="FachId"/>
-          <enumeration value="ADEElement"/>
-          <enumeration value="import"/>
-          <enumeration value="include"/>
-          <enumeration value="disjoint"/>
-          <enumeration value="voidable"/>
-        </restriction>
-      </simpleType>
-    </attribute>
-    <attribute name="mapsTo" type="string" use="required"/>
-  </complexType>
-  <complexType name="TargetBaseType">
-    <complexContent>
-      <extension base="sc:ProcessBaseType">
-        <attribute name="inputs" type="IDREFS"/>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="advancedProcessConfigurations">
-    <complexType>
-      <choice maxOccurs="unbounded">
-        <element maxOccurs="1" ref="sc:AttributeDefinition"/>
-      </choice>
-    </complexType>
-  </element>
-  <element name="AttributeDefinition" type="sc:AttributeDefinitionType"/>
-  <complexType name="AttributeDefinitionType">
-    <sequence>
-      <element name="classSelection">
-        <complexType>
-          <sequence>
-            <element ref="sc:PackageSelector"/>
-            <element ref="sc:ClassSelector"/>
-          </sequence>
-        </complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="TaggedValue">
+       <complexType>
+        <attribute name="name" use="required"/>
+        <attribute name="value" use="required"/>
+       </complexType>
       </element>
-      <element maxOccurs="1" minOccurs="0" name="aliasName" type="string"/>
-      <element minOccurs="0" name="initialValue" type="string"/>
-      <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
-      <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
-      <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
-      <element name="name" type="string"/>
-      <element default="1" minOccurs="0" name="multiplicity" type="string"/>
-      <element minOccurs="0" name="stereotypes">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" name="Stereotype" type="string"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="taggedValues">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" name="TaggedValue">
-              <complexType>
-                <attribute name="name" use="required"/>
-                <attribute name="value" use="required"/>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="type" type="string"/>
-    </sequence>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="type" type="string"/>
+  </sequence>
+ </complexType>
+ <element name="PackageSelector">
+  <complexType>
+   <attribute name="schemaNameRegex"/>
+   <attribute name="nameRegex"/>
+   <attribute name="stereotypeRegex"/>
   </complexType>
-  <element name="PackageSelector">
-    <complexType>
-      <attribute name="schemaNameRegex"/>
-      <attribute name="nameRegex"/>
-      <attribute name="stereotypeRegex"/>
-    </complexType>
-  </element>
-  <element name="ClassSelector">
-    <complexType>
-      <attribute name="nameRegex"/>
-      <attribute name="stereotypeRegex"/>
-    </complexType>
-  </element>
+ </element>
+ <element name="ClassSelector">
+  <complexType>
+   <attribute name="nameRegex"/>
+   <attribute name="stereotypeRegex"/>
+  </complexType>
+ </element>
+ <element name="rdfMapEntries">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:RdfTypeMapEntry"/>
+    <element ref="sc:RdfPropertyMapEntry"/>
+    <element ref="sc:rdfMapEntries"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="RdfTypeMapEntry" type="sc:RdfTypeMapEntryType"/>
+ <complexType name="RdfTypeMapEntryType">
+  <sequence/>
+  <attribute name="type" type="string" use="required">
+   <annotation>
+    <documentation>Name of a UML type</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="schema" type="string">
+   <annotation>
+    <documentation>The name of the application schema package to which the UML type belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="target" type="string" use="required">
+   <annotation>
+    <documentation>IRI of the RDFS/OWL class or datatype to which the UML type shall be mapped
+          (e.g. "ex1:A"). Note: the value is expected to be given as a QName, with the namespace
+          prefix matching the namespace abbreviation of a namespace declared in the
+          configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute default="class" name="targetType">
+   <annotation>
+    <documentation>Type of the target (class or datatype) to which the UML type will be
+          mapped.</documentation>
+   </annotation>
+   <simpleType>
+    <restriction base="string">
+     <pattern value="datatype"/>
+     <pattern value="class"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="rule" type="string" use="optional" default="*">
+   <annotation>
+    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
+          the mapping applies to all encoding rules.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="RdfPropertyMapEntry" type="sc:RdfPropertyMapEntryType"/>
+ <complexType name="RdfPropertyMapEntryType">
+  <sequence/>
+  <attribute name="property" type="string" use="required">
+   <annotation>
+    <documentation>Name of a UML property, optionally scoped to a class from the application schema (example: FeatureX::propertyY).</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="schema" type="string">
+   <annotation>
+    <documentation>The names of the application schema package to which the UML property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="target" type="string" use="optional">
+   <annotation>
+    <documentation>IRI of the RDF/OWL property to which the UML property shall be mapped (e.g. "ex1:propZ"). Can be omitted or empty if the property shall not be encoded. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="range" type="string">
+   <annotation>
+    <documentation>Range to use in class expressions involving the target (RDF/OWL) property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="rule" type="string" use="optional" default="*">
+   <annotation>
+    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
+          the mapping applies to all encoding rules.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="rdfConversionParameters">
+  <complexType>
+   <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:StereotypeConversionParameter"/>
+    <element ref="sc:TypeConversionParameter"/>
+    <element ref="sc:PropertyConversionParameter"/>
+    <element ref="sc:rdfConversionParameters"/>
+   </choice>
+  </complexType>
+ </element>
+ <element name="StereotypeConversionParameter" type="sc:StereotypeConversionParameterType"/>
+ <complexType name="StereotypeConversionParameterType">
+  <sequence/>
+  <attribute name="wellknown" use="required">
+   <annotation>
+    <documentation>Stereotype that is well-known to ShapeChange</documentation>
+   </annotation>
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="DataType"/>
+     <enumeration value="FeatureType"/>
+     <enumeration value="Enumeration"/>
+     <enumeration value="CodeList"/>
+     <enumeration value="Union"/>
+     <enumeration value="Type"/>
+     <enumeration value="BasicType"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="subClassOf" type="string" use="required">
+   <annotation>
+    <documentation>IRIs of classes of which UML types with this stereotype shall be subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="rule" type="string" use="optional" default="*">
+   <annotation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="TypeConversionParameter" type="sc:TypeConversionParameterType"/>
+ <complexType name="TypeConversionParameterType">
+  <sequence/>
+  <attribute name="type" type="string" use="required">
+   <annotation>
+    <documentation>Name of a UML type</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="schema" type="string">
+   <annotation>
+    <documentation>The name of the application schema package to which the UML type belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="subClassOf" type="string" use="required">
+   <annotation>
+    <documentation>IRIs of classes of which the UML type shall be a subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="rule" type="string" use="optional" default="*">
+   <annotation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="PropertyConversionParameter" type="sc:PropertyConversionParameterType"/>
+ <complexType name="PropertyConversionParameterType">
+  <sequence/>
+  <attribute name="property" type="string" use="required">
+   <annotation>
+    <documentation>Name of a UML property, optionally scoped to a class from the application schema (example: FeatureX::propertyY).</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="schema" type="string">
+   <annotation>
+    <documentation>The name of the application schema package to which the UML property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute default="false" name="global" type="boolean">
+   <annotation>
+    <documentation>Specifies if the UML property shall be encoded as a global
+          property</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="subPropertyOf" type="string">
+   <annotation>
+    <documentation>IRIs of RDF/OWL properties of which the RDF/OWL implementation of the UML property shall be a subPropertyOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="target" type="string">
+   <annotation>
+    <documentation>Name of the target UML property (scoped to a class from the application schema - example: FeatureX::propertyY), whose RDF/OWL implementation will be used to implement this property.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="targetSchema" type="string">
+   <annotation>
+    <documentation>The name of the application schema package to which the target property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="rule" type="string" use="optional" default="*">
+   <annotation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
+          the parameter applies to all encoding rules.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="descriptorTargets">
+  <complexType>
+   <sequence>
+    <element maxOccurs="unbounded" minOccurs="0" name="DescriptorTarget">
+     <complexType>
+      <attribute name="appliesTo" default="all">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="ontology"/>
+         <enumeration value="class"/>
+         <enumeration value="conceptscheme"/>
+         <enumeration value="property"/>
+         <enumeration value="all"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+      <attribute name="target" type="string" use="required"/>
+      <attribute name="template" type="string" use="required"/>
+      <attribute default="langString" name="format">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="langString"/>
+         <enumeration value="IRI"/>
+         <enumeration value="string"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+      <attribute default="ignore" name="noValueBehavior">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="ignore"/>
+         <enumeration value="populateOnce"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+      <attribute default="" name="noValueText" type="string"/>
+      <attribute default="connectInSingleTarget" name="multiValueBehavior">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="connectInSingleTarget"/>
+         <enumeration value="splitToMultipleTargets"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+      <attribute default=" " name="multiValueConnectorToken" type="string"/>
+     </complexType>
+    </element>
+   </sequence>
+  </complexType>
+ </element>
+ <element name="constraintMappings">
+  <complexType>
+   <sequence>
+    <element maxOccurs="unbounded" minOccurs="0" name="ConstraintMapping">
+     <complexType>
+      <attribute name="constraintType" use="required">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="Text"/>
+         <enumeration value="FOL"/>
+         <enumeration value="OCL"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+      <attribute default="iso19150-2:constraint" name="target" type="string"/>
+      <attribute name="template" type="string" use="required"/>
+      <attribute default="" name="noValue" type="string"/>
+      <attribute default=" " name="multiValueConnectorToken" type="string"/>
+      <attribute default="string" name="format">
+       <simpleType>
+        <restriction base="string">
+         <enumeration value="langString"/>
+         <enumeration value="string"/>
+        </restriction>
+       </simpleType>
+      </attribute>
+     </complexType>
+    </element>
+   </sequence>
+  </complexType>
+ </element>
 </schema>

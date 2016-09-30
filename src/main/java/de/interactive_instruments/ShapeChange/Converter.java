@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import java.util.Vector;
 
 import org.xml.sax.SAXException;
 
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -79,6 +81,45 @@ public class Converter {
 
 	public void convert() throws ShapeChangeAbortException {
 
+		/*
+		 * Semantic validation of the ShapeChange configuration
+		 * 
+		 * NOTE: Validation of the configuration is managed by the Converter
+		 * because it is an essential pre-processing step before executing the
+		 * conversion
+		 */
+		boolean skipSemanticValidation = false;
+		if (options.parameter(
+				Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG) != null
+				&& options
+						.parameter(
+								Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG)
+						.trim().equalsIgnoreCase("true")) {
+			skipSemanticValidation = true;
+		}
+
+		if (skipSemanticValidation) {
+
+			result.addInfo(null, 512);
+
+		} else {
+
+			/*
+			 * 2016-09-16 JE TBD: should we surround the validateConfiguration()
+			 * call with a try-catch to catch any Exception that might be
+			 * thrown? That could create a warning or error message in the log.
+			 */
+			result.addInfo(null, 510);
+			boolean isValidConfig = validateConfiguration();
+			result.addInfo(null, 511);
+			if (!isValidConfig) {
+				MessageContext mc = result.addError(null, 509);
+				if (mc != null)
+					mc.addDetail(null, 513);
+				return;
+			}
+		}
+
 		if (options.isOnlyDeferrableOutputWrite()) {
 
 			executeDeferrableOutputWriters();
@@ -90,6 +131,55 @@ public class Converter {
 
 			convert(m);
 		}
+	}
+
+	private boolean validateConfiguration() {
+
+		// perform basic validation, especially input parameters and
+		// configuration elements
+		BasicConfigurationValidator bcv = new BasicConfigurationValidator();
+		boolean isValid = bcv.isValid(options, result);
+
+		// validate enabled transformer and target configurations
+		List<ProcessConfiguration> processConfigs = new ArrayList<ProcessConfiguration>();
+
+		processConfigs.addAll(options.getTransformerConfigs().values());
+		processConfigs.addAll(options.getTargetConfigurations());
+
+		for (ProcessConfiguration pConfig : processConfigs) {
+
+			if (pConfig.getProcessMode() == ProcessMode.disabled) {
+
+				// we do not validate disabled processes
+
+			} else {
+
+				try {
+
+					@SuppressWarnings("rawtypes")
+					Class theClass = Class.forName(
+							pConfig.getClassName() + "ConfigurationValidator");
+
+					ConfigurationValidator validator = (ConfigurationValidator) theClass
+							.newInstance();
+
+					isValid = isValid
+							& validator.isValid(pConfig, options, result);
+
+				} catch (ClassNotFoundException e) {
+
+					// that's fine - a ConfigurationValidator is not
+					// required for a Transformer/Target
+
+				} catch (Exception e) {
+
+					result.addWarning(null, 508, pConfig.getClassName(),
+							e.getMessage());
+				}
+			}
+		}
+
+		return isValid;
 	}
 
 	private void executeDeferrableOutputWriters() {
@@ -271,7 +361,7 @@ public class Converter {
 
 	private void executeTransformations(Model model,
 			List<TransformerConfiguration> transformerConfigs)
-					throws Exception {
+			throws Exception {
 
 		/*
 		 * First of all count the transformers that are disabled. Then subtract
@@ -423,9 +513,9 @@ public class Converter {
 	@SuppressWarnings("rawtypes")
 	private void executeTargets(Model model, String modelProviderId,
 			List<TargetConfiguration> targetConfigs)
-					throws ShapeChangeAbortException, ClassNotFoundException,
-					InstantiationException, IllegalAccessException,
-					NoSuchMethodException, SecurityException {
+			throws ShapeChangeAbortException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException,
+			NoSuchMethodException, SecurityException {
 
 		if (processIdsToIgnore.contains(modelProviderId)) {
 			// do not execute this target
@@ -736,7 +826,7 @@ public class Converter {
 		else if (imt.equalsIgnoreCase("xmi10"))
 			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
 		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
+			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
 
 		// Transformations of the model are only supported for EA models
 		if (imt.equals(

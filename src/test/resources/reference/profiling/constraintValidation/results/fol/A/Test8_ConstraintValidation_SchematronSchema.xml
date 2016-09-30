@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2">
+  <title>Schematron constraints for schema 'Test8 ConstraintValidation'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="test" uri="http://shapechange.net/profiling/test8"/>
+  <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
+  <ns prefix="gml" uri="http://www.opengis.net/gml/3.2"/>
+  <pattern>
+    <rule context="test:T8_Class1">
+      <assert id="sbvr1" test="every $x1 in current() satisfies (for $c2 in count(for $x2 in $x1/test:class2 return if (for $c1 in count(for $x3 in $x2/* | //*[concat('#',@gml:id)=$x2/@xlink:href]/test:string return if ($x3 = 'TEST') then 1 else ()) return ($c1 &gt;= 1)) then 1 else ()) return ($c2 &gt;= 1))">Each T8_Class1 shall have class2 that has string equal-to 'TEST'.</assert>
+    </rule>
+  </pattern>
+</schema>

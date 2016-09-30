@@ -245,18 +245,32 @@ public class SbvrUtil {
 	}
 
 	public static void printErrors(List<SbvrErrorInfo> errors,
-			String sbvrRuleText, ShapeChangeResult result) {
+			String sbvrRuleText, ShapeChangeResult result, boolean asWarnings) {
+		
+		String msg;
 
 		for (SbvrErrorInfo err : errors) {
-
-			result.addError(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
-					+ err.getErrorCategory() + ": " + err.getErrorMessage());
+			
+			msg = SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
+					+ err.getErrorCategory() + ": " + err.getErrorMessage();
+			
+			if(asWarnings) {
+				result.addWarning(msg);
+			} else {
+				result.addError(msg);
+			}
 
 			if (err.hasOffendingTextInfo()) {
 
-				result.addError(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
-						+ SbvrConstants.RULE_MESSAGE_PREFIX + sbvrRuleText);
-
+				msg = SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
+						+ SbvrConstants.RULE_MESSAGE_PREFIX + sbvrRuleText;
+				
+				if(asWarnings) {
+					result.addWarning(msg);
+				} else {
+					result.addError(msg);
+				}
+				
 				StringBuilder sb = new StringBuilder();
 
 				int start = err.getOffendingTextStartIndex();
@@ -272,7 +286,14 @@ public class SbvrUtil {
 					for (int i = start; i <= stop; i++)
 						sb.append("^");
 				}
-				result.addError(sb.toString());
+				
+				msg = sb.toString();
+				
+				if(asWarnings) {
+					result.addWarning(msg);
+				} else {
+					result.addError(msg);
+				}
 			}
 		}
 	}

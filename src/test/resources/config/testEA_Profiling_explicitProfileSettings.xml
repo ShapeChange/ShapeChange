@@ -6,7 +6,6 @@
   xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
   <input>
     <parameter name="taggedValueImplementation" value="array"/>
-    <parameter name="addTaggedValues" value="profiles"/>
     <parameter name="inputModelType" value="EA7"/>
     <parameter name="inputFile" value="src/test/resources/testProfiling_explicitProfileSettings.eap"/>
     <parameter name="appSchemaName" value="Test Schema"/>

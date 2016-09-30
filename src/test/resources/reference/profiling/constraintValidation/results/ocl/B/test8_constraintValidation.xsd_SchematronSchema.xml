@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'Test8 ConstraintValidation'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="test" uri="http://shapechange.net/profiling/test8"/>
+  <pattern>
+    <rule context="test:T8_Class1">
+      <assert test="test:att &gt;= 30">ocl1</assert>
+    </rule>
+  </pattern>
+</schema>

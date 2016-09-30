@@ -59,7 +59,7 @@
 			</parameters>
 		</Transformer>
 		<Transformer
-			class="de.interactive_instruments.ShapeChange.Transformation.Constraints.FolConstraintParsing"
+			class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintParserAndValidator"
 			input="step2" id="step3" mode="enabled" />
 	</transformers>
 	<targets>

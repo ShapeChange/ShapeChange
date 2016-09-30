@@ -35,29 +35,32 @@ package de.interactive_instruments.ShapeChange.Model;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode;
 
 /**
- * The interface OclConstraint handles constraints specified in Object 
- * Constraint Language (OCL). OCL expressions are represented by a 
- * syntax tree similar to the one implied by the OCL specification,
- * however, only part of the language is supported.   
+ * The interface OclConstraint handles constraints specified in Object
+ * Constraint Language (OCL). OCL expressions are represented by a syntax tree
+ * similar to the one implied by the OCL specification, however, only part of
+ * the language is supported.
  */
 public interface OclConstraint extends Constraint {
-	
+
 	/** Type for possible OCL expressions */
 	enum ConditionType {
-		INVARIANT,		// An OCL-constraint of type 'inv:'
-		INITIAL,		// An OCL-expression of type 'init:'
-		DERIVE			// An OCL-expression of type 'derive:'
+		INVARIANT, // An OCL-constraint of type 'inv:'
+		INITIAL, // An OCL-expression of type 'init:'
+		DERIVE // An OCL-expression of type 'derive:'
 	}
-	
+
 	/** Inquire context class - i.e. 'self' */
 	public ClassInfo contextClass();
-	
+
 	/** Inquire condition type */
 	public ConditionType conditionType();
 
 	/** Inquire constraint syntax tree */
 	public OclNode.Expression syntaxTree();
-	
-	/** Get comments contained in the OCL expression */
+
+	/**
+	 * @return comments contained in the OCL expression; may be empty but not
+	 *         <code>null</code>
+	 */
 	public String[] comments();
 }

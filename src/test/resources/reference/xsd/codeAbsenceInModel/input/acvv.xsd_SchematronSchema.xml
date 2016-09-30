@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'AppSchema'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="acvv" uri="http://test/absentCodelistValueValidation"/>
+  <pattern>
+    <rule context="acvv:FeatureType">
+      <assert test="not(acvv:propCL) or acvv:propCL = 'code1' or acvv:propCL = 'code2'">propCL_AllowedValues</assert>
+    </rule>
+  </pattern>
+</schema>

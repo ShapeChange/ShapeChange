@@ -47,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -57,6 +60,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -211,9 +215,14 @@ public class Options {
 	 */
 	public static final String PARAM_CONSTRAINT_EXCEL_FILE = "constraintExcelFile";
 
+	public static final String PARAM_IGNORE_ENCODING_RULE_TVS = "ignoreEncodingRuleTaggedValues";
 	public static final String PARAM_ONLY_DEFERRABLE_OUTPUT_WRITE = "onlyDeferrableOutputWrite";
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
+	/**
+	 * If 'true', semantic validation of the ShapeChange configuration will not be performed.
+	 */
+	public static final String PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG = "skipSemanticValidationOfShapeChangeConfiguration";
 
 	/**
 	 * If set to “array”, ShapeChange will use a memory optimized implementation
@@ -232,6 +241,8 @@ public class Options {
 	 * elements shall be loaded ("true") or not. Default is to not load them.
 	 */
 	public static final String PARAM_LOAD_GLOBAL_IDENTIFIERS = "loadGlobalIdentifiers";
+
+	public static final String PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES = "dontConstructAssociationNames";
 
 	/**
 	 * Set this input parameter to <code>true</code> if constraints shall only
@@ -342,29 +353,33 @@ public class Options {
 
 	/** Known descriptors */
 	public static enum Descriptor {
-		ALIAS("alias"),
-		PRIMARYCODE("primaryCode"),
-		DOCUMENTATION("documentation"),
-		DEFINITION("definition"),
-		DESCRIPTION("description"),
-		EXAMPLE("example"),
-		LEGALBASIS("legalBasis"),
-		DATACAPTURESTATEMENT("dataCaptureStatement"),
-		LANGUAGE("language");
-		
-		private String name = null;		
-		Descriptor(String n) {name = n;};
-		public String toString() {return name;};
+		ALIAS("alias"), PRIMARYCODE("primaryCode"), DOCUMENTATION(
+				"documentation"), DEFINITION("definition"), DESCRIPTION(
+						"description"), EXAMPLE("example"), LEGALBASIS(
+								"legalBasis"), DATACAPTURESTATEMENT(
+										"dataCaptureStatement"), LANGUAGE(
+												"language");
+
+		private String name = null;
+
+		Descriptor(String n) {
+			name = n;
+		};
+
+		public String toString() {
+			return name;
+		};
 	}
 
 	public static final String DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE = "[[definition]]";
 	public static final String DERIVED_DOCUMENTATION_DEFAULT_NOVALUE = "";
 
-	public static final String LF = System.getProperty("line.separator"); 
-	public static final String DERIVED_DOCUMENTATION_INSPIRE_TEMPLATE = "-- Name --"+LF+"[[alias]]"+LF+LF+
-			"-- Definition --"+LF+"[[definition]]"+LF+LF+
-			"-- Description --"+LF+"[[description]]";
-	
+	public static final String LF = System.getProperty("line.separator");
+	public static final String DERIVED_DOCUMENTATION_INSPIRE_TEMPLATE = "-- Name --"
+			+ LF + "[[alias]]" + LF + LF + "-- Definition --" + LF
+			+ "[[definition]]" + LF + LF + "-- Description --" + LF
+			+ "[[description]]";
+
 	/**
 	 * Hash table for external namespaces
 	 * <p>
@@ -419,38 +434,42 @@ public class Options {
 			nameSeparator = parameter("nameSeparator");
 		return nameSeparator;
 	}
-	
-	// determines, if unset class descriptors are inherited from a superclass of the same name
+
+	// determines, if unset class descriptors are inherited from a superclass of
+	// the same name
 	boolean getDescriptorsFromSupertypesInitialised = false;
 	boolean getDescriptorsFromSupertypes = false;
-	
+
 	public boolean getDescriptorsFromSupertypes() {
-		if (!getDescriptorsFromSupertypesInitialised) {		
+		if (!getDescriptorsFromSupertypesInitialised) {
 			getDescriptorsFromSupertypesInitialised = true;
 			String s = parameter("inheritDocumentation");
-			// still support deprecated parameter in the FeatureCatalogue target for backward compatibility
+			// still support deprecated parameter in the FeatureCatalogue target
+			// for backward compatibility
 			if (s == null || !s.equals("true"))
-				s = parameter(FeatureCatalogue.class.getName(), "inheritDocumentation");
+				s = parameter(FeatureCatalogue.class.getName(),
+						"inheritDocumentation");
 			if (s != null && s.equals("true"))
-				getDescriptorsFromSupertypes = true;			
+				getDescriptorsFromSupertypes = true;
 		}
 		return getDescriptorsFromSupertypes;
 	}
-	
-	// determines, if unset package, class or property descriptors are inherited from a dependency
+
+	// determines, if unset package, class or property descriptors are inherited
+	// from a dependency
 	boolean getDescriptorsFromDependencyInitialised = false;
 	boolean getDescriptorsFromDependency = true;
-	
+
 	public boolean getDescriptorsFromDepedency() {
-		if (!getDescriptorsFromDependencyInitialised) {		
+		if (!getDescriptorsFromDependencyInitialised) {
 			getDescriptorsFromDependencyInitialised = true;
 			String s = parameter("documentationFromDependency");
 			if (s != null && s.equals("false"))
-				getDescriptorsFromDependency = false;			
+				getDescriptorsFromDependency = false;
 		}
 		return getDescriptorsFromDependency;
 	}
-	
+
 	// /**
 	// * List of transformer configurations that directly reference the input
 	// * element.
@@ -476,6 +495,7 @@ public class Options {
 	protected boolean ignoreEncodingRuleTaggedValues = false;
 
 	protected boolean useStringInterning = false;
+	protected boolean dontConstructAssociationNames = false;
 	protected boolean loadGlobalIds = false;
 	protected String language = "en";
 
@@ -500,6 +520,11 @@ public class Options {
 	 */
 	private boolean resetUponLoadFlag = true;
 	private List<TargetConfiguration> targetConfigs = null;
+	/**
+	 * key: 'id' assigned to the transformer; value: the transformer
+	 * configuration
+	 */
+	private Map<String, TransformerConfiguration> transformerConfigs = null;
 
 	protected File imageTmpDir = null;
 
@@ -828,8 +853,7 @@ public class Options {
 	 * @param alias
 	 *            - the tag alias (in lower case)
 	 * @param wellknown
-	 *            - the wellknown tag (in lower case) to which the alias
-	 *            maps
+	 *            - the wellknown tag (in lower case) to which the alias maps
 	 */
 	protected void addTagAlias(String alias, String wellknown) {
 		fTagAliases.put(alias, wellknown);
@@ -842,10 +866,9 @@ public class Options {
 	 * values in the tag map have also been converted to lower case).
 	 * 
 	 * @param alias
-	 *            tag for which a mapping to a wellknown tag is
-	 *            being looked up
-	 * @return the wellknown tag to which the alias maps, or
-	 *         <code>null</code> if no such mapping exists
+	 *            tag for which a mapping to a wellknown tag is being looked up
+	 * @return the wellknown tag to which the alias maps, or <code>null</code>
+	 *         if no such mapping exists
 	 */
 	public String tagAlias(String alias) {
 		return fTagAliases.get(alias.toLowerCase());
@@ -857,7 +880,7 @@ public class Options {
 	 * @param descriptor
 	 *            - the descriptor (in lower case)
 	 * @param source
-	 *            - the source (in lower case) 
+	 *            - the source (in lower case)
 	 */
 	protected void addDescriptorSource(String descriptor, String source) {
 		fDescriptorSources.put(descriptor, source);
@@ -1246,15 +1269,15 @@ public class Options {
 				// case shall be ignored for descriptor and source
 				key = key.toLowerCase();
 				val = val.toLowerCase();
-				
+
 				if (val.equals("sc:extract")) {
 					String s = e.getAttribute("token");
-					val += "#"+(s==null ? "" : s);
+					val += "#" + (s == null ? "" : s);
 				} else if (val.equals("tag")) {
 					String s = e.getAttribute("tag");
-					val += "#"+(s==null ? "" : s);
+					val += "#" + (s == null ? "" : s);
 				}
-				
+
 				descriptorSources.put(key, val);
 			}
 
@@ -1262,7 +1285,8 @@ public class Options {
 					inputElement);
 
 			this.inputConfig = new InputConfiguration(inputId, inputParameters,
-					stereotypeAliases, tagAliases, descriptorSources, packageInfos);
+					stereotypeAliases, tagAliases, descriptorSources,
+					packageInfos);
 
 			// parse dialog specific parameters
 			nl = document.getElementsByTagName("dialog");
@@ -1296,8 +1320,7 @@ public class Options {
 
 			// Load transformer configurations (if any are provided in the
 			// configuration file)
-			Map<String, TransformerConfiguration> transformerConfigs = parseTransformerConfigurations(
-					document);
+			this.transformerConfigs = parseTransformerConfigurations(document);
 
 			// Load target configurations
 			this.targetConfigs = parseTargetConfigurations(document);
@@ -1430,10 +1453,12 @@ public class Options {
 
 					// add map entries for Target (no need to do this for
 					// transformers)
-					for (ProcessMapEntry pme : tgtConfig.getMapEntries()) {
-						addTargetTypeMapEntry(tgtConfig.getClassName(),
-								pme.getType(), pme.getRule(),
-								pme.getTargetType(), pme.getParam());
+					if (tgtConfig.getMapEntries() != null) {
+						for (ProcessMapEntry pme : tgtConfig.getMapEntries()) {
+							addTargetTypeMapEntry(tgtConfig.getClassName(),
+									pme.getType(), pme.getRule(),
+									pme.getTargetType(), pme.getParam());
+						}
 					}
 				}
 			}
@@ -1531,11 +1556,8 @@ public class Options {
 				}
 			}
 
-			/*
-			 * TODO add documentation
-			 */
 			String ignoreEncodingRuleTaggedValues = parameter(
-					"ignoreEncodingRuleTaggedValues");
+					PARAM_IGNORE_ENCODING_RULE_TVS);
 
 			if (ignoreEncodingRuleTaggedValues != null) {
 				if (ignoreEncodingRuleTaggedValues.trim()
@@ -1552,6 +1574,15 @@ public class Options {
 				this.useStringInterning = true;
 			}
 
+			String dontConstructAssociationNames_value = parameter(
+					PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES);
+
+			if (dontConstructAssociationNames_value != null
+					&& dontConstructAssociationNames_value.trim()
+							.equalsIgnoreCase("true")) {
+				this.dontConstructAssociationNames = true;
+			}
+
 			String loadGlobalIds_value = this
 					.parameter(PARAM_LOAD_GLOBAL_IDENTIFIERS);
 
@@ -1560,13 +1591,13 @@ public class Options {
 				this.loadGlobalIds = true;
 			}
 
-			String language_value = inputConfig.getParameters().get(PARAM_LANGUAGE);
+			String language_value = inputConfig.getParameters()
+					.get(PARAM_LANGUAGE);
 
 			if (language_value != null && !language_value.trim().isEmpty()) {
 				this.language = language_value.trim().toLowerCase();
 			}
 
-			
 		} catch (SAXException e) {
 			String m = e.getMessage();
 			if (m != null) {
@@ -1608,7 +1639,6 @@ public class Options {
 
 		// reset fields
 
-		fTargets = new HashMap<String, String>();
 		fParameters = new HashMap<String, String>();
 		fTypeMap = new HashMap<String, MapEntry>();
 		fBaseMap = new HashMap<String, MapEntry>();
@@ -1623,7 +1653,6 @@ public class Options {
 		fPackages = new HashMap<String, MapEntry>();
 		fSchemaLocations = new HashMap<String, String>();
 		fAllRules = new HashSet<String>();
-		fRulesInEncRule = new HashSet<String>();
 		fExtendsEncRule = new HashMap<String, String>();
 
 		// repopulate fields
@@ -1641,7 +1670,8 @@ public class Options {
 
 			// add all stereotype aliases
 			for (String key : inputConfig.getStereotypeAliases().keySet()) {
-				addStereotypeAlias(key, inputConfig.getStereotypeAliases().get(key));
+				addStereotypeAlias(key,
+						inputConfig.getStereotypeAliases().get(key));
 			}
 
 			// add all tag aliases
@@ -1651,7 +1681,8 @@ public class Options {
 
 			// add all descriptor sources
 			for (String key : inputConfig.getDescriptorSources().keySet()) {
-				addDescriptorSource(key, inputConfig.getDescriptorSources().get(key));
+				addDescriptorSource(key,
+						inputConfig.getDescriptorSources().get(key));
 			}
 
 			// add all package infos
@@ -1696,10 +1727,6 @@ public class Options {
 					setParameter(currentProcessConfig.getClassName(), name,
 							currentProcessConfig.getParameters().get(name));
 				}
-
-				// add target mode
-				addTarget(currentProcessConfig.getClassName(),
-						currentProcessConfig.getProcessMode().name());
 
 				// add encoding rules
 				for (ProcessRuleSet prs : currentProcessConfig.getRuleSets()
@@ -1805,11 +1832,14 @@ public class Options {
 
 				// add map entries for Target (no need to do this for
 				// transformers)
-				for (ProcessMapEntry pme : currentProcessConfig
-						.getMapEntries()) {
-					addTargetTypeMapEntry(currentProcessConfig.getClassName(),
-							pme.getType(), pme.getRule(), pme.getTargetType(),
-							pme.getParam());
+				if (currentProcessConfig.getMapEntries() != null) {
+					for (ProcessMapEntry pme : currentProcessConfig
+							.getMapEntries()) {
+						addTargetTypeMapEntry(
+								currentProcessConfig.getClassName(),
+								pme.getType(), pme.getRule(),
+								pme.getTargetType(), pme.getParam());
+					}
 				}
 
 				// TODO store namespace info
@@ -1880,6 +1910,12 @@ public class Options {
 		return result;
 	}
 
+	/**
+	 * @param configurationDocument
+	 * @return list with target configurations, can be empty but not
+	 *         <code>null</code>
+	 * @throws ShapeChangeAbortException
+	 */
 	private List<TargetConfiguration> parseTargetConfigurations(
 			Document configurationDocument) throws ShapeChangeAbortException {
 
@@ -1953,24 +1989,38 @@ public class Options {
 
 					} else if (tgtType.equals("TargetOwl")) {
 
-						// now look up all ProcessMapEntry elements, if there
-						// are any
-						List<ProcessMapEntry> processMapEntries = parseProcessMapEntries(
-								tgtE, "MapEntry");
-
-						// also parse namespaces, if there are any
-						List<Namespace> namespaces = parseNamespaces(tgtE);
-
-						// also parse stereotype mappings, if there are any
-						Map<String, String> stereotypeMappings = parseStereotypeMappings(
+						Map<String, List<RdfTypeMapEntry>> rdfTypeMapEntries = parseRdfTypeMapEntries(
+								tgtE);
+						Map<String, List<RdfPropertyMapEntry>> rdfPropertyMapEntries = parseRdfPropertyMapEntries(
+								tgtE);
+						SortedMap<String, List<StereotypeConversionParameter>> stereotypeConversionParameters = parseStereotypeConversionParameters(
+								tgtE);
+						Map<String, List<TypeConversionParameter>> typeConversionParameters = parseTypeConversionParameters(
+								tgtE);
+						Map<String, List<PropertyConversionParameter>> propertyConversionParameters = parsePropertyConversionParameters(
+								tgtE);
+						List<DescriptorTarget> descriptorTargets = parseDescriptorTargets(
+								tgtE);
+						Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 								tgtE);
 
+						List<Namespace> namespaces = parseNamespaces(tgtE);
+
 						// create target owl config and add it to list
-						tgtConfig = new TargetOwlConfiguration(tgtConfigName,
-								tgtMode, processParameters, processRuleSets,
-								processMapEntries, tgtConfigInputs, namespaces,
-								stereotypeMappings,
-								advancedProcessConfigurations);
+						TargetOwlConfiguration owlConfig = new TargetOwlConfiguration(
+								tgtConfigName, tgtMode, processParameters,
+								processRuleSets, tgtConfigInputs, namespaces,
+								advancedProcessConfigurations,
+								rdfTypeMapEntries, rdfPropertyMapEntries,
+								stereotypeConversionParameters,
+								typeConversionParameters,
+								propertyConversionParameters, descriptorTargets,
+								constraintMappings);
+
+						owlConfig.validate();
+
+						tgtConfig = owlConfig;
+
 					} else {
 						// We're dealing with a TargetXmlSchema element
 
@@ -2022,30 +2072,477 @@ public class Options {
 		return null;
 	}
 
-	private Map<String, String> parseStereotypeMappings(Element targetElement) {
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key:
+	 *         identifier of wellknown stereotype, and value: list of conversion
+	 *         parameters with that identifier as 'wellknown'
+	 */
+	private SortedMap<String, List<StereotypeConversionParameter>> parseStereotypeConversionParameters(
+			Element targetElement) {
 
-		Map<String, String> result = new HashMap<String, String>();
+		NodeList scpNl = targetElement
+				.getElementsByTagName("StereotypeConversionParameter");
+		Node scpN;
+		Element scpE;
 
-		NodeList smNl = targetElement.getElementsByTagName("StereotypeMapping");
-		Node smN;
-		Element smE;
+		SortedMap<String, List<StereotypeConversionParameter>> result = new TreeMap<String, List<StereotypeConversionParameter>>();
 
-		if (smNl != null && smNl.getLength() != 0) {
+		if (scpNl != null && scpNl.getLength() != 0) {
 
-			for (int k = 0; k < smNl.getLength(); k++) {
+			for (int k = 0; k < scpNl.getLength(); k++) {
 
-				smN = smNl.item(k);
-				if (smN.getNodeType() == Node.ELEMENT_NODE) {
+				scpN = scpNl.item(k);
+				if (scpN.getNodeType() == Node.ELEMENT_NODE) {
 
-					smE = (Element) smN;
+					scpE = (Element) scpN;
 
-					String wellknownStereotype = smE.getAttribute("wellknown");
-					String mapsTo = smE.getAttribute("mapsTo");
+					String wellknown = scpE.getAttribute("wellknown")
+							.toLowerCase();
 
-					result.put(wellknownStereotype.toLowerCase(), mapsTo);
+					String subClassOf_tmp = scpE.getAttribute("subClassOf")
+							.trim();
+					Set<String> subClassOf = new TreeSet<String>(
+							Arrays.asList(StringUtils.split(subClassOf_tmp)));
+
+					String rule = scpE.hasAttribute("rule")
+							? scpE.getAttribute("rule").trim() : "*";
+
+					StereotypeConversionParameter scp = new StereotypeConversionParameter(
+							wellknown, subClassOf, rule);
+
+					List<StereotypeConversionParameter> list;
+					if (result.containsKey(wellknown)) {
+						list = result.get(wellknown);
+					} else {
+						list = new ArrayList<StereotypeConversionParameter>();
+						result.put(wellknown, list);
+					}
+					list.add(scp);
 				}
 			}
 		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return map, with key: type name, and value: list of conversion
+	 *         parameters for types with that name (which can be more than one,
+	 *         if schemas are different)
+	 */
+	private Map<String, List<TypeConversionParameter>> parseTypeConversionParameters(
+			Element targetElement) {
+
+		NodeList tcpNl = targetElement
+				.getElementsByTagName("TypeConversionParameter");
+		Node tcpN;
+		Element tcpE;
+
+		Map<String, List<TypeConversionParameter>> result = new TreeMap<String, List<TypeConversionParameter>>();
+
+		if (tcpNl != null && tcpNl.getLength() != 0) {
+
+			for (int k = 0; k < tcpNl.getLength(); k++) {
+
+				tcpN = tcpNl.item(k);
+				if (tcpN.getNodeType() == Node.ELEMENT_NODE) {
+
+					tcpE = (Element) tcpN;
+
+					String type = tcpE.getAttribute("type");
+
+					String schema = tcpE.hasAttribute("schema")
+							? tcpE.getAttribute("schema") : null;
+
+					Set<String> subClassOf = new TreeSet<String>(
+							Arrays.asList(StringUtils
+									.split(tcpE.getAttribute("subClassOf"))));
+
+					String rule = tcpE.hasAttribute("rule")
+							? tcpE.getAttribute("rule") : "*";
+
+					TypeConversionParameter tcp = new TypeConversionParameter(
+							type, schema, subClassOf, rule);
+
+					List<TypeConversionParameter> list;
+					if (result.containsKey(type)) {
+						list = result.get(type);
+					} else {
+						list = new ArrayList<TypeConversionParameter>();
+						result.put(type, list);
+					}
+					list.add(tcp);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key: property
+	 *         name (optionally scoped to a class) and value: list of conversion
+	 *         parameters for types with that name (which can be more than one,
+	 *         if schemas are different)
+	 */
+	private Map<String, List<PropertyConversionParameter>> parsePropertyConversionParameters(
+			Element targetElement) {
+
+		NodeList pcpNl = targetElement
+				.getElementsByTagName("PropertyConversionParameter");
+		Node pcpN;
+		Element pcpE;
+
+		Map<String, List<PropertyConversionParameter>> result = new TreeMap<String, List<PropertyConversionParameter>>();
+
+		if (pcpNl != null && pcpNl.getLength() != 0) {
+
+			for (int k = 0; k < pcpNl.getLength(); k++) {
+
+				pcpN = pcpNl.item(k);
+				if (pcpN.getNodeType() == Node.ELEMENT_NODE) {
+
+					pcpE = (Element) pcpN;
+
+					String property = pcpE.getAttribute("property").trim();
+
+					String schema = pcpE.hasAttribute("schema")
+							? pcpE.getAttribute("schema").trim() : null;
+
+					boolean global = pcpE.hasAttribute("global")
+							? javax.xml.bind.DatatypeConverter.parseBoolean(
+									pcpE.getAttribute("global"))
+							: false;
+
+					String subPropertyOf_tmp = pcpE
+							.hasAttribute("subPropertyOf")
+									? pcpE.getAttribute("subPropertyOf").trim()
+									: null;
+					Set<String> subPropertyOf = null;
+					if (subPropertyOf_tmp != null) {
+						subPropertyOf = new TreeSet<String>(Arrays
+								.asList(StringUtils.split(subPropertyOf_tmp)));
+					}
+
+					String target = pcpE.hasAttribute("target")
+							? pcpE.getAttribute("target").trim() : null;
+
+					String targetSchema = pcpE.hasAttribute("targetSchema")
+							? pcpE.getAttribute("targetSchema").trim() : null;
+
+					String rule = pcpE.hasAttribute("rule")
+							? pcpE.getAttribute("rule").trim() : "*";
+
+					PropertyConversionParameter pcp = new PropertyConversionParameter(
+							property, schema, global, subPropertyOf, target,
+							targetSchema, rule);
+
+					List<PropertyConversionParameter> list;
+					if (result.containsKey(property)) {
+						list = result.get(property);
+					} else {
+						list = new ArrayList<PropertyConversionParameter>();
+						result.put(property, list);
+					}
+					list.add(pcp);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key: type
+	 *         name, and value: list of map entries for types with that name
+	 *         (which can be more than one, if schemas are different)
+	 */
+	private Map<String, List<RdfTypeMapEntry>> parseRdfTypeMapEntries(
+			Element targetElement) {
+
+		NodeList rtmeNl = targetElement.getElementsByTagName("RdfTypeMapEntry");
+		Node rtmeN;
+		Element rtmeE;
+
+		Map<String, List<RdfTypeMapEntry>> result = new TreeMap<String, List<RdfTypeMapEntry>>();
+
+		if (rtmeNl != null && rtmeNl.getLength() != 0) {
+
+			for (int k = 0; k < rtmeNl.getLength(); k++) {
+
+				rtmeN = rtmeNl.item(k);
+				if (rtmeN.getNodeType() == Node.ELEMENT_NODE) {
+
+					rtmeE = (Element) rtmeN;
+
+					String type = rtmeE.getAttribute("type").trim();
+
+					String schema = rtmeE.hasAttribute("schema")
+							? rtmeE.getAttribute("schema").trim() : null;
+
+					String target = rtmeE.getAttribute("target").trim();
+
+					RdfTypeMapEntry.TargetType targetType = RdfTypeMapEntry.TargetType.CLASS;
+					if (rtmeE.hasAttribute("targetType")) {
+						String tmp = rtmeE.getAttribute("targetType");
+						if (tmp.trim().equalsIgnoreCase("class")) {
+							targetType = RdfTypeMapEntry.TargetType.CLASS;
+						} else {
+							targetType = RdfTypeMapEntry.TargetType.DATATYPE;
+						}
+					}
+
+					String rule = rtmeE.hasAttribute("rule")
+							? rtmeE.getAttribute("rule").trim() : "*";
+
+					RdfTypeMapEntry rtme = new RdfTypeMapEntry(type, schema,
+							target, targetType, rule);
+
+					List<RdfTypeMapEntry> list;
+					if (result.containsKey(type)) {
+						list = result.get(type);
+					} else {
+						list = new ArrayList<RdfTypeMapEntry>();
+						result.put(type, list);
+					}
+					list.add(rtme);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key: property
+	 *         name (optionally scoped to a class), and value: list of map
+	 *         entries for properties with that name (which can be more than
+	 *         one, if schemas are different)
+	 */
+	private Map<String, List<RdfPropertyMapEntry>> parseRdfPropertyMapEntries(
+			Element targetElement) {
+
+		NodeList rpmeNl = targetElement
+				.getElementsByTagName("RdfPropertyMapEntry");
+		Node rpmeN;
+		Element rpmeE;
+
+		Map<String, List<RdfPropertyMapEntry>> result = new TreeMap<String, List<RdfPropertyMapEntry>>();
+
+		if (rpmeNl != null && rpmeNl.getLength() != 0) {
+
+			for (int k = 0; k < rpmeNl.getLength(); k++) {
+
+				rpmeN = rpmeNl.item(k);
+				if (rpmeN.getNodeType() == Node.ELEMENT_NODE) {
+
+					rpmeE = (Element) rpmeN;
+
+					String property = rpmeE.getAttribute("property").trim();
+
+					String schema = rpmeE.hasAttribute("schema")
+							? rpmeE.getAttribute("schema").trim() : null;
+
+					String target = rpmeE.hasAttribute("target")
+							? rpmeE.getAttribute("target").trim() : null;
+					if (target != null && target.isEmpty()) {
+						target = null;
+					}
+
+					String range = rpmeE.hasAttribute("range")
+							? rpmeE.getAttribute("range").trim() : null;
+
+					String rule = rpmeE.hasAttribute("rule")
+							? rpmeE.getAttribute("rule").trim() : "*";
+
+					RdfPropertyMapEntry rpme = new RdfPropertyMapEntry(property,
+							schema, target, range, rule);
+
+					List<RdfPropertyMapEntry> list;
+					if (result.containsKey(property)) {
+						list = result.get(property);
+					} else {
+						list = new ArrayList<RdfPropertyMapEntry>();
+						result.put(property, list);
+					}
+					list.add(rpme);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key:
+	 *         constraint type, and value: mapping defined for the constraint
+	 *         type
+	 */
+	private Map<ConstraintMapping.ConstraintType, ConstraintMapping> parseConstraintMappings(
+			Element targetElement) {
+
+		NodeList cmNl = targetElement.getElementsByTagName("ConstraintMapping");
+		Node cmN;
+		Element cmE;
+
+		Map<ConstraintMapping.ConstraintType, ConstraintMapping> result = new HashMap<ConstraintMapping.ConstraintType, ConstraintMapping>();
+
+		if (cmNl != null && cmNl.getLength() != 0) {
+
+			for (int k = 0; k < cmNl.getLength(); k++) {
+
+				cmN = cmNl.item(k);
+				if (cmN.getNodeType() == Node.ELEMENT_NODE) {
+
+					cmE = (Element) cmN;
+
+					ConstraintMapping.ConstraintType constraintType;
+					String tmp = cmE.getAttribute("constraintType");
+					if (tmp.trim().equalsIgnoreCase("Text")) {
+						constraintType = ConstraintMapping.ConstraintType.TEXT;
+					} else if (tmp.trim().equalsIgnoreCase("FOL")) {
+						constraintType = ConstraintMapping.ConstraintType.FOL;
+					} else {
+						constraintType = ConstraintMapping.ConstraintType.OCL;
+					}
+
+					String target = cmE.hasAttribute("target")
+							? cmE.getAttribute("target").trim()
+							: "iso19150-2:constraint";
+
+					String template = cmE.getAttribute("template");
+
+					String noValue = cmE.hasAttribute("noValue")
+							? cmE.getAttribute("noValue") : " ";
+
+					String mvct = cmE.hasAttribute("multiValueConnectorToken")
+							? cmE.getAttribute("multiValueConnectorToken")
+							: " ";
+
+					ConstraintMapping.Format format = ConstraintMapping.Format.STRING;
+					if (cmE.hasAttribute("format")) {
+						String tmp2 = cmE.getAttribute("format");
+						if (tmp2.trim().equalsIgnoreCase("string")) {
+							format = ConstraintMapping.Format.STRING;
+						} else {
+							format = ConstraintMapping.Format.LANG_STRING;
+						}
+					}
+
+					ConstraintMapping cm = new ConstraintMapping(constraintType,
+							target, template, noValue, mvct, format);
+
+					/*
+					 * NOTE: constraints defined in the XSD for TargetOwl ensure
+					 * that ConstraintMappings have unique constraintType
+					 */
+					result.put(constraintType, cm);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param targetElement
+	 * @return list of descriptor targets (can be empty but not
+	 *         <code>null</code>)
+	 */
+	private List<DescriptorTarget> parseDescriptorTargets(
+			Element targetElement) {
+
+		NodeList dtNl = targetElement.getElementsByTagName("DescriptorTarget");
+		Node dtN;
+		Element dtE;
+
+		List<DescriptorTarget> result = new ArrayList<DescriptorTarget>();
+
+		if (dtNl != null && dtNl.getLength() != 0) {
+
+			for (int k = 0; k < dtNl.getLength(); k++) {
+
+				dtN = dtNl.item(k);
+				if (dtN.getNodeType() == Node.ELEMENT_NODE) {
+
+					dtE = (Element) dtN;
+
+					String target = dtE.getAttribute("target").trim();
+
+					String template = dtE.getAttribute("template");
+
+					DescriptorTarget.Format format = DescriptorTarget.Format.LANG_STRING;
+					if (dtE.hasAttribute("format")) {
+						String tmp = dtE.getAttribute("format");
+						if (tmp.trim().equalsIgnoreCase("string")) {
+							format = DescriptorTarget.Format.STRING;
+						} else if (tmp.trim().equalsIgnoreCase("IRI")) {
+							format = DescriptorTarget.Format.IRI;
+						} else {
+							format = DescriptorTarget.Format.LANG_STRING;
+						}
+					}
+
+					DescriptorTarget.NoValueBehavior noValueBehavior = DescriptorTarget.NoValueBehavior.INGORE;
+					if (dtE.hasAttribute("noValueBehavior")) {
+						String tmp = dtE.getAttribute("noValueBehavior");
+						if (tmp.trim().equalsIgnoreCase("populateOnce")) {
+							noValueBehavior = DescriptorTarget.NoValueBehavior.POPULATE_ONCE;
+						} else {
+							noValueBehavior = DescriptorTarget.NoValueBehavior.INGORE;
+						}
+					}
+
+					String noValueText = dtE.hasAttribute("noValueText")
+							? dtE.getAttribute("noValueText") : "";
+
+					DescriptorTarget.MultiValueBehavior multiValueBehavior = DescriptorTarget.MultiValueBehavior.CONNECT_IN_SINGLE_TARGET;
+					if (dtE.hasAttribute("multiValueBehavior")) {
+						String tmp = dtE.getAttribute("multiValueBehavior");
+						if (tmp.trim()
+								.equalsIgnoreCase("splitToMultipleTargets")) {
+							multiValueBehavior = DescriptorTarget.MultiValueBehavior.SPLIT_TO_MULTIPLE_TARGETS;
+						} else {
+							multiValueBehavior = DescriptorTarget.MultiValueBehavior.CONNECT_IN_SINGLE_TARGET;
+						}
+					}
+
+					DescriptorTarget.AppliesTo appliesTo = DescriptorTarget.AppliesTo.ALL;
+					if (dtE.hasAttribute("appliesTo")) {
+						String tmp = dtE.getAttribute("appliesTo");
+						if (tmp.trim().equalsIgnoreCase("ontology")) {
+							appliesTo = DescriptorTarget.AppliesTo.ONTOLOGY;
+						} else if (tmp.trim().equalsIgnoreCase("class")) {
+							appliesTo = DescriptorTarget.AppliesTo.CLASS;
+						} else if (tmp.trim()
+								.equalsIgnoreCase("conceptscheme")) {
+							appliesTo = DescriptorTarget.AppliesTo.CONCEPT_SCHEME;
+						} else if (tmp.trim().equalsIgnoreCase("property")) {
+							appliesTo = DescriptorTarget.AppliesTo.PROPERTY;
+						} else {
+							appliesTo = DescriptorTarget.AppliesTo.ALL;
+						}
+					}
+
+					String mvct = dtE.hasAttribute("multiValueConnectorToken")
+							? dtE.getAttribute("multiValueConnectorToken")
+							: " ";
+
+					DescriptorTarget dt = new DescriptorTarget(appliesTo,
+							target, template, format, noValueBehavior,
+							noValueText, multiValueBehavior, mvct);
+
+					result.add(dt);
+				}
+			}
+		}
+
 		return result;
 	}
 
@@ -2232,8 +2729,10 @@ public class Options {
 							? xsdMapEntryE.getAttribute("xmlElement") : null;
 
 					String xmlPropertyType = xsdMapEntryE
-							.hasAttribute("xmlPropertyType") ? xsdMapEntryE
-									.getAttribute("xmlPropertyType") : null;
+							.hasAttribute("xmlPropertyType")
+									? xsdMapEntryE.getAttribute(
+											"xmlPropertyType")
+									: null;
 
 					String xmlAttribute = xsdMapEntryE
 							.hasAttribute("xmlAttribute")
@@ -2241,8 +2740,10 @@ public class Options {
 									: null;
 
 					String xmlAttributeGroup = xsdMapEntryE
-							.hasAttribute("xmlAttributeGroup") ? xsdMapEntryE
-									.getAttribute("xmlAttributeGroup") : null;
+							.hasAttribute("xmlAttributeGroup")
+									? xsdMapEntryE.getAttribute(
+											"xmlAttributeGroup")
+									: null;
 
 					String nsabr = xsdMapEntryE.hasAttribute("nsabr")
 							? xsdMapEntryE.getAttribute("nsabr") : null;
@@ -2311,6 +2812,8 @@ public class Options {
 	 * ShapeChangeConfiguration document.
 	 *
 	 * @param configurationDocument
+	 * @return map with key: 'id' assigned to the transformer, value: the
+	 *         transformer configuration; can be empty but not <code>null</code>
 	 * @throws ShapeChangeAbortException
 	 *
 	 */
@@ -2513,7 +3016,7 @@ public class Options {
 
 	private Map<String, ProcessRuleSet> parseRuleSets(Element processElement,
 			String ruleSetElementTagName, boolean checkRuleExistence)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		Map<String, ProcessRuleSet> result = new HashMap<String, ProcessRuleSet>();
 
@@ -2799,6 +3302,7 @@ public class Options {
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
+		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 		addRule("rule-xsd-cls-enum-subtypes");
 		addRule("rule-xsd-cls-enum-supertypes");
 		addRule("rule-xsd-cls-mixin-classes-as-group");
@@ -2858,6 +3362,7 @@ public class Options {
 		addRule("rule-sql-prop-exclude-derived");
 		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
+		addRule("rule-sql-all-exclude-abstract");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
@@ -2866,22 +3371,60 @@ public class Options {
 		/*
 		 * OWL encoding rules
 		 */
-		addExtendsEncRule("iso19150_2014", "*");
 
 		// declare optional rules
-		addRule("rule-owl-pkg-singleOntologyPerSchema");
-		addRule("rule-owl-pkg-pathInOntologyName");
-		addRule("rule-owl-all-constraints");
-		addRule("rule-owl-cls-geosparql-features");
-		addRule("rule-owl-cls-19150-2-features");
-		addRule("rule-owl-cls-codelist-external");
+		addRule("rule-owl-all-constraints-byConstraintMapping");
+		addRule("rule-owl-all-constraints-humanReadableTextOnly");
 
-		addRule("rule-owl-prop-suppress-cardinality-restrictions");
-		addRule("rule-owl-prop-suppress-allValuesFrom-restrictions");
+		addRule("rule-owl-pkg-importISO191502Base");
+		addRule("rule-owl-pkg-dctSourceTitle");
+		addRule("rule-owl-pkg-ontologyName-appendVersion");
+		addRule("rule-owl-pkg-ontologyName-byTaggedValue");
+		addRule("rule-owl-pkg-ontologyName-code");
+		addRule("rule-owl-pkg-ontologyName-withPath");
+		addRule("rule-owl-pkg-ontologyName-iso191502");
+		addRule("rule-owl-pkg-versionInfo");
+		addRule("rule-owl-pkg-versionIRI");
+		addRule("rule-owl-pkg-versionIRI-avoid-duplicate-version");
+		addRule("rule-owl-pkg-singleOntologyPerSchema");
+
+		addRule("rule-owl-cls-codelist-external");
+		addRule("rule-owl-cls-codelist-19150-2");
+		addRule("rule-owl-cls-codelist-19150-2-conceptSchemeSubclass");
+		addRule("rule-owl-cls-codelist-19150-2-differentIndividuals");
+		addRule("rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace");
+		addRule("rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration");
+		addRule("rule-owl-cls-codelist-19150-2-skos-collection");
+		addRule("rule-owl-cls-disjoint-classes");
+		addRule("rule-owl-cls-iso191502Enumeration");
+
+		addRule("rule-owl-cls-encode-featuretypes");
+		addRule("rule-owl-cls-encode-basictypes");
+		addRule("rule-owl-cls-encode-datatypes");
+		addRule("rule-owl-cls-encode-mixintypes");
+		addRule("rule-owl-cls-encode-objecttypes");
+		addRule("rule-owl-cls-enumerationAsCodelist");
+		addRule("rule-owl-cls-generalization");
+		addRule("rule-owl-cls-iso191502IsAbstract");
+		addRule("rule-owl-cls-union");
+		addRule("rule-owl-cls-unionSets");
+
+		addRule("rule-owl-prop-code-broader-byBroaderListedValue");
+		addRule("rule-owl-prop-general");
+		addRule("rule-owl-prop-globalScopeAttributes");
+		addRule("rule-owl-prop-globalScopeByConversionParameter");
+		addRule("rule-owl-prop-globalScopeByUniquePropertyName");
+		addRule("rule-owl-prop-inverseOf");
+		addRule("rule-owl-prop-iso191502Aggregation");
+		addRule("rule-owl-prop-iso191502AssociationName");
+		addRule("rule-owl-prop-iso191502-naming");
+		addRule("rule-owl-prop-localScopeAll");
+		addRule("rule-owl-prop-mapping-compare-specifications");
+		addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
+		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
+		addRule("rule-owl-prop-range-global");
+		addRule("rule-owl-prop-range-local-withUniversalQuantification");
 		addRule("rule-owl-prop-voidable-as-minCardinality0");
-		addRule("rule-owl-all-suppress-dc-source");
-		addRule("rule-owl-prop-suppress-asociation-names");
-		addRule("rule-owl-pkg-app-schema-code");
 
 		/*
 		 * ArcGIS workspace encoding rules
@@ -2899,36 +3442,11 @@ public class Options {
 		addRule("rule-rep-prop-exclude-derived");
 		addRule("rule-rep-cls-generate-objectidentifier");
 		addRule("rule-rep-prop-maxLength-from-size");
-		
+
 		/*
 		 * Application schema metadata rules
 		 */
 		addRule("rule-asm-all-identify-profiles");
-
-		// // ==================
-		// // Transformer rules
-		// // ==================
-		//
-		// /*
-		// * Flattener rules
-		// */
-		// addRule("rule-trf-all-removeType");
-		// addRule("rule-trf-prop-flatten-ONINAs");
-		// addRule("rule-trf-prop-optionality");
-		// addRule("rule-trf-cls-flatten-inheritance");
-		// addRule("rule-trf-prop-flatten-multiplicity");
-		// addRule("rule-trf-prop-flatten-types");
-		// addRule("rule-trf-all-flatten-name");
-		// addRule("rule-trf-all-flatten-constraints");
-		// addRule("rule-trf-prop-remove-name-and-alias-component");
-		// addRule("rule-trf-prop-flatten-homogeneousgeometries");
-		//
-		// /*
-		// * Profiler rules
-		// */
-		// addRule("rule-trf-profiling-preprocessing-profilesValueConsistencyCheck");
-		// addRule("rule-trf-profiling-preprocessing-modelConsistencyCheck");
-		// addRule("rule-trf-profiling-postprocessing-removeEmptyPackages");
 
 	}
 
@@ -3062,6 +3580,10 @@ public class Options {
 		return this.targetConfigs;
 	}
 
+	public Map<String, TransformerConfiguration> getTransformerConfigs() {
+		return this.transformerConfigs;
+	}
+
 	/**
 	 * @return the value of the 'id' attribute of the 'input' configuration
 	 *         element (or the default value as defined by the
@@ -3179,23 +3701,26 @@ public class Options {
 
 		return this.loadGlobalIds;
 	}
-	
+
 	/**
 	 * 
-	 * @return RFC 5646 language code of the primary language to use in targets and transformers
+	 * @return RFC 5646 language code of the primary language to use in targets
+	 *         and transformers
 	 */
 	public String language() {
 
 		return this.language;
 	}
-	
-
 
 	public boolean useStringInterning() {
 
 		return this.useStringInterning;
 	}
-	
+
+	public boolean dontConstructAssociationNames() {
+		return this.dontConstructAssociationNames;
+	}
+
 	/**
 	 * Depending upon whether or not string interning shall be used during
 	 * processing, this method interns the given string.
@@ -3204,8 +3729,8 @@ public class Options {
 	 * @return
 	 */
 	public String internalize(String string) {
-		
-		if(string == null) {
+
+		if (string == null) {
 			return null;
 		} else if (useStringInterning) {
 			return string.intern();
@@ -3216,8 +3741,8 @@ public class Options {
 
 	/**
 	 * Depending upon whether or not string interning shall be used during
-	 * processing, this method interns the given string array or an 
-	 * internized copy.
+	 * processing, this method interns the given string array or an internized
+	 * copy.
 	 *
 	 * @param array
 	 * @return
@@ -3226,7 +3751,7 @@ public class Options {
 		if (useStringInterning) {
 			String[] result = new String[array.length];
 			int i = 0;
-			for (String s : array) 
+			for (String s : array)
 				result[i++] = s.intern();
 			return result;
 		} else {

@@ -58,9 +58,13 @@ public interface PackageInfo extends Info {
 	public String gmlProfileSchema();
 
 	/**
-	 * Determine the version attribute to be applied to the GML application
-	 * schema. It is taken either from the configuration or from a tagged value
-	 * on this package or any of its ancestors.
+	 * Determine the version attribute to be applied to the application schema.
+	 * It is taken either from the configuration (more specifically: a
+	 * PackageInfo element) or from a tagged value on this package or any of its
+	 * ancestors (even outside the schema).
+	 * 
+	 * @return the version of the package, or <code>null</code> if no version
+	 *         information is available
 	 */
 	public String version();
 

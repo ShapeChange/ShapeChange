@@ -32,30 +32,40 @@
 
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.reasoner.ValidityReport;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
+import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
-import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 
 /**
- * @author Johannes Echterhoff
+ * UML to RDF/OWL/SKOS (based on ISO 19150-2)
+ * 
+ * @author Johannes Echterhoff, Clemens Portele
  * 
  */
 public class OWLISO19150 implements SingleTarget, MessageSource {
@@ -70,16 +80,29 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150-2/2012/base#";
 	public static final String RDF_NS_OGC_GEOSPARQL = "http://www.opengis.net/ont/geosparql#";
 	public static final String RDF_NS_ISO_GFM = "http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#";
-	
+
 	public static final String PREFIX_ISO_19150_2 = "iso19150-2";
 
 	public static final String NS_XMLNS = "http://www.w3.org/2000/xmlns/";
+
+	/**
+	 * NOTE: this tagged value is usually set by ShapeChange internally; if it
+	 * is explicitly set in the model for whatever reason, then it needs to be
+	 * made known to ShapeChange via the "addTaggedValues" or
+	 * "representTaggedValues" configuration parameters.
+	 */
+	public static final String TV_UNION_SET = "SC_UNION_SET";
+	public static final String TV_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME = "skosConceptSchemeSubclassName";
+	public static final String TV_BROADER_LISTED_VALUE = "broaderListedValue";
 
 	/**
 	 * If this rule is enabled, ontologies will be created for selected schema,
 	 * but not for all of their child packages.
 	 */
 	public static final String RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA = "rule-owl-pkg-singleOntologyPerSchema";
+
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_BY_TAGGED_VALUE = "rule-owl-pkg-ontologyName-byTaggedValue";
+
 	/**
 	 * If this rule is enabled, ontology names will be constructed using the
 	 * path of packages (usually from a leaf package to its main schema
@@ -87,95 +110,150 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * {@value #RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA} is not in effect
 	 * (because otherwise child packages will not be considered).
 	 */
-	public static final String RULE_OWL_PKG_PATH_IN_ONTOLOGY_NAME = "rule-owl-pkg-pathInOntologyName";
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_WITH_PATH = "rule-owl-pkg-ontologyName-withPath";
+
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_CODE = "rule-owl-pkg-ontologyName-code";
+
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_ISO191502 = "rule-owl-pkg-ontologyName-iso191502";
+
+	public static final String RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION = "rule-owl-pkg-ontologyName-appendVersion";
 
 	/**
-	 * If this rule is included, the target will create constraint definitions.
-	 * Constraints on properties (not for union properties) and classes are
-	 * supported.
+	 * If {@value #RULE_OWL_PKG_VERSION_IRI} and
+	 * {@value #RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION} are both enabled, and
+	 * the package has version information, then this rule prevents the version
+	 * to be appended again to the versionIRI (because it will already be added
+	 * to the RDF namespace).
 	 */
-	public static final String RULE_OWL_ALL_CONSTRAINTS = "rule-owl-all-constraints";
+	public static final String RULE_OWL_PKG_VERSION_IRI_AVOID_DUPLICATE_VERSION = "rule-owl-pkg-versionIRI-avoid-duplicate-version";
 
 	/**
-	 * If this rule is included, each feature type definition gets a subClassOf
-	 * declaration to the GeoSPARQL defined FeatureType class.
+	 * If this rule is included and a package that is converted into an ontology
+	 * has version information, then the versionIRI of the ontology is
+	 * constructed as follows: 'rdfNamespace' + 'version'.
 	 */
-	public static final String RULE_OWL_CLS_GEOSPARQL_FEATURES = "rule-owl-cls-geosparql-features";
+	public static final String RULE_OWL_PKG_VERSION_IRI = "rule-owl-pkg-versionIRI";
+
+	public static final String RULE_OWL_PKG_VERSION_INFO = "rule-owl-pkg-versionInfo";
+
+	public static final String RULE_OWL_ALL_CONSTRAINTS_HUMAN_READABLE_TEXT_ONLY = "rule-owl-all-constraints-humanReadableTextOnly";
+	public static final String RULE_OWL_ALL_CONSTRAINTS_BY_CONSTRAINT_MAPPING = "rule-owl-all-constraints-byConstraintMapping";
+
+	public static final String RULE_OWL_CLS_19150_2_ISABSTRACT = "rule-owl-cls-iso191502IsAbstract";
 
 	/**
-	 * If this rule is included, each feature type definition gets a subClassOf
-	 * declaration to the ISO 19150-2 defined FeatureType class (which defines
-	 * the according stereotype) as well as AnyFeature.
+	 * If this rule is included, the base ontology defined by ISO 19150-2 with
+	 * IRI http://def.isotc211.org/iso19150-2/2012/base# is imported by each
+	 * ontology.
 	 */
-	public static final String RULE_OWL_CLS_19150_2_FEATURES = "rule-owl-cls-19150-2-features";
+	public static final String RULE_OWL_PKG_IMPORT_191502BASE = "rule-owl-pkg-importISO191502Base";
+
+	public static final String RULE_OWL_PROP_GENERAL = "rule-owl-prop-general";
+
+	public static final String RULE_OWL_PROP_RANGE_LOCAL_UNIVERSAL_QUANTIFICATION = "rule-owl-prop-range-local-withUniversalQuantification";
+	public static final String RULE_OWL_PROP_RANGE_GLOBAL = "rule-owl-prop-range-global";
+
+	public static final String RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES = "rule-owl-prop-globalScopeAttributes";
+	public static final String RULE_OWL_PROP_LOCAL_SCOPE_ALL = "rule-owl-prop-localScopeAll";
+	public static final String RULE_OWL_PROP_GLOBAL_SCOPE_BY_CONVERSION_PARAMETER = "rule-owl-prop-globalScopeByConversionParameter";
+	public static final String RULE_OWL_PROP_GLOBAL_SCOPE_BY_UNIQUE_PROPERTY_NAME = "rule-owl-prop-globalScopeByUniquePropertyName";
+
+	public static final String RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION = "rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction";
+	public static final String RULE_OWL_PROP_MULTIPLICITY_UNQUALIFIED_RESTRICTION = "rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction";
 
 	/**
-	 * If this rule is included, allValuesFrom restrictions are not included in
-	 * the ontology
-	 */
-	public static final String RULE_OWL_PROP_SUPPRESS_ALLVALUESFROM_RESTRICTIONS = "rule-owl-prop-suppress-allValuesFrom-restrictions";
-
-	/**
-	 * If this rule is included, cardinality restrictions are not included in
-	 * the ontology
-	 */
-	public static final String RULE_OWL_PROP_SUPPRESS_CARDINALITY_RESTRICTIONS = "rule-owl-prop-suppress-cardinality-restrictions";
-
-	/**
-	 * If this rule is included, minCardinality is set to 0 for voidable properties
+	 * If this rule is included, minCardinality is set to 0 for voidable
+	 * properties
 	 */
 	public static final String RULE_OWL_PROP_VOIDABLE_AS_MINCARDINALITY0 = "rule-owl-prop-voidable-as-minCardinality0";
-	
-	/**
-	 * If this rule is included, association names are not included in
-	 * the ontology
-	 */
-	public static final String RULE_OWL_PROP_SUPPRESS_ASSOCIATION_NAMES = "rule-owl-prop-suppress-asociation-names";
 
-	/**
-	 * If this rule is included, dc:source in not included except on the ontology subject
-	 */
-	public static final String RULE_OWL_ALL_SUPPRESS_DC_SOURCE = "rule-owl-all-suppress-dc-source";
+	public static final String RULE_OWL_PROP_MAPPING_COMPARE_SPECIFICATIONS = "rule-owl-prop-mapping-compare-specifications";
 
+	public static final String RULE_OWL_PROP_ISO191502_ASSOCIATION_NAME = "rule-owl-prop-iso191502AssociationName";
+
+	public static final String RULE_OWL_PROP_INVERSEOF = "rule-owl-prop-inverseOf";
+
+	public static final String RULE_OWL_PROP_ISO191502_AGGREGATION = "rule-owl-prop-iso191502Aggregation";
+
+	public static final String RULE_OWL_PROP_ISO191502_NAMING = "rule-owl-prop-iso191502-naming";
+
+	public static final String RULE_OWL_PKG_DCT_SOURCE_TITLE = "rule-owl-pkg-dctSourceTitle";
 	/**
-	 * If this rule is included, code lists are not represented as part of the RDF vocabulary and where available
-	 * the vocabulary or codelist tagged value is used for the rdfs:range. If not set, owl:Class is used.
+	 * If this rule is included, code lists are not represented as part of the
+	 * RDF vocabulary and where available the vocabulary or codelist tagged
+	 * value is used for the rdfs:range. If not set, owl:Class is used.
 	 */
 	public static final String RULE_OWL_CLS_CODELIST_EXTERNAL = "rule-owl-cls-codelist-external";
+	public static final String RULE_OWL_CLS_CODELIST_191502 = "rule-owl-cls-codelist-19150-2";
+	public static final String RULE_OWL_CLS_CODELIST_191502_CONCEPTSCHEMESUBCLASS = "rule-owl-cls-codelist-19150-2-conceptSchemeSubclass";
+	public static final String RULE_OWL_CLS_CODELIST_191502_DIFFERENTINDIVIDUALS = "rule-owl-cls-codelist-19150-2-differentIndividuals";
+	public static final String RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE = "rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace";
+	public static final String RULE_OWL_CLS_CODELIST_191502_SKOS_COLLECTION = "rule-owl-cls-codelist-19150-2-skos-collection";
+	public static final String RULE_OWL_CLS_CODELIST_191502_OBJECTONEOFFORENUMERATION = "rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration";
+	public static final String RULE_OWL_PROP_CODE_BROADER_BY_BROADER_LISTED_VALUE = "rule-owl-prop-code-broader-byBroaderListedValue";
 
-	public static final String RULE_OWL_PKG_APP_SCHEMA_CODE = "rule-owl-pkg-app-schema-code";
-	
-	public static final String PARAM_VERSIONINFO = "versionInfo";
+	public static final String RULE_OWL_CLS_ENUMERATION_AS_CODELIST = "rule-owl-cls-enumerationAsCodelist";
+
+	public static final String RULE_OWL_CLS_ISO191502_ENUMERATION = "rule-owl-cls-iso191502Enumeration";
+
+	public static final String RULE_OWL_CLS_GENERALIZATION = "rule-owl-cls-generalization";
+
+	public static final String RULE_OWL_CLS_DISJOINT_CLASSES = "rule-owl-cls-disjoint-classes";
+
+	public static final String RULE_OWL_CLS_ENCODE_FEATURETYPES = "rule-owl-cls-encode-featuretypes";
+	public static final String RULE_OWL_CLS_ENCODE_OBJECTTYPES = "rule-owl-cls-encode-objecttypes";
+	public static final String RULE_OWL_CLS_ENCODE_MIXINTYPES = "rule-owl-cls-encode-mixintypes";
+	public static final String RULE_OWL_CLS_ENCODE_DATATYPES = "rule-owl-cls-encode-datatypes";
+	public static final String RULE_OWL_CLS_ENCODE_BASICTYPES = "rule-owl-cls-encode-basictypes";
+
+	public static final String RULE_OWL_CLS_UNION = "rule-owl-cls-union";
+	/**
+	 * Adds class expression defining union semantics for those properties of a
+	 * class that have the same value for the tag {@value #TV_UNION_SET}.
+	 */
+	public static final String RULE_OWL_CLS_UNION_SETS = "rule-owl-cls-unionSets";
+
 	/**
 	 * 
 	 */
 	public static final String PARAM_SOURCE = "source";
+
+	public static final String PARAM_DEFAULT_TYPE_IMPL = "defaultTypeImplementation";
+
+	public static final String PARAM_CODE_NAMESPACE = "codeNamespace";
+	public static final String PARAM_CODE_NAMESPACE_FOR_ENUMERATIONS = "codeNamespaceForEnumerations";
+	public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE = "codeListOwlClassNamespace";
+	public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS = "codeListOwlClassNamespaceForEnumerations";
+
 	/**
 	 * 
 	 */
 	public static final String PARAM_LANGUAGE = "language";
+
+	public static final String PARAM_OUTPUTFORMAT = "outputFormat";
+
 	/**
 	 * 
 	 */
 	public static final String PARAM_SOURCE_TAGGED_VALUE_NAME = "sourceTaggedValueName";
 
+	public static final String PARAM_SKOS_CONCEPT_SCHEME_SUFFIX = "skosConceptSchemeSuffix";
+	public static final String PARAM_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME_SUFFIX = "skosConceptSchemeSubclassSuffix";
+
 	/**
 	 * Defines the global URIbase for construction of the ontologyName (see
-	 * 19150-2owl:ontologyName).
-	 * <p>
-	 * The ontologyName is defined via the following rules, in descending
-	 * priority:
-	 * <ul>
-	 * <li>If the configuration parameter
-	 * {@value #PARAM_ONTOLOGYNAME_TAGGED_VALUE_NAME} is set and an according
-	 * tagged value is set for the package its value is used.</li>
-	 * <li>If the configuration parameter {@value #PARAM_URIBASE} is set its
-	 * value is used for constructing the ontologyName as per
-	 * 19150-2owl:ontologyName</li>
-	 * <li>Otherwise the targetNamespace of the package is used as URIbase</li>
-	 * </ul>
+	 * 19150-2package:ontologyName). If this parameter is not configured or
+	 * empty, the target namespace of the application schema is used as URIbase.
 	 */
-	public static String PARAM_URIBASE = "URIbase";
+	public static final String PARAM_URIBASE = "URIbase";
+
+	/**
+	 * Per 19150-2package:rdfNamespace, the default separator that is appended
+	 * to the 'ontologyName' when creating the 'rdfNamespace' is '#'. If this
+	 * parameter is included in the configuration, a different separator can be
+	 * used (e.g. '/'), even the empty string.
+	 */
+	public static final String PARAM_RDF_NAMESPACE_SEPARATOR = "rdfNamespaceSeparator";
 
 	/**
 	 * Name of the parameter whose value provides the name of the tagged value
@@ -194,42 +272,42 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * <li>Otherwise the targetNamespace of the package is used as URIbase</li>
 	 * </ul>
 	 */
-	public static String PARAM_ONTOLOGYNAME_TAGGED_VALUE_NAME = "ontologyName_TaggedValue_Name";
+	public static final String PARAM_ONTOLOGYNAME_TAGGED_VALUE_NAME = "ontologyNameTaggedValue";
 
-	public static String PARAM_GLOBALPROPERTIES = "globalProperties";
+	public static final String PARAM_ONTOLOGYNAME_CODE_NAME = "ontologyNameCode";
 
 	/**
 	 * key: a package, value: the according ontology object
 	 */
-	protected static Map<PackageInfo, OntologyDocument> ontologyByPiMap = new HashMap<PackageInfo, OntologyDocument>();
+	protected static SortedMap<PackageInfo, OntologyModel> ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
 
 	/**
 	 * key: rdf namespace of an ontology document; value: the ontology document
 	 */
-	protected static Map<String, OntologyDocument> ontologyByRdfNs = new HashMap<String, OntologyDocument>();
-	/**
-	 * key: code namespace of an ontology document; value: the ontology document
-	 */
-	protected static Map<String, OntologyDocument> ontologyByCodeNs = new HashMap<String, OntologyDocument>();
+	protected static SortedMap<String, OntologyModel> ontologyByRdfNs = new TreeMap<String, OntologyModel>();
 
-	/**
-	 * key: targetNamespace, value: main schema package
-	 */
-	protected static Map<String, PackageInfo> schemaByTargetNamespace = new HashMap<String, PackageInfo>();
+	protected static SortedMap<ClassInfo, OntologyModel> ontologyByCi = new TreeMap<ClassInfo, OntologyModel>();
 
 	/**
 	 * key: xml prefix value, value: current counter (used to establish unique
 	 * xml prefixes for referencing elements from the same target namespace
 	 * [which might be contained in different ontologies])
 	 */
-	protected static Map<String, Integer> counterByXmlprefix = new HashMap<String, Integer>();
+	protected static SortedMap<String, Integer> counterByXmlprefix = new TreeMap<String, Integer>();
 
 	/**
 	 * key: namespace abbreviation / prefix; value: RDF namespace
 	 */
-	protected static Map<String, String> rdfNsByPrefix = new HashMap<String, String>();
+	protected static SortedMap<String, String> rdfNsByPrefix = new TreeMap<String, String>();
 
-	protected static Set<AssociationInfo> processedAssociations = new HashSet<AssociationInfo>();
+	protected static String codeNamespace = null;
+	protected static String codeNamespaceForEnumerations = null;
+	protected static String codeListOwlClassNamespace = null;
+	protected static String codeListOwlClassNamespaceForEnumerations = null;
+	protected static String prefixCodeNamespace = "c";
+	protected static String prefixCodeNamespaceForEnumerations = "e";
+	protected static String prefixCodeListOwlClassNamespace = "cc";
+	protected static String prefixCodeListOwlClassNamespaceForEnumerations = "ce";
 
 	private static boolean error = false;
 	private static boolean printed = false;
@@ -237,17 +315,31 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String outputDirectory = null;
 	private Options options = null;
 
-	private TargetOwlConfiguration config = null;
+	private static TargetOwlConfiguration config = null;
 
 	private static ShapeChangeResult result = null;
+	private static Model model = null;
 
-	private static String versionInfo = "FIXME";
+	private static String skosConceptSchemeSuffix = "";
+	private static String skosConceptSchemeSubclassSuffix = "";
 	private static String source = null;
 	private static String sourceTaggedValue = null;
 	private static String uriBase = null;
+	private static String rdfNamespaceSeparator = "#";
 	private static String language = "en";
-	private static String ontologyNameTaggedValue = null;
-	private static Set<String> globalPropertyNames = new HashSet<String>();
+	private static String outputFormat = "TURTLE";
+	private static RDFFormat rdfFormat = RDFFormat.TURTLE;
+	private static String fileNameExtension = ".ttl";
+	private static String ontologyNameTaggedValue = "ontologyName";
+	private static String ontologyNameCode = null;
+	private static String defaultTypeImplementation = null;
+
+	/**
+	 * Will be populated when writeAll is called.
+	 * 
+	 * key: property-name '#' schema-name
+	 */
+	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
 
 	public int getTargetID() {
 		return TargetIdentification.OWLISO19150.getId();
@@ -260,6 +352,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		options = o;
 		result = r;
+		model = m;
 
 		ProcessConfiguration tmp = o.getCurrentProcessConfig();
 
@@ -270,8 +363,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			throw new ShapeChangeAbortException();
 		}
 
-		// we need to retrieve the output directory this way because the
-		// converter may modify the output directory location
+		/*
+		 * We need to retrieve the output directory this way - rather than
+		 * directly from the configuration - because the converter may modify
+		 * the output directory location.
+		 */
 		outputDirectory = options.parameter(this.getClass().getName(),
 				"outputDirectory");
 		if (outputDirectory == null)
@@ -279,15 +375,58 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		if (outputDirectory == null)
 			outputDirectory = ".";
 
-		String versionInfoFromConfig = config
-				.getParameterValue(PARAM_VERSIONINFO);
-		if (versionInfoFromConfig != null) {
-			versionInfo = versionInfoFromConfig;
+		String outputFormatFromConfig = config
+				.getParameterValue(PARAM_OUTPUTFORMAT);
+		if (outputFormatFromConfig != null) {
+			outputFormat = outputFormatFromConfig;
+		}
+
+		if (outputFormat.equalsIgnoreCase("NTRIPLES")) {
+			rdfFormat = RDFFormat.NTRIPLES;
+			fileNameExtension = ".nt";
+		} else if (outputFormat.equalsIgnoreCase("RDFXML")) {
+			rdfFormat = RDFFormat.RDFXML;
+			fileNameExtension = ".rdf";
+		} else if (outputFormat.equalsIgnoreCase("JSONLD")) {
+			rdfFormat = RDFFormat.JSONLD;
+			fileNameExtension = ".jsonld";
+		} else if (outputFormat.equalsIgnoreCase("RDFJSON")) {
+			rdfFormat = RDFFormat.RDFJSON;
+			fileNameExtension = ".rj";
+		} else if (outputFormat.equalsIgnoreCase("TRIG")) {
+			rdfFormat = RDFFormat.TRIG;
+			fileNameExtension = ".trig";
+		} else if (outputFormat.equalsIgnoreCase("NQUADS")) {
+			rdfFormat = RDFFormat.NQUADS;
+			fileNameExtension = ".nq";
+		} else if (outputFormat.equalsIgnoreCase("TRIX")) {
+			rdfFormat = RDFFormat.TRIX;
+			fileNameExtension = ".trix";
+		} else if (outputFormat.equalsIgnoreCase("RDFTHRFIT")) {
+			rdfFormat = RDFFormat.RDF_THRIFT;
+			fileNameExtension = ".trdf";
+		} else {
+			// default is turtle
+			rdfFormat = RDFFormat.TURTLE;
+			fileNameExtension = ".ttl";
 		}
 
 		String sourceFromConfig = config.getParameterValue(PARAM_SOURCE);
 		if (sourceFromConfig != null) {
 			source = sourceFromConfig;
+		}
+
+		String skosConceptSchemeSuffixFromConfig = config
+				.getParameterValue(PARAM_SKOS_CONCEPT_SCHEME_SUFFIX);
+		if (skosConceptSchemeSuffixFromConfig != null) {
+			skosConceptSchemeSuffix = skosConceptSchemeSuffixFromConfig;
+		}
+
+		String skosConceptSchemeSubclassSuffixFromConfig = config
+				.getParameterValue(
+						PARAM_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME_SUFFIX);
+		if (skosConceptSchemeSubclassSuffixFromConfig != null) {
+			skosConceptSchemeSubclassSuffix = skosConceptSchemeSubclassSuffixFromConfig;
 		}
 
 		String sourceTaggedValueNameFromConfig = config
@@ -301,6 +440,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			uriBase = uriBaseFromConfig;
 		}
 
+		String rdfNamespaceSeparatorFromConfig = config
+				.getParameterValue(PARAM_RDF_NAMESPACE_SEPARATOR);
+		if (rdfNamespaceSeparatorFromConfig != null) {
+			rdfNamespaceSeparator = rdfNamespaceSeparatorFromConfig.trim();
+		}
+
 		String langFromConfig = config.getParameterValue(PARAM_LANGUAGE);
 		if (langFromConfig != null) {
 			language = langFromConfig;
@@ -312,54 +457,241 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			ontologyNameTaggedValue = ontologyNameTaggedValueNameFromConfig;
 		}
 
-		String[] globalPropertyNamesFromConfig = config.getParameterValues(PARAM_GLOBALPROPERTIES);
-		if (globalPropertyNamesFromConfig != null) {
-			for (String s : globalPropertyNamesFromConfig) {
-				globalPropertyNames.add(s);
-			}
+		String ontologyNameCodeFromConfig = config
+				.getParameterValue(PARAM_ONTOLOGYNAME_CODE_NAME);
+		if (ontologyNameCodeFromConfig != null) {
+			ontologyNameCode = ontologyNameCodeFromConfig;
 		}
 
-		// initialize an ontology for the package and - unless stated
-		// otherwise via a rule - for the sub-packages in the same target
-		// namespace
+		String defaultTypeImplementation_tmp = config
+				.getParameterValue(PARAM_DEFAULT_TYPE_IMPL);
+		if (defaultTypeImplementation_tmp != null
+				&& defaultTypeImplementation_tmp.contains(":")) {
+			defaultTypeImplementation = defaultTypeImplementation_tmp;
+		}
+
+		String codeNamespace_tmp = config
+				.getParameterValue(PARAM_CODE_NAMESPACE);
+		if (codeNamespace_tmp != null
+				&& codeNamespace_tmp.trim().length() > 0) {
+			codeNamespace = codeNamespace_tmp.trim();
+		}
+
+		String codeNamespaceForEnumerations_tmp = config
+				.getParameterValue(PARAM_CODE_NAMESPACE_FOR_ENUMERATIONS);
+		if (codeNamespaceForEnumerations_tmp != null
+				&& codeNamespaceForEnumerations_tmp.trim().length() > 0) {
+			codeNamespaceForEnumerations = codeNamespaceForEnumerations_tmp
+					.trim();
+		}
+
+		String codeListOwlClassNamespace_tmp = config
+				.getParameterValue(PARAM_CODE_LIST_OWL_CLASS_NAMESPACE);
+		if (codeListOwlClassNamespace_tmp != null
+				&& codeListOwlClassNamespace_tmp.trim().length() > 0) {
+			codeListOwlClassNamespace = codeListOwlClassNamespace_tmp.trim();
+		}
+
+		String codeListOwlClassNamespaceForEnumerations_tmp = config
+				.getParameterValue(
+						PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS);
+		if (codeListOwlClassNamespaceForEnumerations_tmp != null
+				&& codeListOwlClassNamespaceForEnumerations_tmp.trim()
+						.length() > 0) {
+			codeListOwlClassNamespaceForEnumerations = codeListOwlClassNamespaceForEnumerations_tmp
+					.trim();
+		}
+
+		/*
+		 * Initialize an ontology for the package and - unless stated otherwise
+		 * via a rule - for the sub-packages in the same target namespace. Also
+		 * create ontologies for code lists (classes - if in separate namespace
+		 * - and their individuals).
+		 */
 
 		// create new ontology / ontologies
 		String xmlPrefixOfMainSchema = p.xmlns();
 
-		// OntologyDocument od = new OntologyDocumentRDFXML(p, m, o, r, xmlPrefixOfMainSchema, this);
-		OntologyDocument od = new OntologyModel(p, m, o, r, xmlPrefixOfMainSchema, this);
-		
+		OntologyModel od = new OntologyModel(p, m, o, r, xmlPrefixOfMainSchema,
+				this);
+
+		if (ontologyByRdfNs.containsKey(od.getRdfNamespace())) {
+			/*
+			 * can happen if multiple schemas are merged into a single ontology
+			 * by setting a common URI base; we re-use the existing
+			 * OntologyModel
+			 */
+			od = ontologyByRdfNs.get(od.getRdfNamespace());
+		}
+
 		ontologyByPiMap.put(p, od);
 		ontologyByRdfNs.put(od.getRdfNamespace(), od);
-		ontologyByCodeNs.put(od.getCodeNamespace(), od);
 
-		if (!p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+		if (p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+
+			SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
+			ontclasses.addAll(model.classes(p));
+			createAdditionalOntologyModels(ontclasses, od.getPrefix(),
+					od.getRdfNamespace(), od.getName(), od.getPath(),
+					od.getFileName(), p.version());
+
+		} else {
+
+			// DEFAULT BEHAVIOR
 
 			/*
-			 * also create ontologies for all sub packages that are in the same
-			 * target namespace
+			 * Create ontologies for all sub packages that are in the same
+			 * target namespace.
 			 * 
 			 * Future work: exclude packages that contain no classes
 			 */
-			Set<PackageInfo> subPkgsInSameTNS = subPackagesInSameTNS(p);
+			SortedSet<PackageInfo> subPkgsInSameTNS = subPackagesInSameTNS(p);
 
 			int counter = 1;
 			for (PackageInfo subPi : subPkgsInSameTNS) {
 				String xmlprefix = xmlPrefixOfMainSchema + counter;
 				counter++;
-				OntologyDocument odSub = new OntologyModel(subPi, m, o, r, xmlprefix, this);
-				ontologyByPiMap.put(subPi, odSub);
+				OntologyModel odSub = new OntologyModel(subPi, m, o, r,
+						xmlprefix, this);
 
+				ontologyByPiMap.put(subPi, odSub);
 				ontologyByRdfNs.put(odSub.getRdfNamespace(), odSub);
-				ontologyByCodeNs.put(odSub.getCodeNamespace(), odSub);
+
+				// if the package contains a code list or enumeration, create
+				// additional OntologyModels as necessary
+				SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
+				ontclasses.addAll(subPi.containedClasses());
+				createAdditionalOntologyModels(ontclasses, odSub.getPrefix(),
+						odSub.getRdfNamespace(), odSub.getName(),
+						odSub.getPath(), odSub.getFileName(), subPi.version());
+
 			}
 		}
+	}
 
-		/*
-		 * keep track of main schema packages so that we can look them up by
-		 * targetNamespace
-		 */
-		schemaByTargetNamespace.put(p.targetNamespace(), p);
+	private void createAdditionalOntologyModels(SortedSet<ClassInfo> classes,
+			String basePrefix, String baseRdfns, String baseName, String path,
+			String baseFileName, String version)
+			throws ShapeChangeAbortException {
+
+		for (ClassInfo ci : classes) {
+
+			if (isEncodedAsCodeList(ci)) {
+
+				/*
+				 * We have a code list / enumeration that is not mapped and
+				 * shall be encoded under rule-owl-cls-codelist-19150-2
+				 */
+
+				/*
+				 * Create an OntologyModel for the individuals derived from this
+				 * class, if such a model doesn't already exist.
+				 */
+				String prefixOntIndividuals, nameOntIndividuals,
+						pathOntIndividuals, fileNameOntIndividuals;
+				if (ci.category() == Options.ENUMERATION
+						&& codeNamespaceForEnumerations != null) {
+					prefixOntIndividuals = prefixCodeNamespaceForEnumerations;
+					nameOntIndividuals = codeNamespaceForEnumerations;
+					pathOntIndividuals = "";
+					fileNameOntIndividuals = "enums";
+				} else if (codeNamespace != null) {
+					prefixOntIndividuals = prefixCodeNamespace;
+					nameOntIndividuals = codeNamespace;
+					pathOntIndividuals = "";
+					fileNameOntIndividuals = "codes";
+				} else {
+					prefixOntIndividuals = basePrefix + "code";
+					nameOntIndividuals = baseName + "/" + "code";
+					pathOntIndividuals = path;
+					fileNameOntIndividuals = baseFileName + "_codes";
+				}
+
+				String rdfnsOntIndividuals = nameOntIndividuals
+						+ getRdfNamespaceSeparator();
+
+				/*
+				 * We have to check if the ontology exists because use of the
+				 * codeNamespace /codeNamespaceForEnumeration will result in a
+				 * single, global ontology model for code list / enumeration
+				 * individuals, and this method may be called multiple times
+				 * (for the code lists / enumerations in different packages).
+				 */
+				if (!ontologyByRdfNs.containsKey(rdfnsOntIndividuals)) {
+					OntologyModel om = new OntologyModel(model, options, result,
+							prefixOntIndividuals, rdfnsOntIndividuals,
+							nameOntIndividuals, pathOntIndividuals,
+							fileNameOntIndividuals, this);
+					ontologyByRdfNs.put(rdfnsOntIndividuals, om);
+				}
+
+				/*
+				 * determine if the owl:Class of the code list / enumeration
+				 * shall be in a different namespace
+				 */
+				if (ci.matches(
+						OWLISO19150.RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE)) {
+
+					if (codeListOwlClassNamespace == null
+							&& codeListOwlClassNamespaceForEnumerations == null) {
+						// rule does not have any effect
+						result.addWarning(this, 9);
+					}
+
+					if (ci.category() == Options.ENUMERATION
+							&& codeListOwlClassNamespaceForEnumerations != null) {
+						/*
+						 * Create OntologyModel for enumerations if it does not
+						 * exist yet.
+						 * 
+						 * NOTE: If the
+						 * 'codeListOwlClassNamespaceForEnumerations' is equal
+						 * to the 'codeNamespaceForEnumerations' then the
+						 * ontology already exists.
+						 */
+						String rdfns = codeListOwlClassNamespaceForEnumerations
+								+ getRdfNamespaceSeparator();
+						if (!ontologyByRdfNs.containsKey(rdfns)) {
+							OntologyModel om = new OntologyModel(model, options,
+									result,
+									prefixCodeListOwlClassNamespaceForEnumerations,
+									rdfns,
+									codeListOwlClassNamespaceForEnumerations,
+									"", "enumerations", this);
+							ontologyByRdfNs.put(rdfns, om);
+						}
+
+					} else if (codeListOwlClassNamespace != null) {
+
+						/*
+						 * Create OntologyModel for code lists if it does not
+						 * exist yet. If
+						 * 'codeListOwlClassNamespaceForEnumerations' is null
+						 * then an enumeration will be added here as well.
+						 * 
+						 * NOTE: If the 'codeListOwlClassNamespace' is equal to
+						 * the 'codeNamespace' then the ontology already exists.
+						 */
+
+						String rdfns = codeListOwlClassNamespace
+								+ getRdfNamespaceSeparator();
+						if (!ontologyByRdfNs.containsKey(rdfns)) {
+							OntologyModel om = new OntologyModel(model, options,
+									result, prefixCodeListOwlClassNamespace,
+									rdfns, codeListOwlClassNamespace, "",
+									"code_lists", this);
+							ontologyByRdfNs.put(rdfns, om);
+						}
+					}
+
+				} else {
+					/*
+					 * the class itself will be added to the OntologyModel to
+					 * which its package belongs
+					 */
+				}
+			}
+		}
 
 	}
 
@@ -401,20 +733,72 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			return;
 
 		// determine ontology to which the class should be added
-		OntologyDocument od = computeRelevantOntology(ci);
+		OntologyModel om = computeRelevantOntology(ci);
 
-		if (od == null) {
+		if (om == null) {
+
 			// ontology document could not be found
 			MessageContext mc = result.addError(this, 2, ci.name());
 			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
+
+		} else {
+
+			ontologyByCi.put(ci, om);
+			om.addClass(ci);
+		}
+	}
+
+	/**
+	 * @param ci
+	 *            a code list or enumeration
+	 * @return
+	 */
+	public OntologyModel computeRelevantOntologyForIndividuals(ClassInfo ci) {
+
+		PackageInfo pCi = ci.pkg();
+		PackageInfo relevantPi;
+
+		if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+
+			relevantPi = model.schemaPackage(ci);
+
 		} else {
 			/*
-			 * remember class assignment to ontology for complete processing
-			 * once all schema/ontologies are known (as this is a SingleTarget)
+			 * follow default ISO 19150-2 behavior, which is to have an ontology
+			 * for each package
 			 */
-			od.addClass(ci);
+			relevantPi = pCi;
+		}
+
+		OntologyModel om = ontologyByPiMap.get(relevantPi);
+
+		if (isEncodedAsCodeList(ci)) {
+
+			/*
+			 * We have a code list / enumeration that is not mapped and shall be
+			 * encoded under rule-owl-cls-codelist-19150-2
+			 */
+
+			String nameOntIndividuals;
+			if (ci.category() == Options.ENUMERATION
+					&& codeNamespaceForEnumerations != null) {
+				nameOntIndividuals = codeNamespaceForEnumerations;
+			} else if (codeNamespace != null) {
+				nameOntIndividuals = codeNamespace;
+			} else {
+				nameOntIndividuals = om.getName() + "/" + "code";
+			}
+
+			String rdfnsOntIndividuals = nameOntIndividuals
+					+ getRdfNamespaceSeparator();
+
+			return ontologyByRdfNs.get(rdfnsOntIndividuals);
+		} else {
+			// for a code list or enumeration that is encoded as a code list,
+			// there must be an OntologyModel for the individuals
+			return null;
 		}
 	}
 
@@ -427,73 +811,476 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * @return the ontology document for the class, or <code>null</code> if no
 	 *         ontology could be found for the class
 	 */
-	public OntologyDocument computeRelevantOntology(ClassInfo ci) {
+	public OntologyModel computeRelevantOntology(ClassInfo ci) {
 
-		PackageInfo pCi = ci.pkg();
-		PackageInfo relevantPi;
+		if (ontologyByCi.containsKey(ci)) {
 
-		if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+			return ontologyByCi.get(ci);
 
-			relevantPi = schemaByTargetNamespace.get(pCi.targetNamespace());
+		} else {
 
-			if (relevantPi == null) {
-				// can happen if the class is in a package from an unselected
-				// schema
-				return null;
+			PackageInfo pCi = ci.pkg();
+			PackageInfo relevantPi;
+
+			if (pCi.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+
+				relevantPi = model.schemaPackage(ci);
+
+				if (relevantPi == null) {
+					/*
+					 * can happen if, for example, the inClass of a reverse
+					 * property is in a schema that was not selected for
+					 * processing
+					 */
+					return null;
+				}
+
+			} else {
+				/*
+				 * follow default ISO 19150-2 behavior, which is to have an
+				 * ontology for each package
+				 */
+				relevantPi = pCi;
 			}
 
-		} else {
-			// follow default ISO 19150-2 behavior, which is to have an ontology
-			// for each package
-			relevantPi = pCi;
+			OntologyModel om = ontologyByPiMap.get(relevantPi);
+
+			if (isEncodedAsCodeList(ci)) {
+
+				/*
+				 * We have a code list / enumeration that is not mapped and
+				 * shall be encoded under rule-owl-cls-codelist-19150-2
+				 */
+
+				/*
+				 * determine if the owl:Class of the code list / enumeration
+				 * shall be in a different namespace
+				 */
+				if (ci.matches(
+						OWLISO19150.RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE)) {
+
+					if (ci.category() == Options.ENUMERATION
+							&& codeListOwlClassNamespaceForEnumerations != null) {
+
+						String rdfns = codeListOwlClassNamespaceForEnumerations
+								+ getRdfNamespaceSeparator();
+						om = ontologyByRdfNs.get(rdfns);
+
+					} else if (codeListOwlClassNamespace != null) {
+
+						String rdfns = codeListOwlClassNamespace
+								+ getRdfNamespaceSeparator();
+						om = ontologyByRdfNs.get(rdfns);
+
+					} else {
+						/*
+						 * Rule does not have any effect - the class will be
+						 * encoded in the OntologyModel that applies to the
+						 * package (which we already retrieved)
+						 */
+					}
+
+				} else {
+					/*
+					 * The class itself will be added to the OntologyModel that
+					 * applies to its package.
+					 */
+				}
+			}
+
+			return om;
 		}
+	}
 
-		OntologyDocument od = ontologyByPiMap.get(relevantPi);
+	/**
+	 * @return <code>true</code> if RULE_OWL_CLS_CODELIST_191502 is enabled, ci
+	 *         is either an unmapped code list or an unmapped enumeration for
+	 *         which RULE_OWL_CLS_ENUMERATION_AS_CODELIST applies, and ci is not
+	 *         encoded under RULE_OWL_CLS_CODELIST_EXTERNAL; else
+	 *         <code>false</code>
+	 */
+	private boolean isEncodedAsCodeList(ClassInfo ci) {
 
-		if (od == null) {
-			// can happen if the class is in a package from an unselected
-			// schema
+		/*
+		 * NOTE: the check to see if ci is encoded under
+		 * RULE_OWL_CLS_CODELIST_EXTERNAL must take place after the check that
+		 * ci is an unmapped enumeration that is encoded under
+		 * RULE_OWL_CLS_ENUMERATION_AS_CODELIST.
+		 */
+
+		boolean result = ci.matches(RULE_OWL_CLS_CODELIST_191502)
+
+				&& ((ci.category() == Options.CODELIST
+						&& config.getTypeMapEntry(ci) == null)
+						|| (ci.category() == Options.ENUMERATION
+								&& config.getTypeMapEntry(ci) == null
+								&& ci.matches(
+										RULE_OWL_CLS_ENUMERATION_AS_CODELIST)))
+
+				&& !(ci.matches(RULE_OWL_CLS_CODELIST_EXTERNAL)
+						&& !ci.taggedValuesForTagList("codeList,vocabulary")
+								.isEmpty());
+
+		return result;
+	}
+
+	/**
+	 * Searches for the ontology that contains the property that is identified
+	 * by the 'target' and 'targetSchema' fields of the given conversion
+	 * parameter.
+	 * 
+	 * @param pcp
+	 * @return the ontology that contains the global property to which the
+	 *         conversion parameter maps; can be <code>null</code> if no
+	 *         applicable ontology was found
+	 */
+	public OntologyModel computeRelevantOntologyForTargetMapping(
+			PropertyConversionParameter pcp) {
+
+		if (pcp == null || !pcp.hasTarget()) {
 			return null;
-
-		} else {
-
-			return od;
 		}
+
+		return ontologyByPropertyConversionTargetReference
+				.get(pcp.getTarget() + "#" + pcp.getTargetSchema());
 	}
 
 	public void write() {
 		// ignore - this is a SingleTarget
 	}
 
-	/**
-	 * This is the message text provision proper. It returns a message for a
-	 * number.
-	 * 
-	 * @param mnr
-	 *            Message number
-	 * @return Message text or null
-	 */
-	protected String messageText(int mnr) {
+	public void writeAll(ShapeChangeResult r) {
 
-		switch (mnr) {
-		case 1:
-			return "Could not find an ontology document for package '$1$', which was determined to be the relevant one for class '$2$'.";
-		case 2:
-			return "Rule '"
-					+ RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA
-					+ "' is in effect, but no schema package was found for class '$1$'.";
-		case 3:
-			return "Unsupported class category ($1$).";
-		case 4:
-			return "Output directory is not accessible.";
-		case 5:
-			return "Ontology document with name '$1$' could not be created.";
-		case 6:
-			return "Target configuration type is incorrect. Expected a TargetOwl(Configuration).";
-		case 10000:
-			return "--- Context - class: '$1$'";
+		if (error || printed)
+			return;
+
+		/*
+		 * identify properties to encode as global ones (only for feature types,
+		 * interfaces, datatypes and basictypes)
+		 */
+
+		ontologyByPropertyConversionTargetReference = new TreeMap<String, OntologyModel>();
+
+		outer: for (PackageInfo schema : model.selectedSchemas()) {
+
+			for (ClassInfo ci : model.classes(schema)) {
+
+				if (ci.category() == Options.FEATURE
+						|| ci.category() == Options.OBJECT
+						|| ci.category() == Options.DATATYPE
+						|| ci.category() == Options.MIXIN
+						|| ci.category() == Options.BASICTYPE) {
+
+					for (PropertyInfo prop : ci.properties().values()) {
+
+						if (!prop.matches(
+								RULE_OWL_PROP_GLOBAL_SCOPE_BY_CONVERSION_PARAMETER)
+								|| !prop.matches(RULE_OWL_PROP_GENERAL)) {
+							// no need to look further
+							break outer;
+						}
+
+						PropertyConversionParameter pcp = config
+								.getPropertyConversionParameter(prop);
+						if (pcp != null && pcp.isGlobal() && !pcp.hasTarget()) {
+
+							OntologyModel om = computeRelevantOntology(
+									prop.inClass());
+							ontologyByPropertyConversionTargetReference.put(
+									pcp.getProperty() + "#" + pcp.getSchema(),
+									om);
+						}
+					}
+				}
+			}
 		}
-		return null;
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			om.createClasses();
+		}
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			om.createProperties();
+		}
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			om.createAdditionalClassDetails();
+		}
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			om.createAdditionalPropertyDetails();
+		}
+
+		// output ontologies in folder hierarchy as determined by their
+		// path - using normalized package names
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+
+			OntModel ont = om.getOntologyModel();
+			print(ont, om.getName(), outputDirectory, om.getPath(),
+					om.getFileName(), r);
+		}
+
+		printed = true;
+	}
+
+	public void print(OntModel ontmodel, String ontName, String outputDirectory,
+			String path, String filenameWithoutExtension, ShapeChangeResult r) {
+
+		ValidityReport report = ontmodel.validate();
+		if (report != null && !report.isValid())
+			result.addError(this, 7, ontName, r.toString());
+
+		String outDirForOntology = outputDirectory + path;
+
+		// Check if we can use the output directory
+		File outputDirectoryFile = new File(outDirForOntology);
+
+		boolean exi = outputDirectoryFile.exists();
+		if (!exi) {
+			outputDirectoryFile.mkdirs();
+			exi = outputDirectoryFile.exists();
+		}
+		boolean dir = outputDirectoryFile.isDirectory();
+		boolean wrt = outputDirectoryFile.canWrite();
+		boolean rea = outputDirectoryFile.canRead();
+
+		if (!exi || !dir || !wrt || !rea) {
+			r.addFatalError(this, 8, ontName, outDirForOntology);
+			return;
+		}
+
+		/*
+		 * Uses OutputStreamWriter instead of FileWriter to set character
+		 * encoding
+		 */
+
+		String filename = filenameWithoutExtension + fileNameExtension;
+
+		String fname = outDirForOntology + "/" + filename + fileNameExtension;
+
+		File outFile = new File(outputDirectoryFile, filename);
+
+		try {
+
+			String canpath = new File(fname).getCanonicalPath();
+			r.addDebug(this, 20000, ontName, canpath);
+
+			OutputStream fout = new FileOutputStream(outFile);
+			OutputStream bout = new BufferedOutputStream(fout);
+
+			RDFDataMgr.write(bout, ontmodel, rdfFormat);
+			r.addResult(getTargetID(), outDirForOntology, filename, ontName);
+
+		} catch (Exception e) {
+			r.addError(this, 5, fname);
+			e.printStackTrace(System.err);
+		}
+	}
+
+	public void reset() {
+
+		OWLISO19150.ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
+		OWLISO19150.ontologyByRdfNs = new TreeMap<String, OntologyModel>();
+		OWLISO19150.ontologyByCi = new TreeMap<ClassInfo, OntologyModel>();
+		OWLISO19150.counterByXmlprefix = new TreeMap<String, Integer>();
+		OWLISO19150.rdfNsByPrefix = new TreeMap<String, String>();
+
+		OWLISO19150.codeNamespace = null;
+		OWLISO19150.codeNamespaceForEnumerations = null;
+		OWLISO19150.codeListOwlClassNamespace = null;
+		OWLISO19150.codeListOwlClassNamespaceForEnumerations = null;
+		OWLISO19150.prefixCodeNamespace = "c";
+		OWLISO19150.prefixCodeNamespaceForEnumerations = "e";
+		OWLISO19150.prefixCodeListOwlClassNamespace = "cc";
+		OWLISO19150.prefixCodeListOwlClassNamespaceForEnumerations = "ce";
+
+		OWLISO19150.error = false;
+		OWLISO19150.printed = false;
+
+		OWLISO19150.outputDirectory = null;
+
+		OWLISO19150.config = null;
+
+		OWLISO19150.result = null;
+		OWLISO19150.model = null;
+
+		OWLISO19150.skosConceptSchemeSuffix = "";
+		OWLISO19150.skosConceptSchemeSubclassSuffix = "";
+		OWLISO19150.source = null;
+		OWLISO19150.sourceTaggedValue = null;
+		OWLISO19150.uriBase = null;
+		OWLISO19150.rdfNamespaceSeparator = "#";
+		OWLISO19150.language = "en";
+		OWLISO19150.outputFormat = "TURTLE";
+		OWLISO19150.rdfFormat = RDFFormat.TURTLE;
+		OWLISO19150.fileNameExtension = ".ttl";
+		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
+		OWLISO19150.ontologyNameCode = null;
+		OWLISO19150.defaultTypeImplementation = null;
+
+		OWLISO19150.ontologyByPropertyConversionTargetReference = null;
+	}
+
+	/**
+	 * Computes the value for the dct:source that qualifies an ontology element.
+	 * The value is computed according to the following instructions, in
+	 * descending order:
+	 * <ul>
+	 * <li>if the configuration parameter
+	 * {@value #PARAM_SOURCE_TAGGED_VALUE_NAME} is set and the info object has
+	 * this tagged value, its value is used</li>
+	 * <li>if the configuration parameter {@value #PARAM_SOURCE} is set then its
+	 * value is used</li>
+	 * <li>otherwise "FIXME" is returned</li>
+	 * </ul>
+	 * 
+	 * @param i
+	 * @return
+	 */
+	public String computeSource(Info i) {
+
+		if (sourceTaggedValue != null) {
+
+			String sourceTV = i.taggedValue(sourceTaggedValue);
+
+			if (sourceTV != null) {
+				return sourceTV;
+			}
+		}
+
+		if (source != null) {
+			return source;
+		}
+
+		return "FIXME";
+	}
+
+	/**
+	 * @return the suffix defined by the configuration, or the empty string
+	 */
+	public String getSkosConceptSchemeSuffix() {
+		return skosConceptSchemeSuffix;
+	}
+
+	/**
+	 * @return the suffix defined by the configuration, or the empty string
+	 */
+	public String getSkosConceptSchemeSubclassSuffix() {
+		return skosConceptSchemeSubclassSuffix;
+	}
+
+	/**
+	 * @param rdfns
+	 * @return the abbreviation/prefix belonging to the given rdf namespace, or
+	 *         <code>null</code> if no such prefix was found.
+	 */
+	public String computePrefixForRdfNamespace(String rdfns) {
+
+		// try to identify via namespace configuration info
+		String nsabr = config.nsabrForNamespace(rdfns);
+
+		if (nsabr == null) {
+
+			// try to find namespace via local ontologies
+			if (ontologyByRdfNs.containsKey(rdfns)) {
+
+				nsabr = ontologyByRdfNs.get(rdfns).getPrefix();
+			}
+		}
+
+		return nsabr;
+	}
+
+	/**
+	 * @return the config
+	 */
+	public TargetOwlConfiguration getConfig() {
+		return config;
+	}
+
+	/**
+	 * @return the uriBase
+	 */
+	public String getUriBase() {
+		return uriBase;
+	}
+
+	/**
+	 * @return the rdfNamespaceSeparator
+	 */
+	public String getRdfNamespaceSeparator() {
+		return rdfNamespaceSeparator;
+	}
+
+	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return language;
+	}
+
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	public String getOutputFileNameExtension() {
+		return fileNameExtension;
+	}
+
+	public RDFFormat getRDFFormat() {
+		return rdfFormat;
+	}
+
+	/**
+	 * @return the ontologyNameTaggedValue
+	 */
+	public String getOntologyNameTaggedValue() {
+		return ontologyNameTaggedValue;
+	}
+
+	/**
+	 * @return value of parameter {@value #PARAM_ONTOLOGYNAME_CODE_NAME} if set,
+	 *         else <code>null</code>
+	 */
+	public String getOntologyNameCodeParameterValue() {
+		return ontologyNameCode;
+	}
+
+	/**
+	 * @return QName identifying the resource to use as default implementation
+	 *         for schema types
+	 */
+	public String getDefaultTypeImplementation() {
+		return defaultTypeImplementation;
+	}
+
+	/**
+	 * @return the codeNamespace
+	 */
+	public static String getCodeNamespace() {
+		return codeNamespace;
+	}
+
+	/**
+	 * @return the codeNamespaceForEnumerations
+	 */
+	public static String getCodeNamespaceForEnumerations() {
+		return codeNamespaceForEnumerations;
+	}
+
+	/**
+	 * @return the codeListOwlClassNamespace
+	 */
+	public static String getCodeListOwlClassNamespace() {
+		return codeListOwlClassNamespace;
+	}
+
+	/**
+	 * @return the codeListOwlClassNamespaceForEnumerations
+	 */
+	public static String getCodeListOwlClassNamespaceForEnumerations() {
+		return codeListOwlClassNamespaceForEnumerations;
 	}
 
 	/**
@@ -519,149 +1306,46 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		return prefix + "OWL ISO 19150 Target: " + mess;
 	}
 
-	public void writeAll(ShapeChangeResult r) {
-
-		if (error || printed)
-			return;
-
-		// output ontologies in folder hierarchy as determined by their
-		// path - using normalized package names
-
-		for (OntologyDocument od : ontologyByPiMap.values()) {
-
-			od.finalizeDocument();
-
-			od.print(outputDirectory, r);
-		}
-
-		printed = true;
-
-	}
-
-	public void reset() {
-
-		OWLISO19150.counterByXmlprefix = new HashMap<String, Integer>();
-		OWLISO19150.error = false;
-		OWLISO19150.ontologyByCodeNs = new HashMap<String, OntologyDocument>();
-		OWLISO19150.ontologyByPiMap = new HashMap<PackageInfo, OntologyDocument>();
-		OWLISO19150.ontologyByRdfNs = new HashMap<String, OntologyDocument>();
-		OWLISO19150.ontologyNameTaggedValue = null;
-		OWLISO19150.outputDirectory = null;
-		OWLISO19150.printed = false;
-		OWLISO19150.processedAssociations = new HashSet<AssociationInfo>();
-		OWLISO19150.rdfNsByPrefix = new HashMap<String, String>();
-		OWLISO19150.result = null;
-		OWLISO19150.schemaByTargetNamespace = new HashMap<String, PackageInfo>();
-		OWLISO19150.source = null;
-		OWLISO19150.sourceTaggedValue = null;
-		OWLISO19150.uriBase = null;
-		OWLISO19150.versionInfo = null;
-		OWLISO19150.globalPropertyNames = new HashSet<String>();
-	}
-
 	/**
-	 * @return the versionInfo
-	 */
-	public String getVersionInfo() {
-		return versionInfo;
-	}
-
-	/**
-	 * Computes the value for the dc:source that qualifies an ontology element.
-	 * The value is computed according to the following instructions, in
-	 * descending order:
-	 * <ul>
-	 * <li>if the configuration parameter
-	 * {@value #PARAM_SOURCE_TAGGED_VALUE_NAME} is set and the info object has
-	 * this tagged value, its value is used</li>
-	 * <li>if the configuration parameter {@value #PARAM_SOURCE} is set then its
-	 * value is used</li>
-	 * <li>otherwise "FIXME" is returned</li>
-	 * </ul>
+	 * This is the message text provision proper. It returns a message for a
+	 * number.
 	 * 
-	 * @param i
-	 * @return
+	 * @param mnr
+	 *            Message number
+	 * @return Message text or null
 	 */
-	public String computeSource(Info i) {
+	protected String messageText(int mnr) {
 
-		if (sourceTaggedValue != null) {
-
-			String sourceTV = i.taggedValue(sourceTaggedValue);
-
-			if (sourceTV != null) {
-				return sourceTV;
-			}
-
-		} else if (source != null) {
-			return source;
+		switch (mnr) {
+		case 1:
+			return "Could not find an ontology document for package '$1$', which was determined to be the relevant one for class '$2$'.";
+		case 2:
+			return "Rule '" + RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA
+					+ "' is in effect, but no schema package was found for class '$1$'.";
+		case 3:
+			return "Unsupported class category ($1$).";
+		case 4:
+			return "Output directory is not accessible.";
+		case 5:
+			return "Ontology document with name '$1$' could not be created.";
+		case 6:
+			return "Target configuration type is incorrect. Expected a TargetOwl(Configuration).";
+		case 7:
+			return "Ontology '$1$' is not valid: $2$";
+		case 8:
+			return "Cannot print ontology '$1$' in directory '$2$'.";
+		case 9:
+			return "??" + RULE_OWL_CLS_CODELIST_191502_CLASSINDIFFERENTNAMESPACE
+					+ " is enabled, but neither the configuration parameter '"
+					+ PARAM_CODE_LIST_OWL_CLASS_NAMESPACE
+					+ "' nor the parameter '"
+					+ PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS
+					+ "' are set to a specific value. The rule does not have any effect.";
+		case 10000:
+			return "--- Context - class: '$1$'";
+		case 20000:
+			return "Writing ontology '$1$' to file '$2$'.";
 		}
-
-		return "FIXME";
-	}
-
-	/**
-	 * @param rdfns
-	 * @return the abbreviation/prefix belonging to the given rdf namespace, or
-	 *         <code>null</code> if no such prefix was found.
-	 */
-	public String computePrefixForRdfNamespace(String rdfns) {
-
-		// try to identify via namespace configuration info
-		String nsabr = config.nsabrForNamespace(rdfns);
-
-		if (nsabr == null) {
-
-			// try to find namespace via local ontologies
-			if (ontologyByRdfNs.containsKey(rdfns)) {
-
-				nsabr = ontologyByRdfNs.get(rdfns).getPrefix();
-			}
-
-			if (ontologyByCodeNs.containsKey(rdfns)) {
-
-				nsabr = ontologyByCodeNs.get(rdfns).getPrefixForCode();
-			}
-		}
-
-		return nsabr;
-	}
-
-	public Set<AssociationInfo> getProcessedAssociations() {
-		return processedAssociations;
-	}
-
-	/**
-	 * @return the config
-	 */
-	public TargetOwlConfiguration getConfig() {
-		return config;
-	}
-
-	/**
-	 * @return the uriBase
-	 */
-	public String getUriBase() {
-		return uriBase;
-	}
-
-	/**
-	 * @return the language
-	 */
-	public String getLanguage() {
-		return language;
-	}
-
-	/**
-	 * @return the ontologyNameTaggedValue
-	 */
-	public String getOntologyNameTaggedValue() {
-		return ontologyNameTaggedValue;
-	}
-
-	/**
-	 * @return the globalPropertyNames
-	 */
-	public static Set<String> getGlobalPropertyNames() {
-		return globalPropertyNames;
+		return null;
 	}
 }

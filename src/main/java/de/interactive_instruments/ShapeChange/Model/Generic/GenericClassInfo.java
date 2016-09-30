@@ -31,6 +31,9 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +42,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.Vector;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -760,7 +762,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * NOTE: does NOT return a shallow copy, thus modifications of the returned
 	 * set will modify the subtype information for this class
 	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#subtypes()
+	 * @return Set with the ids of all direct subtypes of this class. Can be
+	 *         empty but not <code>null</code>.
 	 */
 	public TreeSet<String> subtypes() {
 
@@ -1303,7 +1306,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		copy.setSupertypes((TreeSet<String>) supertypes.clone());
 		copy.setSubtypes((TreeSet<String>) subtypes.clone());
 		copy.setBaseClass(baseClass);
-		
+
 		copy.setDiagrams(diagrams);
 
 		TreeMap<StructuredNumber, PropertyInfo> copyProperties = new TreeMap<StructuredNumber, PropertyInfo>();
@@ -1320,9 +1323,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			 */
 			GenericPropertyInfo genProp = (GenericPropertyInfo) propI;
 
-			// String newId = genProp.id() + "_copyFor" + copyId;
-			UUID id = UUID.randomUUID();
-			String newId = id.toString();
+			String newId = genProp.name() + "_propertyCopyFor_" + copyId;
 
 			GenericPropertyInfo propCopy = genProp.createCopy(newId);
 
@@ -1555,6 +1556,26 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
+	 * Adds the given property to this class. Its sequence number is shifted so
+	 * that the property is placed after the existing properties, at the
+	 * "bottom" of the list of class properties.
+	 * 
+	 * The behavior for adding a property that has the same name as an existing
+	 * one is determined by a parameter.
+	 * 
+	 * @param newProps
+	 * @param duplicateHandling
+	 */
+	public void addPropertyAtBottom(GenericPropertyInfo newProp,
+			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
+
+		List<GenericPropertyInfo> newProps = new ArrayList<GenericPropertyInfo>();
+		newProps.add(newProp);
+
+		addPropertiesAtBottom(newProps, duplicateHandling);
+	}
+
+	/**
 	 * Adds the given list of new properties to this class. Their sequence
 	 * numbers are shifted so that the sequence/list of new properties is placed
 	 * after the existing properties, at the "bottom" of the list of class
@@ -1573,77 +1594,64 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 			return;
 
-		} else if (properties == null || properties.size() == 0) {
-
-			properties = new TreeMap<StructuredNumber, PropertyInfo>();
-
-			for (GenericPropertyInfo newProp : newProps) {
-				this.addProperty(newProp, duplicateHandling);
-			}
-
 		} else {
 
-			/*
-			 * Now determine if the sequence numbers of new properties need to
-			 * be updated before adding the new properties.
-			 */
-			int minMajorComponentNewProps = Integer.MAX_VALUE;
-			int maxMajorComponentExistingProps = Integer.MIN_VALUE;
+			if (properties == null) {
+				properties = new TreeMap<StructuredNumber, PropertyInfo>();
+			}
 
 			/*
-			 * Identify the lowest major component of the sequence numbers in
-			 * the list of new properties.
+			 * Sort list of new props by their sequence number so that we make
+			 * good use of the sequence number value space.
 			 */
+			Collections.sort(newProps, new Comparator<GenericPropertyInfo>() {
+				@Override
+				public int compare(GenericPropertyInfo o1,
+						GenericPropertyInfo o2) {
+					return o1.sequenceNumber().compareTo(o2.sequenceNumber());
+				}
+
+			});
+
 			for (GenericPropertyInfo newProp : newProps) {
 
-				StructuredNumber snNewProp = newProp.sequenceNumber();
-
-				if (snNewProp.components[0] < minMajorComponentNewProps) {
-					minMajorComponentNewProps = snNewProp.components[0];
-				}
-			}
-
-			/*
-			 * Now identify the highest major component of the sequence numbers
-			 * in the collection of existing properties.
-			 */
-			for (StructuredNumber snExistingProp : properties.keySet()) {
-
-				if (snExistingProp.components[0] > maxMajorComponentExistingProps) {
-					maxMajorComponentExistingProps = snExistingProp.components[0];
-				}
-			}
-
-			if (minMajorComponentNewProps > maxMajorComponentExistingProps) {
+				/*
+				 * Determine if the sequence number of the new property needs to
+				 * be updated before adding it.
+				 */
+				int minMajorComponentNewProp = newProp
+						.sequenceNumber().components[0];
+				int maxMajorComponentExistingProps = Integer.MIN_VALUE;
 
 				/*
-				 * Perfect, we can just add the new properties to the collection
-				 * of existing properties because the sequence numbers do not
-				 * conflict.
+				 * Now identify the highest major component of the sequence
+				 * numbers in the collection of existing properties.
 				 */
+				for (StructuredNumber snExistingProp : properties.keySet()) {
 
-			} else {
+					if (snExistingProp.components[0] > maxMajorComponentExistingProps) {
+						maxMajorComponentExistingProps = snExistingProp.components[0];
+					}
+				}
 
-				/*
-				 * We need to shift the sequence numbers of new properties so
-				 * that they are placed after the existing properties.
-				 */
-				int shift = maxMajorComponentExistingProps
-						- minMajorComponentNewProps + 1;
+				if (minMajorComponentNewProp > maxMajorComponentExistingProps) {
 
-				for (GenericPropertyInfo newProp : newProps) {
+					/*
+					 * Perfect, we can just add the new properties to the
+					 * collection of existing properties because the sequence
+					 * numbers do not conflict.
+					 */
+
+				} else {
 
 					StructuredNumber snNewProp = newProp.sequenceNumber();
 
-					snNewProp.components[0] = snNewProp.components[0] + shift;
+					snNewProp.components[0] = maxMajorComponentExistingProps
+							+ 1;
 				}
-			}
 
-			// add the new properties
-			for (GenericPropertyInfo newProp : newProps) {
 				this.addProperty(newProp, duplicateHandling);
 			}
-
 		}
 	}
 

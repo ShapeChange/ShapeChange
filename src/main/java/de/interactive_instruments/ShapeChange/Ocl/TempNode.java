@@ -1306,13 +1306,18 @@ abstract class TempNode {
 							// for it ...
 							return new OclNode.EnumerationLiteralExp( pi );
 						} else {
-							// Not found: Then this has to be regarded an error
-							MessageCollection.Message mess = 
-								p.getMessageCollection().new Message( 33 );
-							mess.substitute( 1, name );
-							mess.substitute( 2, ci.name() );
-							mess.addSourceReferences( sourceReferences );
-							return null;
+							// Not found
+							if(ci.matches("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed")) {
+								return new OclNode.EnumerationLiteralExp( name,ci );
+							} else {
+								// Then this has to be regarded an error
+								MessageCollection.Message mess = 
+									p.getMessageCollection().new Message( 33 );
+								mess.substitute( 1, name );
+								mess.substitute( 2, ci.name() );
+								mess.addSourceReferences( sourceReferences );
+								return null;
+							}
 						}
 					}
 				}

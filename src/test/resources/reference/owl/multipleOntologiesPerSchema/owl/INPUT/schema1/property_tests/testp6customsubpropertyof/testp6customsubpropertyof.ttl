@@ -1,0 +1,21 @@
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix s112:  <http://ontology.base.uri/schema1/property_tests/testp6customsubpropertyof/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+s112:TP6_Class2  a  owl:Class ;
+        rdfs:label  "FIXME"@en .
+
+s112:TP6_Class1  a  owl:Class ;
+        rdfs:label  "FIXME"@en .
+
+<http://ontology.base.uri/schema1/property_tests/testp6customsubpropertyof>
+        a            owl:Ontology ;
+        rdfs:label   "FIXME"@en ;
+        dct:source   "FIXME"@en ;
+        owl:imports  <http://def.isotc211.org/iso19150-2/2012/base/LOCATION> .

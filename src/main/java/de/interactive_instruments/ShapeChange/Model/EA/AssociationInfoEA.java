@@ -148,15 +148,25 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		// If there is no name present, we construct one from the names of the
 		// classes ...
 		// A default name is used if the role is unset, e.g. orphaned Note Link.
+		/*
+		 * 2016-07-26 JE: The association name should not always automatically
+		 * be constructed. For rule-owl-prop-iso191502Aggregation we would get
+		 * association names that are not in the model. I've added a new input
+		 * parameter to control the behavior.
+		 */
 		if (name == null || name.length() == 0) {
-			if (roles[0].ci != null)
-				name = roles[0].ci.name() + "_";
-			else
-				name = "roles[0]_";
-			if (roles[1].ci != null)
-				name = name + roles[1].ci.name();
-			else
-				name = name + "roles[1]";
+			if (options().dontConstructAssociationNames()) {
+				name = "";
+			} else {
+				if (roles[0].ci != null)
+					name = roles[0].ci.name() + "_";
+				else
+					name = "roles[0]_";
+				if (roles[1].ci != null)
+					name = name + roles[1].ci.name();
+				else
+					name = name + "roles[1]";
+			}
 		}
 
 		// Write to debug trace ...

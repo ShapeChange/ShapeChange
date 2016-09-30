@@ -35,6 +35,7 @@ package de.interactive_instruments.ShapeChange;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -58,6 +59,10 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -135,8 +140,10 @@ public class BasicTest {
 			/*
 			 * Test property options: ordered, uniqueness and inline/byReference
 			 */
-			multiTest("src/test/resources/config/testEA_prop.xml", new String[] { "xsd", "xml", "html" },
-					"testResults/ea/prop/INPUT", "src/test/resources/reference/prop");
+			multiTest("src/test/resources/config/testEA_prop.xml",
+					new String[] { "xsd", "xml", "html" },
+					"testResults/ea/prop/INPUT",
+					"src/test/resources/reference/prop");
 
 			/*
 			 * Test multiple tagged values and stereotypes
@@ -197,13 +204,20 @@ public class BasicTest {
 					"src/test/resources/reference/html/descriptors");
 
 			/*
+			 * Test rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed.
+			 */
+			multiTest("src/test/resources/config/testEA_codeAbsenceInModel.xml",
+					new String[] { "xml" },
+					"testResults/codeAbsenceInModel/input",
+					"src/test/resources/reference/xsd/codeAbsenceInModel/input");
+
+			/*
 			 * Test derivation of application schema metadata.
 			 */
 			multiTest("src/test/resources/config/testEA_schema_metadata.xml",
-					new String[] { "xml" },
-					"testResults/schema_metadata/INPUT",
+					new String[] { "xml" }, "testResults/schema_metadata/INPUT",
 					"src/test/resources/reference/schema_metadata/INPUT");
-			
+
 			/*
 			 * Test creation of an HTML feature catalogue with
 			 * inheritedProperties=true and noAlphabeticSortingForProperties =
@@ -387,18 +401,23 @@ public class BasicTest {
 					"src/test/resources/reference/rdf/skos");
 
 			/*
-			 * OWL 19150-2 ontologies
+			 * Ontology (based on ISO 19150-2) - single ontology per schema 
 			 */
-			String[] rdfowl = { "SchemaA/SchemaA", "SchemaB/SchemaB" };
-			// FIXME text comparison does not work, order changes each time,
-			// compare ttl files on a triple level (with Jena?)
-			// ttlTest("src/test/resources/config/testEA_owliso19150_default.xml",
-			// rdfowl, "testResults/ea/owl/default/INPUT",
-			// "src/test/resources/reference/rdf/owliso19150/default");
-			// ttlTest("src/test/resources/config/testEA_owliso19150_extensions.xml",
-			// rdfowl, "testResults/ea/owl/extensions/INPUT",
-			// "src/test/resources/reference/rdf/owliso19150/extensions");
-
+			multiTest(
+					"src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml",
+					new String[] { "ttl" },
+					"testResults/owl/singleOntologyPerSchema/owl",
+					"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
+			
+			/*
+			 * Ontology (based on ISO 19150-2) - multiple ontologies - one per package 
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_owliso_multipleOntologiesPerSchema.xml",
+					new String[] { "ttl" },
+					"testResults/owl/multipleOntologiesPerSchema/owl",
+					"src/test/resources/reference/owl/multipleOntologiesPerSchema/owl");
+			
 			/*
 			 * Flattening transformation
 			 */
@@ -434,6 +453,13 @@ public class BasicTest {
 					"testResults/flattening/inheritance/",
 					"src/test/resources/reference/flattening/inheritance");
 
+			/*
+			 * Flattening transformation - removing inheritance
+			 */
+			multiTest("src/test/resources/config/testEA_Flattening_removeInheritance.xml",
+					new String[] { "xsd" }, "testResults/flattening/removeInheritance/xsd",
+					"src/test/resources/reference/flattening/removeInheritance/xsd");
+			
 			/*
 			 * Flattening transformation - cycles (and isFlatTarget setting)
 			 */
@@ -480,10 +506,18 @@ public class BasicTest {
 			/*
 			 * Test the profiling functionality
 			 */
-
 			multiTest("src/test/resources/config/testEA_Profiling.xml",
 					new String[] { "xsd", "xml" }, "testResults/profiling/xsd",
 					"src/test/resources/reference/profiling/xsd");
+
+			/*
+			 * Test the constraint validation functionality
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_Profiling_withConstraintValidation.xml",
+					new String[] { "xml" },
+					"testResults/profiling/constraintValidation/results",
+					"src/test/resources/reference/profiling/constraintValidation/results");
 
 			/*
 			 * Test the profiling functionality - with explicit profile settings
@@ -510,6 +544,15 @@ public class BasicTest {
 					new String[] { "xml" },
 					"testResults/fol/fromSbvr/sch/step3",
 					"src/test/resources/reference/sch/fromSbvr");
+
+			/*
+			 * Test the GML 3.3 based transformation of association classes.
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_associationClassMapper.xml",
+					new String[] { "xsd" },
+					"testResults/associationClassTransform/associationClassMapper",
+					"src/test/resources/reference/associationClassTransform/associationClassMapper");
 		}
 	}
 
@@ -595,6 +638,12 @@ public class BasicTest {
 									dirReference + File.separator
 											+ fres.getName(),
 									true, true);
+						} else if (fresExtension.equals("ttl")) {
+							similarJenaModel(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
 						} else {
 							// TBD add more similarity tests for further file
 							// formats, or add them to one of the above
@@ -633,6 +682,13 @@ public class BasicTest {
 									dirReference + File.separator
 											+ fres.getName(),
 									true, true);
+						} else if (fresExtension.equals("ttl")
+								&& fileFormatsToCheck.contains("ttl")) {
+							similarJenaModel(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
 						} else {
 							// TBD add more similarity tests for further file
 							// formats, or add them to one of the above
@@ -892,21 +948,52 @@ public class BasicTest {
 			}
 	}
 
-	private void ttlTest(String config, String[] rdfs, String basedirResults,
-			String basedirReference) {
-		long start = (new Date()).getTime();
-		TestInstance test = new TestInstance(config);
-		long end = (new Date()).getTime();
-		System.out.println(
-				"Execution time " + config + ": " + (end - start) + "ms");
-		assertTrue("Test model execution failed", test.noError());
-		if (testTime)
-			assertTrue("Execution time too long", end - start < 60000);
-		if (rdfs != null)
-			for (String rdf : rdfs) {
-				similar(basedirResults + "/" + rdf + ".ttl",
-						basedirReference + "/" + rdf + ".ttl");
+	private void similarJenaModel(String fileName, String referenceFileName) {
+
+		Model model = ModelFactory.createDefaultModel();
+		model.read(fileName);
+
+		Model ref = ModelFactory.createDefaultModel();
+		ref.read(referenceFileName);
+
+		if (model.isIsomorphicWith(ref)) {
+			// fine
+		} else {
+
+			/*
+			 * FIXME: blank nodes are an issue - they always create a difference
+			 * 
+			 * See
+			 * http://answers.semanticweb.com/questions/21247/can-we-compare-two
+			 * -rdf-statements-objects
+			 */
+			// statements in model that aren't in ref
+			Model modelMinusRef = model.difference(ref);
+			modelMinusRef.setNsPrefixes(model.getNsPrefixMap());
+			// statements in ref that aren't in model
+			Model refMinusModel = ref.difference(model);
+			refMinusModel.setNsPrefixes(ref.getNsPrefixMap());
+
+			try {
+
+				ByteArrayOutputStream fout1 = new ByteArrayOutputStream();
+				RDFDataMgr.write(fout1, modelMinusRef, RDFFormat.TURTLE_PRETTY);
+				String diff1 = fout1.toString("UTF-8");
+
+				ByteArrayOutputStream fout2 = new ByteArrayOutputStream();
+				RDFDataMgr.write(fout2, refMinusModel, RDFFormat.TURTLE_PRETTY);
+				String diff2 = fout2.toString("UTF-8");
+
+				fail("Input and reference model are not isomorphic.\r\n"
+						+ "Statements in input model that are not in the reference model (NOTE: triples involving blank nodes may be false positives):\r\n"
+						+ diff1 + "\r\n\r\n------------\r\n\r\n"
+						+ "Statements in reference model that are not in the input model (NOTE: triples involving blank nodes may be false positives):\r\n"
+						+ diff2);
+			} catch (Exception e) {
+				fail("Could not compare " + fileName + " and "
+						+ referenceFileName);
 			}
+		}
 	}
 
 	private void htmlTest(String config, String[] htmls, String basedirResults,
@@ -973,6 +1060,7 @@ public class BasicTest {
 					+ referenceHtmlFileName);
 		}
 	}
+
 
 	private void docxTest(String config, String[] docxs, String basedirResults,
 			String basedirReference) {

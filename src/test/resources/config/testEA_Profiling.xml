@@ -5,9 +5,9 @@
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
   <input>
-    <parameter name="addTaggedValues" value="profiles"/>
     <parameter name="inputModelType" value="EA7"/>
     <parameter name="inputFile" value="src/test/resources/testProfiling.eap"/>
+    <parameter name="appSchemaNameRegex" value="Test[1-7].*"/>
     <parameter name="publicOnly" value="true"/>
     <parameter name="checkingConstraints" value="enabled"/>
     <parameter name="sortedSchemaOutput" value="true"/>

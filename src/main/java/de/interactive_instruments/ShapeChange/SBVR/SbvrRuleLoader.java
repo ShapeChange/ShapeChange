@@ -445,7 +445,7 @@ public class SbvrRuleLoader implements MessageSource {
 		// if there were parsing errors, we cannot identify the main class name
 		if (parsingErrorListener.hasErrors()) {
 
-			SbvrUtil.printErrors(parsingErrorListener.getErrors(), text, result);
+			SbvrUtil.printErrors(parsingErrorListener.getErrors(), text, result, false);
 
 			return null;
 

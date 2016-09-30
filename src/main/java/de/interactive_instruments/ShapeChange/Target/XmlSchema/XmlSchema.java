@@ -159,7 +159,7 @@ public class XmlSchema implements Target {
 			if (cs != null) {
 				for (Iterator<Constraint> i = cs.iterator(); i.hasNext();) {
 					Constraint c = i.next();
-					if (c != null && c instanceof OclConstraint && schDoc != null) {
+					if (c != null && c instanceof OclConstraint && schDoc != null && ((OclConstraint)c).syntaxTree() != null) {
 						schDoc.addAssertion(ci, (OclConstraint)c);
 					}
 				}

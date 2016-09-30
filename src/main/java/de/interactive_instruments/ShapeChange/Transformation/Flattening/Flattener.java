@@ -46,12 +46,13 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
@@ -104,7 +105,7 @@ public class Flattener implements Transformer {
 	/* ------------------------------------------- */
 
 	public static final String TRANSFORMER_NAMESPACE_SUFFIX_PARAMETER = "targetNamespaceSuffix";
-	public static final String TRANSFORMER_REMOVE_TYPE_PARAMETER = "removeType";
+	public static final String PARAM_REMOVE_TYPE = "removeType";
 
 	// lower case alias for properties is kept for backward compatibility
 	public static final String TRANSFORMER_LOWER_CASE_ALIAS_FOR_PROPERTIES = "lowerCaseAliasForProperties";
@@ -159,6 +160,53 @@ public class Flattener implements Transformer {
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
 	public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
 
+	// Parameters for RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES
+	/**
+	 * Alias: none
+	 * <p>
+	 * Type: String (with Java compliant regular expression)
+	 * <p>
+	 * Default Value: none
+	 * <p>
+	 * Behavior: This parameter identifies the unions that shall NOT be
+	 * flattened. The value of this parameter contains a (Java compliant)
+	 * regular expression which, if it matches the name of a union, marks it to
+	 * be excluded by the Flattener.
+	 * <p>
+	 * Applies to Rule(s): rule-trf-cls-replace-with-union-properties
+	 */
+	public static final String PARAM_REPLACE_UNION_EXCLUDE_REGEX = "replaceUnionExcludeRegex";
+
+	/**
+	 * If this parameter is set to <code>true</code>, then properties that
+	 * originate from flattening a specific union will be tagged (with tag '
+	 * {@link #UNION_SET_TAG_NAME}'). This allows identifying which properties
+	 * belong to the union after it has been flattened - just by looking at the
+	 * tagged values. Properties from a union that are copied into another union
+	 * will not be tracked. Also, tracking information will be removed / not
+	 * created if union options replace a property with max multiplicity > 1
+	 * (because then the union semantics will become irrelevant, as that
+	 * property can have values from more than one union option).
+	 */
+	public static final String PARAM_INCLUDE_UNION_IDENTIFIER_TV = "includeUnionIdentifierTaggedValue";
+	/**
+	 * If, during execution of {@value #RULE_TRF_PROP_FLATTEN_TYPES}, a union is
+	 * flattened, then by default the minimum multiplicity of the flattened
+	 * property is set to 0. However, if the replaced property has a maximum
+	 * multiplicity of 1 and {@value #PARAM_INCLUDE_UNION_IDENTIFIER_TV} is set
+	 * to true, then the union semantics can be represented in the model. In
+	 * that case, setting the minimum multiplicity of the flattened property to
+	 * 0 would unnecessarily reduce valuable information. To prevent this from
+	 * happening, set this parameter to <code>false</code> (the default is
+	 * <code>true</code>).
+	 */
+	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
+	/**
+	 * If set to <code>true</code>, then descriptors of properties will be
+	 * merged during type flattening.
+	 */
+	public static final String PARAM_MERGE_DESCRIPTORS = "mergeDescriptors";
+
 	/**
 	 * If this parameter is set to true, then type flattening is not performed
 	 * for a (navigable) property that has its inClass (or one of its
@@ -179,6 +227,9 @@ public class Flattener implements Transformer {
 	// Parameters for RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
+
+	// Parameters for RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP
+	public static final String PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX = "removeInheritanceIncludeRegex";
 
 	// =============================
 	/* Flattener rule identifiers */
@@ -244,6 +295,33 @@ public class Flattener implements Transformer {
 	 */
 	public static final String RULE_TRF_CLS_DISSOLVE_MIXINS = "rule-trf-cls-dissolve-mixins";
 
+	/**
+	 * Removes inheritance relationships of classes to the classes whose name
+	 * matches the regular expression provided by parameter
+	 * {@value #PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX}. NOTE: Applies to
+	 * classes in the whole model!
+	 * 
+	 */
+	public static final String RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP = "rule-trf-cls-remove-inheritance-relationship";
+
+	/**
+	 * If only a single property (A) of a non-union type (e.g. a datatype) has a
+	 * specific union as value type, and if that property has maximum
+	 * multiplicity 1, then copies of the union properties replace property A.
+	 * The sequenceNumbers of the property copies will be adjusted, so that the
+	 * union property copies are correctly positioned within their new class.
+	 * Their multiplicity is also adjusted: minimum occurrence is the product of
+	 * the minimum occurrence of property A and the original union property,
+	 * while the maximum occurrence is "*" if the maximum occurrence of one of
+	 * the two properties is "*", otherwise it is the product of the maximum
+	 * occurrences.
+	 * 
+	 * Finally, those unions that 1) have been processed by this rule and 2) are
+	 * no longer used by properties of the selected schemas are removed from the
+	 * model.
+	 */
+	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
+
 	// =============================
 	/* Flattener requirements */
 	// =============================
@@ -283,6 +361,7 @@ public class Flattener implements Transformer {
 	 */
 	public static final String TAGGED_VALUE_IS_FLAT_TARGET = "isFlatTarget";
 
+	public static final String UNION_SET_TAG_NAME = "SC_UNION_SET";
 	// =============================
 	/* internal */
 	// =============================
@@ -346,7 +425,7 @@ public class Flattener implements Transformer {
 
 	public void process(GenericModel genModel, Options options,
 			TransformerConfiguration trfConfig, ShapeChangeResult result)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		this.options = options;
 		this.result = result;
@@ -590,6 +669,12 @@ public class Flattener implements Transformer {
 			applyRuleMultiplicity(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES);
+			applyRuleUnionReplace(genModel, trfConfig);
+		}
+
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPES)) {
 			result.addInfo(null, 20103, RULE_TRF_PROP_FLATTEN_TYPES);
 			applyRuleFlattenTypes(genModel, trfConfig);
@@ -620,6 +705,12 @@ public class Flattener implements Transformer {
 		if (rules.contains(RULE_TRF_PROP_UNION_DIRECT_OPTIONALITY)) {
 			result.addInfo(null, 20103, RULE_TRF_PROP_UNION_DIRECT_OPTIONALITY);
 			applyRulePropUnionDirectOptionality(genModel, trfConfig);
+		}
+
+		if (rules.contains(RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
+			applyRuleRemoveInheritanceRelationship(genModel, trfConfig);
 		}
 
 		// postprocessing
@@ -698,6 +789,78 @@ public class Flattener implements Transformer {
 		for (GenericClassInfo mixin : mixinsToRemove) {
 
 			genModel.remove(mixin);
+		}
+	}
+
+	/**
+	 * @see #RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP
+	 * @param genModel
+	 * @param trfConfig
+	 */
+	private void applyRuleRemoveInheritanceRelationship(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		if (!trfConfig.hasParameter(PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+				|| trfConfig
+						.getParameterValue(
+								PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+						.trim().isEmpty()) {
+			result.addWarning(null, 20343,
+					PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX,
+					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
+			return;
+		}
+
+		String includeRegex = trfConfig
+				.getParameterValue(PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
+				.trim();
+
+		/*
+		 * identify the supertypes in the model that shall be disconnected from
+		 * their subtypes
+		 */
+		Pattern includePattern = Pattern.compile(includeRegex);
+
+		Set<String> idsOfRelevantSupertypes = new HashSet<String>();
+
+		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+
+			Matcher m = includePattern.matcher(genCi.name());
+
+			if (m.matches()) {
+				idsOfRelevantSupertypes.add(genCi.id());
+
+				genCi.setSubtypes(null);
+			}
+		}
+
+		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+
+			if (genCi.baseClass() != null && idsOfRelevantSupertypes
+					.contains(genCi.baseClass().id())) {
+				genCi.setBaseClass(null);
+			}
+
+			TreeSet<String> idsOfSupertypesToKeep = new TreeSet<String>();
+
+			for (String supertypeId : genCi.supertypes()) {
+				if (idsOfRelevantSupertypes.contains(supertypeId)) {
+					/*
+					 * alright, we won't add this supertype to the set of
+					 * supertypes to keep
+					 */
+				} else {
+					idsOfSupertypesToKeep.add(supertypeId);
+				}
+			}
+
+			genCi.setSupertypes(idsOfSupertypesToKeep);
+
+			if (idsOfSupertypesToKeep.size() == 1) {
+				GenericClassInfo base = genModel.getGenClasses()
+						.get(idsOfSupertypesToKeep.first());
+				genCi.setBaseClass(base);
+			}
 		}
 	}
 
@@ -796,7 +959,7 @@ public class Flattener implements Transformer {
 		// First identify if the removeType parameter exists and if so, which -
 		// if any - types shall be removed from the model.
 		String[] typesToRemove = trfConfig
-				.getListParameterValue(TRANSFORMER_REMOVE_TYPE_PARAMETER);
+				.getListParameterValue(PARAM_REMOVE_TYPE);
 
 		if (typesToRemove == null || typesToRemove.length == 0) {
 			result.addWarning(null, 20324);
@@ -1132,10 +1295,10 @@ public class Flattener implements Transformer {
 								genCi.name() + separatorForGeometryTypeSuffix
 										+ mapEntry.getParam(),
 								Options.FEATURE);
-								/*
-								 * NOTE: we have not added the properties of the
-								 * copy to the model yet
-								 */
+						/*
+						 * NOTE: we have not added the properties of the copy to
+						 * the model yet
+						 */
 
 						// keep track of the new copy
 						ftCopiesByGeometryTypeSuffix.put(mapEntry.getParam(),
@@ -2199,7 +2362,6 @@ public class Flattener implements Transformer {
 
 				genModel.updateClassName(genCi, code);
 			}
-
 		}
 
 		// update property names - also for any reverse properties
@@ -2347,6 +2509,207 @@ public class Flattener implements Transformer {
 		return code;
 	}
 
+	private void applyRuleUnionReplace(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		// compute some general parameter values
+		boolean includeUnionIdentifierTV = false;
+		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
+			String tmp = trfConfig
+					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				includeUnionIdentifierTV = true;
+			}
+		}
+
+		Pattern replaceUnionExcludePattern = null;
+		if (trfConfig.hasParameter(PARAM_REPLACE_UNION_EXCLUDE_REGEX)) {
+			String replaceUnionExcludeRegex = trfConfig
+					.getParameterValue(PARAM_REPLACE_UNION_EXCLUDE_REGEX);
+			replaceUnionExcludePattern = Pattern
+					.compile(replaceUnionExcludeRegex);
+		}
+
+		// identify all union classes
+		SortedSet<GenericClassInfo> unionsToProcess = new TreeSet<GenericClassInfo>();
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			if (genCi.category() == Options.UNION) {
+
+				if (replaceUnionExcludePattern != null) {
+
+					Matcher m = replaceUnionExcludePattern
+							.matcher(genCi.name());
+
+					if (m.matches()) {
+						/*
+						 * alright, then the type shall be excluded from
+						 * processing
+						 */
+					} else {
+						unionsToProcess.add(genCi);
+					}
+
+				} else {
+					unionsToProcess.add(genCi);
+				}
+			}
+		}
+
+		/*
+		 * identify union classes that were used to replace properties, so that
+		 * they can be removed at the end if they are no longer used in the
+		 * model
+		 */
+		Map<String, GenericClassInfo> processedUnionsById = new HashMap<String, GenericClassInfo>();
+
+		for (GenericClassInfo union : unionsToProcess) {
+
+			List<GenericPropertyInfo> propsToAdd = new ArrayList<GenericPropertyInfo>();
+			Set<GenericPropertyInfo> propsToRemove = new HashSet<GenericPropertyInfo>();
+
+			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+				if (genCi == union) {
+					continue;
+				}
+
+				int countPropsWithUnionAsValueType = 0;
+				GenericPropertyInfo relPi = null;
+
+				for (PropertyInfo pi : genCi.properties().values()) {
+
+					if (!pi.isNavigable()) {
+						continue;
+					}
+
+					if (pi.typeInfo().id.equals(union.id())) {
+						countPropsWithUnionAsValueType++;
+						if (pi.cardinality().maxOccurs == 1) {
+							relPi = (GenericPropertyInfo) pi;
+						}
+					}
+				}
+
+				if (countPropsWithUnionAsValueType == 1 && relPi != null) {
+
+					/*
+					 * replace the relevant property with copies of the union
+					 * options
+					 */
+
+					processedUnionsById.put(union.id(), union);
+
+					int seqNumIndex = 1;
+					for (PropertyInfo uPi : union.properties().values()) {
+
+						GenericPropertyInfo uGPi = (GenericPropertyInfo) uPi;
+
+						GenericPropertyInfo copy = uGPi.createCopy(relPi.id()
+								+ "_replacedByUnionProperty_" + uGPi.name());
+
+						copy.setInClass(genCi);
+
+						// merge global identifier information
+						if (genCi.globalId() == null) {
+							/*
+							 * globalId from uGPi can be used as-is, which is
+							 * the default for the copy
+							 */
+						} else if (uGPi.globalId() == null) {
+
+							// use the global id from genPi
+							copy.setGlobalId(relPi.globalId());
+
+						} else {
+
+							// merge global ids
+							copy.setGlobalId(
+									relPi.globalId() + "." + uGPi.globalId());
+						}
+
+						/* handle derived properties */
+						if (relPi.isDerived()) {
+							copy.setDerived(true);
+						}
+
+						/*
+						 * ensure that the copy is not counted as an association
+						 * role
+						 */
+						copy.setAttribute(true);
+						copy.setAssociation(null);
+
+						/*
+						 * set union identifier if so configured and if the
+						 * class that the property is copied to is not a union
+						 * itself; we have already checked that max multiplicity
+						 * of the property that is being replaced is 1
+						 */
+						if (includeUnionIdentifierTV
+								&& !(genCi.category() == Options.UNION)) {
+							TaggedValues tvs = copy.taggedValuesAll();
+							tvs.put(UNION_SET_TAG_NAME, relPi.name());
+							copy.setTaggedValues(tvs, false);
+						}
+
+						/*
+						 * ensure that "sequenceNumber" tagged value is also
+						 * updated
+						 */
+						copy.setSequenceNumber(relPi.sequenceNumber()
+								.createCopyWithSuffix(seqNumIndex), true);
+						seqNumIndex++;
+
+						int minOccurs = relPi.cardinality().minOccurs
+								* uGPi.cardinality().minOccurs;
+						int genPiMaxOccurs = relPi.cardinality().maxOccurs;
+						int typeGPiMaxOccurs = uGPi.cardinality().maxOccurs;
+						int maxOccurs = 0;
+						if (genPiMaxOccurs == Integer.MAX_VALUE
+								|| typeGPiMaxOccurs == Integer.MAX_VALUE) {
+							maxOccurs = Integer.MAX_VALUE;
+						} else {
+							maxOccurs = genPiMaxOccurs * typeGPiMaxOccurs;
+						}
+						copy.setCardinality(
+								new Multiplicity(minOccurs, maxOccurs));
+						propsToAdd.add(copy);
+					}
+					// remove the replaced property
+					propsToRemove.add(relPi);
+				}
+			}
+
+			// add new properties, if any, to inClass and model, ignoring
+			// already existing ones
+			genModel.add(propsToAdd, PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+			// remove properties of the current class which have been
+			// processed from both the class and the model
+			for (GenericPropertyInfo propToRemove : propsToRemove) {
+				genModel.remove(propToRemove, false);
+			}
+		}
+
+		/*
+		 * remove processed unions that are no longer used by properties of the
+		 * selected schemas; to do so, first identify which of the processed
+		 * unions are still in use
+		 */
+
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+			if (processedUnionsById.containsKey(genPi.typeInfo().id)) {
+				processedUnionsById.remove(genPi.typeInfo().id);
+			}
+		}
+
+		for (GenericClassInfo unusedUnion : processedUnionsById.values()) {
+			genModel.remove(unusedUnion);
+		}
+	}
+
 	/**
 	 *
 	 * NOTE: removes all unions and potentially also data and object types (can
@@ -2402,6 +2765,33 @@ public class Flattener implements Transformer {
 				 * computeTypesToProcessForFlattenTypes
 				 */
 				idsOfDataTypesToProcess.add(typeCi.id());
+			}
+		}
+
+		// compute some general parameter values
+		boolean includeUnionIdentifierTV = false;
+		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
+			String tmp = trfConfig
+					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				includeUnionIdentifierTV = true;
+			}
+		}
+
+		boolean setMinCardinalityToZeroWhenMergingUnion = true;
+		if (trfConfig.hasParameter(
+				PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION)) {
+			String tmp = trfConfig.getParameterValue(
+					PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION);
+			if (tmp.trim().equalsIgnoreCase("false")) {
+				setMinCardinalityToZeroWhenMergingUnion = false;
+			}
+		}
+		boolean mergeDescriptors = false;
+		if (trfConfig.hasParameter(PARAM_MERGE_DESCRIPTORS)) {
+			String tmp = trfConfig.getParameterValue(PARAM_MERGE_DESCRIPTORS);
+			if (tmp.trim().equalsIgnoreCase("true")) {
+				mergeDescriptors = true;
 			}
 		}
 
@@ -2542,10 +2932,10 @@ public class Flattener implements Transformer {
 							 */
 							GenericPropertyInfo typeGPi = (GenericPropertyInfo) typePi;
 
-							UUID id = UUID.randomUUID();
+							String id = genPi.id() + "_replacedBy_"
+									+ typeGPi.name();
 
-							GenericPropertyInfo copy = typeGPi
-									.createCopy(id.toString());
+							GenericPropertyInfo copy = typeGPi.createCopy(id);
 
 							// merge global identifier information
 							if (genCi.globalId() == null) {
@@ -2577,35 +2967,58 @@ public class Flattener implements Transformer {
 							copy.setAttribute(true);
 							copy.setAssociation(null);
 
-							// JE: not needed because we keep the documentation,
-							// definition and description from the lowest level
-							// only
 							/*
-							 * Merge the documentation of the property that will
-							 * be flattened with the properties of its type and
-							 * the property copy.
+							 * handle descriptors (except name and alias)
 							 */
-							// String genPiDoc = genPi.documentation() != null ?
-							// genPi
-							// .documentation() : "";
-							// String copyDoc = copy.documentation() != null ?
-							// copy
-							// .documentation() : "";
-							// copy.setDocumentation(genPiDoc + copyDoc);
-
-							// Reset the documentation for the copy if it is
-							// empty.
-							String s = copy.derivedDocumentation(
-									"[[definition]][[description]]", "");
-							if (s == null || s.length() == 0) {
-								copy.setDefinition(genPi.definition());
-								copy.setDescription(genPi.description());
-								copy.setPrimaryCode(genPi.primaryCode());
-								copy.setLanguage(genPi.language());
-								copy.setLegalBasis(genPi.legalBasis());
-								copy.setDataCaptureStatements(
-										genPi.dataCaptureStatements());
-								copy.setExamples(genPi.examples());
+							if (mergeDescriptors) {
+								copy.setDefinition(
+										StringUtils.join(
+												new String[] {
+														genPi.definition(),
+														copy.definition() },
+												" "));
+								copy.setDescription(
+										StringUtils.join(
+												new String[] {
+														genPi.description(),
+														copy.description() },
+												" "));
+								copy.setPrimaryCode(
+										StringUtils.join(
+												new String[] {
+														genPi.primaryCode(),
+														copy.primaryCode() },
+												" "));
+								// TBD: would it make sense to merge the
+								// language()?
+								copy.setLegalBasis(
+										StringUtils.join(
+												new String[] {
+														genPi.legalBasis(),
+														copy.legalBasis() },
+												" "));
+								copy.setDataCaptureStatements(ArrayUtils.addAll(
+										genPi.dataCaptureStatements(),
+										copy.dataCaptureStatements()));
+								copy.setExamples(ArrayUtils.addAll(
+										genPi.examples(), copy.examples()));
+							} else {
+								// (NOTE: for backwards compatibility after
+								// mergeDescriptors has been introduced) Reset
+								// the documentation for the copy if it is
+								// empty.
+								String s = copy.derivedDocumentation(
+										"[[definition]][[description]]", "");
+								if (s == null || s.length() == 0) {
+									copy.setDefinition(genPi.definition());
+									copy.setDescription(genPi.description());
+									copy.setPrimaryCode(genPi.primaryCode());
+									copy.setLanguage(genPi.language());
+									copy.setLegalBasis(genPi.legalBasis());
+									copy.setDataCaptureStatements(
+											genPi.dataCaptureStatements());
+									copy.setExamples(genPi.examples());
+								}
 							}
 
 							/*
@@ -2764,6 +3177,67 @@ public class Flattener implements Transformer {
 							 */
 
 							copy.setInClass(genCi);
+
+							if (includeUnionIdentifierTV) {
+
+								if (genPi.cardinality().maxOccurs > 1) {
+									TaggedValues tvs = copy.taggedValuesAll();
+									tvs.remove(UNION_SET_TAG_NAME);
+									copy.setTaggedValues(tvs, false);
+								} else if (typeToProcess
+										.category() == Options.UNION
+										&& genCi.category() == Options.UNION) {
+									// nothing to do
+								} else if (genCi.category() == Options.UNION) {
+									/*
+									 * remove potentially existing union
+									 * identifier tag from the copy
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+									tvs.remove(UNION_SET_TAG_NAME);
+									copy.setTaggedValues(tvs, false);
+								} else if (typeToProcess
+										.category() == Options.UNION) {
+									/*
+									 * set union identifier tag in the copy;
+									 * handle the case where a union was used in
+									 * a union
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+
+									String setName;
+									int lastIndexOfUnionSeparator = pi.name()
+											.lastIndexOf(
+													separatorForPropertyFromUnion);
+									int lastIndexOfNonUnionSeparator = pi.name()
+											.lastIndexOf(
+													separatorForPropertyFromNonUnion);
+
+									if (lastIndexOfUnionSeparator > lastIndexOfNonUnionSeparator) {
+										// last merge was a union property, just
+										// like now
+										setName = pi.name().substring(0,
+												lastIndexOfUnionSeparator);
+									} else {
+										setName = pi.name();
+									}
+
+									tvs.put(UNION_SET_TAG_NAME, setName);
+									copy.setTaggedValues(tvs, false);
+								} else if (copy.taggedValue(
+										UNION_SET_TAG_NAME) != null) {
+									/*
+									 * extend union identifier tag in the copy
+									 */
+									TaggedValues tvs = copy.taggedValuesAll();
+									String tmp = tvs
+											.getFirstValue(UNION_SET_TAG_NAME);
+									tvs.put(UNION_SET_TAG_NAME,
+											pi.name() + separator + tmp);
+									copy.setTaggedValues(tvs, false);
+								}
+							}
+
 							/*
 							 * ensure that "sequenceNumber" tagged value is also
 							 * updated
@@ -2774,15 +3248,13 @@ public class Flattener implements Transformer {
 
 							int minOccurs;
 
-							if (typeToProcess.category() == Options.UNION) {
+							if (typeToProcess.category() == Options.UNION
+									&& (setMinCardinalityToZeroWhenMergingUnion
+											|| pi.cardinality().maxOccurs > 1)) {
 								minOccurs = 0;
 							} else {
-								minOccurs = (pi
-										.cardinality().minOccurs < typeGPi
-												.cardinality().minOccurs)
-														? pi.cardinality().minOccurs
-														: typeGPi
-																.cardinality().minOccurs;
+								minOccurs = pi.cardinality().minOccurs
+										* typeGPi.cardinality().minOccurs;
 							}
 
 							int piMaxOccurs = pi.cardinality().maxOccurs;
@@ -2970,7 +3442,7 @@ public class Flattener implements Transformer {
 									type.name)
 							.getTargetType();
 
-					result.addWarning(null, 20318, targetTypeName, genPi.name(),
+					result.addDebug(null, 20318, targetTypeName, genPi.name(),
 							genPi.inClass().name());
 
 					type.id = UNKNOWN;
@@ -3023,7 +3495,7 @@ public class Flattener implements Transformer {
 						// type.name = targetTypeName;
 						//
 						// } else {
-						MessageContext mc = result.addWarning(null, 20301,
+						MessageContext mc = result.addDebug(null, 20301,
 								genPi.inClass().name() + "." + genPi.name(),
 								type.name);
 						if (mc != null)
@@ -3465,7 +3937,7 @@ public class Flattener implements Transformer {
 											|| end2.categoryOfValue() == Options.OBJECT
 											|| end2.categoryOfValue() == Options.MIXIN))
 
-			)) {
+					)) {
 				// alright, then we keep this association as is
 				continue;
 			}
@@ -3694,9 +4166,6 @@ public class Flattener implements Transformer {
 	 */
 	private void applyRuleInheritance(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
-
-		// Map<String, GenericClassInfo> genClasses =
-		// genModel.selectedSchemaClasses();
 
 		// key: class id, value: class
 		Map<String, GenericClassInfo> genSuperclassesById = new HashMap<String, GenericClassInfo>();
@@ -3991,8 +4460,8 @@ public class Flattener implements Transformer {
 			PropertyInfo pi1 = genAi.end1();
 			PropertyInfo pi2 = genAi.end2();
 
-			String name1 = pi1.inClass().name();
-			String name2 = pi2.inClass().name();
+			String namePi1InClass = pi1.inClass().name();
+			String namePi2InClass = pi2.inClass().name();
 
 			/*
 			 * check that at least one end of the association belongs to a
@@ -4025,17 +4494,21 @@ public class Flattener implements Transformer {
 						&& pi1.inClass() instanceof GenericClassInfo)) {
 
 					result.addWarning(null, 20336,
-							(name1.compareTo(name2) <= 0) ? name1 : name2,
-							(name1.compareTo(name2) <= 0) ? name2 : name1,
-							name1);
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi1InClass : namePi2InClass,
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi2InClass : namePi1InClass,
+							namePi1InClass);
 
 				} else {
 
 					// pi2 is not an instance of GenericPropertyInfo
 					result.addWarning(null, 20336,
-							(name1.compareTo(name2) <= 0) ? name1 : name2,
-							(name1.compareTo(name2) <= 0) ? name2 : name1,
-							name2);
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi1InClass : namePi2InClass,
+							(namePi1InClass.compareTo(namePi2InClass) <= 0)
+									? namePi2InClass : namePi1InClass,
+							namePi2InClass);
 				}
 
 				continue;
@@ -4054,6 +4527,13 @@ public class Flattener implements Transformer {
 			GenericPropertyInfo genPi2Orig = (GenericPropertyInfo) pi2;
 
 			/*
+			 * Note on cast: should be safe because we checked before that the
+			 * inClasses of pi1 and pi2 are instances of GenericClassInfo
+			 */
+			GenericClassInfo genPi1InClass = (GenericClassInfo) pi1.inClass();
+			GenericClassInfo genPi2InClass = (GenericClassInfo) pi2.inClass();
+
+			/*
 			 * compute new names and aliases for genPi1Orig and genPi2Orig
 			 * (WARNING: NOT for the subtype specific property copies) which
 			 * will be set later on, depending on the actual case
@@ -4063,21 +4543,17 @@ public class Flattener implements Transformer {
 			String newGenPi2OrigName = pi2.name() + separator
 					+ pi1.inClass().name();
 
-			String newAliasPi1Orig = (hasCode(pi1))
-					? getCode(pi1) + separator + (hasCode(pi2.inClass())
-							? getCode(pi2.inClass()) : pi2.inClass().name())
-					: null;
-			String newAliasPi2Orig = (hasCode(pi2))
-					? getCode(pi2) + separator + (hasCode(pi1.inClass())
-							? getCode(pi1.inClass()) : pi1.inClass().name())
-					: null;
+			String codePi1 = hasCode(pi1) ? getCode(pi1) : pi1.name();
+			String codePi2 = hasCode(pi2) ? getCode(pi2) : pi2.name();
+			String codePi1InClass = hasCode(genPi1InClass)
+					? getCode(genPi1InClass) : genPi1InClass.name();
+			String codePi2InClass = hasCode(genPi2InClass)
+					? getCode(genPi2InClass) : genPi2InClass.name();
 
-			/*
-			 * Note on cast: should be safe because we checked before that the
-			 * inClasses of pi1 and pi2 are instances of GenericClassInfo
-			 */
-			GenericClassInfo genPi1InClass = (GenericClassInfo) pi1.inClass();
-			GenericClassInfo genPi2InClass = (GenericClassInfo) pi2.inClass();
+			String newAliasPi1Orig = (hasCode(pi1) || hasCode(genPi2InClass))
+					? codePi1 + separator + codePi2InClass : null;
+			String newAliasPi2Orig = (hasCode(pi2) || hasCode(genPi1InClass))
+					? codePi2 + separator + codePi1InClass : null;
 
 			/*
 			 * now create the new associations; first handle case of subtypes on
@@ -4139,18 +4615,25 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ subclassPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(subclassPi2InClass)
-												? getCode(subclassPi2InClass)
-												: subclassPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(subclassPi1InClass)
-												? getCode(subclassPi1InClass)
-												: subclassPi1InClass.name())
-								: null;
+						String codesubclassPi1InClass = hasCode(
+								subclassPi1InClass)
+										? getCode(subclassPi1InClass)
+										: subclassPi1InClass.name();
+						String codesubclassPi2InClass = hasCode(
+								subclassPi2InClass)
+										? getCode(subclassPi2InClass)
+										: subclassPi2InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(subclassPi2InClass))
+										? codePi1 + separator
+												+ codesubclassPi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(subclassPi1InClass))
+										? codePi2 + separator
+												+ codesubclassPi1InClass
+										: null;
 
 						StructuredNumber newSnPi1 = pi1.sequenceNumber()
 								.createCopyWithSuffix(sequenceNumberIndex);
@@ -4191,18 +4674,20 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ genPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(subclassPi2InClass)
-												? getCode(subclassPi2InClass)
-												: subclassPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(genPi1InClass)
-												? getCode(genPi1InClass)
-												: genPi1InClass.name())
-								: null;
+						String codesubclassPi2InClass = hasCode(
+								subclassPi2InClass)
+										? getCode(subclassPi2InClass)
+										: subclassPi2InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(subclassPi2InClass))
+										? codePi1 + separator
+												+ codesubclassPi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(genPi1InClass))
+										? codePi2 + separator + codePi1InClass
+										: null;
 
 						StructuredNumber newSnPi1 = pi1.sequenceNumber()
 								.createCopyWithSuffix(sequenceNumberIndex);
@@ -4246,18 +4731,20 @@ public class Flattener implements Transformer {
 						String newNamePi2 = pi2.name() + separator
 								+ subclassPi1InClass.name();
 
-						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator
-										+ (hasCode(genPi2InClass)
-												? getCode(genPi2InClass)
-												: genPi2InClass.name())
-								: null;
-						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator
-										+ (hasCode(subclassPi1InClass)
-												? getCode(subclassPi1InClass)
-												: subclassPi1InClass.name())
-								: null;
+						String codesubclassPi1InClass = hasCode(
+								subclassPi1InClass)
+										? getCode(subclassPi1InClass)
+										: subclassPi1InClass.name();
+
+						String newAliasPi1 = (hasCode(pi1)
+								|| hasCode(genPi2InClass))
+										? codePi1 + separator + codePi2InClass
+										: null;
+						String newAliasPi2 = (hasCode(pi2)
+								|| hasCode(subclassPi1InClass))
+										? codePi2 + separator
+												+ codesubclassPi1InClass
+										: null;
 
 						/*
 						 * the value type of pi1 is always pi2.inClass() - by
@@ -4326,13 +4813,16 @@ public class Flattener implements Transformer {
 							String newNamePi2 = pi2.name() + separator
 									+ subclassPi1InClass.name();
 
-							String newAliasPi2 = (hasCode(pi2))
-									? getCode(pi2) + separator
-											+ (hasCode(subclassPi1InClass)
-													? getCode(
-															subclassPi1InClass)
-													: subclassPi1InClass.name())
-									: null;
+							String codesubclassPi1InClass = hasCode(
+									subclassPi1InClass)
+											? getCode(subclassPi1InClass)
+											: subclassPi1InClass.name();
+
+							String newAliasPi2 = (hasCode(pi2)
+									|| hasCode(subclassPi1InClass))
+											? codePi2 + separator
+													+ codesubclassPi1InClass
+											: null;
 
 							/*
 							 * the value type of pi1 is always pi2.inClass() -
@@ -4399,13 +4889,16 @@ public class Flattener implements Transformer {
 							String newNamePi1 = pi1.name() + separator
 									+ subclassPi2InClass.name();
 
-							String newAliasPi1 = (hasCode(pi1))
-									? getCode(pi1) + separator
-											+ (hasCode(subclassPi2InClass)
-													? getCode(
-															subclassPi2InClass)
-													: subclassPi2InClass.name())
-									: null;
+							String codesubclassPi2InClass = hasCode(
+									subclassPi2InClass)
+											? getCode(subclassPi2InClass)
+											: subclassPi2InClass.name();
+
+							String newAliasPi1 = (hasCode(pi1)
+									|| hasCode(subclassPi2InClass))
+											? codePi1 + separator
+													+ codesubclassPi2InClass
+											: null;
 
 							StructuredNumber newSnPi1 = pi1.sequenceNumber()
 									.createCopyWithSuffix(sequenceNumberIndex);
