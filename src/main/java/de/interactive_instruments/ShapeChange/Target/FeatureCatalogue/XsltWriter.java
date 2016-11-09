@@ -317,11 +317,6 @@ public class XsltWriter {
 				stream = new FileInputStream(xsl);
 			}
 
-			Source xsltSource = new StreamSource(stream);
-			xsltSource.setSystemId(xsltMainFileUri.toString());
-			Source xmlSource = new StreamSource(transformationSource);
-			Result res = new StreamResult(transformationTarget);
-
 			// create an instance of TransformerFactory
 			if (xslTransformerFactory != null) {
 				// use TransformerFactory specified in configuration
@@ -331,6 +326,23 @@ public class XsltWriter {
 				// use TransformerFactory determined by system
 			}
 			TransformerFactory transFact = TransformerFactory.newInstance();
+
+			Source xsltSource = new StreamSource(stream);
+			xsltSource.setSystemId(xsltMainFileUri.toString());
+			Source xmlSource = new StreamSource(transformationSource);
+			
+			/*
+			 * Create StreamResult differently to avoid issues with whitespace
+			 * in file path, depending upon the actual TransformerFactory
+			 * implementation.
+			 */
+			Result res;
+			if (transFact.getClass().getName().equalsIgnoreCase(
+					"org.apache.xalan.processor.TransformerFactoryImpl")) {
+				res = new StreamResult(transformationTarget.getPath());
+			} else {
+				res = new StreamResult(transformationTarget);
+			}
 
 			/*
 			 * Set URI resolver for transformation, configured with standard

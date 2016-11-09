@@ -818,7 +818,19 @@ public class ShapeChangeResult {
 			return "(Converter.java) Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
 		case 507:
 			return "(Converter.java) None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
-
+		case 508:
+			return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
+		case 509:
+			return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
+		case 510: 
+			return "---------- Semantic validation of ShapeChange configuration: START ----------"; 
+		case 511: 
+			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"; 
+		case 512:
+			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
+		case 513:
+			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"+Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG+"' to 'true'.";
+			
 		// 600 - 699 Messages known to be used by multiple targets			
 		case 600:
 			return "File could not be deleted. Exception message: '$1$'.";
@@ -938,7 +950,15 @@ public class ShapeChangeResult {
 			return "Navigable via property '$1$' of class '$2$'.";
 		case 20108:
 			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
-
+		case 20109:
+			return "---------- TransformationManager postprocessing: validating constraints ----------";
+		case 20110:
+			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
+		case 20111:
+			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+			 
+			
+			
 		case 20201:
 			return "(Profiler.java) The profile identifier '$1$' in class '$2$' is not well-formed: $3$";
 		case 20202:
@@ -1054,6 +1074,8 @@ public class ShapeChangeResult {
 			return "(Flattener.java) Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
 		case 20342:
 			return "(Flattener.java) Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
+		case 20343:
+			return "(Flattener.java) Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
 
 			/* Generic Model related messages */
 			// (30000-30099) Messages used in multiple generic model classes

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2014 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,168 +32,178 @@
 
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.SortedMap;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Ontology;
-import com.hp.hpl.jena.ontology.UnionClass;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFList;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.reasoner.ValidityReport;
-import com.hp.hpl.jena.vocabulary.DC;
-import com.hp.hpl.jena.vocabulary.DCTerms;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.ontology.OntResource;
+import org.apache.jena.ontology.Ontology;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.OWL2;
+
+import de.interactive_instruments.ShapeChange.DescriptorTarget;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
-import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
+import de.interactive_instruments.ShapeChange.RdfPropertyMapEntry;
+import de.interactive_instruments.ShapeChange.RdfTypeMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
+import de.interactive_instruments.ShapeChange.TypeConversionParameter;
+import de.interactive_instruments.ShapeChange.ConstraintMapping;
+import de.interactive_instruments.ShapeChange.ConstraintMapping.ConstraintType;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.StereotypeConversionParameter;
 
 /**
- * @author Clemens Portele
+ * @author Clemens Portele, Johannes Echterhoff
  * 
  */
-public class OntologyModel implements OntologyDocument, MessageSource {
+public class OntologyModel implements MessageSource {
 
-	protected OntModel ontmodel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
-	protected Ontology ontology = null;
+	private OntModel ontmodel = ModelFactory
+			.createOntologyModel(OntModelSpec.OWL_MEM);
+	private Ontology ontology = null;
+	private OntModel refmodel = ModelFactory
+			.createOntologyModel(OntModelSpec.OWL_MEM);
 
-	// ontology for classes and properties used in map entries
-	protected static com.hp.hpl.jena.rdf.model.Model refmodel = ModelFactory.createDefaultModel();
-	
-	protected Options options = null;
+	private Options options = null;
 	public ShapeChangeResult result = null;
 
-	protected Model model = null;
-	protected PackageInfo mpackage = null;
+	private Model model = null;
+	private PackageInfo mpackage = null;
 
-	protected boolean printed = false;
+	/**
+	 * group 0: the whole input string group 1: the string to use as separator
+	 * of multiple values; can be <code>null</code> group 2: the name of the
+	 * tagged value; cannot be <code>null</code>
+	 */
+	private Pattern descriptorTargetTaggedValuePattern = Pattern
+			.compile("TV(\\(.+?\\))?:(.+)");
 
-	protected String targetNamespace = null;
+	private String name;
+	private String fileName;
+	private String rdfNamespace;
+	private String prefix;
+	private OWLISO19150 owliso19150;
+	private boolean finalized = false;
+	private String path;
 
-	protected String name;
-	protected String fileName;
-	protected String rdfNamespace;
-	protected String prefix;
-	protected OWLISO19150 owliso19150;
-	protected boolean finalized = false;
-	protected String path;
-	protected String backPath;
-	protected List<ClassInfo> classInfos = new ArrayList<ClassInfo>();
-	protected TargetOwlConfiguration config;
-	protected Set<String> globalPropertyNames;
-	protected Map<String,OwlProperty> properties = new HashMap<String,OwlProperty>();
+	private SortedSet<ClassInfo> classInfos = new TreeSet<ClassInfo>();
+	private Resource defaultTypeImplementation;
+
+	private TargetOwlConfiguration config;
+
+	/**
+	 * key: ontology name of property (so a URI); value: OwlProperty (a pair of
+	 * Jena Property and PropertyInfo)
+	 */
+	private SortedMap<String, OwlProperty> properties = new TreeMap<String, OwlProperty>();
+
+	/**
+	 * Map to keep track of the RDF implementation of a ClassInfo. Can be a
+	 * specific class or datatype but also the 'defaultTypeImplementation'
+	 * (which defaults to OWL Class). This information is necessary whenever the
+	 * RDF/OWL implementation of a ClassInfo needs to be known (especially when
+	 * mapping a ClassInfo).
+	 */
+	protected SortedMap<ClassInfo, Resource> resourceByClassInfo = new TreeMap<ClassInfo, Resource>();
+
+	/**
+	 * Map to keep track of the ClassInfos that were converted to OWL classes.
+	 */
+	private SortedMap<ClassInfo, OntClass> ontClassByClassInfo = new TreeMap<ClassInfo, OntClass>();
+
+	private SortedMap<PropertyInfo, OntProperty> ontPropertyByPropertyInfo = new TreeMap<PropertyInfo, OntProperty>();
+
+	private SortedMap<PropertyInfo, Resource> rangeByPropertyInfo = new TreeMap<PropertyInfo, Resource>();
+
+	private ConstraintMapping defaultConstraintMapping = new ConstraintMapping(
+			null, "iso19150-2:constraint", "[[name]]: [[text]]", "", " ",
+			ConstraintMapping.Format.STRING);
+
+	private SortedSet<String> uniquePropertyNames = new TreeSet<String>();
 
 	class OwlProperty {
 		protected PropertyInfo pi;
 		protected OntProperty p;
-		public OwlProperty(PropertyInfo pi, OntProperty p) {this.pi = pi; this.p = p;}
+
+		public OwlProperty(PropertyInfo pi, OntProperty p) {
+			this.pi = pi;
+			this.p = p;
+		}
 	}
-	
+
+	private OntologyModel(Model m, Options o, ShapeChangeResult r,
+			String xmlprefix, OWLISO19150 owliso19150) {
+
+		this.model = m;
+		this.options = o;
+		this.result = r;
+		this.prefix = xmlprefix;
+		this.owliso19150 = owliso19150;
+		this.config = this.owliso19150.getConfig();
+
+		this.ontmodel.setNsPrefix("rdf", OWLISO19150.RDF_NS_W3C_RDF);
+		this.ontmodel.setNsPrefix("rdfs", OWLISO19150.RDF_NS_W3C_RDFS);
+		this.ontmodel.setNsPrefix("owl", OWLISO19150.RDF_NS_W3C_OWL);
+		this.ontmodel.setNsPrefix("xsd", OWLISO19150.RDF_NS_W3C_XML_SCHEMA);
+
+		if (owliso19150.getDefaultTypeImplementation() == null) {
+			defaultTypeImplementation = OWL.Class;
+			result.addInfo(this, 40, "owl:Class");
+		} else {
+			String dti = owliso19150.getDefaultTypeImplementation();
+			defaultTypeImplementation = mapClass(dti);
+			result.addInfo(this, 40, dti);
+		}
+	}
+
 	public OntologyModel(PackageInfo pi, Model m, Options o,
 			ShapeChangeResult r, String xmlprefix, OWLISO19150 owliso19150)
 			throws ShapeChangeAbortException {
 
-		this.options = o;
-		this.result = r;
-		this.model = m;
+		this(m, o, r, xmlprefix, owliso19150);
+
 		this.mpackage = pi;
-		this.prefix = xmlprefix;
-		this.owliso19150 = owliso19150;
-		this.config = this.owliso19150.getConfig();
-		this.globalPropertyNames = OWLISO19150.getGlobalPropertyNames();
 
-		this.name = computeName();
-		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA) && mpackage.matches(OWLISO19150.RULE_OWL_PKG_APP_SCHEMA_CODE)) {
-			this.fileName = pi.xmlns() + ".ttl";
-			this.path = "";
-		} else {
-			this.fileName = normalizedName(pi) + ".ttl";
-			this.path = computePath(pi);
-		}
-		
-		// as per ISO 19150-2owl:rdfNamespace
-		// TODO Comment by Great Britain: "/" should also be allowed
-		this.rdfNamespace = name + "#";
-
-		this.backPath = computeBackPath(pi);
-		
-		setupModel();
-	}
-
-	/**
-	 * Determines the ontology name of a given package. The name is constructed
-	 * following the ISO 19150-2owl:ontologyName requirement.
-	 * 
-	 * The ontologyName is defined via the following rules, in descending
-	 * priority:
-	 * <ul>
-	 * <li>If the configuration parameter
-	 * {@link OWLISO19150#PARAM_ONTOLOGYNAME_TAGGED_VALUE_NAME} is set and an
-	 * according tagged value is set for the package its value is used.</li>
-	 * <li>If the configuration parameter {@link OWLISO19150#PARAM_URIBASE} is
-	 * set its value is used for constructing the ontologyName</li>
-	 * <li>Otherwise the targetNamespace of the package is used as URIbase</li>
-	 * </ul>
-	 * If URIbase is used and the encoding rule
-	 * {@link OWLISO19150#RULE_OWL_PKG_PATH_IN_ONTOLOGY_NAME} is in effect, then
-	 * the umlPackageName is constructed using the path of the package to the
-	 * upmost owner that is in the same targetNamespace - using a combination of
-	 * "/" and normalized package names for all parent packages in the same
-	 * target namespace; otherwise just the normalized package name is appended
-	 * to URIbase as per 19150-2owl:ontologyName.
-	 * 
-	 * @param pi
-	 * @return
-	 */
-	public String computeName() {
-
-		if (owliso19150.getOntologyNameTaggedValue() != null) {
-			String ontologyName = mpackage.taggedValue(owliso19150
-					.getOntologyNameTaggedValue());
-			if (ontologyName != null) {
-				return ontologyName;
-			}
-		}
+		String ontologyName = null;
 
 		String uriBase;
-
 		if (owliso19150.getUriBase() != null) {
 			uriBase = owliso19150.getUriBase();
 		} else {
@@ -202,16 +212,190 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 
 		String path;
 
-		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_PATH_IN_ONTOLOGY_NAME)) {
-			path = computePath(mpackage);
-		} else {
-			if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA) && mpackage.matches(OWLISO19150.RULE_OWL_PKG_APP_SCHEMA_CODE))
-				path = "/" + mpackage.xmlns();
-			else
-				path = "/" + normalizedName(mpackage);
+		if (mpackage.matches(
+				OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_BY_TAGGED_VALUE)) {
+
+			String ontologyNameTVName = owliso19150
+					.getOntologyNameTaggedValue();
+
+			ontologyName = mpackage.taggedValue(ontologyNameTVName);
+
+			if (ontologyName == null) {
+				result.addWarning(this, 26,
+						OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_BY_TAGGED_VALUE,
+						ontologyNameTVName, mpackage.fullNameInSchema());
+			}
 		}
 
-		return uriBase + path;
+		if (ontologyName == null) {
+
+			if (mpackage.matches(
+					OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)
+					&& mpackage.matches(
+							OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_CODE)) {
+
+				String code = computeOntologyNameCode();
+
+				path = "/" + code;
+
+			} else if (mpackage.matches(
+					OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_WITH_PATH)) {
+
+				path = computePath(mpackage);
+
+			} else {
+
+				// default behavior - as defined by 19150-2package:ontologyName
+
+				if (!mpackage.matches(
+						OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_ISO191502)) {
+					result.addWarning(this, 27, mpackage.fullNameInSchema());
+				}
+
+				path = "/" + normalizedName(mpackage);
+			}
+
+			ontologyName = uriBase + path;
+		}
+
+		if (mpackage.matches(
+				OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION)) {
+
+			String version = mpackage.version();
+
+			if (version != null && version.trim().length() > 0) {
+				ontologyName = ontologyName + "/" + version.trim();
+			}
+		}
+		this.name = ontologyName;
+
+		if (mpackage
+				.matches(OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)
+				&& mpackage
+						.matches(OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_CODE)) {
+			this.fileName = computeOntologyNameCode();
+			this.path = "";
+		} else {
+			this.fileName = normalizedName(pi);
+			this.path = computePath(pi);
+		}
+
+		/*
+		 * identify properties that have a unique name amongst the properties of
+		 * classes that belong to the ontology
+		 */
+		SortedSet<ClassInfo> relevantClasses;
+		if (mpackage
+				.matches(OWLISO19150.RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
+			relevantClasses = model.classes(mpackage);
+		} else {
+			relevantClasses = mpackage.containedClasses();
+		}
+		SortedSet<String> encounteredPropertyNames = new TreeSet<String>();
+		for (ClassInfo ci : relevantClasses) {
+			for (PropertyInfo prop : ci.properties().values()) {
+				if (encounteredPropertyNames.contains(prop.name())) {
+					uniquePropertyNames.remove(prop.name());
+				} else {
+					encounteredPropertyNames.add(prop.name());
+					uniquePropertyNames.add(prop.name());
+				}
+			}
+		}
+
+		/*
+		 * As per ISO 19150-2package:rdfNamespace; '#' is the default for the
+		 * separator - this can be changed via configuration parameter
+		 * OWLISO19150#PARAM_RDF_NAMESPACE_SEPARATOR.
+		 */
+		this.rdfNamespace = name + owliso19150.getRdfNamespaceSeparator();
+
+		this.ontmodel.setNsPrefix(prefix, rdfNamespace);
+
+		ontology = ontmodel.createOntology(name);
+
+		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_VERSION_INFO)
+				&& mpackage.version() != null
+				&& !mpackage.version().trim().isEmpty()) {
+			ontology.addVersionInfo(mpackage.version());
+		}
+
+		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_VERSION_IRI)
+				&& mpackage.version() != null
+				&& !mpackage.version().trim().isEmpty()) {
+
+			if (mpackage.matches(
+					OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION)
+					&& mpackage.matches(
+							OWLISO19150.RULE_OWL_PKG_VERSION_IRI_AVOID_DUPLICATE_VERSION)) {
+				ontology.addProperty(OWL2.versionIRI, name);
+			} else {
+				ontology.addProperty(OWL2.versionIRI,
+						name + "/" + mpackage.version());
+			}
+		}
+
+		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_IMPORT_191502BASE)) {
+			addImport(OWLISO19150.RDF_NS_ISO_19150_2,
+					config.locationOfNamespace(OWLISO19150.RDF_NS_ISO_19150_2));
+		}
+
+		if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_DCT_SOURCE_TITLE)) {
+			ontmodel.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
+			ontology.addProperty(DCTerms.source,
+					owliso19150.computeSource(mpackage),
+					owliso19150.getLanguage());
+		}
+
+		applyDescriptorTargets(ontology, mpackage,
+				DescriptorTarget.AppliesTo.ONTOLOGY);
+	}
+
+	/**
+	 * This constructor is used to create an ontology model for codes
+	 * (individuals, maybe also classes). Note that the namespace separator in
+	 * this case is always '/'.
+	 * 
+	 * @param m
+	 * @param o
+	 * @param r
+	 * @param prefix
+	 * @param rdfns
+	 * @param name
+	 * @param path
+	 * @param fileName
+	 * @param owliso19150
+	 * @throws ShapeChangeAbortException
+	 */
+	public OntologyModel(Model m, Options o, ShapeChangeResult r, String prefix,
+			String rdfns, String name, String path, String fileName,
+			OWLISO19150 owliso19150) throws ShapeChangeAbortException {
+
+		this(m, o, r, prefix, owliso19150);
+
+		this.name = name;
+		this.path = path;
+		this.fileName = fileName;
+
+		this.rdfNamespace = rdfns;
+
+		this.ontmodel.setNsPrefix(prefix, rdfNamespace);
+
+		ontology = ontmodel.createOntology(name);
+	}
+
+	private String computeOntologyNameCode() {
+
+		String onc = owliso19150.getOntologyNameCodeParameterValue();
+		String xmlns = mpackage.xmlns();
+
+		if (onc != null && onc.trim().length() > 0) {
+			return onc;
+		} else if (xmlns != null && xmlns.trim().length() > 0) {
+			return mpackage.xmlns();
+		} else {
+			return "FIXME";
+		}
 	}
 
 	public static String normalizedName(ClassInfo ci) {
@@ -229,10 +413,10 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		 * 
 		 * other punctuation characters are replaced by underscore characters
 		 * 
-		 * According to
-		 * http://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended
-		 * the POSIX [:punct:] character class has the following ASCII
-		 * punctuation characters: [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
+		 * According to http://en.wikipedia.org/wiki/Regular_expression#
+		 * POSIX_basic_and_extended the POSIX [:punct:] character class has the
+		 * following ASCII punctuation characters:
+		 * [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
 		 * 
 		 * In Java this character class can be used in regular expressions via
 		 * \p{Punct}. We can omit specific characters in a regular expression
@@ -307,7 +491,7 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 
 	/**
 	 * Normalizes the name of a package according to the rules in ISO
-	 * 19150-2owl:ontologyName.
+	 * 19150-2package:name and 19150-2package:ontologyName.
 	 * 
 	 * @param pi
 	 * @return
@@ -320,14 +504,14 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		result = result.replaceAll(" ", "");
 
 		/*
-		 * dash and underscore characters are kept
+		 * dash and underscore characters allowed
 		 * 
 		 * other punctuation characters are replaced by underscore characters
 		 * 
-		 * According to
-		 * http://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended
-		 * the POSIX [:punct:] character class has the following ASCII
-		 * punctuation characters: [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
+		 * According to http://en.wikipedia.org/wiki/Regular_expression#
+		 * POSIX_basic_and_extended the POSIX [:punct:] character class has the
+		 * following ASCII punctuation characters:
+		 * [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
 		 * 
 		 * In Java this character class can be used in regular expressions via
 		 * \p{Punct}. We can omit specific characters in a regular expression
@@ -335,13 +519,8 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		 */
 		result = result.replaceAll("[\\p{Punct}&&[^-_]]", "_");
 
-		// upper camel case
-		// TBD lower camel case requested by Australia
-		char[] characters = result.toCharArray();
-		String firstChar = String.valueOf(characters[0]);
-		firstChar = firstChar.toUpperCase();
-		characters[0] = firstChar.charAt(0);
-		result = String.valueOf(characters);
+		// lower case
+		result = result.toLowerCase(Locale.ENGLISH);
 
 		/*
 		 * only the semantic part of the package name is represented -> this
@@ -352,110 +531,859 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		return result;
 	}
 
-	public void setupModel() {
+	public void createClasses() {
 
-		this.ontmodel.setNsPrefix("rdf", OWLISO19150.RDF_NS_W3C_RDF);
-		this.ontmodel.setNsPrefix("rdfs", OWLISO19150.RDF_NS_W3C_RDFS);
-		this.ontmodel.setNsPrefix("owl", OWLISO19150.RDF_NS_W3C_OWL);
-		this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
-		this.ontmodel.setNsPrefix("dc", OWLISO19150.RDF_NS_DC);
-		this.ontmodel.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
-		this.ontmodel.setNsPrefix("xsd", OWLISO19150.RDF_NS_W3C_XML_SCHEMA);
-		this.ontmodel.setNsPrefix(OWLISO19150.PREFIX_ISO_19150_2, OWLISO19150.RDF_NS_ISO_19150_2);
-		this.ontmodel.setNsPrefix(prefix, rdfNamespace);
+		for (ClassInfo ci : this.classInfos) {
 
-		ontology = ontmodel.createOntology(name);
+			// determine if a mapping exists for the class
+			RdfTypeMapEntry rtme = config.getTypeMapEntry(ci);
+
+			if (rtme != null) {
+				/*
+				 * Then this class shall be mapped - it shall not be encoded in
+				 * the ontology.
+				 */
+				Resource r = mapClass(rtme.getTarget());
+				this.resourceByClassInfo.put(ci, r);
+
+			} else {
+
+				int cat = ci.category();
+
+				switch (cat) {
+				case Options.FEATURE:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_FEATURETYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.OBJECT:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_OBJECTTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.MIXIN:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_MIXINTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.BASICTYPE:
+					if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENCODE_BASICTYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.DATATYPE:
+					if (ci.matches(OWLISO19150.RULE_OWL_CLS_ENCODE_DATATYPES)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.UNION:
+					if (ci.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
+						addClassDefinition(ci);
+					}
+					break;
+				case Options.ENUMERATION:
+					if (!ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ENUMERATION_AS_CODELIST)
+							&& !ci.matches(
+									OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
+						// this class shall not be encoded
+						break;
+					} else if (ci.matches(
+							OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
+
+						if (ci.matches(
+								OWLISO19150.RULE_OWL_CLS_ENUMERATION_AS_CODELIST)) {
+							// rules are mutually exclusive
+							result.addWarning(this, 29,
+									OWLISO19150.RULE_OWL_CLS_ENUMERATION_AS_CODELIST,
+									OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION);
+						}
+						addEnumeration(ci);
+						break;
+					} else {
+						/*
+						 * Matches RULE_OWL_CLS_ENUMERATION_AS_CODELIST
+						 * 
+						 * just continue with the instructions from the next
+						 * case (Options.CODELIST)
+						 */
+					}
+				case Options.CODELIST:
+					if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)
+							|| ci.matches(
+									OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL)) {
+						addCodelist(ci);
+					}
+					break;
+				default:
+					this.resourceByClassInfo.put(ci, defaultTypeImplementation);
+					MessageContext mc = result.addError(this, 5, "" + cat);
+					if (mc != null) {
+						mc.addDetail(this, 10000, ci.fullName());
+					}
+					MessageContext mc2 = result.addWarning(this, 41, ci.name());
+					if (mc2 != null) {
+						mc2.addDetail(this, 10000, ci.fullName());
+					}
+				}
+			}
+		}
+	}
+
+	public void createProperties() {
+
+		for (ClassInfo ci : this.ontClassByClassInfo.keySet()) {
+
+			int cat = ci.category();
+
+			switch (cat) {
+			case Options.FEATURE:
+			case Options.OBJECT:
+			case Options.MIXIN:
+			case Options.DATATYPE:
+			case Options.BASICTYPE:
+			case Options.UNION:
+				createNormalProperties(ci);
+				break;
+			case Options.CODELIST:
+				/*
+				 * code list properties are fully encoded when adding the code
+				 * list class
+				 */
+				break;
+			case Options.ENUMERATION:
+				/*
+				 * enumeration is either encoded as an RDFS datatype (which is
+				 * fully covered when adding the enumeration class), treated as
+				 * code list, or not encoded at all
+				 */
+				break;
+			default:
+				// already covered in createClasses() method
+			}
+
+		}
+	}
+
+	public void createNormalProperties(ClassInfo ci) {
+
+		SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
+
+		for (PropertyInfo pi : pis.values()) {
+
+			if (!pi.matches(OWLISO19150.RULE_OWL_PROP_GENERAL)) {
+				// properties shall not be encoded
+				break;
+			}
+
+			if (pi.isNavigable()) {
+
+				OntProperty p = addPropertyDeclaration(pi);
+				this.ontPropertyByPropertyInfo.put(pi, p);
+
+				Resource range = computeRange(pi);
+				this.rangeByPropertyInfo.put(pi, range);
+			}
+		}
+	}
+
+	private Resource computeRange(PropertyInfo pi) {
+
+		Resource range = null;
+
+		// the range may have already been computed for the property
+		if (this.rangeByPropertyInfo.containsKey(pi)) {
+			return this.rangeByPropertyInfo.get(pi);
+		}
 
 		/*
-		 * ISO 19150-2 says "full name of the corresponding UML PACKAGE" - we interpret this as the full local name
+		 * identify the range to use for this property in class expressions
+		 * (such as quantified cardinality restrictions and universal
+		 * quantifications)
 		 */
-		ontology.addLabel(mpackage.name(), owliso19150.getLanguage());
+		RdfPropertyMapEntry rpme = config.getPropertyMapEntry(pi);
 
-		ontology.addProperty(DC.source, owliso19150.computeSource(mpackage), owliso19150.getLanguage());
+		if (rpme != null) {
 
-		String documentation = "";
-		String def = mpackage.definition();
-		if (def!=null)
-			documentation = def+"\n";
-		String desc = mpackage.description();
-		if (desc!=null)
-			documentation += desc;
-		documentation = documentation.trim();
-		if (documentation.length() > 0) {
-			ontology.addComment(documentation, owliso19150.getLanguage());
+			if (rpme.hasRange()) {
+				range = mapClass(rpme.getRange());
+			} else {
+				/*
+				 * so this property is mapped, but without a specific range
+				 * being declared - that's fine
+				 */
+				return null;
+			}
+
+		} else {
+
+			PropertyConversionParameter pcp = config
+					.getPropertyConversionParameter(pi);
+
+			if (pcp != null && pcp.hasTarget()) {
+
+				// use range of global property to which this property is mapped
+
+				PropertyInfo globalProp = getGlobalProperty(pcp);
+
+				if (globalProp == null) {
+
+					/*
+					 * log warning that we could not find the global property in
+					 * selected schemas
+					 */
+					MessageContext mc = result.addError(this, 36,
+							pcp.getTarget(), pcp.getTargetSchema());
+					if (mc != null) {
+						mc.addDetail(this, 10001, pi.fullName());
+					}
+
+					range = mapType(pi);
+
+				} else {
+
+					range = mapType(globalProp);
+				}
+
+			} else {
+
+				String propAbout = computePropertyName(pi);
+
+				if (properties.containsKey(propAbout)) {
+					/*
+					 * a property with this id has already been declared - the
+					 * given property may have been mapped to it
+					 */
+					OwlProperty p0 = properties.get(propAbout);
+
+					/*
+					 * compute the range from the PropertyInfo that belongs to
+					 * the OWL property that has already been declared
+					 */
+					range = mapType(p0.pi);
+
+				} else {
+
+					// use type of the property
+					range = mapType(pi);
+				}
+			}
 		}
 
-		ontology.addVersionInfo(mpackage.version());
+		if (range == null) {
+			// use default range
+			range = defaultTypeImplementation;
+			MessageContext mc = result.addWarning(this, 42, pi.name());
+			if (mc != null) {
+				mc.addDetail(this, 10001, pi.fullName());
+			}
+		}
 
-		// add standard import(s)
-		addImport(OWLISO19150.RDF_NS_ISO_19150_2, config.locationOfNamespace(OWLISO19150.RDF_NS_ISO_19150_2));
+		this.rangeByPropertyInfo.put(pi, range);
+
+		return range;
 	}
-	
+
 	/**
-	 * <p>
-	 * This method returns messages belonging to the XML Schema target by their
-	 * message number. The organization corresponds to the logic in module
-	 * ShapeChangeResult. All functions in that class, which require an message
-	 * number can be redirected to the function at hand.
-	 * </p>
-	 * 
-	 * @param mnr
-	 *            Message number
-	 * @return Message text, including $x$ substitution points.
+	 * @param pcp
+	 * @return the PropertyInfo that matches the 'target' and 'targetSchema'
+	 *         specification from the given PropertyConversionParameter, or
+	 *         <code>null</code> if no such property could be found
 	 */
-	public String message(int mnr) {
-		// Get the message proper and return it with an identification prefixed
-		String mess = messageText(mnr);
-		if (mess == null)
-			return null;
-		String prefix = "";
-		if (mess.startsWith("??")) {
-			prefix = "??";
-			mess = mess.substring(2);
+	public PropertyInfo getGlobalProperty(PropertyConversionParameter pcp) {
+
+		SortedSet<PackageInfo> schemas = model.schemas(pcp.getTargetSchema());
+
+		if (schemas != null && schemas.size() == 1) {
+
+			String[] qnameParts = pcp.getTarget().split("::");
+			PackageInfo schema = schemas.first();
+			SortedSet<ClassInfo> schemaCis = model.classes(schema);
+			for (ClassInfo schemaCi : schemaCis) {
+				if (schemaCi.name().equals(qnameParts[0])) {
+					for (PropertyInfo prop : schemaCi.properties().values()) {
+						if (prop.name().equals(qnameParts[1])) {
+							return prop;
+						}
+					}
+				}
+			}
 		}
-		return prefix + "Ontology Target: " + mess;
+
+		return null;
+	}
+
+	public void createAdditionalClassDetails() {
+
+		for (ClassInfo ci : this.ontClassByClassInfo.keySet()) {
+
+			OntClass c = this.ontClassByClassInfo.get(ci);
+
+			// determine if this is a subclass of one or more specific types
+			if ((ci.baseClass() != null
+					|| (ci.supertypes() != null && !ci.supertypes().isEmpty()))
+					&& ci.matches(OWLISO19150.RULE_OWL_CLS_GENERALIZATION)) {
+
+				String baseClassId = null;
+
+				if (ci.baseClass() != null) {
+
+					ClassInfo supertype = ci.baseClass();
+
+					baseClassId = supertype.id();
+
+					mapAndAddSuperClass(ci, c, supertype);
+				}
+
+				if (ci.supertypes() != null && !ci.supertypes().isEmpty()) {
+
+					// for now create one subClassOf for each supertype
+					for (String ciId : ci.supertypes()) {
+
+						if (baseClassId != null && baseClassId.equals(ciId)) {
+							continue;
+						}
+
+						ClassInfo supertype = model.classById(ciId);
+
+						mapAndAddSuperClass(ci, c, supertype);
+					}
+				}
+			}
+
+			if (ci.subtypes() != null && !ci.subtypes().isEmpty()
+					&& ci.subtypes().size() > 1
+					&& ci.matches(OWLISO19150.RULE_OWL_CLS_DISJOINT_CLASSES)) {
+
+				SortedMap<String, Resource> subtypeResources = new TreeMap<String, Resource>();
+
+				for (String ciId : ci.subtypes()) {
+
+					ClassInfo subtype = model.classById(ciId);
+
+					Resource mappedResource = map(subtype);
+
+					if (mappedResource == null) {
+						MessageContext mc = result.addError(this, 28,
+								subtype.name(), ci.name());
+						if (mc != null) {
+							mc.addDetail(this, 10000, ci.fullName());
+						}
+					} else {
+
+						subtypeResources.put(mappedResource.getURI(),
+								mappedResource);
+					}
+				}
+
+				if (subtypeResources.size() == 2) {
+
+					Iterator<Resource> it = subtypeResources.values()
+							.iterator();
+					Resource r1 = it.next();
+					Resource r2 = it.next();
+					r1.addProperty(OWL2.disjointWith, r2);
+
+				} else {
+
+					OntClass adw = ontmodel.createClass();
+					adw.setRDFType(OWL2.AllDisjointClasses);
+					adw.addProperty(OWL2.members, ontmodel
+							.createList(subtypeResources.values().iterator()));
+				}
+			}
+
+			if (ci.category() != Options.ENUMERATION
+					&& ci.category() != Options.CODELIST) {
+
+				SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
+
+				for (PropertyInfo pi : pis.values()) {
+
+					if (!pi.matches(OWLISO19150.RULE_OWL_PROP_GENERAL)) {
+						// properties shall not be encoded
+						break;
+					}
+
+					if (pi.isNavigable()) {
+
+						OntProperty p = this.ontPropertyByPropertyInfo.get(pi);
+
+						addMultiplicity(c, pi, p);
+
+						addAllValuesFrom(c, pi, p);
+					}
+				}
+			}
+
+			addUnionSemantics(ci, c);
+		}
+	}
+
+	/**
+	 * Adds one or more class expressions to define union semantics for sets of
+	 * properties of the class.
+	 * <p>
+	 * If the class is a 'union' then all properties belong to one set.
+	 * Otherwise, all properties with the same value for the tag
+	 * {@value OWLISO19150#UNION_SET_TAG_NAME} are members of a set. This can
+	 * lead to multiple sets.
+	 * 
+	 * @param ci
+	 */
+	protected void addUnionSemantics(ClassInfo ci, OntClass c) {
+
+		SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
+
+		SortedMap<String, SortedSet<PropertyInfo>> sets = new TreeMap<String, SortedSet<PropertyInfo>>();
+		String unionSetId = "INTERNAL_UNION_SET_IDENTIFIER";
+
+		for (PropertyInfo pi : pis.values()) {
+
+			if (!pi.isNavigable()) {
+
+				continue;
+
+			} else if (!pi.matches(OWLISO19150.RULE_OWL_PROP_GENERAL)) {
+
+				// properties shall not be encoded
+				break;
+
+			} else if (ci.category() == Options.UNION
+					&& ci.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
+
+				SortedSet<PropertyInfo> set;
+
+				if (sets.containsKey(unionSetId)) {
+					set = sets.get(unionSetId);
+				} else {
+					set = new TreeSet<PropertyInfo>();
+					sets.put(unionSetId, set);
+				}
+
+				set.add(pi);
+
+			} else {
+
+				String tag = pi.taggedValue(OWLISO19150.TV_UNION_SET);
+
+				if (tag != null && pi.inClass()
+						.matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS)) {
+					SortedSet<PropertyInfo> set;
+
+					if (sets.containsKey(tag)) {
+						set = sets.get(tag);
+					} else {
+						set = new TreeSet<PropertyInfo>();
+						sets.put(tag, set);
+					}
+
+					set.add(pi);
+				}
+			}
+		}
+
+		for (SortedSet<PropertyInfo> set : sets.values()) {
+
+			if (set.size() == 1) {
+				// no need to create a class expression
+			} else {
+
+				List<OntClass> intersections = new ArrayList<OntClass>();
+
+				for (PropertyInfo pi_main : set) {
+
+					List<OntClass> cardinalityRestrictions = new ArrayList<OntClass>();
+
+					for (PropertyInfo pi_x : set) {
+
+						OntProperty p = this.ontPropertyByPropertyInfo
+								.get(pi_x);
+
+						OntClass restriction;
+
+						if (pi_x == pi_main) {
+
+							int lower = pi_main.cardinality().minOccurs;
+							int upper = pi_main.cardinality().maxOccurs;
+
+							Resource range = this.rangeByPropertyInfo
+									.get(pi_main);
+
+							if (pi_main.matches(
+									OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_UNQUALIFIED_RESTRICTION)
+									|| (range == null && pi_main.matches(
+											OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION))) {
+
+								if (lower == upper) {
+
+									restriction = createCardinalityRestriction(
+											p, lower);
+
+								} else if (upper == Integer.MAX_VALUE) {
+
+									restriction = createMinCardinalityRestriction(
+											p, lower);
+
+								} else if (lower == 0) {
+
+									restriction = createMaxCardinalityRestriction(
+											p, upper);
+
+								} else {
+
+									// lower >= 1 and 1<=upper<*
+									// we need to represent this case in the
+									// intersection as an intersection of
+									// restrictions
+
+									OntClass restriction_lower = createMinCardinalityRestriction(
+											p, lower);
+									OntClass restriction_upper = createMaxCardinalityRestriction(
+											p, upper);
+
+									List<OntClass> pi_main_restrictions = new ArrayList<OntClass>();
+									pi_main_restrictions.add(restriction_lower);
+									pi_main_restrictions.add(restriction_upper);
+
+									restriction = this.ontmodel
+											.createIntersectionClass(null,
+													this.ontmodel.createList(
+															pi_main_restrictions
+																	.iterator()));
+								}
+
+							} else if (pi_main.matches(
+									OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION)) {
+
+								if (lower == upper) {
+
+									restriction = createQCardinalityRestriction(
+											p, lower, range);
+
+								} else if (upper == Integer.MAX_VALUE) {
+
+									restriction = createQMinCardinalityRestriction(
+											p, lower, range);
+
+								} else if (lower == 0) {
+
+									restriction = createQMaxCardinalityRestriction(
+											p, upper, range);
+
+								} else {
+
+									// lower >= 1 and 1<=upper<*
+									// we need to represent this case in the
+									// intersection as an intersection of
+									// restrictions
+
+									OntClass restriction_lower = createQMinCardinalityRestriction(
+											p, lower, range);
+									OntClass restriction_upper = createQMaxCardinalityRestriction(
+											p, upper, range);
+
+									List<OntClass> pi_main_restrictions = new ArrayList<OntClass>();
+									pi_main_restrictions.add(restriction_lower);
+									pi_main_restrictions.add(restriction_upper);
+
+									restriction = this.ontmodel
+											.createIntersectionClass(null,
+													this.ontmodel.createList(
+															pi_main_restrictions
+																	.iterator()));
+								}
+
+							} else {
+
+								/*
+								 * multiplicity is otherwise not encoded; just
+								 * create a simple minimum cardinality
+								 * restriction to cover this property in the
+								 * intersection of restrictions for the union
+								 * properties
+								 */
+								restriction = createMinCardinalityRestriction(p,
+										0);
+							}
+
+						} else {
+							restriction = createCardinalityRestriction(p, 0);
+						}
+
+						cardinalityRestrictions.add(restriction);
+					}
+
+					OntClass intersectionRestriction = this.ontmodel
+							.createIntersectionClass(null,
+									this.ontmodel
+											.createList(cardinalityRestrictions
+													.iterator()));
+					intersections.add(intersectionRestriction);
+				}
+
+				OntClass unionOfRestriction = this.ontmodel.createUnionClass(
+						null,
+						this.ontmodel.createList(intersections.iterator()));
+				c.addSuperClass(unionOfRestriction);
+			}
+		}
+	}
+
+	public OntClass createQCardinalityRestriction(OntProperty p,
+			int cardinality, Resource range) {
+		/*
+		 * NOTE: We cannot use the create(Min|Max)CardinalityQRestriction(...)
+		 * methods from the Jena API, because they throw the following
+		 * exception: org.apache.jena.ontology.ProfileException: Attempted to
+		 * use language construct CARDINALITY_Q that is not supported in the
+		 * current language profile: OWL Full
+		 * 
+		 * So, we use a workaround to create the qualified cardinality
+		 * restriction. For further details, see
+		 * http://stackoverflow.com/questions/20562107/how-to-add-qualified-
+		 * cardinality-in-jena
+		 */
+
+		OntClass restriction = this.ontmodel.createCardinalityRestriction(null,
+				p, cardinality);
+		restriction.removeAll(OWL.cardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL2.qualifiedCardinality,
+				cardAsNonNegativeInteger);
+		restriction.addProperty(OWL2.onClass, range);
+
+		return restriction;
+	}
+
+	public OntClass createQMinCardinalityRestriction(OntProperty p,
+			int cardinality, Resource range) {
+		/*
+		 * NOTE: We cannot use the create(Min|Max)CardinalityQRestriction(...)
+		 * methods from the Jena API, because they throw the following
+		 * exception: org.apache.jena.ontology.ProfileException: Attempted to
+		 * use language construct CARDINALITY_Q that is not supported in the
+		 * current language profile: OWL Full
+		 * 
+		 * So, we use a workaround to create the qualified cardinality
+		 * restriction. For further details, see
+		 * http://stackoverflow.com/questions/20562107/how-to-add-qualified-
+		 * cardinality-in-jena
+		 */
+
+		OntClass restriction = this.ontmodel
+				.createMinCardinalityRestriction(null, p, cardinality);
+		restriction.removeAll(OWL.minCardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL2.minQualifiedCardinality,
+				cardAsNonNegativeInteger);
+		restriction.addProperty(OWL2.onClass, range);
+
+		return restriction;
+	}
+
+	public OntClass createQMaxCardinalityRestriction(OntProperty p,
+			int cardinality, Resource range) {
+		/*
+		 * NOTE: We cannot use the create(Min|Max)CardinalityQRestriction(...)
+		 * methods from the Jena API, because they throw the following
+		 * exception: org.apache.jena.ontology.ProfileException: Attempted to
+		 * use language construct CARDINALITY_Q that is not supported in the
+		 * current language profile: OWL Full
+		 * 
+		 * So, we use a workaround to create the qualified cardinality
+		 * restriction. For further details, see
+		 * http://stackoverflow.com/questions/20562107/how-to-add-qualified-
+		 * cardinality-in-jena
+		 */
+
+		OntClass restriction = this.ontmodel
+				.createMaxCardinalityRestriction(null, p, cardinality);
+		restriction.removeAll(OWL.maxCardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL2.maxQualifiedCardinality,
+				cardAsNonNegativeInteger);
+		restriction.addProperty(OWL2.onClass, range);
+
+		return restriction;
+	}
+
+	public OntClass createCardinalityRestriction(OntProperty p,
+			int cardinality) {
+
+		/*
+		 * NOTE: the create(Min|Max)CardinalityRestriction(...) methods from
+		 * Jena - or the turtle serialization - encodes the cardinality as an
+		 * xsd:int, which should be an xsd:nonNegativeInteger according to
+		 * https://www.w3.org/TR/owl2-mapping-to-rdf/
+		 * 
+		 * That's why we create and set the typed literal that represents the
+		 * cardinality ourselves.
+		 */
+
+		OntClass restriction = this.ontmodel.createCardinalityRestriction(null,
+				p, cardinality);
+		restriction.removeAll(OWL.cardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL.cardinality, cardAsNonNegativeInteger);
+		return restriction;
+	}
+
+	public OntClass createMinCardinalityRestriction(OntProperty p,
+			int cardinality) {
+
+		/*
+		 * NOTE: the create(Min|Max)CardinalityRestriction(...) methods from
+		 * Jena - or the turtle serialization - encodes the cardinality as an
+		 * xsd:int, which should be an xsd:nonNegativeInteger according to
+		 * https://www.w3.org/TR/owl2-mapping-to-rdf/
+		 * 
+		 * That's why we create and set the typed literal that represents the
+		 * cardinality ourselves.
+		 */
+
+		OntClass restriction = this.ontmodel
+				.createMinCardinalityRestriction(null, p, cardinality);
+		restriction.removeAll(OWL.minCardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL.minCardinality, cardAsNonNegativeInteger);
+		return restriction;
+	}
+
+	public OntClass createMaxCardinalityRestriction(OntProperty p,
+			int cardinality) {
+
+		/*
+		 * NOTE: the create(Min|Max)CardinalityRestriction(...) methods from
+		 * Jena - or the turtle serialization - encodes the cardinality as an
+		 * xsd:int, which should be an xsd:nonNegativeInteger according to
+		 * https://www.w3.org/TR/owl2-mapping-to-rdf/
+		 * 
+		 * That's why we create and set the typed literal that represents the
+		 * cardinality ourselves.
+		 */
+
+		OntClass restriction = this.ontmodel
+				.createMaxCardinalityRestriction(null, p, cardinality);
+		restriction.removeAll(OWL.maxCardinality);
+		Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(
+				cardinality,
+				"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		restriction.addLiteral(OWL.maxCardinality, cardAsNonNegativeInteger);
+		return restriction;
+	}
+
+	public void createAdditionalPropertyDetails() {
+
+		outer: for (ClassInfo ci : this.ontClassByClassInfo.keySet()) {
+
+			SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
+
+			for (PropertyInfo pi : pis.values()) {
+
+				if (!pi.matches(OWLISO19150.RULE_OWL_PROP_GENERAL)) {
+					// properties shall not be encoded
+					break outer;
+				}
+
+				if (pi.isNavigable()) {
+
+					OntProperty p = this.ontPropertyByPropertyInfo.get(pi);
+
+					AssociationInfo ai = pi.association();
+
+					if (ai != null) {
+
+						if (ai.assocClass() != null) {
+							result.addError(this, 15, ai.assocClass().name());
+						}
+
+						PropertyInfo revPi = pi.reverseProperty();
+
+						if (revPi != null && revPi.isNavigable() && pi
+								.matches(OWLISO19150.RULE_OWL_PROP_INVERSEOF)) {
+
+							OntologyModel om = owliso19150
+									.computeRelevantOntology(revPi.inClass());
+
+							if (om != null) {
+								OntProperty ip;
+
+								if (om == this) {
+									ip = this.ontPropertyByPropertyInfo
+											.get(revPi);
+								} else {
+									ip = om.getOntProperty(revPi);
+								}
+
+								if (ip != null)
+									p.addInverseOf(ip);
+								else {
+									result.addError(this, 13, p.getURI());
+								}
+							} else {
+								/*
+								 * The schema to which revPi belongs is not
+								 * selected for processing; we cannot create a
+								 * property in the reference model to use as
+								 * inverseOf because we do not know the correct
+								 * ontology name of the reverse property.
+								 */
+							}
+						}
+
+						String aiName = ai.name();
+						if (aiName != null && aiName.length() > 0 && pi.matches(
+								OWLISO19150.RULE_OWL_PROP_ISO191502_ASSOCIATION_NAME)) {
+							this.ontmodel.setNsPrefix(
+									OWLISO19150.PREFIX_ISO_19150_2,
+									OWLISO19150.RDF_NS_ISO_19150_2);
+							p.addProperty(ISO19150_2.associationName, aiName);
+						}
+
+						if ((pi.isComposition() || pi.isAggregation())
+								&& pi.matches(
+										OWLISO19150.RULE_OWL_PROP_ISO191502_AGGREGATION)) {
+							if (pi.isComposition()) {
+								this.ontmodel.setNsPrefix(
+										OWLISO19150.PREFIX_ISO_19150_2,
+										OWLISO19150.RDF_NS_ISO_19150_2);
+								p.addProperty(ISO19150_2.aggregationType,
+										"partOfCompositeAggregation");
+							} else if (pi.isAggregation()) {
+								this.ontmodel.setNsPrefix(
+										OWLISO19150.PREFIX_ISO_19150_2,
+										OWLISO19150.RDF_NS_ISO_19150_2);
+								p.addProperty(ISO19150_2.aggregationType,
+										"partOfSharedAggregation");
+							} else {
+								// no special aggregation to document
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public void finalizeDocument() {
 
-		for (ClassInfo ci : this.classInfos) {
-			createClass(ci);
-		}
-
 		// ensure that no further classes are added once finalized
 		finalized = true;
-	}
-	
-	private Resource createClass(ClassInfo ci) {
-		Resource r = null;
-		
-		// otherwise we have to create the resource for the class...
-		int cat = ci.category();
-
-		switch (cat) {
-		case Options.FEATURE:
-			r = addFeature(ci);
-			break;
-		case Options.OBJECT:
-			r = addInterface(ci);
-			break;
-		case Options.DATATYPE:
-			r = addDatatype(ci);
-			break;
-		case Options.UNION:
-			r = addUnion(ci);
-			break;
-		case Options.CODELIST:
-			r = addCodelist(ci);
-			break;
-		case Options.ENUMERATION:
-			r = addEnumeration(ci);
-			break;
-		default:
-			MessageContext mc = result.addError(this, 5, "" + cat);
-			mc.addDetail(this, 30000, ci.fullName());
-		}
-		return r;
 	}
 
 	/**
@@ -472,18 +1400,7 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		return rdfNamespace;
 	}
 
-	/**
-	 * @return the rdfNamespace
-	 */
-	public String getCodeNamespace() {
-		return getName() + "/code/";
-	}
-
-	public Resource addFeature(ClassInfo ci) {
-		return addClassDefinition(ci);
-	}
-
-	public Resource addClassDefinition(ClassInfo ci) {
+	public OntClass addClassDefinition(ClassInfo ci) {
 
 		if (finalized) {
 			this.result.addWarning(this, 3, ci.name());
@@ -491,208 +1408,418 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		}
 
 		// create the Class <OWL>
-		OntClass c = ontmodel.createClass( computeReference(getPrefix(), normalizedName(ci)) );
-		
-		setLabelsAndAnnotations(c, ci);
-		
-		if (ci.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-			addConstraintDeclarations(c, ci);
+		OntClass c = ontmodel
+				.createClass(computeReference(getPrefix(), normalizedName(ci)));
+
+		this.ontClassByClassInfo.put(ci, c);
+		this.resourceByClassInfo.put(ci, c);
+
+		applyDescriptorTargets(c, ci, DescriptorTarget.AppliesTo.CLASS);
+
+		if (ci.isAbstract()
+				&& ci.matches(OWLISO19150.RULE_OWL_CLS_19150_2_ISABSTRACT)) {
+			this.ontmodel.setNsPrefix(OWLISO19150.PREFIX_ISO_19150_2,
+					OWLISO19150.RDF_NS_ISO_19150_2);
+			c.addLiteral(ISO19150_2.isAbstract,
+					ontmodel.createTypedLiteral(true));
 		}
 
-		if (ci.isAbstract()) {
-			c.addLiteral(ISO19150_2.isAbstract, ontmodel.createTypedLiteral(true));
-		}
+		addCustomSubClassOf(c, ci);
+		addConstraintDeclarations(c, ci);
 
-		// assign stereotype information
-		addStereotypeInfo(c, ci);
+		// NOTE: properties are created once all classes have been created
 
-		// determine if this is a subclass of one or more specific types
-		if (ci.baseClass() != null
-				|| (ci.supertypes() != null && !ci.supertypes().isEmpty())) {
-
-			String baseClassId = null;
-
-			if (ci.baseClass() != null) {
-
-				ClassInfo supertype = ci.baseClass();
-
-				baseClassId = supertype.id();
-
-				Resource mappedResource = mapResource(supertype, true);
-
-				if (mappedResource == null) {
-					MessageContext mc = result.addError(this, 6, supertype.name(), ci.name());
-					mc.addDetail(this, 10000, ci.fullName());
-					c.addComment("This class has a supertype for which no RDF representation is known: "+supertype.name(), "en");
-				} else {
-					c.addSuperClass(mappedResource);
-				}
-			}
-
-			if (ci.supertypes() != null && !ci.supertypes().isEmpty()) {
-
-				// for now create one subClassOf for each supertype
-				for (String ciId : ci.supertypes()) {
-
-					if (baseClassId != null && baseClassId.equals(ciId)) {
-						continue;
-					}
-
-					ClassInfo supertype = model.classById(ciId);
-
-					Resource mappedResource = mapResource(supertype, true);
-
-					if (mappedResource == null) {
-						MessageContext mc = result.addError(this, 6, supertype.name(), ci.name());
-						mc.addDetail(this, 10000, ci.fullName());
-						c.addComment("This class has a supertype for which no RDF representation is known: "+supertype.name(), "en");
-					} else {
-						c.addSuperClass(mappedResource);
-					}
-				}
-			}
-		}
-
-		// now add the properties
-		SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
-
-		if (pis != null) {
-			for (PropertyInfo pi : pis.values()) {
-				if (pi.isNavigable()) {
-					Property p = addPropertyDeclaration(pi);
-
-					// establish multiplicity and all-values-from restrictions
-					if (p!=null) {
-						addMultiplicity(c, pi, p);
-						// add no all-values-from for mapped properties
-						if (p.getModel()==ontmodel)
-							addAllValuesFrom(c, pi, p);
-					}
-				}
-			}
-		}
-		
 		return c;
 	}
 
-	private void setLabelsAndAnnotations(OntResource c, Info i) {
-		c.addProperty(SKOS.prefLabel, prefLabel(i), owliso19150.getLanguage());
-		c.addProperty(SKOS.notation, i.name(), XSDDatatype.XSDNCName);
-		String s = i.definition();
-		if (s!=null && !s.trim().isEmpty())
-			c.addProperty(SKOS.definition, s, owliso19150.getLanguage());
-		s = i.description();
-		if (s!=null && !s.trim().isEmpty())
-			c.addProperty(SKOS.scopeNote, s, owliso19150.getLanguage());
-		if (!i.matches(OWLISO19150.RULE_OWL_ALL_SUPPRESS_DC_SOURCE)) {
-			s = owliso19150.computeSource(i);
-			if (s!=null && !s.trim().isEmpty())
-				c.addProperty(DC.source, s, owliso19150.getLanguage());		
+	private void mapAndAddSuperClass(ClassInfo ci, OntClass c,
+			ClassInfo supertype) {
+
+		Resource mappedResource = map(supertype);
+
+		if (mappedResource == null) {
+			MessageContext mc = result.addError(this, 6, supertype.name(),
+					ci.name());
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
+
+		} else {
+			c.addSuperClass(mappedResource);
 		}
 	}
 
-	private void addStereotypeInfo(OntResource c, ClassInfo ci) {
+	private void applyDescriptorTargets(OntResource c, Info i,
+			DescriptorTarget.AppliesTo appliesTo) {
 
-		Map<String, String> stereotypeMappings = owliso19150.getConfig().getStereotypeMappings();
-		if (stereotypeMappings == null) {
-			// initialize map so that following tests are simpler
-			stereotypeMappings = new HashMap<String, String>();
+		for (DescriptorTarget dt : this.config.getDescriptorTargets()) {
+
+			if (!dt.getAppliesTo().equals(DescriptorTarget.AppliesTo.ALL)
+					&& !appliesTo.equals(DescriptorTarget.AppliesTo.ALL)
+					&& (((i instanceof PackageInfo) && !dt.getAppliesTo()
+							.equals(DescriptorTarget.AppliesTo.ONTOLOGY))
+							|| ((i instanceof ClassInfo) && !((dt.getAppliesTo()
+									.equals(DescriptorTarget.AppliesTo.CLASS)
+									&& appliesTo
+											.equals(DescriptorTarget.AppliesTo.CLASS))
+									|| (dt.getAppliesTo()
+											.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME)
+											&& appliesTo
+													.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME))))
+							|| ((i instanceof PropertyInfo)
+									&& !dt.getAppliesTo().equals(
+											DescriptorTarget.AppliesTo.PROPERTY)))) {
+				// Descriptor target does not apply to the Info object
+				continue;
+			}
+
+			String template = dt.getTemplate();
+
+			String doc = template;
+
+			Pattern pattern = Pattern.compile("\\[\\[([^\\[].*?)\\]\\]");
+			// TV(\(.+?\))?:(.+) -> "TV(\\(.+?\\))?:(.+)"
+			Matcher matcher = pattern.matcher(template);
+
+			List<StringBuilder> builders = new ArrayList<StringBuilder>();
+			builders.add(new StringBuilder());
+
+			boolean noValuesForFieldsInTemplate = true;
+
+			int index = 0;
+			while (matcher.find()) {
+
+				String desc = matcher.group(1).trim();
+
+				/*
+				 * identify the descriptor or tagged value from the field and
+				 * get value(s)
+				 */
+				List<String> values = new ArrayList<String>();
+				boolean descRecognized = true;
+
+				if (desc.startsWith("TV")) {
+
+					Matcher m = descriptorTargetTaggedValuePattern
+							.matcher(desc);
+
+					/*
+					 * validation of the TargetOwlConfiguration already ensured
+					 * that desc matches
+					 */
+					m.matches();
+					String separator = m.group(1);
+					String tv = m.group(2);
+
+					String[] tv_values = i.taggedValuesInLanguage(tv,
+							options.language());
+
+					if (separator != null) {
+						// exclude leading "(" and trailing ")"
+						separator = separator.substring(1,
+								separator.length() - 1);
+						// match the string separator as if it were a literal
+						// pattern
+						String quoted_separator = Pattern.quote(separator);
+
+						for (String tv_value : tv_values) {
+							String[] split = tv_value.split(quoted_separator);
+							for (String s : split) {
+								if (!s.trim().isEmpty()) {
+									values.add(s.trim());
+								}
+							}
+						}
+					} else {
+						for (String tv_value : tv_values) {
+							if (!tv_value.trim().isEmpty()) {
+								values.add(tv_value.trim());
+							}
+						}
+					}
+
+				} else if (desc.equalsIgnoreCase("name")) {
+
+					values.add(i.name());
+
+				} else if (desc.equalsIgnoreCase("alias")) {
+
+					String s = i.aliasName();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
+				} else if (desc.equalsIgnoreCase("definition")) {
+
+					String s = i.definition();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
+				} else if (desc.equalsIgnoreCase("description")) {
+
+					String s = i.description();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
+				} else if (desc.equalsIgnoreCase("example")) {
+
+					String[] s = i.examples();
+					if (s != null && s.length > 0) {
+						for (String ex : s) {
+							if (ex.trim().length() > 0) {
+								values.add(ex.trim());
+							}
+						}
+					}
+
+				} else if (desc.equalsIgnoreCase("legalBasis")) {
+
+					String s = i.legalBasis();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
+				} else if (desc.equalsIgnoreCase("dataCaptureStatement")) {
+
+					String[] s = i.dataCaptureStatements();
+					if (s != null && s.length > 0) {
+						for (String ex : s) {
+							if (ex.trim().length() > 0) {
+								values.add(ex.trim());
+							}
+						}
+					}
+
+				} else if (desc.equalsIgnoreCase("primaryCode")) {
+
+					String s = i.primaryCode();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
+				} else {
+					/*
+					 * the field in the template neither identifies a known
+					 * descriptor nor a tagged value
+					 */
+					descRecognized = false;
+				}
+
+				// append the text from the template up until the current find
+				for (StringBuilder b : builders) {
+					b.append(doc.substring(index, matcher.start()));
+				}
+
+				if (descRecognized) {
+
+					if (values.isEmpty()) {
+						values.add(dt.getNoValueText());
+					} else {
+						noValuesForFieldsInTemplate = false;
+					}
+
+					if (values.size() == 1) {
+
+						for (StringBuilder b : builders) {
+							b.append(values.get(0));
+						}
+
+					} else {
+
+						if (dt.getMultiValueBehavior() == DescriptorTarget.MultiValueBehavior.CONNECT_IN_SINGLE_TARGET) {
+
+							String connectedValues = StringUtils.join(values,
+									dt.getMultiValueConnectorToken());
+
+							for (StringBuilder b : builders) {
+								b.append(connectedValues);
+							}
+
+						} else {
+
+							// we shall split to multiple targets
+							List<StringBuilder> newBuilders = new ArrayList<StringBuilder>();
+
+							for (String val : values) {
+								for (StringBuilder b : builders) {
+									StringBuilder newBuilder = new StringBuilder(
+											b);
+									newBuilder.append(val);
+									newBuilders.add(newBuilder);
+								}
+							}
+
+							builders = newBuilders;
+						}
+					}
+
+				} else {
+					// template field not recognized - put it back in
+					for (StringBuilder b : builders) {
+						b.append(matcher.group(0));
+					}
+				}
+
+				index = matcher.end();
+			}
+
+			// append any remaining text from the template
+			for (StringBuilder b : builders) {
+				b.append(doc.substring(index, doc.length()));
+			}
+
+			if (noValuesForFieldsInTemplate && dt
+					.getNoValueBehavior() == DescriptorTarget.NoValueBehavior.INGORE) {
+				// we don't create any property from this descriptor target
+
+			} else {
+
+				String target = dt.getTarget();
+				addNamespaceDeclaration(target);
+
+				String propertyIRI = computeReference(target);
+
+				Property prop = ontmodel.createProperty(propertyIRI);
+
+				for (StringBuilder sb : builders) {
+
+					if (dt.getFormat() == DescriptorTarget.Format.STRING) {
+						c.addProperty(prop, sb.toString());
+					} else if (dt
+							.getFormat() == DescriptorTarget.Format.LANG_STRING) {
+						c.addProperty(prop, sb.toString(),
+								owliso19150.getLanguage());
+					} else {
+						// format is IRI
+						Resource r = ontmodel.createResource(sb.toString());
+						c.addProperty(prop, r);
+					}
+				}
+			}
 		}
+	}
+
+	private void addCustomSubClassOf(OntResource c, ClassInfo ci) {
+
+		// apply stereotype conversion parameters
 
 		int cat = ci.category();
 
+		String catID;
+
 		switch (cat) {
 		case Options.FEATURE:
-			boolean featureFlag = false;
-			if (ci.matches(OWLISO19150.RULE_OWL_CLS_GEOSPARQL_FEATURES)) {
-				addImport(OWLISO19150.RDF_NS_OGC_GEOSPARQL,config.locationOfNamespace(OWLISO19150.RDF_NS_OGC_GEOSPARQL));
-				c.asClass().addSuperClass(ontmodel.createResource(OWLISO19150.RDF_NS_OGC_GEOSPARQL + "Feature"));
-				featureFlag = true;
-			}
-			if (ci.matches(OWLISO19150.RULE_OWL_CLS_19150_2_FEATURES)) {
-				/*
-				 * import for 19150-2 base is automatically added in createDocument()
-				 */
-				c.asClass().addSuperClass(ontmodel.createResource(computeReference(OWLISO19150.PREFIX_ISO_19150_2, "FeatureType")));
-
-				addImport(OWLISO19150.RDF_NS_ISO_GFM,config.locationOfNamespace(OWLISO19150.RDF_NS_ISO_GFM));
-				c.asClass().addSuperClass(ontmodel.createResource(OWLISO19150.RDF_NS_ISO_GFM + "AnyFeature"));
-				featureFlag = true;
-			}
-			if (stereotypeMappings.containsKey("featuretype")) {
-				String mappingForFeatureType = stereotypeMappings.get("featuretype");
-				if (mappingForFeatureType!=null) {
-					c.asClass().addSuperClass(ontmodel.createResource(mappingForFeatureType));
-					featureFlag = true;
-				}
-			}
-			if (!featureFlag) {
-				result.addWarning(this, 8, ci.name(), "featuretype");
-			}
+			catID = "featuretype";
 			break;
-
+		case Options.MIXIN:
 		case Options.OBJECT:
-			if (stereotypeMappings.containsKey("type")) {
-				c.asClass().addSuperClass(ontmodel.createResource(stereotypeMappings.get("type")));
-			}
+			catID = "type";
 			break;
-			
+		case Options.BASICTYPE:
+			catID = "basictype";
+			break;
 		case Options.DATATYPE:
-			if (stereotypeMappings.containsKey("datatype")) {
-				c.asClass().addSuperClass(ontmodel.createResource(stereotypeMappings.get("datatype")));
-			}
-
+			catID = "datatype";
 			break;
 		case Options.CODELIST:
-			if (stereotypeMappings.containsKey("codelist")) {
-				c.asClass().addSuperClass(ontmodel.createResource(stereotypeMappings.get("codelist")));
-			}
+			catID = "codelist";
 			break;
-
 		case Options.UNION:
-			if (stereotypeMappings.containsKey("union")) {
-				c.asClass().addSuperClass(ontmodel.createResource(stereotypeMappings.get("union")));
-			}
+			catID = "union";
 			break;
-
 		case Options.ENUMERATION:
-			if (stereotypeMappings.containsKey("enumeration")) {
-				c.asClass().addSuperClass(ontmodel.createResource(stereotypeMappings.get("enumeration")));
-			}
-			
-			/*
-			 * TODO Comment 15 by Australia: The classification of a resource as an
-			 * ‘enumeration’ is implicit. So it is not necessary to add the
-			 * isEnumeration annotation.
-			 */
-			c.addLiteral(ISO19150_2.isEnumeration, ontmodel.createTypedLiteral(true));
+			catID = "enumeration";
 			break;
 
 		default:
 			result.addWarning(this, 9, ci.name(), ci.stereotypes().toString());
-		}
-	}
-
-	protected void addImport(String rdfns, String uri) {
-
-		if (rdfns == null || rdfns.equals(this.rdfNamespace) || rdfns.equals(getCodeNamespace())) {
 			return;
 		}
 
-		if (uri!=null) {
+		SortedMap<String, List<StereotypeConversionParameter>> stereotypeMappings = owliso19150
+				.getConfig().getStereotypeConversionParameters();
+
+		if (stereotypeMappings.containsKey(catID)) {
+
+			List<StereotypeConversionParameter> scps = stereotypeMappings
+					.get(catID);
+
+			for (StereotypeConversionParameter scp : scps) {
+				for (String subClassOf : scp.getSubClassOf()) {
+					Resource mappedResource = mapResource(subClassOf);
+					c.asClass().addSuperClass(mappedResource);
+				}
+			}
+		}
+
+		// apply type conversion parameters
+
+		TypeConversionParameter tcp = owliso19150.getConfig()
+				.getTypeConversionParameter(ci);
+
+		if (tcp != null) {
+			for (String subClassOf : tcp.getSubClassOf()) {
+				Resource mappedResource = mapResource(subClassOf);
+				c.asClass().addSuperClass(mappedResource);
+			}
+		}
+	}
+
+	public void addNamespaceDeclaration(String qname) {
+
+		if (qname == null || !qname.contains(":")
+				|| qname.substring(0, qname.indexOf(":")).length() == 0) {
+			return;
+		}
+
+		String prefix = qname.substring(0, qname.indexOf(":"));
+
+		if (config.hasNamespaceWithAbbreviation(prefix)) {
+
+			String ns = config.fullNamespace(prefix);
+			// add namespace declaration
+			String s = ontmodel.getNsPrefixURI(prefix);
+			if (s == null)
+				ontmodel.setNsPrefix(prefix, ns);
+			else if (!s.equals(ns))
+				result.addError(this, 11, getName(), prefix, ns, s);
+
+		} else {
+
+			result.addError(this, 39, prefix);
+		}
+	}
+
+	/**
+	 * @param rdfns
+	 *            full namespace of the ontology to import
+	 * @param uri
+	 *            location of the ontology to import, can be <code>null</code>
+	 *            to indicate that the location is unknown (in that case, an
+	 *            import is not created)
+	 */
+	public void addImport(String rdfns, String uri) {
+
+		if (rdfns == null || rdfns.equals(this.rdfNamespace)) {
+			return;
+		}
+
+		if (uri != null) {
 			if (ontmodel.hasLoadedImport(uri)) {
 				return;
 			}
-	
+
 			ontology.addImport(ontmodel.createResource(uri));
 		}
-		
+
 		// determine prefix for rdf namespace
 		String prefix = owliso19150.computePrefixForRdfNamespace(rdfns);
 
 		if (prefix != null) {
 			String s = ontmodel.getNsPrefixURI(prefix);
-			if (s==null)
+			if (s == null)
 				ontmodel.setNsPrefix(prefix, rdfns);
 			else if (!s.equals(rdfns))
 				result.addError(this, 11, getName(), prefix, rdfns, s);
@@ -701,247 +1828,472 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		}
 	}
 
-	protected void addMultiplicity(OntClass cls, PropertyInfo pi, Property p) {
+	protected void addMultiplicity(OntClass cls, PropertyInfo pi,
+			OntProperty p) {
+
+		if ((pi.inClass().category() == Options.UNION
+				&& pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION))
+				|| (pi.taggedValue(OWLISO19150.TV_UNION_SET) != null
+						&& pi.inClass().matches(
+								OWLISO19150.RULE_OWL_CLS_UNION_SETS))) {
+			/*
+			 * A class expression to specify union semantics for this property
+			 * will be created. The expression specifies the multiplicity, so do
+			 * not encode it here.
+			 */
+			return;
+		}
 
 		Multiplicity m = pi.cardinality();
-		
-		if (pi.voidable() && pi.matches(OWLISO19150.RULE_OWL_PROP_VOIDABLE_AS_MINCARDINALITY0)) {
-			m.minOccurs = 0;
+		int lower = m.minOccurs;
+		int upper = m.maxOccurs;
+
+		if (pi.voidable() && pi.matches(
+				OWLISO19150.RULE_OWL_PROP_VOIDABLE_AS_MINCARDINALITY0)) {
+			lower = 0;
 		}
-		
-		if (m.minOccurs==m.maxOccurs && !pi.matches(OWLISO19150.RULE_OWL_PROP_SUPPRESS_CARDINALITY_RESTRICTIONS)) {
-			OntClass restriction = ontmodel.createCardinalityRestriction(null, p, m.minOccurs);
-			cls.addSuperClass(restriction);
-		} else {
-			// set min cardinality if required
-			if (m.minOccurs == 0 || pi.matches(OWLISO19150.RULE_OWL_PROP_SUPPRESS_CARDINALITY_RESTRICTIONS)) {
-				// simply omit min cardinality to represent this case
-			} else {
-				OntClass restriction = ontmodel.createMinCardinalityRestriction(null, p, m.minOccurs);
+
+		Resource range = this.rangeByPropertyInfo.get(pi);
+
+		if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_UNQUALIFIED_RESTRICTION)
+				|| (range == null && pi.matches(
+						OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION))) {
+
+			boolean restrictionCreated = false;
+
+			if (lower == upper) {
+
+				OntClass restriction = createCardinalityRestriction(p, lower);
+
 				cls.addSuperClass(restriction);
+				restrictionCreated = true;
+
+			} else {
+
+				// set min cardinality if required
+				if (lower == 0) {
+
+					// simply omit min cardinality to represent this case
+
+				} else {
+
+					OntClass restriction = createMinCardinalityRestriction(p,
+							lower);
+
+					cls.addSuperClass(restriction);
+					restrictionCreated = true;
+				}
+
+				// set max cardinality if required
+				if (upper == Integer.MAX_VALUE) {
+
+					// simply omit max cardinality to represent this case
+
+				} else {
+
+					OntClass restriction = createMaxCardinalityRestriction(p,
+							upper);
+
+					cls.addSuperClass(restriction);
+					restrictionCreated = true;
+				}
 			}
-			
-			// set max cardinality if required
-			if (m.maxOccurs == Integer.MAX_VALUE || pi.matches(OWLISO19150.RULE_OWL_PROP_SUPPRESS_CARDINALITY_RESTRICTIONS)) {
-				// simply omit max cardinality to represent this case
-			} else {
-				OntClass restriction = ontmodel.createMaxCardinalityRestriction(null, p, m.maxOccurs);
+
+			if (restrictionCreated && range == null && pi.matches(
+					OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION)) {
+				MessageContext mc = result.addInfo(this, 33);
+				if (mc != null) {
+					mc.addDetail(this, 10001, pi.fullName());
+				}
+			}
+
+		} else if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_MULTIPLICITY_QUALIFIED_RESTRICTION)) {
+
+			if (lower == upper) {
+
+				OntClass restriction = createQCardinalityRestriction(p, lower,
+						range);
 				cls.addSuperClass(restriction);
+
+			} else {
+
+				// set min cardinality if required
+				if (lower == 0) {
+
+					// simply omit min cardinality to represent this case
+
+				} else {
+
+					OntClass restriction = createQMinCardinalityRestriction(p,
+							lower, range);
+					cls.addSuperClass(restriction);
+				}
+
+				// set max cardinality if required
+				if (upper == Integer.MAX_VALUE) {
+
+					// simply omit max cardinality to represent this case
+
+				} else {
+
+					OntClass restriction = createQMaxCardinalityRestriction(p,
+							upper, range);
+					cls.addSuperClass(restriction);
+				}
 			}
 		}
 	}
 
+	/**
+	 * @param cls
+	 *            class for which a all-values-from restriction is created
+	 * @param pi
+	 *            property
+	 * @param p
+	 *            ontology representation of the property
+	 */
 	protected void addAllValuesFrom(OntClass cls, PropertyInfo pi, Property p) {
-		// get referenced resource
-		Resource r = p.getPropertyResourceValue(RDFS.range);
-		// add allValuesFrom, in case the suppressing conversion rule is active do it only for cases with unionOf values or no range
-		if (r==null || r.hasProperty(OWL.unionOf) || !pi.matches(OWLISO19150.RULE_OWL_PROP_SUPPRESS_ALLVALUESFROM_RESTRICTIONS)) {
-			OntClass restriction = ontmodel.createAllValuesFromRestriction(null, p, mapTypeResource(pi));
-			cls.addSuperClass(restriction);
+
+		if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_RANGE_LOCAL_UNIVERSAL_QUANTIFICATION)) {
+
+			Resource range = this.rangeByPropertyInfo.get(pi);
+
+			if (range != null) {
+
+				OntClass restriction = ontmodel
+						.createAllValuesFromRestriction(null, p, range);
+				cls.addSuperClass(restriction);
+
+			} else {
+				/*
+				 * The restriction is not created because the range is unknown
+				 */
+				MessageContext mc = result.addWarning(this, 35, pi.name());
+				if (mc != null) {
+					mc.addDetail(this, 10001, pi.fullName());
+				}
+			}
 		}
-	}
-	
-	private boolean isDatatypeProperty(PropertyInfo pi) {
-		boolean result;
-		ProcessMapEntry pme = config.getMapEntry(pi.typeInfo().name);
-		if (pme==null) {
-			int cat = pi.categoryOfValue();
-			result = (cat==Options.ENUMERATION);
-		} else {
-			result = (pme.hasParam() && pme.getParam().equalsIgnoreCase("datatype"));
-		}
-		return result;
 	}
 
-	private Property addPropertyDeclaration(PropertyInfo pi) {
+	private boolean isDatatypeProperty(PropertyInfo pi) {
+
+		RdfTypeMapEntry rtme = config.getTypeMapEntryByTypeInfo(pi);
+
+		if (rtme == null) {
+			int cat = pi.categoryOfValue();
+
+			if (cat == Options.ENUMERATION) {
+				ClassInfo enumeration = model.classById(pi.typeInfo().id);
+				if (enumeration == null
+						|| this.ontClassByClassInfo.containsKey(enumeration)) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return rtme.getTargetType() == RdfTypeMapEntry.TargetType.DATATYPE;
+		}
+	}
+
+	private OntProperty addPropertyDeclaration(PropertyInfo pi) {
 
 		if (!pi.isNavigable()) {
 			return null;
 		}
-		
-		Property mappedProperty = mapProperty(pi);
-		if (mappedProperty!=null) {
-			if (mappedProperty.getURI().equals(computeReference("sc","null"))) {
+
+		OntProperty mappedProperty = mapProperty(pi);
+
+		if (mappedProperty != null) {
+			if (mappedProperty.getURI()
+					.equals(computeReference("sc", "null"))) {
 				MessageContext mc = result.addInfo(this, 20, pi.name());
-				if (mc!=null)
-					mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
+				if (mc != null)
+					mc.addDetail(this, 10001, pi.fullName());
 				return null;
 			} else {
-				MessageContext mc = result.addInfo(this, 21, pi.name(), mappedProperty.getURI());
-				if (mc!=null)
-					mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
+				MessageContext mc = result.addDebug(this, 21, pi.name(),
+						mappedProperty.getURI());
+				if (mc != null) {
+					mc.addDetail(this, 10001, pi.fullName());
+				}
 				return mappedProperty;
 			}
-		}
+		} else if (pi.isAttribute() && pi
+				.matches(OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES)) {
+			/*
+			 * fine - we only check this here because
+			 * rule-owl-prop-globalScopeAttributes has higher priority than
+			 * rule-owl-prop-globalScopeByConversionParameter; pi will be
+			 * handled later on
+			 */
+		} else if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_BY_CONVERSION_PARAMETER)) {
 
-		boolean isGlobalProperty = false;
-		if (globalPropertyNames.contains("*") || globalPropertyNames.contains(pi.name())) {
-			isGlobalProperty = true;
-		}
+			PropertyConversionParameter pcp = config
+					.getPropertyConversionParameter(pi);
 
-		String propAbout;
-		if (isGlobalProperty) {
-			propAbout = computeReference(getPrefix(), normalizedName(pi));
-		} else {
-			propAbout = computeReference(getPrefix(), normalizedName(pi.inClass()) + "." + normalizedName(pi));
-		}
+			if (pcp != null && pcp.hasTarget()) {
+				/*
+				 * The property shall be mapped to a global one. Identify the
+				 * relevant ontology and create a reference.
+				 */
+				OntologyModel ontologyWithGlobalProp = owliso19150
+						.computeRelevantOntologyForTargetMapping(pcp);
 
-		if (properties.containsKey(propAbout)) {
-			// a property with this id has already been declared - do not add it again, 
-			// but verify the specifications are consistent
-			OwlProperty p0 = properties.get(propAbout); 
-			if (isDatatypeProperty(pi)!=isDatatypeProperty(p0.pi)) {
-				MessageContext mc = result.addError(this, 23, propAbout, pi.typeInfo().name, p0.pi.typeInfo().name);
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-				mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
-			} else if (!pi.typeInfo().name.equalsIgnoreCase(p0.pi.typeInfo().name)) {
-				if (isDatatypeProperty(pi)) {
-					MessageContext mc = result.addError(this, 16, propAbout, pi.typeInfo().name, p0.pi.typeInfo().name);
-					mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-					mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
-					p0.p.removeAll(RDFS.range);
-				} else {
-					Resource range = mapTypeResource(pi);
-					Statement rangeStatement = p0.p.getProperty(RDFS.range);
-					Resource object = rangeStatement.getObject().asResource();
-					if (object.hasProperty(OWL.unionOf)) {
-						UnionClass unionOf = object.as( UnionClass.class );
-						unionOf.addOperand(range);
-					} else {
-						RDFNode[] nodes1 = {object, range};
-						RDFList list = ontmodel.createList(nodes1);
-						UnionClass unionOf = ontmodel.createUnionClass(null, list);						
-						rangeStatement.changeObject(unionOf);
+				if (ontologyWithGlobalProp == null) {
+
+					MessageContext mc = result.addError(this, 31,
+							pcp.getTarget(), pcp.getTargetSchema());
+					if (mc != null) {
+						mc.addDetail(this, 10001, pi.fullName());
 					}
-					MessageContext mc = result.addError(this, 25, propAbout, pi.typeInfo().name, p0.pi.typeInfo().name);
-					mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-					mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
+
+				} else {
+
+					addImport(ontologyWithGlobalProp.getRdfNamespace(), null);
+
+					String propAbout = computeReference(
+							ontologyWithGlobalProp.getPrefix(),
+							pcp.getTarget().split("::")[1]);
+					OntModel ontModel = ontologyWithGlobalProp
+							.getOntologyModel();
+					OntProperty p = ontModel.getOntProperty(propAbout);
+
+					if (p == null)
+						p = ontModel.createOntProperty(propAbout);
+
+					MessageContext mc = result.addInfo(this, 34, pi.name(),
+							p.getURI());
+					if (mc != null) {
+						mc.addDetail(this, 10001, pi.fullName());
+					}
+
+					if (pi.matches(
+							OWLISO19150.RULE_OWL_PROP_MAPPING_COMPARE_SPECIFICATIONS)) {
+
+						PropertyInfo globalProp = getGlobalProperty(pcp);
+
+						if (globalProp != null) {
+							comparePropertySpecifications(pi, globalProp);
+						} else {
+							MessageContext mc2 = result.addError(this, 25);
+							if (mc2 != null) {
+								mc2.addDetail(this, 10003, pi.fullName());
+								mc2.addDetail(this, 10004, pi.fullName());
+							}
+						}
+					}
+
+					return p;
 				}
 			}
-			String s1 = pi.definition();
-			if (s1==null)
-				s1 = "";
-			String s2 = p0.pi.definition();
-			if (s2==null)
-				s2 = "";
-			if (!s1.equalsIgnoreCase(s2)) {
-				p0.p.addProperty(SKOS.definition, s1, owliso19150.getLanguage());
-				MessageContext mc = result.addWarning(this, 17, propAbout, s1, s2);
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-				mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
+		}
+
+		String propAbout = computePropertyName(pi);
+
+		if (properties.containsKey(propAbout)) {
+			/*
+			 * a property with this id has already been declared - do not add it
+			 * again
+			 */
+			OwlProperty p0 = properties.get(propAbout);
+
+			if (pi.matches(
+					OWLISO19150.RULE_OWL_PROP_MAPPING_COMPARE_SPECIFICATIONS)) {
+				comparePropertySpecifications(pi, p0.pi);
 			}
-			s1 = pi.description();
-			if (s1==null)
-				s1 = "";
-			s2 = p0.pi.description();
-			if (s2==null)
-				s2 = "";
-			if (!s1.equalsIgnoreCase(s2)) {
-				p0.p.addProperty(SKOS.scopeNote, s1, owliso19150.getLanguage());
-				MessageContext mc = result.addWarning(this, 18, propAbout, s1, s2);
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-				mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
-			}
-			s1 = prefLabel(pi);
-			s2 = prefLabel(p0.pi);
-			if (!s1.equalsIgnoreCase(s2)) {
-				p0.p.addProperty(SKOS.altLabel, s1, owliso19150.getLanguage());
-				MessageContext mc = result.addWarning(this, 19, propAbout, s1, s2);
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
-				mc.addDetail(this, 10001, p0.pi.inClass().fullName(), p0.pi.name());
-			}
-			
+
 			// return the existing property
 			return p0.p;
 		}
-				
+
 		OntProperty p;
-		
+
 		// Determine if this is a DatatypeProperty or ObjectProperty
 		if (isDatatypeProperty(pi)) {
 
 			// we have a datatype
-			DatatypeProperty dp = ontmodel.createDatatypeProperty(propAbout);			
+			DatatypeProperty dp = ontmodel.createDatatypeProperty(propAbout);
 			p = dp.asProperty();
 
 		} else {
 
 			// we have an object type
-			ObjectProperty op = ontmodel.createObjectProperty(propAbout);			
+			ObjectProperty op = ontmodel.createObjectProperty(propAbout);
 			p = op.asProperty();
-
 		}
 
-		setLabelsAndAnnotations(p, pi);
+		applyDescriptorTargets(p, pi, DescriptorTarget.AppliesTo.PROPERTY);
+		addConstraintDeclarations(p, pi);
+		addCustomSubPropertyOf(p, pi);
 
-		if (pi.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-			addConstraintDeclarations(p, pi);
+		// domain should be declared only for a locally scoped property
+		if (!isGlobalProperty(pi)) {
+			p.addDomain(ontmodel.createResource(computeReference(getPrefix(),
+					normalizedName(pi.inClass()))));
 		}
 
-		// no domain should be declared for a global property
-		if (!isGlobalProperty) {
-			p.addDomain(ontmodel.createResource(computeReference(getPrefix(), normalizedName(pi.inClass()))));
+		// if range shall be globally defined, add it now
+		Resource range = computeRange(pi);
+		if (pi.matches(OWLISO19150.RULE_OWL_PROP_RANGE_GLOBAL)
+				&& range != null) {
+			p.addRange(range);
 		}
 
-		Resource range = mapTypeResource(pi);
-		p.addRange(range);
-		if (range==OWL2.Class)
-			p.addComment("The range is a type for which no RDF representation is known: "+pi.typeInfo().name, "en");
-
-		AssociationInfo ai = pi.association();
-
-		if (ai != null) {
-
-			if (ai.assocClass()!=null) {
-				// TODO
-				result.addError(this, 15, ai.assocClass().name());
-			}
-			
-			// ensure that owl:inverseOf is set only once
-			if (!owliso19150.getProcessedAssociations().contains(ai)) {
-
-				// check if we need to set owl:inverseOf
-
-				PropertyInfo revPi = pi.reverseProperty();
-
-				if (revPi != null && revPi.isNavigable()) {
-
-					owliso19150.getProcessedAssociations().add(ai);
-
-					// TODO inverseOf currently only supported for associations within a single schema  
-					if (pi.inClass().pkg().schemaId().equals(revPi.inClass().pkg().schemaId())) {
-						Property ip = addPropertyDeclaration(revPi);
-						if (ip!=null)
-							p.addInverseOf(ip);
-						else {
-							result.addError(this, 13, propAbout);
-						}
-					}
-
-				}
-			}
-
-			// add association name if it exists
-			String aiName = ai.name();
-			if (aiName != null && aiName.length() > 0 && !pi.matches(OWLISO19150.RULE_OWL_PROP_SUPPRESS_ASSOCIATION_NAMES)) {
-				// FIXME p.addProperty(ISO19150_2.associationName, aiName);
-			}
-
-			if (pi.isComposition()) {
-				p.addProperty(ISO19150_2.aggregationType, "partOfCompositeAggregation");
-			} else if (pi.isAggregation()) {
-				p.addProperty(ISO19150_2.aggregationType, "partOfSharedAggregation");
-			} else {
-				// no special aggregation to document
-			}
-		}
-		
 		// remember property
 		properties.put(propAbout, new OwlProperty(pi, p));
-		
+
 		return p;
 	}
 
+	private String computePropertyName(PropertyInfo pi) {
+
+		boolean isGlobalProperty = isGlobalProperty(pi);
+
+		String result;
+		if (isGlobalProperty) {
+			result = computeReference(getPrefix(), normalizedName(pi));
+		} else {
+			result = computeReference(getPrefix(),
+					normalizedName(pi.inClass()) + "." + normalizedName(pi));
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param pi1
+	 *            property 1 (that is usually mapped to or implemented by pi2)
+	 * @param propAbout
+	 *            ontology name of pi1
+	 * @param pi2
+	 *            property 2
+	 */
+	private void comparePropertySpecifications(PropertyInfo pi1,
+			PropertyInfo pi2) {
+
+		if (isDatatypeProperty(pi1) != isDatatypeProperty(pi2)) {
+
+			MessageContext mc = result.addWarning(this, 23, pi1.typeInfo().name,
+					pi2.typeInfo().name);
+			if (mc != null) {
+				mc.addDetail(this, 10003, pi1.fullName());
+				mc.addDetail(this, 10004, pi2.fullName());
+			}
+
+		} else if (!pi1.typeInfo().name.equalsIgnoreCase(pi2.typeInfo().name)) {
+
+			MessageContext mc = result.addWarning(this, 16, pi1.typeInfo().name,
+					pi2.typeInfo().name);
+			if (mc != null) {
+				mc.addDetail(this, 10003, pi1.fullName());
+				mc.addDetail(this, 10004, pi2.fullName());
+			}
+		}
+
+		String s1 = pi1.definition();
+		if (s1 == null)
+			s1 = "";
+		String s2 = pi2.definition();
+		if (s2 == null)
+			s2 = "";
+		if (!s1.equalsIgnoreCase(s2)) {
+			MessageContext mc = result.addWarning(this, 17, s1, s2);
+			if (mc != null) {
+				mc.addDetail(this, 10003, pi1.fullName());
+				mc.addDetail(this, 10004, pi2.fullName());
+			}
+		}
+
+		s1 = pi1.description();
+		if (s1 == null)
+			s1 = "";
+		s2 = pi2.description();
+		if (s2 == null)
+			s2 = "";
+		if (!s1.equalsIgnoreCase(s2)) {
+			MessageContext mc = result.addWarning(this, 18, s1, s2);
+			if (mc != null) {
+				mc.addDetail(this, 10003, pi1.fullName());
+				mc.addDetail(this, 10004, pi2.fullName());
+			}
+		}
+
+		s1 = pi1.aliasName();
+		if (s1 == null)
+			s1 = "";
+		s2 = pi2.aliasName();
+		if (s2 == null)
+			s2 = "";
+		if (!s1.equalsIgnoreCase(s2)) {
+			MessageContext mc = result.addWarning(this, 19, s1, s2);
+			if (mc != null) {
+				mc.addDetail(this, 10003, pi1.fullName());
+				mc.addDetail(this, 10004, pi2.fullName());
+			}
+		}
+	}
+
+	private void addCustomSubPropertyOf(OntProperty p, PropertyInfo pi) {
+
+		PropertyConversionParameter pcp = config
+				.getPropertyConversionParameter(pi);
+		if (pcp != null && pcp.hasSubPropertyOf()) {
+
+			for (String spo : pcp.getSubPropertyOf()) {
+
+				Property mapping = mapProperty(spo);
+				p.asProperty().addSuperProperty(mapping);
+			}
+		}
+	}
+
+	private boolean isGlobalProperty(PropertyInfo pi) {
+
+		if (pi.matches(OWLISO19150.RULE_OWL_PROP_LOCAL_SCOPE_ALL)) {
+			return false;
+		}
+
+		if (pi.isAttribute() && pi
+				.matches(OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_ATTRIBUTES)) {
+			return true;
+		}
+
+		if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_BY_UNIQUE_PROPERTY_NAME)
+				&& this.uniquePropertyNames.contains(pi.name())) {
+			return true;
+		}
+
+		if (pi.matches(
+				OWLISO19150.RULE_OWL_PROP_GLOBAL_SCOPE_BY_CONVERSION_PARAMETER)) {
+
+			PropertyConversionParameter pcp = config
+					.getPropertyConversionParameter(pi);
+			if (pcp != null && pcp.isGlobal() && !pcp.hasTarget()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieves a resource identified by the given QName from the reference
+	 * model. The resource is created if necessary. Also creates an import for
+	 * the resource.
+	 * 
+	 * @param qname
+	 *            identifies a resource
+	 * @return resource identified by the qname
+	 */
 	private Resource mapResource(String qname) {
 		String[] qnamePars = qname.split(":");
 		String prefix = qnamePars[0];
@@ -950,86 +2302,155 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		// identify rdf namespace based upon prefix and standard namespaces
 		String rdfNs = config.fullNamespace(prefix);
 		String location = config.locationOfNamespace(rdfNs);
-		
-		String uri =  rdfNs+resourceName;
+
+		String uri = rdfNs + resourceName;
+
 		Resource r = refmodel.getResource(uri);
-		if (r==null)
-			r = refmodel.createResource(uri);		
+		if (r == null)
+			r = refmodel.createResource(uri);
 
 		// also add import for the namespace
 		addImport(rdfNs, location);
-	
+
 		// return correct element definition
 		return r;
 	}
-	
-	protected Resource mapResource(ClassInfo ci, boolean processMapEntry) {
 
-		if (ci == null)
-			return null;
+	/**
+	 * Creates an ontology class (in the internal {@link #refmodel}), with
+	 * namespace identified by looking up the prefix of the QName in the
+	 * configuration of namespaces. Also creates an import of that namespace.
+	 * 
+	 * @param qname
+	 *            identifies a class
+	 * @return ontology class identified by the qname
+	 */
+	private Resource mapClass(String qname) {
 
-		if (processMapEntry) {
-			ProcessMapEntry pme = config.getMapEntry(ci.name());
-			if (pme!=null) {
-				Resource r = mapResource(pme.getTargetType());
-				MessageContext mc = result.addInfo(this, 22, ci.name(), r.getURI());
-				if (mc != null) {
-					mc.addDetail(this, 10000, ci.fullName());
-				}
-				return r;
+		String[] qnamePars = qname.split(":");
+		String prefix = qnamePars[0];
+		String resourceName = qnamePars[1];
+
+		// identify rdf namespace based upon prefix and standard namespaces
+		String rdfNs = config.fullNamespace(prefix);
+		String location = config.locationOfNamespace(rdfNs);
+
+		String uri = rdfNs + resourceName;
+
+		OntClass c = refmodel.getOntClass(uri);
+		if (c == null)
+			c = refmodel.createClass(uri);
+
+		// also add import for the namespace
+		addImport(rdfNs, location);
+
+		// return correct element definition
+		return c;
+	}
+
+	/**
+	 * Creates an ontology property (in the internal {@link #refmodel} - unless
+	 * it already exists in the refmodel), with namespace identified by looking
+	 * up the prefix of the QName in the configuration of namespaces. Also
+	 * creates an import of that namespace.
+	 * 
+	 * @param qname
+	 *            identifies a property
+	 * @return property identified by the qname
+	 */
+	private Property mapProperty(String qname) {
+
+		String[] qnamePars = qname.split(":");
+		String prefix = qnamePars[0];
+		String propertyName = qnamePars[1];
+
+		// identify rdf namespace based upon prefix and standard namespaces
+		String rdfNs = config.fullNamespace(prefix);
+		String location = config.locationOfNamespace(rdfNs);
+
+		String uri = rdfNs + propertyName;
+		Property p = refmodel.getProperty(uri);
+		if (p == null)
+			p = refmodel.createProperty(uri);
+
+		// also add import for the namespace
+		addImport(rdfNs, location);
+
+		// return correct element definition
+		return p;
+	}
+
+	/**
+	 * Maps the given class to the RDF resource that represents it. If an
+	 * RdfTypeMapEntry exists for the class, it is used. Otherwise, the RDF
+	 * implementation of the class is looked up in one of the ontology models
+	 * that were created from the schemas selected for processing. If no map
+	 * entry exists and the class is not part of the schemas selected for
+	 * processing, an error will be logged and <code>null</code> returned.
+	 * 
+	 * @param ci
+	 * @param processMapEntry
+	 * @return the resource that implements the class, or <code>null</code>
+	 *         (then no RdfTypeMapEntry is defined for the class and the class
+	 *         is not part of the schemas selected for processing)
+	 */
+	protected Resource map(ClassInfo ci) {
+
+		RdfTypeMapEntry rtme = config.getTypeMapEntry(ci);
+
+		if (rtme != null) {
+			Resource r = mapClass(rtme.getTarget());
+			MessageContext mc = result.addDebug(this, 22, ci.name(),
+					r.getURI());
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
 			}
+			return r;
 		}
-		
+
 		// lookup the ontology to which the class belongs
-		OntologyDocument od = owliso19150.computeRelevantOntology(ci);
+		OntologyModel om = owliso19150.computeRelevantOntology(ci);
 
-		if (od == null) {
-			// FIXME this.result.addError(this, 7, ci.name());
-			return null;
-		} 
-		
-		String rdfNs = od.getRdfNamespace();
-		String location = od.getName();
+		if (om == null) {
 
-		if (ci.category() == Options.CODELIST) {
-			if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL)) {
-				String uri= ci.taggedValue("codeList");
-				if (uri==null || uri.isEmpty())
-					uri= ci.taggedValue("vocabulary");
-				if (uri!=null && (uri.startsWith("http://")||uri.startsWith("https://"))) {
-					result.addInfo(this, 24, ci.name(), uri);
-					Resource r = refmodel.getResource(uri);
-					if (r==null)
-						r = refmodel.createResource(uri);
-					return r;
-				} else {
-					result.addInfo(this, 24, ci.name(), "owl:Class");
-					return OWL2.Class;
-				}
-			} else {
-				rdfNs = od.getCodeNamespace();
-				location = null;					
+			/*
+			 * No RdfMapEntry is defined for the type and the type is not
+			 * contained in the schemas selected for processing
+			 */
+			MessageContext mc = this.result.addError(this, 14, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullNameInSchema());
 			}
+			return null;
 		}
+
+		String rdfNs = om.getRdfNamespace();
+		String location = om.getName();
 
 		// add import for the namespace and declare prefix
 		addImport(rdfNs, location);
 
-		// return resource
-		return od.getResource(ci);
+		return om.getResource(ci);
 	}
 
-	protected Resource mapTypeResource(PropertyInfo pi) {
+	/**
+	 * Returns a class representing the type of the property.
+	 * RdfPropertyMapEntries are not considered.
+	 * 
+	 * @param pi
+	 * @return
+	 */
+	protected Resource mapType(PropertyInfo pi) {
 
+		RdfTypeMapEntry rtme = config.getTypeMapEntryByTypeInfo(pi);
+
+		if (rtme != null) {
+			return mapClass(rtme.getTarget());
+		}
+
+		// no mapping available - use actual type
 		Type ti = pi.typeInfo();
-		
-		if (ti == null)
-			return null;
 
-		ProcessMapEntry pme = config.getMapEntry(ti.name);
-		if (pme!=null)
-			return mapResource(pme.getTargetType());
-		
 		ClassInfo ci = model.classById(ti.id);
 
 		if (ci == null) {
@@ -1038,75 +2459,94 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		}
 
 		if (ci == null) {
-			MessageContext mc = this.result.addError(this, 7, ti.name);
+			MessageContext mc = this.result.addError(this, 37, ti.name);
 			if (mc != null) {
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
+				mc.addDetail(this, 10001, pi.fullName());
 			}
-			return OWL2.Class;
+			return null;
 		}
 
-		Resource r = mapResource(ci, false);
-		if (r==null) {
+		Resource r = map(ci);
+
+		if (r == null) {
 			MessageContext mc = this.result.addError(this, 7, ti.name);
 			if (mc != null) {
-				mc.addDetail(this, 10001, pi.inClass().fullName(), pi.name());
+				mc.addDetail(this, 10001, pi.fullName());
 			}
-			return OWL2.Class;
+			return null;
 		}
 
 		return r;
 	}
 
-	protected Property mapProperty(PropertyInfo pi) {
+	/**
+	 * NOTE: also imports the namespace of a mapped property
+	 * 
+	 * @param pi
+	 * @return The RDF/OWL property implementation to which the given
+	 *         PropertyInfo is mapped, or <code>null</code> if there is no
+	 *         mapping. The mapping can be defined via an RdfPropertyMapEntry or
+	 *         through a PropertyConversionParameter (a global property to which
+	 *         the given property is mapped will automatically be created in the
+	 *         correct OntologyModel if it does not already exist there).
+	 */
+	protected OntProperty mapProperty(PropertyInfo pi) {
 
 		if (pi == null)
 			return null;
 
-		// look for map entry based on the name of the property
-		ProcessMapEntry pme = config.getMapEntry(pi.name());
-		if (pme == null || !pme.hasParam() || !pme.getParam().equalsIgnoreCase("property")) {
-			// look for map entry based on the name of the range
-			pme = config.getMapEntry(pi.typeInfo().name);
-			if (pme == null || !pme.hasParam() || !pme.getParam().equalsIgnoreCase("propertyByValueType")) {
-				return null;
+		RdfPropertyMapEntry pme = config.getPropertyMapEntry(pi);
+
+		if (pme != null) {
+			// The property shall be mapped via RdfPropertyMapEntry
+
+			// get QName
+			String qname;
+
+			if (pme.hasTarget()) {
+				qname = pme.getTarget();
+			} else {
+				// property to be dropped
+				qname = "sc:null";
 			}
+
+			String[] qnamePars = qname.split(":");
+			String prefix = qnamePars[0];
+			String refName = qnamePars[1];
+
+			// identify rdf namespace based upon prefix and standard namespaces
+			String rdfNs = config.fullNamespace(prefix);
+			String location = config.locationOfNamespace(rdfNs);
+
+			// also add import for the namespace
+			if (!qname.equalsIgnoreCase("sc:null")) {
+				addImport(rdfNs, location);
+			}
+
+			// return property, create if needed
+			String propAbout = computeReference(prefix, refName);
+			OntProperty p = refmodel.getOntProperty(propAbout);
+			if (p == null)
+				p = refmodel.createOntProperty(propAbout);
+			return p;
 		}
 
-		// get QName
-		String qname = pme.getTargetType();
-		
-		if (qname.isEmpty()) {
-			// property to be dropped
-			qname = "sc:null";
-		}
-
-		String[] qnamePars = qname.split(":");
-		String prefix = qnamePars[0];
-		String refName = qnamePars[1];
-
-		// identify rdf namespace based upon prefix and standard namespaces
-		String rdfNs = config.fullNamespace(prefix);
-		String location = config.locationOfNamespace(rdfNs);
-
-		// also add import for the namespace
-		if (!qname.equalsIgnoreCase("sc:null"))
-			addImport(rdfNs, location);
-
-		// return property, create if needed
-		String propAbout = computeReference(prefix, refName);
-		Property p = refmodel.getProperty(propAbout);
-		if (p==null)
-			p = refmodel.createProperty(propAbout);
-		return p;
-		
+		// the property is not mapped
+		return null;
 	}
 
 	public static String normalizedName(PropertyInfo pi) {
+		return normalizedPropertyName(pi.name());
+	}
+
+	public static String normalizedPropertyName(String name) {
+
+		// NOTE: using RULE_OWL_PROP_ISO191502_NAMING behavior as default
 
 		// ISO 19150-2owl:propertyName (part 2)
 		// =================================
 
-		String result = pi.name();
+		String result = name;
 
 		// no space characters
 		result = result.replaceAll(" ", "");
@@ -1116,10 +2556,10 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		 * 
 		 * other punctuation characters are replaced by underscore characters
 		 * 
-		 * According to
-		 * http://en.wikipedia.org/wiki/Regular_expression#POSIX_basic_and_extended
-		 * the POSIX [:punct:] character class has the following ASCII
-		 * punctuation characters: [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
+		 * According to http://en.wikipedia.org/wiki/Regular_expression#
+		 * POSIX_basic_and_extended the POSIX [:punct:] character class has the
+		 * following ASCII punctuation characters:
+		 * [][!"#$%&'()*+,./:;<=>?@\^_`{|}~-]
 		 * 
 		 * In Java this character class can be used in regular expressions via
 		 * \p{Punct}. We can omit specific characters in a regular expression
@@ -1141,124 +2581,444 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		return fileName;
 	}
 
-	private String prefLabel(Info i) {
-		String alias = i.aliasName();
-		if (alias != null && alias.length() > 0) {
-			return alias;
+	private void addConstraintDeclarations(OntResource r, Info i) {
+
+		List<Constraint> cons;
+
+		if (i instanceof ClassInfo) {
+			cons = ((ClassInfo) i).constraints();
+		} else if (i instanceof PropertyInfo) {
+			cons = ((PropertyInfo) i).constraints();
 		} else {
-			return i.name();
-		}
-	}
-
-	public Resource addInterface(ClassInfo ci) {
-		return addClassDefinition(ci);
-	}
-
-	public Resource addDatatype(ClassInfo ci) {
-		return addClassDefinition(ci);
-	}
-
-	public Resource addUnion(ClassInfo ci) {
-
-		if (finalized) {
-			this.result.addWarning(this, 3, ci.name());
-			return null;
+			return;
 		}
 
-		// create the Class <OWL>
-		OntClass c = ontmodel.createClass( computeReference(getPrefix(), normalizedName(ci)) );
-		
-		setLabelsAndAnnotations(c, ci);
-		
-		if (ci.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-			addConstraintDeclarations(c, ci);
-		}
+		if (cons.isEmpty())
+			return;
 
-		// assign stereotype information
-		addStereotypeInfo(c, ci);
+		if (i.matches(
+				OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_HUMAN_READABLE_TEXT_ONLY)) {
 
-		// TODO implement
-		result.addError(this, 14, ci.name());
-		
-		return c;
-	}
-
-	private void addConstraintDeclarations(Resource r, ClassInfo ci) {
-		List<Constraint> cons = ci.constraints();
-		if (cons != null && !cons.isEmpty()) {
-			for (Constraint c : cons) {
-				r.addProperty(ISO19150_2.constraint, c.name() + ": " + c.text());
+			if (i.matches(
+					OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_BY_CONSTRAINT_MAPPING)) {
+				result.addWarning(this, 29,
+						OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_BY_CONSTRAINT_MAPPING,
+						OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_HUMAN_READABLE_TEXT_ONLY);
 			}
-		}
-	}
 
-	private void addConstraintDeclarations(Resource r, PropertyInfo pi) {
-		List<Constraint> cons = pi.constraints();
-		if (cons != null && !cons.isEmpty()) {
 			for (Constraint c : cons) {
-				r.addProperty(ISO19150_2.constraint, c.text());
+
+				String text;
+
+				if (c instanceof OclConstraint) {
+					OclConstraint oclCon = (OclConstraint) c;
+					String[] comments = oclCon.comments();
+					comments = stripOclCommentMarkup(comments);
+					text = StringUtils.join(comments, " ");
+				} else {
+					text = c.text();
+				}
+				r.addProperty(ISO19150_2.constraint, c.name() + ": " + text);
 			}
-		}
-	}
 
-	public Resource addCodelist(ClassInfo ci) {
+		} else if (i.matches(
+				OWLISO19150.RULE_OWL_ALL_CONSTRAINTS_BY_CONSTRAINT_MAPPING)) {
 
-		if (finalized) {
-			this.result.addWarning(this, 3, ci.name());
-			return null;
-		}
-		
-		// code lists are usually managed outside of the application schema. If this
-		// schema conversion rule is active, we skip this classifier
-		if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL))
-			return null;
+			for (Constraint c : cons) {
 
-		String classURI = computeReference(getPrefix(), normalizedName(ci));
-		String schemeURI = getCodeNamespace() + normalizedName(ci);
+				ConstraintMapping cm = null;
 
-		// create the Class <OWL>
-		OntClass c = ontmodel.createClass( classURI );
-		
-		setLabelsAndAnnotations(c, ci);
+				if (c instanceof OclConstraint) {
 
-		if (ci.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-			addConstraintDeclarations(c, ci);
-		}
+					if (!config.hasConstraintMapping(ConstraintType.OCL)) {
+						result.addWarning(this, 30, "OCL");
+						cm = defaultConstraintMapping;
+					} else {
+						cm = config.getConstraintMapping(ConstraintType.OCL);
+					}
 
-		// assign stereotype information
-		addStereotypeInfo(c, ci);
+				} else if (c instanceof FolConstraint) {
 
-		c.addSuperClass(ontmodel.createResource(OWLISO19150.RDF_NS_W3C_SKOS+"Concept"));
+					if (!config.hasConstraintMapping(ConstraintType.FOL)) {
+						result.addWarning(this, 30, "FOL");
+						cm = defaultConstraintMapping;
+					} else {
+						cm = config.getConstraintMapping(ConstraintType.FOL);
+					}
 
-		// create ConceptScheme <SKOS>
-		OntResource cs = ontmodel.createOntResource(schemeURI);
-		cs.addRDFType(ontmodel.createResource(OWLISO19150.RDF_NS_W3C_SKOS+"ConceptScheme"));
-		setLabelsAndAnnotations(cs,ci);
-		cs.addProperty(DCTerms.isFormatOf, classURI);
+				} else {
+					// TextConstraint
+					if (!config.hasConstraintMapping(ConstraintType.TEXT)) {
+						result.addWarning(this, 30, "TEXT");
+						cm = defaultConstraintMapping;
+					} else {
+						cm = config.getConstraintMapping(ConstraintType.TEXT);
+					}
+				}
 
-		// now add the individual concept definitions
-		SortedMap<StructuredNumber, PropertyInfo> clPis = ci.properties();
+				String template = cm.getTemplate();
 
-		if (clPis != null && !clPis.isEmpty()) {
+				String doc = template;
 
-			for (PropertyInfo pi : clPis.values()) {
-				OntResource clv = ontmodel.createOntResource(schemeURI+ "/" + pi.name());
-				clv.addRDFType(ontmodel.createResource(OWLISO19150.RDF_NS_W3C_SKOS+"Concept"));
-				setLabelsAndAnnotations(clv,pi);
-				clv.addProperty(SKOS.inScheme, schemeURI);
+				Pattern pattern = Pattern.compile("\\[\\[([^\\[].*?)\\]\\]");
+				Matcher matcher = pattern.matcher(template);
 
-				if (pi.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-					addConstraintDeclarations(clv, pi);
+				StringBuilder builder = new StringBuilder();
+
+				int index = 0;
+				while (matcher.find()) {
+
+					String desc = matcher.group(1).trim();
+
+					/*
+					 * identify the constraint property from the field and get
+					 * value(s)
+					 */
+					List<String> values = new ArrayList<String>();
+					boolean descRecognized = true;
+
+					if (desc.equalsIgnoreCase("name")) {
+
+						values.add(c.name());
+
+					} else if (desc.equalsIgnoreCase("text")) {
+
+						String s = c.text();
+						if (s != null && !s.trim().isEmpty()) {
+							values.add(s);
+						}
+
+					} else if (desc.equalsIgnoreCase("status")) {
+
+						String s = c.status();
+						if (s != null && !s.trim().isEmpty()) {
+							values.add(s);
+						}
+
+					} else if (desc.equalsIgnoreCase("comment")) {
+
+						if (c instanceof OclConstraint) {
+							String[] s = ((OclConstraint) c).comments();
+							s = stripOclCommentMarkup(s);
+							if (s != null && s.length > 0) {
+								for (String ex : s) {
+									if (ex.trim().length() > 0) {
+										values.add(ex.trim());
+									}
+								}
+							}
+						}
+
+					} else {
+						/*
+						 * the field in the template does not identify a known
+						 * constraint property
+						 */
+						descRecognized = false;
+					}
+
+					/*
+					 * append the text from the template up until the current
+					 * find
+					 */
+					builder.append(doc.substring(index, matcher.start()));
+
+					if (descRecognized) {
+
+						if (values.isEmpty()) {
+							values.add(cm.getNoValue());
+						}
+
+						if (values.size() == 1) {
+
+							builder.append(values.get(0));
+
+						} else {
+
+							String connectedValues = StringUtils.join(values,
+									cm.getMultiValueConnectorToken());
+
+							builder.append(connectedValues);
+						}
+
+					} else {
+						// template field not recognized - put it back in
+						builder.append(matcher.group(0));
+					}
+
+					index = matcher.end();
+				}
+
+				// append any remaining text from the template
+				builder.append(doc.substring(index, doc.length()));
+
+				String target = cm.getTarget();
+				addNamespaceDeclaration(target);
+
+				String propertyIRI = computeReference(target);
+
+				/*
+				 * ensure that we import the ISO 19150-2 base ontology if we are
+				 * using the default template
+				 */
+				if (cm == this.defaultConstraintMapping) {
+					addImport(OWLISO19150.RDF_NS_ISO_19150_2,
+							config.locationOfNamespace(
+									OWLISO19150.RDF_NS_ISO_19150_2));
+				}
+
+				Property prop = ontmodel.createProperty(propertyIRI);
+
+				if (cm.getFormat() == ConstraintMapping.Format.LANG_STRING) {
+					r.addProperty(prop, builder.toString(),
+							owliso19150.getLanguage());
+				} else {
+					// cm.getFormat() == ConstraintMapping.Format.STRING
+					r.addProperty(prop, builder.toString());
 				}
 			}
 		}
-		return c;
+	}
+
+	/**
+	 * Removes any leading or trailing java comment markup; also trims the
+	 * resulting string(s).
+	 * 
+	 * @param comments
+	 * @return
+	 */
+	private String[] stripOclCommentMarkup(String[] comments) {
+
+		if (comments == null || comments.length == 0) {
+			return new String[] {};
+		} else {
+			List<String> res = new ArrayList<String>();
+			for (String c : comments) {
+				String tmp = c.trim();
+				if (tmp.startsWith("/*")) {
+					tmp = tmp.substring(2);
+				}
+				if (tmp.endsWith("*/")) {
+					tmp = tmp.substring(0, tmp.length() - 2);
+				}
+				tmp = tmp.trim();
+				res.add(tmp);
+			}
+
+			return res.toArray(new String[res.size()]);
+		}
+	}
+
+	/**
+	 * @param ci
+	 */
+	/**
+	 * @param ci
+	 */
+	public void addCodelist(ClassInfo ci) {
+
+		if (finalized) {
+
+			this.result.addWarning(this, 3, ci.name());
+
+		} else if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL) && !ci
+				.taggedValuesForTagList("codeList,vocabulary").isEmpty()) {
+
+			/*
+			 * the class has tagged value 'codeList' or 'vocabulary' and shall
+			 * be encoded under RULE_OWL_CLS_CODELIST_EXTERNAL
+			 */
+			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
+			MessageContext mc = result.addWarning(this, 41, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
+
+		} else if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)) {
+
+			this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
+
+			String classURI = computeReference(getPrefix(), normalizedName(ci));
+
+			/*
+			 * create the Class <OWL>; we are already in the correct
+			 * OntologyModel (the logic is in OWLISO19150.java)
+			 */
+			OntClass c = ontmodel.createClass(classURI);
+			this.resourceByClassInfo.put(ci, c);
+
+			applyDescriptorTargets(c, ci, DescriptorTarget.AppliesTo.CLASS);
+			addConstraintDeclarations(c, ci);
+			c.addSuperClass(SKOS.Concept);
+			addCustomSubClassOf(c, ci);
+
+			// now create the <OWL> individuals
+			OntologyModel ontForIndividuals = owliso19150
+					.computeRelevantOntologyForIndividuals(ci);
+			OntModel ontmodelIndi = ontForIndividuals.getOntologyModel();
+			ontmodelIndi.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
+			ontmodelIndi.setNsPrefix("dct", OWLISO19150.RDF_NS_DCT);
+
+			// create ConceptScheme <SKOS>
+			String schemeURI = ontForIndividuals.getRdfNamespace()
+					+ normalizedName(ci)
+					+ owliso19150.getSkosConceptSchemeSuffix();
+
+			Individual cs;
+
+			if (ci.matches(
+					OWLISO19150.RULE_OWL_CLS_CODELIST_191502_CONCEPTSCHEMESUBCLASS)) {
+
+				String css_name;
+				if (ci.taggedValuesForTag(
+						OWLISO19150.TV_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME).length > 0) {
+					css_name = ci.taggedValuesForTag(
+							OWLISO19150.TV_SKOS_CONCEPT_SCHEME_SUBCLASS_NAME)[0];
+				} else {
+					css_name = ontForIndividuals.getRdfNamespace()
+							+ normalizedName(ci)
+							+ owliso19150.getSkosConceptSchemeSubclassSuffix();
+				}
+				OntClass css = ontmodelIndi.createClass(css_name);
+				css.addSuperClass(SKOS.ConceptScheme);
+
+				cs = ontmodelIndi.createIndividual(schemeURI, css);
+
+			} else {
+
+				cs = ontmodelIndi.createIndividual(schemeURI,
+						SKOS.ConceptScheme);
+			}
+
+			cs.addProperty(DCTerms.isFormatOf, c);
+			applyDescriptorTargets(cs, ci,
+					DescriptorTarget.AppliesTo.CONCEPT_SCHEME);
+
+			// now add the individual concept definitions
+			SortedMap<StructuredNumber, PropertyInfo> clPis = ci.properties();
+
+			SortedMap<String, Individual> codesByUri = new TreeMap<String, Individual>();
+
+			SortedMap<String, Individual> codesByPropertyName = new TreeMap<String, Individual>();
+			// note: value may be null to indicate that no broader listed value
+			// is defined for a property
+			SortedMap<String, String> broaderListedValueByPropertyName = new TreeMap<String, String>();
+
+			String indiBaseURI = ontForIndividuals.getRdfNamespace()
+					+ normalizedName(ci);
+
+			for (PropertyInfo pi : clPis.values()) {
+
+				String clvUri = indiBaseURI + "/" + pi.name();
+				ontmodelIndi.setNsPrefix(this.prefix, this.rdfNamespace);
+				Individual clv = ontmodelIndi.createIndividual(clvUri, c);
+
+				codesByUri.put(clvUri, clv);
+
+				if (pi.matches(
+						OWLISO19150.RULE_OWL_PROP_CODE_BROADER_BY_BROADER_LISTED_VALUE)) {
+					codesByPropertyName.put(pi.name(), clv);
+					String broaderListedValue = pi
+							.taggedValue(OWLISO19150.TV_BROADER_LISTED_VALUE);
+					broaderListedValueByPropertyName.put(pi.name(),
+							broaderListedValue);
+				}
+
+				applyDescriptorTargets(clv, pi,
+						DescriptorTarget.AppliesTo.PROPERTY);
+				clv.addProperty(SKOS.inScheme, cs);
+			}
+
+			if (!broaderListedValueByPropertyName.isEmpty()) {
+
+				/*
+				 * RULE_OWL_PROP_CODE_BROADER_BY_BROADER_LISTED_VALUE is enabled
+				 */
+				for (Entry<String, String> e : broaderListedValueByPropertyName
+						.entrySet()) {
+
+					String piName = e.getKey();
+					String broaderListedValue = e.getValue();
+
+					Individual indi = codesByPropertyName.get(piName);
+
+					if (broaderListedValue == null) {
+
+						indi.addProperty(SKOS.topConceptOf, cs);
+
+					} else {
+
+						if (codesByPropertyName
+								.containsKey(broaderListedValue)) {
+
+							Individual broader = codesByPropertyName
+									.get(broaderListedValue);
+							indi.addProperty(SKOS.broader, broader);
+
+						} else {
+
+							MessageContext mc = result.addWarning(this, 38);
+							if (mc != null) {
+								mc.addDetail(this, 10001,
+										ci.property(piName).fullNameInSchema());
+							}
+							indi.addProperty(SKOS.topConceptOf, cs);
+						}
+					}
+				}
+			}
+
+			if (ci.matches(
+					OWLISO19150.RULE_OWL_CLS_CODELIST_191502_SKOS_COLLECTION)) {
+
+				String collectionURI = schemeURI + "Collection";
+
+				Individual collection = ontmodelIndi
+						.createIndividual(collectionURI, SKOS.Collection);
+
+				for (Individual code : codesByUri.values()) {
+					collection.addProperty(SKOS.member, code);
+				}
+			}
+
+			if (ci.category() == Options.ENUMERATION
+					&& !ci.properties().isEmpty() && ci.matches(
+							OWLISO19150.RULE_OWL_CLS_CODELIST_191502_OBJECTONEOFFORENUMERATION)) {
+
+				c.addProperty(OWL2.oneOf,
+						ontmodel.createList(codesByUri.values().iterator()));
+			}
+
+			if (!ci.properties().isEmpty() && ci.matches(
+					OWLISO19150.RULE_OWL_CLS_CODELIST_191502_DIFFERENTINDIVIDUALS)) {
+
+				ontmodelIndi.createAllDifferent(ontmodelIndi
+						.createList(codesByUri.values().iterator()));
+			}
+
+		} else {
+
+			// none of the code list encoding rules matches
+			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
+			MessageContext mc = result.addWarning(this, 41, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
+		}
 	}
 
 	private String computeReference(String prefix, String name) {
 
 		String rdfns = ontmodel.getNsPrefixURI(prefix);
 		return rdfns + name;
+	}
+
+	private String computeReference(String qname) {
+
+		String[] parts = qname.split(":");
+
+		String rdfns = ontmodel.getNsPrefixURI(parts[0]);
+		return rdfns + parts[1];
 	}
 
 	public Resource addEnumeration(ClassInfo ci) {
@@ -1269,30 +3029,30 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		}
 
 		// create the Datatype <RDFS>
-		OntResource e = ontmodel.createOntResource(computeReference(getPrefix(), normalizedName(ci)));
-		e.addRDFType(ontmodel.createResource(OWLISO19150.RDF_NS_W3C_RDFS+"Datatype"));
-		setLabelsAndAnnotations(e,ci);
+		OntResource e = ontmodel.createOntResource(
+				computeReference(getPrefix(), normalizedName(ci)));
 
-		if (ci.matches(OWLISO19150.RULE_OWL_ALL_CONSTRAINTS)) {
-			addConstraintDeclarations(e, ci);
-		}
+		e.addRDFType(ontmodel
+				.createResource(OWLISO19150.RDF_NS_W3C_RDFS + "Datatype"));
+
+		this.resourceByClassInfo.put(ci, e);
+
+		applyDescriptorTargets(e, ci, DescriptorTarget.AppliesTo.CLASS);
+		addConstraintDeclarations(e, ci);
 
 		// assign stereotype information
-		addStereotypeInfo(e, ci);
+		addCustomSubClassOf(e, ci);
 
 		SortedMap<StructuredNumber, PropertyInfo> enumPis = ci.properties();
 
-		if (enumPis != null && !enumPis.isEmpty()) {
-			/*
-			 * Comment 5 Canada: <owl:oneOf> list should be embeded in
-			 * <owl:equivalentClass> and <rdfs:Datatype> elements
-			 */
-			RDFList enums = ontmodel.createList();
+		if (!enumPis.isEmpty()) {
+
+			List<Literal> enums = new ArrayList<Literal>();
 			for (PropertyInfo pi : enumPis.values()) {
 				Literal en = ontmodel.createLiteral(pi.name());
-				enums = enums.cons(en);
+				enums.add(en);
 			}
-			e.addProperty(OWL2.oneOf, enums);
+			e.addProperty(OWL2.oneOf, ontmodel.createList(enums.iterator()));
 		}
 		return e;
 	}
@@ -1318,99 +3078,29 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		return path;
 	}
 
-	/**
-	 * @return the backPath
-	 */
-	public String getBackPath() {
-		return backPath;
-	}
-
-	/**
-	 * @return the mpackage
-	 */
-	public PackageInfo getPackage() {
-		return mpackage;
-	}
-
 	public OntModel getOntologyModel() {
 		return ontmodel;
 	}
 
 	public void addClass(ClassInfo ci) {
+
 		this.classInfos.add(ci);
 	}
 
-	private void validate() {
-		ValidityReport r = ontmodel.validate();
-		if (r!=null && !r.isValid())
-			result.addError(this, 12, name, r.toString());
-	}
-	
-	@Override
-	public void print(String outputDirectory, ShapeChangeResult r) {
-		validate();
-		
-		String outDirForOntology = outputDirectory + getPath();
-
-		// Check whether we can use the output directory
-		File outputDirectoryFile = new File(outDirForOntology);
-
-		boolean exi = outputDirectoryFile.exists();
-		if (!exi) {
-			outputDirectoryFile.mkdirs();
-			exi = outputDirectoryFile.exists();
-		}
-		boolean dir = outputDirectoryFile.isDirectory();
-		boolean wrt = outputDirectoryFile.canWrite();
-		boolean rea = outputDirectoryFile.canRead();
-
-		if (!exi || !dir || !wrt || !rea) {
-			r.addFatalError(this, 12, outDirForOntology);
-			return;
-		}
-
-		/*
-		 * Uses OutputStreamWriter instead of FileWriter to set character
-		 * encoding
-		 */
-
-		String fname = outDirForOntology + "/" + getFileName();
-
-		File outFile = new File(outputDirectoryFile, getFileName());
-
-		try {
-
-			String path = new File(fname).getCanonicalPath();
-			r.addDebug(this, 20000, path);
-
-			OutputStream fout = new FileOutputStream(outFile);
-			OutputStream bout = new BufferedOutputStream(fout);
-			OutputStreamWriter outputWriter = new OutputStreamWriter(bout, "UTF-8");
-		
-			ontmodel.write(outputWriter ,"TTL");			
-			// ontmodel.write(outputWriter ,"RDF/XML-ABBREV");			
-			r.addResult(owliso19150.getTargetID(), outDirForOntology, getFileName(), getName());
-			
-		} catch (Exception e) {
-			r.addError(this, 5, fname);
-			e.printStackTrace(System.err);
-		}
-	}
-	
 	public Resource getResource(ClassInfo ci) {
-		Resource r = ontmodel.getResource(computeReference(getPrefix(),normalizedName(ci)));
-		return r;
+		return this.resourceByClassInfo.get(ci);
+	}
+
+	public OntProperty getOntProperty(PropertyInfo pi) {
+		OntProperty p = this.ontPropertyByPropertyInfo.get(pi);
+		return p;
 	}
 
 	/**
-	 * This is the message text provision proper. It returns a message for a
-	 * number.
-	 * 
-	 * @param mnr
-	 *            Message number
-	 * @return Message text or null
+	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
 	 */
-	protected String messageText(int mnr) {
+	public String message(int mnr) {
+
 		switch (mnr) {
 		case 1:
 			return "ParserConfigurationException when creating document for package '$1$'.";
@@ -1423,7 +3113,7 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		case 6:
 			return "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
 		case 7:
-			return "Could not find a type mapping and also no class within the model to map class '$1$'. Using owl:Class.";
+			return "??Could not find a type mapping and also no class within the model to map class '$1$'.";
 		case 8:
 			return "No stereotype mapping defined for class '$1$' (a $2$).";
 		case 9:
@@ -1433,41 +3123,82 @@ public class OntologyModel implements OntologyDocument, MessageSource {
 		case 11:
 			return "In ontology '$1$' the prefix '$2$' is used for multiple URIs: '$3$' and '$4$'.";
 		case 12:
-			return "Ontology '$1$' is not valid: $2$";
+			return "";
 		case 13:
 			return "Inverse property of '$1$' not found. The owl:inverseOf property has not been added.";
 		case 14:
-			return "Union data types are not implemented. Only placeholder implemented for '$1$'.";
+			return "??Type '$1$' is not covered by an RdfTypeMapEntry and also not contained in one of the schemas selected for processing. Cannot map or create the class.";
 		case 15:
-			return "Association classes are not implemented. Association class '$1$' not represented in the ontology.";
+			return "??Association classes are not supported by this target. Association class '$1$' not represented in the ontology. Use the AssociationClassMapper transformation to convert association classes before executing the ontology target.";
 		case 16:
-			return "Property '$1$' has inconsistent ranges: '$2$' and '$3$'. The rdfs:range property has been dropped.";
+			return "Property mapping with potentially inconsistent ranges. Type of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
 		case 17:
-			return "Property '$1$' may have inconsistent definitions: '$2$' and '$3$'. Please clean up the RDF vocabulary.";
+			return "Property mapping with potentially inconsistent definitions. Definition of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
 		case 18:
-			return "Property '$1$' may have inconsistent descriptions: '$2$' and '$3$'. Please clean up the RDF vocabulary.";
+			return "Property mapping with potentially inconsistent descriptions. Description of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
 		case 19:
-			return "Property '$1$' has inconsistent labels: '$2$' and '$3$'. Please clean up the RDF vocabulary.";
+			return "Property mapping with potentially inconsistent alias names. Alias of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
 		case 20:
 			return "Property '$1$' has been dropped as specified in the configuration.";
 		case 21:
 			return "Property '$1$' has been mapped to '$2$' as specified in the configuration.";
 		case 22:
-			return "Class '$1$' has been mapped to '$2$' as specified in the configuration.";
+			return "??Class '$1$' has been mapped to '$2$' as specified in the configuration.";
 		case 23:
-			return "Property '$1$' has inconsistent ranges: '$2$' and '$3$'. One is a datatype and one a class.";
+			return "Property mapping with inconsistent ranges: '$2$' and '$3$'. One is a datatype and one a class.";
 		case 24:
 			return "Code list '$1$' is managed separately and the range is represented by the class '$2$'.";
 		case 25:
-			return "Property '$1$' has inconsistent ranges: '$2$' and '$3$'. A union has been created. Please review the RDF vocabulary.";
-		case 10000:
-			return "--- Context - class: '$1$'";
-		case 10001:
-			return "--- Context - class: '$1$', property: '$2$'";
-		case 20000:
-			return "Writing ontology to file at $1$";
+			return "Cannot compare property specifications, because property 2 was not found in the model.";
+		case 26:
+			return "Rule $1$ is in effect, but tagged value '$2$' was not found. Ignoring the rule for computing the ontology name of package '$3$'.";
+		case 27:
+			return "The encoding rule does not contain a specific rule for creating the ontology name. Using "
+					+ OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_ISO191502
+					+ " to construct the ontology name for '$1$'.";
+		case 28:
+			return "Could not identify a mapping for the subtype '$1$' of class '$2$'. Cannot create a disjoint classes axiom for this subtype.";
+		case 29:
+			return "??The encoding rule contains both '$1$' and '$2$', which are mutually exclusive. Using '$2$'.";
+		case 30:
+			return "??No constraint mapping is defined for constraints of type '$1$'. Using defaults (template='[[name]]: [[text]]', noValue='', multiValueConnectorToken=' ').";
+		case 31:
+			return "Property shall be mapped to global property '$1$' in schema '$2$', but no applicable ontology was found. The property cannot be mapped.";
+		case 32:
+			return "Universal quantification not created for property, because an RdfPropertyMapEntry is defined for it and the map entry does not declare a specific range.";
+		case 33:
+			return "Qualified cardinality restrictions cannot be created for property, because no specific range is known. Using a unqualified cardinality restrictions instead.";
+		case 34:
+			return "Property '$1$' is mapped to global property '$2$' as specified in the configuration.";
+		case 35:
+			return "Range for property is undefined. This is ok if the property is mapped to an RDF/OWL property with global range declaration. Universal quantification is not created for this property.";
+		case 36:
+			return "Property shall be mapped to global property '$1$' in schema '$2$', but this global property could not be found. The range will be computed based upon the given property.";
+		case 37:
+			return "??No RdfTypeMapEntry is defined for the value type '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
+		case 38:
+			return "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
+		case 39:
+			return "??No namespace configured for namespace abbreviation '$1$'. Cannot create an import and namespace declaration.";
+		case 40:
+			return "??The default type implementation is '$1$'.";
+		case 41:
+			return "??Default type implementation is used to implement type '$1$'.";
+		case 42:
+			return "Default type implementation is used as range of property '$1$'.";
 
+		case 10000:
+			return "--- Context - Class: $1$";
+		case 10001:
+			return "--- Context - Property: $1$";
+		case 10003:
+			return "--- Context - Property 1: $1$";
+		case 10004:
+			return "--- Context - Property 2: $1$";
+
+		default:
+			return "(Unknown message)";
 		}
-		return null;
 	}
+
 }

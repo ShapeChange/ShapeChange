@@ -1214,7 +1214,10 @@
         <xsl:value-of select="$fc.UnionType"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="$type"/>
+        <!--<xsl:value-of select="$type"/>-->
+        <xsl:call-template name="replace_ins">
+          <xsl:with-param name="string" select="$type"/>
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

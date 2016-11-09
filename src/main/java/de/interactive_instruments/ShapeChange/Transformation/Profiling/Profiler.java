@@ -58,6 +58,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericFolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
@@ -678,7 +679,7 @@ public class Profiler implements Transformer {
 					.statusChanged(STATUS_POSTPROCESSING_REMOVERESIDUALTYPES);
 
 			// key: classid
-			HashSet<GenericClassInfo> genCis = genModel.selectedSchemaClasses();
+			SortedSet<GenericClassInfo> genCis = genModel.selectedSchemaClasses();
 
 			if (genCis != null && !genCis.isEmpty()) {
 
@@ -1072,7 +1073,9 @@ public class Profiler implements Transformer {
 			for (Constraint con : constraints) {
 
 				if (!(con instanceof GenericTextConstraint)
-						&& !(con instanceof GenericOclConstraint)) {
+						&& !(con instanceof GenericOclConstraint)
+					    && !(con instanceof GenericFolConstraint)) {
+					
 					log.addError(null, 20208, con.name(),
 							con.contextModelElmt().name());
 					continue;

@@ -73,6 +73,7 @@ public class Sbvr2FolParser implements MessageSource {
 	private Model model;
 
 	private SbvrParserHelper helper;
+	private boolean logParsingErrorsAsWarnings = false;
 
 	public Sbvr2FolParser(Model m) {
 
@@ -95,6 +96,12 @@ public class Sbvr2FolParser implements MessageSource {
 		// System.out.println("verbs.add(\"" + verb + "\");");
 		// }
 
+	}
+
+	public Sbvr2FolParser(Model m, boolean logParsingErrorsAsWarnings) {
+
+		this(m);
+		this.logParsingErrorsAsWarnings = logParsingErrorsAsWarnings;
 	}
 
 	/**
@@ -170,9 +177,16 @@ public class Sbvr2FolParser implements MessageSource {
 				if (folExpr == null) {
 
 					if (folVisitor.hasErrors()) {
+
 						parsingResult.addErrors(folVisitor.getErrors());
+
 					} else {
-						result.addError(this, 1);
+
+						if (logParsingErrorsAsWarnings) {
+							result.addWarning(this, 1);
+						} else {
+							result.addError(this, 1);
+						}
 					}
 
 				} else {
@@ -196,29 +210,50 @@ public class Sbvr2FolParser implements MessageSource {
 
 			TextConstraint con = parsingResult.getConstraint();
 
-			result.addInfo("SBVR constraint "
-					+ con.name()
-					+ ": "
-					+ con.text()
-					+ (con.contextModelElmt() instanceof ClassInfo ? " (on class '"
-							+ con.contextModelElmt().name()
-							+ "' in package '"
-							+ ((ClassInfo) con.contextModelElmt()).pkg().name()
-							+ ")"
-							: ""));
-
 			if (parsingResult.getFirstOrderLogicExpression() != null) {
-				result.addInfo(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
+				result.addDebug(
+						"SBVR constraint " + con.name() + ": " + con.text()
+								+ (con.contextModelElmt() instanceof ClassInfo
+										? " (on class '"
+												+ con.contextModelElmt().name()
+												+ "' in package '"
+												+ ((ClassInfo) con
+														.contextModelElmt())
+																.pkg().name()
+												+ ")"
+										: ""));
+				result.addDebug(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
 						+ parsingResult.getFirstOrderLogicExpression()
 								.toString());
+
 			} else {
+
 				TreeMap<String, List<SbvrErrorInfo>> errors = parsingResult
 						.getErrors();
 
 				if (!errors.isEmpty()) {
 
+					String message = "SBVR constraint " + con.name() + ": "
+							+ con.text()
+							+ (con.contextModelElmt() instanceof ClassInfo
+									? " (on class '"
+											+ con.contextModelElmt().name()
+											+ "' in package '"
+											+ ((ClassInfo) con
+													.contextModelElmt()).pkg()
+															.name()
+											+ ")"
+									: "");
+
+					if (logParsingErrorsAsWarnings) {
+						result.addWarning(message);
+					} else {
+						result.addError(message);
+					}
+
 					for (List<SbvrErrorInfo> ei : errors.values()) {
-						SbvrUtil.printErrors(ei, con.text(), result);
+						SbvrUtil.printErrors(ei, con.text(), result,
+								logParsingErrorsAsWarnings);
 						// printErrors(ei, con.text());
 					}
 				}
@@ -232,38 +267,6 @@ public class Sbvr2FolParser implements MessageSource {
 			}
 		}
 	}
-
-	// private void printErrors(List<SbvrErrorInfo> errors, String sbvrRuleText)
-	// {
-	//
-	// for (SbvrErrorInfo err : errors) {
-	//
-	// result.addError(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
-	// + err.getErrorCategory() + ": " + err.getErrorMessage());
-	//
-	// if (err.hasOffendingTextInfo()) {
-	//
-	// result.addError(SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS
-	// + SbvrConstants.RULE_MESSAGE_PREFIX + sbvrRuleText);
-	//
-	// StringBuilder sb = new StringBuilder();
-	//
-	// int start = err.getOffendingTextStartIndex();
-	// int stop = err.getOffendingTextStopIndex();
-	//
-	// for (int i = 0; i < start
-	// + SbvrConstants.INDENTATION_FOR_MESSAGE_DETAILS.length()
-	// + SbvrConstants.RULE_MESSAGE_PREFIX.length(); i++)
-	// sb.append(" ");
-	//
-	// if (start >= 0 && stop >= 0) {
-	// for (int i = start; i <= stop; i++)
-	// sb.append("^");
-	// }
-	// result.addError(sb.toString());
-	// }
-	// }
-	// }
 
 	@Override
 	public String message(int mnr) {

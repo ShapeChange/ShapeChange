@@ -158,7 +158,6 @@ public class GenericModel extends ModelImpl {
 			selectedSchemaPackageIds.add(selectedSchemaPackage.id());
 		}
 
-		// for (PackageInfo piToCreate : schemaArr) {
 		for (PackageInfo piToCreate : model.packages()) {
 
 			// process the schema, recursively drilling down to all child
@@ -359,29 +358,8 @@ public class GenericModel extends ModelImpl {
 			if (ai == null || genAssociationInfosById.containsKey(ai.id()))
 				continue;
 
-			GenericAssociationInfo genAi = new GenericAssociationInfo();
-
-			// set properties required by Info interface
-			genAi.setOptions(ai.options());
-			genAi.setResult(ai.result());
-			genAi.setModel(this);
-			genAi.setId(ai.id());
-			genAi.setGlobalId(ai.globalId());
-			genAi.setTaggedValues(ai.taggedValuesAll());
-			genAi.setName(ai.name());
-			genAi.setAliasName(ai.aliasName());
-			genAi.setDefinition(ai.definition());
-			genAi.setDescription(ai.description());
-			genAi.setPrimaryCode(ai.primaryCode());
-			genAi.setLanguage(ai.language());
-			genAi.setLegalBasis(ai.legalBasis());
-			genAi.setDataCaptureStatements(ai.dataCaptureStatements());
-			genAi.setExamples(ai.examples());
-			genAi.setStereotypes(ai.stereotypes());
-
-			genAi.setEnd1(ai.end1());
-			genAi.setEnd2(ai.end2());
-
+			GenericAssociationInfo genAi = createCopy(ai,ai.id());
+			
 			// ensure that generic representations of association end properties
 			// are created as well
 			if (!genPropertiesById.containsKey(ai.end1().id())
@@ -404,8 +382,6 @@ public class GenericModel extends ModelImpl {
 				additionalPropsFromAssociationEnds.put(genEnd2Prop.id(),
 						genEnd2Prop);
 			}
-
-			genAi.setAssocClass(ai.assocClass());
 
 			genAssociationInfosById.put(genAi.id(), genAi);
 		}
@@ -1850,68 +1826,54 @@ public class GenericModel extends ModelImpl {
 				}
 
 				if (removeAssociation) {
-					// remove the association, both properties and any
-					// association class
-					GenericClassInfo associationClass = null;
-					ClassInfo assocClass = association.assocClass();
-					if (assocClass != null) {
-						if (assocClass instanceof GenericClassInfo) {
-							associationClass = (GenericClassInfo) association
-									.assocClass();
-						} else {
-							result.addError(null, 30315, assocClass.name());
-						}
-					}
-
-					if (associationClass != null) {
-
-						this.remove(associationClass);
-						// this also takes care of the association itself and
-						// its properties
-
-					} else {
-
-						// remove both properties
-
-						if (genPi.inClass() instanceof GenericClassInfo) {
-
-							/*
-							 * NOTE for cast: the cast should be safe, because
-							 * genPi is a GenericPropertyInfo which always
-							 * belongs to a GenericClassInfo
-							 */
-							((GenericClassInfo) genPi.inClass())
-									.removePropertyById(genPi.id());
-							this.genPropertiesById.remove(genPi.id());
-
-						} else {
-							result.addError(null, 30313, genPi.inClass().name(),
-									genPi.name);
-						}
-
-						if (other instanceof GenericPropertyInfo) {
-
-							if (other.inClass() instanceof GenericClassInfo) {
-
-								((GenericClassInfo) other.inClass())
-										.removePropertyById(other.id());
-							} else {
-								result.addError(null, 30313,
-										genPi.inClass().name(), genPi.name);
-							}
-
-							this.genPropertiesById.remove(other.id());
-
-						} else {
-							result.addError(null, 30312, genPi.inClass().name(),
-									other.name());
-						}
-
-						// remove the association
-						this.genAssociationInfosById.remove(association.id());
-					}
+					remove(association);
 				}
 			}
+		}
+	}
+
+	public void remove(AssociationInfo ai) {
+
+		// remove the association, both properties and any
+		// association class
+
+		GenericClassInfo associationClass = null;
+		ClassInfo assocClass = ai.assocClass();
+
+		if (assocClass != null) {
+			/*
+			 * NOTE: cast should be safe because generic model is now complete
+			 * copy of the model
+			 */
+			associationClass = (GenericClassInfo) ai.assocClass();
+		}
+
+		if (associationClass != null) {
+
+			this.remove(associationClass);
+			// this also takes care of the association itself and
+			// its properties
+
+		} else {
+
+			// remove both properties
+
+			PropertyInfo end1 = ai.end1();
+			PropertyInfo end2 = ai.end2();
+
+			/*
+			 * NOTE: casts should be safe because generic model is now complete
+			 * copy of the model
+			 */
+
+			((GenericClassInfo) end1.inClass()).removePropertyById(end1.id());
+			this.genPropertiesById.remove(end1.id());
+
+			((GenericClassInfo) end2.inClass()).removePropertyById(end2.id());
+			this.genPropertiesById.remove(end2.id());
+
+			// remove the association
+			this.genAssociationInfosById.remove(ai.id());
 		}
 	}
 
@@ -2357,7 +2319,7 @@ public class GenericModel extends ModelImpl {
 
 		// update in property type info
 		for (GenericPropertyInfo genPi : getGenProperties().values()) {
-			if (genPi.typeInfo().name.equals(oldName)) {
+			if (genPi.typeInfo().id.equals(genCi.id())) {
 				genPi.typeInfo().name = newName;
 			}
 		}
@@ -2417,9 +2379,9 @@ public class GenericModel extends ModelImpl {
 	 * @return a set with all classes that belong to selected schemas; can be
 	 *         empty but not <code>null</code>.
 	 */
-	public HashSet<GenericClassInfo> selectedSchemaClasses() {
+	public SortedSet<GenericClassInfo> selectedSchemaClasses() {
 
-		HashSet<GenericClassInfo> res = new HashSet<GenericClassInfo>();
+		SortedSet<GenericClassInfo> res = new TreeSet<GenericClassInfo>();
 
 		for (GenericPackageInfo selectedSchema : selectedSchemas()) {
 
@@ -2442,11 +2404,11 @@ public class GenericModel extends ModelImpl {
 	 * @return a set with all properties that belong to the classes from
 	 *         selected schemas; can be empty but not <code>null</code>.
 	 */
-	public HashSet<GenericPropertyInfo> selectedSchemaProperties() {
+	public SortedSet<GenericPropertyInfo> selectedSchemaProperties() {
 
-		HashSet<GenericClassInfo> selCis = this.selectedSchemaClasses();
+		SortedSet<GenericClassInfo> selCis = this.selectedSchemaClasses();
 
-		HashSet<GenericPropertyInfo> res = new HashSet<GenericPropertyInfo>();
+		SortedSet<GenericPropertyInfo> res = new TreeSet<GenericPropertyInfo>();
 
 		for (GenericClassInfo selCi : selCis) {
 
@@ -2473,12 +2435,12 @@ public class GenericModel extends ModelImpl {
 	 * @return a set with all associations that connect at least one class from
 	 *         the selected schemas; can be empty but not <code>null</code>.
 	 */
-	public HashSet<GenericAssociationInfo> selectedSchemaAssociations() {
+	public SortedSet<GenericAssociationInfo> selectedSchemaAssociations() {
 
-		HashSet<GenericPropertyInfo> selGenPis = this
+		SortedSet<GenericPropertyInfo> selGenPis = this
 				.selectedSchemaProperties();
 
-		HashSet<GenericAssociationInfo> res = new HashSet<GenericAssociationInfo>();
+		SortedSet<GenericAssociationInfo> res = new TreeSet<GenericAssociationInfo>();
 
 		for (GenericPropertyInfo genPi : selGenPis) {
 

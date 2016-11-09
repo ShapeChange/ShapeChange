@@ -12,38 +12,6 @@
     <versionNumber>7.0.2</versionNumber>
     <taggedValues></taggedValues>
   </ApplicationSchema>
-  <Package id="_P651">
-    <name>AAA Basisschema</name>
-    <definition>Das AAA Basisschema ist die Basis für die Modellierung  fachspezifischer Anwendungen. Es stellt darüber hinaus alle Eigenschaften der AFIS-ALKIS-ATKIS-Daten dar, die einen Einfluss auf den Datenaustausch haben. Es ist deshalb erforderlich, die AFIS - ALKIS und ATKIS Fachobjekte als Subklassen von Klassen des  AAA Basisschemas zu definieren. Die Trennung des Basisschemas vom Schema für die Versionierung/Historisierung hat den Vorteil, dass alle fachlichen Eigenschaften ausgedrückt werden können, ohne dass die Modellierung von dem (ohnehin immer gleichen) Modell der Versionierung und Historisierung belastet wird.</definition>
-    <parent idref="_P483"></parent>
-  </Package>
-  <Package id="_P652">
-    <name>AAA_Basisklassen</name>
-    <definition>Das Paket AAA_Basisklassen enthält die grundlegenden Klassen und Datentypen zum Aufbau der fachspezifischen Modelle der AdV. Es stellt damit die gemeinsame Modellierung von AFIS, ALKIS und ATKIS sicher.</definition>
-    <parent idref="_P651"></parent>
-  </Package>
-  <Package id="_P653">
-    <name>AAA_GemeinsameGeometrie</name>
-    <definition>Das Paket "AAA_GemeinsameGeometrie" stellt Basisklassen für Fachobjekte (Features) zur Verfügung, deren Geometrie aus Linien und Flächen bestehen, die sich jeweils ihre Punkt-/Liniengeometrie teilen. Dies wird durch Verwendung des genormten Anwendungsschemas "SimpleTopology" erreicht, das Fachobjekte topologischen Themen zuordnet, innerhalb derer die Geometrie gemeinsam genutzt wird. Daneben werden die Eigenschaften des gegenüber der Norm erweiterten AAA_SpatialSchema genutzt, das zusätzlich das Konstrukt des "AA_PunktLinienthemas" zur Verfügung stellt. Dies ist die Basis zur Definition der Klassen AG_ObjektMitGemeinsamerGeometrie, AG_Punktobjekt, AG_Linienobjekt und AG_Flaechenobjekt, die  sich Linien- und Punktgeometrie teilen. Diese Basisklassen sollen als Basis raumbezogener Objektarten mit gemeinsamer Geometrie verwendet werden. (wie es z.B. bisher in ALK und ATKIS üblich war.)</definition>
-    <parent idref="_P651"></parent>
-  </Package>
-  <Package id="_P660">
-    <name>AAA_Spatial Schema</name>
-    <definition>Dieses Paket fasst alle Ergänzungen an den von ISO genormten Klassen zusammen.</definition>
-    <parent idref="_P651"></parent>
-  </Package>
-  <Package id="_P661">
-    <name>AAA_Unabhaengige Geometrie</name>
-    <definition>Das Paket AAA_Unabhängige Geometrie stellt Basisklassen für Fachobjekte (Features) zur Verfügung, deren Geometrie aus voneinander unabhängigen Punkten, Linien und Flächen bestehen. Diese Basisklassen sollen als Basis raumbezogener Objektarten mit unabhängiger Geometrie verwendet werden. (z.B. Präsentationsobjekte)</definition>
-    <parent idref="_P651"></parent>
-  </Package>
-  <Package id="_P663">
-    <name>Codelisten</name>
-    <definition>Codelisten repräsentieren Wertebereiche, die im Anwendungsschema nicht abschließend beschrieben werden können, da sie gegebenenfalls länderspezifisch erweitert werden müssen.</definition>
-    <definition></definition>
-    <definition>Achtung: Die hier angegebenen Werte definieren den aktuell bekannten Wertebereich, der sich ändern kann, ohne dass dies im Anwendungsschema angepasst werden muss.</definition>
-    <parent idref="_P651"></parent>
-  </Package>
   <Package id="_P1240">
     <name>AFIS-ALKIS-ATKIS Fachschema</name>
     <definition>AFIS-ALKIS-ATKIS Objektartenkatalog für die Bestandsdaten.</definition>
@@ -143,6 +111,38 @@
     <definition>Die nachfolgende Auflistung der Objektarten ist abhängig von der gewählten Modellart.</definition>
     <code>42000</code>
     <parent idref="_P1282"></parent>
+  </Package>
+  <Package id="_P651">
+    <name>AAA Basisschema</name>
+    <definition>Das AAA Basisschema ist die Basis für die Modellierung  fachspezifischer Anwendungen. Es stellt darüber hinaus alle Eigenschaften der AFIS-ALKIS-ATKIS-Daten dar, die einen Einfluss auf den Datenaustausch haben. Es ist deshalb erforderlich, die AFIS - ALKIS und ATKIS Fachobjekte als Subklassen von Klassen des  AAA Basisschemas zu definieren. Die Trennung des Basisschemas vom Schema für die Versionierung/Historisierung hat den Vorteil, dass alle fachlichen Eigenschaften ausgedrückt werden können, ohne dass die Modellierung von dem (ohnehin immer gleichen) Modell der Versionierung und Historisierung belastet wird.</definition>
+    <parent idref="_P483"></parent>
+  </Package>
+  <Package id="_P652">
+    <name>AAA_Basisklassen</name>
+    <definition>Das Paket AAA_Basisklassen enthält die grundlegenden Klassen und Datentypen zum Aufbau der fachspezifischen Modelle der AdV. Es stellt damit die gemeinsame Modellierung von AFIS, ALKIS und ATKIS sicher.</definition>
+    <parent idref="_P651"></parent>
+  </Package>
+  <Package id="_P653">
+    <name>AAA_GemeinsameGeometrie</name>
+    <definition>Das Paket "AAA_GemeinsameGeometrie" stellt Basisklassen für Fachobjekte (Features) zur Verfügung, deren Geometrie aus Linien und Flächen bestehen, die sich jeweils ihre Punkt-/Liniengeometrie teilen. Dies wird durch Verwendung des genormten Anwendungsschemas "SimpleTopology" erreicht, das Fachobjekte topologischen Themen zuordnet, innerhalb derer die Geometrie gemeinsam genutzt wird. Daneben werden die Eigenschaften des gegenüber der Norm erweiterten AAA_SpatialSchema genutzt, das zusätzlich das Konstrukt des "AA_PunktLinienthemas" zur Verfügung stellt. Dies ist die Basis zur Definition der Klassen AG_ObjektMitGemeinsamerGeometrie, AG_Punktobjekt, AG_Linienobjekt und AG_Flaechenobjekt, die  sich Linien- und Punktgeometrie teilen. Diese Basisklassen sollen als Basis raumbezogener Objektarten mit gemeinsamer Geometrie verwendet werden. (wie es z.B. bisher in ALK und ATKIS üblich war.)</definition>
+    <parent idref="_P651"></parent>
+  </Package>
+  <Package id="_P660">
+    <name>AAA_Spatial Schema</name>
+    <definition>Dieses Paket fasst alle Ergänzungen an den von ISO genormten Klassen zusammen.</definition>
+    <parent idref="_P651"></parent>
+  </Package>
+  <Package id="_P661">
+    <name>AAA_Unabhaengige Geometrie</name>
+    <definition>Das Paket AAA_Unabhängige Geometrie stellt Basisklassen für Fachobjekte (Features) zur Verfügung, deren Geometrie aus voneinander unabhängigen Punkten, Linien und Flächen bestehen. Diese Basisklassen sollen als Basis raumbezogener Objektarten mit unabhängiger Geometrie verwendet werden. (z.B. Präsentationsobjekte)</definition>
+    <parent idref="_P651"></parent>
+  </Package>
+  <Package id="_P663">
+    <name>Codelisten</name>
+    <definition>Codelisten repräsentieren Wertebereiche, die im Anwendungsschema nicht abschließend beschrieben werden können, da sie gegebenenfalls länderspezifisch erweitert werden müssen.</definition>
+    <definition></definition>
+    <definition>Achtung: Die hier angegebenen Werte definieren den aktuell bekannten Wertebereich, der sich ändern kann, ohne dass dies im Anwendungsschema angepasst werden muss.</definition>
+    <parent idref="_P651"></parent>
   </Package>
   <FeatureType id="_C4789">
     <name>AA_Fachdatenobjekt</name>
@@ -4659,867 +4659,6 @@
     <type>Feature Type</type>
     <taggedValues></taggedValues>
   </FeatureType>
-  <Value id="_A4796_11737">
-    <label>LiegenschaftskatasterModell</label>
-    <code>DLKM</code>
-  </Value>
-  <Value id="_A4796_11738">
-    <label>KatasterkartenModell500</label>
-    <code>DKKM500</code>
-  </Value>
-  <Value id="_A4796_11739">
-    <label>KatasterkartenModell1000</label>
-    <code>DKKM1000</code>
-  </Value>
-  <Value id="_A4796_11740">
-    <label>KatasterkartenModell2000</label>
-    <code>DKKM2000</code>
-  </Value>
-  <Value id="_A4796_11741">
-    <label>KatasterkartenModell5000</label>
-    <code>DKKM5000</code>
-  </Value>
-  <Value id="_A4796_11742">
-    <label>BasisLandschaftsModell</label>
-    <code>Basis-DLM</code>
-  </Value>
-  <Value id="_A4796_11743">
-    <label>LandschaftsModell50</label>
-    <code>DLM50</code>
-  </Value>
-  <Value id="_A4796_11744">
-    <label>LandschaftsModell250</label>
-    <code>DLM250</code>
-  </Value>
-  <Value id="_A4796_11745">
-    <label>LandschaftsModell1000</label>
-    <code>DLM1000</code>
-  </Value>
-  <Value id="_A4796_11746">
-    <label>TopographischeKarte10</label>
-    <code>DTK10</code>
-  </Value>
-  <Value id="_A4796_11747">
-    <label>TopographischeKarte25</label>
-    <code>DTK25</code>
-  </Value>
-  <Value id="_A4796_11748">
-    <label>TopographischeKarte50</label>
-    <code>DTK50</code>
-  </Value>
-  <Value id="_A4796_11749">
-    <label>TopographischeKarte100</label>
-    <code>DTK100</code>
-  </Value>
-  <Value id="_A4796_11750">
-    <label>TopographischeKarte250</label>
-    <code>DTK250</code>
-  </Value>
-  <Value id="_A4796_11751">
-    <label>TopographischeKarte1000</label>
-    <code>DTK1000</code>
-  </Value>
-  <Value id="_A4796_11752">
-    <label>Festpunktmodell</label>
-    <code>DFGM</code>
-  </Value>
-  <Value id="_A4796_11753">
-    <label>DigitalesHoehenmodell</label>
-    <code>DHM</code>
-  </Value>
-  <Value id="_A4796_11754">
-    <label>LevelOfDetail1</label>
-    <code>LoD1</code>
-  </Value>
-  <Value id="_A4796_11755">
-    <label>LevelOfDetail2</label>
-    <code>LoD2</code>
-  </Value>
-  <Value id="_A4796_11756">
-    <label>LevelOfDetail3</label>
-    <code>LoD3</code>
-  </Value>
-  <Value id="_A4894_11944">
-    <label>Abgabe von Flurstücken an eine andere Katasterbehörde</label>
-    <code>010306</code>
-  </Value>
-  <Value id="_A4894_11945">
-    <label>Abschreibung</label>
-    <code>060100</code>
-  </Value>
-  <Value id="_A4894_11946">
-    <label>Abschreibung auf bestehendes Buchungsblatt</label>
-    <code>060102</code>
-  </Value>
-  <Value id="_A4894_11947">
-    <label>Abschreibung auf neues Buchungsblatt</label>
-    <code>060101</code>
-  </Value>
-  <Value id="_A4894_11948">
-    <label>Abschreibung eines Flurstückes (Gebietsreform)</label>
-    <code>010802</code>
-  </Value>
-  <Value id="_A4894_11949">
-    <label>Ändern in Verzeichnissen ohne Grundbucheintragung</label>
-    <code>090000</code>
-  </Value>
-  <Value id="_A4894_11950">
-    <label>Änderung aufgrund des Eisenbahnneuordnungsgesetzes</label>
-    <code>010614</code>
-  </Value>
-  <Value id="_A4894_11951">
-    <label>Änderung aufgrund des Landwirtschaftsanpassungsgesetzes</label>
-    <code>010613</code>
-  </Value>
-  <Value id="_A4894_11952">
-    <label>Änderung der Anschrift</label>
-    <code>090300</code>
-  </Value>
-  <Value id="_A4894_11953">
-    <label>Änderung der Personendaten</label>
-    <code>090400</code>
-  </Value>
-  <Value id="_A4894_11954">
-    <label>Änderung von Koordinaten, Höhe und/oder Schwerewert eines Festpunkts</label>
-    <code>090510</code>
-  </Value>
-  <Value id="_A4894_11955">
-    <label>Änderungen am Wohnungseigentum</label>
-    <code>040100</code>
-  </Value>
-  <Value id="_A4894_11956">
-    <label>Änderungen am Wohnungserbbaurecht</label>
-    <code>040200</code>
-  </Value>
-  <Value id="_A4894_11957">
-    <label>Änderungen am Wohnungsuntererbbaurecht</label>
-    <code>040300</code>
-  </Value>
-  <Value id="_A4894_11958">
-    <label>Änderungen an den Beziehungen  zwischen den Buchungsstellen</label>
-    <code>040500</code>
-  </Value>
-  <Value id="_A4894_11959">
-    <label>Änderungen in der Ergänzung, Beschreibung sowie der Bemerkung zu Buchungen</label>
-    <code>040600</code>
-  </Value>
-  <Value id="_A4894_11960">
-    <label>Angaben zu Eigentümer oder Erbbauberechtigten verändern</label>
-    <code>050000</code>
-  </Value>
-  <Value id="_A4894_11961">
-    <label>Angaben zur Grundbuchfortführung</label>
-    <code>003000</code>
-  </Value>
-  <Value id="_A4894_11962">
-    <label>Anlegen von Wohnungseigentum</label>
-    <code>080200</code>
-  </Value>
-  <Value id="_A4894_11963">
-    <label>Anlegen von Wohnungserbbaurecht</label>
-    <code>080300</code>
-  </Value>
-  <Value id="_A4894_11964">
-    <label>Anlegen von Wohnungsuntererbbaurecht</label>
-    <code>080400</code>
-  </Value>
-  <Value id="_A4894_11965">
-    <label>Anteile buchen</label>
-    <code>080000</code>
-  </Value>
-  <Value id="_A4894_11966">
-    <label>Aufhebung eines Wohnungseigentums</label>
-    <code>060900</code>
-  </Value>
-  <Value id="_A4894_11967">
-    <label>Aufhebung von Anteilen am ungetrennten Hofraum</label>
-    <code>061400</code>
-  </Value>
-  <Value id="_A4894_11968">
-    <label>Auflösung ungetrennter Hofräume</label>
-    <code>080650</code>
-  </Value>
-  <Value id="_A4894_11969">
-    <label>Ausbuchung eines Grundstücks nach § 3 Abs. 3 GBO</label>
-    <code>061300</code>
-  </Value>
-  <Value id="_A4894_11970">
-    <label>Automatische Kartographische Generalisierung mit Konflikt</label>
-    <code>4100</code>
-  </Value>
-  <Value id="_A4894_11971">
-    <label>Automatische Kartographische Generalisierung ohne Konflikt</label>
-    <code>4000</code>
-  </Value>
-  <Value id="_A4894_11972">
-    <label>Berichtigung aufgrund Erbnachweis</label>
-    <code>050200</code>
-  </Value>
-  <Value id="_A4894_11973">
-    <label>Berichtigung aufgrund Erwerbsvorgängen außerhalb des Grundbuchs</label>
-    <code>050300</code>
-  </Value>
-  <Value id="_A4894_11974">
-    <label>Berichtigung der Flächenangabe</label>
-    <code>010501</code>
-  </Value>
-  <Value id="_A4894_11975">
-    <label>Berichtigung der Flächenangabe mit Veränderung des Flurstückskennzeichens</label>
-    <code>010511</code>
-  </Value>
-  <Value id="_A4894_11976">
-    <label>Berichtigung der Flurstücksangaben</label>
-    <code>010500</code>
-    <definition>Mit dieser Fortführung werden katasterliche Berichtigungen zu den Flurstücksangaben mit Änderung des Flurstückskennzeichens durchgeführt, die im Bestandsverzeichnis des Grundbuchs nachgewiesen werden. Die Fortführung beinhaltet je Fortführungsanlass ein Flurstück.</definition>
-  </Value>
-  <Value id="_A4894_11977">
-    <label>Berichtigung eines Katastrierungsfehlers</label>
-    <code>010503</code>
-  </Value>
-  <Value id="_A4894_11978">
-    <label>Berichtigung eines Zeichenfehlers</label>
-    <code>010502</code>
-  </Value>
-  <Value id="_A4894_11979">
-    <label>Beschreibung der Buchungsstelle ändern</label>
-    <code>040000</code>
-  </Value>
-  <Value id="_A4894_11980">
-    <label>Bestandteilszuschreibung (§ 890 Abs. 2 BGB, § 6 GBO)</label>
-    <code>060500</code>
-  </Value>
-  <Value id="_A4894_11981">
-    <label>Bodenordnungsmaßnahmen</label>
-    <code>010600</code>
-    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund rechtlicher Vorschriften (z.B. Flurbereinigungsgesetz) durchgeführt, die eine Änderung in der Form des Grundstücks zur Folge haben. Es werden die Objektinformationen von Flurstücken zur Verfügung gestellt, die bei der Übernahme der Bodenordnungsmaßnahme ins Grundbuch benötigt werden. Diese Fortführung ist nicht die Rechtsgrundlage zur Berichtigung des Grundbuchs.</definition>
-    <definition>Übermittelt werden:</definition>
-    <definition>• Flurstücksinformationen zur Fortführung des Bestandsverzeichnisses</definition>
-    <definition>und optional</definition>
-    <definition>• Daten zur Fortführung der Abteilungen I bis III.</definition>
-  </Value>
-  <Value id="_A4894_11982">
-    <label>Buchung § 3 Abs. 4 ff GBO ändern</label>
-    <code>040400</code>
-  </Value>
-  <Value id="_A4894_11983">
-    <label>Buchung aufgrund Veränderung der Grundstücksbezeichnung oder der Größe (Spalten 3 + 4 des BV)</label>
-    <code>060700</code>
-  </Value>
-  <Value id="_A4894_11984">
-    <label>Buchung der neuen Grundstücke in einem bestehenden  Buchungsblatt</label>
-    <code>060201</code>
-  </Value>
-  <Value id="_A4894_11985">
-    <label>Buchung des Grundstücks auf ein bestehendes Buchungsblatt</label>
-    <code>060902</code>
-  </Value>
-  <Value id="_A4894_11986">
-    <label>Buchung des Grundstücks auf ein bestehendes Buchungsblatt der Miteigentümer</label>
-    <code>060802</code>
-  </Value>
-  <Value id="_A4894_11987">
-    <label>Buchung des Grundstücks auf ein neues Buchungsblatt (1)</label>
-    <code>060801</code>
-  </Value>
-  <Value id="_A4894_11988">
-    <label>Buchung des Grundstücks auf ein neues Buchungsblatt (2)</label>
-    <code>060901</code>
-  </Value>
-  <Value id="_A4894_11989">
-    <label>Buchung nach § 3 Abs. 4 GBO</label>
-    <code>080100</code>
-  </Value>
-  <Value id="_A4894_11990">
-    <label>Buchung nach § 3 Abs. 4 GBO aufheben</label>
-    <code>060800</code>
-  </Value>
-  <Value id="_A4894_11991">
-    <label>Eigentumsänderung</label>
-    <code>050100</code>
-  </Value>
-  <Value id="_A4894_11992">
-    <label>Eintragen eines Gebäudes</label>
-    <code>200100</code>
-  </Value>
-  <Value id="_A4894_11993">
-    <label>Eintragung des Flurstückes</label>
-    <code>010307</code>
-  </Value>
-  <Value id="_A4894_11994">
-    <label>Entstehung eines Festpunkts (erstmalige Aufnahme in AFIS)</label>
-    <code>090500</code>
-  </Value>
-  <Value id="_A4894_11995">
-    <label>Erbbaurecht anlegen</label>
-    <code>070100</code>
-  </Value>
-  <Value id="_A4894_11996">
-    <label>Erbbaurecht aufheben</label>
-    <code>070200</code>
-  </Value>
-  <Value id="_A4894_11997">
-    <label>Erfassung der Bodenschätzung</label>
-    <code>300421</code>
-    <definition>Mit dieser Fortführung werden die Angaben zur Bodenschätzung aus der Urschätzung erfasst.</definition>
-  </Value>
-  <Value id="_A4894_11998">
-    <label>Erneuerung der Lagekoordinaten</label>
-    <code>010702</code>
-    <definition>Anlassart für Neubestimmung durch Neuberechnung mit vorhandenen Messwerten. Teile der Liegenschaftskarte, für die zwar geschlossen qualifizierte Katastervermessungen und neubestimmte AP vorliegen, für die aber Lagekoordinaten noch nicht oder nur unzureichend bestimmt worden sind, werden mit den vorhandenen Vermessungsergebnissen Lagekoordinaten im System des Festpunktfeldes berechnet und datenverarbeitungsgerecht gespeichert.</definition>
-  </Value>
-  <Value id="_A4894_11999">
-    <label>Erstbuchung eines Grundstücks</label>
-    <code>061200</code>
-  </Value>
-  <Value id="_A4894_12000">
-    <label>Ersteinrichtung</label>
-    <code>000000</code>
-  </Value>
-  <Value id="_A4894_12001">
-    <label>Flurbereinigung</label>
-    <code>010611</code>
-  </Value>
-  <Value id="_A4894_12002">
-    <label>Flurbereinigung - freiwilliger Landtausch</label>
-    <code>010612</code>
-  </Value>
-  <Value id="_A4894_12003">
-    <label>Flurstücksbestimmung gemäß § 12 Abs. 2 Satz 2 VermGeoG LSA</label>
-    <code>010316</code>
-  </Value>
-  <Value id="_A4894_12004">
-    <label>Flurstücksdaten fortführen</label>
-    <code>010000</code>
-    <definition>Hiermit sind die Flurstücksdaten gemeint, die aufgrund der rechtlichen Vorschriften zwischen dem amtlichen Verzeichnis (§ 2 Abs. 2 GBO) und dem Bestandsverzeichnis des Grundbuchs in Übereinstimmung zu halten sind (Fläche, Lage, Wirtschaftsart und besondere Flurstücksgrenze).</definition>
-  </Value>
-  <Value id="_A4894_12005">
-    <label>Flurstückszerlegung mit Eigentumsübergang nach Straßengesetzen</label>
-    <code>010104</code>
-  </Value>
-  <Value id="_A4894_12006">
-    <label>Gebäudeeinmessung nach § 14 Abs. 2 Satz 2 VermGeoG LSA</label>
-    <code>010317</code>
-  </Value>
-  <Value id="_A4894_12007">
-    <label>Grenzabmarkung</label>
-    <code>010904</code>
-    <definition>Anlassart für die Grenzabmarkung für die Behebung von Abmarkungsmängeln.</definition>
-  </Value>
-  <Value id="_A4894_12008">
-    <label>Grenzbestimmung</label>
-    <code>010903</code>
-  </Value>
-  <Value id="_A4894_12009">
-    <label>Grenzfeststellung</label>
-    <code>010900</code>
-  </Value>
-  <Value id="_A4894_12010">
-    <label>Grenzvermessung</label>
-    <code>010901</code>
-  </Value>
-  <Value id="_A4894_12011">
-    <label>Grenzwiederherstellung</label>
-    <code>010902</code>
-  </Value>
-  <Value id="_A4894_12012">
-    <label>Grundaktualisierung</label>
-    <code>1000</code>
-  </Value>
-  <Value id="_A4894_12013">
-    <label>Grundbuchblatt schließen</label>
-    <code>062000</code>
-  </Value>
-  <Value id="_A4894_12014">
-    <label>Grundbuchblattbezeichnung ändern</label>
-    <code>030000</code>
-  </Value>
-  <Value id="_A4894_12015">
-    <label>Grundstücke buchen</label>
-    <code>060000</code>
-  </Value>
-  <Value id="_A4894_12016">
-    <label>Herrschvermerk aufheben</label>
-    <code>070400</code>
-  </Value>
-  <Value id="_A4894_12017">
-    <label>Herrschvermerk buchen</label>
-    <code>070300</code>
-  </Value>
-  <Value id="_A4894_12018">
-    <label>Interaktive Kartographische Generalisierung</label>
-    <code>5000</code>
-  </Value>
-  <Value id="_A4894_12019">
-    <label>Katastererneuerung</label>
-    <code>010700</code>
-  </Value>
-  <Value id="_A4894_12020">
-    <label>Katastererneuerung - vereinfachte Neuvermessung</label>
-    <code>010701</code>
-  </Value>
-  <Value id="_A4894_12021">
-    <label>Katasterliche Buchung eines buchungsfreien Grundstücks</label>
-    <code>020102</code>
-  </Value>
-  <Value id="_A4894_12022">
-    <label>Katasterliche Buchung eines noch nicht im Grundbuch gebuchten Grundstücks oder Rechts (Erwerber- oder Pseudoblatt)</label>
-    <code>020101</code>
-  </Value>
-  <Value id="_A4894_12023">
-    <label>Katasterliche Buchungsdaten fortführen</label>
-    <code>020100</code>
-  </Value>
-  <Value id="_A4894_12024">
-    <label>Katasterliche Namensnummer und Rechtsgemeinschaft fortführen</label>
-    <code>020201</code>
-  </Value>
-  <Value id="_A4894_12025">
-    <label>Katasterliche Personendaten fortführen</label>
-    <code>020300</code>
-    <definition>Mit dieser Fortführung werden im Grundbuch noch nicht gebuchte sowie buchungsfreie Flurstücke im Liegenschaftskataster gebucht (Katasterblatt, Erwerberblatt, Pseudoblatt). Die Fortführung beinhaltet die Buchung eines Flurstücks auf einer Buchungsstelle.</definition>
-  </Value>
-  <Value id="_A4894_12026">
-    <label>Kompletter Eigentumswechsel im Grundbuchblatt</label>
-    <code>050101</code>
-  </Value>
-  <Value id="_A4894_12027">
-    <label>Löschen des Flurstückes</label>
-    <code>010308</code>
-  </Value>
-  <Value id="_A4894_12028">
-    <label>Löschen eines Gebäudes</label>
-    <code>200300</code>
-  </Value>
-  <Value id="_A4894_12029">
-    <label>Modellgeneralisierung</label>
-    <code>3000</code>
-  </Value>
-  <Value id="_A4894_12030">
-    <label>Namensänderung</label>
-    <code>050400</code>
-  </Value>
-  <Value id="_A4894_12031">
-    <label>Namensnummer von katasterlichen Buchungsstellen verändern</label>
-    <code>020200</code>
-  </Value>
-  <Value id="_A4894_12032">
-    <label>Neufassung des Grundbuchs (§§ 33, 69 GBV)</label>
-    <code>061100</code>
-  </Value>
-  <Value id="_A4894_12033">
-    <label>Personengruppe eintragen oder ändern</label>
-    <code>090200</code>
-  </Value>
-  <Value id="_A4894_12034">
-    <label>Qualitätssicherung und Datenpflege</label>
-    <code>010704</code>
-  </Value>
-  <Value id="_A4894_12035">
-    <label>Rechte buchen</label>
-    <code>070000</code>
-  </Value>
-  <Value id="_A4894_12036">
-    <label>Sonderung</label>
-    <code>010107</code>
-    <definition>Mit dieser Fortführung werden Flurstücke infolge einer Sonderung (Liegenschaftsvermessung mit vorgezogener Flurstücksbestimmung) zerlegt.</definition>
-  </Value>
-  <Value id="_A4894_12037">
-    <label>Sonstige Daten fortführen</label>
-    <code>300000</code>
-  </Value>
-  <Value id="_A4894_12038">
-    <label>Sonstige Rechte anlegen</label>
-    <code>070700</code>
-  </Value>
-  <Value id="_A4894_12039">
-    <label>Sonstige Rechte aufheben</label>
-    <code>070800</code>
-  </Value>
-  <Value id="_A4894_12040">
-    <label>Sonstiges</label>
-    <code>9999</code>
-  </Value>
-  <Value id="_A4894_12041">
-    <label>Spitzenaktualisierung</label>
-    <code>2000</code>
-  </Value>
-  <Value id="_A4894_12042">
-    <label>Teilung</label>
-    <code>060200</code>
-  </Value>
-  <Value id="_A4894_12043">
-    <label>Teilung am ungetrennten Hofraum aufheben</label>
-    <code>080700</code>
-  </Value>
-  <Value id="_A4894_12044">
-    <label>Teilung einer Buchung § 3 Abs. 4 GBO nach Wohnungseigentumsgesetz</label>
-    <code>080800</code>
-  </Value>
-  <Value id="_A4894_12045">
-    <label>Teilung eines Anteils am ungetrennten Hofraum nach Wohnungseigentumsgesetz</label>
-    <code>080900</code>
-  </Value>
-  <Value id="_A4894_12046">
-    <label>Teilung eines Herrschvermerks</label>
-    <code>080500</code>
-  </Value>
-  <Value id="_A4894_12047">
-    <label>Teilung eines sonstigen Rechts</label>
-    <code>080600</code>
-  </Value>
-  <Value id="_A4894_12048">
-    <label>Teilung Herrschvermerk aufheben</label>
-    <code>071100</code>
-  </Value>
-  <Value id="_A4894_12049">
-    <label>Teilung sonstiges Recht aufheben</label>
-    <code>071200</code>
-  </Value>
-  <Value id="_A4894_12050">
-    <label>Teilweiser Eigentumswechsel im Grundbuchblatt</label>
-    <code>050102</code>
-  </Value>
-  <Value id="_A4894_12051">
-    <label>Übernahme von Flurbereinigungsergebnissen</label>
-    <code>010619</code>
-  </Value>
-  <Value id="_A4894_12052">
-    <label>Übernahme von Flurstücken einer anderen Katasterbehörde</label>
-    <code>010304</code>
-  </Value>
-  <Value id="_A4894_12053">
-    <label>Übernahme von wichtigen Terminen im Ablauf eines Bodenordnungsverfahrens</label>
-    <code>010615</code>
-    <definition>Dient zur Mitteilung des Zeitpunkts der Rechtskraft usw.</definition>
-  </Value>
-  <Value id="_A4894_12054">
-    <label>Umlegung</label>
-    <code>010621</code>
-  </Value>
-  <Value id="_A4894_12055">
-    <label>Umlegung nach § 76 BauGB</label>
-    <code>010622</code>
-  </Value>
-  <Value id="_A4894_12056">
-    <label>Umnummerierung (infolge Zuständigkeitsänderungen am Grundbuch)</label>
-    <code>030100</code>
-  </Value>
-  <Value id="_A4894_12057">
-    <label>Umschreibung des Grundbuchs (§§ 28 ff, 68 GBV)</label>
-    <code>061000</code>
-  </Value>
-  <Value id="_A4894_12058">
-    <label>Untererbbaurecht anlegen</label>
-    <code>070500</code>
-  </Value>
-  <Value id="_A4894_12059">
-    <label>Untererbbaurecht aufheben</label>
-    <code>070600</code>
-  </Value>
-  <Value id="_A4894_12060">
-    <label>Untergang eines Festpunktes</label>
-    <code>090540</code>
-  </Value>
-  <Value id="_A4894_12061">
-    <label>Veränderung am Flurstück mit Änderung der Umfangsgrenzen</label>
-    <code>010203</code>
-    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück infolge wasserrechtlicher Bestimmungen, rechtskräftiger Urteile und Vergleiche über Grenzstreitigkeiten sowie von Grenzbestimmungen auf der Grundlage einer Vereinbarung der beteiligten Grundstückseigentümer durchgeführt, die eine Änderung in der Form des Flurstücks zur Folge haben.</definition>
-  </Value>
-  <Value id="_A4894_12062">
-    <label>Veränderung am Flurstück mit Änderung der Umfangsgrenzen des Grundstücks</label>
-    <code>010200</code>
-    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund rechtlicher Vorschriften (z.B. Wasserrecht, Straßenrecht) durchgeführt, die eine Änderung in der Form des Grundstücks zur Folge haben. Die Fortführung beinhaltet ein oder mehrere alte Flurstücke sowie ein oder mehrere neue Flurstücke.</definition>
-  </Value>
-  <Value id="_A4894_12063">
-    <label>Veränderung an der Landesgrenze und des Gebietes</label>
-    <code>6000</code>
-  </Value>
-  <Value id="_A4894_12064">
-    <label>Veränderung aufgrund Berichtigung eines Aufnahmefehlers</label>
-    <code>010205</code>
-  </Value>
-  <Value id="_A4894_12065">
-    <label>Veränderung aufgrund Berichtigung eines Grenzbestimmungsfehlers</label>
-    <code>010207</code>
-  </Value>
-  <Value id="_A4894_12066">
-    <label>Veränderung aufgrund der Homogenisierung</label>
-    <code>300501</code>
-    <definition>Bei der Fortführung mit Geometriebezug wird durch die Homogenisierung die Punkt-Lagegenauigkeit der raumbezogenen Bestandsdaten verbessert.</definition>
-  </Value>
-  <Value id="_A4894_12067">
-    <label>Veränderung aufgrund der Kartenanpassung</label>
-    <code>300500</code>
-  </Value>
-  <Value id="_A4894_12068">
-    <label>Veränderung aufgrund der Qualitätsverbesserung</label>
-    <code>010703</code>
-  </Value>
-  <Value id="_A4894_12069">
-    <label>Veränderung aufgrund der Vorschriften des Straßenrechts</label>
-    <code>010201</code>
-  </Value>
-  <Value id="_A4894_12070">
-    <label>Veränderung aufgrund der Vorschriften des Wasserrechts</label>
-    <code>010202</code>
-  </Value>
-  <Value id="_A4894_12071">
-    <label>Veränderung aufgrund gerichtlicher Entscheidung</label>
-    <code>010206</code>
-  </Value>
-  <Value id="_A4894_12072">
-    <label>Veränderung der Angaben zu den Nutzerprofilen</label>
-    <code>100000</code>
-  </Value>
-  <Value id="_A4894_12073">
-    <label>Veränderung der Anschrift aufgrund katasterlicher Erhebung</label>
-    <code>020303</code>
-  </Value>
-  <Value id="_A4894_12074">
-    <label>Veränderung der Beschreibung des Flurstücks</label>
-    <code>010400</code>
-    <definition>Mit dieser Fortführung wird die Beschreibung des Flurstücks für Besondere Flurstücksgrenze, Lage und Nutzungsart verändert. Die Fortführung beinhaltet ein oder mehrere Flurstücke.</definition>
-  </Value>
-  <Value id="_A4894_12075">
-    <label>Veränderung der besonderen Flurstücksgrenze</label>
-    <code>010401</code>
-  </Value>
-  <Value id="_A4894_12076">
-    <label>Veränderung der Bewertung</label>
-    <code>300430</code>
-  </Value>
-  <Value id="_A4894_12077">
-    <label>Veränderung der Bezeichnung oder der Zugehörigkeit des Flurstücks</label>
-    <code>010300</code>
-    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund von Umnumerierungen, Zuordnungen zu anderen Fluren oder infolge von Umgemarkungen sowie Umgemeindungen durchgeführt. Die Fortführung beinhaltet ein oder mehrere alte Flurstücke sowie ein oder mehrere neue Flurstücke.</definition>
-  </Value>
-  <Value id="_A4894_12078">
-    <label>Veränderung der Bodenschätzung</label>
-    <code>300420</code>
-  </Value>
-  <Value id="_A4894_12079">
-    <label>Veränderung der Flurstücksbezeichnung</label>
-    <code>010301</code>
-  </Value>
-  <Value id="_A4894_12080">
-    <label>Veränderung der Flurstücksnummer</label>
-    <code>010312</code>
-    <definition>Mit dieser Fortführung werden Flurstücksnummern berichtigt.</definition>
-  </Value>
-  <Value id="_A4894_12081">
-    <label>Veränderung der Flurzugehörigkeit</label>
-    <code>010305</code>
-  </Value>
-  <Value id="_A4894_12082">
-    <label>Veränderung der Gebäudeeigenschaften</label>
-    <code>200200</code>
-  </Value>
-  <Value id="_A4894_12083">
-    <label>Veränderung der Gebietseinheiten</label>
-    <code>300440</code>
-  </Value>
-  <Value id="_A4894_12084">
-    <label>Veränderung der Gemarkungszugehörigkeit</label>
-    <code>010302</code>
-  </Value>
-  <Value id="_A4894_12085">
-    <label>Veränderung der Gemeindezugehörigkeit</label>
-    <code>010310</code>
-  </Value>
-  <Value id="_A4894_12086">
-    <label>Veränderung der Gemeindezugehörigkeit einzelner Flurstücke</label>
-    <code>010309</code>
-  </Value>
-  <Value id="_A4894_12087">
-    <label>Veränderung der Gemeindezugehörigkeit ganzer Gemarkungen</label>
-    <code>010303</code>
-  </Value>
-  <Value id="_A4894_12088">
-    <label>Veränderung der Geometrie durch Implizitbehandlung</label>
-    <code>300900</code>
-  </Value>
-  <Value id="_A4894_12089">
-    <label>Veränderung der Lage</label>
-    <code>010402</code>
-  </Value>
-  <Value id="_A4894_12090">
-    <label>Veränderung der öffentlich-rechtlichen und sonstigen Festsetzungen</label>
-    <code>300410</code>
-  </Value>
-  <Value id="_A4894_12091">
-    <label>Veränderung der Personendaten</label>
-    <code>020301</code>
-  </Value>
-  <Value id="_A4894_12092">
-    <label>Veränderung der Personengruppe</label>
-    <code>020302</code>
-  </Value>
-  <Value id="_A4894_12093">
-    <label>Veränderung der Reservierung von Fachkennzeichen</label>
-    <code>300600</code>
-  </Value>
-  <Value id="_A4894_12094">
-    <label>Veränderung der tatsächlichen Nutzung</label>
-    <code>300300</code>
-  </Value>
-  <Value id="_A4894_12095">
-    <label>Veränderung der tatsächlichen Nutzung mit Änderung der Wirtschaftsart</label>
-    <code>010403</code>
-  </Value>
-  <Value id="_A4894_12096">
-    <label>Veränderung der tatsächlichen Nutzung ohne Änderung der Wirtschaftsart</label>
-    <code>010405</code>
-    <definition>Mit dieser Fortführung wird die tatsächliche Nutzung ohne Änderung der Wirtschaftsart verändert.</definition>
-  </Value>
-  <Value id="_A4894_12097">
-    <label>Veränderung der Vermarkung und/oder der beschreibenden Angaben eines Festpunkts</label>
-    <code>090520</code>
-  </Value>
-  <Value id="_A4894_12098">
-    <label>Veränderung der Vertretung</label>
-    <code>020305</code>
-    <definition>Mit dieser Fortführung werden die Daten zur Vertretung aufgrund katasterlicher Erhebungen verändert.</definition>
-  </Value>
-  <Value id="_A4894_12099">
-    <label>Veränderung der Verwaltung</label>
-    <code>020304</code>
-  </Value>
-  <Value id="_A4894_12100">
-    <label>Veränderung des Anliegervermerks</label>
-    <code>010404</code>
-  </Value>
-  <Value id="_A4894_12101">
-    <label>Veränderung von Bauwerken, Einrichtungen und sonstigen Angaben</label>
-    <code>300200</code>
-  </Value>
-  <Value id="_A4894_12102">
-    <label>Veränderung von Gebäudedaten</label>
-    <code>200000</code>
-  </Value>
-  <Value id="_A4894_12103">
-    <label>Veränderung von gesetzlichen Festlegungen, Gebietseinheiten, Katalogen</label>
-    <code>300400</code>
-  </Value>
-  <Value id="_A4894_12104">
-    <label>Veränderung von Katalogeinträgen</label>
-    <code>300700</code>
-    <definition>Veränderung der OA der abstrakten Oberklasse "Katalogeintrag"</definition>
-  </Value>
-  <Value id="_A4894_12105">
-    <label>Veränderung von Metadaten</label>
-    <code>300800</code>
-  </Value>
-  <Value id="_A4894_12106">
-    <label>Veränderungen am Flurstück ohne Änderung der Umfangsgrenzen des Grundstücks</label>
-    <code>010100</code>
-    <definition>Mit dieser Fortführung werden Flurstücke katastertechnisch zerlegt und / oder verschmolzen ohne das Grundstücke im Rechtssinne in ihrer Form verändert werden. Die Fortführung beinhaltet ein (Zerlegung) oder mehrere alte (Verschmelzung) Flurstücke sowie mehrere oder ein neues Flurstück(e).</definition>
-  </Value>
-  <Value id="_A4894_12107">
-    <label>Veränderungen der Angaben zum Netzpunkt</label>
-    <code>300100</code>
-  </Value>
-  <Value id="_A4894_12108">
-    <label>Vereinfachte Umlegung</label>
-    <code>010623</code>
-  </Value>
-  <Value id="_A4894_12109">
-    <label>Vereinigung (§ 890 Abs. 1 BGB, § 5 GBO)</label>
-    <code>060400</code>
-  </Value>
-  <Value id="_A4894_12110">
-    <label>Verfahren nach dem Baugesetzbuch</label>
-    <code>010602</code>
-  </Value>
-  <Value id="_A4894_12111">
-    <label>Verfahren nach dem Flurbereinigungsgesetz</label>
-    <code>010601</code>
-  </Value>
-  <Value id="_A4894_12112">
-    <label>Vermessung der Verfahrensgrenze des Flurbereinigungsgebietes</label>
-    <code>010616</code>
-  </Value>
-  <Value id="_A4894_12113">
-    <label>Verschmelzung</label>
-    <code>010102</code>
-  </Value>
-  <Value id="_A4894_12114">
-    <label>Verschmelzung von Flurstücken auf unterschiedlichen Beständen/Buchungsstellen</label>
-    <code>010199</code>
-  </Value>
-  <Value id="_A4894_12115">
-    <label>Verwaltung eintragen oder ändern</label>
-    <code>090100</code>
-  </Value>
-  <Value id="_A4894_12116">
-    <label>Verzeichnisse außerhalb des Grundbuches fortführen</label>
-    <code>020000</code>
-    <definition>Hiermit sind die Buchungen von noch nicht gebuchten sowie buchungsfreien Flurstücken sowie sonstige Angaben gemeint, die aufgrund von Vereinbarungen in besonderen Verzeichnissen des Grundbuchs geführt werden.</definition>
-  </Value>
-  <Value id="_A4894_12117">
-    <label>Vollziehung einer Verschmelzung</label>
-    <code>060600</code>
-  </Value>
-  <Value id="_A4894_12118">
-    <label>Wohnungserbbaurecht aufheben</label>
-    <code>070900</code>
-  </Value>
-  <Value id="_A4894_12119">
-    <label>Wohnungsuntererbbaurecht aufheben</label>
-    <code>071000</code>
-  </Value>
-  <Value id="_A4894_12120">
-    <label>Zerlegung</label>
-    <code>010105</code>
-    <definition>Mit dieser Fortführung werden Flurstücke infolge einer Vermessung, Sonderung oder Rückführung einer Verschmelzung zerlegt.</definition>
-  </Value>
-  <Value id="_A4894_12121">
-    <label>Zerlegung oder Sonderung</label>
-    <code>010101</code>
-  </Value>
-  <Value id="_A4894_12122">
-    <label>Zerlegung und Verschmelzung</label>
-    <code>010103</code>
-  </Value>
-  <Value id="_A4894_12123">
-    <label>Zerstörung der Vermarkung eines Festpunkts</label>
-    <code>090530</code>
-  </Value>
-  <Value id="_A4894_12124">
-    <label>Zuschreibung eines Flurstückes (Gebietsreform)</label>
-    <code>010801</code>
-  </Value>
-  <Value id="_A4896_12222">
-    <label>TopographischesFreizeitInformationsSystem25</label>
-    <code>TFIS25</code>
-  </Value>
-  <Value id="_A4896_12223">
-    <label>TopographischesFreizeitInformationsSystem50</label>
-    <code>TFIS50</code>
-  </Value>
-  <Value id="_A4896_12224">
-    <label>Bodenrichtwertinformationssystem</label>
-    <code>BORIS</code>
-  </Value>
-  <Value id="_A4896_12225">
-    <label>DigitaleTopographischeKarte10AKG</label>
-    <code>DTK10A</code>
-    <definition>Digitale topographische Karte 1:10.000 der automatischen kartographischen Generalisierung</definition>
-  </Value>
-  <Value id="_A4896_12226">
-    <label>DigitaleTopographischeKarte25AKG</label>
-    <code>DTK25A</code>
-    <definition>Digitale topographische Karte 1:25.000 der automatischen kartographischen Generalisierung</definition>
-  </Value>
-  <Value id="_A4896_12227">
-    <label>DigitaleTopographischeKarte50AKG</label>
-    <code>DTK50A</code>
-    <definition>Digitale topographische Karte 1:50.000 der automatischen kartographischen Generalisierung</definition>
-  </Value>
-  <Value id="_A4896_12228">
-    <label>DigitaleTopographischeKarte100AKG</label>
-    <code>DTK100A</code>
-    <definition>Digitale topographische Karte 1:100.000 der automatischen kartographischen Generalisierung</definition>
-  </Value>
   <Value id="_A11804_51820">
     <label>Außer Betrieb, stillgelegt, verlassen</label>
     <code>2100</code>
@@ -7736,5 +6875,866 @@
     <label>Eingeschränkt befahrbar</label>
     <code>2000</code>
     <definition>'Eingeschränkt befahrbar' bedeutet, dass 'Fahrwegachse' nicht ganzjährig befahrbar ist.</definition>
+  </Value>
+  <Value id="_A4796_11737">
+    <label>LiegenschaftskatasterModell</label>
+    <code>DLKM</code>
+  </Value>
+  <Value id="_A4796_11738">
+    <label>KatasterkartenModell500</label>
+    <code>DKKM500</code>
+  </Value>
+  <Value id="_A4796_11739">
+    <label>KatasterkartenModell1000</label>
+    <code>DKKM1000</code>
+  </Value>
+  <Value id="_A4796_11740">
+    <label>KatasterkartenModell2000</label>
+    <code>DKKM2000</code>
+  </Value>
+  <Value id="_A4796_11741">
+    <label>KatasterkartenModell5000</label>
+    <code>DKKM5000</code>
+  </Value>
+  <Value id="_A4796_11742">
+    <label>BasisLandschaftsModell</label>
+    <code>Basis-DLM</code>
+  </Value>
+  <Value id="_A4796_11743">
+    <label>LandschaftsModell50</label>
+    <code>DLM50</code>
+  </Value>
+  <Value id="_A4796_11744">
+    <label>LandschaftsModell250</label>
+    <code>DLM250</code>
+  </Value>
+  <Value id="_A4796_11745">
+    <label>LandschaftsModell1000</label>
+    <code>DLM1000</code>
+  </Value>
+  <Value id="_A4796_11746">
+    <label>TopographischeKarte10</label>
+    <code>DTK10</code>
+  </Value>
+  <Value id="_A4796_11747">
+    <label>TopographischeKarte25</label>
+    <code>DTK25</code>
+  </Value>
+  <Value id="_A4796_11748">
+    <label>TopographischeKarte50</label>
+    <code>DTK50</code>
+  </Value>
+  <Value id="_A4796_11749">
+    <label>TopographischeKarte100</label>
+    <code>DTK100</code>
+  </Value>
+  <Value id="_A4796_11750">
+    <label>TopographischeKarte250</label>
+    <code>DTK250</code>
+  </Value>
+  <Value id="_A4796_11751">
+    <label>TopographischeKarte1000</label>
+    <code>DTK1000</code>
+  </Value>
+  <Value id="_A4796_11752">
+    <label>Festpunktmodell</label>
+    <code>DFGM</code>
+  </Value>
+  <Value id="_A4796_11753">
+    <label>DigitalesHoehenmodell</label>
+    <code>DHM</code>
+  </Value>
+  <Value id="_A4796_11754">
+    <label>LevelOfDetail1</label>
+    <code>LoD1</code>
+  </Value>
+  <Value id="_A4796_11755">
+    <label>LevelOfDetail2</label>
+    <code>LoD2</code>
+  </Value>
+  <Value id="_A4796_11756">
+    <label>LevelOfDetail3</label>
+    <code>LoD3</code>
+  </Value>
+  <Value id="_A4894_11944">
+    <label>Abgabe von Flurstücken an eine andere Katasterbehörde</label>
+    <code>010306</code>
+  </Value>
+  <Value id="_A4894_11945">
+    <label>Abschreibung</label>
+    <code>060100</code>
+  </Value>
+  <Value id="_A4894_11946">
+    <label>Abschreibung auf bestehendes Buchungsblatt</label>
+    <code>060102</code>
+  </Value>
+  <Value id="_A4894_11947">
+    <label>Abschreibung auf neues Buchungsblatt</label>
+    <code>060101</code>
+  </Value>
+  <Value id="_A4894_11948">
+    <label>Abschreibung eines Flurstückes (Gebietsreform)</label>
+    <code>010802</code>
+  </Value>
+  <Value id="_A4894_11949">
+    <label>Ändern in Verzeichnissen ohne Grundbucheintragung</label>
+    <code>090000</code>
+  </Value>
+  <Value id="_A4894_11950">
+    <label>Änderung aufgrund des Eisenbahnneuordnungsgesetzes</label>
+    <code>010614</code>
+  </Value>
+  <Value id="_A4894_11951">
+    <label>Änderung aufgrund des Landwirtschaftsanpassungsgesetzes</label>
+    <code>010613</code>
+  </Value>
+  <Value id="_A4894_11952">
+    <label>Änderung der Anschrift</label>
+    <code>090300</code>
+  </Value>
+  <Value id="_A4894_11953">
+    <label>Änderung der Personendaten</label>
+    <code>090400</code>
+  </Value>
+  <Value id="_A4894_11954">
+    <label>Änderung von Koordinaten, Höhe und/oder Schwerewert eines Festpunkts</label>
+    <code>090510</code>
+  </Value>
+  <Value id="_A4894_11955">
+    <label>Änderungen am Wohnungseigentum</label>
+    <code>040100</code>
+  </Value>
+  <Value id="_A4894_11956">
+    <label>Änderungen am Wohnungserbbaurecht</label>
+    <code>040200</code>
+  </Value>
+  <Value id="_A4894_11957">
+    <label>Änderungen am Wohnungsuntererbbaurecht</label>
+    <code>040300</code>
+  </Value>
+  <Value id="_A4894_11958">
+    <label>Änderungen an den Beziehungen  zwischen den Buchungsstellen</label>
+    <code>040500</code>
+  </Value>
+  <Value id="_A4894_11959">
+    <label>Änderungen in der Ergänzung, Beschreibung sowie der Bemerkung zu Buchungen</label>
+    <code>040600</code>
+  </Value>
+  <Value id="_A4894_11960">
+    <label>Angaben zu Eigentümer oder Erbbauberechtigten verändern</label>
+    <code>050000</code>
+  </Value>
+  <Value id="_A4894_11961">
+    <label>Angaben zur Grundbuchfortführung</label>
+    <code>003000</code>
+  </Value>
+  <Value id="_A4894_11962">
+    <label>Anlegen von Wohnungseigentum</label>
+    <code>080200</code>
+  </Value>
+  <Value id="_A4894_11963">
+    <label>Anlegen von Wohnungserbbaurecht</label>
+    <code>080300</code>
+  </Value>
+  <Value id="_A4894_11964">
+    <label>Anlegen von Wohnungsuntererbbaurecht</label>
+    <code>080400</code>
+  </Value>
+  <Value id="_A4894_11965">
+    <label>Anteile buchen</label>
+    <code>080000</code>
+  </Value>
+  <Value id="_A4894_11966">
+    <label>Aufhebung eines Wohnungseigentums</label>
+    <code>060900</code>
+  </Value>
+  <Value id="_A4894_11967">
+    <label>Aufhebung von Anteilen am ungetrennten Hofraum</label>
+    <code>061400</code>
+  </Value>
+  <Value id="_A4894_11968">
+    <label>Auflösung ungetrennter Hofräume</label>
+    <code>080650</code>
+  </Value>
+  <Value id="_A4894_11969">
+    <label>Ausbuchung eines Grundstücks nach § 3 Abs. 3 GBO</label>
+    <code>061300</code>
+  </Value>
+  <Value id="_A4894_11970">
+    <label>Automatische Kartographische Generalisierung mit Konflikt</label>
+    <code>4100</code>
+  </Value>
+  <Value id="_A4894_11971">
+    <label>Automatische Kartographische Generalisierung ohne Konflikt</label>
+    <code>4000</code>
+  </Value>
+  <Value id="_A4894_11972">
+    <label>Berichtigung aufgrund Erbnachweis</label>
+    <code>050200</code>
+  </Value>
+  <Value id="_A4894_11973">
+    <label>Berichtigung aufgrund Erwerbsvorgängen außerhalb des Grundbuchs</label>
+    <code>050300</code>
+  </Value>
+  <Value id="_A4894_11974">
+    <label>Berichtigung der Flächenangabe</label>
+    <code>010501</code>
+  </Value>
+  <Value id="_A4894_11975">
+    <label>Berichtigung der Flächenangabe mit Veränderung des Flurstückskennzeichens</label>
+    <code>010511</code>
+  </Value>
+  <Value id="_A4894_11976">
+    <label>Berichtigung der Flurstücksangaben</label>
+    <code>010500</code>
+    <definition>Mit dieser Fortführung werden katasterliche Berichtigungen zu den Flurstücksangaben mit Änderung des Flurstückskennzeichens durchgeführt, die im Bestandsverzeichnis des Grundbuchs nachgewiesen werden. Die Fortführung beinhaltet je Fortführungsanlass ein Flurstück.</definition>
+  </Value>
+  <Value id="_A4894_11977">
+    <label>Berichtigung eines Katastrierungsfehlers</label>
+    <code>010503</code>
+  </Value>
+  <Value id="_A4894_11978">
+    <label>Berichtigung eines Zeichenfehlers</label>
+    <code>010502</code>
+  </Value>
+  <Value id="_A4894_11979">
+    <label>Beschreibung der Buchungsstelle ändern</label>
+    <code>040000</code>
+  </Value>
+  <Value id="_A4894_11980">
+    <label>Bestandteilszuschreibung (§ 890 Abs. 2 BGB, § 6 GBO)</label>
+    <code>060500</code>
+  </Value>
+  <Value id="_A4894_11981">
+    <label>Bodenordnungsmaßnahmen</label>
+    <code>010600</code>
+    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund rechtlicher Vorschriften (z.B. Flurbereinigungsgesetz) durchgeführt, die eine Änderung in der Form des Grundstücks zur Folge haben. Es werden die Objektinformationen von Flurstücken zur Verfügung gestellt, die bei der Übernahme der Bodenordnungsmaßnahme ins Grundbuch benötigt werden. Diese Fortführung ist nicht die Rechtsgrundlage zur Berichtigung des Grundbuchs.</definition>
+    <definition>Übermittelt werden:</definition>
+    <definition>• Flurstücksinformationen zur Fortführung des Bestandsverzeichnisses</definition>
+    <definition>und optional</definition>
+    <definition>• Daten zur Fortführung der Abteilungen I bis III.</definition>
+  </Value>
+  <Value id="_A4894_11982">
+    <label>Buchung § 3 Abs. 4 ff GBO ändern</label>
+    <code>040400</code>
+  </Value>
+  <Value id="_A4894_11983">
+    <label>Buchung aufgrund Veränderung der Grundstücksbezeichnung oder der Größe (Spalten 3 + 4 des BV)</label>
+    <code>060700</code>
+  </Value>
+  <Value id="_A4894_11984">
+    <label>Buchung der neuen Grundstücke in einem bestehenden  Buchungsblatt</label>
+    <code>060201</code>
+  </Value>
+  <Value id="_A4894_11985">
+    <label>Buchung des Grundstücks auf ein bestehendes Buchungsblatt</label>
+    <code>060902</code>
+  </Value>
+  <Value id="_A4894_11986">
+    <label>Buchung des Grundstücks auf ein bestehendes Buchungsblatt der Miteigentümer</label>
+    <code>060802</code>
+  </Value>
+  <Value id="_A4894_11987">
+    <label>Buchung des Grundstücks auf ein neues Buchungsblatt (1)</label>
+    <code>060801</code>
+  </Value>
+  <Value id="_A4894_11988">
+    <label>Buchung des Grundstücks auf ein neues Buchungsblatt (2)</label>
+    <code>060901</code>
+  </Value>
+  <Value id="_A4894_11989">
+    <label>Buchung nach § 3 Abs. 4 GBO</label>
+    <code>080100</code>
+  </Value>
+  <Value id="_A4894_11990">
+    <label>Buchung nach § 3 Abs. 4 GBO aufheben</label>
+    <code>060800</code>
+  </Value>
+  <Value id="_A4894_11991">
+    <label>Eigentumsänderung</label>
+    <code>050100</code>
+  </Value>
+  <Value id="_A4894_11992">
+    <label>Eintragen eines Gebäudes</label>
+    <code>200100</code>
+  </Value>
+  <Value id="_A4894_11993">
+    <label>Eintragung des Flurstückes</label>
+    <code>010307</code>
+  </Value>
+  <Value id="_A4894_11994">
+    <label>Entstehung eines Festpunkts (erstmalige Aufnahme in AFIS)</label>
+    <code>090500</code>
+  </Value>
+  <Value id="_A4894_11995">
+    <label>Erbbaurecht anlegen</label>
+    <code>070100</code>
+  </Value>
+  <Value id="_A4894_11996">
+    <label>Erbbaurecht aufheben</label>
+    <code>070200</code>
+  </Value>
+  <Value id="_A4894_11997">
+    <label>Erfassung der Bodenschätzung</label>
+    <code>300421</code>
+    <definition>Mit dieser Fortführung werden die Angaben zur Bodenschätzung aus der Urschätzung erfasst.</definition>
+  </Value>
+  <Value id="_A4894_11998">
+    <label>Erneuerung der Lagekoordinaten</label>
+    <code>010702</code>
+    <definition>Anlassart für Neubestimmung durch Neuberechnung mit vorhandenen Messwerten. Teile der Liegenschaftskarte, für die zwar geschlossen qualifizierte Katastervermessungen und neubestimmte AP vorliegen, für die aber Lagekoordinaten noch nicht oder nur unzureichend bestimmt worden sind, werden mit den vorhandenen Vermessungsergebnissen Lagekoordinaten im System des Festpunktfeldes berechnet und datenverarbeitungsgerecht gespeichert.</definition>
+  </Value>
+  <Value id="_A4894_11999">
+    <label>Erstbuchung eines Grundstücks</label>
+    <code>061200</code>
+  </Value>
+  <Value id="_A4894_12000">
+    <label>Ersteinrichtung</label>
+    <code>000000</code>
+  </Value>
+  <Value id="_A4894_12001">
+    <label>Flurbereinigung</label>
+    <code>010611</code>
+  </Value>
+  <Value id="_A4894_12002">
+    <label>Flurbereinigung - freiwilliger Landtausch</label>
+    <code>010612</code>
+  </Value>
+  <Value id="_A4894_12003">
+    <label>Flurstücksbestimmung gemäß § 12 Abs. 2 Satz 2 VermGeoG LSA</label>
+    <code>010316</code>
+  </Value>
+  <Value id="_A4894_12004">
+    <label>Flurstücksdaten fortführen</label>
+    <code>010000</code>
+    <definition>Hiermit sind die Flurstücksdaten gemeint, die aufgrund der rechtlichen Vorschriften zwischen dem amtlichen Verzeichnis (§ 2 Abs. 2 GBO) und dem Bestandsverzeichnis des Grundbuchs in Übereinstimmung zu halten sind (Fläche, Lage, Wirtschaftsart und besondere Flurstücksgrenze).</definition>
+  </Value>
+  <Value id="_A4894_12005">
+    <label>Flurstückszerlegung mit Eigentumsübergang nach Straßengesetzen</label>
+    <code>010104</code>
+  </Value>
+  <Value id="_A4894_12006">
+    <label>Gebäudeeinmessung nach § 14 Abs. 2 Satz 2 VermGeoG LSA</label>
+    <code>010317</code>
+  </Value>
+  <Value id="_A4894_12007">
+    <label>Grenzabmarkung</label>
+    <code>010904</code>
+    <definition>Anlassart für die Grenzabmarkung für die Behebung von Abmarkungsmängeln.</definition>
+  </Value>
+  <Value id="_A4894_12008">
+    <label>Grenzbestimmung</label>
+    <code>010903</code>
+  </Value>
+  <Value id="_A4894_12009">
+    <label>Grenzfeststellung</label>
+    <code>010900</code>
+  </Value>
+  <Value id="_A4894_12010">
+    <label>Grenzvermessung</label>
+    <code>010901</code>
+  </Value>
+  <Value id="_A4894_12011">
+    <label>Grenzwiederherstellung</label>
+    <code>010902</code>
+  </Value>
+  <Value id="_A4894_12012">
+    <label>Grundaktualisierung</label>
+    <code>1000</code>
+  </Value>
+  <Value id="_A4894_12013">
+    <label>Grundbuchblatt schließen</label>
+    <code>062000</code>
+  </Value>
+  <Value id="_A4894_12014">
+    <label>Grundbuchblattbezeichnung ändern</label>
+    <code>030000</code>
+  </Value>
+  <Value id="_A4894_12015">
+    <label>Grundstücke buchen</label>
+    <code>060000</code>
+  </Value>
+  <Value id="_A4894_12016">
+    <label>Herrschvermerk aufheben</label>
+    <code>070400</code>
+  </Value>
+  <Value id="_A4894_12017">
+    <label>Herrschvermerk buchen</label>
+    <code>070300</code>
+  </Value>
+  <Value id="_A4894_12018">
+    <label>Interaktive Kartographische Generalisierung</label>
+    <code>5000</code>
+  </Value>
+  <Value id="_A4894_12019">
+    <label>Katastererneuerung</label>
+    <code>010700</code>
+  </Value>
+  <Value id="_A4894_12020">
+    <label>Katastererneuerung - vereinfachte Neuvermessung</label>
+    <code>010701</code>
+  </Value>
+  <Value id="_A4894_12021">
+    <label>Katasterliche Buchung eines buchungsfreien Grundstücks</label>
+    <code>020102</code>
+  </Value>
+  <Value id="_A4894_12022">
+    <label>Katasterliche Buchung eines noch nicht im Grundbuch gebuchten Grundstücks oder Rechts (Erwerber- oder Pseudoblatt)</label>
+    <code>020101</code>
+  </Value>
+  <Value id="_A4894_12023">
+    <label>Katasterliche Buchungsdaten fortführen</label>
+    <code>020100</code>
+  </Value>
+  <Value id="_A4894_12024">
+    <label>Katasterliche Namensnummer und Rechtsgemeinschaft fortführen</label>
+    <code>020201</code>
+  </Value>
+  <Value id="_A4894_12025">
+    <label>Katasterliche Personendaten fortführen</label>
+    <code>020300</code>
+    <definition>Mit dieser Fortführung werden im Grundbuch noch nicht gebuchte sowie buchungsfreie Flurstücke im Liegenschaftskataster gebucht (Katasterblatt, Erwerberblatt, Pseudoblatt). Die Fortführung beinhaltet die Buchung eines Flurstücks auf einer Buchungsstelle.</definition>
+  </Value>
+  <Value id="_A4894_12026">
+    <label>Kompletter Eigentumswechsel im Grundbuchblatt</label>
+    <code>050101</code>
+  </Value>
+  <Value id="_A4894_12027">
+    <label>Löschen des Flurstückes</label>
+    <code>010308</code>
+  </Value>
+  <Value id="_A4894_12028">
+    <label>Löschen eines Gebäudes</label>
+    <code>200300</code>
+  </Value>
+  <Value id="_A4894_12029">
+    <label>Modellgeneralisierung</label>
+    <code>3000</code>
+  </Value>
+  <Value id="_A4894_12030">
+    <label>Namensänderung</label>
+    <code>050400</code>
+  </Value>
+  <Value id="_A4894_12031">
+    <label>Namensnummer von katasterlichen Buchungsstellen verändern</label>
+    <code>020200</code>
+  </Value>
+  <Value id="_A4894_12032">
+    <label>Neufassung des Grundbuchs (§§ 33, 69 GBV)</label>
+    <code>061100</code>
+  </Value>
+  <Value id="_A4894_12033">
+    <label>Personengruppe eintragen oder ändern</label>
+    <code>090200</code>
+  </Value>
+  <Value id="_A4894_12034">
+    <label>Qualitätssicherung und Datenpflege</label>
+    <code>010704</code>
+  </Value>
+  <Value id="_A4894_12035">
+    <label>Rechte buchen</label>
+    <code>070000</code>
+  </Value>
+  <Value id="_A4894_12036">
+    <label>Sonderung</label>
+    <code>010107</code>
+    <definition>Mit dieser Fortführung werden Flurstücke infolge einer Sonderung (Liegenschaftsvermessung mit vorgezogener Flurstücksbestimmung) zerlegt.</definition>
+  </Value>
+  <Value id="_A4894_12037">
+    <label>Sonstige Daten fortführen</label>
+    <code>300000</code>
+  </Value>
+  <Value id="_A4894_12038">
+    <label>Sonstige Rechte anlegen</label>
+    <code>070700</code>
+  </Value>
+  <Value id="_A4894_12039">
+    <label>Sonstige Rechte aufheben</label>
+    <code>070800</code>
+  </Value>
+  <Value id="_A4894_12040">
+    <label>Sonstiges</label>
+    <code>9999</code>
+  </Value>
+  <Value id="_A4894_12041">
+    <label>Spitzenaktualisierung</label>
+    <code>2000</code>
+  </Value>
+  <Value id="_A4894_12042">
+    <label>Teilung</label>
+    <code>060200</code>
+  </Value>
+  <Value id="_A4894_12043">
+    <label>Teilung am ungetrennten Hofraum aufheben</label>
+    <code>080700</code>
+  </Value>
+  <Value id="_A4894_12044">
+    <label>Teilung einer Buchung § 3 Abs. 4 GBO nach Wohnungseigentumsgesetz</label>
+    <code>080800</code>
+  </Value>
+  <Value id="_A4894_12045">
+    <label>Teilung eines Anteils am ungetrennten Hofraum nach Wohnungseigentumsgesetz</label>
+    <code>080900</code>
+  </Value>
+  <Value id="_A4894_12046">
+    <label>Teilung eines Herrschvermerks</label>
+    <code>080500</code>
+  </Value>
+  <Value id="_A4894_12047">
+    <label>Teilung eines sonstigen Rechts</label>
+    <code>080600</code>
+  </Value>
+  <Value id="_A4894_12048">
+    <label>Teilung Herrschvermerk aufheben</label>
+    <code>071100</code>
+  </Value>
+  <Value id="_A4894_12049">
+    <label>Teilung sonstiges Recht aufheben</label>
+    <code>071200</code>
+  </Value>
+  <Value id="_A4894_12050">
+    <label>Teilweiser Eigentumswechsel im Grundbuchblatt</label>
+    <code>050102</code>
+  </Value>
+  <Value id="_A4894_12051">
+    <label>Übernahme von Flurbereinigungsergebnissen</label>
+    <code>010619</code>
+  </Value>
+  <Value id="_A4894_12052">
+    <label>Übernahme von Flurstücken einer anderen Katasterbehörde</label>
+    <code>010304</code>
+  </Value>
+  <Value id="_A4894_12053">
+    <label>Übernahme von wichtigen Terminen im Ablauf eines Bodenordnungsverfahrens</label>
+    <code>010615</code>
+    <definition>Dient zur Mitteilung des Zeitpunkts der Rechtskraft usw.</definition>
+  </Value>
+  <Value id="_A4894_12054">
+    <label>Umlegung</label>
+    <code>010621</code>
+  </Value>
+  <Value id="_A4894_12055">
+    <label>Umlegung nach § 76 BauGB</label>
+    <code>010622</code>
+  </Value>
+  <Value id="_A4894_12056">
+    <label>Umnummerierung (infolge Zuständigkeitsänderungen am Grundbuch)</label>
+    <code>030100</code>
+  </Value>
+  <Value id="_A4894_12057">
+    <label>Umschreibung des Grundbuchs (§§ 28 ff, 68 GBV)</label>
+    <code>061000</code>
+  </Value>
+  <Value id="_A4894_12058">
+    <label>Untererbbaurecht anlegen</label>
+    <code>070500</code>
+  </Value>
+  <Value id="_A4894_12059">
+    <label>Untererbbaurecht aufheben</label>
+    <code>070600</code>
+  </Value>
+  <Value id="_A4894_12060">
+    <label>Untergang eines Festpunktes</label>
+    <code>090540</code>
+  </Value>
+  <Value id="_A4894_12061">
+    <label>Veränderung am Flurstück mit Änderung der Umfangsgrenzen</label>
+    <code>010203</code>
+    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück infolge wasserrechtlicher Bestimmungen, rechtskräftiger Urteile und Vergleiche über Grenzstreitigkeiten sowie von Grenzbestimmungen auf der Grundlage einer Vereinbarung der beteiligten Grundstückseigentümer durchgeführt, die eine Änderung in der Form des Flurstücks zur Folge haben.</definition>
+  </Value>
+  <Value id="_A4894_12062">
+    <label>Veränderung am Flurstück mit Änderung der Umfangsgrenzen des Grundstücks</label>
+    <code>010200</code>
+    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund rechtlicher Vorschriften (z.B. Wasserrecht, Straßenrecht) durchgeführt, die eine Änderung in der Form des Grundstücks zur Folge haben. Die Fortführung beinhaltet ein oder mehrere alte Flurstücke sowie ein oder mehrere neue Flurstücke.</definition>
+  </Value>
+  <Value id="_A4894_12063">
+    <label>Veränderung an der Landesgrenze und des Gebietes</label>
+    <code>6000</code>
+  </Value>
+  <Value id="_A4894_12064">
+    <label>Veränderung aufgrund Berichtigung eines Aufnahmefehlers</label>
+    <code>010205</code>
+  </Value>
+  <Value id="_A4894_12065">
+    <label>Veränderung aufgrund Berichtigung eines Grenzbestimmungsfehlers</label>
+    <code>010207</code>
+  </Value>
+  <Value id="_A4894_12066">
+    <label>Veränderung aufgrund der Homogenisierung</label>
+    <code>300501</code>
+    <definition>Bei der Fortführung mit Geometriebezug wird durch die Homogenisierung die Punkt-Lagegenauigkeit der raumbezogenen Bestandsdaten verbessert.</definition>
+  </Value>
+  <Value id="_A4894_12067">
+    <label>Veränderung aufgrund der Kartenanpassung</label>
+    <code>300500</code>
+  </Value>
+  <Value id="_A4894_12068">
+    <label>Veränderung aufgrund der Qualitätsverbesserung</label>
+    <code>010703</code>
+  </Value>
+  <Value id="_A4894_12069">
+    <label>Veränderung aufgrund der Vorschriften des Straßenrechts</label>
+    <code>010201</code>
+  </Value>
+  <Value id="_A4894_12070">
+    <label>Veränderung aufgrund der Vorschriften des Wasserrechts</label>
+    <code>010202</code>
+  </Value>
+  <Value id="_A4894_12071">
+    <label>Veränderung aufgrund gerichtlicher Entscheidung</label>
+    <code>010206</code>
+  </Value>
+  <Value id="_A4894_12072">
+    <label>Veränderung der Angaben zu den Nutzerprofilen</label>
+    <code>100000</code>
+  </Value>
+  <Value id="_A4894_12073">
+    <label>Veränderung der Anschrift aufgrund katasterlicher Erhebung</label>
+    <code>020303</code>
+  </Value>
+  <Value id="_A4894_12074">
+    <label>Veränderung der Beschreibung des Flurstücks</label>
+    <code>010400</code>
+    <definition>Mit dieser Fortführung wird die Beschreibung des Flurstücks für Besondere Flurstücksgrenze, Lage und Nutzungsart verändert. Die Fortführung beinhaltet ein oder mehrere Flurstücke.</definition>
+  </Value>
+  <Value id="_A4894_12075">
+    <label>Veränderung der besonderen Flurstücksgrenze</label>
+    <code>010401</code>
+  </Value>
+  <Value id="_A4894_12076">
+    <label>Veränderung der Bewertung</label>
+    <code>300430</code>
+  </Value>
+  <Value id="_A4894_12077">
+    <label>Veränderung der Bezeichnung oder der Zugehörigkeit des Flurstücks</label>
+    <code>010300</code>
+    <definition>Mit dieser Fortführung werden Veränderungen am Flurstück aufgrund von Umnumerierungen, Zuordnungen zu anderen Fluren oder infolge von Umgemarkungen sowie Umgemeindungen durchgeführt. Die Fortführung beinhaltet ein oder mehrere alte Flurstücke sowie ein oder mehrere neue Flurstücke.</definition>
+  </Value>
+  <Value id="_A4894_12078">
+    <label>Veränderung der Bodenschätzung</label>
+    <code>300420</code>
+  </Value>
+  <Value id="_A4894_12079">
+    <label>Veränderung der Flurstücksbezeichnung</label>
+    <code>010301</code>
+  </Value>
+  <Value id="_A4894_12080">
+    <label>Veränderung der Flurstücksnummer</label>
+    <code>010312</code>
+    <definition>Mit dieser Fortführung werden Flurstücksnummern berichtigt.</definition>
+  </Value>
+  <Value id="_A4894_12081">
+    <label>Veränderung der Flurzugehörigkeit</label>
+    <code>010305</code>
+  </Value>
+  <Value id="_A4894_12082">
+    <label>Veränderung der Gebäudeeigenschaften</label>
+    <code>200200</code>
+  </Value>
+  <Value id="_A4894_12083">
+    <label>Veränderung der Gebietseinheiten</label>
+    <code>300440</code>
+  </Value>
+  <Value id="_A4894_12084">
+    <label>Veränderung der Gemarkungszugehörigkeit</label>
+    <code>010302</code>
+  </Value>
+  <Value id="_A4894_12085">
+    <label>Veränderung der Gemeindezugehörigkeit</label>
+    <code>010310</code>
+  </Value>
+  <Value id="_A4894_12086">
+    <label>Veränderung der Gemeindezugehörigkeit einzelner Flurstücke</label>
+    <code>010309</code>
+  </Value>
+  <Value id="_A4894_12087">
+    <label>Veränderung der Gemeindezugehörigkeit ganzer Gemarkungen</label>
+    <code>010303</code>
+  </Value>
+  <Value id="_A4894_12088">
+    <label>Veränderung der Geometrie durch Implizitbehandlung</label>
+    <code>300900</code>
+  </Value>
+  <Value id="_A4894_12089">
+    <label>Veränderung der Lage</label>
+    <code>010402</code>
+  </Value>
+  <Value id="_A4894_12090">
+    <label>Veränderung der öffentlich-rechtlichen und sonstigen Festsetzungen</label>
+    <code>300410</code>
+  </Value>
+  <Value id="_A4894_12091">
+    <label>Veränderung der Personendaten</label>
+    <code>020301</code>
+  </Value>
+  <Value id="_A4894_12092">
+    <label>Veränderung der Personengruppe</label>
+    <code>020302</code>
+  </Value>
+  <Value id="_A4894_12093">
+    <label>Veränderung der Reservierung von Fachkennzeichen</label>
+    <code>300600</code>
+  </Value>
+  <Value id="_A4894_12094">
+    <label>Veränderung der tatsächlichen Nutzung</label>
+    <code>300300</code>
+  </Value>
+  <Value id="_A4894_12095">
+    <label>Veränderung der tatsächlichen Nutzung mit Änderung der Wirtschaftsart</label>
+    <code>010403</code>
+  </Value>
+  <Value id="_A4894_12096">
+    <label>Veränderung der tatsächlichen Nutzung ohne Änderung der Wirtschaftsart</label>
+    <code>010405</code>
+    <definition>Mit dieser Fortführung wird die tatsächliche Nutzung ohne Änderung der Wirtschaftsart verändert.</definition>
+  </Value>
+  <Value id="_A4894_12097">
+    <label>Veränderung der Vermarkung und/oder der beschreibenden Angaben eines Festpunkts</label>
+    <code>090520</code>
+  </Value>
+  <Value id="_A4894_12098">
+    <label>Veränderung der Vertretung</label>
+    <code>020305</code>
+    <definition>Mit dieser Fortführung werden die Daten zur Vertretung aufgrund katasterlicher Erhebungen verändert.</definition>
+  </Value>
+  <Value id="_A4894_12099">
+    <label>Veränderung der Verwaltung</label>
+    <code>020304</code>
+  </Value>
+  <Value id="_A4894_12100">
+    <label>Veränderung des Anliegervermerks</label>
+    <code>010404</code>
+  </Value>
+  <Value id="_A4894_12101">
+    <label>Veränderung von Bauwerken, Einrichtungen und sonstigen Angaben</label>
+    <code>300200</code>
+  </Value>
+  <Value id="_A4894_12102">
+    <label>Veränderung von Gebäudedaten</label>
+    <code>200000</code>
+  </Value>
+  <Value id="_A4894_12103">
+    <label>Veränderung von gesetzlichen Festlegungen, Gebietseinheiten, Katalogen</label>
+    <code>300400</code>
+  </Value>
+  <Value id="_A4894_12104">
+    <label>Veränderung von Katalogeinträgen</label>
+    <code>300700</code>
+    <definition>Veränderung der OA der abstrakten Oberklasse "Katalogeintrag"</definition>
+  </Value>
+  <Value id="_A4894_12105">
+    <label>Veränderung von Metadaten</label>
+    <code>300800</code>
+  </Value>
+  <Value id="_A4894_12106">
+    <label>Veränderungen am Flurstück ohne Änderung der Umfangsgrenzen des Grundstücks</label>
+    <code>010100</code>
+    <definition>Mit dieser Fortführung werden Flurstücke katastertechnisch zerlegt und / oder verschmolzen ohne das Grundstücke im Rechtssinne in ihrer Form verändert werden. Die Fortführung beinhaltet ein (Zerlegung) oder mehrere alte (Verschmelzung) Flurstücke sowie mehrere oder ein neues Flurstück(e).</definition>
+  </Value>
+  <Value id="_A4894_12107">
+    <label>Veränderungen der Angaben zum Netzpunkt</label>
+    <code>300100</code>
+  </Value>
+  <Value id="_A4894_12108">
+    <label>Vereinfachte Umlegung</label>
+    <code>010623</code>
+  </Value>
+  <Value id="_A4894_12109">
+    <label>Vereinigung (§ 890 Abs. 1 BGB, § 5 GBO)</label>
+    <code>060400</code>
+  </Value>
+  <Value id="_A4894_12110">
+    <label>Verfahren nach dem Baugesetzbuch</label>
+    <code>010602</code>
+  </Value>
+  <Value id="_A4894_12111">
+    <label>Verfahren nach dem Flurbereinigungsgesetz</label>
+    <code>010601</code>
+  </Value>
+  <Value id="_A4894_12112">
+    <label>Vermessung der Verfahrensgrenze des Flurbereinigungsgebietes</label>
+    <code>010616</code>
+  </Value>
+  <Value id="_A4894_12113">
+    <label>Verschmelzung</label>
+    <code>010102</code>
+  </Value>
+  <Value id="_A4894_12114">
+    <label>Verschmelzung von Flurstücken auf unterschiedlichen Beständen/Buchungsstellen</label>
+    <code>010199</code>
+  </Value>
+  <Value id="_A4894_12115">
+    <label>Verwaltung eintragen oder ändern</label>
+    <code>090100</code>
+  </Value>
+  <Value id="_A4894_12116">
+    <label>Verzeichnisse außerhalb des Grundbuches fortführen</label>
+    <code>020000</code>
+    <definition>Hiermit sind die Buchungen von noch nicht gebuchten sowie buchungsfreien Flurstücken sowie sonstige Angaben gemeint, die aufgrund von Vereinbarungen in besonderen Verzeichnissen des Grundbuchs geführt werden.</definition>
+  </Value>
+  <Value id="_A4894_12117">
+    <label>Vollziehung einer Verschmelzung</label>
+    <code>060600</code>
+  </Value>
+  <Value id="_A4894_12118">
+    <label>Wohnungserbbaurecht aufheben</label>
+    <code>070900</code>
+  </Value>
+  <Value id="_A4894_12119">
+    <label>Wohnungsuntererbbaurecht aufheben</label>
+    <code>071000</code>
+  </Value>
+  <Value id="_A4894_12120">
+    <label>Zerlegung</label>
+    <code>010105</code>
+    <definition>Mit dieser Fortführung werden Flurstücke infolge einer Vermessung, Sonderung oder Rückführung einer Verschmelzung zerlegt.</definition>
+  </Value>
+  <Value id="_A4894_12121">
+    <label>Zerlegung oder Sonderung</label>
+    <code>010101</code>
+  </Value>
+  <Value id="_A4894_12122">
+    <label>Zerlegung und Verschmelzung</label>
+    <code>010103</code>
+  </Value>
+  <Value id="_A4894_12123">
+    <label>Zerstörung der Vermarkung eines Festpunkts</label>
+    <code>090530</code>
+  </Value>
+  <Value id="_A4894_12124">
+    <label>Zuschreibung eines Flurstückes (Gebietsreform)</label>
+    <code>010801</code>
+  </Value>
+  <Value id="_A4896_12222">
+    <label>TopographischesFreizeitInformationsSystem25</label>
+    <code>TFIS25</code>
+  </Value>
+  <Value id="_A4896_12223">
+    <label>TopographischesFreizeitInformationsSystem50</label>
+    <code>TFIS50</code>
+  </Value>
+  <Value id="_A4896_12224">
+    <label>Bodenrichtwertinformationssystem</label>
+    <code>BORIS</code>
+  </Value>
+  <Value id="_A4896_12225">
+    <label>DigitaleTopographischeKarte10AKG</label>
+    <code>DTK10A</code>
+    <definition>Digitale topographische Karte 1:10.000 der automatischen kartographischen Generalisierung</definition>
+  </Value>
+  <Value id="_A4896_12226">
+    <label>DigitaleTopographischeKarte25AKG</label>
+    <code>DTK25A</code>
+    <definition>Digitale topographische Karte 1:25.000 der automatischen kartographischen Generalisierung</definition>
+  </Value>
+  <Value id="_A4896_12227">
+    <label>DigitaleTopographischeKarte50AKG</label>
+    <code>DTK50A</code>
+    <definition>Digitale topographische Karte 1:50.000 der automatischen kartographischen Generalisierung</definition>
+  </Value>
+  <Value id="_A4896_12228">
+    <label>DigitaleTopographischeKarte100AKG</label>
+    <code>DTK100A</code>
+    <definition>Digitale topographische Karte 1:100.000 der automatischen kartographischen Generalisierung</definition>
   </Value>
 </FeatureCatalogue>

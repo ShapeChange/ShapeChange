@@ -7,6 +7,31 @@
   <versionNumber>n/a</versionNumber>
   <versionDate>n/a</versionDate>
   <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P32">
+    <name>Test Schema2</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_Crefmodel_114" mode="DELETE">
+    <name mode="DELETE">DeletedFeatureType</name>
+    <subtypeOf idref="_C118" mode="DELETE">FeatureType</subtypeOf>
+    <package idref="_P32"></package>
+    <type mode="DELETE">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C118">
+    <name>FeatureType</name>
+    <package idref="_P32"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C119" mode="INSERT">
+    <name mode="INSERT">InsertedFeatureType</name>
+    <subtypeOf idref="_C118" mode="INSERT">FeatureType</subtypeOf>
+    <package idref="_P32"></package>
+    <type mode="INSERT">Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
   <ApplicationSchema id="_P4">
     <name>Test Schema</name>
     <versionNumber>1.0</versionNumber>
@@ -1281,31 +1306,14 @@
     <type>Feature Type</type>
     <taggedValues></taggedValues>
   </FeatureType>
-  <ApplicationSchema id="_P32">
-    <name>Test Schema2</name>
-    <versionNumber>1.0</versionNumber>
-    <taggedValues></taggedValues>
-  </ApplicationSchema>
-  <FeatureType id="_Crefmodel_114" mode="DELETE">
-    <name mode="DELETE">DeletedFeatureType</name>
-    <subtypeOf idref="_C118" mode="DELETE">FeatureType</subtypeOf>
-    <package idref="_P32"></package>
-    <type mode="DELETE">Feature Type</type>
-    <taggedValues></taggedValues>
-  </FeatureType>
-  <FeatureType id="_C118">
-    <name>FeatureType</name>
-    <package idref="_P32"></package>
-    <type>Feature Type</type>
-    <taggedValues></taggedValues>
-  </FeatureType>
-  <FeatureType id="_C119" mode="INSERT">
-    <name mode="INSERT">InsertedFeatureType</name>
-    <subtypeOf idref="_C118" mode="INSERT">FeatureType</subtypeOf>
-    <package idref="_P32"></package>
-    <type mode="INSERT">Feature Type</type>
-    <taggedValues></taggedValues>
-  </FeatureType>
+  <Value id="_A115_102">
+    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]1</label>
+    <code>ENUM1</code>
+  </Value>
+  <Value id="_A115_103">
+    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]2</label>
+    <code>ENUM2</code>
+  </Value>
   <Value id="_A49_52">
     <label>code1</label>
     <code>code1</code>
@@ -1341,13 +1349,5 @@
   <Value id="_Arefmodel_97_89" mode="DELETE">
     <label mode="DELETE">deletedEnum</label>
     <code mode="DELETE">deletedEnum</code>
-  </Value>
-  <Value id="_A115_102">
-    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]1</label>
-    <code>ENUM1</code>
-  </Value>
-  <Value id="_A115_103">
-    <label>[[del]]enum[[/del]][[ins]]ENUM[[/ins]]2</label>
-    <code>ENUM2</code>
   </Value>
 </FeatureCatalogue>

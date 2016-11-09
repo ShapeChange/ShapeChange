@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P45">
+    <name>AppSchema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C16440">
+    <name>AS1_1</name>
+    <title>Name of AS1_1</title>
+    <definition>Definition of AS1_1</definition>
+    <description>Description of AS1_1</description>
+    <example>Example for AS1_1</example>
+    <legalBasis>Legal basis for AS1_1</legalBasis>
+    <dataCaptureStatement>Data capture statement for AS1_1</dataCaptureStatement>
+    <code>Primary code of AS1_1</code>
+    <characterizedBy idref="_A16440_50990"></characterizedBy>
+    <characterizedBy idref="_AT51460"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16440_50990">
+    <name>p_as1_1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T51460">
+    <name>(unbestimmt)</name>
+    <associationClass idref="_C16442">AssociationClass1_A</associationClass>
+    <roles idref="_AT51460"></roles>
+    <roles idref="_AS51460"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51460">
+    <name>as1_2</name>
+    <title>Name of as1_2</title>
+    <definition>Definition of as1_2</definition>
+    <description>Description of as1_2</description>
+    <example>Example for as1_2</example>
+    <legalBasis>Legal basis for as1_2</legalBasis>
+    <dataCaptureStatement>Data capture statement for as1_2</dataCaptureStatement>
+    <code>Primary code of as1_2</code>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16441" category="feature type">AS1_2</FeatureTypeIncluded>
+    <relation idref="__T51460"></relation>
+    <InverseRole idref="_AS51460"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51460">
+    <name>as1_1</name>
+    <title>Name of as1_1</title>
+    <definition>Definition of as1_1</definition>
+    <description>Description of as1_1</description>
+    <example>Example for as1_1</example>
+    <legalBasis>Legal basis for as1_1</legalBasis>
+    <dataCaptureStatement>Data capture statement for as1_1</dataCaptureStatement>
+    <code>Primary code of as1_1</code>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16440" category="feature type">AS1_1</FeatureTypeIncluded>
+    <relation idref="__T51460"></relation>
+    <InverseRole idref="_AT51460"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16441">
+    <name>AS1_2</name>
+    <title>Name of AS1_2</title>
+    <definition>Definition of AS1_2</definition>
+    <description>Description of AS1_2</description>
+    <example>Example for AS1_2</example>
+    <legalBasis>Legal basis for AS1_2</legalBasis>
+    <dataCaptureStatement>Data capture statement for AS1_2</dataCaptureStatement>
+    <code>Primary code of AS1_2</code>
+    <characterizedBy idref="_A16441_50991"></characterizedBy>
+    <characterizedBy idref="_AS51460"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16441_50991">
+    <name>p_as1_2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16448">
+    <name>AS1_3</name>
+    <characterizedBy idref="_AT51462"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T51462">
+    <name>(unbestimmt)</name>
+    <associationClass idref="_C16450">AssociationClass1_B</associationClass>
+    <roles idref="_AT51462"></roles>
+    <roles idref="_AS51462"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51462">
+    <name>as1_4</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16449" category="feature type">AS1_4</FeatureTypeIncluded>
+    <relation idref="__T51462"></relation>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51462">
+    <name>role_S51462</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16448" category="feature type">AS1_3</FeatureTypeIncluded>
+    <relation idref="__T51462"></relation>
+    <InverseRole idref="_AT51462"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16449">
+    <name>AS1_4</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16451">
+    <name>AS1_5</name>
+    <characterizedBy idref="_AT51464"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T51464">
+    <name>(unbestimmt)</name>
+    <associationClass idref="_C16452">AssociationClass1_C</associationClass>
+    <roles idref="_AT51464"></roles>
+    <roles idref="_AS51464"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51464">
+    <name>ext1_1</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16443" category="feature type">EXT1_1</FeatureTypeIncluded>
+    <relation idref="__T51464"></relation>
+    <InverseRole idref="_AS51464"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51464">
+    <name>as1_5</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16451" category="feature type">AS1_5</FeatureTypeIncluded>
+    <relation idref="__T51464"></relation>
+    <InverseRole idref="_AT51464"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16453">
+    <name>AS1_6</name>
+    <characterizedBy idref="_AT51465"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T51465">
+    <name>(unbestimmt)</name>
+    <associationClass idref="_C16454">AssociationClass1_D</associationClass>
+    <roles idref="_AT51465"></roles>
+    <roles idref="_AS51465"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51465">
+    <name>ext1_2</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16444" category="feature type">EXT1_2</FeatureTypeIncluded>
+    <relation idref="__T51465"></relation>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51465">
+    <name>role_S51465</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16453" category="feature type">AS1_6</FeatureTypeIncluded>
+    <relation idref="__T51465"></relation>
+    <InverseRole idref="_AT51465"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16459">
+    <name>AS1_7</name>
+    <characterizedBy idref="_AS51466"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__S51466">
+    <name>(unbestimmt)</name>
+    <associationClass idref="_C16461">AssociationClassExt1_A</associationClass>
+    <roles idref="_AS51466"></roles>
+    <roles idref="_AT51466"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AS51466">
+    <name>ext1_3</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16460" category="feature type">EXT1_3</FeatureTypeIncluded>
+    <relation idref="__S51466"></relation>
+    <InverseRole idref="_AT51466"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AT51466">
+    <name>as1_7</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16459" category="feature type">AS1_7</FeatureTypeIncluded>
+    <relation idref="__S51466"></relation>
+    <InverseRole idref="_AS51466"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16463">
+    <name>AS1_8</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16468">
+    <name>AS1_X</name>
+    <characterizedBy idref="_AT51469"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T51469">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT51469"></roles>
+    <roles idref="_AS51469"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51469">
+    <name>assocClass1_A</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16442" category="feature type">AssociationClass1_A</FeatureTypeIncluded>
+    <relation idref="__T51469"></relation>
+    <InverseRole idref="_AS51469"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51469">
+    <name>as1_x</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16468" category="feature type">AS1_X</FeatureTypeIncluded>
+    <relation idref="__T51469"></relation>
+    <InverseRole idref="_AT51469"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16442">
+    <name>AssociationClass1_A</name>
+    <title>Name of AssociationClass1_A</title>
+    <definition>Definition of AssociationClass1_A</definition>
+    <description>Description of AssociationClass1_A</description>
+    <example>Example for AssociationClass1_A</example>
+    <legalBasis>Legal basis for AssociationClass1_A</legalBasis>
+    <dataCaptureStatement>Data capture statement for AssociationClass1_A</dataCaptureStatement>
+    <code>Primary code of AssociationClass1_A</code>
+    <subtypeOf idref="_C16467">AssociationClass1_A_Supertype</subtypeOf>
+    <characterizedBy idref="_A16442_50989"></characterizedBy>
+    <characterizedBy idref="_AS51469"></characterizedBy>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16442_50989">
+    <name>p_ac1_a</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C16467">
+    <name>AssociationClass1_A_Supertype</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16450">
+    <name>AssociationClass1_B</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16452">
+    <name>AssociationClass1_C</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16454">
+    <name>AssociationClass1_D</name>
+    <package idref="_P45"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+</FeatureCatalogue>

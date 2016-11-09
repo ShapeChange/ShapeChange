@@ -72,7 +72,7 @@ public abstract class ModelImpl implements Model {
 			"asDictionary", "inlineOrByReference", "isMetadata",
 			"defaultCodeSpace", "xmlSchemaType", "documentation", "resourceURI",
 			"codeList" };
-			// TODO clean-up list
+	// TODO clean-up list
 
 	/*
 	 * the list of tagged values specified by the JSON encoding rule
@@ -88,19 +88,23 @@ public abstract class ModelImpl implements Model {
 			"maxLength", "base", "rangeMinimum", "rangeMaximum", "default",
 			"nilReasonAllowed", "gmlImplementedByNilReason", "primaryCode",
 			"secondaryCode", "oclExpressions", "schPatterns", "unitMeasure",
-			"voidable", "infoURL", "alias", "gmlAsCharacterString", "gmlMixin",
-			"nillable", "suppress", "codeList", "codeListValuePattern",
-			"codeListRepresentation", "uomResourceURI",
-			"uomResourceValuePattern", "uomResourceRepresentation",
-			"physicalQuantity", "recommendedMeasure", "noncomparableMeasure",
-			"asXMLAttribute", "soft-typed", "parent", "AAA:Kennung",
-			"AAA:Datum", "AAA:Organisation", "AAA:Modellart", "AAA:Profile",
+			"voidable", "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
+			"suppress", "codeListValuePattern", "codeListRepresentation",
+			"uomResourceURI", "uomResourceValuePattern",
+			"uomResourceRepresentation", "physicalQuantity",
+			"recommendedMeasure", "noncomparableMeasure", "asXMLAttribute",
+			"soft-typed", "parent", "AAA:Kennung", "AAA:Datum",
+			"AAA:Organisation", "AAA:Modellart", "AAA:Profile",
 			"AAA:Grunddatenbestand", "AAA:Nutzungsart",
 			"AAA:Nutzungsartkennung", "AAA:objektbildend", "AAA:Themen",
 			"AAA:Revisionsnummer", "reverseRoleNAS", "allowedTypesNAS",
 			"gmlArrayProperty", "gmlListProperty", "example",
-			"dataCaptureStatement", "legalBasis", "profiles" };
-			// TODO update this with missing tags from other targets?
+			"dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL",
+			"broaderListedValue", "skosConceptSchemeSubclassName", "size",
+			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
+			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
+			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
+			"vocabulary", "associativeTable" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -433,6 +437,24 @@ public abstract class ModelImpl implements Model {
 			// ci is not part of any of the selected schemas
 			return false;
 		}
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.Model#schemaPackage(de.interactive_instruments.ShapeChange.Model.ClassInfo)
+	 */
+	public PackageInfo schemaPackage(ClassInfo ci) {
+
+		PackageInfo p = ci.pkg();
+
+		do {
+			if (p.isSchema() || p.isAppSchema()) {
+				return p;
+			} else {
+				p = p.owner();
+			}
+		} while (p != null);
+
+		return null;
 	}
 
 	/**

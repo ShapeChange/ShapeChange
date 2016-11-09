@@ -62,6 +62,7 @@ public class JsonSchema implements Target, MessageSource {
 
 	// TODO convert to more fine-grained info.matches() logic
 	
+	public static final String PARAM_SKIP_NOT_IMPLEMENTED_CHECK = "skipNotImplementedCheck";
 	private static final String JSON_SCHEMA_URI_DRAFT_03 = "http://json-schema.org/draft-03/schema#";
 	private static final String JSON_SCHEMA_URI_DRAFT_04 = "http://json-schema.org/draft-04/schema#";
 
@@ -86,6 +87,7 @@ public class JsonSchema implements Target, MessageSource {
 	private String schemaURI = null;
 	private boolean diagnosticsOnly;
 	private boolean includeDocumentation = true;
+	private boolean skipNotImplementedCheck = false;
 	private String documentationTemplate = null;
 	private String documentationNoValue = null;
 
@@ -121,6 +123,11 @@ public class JsonSchema implements Target, MessageSource {
 			baseURI = options.parameter(this.getClass().getName(),"jsonBaseURI");
 		if (baseURI==null)
 			baseURI = "FIXME";
+		
+		String skipNotImplemented_tmp = options.parameter(this.getClass().getName(),PARAM_SKIP_NOT_IMPLEMENTED_CHECK);
+		if(skipNotImplemented_tmp != null && skipNotImplemented_tmp.trim().equalsIgnoreCase("true")) {
+			skipNotImplementedCheck = true;
+		}
 		
 		// change the default documentation template?
 		documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
@@ -193,18 +200,20 @@ public class JsonSchema implements Target, MessageSource {
 	}
 
 	public void process(ClassInfo ci) {
+		
 		int cat = ci.category();
+				
 		if (options.matchesEncRule(ci.encodingRule("json"),"geoservices")) {
-			if (cat != Options.FEATURE && cat != Options.OBJECT) {
+			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN) {
 				return;
 			}
 		} else if (options.matchesEncRule(ci.encodingRule("json"),"geoservices_extended")) {
-			if (cat != Options.FEATURE && cat != Options.OBJECT && 
+			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN && 
 				cat != Options.DATATYPE && cat != Options.UNION) {
 				return;
 			}
 		}
-
+		
 		Context ctx = new Context();
 		try {
 			
@@ -276,7 +285,7 @@ public class JsonSchema implements Target, MessageSource {
 					ClassInfo cix = model.classById(sid);
 					if (cix != null) {
 						String cn = cix.name();
-						if (notImplemented(cn))
+						if (!skipNotImplementedCheck && notImplemented(cn))
 							result.addWarning(this, 104, ci.name(), cn);
 						else
 							ctx = ProcessProperties(ctx, cix);
@@ -413,7 +422,7 @@ public class JsonSchema implements Target, MessageSource {
 						}
 						enums += "]";
 						}
-					} else if (cat==Options.FEATURE || cat==Options.OBJECT) {
+					} else if (cat==Options.FEATURE || cat==Options.OBJECT || cat==Options.MIXIN) {
 						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
 							type = "integer";
 							String lyrURI = cix.taggedValue("jsonLayerTableURI");
@@ -433,18 +442,30 @@ public class JsonSchema implements Target, MessageSource {
 							format = "uri";
 						}					
 					} else if (cat==Options.DATATYPE || cat==Options.UNION) {
+						
 						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+							
 							flatten = true;
 							verifyNoGeometry(cix);
+							
 						} else if (options.matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
-							String refBaseURI = cix.pkg().rootPackage().taggedValue("jsonBaseURI");
+							
+							PackageInfo rootPackage = cix.pkg().rootPackage();
+							
+							String refBaseURI = null;
+							if(rootPackage != null) 
+								refBaseURI = rootPackage.taggedValue("jsonBaseURI");
 							if (refBaseURI == null)
 								refBaseURI = baseURI;
-							String refDir = cix.pkg().rootPackage().taggedValue("jsonDirectory");
-							if (refDir==null)
-								refDir = cix.pkg().rootPackage().xmlns();
+							
+							String refDir = null;
+							if(rootPackage != null)
+								refDir = rootPackage.taggedValue("jsonDirectory");
+							if (refDir==null && rootPackage != null)
+								refDir = rootPackage.xmlns();
 							if (refDir==null)
 								refDir = "default";
+							
 							ref = refBaseURI+"/"+refDir+"/"+cix.name()+".json";
 						}					
 					}
@@ -570,6 +591,7 @@ public class JsonSchema implements Target, MessageSource {
 					}				
 				}
 			} else {
+				// TODO 2016-09-26: is the message misleading? The property is not encoded at all.
 				result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
 			}
 		}
@@ -713,7 +735,7 @@ public class JsonSchema implements Target, MessageSource {
 		case 103:
 			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'string' will be used.";
 		case 104:
-			return "??No JSON representation known for type '$2$' which is a subtype of '$1$'. The supertype is ignored.";
+			return "??No JSON representation known for type '$2$' which is a supertype of '$1$'. The supertype is ignored.";
 		case 105:
 			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'any' will be used.";
 		case 106: 

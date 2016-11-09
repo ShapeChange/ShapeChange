@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+<rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 
   <!--    
-  <MapEntry type="Curve" rule="iso19150_2014" targetType="sf:Curve"/>
-  <MapEntry type="PolyhedralSurface" rule="iso19150_2014" targetType="sf:PolyhedralSurface"/>
-  <MapEntry type="MultiPoint" rule="iso19150_2014" targetType="sf:MultiPoint"/>
-  <MapEntry type="MultiLineString" rule="iso19150_2014" targetType="sf:MultiLineString"/>
-  <MapEntry type="Line" rule="iso19150_2014" targetType="sf:Line"/>
-  <MapEntry type="Point" rule="iso19150_2014" targetType="sf:Point"/>
-  <MapEntry type="Polygon" rule="iso19150_2014" targetType="sf:Polygon"/>
-  <MapEntry type="MultiPolygon" rule="iso19150_2014" targetType="sf:MultiPolygon"/>
-  <MapEntry type="Triangle" rule="iso19150_2014" targetType="sf:Triangle"/>
-  <MapEntry type="LineString" rule="iso19150_2014" targetType="sf:LineString"/>
-  <MapEntry type="LinearRing" rule="iso19150_2014" targetType="sf:LinearRing"/>
-  <MapEntry type="Geometry" rule="iso19150_2014" targetType="sf:Geometry"/>
-  <MapEntry type="Surface" rule="iso19150_2014" targetType="sf:Surface"/>
-  <MapEntry type="MultiSurface" rule="iso19150_2014" targetType="sf:MultiSurface"/>
-  <MapEntry type="GeometryCollection" rule="iso19150_2014" targetType="sf:GeometryCollection"/>
-  <MapEntry type="TIN" rule="iso19150_2014" targetType="sf:TIN"/>
-  <MapEntry type="MultiCurve" rule="iso19150_2014" targetType="sf:MultiCurve"/>
+  <RdfTypeMapEntry type="Curve" target="sf:Curve"/>
+  <RdfTypeMapEntry type="PolyhedralSurface" target="sf:PolyhedralSurface"/>
+  <RdfTypeMapEntry type="MultiPoint" target="sf:MultiPoint"/>
+  <RdfTypeMapEntry type="MultiLineString" target="sf:MultiLineString"/>
+  <RdfTypeMapEntry type="Line" target="sf:Line"/>
+  <RdfTypeMapEntry type="Point" target="sf:Point"/>
+  <RdfTypeMapEntry type="Polygon" target="sf:Polygon"/>
+  <RdfTypeMapEntry type="MultiPolygon" target="sf:MultiPolygon"/>
+  <RdfTypeMapEntry type="Triangle" target="sf:Triangle"/>
+  <RdfTypeMapEntry type="LineString" target="sf:LineString"/>
+  <RdfTypeMapEntry type="LinearRing" target="sf:LinearRing"/>
+  <RdfTypeMapEntry type="Geometry" target="sf:Geometry"/>
+  <RdfTypeMapEntry type="Surface" target="sf:Surface"/>
+  <RdfTypeMapEntry type="MultiSurface" target="sf:MultiSurface"/>
+  <RdfTypeMapEntry type="GeometryCollection" target="sf:GeometryCollection"/>
+  <RdfTypeMapEntry type="TIN" target="sf:TIN"/>
+  <RdfTypeMapEntry type="MultiCurve" target="sf:MultiCurve"/>
   -->
   <!-- ... more to be added as required -->
-</mapEntries>
+</rdfMapEntries>

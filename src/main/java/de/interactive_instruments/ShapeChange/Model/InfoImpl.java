@@ -43,8 +43,11 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
-public abstract class InfoImpl
-		implements Info, MessageSource {
+/**
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ *
+ */
+public abstract class InfoImpl implements Info, MessageSource {
 
 	boolean postprocessed = false;
 	private String lf = System.getProperty("line.separator");
@@ -66,7 +69,16 @@ public abstract class InfoImpl
 	public int compareTo(Info i) {
 		String my = id();
 		String other = i.id();
-		return my.hashCode() - other.hashCode();
+
+		return my.compareTo(other);
+
+		/*
+		 * 2016-08-11 JE - WARNING: Comparison using hashCodes of ids led to
+		 * wrong results when Info objects were used in SortedMaps - the
+		 * particular situation was a SortedMap with PropertyInfo objects (from
+		 * a very large application schema, the NAS) as keys.
+		 */
+		// return my.hashCode() - other.hashCode();
 	}
 
 	public Stereotypes stereotypes() {

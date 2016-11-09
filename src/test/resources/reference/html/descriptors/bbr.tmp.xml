@@ -12,21 +12,13 @@
     <versionNumber>1.0</versionNumber>
     <taggedValues></taggedValues>
   </ApplicationSchema>
+  <Package id="_P160">
+    <name>Property Overwrite Warning</name>
+    <parent idref="_P162"></parent>
+  </Package>
   <Package id="_P46">
     <name>Foundation</name>
     <parent idref="_P162"></parent>
-  </Package>
-  <Package id="_P43">
-    <name>Entity</name>
-    <parent idref="_P46"></parent>
-  </Package>
-  <Package id="_P76">
-    <name>Geometry</name>
-    <parent idref="_P46"></parent>
-  </Package>
-  <Package id="_P77">
-    <name>Metadata</name>
-    <parent idref="_P46"></parent>
   </Package>
   <Package id="_P153">
     <name>Datatypes</name>
@@ -40,12 +32,20 @@
     <name>Codelists</name>
     <parent idref="_P153"></parent>
   </Package>
+  <Package id="_P43">
+    <name>Entity</name>
+    <parent idref="_P46"></parent>
+  </Package>
+  <Package id="_P76">
+    <name>Geometry</name>
+    <parent idref="_P46"></parent>
+  </Package>
+  <Package id="_P77">
+    <name>Metadata</name>
+    <parent idref="_P46"></parent>
+  </Package>
   <Package id="_P62">
     <name>AppFeatureTypes</name>
-    <parent idref="_P162"></parent>
-  </Package>
-  <Package id="_P160">
-    <name>Property Overwrite Warning</name>
     <parent idref="_P162"></parent>
   </Package>
   <FeatureType id="_C16281">
@@ -1505,36 +1505,6 @@
     <code>enum3</code>
     <definition>enum3 of EnumerationA VC definition.</definition>
   </Value>
-  <Value id="_A3414_18004">
-    <label>1</label>
-    <code>enum1</code>
-    <definition>enum1 of EnumerationX VC definition.</definition>
-  </Value>
-  <Value id="_A3414_18003">
-    <label>2</label>
-    <code>enum2</code>
-    <definition>enum2 of EnumerationX VC definition.</definition>
-  </Value>
-  <Value id="_A3684_19513">
-    <label>1</label>
-    <code>enum1</code>
-    <definition>enum1 of EnumerationY VC definition.</definition>
-  </Value>
-  <Value id="_A3684_19514">
-    <label>2</label>
-    <code>enum2</code>
-    <definition>enum2 of EnumerationY VC definition.</definition>
-  </Value>
-  <Value id="_A8628_49244">
-    <label>A</label>
-    <code>enumA</code>
-    <definition>EnumA of EnumerationB VC definition.</definition>
-  </Value>
-  <Value id="_A8628_49245">
-    <label>B</label>
-    <code>enumB</code>
-    <definition>EnumB of EnumerationB VC definition.</definition>
-  </Value>
   <Value id="_A16279_50882">
     <label>-999999</label>
     <code>noInformation</code>
@@ -1564,5 +1534,35 @@
     <label>999</label>
     <code>other</code>
     <definition>Other</definition>
+  </Value>
+  <Value id="_A3414_18004">
+    <label>1</label>
+    <code>enum1</code>
+    <definition>enum1 of EnumerationX VC definition.</definition>
+  </Value>
+  <Value id="_A3414_18003">
+    <label>2</label>
+    <code>enum2</code>
+    <definition>enum2 of EnumerationX VC definition.</definition>
+  </Value>
+  <Value id="_A3684_19513">
+    <label>1</label>
+    <code>enum1</code>
+    <definition>enum1 of EnumerationY VC definition.</definition>
+  </Value>
+  <Value id="_A3684_19514">
+    <label>2</label>
+    <code>enum2</code>
+    <definition>enum2 of EnumerationY VC definition.</definition>
+  </Value>
+  <Value id="_A8628_49244">
+    <label>A</label>
+    <code>enumA</code>
+    <definition>EnumA of EnumerationB VC definition.</definition>
+  </Value>
+  <Value id="_A8628_49245">
+    <label>B</label>
+    <code>enumB</code>
+    <definition>EnumB of EnumerationB VC definition.</definition>
   </Value>
 </FeatureCatalogue>

@@ -39,6 +39,9 @@ public class Multiplicity {
 	public int minOccurs = 1;
 	public int maxOccurs = 1;
 
+	/**
+	 * Creates multiplicity with minOccurs = 1 and maxOccurs = 1
+	 */
 	public Multiplicity() {
 	}
 	

@@ -170,6 +170,8 @@ public class FeatureCatalogue
 	 */
 	public static final String PARAM_INCLUDE_CODELIST_URI = "includeCodelistURI";
 
+	public static final String PARAM_XSL_TRANSFORMER_FACTORY = "xslTransformerFactory";
+	public static final String PARAM_OUTPUT_FORMAT = "outputFormat";
 	/**
 	 * Path to a java executable (usually 64bit). This parameter should be used
 	 * whenever the feature catalogue to produce will be very large (hundreds of
@@ -3011,7 +3013,7 @@ public class FeatureCatalogue
 		else
 			Package = "";
 
-		s = options.parameter(this.getClass().getName(), "outputFormat");
+		s = options.parameter(this.getClass().getName(), PARAM_OUTPUT_FORMAT);
 		if (s != null && s.length() > 0)
 			OutputFormat = s;
 		else
@@ -3050,7 +3052,7 @@ public class FeatureCatalogue
 		}
 
 		s = options.parameter(this.getClass().getName(),
-				"xslTransformerFactory");
+				PARAM_XSL_TRANSFORMER_FACTORY);
 		if (s != null && s.length() > 0)
 			xslTransformerFactory = s;
 
