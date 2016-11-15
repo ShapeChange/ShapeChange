@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2014 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +95,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * the initial value defined in the application schema.
 	 */
 	public static final String RULE_ENUM_INITIAL_VALUE_BY_ALIAS = "rule-arcgis-prop-initialValueByAlias";
+
+	public static final String RULE_CLS_HASZ = "rule-arcgis-cls-hasZ";
+
+	public static final String RULE_CLS_HASM = "rule-arcgis-cls-hasM";
 
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
@@ -325,7 +329,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 */
 	private Pattern lengthConstraintPattern = Pattern
 			.compile("(?:self\\.)?(\\w+)[\\.\\w+]*\\.size\\(\\)\\D*(\\d+)");
-	
 
 	/**
 	 * Pattern to parse the lower boundary information from a numeric range
@@ -673,6 +676,19 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	public void process(ClassInfo ci) {
 
+		/*
+		 * if a map entry provides a mapping for this class to an esri field
+		 * type, we can ignore it
+		 */
+		if (this.processMapEntries.containsKey(ci.name())) {
+			
+			ProcessMapEntry pme = this.processMapEntries.get(ci.name());
+			
+			result.addInfo(this, 240, ci.name(),pme.getTargetType());
+			ignoredCis.add(ci);
+			return;
+		}
+
 		// some preprocessing: determine length info from OCL constraints
 		parseLengthInfoFromOCLConstraints(ci);
 
@@ -953,10 +969,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		EAModelUtil.setEAStereotype(e, "CodedValueDomain");
 
-		
 		String documentation = ci.derivedDocumentation(documentationTemplate,
 				"<no description available>");
-				
+
 		EAModelUtil.setTaggedValue(e,
 				new EATaggedValue("description", documentation, true));
 
@@ -1127,11 +1142,26 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			tvs.add(new EATaggedValue("DSID", ""));
 			tvs.add(new EATaggedValue("FeatureType", "esriFTSimple"));
 			tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-			tvs.add(new EATaggedValue("HasM", "false"));
+			
+			String hasM = "false";
+			if(ci.matches(RULE_CLS_HASM)) {
+				String hasMFromTV = ci.taggedValue("HasM");
+				if(hasMFromTV != null && hasMFromTV.trim().equalsIgnoreCase("true")) {
+					hasM = "true";
+				}
+			}			
+			tvs.add(new EATaggedValue("HasM", hasM));
+			
 			tvs.add(new EATaggedValue("HasSpatialIndex", "true"));
-			// TODO - maybe HasZ needs to be set via configuration parameter,
-			// depending on the SRS
-			tvs.add(new EATaggedValue("HasZ", "false"));
+			
+			String hasZ = "false";
+			if(ci.matches(RULE_CLS_HASZ)) {
+				String hasZFromTV = ci.taggedValue("HasZ");
+				if(hasZFromTV != null && hasZFromTV.trim().equalsIgnoreCase("true")) {
+					hasZ = "true";
+				}
+			}
+			tvs.add(new EATaggedValue("HasZ", hasZ));
 
 			if (geomType.equals(ArcGISGeometryType.POLYGON)
 					|| geomType.equals(ArcGISGeometryType.POLYLINE)) {
@@ -1973,9 +2003,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 									pi.derivedDocumentation(
 											documentationTemplate,
 											documentationNoValue),
-									eaTargetType, "" + computeLength(pi,mappedTypeName),
-									"" + computePrecision(pi,mappedTypeName),
-									"" + computeScale(pi,mappedTypeName),
+									eaTargetType,
+									"" + computeLength(pi, mappedTypeName),
+									"" + computePrecision(pi, mappedTypeName),
+									"" + computeScale(pi, mappedTypeName),
 									eaTargetClassifierId);
 
 						} catch (EAException e) {
@@ -3115,7 +3146,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "One to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
 		case 239:
 			return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-
+		case 240:
+			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+			
 		// 10001-10100: EA exceptions
 		case 10001:
 			return "EA exception encountered: $1$";

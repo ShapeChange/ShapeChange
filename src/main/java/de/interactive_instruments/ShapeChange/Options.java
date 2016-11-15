@@ -3363,6 +3363,8 @@ public class Options {
 		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-all-exclude-abstract");
+		addRule("rule-sql-all-foreign-key-oracle-naming-style");
+		addRule("rule-sql-cls-code-lists");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
@@ -3430,6 +3432,9 @@ public class Options {
 		 * ArcGIS workspace encoding rules
 		 */
 		addRule("rule-arcgis-prop-initialValueByAlias");
+		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-cls-hasM");
+		
 		/*
 		 * extend core encoding rule with optional ArcGIS workspace rules
 		 */

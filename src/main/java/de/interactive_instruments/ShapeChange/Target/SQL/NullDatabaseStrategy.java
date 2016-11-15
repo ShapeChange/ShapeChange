@@ -48,6 +48,11 @@ public class NullDatabaseStrategy implements DatabaseStrategy {
 	public String primaryKeyDataType() {
 		return "";
 	}
+	
+	@Override
+	public String convertDefaultValue(boolean b) {		
+		return "";
+	}
 
 	@Override
 	public String geometryDataType(ProcessMapEntry me, int srid) {
@@ -65,8 +70,8 @@ public class NullDatabaseStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String columnname,
-			Map<String, String> geometryCharacteristics) {
+	public String geometryIndexColumnPart(String indexName, String tableName,
+			String columnName, Map<String, String> geometryCharacteristics) {
 		return "";
 	}
 
@@ -82,12 +87,15 @@ public class NullDatabaseStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp) {
+	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
+			MapEntryParamInfos mepp) {
 		// ignore
+		return true;
 	}
 
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
+	public String createNameCheckConstraint(String tableName,
+			String propertyName) {
 		return "";
 	}
 

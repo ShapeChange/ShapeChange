@@ -105,6 +105,8 @@ public class MapEntryParamInfos implements MessageSource {
 	private Map<String, Map<String, Map<String, String>>> paramCache;
 
 	private ShapeChangeResult result;
+	
+	private boolean allParamsInMapEntriesAreValid = true;
 
 	public MapEntryParamInfos(ShapeChangeResult result,
 			List<ProcessMapEntry> pmes) {
@@ -137,9 +139,7 @@ public class MapEntryParamInfos implements MessageSource {
 						if (paramCache.containsKey(pme.getType())) {
 
 							MessageContext mc = result.addWarning(this, 4);
-							mc.addDetail(this, 0);
-							mc.addDetail(this, 1, pme.getType());
-							mc.addDetail(this, 2, param);
+							mc.addDetail(this, 1, pme.getType(), param);
 
 						} else {
 
@@ -187,11 +187,11 @@ public class MapEntryParamInfos implements MessageSource {
 						}
 
 					} else {
+						
+						allParamsInMapEntriesAreValid = false;
 
 						MessageContext mc = result.addError(this, 3);
-						mc.addDetail(this, 0);
-						mc.addDetail(this, 1, pme.getType());
-						mc.addDetail(this, 2, param);
+						mc.addDetail(this, 1, pme.getType(), param);
 					}
 				}
 			}
@@ -257,17 +257,19 @@ public class MapEntryParamInfos implements MessageSource {
 			return null;
 		}
 	}
+	
+	public boolean isValid() {
+		return allParamsInMapEntriesAreValid;
+	}
 
 	@Override
 	public String message(int mnr) {
 
 		switch (mnr) {
-		case 0:
-			return "Context: class MapEntryParamParser";
 		case 1:
-			return "Context: map entry with @type='$1$'.";
+			return "Context: map entry with @type='$1$' and @param='$2$'.";
 		case 2:
-			return "Context: map entry with @param='$1$'.";
+			return "";
 		case 3:
 			return "Found invalid value for 'param attribute in map entry. The entry will be ignored. Ensure that the value matches the regular expression "
 					+ VALIDATION_PATTERN + ".";

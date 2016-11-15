@@ -401,23 +401,24 @@ public class BasicTest {
 					"src/test/resources/reference/rdf/skos");
 
 			/*
-			 * Ontology (based on ISO 19150-2) - single ontology per schema 
+			 * Ontology (based on ISO 19150-2) - single ontology per schema
 			 */
 			multiTest(
 					"src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml",
 					new String[] { "ttl" },
 					"testResults/owl/singleOntologyPerSchema/owl",
 					"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
-			
+
 			/*
-			 * Ontology (based on ISO 19150-2) - multiple ontologies - one per package 
+			 * Ontology (based on ISO 19150-2) - multiple ontologies - one per
+			 * package
 			 */
 			multiTest(
 					"src/test/resources/config/testEA_owliso_multipleOntologiesPerSchema.xml",
 					new String[] { "ttl" },
 					"testResults/owl/multipleOntologiesPerSchema/owl",
 					"src/test/resources/reference/owl/multipleOntologiesPerSchema/owl");
-			
+
 			/*
 			 * Flattening transformation
 			 */
@@ -456,10 +457,12 @@ public class BasicTest {
 			/*
 			 * Flattening transformation - removing inheritance
 			 */
-			multiTest("src/test/resources/config/testEA_Flattening_removeInheritance.xml",
-					new String[] { "xsd" }, "testResults/flattening/removeInheritance/xsd",
+			multiTest(
+					"src/test/resources/config/testEA_Flattening_removeInheritance.xml",
+					new String[] { "xsd" },
+					"testResults/flattening/removeInheritance/xsd",
 					"src/test/resources/reference/flattening/removeInheritance/xsd");
-			
+
 			/*
 			 * Flattening transformation - cycles (and isFlatTarget setting)
 			 */
@@ -553,6 +556,31 @@ public class BasicTest {
 					new String[] { "xsd" },
 					"testResults/associationClassTransform/associationClassMapper",
 					"src/test/resources/reference/associationClassTransform/associationClassMapper");
+
+			/*
+			 * SQL - foreign keys Oracle naming style
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_sql_foreignKeysOracleNamingStyle.xml",
+					new String[] { "sql" }, "testResults/sql/associativeTables",
+					"src/test/resources/reference/sql/associativeTables");
+
+			/*
+			 * SQL - codelist conversion
+			 */
+			multiTest("src/test/resources/config/testEA_sql_codelists.xml",
+					new String[] { "sql" }, "testResults/sql/codelists",
+					"src/test/resources/reference/sql/codelists");
+
+			/*
+			 * Test rule-trf-camelcase-to-uppercase of NamingModifier
+			 * transformation
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_namingmodifier_camelcasetouppercase.xml",
+					new String[] { "xsd" },
+					"testResults/namingModifier/camelcaseToUppercase",
+					"src/test/resources/reference/namingModifier/camelcaseToUppercase");
 		}
 	}
 
@@ -1060,7 +1088,6 @@ public class BasicTest {
 					+ referenceHtmlFileName);
 		}
 	}
-
 
 	private void docxTest(String config, String[] docxs, String basedirResults,
 			String basedirReference) {

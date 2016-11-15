@@ -160,9 +160,9 @@ ALTER TABLE t5_class2 ADD CONSTRAINT t5_class2_t5c2p1_chk CHECK (t5c2p1 IN ('e2v
 ALTER TABLE t5_class2_t5c1p1 ADD CONSTRAINT t5_class2_t5c1p1_t5c1p1_chk CHECK (t5c1p1 IN ('e1val1', 'e1val2'));
 
 ALTER TABLE c1py ADD CONSTRAINT fk_c1py_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;
-ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa2 FOREIGN KEY (pa2_fk) REFERENCES T1_Class2;
-ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa4 FOREIGN KEY (pa4_fk) REFERENCES T1_Class2;
-ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa5 FOREIGN KEY (pa5_fk) REFERENCES T1_Class2;
+ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa2 FOREIGN KEY (pa2_fk) REFERENCES t1_class2;
+ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa4 FOREIGN KEY (pa4_fk) REFERENCES t1_class2;
+ALTER TABLE t1_class1 ADD CONSTRAINT fk_t1_class1_pa5 FOREIGN KEY (pa5_fk) REFERENCES t1_class2;
 ALTER TABLE t1_class1_pa1 ADD CONSTRAINT fk_t1_class1_pa1_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;
 ALTER TABLE t1_class1_pa1 ADD CONSTRAINT fk_t1_class1_pa1_t1_class2_id FOREIGN KEY (t1_class2_id) REFERENCES t1_class2;
 ALTER TABLE t1_class1_pa6 ADD CONSTRAINT fk_t1_class1_pa6_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;
@@ -170,11 +170,11 @@ ALTER TABLE t1_class1_pa6 ADD CONSTRAINT fk_t1_class1_pa6_t1_class2_id FOREIGN K
 ALTER TABLE t1_class1_pa7 ADD CONSTRAINT fk_t1_class1_pa7_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;
 ALTER TABLE t1_class1_pa7 ADD CONSTRAINT fk_t1_class1_pa7_t1_class2_id FOREIGN KEY (t1_class2_id) REFERENCES t1_class2;
 ALTER TABLE t1_class1_px ADD CONSTRAINT fk_t1_class1_px_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;
-ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb3 FOREIGN KEY (pb3_fk) REFERENCES T1_Class1;
-ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_1 FOREIGN KEY (pb6_1_fk) REFERENCES T1_Class1;
-ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_2 FOREIGN KEY (pb6_2_fk) REFERENCES T1_Class1;
-ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_3 FOREIGN KEY (pb6_3_fk) REFERENCES T1_Class1;
-ALTER TABLE t3_class1 ADD CONSTRAINT fk_t3_class1_p3 FOREIGN KEY (p3_fkdt) REFERENCES T3_Class3;
+ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb3 FOREIGN KEY (pb3_fk) REFERENCES t1_class1;
+ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_1 FOREIGN KEY (pb6_1_fk) REFERENCES t1_class1;
+ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_2 FOREIGN KEY (pb6_2_fk) REFERENCES t1_class1;
+ALTER TABLE t1_class2 ADD CONSTRAINT fk_t1_class2_pb6_3 FOREIGN KEY (pb6_3_fk) REFERENCES t1_class1;
+ALTER TABLE t3_class1 ADD CONSTRAINT fk_t3_class1_p3 FOREIGN KEY (p3_fkdt) REFERENCES t3_class3;
 ALTER TABLE t3_class1 ADD CONSTRAINT fk_t3_class1_p5 FOREIGN KEY (p5_fkdt) REFERENCES tb_extdtinmodel;
 ALTER TABLE t3_class1 ADD CONSTRAINT fk_t3_class1_p7 FOREIGN KEY (p7_fk) REFERENCES tb_extdtoutsidemodel;
 ALTER TABLE t3_class1_p4 ADD CONSTRAINT fk_t3_class1_p4_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
