@@ -96,8 +96,20 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 */
 	public static final String RULE_ENUM_INITIAL_VALUE_BY_ALIAS = "rule-arcgis-prop-initialValueByAlias";
 
+	/**
+	 * If a feature type has the tagged value 'HasZ' set to 'true', and the
+	 * feature type is converted to an ArcGIS feature class (Point, Polyline,
+	 * etc.), then with this rule enabled the ArcGIS feature class will have the
+	 * tagged value 'HasZ' set to 'true' (default is 'false').
+	 */
 	public static final String RULE_CLS_HASZ = "rule-arcgis-cls-hasZ";
 
+	/**
+	 * If a feature type has the tagged value 'HasM' set to 'true', and the
+	 * feature type is converted to an ArcGIS feature class (Point, Polyline,
+	 * etc.), then with this rule enabled the ArcGIS feature class will have the
+	 * tagged value 'HasM' set to 'true' (default is 'false').
+	 */
 	public static final String RULE_CLS_HASM = "rule-arcgis-cls-hasM";
 
 	/* ------------------------------------------- */
@@ -681,10 +693,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		 * type, we can ignore it
 		 */
 		if (this.processMapEntries.containsKey(ci.name())) {
-			
+
 			ProcessMapEntry pme = this.processMapEntries.get(ci.name());
-			
-			result.addInfo(this, 240, ci.name(),pme.getTargetType());
+
+			result.addInfo(this, 240, ci.name(), pme.getTargetType());
 			ignoredCis.add(ci);
 			return;
 		}
@@ -1142,22 +1154,24 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			tvs.add(new EATaggedValue("DSID", ""));
 			tvs.add(new EATaggedValue("FeatureType", "esriFTSimple"));
 			tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-			
+
 			String hasM = "false";
-			if(ci.matches(RULE_CLS_HASM)) {
+			if (ci.matches(RULE_CLS_HASM)) {
 				String hasMFromTV = ci.taggedValue("HasM");
-				if(hasMFromTV != null && hasMFromTV.trim().equalsIgnoreCase("true")) {
+				if (hasMFromTV != null
+						&& hasMFromTV.trim().equalsIgnoreCase("true")) {
 					hasM = "true";
 				}
-			}			
+			}
 			tvs.add(new EATaggedValue("HasM", hasM));
-			
+
 			tvs.add(new EATaggedValue("HasSpatialIndex", "true"));
-			
+
 			String hasZ = "false";
-			if(ci.matches(RULE_CLS_HASZ)) {
+			if (ci.matches(RULE_CLS_HASZ)) {
 				String hasZFromTV = ci.taggedValue("HasZ");
-				if(hasZFromTV != null && hasZFromTV.trim().equalsIgnoreCase("true")) {
+				if (hasZFromTV != null
+						&& hasZFromTV.trim().equalsIgnoreCase("true")) {
 					hasZ = "true";
 				}
 			}
@@ -3148,7 +3162,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
 		case 240:
 			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-			
+
 		// 10001-10100: EA exceptions
 		case 10001:
 			return "EA exception encountered: $1$";

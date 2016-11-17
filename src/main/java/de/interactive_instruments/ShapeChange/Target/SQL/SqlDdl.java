@@ -43,9 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -169,16 +167,7 @@ public class SqlDdl implements Target, MessageSource {
 	public static final String PARAM_DESCRIPTORS_FOR_CODELIST = "descriptorsForCodelist";
 	private String[] descriptorsForCodelistFromConfig = new String[] {
 			"documentation" };
-	private SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
-
-	/**
-	 * key: descriptor identifier (name, alias, definition, description,
-	 * example, legalBasis, dataCaptureStatement, primaryCode) and
-	 * 'documentation'
-	 * <p>
-	 * value: normalized name of the column representing the descriptor
-	 */
-	private Map<String, String> normalizedColumnNameByDescriptorIdentifier = new HashMap<String, String>();
+	private List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
 	/**
 	 * This parameter controls the name of the column that contains the name or
@@ -186,95 +175,17 @@ public class SqlDdl implements Target, MessageSource {
 	 * The column name will be normalized according to the rules of the chosen
 	 * database system.
 	 * <p>
+	 * Additional columns can be defined via the configuration parameter
+	 * {@value #PARAM_DESCRIPTORS_FOR_CODELIST}.
+	 * <p>
 	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
 	 */
 	public static final String PARAM_CODE_NAME_COLUMN_NAME = "codeNameColumnName";
 	private String codeNameColumnName = "name";
+	private String normalizedCodeNameColumnName = null;
 
-	/**
-	 * This parameter controls the name of the column that contains the
-	 * documentation of a code. Default is 'documentation'. NOTE1: The column
-	 * name will be normalized according to the rules of the chosen database
-	 * system. NOTE2: The documentation of a code is computed based upon the
-	 * value of the configuration parameters
-	 * {@value #PARAM_DOCUMENTATION_TEMPLATE} and
-	 * {@value #PARAM_DOCUMENTATION_NOVALUE}.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_DOCUMENTATION_COLUMN_NAME = "codeDocumentationColumnName";
-	private String codeDocumentationColumnName = "documentation";
-
-	/**
-	 * This parameter controls the name of the column that contains the alias of
-	 * a code. Default is 'alias'. NOTE: The column name will be normalized
-	 * according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_ALIAS_COLUMN_NAME = "codeAliasColumnName";
-	private String codeAliasColumnName = "alias";
-
-	/**
-	 * This parameter controls the name of the column that contains the
-	 * definition of a code. Default is 'definition'. NOTE: The column name will
-	 * be normalized according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_DEFINITION_COLUMN_NAME = "codeDefinitionColumnName";
-	private String codeDefinitionColumnName = "definition";
-
-	/**
-	 * This parameter controls the name of the column that contains the
-	 * description of a code. Default is 'description'. NOTE: The column name
-	 * will be normalized according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_DESCRIPTION_COLUMN_NAME = "codeDescriptionColumnName";
-	private String codeDescriptionColumnName = "description";
-
-	/**
-	 * This parameter controls the name of the column that contains the
-	 * example(s) of a code. Default is 'example'. NOTE: The column name will be
-	 * normalized according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_EXAMPLE_COLUMN_NAME = "codeExampleColumnName";
-	private String codeExampleColumnName = "example";
-
-	/**
-	 * This parameter controls the name of the column that contains the legal
-	 * basis of a code. Default is 'legalBasis'. NOTE: The column name will be
-	 * normalized according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_LEGALBASIS_COLUMN_NAME = "codeLegalBasisColumnName";
-	private String codeLegalBasisColumnName = "legalBasis";
-
-	/**
-	 * This parameter controls the name of the column that contains the data
-	 * capture statement(s) of a code. Default is 'dataCaptureStatement'. NOTE:
-	 * The column name will be normalized according to the rules of the chosen
-	 * database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_DATACAPTURESTATEMENT_COLUMN_NAME = "codeDataCaptureStatementColumnName";
-	private String codeDataCaptureStatementColumnName = "dataCaptureStatement";
-
-	/**
-	 * This parameter controls the name of the column that contains the primary
-	 * code of a code. Default is 'primaryCode'. NOTE: The column name will be
-	 * normalized according to the rules of the chosen database system.
-	 * <p>
-	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
-	 */
-	public static final String PARAM_CODE_PRIMARYCODE_COLUMN_NAME = "codePrimaryCodeColumnName";
-	private String codePrimaryCodeColumnName = "primaryCode";
+	public static final String PARAM_CODE_NAME_SIZE = "codeNameSize";
+	private Integer codeNameSize = null;
 
 	/* ------------------------ */
 	/* --- rule identifiers --- */
@@ -307,6 +218,11 @@ public class SqlDdl implements Target, MessageSource {
 	 * be converted to fields with foreign key type.
 	 */
 	public static final String RULE_TGT_SQL_CLS_CODELISTS = "rule-sql-cls-code-lists";
+
+	/**
+	 * 
+	 */
+	public static final String RULE_TGT_SQL_CLS_CODELISTS_PODS = "rule-sql-cls-code-lists-pods";
 
 	/**
 	 * If this rule is enabled, then a property whose type is neither covered by
@@ -349,8 +265,30 @@ public class SqlDdl implements Target, MessageSource {
 	 */
 	public static final String RULE_TGT_SQL_PROP_EXCLUDE_DERIVED = "rule-sql-prop-exclude-derived";
 
+	/**
+	 * If this rule is enabled, abstract classes will be ignored by the target.
+	 */
 	public static final String RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT = "rule-sql-all-exclude-abstract";
 
+	/**
+	 * Under this rule, foreign key identifiers are generated as follows:
+	 * <p>
+	 * "fk_" + tableNameForFK + "" + targetTableNameForFK + "" + fieldNameForFK
+	 * + count where:
+	 * <ul>
+	 * <li>tableNameForFK is the name of the table that contains the field with
+	 * the foreign key, clipped to the first eight characters</li>
+	 * <li>targetTableNameForFK is the name of the table that the field with
+	 * foreign key references, clipped to the first eight characters</li>
+	 * <li>fieldNameForFK is the name of the field that contains the foreign
+	 * key, clipped to the first eight characters</li>
+	 * <li>count is the number of times the foreign key identifier has been
+	 * assigned; it ranges from 0-9 and can also be omitted, thus supporting
+	 * eleven unambiguous uses of the foreign key identifier (NOTE: if the
+	 * foreign key identifier is used more than eleven times, ShapeChange logs
+	 * an error)</li>
+	 * </ul>
+	 */
 	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
 
 	/* --------------------- */
@@ -362,6 +300,13 @@ public class SqlDdl implements Target, MessageSource {
 	/* -------------------- */
 	/* --- other fields --- */
 	/* -------------------- */
+
+	/**
+	 * <pre>
+	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size)=\w+)(,(columnName|size)=\w+)*\))?
+	 * </pre>
+	 */
+	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";
@@ -661,22 +606,55 @@ public class SqlDdl implements Target, MessageSource {
 					.trim().split(",");
 		}
 		boolean unknownDescriptorFound = false;
-		String descriptorRegex = "documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode";
+
 		for (String tmp : descriptorsForCodelistFromConfig) {
 
-			if (tmp.matches(descriptorRegex)) {
-				descriptorsForCodelist.add(tmp);
+			if (tmp.matches(DESCRIPTORS_FOR_CODELIST_REGEX)) {
+
+				// parse descriptor string
+				String name = null;
+				String normalizedColumnName = null;
+				Integer size = null;
+
+				if (tmp.contains("(")) {
+
+					name = tmp.substring(0, tmp.indexOf("("));
+					String tmp2 = tmp.substring(tmp.indexOf("(") + 1,
+							tmp.length() - 1);
+					String[] metadata = tmp2.split(";");
+					for (String meta : metadata) {
+						String[] meta_parts = meta.split("=");
+						if (meta_parts[0].equalsIgnoreCase("columnName")) {
+							normalizedColumnName = normalizeName(meta_parts[1]);
+						} else if (meta_parts[0].equalsIgnoreCase("size")) {
+							size = new Integer(meta_parts[1]);
+						}
+					}
+
+				} else {
+					// no metadata defined for descriptor
+					name = tmp;
+				}
+
+				if (normalizedColumnName == null) {
+					normalizedColumnName = normalizeName(name);
+				}
+
+				descriptorsForCodelist.add(new DescriptorForCodeList(name,
+						normalizedColumnName, size));
+
 			} else {
 				unknownDescriptorFound = true;
 			}
 		}
 		if (unknownDescriptorFound) {
 			result.addWarning(this, 23, descriptorsForCodelistByConfig,
-					descriptorRegex);
+					DESCRIPTORS_FOR_CODELIST_REGEX);
 		}
 		if (descriptorsForCodelist.isEmpty()) {
 			result.addWarning(this, 24);
-			descriptorsForCodelist.add("documentation");
+			descriptorsForCodelist.add(
+					new DescriptorForCodeList("documentation", null, null));
 		}
 
 		/*
@@ -689,87 +667,14 @@ public class SqlDdl implements Target, MessageSource {
 				&& !codeNameColumnNameByConfig.trim().isEmpty()) {
 			codeNameColumnName = codeNameColumnNameByConfig.trim();
 		}
-		normalizedColumnNameByDescriptorIdentifier.put("name",
-				normalizeName(codeNameColumnName));
+		normalizedCodeNameColumnName = normalizeName(codeNameColumnName);
 
-		String codeDocumentationColumnNameByConfig = options.parameter(
-				this.getClass().getName(),
-				PARAM_CODE_DOCUMENTATION_COLUMN_NAME);
-		if (codeDocumentationColumnNameByConfig != null
-				&& !codeDocumentationColumnNameByConfig.trim().isEmpty()) {
-			codeDocumentationColumnName = codeDocumentationColumnNameByConfig
-					.trim();
+		String codeNameSizeByConfig = options
+				.parameter(this.getClass().getName(), PARAM_CODE_NAME_SIZE);
+		if (codeNameSizeByConfig != null
+				&& !codeNameSizeByConfig.trim().isEmpty()) {
+			codeNameSize = new Integer(codeNameSizeByConfig.trim());
 		}
-		normalizedColumnNameByDescriptorIdentifier.put("documentation",
-				normalizeName(codeDocumentationColumnName));
-
-		String codeAliasColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_ALIAS_COLUMN_NAME);
-		if (codeAliasColumnNameByConfig != null
-				&& !codeAliasColumnNameByConfig.trim().isEmpty()) {
-			codeAliasColumnName = codeAliasColumnNameByConfig.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("alias",
-				normalizeName(codeAliasColumnName));
-
-		String codeDefinitionColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_DEFINITION_COLUMN_NAME);
-		if (codeDefinitionColumnNameByConfig != null
-				&& !codeDefinitionColumnNameByConfig.trim().isEmpty()) {
-			codeDefinitionColumnName = codeDefinitionColumnNameByConfig.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("definition",
-				normalizeName(codeDefinitionColumnName));
-
-		String codeDescriptionColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_DESCRIPTION_COLUMN_NAME);
-		if (codeDescriptionColumnNameByConfig != null
-				&& !codeDescriptionColumnNameByConfig.trim().isEmpty()) {
-			codeDescriptionColumnName = codeDescriptionColumnNameByConfig
-					.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("description",
-				normalizeName(codeDescriptionColumnName));
-
-		String codeExampleColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_EXAMPLE_COLUMN_NAME);
-		if (codeExampleColumnNameByConfig != null
-				&& !codeExampleColumnNameByConfig.trim().isEmpty()) {
-			codeExampleColumnName = codeExampleColumnNameByConfig.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("example",
-				normalizeName(codeExampleColumnName));
-
-		String codeLegalBasisColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_LEGALBASIS_COLUMN_NAME);
-		if (codeLegalBasisColumnNameByConfig != null
-				&& !codeLegalBasisColumnNameByConfig.trim().isEmpty()) {
-			codeLegalBasisColumnName = codeLegalBasisColumnNameByConfig.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("legalBasis",
-				normalizeName(codeLegalBasisColumnName));
-
-		String codeDataCaptureStatementColumnNameByConfig = options.parameter(
-				this.getClass().getName(),
-				PARAM_CODE_DATACAPTURESTATEMENT_COLUMN_NAME);
-		if (codeDataCaptureStatementColumnNameByConfig != null
-				&& !codeDataCaptureStatementColumnNameByConfig.trim()
-						.isEmpty()) {
-			codeDataCaptureStatementColumnName = codeDataCaptureStatementColumnNameByConfig
-					.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("dataCaptureStatement",
-				normalizeName(codeDataCaptureStatementColumnName));
-
-		String codePrimaryCodeColumnNameByConfig = options.parameter(
-				this.getClass().getName(), PARAM_CODE_PRIMARYCODE_COLUMN_NAME);
-		if (codePrimaryCodeColumnNameByConfig != null
-				&& !codePrimaryCodeColumnNameByConfig.trim().isEmpty()) {
-			codePrimaryCodeColumnName = codePrimaryCodeColumnNameByConfig
-					.trim();
-		}
-		normalizedColumnNameByDescriptorIdentifier.put("primaryCode",
-				normalizeName(codePrimaryCodeColumnName));
 
 		// reset processed flags on all classes in the schema
 		for (Iterator<ClassInfo> k = model.classes(pi).iterator(); k
@@ -1006,8 +911,6 @@ public class SqlDdl implements Target, MessageSource {
 		 */
 		// String res = "fk_" + className + "_" + fieldName + "_to_"
 		// + targetClassName;
-
-		// TBD: UPDATE NAMING PATTERN?
 
 		String res;
 
@@ -1365,11 +1268,17 @@ public class SqlDdl implements Target, MessageSource {
 
 			if (pi.categoryOfValue() == Options.CODELIST
 					&& pi.inClass().matches(RULE_TGT_SQL_CLS_CODELISTS)) {
+
+				String fieldType;
+				if (codeNameSize == null) {
+					fieldType = databaseStrategy
+							.unlimitedLengthCharacterDataType();
+				} else {
+					fieldType = databaseStrategy
+							.limitedLengthCharacterDataType(codeNameSize);
+				}
 				indent(sb,
-						normalizedPiFieldName + " "
-								+ databaseStrategy
-										.unlimitedLengthCharacterDataType()
-								+ " NOT NULL,");
+						normalizedPiFieldName + " " + fieldType + " NOT NULL,");
 			} else {
 				indent(sb, normalizedPiFieldName + " "
 						+ foreignKeyColumnDataType + " NOT NULL,");
@@ -1564,46 +1473,66 @@ public class SqlDdl implements Target, MessageSource {
 		addCRLF(sb, "CREATE TABLE " + codeListTableName + " (");
 		newLine(sb);
 
-		// create the columns for codes
+		// --- create the columns for codes
 
-		/*
-		 * TBD: use limitedLengthCharacterDataType with configurable size
-		 * (default, by config, by TV on class, or computed by max name length
-		 * of defined codes)?
-		 */
-		String name_column_stmt = normalizedColumnNameByDescriptorIdentifier
-				.get("name") + " "
-				+ databaseStrategy.unlimitedLengthCharacterDataType()
-				+ " NOT NULL PRIMARY KEY";
+		// create required column to store the code name
+		StringBuffer name_column_stmt = new StringBuffer();
+		name_column_stmt.append(normalizedCodeNameColumnName);
+		name_column_stmt.append(" ");
+		if (codeNameSize == null) {
+			name_column_stmt.append(
+					databaseStrategy.unlimitedLengthCharacterDataType());
+		} else {
+			name_column_stmt.append(databaseStrategy
+					.limitedLengthCharacterDataType(codeNameSize));
+		}
+		name_column_stmt.append(" NOT NULL");
+		if (!ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+			name_column_stmt.append(" PRIMARY KEY");
+		}
 
 		if (!descriptorsForCodelist.isEmpty()) {
-			name_column_stmt = name_column_stmt + ",";
+			name_column_stmt.append(",");
 		}
-		indent(sb, name_column_stmt);
+		indent(sb, name_column_stmt.toString());
 
-		for (Iterator<String> iter = descriptorsForCodelist.iterator(); iter
-				.hasNext();) {
+		/*
+		 * now add one column for each descriptor, as specified via the
+		 * configuration
+		 */
+		for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+				.iterator(); iter.hasNext();) {
 
-			String identifier = iter.next();
-			String columnName = normalizedColumnNameByDescriptorIdentifier
-					.get(identifier);
+			DescriptorForCodeList descriptor = iter.next();
 
-			if (columnName != null) {
-
-				// that none of the above applies
-				String column_stmt = columnName + " "
-						+ databaseStrategy.unlimitedLengthCharacterDataType();
-				if (iter.hasNext()) {
-					column_stmt = column_stmt + ",";
-				}
-				indent(sb, column_stmt);
-
+			StringBuffer column_stmt = new StringBuffer();
+			column_stmt.append(descriptor.getNormalizedColumnName());
+			column_stmt.append(" ");
+			if (descriptor.getSize() == null) {
+				column_stmt.append(
+						databaseStrategy.unlimitedLengthCharacterDataType());
 			} else {
-				/*
-				 * should not happen, since we checked during initialization of
-				 * this target that all values in the set are well-known
-				 */
+				column_stmt.append(databaseStrategy
+						.limitedLengthCharacterDataType(descriptor.getSize()));
 			}
+			if (iter.hasNext() || ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				column_stmt.append(",");
+			}
+
+			indent(sb, column_stmt.toString());
+		}
+
+		if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+
+			indent(sb, "ACTIVE_INDICATOR_LF CHAR(1) NULL,");
+			indent(sb, "CONSTRAINT "
+					+ normalizeName("CKC_AI_" + codeListTableName)
+					+ " CHECK (ACTIVE_INDICATOR_LF IS NULL OR (ACTIVE_INDICATOR_LF IN ('Y','N'))),");
+			indent(sb, "SOURCE_GCL VARCHAR(16) NULL,");
+			indent(sb,
+					"CONSTRAINT " + normalizeName("PK_" + codeListTableName)
+							+ " PRIMARY KEY NONCLUSTERED ("
+							+ normalizedCodeNameColumnName + ")");
 		}
 
 		addCRLF(sb, ");");
@@ -1624,33 +1553,27 @@ public class SqlDdl implements Target, MessageSource {
 
 			addCRLF(codeSb, "INSERT INTO " + codeListTableName);
 
-			codeSb.append("("
-					+ normalizedColumnNameByDescriptorIdentifier.get("name"));
+			codeSb.append("(" + normalizedCodeNameColumnName);
 			if (!descriptorsForCodelist.isEmpty()) {
 				codeSb.append(", ");
 			}
 
-			for (Iterator<String> iter = descriptorsForCodelist.iterator(); iter
-					.hasNext();) {
+			for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+					.iterator(); iter.hasNext();) {
 
-				String identifier = iter.next();
-				String columnName = normalizedColumnNameByDescriptorIdentifier
-						.get(identifier);
+				DescriptorForCodeList descriptor = iter.next();
 
-				if (columnName != null) {
-
-					if (iter.hasNext()) {
-						columnName = columnName + ", ";
-					}
-					codeSb.append(columnName);
-
-				} else {
-					/*
-					 * should not happen, since we checked during initialization
-					 * of this target that all values in the set are well-known
-					 */
+				codeSb.append(descriptor.getNormalizedColumnName());
+				if (iter.hasNext()
+						|| ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+					codeSb.append(", ");
 				}
 			}
+
+			if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				codeSb.append("ACTIVE_INDICATOR_LF, SOURCE_GCL");
+			}
+
 			addCRLF(codeSb, ")");
 			addCRLF(codeSb, "VALUES");
 
@@ -1664,49 +1587,53 @@ public class SqlDdl implements Target, MessageSource {
 				codeSb.append(", ");
 			}
 
-			for (Iterator<String> iter = descriptorsForCodelist.iterator(); iter
-					.hasNext();) {
+			for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+					.iterator(); iter.hasNext();) {
 
-				String identifier = iter.next();
+				DescriptorForCodeList descriptor = iter.next();
+				String descName = descriptor.getDescriptorName();
 				String value = null;
 
-				if (identifier.equalsIgnoreCase("documentation")) {
+				if (descName.equalsIgnoreCase("name")) {
+
+					value = codePi.name();
+
+				} else if (descName.equalsIgnoreCase("documentation")) {
 
 					value = codePi.derivedDocumentation(documentationTemplate,
 							documentationNoValue);
 
-				} else if (identifier.equalsIgnoreCase("alias")) {
+				} else if (descName.equalsIgnoreCase("alias")) {
 
 					value = codePi.aliasName();
 
-				} else if (identifier.equalsIgnoreCase("definition")) {
+				} else if (descName.equalsIgnoreCase("definition")) {
 
 					value = codePi.definition();
 
-				} else if (identifier.equalsIgnoreCase("description")) {
+				} else if (descName.equalsIgnoreCase("description")) {
 
 					value = codePi.description();
 
-				} else if (identifier.equalsIgnoreCase("example")) {
+				} else if (descName.equalsIgnoreCase("example")) {
 
 					String[] examples = codePi.examples();
 					if (examples != null && examples.length > 0) {
 						value = StringUtils.join(examples, " ");
 					}
 
-				} else if (identifier.equalsIgnoreCase("legalBasis")) {
+				} else if (descName.equalsIgnoreCase("legalBasis")) {
 
 					value = codePi.legalBasis();
 
-				} else if (identifier
-						.equalsIgnoreCase("dataCaptureStatement")) {
+				} else if (descName.equalsIgnoreCase("dataCaptureStatement")) {
 
 					String[] dcss = codePi.dataCaptureStatements();
 					if (dcss != null && dcss.length > 0) {
 						value = StringUtils.join(dcss, " ");
 					}
 
-				} else if (identifier.equalsIgnoreCase("primaryCode")) {
+				} else if (descName.equalsIgnoreCase("primaryCode")) {
 
 					value = codePi.primaryCode();
 				}
@@ -1714,14 +1641,19 @@ public class SqlDdl implements Target, MessageSource {
 				if (value == null) {
 					value = "NULL";
 				} else {
-					
-					value = "'"+value+"'";
+
+					value = "'" + value + "'";
 				}
 
-				if (iter.hasNext()) {
+				if (iter.hasNext()
+						|| ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
 					value = value + ", ";
 				}
 				codeSb.append(value);
+			}
+
+			if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				codeSb.append("'Y', NULL");
 			}
 
 			addCRLF(codeSb, ");");
@@ -2427,7 +2359,7 @@ public class SqlDdl implements Target, MessageSource {
 		case 22:
 			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 		case 23:
-			return "At least one of the identifiers in configuration parameter '"
+			return "At least one of the descriptor identifiers in configuration parameter '"
 					+ PARAM_DESCRIPTORS_FOR_CODELIST
 					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Identifiers that do not match this expression will be ignored.";
 		case 24:

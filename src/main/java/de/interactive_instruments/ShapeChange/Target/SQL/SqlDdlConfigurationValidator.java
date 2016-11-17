@@ -120,15 +120,14 @@ public class SqlDdlConfigurationValidator
 			isValid = false;
 		}
 
-		isValid = checkDescriptorsForCodeList(config,options,result);
-
+		isValid = checkDescriptorsForCodeList(config, options, result);
 
 		return isValid;
 	}
 
 	private boolean checkDescriptorsForCodeList(ProcessConfiguration config,
 			Options options, ShapeChangeResult result) {
-		
+
 		boolean isValid = true;
 
 		String descriptorsForCodelistByConfig = options.parameter(
@@ -147,10 +146,9 @@ public class SqlDdlConfigurationValidator
 			}
 		}
 		boolean unknownDescriptorFound = false;
-		String descriptorRegex = "documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode";
 		for (String tmp : descriptorsForCodelistFromConfig) {
 
-			if (tmp.matches(descriptorRegex)) {
+			if (tmp.matches(SqlDdl.DESCRIPTORS_FOR_CODELIST_REGEX)) {
 				descriptorsForCodelist.add(tmp);
 			} else {
 				unknownDescriptorFound = true;
@@ -158,7 +156,7 @@ public class SqlDdlConfigurationValidator
 		}
 		if (unknownDescriptorFound) {
 			result.addError(this, 2, descriptorsForCodelistByConfig,
-					descriptorRegex);
+					SqlDdl.DESCRIPTORS_FOR_CODELIST_REGEX);
 			isValid = false;
 		}
 		if (descriptorsForCodelist.isEmpty()) {
@@ -166,7 +164,7 @@ public class SqlDdlConfigurationValidator
 			isValid = false;
 			// irrelevant here: descriptorsForCodelist.add("documentation");
 		}
-		
+
 		return isValid;
 	}
 
@@ -179,7 +177,7 @@ public class SqlDdlConfigurationValidator
 		case 1:
 			return "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/sql-ddl/";
 		case 2:
-			return "At least one of the identifiers in configuration parameter '"
+			return "At least one of the descriptor identifiers in configuration parameter '"
 					+ SqlDdl.PARAM_DESCRIPTORS_FOR_CODELIST
 					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Correct the parameter value.";
 		case 3:

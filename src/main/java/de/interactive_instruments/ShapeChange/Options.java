@@ -3365,6 +3365,7 @@ public class Options {
 		addRule("rule-sql-all-exclude-abstract");
 		addRule("rule-sql-all-foreign-key-oracle-naming-style");
 		addRule("rule-sql-cls-code-lists");
+		addRule("rule-sql-cls-code-lists-pods");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");

@@ -1,7 +1,7 @@
 CREATE TABLE t3_codelist1 (
 
-	myname text NOT NULL PRIMARY KEY,
-	myalias text,
+	myname character varying(50) NOT NULL PRIMARY KEY,
+	myalias character varying(255),
 	mydatacapturestatement text,
 	mydefinition text,
 	mydescription text,
@@ -13,8 +13,8 @@ CREATE TABLE t3_codelist1 (
 
 CREATE TABLE t3_codelist2 (
 
-	myname text NOT NULL PRIMARY KEY,
-	myalias text,
+	myname character varying(50) NOT NULL PRIMARY KEY,
+	myalias character varying(255),
 	mydatacapturestatement text,
 	mydefinition text,
 	mydescription text,
@@ -34,7 +34,7 @@ CREATE TABLE t3_featuretype1 (
 CREATE TABLE t3_featuretype1_propalpcode (
 
 	t3_featuretype1_id bigserial NOT NULL,
-	t3_codelist2_id text NOT NULL,
+	t3_codelist2_id character varying(50) NOT NULL,
 	PRIMARY KEY (t3_featuretype1_id,t3_codelist2_id)
 );
 
