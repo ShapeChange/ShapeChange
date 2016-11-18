@@ -1986,8 +1986,15 @@ public class SqlDdl implements Target, MessageSource {
 							RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
 
 						if (catOfValue == Options.CODELIST) {
-							return databaseStrategy
-									.unlimitedLengthCharacterDataType();
+							
+							if (codeNameSize == null) {
+								return databaseStrategy
+										.unlimitedLengthCharacterDataType();
+							} else {
+								return databaseStrategy
+										.limitedLengthCharacterDataType(codeNameSize);
+							}
+														
 						} else {
 							return foreignKeyColumnDataType;
 						}

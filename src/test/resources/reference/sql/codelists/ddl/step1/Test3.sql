@@ -27,7 +27,7 @@ CREATE TABLE t3_codelist2 (
 CREATE TABLE t3_featuretype1 (
 
 	_id bigserial NOT NULL PRIMARY KEY,
-	propnumcode text   -- DEF: propNumCode definition; DESC: propNumCode description; EX: propNumCode example 1 propNumCode example 2; LB: propNumCode legal basis; DCS: propNumCode data capture statement 1 propNumCode data capture statement 2; PC: propNumCode primary code
+	propnumcode character varying(50)   -- DEF: propNumCode definition; DESC: propNumCode description; EX: propNumCode example 1 propNumCode example 2; LB: propNumCode legal basis; DCS: propNumCode data capture statement 1 propNumCode data capture statement 2; PC: propNumCode primary code
 );
 
 
