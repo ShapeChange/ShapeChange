@@ -67,6 +67,13 @@ public interface Stereotypes {
 	public void add(String stereotype);
 
 	/**
+	 * Removes the given stereotype from this collection of stereotypes.
+	 * 
+	 * @param stereotype
+	 */
+	public void remove(String stereotype);
+
+	/**
 	 * @return the ShapeChange options
 	 */
 	public Options options();

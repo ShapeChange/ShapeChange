@@ -308,6 +308,11 @@ public interface Info extends Comparable<Info> {
 	public String[] dataCaptureStatements();
 
 	/**
+	 * Retrieves a copy of all (normalized) stereotypes of this model element.
+	 * <p>
+	 * NOTE: The returned object is a copy; modifications to that copy do NOT
+	 * change the stereotypes of this Info object.
+	 * 
 	 * @return all (normalized) stereotypes of the model element
 	 */
 	public Stereotypes stereotypes();

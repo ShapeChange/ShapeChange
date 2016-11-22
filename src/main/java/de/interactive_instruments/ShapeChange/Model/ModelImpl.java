@@ -83,7 +83,7 @@ public abstract class ModelImpl implements Model {
 	/*
 	 * the list of tagged values specified by the ArcGIS encoding rule
 	 */
-	protected static String[] arcgisTags = { "HasZ", "HasM" };
+	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType" };
 
 	/*
 	 * the list of tagged values specified by other encoding rules

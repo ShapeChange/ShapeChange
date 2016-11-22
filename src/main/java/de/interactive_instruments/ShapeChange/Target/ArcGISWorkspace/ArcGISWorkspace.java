@@ -986,10 +986,17 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		EAModelUtil.setTaggedValue(e,
 				new EATaggedValue("description", documentation, true));
+		
+		// identify field type for the coded value domain
+		String fieldType = "esriFieldTypeString";
+		String fieldTypeTV = ci.taggedValue("fieldType");
+		if(fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
+			fieldType = fieldTypeTV.trim();
+		}
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAModelUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, "esriFieldTypeString", new Multiplicity(1, 1),
+				false, false, fieldType, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
 		EAModelUtil.createEAAttribute(e, "MergePolicy", null, null, null, null,

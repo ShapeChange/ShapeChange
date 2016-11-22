@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:etc="http://test/typeConverter/enumerationToCodelist" xmlns:etcext="http://test/typeConverter/enumerationToCodelist/external" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmlexr="http://www.opengis.net/gml/3.3/exr" elementFormDefault="qualified" targetNamespace="http://test/typeConverter/enumerationToCodelist" version="1.0">
+  <import namespace="http://test/typeConverter/enumerationToCodelist/external"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.3/exr" schemaLocation="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="etc:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence/>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="etc:DataType"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <union memberTypes="etc:EnumerationEnumerationType etc:EnumerationOtherType"/>
+  </simpleType>
+  <simpleType name="EnumerationEnumerationType">
+    <restriction base="string">
+      <enumeration value="1"/>
+      <enumeration value="2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="etc:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propDataType" type="etc:DataTypePropertyType"/>
+          <element name="propExtCodeList" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">ExtCodeList</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="propExtEnumeration" type="etcext:ExtEnumerationType"/>
+          <element name="propUnion" type="etc:UnionPropertyType"/>
+          <element name="propFeatureType2" type="etc:FeatureType2PropertyType"/>
+          <element name="propType" type="etc:TypePropertyType"/>
+          <element name="propCodeList" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">Codelist</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="propEnumeration" type="etc:EnumerationType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="etc:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="etc:FeatureType2Type"/>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="etc:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Type" substitutionGroup="gml:AbstractGML" type="etc:TypeType"/>
+  <complexType name="TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="etc:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Union" substitutionGroup="gml:AbstractObject" type="etc:UnionType"/>
+  <complexType name="UnionType">
+    <choice>
+      <element name="opt1" type="string"/>
+      <element name="opt2" type="integer"/>
+    </choice>
+  </complexType>
+  <complexType name="UnionPropertyType">
+    <sequence>
+      <element ref="etc:Union"/>
+    </sequence>
+  </complexType>
+</schema>

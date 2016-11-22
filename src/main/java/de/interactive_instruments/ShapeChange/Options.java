@@ -3437,11 +3437,6 @@ public class Options {
 		addRule("rule-arcgis-cls-hasM");
 		
 		/*
-		 * extend core encoding rule with optional ArcGIS workspace rules
-		 */
-		addRule("rule-arcgis-prop-initialValueByAlias", "*");
-
-		/*
 		 * Replication schema encoding rules
 		 */
 		addRule("rule-rep-prop-optional");

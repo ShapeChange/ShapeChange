@@ -173,6 +173,50 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
+	public void remove(String stereotype) {
+
+		if (stereotype == null || stereotype.trim().length() == 0) {
+
+			// nothing to do
+
+		} else if (st == null && stSet == null) {
+
+			// nothing to do
+
+		} else {
+
+			// cache contains at least one stereotype
+
+			if (st != null) {
+
+				/*
+				 * Cache currently contains exactly one stereotype.
+				 */
+
+				if (st.equals(stereotype)) {
+					st = null;
+				}
+
+			} else {
+
+				// stSet has been initialized - multiple stereotypes exist
+
+				if (stSet.remove(stereotype)) {
+
+					/*
+					 * the stereotype existed in stSet - determine if only one
+					 * stereotype remains
+					 */
+					if(stSet.size() == 1) {
+						st = stSet.first();
+						stSet = null;
+					}
+				}
+			}
+		}
+	}
+
+	@Override
 	public String getOne() {
 
 		if (st != null) {
