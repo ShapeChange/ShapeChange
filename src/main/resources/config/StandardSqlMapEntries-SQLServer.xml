@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<!-- targetType: use 'cond:' to indicate that conditional type selection needs to be performed, with the following string identifying the nature of the type mapping (e.g. 'textOrCharacterVarying'). -->
+	<!-- param: used to indicate special nature of the type, for example 'geometry' to indicate that the map entry is for a geometry type. -->
+	
+	<!-- ISO/TS 19103 -->
+	<MapEntry type="Boolean" rule="*" targetType="bit" param=""/>
+	<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying"/>
+	<MapEntry type="DateTime" rule="*" targetType="datetime2" param=""/>
+	<MapEntry type="Integer" rule="*" targetType="int" param=""/>
+	<MapEntry type="Real" rule="*" targetType="numeric" param=""/>
+	
+	<!-- ISO/TS 19107 -->
+	<MapEntry type="GM_Curve" rule="*" targetType="geometry" param="geometry"/>
+	<MapEntry type="GM_MultiCurve" rule="*" targetType="geometry" param="geometry"/>
+	<MapEntry type="GM_MultiPoint" rule="*" targetType="geometry" param="geometry"/>
+	<MapEntry type="GM_MultiSurface" rule="*" targetType="geometry" param="geometry"/>
+	<MapEntry type="GM_Object" rule="*" targetType="geometry" param="geometry"/>
+	<MapEntry type="GM_Point" rule="*" targetType="geometry" param="geometry{USING=GEOMETRY_AUTO_GRID;BOUNDING_BOX=(-1000,-1000,1000,1000)}"/>
+	<MapEntry type="GM_Surface" rule="*" targetType="geometry" param="geometry"/>
+	
+	<!-- ISO/TS 19107 -->
+	<MapEntry type="CI_Citation" rule="*" targetType="nvarchar(max)" param=""/>
+	
+	<!-- ... more to be added as required -->
+	
+	<!-- other ISO -->
+	<MapEntry type="Date" rule="*" targetType="date" param=""/>
+</mapEntries>
