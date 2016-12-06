@@ -346,6 +346,8 @@ public class SqlDdl implements Target, MessageSource {
 	private Set<AssociationInfo> associationsWithAssociativeTable = new HashSet<AssociationInfo>();
 
 	private DatabaseStrategy databaseStrategy;
+	
+	private Set<String> allConstraintNames = new HashSet<String>();
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Target.Target#initialise(de.interactive_instruments.ShapeChange.Model.PackageInfo,
@@ -1791,7 +1793,7 @@ public class SqlDdl implements Target, MessageSource {
 
 	/**
 	 * @param name
-	 * @return String with any occurrence of '.' or '-' replaced by '_'.
+	 * @return String with characters that are illegal in database objects replaced by an underscore. Depending on the database, additional normalization can be done.
 	 */
 	private String normalizeName(String name) {
 
@@ -1799,15 +1801,24 @@ public class SqlDdl implements Target, MessageSource {
 			return null;
 		} else {
 			return databaseStrategy
-					.normalizeName(name.replace(".", "_").replace("-", "_"));
+					.normalizeName(replaceIllegalCharacters(name));
 		}
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @return String with any occurrence of '.' or '-' replaced by '_'.
+	 */
+	private String replaceIllegalCharacters(String string) {
+		return string.replace(".", "_").replace("-", "_");
 	}
 
 	private String createNameCheckConstraint(String tableName, String propertyName) {
 		if (tableName == null || propertyName == null) {
 			return null;
 		}
-		return databaseStrategy.createNameCheckConstraint(tableName.replace(".", "_").replace("-", "_"), propertyName.replace(".", "_").replace("-", "_"));
+		return databaseStrategy.createNameCheckConstraint(replaceIllegalCharacters(tableName), replaceIllegalCharacters(propertyName), allConstraintNames);
 	}
 
 	/**
