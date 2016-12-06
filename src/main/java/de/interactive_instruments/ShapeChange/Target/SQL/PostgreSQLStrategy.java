@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -78,13 +79,22 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
-		return tableName.toLowerCase(Locale.ENGLISH) + "_" + propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
+	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
+		String name = tableName.toLowerCase(Locale.ENGLISH) + "_" + propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
+		allConstraintNames.add(name);
+		return name;
 	}
 
 	@Override
 	public void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp) {
 		// nothing specific to check
+	}
+	
+	@Override
+	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
+		String name = "fk_" + tableName + "_" + fieldName;
+		allConstraintNames.add(name);
+		return name;
 	}
 
 }
