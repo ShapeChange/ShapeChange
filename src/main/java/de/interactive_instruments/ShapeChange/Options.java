@@ -3435,6 +3435,12 @@ public class Options {
 		addRule("rule-arcgis-prop-initialValueByAlias");
 		addRule("rule-arcgis-cls-hasZ");
 		addRule("rule-arcgis-cls-hasM");
+		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		addRule("rule-arcgis-prop-lengthFromTaggedValue");
+		addRule("rule-arcgis-prop-initialValue");
+		addRule("rule-arcgis-prop-precision");
+		addRule("rule-arcgis-prop-scale");
+		addRule("rule-arcgis-prop-isNullable");
 		
 		/*
 		 * Replication schema encoding rules

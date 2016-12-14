@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -64,6 +65,7 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -112,6 +114,38 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 */
 	public static final String RULE_CLS_HASM = "rule-arcgis-cls-hasM";
 
+	/**
+	 * Identifies range domains for class properties based upon the tagged
+	 * values 'rangeMinimum' and 'rangeMaximum'. Each boundary is inclusive. If
+	 * one of the tagged value is not provided, the default value for that
+	 * boundary is used. If both tagged values are empty, a range domain is not
+	 * created. This rule overrides the range domain parsed from an OCL
+	 * constraint, if the tagged values also specify a range domain for that
+	 * property.
+	 */
+	public static final String RULE_CLS_RANGE_DOMAIN_FROM_TAGGED_VALUES = "rule-arcgis-cls-rangeDomainFromTaggedValues";
+
+	/**
+	 * If this rule is enabled, ShapeChange will use the value of the tagged
+	 * value 'size' (must be an integer) to populate the ‘length’ tagged value
+	 * of the <<field>> that will represent the property in the ArcGIS model.
+	 * NOTE: Only applies to properties that are implemented as fields with type
+	 * esriFieldTypeString. If the value is 0 or empty, unlimited length is
+	 * assumed - unless an OCL constraint exists that restricts the length for
+	 * the property. That also means that this rule has precedence over an OCL
+	 * constraint: if the tagged value 'size' has an integer value > 1, then
+	 * this value will be used as the length in the <<field>>.
+	 */
+	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
+
+	public static final String RULE_PROP_INITIAL_VALUE = "rule-arcgis-prop-initialValue";
+
+	public static final String RULE_PROP_PRECISION = "rule-arcgis-prop-precision";
+
+	public static final String RULE_PROP_SCALE = "rule-arcgis-prop-scale";
+
+	public static final String RULE_PROP_ISNULLABLE = "rule-arcgis-prop-isNullable";
+
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
 	/* ------------------------------------------- */
@@ -123,6 +157,14 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * OCL constraint that defines the length.
 	 */
 	public static final String PARAM_LENGTH_TAGGED_VALUE_DEFAULT = "defaultLength";
+
+	/**
+	 * Optional (defaults to 'size') - Name of the tagged value that is used to
+	 * determine the length of a &lt;&lt;field&gt;&gt; that represents a
+	 * property under {@value #RULE_PROP_LENGTH_FROM_TAGGED_VALUE}.
+	 */
+	public static final String PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH = "nameOfTaggedValueToDetermineFieldLength";
+
 	/**
 	 * Optional (defaults to 0.01) - Delta to add to / subtract from a range
 	 * limit in case that the lower and/or upper boundary comparison operator is
@@ -155,6 +197,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
+	public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
+
 	/* --------------------------------------------------------------- */
 	/* --- Constants for elements of the ArcGIS workspace template --- */
 	/* --------------------------------------------------------------- */
@@ -176,8 +220,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	/* --- Other constants --- */
 	/* ----------------------- */
 
-	public static final int MAX_NAME_LENGTH = 30;
-	public static final int MAX_ALIAS_LENGTH = 30;
+	public static final int DEFAULT_MAX_NAME_LENGTH = 30;
+
+	private int maxNameLength = DEFAULT_MAX_NAME_LENGTH;
 
 	public static final double NUM_RANGE_DELTA = 0.01;
 
@@ -186,7 +231,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	public static final Double DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY = new Double(
 			1000000000);
 
-	public int lengthTaggedValueDefault = 255;
+	public static final int LENGTH_TAGGED_VALUE_DEFAULT = 255;
+	public int lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
 
 	public static final String ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX = "\\W";
 
@@ -390,6 +436,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	private Pattern numRangeConstraintPropertyNamePattern = Pattern
 			.compile("(?:self\\.|\\s)?(\\w+)\\.[\\w\\.]*?value(?:[,\\s])");
 
+	protected String nameOfTVToDetermineFieldLength = "size";
+
 	private String absolutePathOfOutputEAPFile;
 
 	/**
@@ -446,8 +494,35 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			} catch (NumberFormatException e) {
 
-				result.addError(this, 13);
+				result.addError(this, 13, PARAM_LENGTH_TAGGED_VALUE_DEFAULT,
+						"" + LENGTH_TAGGED_VALUE_DEFAULT);
 			}
+		}
+
+		// parse max name length parameter
+		String maxNameLengthParamValue = options
+				.parameter(this.getClass().getName(), PARAM_MAX_NAME_LENGTH);
+		if (maxNameLengthParamValue != null) {
+			try {
+				int maxNameLengthTmp = Integer
+						.parseInt(maxNameLengthParamValue);
+				this.maxNameLength = maxNameLengthTmp;
+			} catch (NumberFormatException e) {
+				result.addError(this, 13, PARAM_MAX_NAME_LENGTH,
+						"" + DEFAULT_MAX_NAME_LENGTH);
+			}
+		}
+
+		// check parameter with name of the tagged value that determines the
+		// field length
+		String nameOfTVToDetermineFieldLengthParamValue = options.parameter(
+				this.getClass().getName(),
+				PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH);
+		if (nameOfTVToDetermineFieldLengthParamValue != null
+				&& nameOfTVToDetermineFieldLengthParamValue.trim()
+						.length() > 0) {
+			this.nameOfTVToDetermineFieldLength = nameOfTVToDetermineFieldLengthParamValue
+					.trim();
 		}
 
 		// Check if we can use the output directory; create it if it
@@ -923,6 +998,74 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				}
 			}
 		}
+
+		if (ci.matches(RULE_CLS_RANGE_DOMAIN_FROM_TAGGED_VALUES)) {
+
+			for (PropertyInfo pi : ci.properties().values()) {
+
+				Double lowerBoundaryValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+				Double upperBoundaryValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+
+				boolean foundLowerBoundary = false;
+				boolean foundUpperBoundary = false;
+
+				String TV_RANGE_MIN = "rangeMinimum";
+				String TV_RANGE_MAX = "rangeMaximum";
+
+				String rMin = pi.taggedValue(TV_RANGE_MIN);
+				String rMax = pi.taggedValue(TV_RANGE_MAX);
+
+				if (rMin != null && rMin.trim().length() > 0) {
+
+					try {
+						lowerBoundaryValue = Double.parseDouble(rMin.trim());
+						foundLowerBoundary = true;
+					} catch (NumberFormatException e) {
+						MessageContext mc = result.addWarning(this, 241,
+								rMin.trim(), TV_RANGE_MIN);
+						mc.addDetail(this, 20001, pi.fullNameInSchema());
+					}
+				}
+
+				if (rMax != null && rMax.trim().length() > 0) {
+
+					try {
+						upperBoundaryValue = Double.parseDouble(rMax.trim());
+						foundUpperBoundary = true;
+					} catch (NumberFormatException e) {
+						MessageContext mc = result.addWarning(this, 242,
+								rMax.trim(), TV_RANGE_MAX);
+						mc.addDetail(this, 20001, pi.fullNameInSchema());
+					}
+				}
+
+				if (foundLowerBoundary || foundUpperBoundary) {
+
+					// keep track of the numeric range information
+
+					NumericRangeConstraintMetadata nrcm = new NumericRangeConstraintMetadata(
+							lowerBoundaryValue, upperBoundaryValue, true, true);
+
+					Map<String, NumericRangeConstraintMetadata> map;
+
+					if (this.numericRangeConstraintByPropNameByClassName
+							.containsKey(ci)) {
+						// fine, we don't need to initialize the map for the
+						// class
+						map = this.numericRangeConstraintByPropNameByClassName
+								.get(ci);
+					} else {
+
+						map = new HashMap<String, NumericRangeConstraintMetadata>();
+
+						this.numericRangeConstraintByPropNameByClassName.put(ci,
+								map);
+					}
+
+					map.put(pi.name(), nrcm);
+				}
+			}
+		}
 	}
 
 	private void parseLengthInfoFromOCLConstraints(ClassInfo ci) {
@@ -966,7 +1109,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + MAX_NAME_LENGTH);
+					"" + this.maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -986,11 +1129,11 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		EAModelUtil.setTaggedValue(e,
 				new EATaggedValue("description", documentation, true));
-		
+
 		// identify field type for the coded value domain
 		String fieldType = "esriFieldTypeString";
 		String fieldTypeTV = ci.taggedValue("fieldType");
-		if(fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
+		if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
 			fieldType = fieldTypeTV.trim();
 		}
 
@@ -1098,7 +1241,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + MAX_NAME_LENGTH);
+					"" + this.maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -1352,7 +1495,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + MAX_NAME_LENGTH);
+					"" + this.maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -1470,7 +1613,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			return false;
 
-		} else if (s.length() <= MAX_NAME_LENGTH) {
+		} else if (s.length() <= this.maxNameLength) {
 
 			return false;
 
@@ -1486,13 +1629,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			return null;
 
-		} else if (s.length() <= MAX_NAME_LENGTH) {
+		} else if (s.length() <= this.maxNameLength) {
 
 			return s;
 
 		} else {
 
-			return s.substring(0, MAX_NAME_LENGTH);
+			return s.substring(0, this.maxNameLength);
 		}
 	}
 
@@ -1795,6 +1938,11 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					continue;
 				}
 
+				String initialValue = null;
+				if (pi.matches(RULE_PROP_INITIAL_VALUE)) {
+					initialValue = pi.initialValue();
+				}
+
 				Type typeInfo = pi.typeInfo();
 				String mappedTypeName = typeInfo.name;
 
@@ -1824,7 +1972,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 				if (exceedsMaxLength(normalizedPiName)) {
 					this.result.addWarning(this, 205, normalizedPiName,
-							pi.name(), ci.name(), "" + MAX_NAME_LENGTH);
+							pi.name(), ci.name(), "" + this.maxNameLength);
 					normalizedPiName = clipToMaxLength(normalizedPiName);
 				}
 
@@ -1874,8 +2022,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						for (String origPropName : originalPropertyNames) {
 
-							if (pi.name().startsWith(origPropName) || pi
-									.aliasName().startsWith(origPropName)) {
+							if (pi.name().startsWith(origPropName)
+									|| (pi.aliasName() != null && pi.aliasName()
+											.startsWith(origPropName))) {
 
 								// apply range constraint!
 
@@ -1936,13 +2085,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 										EAModelUtil.createEAAttribute(rd,
 												"MinValue", null, null, null,
 												null, false, false,
-												"" + minValue,
+												doubleToString(minValue),
 												new Multiplicity(1, 1), null,
 												null);
 										EAModelUtil.createEAAttribute(rd,
 												"MaxValue", null, null, null,
 												null, false, false,
-												"" + maxValue,
+												doubleToString(maxValue),
 												new Multiplicity(1, 1), null,
 												null);
 
@@ -1967,13 +2116,17 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					if (numericRange != null) {
 
 						try {
+							String valueType = numericRange.GetName();
 							createField(eaClass, normalizedPiName,
 									normalizedPiAlias,
 									pi.derivedDocumentation(
 											documentationTemplate,
 											documentationNoValue),
-									numericRange.GetName(), "0", "0", "0",
-									numericRange.GetElementID());
+									valueType, "0",
+									"" + computePrecision(pi, valueType),
+									"" + computeScale(pi, valueType),
+									numericRange.GetElementID(), initialValue,
+									computeIsNullable(pi));
 
 						} catch (EAException e) {
 							result.addError(this, 10003, pi.name(), ci.name(),
@@ -2028,7 +2181,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 									"" + computeLength(pi, mappedTypeName),
 									"" + computePrecision(pi, mappedTypeName),
 									"" + computeScale(pi, mappedTypeName),
-									eaTargetClassifierId);
+									eaTargetClassifierId, initialValue,
+									computeIsNullable(pi));
 
 						} catch (EAException e) {
 							result.addError(this, 10003, pi.name(), ci.name(),
@@ -2090,7 +2244,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 								normalizedPiAlias,
 								pi.derivedDocumentation(documentationTemplate,
 										documentationNoValue),
-								eaType, "0", "0", "0", eaClassifierId);
+								eaType, "0", "0", "0", eaClassifierId,
+								initialValue, computeIsNullable(pi));
 					} catch (EAException e) {
 						result.addError(this, 10003, pi.name(), ci.name(),
 								e.getMessage());
@@ -2228,6 +2383,22 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
+	private String doubleToString(Double d) {
+
+		// see http://stackoverflow.com/a/38873693/3469138
+		if (d == null)
+			return null;
+		if (d.isNaN() || d.isInfinite())
+			return d.toString();
+
+		// pre java 8, a value of 0 would yield "0.0" below
+		if (d.doubleValue() == 0)
+			return "0";
+
+		return new BigDecimal(d.toString()).stripTrailingZeros()
+				.toPlainString();
+	}
+
 	/**
 	 * Creates a relationship class including association class between the
 	 * classes that the given properties are in.
@@ -2322,7 +2493,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					if (exceedsMaxLength(assocClassName)) {
 						this.result.addWarning(this, 226, assocClassName,
-								"" + MAX_NAME_LENGTH);
+								"" + this.maxNameLength);
 						assocClassName = clipToMaxLength(assocClassName);
 					}
 
@@ -2337,7 +2508,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					try {
 
 						ridField = createField(assocClass, "RID", "", "",
-								"esriFieldTypeOID", "0", "0", "0", null);
+								"esriFieldTypeOID", "0", "0", "0", null, null,
+								true);
 
 					} catch (EAException e) {
 						result.addError(this, 10003, "RID", assocClassName,
@@ -2358,13 +2530,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						if (exceedsMaxLength(fkSrcName)) {
 							this.result.addWarning(this, 227, fkSrcName,
-									"" + MAX_NAME_LENGTH);
+									"" + this.maxNameLength);
 							fkSrcName = clipToMaxLength(fkSrcName);
 						}
 
 						foreignKeyFieldSrc = createField(assocClass, fkSrcName,
 								"", "", "esriFieldTypeInteger", "0", "9", "0",
-								null);
+								null, null, true);
 
 					} catch (EAException e) {
 						result.addError(this, 10003, fkSrcName, assocClassName,
@@ -2380,13 +2552,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						if (exceedsMaxLength(fkTgtName)) {
 							this.result.addWarning(this, 227, fkTgtName,
-									"" + MAX_NAME_LENGTH);
+									"" + this.maxNameLength);
 							fkTgtName = clipToMaxLength(fkTgtName);
 						}
 
 						foreignKeyFieldTgt = createField(assocClass, fkTgtName,
 								"", "", "esriFieldTypeInteger", "0", "9", "0",
-								null);
+								null, null, true);
 
 					} catch (EAException e) {
 						result.addError(this, 10003, fkTgtName, assocClassName,
@@ -2606,13 +2778,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			if (exceedsMaxLength(name)) {
 				this.result.addWarning(this, 205, name, roleNameSource,
-						target.name(), "" + MAX_NAME_LENGTH);
+						target.name(), "" + this.maxNameLength);
 				name = clipToMaxLength(name);
 
 			}
 
 			foreignKeyField = createField(eaClassTarget, name, "", "",
-					"esriFieldTypeInteger", "0", "9", "0", null);
+					"esriFieldTypeInteger", "0", "9", "0", null, null, true);
 
 		} catch (EAException e) {
 			result.addError(this, 10003, roleNameTarget, target.name(),
@@ -2681,7 +2853,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					if (exceedsMaxLength(relClassName)) {
 						this.result.addWarning(this, 234, relClassName,
-								"" + MAX_NAME_LENGTH);
+								"" + this.maxNameLength);
 						relClassName = clipToMaxLength(relClassName);
 					}
 
@@ -2926,6 +3098,22 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private Integer computeScale(PropertyInfo pi, String valueTypeName) {
 
+		String nameOfScaleTV = "scale";
+		String scaleTV = pi.taggedValue(nameOfScaleTV);
+
+		if (pi.matches(RULE_PROP_SCALE) && scaleTV != null
+				&& scaleTV.trim().length() > 0) {
+
+			try {
+				Integer scale = Integer.parseInt(scaleTV.trim());
+				return scale;
+			} catch (NumberFormatException e) {
+				MessageContext mc = result.addWarning(this, 243, scaleTV.trim(),
+						nameOfScaleTV);
+				mc.addDetail(this, 20001, pi.fullNameInSchema());
+			}
+		}
+
 		// if the property type is known, use the known value
 		if (this.scaleMappingByTypeName.containsKey(valueTypeName)) {
 
@@ -2940,6 +3128,22 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private Integer computePrecision(PropertyInfo pi, String valueTypeName) {
 
+		String nameOfPrecisionTV = "precision";
+		String precisionTV = pi.taggedValue(nameOfPrecisionTV);
+
+		if (pi.matches(RULE_PROP_PRECISION) && precisionTV != null
+				&& precisionTV.trim().length() > 0) {
+
+			try {
+				Integer prec = Integer.parseInt(precisionTV.trim());
+				return prec;
+			} catch (NumberFormatException e) {
+				MessageContext mc = result.addWarning(this, 243,
+						precisionTV.trim(), nameOfPrecisionTV);
+				mc.addDetail(this, 20001, pi.fullNameInSchema());
+			}
+		}
+
 		// if the property type is known, use the known value
 		if (this.precisionMappingByTypeName.containsKey(valueTypeName)) {
 
@@ -2952,6 +3156,21 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
+	private boolean computeIsNullable(PropertyInfo pi) {
+
+		if (pi.matches(RULE_PROP_ISNULLABLE)) {
+
+			if (pi.voidable() || pi.cardinality().minOccurs < 1) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} else {
+			return true;
+		}
+	}
+
 	private int computeLength(PropertyInfo pi, String valueTypeName) {
 
 		// if the property type is known, use the known value
@@ -2960,6 +3179,25 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return this.lengthMappingByTypeName.get(valueTypeName);
 
 		} else {
+
+			if (pi.matches(RULE_PROP_LENGTH_FROM_TAGGED_VALUE)) {
+
+				String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
+
+				if (tv != null && tv.trim().length() > 0) {
+
+					try {
+						Integer value = Integer.parseInt(tv.trim());
+						if (value > 0) {
+							return value;
+						}
+					} catch (NumberFormatException e) {
+						MessageContext mc = result.addWarning(this, 243,
+								tv.trim(), nameOfTVToDetermineFieldLength);
+						mc.addDetail(this, 20001, pi.fullNameInSchema());
+					}
+				}
+			}
 
 			/*
 			 * see if length is defined by OCL constraint contained in pi's
@@ -2987,15 +3225,15 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private Attribute createField(Element e, String name, String alias,
 			String documentation, String eaType, String tvLength,
-			String tvPrecision, String tvScale, Integer eaClassifierId)
-			throws EAException {
+			String tvPrecision, String tvScale, Integer eaClassifierId,
+			String initialValue, boolean isNullable) throws EAException {
 
 		List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
 
 		tvs.add(new EATaggedValue("DomainFixed", "false"));
 		tvs.add(new EATaggedValue("Editable", "true"));
 		tvs.add(new EATaggedValue("GeometryDef", "", true));
-		tvs.add(new EATaggedValue("IsNullable", "true"));
+		tvs.add(new EATaggedValue("IsNullable", isNullable ? "true" : "false"));
 		tvs.add(new EATaggedValue("Length", tvLength));
 		tvs.add(new EATaggedValue("ModelName", ""));
 		tvs.add(new EATaggedValue("Precision", tvPrecision));
@@ -3006,10 +3244,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("Field");
 
-		// TODO: set initial value?
 		return EAModelUtil.createEAAttribute(e, name, alias, documentation,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				eaType, eaClassifierId);
+				stereotypes, tvs, false, false, initialValue,
+				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
 
 	public int getTargetID() {
@@ -3074,11 +3311,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					+ "' could not be parsed as a double value. The default value of "
 					+ NUM_RANGE_DELTA + " will be used for processing.";
 		case 13:
-			return "Value of configuration parameter '"
-					+ PARAM_LENGTH_TAGGED_VALUE_DEFAULT
-					+ "' could not be parsed as an integer value. The default value of "
-					+ lengthTaggedValueDefault
-					+ " will be used for processing.";
+			return "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
 
 		// 101-200: ArcGIS workspace template related messages
 		case 101:
@@ -3169,6 +3402,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
 		case 240:
 			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+		case 241:
+			return "Could not parse lower boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+		case 242:
+			return "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+		case 243:
+			return "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
@@ -3177,6 +3416,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
 		case 10003:
 			return "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+
+		// 20001 - 20100: message context
+		case 20001:
+			return "Property: $1$";
 
 		default:
 			return "(Unknown message)";

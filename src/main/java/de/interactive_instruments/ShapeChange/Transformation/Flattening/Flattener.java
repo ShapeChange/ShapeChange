@@ -245,6 +245,7 @@ public class Flattener implements Transformer {
 	 */
 	public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
@@ -4182,6 +4183,9 @@ public class Flattener implements Transformer {
 			inclusionPattern = Pattern.compile(inclusionRegex);
 		}
 
+		boolean addAttributesAtBottom = trfConfig
+				.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM);
+
 		/*
 		 * Identify supertypes and leafs in selected schemas. A class is only
 		 * identified as a supertype if it has at least one subtype from within
@@ -4281,8 +4285,15 @@ public class Flattener implements Transformer {
 
 				if (supertypesOfSuperclass == null
 						|| supertypesOfSuperclass.size() == 0) {
+					
 					// copy relevant contents down to subtypes
-					copyContentToSubtypes(genModel, superclass);
+					if (addAttributesAtBottom) {
+						copyContentToSubtypes(genModel, superclass,
+								PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
+					} else {
+						copyContentToSubtypes(genModel, superclass,
+								PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
+					}
 
 					idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
 
@@ -4309,7 +4320,13 @@ public class Flattener implements Transformer {
 						 * NOTE: does not copy associations - they are
 						 * specifically handled later on
 						 */
-						copyContentToSubtypes(genModel, superclass);
+						if (addAttributesAtBottom) {
+							copyContentToSubtypes(genModel, superclass,
+									PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
+						} else {
+							copyContentToSubtypes(genModel, superclass,
+									PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
+						}
 
 						idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
 					}
@@ -5391,7 +5408,7 @@ public class Flattener implements Transformer {
 	 *            subtypes
 	 */
 	private void copyContentToSubtypes(GenericModel genModel,
-			GenericClassInfo genCi) {
+			GenericClassInfo genCi, PropertyCopyPositionIndicator pcpi) {
 
 		SortedSet<String> subtypeIds = genCi.subtypes();
 		if (subtypeIds == null || subtypeIds.isEmpty())
@@ -5405,8 +5422,7 @@ public class Flattener implements Transformer {
 
 				GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
-				genModel.copyClassContent(genCi, genSubtype,
-						PropertyCopyPositionIndicator.PROPERTY_COPY_TOP,
+				genModel.copyClassContent(genCi, genSubtype, pcpi,
 						PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT);
 			} else {
 
@@ -5415,6 +5431,18 @@ public class Flattener implements Transformer {
 
 		}
 
+	}
+
+	/**
+	 * Same as
+	 * {@link #copyContentToSubtypes(GenericModel, GenericClassInfo, PropertyCopyPositionIndicator)}
+	 * , just with PropertyCopyPositionIndicator.PROPERTY_COPY_TOP as fixed
+	 * value
+	 */
+	private void copyContentToSubtypes(GenericModel genModel,
+			GenericClassInfo genCi) {
+		copyContentToSubtypes(genModel, genCi,
+				PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 	}
 
 	private void applyRuleOptionality(GenericModel genModel,
