@@ -590,6 +590,15 @@ public class BasicTest {
 					new String[] { "xsd" },
 					"testResults/typeConversion/enumerationToCodelist",
 					"src/test/resources/reference/typeConversion/enumerationToCodelist");
+			
+			/*
+			 * Test rule-trf-cls-flatten-inheritance-add-attributes-at-bottom
+			 */
+			multiTest(
+					"src/test/resources/config/testEA_Flattening_inheritanceAddAttributesAtBottom.xml",
+					new String[] { "xsd" },
+					"testResults/flattening/inheritanceAddAttributesAtBottom",
+					"src/test/resources/reference/flattening/inheritanceAddAttributesAtBottom");
 		}
 	}
 
