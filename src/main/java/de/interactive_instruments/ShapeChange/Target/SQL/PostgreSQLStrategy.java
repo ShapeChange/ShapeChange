@@ -31,7 +31,6 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +38,12 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 
 public class PostgreSQLStrategy implements DatabaseStrategy {
+
+	private DatabaseObjectNamingScheme namingScheme;
+
+	public PostgreSQLStrategy(DatabaseObjectNamingScheme namingScheme) {
+		this.namingScheme = namingScheme;
+	}
 
 	@Override
 	public String primaryKeyDataType() {
@@ -75,14 +80,12 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 
 	@Override
 	public String normalizeName(String name) {
-		return name.toLowerCase(Locale.ENGLISH);
+		return namingScheme.normalizeName(name);
 	}
 
 	@Override
 	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
-		String name = tableName.toLowerCase(Locale.ENGLISH) + "_" + propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
-		allConstraintNames.add(name);
-		return name;
+		return namingScheme.createNameCheckConstraint(tableName, propertyName, allConstraintNames);
 	}
 
 	@Override
@@ -92,9 +95,7 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	
 	@Override
 	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
-		String name = "fk_" + tableName + "_" + fieldName;
-		allConstraintNames.add(name);
-		return name;
+		return namingScheme.createNameForeignKey(tableName, targetTableName, fieldName, allConstraintNames);
 	}
 
 }

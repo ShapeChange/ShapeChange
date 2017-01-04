@@ -35,8 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -53,11 +51,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	 */
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
+	private DatabaseObjectNamingScheme namingScheme;
 	private ShapeChangeResult result;
-	
-	private PearsonHash pearsonHash = new PearsonHash();
 
-	public OracleStrategy(ShapeChangeResult result) {
+	public OracleStrategy(DatabaseObjectNamingScheme namingScheme, ShapeChangeResult result) {
+		this.namingScheme = namingScheme;
 		this.result = result;
 	}
 
@@ -121,12 +119,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public String normalizeName(String name) {
-		String upperCaseName = name.toUpperCase(Locale.ENGLISH);
-		String normalizedName = StringUtils.substring(upperCaseName, 0, 30);
-		if (upperCaseName.length() != normalizedName.length()) {
-			result.addWarning(this, 1, upperCaseName, normalizedName);
-		}
-		return normalizedName;
+		return namingScheme.normalizeName(name);
 	}
 
 	/**
@@ -135,36 +128,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	 */
 	@Override
 	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
-		String tableNameUpperCase = tableName.toUpperCase(Locale.ENGLISH);
-		String propertyNameUpperCase = propertyName.toUpperCase(Locale.ENGLISH);
-		
-		String proposedCheckConstraintName = "CK_" 
-				+ StringUtils.substring(tableNameUpperCase, 0, 11)
-				+ "_"
-				+ StringUtils.substring(propertyNameUpperCase, 0, 11)
-				+ pearsonHash.createPearsonHashAsLeftPaddedString(tableNameUpperCase + propertyNameUpperCase);
-		String checkConstraintName = makeConstraintNameUnique(proposedCheckConstraintName, allConstraintNames);
-		allConstraintNames.add(checkConstraintName);
-		return checkConstraintName;
-	}
-	
-	/**
-	 * Adds a digit to the given constraint name if that name was already assigned to a constraint.
-	 */
-	private String makeConstraintNameUnique(String proposedConstraintName, Set<String> allConstraintNames) {
-		String newProposedConstraintName = proposedConstraintName;
-		if (allConstraintNames.contains(proposedConstraintName)) {
-			for (int i = 0; i <= 9; i++) {
-				newProposedConstraintName = proposedConstraintName + i;
-				if (!allConstraintNames.contains(newProposedConstraintName)) {
-					break;
-				}
-			}
-			if (allConstraintNames.contains(newProposedConstraintName)) {
-				result.addWarning(this, 5, newProposedConstraintName);
-			}
-		}
-		return newProposedConstraintName;
+		return namingScheme.createNameCheckConstraint(tableName, propertyName, allConstraintNames);
 	}
 
 	@Override
@@ -204,20 +168,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	
 	@Override
 	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
-		String tableNameUpperCase = tableName.toUpperCase(Locale.ENGLISH);
-		String targetTableNameUpperCase = targetTableName.toUpperCase(Locale.ENGLISH);
-		String fieldNameUpperCase = fieldName.toUpperCase(Locale.ENGLISH);
-		
-		String proposedForeignKeyName = "FK_" 
-				+ StringUtils.substring(tableNameUpperCase, 0, 7)
-				+ "_"
-				+ StringUtils.substring(targetTableNameUpperCase, 0, 7)
-				+ "_"
-				+ StringUtils.substring(fieldNameUpperCase, 0, 7)
-				+ pearsonHash.createPearsonHashAsLeftPaddedString(tableNameUpperCase + targetTableNameUpperCase + fieldNameUpperCase);
-		String foreignKeyName = makeConstraintNameUnique(proposedForeignKeyName, allConstraintNames);
-		allConstraintNames.add(foreignKeyName);
-		return foreignKeyName;
+		return namingScheme.createNameForeignKey(tableName, targetTableName, fieldName, allConstraintNames);
 	}
 
 
@@ -226,14 +177,10 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class OracleStrategy";
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
 		case 3:
 			return "Invalid map entry for type '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 4:
 			return "Invalid map entry for type '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
-		case 5:
-			return "Constraint name '$1$' will be present more than once, no unique constraint name could be created.";
 		default:
 			return "(Unknown message)";
 		}
