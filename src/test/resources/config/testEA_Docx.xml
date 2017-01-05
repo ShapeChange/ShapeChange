@@ -23,6 +23,8 @@
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>
 			<targetParameter name="outputFormat" value="DOCX"/>
+            <targetParameter name="xslTransformerFactory"
+              value="net.sf.saxon.TransformerFactoryImpl" />
 			<targetParameter name="name" value="'Test application schema'"/>
 			<targetParameter name="scope" value="This feature catalogue ..."/>
 			<targetParameter name="versionNumber" value="n/a"/>
