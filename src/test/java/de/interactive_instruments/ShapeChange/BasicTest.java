@@ -562,8 +562,8 @@ public class BasicTest {
 			 */
 			multiTest(
 					"src/test/resources/config/testEA_sql_foreignKeysOracleNamingStyle.xml",
-					new String[] { "sql" }, "testResults/sql/associativeTables",
-					"src/test/resources/reference/sql/associativeTables");
+					new String[] { "sql" }, "testResults/sql/foreignKeysOracleNamingStyle",
+					"src/test/resources/reference/sql/foreignKeysOracleNamingStyle");
 
 			/*
 			 * SQL - codelist conversion
