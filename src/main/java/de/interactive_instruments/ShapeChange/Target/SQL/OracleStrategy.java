@@ -33,8 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Set;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -52,9 +51,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	 */
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
+	private DatabaseObjectNamingScheme namingScheme;
 	private ShapeChangeResult result;
 
-	public OracleStrategy(ShapeChangeResult result) {
+	public OracleStrategy(DatabaseObjectNamingScheme namingScheme, ShapeChangeResult result) {
+		this.namingScheme = namingScheme;
 		this.result = result;
 	}
 
@@ -118,22 +119,16 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public String normalizeName(String name) {
-		String upperCaseName = name.toUpperCase(Locale.ENGLISH);
-		String normalizedName = StringUtils.substring(upperCaseName, 0, 30);
-		if (upperCaseName.length() != normalizedName.length()) {
-			result.addWarning(this, 1, upperCaseName, normalizedName);
-		}
-		return normalizedName;
+		return namingScheme.normalizeName(name);
 	}
 
 	/**
 	 * Constraints in Oracle are in their own namespace and do also have the maximum length of 30.
+	 * 
 	 */
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
-		String truncatedName = StringUtils.substring(tableName.toUpperCase(Locale.ENGLISH), 0, 13) + "_" + StringUtils.substring(propertyName.toUpperCase(Locale.ENGLISH), 0, 13);
-		String checkConstraintName = truncatedName  + "_CK";
-		return checkConstraintName;
+	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
+		return namingScheme.createNameCheckConstraint(tableName, propertyName, allConstraintNames);
 	}
 
 	@Override
@@ -170,6 +165,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			}
 		}
 	}
+	
+	@Override
+	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
+		return namingScheme.createNameForeignKey(tableName, targetTableName, fieldName, allConstraintNames);
+	}
 
 
 	@Override
@@ -177,8 +177,6 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class OracleStrategy";
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
 		case 3:
 			return "Invalid map entry for type '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 4:

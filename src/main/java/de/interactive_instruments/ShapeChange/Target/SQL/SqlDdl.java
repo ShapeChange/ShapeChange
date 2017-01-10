@@ -142,6 +142,11 @@ public class SqlDdl implements Target, MessageSource {
 	public static final String PARAM_DATABASE_SYSTEM = "databaseSystem";
 	
 	/**
+	 * Identifier of the naming scheme that will be used for the creation of database object names.
+	 */
+	public static final String PARAM_NAMING_SCHEME = "namingScheme";
+	
+	/**
 	 * Optional changes to the default documentation template and the default strings for descriptors without value
 	 */
 	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
@@ -212,6 +217,7 @@ public class SqlDdl implements Target, MessageSource {
 	 * If this rule is enabled derived properties will be ignored.
 	 */
 	public static final String RULE_TGT_SQL_PROP_EXCLUDE_DERIVED = "rule-sql-prop-exclude-derived";
+	
 
 	/* --------------------- */
 	/* --- Tagged Values --- */
@@ -346,6 +352,10 @@ public class SqlDdl implements Target, MessageSource {
 	private Set<AssociationInfo> associationsWithAssociativeTable = new HashSet<AssociationInfo>();
 
 	private DatabaseStrategy databaseStrategy;
+	
+	private DatabaseObjectNamingScheme namingScheme;
+	
+	private Set<String> allConstraintNames = new HashSet<String>();
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Target.Target#initialise(de.interactive_instruments.ShapeChange.Model.PackageInfo,
@@ -394,14 +404,28 @@ public class SqlDdl implements Target, MessageSource {
 		if (pi.matches(RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
 			this.createAssociativeTables = true;
 		}
+		
+		String namingSchemeParam = options.parameter(this.getClass().getName(),
+				PARAM_NAMING_SCHEME);
 
 		String databaseSystem = options.parameter(this.getClass().getName(),
 				PARAM_DATABASE_SYSTEM);
+		
 		if (databaseSystem == null
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
-			databaseStrategy = new PostgreSQLStrategy();
+			if (namingSchemeParam == null) {
+				namingScheme = new PostgreSQLStyleNamingScheme();
+			} else {
+				namingScheme = determineNamingSchemeFromParameter(namingSchemeParam);
+			}
+			databaseStrategy = new PostgreSQLStrategy(namingScheme);
 		} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
-			databaseStrategy = new OracleStrategy(result);
+			if (namingSchemeParam == null) {
+				namingScheme = new DefaultOracleStyleNamingScheme(result);
+			} else {
+				namingScheme = determineNamingSchemeFromParameter(namingSchemeParam);
+			}
+			databaseStrategy = new OracleStrategy(namingScheme, result);
 		} else {
 			databaseStrategy = new NullDatabaseStrategy();
 			result.addFatalError(this, 6, databaseSystem);
@@ -517,6 +541,23 @@ public class SqlDdl implements Target, MessageSource {
 
 			validateMapEntryParamInfos(mepp);
 		}
+	}
+	
+	private DatabaseObjectNamingScheme determineNamingSchemeFromParameter(String namingSchemeParam) {
+		DatabaseObjectNamingScheme namingScheme;
+		if ("postgresql".equalsIgnoreCase(namingSchemeParam)) {
+			namingScheme = new PostgreSQLStyleNamingScheme();
+		} else if ("oracleDefault".equalsIgnoreCase(namingSchemeParam)) {
+			namingScheme = new DefaultOracleStyleNamingScheme(result);
+		} else if ("oracleTruncate".equalsIgnoreCase(namingSchemeParam)) {
+			namingScheme = new TruncateOracleStyleNamingScheme(result);
+		} else if ("oraclePearson".equalsIgnoreCase(namingSchemeParam)) {
+			namingScheme = new PearsonHashOracleStyleNamingScheme(result);
+		} else {
+			namingScheme = new NullNamingScheme();
+			result.addWarning(this, 22, namingSchemeParam);
+		}
+		return namingScheme;
 	}
 
 	private void validateMapEntryParamInfos(MapEntryParamInfos mepp2) {
@@ -639,7 +680,7 @@ public class SqlDdl implements Target, MessageSource {
 	public void createForeignKeyDefinition(String className, PropertyInfo pi) {
 
 		String res = "ALTER TABLE " + normalizeName(className)
-				+ " ADD CONSTRAINT " + getForeignKeyIdentifier(pi)
+				+ " ADD CONSTRAINT " + databaseStrategy.createNameForeignKey(pi.inClass().name(), determineTableNameForValueType(pi), pi.name(), allConstraintNames)
 				+ " FOREIGN KEY ("
 				+ normalizeName(pi.name() + identifyForeignKeyColumnSuffix(pi))
 				+ ") REFERENCES " + determineTableNameForValueType(pi) + ";"
@@ -693,7 +734,7 @@ public class SqlDdl implements Target, MessageSource {
 
 		String res = "ALTER TABLE " + normalizeName(tableName)
 				+ " ADD CONSTRAINT "
-				+ getForeignKeyIdentifier(tableName, fieldName)
+				+ databaseStrategy.createNameForeignKey(tableName, targetTableName, fieldName, allConstraintNames)
 				+ " FOREIGN KEY (" + normalizeName(fieldName) + ") REFERENCES "
 				+ normalizeName(targetTableName) + ";" + CRLF;
 
@@ -705,30 +746,6 @@ public class SqlDdl implements Target, MessageSource {
 		}
 
 		this.referenceColumnDefinitionsByTableName.get(tableName).add(res);
-	}
-
-	private String getForeignKeyIdentifier(PropertyInfo pi) {
-
-		return getForeignKeyIdentifier(pi.inClass().name(), pi.name());
-	}
-
-	/**
-	 * @param tableName
-	 * @param fieldName
-	 * @return the normalized identifier for the foreign key
-	 */
-	private String getForeignKeyIdentifier(String tableName, String fieldName) {
-
-		/*
-		 * The following is most often too long, thus we simply use the table
-		 * and field name
-		 */
-		// String res = "fk_" + className + "_" + fieldName + "_to_"
-		// + targetClassName;
-
-		String res = "fk_" + tableName + "_" + fieldName;
-
-		return normalizeName(res);
 	}
 
 	private void generateTableCreationAndAlterStatements(ClassInfo ci) {
@@ -1789,25 +1806,12 @@ public class SqlDdl implements Target, MessageSource {
 		return TargetIdentification.SQLDDL.getId();
 	}
 
-	/**
-	 * @param name
-	 * @return String with any occurrence of '.' or '-' replaced by '_'.
-	 */
 	private String normalizeName(String name) {
-
-		if (name == null) {
-			return null;
-		} else {
-			return databaseStrategy
-					.normalizeName(name.replace(".", "_").replace("-", "_"));
-		}
+		return databaseStrategy.normalizeName(name);
 	}
 
 	private String createNameCheckConstraint(String tableName, String propertyName) {
-		if (tableName == null || propertyName == null) {
-			return null;
-		}
-		return databaseStrategy.createNameCheckConstraint(tableName.replace(".", "_").replace("-", "_"), propertyName.replace(".", "_").replace("-", "_"));
+		return databaseStrategy.createNameCheckConstraint(tableName, propertyName, allConstraintNames);
 	}
 
 	/**
@@ -1870,6 +1874,8 @@ public class SqlDdl implements Target, MessageSource {
 			return "Invalid map entry for type '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 		case 21:
 			return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
+		case 22:
+			return "Unknown naming scheme '$1$'";
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
 		default:

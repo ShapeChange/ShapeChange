@@ -31,13 +31,19 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 
 public class PostgreSQLStrategy implements DatabaseStrategy {
+
+	private DatabaseObjectNamingScheme namingScheme;
+
+	public PostgreSQLStrategy(DatabaseObjectNamingScheme namingScheme) {
+		this.namingScheme = namingScheme;
+	}
 
 	@Override
 	public String primaryKeyDataType() {
@@ -74,17 +80,22 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 
 	@Override
 	public String normalizeName(String name) {
-		return name.toLowerCase(Locale.ENGLISH);
+		return namingScheme.normalizeName(name);
 	}
 
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
-		return tableName.toLowerCase(Locale.ENGLISH) + "_" + propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
+	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
+		return namingScheme.createNameCheckConstraint(tableName, propertyName, allConstraintNames);
 	}
 
 	@Override
 	public void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp) {
 		// nothing specific to check
+	}
+	
+	@Override
+	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
+		return namingScheme.createNameForeignKey(tableName, targetTableName, fieldName, allConstraintNames);
 	}
 
 }
