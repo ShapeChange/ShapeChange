@@ -45,21 +45,22 @@ import org.w3c.dom.NodeList;
 /**
  * Instance of ShapeChange to be used in test cases
  */
-public class TestInstance{
+public class TestInstance {
 
 	Options options = null;
 	ShapeChangeResult result = null;
 
 	/**
-	 * Create and execute the ShapeChange instance 
+	 * Create and execute the ShapeChange instance
 	 * 
-	 * @param config URI/Path of the configuration file
+	 * @param config
+	 *            URI/Path of the configuration file
 	 */
-	TestInstance(String config){
+	TestInstance(String config) {
 		init(config, null);
 	}
-	
-	TestInstance(String config, HashMap<String, String> replacevalues){
+
+	TestInstance(String config, HashMap<String, String> replacevalues) {
 		init(config, replacevalues);
 	}
 
@@ -67,20 +68,20 @@ public class TestInstance{
 		try {
 			options = new Options();
 			result = new ShapeChangeResult(options);
-			
+
 			String javaVersion = System.getProperty("java.version");
 			char major = javaVersion.charAt(0);
 			char minor = javaVersion.charAt(2);
-		    if (major == '1' && minor < '6') {
-				result.addError(null,18, javaVersion);
+			if (major == '1' && minor < '6') {
+				result.addError(null, 18, javaVersion);
 				System.exit(1);
-		    }
-		    
-			if (replacevalues!=null)
-		    	for (Entry<String, String> me : replacevalues.entrySet()) {
-					options.setReplaceValue(me.getKey(),me.getValue()); 
-		    	}
-		    
+			}
+
+			if (replacevalues != null)
+				for (Entry<String, String> me : replacevalues.entrySet()) {
+					options.setReplaceValue(me.getKey(), me.getValue());
+				}
+
 			Converter converter = new Converter(options, result);
 			options.configFile = config;
 			options.loadConfiguration();
@@ -92,29 +93,31 @@ public class TestInstance{
 			result.addFatalError(e.getMessage());
 			fail("ShapeChange encountered an unknown error.");
 		}
-	}		
-	
+	}
+
 	/**
 	 * Checks, if errors were reported during execution
 	 * 
 	 * @return true, if no error was logged in the log file
 	 */
 	protected boolean noError() {
-		
+
 		// if there is no result file, there is an error
-		if (result==null)
+		if (result == null)
 			return false;
-		
+
 		try {
-			NodeList nodes = XPathAPI.selectNodeList( result.document, "//r:Error|//r:FatalError", result.document.getDocumentElement());
-			if (nodes.getLength()>0)
+			NodeList nodes = XPathAPI.selectNodeList(result.document,
+					"//r:Error|//r:FatalError",
+					result.document.getDocumentElement());
+			if (nodes.getLength() > 0)
 				return false;
 		} catch (TransformerException e) {
 			fail("An error occured processing an Xpath expression on the log file.");
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
-	}	
+	}
 }

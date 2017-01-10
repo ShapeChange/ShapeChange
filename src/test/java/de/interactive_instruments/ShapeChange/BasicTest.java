@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@
 
 package de.interactive_instruments.ShapeChange;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -45,7 +46,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,7 +58,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
@@ -72,537 +71,20 @@ import org.custommonkey.xmlunit.HTMLDocumentBuilder;
 import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.jaxp13.Validator;
-import org.junit.Test;
+import org.junit.Before;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
-import de.interactive_instruments.ShapeChange.TestInstance;
 
 /**
  * Basic unit test for ShapeChange
- * 
- * <li>Process without configuration file and verify that no error is reported
- * <li>Process XMI 1.0 test model and verify that no error is reported
- * <li>On Windows, process EA test model and verify that no error is reported
  */
-public class BasicTest {
+public abstract class BasicTest {
 
 	boolean testTime = false;
 
-	@Test
-	public void test() {
-		initialise();
-
-		/*
-		 * Invoke without parameters, if we are connected
-		 */
-		String[] xsdTest = { "test" };
-		try {
-			URL url = new URL(
-					"http://shapechange.net/resources/config/minimal.xml");
-			InputStream configStream = url.openStream();
-			if (configStream != null) {
-				xsdTest(null, xsdTest, null, ".",
-						"src/test/resources/reference/xsd");
-			}
-		} catch (Exception e) {
-		}
-
-		/*
-		 * Process the XMI 1.0 test model
-		 */
-		xsdTest("src/test/resources/config/testXMI.xml", xsdTest, null,
-				"testResults/xmi/INPUT", "src/test/resources/reference/xsd");
-
-		/*
-		 * On Windows process also the EA test models
-		 */
-		if (SystemUtils.IS_OS_WINDOWS) {
-
-			/*
-			 * First the same test model as the XMI 1.0 test model
-			 */
-			xsdTest("src/test/resources/config/testEA.xml", xsdTest, null,
-					"testResults/ea/INPUT", "src/test/resources/reference/xsd");
-
-			/*
-			 * Now with some replacement values
-			 */
-			HashMap<String, String> replace = new HashMap<String, String>();
-			replace.put("$eap$", "src/test/resources/test.eap");
-			replace.put("$log$", "testResults/ea/log.xml");
-			replace.put("$out$", "testResults/ea");
-			xsdTest("src/test/resources/config/testEA_x.xml", xsdTest, null,
-					replace, "testResults/ea/INPUT",
-					"src/test/resources/reference/xsd");
-
-			/*
-			 * Test property options: ordered, uniqueness and inline/byReference
-			 */
-			multiTest("src/test/resources/config/testEA_prop.xml",
-					new String[] { "xsd", "xml", "html" },
-					"testResults/ea/prop/INPUT",
-					"src/test/resources/reference/prop");
-
-			/*
-			 * Test multiple tagged values and stereotypes
-			 */
-			HashMap<String, String> replace2 = new HashMap<String, String>();
-			replace2.put("$tvimpl$", "");
-			replace2.put("$logout$",
-					"testResults/multipleTaggedValuesAndStereotypes/tv_map_impl/log.xml");
-			replace2.put("$xsdout$",
-					"testResults/multipleTaggedValuesAndStereotypes/tv_map_impl");
-			xsdTest("src/test/resources/config/testEA_multipleTaggedValuesAndStereotypes.xml",
-					new String[] { "multTvAndSt" }, null, replace2,
-					"testResults/multipleTaggedValuesAndStereotypes/tv_map_impl/INPUT",
-					"src/test/resources/reference/xsd/multipleTaggedValuesAndStereotypes/INPUT");
-
-			/*
-			 * Test multiple tagged values and stereotypes - with array
-			 * implementation for tagged values.
-			 */
-			replace2 = new HashMap<String, String>();
-			replace2.put("$tvimpl$", "array");
-			replace2.put("$logout$",
-					"testResults/multipleTaggedValuesAndStereotypes/tv_array_impl/log.xml");
-			replace2.put("$xsdout$",
-					"testResults/multipleTaggedValuesAndStereotypes/tv_array_impl");
-			xsdTest("src/test/resources/config/testEA_multipleTaggedValuesAndStereotypes.xml",
-					new String[] { "multTvAndSt" }, null, replace2,
-					"testResults/multipleTaggedValuesAndStereotypes/tv_array_impl/INPUT",
-					"src/test/resources/reference/xsd/multipleTaggedValuesAndStereotypes/INPUT");
-
-			/*
-			 * Test the descriptor functionality
-			 */
-			multiTest("src/test/resources/config/testEA_descriptors_fc_en.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/descriptors/INPUT",
-					"src/test/resources/reference/html/descriptors");
-
-			multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/descriptors/INPUT",
-					"src/test/resources/reference/html/descriptors");
-
-			multiTest(
-					"src/test/resources/config/testEA_descriptors_inspire.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/descriptors/INPUT",
-					"src/test/resources/reference/html/descriptors");
-
-			multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/descriptors/INPUT",
-					"src/test/resources/reference/html/descriptors");
-
-			multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/descriptors/INPUT",
-					"src/test/resources/reference/html/descriptors");
-
-			/*
-			 * Test rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed.
-			 */
-			multiTest("src/test/resources/config/testEA_codeAbsenceInModel.xml",
-					new String[] { "xml" },
-					"testResults/codeAbsenceInModel/input",
-					"src/test/resources/reference/xsd/codeAbsenceInModel/input");
-
-			/*
-			 * Test derivation of application schema metadata.
-			 */
-			multiTest("src/test/resources/config/testEA_schema_metadata.xml",
-					new String[] { "xml" }, "testResults/schema_metadata/INPUT",
-					"src/test/resources/reference/schema_metadata/INPUT");
-
-			/*
-			 * Test creation of an HTML feature catalogue with
-			 * inheritedProperties=true and noAlphabeticSortingForProperties =
-			 * true
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_fc_inheritedProperties.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/inheritedProperties/INPUT",
-					"src/test/resources/reference/html/inheritedProperties/INPUT");
-
-			/*
-			 * Test derivation of application schema differences (output as
-			 * single page HTML feature catalogue).
-			 */
-			multiTest("src/test/resources/config/testEA_model_diff.xml",
-					new String[] { "xml", "html" },
-					"testResults/html/diff/INPUT",
-					"src/test/resources/reference/html/diff/INPUT");
-
-			/*
-			 * SQL - basic text
-			 */
-			multiTest("src/test/resources/config/testEA_sql.xml",
-					new String[] { "sql" }, "testResults/sql/basic",
-					"src/test/resources/reference/sql/basic");
-
-			/*
-			 * SQL - associative tables tests
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_sqlAssociativeTables.xml",
-					new String[] { "sql" }, "testResults/sql/associativeTables",
-					"src/test/resources/reference/sql/associativeTables");
-
-			/*
-			 * SQL - geometry parameters test
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_sqlGeometryParameters.xml",
-					new String[] { "sql" },
-					"testResults/sql/geometryParameters",
-					"src/test/resources/reference/sql/geometryParameters");
-
-			/*
-			 * Test XML Schema creation for Application Schema with multiple
-			 * packages that shall be output as individual xsd files.
-			 */
-			multiTest("src/test/resources/config/testEA_packageIncludes.xml",
-					new String[] { "xsd" }, "testResults/xsd/packageIncludes",
-					"src/test/resources/reference/xsd/packageIncludes");
-
-			/*
-			 * Test XML Schema creation for two Application Schema, with
-			 * identity transformation.
-			 */
-			multiTest("src/test/resources/config/testEA_MultipleAppSchema.xml",
-					new String[] { "xsd" }, "testResults/xsd/multiAppSchema",
-					"src/test/resources/reference/xsd/multiAppSchema");
-
-			/*
-			 * A simple model to test the creation of a single-file html feature
-			 * catalogue
-			 */
-			htmlTest("src/test/resources/config/testEA_Html.xml",
-					new String[] { "test" }, "testResults/html/INPUT",
-					"src/test/resources/reference/html");
-
-			/*
-			 * A simple model to test the localization functionality
-			 */
-			htmlTest("src/test/resources/config/testEA_HtmlLocalization.xml",
-					new String[] { "test" },
-					"testResults/html/localization/INPUT",
-					"src/test/resources/reference/html/localization");
-
-			/*
-			 * A simple model to test the creation of a docx feature catalogue
-			 */
-			docxTest("src/test/resources/config/testEA_Docx.xml",
-					new String[] { "test" }, "testResults/docx/myInputId",
-					"src/test/resources/reference/docx");
-
-			/*
-			 * A simple model to test the creation of a docx feature catalogue
-			 * that includes UML diagrams
-			 */
-			// TODO image file names and sizes not stable
-			// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-			// new String[]{"test_featurecatalog_with_images"},
-			// "testResults/docx_with_images/myInputId",
-			// "src/test/resources/reference/docx");
-
-			/*
-			 * A test model where documentation is retrieved from classifiers
-			 * that are suppliers of a dependency (feature, attribute and value
-			 * concepts)
-			 */
-			xsdTest("src/test/resources/config/testEA_dep.xml", xsdTest, null,
-					"testResults/ea/INPUT", "src/test/resources/reference/xsd");
-
-			/*
-			 * A simple CityGML Application Domain Extension (ADE)
-			 */
-			String[] xsdADE = { "ade" };
-			xsdTest("src/test/resources/config/testEA_ADE.xml", xsdADE, null,
-					"testResults/ea/INPUT", "src/test/resources/reference/xsd");
-
-			/*
-			 * Qualified associations as well as array and list properties. Note
-			 * that there are errors reported during the conversion (on purpose)
-			 * unlike in most other tests.
-			 */
-			String[] xsdaaask = { "testaaask" };
-			xsdTest("src/test/resources/config/testEA_aaa-sk.xml", xsdaaask,
-					null, "testResults/ea/INPUT",
-					"src/test/resources/reference/xsd", false);
-
-			/*
-			 * An association class and the GML 3.3 code list values
-			 */
-			String[] xsdgml33 = { "testgml33" };
-			xsdTest("src/test/resources/config/testEA_gml33.xml", xsdgml33,
-					xsdgml33, "testResults/ea/INPUT",
-					"src/test/resources/reference/xsd");
-
-			/*
-			 * Test the mixin options
-			 */
-			String[] xsdmixin = { "testgroupmixin" };
-			xsdTest("src/test/resources/config/testEA_groupmixin.xml", xsdmixin,
-					null, "testResults/ea/INPUT",
-					"src/test/resources/reference/xsd");
-
-			/*
-			 * A simple 19115 metadata profile and Schematron tests
-			 */
-			String[] xsdmd = { "testbasetypes", "testprofile", "testlet" };
-			String[] schmd = { "testprofile", "testlet" };
-			xsdTest("src/test/resources/config/testEA_md.xml", xsdmd, schmd,
-					"testResults/ea/md/INPUT",
-					"src/test/resources/reference/xsd");
-
-			/*
-			 * The SWE Common 2.0 encoding
-			 */
-			String[] xsdswe = { "advanced_encodings", "basic_types",
-					"block_components", "choice_components",
-					"record_components", "simple_components",
-					"simple_encodings", "swe" };
-			xsdTest("src/test/resources/config/testEA_swe.xml", xsdswe, null,
-					"testResults/ea/swe/INPUT",
-					"src/test/resources/reference/xsd/swe");
-
-			// TODO add INSPIRE, OKSTRA, no GML, more Schematron tests
-
-			/*
-			 * JSON encoding with geoservices encoding rule
-			 */
-			String[] typenamesGsr = { "FeatureType1", "FeatureType2" };
-			jsonTest("src/test/resources/config/testEA_JsonGsr.xml",
-					typenamesGsr, "testResults/ea/json/geoservices/INPUT",
-					"src/test/resources/reference/json/geoservices");
-
-			/*
-			 * JSON encoding with extended geoservices encoding rule
-			 */
-			String[] typenamesGsrExtended = { "DataType", "DataType2",
-					"FeatureType1", "FeatureType2", "NilUnion", "Union" };
-			jsonTest("src/test/resources/config/testEA_JsonGsrExtended.xml",
-					typenamesGsrExtended,
-					"testResults/ea/json/geoservices_extended/INPUT",
-					"src/test/resources/reference/json/geoservices_extended");
-
-			/*
-			 * SKOS codelists
-			 */
-			String[] rdfskos = { "Codelists" };
-			rdfTest("src/test/resources/config/testEA_skos.xml", rdfskos,
-					"testResults/ea/skos/INPUT",
-					"src/test/resources/reference/rdf/skos");
-
-			/*
-			 * Ontology (based on ISO 19150-2) - single ontology per schema
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml",
-					new String[] { "ttl" },
-					"testResults/owl/singleOntologyPerSchema/owl",
-					"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
-
-			/*
-			 * Ontology (based on ISO 19150-2) - multiple ontologies - one per
-			 * package
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_owliso_multipleOntologiesPerSchema.xml",
-					new String[] { "ttl" },
-					"testResults/owl/multipleOntologiesPerSchema/owl",
-					"src/test/resources/reference/owl/multipleOntologiesPerSchema/owl");
-
-			/*
-			 * Flattening transformation
-			 */
-			multiTest("src/test/resources/config/testEA_Flattening.xml",
-					new String[] { "xsd" }, "testResults/flattening/xsd",
-					"src/test/resources/reference/flattening/xsd");
-
-			/*
-			 * Flattening transformation - only homogeneous geometries
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_homogeneousGeometries.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/homogeneousGeometry_core/",
-					"src/test/resources/reference/flattening/homogeneousGeometry");
-
-			/*
-			 * Flattening transformation - only homogeneous geometries - Test1
-			 * (handling of associations)
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_homogeneousGeometries_test1.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/homogeneousGeometry_test1/",
-					"src/test/resources/reference/flattening/homogeneousGeometry_test1");
-
-			/*
-			 * Flattening transformation - only inheritance
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_inheritance.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/inheritance/",
-					"src/test/resources/reference/flattening/inheritance");
-
-			/*
-			 * Flattening transformation - removing inheritance
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_removeInheritance.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/removeInheritance/xsd",
-					"src/test/resources/reference/flattening/removeInheritance/xsd");
-
-			/*
-			 * Flattening transformation - cycles (and isFlatTarget setting)
-			 */
-			multiTest("src/test/resources/config/testEA_Flattening_cycles.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/xsd/cycles_step1",
-					"src/test/resources/reference/flattening/xsd/cycles_step1");
-
-			/*
-			 * Flattening transformation - remove feature-2-feature
-			 * relationships
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_removeFeatureTypeRelationships.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/removeFeatureTypeRelationships",
-					"src/test/resources/reference/flattening/removeFeatureTypeRelationships");
-
-			/*
-			 * Flattening transformation - remove object-2-feature relationships
-			 * for specific object types
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_removeObjectToFeatureTypeNavigability.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/removeObjectToFeatureTypeNavigability",
-					"src/test/resources/reference/flattening/removeObjectToFeatureTypeNavigability");
-
-			/*
-			 * Replication schema target
-			 */
-			multiTest("src/test/resources/config/testEA_repSchema.xml",
-					new String[] { "xsd" }, "testResults/repSchema/repXsd",
-					"src/test/resources/reference/xsd/replicationSchema");
-
-			/*
-			 * Attribute creation transformer
-			 */
-			multiTest("src/test/resources/config/testEA_attributeCreation.xml",
-					new String[] { "xsd" },
-					"testResults/attribute_creation/xsd",
-					"src/test/resources/reference/xsd/attributeCreation");
-
-			/*
-			 * Test the profiling functionality
-			 */
-			multiTest("src/test/resources/config/testEA_Profiling.xml",
-					new String[] { "xsd", "xml" }, "testResults/profiling/xsd",
-					"src/test/resources/reference/profiling/xsd");
-
-			/*
-			 * Test the constraint validation functionality
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Profiling_withConstraintValidation.xml",
-					new String[] { "xml" },
-					"testResults/profiling/constraintValidation/results",
-					"src/test/resources/reference/profiling/constraintValidation/results");
-
-			/*
-			 * Test the profiling functionality - with explicit profile settings
-			 * behavior
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Profiling_explicitProfileSettings.xml",
-					new String[] { "xsd", "xml" },
-					"testResults/profiling_explicitProfileSettings/xsd",
-					"src/test/resources/reference/profiling_explicitProfileSettings/xsd");
-
-			// /*
-			// * Test the creation of a frame-based html feature catalogue
-			// */
-			// multiTest("src/test/resources/config/testEA_HtmlFrame.xml",
-			// new String[] { "html" }, "testResults/html/frame/INPUT",
-			// "src/test/resources/reference/html/frame/INPUT");
-
-			/*
-			 * Schematron derived from SBVR (with intermediate translation to
-			 * FOL)
-			 */
-			multiTest("src/test/resources/config/testEA_Sbvr.xml",
-					new String[] { "xml" },
-					"testResults/fol/fromSbvr/sch/step3",
-					"src/test/resources/reference/sch/fromSbvr");
-
-			/*
-			 * Test the GML 3.3 based transformation of association classes.
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_associationClassMapper.xml",
-					new String[] { "xsd" },
-					"testResults/associationClassTransform/associationClassMapper",
-					"src/test/resources/reference/associationClassTransform/associationClassMapper");
-
-			/*
-			 * SQL - foreign keys Oracle naming style
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_sql_foreignKeysOracleNamingStyle.xml",
-					new String[] { "sql" }, "testResults/sql/foreignKeysOracleNamingStyle",
-					"src/test/resources/reference/sql/foreignKeysOracleNamingStyle");
-
-			/*
-			 * SQL - codelist conversion
-			 */
-			multiTest("src/test/resources/config/testEA_sql_codelists.xml",
-					new String[] { "sql" }, "testResults/sql/codelists",
-					"src/test/resources/reference/sql/codelists");
-
-			/*
-			 * Test rule-trf-camelcase-to-uppercase of NamingModifier
-			 * transformation
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_namingmodifier_camelcasetouppercase.xml",
-					new String[] { "xsd" },
-					"testResults/namingModifier/camelcaseToUppercase",
-					"src/test/resources/reference/namingModifier/camelcaseToUppercase");
-			
-			/*
-			 * Test rule-trf-enumeration-to-codelist of TypeConverter transformation
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_typeConverter_enumerationToCodelist.xml",
-					new String[] { "xsd" },
-					"testResults/typeConversion/enumerationToCodelist",
-					"src/test/resources/reference/typeConversion/enumerationToCodelist");
-			
-			/*
-			 * Test rule-trf-cls-flatten-inheritance-add-attributes-at-bottom
-			 */
-			multiTest(
-					"src/test/resources/config/testEA_Flattening_inheritanceAddAttributesAtBottom.xml",
-					new String[] { "xsd" },
-					"testResults/flattening/inheritanceAddAttributesAtBottom",
-					"src/test/resources/reference/flattening/inheritanceAddAttributesAtBottom");
-		}
-	}
-
-	private void multiTest(String config, String[] fileFormatsToCheck,
+	protected void multiTest(String config, String[] fileFormatsToCheck,
 			String basedirResults, String basedirReference) {
 
 		Set<String> fileFormatsToCheckLC = null;
@@ -856,26 +338,26 @@ public class BasicTest {
 		}
 	}
 
-	private void xsdTest(String config, String[] xsds, String[] schs,
+	protected void xsdTest(String config, String[] xsds, String[] schs,
 			String basedirResults, String basedirReference) {
 		xsdTest(config, xsds, schs, null, basedirResults, basedirReference,
 				true);
 	}
 
-	private void xsdTest(String config, String[] xsds, String[] schs,
+	protected void xsdTest(String config, String[] xsds, String[] schs,
 			HashMap<String, String> replacevalues, String basedirResults,
 			String basedirReference) {
 		xsdTest(config, xsds, schs, replacevalues, basedirResults,
 				basedirReference, true);
 	}
 
-	private void xsdTest(String config, String[] xsds, String[] schs,
+	protected void xsdTest(String config, String[] xsds, String[] schs,
 			String basedirResults, String basedirReference, boolean noErrors) {
 		xsdTest(config, xsds, schs, null, basedirResults, basedirReference,
 				noErrors);
 	}
 
-	private void xsdTest(String config, String[] xsds, String[] schs,
+	protected void xsdTest(String config, String[] xsds, String[] schs,
 			HashMap<String, String> replacevalues, String basedirResults,
 			String basedirReference, boolean noErrors) {
 		long start = (new Date()).getTime();
@@ -901,24 +383,24 @@ public class BasicTest {
 			}
 	}
 
-	private void sqlTest(String config, String[] sqls, String basedirResults,
-			String basedirReference) {
-		sqlTest(config, sqls, null, basedirResults, basedirReference, true);
-	}
+	// private void sqlTest(String config, String[] sqls, String basedirResults,
+	// String basedirReference) {
+	// sqlTest(config, sqls, null, basedirResults, basedirReference, true);
+	// }
+	//
+	// private void sqlTest(String config, String[] sqls,
+	// HashMap<String, String> replacevalues, String basedirResults,
+	// String basedirReference) {
+	// sqlTest(config, sqls, replacevalues, basedirResults, basedirReference,
+	// true);
+	// }
+	//
+	// private void sqlTest(String config, String[] sqls, String basedirResults,
+	// String basedirReference, boolean noErrors) {
+	// sqlTest(config, sqls, null, basedirResults, basedirReference, noErrors);
+	// }
 
-	private void sqlTest(String config, String[] sqls,
-			HashMap<String, String> replacevalues, String basedirResults,
-			String basedirReference) {
-		sqlTest(config, sqls, replacevalues, basedirResults, basedirReference,
-				true);
-	}
-
-	private void sqlTest(String config, String[] sqls, String basedirResults,
-			String basedirReference, boolean noErrors) {
-		sqlTest(config, sqls, null, basedirResults, basedirReference, noErrors);
-	}
-
-	private void sqlTest(String config, String[] sqls,
+	protected void sqlTest(String config, String[] sqls,
 			HashMap<String, String> replacevalues, String basedirResults,
 			String basedirReference, boolean noErrors) {
 
@@ -943,7 +425,7 @@ public class BasicTest {
 		}
 	}
 
-	private void jsonTest(String config, String[] typenames,
+	protected void jsonTest(String config, String[] typenames,
 			String basedirResults, String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
@@ -977,7 +459,7 @@ public class BasicTest {
 		}
 	}
 
-	private void rdfTest(String config, String[] rdfs, String basedirResults,
+	protected void rdfTest(String config, String[] rdfs, String basedirResults,
 			String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
@@ -1042,8 +524,8 @@ public class BasicTest {
 		}
 	}
 
-	private void htmlTest(String config, String[] htmls, String basedirResults,
-			String basedirReference) {
+	protected void htmlTest(String config, String[] htmls,
+			String basedirResults, String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
 		long end = (new Date()).getTime();
@@ -1107,8 +589,8 @@ public class BasicTest {
 		}
 	}
 
-	private void docxTest(String config, String[] docxs, String basedirResults,
-			String basedirReference) {
+	protected void docxTest(String config, String[] docxs,
+			String basedirResults, String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
 		long end = (new Date()).getTime();
@@ -1262,7 +744,8 @@ public class BasicTest {
 		}
 	}
 
-	private void initialise() {
+	@Before
+	public void initialise() {
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 		System.setProperty("javax.xml.parsers.SAXParserFactory",
