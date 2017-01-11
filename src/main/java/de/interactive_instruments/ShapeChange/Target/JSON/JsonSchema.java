@@ -230,7 +230,10 @@ public class JsonSchema implements Target, MessageSource {
 			write(ctx,"\t"+"\"title\":\""+(s==null||s.isEmpty()?ci.name():s)+"\",");
 			newLine(ctx);
 			String s2 = ci.derivedDocumentation(documentationTemplate, documentationNoValue);
-			if (includeDocumentation && !s2.isEmpty()) {
+			if (ci.globalId() != null) {
+				write(ctx, "\t" + "\"description\":\"" + ci.globalId() + "\",");
+				newLine(ctx);
+			} else if (includeDocumentation && !s2.isEmpty()) {
 				write(ctx,"\t"+"\"description\":\""+escape(s2).trim()+"\",");
 				newLine(ctx);				
 			}
@@ -511,7 +514,10 @@ public class JsonSchema implements Target, MessageSource {
 						write(ctx,"\t\t\t\t\t"+"\"title\":\""+(s==null||s.isEmpty()?propi.name():s)+"\",");
 						newLine(ctx);
 						String s2 = propi.derivedDocumentation(documentationTemplate, documentationNoValue);
-						if (includeDocumentation && !s2.isEmpty()) {
+						if (propi.globalId() != null) {
+							write(ctx, "\t\t\t\t\t" + "\"description\":\"" + propi.globalId() + "\",");
+							newLine(ctx);
+						} else if (includeDocumentation && !s2.isEmpty()) {
 							write(ctx,"\t\t\t\t\t"+"\"description\":\""+escape(s2).trim()+"\",");
 							newLine(ctx);				
 						}

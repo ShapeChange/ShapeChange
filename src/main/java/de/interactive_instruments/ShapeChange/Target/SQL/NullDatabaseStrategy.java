@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -87,7 +88,12 @@ public class NullDatabaseStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
+	public String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames) {
+		return "";
+	}
+	
+	@Override
+	public String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames) {
 		return "";
 	}
 

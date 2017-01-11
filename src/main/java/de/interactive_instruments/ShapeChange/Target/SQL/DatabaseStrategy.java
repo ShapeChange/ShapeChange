@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -100,13 +101,18 @@ public interface DatabaseStrategy {
 	void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp);
 
 	/**
+	 * Implementations of this method should add the generated constraint to the set with constraint names.
 	 *
-	 * @param tableName
-	 * @param propertyName
 	 * @return name that is according to the default case of the database
 	 *         system, and that does not exceed the max length for names in the
 	 *         database system
 	 */
-	String createNameCheckConstraint(String tableName, String propertyName);
+	String createNameCheckConstraint(String tableName, String propertyName, Set<String> allConstraintNames);
+	
+	/**
+	 * Implementations of this method should add the generated constraint to the set with constraint names.
+	 * 
+	 */
+	String createNameForeignKey(String tableName, String targetTableName, String fieldName, Set<String> allConstraintNames);
 
 }
