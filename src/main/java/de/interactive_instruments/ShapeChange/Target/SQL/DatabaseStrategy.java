@@ -37,6 +37,12 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 
 public interface DatabaseStrategy {
+	
+	/**
+	 * @param b
+	 * @return the representation of the boolean value suitable for the strategy
+	 */
+	String convertDefaultValue(boolean b);
 
 	/**
 	 *
@@ -61,13 +67,15 @@ public interface DatabaseStrategy {
 	String limitedLengthCharacterDataType(int size);
 
 	/**
-	 * @param columnname
+	 * @param indexName
+	 * @param tableName
+	 * @param columnName
 	 * @param geometryCharacteristics
 	 *            additional geometry specific characteristics - can be
 	 *            <code>null</code>
 	 * @return
 	 */
-	String geometryIndexColumnPart(String columnname,
+	String geometryIndexColumnPart(String indexName, String tableName, String columnName,
 			Map<String, String> geometryCharacteristics);
 
 	/**
@@ -96,8 +104,9 @@ public interface DatabaseStrategy {
 	 * target.
 	 * @param mapEntryByType
 	 * @param mepp
+	 * @return <code>true</code> if the parameters are valid, else <code>false</code>
 	 */
-	void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp);
+	boolean validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp);
 
 	/**
 	 *

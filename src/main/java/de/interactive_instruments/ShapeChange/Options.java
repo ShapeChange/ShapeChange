@@ -3363,6 +3363,9 @@ public class Options {
 		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-all-exclude-abstract");
+		addRule("rule-sql-all-foreign-key-oracle-naming-style");
+		addRule("rule-sql-cls-code-lists");
+		addRule("rule-sql-cls-code-lists-pods");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
@@ -3430,11 +3433,17 @@ public class Options {
 		 * ArcGIS workspace encoding rules
 		 */
 		addRule("rule-arcgis-prop-initialValueByAlias");
-		/*
-		 * extend core encoding rule with optional ArcGIS workspace rules
-		 */
-		addRule("rule-arcgis-prop-initialValueByAlias", "*");
-
+		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-cls-hasM");
+		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
+		addRule("rule-arcgis-prop-lengthFromTaggedValue");
+		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
+		addRule("rule-arcgis-prop-initialValue");
+		addRule("rule-arcgis-prop-precision");
+		addRule("rule-arcgis-prop-scale");
+		addRule("rule-arcgis-prop-isNullable");
+		
 		/*
 		 * Replication schema encoding rules
 		 */

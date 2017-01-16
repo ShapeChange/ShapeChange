@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,38 +79,11 @@ import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
  * Basic unit test for ShapeChange
- * 
- * <li>Process without configuration file and verify that no error is reported
- * <li>Process XMI 1.0 test model and verify that no error is reported
- * <li>On Windows, process EA test model and verify that no error is reported
  */
-public class BasicTest {
+public abstract class BasicTest {
 
 	boolean testTime = false;
-	
-	/*
-	 * Remaining comments:
-	 */
-	
-	/*
-	 * A simple model to test the creation of a docx feature catalogue
-	 * that includes UML diagrams
-	 */
-	// TODO image file names and sizes not stable
-	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-	// new String[]{"test_featurecatalog_with_images"},
-	// "testResults/docx_with_images/myInputId",
-	// "src/test/resources/reference/docx");
 
-	// TODO add INSPIRE, OKSTRA, no GML, more Schematron tests
-
-	// /*
-	// * Test the creation of a frame-based html feature catalogue
-	// */
-	// multiTest("src/test/resources/config/testEA_HtmlFrame.xml",
-	// new String[] { "html" }, "testResults/html/frame/INPUT",
-	// "src/test/resources/reference/html/frame/INPUT");
-	
 	protected void multiTest(String config, String[] fileFormatsToCheck,
 			String basedirResults, String basedirReference) {
 
@@ -410,22 +383,22 @@ public class BasicTest {
 			}
 	}
 
-	private void sqlTest(String config, String[] sqls, String basedirResults,
-			String basedirReference) {
-		sqlTest(config, sqls, null, basedirResults, basedirReference, true);
-	}
-
-	private void sqlTest(String config, String[] sqls,
-			HashMap<String, String> replacevalues, String basedirResults,
-			String basedirReference) {
-		sqlTest(config, sqls, replacevalues, basedirResults, basedirReference,
-				true);
-	}
-
-	private void sqlTest(String config, String[] sqls, String basedirResults,
-			String basedirReference, boolean noErrors) {
-		sqlTest(config, sqls, null, basedirResults, basedirReference, noErrors);
-	}
+	// private void sqlTest(String config, String[] sqls, String basedirResults,
+	// String basedirReference) {
+	// sqlTest(config, sqls, null, basedirResults, basedirReference, true);
+	// }
+	//
+	// private void sqlTest(String config, String[] sqls,
+	// HashMap<String, String> replacevalues, String basedirResults,
+	// String basedirReference) {
+	// sqlTest(config, sqls, replacevalues, basedirResults, basedirReference,
+	// true);
+	// }
+	//
+	// private void sqlTest(String config, String[] sqls, String basedirResults,
+	// String basedirReference, boolean noErrors) {
+	// sqlTest(config, sqls, null, basedirResults, basedirReference, noErrors);
+	// }
 
 	protected void sqlTest(String config, String[] sqls,
 			HashMap<String, String> replacevalues, String basedirResults,
@@ -551,8 +524,8 @@ public class BasicTest {
 		}
 	}
 
-	protected void htmlTest(String config, String[] htmls, String basedirResults,
-			String basedirReference) {
+	protected void htmlTest(String config, String[] htmls,
+			String basedirResults, String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
 		long end = (new Date()).getTime();
@@ -616,9 +589,8 @@ public class BasicTest {
 		}
 	}
 
-
-	protected void docxTest(String config, String[] docxs, String basedirResults,
-			String basedirReference) {
+	protected void docxTest(String config, String[] docxs,
+			String basedirResults, String basedirReference) {
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
 		long end = (new Date()).getTime();

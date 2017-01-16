@@ -8,7 +8,8 @@
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
 			value="src/test/resources/test_ArcGISWorkspace.eap" />
-		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
+<!-- 		<parameter name="appSchemaNameRegex" value="AppSchema.*" /> -->
+		<parameter name="appSchemaNameRegex" value="AppSchema3" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="loadConstraintsForSelectedSchemasOnly" value="true"/>
@@ -96,6 +97,19 @@
 					type="GM_MultiSolid" />
 			</mapEntries>
 		</Transformer>
+		  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Naming.NamingModifier"
+   id="camelcase_to_uppercase" input="flattenedModel" mode="enabled">
+   <parameters>
+    <ProcessParameter name="suffixesToIgnore" value="ID, LF, CL"/>
+   </parameters>
+   <rules>
+    <ProcessRuleSet name="nmrule">
+     <rule name="rule-trf-camelcase-to-uppercase"/>
+     <!--       <rule name="rule-trf-camelcase-to-uppercase-include-enums" />-->
+     <!--       <rule name="rule-trf-camelcase-to-uppercase-include-codes" />-->
+    </ProcessRuleSet>
+   </rules>
+  </Transformer>
 	</transformers>
 	<targets>
 		<TargetXmlSchema
@@ -131,10 +145,11 @@
 		<!-- </Target> -->
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
-			mode="enabled" inputs="flattenedModel">
+			mode="enabled" inputs="camelcase_to_uppercase">
 
 			<targetParameter name="workspaceTemplate"
 				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
+			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"
 				value="testResults/ArcGISWorkspace/eap" />
@@ -143,9 +158,18 @@
 				value="0.001" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
+			<targetParameter name="maxNameLength" value="64"/>
 			<rules>
-				<EncodingRule name="ArcGIS">
+				<EncodingRule name="MyArcGISRule">
+				    <rule name="rule-arcgis-cls-hasZ"/>
+     				<rule name="rule-arcgis-cls-hasM"/>
 					<rule name="rule-arcgis-prop-initialValueByAlias" />
+					<rule name="rule-arcgis-cls-rangeDomainFromTaggedValues" />
+					<rule name="rule-arcgis-prop-lengthFromTaggedValue" />
+					<rule name="rule-arcgis-prop-initialValue"/>
+					<rule name="rule-arcgis-prop-isNullable"/>
+				    <rule name="rule-arcgis-prop-precision"/>
+				    <rule name="rule-arcgis-prop-scale"/>
 				</EncodingRule>
 			</rules>
 			<xi:include

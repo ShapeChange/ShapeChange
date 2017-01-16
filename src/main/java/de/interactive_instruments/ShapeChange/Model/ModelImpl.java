@@ -81,6 +81,12 @@ public abstract class ModelImpl implements Model {
 			"jsonDirectory" };
 
 	/*
+	 * the list of tagged values specified by the ArcGIS encoding rule
+	 */
+	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType",
+			"precision", "scale" };
+
+	/*
 	 * the list of tagged values specified by other encoding rules
 	 */
 	protected static String[] shapeChangeTags = { "xsdEncodingRule",
@@ -356,6 +362,8 @@ public abstract class ModelImpl implements Model {
 			for (String s : gmlTags)
 				allowedTags.add(s);
 			for (String s : jsonTags)
+				allowedTags.add(s);
+			for (String s : arcgisTags)
 				allowedTags.add(s);
 			for (String s : shapeChangeTags)
 				allowedTags.add(s);

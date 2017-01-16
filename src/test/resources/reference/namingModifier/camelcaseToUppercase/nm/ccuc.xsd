@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ccuc="http://test/namingModifier/camelcasetouppercase" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/namingModifier/camelcasetouppercase" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="AB_CDType">
+    <union memberTypes="ccuc:AB_CDEnumerationType ccuc:AB_CDOtherType"/>
+  </simpleType>
+  <simpleType name="AB_CDEnumerationType">
+    <restriction base="string">
+      <enumeration value="MYENUM"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="AB_CDOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="EF_G_H" substitutionGroup="gml:AbstractObject" type="ccuc:EF_G_HType"/>
+  <complexType name="EF_G_HType">
+    <sequence/>
+  </complexType>
+  <complexType name="EF_G_HPropertyType">
+    <sequence>
+      <element ref="ccuc:EF_G_H"/>
+    </sequence>
+  </complexType>
+  <simpleType name="J_K_LMType">
+    <restriction base="string">
+      <enumeration value="ENUM_B"/>
+    </restriction>
+  </simpleType>
+  <element name="O_P_Q_R" substitutionGroup="gml:AbstractFeature" type="ccuc:O_P_Q_RType"/>
+  <complexType name="O_P_Q_RType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ABCD_ID" type="boolean"/>
+          <element name="PROP_X2" type="ccuc:S_T_UVPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ccuc:PROP_X1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="O_P_Q_RPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ccuc:O_P_Q_R"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="S_T_UV" substitutionGroup="gml:AbstractGML" type="ccuc:S_T_UVType"/>
+  <complexType name="S_T_UVType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="PROP_GHIID" type="boolean"/>
+          <element name="PROP_X1" type="ccuc:O_P_Q_RPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ccuc:PROP_X2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="S_T_UVPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ccuc:S_T_UV"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="WX1_Y_Z" substitutionGroup="gml:AbstractObject" type="ccuc:WX1_Y_ZType"/>
+  <complexType name="WX1_Y_ZType">
+    <choice>
+      <element name="OPT1" type="integer"/>
+      <element name="OPT2" type="integer"/>
+    </choice>
+  </complexType>
+  <complexType name="WX1_Y_ZPropertyType">
+    <sequence>
+      <element ref="ccuc:WX1_Y_Z"/>
+    </sequence>
+  </complexType>
+</schema>

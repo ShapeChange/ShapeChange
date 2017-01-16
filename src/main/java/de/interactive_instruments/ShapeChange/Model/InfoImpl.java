@@ -430,7 +430,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 				s = nov;
 		} else
 			s = nov;
-		replacements.put("examples", s.trim());
+		replacements.put("example", s.trim());
 
 		sa = this.dataCaptureStatements();
 		if (sa != null && sa.length > 0) {
@@ -441,7 +441,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 				s = nov;
 		} else
 			s = nov;
-		replacements.put("dataCaptureStatements", s.trim());
+		replacements.put("dataCaptureStatement", s.trim());
 
 		StringBuilder builder = new StringBuilder();
 		int i = 0;

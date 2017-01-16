@@ -43,6 +43,14 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	public String primaryKeyDataType() {
 		return "bigserial";
 	}
+	
+	@Override
+	public String convertDefaultValue(boolean b) {
+		if(b)
+			return "true";
+		else
+			return "false";
+	}
 
 	@Override
 	public String geometryDataType(ProcessMapEntry me, int srid) {
@@ -60,9 +68,10 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String columnname,
-			Map<String, String> geometryCharacteristics) {
-		return " USING GIST (" + columnname + ")";
+	public String geometryIndexColumnPart(String indexName, String tableName,
+			String columnName, Map<String, String> geometryCharacteristics) {
+		return "CREATE INDEX " + indexName + " ON " + tableName
+				+ " USING GIST (" + columnName + ")";
 	}
 
 	@Override
@@ -78,13 +87,17 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
-		return tableName.toLowerCase(Locale.ENGLISH) + "_" + propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
+	public String createNameCheckConstraint(String tableName,
+			String propertyName) {
+		return tableName.toLowerCase(Locale.ENGLISH) + "_"
+				+ propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
 	}
 
 	@Override
-	public void validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp) {
+	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
+			MapEntryParamInfos mepp) {
 		// nothing specific to check
+		return true;
 	}
 
 }

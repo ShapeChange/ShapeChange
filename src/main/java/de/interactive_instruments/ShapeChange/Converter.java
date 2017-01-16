@@ -568,6 +568,9 @@ public class Converter {
 
 				String name = pi.name();
 				String ns = pi.targetNamespace();
+				if (ns == null) {
+					ns = "(no namespace)";
+				}
 				result.addInfo(null, 1012, name, ns);
 
 				if (tmode.equals(ProcessMode.disabled))

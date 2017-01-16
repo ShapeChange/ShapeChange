@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<UMLProfile profiletype="uml2">
+	<Documentation id="9E02DF83-4" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+	<Content>
+		<Stereotypes>
+			<Stereotype name="applicationSchema" notes="URL of the schema location of a GML profile (optional)" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Package">
+						<Property name="URI" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="gmlProfileSchema" type="char" description="" unit="" values="" default=""/>
+					<Tag name="targetNamespace" type="char" description="Target XML namespace of the application schema" unit="" values="" default="FIXME"/>
+					<Tag name="version" type="char" description="Current version of the application schema" unit="" values="" default="FIXME"/>
+					<Tag name="xmlns" type="char" description="Namespace prefix to be used as short form of the target namespace" unit="" values="" default=""/>
+					<Tag name="xsdDocument" type="char" description="Name of an XML Schema document to create representing the content of this package" unit="" values="" default="FIXME"/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="bundle" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Package">
+						<Property name="URI" value=""/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="codeList" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="asDictionary" type="boolean" description="Encode code list as externally managed dictionary (applies to ISO 19136:2007 encoding rule). Always true in INSPIRE." unit="" values="true,false" default="true"/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="dataType" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="isCollection" type="boolean" description="Identifies the type as an object collection." unit="" values="true,false" default="false"/>
+					<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="enum" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Attribute"/>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="enumeration" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="featureType" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="byValuePropertyType" type="boolean" description="Create a property type that requires that the instance is encoded inline (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+					<Tag name="gmlMixin" type="boolean" description="Identifies the feature type as a mixin type that will not be encoded as a separate element/type in the GML encoding." unit="" values="true,false" default="false"/>
+					<Tag name="isCollection" type="boolean" description="Identifies the feature type as an object collection." unit="" values="true,false" default="false"/>
+					<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="import" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Dependency">
+						<Property name="direction" value="Source -&gt; Destination"/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="include" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Dependency">
+						<Property name="direction" value="Source -&gt; Destination"/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="leaf" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Package">
+						<Property name="URI" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="xsdDocument" type="char" description="Name of an XML Schema document to create representing the content of this package" unit="" values="" default=""/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="property" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Attribute"/>
+					<Apply type="AssociationEnd">
+						<Property name="aggregation" value="none"/>
+						<Property name="default" value=""/>
+						<Property name="isComposite" value=""/>
+						<Property name="isDerived" value="false"/>
+						<Property name="isDerivedUnion" value="false"/>
+						<Property name="isID" value="false"/>
+						<Property name="isReadOnly" value="false"/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="inlineOrByReference" type="enumeration" description="" unit="" values="inline,byReference,inlineOrByReference" default="inlineOrByReference"/>
+					<Tag name="isMetadata" type="boolean" description="" unit="" values="true,false" default="false"/>
+					<Tag name="sequenceNumber" type="string" description="" unit="" values="" default=""/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="type" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="byValuePropertyType" type="boolean" description="Create a property type that requires that the instance is encoded inline (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+					<Tag name="gmlMixin" type="boolean" description="Identifies the type as a mixin type that will not be encoded as a separate element/type in the GML encoding." unit="" values="true,false" default="false"/>
+					<Tag name="isCollection" type="boolean" description="Identifies the type as an object collection." unit="" values="true,false" default="false"/>
+					<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+					<Tag name="xmlSchemaType" type="char" description="If the type has a canonical XML Schema encoding the XML Schema typename corresponding to the data type shall be given as the value (applies to ISO 19136:2007 encoding rule)." unit="" values="" default=""/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="union" notes="" cx="0" cy="0" bgcolor="-1" fontcolor="-1" bordercolor="-1" borderwidth="-1" hideicon="0">
+				<AppliesTo>
+					<Apply type="Class">
+						<Property name="isActive" value=""/>
+					</Apply>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+				</TaggedValues>
+			</Stereotype>
+		</Stereotypes>
+		<TaggedValueTypes/>
+	</Content>
+</UMLProfile>

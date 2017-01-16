@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:etcext="http://test/typeConverter/enumerationToCodelist/external" elementFormDefault="qualified" targetNamespace="http://test/typeConverter/enumerationToCodelist/external" version="1.0">
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="ExtEnumerationType">
+    <union memberTypes="etcext:ExtEnumerationEnumerationType etcext:ExtEnumerationOtherType"/>
+  </simpleType>
+  <simpleType name="ExtEnumerationEnumerationType">
+    <restriction base="string">
+      <enumeration value="1"/>
+      <enumeration value="2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="ExtEnumerationOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+</schema>

@@ -213,5 +213,10 @@ public class TransformerConfiguration extends ProcessConfiguration {
 		}
 		return targets;
 	}
+	
+	public boolean hasRule(String ruleID) {
+		
+		return this.getAllRules().contains(ruleID);
+	}
 
 }

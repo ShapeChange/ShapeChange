@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2015 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -100,8 +102,9 @@ public class SqlDdl implements Target, MessageSource {
 	public static final String PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
 
 	/**
-	 * Datatype to use for foreign key fields, for example 'bigint' in case of a PostgreSQL database.
-	 * The default is the primary key type defined by the database strategy.
+	 * Datatype to use for foreign key fields, for example 'bigint' in case of a
+	 * PostgreSQL database. The default is the primary key type defined by the
+	 * database strategy.
 	 */
 	public static final String PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE = "foreignKeyColumnDataType";
 
@@ -136,16 +139,53 @@ public class SqlDdl implements Target, MessageSource {
 	 * <ul>
 	 * <li>PostgreSQL</li>
 	 * <li>Oracle</li>
+	 * <li>SQLServer</li>
 	 * </ul>
 	 * The default is PostgreSQL.
 	 */
 	public static final String PARAM_DATABASE_SYSTEM = "databaseSystem";
-	
+
 	/**
-	 * Optional changes to the default documentation template and the default strings for descriptors without value
+	 * Optional changes to the default documentation template and the default
+	 * strings for descriptors without value
 	 */
 	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
+
+	/**
+	 * Comma-separated list of descriptors that shall be encoded as individual
+	 * columns in a table representing a code list. The descriptors are
+	 * specified by their identifier ('alias', 'definition', 'description',
+	 * 'example', 'legalBasis', 'dataCaptureStatement', 'primaryCode'). NOTE:
+	 * 'documentation' can also be used to include documentation that is derived
+	 * from descriptors using the {@value #PARAM_DOCUMENTATION_TEMPLATE} and
+	 * {@value #PARAM_DOCUMENTATION_NOVALUE}. The default value for this
+	 * parameter is 'documentation'.
+	 * <p>
+	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
+	 */
+	public static final String PARAM_DESCRIPTORS_FOR_CODELIST = "descriptorsForCodelist";
+	private String[] descriptorsForCodelistFromConfig = new String[] {
+			"documentation" };
+	private List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
+
+	/**
+	 * This parameter controls the name of the column that contains the name or
+	 * - if available - the initial value of a code. Default is 'name'. NOTE:
+	 * The column name will be normalized according to the rules of the chosen
+	 * database system.
+	 * <p>
+	 * Additional columns can be defined via the configuration parameter
+	 * {@value #PARAM_DESCRIPTORS_FOR_CODELIST}.
+	 * <p>
+	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
+	 */
+	public static final String PARAM_CODE_NAME_COLUMN_NAME = "codeNameColumnName";
+	private String codeNameColumnName = "name";
+	private String normalizedCodeNameColumnName = null;
+
+	public static final String PARAM_CODE_NAME_SIZE = "codeNameSize";
+	private Integer codeNameSize = null;
 
 	/* ------------------------ */
 	/* --- rule identifiers --- */
@@ -171,6 +211,18 @@ public class SqlDdl implements Target, MessageSource {
 	 * types.
 	 */
 	public static final String RULE_TGT_SQL_CLS_DATATYPES = "rule-sql-cls-data-types";
+
+	/**
+	 * Tables are generated for code lists. Insert statements are created for
+	 * the codes of a code list. Properties with a code list as value type will
+	 * be converted to fields with foreign key type.
+	 */
+	public static final String RULE_TGT_SQL_CLS_CODELISTS = "rule-sql-cls-code-lists";
+
+	/**
+	 * 
+	 */
+	public static final String RULE_TGT_SQL_CLS_CODELISTS_PODS = "rule-sql-cls-code-lists-pods";
 
 	/**
 	 * If this rule is enabled, then a property whose type is neither covered by
@@ -213,6 +265,32 @@ public class SqlDdl implements Target, MessageSource {
 	 */
 	public static final String RULE_TGT_SQL_PROP_EXCLUDE_DERIVED = "rule-sql-prop-exclude-derived";
 
+	/**
+	 * If this rule is enabled, abstract classes will be ignored by the target.
+	 */
+	public static final String RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT = "rule-sql-all-exclude-abstract";
+
+	/**
+	 * Under this rule, foreign key identifiers are generated as follows:
+	 * <p>
+	 * "fk_" + tableNameForFK + "" + targetTableNameForFK + "" + fieldNameForFK
+	 * + count where:
+	 * <ul>
+	 * <li>tableNameForFK is the name of the table that contains the field with
+	 * the foreign key, clipped to the first eight characters</li>
+	 * <li>targetTableNameForFK is the name of the table that the field with
+	 * foreign key references, clipped to the first eight characters</li>
+	 * <li>fieldNameForFK is the name of the field that contains the foreign
+	 * key, clipped to the first eight characters</li>
+	 * <li>count is the number of times the foreign key identifier has been
+	 * assigned; it ranges from 0-9 and can also be omitted, thus supporting
+	 * eleven unambiguous uses of the foreign key identifier (NOTE: if the
+	 * foreign key identifier is used more than eleven times, ShapeChange logs
+	 * an error)</li>
+	 * </ul>
+	 */
+	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
+
 	/* --------------------- */
 	/* --- Tagged Values --- */
 	/* --------------------- */
@@ -222,6 +300,13 @@ public class SqlDdl implements Target, MessageSource {
 	/* -------------------- */
 	/* --- other fields --- */
 	/* -------------------- */
+
+	/**
+	 * <pre>
+	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size)=\w+)(,(columnName|size)=\w+)*\))?
+	 * </pre>
+	 */
+	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";
@@ -265,13 +350,26 @@ public class SqlDdl implements Target, MessageSource {
 
 	protected TreeMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
 
+	private Pattern pattern_find_true = Pattern.compile("true",
+			Pattern.CASE_INSENSITIVE);
+	private Pattern pattern_find_false = Pattern.compile("false",
+			Pattern.CASE_INSENSITIVE);
+
 	private ShapeChangeResult result = null;
 	private PackageInfo schema = null;
 	private Model model = null;
 	private Options options = null;
 	private boolean printed = false;
 	private boolean diagnosticsOnly = false;
+	/**
+	 * NOTE: If not set via the configuration, the default applies which is
+	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
+	 */
 	private String documentationTemplate = null;
+	/**
+	 * NOTE: If not set via the configuration, the default applies which is
+	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_NOVALUE}.
+	 */
 	private String documentationNoValue = null;
 
 	private String outputDirectory;
@@ -285,6 +383,8 @@ public class SqlDdl implements Target, MessageSource {
 	private boolean createReferences = false;
 	private boolean createDocumentation = true;
 	private boolean createAssociativeTables = false;
+	private boolean oracleNamingStyle = false;
+	private Map<String, Integer> countByForeignKeyOracleStyle = new HashMap<String, Integer>();
 
 	/**
 	 * This map contains the general table definitions for each class.
@@ -326,6 +426,16 @@ public class SqlDdl implements Target, MessageSource {
 	private TreeMap<String, List<String>> referenceColumnDefinitionsByTableName = new TreeMap<String, List<String>>();
 
 	private TreeMap<String, List<String>> checkConstraintsForPropsWithEnumValueTypeByTableName = new TreeMap<String, List<String>>();
+
+	/**
+	 * This map is used to cache INSERT statements for code list tables
+	 *
+	 * key: name of code list (not normalized)
+	 *
+	 * value: INSERT statements for codes of the code list
+	 */
+	private TreeMap<String, List<String>> insertStatementsByCodeListName = new TreeMap<String, List<String>>();
+
 	private List<String> geometryMetadataUpdateStatements;
 	private List<String> geometryIndexCreationStatements;
 
@@ -355,7 +465,7 @@ public class SqlDdl implements Target, MessageSource {
 	 */
 	public void initialise(PackageInfo pi, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		schema = pi;
 		model = m;
@@ -395,6 +505,10 @@ public class SqlDdl implements Target, MessageSource {
 			this.createAssociativeTables = true;
 		}
 
+		if (pi.matches(RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE)) {
+			this.oracleNamingStyle = true;
+		}
+
 		String databaseSystem = options.parameter(this.getClass().getName(),
 				PARAM_DATABASE_SYSTEM);
 		if (databaseSystem == null
@@ -402,6 +516,8 @@ public class SqlDdl implements Target, MessageSource {
 			databaseStrategy = new PostgreSQLStrategy();
 		} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new OracleStrategy(result);
+		} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
+			databaseStrategy = new SQLServerStrategy(result);
 		} else {
 			databaseStrategy = new NullDatabaseStrategy();
 			result.addFatalError(this, 6, databaseSystem);
@@ -475,10 +591,90 @@ public class SqlDdl implements Target, MessageSource {
 			createDocumentation = Boolean
 					.parseBoolean(createDocumentationByConfig.trim());
 		}
-		
+
 		// change the default documentation template?
-		documentationTemplate = options.parameter(this.getClass().getName(), PARAM_DOCUMENTATION_TEMPLATE);
-		documentationNoValue = options.parameter(this.getClass().getName(), PARAM_DOCUMENTATION_NOVALUE);		
+		documentationTemplate = options.parameter(this.getClass().getName(),
+				PARAM_DOCUMENTATION_TEMPLATE);
+		documentationNoValue = options.parameter(this.getClass().getName(),
+				PARAM_DOCUMENTATION_NOVALUE);
+
+		String descriptorsForCodelistByConfig = options.parameter(
+				this.getClass().getName(), PARAM_DESCRIPTORS_FOR_CODELIST);
+		if (descriptorsForCodelistByConfig != null
+				&& !descriptorsForCodelistByConfig.trim().isEmpty()) {
+			descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
+					.trim().split(",");
+		}
+		boolean unknownDescriptorFound = false;
+
+		for (String tmp : descriptorsForCodelistFromConfig) {
+
+			if (tmp.matches(DESCRIPTORS_FOR_CODELIST_REGEX)) {
+
+				// parse descriptor string
+				String name = null;
+				String normalizedColumnName = null;
+				Integer size = null;
+
+				if (tmp.contains("(")) {
+
+					name = tmp.substring(0, tmp.indexOf("("));
+					String tmp2 = tmp.substring(tmp.indexOf("(") + 1,
+							tmp.length() - 1);
+					String[] metadata = tmp2.split(";");
+					for (String meta : metadata) {
+						String[] meta_parts = meta.split("=");
+						if (meta_parts[0].equalsIgnoreCase("columnName")) {
+							normalizedColumnName = normalizeName(meta_parts[1]);
+						} else if (meta_parts[0].equalsIgnoreCase("size")) {
+							size = new Integer(meta_parts[1]);
+						}
+					}
+
+				} else {
+					// no metadata defined for descriptor
+					name = tmp;
+				}
+
+				if (normalizedColumnName == null) {
+					normalizedColumnName = normalizeName(name);
+				}
+
+				descriptorsForCodelist.add(new DescriptorForCodeList(name,
+						normalizedColumnName, size));
+
+			} else {
+				unknownDescriptorFound = true;
+			}
+		}
+		if (unknownDescriptorFound) {
+			result.addWarning(this, 23, descriptorsForCodelistByConfig,
+					DESCRIPTORS_FOR_CODELIST_REGEX);
+		}
+		if (descriptorsForCodelist.isEmpty()) {
+			result.addWarning(this, 24);
+			descriptorsForCodelist.add(
+					new DescriptorForCodeList("documentation", null, null));
+		}
+
+		/*
+		 * set of parameters for naming of columns when converting code list to
+		 * table
+		 */
+		String codeNameColumnNameByConfig = options.parameter(
+				this.getClass().getName(), PARAM_CODE_NAME_COLUMN_NAME);
+		if (codeNameColumnNameByConfig != null
+				&& !codeNameColumnNameByConfig.trim().isEmpty()) {
+			codeNameColumnName = codeNameColumnNameByConfig.trim();
+		}
+		normalizedCodeNameColumnName = normalizeName(codeNameColumnName);
+
+		String codeNameSizeByConfig = options
+				.parameter(this.getClass().getName(), PARAM_CODE_NAME_SIZE);
+		if (codeNameSizeByConfig != null
+				&& !codeNameSizeByConfig.trim().isEmpty()) {
+			codeNameSize = new Integer(codeNameSizeByConfig.trim());
+		}
 
 		// reset processed flags on all classes in the schema
 		for (Iterator<ClassInfo> k = model.classes(pi).iterator(); k
@@ -514,42 +710,7 @@ public class SqlDdl implements Target, MessageSource {
 			 * Parse all parameter information
 			 */
 			mepp = new MapEntryParamInfos(result, mapEntries);
-
-			validateMapEntryParamInfos(mepp);
 		}
-	}
-
-	private void validateMapEntryParamInfos(MapEntryParamInfos mepp2) {
-
-		// first up validation of common parameters
-		if (mapEntryByType != null) {
-
-			for (String type : mapEntryByType.keySet()) {
-
-				if (mepp.hasCharacteristic(type, ME_PARAM_TABLE,
-						ME_PARAM_TABLE_CHARACT_REP_CAT)) {
-
-					String representedCategory = mepp.getCharacteristic(type,
-							ME_PARAM_TABLE, ME_PARAM_TABLE_CHARACT_REP_CAT);
-
-					if (representedCategory == null) {
-
-						result.addError(this, 19, type,
-								ME_PARAM_TABLE_CHARACT_REP_CAT, ME_PARAM_TABLE);
-
-					} else if (!representedCategory.matches(
-							ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX)) {
-
-						result.addError(this, 20, type,
-								ME_PARAM_TABLE_CHARACT_REP_CAT, ME_PARAM_TABLE,
-								ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX);
-					}
-				}
-			}
-		}
-
-		// now the database specific validation
-		this.databaseStrategy.validate(mapEntryByType, mepp);
 	}
 
 	public void process(ClassInfo ci) {
@@ -561,6 +722,17 @@ public class SqlDdl implements Target, MessageSource {
 			return;
 
 		result.addDebug(this, 2, ci.name());
+
+		if (this.mapEntryByType.containsKey(ci.name())) {
+			ProcessMapEntry pme = this.mapEntryByType.get(ci.name());
+
+			result.addInfo(this, 22, ci.name(), pme.getTargetType());
+			return;
+		}
+
+		if (ci.isAbstract() && ci.matches(RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT)) {
+			return;
+		}
 
 		// Create table creation statements
 		if ((ci.category() == Options.OBJECT
@@ -579,6 +751,16 @@ public class SqlDdl implements Target, MessageSource {
 		} else if (ci.category() == Options.ENUMERATION) {
 
 			// fine - tables won't be created for enumerations
+
+		} else if (ci.category() == Options.CODELIST) {
+
+			if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS)) {
+
+				generateTableForCodeList(ci);
+
+			} else {
+				// do not create tables for code lists
+			}
 		} else {
 
 			result.addInfo(this, 17, ci.name());
@@ -693,7 +875,7 @@ public class SqlDdl implements Target, MessageSource {
 
 		String res = "ALTER TABLE " + normalizeName(tableName)
 				+ " ADD CONSTRAINT "
-				+ getForeignKeyIdentifier(tableName, fieldName)
+				+ getForeignKeyIdentifier(tableName, fieldName, targetTableName)
 				+ " FOREIGN KEY (" + normalizeName(fieldName) + ") REFERENCES "
 				+ normalizeName(targetTableName) + ";" + CRLF;
 
@@ -709,7 +891,10 @@ public class SqlDdl implements Target, MessageSource {
 
 	private String getForeignKeyIdentifier(PropertyInfo pi) {
 
-		return getForeignKeyIdentifier(pi.inClass().name(), pi.name());
+		String targetTableName = determineTableNameForValueType(pi);
+
+		return getForeignKeyIdentifier(pi.inClass().name(), pi.name(),
+				targetTableName);
 	}
 
 	/**
@@ -717,7 +902,8 @@ public class SqlDdl implements Target, MessageSource {
 	 * @param fieldName
 	 * @return the normalized identifier for the foreign key
 	 */
-	private String getForeignKeyIdentifier(String tableName, String fieldName) {
+	private String getForeignKeyIdentifier(String tableName, String fieldName,
+			String targetTableName) {
 
 		/*
 		 * The following is most often too long, thus we simply use the table
@@ -726,7 +912,39 @@ public class SqlDdl implements Target, MessageSource {
 		// String res = "fk_" + className + "_" + fieldName + "_to_"
 		// + targetClassName;
 
-		String res = "fk_" + tableName + "_" + fieldName;
+		String res;
+
+		if (oracleNamingStyle) {
+
+			String tableNameForFK = tableName.length() > 8
+					? tableName.substring(0, 8) : tableName;
+			String fieldNameForFK = fieldName.length() > 8
+					? fieldName.substring(0, 8) : fieldName;
+			String targetTableNameForFK = targetTableName.length() > 8
+					? targetTableName.substring(0, 8) : targetTableName;
+			String fk = "fk_" + tableNameForFK + "_" + targetTableNameForFK
+					+ "_" + fieldNameForFK;
+
+			if (countByForeignKeyOracleStyle.containsKey(fk)) {
+
+				Integer count = countByForeignKeyOracleStyle.get(fk);
+
+				if (count > 9) {
+					result.addError(this, 20, fk);
+				}
+
+				res = fk + count;
+				countByForeignKeyOracleStyle.put(fk, new Integer(count + 1));
+
+			} else {
+
+				res = fk;
+				countByForeignKeyOracleStyle.put(fk, new Integer(0));
+			}
+
+		} else {
+			res = "fk_" + tableName + "_" + fieldName;
+		}
 
 		return normalizeName(res);
 	}
@@ -755,11 +973,11 @@ public class SqlDdl implements Target, MessageSource {
 				typeCi = model.classByName(pi.typeInfo().name);
 			}
 
-			if (typeCi != null && typeCi.inSchema(schema)
-					&& ((typeCi.category() == Options.OBJECT
-							&& !typeCi.matches(RULE_TGT_SQL_CLS_OBJECT_TYPES))
-							|| (typeCi.category() == Options.FEATURE && !typeCi
-									.matches(RULE_TGT_SQL_CLS_FEATURE_TYPES))
+			if (typeCi != null && typeCi.inSchema(schema) && ((typeCi
+					.category() == Options.OBJECT
+					&& !typeCi.matches(RULE_TGT_SQL_CLS_OBJECT_TYPES))
+					|| (typeCi.category() == Options.FEATURE
+							&& !typeCi.matches(RULE_TGT_SQL_CLS_FEATURE_TYPES))
 					|| (typeCi.category() == Options.DATATYPE
 							&& !typeCi.matches(RULE_TGT_SQL_CLS_DATATYPES)))) {
 
@@ -772,6 +990,11 @@ public class SqlDdl implements Target, MessageSource {
 					&& pi.matches(RULE_TGT_SQL_PROP_EXCLUDE_DERIVED)) {
 
 				result.addInfo(this, 14, pi.name(), ci.name());
+				continue;
+			}
+
+			if (typeCi != null && typeCi.isAbstract()
+					&& typeCi.matches(RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT)) {
 				continue;
 			}
 
@@ -948,13 +1171,17 @@ public class SqlDdl implements Target, MessageSource {
 			pi2 = ai.end1();
 		}
 
+		boolean reflexive = pi1.inClass().id().equals(pi2.inClass().id());
+
 		// add field for first reference
-		String name_1 = determineTableNameForType(pi1.inClass()) + idColumnName;
+		String name_1 = determineTableNameForType(pi1.inClass())
+				+ (reflexive ? "_" + pi1.name() : "") + idColumnName;
 		String name_1_norm = normalizeName(name_1);
 		indent(sb, name_1_norm + " " + foreignKeyColumnDataType + " NOT NULL,");
 
 		// add field for second reference
-		String name_2 = determineTableNameForType(pi2.inClass()) + idColumnName;
+		String name_2 = determineTableNameForType(pi2.inClass())
+				+ (reflexive ? "_" + pi2.name() : "") + idColumnName;
 		String name_2_norm = normalizeName(name_2);
 		indent(sb, name_2_norm + " " + foreignKeyColumnDataType + " NOT NULL,");
 
@@ -1038,10 +1265,26 @@ public class SqlDdl implements Target, MessageSource {
 
 			normalizedPiFieldName = normalizeName(
 					determineTableNameForValueType(pi) + idColumnName);
-			createForeignKeyConstraintForPiField = true;
 
-			indent(sb, normalizedPiFieldName + " " + foreignKeyColumnDataType
-					+ " NOT NULL,");
+			if (pi.categoryOfValue() == Options.CODELIST
+					&& pi.inClass().matches(RULE_TGT_SQL_CLS_CODELISTS)) {
+
+				String fieldType;
+				if (codeNameSize == null) {
+					fieldType = databaseStrategy
+							.unlimitedLengthCharacterDataType();
+				} else {
+					fieldType = databaseStrategy
+							.limitedLengthCharacterDataType(codeNameSize);
+				}
+				indent(sb,
+						normalizedPiFieldName + " " + fieldType + " NOT NULL,");
+			} else {
+				indent(sb, normalizedPiFieldName + " "
+						+ foreignKeyColumnDataType + " NOT NULL,");
+			}
+
+			createForeignKeyConstraintForPiField = true;
 
 		} else {
 
@@ -1123,11 +1366,14 @@ public class SqlDdl implements Target, MessageSource {
 			StringBuffer sb2 = new StringBuffer();
 
 			sb2.append("ALTER TABLE " + normalizeName(tableName)
-					+ " ADD CONSTRAINT " + createNameCheckConstraint(tableName, pi.name())
+					+ " ADD CONSTRAINT "
+					+ createNameCheckConstraint(tableName, pi.name())
 					+ " CHECK (" + normalizeName(pi.name()) + " IN (");
 
 			for (PropertyInfo enumPi : enumCi.properties().values()) {
-				sb2.append("'" + StringUtils.replace(enumPi.name(), "'", "''") + "', "); // escape single quotes in the enumeration value
+				sb2.append("'" + StringUtils.replace(enumPi.name(), "'", "''")
+						+ "', "); // escape single quotes in the enumeration
+									// value
 			}
 			sb2.delete(sb2.length() - 2, sb2.length());
 			sb2.append("));" + CRLF);
@@ -1149,8 +1395,8 @@ public class SqlDdl implements Target, MessageSource {
 	 * @param pi
 	 * @return If a map entry with param = {@value #ME_PARAM_TABLE} is defined
 	 *         for the value type of the property, the targetType defined by the
-	 *         map entry is returned. Otherwise the name of the value type is
-	 *         returned.
+	 *         map entry is returned. Otherwise the normalized name of the value
+	 *         type is returned.
 	 */
 	private String determineTableNameForValueType(PropertyInfo pi) {
 
@@ -1164,7 +1410,7 @@ public class SqlDdl implements Target, MessageSource {
 
 		} else {
 
-			return pi.typeInfo().name;
+			return normalizeName(pi.typeInfo().name);
 		}
 	}
 
@@ -1216,6 +1462,206 @@ public class SqlDdl implements Target, MessageSource {
 
 		// now store the table creation statement for later use
 		this.tablesByClassName.put(ci.name(), sb.toString());
+	}
+
+	public void generateTableForCodeList(ClassInfo ci) {
+
+		StringBuffer sb = new StringBuffer();
+
+		String codeListTableName = normalizeName(ci.name());
+
+		addCRLF(sb, "CREATE TABLE " + codeListTableName + " (");
+		newLine(sb);
+
+		// --- create the columns for codes
+
+		// create required column to store the code name
+		StringBuffer name_column_stmt = new StringBuffer();
+		name_column_stmt.append(normalizedCodeNameColumnName);
+		name_column_stmt.append(" ");
+		if (codeNameSize == null) {
+			name_column_stmt.append(
+					databaseStrategy.unlimitedLengthCharacterDataType());
+		} else {
+			name_column_stmt.append(databaseStrategy
+					.limitedLengthCharacterDataType(codeNameSize));
+		}
+		name_column_stmt.append(" NOT NULL");
+		if (!ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+			name_column_stmt.append(" PRIMARY KEY");
+		}
+
+		if (!descriptorsForCodelist.isEmpty()) {
+			name_column_stmt.append(",");
+		}
+		indent(sb, name_column_stmt.toString());
+
+		/*
+		 * now add one column for each descriptor, as specified via the
+		 * configuration
+		 */
+		for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+				.iterator(); iter.hasNext();) {
+
+			DescriptorForCodeList descriptor = iter.next();
+
+			StringBuffer column_stmt = new StringBuffer();
+			column_stmt.append(descriptor.getNormalizedColumnName());
+			column_stmt.append(" ");
+			if (descriptor.getSize() == null) {
+				column_stmt.append(
+						databaseStrategy.unlimitedLengthCharacterDataType());
+			} else {
+				column_stmt.append(databaseStrategy
+						.limitedLengthCharacterDataType(descriptor.getSize()));
+			}
+			if (iter.hasNext() || ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				column_stmt.append(",");
+			}
+
+			indent(sb, column_stmt.toString());
+		}
+
+		if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+
+			indent(sb, "ACTIVE_INDICATOR_LF CHAR(1) NULL,");
+			indent(sb, "CONSTRAINT "
+					+ normalizeName("CKC_AI_" + codeListTableName)
+					+ " CHECK (ACTIVE_INDICATOR_LF IS NULL OR (ACTIVE_INDICATOR_LF IN ('Y','N'))),");
+			indent(sb, "SOURCE_GCL VARCHAR(16) NULL,");
+			indent(sb,
+					"CONSTRAINT " + normalizeName("PK_" + codeListTableName)
+							+ " PRIMARY KEY NONCLUSTERED ("
+							+ normalizedCodeNameColumnName + ")");
+		}
+
+		addCRLF(sb, ");");
+		newLine(sb);
+
+		// now store the table creation statement for later use
+		this.tablesByClassName.put(ci.name(), sb.toString());
+
+		// -------------------------
+		// create INSERT statements
+		// -------------------------
+
+		List<String> insertStatements = new ArrayList<String>();
+
+		for (PropertyInfo codePi : ci.properties().values()) {
+
+			StringBuffer codeSb = new StringBuffer();
+
+			addCRLF(codeSb, "INSERT INTO " + codeListTableName);
+
+			codeSb.append("(" + normalizedCodeNameColumnName);
+			if (!descriptorsForCodelist.isEmpty()) {
+				codeSb.append(", ");
+			}
+
+			for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+					.iterator(); iter.hasNext();) {
+
+				DescriptorForCodeList descriptor = iter.next();
+
+				codeSb.append(descriptor.getNormalizedColumnName());
+				if (iter.hasNext()
+						|| ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+					codeSb.append(", ");
+				}
+			}
+
+			if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				codeSb.append("ACTIVE_INDICATOR_LF, SOURCE_GCL");
+			}
+
+			addCRLF(codeSb, ")");
+			addCRLF(codeSb, "VALUES");
+
+			String codeName = codePi.name();
+			if (codePi.initialValue() != null) {
+				codeName = codePi.initialValue();
+			}
+
+			codeSb.append("('" + codeName + "'");
+			if (!descriptorsForCodelist.isEmpty()) {
+				codeSb.append(", ");
+			}
+
+			for (Iterator<DescriptorForCodeList> iter = descriptorsForCodelist
+					.iterator(); iter.hasNext();) {
+
+				DescriptorForCodeList descriptor = iter.next();
+				String descName = descriptor.getDescriptorName();
+				String value = null;
+
+				if (descName.equalsIgnoreCase("name")) {
+
+					value = codePi.name();
+
+				} else if (descName.equalsIgnoreCase("documentation")) {
+
+					value = codePi.derivedDocumentation(documentationTemplate,
+							documentationNoValue);
+
+				} else if (descName.equalsIgnoreCase("alias")) {
+
+					value = codePi.aliasName();
+
+				} else if (descName.equalsIgnoreCase("definition")) {
+
+					value = codePi.definition();
+
+				} else if (descName.equalsIgnoreCase("description")) {
+
+					value = codePi.description();
+
+				} else if (descName.equalsIgnoreCase("example")) {
+
+					String[] examples = codePi.examples();
+					if (examples != null && examples.length > 0) {
+						value = StringUtils.join(examples, " ");
+					}
+
+				} else if (descName.equalsIgnoreCase("legalBasis")) {
+
+					value = codePi.legalBasis();
+
+				} else if (descName.equalsIgnoreCase("dataCaptureStatement")) {
+
+					String[] dcss = codePi.dataCaptureStatements();
+					if (dcss != null && dcss.length > 0) {
+						value = StringUtils.join(dcss, " ");
+					}
+
+				} else if (descName.equalsIgnoreCase("primaryCode")) {
+
+					value = codePi.primaryCode();
+				}
+
+				if (value == null) {
+					value = "NULL";
+				} else {
+
+					value = "'" + value + "'";
+				}
+
+				if (iter.hasNext()
+						|| ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+					value = value + ", ";
+				}
+				codeSb.append(value);
+			}
+
+			if (ci.matches(RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
+				codeSb.append("'Y', NULL");
+			}
+
+			addCRLF(codeSb, ");");
+			newLine(codeSb);
+
+			insertStatements.add(codeSb.toString());
+		}
+		this.insertStatementsByCodeListName.put(ci.name(), insertStatements);
 	}
 
 	public void createAlterTableStatementForReverseProperty(PropertyInfo pi) {
@@ -1296,8 +1742,24 @@ public class SqlDdl implements Target, MessageSource {
 			/*
 			 * strings in UML: enclosed by " strings in SQL: enclosed by '
 			 */
-			result = result + " DEFAULT "
-					+ columnDefault.trim().replace("\"", "'");
+			String defaultValue = null;
+			if (pi.typeInfo().name.equals("Boolean")) {
+
+				if (pattern_find_true.matcher(columnDefault).find()) {
+
+					defaultValue = databaseStrategy.convertDefaultValue(true);
+
+				} else if (pattern_find_false.matcher(columnDefault).find()) {
+
+					defaultValue = databaseStrategy.convertDefaultValue(false);
+				}
+			}
+
+			if (defaultValue == null) {
+				defaultValue = columnDefault.trim().replace("\"", "'");
+			}
+
+			result = result + " DEFAULT " + defaultValue;
 		}
 
 		// ----- add constraints
@@ -1323,10 +1785,10 @@ public class SqlDdl implements Target, MessageSource {
 		}
 
 		if (createDocumentation) {
-			String s =  pi.derivedDocumentation(documentationTemplate, documentationNoValue);
+			String s = pi.derivedDocumentation(documentationTemplate,
+					documentationNoValue);
 			if (s != null) {
-				result = result + "   -- "
-						+ s.replaceAll("\\s+", " ");
+				result = result + "   -- " + s.replaceAll("\\s+", " ");
 			}
 		}
 
@@ -1339,9 +1801,9 @@ public class SqlDdl implements Target, MessageSource {
 	 *         <code>true</code> if the entry specifies (via the parameter) a
 	 *         mapping to a table, else <code>false</code> is returned.
 	 *         Otherwise, if the value type of the property is a feature,
-	 *         object, or data type that: 1) can be found in the model, 2) table
-	 *         creation for the type is allowed (defined by the conversion
-	 *         rules), and 3) is in the currently processed schema OR
+	 *         object, data type, or code list that: 1) can be found in the
+	 *         model, 2) table creation for the type is allowed (defined by the
+	 *         conversion rules), and 3) is in the currently processed schema OR
 	 *         {@value #RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES} is
 	 *         enabled, then the return value is <code>true</code> - else
 	 *         <code>false</code>.
@@ -1362,7 +1824,8 @@ public class SqlDdl implements Target, MessageSource {
 
 		} else if (pi.categoryOfValue() == Options.FEATURE
 				|| pi.categoryOfValue() == Options.OBJECT
-				|| pi.categoryOfValue() == Options.DATATYPE) {
+				|| pi.categoryOfValue() == Options.DATATYPE
+				|| pi.categoryOfValue() == Options.CODELIST) {
 
 			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
 
@@ -1372,8 +1835,10 @@ public class SqlDdl implements Target, MessageSource {
 						&& !typeCi.matches(RULE_TGT_SQL_CLS_OBJECT_TYPES))
 						|| (pi.categoryOfValue() == Options.FEATURE && !typeCi
 								.matches(RULE_TGT_SQL_CLS_FEATURE_TYPES))
-						|| (pi.categoryOfValue() == Options.DATATYPE && !typeCi
-								.matches(RULE_TGT_SQL_CLS_DATATYPES))) {
+						|| (pi.categoryOfValue() == Options.DATATYPE
+								&& !typeCi.matches(RULE_TGT_SQL_CLS_DATATYPES))
+						|| (pi.categoryOfValue() == Options.CODELIST && !typeCi
+								.matches(RULE_TGT_SQL_CLS_CODELISTS))) {
 
 					return false;
 
@@ -1488,13 +1953,13 @@ public class SqlDdl implements Target, MessageSource {
 		// property value
 		int catOfValue = pi.categoryOfValue();
 
-		if (catOfValue == Options.ENUMERATION
-				|| catOfValue == Options.CODELIST) {
+		if (catOfValue == Options.ENUMERATION) {
 
 			return determineCharacterVaryingOrText(pi);
 
 		} else if (catOfValue == Options.OBJECT || catOfValue == Options.FEATURE
-				|| catOfValue == Options.DATATYPE) {
+				|| catOfValue == Options.DATATYPE
+				|| catOfValue == Options.CODELIST) {
 
 			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
 
@@ -1504,8 +1969,10 @@ public class SqlDdl implements Target, MessageSource {
 						&& !typeCi.matches(RULE_TGT_SQL_CLS_OBJECT_TYPES))
 						|| (catOfValue == Options.FEATURE && !typeCi
 								.matches(RULE_TGT_SQL_CLS_FEATURE_TYPES))
-						|| (catOfValue == Options.DATATYPE && !typeCi
-								.matches(RULE_TGT_SQL_CLS_DATATYPES))) {
+						|| (catOfValue == Options.DATATYPE
+								&& !typeCi.matches(RULE_TGT_SQL_CLS_DATATYPES))
+						|| (catOfValue == Options.CODELIST && !typeCi
+								.matches(RULE_TGT_SQL_CLS_CODELISTS))) {
 
 					/*
 					 * table creation for this category is not enabled -> assign
@@ -1518,7 +1985,19 @@ public class SqlDdl implements Target, MessageSource {
 					if (typeCi.inSchema(schema) || typeCi.matches(
 							RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
 
-						return foreignKeyColumnDataType;
+						if (catOfValue == Options.CODELIST) {
+							
+							if (codeNameSize == null) {
+								return databaseStrategy
+										.unlimitedLengthCharacterDataType();
+							} else {
+								return databaseStrategy
+										.limitedLengthCharacterDataType(codeNameSize);
+							}
+														
+						} else {
+							return foreignKeyColumnDataType;
+						}
 
 					} else {
 						result.addWarning(this, 9, typeCi.name(), pi.name(),
@@ -1649,7 +2128,7 @@ public class SqlDdl implements Target, MessageSource {
 
 		String fileName = schema.name().replace("/", "_").replace(" ", "_")
 				+ ".sql";
-				// String fileName = outputFilename + ".sql";
+		// String fileName = outputFilename + ".sql";
 
 		// Now aggregate the output
 
@@ -1697,7 +2176,6 @@ public class SqlDdl implements Target, MessageSource {
 		for (String geometryMetadataUpdateStatement : geometryMetadataUpdateStatements) {
 			sb.append(geometryMetadataUpdateStatement);
 		}
-
 		newLine(sb);
 
 		// add indexes
@@ -1705,6 +2183,16 @@ public class SqlDdl implements Target, MessageSource {
 			sb.append(geometryIndexCreationStatement);
 		}
 		newLine(sb);
+
+		// add INSERT statements for code lists, if any
+		if (!insertStatementsByCodeListName.isEmpty()) {
+			for (List<String> inserts : insertStatementsByCodeListName
+					.values()) {
+				for (String stmt : inserts) {
+					sb.append(stmt);
+				}
+			}
+		}
 
 		BufferedWriter writer = null;
 		try {
@@ -1763,8 +2251,6 @@ public class SqlDdl implements Target, MessageSource {
 
 			for (PropertyInfo pi : geometryPropsByTableName.get(classname)) {
 
-				String columnName = normalizeName(pi.name());
-
 				Map<String, String> geometryCharacteristics = null;
 
 				if (mepp.hasParameter(pi.typeInfo().name, ME_PARAM_GEOMETRY)) {
@@ -1772,12 +2258,16 @@ public class SqlDdl implements Target, MessageSource {
 							pi.typeInfo().name, ME_PARAM_GEOMETRY);
 				}
 
-				String s = "CREATE INDEX "
-						+ normalizeName("idx_" + classname + "_" + columnName)
-						+ " ON " + normalizeName(classname)
-						+ databaseStrategy.geometryIndexColumnPart(columnName,
-								geometryCharacteristics)
-						+ ";" + CRLF;
+				// TBD: UPDATE NAMING PATTERN?
+
+				String columnName = normalizeName(pi.name());
+				String indexName = normalizeName(
+						"idx_" + classname + "_" + columnName);
+				String tableName = normalizeName(classname);
+
+				String s = databaseStrategy.geometryIndexColumnPart(indexName,
+						tableName, columnName, geometryCharacteristics) + ";"
+						+ CRLF;
 
 				result.add(s);
 			}
@@ -1803,11 +2293,14 @@ public class SqlDdl implements Target, MessageSource {
 		}
 	}
 
-	private String createNameCheckConstraint(String tableName, String propertyName) {
+	private String createNameCheckConstraint(String tableName,
+			String propertyName) {
 		if (tableName == null || propertyName == null) {
 			return null;
 		}
-		return databaseStrategy.createNameCheckConstraint(tableName.replace(".", "_").replace("-", "_"), propertyName.replace(".", "_").replace("-", "_"));
+		return databaseStrategy.createNameCheckConstraint(
+				tableName.replace(".", "_").replace("-", "_"),
+				propertyName.replace(".", "_").replace("-", "_"));
 	}
 
 	/**
@@ -1865,11 +2358,20 @@ public class SqlDdl implements Target, MessageSource {
 		case 18:
 			return "Could not find enumeration '$1$' in the model - or no enum values defined for it. Check constraint for '$2$' will not be created.";
 		case 19:
-			return "Invalid map entry for type '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+			return "";
 		case 20:
-			return "Invalid map entry for type '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+			return "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
 		case 21:
 			return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
+		case 22:
+			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+		case 23:
+			return "At least one of the descriptor identifiers in configuration parameter '"
+					+ PARAM_DESCRIPTORS_FOR_CODELIST
+					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Identifiers that do not match this expression will be ignored.";
+		case 24:
+			return "Configuration parameter '" + PARAM_DESCRIPTORS_FOR_CODELIST
+					+ "' did not contain a well-known identifier. Using default value 'documentation'.";
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
 		default:

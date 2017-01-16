@@ -82,24 +82,38 @@ public class StructuredNumber implements Comparable<StructuredNumber> {
 	 * @param sn
 	 *            other structured number to compare with
 	 * 
-	 * */
+	 */
 	public int compareTo(StructuredNumber sn) {
+
 		// Determine lengths
 		int lth = components.length;
 		int lsn = sn.components.length;
 		int len = lth <= lsn ? lth : lsn;
+
 		// Loop over common part
-		int diff;
 		for (int i = 0; i < len; i++) {
+
 			// Compare component
-			diff = components[i] - sn.components[i];
-			// If other than equal return difference
-			if (diff != 0)
-				return diff;
+			if (components[i] < sn.components[i]) {
+				return -1;
+			} else if (components[i] > sn.components[i]) {
+				return 1;
+			} else {
+				/*
+				 * this component is equal, compare the next one or compare
+				 * their length
+				 */
+			}
 		}
+		
 		// Common part is equal, decide on lengths
-		diff = lth - lsn;
-		return diff;
+		if(lth < lsn) {
+			return -1;
+		} else if(lth > lsn) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	public String getString() {
@@ -153,7 +167,7 @@ public class StructuredNumber implements Comparable<StructuredNumber> {
 			return result;
 		}
 	}
-	
+
 	public String toString() {
 		return this.getString();
 	}

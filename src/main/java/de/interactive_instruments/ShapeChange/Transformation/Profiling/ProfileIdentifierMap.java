@@ -75,7 +75,7 @@ public class ProfileIdentifierMap {
 		for (String profileIdentifierString : profileIdentifierStrings) {
 
 			ProfileIdentifier profileIdentifier = ProfileIdentifier.parse(
-					profileIdentifierString, pattern, ownerName);
+					profileIdentifierString.trim(), pattern, ownerName);
 
 			if (profileIdentifiersByName.containsKey(profileIdentifier
 					.getName())) {

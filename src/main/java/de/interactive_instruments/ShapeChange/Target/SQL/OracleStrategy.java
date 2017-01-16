@@ -53,9 +53,18 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
 	private ShapeChangeResult result;
-
+	
 	public OracleStrategy(ShapeChangeResult result) {
 		this.result = result;
+	}
+	
+
+	@Override
+	public String convertDefaultValue(boolean b) {
+		if(b)
+			return "1";
+		else
+			return "0";
 	}
 
 	@Override
@@ -79,10 +88,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String columnname,
-			Map<String, String> geometryCharacteristics) {
+	public String geometryIndexColumnPart(String indexName, String tableName,
+			String columnName, Map<String, String> geometryCharacteristics) {
 
-		String res = " (" + columnname + ") INDEXTYPE IS MDSYS.SPATIAL_INDEX";
+		String res = "CREATE INDEX " + indexName + " ON " + tableName + " ("
+				+ columnName + ") INDEXTYPE IS MDSYS.SPATIAL_INDEX";
 
 		if (geometryCharacteristics != null && geometryCharacteristics
 				.containsKey(GEOM_PARAM_LAYER_GTYPE)) {
@@ -127,18 +137,25 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	/**
-	 * Constraints in Oracle are in their own namespace and do also have the maximum length of 30.
+	 * Constraints in Oracle are in their own namespace and do also have the
+	 * maximum length of 30.
 	 */
 	@Override
-	public String createNameCheckConstraint(String tableName, String propertyName) {
-		String truncatedName = StringUtils.substring(tableName.toUpperCase(Locale.ENGLISH), 0, 13) + "_" + StringUtils.substring(propertyName.toUpperCase(Locale.ENGLISH), 0, 13);
-		String checkConstraintName = truncatedName  + "_CK";
+	public String createNameCheckConstraint(String tableName,
+			String propertyName) {
+		String truncatedName = StringUtils
+				.substring(tableName.toUpperCase(Locale.ENGLISH), 0, 13) + "_"
+				+ StringUtils.substring(
+						propertyName.toUpperCase(Locale.ENGLISH), 0, 13);
+		String checkConstraintName = truncatedName + "_CK";
 		return checkConstraintName;
 	}
 
 	@Override
-	public void validate(Map<String, ProcessMapEntry> mapEntryByType,
+	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
 			MapEntryParamInfos mepp) {
+		
+		boolean isValid = true;
 
 		if (mapEntryByType != null) {
 
@@ -156,6 +173,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 						result.addError(this, 3, type, GEOM_PARAM_LAYER_GTYPE,
 								SqlDdl.ME_PARAM_GEOMETRY);
+						isValid = false;
 
 					} else if (!layergtype
 							.matches(GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX)) {
@@ -163,14 +181,17 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 						result.addError(this, 4, type, GEOM_PARAM_LAYER_GTYPE,
 								SqlDdl.ME_PARAM_GEOMETRY,
 								GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX);
+						isValid = false;
+						
 					} else {
 						// fine - no further tests at this point in time
 					}
 				}
 			}
 		}
+		
+		return isValid;
 	}
-
 
 	@Override
 	public String message(int mnr) {

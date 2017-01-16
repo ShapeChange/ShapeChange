@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<RefData version="1.0" exporter="EA.25">
+	<DataSet name="Constraint Types" table="t_constrainttypes" filter="[Constraint]='#Constraint#'">
+		<DataRow>
+			<Column name="Constraint" value="Invariant"/>
+			<Column name="Description" value="A state the object must always be in"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Constraint" value="Post-condition"/>
+			<Column name="Description" value="An ending state that must be met"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Constraint" value="Pre-condition"/>
+			<Column name="Description" value="A starting state that must be met"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Constraint" value="Process"/>
+			<Column name="Description" value="A process that must occur"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Constraint" value="SBVR"/>
+			<Column name="Description" value="An SBVR business rule that must be complied with."/>
+		</DataRow>
+	</DataSet>
+	<DataSet name="Tagged Value Types" table="t_propertytypes" filter="Property='#Property#'">
+		<DataRow>
+			<Column name="Property" value="inlineOrByReference"/>
+			<Column name="Description" value="Defines the encoding of a property"/>
+			<Column name="Notes" value="Type=Enum;&#xA;Values=inline,byReference,inlineOrByReference;&#xA;Default=inlineOrByReference;"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Property" value="isMetadata"/>
+			<Column name="Description" value="Defines if a property is a metadata property"/>
+			<Column name="Notes" value="Type=Boolean;&#xA;Default=false;"/>
+		</DataRow>
+		<DataRow>
+			<Column name="Property" value="xsdEncodingRule"/>
+			<Column name="Description" value="Identifies rule (set) for encoding schema elements"/>
+			<Column name="Notes" value="Type=String;&#xA;Default=iso19136_2007;"/>
+		</DataRow>
+	</DataSet>
+</RefData>

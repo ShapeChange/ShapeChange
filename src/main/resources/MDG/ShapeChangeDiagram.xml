@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<UMLProfile profiletype="uml2">
+	<Documentation id="2BAE1AFC-F" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+	<Content>
+		<Stereotypes>
+			<Stereotype name="ShapeChange - Logical" alias="Logical" notes="Logical diagram for application schema development.">
+				<AppliesTo>
+					<Apply type="Diagram_Logical">
+						<Property name="frameString" value="#DGMALIAS#"/>
+						<Property name="toolbox" value="ShapeChange"/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+			<Stereotype name="ShapeChange - Package" alias="Package" notes="Package diagram for application schema development.">
+				<AppliesTo>
+					<Apply type="Diagram_Package">
+						<Property name="frameString" value="#DGMALIAS#"/>
+						<Property name="toolbox" value="ShapeChange"/>
+					</Apply>
+				</AppliesTo>
+			</Stereotype>
+		</Stereotypes>
+		<TaggedValueTypes/>
+	</Content>
+</UMLProfile>
