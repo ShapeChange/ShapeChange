@@ -3436,7 +3436,9 @@ public class Options {
 		addRule("rule-arcgis-cls-hasZ");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
 		addRule("rule-arcgis-prop-lengthFromTaggedValue");
+		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
 		addRule("rule-arcgis-prop-initialValue");
 		addRule("rule-arcgis-prop-precision");
 		addRule("rule-arcgis-prop-scale");

@@ -128,15 +128,37 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	/**
 	 * If this rule is enabled, ShapeChange will use the value of the tagged
 	 * value 'size' (must be an integer) to populate the ‘length’ tagged value
-	 * of the <<field>> that will represent the property in the ArcGIS model.
-	 * NOTE: Only applies to properties that are implemented as fields with type
-	 * esriFieldTypeString. If the value is 0 or empty, unlimited length is
-	 * assumed - unless an OCL constraint exists that restricts the length for
-	 * the property. That also means that this rule has precedence over an OCL
-	 * constraint: if the tagged value 'size' has an integer value > 1, then
-	 * this value will be used as the length in the <<field>>.
+	 * of the &lt;&lt;field&gt;&gt; that will represent the property in the
+	 * ArcGIS model. NOTE: Only applies to properties that are implemented as
+	 * fields with type esriFieldTypeString. If the value is 0 or empty,
+	 * unlimited length is assumed - unless an OCL constraint exists that
+	 * restricts the length for the property. That also means that this rule has
+	 * precedence over an OCL constraint: if the tagged value 'size' has an
+	 * integer value > 1, then this value will be used as the length in the
+	 * &lt;&lt;field&gt;&gt;.
 	 */
 	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
+
+	/**
+	 * If this rule is enabled, then - for properties with a code list or
+	 * enumeration as value type - ShapeChange will use the value of the tagged
+	 * value 'size' (must be an integer) to populate the ‘length’ tagged value
+	 * of the &lt;&lt;field&gt;&gt; that will represent the property in the
+	 * ArcGIS model. This rule has higher priority than
+	 * {@value #RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE}. If none of
+	 * these rules apply, the length will be set to 0.
+	 */
+	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE = "rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType";
+
+	/**
+	 * If this rule is enabled then the length of a property that has a code
+	 * list or enumeration as value type is computed as the maximum name length
+	 * from the codes/enums of the value type (if codes/enums are defined by
+	 * that type). This rule has lower priority than
+	 * {@value #RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE}
+	 * If none of these rules apply, the length will be set to 0.
+	 */
+	public static final String RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE = "rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType";
 
 	public static final String RULE_PROP_INITIAL_VALUE = "rule-arcgis-prop-initialValue";
 
@@ -2244,8 +2266,11 @@ public class ArcGISWorkspace implements Target, MessageSource {
 								normalizedPiAlias,
 								pi.derivedDocumentation(documentationTemplate,
 										documentationNoValue),
-								eaType, "0", "0", "0", eaClassifierId,
-								initialValue, computeIsNullable(pi));
+								eaType,
+								"" + computeLengthForCodelistOrEnumerationValueType(
+										pi),
+								"0", "0", eaClassifierId, initialValue,
+								computeIsNullable(pi));
 					} catch (EAException e) {
 						result.addError(this, 10003, pi.name(), ci.name(),
 								e.getMessage());
@@ -3223,6 +3248,61 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
+	private int computeLengthForCodelistOrEnumerationValueType(
+			PropertyInfo pi) {
+
+		if (pi.matches(
+				RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE)) {
+
+			String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
+
+			if (tv != null && tv.trim().length() > 0) {
+
+				try {
+					Integer value = Integer.parseInt(tv.trim());
+					if (value > 0) {
+						return value;
+					}
+				} catch (NumberFormatException e) {
+					MessageContext mc = result.addWarning(this, 243, tv.trim(),
+							nameOfTVToDetermineFieldLength);
+					mc.addDetail(this, 20001, pi.fullNameInSchema());
+				}
+			}
+		}
+		
+		if (pi.matches(RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE)) {
+
+			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
+
+			if (typeCi == null) {
+
+				MessageContext mc = result.addWarning(this, 244,
+						pi.typeInfo().name, pi.name());
+				mc.addDetail(this, 20001, pi.fullNameInSchema());
+
+			} else {
+
+				if (!typeCi.properties().isEmpty()) {
+
+					int maxLength = 0;
+					for (PropertyInfo pix : typeCi.properties().values()) {
+						if (pix.name().length() > maxLength) {
+							maxLength = pix.name().length();
+						}
+					}
+					return maxLength;
+				}
+			}
+		}
+
+		/*
+		 * default length for property with code list or enumeration as value
+		 * type is 0
+		 */
+		return 0;
+	}
+
 	private Attribute createField(Element e, String name, String alias,
 			String documentation, String eaType, String tvLength,
 			String tvPrecision, String tvScale, Integer eaClassifierId,
@@ -3408,6 +3488,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
 		case 243:
 			return "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
+		case 244:
+			return "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
