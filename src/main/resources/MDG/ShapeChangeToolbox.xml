@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<UMLProfile profiletype="uml2">
+	<Documentation id="98DDCD57-F" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+	<Content>
+		<Stereotypes>
+			<Stereotype name="Logical" notes="Logical elements (classes, attributes, association roles) and relationships used in application schema modeling.">
+				<AppliesTo>
+					<Apply type="ToolboxPage"/>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="ShapeChange::codeList(UML::Class)" type="" description="" unit="" values="" default="code list"/>
+					<Tag name="ShapeChange::dataType(UML::Class)" type="" description="" unit="" values="" default="data type"/>
+					<Tag name="ShapeChange::enumeration(UML::Class)" type="" description="" unit="" values="" default="enumeration"/>
+					<Tag name="ShapeChange::featureType(UML::Class)" type="" description="" unit="" values="" default="feature type"/>
+					<Tag name="ShapeChange::type(UML::Class)" type="" description="" unit="" values="" default="type"/>
+					<Tag name="ShapeChange::union(UML::Class)" type="" description="" unit="" values="" default="union"/>
+					<Tag name="ShapeChange::property(UML::Attribute)" type="" description="" unit="" values="" default="property (as attribute)"/>
+					<Tag name="ShapeChange::property(UML::AssociationEnd)" type="" description="" unit="" values="" default="property (as association end)"/>
+					<Tag name="ShapeChange::enum(UML::Attribute)" type="" description="" unit="" values="" default="enum"/>
+					<Tag name="UML::Aggregation" type="" description="" unit="" values="" default="aggregation"/>
+					<Tag name="UML::Association" type="" description="" unit="" values="" default="association"/>
+					<Tag name="UML::AssociationClass" type="" description="" unit="" values="" default="association class"/>
+					<Tag name="UML::Composition" type="" description="" unit="" values="" default="composition"/>
+					<Tag name="UML::Dependency" type="" description="" unit="" values="" default="dependency"/>
+					<Tag name="UML::Generalization" type="" description="" unit="" values="" default="generalization"/>
+				</TaggedValues>
+			</Stereotype>
+			<Stereotype name="Package" notes="Package elements and relationships used in application schema modeling.">
+				<AppliesTo>
+					<Apply type="ToolboxPage"/>
+				</AppliesTo>
+				<TaggedValues>
+					<Tag name="ShapeChange::applicationSchema(UML::Package)" type="" description="" unit="" values="" default="application schema"/>
+					<Tag name="ShapeChange::bundle(UML::Package)" type="" description="" unit="" values="" default="bundle"/>
+					<Tag name="ShapeChange::leaf(UML::Package)" type="" description="" unit="" values="" default="leaf"/>
+					<Tag name="ShapeChange::import(UML::Dependency)" type="" description="" unit="" values="" default="import"/>
+					<Tag name="ShapeChange::include(UML::Dependency)" type="" description="" unit="" values="" default="include"/>
+					<Tag name="UML::Dependency" type="" description="" unit="" values="" default="dependency"/>
+				</TaggedValues>
+			</Stereotype>
+		</Stereotypes>
+		<TaggedValueTypes/>
+	</Content>
+</UMLProfile>

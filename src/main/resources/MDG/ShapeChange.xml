@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<MDG.Technology version="1.0"><Documentation id="ShapeChange" name="ShapeChange MDG" version="0.1" notes="MDG Technology for Application Schema modelling and artifact derivation by ShapeChange." infoURI="shapechange.net"/><UMLProfiles><UMLProfile profiletype="uml2">
+			<Documentation id="9E02DF83-4" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+			<Content>
+				<Stereotypes>
+					<Stereotype name="applicationSchema" notes="URL of the schema location of a GML profile (optional)">
+						<AppliesTo>
+							<Apply type="Package">
+								<Property name="URI" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="gmlProfileSchema" type="char" description="" unit="" values="" default=""/>
+							<Tag name="targetNamespace" type="char" description="Target XML namespace of the application schema" unit="" values="" default="FIXME"/>
+							<Tag name="version" type="char" description="Current version of the application schema" unit="" values="" default="FIXME"/>
+							<Tag name="xmlns" type="char" description="Namespace prefix to be used as short form of the target namespace" unit="" values="" default=""/>
+							<Tag name="xsdDocument" type="char" description="Name of an XML Schema document to create representing the content of this package" unit="" values="" default="FIXME"/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="bundle" notes="">
+						<AppliesTo>
+							<Apply type="Package">
+								<Property name="URI" value=""/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="codeList" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="asDictionary" type="boolean" description="Encode code list as externally managed dictionary (applies to ISO 19136:2007 encoding rule). Always true in INSPIRE." unit="" values="true,false" default="true"/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="dataType" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="isCollection" type="boolean" description="Identifies the type as an object collection." unit="" values="true,false" default="false"/>
+							<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="enum" notes="">
+						<AppliesTo>
+							<Apply type="Attribute"/>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="enumeration" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="featureType" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="byValuePropertyType" type="boolean" description="Create a property type that requires that the instance is encoded inline (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+							<Tag name="gmlMixin" type="boolean" description="Identifies the feature type as a mixin type that will not be encoded as a separate element/type in the GML encoding." unit="" values="true,false" default="false"/>
+							<Tag name="isCollection" type="boolean" description="Identifies the feature type as an object collection." unit="" values="true,false" default="false"/>
+							<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="import" notes="">
+						<AppliesTo>
+							<Apply type="Dependency">
+								<Property name="direction" value="Source -&gt; Destination"/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="include" notes="">
+						<AppliesTo>
+							<Apply type="Dependency">
+								<Property name="direction" value="Source -&gt; Destination"/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="leaf" notes="">
+						<AppliesTo>
+							<Apply type="Package">
+								<Property name="URI" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="xsdDocument" type="char" description="Name of an XML Schema document to create representing the content of this package" unit="" values="" default=""/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="property" notes="">
+						<AppliesTo>
+							<Apply type="Attribute"/>
+							<Apply type="AssociationEnd">
+								<Property name="aggregation" value="none"/>
+								<Property name="default" value=""/>
+								<Property name="isComposite" value=""/>
+								<Property name="isDerived" value="false"/>
+								<Property name="isDerivedUnion" value="false"/>
+								<Property name="isID" value="false"/>
+								<Property name="isReadOnly" value="false"/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="inlineOrByReference" type="enumeration" description="" unit="" values="inline,byReference,inlineOrByReference" default="inlineOrByReference"/>
+							<Tag name="isMetadata" type="boolean" description="" unit="" values="true,false" default="false"/>
+							<Tag name="sequenceNumber" type="string" description="" unit="" values="" default=""/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="type" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="byValuePropertyType" type="boolean" description="Create a property type that requires that the instance is encoded inline (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+							<Tag name="gmlMixin" type="boolean" description="Identifies the type as a mixin type that will not be encoded as a separate element/type in the GML encoding." unit="" values="true,false" default="false"/>
+							<Tag name="isCollection" type="boolean" description="Identifies the type as an object collection." unit="" values="true,false" default="false"/>
+							<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+							<Tag name="xmlSchemaType" type="char" description="If the type has a canonical XML Schema encoding the XML Schema typename corresponding to the data type shall be given as the value (applies to ISO 19136:2007 encoding rule)." unit="" values="" default=""/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="union" notes="">
+						<AppliesTo>
+							<Apply type="Class">
+								<Property name="isActive" value=""/>
+							</Apply>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="noPropertyType" type="boolean" description="Suppress creation of a standard property type that supports inline or byReference encoding (applies to ISO 19136:2007 encoding rule). Always set to false in INSPIRE." unit="" values="true,false" default="false"/>
+						</TaggedValues>
+					</Stereotype>
+				</Stereotypes>
+				<TaggedValueTypes/>
+			</Content>
+		</UMLProfile>
+	</UMLProfiles><DiagramProfile><UMLProfile profiletype="uml2">
+			<Documentation id="2BAE1AFC-F" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+			<Content>
+				<Stereotypes>
+					<Stereotype name="ShapeChange - Logical" alias="Logical" notes="Logical diagram for application schema development.">
+						<AppliesTo>
+							<Apply type="Diagram_Logical">
+								<Property name="frameString" value="#DGMALIAS#"/>
+								<Property name="toolbox" value="ShapeChange"/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+					<Stereotype name="ShapeChange - Package" alias="Package" notes="Package diagram for application schema development.">
+						<AppliesTo>
+							<Apply type="Diagram_Package">
+								<Property name="frameString" value="#DGMALIAS#"/>
+								<Property name="toolbox" value="ShapeChange"/>
+							</Apply>
+						</AppliesTo>
+					</Stereotype>
+				</Stereotypes>
+				<TaggedValueTypes/>
+			</Content>
+		</UMLProfile>
+	</DiagramProfile><UIToolboxes><UMLProfile profiletype="uml2">
+			<Documentation id="98DDCD57-F" name="ShapeChange" version="1.0" notes="ShapeChange"/>
+			<Content>
+				<Stereotypes>
+					<Stereotype name="Logical" notes="Logical elements (classes, attributes, association roles) and relationships used in application schema modeling.">
+						<AppliesTo>
+							<Apply type="ToolboxPage"/>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="ShapeChange::codeList(UML::Class)" type="" description="" unit="" values="" default="code list"/>
+							<Tag name="ShapeChange::dataType(UML::Class)" type="" description="" unit="" values="" default="data type"/>
+							<Tag name="ShapeChange::enumeration(UML::Class)" type="" description="" unit="" values="" default="enumeration"/>
+							<Tag name="ShapeChange::featureType(UML::Class)" type="" description="" unit="" values="" default="feature type"/>
+							<Tag name="ShapeChange::type(UML::Class)" type="" description="" unit="" values="" default="type"/>
+							<Tag name="ShapeChange::union(UML::Class)" type="" description="" unit="" values="" default="union"/>
+							<Tag name="ShapeChange::property(UML::Attribute)" type="" description="" unit="" values="" default="property (as attribute)"/>
+							<Tag name="ShapeChange::property(UML::AssociationEnd)" type="" description="" unit="" values="" default="property (as association end)"/>
+							<Tag name="ShapeChange::enum(UML::Attribute)" type="" description="" unit="" values="" default="enum"/>
+							<Tag name="UML::Aggregation" type="" description="" unit="" values="" default="aggregation"/>
+							<Tag name="UML::Association" type="" description="" unit="" values="" default="association"/>
+							<Tag name="UML::AssociationClass" type="" description="" unit="" values="" default="association class"/>
+							<Tag name="UML::Composition" type="" description="" unit="" values="" default="composition"/>
+							<Tag name="UML::Dependency" type="" description="" unit="" values="" default="dependency"/>
+							<Tag name="UML::Generalization" type="" description="" unit="" values="" default="generalization"/>
+						</TaggedValues>
+					</Stereotype>
+					<Stereotype name="Package" notes="Package elements and relationships used in application schema modeling.">
+						<AppliesTo>
+							<Apply type="ToolboxPage"/>
+						</AppliesTo>
+						<TaggedValues>
+							<Tag name="ShapeChange::applicationSchema(UML::Package)" type="" description="" unit="" values="" default="application schema"/>
+							<Tag name="ShapeChange::bundle(UML::Package)" type="" description="" unit="" values="" default="bundle"/>
+							<Tag name="ShapeChange::leaf(UML::Package)" type="" description="" unit="" values="" default="leaf"/>
+							<Tag name="ShapeChange::import(UML::Dependency)" type="" description="" unit="" values="" default="import"/>
+							<Tag name="ShapeChange::include(UML::Dependency)" type="" description="" unit="" values="" default="include"/>
+							<Tag name="UML::Dependency" type="" description="" unit="" values="" default="dependency"/>
+						</TaggedValues>
+					</Stereotype>
+				</Stereotypes>
+				<TaggedValueTypes/>
+			</Content>
+		</UMLProfile>
+	</UIToolboxes><ModelViews/><ModelSearches/></MDG.Technology>
