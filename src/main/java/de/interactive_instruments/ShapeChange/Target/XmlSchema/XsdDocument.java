@@ -102,8 +102,8 @@ public class XsdDocument implements MessageSource {
 	protected String okstra;
 
 	public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r,
-			String n) throws ShapeChangeAbortException,
-					ParserConfigurationException {
+			String n)
+			throws ShapeChangeAbortException, ParserConfigurationException {
 		options = o;
 		result = r;
 		model = m;
@@ -117,11 +117,11 @@ public class XsdDocument implements MessageSource {
 			outputDirectory = options.parameter(".");
 
 		// change the default documentation template?
-		documentationTemplate = options.parameter(Options.TargetXmlSchemaClass, 
+		documentationTemplate = options.parameter(Options.TargetXmlSchemaClass,
 				"documentationTemplate");
-		documentationNoValue = options.parameter(Options.TargetXmlSchemaClass, 
-				"documentationNoValue");		
-		
+		documentationNoValue = options.parameter(Options.TargetXmlSchemaClass,
+				"documentationNoValue");
+
 		String s = options.parameter(Options.TargetXmlSchemaClass,
 				"okstraKeyValuePropertyType");
 		if (s != null)
@@ -196,13 +196,14 @@ public class XsdDocument implements MessageSource {
 		Element e1 = null;
 		String txt;
 		if (!info.matches("rule-xsd-all-no-documentation")) {
-			if (documentationTemplate!=null) {
-				/* 
-				 * Only use the derived documentation, if a template has 
-				 * been specified explicitly, otherwise use the old style
-				 * for backwards compatibility
+			if (documentationTemplate != null) {
+				/*
+				 * Only use the derived documentation, if a template has been
+				 * specified explicitly, otherwise use the old style for
+				 * backwards compatibility
 				 */
-				txt = info.derivedDocumentation(documentationTemplate, documentationNoValue);
+				txt = info.derivedDocumentation(documentationTemplate,
+						documentationNoValue);
 			} else {
 				/*
 				 * Use the fixed documentation template from v2.0.1 and earlier.
@@ -231,7 +232,7 @@ public class XsdDocument implements MessageSource {
 					}
 				}
 			}
-			if (txt!=null && !txt.trim().isEmpty()) {
+			if (txt != null && !txt.trim().isEmpty()) {
 				e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
 						"documentation");
 				txt = options.internalize(txt);
@@ -299,10 +300,11 @@ public class XsdDocument implements MessageSource {
 								|| (ci.category() == Options.OKSTRAFID) && ci
 										.matches("rule-xsd-cls-okstra-fid"))) {
 					// Only add targetElement, if this is not a code list
-					if (ci.category()!=Options.CODELIST && classHasObjectElement(ci)) {
+					if (ci.category() != Options.CODELIST
+							&& classHasObjectElement(ci)) {
 						if (e2 == null)
-							e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
-									"appinfo");
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "appinfo");
 						Element e3 = document.createElementNS(options.GML_NS,
 								"targetElement");
 						e2.appendChild(e3);
@@ -354,28 +356,32 @@ public class XsdDocument implements MessageSource {
 
 		if (info.matches("rule-xsd-all-tagged-values")) {
 
-			TaggedValues taggedValues = info.taggedValuesForTagList(options.parameter("representTaggedValues"));
-			
-			if(!taggedValues.isEmpty()) {
-				
+			TaggedValues taggedValues = info.taggedValuesForTagList(
+					options.parameter("representTaggedValues"));
+
+			if (!taggedValues.isEmpty()) {
+
 				// sort results alphabetically to support unit testing
-				
+
 				// sort by tag name
-				TreeSet<String> tags = new TreeSet<String>(taggedValues.keySet());
-				
-				for(String tag : tags) {
-					
+				TreeSet<String> tags = new TreeSet<String>(
+						taggedValues.keySet());
+
+				for (String tag : tags) {
+
 					// sort values
 					String[] values = taggedValues.get(tag);
 					List<String> valueList = Arrays.asList(values);
 					Collections.sort(valueList);
-					
+
 					// add appinfo elements
-					for(String v : values) {
+					for (String v : values) {
 						if (v.trim().length() > 0) {
 							if (e2 == null)
-								e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-							Element e3 = document.createElementNS(Options.SCAI_NS, "taggedValue");
+								e2 = document.createElementNS(
+										Options.W3C_XML_SCHEMA, "appinfo");
+							Element e3 = document.createElementNS(
+									Options.SCAI_NS, "taggedValue");
 							addAttribute(e3, "tag", tag);
 							e3.appendChild(document.createTextNode(v));
 							e2.appendChild(e3);
@@ -528,7 +534,8 @@ public class XsdDocument implements MessageSource {
 			}
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
-			return options.internalize((qualified ? ci.qname() : ci.name()) + (ci.name().endsWith("Property") ? "_" : "") + "Type");
+			return options.internalize((qualified ? ci.qname() : ci.name())
+					+ (ci.name().endsWith("Property") ? "_" : "") + "Type");
 		} else {
 			MessageContext mc = result.addError(null, 154, "type", ci.name());
 			if (mc != null)
@@ -536,7 +543,7 @@ public class XsdDocument implements MessageSource {
 		}
 		return null;
 	}
-	
+
 	private String propertyTypeName(ClassInfo ci, boolean qualified) {
 		if (ci == null) {
 			// nothing to do;
@@ -554,8 +561,9 @@ public class XsdDocument implements MessageSource {
 		} else if (ci.matches("rule-xsd-all-naming-gml")
 				|| ci.matches("rule-xsd-all-naming-swe")) {
 			String propertyTypeName = (qualified ? ci.qname() : ci.name())
-					+ (ci.name().endsWith("Property") ? "_" : "") + "PropertyType";
-			propertyTypeName = options.internalize(propertyTypeName);			
+					+ (ci.name().endsWith("Property") ? "_" : "")
+					+ "PropertyType";
+			propertyTypeName = options.internalize(propertyTypeName);
 			return propertyTypeName;
 		} else {
 			MessageContext mc = result.addError(null, 154, "property type",
@@ -833,7 +841,8 @@ public class XsdDocument implements MessageSource {
 			ret = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
 		} else if (ci.matches("rule-xsd-cls-sequence")) {
 			ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
-			if (ci.matches("rule-xsd-cls-mixin-classes") && ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
+			if (ci.matches("rule-xsd-cls-mixin-classes")
+					&& ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
 				addGroupReferences(ci, ret, true);
 			}
 		} else {
@@ -847,10 +856,12 @@ public class XsdDocument implements MessageSource {
 		return ret;
 	};
 
-	private void addGroupReferences(ClassInfo ci, Element e, boolean recursive) {
+	private void addGroupReferences(ClassInfo ci, Element e,
+			boolean recursive) {
 
 		SortedSet<String> st = ci.supertypes();
-		if (st != null && ci.matches("rule-xsd-cls-mixin-classes") && ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
+		if (st != null && ci.matches("rule-xsd-cls-mixin-classes")
+				&& ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
 			for (Iterator<String> i = st.iterator(); i.hasNext();) {
 				String sid = i.next();
 				ClassInfo cix = model.classById(sid);
@@ -863,7 +874,10 @@ public class XsdDocument implements MessageSource {
 					addAttribute(eg, "ref", cix.qname() + "Group");
 					if (recursive)
 						addGroupReferences(cix, e, true);
-				} else if (cix != null && cix.category() != Options.MIXIN && ci.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes") && recursive) {
+				} else if (cix != null && cix.category() != Options.MIXIN
+						&& ci.matches(
+								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")
+						&& recursive) {
 					processLocalProperties(cix, e, null);
 					if (recursive)
 						addGroupReferences(cix, e, true);
@@ -876,7 +890,8 @@ public class XsdDocument implements MessageSource {
 			SchematronSchema schDoc) {
 
 		SortedSet<String> st = ci.supertypes();
-		if (st != null && ci.matches("rule-xsd-cls-mixin-classes") && !ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
+		if (st != null && ci.matches("rule-xsd-cls-mixin-classes")
+				&& !ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
 			for (Iterator<String> i = st.iterator(); i.hasNext();) {
 				String sid = i.next();
 				ClassInfo cix = model.classById(sid);
@@ -936,7 +951,8 @@ public class XsdDocument implements MessageSource {
 	}
 
 	/**
-	 * Walk down the subtype tree to find the first instantiable types for any mixin subtype
+	 * Walk down the subtype tree to find the first instantiable types for any
+	 * mixin subtype
 	 */
 	private HashSet<ClassInfo> subtypesOfMixins(ClassInfo ci, boolean inMixin) {
 		HashSet<ClassInfo> res = new HashSet<ClassInfo>();
@@ -1003,14 +1019,15 @@ public class XsdDocument implements MessageSource {
 		HashSet<ClassInfo> instatiableMixinSubclasses = null;
 		if (ci.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
 			instatiableMixinSubclasses = subtypesOfMixins(ci, false);
-		}		
-		
+		}
+
 		Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
 				"complexType");
 		document.getDocumentElement().appendChild(e1);
 		addAttribute(e1, "name", propertyTypeName(ci, false));
 		Element e4;
-		if (instatiableMixinSubclasses!=null && !instatiableMixinSubclasses.isEmpty()) {
+		if (instatiableMixinSubclasses != null
+				&& !instatiableMixinSubclasses.isEmpty()) {
 			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
 		} else {
 			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
@@ -1022,7 +1039,8 @@ public class XsdDocument implements MessageSource {
 		String s = elementName(ci, true);
 		if (s != null)
 			addAttribute(e3, "ref", s);
-		if (instatiableMixinSubclasses!=null && !instatiableMixinSubclasses.isEmpty()) {
+		if (instatiableMixinSubclasses != null
+				&& !instatiableMixinSubclasses.isEmpty()) {
 			addElements(e4, instatiableMixinSubclasses);
 		}
 		if (rgml && !rnobase) {
@@ -1120,7 +1138,8 @@ public class XsdDocument implements MessageSource {
 		Element e1, e2, e3, e4, e5, e6, e7, e8, e9, e10;
 		e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 		document.getDocumentElement().appendChild(e1);
-		addAttribute(e1, "name", ci.name() + (ci.name().endsWith("Property") ? "_" : "") + "PropertyType");
+		addAttribute(e1, "name", ci.name()
+				+ (ci.name().endsWith("Property") ? "_" : "") + "PropertyType");
 		e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
 		e1.appendChild(e2);
 		e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
@@ -1169,7 +1188,22 @@ public class XsdDocument implements MessageSource {
 			String min = ci.taggedValue("rangeMinimum");
 			String max = ci.taggedValue("rangeMaximum");
 			String typecontent = "simple/simple";
+
+			/*
+			 * baseType is the simple type that is the foundation of the basic
+			 * type implementation; it is either defined directly, via the
+			 * tagged value "base" of the type, or indirectly, by a map entry in
+			 * the supertypes (direct and indirect) that maps to a simple type
+			 * with simple content.
+			 */
+			String baseType = null;
+
 			if (base == null) {
+
+				/*
+				 * Identify base and type content from the direct supertypes;
+				 * this is important for correct declaration of the basic type
+				 */
 				if (ci.supertypes() != null) {
 					for (Iterator<String> i = ci.supertypes().iterator(); i
 							.hasNext();) {
@@ -1187,8 +1221,25 @@ public class XsdDocument implements MessageSource {
 						}
 					}
 				}
+
+				/*
+				 * Identify base type that has xmlTypeType="simple" and
+				 * xmlTypeContent="simple"
+				 */
+				MapEntry me = findBaseMapEntryInSupertypes(ci,
+						ci.encodingRule("xsd"), "simple", "simple");
+
+				if (me != null) {
+					baseType = me.p1;
+				}
 			}
+			
+			if(baseType == null) {
+				baseType = base;
+			}
+
 			if (base != null) {
+
 				Element e3;
 				Element e4;
 				if (typecontent.equals("complex/simple")) {
@@ -1220,31 +1271,31 @@ public class XsdDocument implements MessageSource {
 					e4.appendChild(e3);
 				}
 				addAttribute(e3, "base", base);
-				if (facetSupported("totalDigits", base) && length != null) {
+				if (facetSupported("totalDigits", baseType) && length != null) {
 					Element e5 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "totalDigits");
 					e3.appendChild(e5);
 					addAttribute(e5, "value", length);
 				}
-				if (facetSupported("maxLength", base) && length != null) {
+				if (facetSupported("maxLength", baseType) && length != null) {
 					Element e5 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "maxLength");
 					e3.appendChild(e5);
 					addAttribute(e5, "value", length);
 				}
-				if (facetSupported("pattern", base) && pattern != null) {
+				if (facetSupported("pattern", baseType) && pattern != null) {
 					Element e5 = document
 							.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 					e3.appendChild(e5);
 					addAttribute(e5, "value", pattern);
 				}
-				if (facetSupported("minInclusive", base) && min != null) {
+				if (facetSupported("minInclusive", baseType) && min != null) {
 					Element e5 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "minInclusive");
 					e3.appendChild(e5);
 					addAttribute(e5, "value", min);
 				}
-				if (facetSupported("maxInclusive", base) && max != null) {
+				if (facetSupported("maxInclusive", baseType) && max != null) {
 					Element e5 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "maxInclusive");
 					e3.appendChild(e5);
@@ -1262,6 +1313,48 @@ public class XsdDocument implements MessageSource {
 		}
 
 		return e1;
+	}
+
+	/**
+	 * Search for a MapEntry that provides the base of the given class, with the
+	 * given type and content definition. The map entry must be defined for one
+	 * of the direct or indirect supertypes of the class. NOTE: a tagged value
+	 * 'base' that may be defined on the supertype is currently ignored.
+	 * 
+	 * @param ci
+	 * @param encodingRule
+	 * @param xmlTypeType
+	 * @param xmlTypeContent
+	 * @return the base MapEntry that matches the search criteria, or
+	 *         <code>null</code> if none was found
+	 */
+	private MapEntry findBaseMapEntryInSupertypes(ClassInfo ci,
+			String encodingRule, String xmlTypeType, String xmlTypeContent) {
+
+		MapEntry me = null;
+
+		if (ci.supertypes() != null) {
+
+			for (String supertypeId : ci.supertypes()) {
+
+				ClassInfo cix = model.classById(supertypeId);
+
+				if (cix != null) {
+					MapEntry mex = options.baseMapEntry(cix.name(),
+							encodingRule, xmlTypeType, xmlTypeContent);
+					if (mex == null) {
+						// search in supertypes of supertype
+						mex = findBaseMapEntryInSupertypes(cix, encodingRule,
+								xmlTypeType, xmlTypeContent);
+					}
+					if (mex != null) {
+						me = mex;
+					}
+				}
+			}
+		}
+
+		return me;
 	}
 
 	private boolean facetSupported(String facet, String base) {
@@ -1630,7 +1723,7 @@ public class XsdDocument implements MessageSource {
 		if (m.minOccurs != 1) {
 
 			String minOccursTxt = ((Integer) m.minOccurs).toString();
-			minOccursTxt = options.internalize(minOccursTxt);			
+			minOccursTxt = options.internalize(minOccursTxt);
 			addAttribute(e, "minOccurs", minOccursTxt);
 		}
 
@@ -1641,7 +1734,7 @@ public class XsdDocument implements MessageSource {
 		} else if (m.maxOccurs != 1) {
 
 			String maxOccursTxt = ((Integer) m.maxOccurs).toString();
-			maxOccursTxt = options.internalize(maxOccursTxt);			
+			maxOccursTxt = options.internalize(maxOccursTxt);
 			addAttribute(e, "maxOccurs", maxOccursTxt);
 		}
 	};
@@ -2513,8 +2606,8 @@ public class XsdDocument implements MessageSource {
 								|| (propi.matches("rule-xsd-prop-soft-typed")
 										&& propi.taggedValue(
 												"soft-typed") != null
-								&& propi.taggedValue("soft-typed")
-										.equalsIgnoreCase("true"));
+										&& propi.taggedValue("soft-typed")
+												.equalsIgnoreCase("true"));
 					/*
 					 * 6. the property has qualifiers
 					 */
@@ -2567,9 +2660,8 @@ public class XsdDocument implements MessageSource {
 				addAttribute(e4, "ref", "xlink:simpleAttrs");
 				addImport("xlink", options.fullNamespace("xlink"));
 
-			} else if (ci.category() == Options.CODELIST
-					&& ((ci.matches("rule-xsd-cls-codelist-asDictionary") && ci
-							.asDictionary())
+			} else if (ci.category() == Options.CODELIST && ((ci.matches(
+					"rule-xsd-cls-codelist-asDictionary") && ci.asDictionary())
 					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 							&& ci.asDictionaryGml33()))) {
 				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
