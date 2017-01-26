@@ -57,6 +57,18 @@ public class OntologyTest extends WindowsBasicTest {
 				"testResults/owl/singleOntologyPerSchema/owl",
 				"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
 	}
+		
+	@Test
+	public void testRuleOwlPropExternalReference() {
+		/*
+		 * Target: OWLISO19150; conversion rule: rule-owl-prop-external-reference
+		 */
+		multiTest(
+				"src/test/resources/config/testEA_owliso_propExternalReference.xml",
+				new String[] { "ttl" },
+				"testResults/owl/propExternalReference/owl",
+				"src/test/resources/reference/owl/propExternalReference/owl");
+	}
 
 	@Test
 	public void testMultipleOntologiesOnePerPackage() {

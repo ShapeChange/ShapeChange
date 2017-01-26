@@ -177,11 +177,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	public static final String RULE_OWL_PROP_ISO191502_NAMING = "rule-owl-prop-iso191502-naming";
 
+	public static final String RULE_OWL_PROP_EXTERNAL_REFERENCE = "rule-owl-prop-external-reference";
+
 	public static final String RULE_OWL_PKG_DCT_SOURCE_TITLE = "rule-owl-pkg-dctSourceTitle";
 	/**
-	 * If this rule is included, code lists are not represented as part of the
-	 * RDF vocabulary and where available the vocabulary or codelist tagged
-	 * value is used for the rdfs:range. If not set, owl:Class is used.
+	 * If this conversion rule is enabled, then a code list that has the
+	 * vocabulary or codeList tagged value is not represented as part of the OWL
+	 * ontology derived from the application schema.
 	 */
 	public static final String RULE_OWL_CLS_CODELIST_EXTERNAL = "rule-owl-cls-codelist-external";
 	public static final String RULE_OWL_CLS_CODELIST_191502 = "rule-owl-cls-codelist-19150-2";
@@ -277,6 +279,16 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String PARAM_ONTOLOGYNAME_CODE_NAME = "ontologyNameCode";
 
 	/**
+	 * Provide a QName that identifies an RDF(S) or OWL property to use for
+	 * encoding an external reference, which is defined by tagged values
+	 * 'codeList' and 'vocabulary' on the value type of a UML property. The
+	 * tagged value will be encoded as IRI, the range of the chosen RDF(S)/OWL
+	 * property should support this. For further details, see
+	 * {@value #RULE_OWL_PROP_EXTERNAL_REFERENCE}. Default is 'rdfs:seeAlso'.
+	 */
+	public static final String PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY = "propExternalReference_targetProperty";
+
+	/**
 	 * key: a package, value: the according ontology object
 	 */
 	protected static SortedMap<PackageInfo, OntologyModel> ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
@@ -308,6 +320,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	protected static String prefixCodeNamespaceForEnumerations = "e";
 	protected static String prefixCodeListOwlClassNamespace = "cc";
 	protected static String prefixCodeListOwlClassNamespaceForEnumerations = "ce";
+	protected static String propExternalReference_targetProperty = "rdfs:seeAlso";
 
 	private static boolean error = false;
 	private static boolean printed = false;
@@ -499,6 +512,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 				&& codeListOwlClassNamespaceForEnumerations_tmp.trim()
 						.length() > 0) {
 			codeListOwlClassNamespaceForEnumerations = codeListOwlClassNamespaceForEnumerations_tmp
+					.trim();
+		}
+
+		String propExternalReference_targetProperty_tmp = config
+				.getParameterValue(
+						PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY);
+		if (propExternalReference_targetProperty_tmp != null
+				&& propExternalReference_targetProperty_tmp.contains(":")) {
+			propExternalReference_targetProperty = propExternalReference_targetProperty_tmp
 					.trim();
 		}
 
@@ -1094,6 +1116,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.prefixCodeNamespaceForEnumerations = "e";
 		OWLISO19150.prefixCodeListOwlClassNamespace = "cc";
 		OWLISO19150.prefixCodeListOwlClassNamespaceForEnumerations = "ce";
+		OWLISO19150.propExternalReference_targetProperty = "rdfs:seeAlso";
 
 		OWLISO19150.error = false;
 		OWLISO19150.printed = false;
@@ -1253,6 +1276,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public String getDefaultTypeImplementation() {
 		return defaultTypeImplementation;
+	}
+
+	/**
+	 * @return QName identifying the property to use for encoding an external
+	 *         reference defined by tagged values 'codeList' and 'vocabulary' on
+	 *         the value type of a property
+	 */
+	public String getPropExternalReferenceTargetProperty() {
+		return propExternalReference_targetProperty;
 	}
 
 	/**
