@@ -401,6 +401,11 @@ public abstract class InfoImpl implements Info, MessageSource {
 			s = nov;
 		replacements.put("description", s.trim());
 
+		s = this.documentation();
+		if (s == null || s.trim().isEmpty())
+			s = nov;
+		replacements.put("documentation", s.trim());
+
 		s = this.aliasName();
 		if (s == null || s.trim().isEmpty())
 			s = nov;

@@ -220,7 +220,8 @@ public class Options {
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
 	/**
-	 * If 'true', semantic validation of the ShapeChange configuration will not be performed.
+	 * If 'true', semantic validation of the ShapeChange configuration will not
+	 * be performed.
 	 */
 	public static final String PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG = "skipSemanticValidationOfShapeChangeConfiguration";
 
@@ -333,7 +334,7 @@ public class Options {
 	 * <ul>
 	 * <li>rule: ("direct")</li>
 	 * <li>p1: xmlType</li>
-	 * <li>(optionally) p2: xmlTypeType+"/"+xmlTypeContent</li>
+	 * <li>p2: xmlTypeType+"/"+xmlTypeContent</li>
 	 * </ul>
 	 */
 	protected HashMap<String, MapEntry> fBaseMap = new HashMap<String, MapEntry>();
@@ -639,10 +640,6 @@ public class Options {
 		return me;
 	}
 
-	protected void addBaseMapEntry(String k1, String k2, String s1, String s2) {
-		fBaseMap.put(k1 + "#" + k2, new MapEntry(s1, s2));
-	}
-
 	/**
 	 * Adds a new MapEntry to fBaseMap.
 	 * <p>
@@ -679,14 +676,46 @@ public class Options {
 	 *            type name
 	 * @param k2
 	 *            encoding rule name
-	 * @return MapEntry with rule=("direct"), p1=xmlType and (optionally, can be
-	 *         null) p2=xmlTypeType+"/"+xmlTypeContent
+	 * @return MapEntry with rule=("direct"), p1=xmlType and
+	 *         p2=xmlTypeType+"/"+xmlTypeContent
 	 */
 	public MapEntry baseMapEntry(String k1, String k2) {
 		String rule = k2;
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fBaseMap.get(k1 + "#" + rule);
+			rule = extendsEncRule(rule);
+		}
+		return me;
+	}
+
+	/**
+	 * Tries to find a MapEntry that defines the mapping of a type to its
+	 * xmlType, with given xmlTypeType and xmlTypeContent, based upon the given
+	 * encoding rule or any rules it extends.
+	 *
+	 * @param k1
+	 *            type name
+	 * @param k2
+	 *            encoding rule name
+	 * @param xmlTypeType
+	 *            Identifies, if the xmlType is “simple” or “complex”.
+	 * @param xmlTypeContent
+	 *            Identifies, if the content of the xmlType is “simple” or
+	 *            “complex”.
+	 * @return MapEntry with rule=("direct"), p1=xmlType and
+	 *         p2=xmlTypeType+"/"+xmlTypeContent
+	 */
+	public MapEntry baseMapEntry(String k1, String k2, String xmlTypeType,
+			String xmlTypeContent) {
+		String rule = k2;
+		MapEntry me = null;
+		while (me == null && rule != null) {
+			MapEntry mex = fBaseMap.get(k1 + "#" + rule);
+			if (mex != null && mex.p2
+					.equalsIgnoreCase(xmlTypeType + "/" + xmlTypeContent)) {
+				me = mex;
+			}
 			rule = extendsEncRule(rule);
 		}
 		return me;
@@ -3443,7 +3472,7 @@ public class Options {
 		addRule("rule-arcgis-prop-precision");
 		addRule("rule-arcgis-prop-scale");
 		addRule("rule-arcgis-prop-isNullable");
-		
+
 		/*
 		 * Replication schema encoding rules
 		 */
