@@ -86,6 +86,7 @@ import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StereotypeConversionParameter;
 
@@ -2145,6 +2146,34 @@ public class OntologyModel implements MessageSource {
 		if (pi.matches(OWLISO19150.RULE_OWL_PROP_RANGE_GLOBAL)
 				&& range != null) {
 			p.addRange(range);
+		}
+
+		// add references to external codelist or vocabulary representations
+		if (pi.matches(OWLISO19150.RULE_OWL_PROP_EXTERNAL_REFERENCE)) {
+
+			ClassInfo piType = model.classById(pi.typeInfo().id);
+
+			if (piType != null) {
+
+				String targetPropertyQName = owliso19150
+						.getPropExternalReferenceTargetProperty();
+				addNamespaceDeclaration(targetPropertyQName);
+				String targetPropertyIRI = computeReference(
+						targetPropertyQName);
+				Property targetProperty = ontmodel
+						.createProperty(targetPropertyIRI);
+
+				TaggedValues refs = piType
+						.taggedValuesForTagList("codeList,vocabulary");
+				for (String tag : refs.keySet()) {
+					for (String value : refs.get(tag)) {
+						if (value.trim().length() > 0) {
+							p.addProperty(targetProperty,
+									ontmodel.createResource(value.trim()));
+						}
+					}
+				}
+			}
 		}
 
 		// remember property

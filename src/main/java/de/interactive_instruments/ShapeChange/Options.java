@@ -3442,6 +3442,7 @@ public class Options {
 		addRule("rule-owl-cls-unionSets");
 
 		addRule("rule-owl-prop-code-broader-byBroaderListedValue");
+		addRule("rule-owl-prop-external-reference");
 		addRule("rule-owl-prop-general");
 		addRule("rule-owl-prop-globalScopeAttributes");
 		addRule("rule-owl-prop-globalScopeByConversionParameter");
@@ -3456,7 +3457,7 @@ public class Options {
 		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
 		addRule("rule-owl-prop-range-global");
 		addRule("rule-owl-prop-range-local-withUniversalQuantification");
-		addRule("rule-owl-prop-voidable-as-minCardinality0");
+		addRule("rule-owl-prop-voidable-as-minCardinality0");		
 
 		/*
 		 * ArcGIS workspace encoding rules
