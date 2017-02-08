@@ -832,6 +832,10 @@ public class Flattener implements Transformer {
 				idsOfRelevantSupertypes.add(genCi.id());
 
 				genCi.setSubtypes(null);
+				
+				result.addDebug(null, 20344, genCi.name(), includeRegex, PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
+			} else {
+				result.addDebug(null, 20345, genCi.name(), includeRegex, PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
 			}
 		}
 
@@ -2548,7 +2552,9 @@ public class Flattener implements Transformer {
 						 * alright, then the type shall be excluded from
 						 * processing
 						 */
+						result.addDebug(null, 20344, genCi.name(), replaceUnionExcludePattern.pattern(), PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 					} else {
+						result.addDebug(null, 20345, genCi.name(), replaceUnionExcludePattern.pattern(), PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 						unionsToProcess.add(genCi);
 					}
 
@@ -3531,8 +3537,10 @@ public class Flattener implements Transformer {
 
 								if (m.matches()) {
 									processType = false;
+									result.addDebug(null, 20344, typeCi.name(), excludeDataTypeRegex, PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
 								} else {
 									processType = true;
+									result.addDebug(null, 20345, typeCi.name(), excludeDataTypeRegex, PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
 								}
 
 							} else {
@@ -3552,8 +3560,10 @@ public class Flattener implements Transformer {
 
 								if (m.matches()) {
 									processType = true;
+									result.addInfo(null, 20344, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								} else {
 									processType = false;
+									result.addInfo(null, 20345, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								}
 
 							} else {
@@ -5086,10 +5096,11 @@ public class Flattener implements Transformer {
 		Matcher m = regex.matcher(genCi.name());
 
 		if (m.matches()) {
-
+			result.addDebug(null, 20344, genCi.name(), regex.pattern(), PARAM_INHERITANCE_INCLUDE_REGEX);
 			return true;
 
 		} else {
+			result.addDebug(null, 20345, genCi.name(), regex.pattern(), PARAM_INHERITANCE_INCLUDE_REGEX);
 
 			GenericModel model = genCi.model();
 
@@ -6030,6 +6041,9 @@ public class Flattener implements Transformer {
 				if (matcher.matches()) {
 
 					genPisToRemove.add(genPi);
+					result.addDebug(null, 20344, genPi.inClass().name(), regex, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
+				} else {
+					result.addDebug(null, 20345, genPi.inClass().name(), regex, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
 				}
 			}
 		}
