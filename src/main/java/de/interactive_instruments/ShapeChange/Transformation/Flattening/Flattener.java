@@ -3560,10 +3560,10 @@ public class Flattener implements Transformer {
 
 								if (m.matches()) {
 									processType = true;
-									result.addInfo(null, 20344, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
+									result.addDebug(null, 20344, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								} else {
 									processType = false;
-									result.addInfo(null, 20345, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
+									result.addDebug(null, 20345, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								}
 
 							} else {
