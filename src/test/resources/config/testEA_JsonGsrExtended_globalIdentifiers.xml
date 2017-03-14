@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/test.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml"/>
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/json/globalIdentifierInDescription/log_json_globalIdentifier.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/json/globalIdentifierInDescription"/>
+			<targetParameter name="defaultEncodingRule" value="geoservices_extended"/>
+			<targetParameter name="documentationTemplate" value="[[globalIdentifier]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<xi:include href="src/main/resources/config/StandardJsonMapEntries.xml"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

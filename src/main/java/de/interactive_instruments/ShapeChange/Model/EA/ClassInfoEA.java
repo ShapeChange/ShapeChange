@@ -143,8 +143,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	/** Does this class possess nilReason properties? */
 	protected boolean hasNilReason = false;
 
-	protected String globalIdentifier = null;
-
 	private Boolean realization = null;
 
 	/**
@@ -161,14 +159,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		eaClassElement = elmt;
 		eaClassId = eaClassElement.GetElementID();
 		eaName = eaClassElement.GetName().trim();
-		
+
 		// Register as child of parent package.
 		pi.childCI.add(this);
-
-		if (options().isLoadGlobalIdentifiers()) {
-			globalIdentifier = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaClassElement.GetElementGUID());
-		}
 
 		// Determine some class flags
 		isAbstract = eaClassElement.GetAbstract().equals("1");
@@ -421,12 +414,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						stsize++;
 						cir = baseCI;
 					} else if (bcat != Options.MIXIN) {
-						
-						// Ignore, if we accept supertypes that are not mixins and we are a mixin
-						if (cat == Options.MIXIN && matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+
+						// Ignore, if we accept supertypes that are not mixins
+						// and we are a mixin
+						if (cat == Options.MIXIN && matches(
+								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
 							// do nothing and ignore
-						}
-						else if (this.model().isInSelectedSchemas(this)) {
+						} else if (this.model().isInSelectedSchemas(this)) {
 							// Not compatible and not mixin: An error
 							MessageContext mc = document.result.addError(null,
 									108, name());
@@ -626,16 +620,19 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			// Try default first
 			String s = super.documentation();
 
-			// Try EA notes, if both tagged values fail and ea:notes is the source
-			if ((s == null || s.length() == 0) && descriptorSource(Options.Descriptor.DOCUMENTATION.toString()).equals("ea:notes")) {
+			// Try EA notes, if both tagged values fail and ea:notes is the
+			// source
+			if ((s == null || s.length() == 0) && descriptorSource(
+					Options.Descriptor.DOCUMENTATION.toString())
+							.equals("ea:notes")) {
 				s = eaClassElement.GetNotes();
 				// Fix for EA7.5 bug
 				if (s != null) {
 					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-					super.documentation = options().internalize(s); 
+					super.documentation = options().internalize(s);
 				}
 			}
-			
+
 			// If result is empty, check if we can get the documentation from a
 			// dependency
 			if (s == null || s.isEmpty()) {
@@ -652,7 +649,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 					}
 				}
 			}
-			
+
 			// If result is empty, check if we can get the documentation from a
 			// supertype with the same name (added for ELF/INSPIRE)
 			if (s == null || s.isEmpty()) {
@@ -703,10 +700,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 			// Obtain alias name from default implementation
 			String a = super.aliasName();
-			// If not present, obtain from EA model directly, if ea:alias is identified as the source
-			if ((a == null || a.length() == 0) && descriptorSource(Options.Descriptor.ALIAS.toString()).equals("ea:alias")) {
+			// If not present, obtain from EA model directly, if ea:alias is
+			// identified as the source
+			if ((a == null || a.length() == 0)
+					&& descriptorSource(Options.Descriptor.ALIAS.toString())
+							.equals("ea:alias")) {
 				a = eaClassElement.GetAlias();
-				super.aliasName = options().internalize(a); 
+				super.aliasName = options().internalize(a);
 			}
 		}
 		return super.aliasName;
@@ -1143,7 +1143,23 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	} // supplierIds()
 
 	@Override
-	public String globalId() {
-		return globalIdentifier;
+	public String globalIdentifier() {
+
+		// Obtain global identifier from default implementation
+		String gi = super.globalIdentifier();
+		// If not present, obtain from EA model directly
+		if ((gi == null || gi.length() == 0)
+				&& descriptorSource(
+						Options.Descriptor.GLOBALIDENTIFIER.toString())
+								.equals("ea:guidtoxml")
+//				&& options().isLoadGlobalIdentifiers()
+				) {
+
+			gi = document.repository.GetProjectInterface()
+					.GUIDtoXML(eaClassElement.GetElementGUID());
+
+			super.globalIdentifier = options().internalize(gi);
+		}
+		return gi;
 	}
 }

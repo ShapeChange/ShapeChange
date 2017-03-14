@@ -31,9 +31,12 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -42,85 +45,139 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
- *
  */
 public class SqlDdlConfigurationValidator
 		implements ConfigurationValidator, MessageSource {
+
+	// these fields will be initialized when isValid(...) is called
+	private ProcessConfiguration config = null;
+	private Options options = null;
+	private ShapeChangeResult result = null;
 
 	@Override
 	public boolean isValid(ProcessConfiguration config, Options options,
 			ShapeChangeResult result) {
 
+		this.config = config;
+		this.options = options;
+		this.result = result;
+
 		boolean isValid = true;
 
-		TreeMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
+		SortedMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
+
 		for (ProcessMapEntry pme : config.getMapEntries()) {
 			mapEntryByType.put(pme.getType(), pme);
 		}
 
-		MapEntryParamInfos mepp = new MapEntryParamInfos(result,
-				config.getMapEntries());
-		if (!mepp.isValid()) {
-			isValid = false;
-		}
+		// general validation of map entry parameters
+		MapEntryParamInfos mepis = new MapEntryParamInfos(result,
+				mapEntryByType.values());
+
+		isValid = isValid && mepis.isValid();
 
 		DatabaseStrategy databaseStrategy;
-		String databaseSystem = options.parameter(SqlDdl.class.getName(),
-				SqlDdl.PARAM_DATABASE_SYSTEM);
+		String databaseSystem = options.parameter(SqlConstants.class.getName(),
+				SqlConstants.PARAM_DATABASE_SYSTEM);
 		if (databaseSystem == null
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new PostgreSQLStrategy();
 		} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
-			databaseStrategy = new OracleStrategy(result);
+			databaseStrategy = new OracleStrategy(result,null);
 		} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new SQLServerStrategy(result);
 		} else {
-			databaseStrategy = new NullDatabaseStrategy();
-			result.addError(this, 100, databaseSystem);
+			databaseStrategy = new PostgreSQLStrategy();
+			result.addError(this, 100, SqlConstants.PARAM_DATABASE_SYSTEM,
+					databaseSystem);
+			isValid = false;
 		}
 
-		// first up validation of common parameters
-		if (mapEntryByType != null) {
+		// validation of common sql map entry parameters
+		isValid = isValid && checkCommonMapEntryParameters(mepis);
 
-			for (String type : mapEntryByType.keySet()) {
+		// validation of database strategy specific sql map entry parameters
+		isValid = isValid && databaseStrategy.validate(mapEntryByType, mepis);
 
-				if (mepp.hasCharacteristic(type, SqlDdl.ME_PARAM_TABLE,
-						SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT)) {
+		isValid = isValid
+				&& checkDescriptorsForCodeList(config, options, result);
 
-					String representedCategory = mepp.getCharacteristic(type,
-							SqlDdl.ME_PARAM_TABLE,
-							SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT);
+		isValid = isValid && checkIntegerParameter(SqlConstants.PARAM_SIZE);
+		isValid = isValid
+				&& checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
+
+		return isValid;
+	}
+
+	private boolean checkCommonMapEntryParameters(MapEntryParamInfos mepp) {
+
+		boolean isValid = true;
+
+		for (Entry<String, Map<String, Map<String, String>>> entry : mepp
+				.getParameterCache().entrySet()) {
+
+			String typeRuleKey = entry.getKey();
+			Map<String, Map<String, String>> characteristicsByParameter = entry
+					.getValue();
+
+			if (characteristicsByParameter
+					.containsKey(SqlConstants.ME_PARAM_TABLE)) {
+
+				Map<String, String> tableCharacteristics = characteristicsByParameter
+						.get(SqlConstants.ME_PARAM_TABLE);
+
+				if (tableCharacteristics.containsKey(
+						SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT)) {
+
+					String representedCategory = tableCharacteristics
+							.get(SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT);
 
 					if (representedCategory == null) {
 
 						isValid = false;
-						result.addError(this, 101, type,
-								SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT,
-								SqlDdl.ME_PARAM_TABLE);
+						result.addError(this, 101, typeRuleKey,
+								SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT,
+								SqlConstants.ME_PARAM_TABLE);
 
 					} else if (!representedCategory.matches(
-							SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX)) {
+							SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX)) {
 
 						isValid = false;
-						result.addError(this, 102, type,
-								SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT,
-								SqlDdl.ME_PARAM_TABLE,
-								SqlDdl.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX);
+						result.addError(this, 102, typeRuleKey,
+								SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT,
+								SqlConstants.ME_PARAM_TABLE,
+								SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX);
 					}
 				}
 			}
 		}
 
-		// then the database strategy specific parameters
-		if (!databaseStrategy.validate(mapEntryByType, mepp)) {
-			isValid = false;
-		}
+		return isValid;
+	}
 
-		isValid = checkDescriptorsForCodeList(config, options, result);
+	private boolean checkIntegerParameter(String paramName) {
+
+		boolean isValid = true;
+
+		String valueByConfig = options.parameter(this.getClass().getName(),
+				paramName);
+
+		if (valueByConfig != null) {
+
+			try {
+				Integer.parseInt(valueByConfig);
+			} catch (NumberFormatException e) {
+				MessageContext mc = result.addWarning(this, 4, paramName,
+						e.getMessage());
+				mc.addDetail(this, 0);
+				isValid = false;
+			}
+		}
 
 		return isValid;
 	}
@@ -131,7 +188,8 @@ public class SqlDdlConfigurationValidator
 		boolean isValid = true;
 
 		String descriptorsForCodelistByConfig = options.parameter(
-				SqlDdl.class.getName(), SqlDdl.PARAM_DESCRIPTORS_FOR_CODELIST);
+				SqlConstants.class.getName(),
+				SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
 		String[] descriptorsForCodelistFromConfig = new String[] {
 				"documentation" };
 		SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
@@ -148,7 +206,7 @@ public class SqlDdlConfigurationValidator
 		boolean unknownDescriptorFound = false;
 		for (String tmp : descriptorsForCodelistFromConfig) {
 
-			if (tmp.matches(SqlDdl.DESCRIPTORS_FOR_CODELIST_REGEX)) {
+			if (tmp.matches(SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
 				descriptorsForCodelist.add(tmp);
 			} else {
 				unknownDescriptorFound = true;
@@ -156,7 +214,7 @@ public class SqlDdlConfigurationValidator
 		}
 		if (unknownDescriptorFound) {
 			result.addError(this, 2, descriptorsForCodelistByConfig,
-					SqlDdl.DESCRIPTORS_FOR_CODELIST_REGEX);
+					SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
 			isValid = false;
 		}
 		if (descriptorsForCodelist.isEmpty()) {
@@ -178,19 +236,21 @@ public class SqlDdlConfigurationValidator
 			return "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/sql-ddl/";
 		case 2:
 			return "At least one of the descriptor identifiers in configuration parameter '"
-					+ SqlDdl.PARAM_DESCRIPTORS_FOR_CODELIST
+					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Correct the parameter value.";
 		case 3:
 			return "Configuration parameter '"
-					+ SqlDdl.PARAM_DESCRIPTORS_FOR_CODELIST
+					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 					+ "' did not contain a well-known identifier. Use well-known identifiers or omit the parameter.";
+		case 4:
+			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
+
 		case 100:
-			return "Parameter '" + SqlDdl.PARAM_DATABASE_SYSTEM
-					+ "' is set to '$1$'. This is not a valid value.";
+			return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
 		case 101:
-			return "Invalid map entry for type '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 102:
-			return "Invalid map entry for type '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 
 		default:
 			return "(Unknown message)";

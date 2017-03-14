@@ -1,0 +1,38 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/DataType.json",
+	"title":"DataType",
+	"description":"EAID_6DFFE91A_1192_432d_B2D5_21FF711EECEC",
+	"type":"object",
+	"properties":{
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"datatype":{
+					"title":"datatype",
+					"description":"EAID_C5B27E9B_7FF6_40f5_BDAF_C9B9A1BF2D45",
+					"type":"array",
+					"items":{
+						"$ref":"http://portele.de/ows9/test/DataType2.json"
+
+					}
+				},
+				"string":{
+					"title":"string",
+					"description":"EAID_902CB6C5_BBCA_4273_8021_F76BD8AAF82A",
+					"type":"array",
+					"items":{
+						"type":"string"
+					},
+					"minItems":1
+				},
+				"boolean":{
+					"title":"boolean",
+					"description":"EAID_7FB2615C_2E9F_445b_B28C_595BBF36C989",
+					"type":"boolean"
+				}
+			}
+		}
+	}
+}

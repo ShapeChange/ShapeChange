@@ -38,11 +38,4 @@ public interface AssociationInfo extends Info {
 	public PropertyInfo end2();
 
 	public ClassInfo assocClass();
-
-	/**
-	 * @return an identifier of the association that is globally unique, i.e.
-	 *         unique across models, or <code>null</code> if such an identifier
-	 *         is not available
-	 */
-	public String globalId();
 };

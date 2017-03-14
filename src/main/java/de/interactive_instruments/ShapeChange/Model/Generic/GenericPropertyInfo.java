@@ -59,7 +59,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected GenericModel model = null;
 
 	protected String id = null;
-	protected String globalId = null;
+	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected boolean isDerived = false;
@@ -589,8 +589,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	@Override
-	public String globalId() {
-		return globalId;
+	public String globalIdentifier() {
+		return globalIdentifier;
 	}
 
 	@Override
@@ -712,11 +712,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	/**
-	 * @param globalId
+	 * @param globalIdentifier
 	 */
-	public void setGlobalId(String globalId) {
+	public void setGlobalIdentifier(String globalIdentifier) {
 
-		this.globalId = options.internalize(globalId);
+		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 	/**
@@ -834,7 +834,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name,
 				categoryOfValue);
 
-		copy.setGlobalId(globalId);
+		copy.setGlobalIdentifier(globalIdentifier);
 		copy.setAliasName(aliasName);
 		copy.setDefinition(definition);
 		copy.setDescription(description);

@@ -31,15 +31,29 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Map.Entry;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.EqualsExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.LongValueExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArrayExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.StringValueExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToCharExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
@@ -53,18 +67,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
 	private ShapeChangeResult result;
-	
-	public OracleStrategy(ShapeChangeResult result) {
-		this.result = result;
-	}
-	
+	private SqlDdl sqlddl;
 
-	@Override
-	public String convertDefaultValue(boolean b) {
-		if(b)
-			return "1";
-		else
-			return "0";
+	public OracleStrategy(ShapeChangeResult result, SqlDdl sqlddl) {
+		this.result = result;
+		this.sqlddl = sqlddl;
 	}
 
 	@Override
@@ -88,11 +95,12 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String indexName, String tableName,
-			String columnName, Map<String, String> geometryCharacteristics) {
+	public Statement geometryIndexColumnPart(String indexName, Table table,
+			Column column, Map<String, String> geometryCharacteristics) {
 
-		String res = "CREATE INDEX " + indexName + " ON " + tableName + " ("
-				+ columnName + ") INDEXTYPE IS MDSYS.SPATIAL_INDEX";
+		Index index = new Index(indexName);
+		index.addColumn(column);
+		index.addSpec("INDEXTYPE IS MDSYS.SPATIAL_INDEX");
 
 		if (geometryCharacteristics != null && geometryCharacteristics
 				.containsKey(GEOM_PARAM_LAYER_GTYPE)) {
@@ -101,9 +109,9 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 					.get(GEOM_PARAM_LAYER_GTYPE);
 
 			if (layergtype != null) {
-				res = res + " PARAMETERS('layer_gtype="
+				index.addSpec("PARAMETERS('layer_gtype="
 						+ geometryCharacteristics.get(GEOM_PARAM_LAYER_GTYPE)
-						+ "')";
+						+ "')");
 			} else {
 
 				/*
@@ -113,83 +121,94 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			}
 		}
 
-		return res;
+		CreateIndex cIndex = new CreateIndex();
+		cIndex.setIndex(index);
+		cIndex.setTable(table);
+
+		return cIndex;
 	}
 
 	@Override
-	public String geometryMetadataUpdateStatement(String normalizedClassName,
-			String columnname, int srid) {
-		String s = "INSERT INTO USER_SDO_GEOM_METADATA (TABLE_NAME, COLUMN_NAME, DIMINFO, SRID) VALUES ('"
-				+ normalizedClassName.toUpperCase(Locale.ENGLISH) + "', '"
-				+ columnname.toUpperCase(Locale.ENGLISH)
-				+ "', MDSYS.SDO_DIM_ARRAY(FIXME)" + ", " + srid + ")";
-		return s;
-	}
+	public Statement geometryMetadataUpdateStatement(Table tableWithColumn,
+			Column columnForGeometryTypedProperty, int srid) {
 
-	@Override
-	public String normalizeName(String name) {
-		String upperCaseName = name.toUpperCase(Locale.ENGLISH);
-		String normalizedName = StringUtils.substring(upperCaseName, 0, 30);
-		if (upperCaseName.length() != normalizedName.length()) {
-			result.addWarning(this, 1, upperCaseName, normalizedName);
-		}
-		return normalizedName;
-	}
+		Insert ins = new Insert();
+		Table table = new Table("USER_SDO_GEOM_METADATA");
+		ins.setTable(table);
 
-	/**
-	 * Constraints in Oracle are in their own namespace and do also have the
-	 * maximum length of 30.
-	 */
-	@Override
-	public String createNameCheckConstraint(String tableName,
-			String propertyName) {
-		String truncatedName = StringUtils
-				.substring(tableName.toUpperCase(Locale.ENGLISH), 0, 13) + "_"
-				+ StringUtils.substring(
-						propertyName.toUpperCase(Locale.ENGLISH), 0, 13);
-		String checkConstraintName = truncatedName + "_CK";
-		return checkConstraintName;
+		ins.setColumns(SqlUtil.toColumnList(table,"TABLE_NAME", "COLUMN_NAME",
+				"DIMINFO", "SRID"));
+
+		List<Expression> items = new ArrayList<Expression>();
+		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
+				columnForGeometryTypedProperty.getName()));
+
+		SdoDimArrayExpression dimArray = sqlddl.getSdoDimArrayExpression();
+
+		items.add(dimArray);
+		items.add(new LongValueExpression(srid));
+
+		ins.setExpressionList(SqlUtil.toExpressionList(items));
+
+		return ins;
 	}
 
 	@Override
 	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
 			MapEntryParamInfos mepp) {
-		
+
 		boolean isValid = true;
 
-		if (mapEntryByType != null) {
+		if (mepp != null) {
 
-			for (String type : mapEntryByType.keySet()) {
+			// browse through the parameters and their characteristics that are
+			// stored for each map entry
+			for (Entry<String, Map<String, Map<String, String>>> entry : mepp
+					.getParameterCache().entrySet()) {
 
-				// ensure that layer_gtype has a value and that it is one of the
-				// allowed ones
-				if (mepp.hasCharacteristic(type, SqlDdl.ME_PARAM_GEOMETRY,
-						GEOM_PARAM_LAYER_GTYPE)) {
+				String typeRuleKey = entry.getKey();
+				Map<String, Map<String, String>> characteristicsByParameter = entry
+						.getValue();
 
-					String layergtype = mepp.getCharacteristic(type,
-							SqlDdl.ME_PARAM_GEOMETRY, GEOM_PARAM_LAYER_GTYPE);
+				if (characteristicsByParameter
+						.containsKey(SqlConstants.ME_PARAM_GEOMETRY)) {
 
-					if (layergtype == null) {
+					Map<String, String> geometryCharacteristics = characteristicsByParameter
+							.get(SqlConstants.ME_PARAM_GEOMETRY);
 
-						result.addError(this, 3, type, GEOM_PARAM_LAYER_GTYPE,
-								SqlDdl.ME_PARAM_GEOMETRY);
-						isValid = false;
+					// ensure that layer_gtype has a value and that it is one of
+					// the
+					// allowed ones
+					if (geometryCharacteristics
+							.containsKey(GEOM_PARAM_LAYER_GTYPE)) {
 
-					} else if (!layergtype
-							.matches(GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX)) {
+						String layergtype = geometryCharacteristics
+								.get(GEOM_PARAM_LAYER_GTYPE);
 
-						result.addError(this, 4, type, GEOM_PARAM_LAYER_GTYPE,
-								SqlDdl.ME_PARAM_GEOMETRY,
-								GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX);
-						isValid = false;
-						
-					} else {
-						// fine - no further tests at this point in time
+						if (layergtype == null) {
+
+							result.addError(this, 3, typeRuleKey,
+									GEOM_PARAM_LAYER_GTYPE,
+									SqlConstants.ME_PARAM_GEOMETRY);
+							isValid = false;
+
+						} else if (!layergtype.matches(
+								GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX)) {
+
+							result.addError(this, 4, typeRuleKey,
+									GEOM_PARAM_LAYER_GTYPE,
+									SqlConstants.ME_PARAM_GEOMETRY,
+									GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX);
+							isValid = false;
+
+						} else {
+							// fine - no further tests at this point in time
+						}
 					}
 				}
 			}
 		}
-		
+
 		return isValid;
 	}
 
@@ -198,15 +217,31 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class OracleStrategy";
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
 		case 3:
-			return "Invalid map entry for type '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 4:
-			return "Invalid map entry for type '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 		default:
 			return "(Unknown message)";
 		}
 	}
 
+	@Override
+	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
+			PropertyInfo pi, Column columnForPi) {
+
+		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
+
+			ColumnExpression colexp = new ColumnExpression(columnForPi);
+			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS",
+					null);
+			StringValueExpression compareValue = new StringValueExpression("00:00:00");
+			EqualsExpression eexp = new EqualsExpression(tcexp, compareValue);
+
+			return eexp;
+
+		} else {
+			return null;
+		}
+	}
 }

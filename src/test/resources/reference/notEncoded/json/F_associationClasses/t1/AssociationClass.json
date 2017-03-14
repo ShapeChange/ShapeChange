@@ -1,0 +1,30 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://example.org/shapechange/schema/json/t1/AssociationClass.json",
+	"title":"AssociationClass",
+	"type":"object",
+	"properties":{
+		"entityType":{
+			"title":"feature/object type",
+			"type":"string",
+			"default":"AssociationClass"
+		},
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"pOfAssociationClass":{
+					"title":"pOfAssociationClass",
+					"type":"boolean",
+					"required":true
+				},
+				"roleFT4toFT3":{
+					"title":"roleFT4toFT3",
+					"type":"string",
+					"format":"uri",
+					"required":true
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmlexr="http://www.opengis.net/gml/3.3/exr" xmlns:rep="http://example.org/shapechange/schema" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.3/exr" schemaLocation="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element abstract="true" name="T1_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T1_Class1Type"/>
+  <complexType abstract="true" name="T1_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p" type="gml:GeometryPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T1_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_Class2" substitutionGroup="rep:T1_Class1" type="rep:T1_Class2Type"/>
+  <complexType name="T1_Class2Type">
+    <complexContent>
+      <extension base="rep:T1_Class1Type">
+        <sequence>
+          <element name="pMixin" type="string"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="p1" type="rep:T1_Class4PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T1_Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_Class3" substitutionGroup="rep:T1_Class2" type="rep:T1_Class3Type"/>
+  <complexType name="T1_Class3Type">
+    <complexContent>
+      <extension base="rep:T1_Class2Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_Class3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T1_Class3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_Class4" substitutionGroup="gml:AbstractGML" type="rep:T1_Class4Type"/>
+  <complexType name="T1_Class4Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_Class4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T1_Class4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="T1_MixinPropertyType">
+    <choice minOccurs="0">
+      <element ref="rep:T1_Class2"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T2_Class1Type"/>
+  <complexType name="T2_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="string"/>
+          <element name="p2" type="anyURI"/>
+          <element name="p3_noSizeTV" type="string"/>
+          <element name="p4_size0" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T2_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T3_Class1Type"/>
+  <complexType name="T3_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="gml:PointPropertyType"/>
+          <element name="p2" type="rep:T3_Enumeration1Type"/>
+          <element name="p3" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">T3_Codelist</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="p4" type="rep:T3_Enumeration2Type"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T3_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="T3_Enumeration1Type">
+    <restriction base="string">
+      <enumeration value="e1"/>
+      <enumeration value="e2"/>
+      <enumeration value="e3"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="T3_Enumeration2Type">
+    <restriction base="string">
+      <enumeration value="A"/>
+      <enumeration value="B"/>
+    </restriction>
+  </simpleType>
+  <element name="T4_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T4_Class1Type"/>
+  <complexType name="T4_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="integer"/>
+          <element minOccurs="0" name="p2" type="dateTime"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T4_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T5_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T5_Class1Type"/>
+  <complexType name="T5_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="double"/>
+          <element name="p2" type="double"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T5_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Class1" substitutionGroup="gml:AbstractFeature" type="rep:T6_Class1Type"/>
+  <complexType name="T6_Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="rep:T6_Class2PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T6_Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Class2" substitutionGroup="gml:AbstractGML" type="rep:T6_Class2Type"/>
+  <complexType name="T6_Class2Type">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="p1" type="rep:T6_Class3PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6_Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="rep:T6_Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6_Class3" substitutionGroup="gml:AbstractObject" type="rep:T6_Class3Type"/>
+  <complexType name="T6_Class3Type">
+    <choice>
+      <element name="c1" type="rep:T6_Class5PropertyType"/>
+      <element name="c2" type="rep:T6_Class4PropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T6_Class3PropertyType">
+    <sequence>
+      <element ref="rep:T6_Class3"/>
+    </sequence>
+  </complexType>
+  <element name="T6_Class4" substitutionGroup="gml:AbstractObject" type="rep:T6_Class4Type"/>
+  <complexType name="T6_Class4Type">
+    <sequence>
+      <element name="p1" type="integer"/>
+    </sequence>
+  </complexType>
+  <complexType name="T6_Class4PropertyType">
+    <sequence>
+      <element ref="rep:T6_Class4"/>
+    </sequence>
+  </complexType>
+  <element name="T6_Class5" substitutionGroup="gml:AbstractObject" type="rep:T6_Class5Type"/>
+  <complexType name="T6_Class5Type">
+    <sequence>
+      <element name="p1" type="double"/>
+    </sequence>
+  </complexType>
+  <complexType name="T6_Class5PropertyType">
+    <sequence>
+      <element ref="rep:T6_Class5"/>
+    </sequence>
+  </complexType>
+</schema>

@@ -179,11 +179,4 @@ public interface PropertyInfo extends Info {
 	public Qualifier qualifier(String name);
 
 	public List<Qualifier> qualifiers();
-
-	/**
-	 * @return an identifier of the property that is globally unique, i.e.
-	 *         unique across models, or <code>null</code> if such an identifier
-	 *         is not available
-	 */
-	public String globalId();
 };

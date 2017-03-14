@@ -149,7 +149,7 @@ public class XMLSchemaTest extends WindowsBasicTest {
 		 * are suppliers of a dependency (feature, attribute and value concepts)
 		 */
 		xsdTest("src/test/resources/config/testEA_dep.xml",
-				new String[] { "test" }, null, "testResults/ea/INPUT",
+				new String[] { "test_dep" }, null, "testResults/ea/INPUT",
 				"src/test/resources/reference/xsd");
 	}
 

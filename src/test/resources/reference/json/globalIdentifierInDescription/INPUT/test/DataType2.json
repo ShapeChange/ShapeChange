@@ -1,0 +1,29 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/DataType2.json",
+	"title":"DataType2",
+	"description":"EAID_51FA8E34_8588_4a3c_B96F_E612AFE207AB",
+	"type":"object",
+	"properties":{
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"string":{
+					"title":"string",
+					"description":"EAID_BE4EA500_1BB5_4b1a_AC60_B0379E3CE5CB",
+					"type":"array",
+					"items":{
+						"type":"string"
+					},
+					"minItems":1
+				},
+				"integer":{
+					"title":"integer",
+					"description":"EAID_3FD3F9B4_7201_4847_97D7_F380B3B3F723",
+					"type":"integer"
+				}
+			}
+		}
+	}
+}

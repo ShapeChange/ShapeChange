@@ -252,4 +252,25 @@ public class OperationInfoEA extends OperationInfoImpl
 			}
 		}
 	} // validateTaggedValuesCache()
+	
+	@Override
+	public String globalIdentifier() {
+
+		// Obtain global identifier from default implementation
+		String gi = super.globalIdentifier();
+		// If not present, obtain from EA model directly
+		if ((gi == null || gi.length() == 0)
+				&& descriptorSource(
+						Options.Descriptor.GLOBALIDENTIFIER.toString())
+								.equals("ea:guidtoxml")
+//				&& options().isLoadGlobalIdentifiers()
+				) {
+
+			gi = document.repository.GetProjectInterface()
+					.GUIDtoXML(eaMethod.GetMethodGUID());
+
+			super.globalIdentifier = options().internalize(gi);
+		}
+		return gi;
+	}
 }

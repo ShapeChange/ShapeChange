@@ -92,12 +92,5 @@ public abstract class AssociationInfoImpl extends InfoImpl implements Associatio
 		super.postprocessAfterLoadingAndValidate();
 
 		postprocessed = true;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#globalId()
-	 */
-	public String globalId() {
-		return null;
 	}
 }

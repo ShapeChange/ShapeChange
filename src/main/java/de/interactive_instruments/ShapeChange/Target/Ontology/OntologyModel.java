@@ -1600,6 +1600,13 @@ public class OntologyModel implements MessageSource {
 						values.add(s);
 					}
 
+				} else if (desc.equalsIgnoreCase("globalIdentifier")) {
+
+					String s = i.globalIdentifier();
+					if (s != null && !s.trim().isEmpty()) {
+						values.add(s);
+					}
+
 				} else {
 					/*
 					 * the field in the template neither identifies a known

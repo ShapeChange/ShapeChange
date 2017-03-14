@@ -31,25 +31,23 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
-import java.util.Locale;
 import java.util.Map;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 public class PostgreSQLStrategy implements DatabaseStrategy {
 
 	@Override
 	public String primaryKeyDataType() {
 		return "bigserial";
-	}
-	
-	@Override
-	public String convertDefaultValue(boolean b) {
-		if(b)
-			return "true";
-		else
-			return "false";
 	}
 
 	@Override
@@ -68,29 +66,24 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String indexName, String tableName,
-			String columnName, Map<String, String> geometryCharacteristics) {
-		return "CREATE INDEX " + indexName + " ON " + tableName
-				+ " USING GIST (" + columnName + ")";
+	public Statement geometryIndexColumnPart(String indexName, Table table,
+			Column column, Map<String, String> geometryCharacteristics) {
+
+		Index index = new Index(indexName);
+		index.addSpec("USING GIST (" + column.getName() + ")");
+
+		CreateIndex cIndex = new CreateIndex();
+		cIndex.setIndex(index);
+		cIndex.setTable(table);
+
+		return cIndex;
 	}
 
 	@Override
-	public String geometryMetadataUpdateStatement(String normalizedClassName,
-			String columnname, int srid) {
+	public Statement geometryMetadataUpdateStatement(Table tableWithColumn,
+			Column columForGeometryTypedProperty, int srid) {
 		// in PostGIS 2.0, geometry_column is a view
-		return "";
-	}
-
-	@Override
-	public String normalizeName(String name) {
-		return name.toLowerCase(Locale.ENGLISH);
-	}
-
-	@Override
-	public String createNameCheckConstraint(String tableName,
-			String propertyName) {
-		return tableName.toLowerCase(Locale.ENGLISH) + "_"
-				+ propertyName.toLowerCase(Locale.ENGLISH) + "_chk";
+		return null;
 	}
 
 	@Override
@@ -98,6 +91,18 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 			MapEntryParamInfos mepp) {
 		// nothing specific to check
 		return true;
+	}
+
+	/**
+	 * TBD - not implemented yet
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Target.SQL.DatabaseStrategy#expressionForCheckConstraintToRestrictTimeOfDate(de.interactive_instruments.ShapeChange.Model.PropertyInfo,
+	 *      de.interactive_instruments.ShapeChange.Target.SQL.structure.Column)
+	 */
+	@Override
+	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
+			PropertyInfo pi, Column columnForPi) {
+		return null;
 	}
 
 }

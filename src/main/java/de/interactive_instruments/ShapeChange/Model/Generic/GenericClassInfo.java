@@ -69,7 +69,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
 	protected String id = null;
-	protected String globalId = null;
+	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected boolean includePropertyType = true;
@@ -406,8 +406,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	@Override
-	public String globalId() {
-		return globalId;
+	public String globalIdentifier() {
+		return globalIdentifier;
 	}
 
 	/**
@@ -511,10 +511,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * @param globalId
+	 * @param globalIdentifier
 	 */
-	public void setGlobalId(String globalId) {
-		this.globalId = globalId;
+	public void setGlobalIdentifier(String globalIdentifier) {
+		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 	/**
@@ -1281,7 +1281,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		GenericClassInfo copy = new GenericClassInfo(this.model, copyId,
 				copyName, copyCategory);
 
-		copy.setGlobalId(globalId);
+		copy.setGlobalIdentifier(globalIdentifier);
 		copy.setAliasName(aliasName);
 		copy.setDefinition(definition);
 		copy.setDescription(description);
@@ -1687,7 +1687,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	/**
 	 * Adds the prefix to the 'id' of this class as well as the 'subtypes' (if
 	 * not <code>null</code>) and the 'supertypes' (if not <code>null</code>).
-	 * Does NOT update the 'globalId'.
+	 * Does NOT update the 'globalIdentifier'.
 	 * 
 	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
 	 * IDs used in a reference model are unique to that model and do not get

@@ -49,7 +49,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
 	protected String id = null;
-	protected String globalId = null;
+	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected PropertyInfo end1 = null;
@@ -188,8 +188,8 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	@Override
-	public String globalId() {
-		return globalId;
+	public String globalIdentifier() {
+		return globalIdentifier;
 	}
 
 	/**
@@ -297,10 +297,10 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * @param globalId
+	 * @param globalIdentifier
 	 */
-	public void setGlobalId(String globalId) {
-		this.globalId = globalId;
+	public void setGlobalIdentifier(String globalIdentifier) {
+		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	/**
 	 * Adds the prefix to the 'id' of this class. Does NOT update the
-	 * 'globalId'.
+	 * 'globalIdentifier'.
 	 * 
 	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
 	 * IDs used in a reference model are unique to that model and do not get

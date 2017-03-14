@@ -892,6 +892,12 @@ public class FeatureCatalogue
 		if (s != null && s.length() > 0) {
 			writer.dataElement("code", PrepareToPrint(s), op);
 		}
+		
+		s = i.globalIdentifier();
+		s = checkDiff(s, i, ElementType.GLOBALIDENTIFIER);
+		if (s != null && s.length() > 0) {
+			writer.dataElement("globalIdentifier", PrepareToPrint(s), op);
+		}
 	}
 
 	/**

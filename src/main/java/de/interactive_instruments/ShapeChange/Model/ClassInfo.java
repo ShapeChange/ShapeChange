@@ -197,11 +197,4 @@ public interface ClassInfo extends Info {
 	 *            metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
-
-	/**
-	 * @return an identifier of the class that is globally unique, i.e. unique
-	 *         across models, or <code>null</code> if such an identifier is not
-	 *         available
-	 */
-	public String globalId();
 }

@@ -1,0 +1,25 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/NilUnion.json",
+	"title":"NilUnion",
+	"description":"EAID_ED134459_7905_4386_816D_C2660A11F888",
+	"type":"object",
+	"properties":{
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"value":{
+					"title":"value",
+					"description":"EAID_11AA74E0_B091_4ff7_BCC3_118D96E5C01F",
+					"$ref":"http://portele.de/ows9/test/DataType2.json"
+				},
+				"reason":{
+					"title":"reason",
+					"description":"EAID_D48720C1_4944_45b8_BA77_7BA0F8FC9C9B",
+					"type":"string"
+				}
+			}
+		}
+	}
+}

@@ -198,18 +198,19 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	protected Integer defaultSize = null;
 	protected String targetNamespaceSuffix;
 
-	private TreeSet<PackageInfo> packagesForImport = new TreeSet<PackageInfo>(new Comparator<PackageInfo>() {
+	private TreeSet<PackageInfo> packagesForImport = new TreeSet<PackageInfo>(
+			new Comparator<PackageInfo>() {
 
-		@Override
-		public int compare(PackageInfo pi1, PackageInfo pi2) {
-			return pi1.name().compareTo(pi2.name());
-		}
-	});
+				@Override
+				public int compare(PackageInfo pi1, PackageInfo pi2) {
+					return pi1.name().compareTo(pi2.name());
+				}
+			});
 
 	@Override
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		schemaPi = p;
 		model = m;
@@ -305,8 +306,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 				this.getClass().getName(),
 				PARAM_SUFFIX_FOR_PROPERTIES_WITH_FEATURE_VALUE_TYPE);
 		if (suffixForPropWithFeatureValueType == null
-				|| suffixForPropWithFeatureValueType.trim()
-						.length() == 0) {
+				|| suffixForPropWithFeatureValueType.trim().length() == 0) {
 			suffixForPropWithFeatureValueType = "";
 		}
 
@@ -314,13 +314,12 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 				this.getClass().getName(),
 				PARAM_SUFFIX_FOR_PROPERTIES_WITH_OBJECT_VALUE_TYPE);
 		if (suffixForPropWithObjectValueType == null
-				|| suffixForPropWithObjectValueType.trim()
-				.length() == 0) {
+				|| suffixForPropWithObjectValueType.trim().length() == 0) {
 			suffixForPropWithObjectValueType = "";
 		}
 
-		targetNamespaceSuffix = options.parameter(
-				this.getClass().getName(), PARAM_TARGET_NAMESPACE_SUFFIX);
+		targetNamespaceSuffix = options.parameter(this.getClass().getName(),
+				PARAM_TARGET_NAMESPACE_SUFFIX);
 		if (targetNamespaceSuffix == null
 				|| objectIdentifierFieldName.trim().length() == 0) {
 			targetNamespaceSuffix = "";
@@ -644,11 +643,12 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 					addAttribute(e, "type",
 							options.internalize(typeCi.qname() + "Type"));
 
-					// enumerations may reside in another namespace, they are usually not flattened
-					if (!typeCi.pkg().targetNamespace().equals(schemaPi.targetNamespace())) {
+					// enumerations may reside in another namespace, they are
+					// usually not flattened
+					if (!typeCi.pkg().targetNamespace()
+							.equals(schemaPi.targetNamespace())) {
 						packagesForImport.add(typeCi.pkg());
 					}
-
 
 				} else {
 
@@ -710,31 +710,31 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 		Element e3;
 
-//		String s = null;
-//		if (cibase != null) {
-//			s = mapBaseType(cibase);
-//			if (s == null) {
-//				result.addError(null, 158);
-//				s = "fixme:fixme";
-//			}
-//		}
-//		if (s != null) {
-//			Element e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
-//					"complexContent");
-//			e1.appendChild(e2);
-//			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
-//			e2.appendChild(e3);
-//			addAttribute(e3, "base", s);
-//		} else if (cibase != null) {
-//			MessageContext mc = result.addError(null, 121,
-//					(cibase == null ? "<unknown>" : cibase.name()),
-//					typeName(ci, false));
-//			if (mc != null)
-//				mc.addDetail(null, 400, "Class",
-//						(ci == null ? "<unknown>" : ci.fullName()));
-//			e3 = e1;
-//		} else
-			e3 = e1;
+		// String s = null;
+		// if (cibase != null) {
+		// s = mapBaseType(cibase);
+		// if (s == null) {
+		// result.addError(null, 158);
+		// s = "fixme:fixme";
+		// }
+		// }
+		// if (s != null) {
+		// Element e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+		// "complexContent");
+		// e1.appendChild(e2);
+		// e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
+		// e2.appendChild(e3);
+		// addAttribute(e3, "base", s);
+		// } else if (cibase != null) {
+		// MessageContext mc = result.addError(null, 121,
+		// (cibase == null ? "<unknown>" : cibase.name()),
+		// typeName(ci, false));
+		// if (mc != null)
+		// mc.addDetail(null, 400, "Class",
+		// (ci == null ? "<unknown>" : ci.fullName()));
+		// e3 = e1;
+		// } else
+		e3 = e1;
 
 		Element ret = document.createElementNS(Options.W3C_XML_SCHEMA,
 				"sequence");
@@ -798,8 +798,9 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 				val = atti.initialValue();
 			}
 			addAttribute(e3, "value", val);
-			// TODO hevan: check with KMD if this could be useful or not (answer: not needed but no problem if present)
-			//addGlobalIdentifierAnnotation(e3, atti);
+			// TODO hevan: check with KMD if this could be useful or not
+			// (answer: not needed but no problem if present)
+			// addGlobalIdentifierAnnotation(e3, atti);
 		}
 
 		return e1;
@@ -861,25 +862,28 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 			ClassInfo ci = (ClassInfo) info;
 
-			if (ci.globalId() != null && (ci.category() == Options.FEATURE
-					|| ci.category() == Options.OBJECT)) {
+			if (ci.globalIdentifier() != null
+					&& (ci.category() == Options.FEATURE
+							|| ci.category() == Options.OBJECT)) {
 
 				if (eAppInfo == null)
 					eAppInfo = document.createElementNS(Options.W3C_XML_SCHEMA,
 							"appinfo");
-				eAppInfo.appendChild(document.createTextNode(ci.globalId()));
+				eAppInfo.appendChild(
+						document.createTextNode(ci.globalIdentifier()));
 			}
 
 		} else if (info instanceof PropertyInfo) {
 
 			PropertyInfo pi = (PropertyInfo) info;
 
-			if (pi.globalId() != null) {
+			if (pi.globalIdentifier() != null) {
 
 				if (eAppInfo == null)
 					eAppInfo = document.createElementNS(Options.W3C_XML_SCHEMA,
 							"appinfo");
-				eAppInfo.appendChild(document.createTextNode(pi.globalId()));
+				eAppInfo.appendChild(
+						document.createTextNode(pi.globalIdentifier()));
 			}
 		}
 
@@ -982,9 +986,12 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	private void addImports() {
 		Element importElement;
 		for (PackageInfo packageInfo : packagesForImport) {
-			addAttribute(root, "xmlns:" + packageInfo.xmlns(), packageInfo.targetNamespace() + targetNamespaceSuffix);
-			importElement = document.createElementNS(Options.W3C_XML_SCHEMA, "import");
-			addAttribute(importElement, "namespace", packageInfo.targetNamespace() + targetNamespaceSuffix);
+			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
+					packageInfo.targetNamespace() + targetNamespaceSuffix);
+			importElement = document.createElementNS(Options.W3C_XML_SCHEMA,
+					"import");
+			addAttribute(importElement, "namespace",
+					packageInfo.targetNamespace() + targetNamespaceSuffix);
 			root.insertBefore(importElement, hook);
 		}
 	}

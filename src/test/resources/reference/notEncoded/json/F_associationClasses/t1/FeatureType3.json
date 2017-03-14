@@ -1,0 +1,24 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://example.org/shapechange/schema/json/t1/FeatureType3.json",
+	"title":"FeatureType3",
+	"type":"object",
+	"properties":{
+		"entityType":{
+			"title":"feature/object type",
+			"type":"string",
+			"default":"FeatureType3"
+		},
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"pFT3":{
+					"title":"pFT3",
+					"type":"string",
+					"required":true
+				}
+			}
+		}
+	}
+}

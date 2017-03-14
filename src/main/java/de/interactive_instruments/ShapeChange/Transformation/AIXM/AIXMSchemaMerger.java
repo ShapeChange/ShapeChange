@@ -628,6 +628,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				assocCopy.setDefinition(assocCi.definition());
 				assocCopy.setDescription(assocCi.description());
 				assocCopy.setPrimaryCode(assocCi.primaryCode());
+				assocCopy.setGlobalIdentifier(assocCi.globalIdentifier());
 				assocCopy.setLanguage(assocCi.language());
 				assocCopy.setLegalBasis(assocCi.legalBasis());
 				assocCopy.setDataCaptureStatements(assocCi.dataCaptureStatements());
