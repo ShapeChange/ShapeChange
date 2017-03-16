@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -49,12 +53,10 @@ import de.interactive_instruments.ShapeChange.TargetConfiguration;
  *         <dot> de)
  *
  */
-public class FeatureCatalogueConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class FeatureCatalogueConfigurationValidator implements ConfigurationValidator, MessageSource {
 
 	@Override
-	public boolean isValid(ProcessConfiguration pConfig, Options options,
-			ShapeChangeResult result) {
+	public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
 
 		boolean isValid = true;
 
@@ -69,25 +71,21 @@ public class FeatureCatalogueConfigurationValidator
 		/*
 		 * Check that the configured XSL transformer factory is available
 		 */
-		String xslTransformerFactory = tgtConfig.getParameterValue(
-				FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+		String xslTransformerFactory = tgtConfig.getParameterValue(FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 
 		if (xslTransformerFactory != null) {
 
 			try {
-				System.setProperty("javax.xml.transform.TransformerFactory",
-						xslTransformerFactory);
+				System.setProperty("javax.xml.transform.TransformerFactory", xslTransformerFactory);
 				@SuppressWarnings("unused")
 				TransformerFactory factory = TransformerFactory.newInstance();
 
 			} catch (TransformerFactoryConfigurationError e) {
 				isValid = false;
-				MessageContext mc = result.addError(this, 100,
-						xslTransformerFactory);
+				MessageContext mc = result.addError(this, 100, xslTransformerFactory);
 				if (mc != null) {
 					mc.addDetail(this, 0, inputs);
-					mc.addDetail(this, 1,
-							FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+					mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 				}
 
 			}
@@ -96,8 +94,7 @@ public class FeatureCatalogueConfigurationValidator
 		/*
 		 * Check that parameter 'outputFormat' is set.
 		 */
-		String outputFormat = tgtConfig
-				.getParameterValue(FeatureCatalogue.PARAM_OUTPUT_FORMAT);
+		String outputFormat = tgtConfig.getParameterValue(FeatureCatalogue.PARAM_OUTPUT_FORMAT);
 
 		if (outputFormat == null) {
 
@@ -116,16 +113,13 @@ public class FeatureCatalogueConfigurationValidator
 			 * 'xslTransformerFactory' is set or Saxon is used as
 			 * TransformerFactory implementation
 			 */
-			if ((outputFormat.toLowerCase().contains("docx")
-					|| outputFormat.toLowerCase().contains("framehtml"))
+			if ((outputFormat.toLowerCase().contains("docx") || outputFormat.toLowerCase().contains("framehtml"))
 					&& xslTransformerFactory == null) {
 
 				try {
-					TransformerFactory factory = TransformerFactory
-							.newInstance();
+					TransformerFactory factory = TransformerFactory.newInstance();
 
-					if (factory.getClass().getName().equalsIgnoreCase(
-							"net.sf.saxon.TransformerFactoryImpl")) {
+					if (factory.getClass().getName().equalsIgnoreCase("net.sf.saxon.TransformerFactoryImpl")) {
 						// fine - this is an XSLT 2.0 processor
 					} else {
 						isValid = false;
@@ -133,21 +127,87 @@ public class FeatureCatalogueConfigurationValidator
 						MessageContext mc = result.addError(this, 102);
 						if (mc != null) {
 							mc.addDetail(this, 0, inputs);
-							mc.addDetail(this, 1,
-									FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+							mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 						}
 					}
 
 				} catch (TransformerFactoryConfigurationError e) {
 					isValid = false;
-					MessageContext mc = result.addError(this, 100,
-							xslTransformerFactory);
+					MessageContext mc = result.addError(this, 100, xslTransformerFactory);
 					if (mc != null) {
 						mc.addDetail(this, 0, inputs);
-						mc.addDetail(this, 1,
-								FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+						mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 					}
 				}
+			}
+		}
+
+		String pathToJavaExe_ = options.parameter(this.getClass().getName(), FeatureCatalogue.PARAM_JAVA_EXE_PATH);
+		if (pathToJavaExe_ != null && pathToJavaExe_.trim().length() > 0) {
+			String pathToJavaExe = pathToJavaExe_.trim();
+			String javaOptions = null;
+			if (!pathToJavaExe.startsWith("\"")) {
+				pathToJavaExe = "\"" + pathToJavaExe;
+			}
+			if (!pathToJavaExe.endsWith("\"")) {
+				pathToJavaExe = pathToJavaExe + "\"";
+			}
+
+			String jo_tmp = options.parameter(this.getClass().getName(), FeatureCatalogue.PARAM_JAVA_OPTIONS);
+			if (jo_tmp != null && jo_tmp.trim().length() > 0) {
+				javaOptions = jo_tmp.trim();
+			}
+
+			/*
+			 * check path - and potentially also options - by invoking the exe
+			 */
+			List<String> cmds = new ArrayList<String>();
+			cmds.add(pathToJavaExe);
+			if (javaOptions != null) {
+				cmds.add(javaOptions);
+			}
+			cmds.add("-version");
+
+			ProcessBuilder pb = new ProcessBuilder(cmds);
+
+			try {
+				Process proc = pb.start();
+
+				StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream());
+				StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream());
+
+				errorGobbler.start();
+				outputGobbler.start();
+
+				errorGobbler.join();
+				outputGobbler.join();
+
+				int exitVal = proc.waitFor();
+
+				if (exitVal != 0) {
+					if (errorGobbler.hasResult()) {
+						MessageContext mc = result.addFatalError(this, 102, StringUtils.join(cmds, " "), "" + exitVal);
+						mc.addDetail(this, 4, errorGobbler.getResult());
+					} else {
+						result.addFatalError(this, 102, StringUtils.join(cmds, " "), "" + exitVal);
+					}
+					isValid = false;
+				}
+
+			} catch (InterruptedException e) {
+				MessageContext mc = result.addFatalError(this, 104);
+				if (mc != null) {
+					mc.addDetail(this, 2, pathToJavaExe);
+					mc.addDetail(this, 3, javaOptions != null ? javaOptions : "<none>");
+				}
+				isValid = false;
+			} catch (IOException e) {
+				MessageContext mc = result.addFatalError(this, 105);
+				if (mc != null) {
+					mc.addDetail(this, 2, pathToJavaExe);
+					mc.addDetail(this, 3, javaOptions != null ? javaOptions : "<none>");
+				}
+				isValid = false;
 			}
 		}
 
@@ -162,19 +222,29 @@ public class FeatureCatalogueConfigurationValidator
 			return "Context: FeatureCatalogue target configuration element with 'inputs'='$1$'.";
 		case 1:
 			return "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/feature-catalogue/";
+		case 2:
+			return FeatureCatalogue.PARAM_JAVA_EXE_PATH + " is: $1$";
+		case 3:
+			return FeatureCatalogue.PARAM_JAVA_OPTIONS + " is: $1$";
+		case 4:
+			return "Message from external java executable: $1$";
 		case 100:
-			return "Parameter '"
-					+ FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
+			return "Parameter '" + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
 					+ "' is set to '$1$'. A Transformer with this factory could not be instantiated. Make the implementation of the transformer factory available on the classpath.";
 		case 101:
-			return "The required parameter '"
-					+ FeatureCatalogue.PARAM_OUTPUT_FORMAT
+			return "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
 					+ "' was not found in the configuration.";
 		case 102:
 			return "Parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
 					+ "' contains 'DOCX' and/or 'FRAMEHTML'. These formats require an XSLT 2.0 processor, which should be set via the configuration parameter '"
 					+ FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
 					+ "'. That parameter was not found, and the default TransformerFactory implementation is not 'net.sf.saxon.TransformerFactoryImpl' (which is known to be an XSLT 2.0 processor); ensure that the parameter is configured correctly.";
+		case 103:
+			return "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
+		case 104:
+			return "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+		case 105:
+			return "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
 
 		default:
 			return "(Unknown message)";
