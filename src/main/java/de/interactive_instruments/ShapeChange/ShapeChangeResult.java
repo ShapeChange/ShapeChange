@@ -1081,6 +1081,10 @@ public class ShapeChangeResult {
 			return "(Flattener.java) Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
 		case 20343:
 			return "(Flattener.java) Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
+		case 20344:
+			return "(Flattener.java) '$1$' matches regex '$2$', provided in parameter '$3$'";
+		case 20345:
+			return "(Flattener.java) '$1$' does not match regex '$2$', provided in parameter '$3$'";
 
 			/* Generic Model related messages */
 			// (30000-30099) Messages used in multiple generic model classes
