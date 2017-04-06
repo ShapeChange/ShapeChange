@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@ public class BasicConfigurationValidator implements MessageSource {
 		boolean isValid = true;
 
 		String imt = options.parameter("inputModelType");
-		if (imt.equalsIgnoreCase("EA7")) {
+
+		if (imt.equalsIgnoreCase("EA7") && !options.isOnlyDeferrableOutputWrite()) {
 
 			/*
 			 * Check that we are running on 32bit Java in a windows environment.
