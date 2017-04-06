@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,41 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Profiling;
+package de.interactive_instruments.ShapeChange.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
+
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  */
 public class ProfileVersionIndicator {
 
+	/**
+	 * Version indicator with maximum version range, i.e. a range with begin = 0
+	 * and end = Integer.MAX_VALUE. It is primarily used for comparisons (e.g.
+	 * if one version indicator contains another).
+	 */
+	static final ProfileVersionIndicator MAX_RANGE_VERSION_INDICATOR = new ProfileVersionIndicator();
+
 	private List<VersionRange> versionInfos = null;
+
+	/**
+	 * Creates a version indicator with maximum version range, i.e. a range with
+	 * begin = 0 and end = Integer.MAX_VALUE.
+	 */
+	public ProfileVersionIndicator() {
+		VersionNumber begin = new VersionNumber(0);
+		VersionNumber end = new VersionNumber(Integer.MAX_VALUE);
+		VersionRange vr = new VersionRange(begin, end);
+		this.versionInfos = new ArrayList<VersionRange>();
+		this.versionInfos.add(vr);
+	}
 
 	public ProfileVersionIndicator(List<VersionRange> versionInfos) {
 		this.versionInfos = versionInfos;
@@ -53,15 +74,11 @@ public class ProfileVersionIndicator {
 	 * @param identifierName
 	 *            name of the profile identifier this version indicator belongs
 	 *            to
-	 * @param ownerName
-	 *            name of the model element that the profile identifier belongs
-	 *            to
 	 * @return
 	 * @throws MalformedProfileIdentifierException
 	 */
 	public static ProfileVersionIndicator parse(String versionInformation,
-			String identifierName, String ownerName)
-			throws MalformedProfileIdentifierException {
+			String identifierName) throws MalformedProfileIdentifierException {
 
 		String[] versionValues = versionInformation.split(";");
 		List<VersionRange> versionInfosTmp = new ArrayList<VersionRange>();
@@ -73,9 +90,10 @@ public class ProfileVersionIndicator {
 				VersionNumber end = null;
 				if (versionValue.indexOf("-") == 0) {
 					begin = new VersionNumber(0);
-					end = new VersionNumber(versionValue.substring(1,
-							versionValue.length()));
-				} else if (versionValue.indexOf("-") == versionValue.length() - 1) {
+					end = new VersionNumber(
+							versionValue.substring(1, versionValue.length()));
+				} else if (versionValue.indexOf("-") == versionValue.length()
+						- 1) {
 					begin = new VersionNumber(versionValue.substring(0,
 							versionValue.length() - 1));
 					end = new VersionNumber(Integer.MAX_VALUE);
@@ -90,11 +108,9 @@ public class ProfileVersionIndicator {
 					// start being greater than or equal to end is invalid
 					if (begin.compareTo(end) >= 0) {
 						throw new MalformedProfileIdentifierException(
-								"Begin of version range '"
-										+ versionValue
+								"Begin of version range '" + versionValue
 										+ "' is not lower than its end (in profile '"
-										+ identifierName + "' owned by '"
-										+ ownerName + "').");
+										+ identifierName + "').");
 					}
 				}
 				VersionRange vr = new VersionRange(begin, end);
@@ -116,8 +132,7 @@ public class ProfileVersionIndicator {
 			throw new MalformedProfileIdentifierException(
 					"Version information '" + versionInformation
 							+ "' could not be parsed (in profile '"
-							+ identifierName + "' owned by '" + ownerName
-							+ "').");
+							+ identifierName + "').");
 		} else if (versionInfosTmp.size() == 1) {
 			pVIndicator = new ProfileVersionIndicator(versionInfosTmp);
 		} else {
@@ -175,7 +190,7 @@ public class ProfileVersionIndicator {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < versionInfos.size(); i++) {
-			sb.append(versionInfos.get(i));
+			sb.append(versionInfos.get(i).toString());
 			if (i < versionInfos.size() - 1) {
 				sb.append(";");
 			}
@@ -227,6 +242,17 @@ public class ProfileVersionIndicator {
 			}
 			return false;
 		}
+	}
+
+	public ProfileVersionIndicator createCopy() {
+
+		List<VersionRange> vrListCopy = new ArrayList<VersionRange>();
+
+		for (VersionRange vr : this.versionInfos) {
+			vrListCopy.add(vr.createCopy());
+		}
+
+		return new ProfileVersionIndicator(vrListCopy);
 	}
 
 }

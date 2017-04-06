@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.interactive_instruments.ShapeChange.Model.EA.PackageInfoEA;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
@@ -452,5 +453,13 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		}
 
 		return result;
+	}
+	
+	@Override
+	public PackageInfo rootPackage() {
+		PackageInfo pi = this;
+		while (pi != null && !pi.isSchema())
+			pi = pi.owner();
+		return pi;
 	}
 }

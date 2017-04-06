@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,29 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Profiling;
+package de.interactive_instruments.ShapeChange;
 
-/**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
- */
-public class MalformedProfileIdentifierException extends Exception {
+import org.junit.Test;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6473676722300935169L;
+public class ModelExportTest extends WindowsBasicTest {
 
-	public MalformedProfileIdentifierException(String msg) {
-		super(msg);
+	@Test
+	public void testModelExport_explicitProfileSettings() {
+
+		multiTest(
+				"src/test/resources/config/testEA_export_scxml_explicitProfileSettings.xml",
+				new String[] { "xml" },
+				"testResults/modelexport/explicitProfileSettings/scxml",
+				"src/test/resources/reference/modelexport/explicitProfileSettings/scxml");
+	}
+
+	@Test
+	public void testModelExport_profileInheritance() {
+
+		multiTest(
+				"src/test/resources/config/testEA_export_scxml_profileInheritance.xml",
+				new String[] { "xml" },
+				"testResults/modelexport/profileInheritance/scxml",
+				"src/test/resources/reference/modelexport/profileInheritance/scxml");
 	}
 }

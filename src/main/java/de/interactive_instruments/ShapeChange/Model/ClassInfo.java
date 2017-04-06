@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /** Information about a UML class. */
 public interface ClassInfo extends Info {
@@ -91,12 +92,22 @@ public interface ClassInfo extends Info {
 	public SortedSet<String> subtypes();
 
 	/**
-	 * @return Set with the ids of all direct - and indirect - subtypes of this
-	 *         class (WARNING: this can be a shallow copy or derived set, thus
-	 *         it is not safe to assume that modifications to this set will
-	 *         update the subtype information in the class itself).
+	 * @return Set with all direct - and indirect - subtypes of this class
+	 *         (WARNING: this can be a shallow copy or derived set, thus it is
+	 *         not safe to assume that modifications to this set will update the
+	 *         subtype information in the class itself). Can be empty but not
+	 *         <code>null</code>
 	 */
-	public SortedSet<String> subtypesInCompleteSubtypeHierarchy();
+	public SortedSet<ClassInfo> subtypesInCompleteHierarchy();
+
+	/**
+	 * @return Set with all direct - and indirect - supertypes of this class
+	 *         (WARNING: this can be a shallow copy or derived set, thus it is
+	 *         not safe to assume that modifications to this set will update the
+	 *         supertype information in the class itself). Can be empty but not
+	 *         <code>null</code>
+	 */
+	public SortedSet<ClassInfo> supertypesInCompleteHierarchy();
 
 	/**
 	 * Check whether the class and the package pi are part of the same schema (=
@@ -104,6 +115,13 @@ public interface ClassInfo extends Info {
 	 */
 	public boolean inSchema(PackageInfo pi);
 
+	/**
+	 * This determines the particular base class of a class in the sense of
+	 * ISO19136 annex D+E. Only classes of categories resulting from the
+	 * acknowledged stereotypes are considered. A base class is selected if it
+	 * has the same category as this class or category unknown. However mixin
+	 * classes are always ignored.
+	 */
 	public ClassInfo baseClass();
 
 	public String qname();
@@ -197,4 +215,10 @@ public interface ClassInfo extends Info {
 	 *            metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
+
+	/**
+	 * @return the profiles defined for this class; can be empty but not
+	 *         <code>null</code>
+	 */
+	public Profiles profiles();
 }

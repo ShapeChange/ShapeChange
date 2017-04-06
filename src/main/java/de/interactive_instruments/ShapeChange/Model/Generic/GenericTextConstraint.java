@@ -50,12 +50,18 @@ public class GenericTextConstraint extends TextConstraintImpl {
 //	private String text = null;
 //	private String type = null;
 
+	public GenericTextConstraint() {
+		super();
+	}
+			
 	/**
 	 * Creates a generic TextConstraint implementation from a given one.
 	 * 
 	 * @param constraint
 	 */
 	public GenericTextConstraint(TextConstraint constraint) {
+		super();
+		
 		contextModelElmt = constraint.contextModelElmt();
 		contextModelElmtType = constraint.contextModelElmtType();
 		constraintName = constraint.name();
@@ -147,6 +153,10 @@ public class GenericTextConstraint extends TextConstraintImpl {
 
 	public void setText(String text) {
 		constraintText = text;
+	}
+	
+	public void setType(String type) {
+		constraintType = type;
 	}
 
 }

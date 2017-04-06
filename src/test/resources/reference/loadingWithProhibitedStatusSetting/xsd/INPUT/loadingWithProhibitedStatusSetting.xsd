@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/loadingWithProhibitedStatusSetting" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/loadingWithProhibitedStatusSetting" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="AttEnumA_T1FeatureType">
+    <restriction base="string">
+      <enumeration value="enum1">
+        <annotation>
+          <documentation>1: enum1 VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum2">
+        <annotation>
+          <documentation>2: enum2 VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum3">
+        <annotation>
+          <documentation>3: enum3 VC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="T1Feature" substitutionGroup="gml:AbstractFeature" type="ex:T1FeatureType">
+    <annotation>
+      <documentation>T1Feature FC definition.
+NOTE T1Feature FC description.</documentation>
+    </annotation>
+  </element>
+  <complexType name="T1FeatureType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attEnumA" type="ex:AttEnumA_T1FeatureType">
+            <annotation>
+              <documentation>attEnumA AC definition</documentation>
+            </annotation>
+          </element>
+          <element name="attOther" type="integer">
+            <annotation>
+              <documentation>attOther AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T1Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2Feature" substitutionGroup="gml:AbstractFeature" type="ex:T2FeatureType">
+    <annotation>
+      <documentation>T2Feature FC definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T2FeatureType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attEnumB" type="ex:T2Feature_attEnumBType">
+            <annotation>
+              <documentation>attEnumB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="attOther" type="integer">
+            <annotation>
+              <documentation>attOther AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T2Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="T2Feature_attEnumBType">
+    <restriction base="string">
+      <enumeration value="enumA">
+        <annotation>
+          <documentation>enumA AVC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enumB">
+        <annotation>
+          <documentation>enumB AVC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="T3FeatureA" substitutionGroup="gml:AbstractFeature" type="ex:T3FeatureAType">
+    <annotation>
+      <documentation>T3FeatureA FC definition.
+NOTE T3FeatureA FC description</documentation>
+    </annotation>
+  </element>
+  <complexType name="T3FeatureAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleOfT3FeatureA" type="ex:T3FeatureBPropertyType">
+            <annotation>
+              <documentation>roleOfT3FeatureA RC definition</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex:roleOfT3FeatureB</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3FeatureAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T3FeatureA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3FeatureB" substitutionGroup="gml:AbstractFeature" type="ex:T3FeatureBType">
+    <annotation>
+      <documentation>T3FeatureB FC definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T3FeatureBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleOfT3FeatureB" type="ex:T3FeatureAPropertyType">
+            <annotation>
+              <documentation>roleOfT3FeatureB RC definition</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex:roleOfT3FeatureA</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3FeatureBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T3FeatureB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T4Feature" substitutionGroup="gml:AbstractFeature" type="ex:T4FeatureType">
+    <annotation>
+      <documentation>T4Feature FC definition.
+NOTE T4Feature FC description</documentation>
+    </annotation>
+  </element>
+  <complexType name="T4FeatureType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T4FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T4Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T5Feature" substitutionGroup="ex:T5FeatureSupertype" type="ex:T5FeatureType">
+    <annotation>
+      <documentation>T5Feature FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="T5FeatureType">
+    <complexContent>
+      <extension base="ex:T5FeatureSupertypeType">
+        <sequence>
+          <element name="attNew" type="boolean">
+            <annotation>
+              <documentation>attNew AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="attOld" type="string">
+            <annotation>
+              <documentation>attOld AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T5Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="T5FeatureMixinPropertyType">
+    <choice minOccurs="0">
+      <element ref="ex:T5Feature"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T5FeatureSupertype" substitutionGroup="gml:AbstractFeature" type="ex:T5FeatureSupertypeType">
+    <annotation>
+      <documentation>T5FeatureSupertype FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="T5FeatureSupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attSupertype" type="double">
+            <annotation>
+              <documentation>attSupertype AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T5FeatureSupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T5FeatureSupertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T6Feature" substitutionGroup="gml:AbstractFeature" type="ex:T6FeatureType">
+    <annotation>
+      <documentation>T6Feature FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="T6FeatureType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T6FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:T6Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

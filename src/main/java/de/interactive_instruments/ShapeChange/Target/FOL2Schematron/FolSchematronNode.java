@@ -908,16 +908,13 @@ public abstract class FolSchematronNode {
 			// Obtain the necessary classes from the model
 			TreeSet<String> classnames = new TreeSet<String>();
 
-			SortedSet<String> subtypes = argumentClass.subtypesInCompleteSubtypeHierarchy();
+			SortedSet<ClassInfo> subtypes = argumentClass.subtypesInCompleteHierarchy();
 
-			if (subtypes != null) {
-				for (String stid : subtypes) {
-					ClassInfo ci = argumentClass.model().classById(stid);
-					if (ci.isAbstract())
-						continue;
-					classnames.add(schemaObject.getAndRegisterXmlName(ci));
-				}
-			}
+			for (ClassInfo subtype : subtypes) {
+				if (subtype.isAbstract())
+					continue;
+				classnames.add(schemaObject.getAndRegisterXmlName(subtype));
+			}			
 
 			if (!argumentClass.isAbstract())
 				classnames.add(schemaObject

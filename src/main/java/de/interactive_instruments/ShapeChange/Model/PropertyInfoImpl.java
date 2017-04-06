@@ -39,6 +39,7 @@ import org.apache.xml.serializer.utils.XMLChar;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 public abstract class PropertyInfoImpl extends InfoImpl
 		implements PropertyInfo {
@@ -49,6 +50,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	/** Inquire restriction of property. */
 	protected boolean restriction = false;
 	protected Boolean implementedByNilReason = null;
+	protected Profiles profiles = null;
 
 	private static int globalSequenceNumberForAttributes = GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ATTRIBUTES;
 	private static int globalSequenceNumberForAssociationRoles = GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ASSOCIATIONROLES;
@@ -72,16 +74,16 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang==null || lang.isEmpty()) {
+		if (lang == null || lang.isEmpty()) {
 			ClassInfo ci = inClass();
-			if (ci!=null)
+			if (ci != null)
 				return ci.language();
 		} else
 			return lang;
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Return the encoding rule relevant on the operation, given the platform
 	 */
@@ -212,7 +214,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	 * de.interactive_instruments.ShapeChange.Model.PropertyInfo#categoryOfValue
 	 * ()
 	 */
-	public int categoryOfValue() {
+	public final int categoryOfValue() {
 		ClassInfo ci = model().classById(typeInfo().id);
 		if (ci != null)
 			return ci.category();
@@ -301,8 +303,8 @@ public abstract class PropertyInfoImpl extends InfoImpl
 						inClass().name() + "." + pn, s2);
 				if (mc != null)
 					mc.addDetail(null, 400, "Property", fullName());
-			} else
-				if (s2 != null && !s2.isEmpty() && (s == null || s.isEmpty())) {
+			} else if (s2 != null && !s2.isEmpty()
+					&& (s == null || s.isEmpty())) {
 				MessageContext mc = result().addError(null, 203, "obligation",
 						inClass().name() + "." + pn, s2);
 				if (mc != null)
@@ -404,6 +406,43 @@ public abstract class PropertyInfoImpl extends InfoImpl
 				res = s.equalsIgnoreCase("true");
 		}
 		return res;
-	} // voidable()
+	}
 
+	@Override
+	public final Profiles profiles() {
+
+		if (this.profiles == null) {
+
+			// attempt to parse from profiles tagged value
+			String profilesTV = this
+					.taggedValue(Profiles.PROFILES_TAGGED_VALUE);
+
+			if (profilesTV == null || profilesTV.trim().length() == 0) {
+
+				// No specific profiles declared, which is valid.
+				this.profiles = new Profiles();
+
+			} else {
+				
+				try {
+
+					Profiles tmp = Profiles.parse(profilesTV, false);
+
+					this.profiles = tmp;
+
+				} catch (MalformedProfileIdentifierException e) {
+
+					MessageContext mc = result().addWarning(null, 20201);
+					if (mc != null) {
+						mc.addDetail(null, 20216, fullNameInSchema());
+						mc.addDetail(null, 20217, e.getMessage());
+						mc.addDetail(null, 20218, profilesTV);
+					}
+					this.profiles = new Profiles();
+				}
+			}
+		}
+		
+		return this.profiles;
+	}
 }

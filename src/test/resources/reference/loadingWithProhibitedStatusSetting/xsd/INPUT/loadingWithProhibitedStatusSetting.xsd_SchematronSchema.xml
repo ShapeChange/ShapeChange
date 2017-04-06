@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'Test'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="ex" uri="http://example.org/shapechange/loadingWithProhibitedStatusSetting"/>
+  <pattern>
+    <rule context="ex:T5Feature">
+      <assert test="string-length(ex:attOld) &lt;= 25">attOld_size</assert>
+    </rule>
+    <rule context="ex:T5FeatureMixin">
+      <assert test="string-length(ex:attOld) &lt;= 25">attOld_size</assert>
+    </rule>
+  </pattern>
+</schema>

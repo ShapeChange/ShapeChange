@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.List;
 import java.util.Map;
 
 import de.interactive_instruments.ShapeChange.Options;
@@ -56,6 +57,15 @@ public interface Info extends Comparable<Info> {
 	 *         is not available
 	 */
 	public String globalIdentifier();
+
+	/**
+	 * Retrieves available values for all descriptors as defined by the
+	 * configuration. Values can be given with or without language identifier,
+	 * depending on what can be retrieved from the specific descriptor source.
+	 * 
+	 * @return all descriptor values; can be empty but not <code>null</code>
+	 */
+	public Descriptors descriptors();
 
 	/**
 	 * Return unique id of model element (unique within the model).
@@ -122,7 +132,7 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="primaryCode" source="tag"
 	 * tag="primaryCode"/&gt;<br/>
 	 * 
-	 * @return primary code of the model element
+	 * @return primary code of the model element, can be <code>null</code>
 	 */
 	public String primaryCode();
 
@@ -150,7 +160,8 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="documentation" source="tag"
 	 * tag="documentation"/&gt;<br/>
 	 * 
-	 * @return text documentation of UML model element from the model
+	 * @return text documentation of UML model element from the model, can be
+	 *         the empty string but not <code>null</code>
 	 */
 	public String documentation();
 
@@ -191,7 +202,7 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="alias" source="tag"
 	 * tag="designation"/&gt;<br/>
 	 * 
-	 * @return alias of the model element
+	 * @return alias of the model element, can be <code>null</code>
 	 */
 	public String aliasName();
 
@@ -218,7 +229,8 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="definition" source="tag"
 	 * tag="definition"/&gt;<br/>
 	 * 
-	 * @return definition of model element
+	 * @return definition of model element, can be empty but not
+	 *         <code>null</code>
 	 */
 	public String definition();
 
@@ -243,7 +255,7 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="description" source="tag"
 	 * tag="description"/&gt;<br/>
 	 * 
-	 * @return description of model element
+	 * @return description of model element, can be <code>null</code>
 	 */
 	public String description();
 
@@ -264,7 +276,7 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="example" source="tag" tag="example"/&gt;
 	 * <br/>
 	 * 
-	 * @return array of examples
+	 * @return array of examples; can be empty but not <code>null</code>
 	 */
 	public String[] examples();
 
@@ -287,7 +299,7 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="legalBasis" source="tag"
 	 * tag="legalBasis"/&gt;<br/>
 	 * 
-	 * @return legal basis for this model element
+	 * @return legal basis for this model element, can be <code>null</code>
 	 */
 	public String legalBasis();
 
@@ -310,7 +322,8 @@ public interface Info extends Comparable<Info> {
 	 * &lt;DescriptorSource descriptor="dataCaptureStatement" source="tag"
 	 * tag="dataCaptureStatement"/&gt;<br/>
 	 * 
-	 * @return a data capture statement for the model element
+	 * @return array of data capture statements; can be empty but not
+	 *         <code>null</code>
 	 */
 	public String[] dataCaptureStatements();
 
@@ -355,6 +368,17 @@ public interface Info extends Comparable<Info> {
 
 	/**
 	 * Retrieves all tagged values of the model element with the specified tag.
+	 * 
+	 * @param the
+	 *            normalized tag name of the tagged value to look up
+	 * @return List of values for the given tag (as objects that have a string
+	 *         value and optional language indicator); can be empty if no value
+	 *         has been found but not <code>null</code> .
+	 */
+	public List<LangString> taggedValuesForTagAsLangStrings(String tag);
+
+	/**
+	 * Retrieves all tagged values of the model element with the specified tag.
 	 * <br/>
 	 * <br/>
 	 * 
@@ -378,13 +402,10 @@ public interface Info extends Comparable<Info> {
 	 *            normalized tag name of the tagged value to look up
 	 * @param language
 	 *            the language to use, use codes from IETF RFC 5646, e.g. "en".
-	 * @return The tagged value (in the requested language or without language
-	 *         classification) for the tag given or <code>null</code> if the
-	 *         tagged value is missing. If there are multiple values with the
-	 *         tag only the first is provided.
-	 * 
-	 * @return the list of tagged values with the tag; an emtpy list if no value
-	 *         has been found
+	 * @return The tagged value (in the requested language) for the tag given or
+	 *         <code>null</code> if the tagged value is missing. If there are
+	 *         multiple values with the tag only the first (in the given
+	 *         language) is provided.
 	 */
 	public String taggedValueInLanguage(String tag, String language);
 
@@ -431,6 +452,8 @@ public interface Info extends Comparable<Info> {
 	 */
 	public TaggedValues taggedValuesAll();
 
+	public void removeTaggedValue(String tag);
+	
 	/**
 	 * Retrieves all tagged values of the model element.
 	 * 

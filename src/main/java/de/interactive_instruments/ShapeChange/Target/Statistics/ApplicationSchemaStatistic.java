@@ -281,6 +281,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 			return "<<codeList>>";
 		case Options.ATTRIBUTECONCEPT:
 			return "<<attributeConcept>>";
+		case Options.ROLECONCEPT:
+			return "<<roleConcept>>";
 		case Options.FEATURECONCEPT:
 			return "<<featureConcept";
 		case Options.BASICTYPE:

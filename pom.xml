@@ -125,6 +125,11 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>20.0</version>
+		</dependency>
 	</dependencies>
 	<url>http://shapechange.net/</url>
 	<description>ShapeChange - processing application schemas for geographic information</description>

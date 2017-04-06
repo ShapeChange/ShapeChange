@@ -64,16 +64,16 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileIdentifierMap;
-import de.interactive_instruments.ShapeChange.Transformation.Profiling.MalformedProfileIdentifierException;
-import de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileIdentifier.IdentifierPattern;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
@@ -322,15 +322,19 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 					try {
 
-						ProfileIdentifierMap piMap = ProfileIdentifierMap.parse(
-								profilesTV, IdentifierPattern.loose, i.name());
+						Profiles piMap = Profiles.parse(
+								profilesTV, false);
 
 						profileNames.addAll(
 								piMap.getProfileIdentifiersByName().keySet());
 
 					} catch (MalformedProfileIdentifierException e) {
-						result.addWarning(this, 9, profilesTV,
-								i.fullNameInSchema(), e.getMessage());
+						MessageContext mc = result.addWarning(null, 20201);
+						if(mc != null) {
+							mc.addDetail(null, 20216, i.fullNameInSchema());
+							mc.addDetail(null,20217,e.getMessage());
+							mc.addDetail(null,20218,profilesTV);
+						}
 					}
 				}
 			}
@@ -406,8 +410,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
 		case 8:
 			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
-		case 9:
-			return "The profile identifier '$1$' in model element '$2$' is not well-formed: $3$";
 
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";

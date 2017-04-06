@@ -42,12 +42,12 @@ ALTER TABLE t3_featuretype1 ADD CONSTRAINT fk_t3_featuretype1_propnumcode FOREIG
 ALTER TABLE t3_featuretype1_propalpcode ADD CONSTRAINT fk_t3_featuretype1_propalpcode_t3_codelist2_id FOREIGN KEY (t3_codelist2_id) REFERENCES t3_codelist2;
 ALTER TABLE t3_featuretype1_propalpcode ADD CONSTRAINT fk_t3_featuretype1_propalpcode_t3_featuretype1_id FOREIGN KEY (t3_featuretype1_id) REFERENCES t3_featuretype1;
 
-INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('1', NULL, NULL, NULL, NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
-INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('2', NULL, NULL, NULL, NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
-INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeA', 'codeA alias', 'codeA data capture statement 2 codeA data capture statement', 'codeA definition', 'codeA description', 'DEF: codeA definition; DESC: codeA description; EX: codeA example 1
-codeA example 2; LB: codeA legal basis; DCS: codeA data capture statement 2
+INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('1', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('2', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeA', 'codeA alias', 'codeA data capture statement codeA data capture statement 2', 'codeA definition', 'codeA description', 'DEF: codeA definition; DESC: codeA description; EX: codeA example 1
+codeA example 2; LB: codeA legal basis; DCS: codeA data capture statement
 
-codeA data capture statement; PC: codeA primary code', 'codeA example 1
+codeA data capture statement 2; PC: codeA primary code', 'codeA example 1
 codeA example 2', 'codeA legal basis', 'codeA primary code');
 INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeB', 'codeB alias', NULL, 'codeB definition', 'codeB description', 'DEF: codeB definition; DESC: codeB description; EX: codeB example 1
 codeB example 2; LB: codeB legal basis; DCS: ; PC: codeB primary code', 'codeB example 1

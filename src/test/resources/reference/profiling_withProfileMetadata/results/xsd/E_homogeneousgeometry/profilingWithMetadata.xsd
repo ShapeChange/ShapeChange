@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://example.org/shapechange/profiling/withMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/profiling/withMetadata" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T2_FeatureUnion" substitutionGroup="gml:AbstractObject" type="sc:T2_FeatureUnionType"/>
+  <complexType name="T2_FeatureUnionType">
+    <choice>
+      <element name="c" type="sc:T2_Feature_CPropertyType"/>
+      <element name="p" type="sc:T2_Feature_PPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T2_FeatureUnionPropertyType">
+    <sequence>
+      <element ref="sc:T2_FeatureUnion"/>
+    </sequence>
+  </complexType>
+  <element name="T2_Feature_C" substitutionGroup="gml:AbstractFeature" type="sc:T2_Feature_CType"/>
+  <complexType name="T2_Feature_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="a2" type="gml:CurvePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_Feature_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T2_Feature_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_Feature_P" substitutionGroup="gml:AbstractFeature" type="sc:T2_Feature_PType"/>
+  <complexType name="T2_Feature_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="a1" type="gml:PointPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_Feature_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T2_Feature_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -117,9 +117,10 @@ public class EADocument extends ModelImpl implements Model {
 		return result;
 	} // result()
 
-	/** Connect to EA Repository with security information*/
+	/** Connect to EA Repository with security information */
 	public void initialise(ShapeChangeResult r, Options o,
-			String repositoryFileNameOrConnectionString, String username, String password) throws ShapeChangeAbortException {
+			String repositoryFileNameOrConnectionString, String username,
+			String password) throws ShapeChangeAbortException {
 
 		options = o;
 		result = r;
@@ -129,19 +130,21 @@ public class EADocument extends ModelImpl implements Model {
 		/** Connect to EA repository */
 		repository = new Repository();
 
-		if (!repository.OpenFile2(repositoryFileNameOrConnectionString,username,password)) {
+		if (!repository.OpenFile2(repositoryFileNameOrConnectionString,
+				username, password)) {
 			String errormsg = repository.GetLastError();
-			r.addFatalError(null, 35, errormsg, repositoryFileNameOrConnectionString,username,password);
+			r.addFatalError(null, 35, errormsg,
+					repositoryFileNameOrConnectionString, username, password);
 			throw new ShapeChangeAbortException();
 		}
 
 		executeCommonInitializationProcedure();
 	}
 
-
 	/** Connect to EA Repository without security information */
 	public void initialise(ShapeChangeResult r, Options o,
-			String repositoryFileNameOrConnectionString) throws ShapeChangeAbortException {
+			String repositoryFileNameOrConnectionString)
+			throws ShapeChangeAbortException {
 
 		options = o;
 		result = r;
@@ -150,9 +153,13 @@ public class EADocument extends ModelImpl implements Model {
 
 		String connectionString;
 
-		/** Determine if we are dealing with a file or server based repository*/
+		/**
+		 * Determine if we are dealing with a file or server based repository
+		 */
 
-		if(repositoryFileNameOrConnectionString.contains("DBType=") || repositoryFileNameOrConnectionString.contains("Connect=Cloud")) {
+		if (repositoryFileNameOrConnectionString.contains("DBType=")
+				|| repositoryFileNameOrConnectionString
+						.contains("Connect=Cloud")) {
 
 			/* We are dealing with a server based repository. */
 
@@ -162,13 +169,16 @@ public class EADocument extends ModelImpl implements Model {
 
 			/* We have an EAP file. Ensure that it exists */
 
-			java.io.File repfile = new java.io.File(repositoryFileNameOrConnectionString);
+			java.io.File repfile = new java.io.File(
+					repositoryFileNameOrConnectionString);
 			boolean ex = true;
 			if (!repfile.exists()) {
 				ex = false;
-				if (!repositoryFileNameOrConnectionString.toLowerCase().endsWith(".eap")) {
+				if (!repositoryFileNameOrConnectionString.toLowerCase()
+						.endsWith(".eap")) {
 					repositoryFileNameOrConnectionString += ".eap";
-					repfile = new java.io.File(repositoryFileNameOrConnectionString);
+					repfile = new java.io.File(
+							repositoryFileNameOrConnectionString);
 					ex = repfile.exists();
 				}
 			}
@@ -192,7 +202,8 @@ public class EADocument extends ModelImpl implements Model {
 		executeCommonInitializationProcedure();
 	}
 
-	public void executeCommonInitializationProcedure() throws ShapeChangeAbortException {
+	public void executeCommonInitializationProcedure()
+			throws ShapeChangeAbortException {
 
 		// determine if specific packages should not be loaded
 		this.excludedPackageNames = options.getExcludedPackages();
@@ -218,7 +229,8 @@ public class EADocument extends ModelImpl implements Model {
 
 			// Check if this model and all its contents shall be excluded
 			String name = p.GetName();
-			if (excludedPackageNames != null && excludedPackageNames.contains(name)) {
+			if (excludedPackageNames != null
+					&& excludedPackageNames.contains(name)) {
 				// stop processing this model and continue with the next
 				continue;
 			}
@@ -237,7 +249,8 @@ public class EADocument extends ModelImpl implements Model {
 			// Check if this package and all its contents shall be excluded from
 			// the model
 			String name = pack.GetName();
-			if (excludedPackageNames != null && excludedPackageNames.contains(name)) {
+			if (excludedPackageNames != null
+					&& excludedPackageNames.contains(name)) {
 				// stop processing this package and continue with the next
 				continue;
 			}
@@ -250,23 +263,41 @@ public class EADocument extends ModelImpl implements Model {
 			if (packelmt != null)
 				this.fPackageByElmtId.put(
 						new Integer(packelmt.GetElementID()).toString(), pi);
+
 			// Now pick all classes and add these to their to caches.
 			for (org.sparx.Element elmt : pack.GetElements()) {
+
 				String type = elmt.GetType();
+
 				if (!type.equals("DataType") && !type.equals("Class")
 						&& !type.equals("Interface")
-						&& !type.equals("Enumeration"))
+						&& !type.equals("Enumeration")) {
 					continue;
+				}
+
 				ClassInfoEA ci = new ClassInfoEA(this, pi, elmt);
+
+				/*
+				 * prevent loading of classes that have tagged value 'status'
+				 * with prohibited value
+				 */
+				String ciname = ci.name();
+				String statusTaggedValue = ci.taggedValue("status");
+				if (statusTaggedValue != null
+						&& options().prohibitedStatusValuesWhenLoadingClasses()
+								.contains(statusTaggedValue)) {
+					continue;
+				}
+
 				fClassById.put(ci.id(), ci);
-				// TODO What's happening to identical class names? How is this
-				// supposed to be handled? Open issue.While classifier names
-				// have to be
-				// unique per app schema only, it is a legacy from Rational Rose
-				// that it is expected that classifier names are unique in the
-				// whole
-				// model. The correct solution would be to add namespace
-				// qualifiers.
+				/*
+				 * TODO What's happening to identical class names? How is this
+				 * supposed to be handled? Open issue. While classifier names
+				 * have to be unique per app schema only, it is a legacy from
+				 * Rational Rose that it is expected that classifier names are
+				 * unique in the whole model. The correct solution would be to
+				 * add namespace qualifiers.
+				 */
 				fClassByName.put(ci.name(), ci);
 			}
 			// Add next level packages for further evaluation
@@ -275,15 +306,15 @@ public class EADocument extends ModelImpl implements Model {
 			}
 		}
 
-		StatusBoard.getStatusBoard().statusChanged(
-				STATUS_EADOCUMENT_ESTABLISHCLASSES);
+		StatusBoard.getStatusBoard()
+				.statusChanged(STATUS_EADOCUMENT_ESTABLISHCLASSES);
 
 		/**
 		 * Now that all classes are collected, in a second go establish class
 		 * derivation hierarchy and all other associations between classes.
 		 */
 		for (ClassInfoEA ci : fClassById.values()) {
-			
+
 			// Generalization - class derivation hierarchy
 			ci.establishClassDerivationHierarchy();
 			// Other associations where the class is source or target
@@ -291,17 +322,18 @@ public class EADocument extends ModelImpl implements Model {
 		}
 
 		String checkingConstraints = options.parameter("checkingConstraints");
-		if (checkingConstraints == null
-				|| !checkingConstraints.toLowerCase().trim().equals("disabled")) {
-			StatusBoard.getStatusBoard().statusChanged(
-					STATUS_EADOCUMENT_READCONSTARINTS);
+		if (checkingConstraints == null || !checkingConstraints.toLowerCase()
+				.trim().equals("disabled")) {
+			StatusBoard.getStatusBoard()
+					.statusChanged(STATUS_EADOCUMENT_READCONSTARINTS);
 
 			// TODO The following may be removed when constraints have been
 			// tested.
 			/** In a third go collect all constraints */
 			for (ClassInfoEA ci : fClassById.values()) {
 				ci.constraints();
-				SortedMap<StructuredNumber, PropertyInfo> props = ci.properties();
+				SortedMap<StructuredNumber, PropertyInfo> props = ci
+						.properties();
 				for (PropertyInfo pi : props.values())
 					pi.constraints();
 			}
@@ -322,20 +354,21 @@ public class EADocument extends ModelImpl implements Model {
 		// load diagrams if so requested
 		String loadDiagrams = options.parameter("loadDiagrams");
 
-		if(loadDiagrams != null && loadDiagrams.equalsIgnoreCase("true")) {
+		if (loadDiagrams != null && loadDiagrams.equalsIgnoreCase("true")) {
 
 			java.io.File tmpDir = options.imageTmpDir();
 
-			if(tmpDir.exists()) {
+			if (tmpDir.exists()) {
 
-				// probably content from previous run, delete the content of the directory
+				// probably content from previous run, delete the content of the
+				// directory
 				try {
 					FileUtils.deleteDirectory(tmpDir);
 				} catch (IOException e) {
 					result.addWarning(null, 34, tmpDir.getAbsolutePath());
 				}
 
-				if(!tmpDir.exists()) {
+				if (!tmpDir.exists()) {
 					try {
 						FileUtils.forceMkdir(tmpDir);
 					} catch (IOException e) {
@@ -346,7 +379,8 @@ public class EADocument extends ModelImpl implements Model {
 
 			AtomicInteger imgIdCounter = new AtomicInteger(0);
 
-			SortedSet<? extends PackageInfo> selectedSchema = this.selectedSchemas();
+			SortedSet<? extends PackageInfo> selectedSchema = this
+					.selectedSchemas();
 
 			for (PackageInfo pi : selectedSchema) {
 
@@ -359,21 +393,23 @@ public class EADocument extends ModelImpl implements Model {
 				if (options.skipSchema(null, pi))
 					continue;
 
-				saveDiagrams(imgIdCounter,"img",tmpDir, escapeFileName(tmpDir.getName()),pi);
+				saveDiagrams(imgIdCounter, "img", tmpDir,
+						escapeFileName(tmpDir.getName()), pi);
 			}
 		}
 
 	} // EA Document Ctor
 
 	/**
-	 * Replace all spaces with underscores and removes non-ASCII characters and removes ASCII characters that are not printable.
+	 * Replace all spaces with underscores and removes non-ASCII characters and
+	 * removes ASCII characters that are not printable.
 	 *
 	 * @param filename
 	 * @return
 	 */
 	private String escapeFileName(String filename) {
 
-		if(filename == null) {
+		if (filename == null) {
 
 			return null;
 
@@ -401,9 +437,10 @@ public class EADocument extends ModelImpl implements Model {
 			targetFolder.mkdir();
 		}
 
-		java.io.File pi_folder = new java.io.File(targetFolder, escapeFileName(pi.name()));
+		java.io.File pi_folder = new java.io.File(targetFolder,
+				escapeFileName(pi.name()));
 
-		if(!pi_folder.mkdir()) {
+		if (!pi_folder.mkdir()) {
 			result.addWarning(null, 32, pi_folder.getAbsolutePath());
 		}
 
@@ -449,16 +486,16 @@ public class EADocument extends ModelImpl implements Model {
 
 			if (type.equalsIgnoreCase("Package")) {
 
-				regexForModelElement = packageDiagramRegex.replaceAll(
-						elementNameKeyForMatching, pi.name());
+				regexForModelElement = packageDiagramRegex
+						.replaceAll(elementNameKeyForMatching, pi.name());
 				if (imgName.matches(regexForModelElement)) {
 					relevantDiagram = true;
 				}
 
 			} else if (type.equalsIgnoreCase("Logical")) {
 
-				regexForModelElement = packageDiagramRegex.replaceAll(
-						elementNameKeyForMatching, pi.name());
+				regexForModelElement = packageDiagramRegex
+						.replaceAll(elementNameKeyForMatching, pi.name());
 				if (imgName.matches(regexForModelElement)) {
 					relevantDiagram = true;
 				}
@@ -471,7 +508,8 @@ public class EADocument extends ModelImpl implements Model {
 					// relevant
 
 				} else if (relevantDiagram) {
-					// we have already established that this is a relevant diagram
+					// we have already established that this is a relevant
+					// diagram
 
 				} else {
 
@@ -480,12 +518,12 @@ public class EADocument extends ModelImpl implements Model {
 						// only process classes from this package
 						if (ci.pkg() == pi) {
 
-							regexForModelElement = classDiagramRegex
-									.replaceAll(elementNameKeyForMatching,
-											ci.name());
+							regexForModelElement = classDiagramRegex.replaceAll(
+									elementNameKeyForMatching, ci.name());
 							if (imgName.matches(regexForModelElement)) {
 								relevantDiagram = true;
-								// we established that this is a relevant diagram
+								// we established that this is a relevant
+								// diagram
 								break;
 							}
 						}
@@ -530,7 +568,8 @@ public class EADocument extends ModelImpl implements Model {
 
 			} else if (type.equalsIgnoreCase("Logical")) {
 
-				regexForModelElement = packageDiagramRegex.replaceAll(elementNameKeyForMatching, pi.name());
+				regexForModelElement = packageDiagramRegex
+						.replaceAll(elementNameKeyForMatching, pi.name());
 				if (imgName.matches(regexForModelElement)) {
 					addDiagramToPackage(pi, imgMeta);
 				}
@@ -548,9 +587,8 @@ public class EADocument extends ModelImpl implements Model {
 						// only process classes from this package
 						if (ci.pkg() == pi) {
 
-							regexForModelElement = classDiagramRegex
-									.replaceAll(elementNameKeyForMatching,
-											ci.name());
+							regexForModelElement = classDiagramRegex.replaceAll(
+									elementNameKeyForMatching, ci.name());
 							if (imgName.matches(regexForModelElement)) {
 								addDiagramToClass(ci, imgMeta);
 							}
@@ -578,20 +616,22 @@ public class EADocument extends ModelImpl implements Model {
 	}
 
 	/**
-	 * @return list of diagrams of the given package. The list is sorted by name if parameter sortDiagramsByName is set to true (default),
-	 * or by the order in the EA model if set to false.
+	 * @return list of diagrams of the given package. The list is sorted by name
+	 *         if parameter sortDiagramsByName is set to true (default), or by
+	 *         the order in the EA model if set to false.
 	 */
 	private List<Diagram> getDiagramsOfPackage(PackageInfoEA piEa) {
 		// note that this is an org.sparx.Collection
 		Collection<Diagram> diagrams = piEa.eaPackage.GetDiagrams();
 
 		List<Diagram> diagramList = new ArrayList<Diagram>();
-		for(Diagram d : diagrams) {
+		for (Diagram d : diagrams) {
 			diagramList.add(d);
 		}
 
 		boolean sortDiagramsByName;
-		String paramSortDiagramsByName = options.parameter("sortDiagramsByName");
+		String paramSortDiagramsByName = options
+				.parameter("sortDiagramsByName");
 		if (paramSortDiagramsByName == null) {
 			sortDiagramsByName = true; // default
 		} else {
@@ -614,7 +654,7 @@ public class EADocument extends ModelImpl implements Model {
 
 		List<ImageMetadata> ciDiagrams = ci.getDiagrams();
 
-		if(ciDiagrams == null) {
+		if (ciDiagrams == null) {
 			ciDiagrams = new ArrayList<ImageMetadata>();
 		}
 

@@ -52,12 +52,16 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -68,20 +72,25 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected Options options = null;
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
+
 	protected String id = null;
-	protected String globalIdentifier = null;
 	protected String name = null;
 
+	protected boolean isAbstract = false;
 	protected boolean includePropertyType = true;
 	protected boolean includeByValuePropertyType = false;
 	protected boolean isCollection = false;
 	protected boolean asDictionary = false;
+	protected boolean asDictionaryGml33 = false;
 	protected boolean asGroup = false;
 	protected boolean asCharacterString = false;
 	protected boolean hasNilReason = false;
-	protected PackageInfo pkg = null;
-	protected boolean isAbstract = false;
 	protected boolean isLeaf = false;
+	protected boolean suppressed = false;
+	protected String xmlSchemaType = null;
+
+	protected PackageInfo pkg = null;
+
 	protected AssociationInfo assocClass = null;
 	/**
 	 * Set of ids of all base classes of this class
@@ -94,9 +103,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * Not null
 	 */
 	protected Vector<Constraint> constraints = new Vector<Constraint>();
-	protected boolean suppressed = false;
-	protected boolean asDictionaryGml33 = false;
-	protected String xmlSchemaType = null;
+
+	public GenericClassInfo() {
+
+	}
 
 	public GenericClassInfo(GenericModel model, String id, String name,
 			int category) {
@@ -288,104 +298,104 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.asDictionaryGml33 = asDictionaryGml33;
 	}
 
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String aliasName() {
-		return aliasName;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String primaryCode() {
-		return primaryCode;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String definition() {
-		return definition;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String description() {
-		return description;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String language() {
-		return language;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String legalBasis() {
-		return legalBasis;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] examples() {
-		return examples;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] dataCaptureStatements() {
-		return dataCaptureStatements;
-	}
-
-	/**
-	 * In the generic model, always return an empty string, the other
-	 * descriptors should be used instead.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String documentation() {
-		return "";
-	}
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String aliasName() {
+	// return aliasName;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String primaryCode() {
+	// return primaryCode;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String definition() {
+	// return definition;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String description() {
+	// return description;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String language() {
+	// return language;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String legalBasis() {
+	// return legalBasis;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String[] examples() {
+	// return examples;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String[] dataCaptureStatements() {
+	// return dataCaptureStatements;
+	// }
+	//
+	// /**
+	// * In the generic model, always return an empty string, the other
+	// * descriptors should be used instead.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String documentation() {
+	// return "";
+	// }
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#fullName()
@@ -405,10 +415,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return id;
 	}
 
-	@Override
-	public String globalIdentifier() {
-		return globalIdentifier;
-	}
+	// @Override
+	// public String globalIdentifier() {
+	// return globalIdentifier;
+	// }
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
@@ -438,69 +448,42 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return result;
 	}
 
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setAliasName(String aliasName) {
-		this.aliasName = aliasName;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDefinition(String definition) {
-		this.definition = definition;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setPrimaryCode(String primaryCode) {
-		this.primaryCode = primaryCode;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLegalBasis(String legalBasis) {
-		this.legalBasis = legalBasis;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setExamples(String[] examples) {
-		this.examples = examples;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDataCaptureStatements(String[] dataCaptureStatements) {
-		this.dataCaptureStatements = dataCaptureStatements;
-	}
+	// public void setAliasNameAll(Descriptors aliasName) {
+	// this.aliasName = aliasName;
+	// }
+	//
+	// public void setDefinitionAll(Descriptors definition) {
+	// this.definition = definition;
+	// }
+	//
+	// public void setDescriptionAll(Descriptors description) {
+	// this.description = description;
+	// }
+	//
+	// public void setLanguageAll(Descriptors language) {
+	// this.language = language;
+	// }
+	//
+	// public void setPrimaryCodeAll(Descriptors primaryCode) {
+	// this.primaryCode = primaryCode;
+	// }
+	//
+	// public void setLegalBasisAll(Descriptors legalBasis) {
+	// this.legalBasis = legalBasis;
+	// }
+	//
+	// public void setExamplesAll(Descriptors examples) {
+	// this.examples = examples;
+	// }
+	//
+	// public void setDataCaptureStatementsAll(Descriptors
+	// dataCaptureStatements) {
+	// this.dataCaptureStatements = dataCaptureStatements;
+	// }
+	//
+	// public void setGlobalIdentifierAll(Descriptors globalIdentifier) {
+	// this.globalIdentifier = globalIdentifier;
+	// }
 
 	/**
 	 * @param id
@@ -508,13 +491,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	public void setId(String id) {
 		this.id = id;
 
-	}
-
-	/**
-	 * @param globalIdentifier
-	 */
-	public void setGlobalIdentifier(String globalIdentifier) {
-		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 	/**
@@ -557,7 +533,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		// do nothing else, stereotypes have to be set explicitly using
 		// setStereotypes
 
-	} // validateStereotypesCache
+	}
 
 	/**
 	 * @param stereotypeSet
@@ -690,12 +666,17 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		} else if (tvName.equalsIgnoreCase("alias")) {
 
-			this.setAliasName(tvValue);
+			LangString ls = LangString.parse(tvValue);
+			this.descriptors.put(Descriptor.ALIAS, ls);
+			// this.setAliasNameAll(new Descriptors(tvValue));
 
 		} else if (tvName.equalsIgnoreCase("documentation")) {
 
 			// we map this to the descriptor 'definition'
-			this.setDefinition(tvValue);
+
+			LangString ls = LangString.parse(tvValue);
+			this.descriptors.put(Descriptor.DEFINITION, ls);
+			// this.setDefinitionAll(new Descriptors(tvValue));
 
 		} else if (tvName.equalsIgnoreCase("suppress")) {
 
@@ -787,13 +768,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		} else {
 			return true;
 		}
-	}
-
-	public boolean hasSubtypes() {
-		if (subtypes != null && subtypes.size() > 0)
-			return true;
-		else
-			return false;
 	}
 
 	/**
@@ -1281,15 +1255,19 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		GenericClassInfo copy = new GenericClassInfo(this.model, copyId,
 				copyName, copyCategory);
 
-		copy.setGlobalIdentifier(globalIdentifier);
-		copy.setAliasName(aliasName);
-		copy.setDefinition(definition);
-		copy.setDescription(description);
-		copy.setPrimaryCode(primaryCode);
-		copy.setLanguage(language);
-		copy.setLegalBasis(legalBasis);
-		copy.setDataCaptureStatements(dataCaptureStatements);
-		copy.setExamples(examples);
+		// set descriptors
+		copy.setDescriptors(this.descriptors().createCopy());
+		copy.setProfiles(this.profiles().createCopy());
+		// copy.setGlobalIdentifierAll(globalIdentifier);
+		// copy.setAliasNameAll(aliasName);
+		// copy.setDefinitionAll(definition);
+		// copy.setDescriptionAll(description);
+		// copy.setPrimaryCodeAll(primaryCode);
+		// copy.setLanguageAll(language);
+		// copy.setLegalBasisAll(legalBasis);
+		// copy.setDataCaptureStatementsAll(dataCaptureStatements);
+		// copy.setExamplesAll(examples);
+
 		copy.setStereotypes(stereotypesCache);
 		copy.setTaggedValues(taggedValuesCache, false);
 		copy.setIncludePropertyType(includePropertyType);
@@ -1713,6 +1691,15 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 				tmp_supertypes.add(prefix + id);
 			}
 			this.supertypes = tmp_supertypes;
+		}
+	}
+
+	public void setProfiles(Profiles profiles) {
+
+		if (profiles == null) {
+			this.profiles = new Profiles();
+		} else {
+			this.profiles = profiles;
 		}
 	}
 }

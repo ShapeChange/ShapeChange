@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Profiling;
+package de.interactive_instruments.ShapeChange.Profile;
 
 import java.util.Arrays;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  */
 public class VersionNumber {
 
@@ -74,25 +74,26 @@ public class VersionNumber {
 	public int compareTo(VersionNumber other) {
 
 		int[] thisComps, otherComps;
-		if(components.length == other.components.length) {
+		if (components.length == other.components.length) {
 			thisComps = this.components;
 			otherComps = other.components;
 		} else if (components.length > other.components.length) {
 			thisComps = this.components;
-			otherComps = Arrays.copyOf(other.components, this.components.length);
+			otherComps = Arrays.copyOf(other.components,
+					this.components.length);
 		} else {
 			// components.length < other.components.length
 			thisComps = Arrays.copyOf(this.components, other.components.length);
 			otherComps = other.components;
 		}
-				
+
 		for (int i = 0; i < thisComps.length; i++) {
 			// Compare component
 			int diff = thisComps[i] - otherComps[i];
 			// If other than equal return difference
 			if (diff != 0)
 				return diff;
-		}	
+		}
 		return 0;
 	}
 
@@ -101,16 +102,23 @@ public class VersionNumber {
 		componentCopy[components.length - 1]++;
 		return new VersionNumber(componentCopy);
 	}
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for(int i=0; i<components.length;i++) {
+		for (int i = 0; i < components.length; i++) {
 			sb.append(components[i]);
-			if(i < components.length-1) {
+			if (i < components.length - 1) {
 				sb.append(".");
 			}
 		}
 		return sb.toString();
+	}
+
+	public VersionNumber createCopy() {
+
+		int[] componentsCopy = Arrays.copyOf(this.components,
+				this.components.length);
+		return new VersionNumber(componentsCopy);
 	}
 
 }

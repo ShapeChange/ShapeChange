@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Profiling;
+package de.interactive_instruments.ShapeChange.Profile;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  */
 public class VersionRange {
 
@@ -244,7 +244,7 @@ public class VersionRange {
 				// both begins are equal; however, in case the version numbers
 				// have different lengths, we want the shorter one (because it
 				// is more general)
-				if(this.begin.components.length <= other.begin.components.length) {
+				if (this.begin.components.length <= other.begin.components.length) {
 					begin_tmp = this.begin;
 				} else {
 					begin_tmp = other.begin;
@@ -258,11 +258,11 @@ public class VersionRange {
 				// both ends are equal; however, in case the version numbers
 				// have different lengths, we want the shorter one (because it
 				// is more general)
-				if(this.end.components.length <= other.end.components.length) {
+				if (this.end.components.length <= other.end.components.length) {
 					end_tmp = this.end;
 				} else {
 					end_tmp = other.end;
-				}			
+				}
 			}
 			return new VersionRange(begin_tmp, end_tmp);
 		}
@@ -270,6 +270,28 @@ public class VersionRange {
 
 	public String toString() {
 		return begin + "-" + end;
+	}
+
+	public VersionRange createCopy() {
+
+		VersionNumber beginCopy = this.begin.createCopy();
+		VersionNumber endCopy = this.end.createCopy();
+
+		return new VersionRange(beginCopy, endCopy);
+	}
+
+	/**
+	 * @return the begin
+	 */
+	public VersionNumber getBegin() {
+		return begin;
+	}
+
+	/**
+	 * @return the end
+	 */
+	public VersionNumber getEnd() {
+		return end;
 	}
 
 }

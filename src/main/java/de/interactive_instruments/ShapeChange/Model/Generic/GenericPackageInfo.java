@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -38,6 +40,9 @@ import java.util.TreeSet;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
@@ -54,7 +59,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
 	protected String id = null;
-	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected String targetNamespace = null;
@@ -63,8 +67,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected String gmlProfileSchema = null;
 	protected String version = null;
 	protected GenericPackageInfo owner = null;
-	protected String schemaId = null;
-	protected GenericPackageInfo rootPackage = null;
 	protected boolean isAppSchema = false;
 	protected boolean isSchema = false;
 	protected SortedSet<GenericPackageInfo> childPi = null;
@@ -72,104 +74,104 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 	protected SortedSet<GenericClassInfo> classes = null;
 
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String aliasName() {
-		return aliasName;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String primaryCode() {
-		return primaryCode;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String definition() {
-		return definition;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String description() {
-		return description;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String language() {
-		return language;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String legalBasis() {
-		return legalBasis;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] examples() {
-		return examples;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] dataCaptureStatements() {
-		return dataCaptureStatements;
-	}
-
-	/**
-	 * In the generic model, always return an empty string, the other
-	 * descriptors should be used instead.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String documentation() {
-		return "";
-	}
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String aliasName() {
+	// return aliasName;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String primaryCode() {
+	// return primaryCode;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String definition() {
+	// return definition;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String description() {
+	// return description;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String language() {
+	// return language;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String legalBasis() {
+	// return legalBasis;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String[] examples() {
+	// return examples;
+	// }
+	//
+	// /**
+	// * In the generic model, the values are actively managed and stored in the
+	// * model elements.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String[] dataCaptureStatements() {
+	// return dataCaptureStatements;
+	// }
+	//
+	// /**
+	// * In the generic model, always return an empty string, the other
+	// * descriptors should be used instead.
+	// *
+	// * @return locally stored descriptor value
+	// */
+	// @Override
+	// public String documentation() {
+	// return "";
+	// }
 
 	/**
 	 * 
@@ -290,22 +292,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#rootPackage()
-	 */
-	public PackageInfo rootPackage() {
-		return rootPackage;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#schemaId()
-	 */
-	@Override
-	public String schemaId() {
-		return schemaId;
-	}
-
 	public void setClasses(SortedSet<GenericClassInfo> genericClassInfos) {
 		this.classes = genericClassInfos;
 	}
@@ -317,69 +303,42 @@ public class GenericPackageInfo extends PackageInfoImpl {
 		this.childPi = childPi;
 	}
 
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setAliasName(String aliasName) {
-		this.aliasName = aliasName;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDefinition(String definition) {
-		this.definition = definition;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setPrimaryCode(String primaryCode) {
-		this.primaryCode = primaryCode;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLegalBasis(String legalBasis) {
-		this.legalBasis = legalBasis;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setExamples(String[] examples) {
-		this.examples = examples;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDataCaptureStatements(String[] dataCaptureStatements) {
-		this.dataCaptureStatements = dataCaptureStatements;
-	}
+	// public void setAliasNameAll(Descriptors aliasName) {
+	// this.aliasName = aliasName;
+	// }
+	//
+	// public void setDefinitionAll(Descriptors definition) {
+	// this.definition = definition;
+	// }
+	//
+	// public void setDescriptionAll(Descriptors description) {
+	// this.description = description;
+	// }
+	//
+	// public void setLanguageAll(Descriptors language) {
+	// this.language = language;
+	// }
+	//
+	// public void setPrimaryCodeAll(Descriptors primaryCode) {
+	// this.primaryCode = primaryCode;
+	// }
+	//
+	// public void setLegalBasisAll(Descriptors legalBasis) {
+	// this.legalBasis = legalBasis;
+	// }
+	//
+	// public void setExamplesAll(Descriptors examples) {
+	// this.examples = examples;
+	// }
+	//
+	// public void setDataCaptureStatementsAll(Descriptors
+	// dataCaptureStatements) {
+	// this.dataCaptureStatements = dataCaptureStatements;
+	// }
+	//
+	// public void setGlobalIdentifierAll(Descriptors globalIdentifier) {
+	// this.globalIdentifier = globalIdentifier;
+	// }
 
 	/**
 	 * @param gmlProfileSchema
@@ -452,22 +411,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 	}
 
-	/**
-	 * @param rootPackage
-	 */
-	public void setRootPackage(GenericPackageInfo rootPackage) {
-		this.rootPackage = rootPackage;
-
-	}
-
-	/**
-	 * @param schemaId
-	 */
-	public void setSchemaId(String schemaId) {
-		this.schemaId = schemaId;
-
-	}
-
 	/** Save the (normalized) stereotypes in the cache. */
 	public void validateStereotypesCache() {
 		// create cache, if necessary
@@ -509,7 +452,14 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	 * @param supplierIds
 	 */
 	public void setSupplierIds(SortedSet<String> supplierIds) {
-		this.supplierIds = supplierIds;
+		if (supplierIds == null || supplierIds.isEmpty()) {
+			this.supplierIds = null;
+		} else {
+			this.supplierIds = new TreeSet<String>();
+			for (String supplierId : supplierIds) {
+				this.supplierIds.add(options.internalize(supplierId));
+			}
+		}
 
 	}
 
@@ -574,13 +524,30 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 				} else if (key.equalsIgnoreCase("alias")) {
 
-					this.setAliasName(taggedValuesCache.getFirstValue(key));
+					String[] tvs = taggedValuesCache.get(key);
+
+					List<LangString> val;
+
+					if (tvs == null) {
+						val = new ArrayList<LangString>();
+					} else {
+						val = LangString.parse(tvs);
+					}
+					this.descriptors.put(Descriptor.ALIAS, val);
 
 				} else if (key.equalsIgnoreCase("documentation")) {
 
 					// we map this to the descriptor 'definition'
-					this.setDefinition(taggedValuesCache.getFirstValue(key));
+					String[] tvs = taggedValuesCache.get(key);
 
+					List<LangString> val;
+
+					if (tvs == null) {
+						val = new ArrayList<LangString>();
+					} else {
+						val = LangString.parse(tvs);
+					}
+					this.descriptors.put(Descriptor.DOCUMENTATION, val);
 				}
 			}
 		}
@@ -642,7 +609,11 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#supplierIds()
 	 */
 	public SortedSet<String> supplierIds() {
-		return supplierIds;
+		if (this.supplierIds == null) {
+			return new TreeSet<String>();
+		} else {
+			return supplierIds;
+		}
 	}
 
 	public void getEmptyPackages(Set<PackageInfo> containerForEmptyPackages) {
@@ -731,12 +702,13 @@ public class GenericPackageInfo extends PackageInfoImpl {
 		if (xmlns != null) {
 			return xmlns;
 		} else {
-			PackageInfo o = owner();
-			if (o != null) {
-				return owner().xmlns();
-			} else {
-				return null;
-			}
+			return super.xmlns();
+			// PackageInfo o = owner();
+			// if (o != null) {
+			// return owner().xmlns();
+			// } else {
+			// return null;
+			// }
 		}
 	}
 
@@ -822,10 +794,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 		this.id = prefix + id;
 
-		if (schemaId != null) {
-			this.schemaId = prefix + schemaId;
-		}
-
 		if (supplierIds != null) {
 			SortedSet<String> tmp_supplierIds = new TreeSet<String>();
 			for (String id : supplierIds) {
@@ -836,17 +804,9 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 	}
 
-	
-	@Override
-	public String globalIdentifier() {
-		return globalIdentifier;
-	}
-
-	/**
-	 * @param globalIdentifier the globalIdentifier to set
-	 */
-	public void setGlobalIdentifier(String globalIdentifier) {
-		this.globalIdentifier = options.internalize(globalIdentifier);
-	}
+	// @Override
+	// public String globalIdentifier() {
+	// return globalIdentifier;
+	// }
 
 }

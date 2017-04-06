@@ -36,6 +36,7 @@ import java.util.List;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 public interface PropertyInfo extends Info {
 
@@ -97,12 +98,14 @@ public interface PropertyInfo extends Info {
 	public boolean isNavigable();
 
 	/**
-	 * Find out if the property represents an ordered collection. Default is false in UML 2.4.1.
+	 * Find out if the property represents an ordered collection. Default is
+	 * false in UML 2.4.1.
 	 */
 	public boolean isOrdered();
 
 	/**
-	 * Find out if the property allows duplicates in the values or if only unique values are allowed. Default is true in UML 2.4.1.
+	 * Find out if the property allows duplicates in the values or if only
+	 * unique values are allowed. Default is true in UML 2.4.1.
 	 */
 	public boolean isUnique();
 
@@ -154,6 +157,9 @@ public interface PropertyInfo extends Info {
 	 */
 	public PropertyInfo reverseProperty();
 
+	/**
+	 * @return the class object to which this property belongs.
+	 */
 	public ClassInfo inClass();
 
 	public void inClass(ClassInfo ci);
@@ -179,4 +185,10 @@ public interface PropertyInfo extends Info {
 	public Qualifier qualifier(String name);
 
 	public List<Qualifier> qualifiers();
-};
+
+	/**
+	 * @return the profiles defined for this property; can be empty but not
+	 *         <code>null</code>
+	 */
+	public Profiles profiles();
+}

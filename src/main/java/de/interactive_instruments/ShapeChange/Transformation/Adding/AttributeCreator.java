@@ -52,6 +52,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -268,21 +270,6 @@ public class AttributeCreator implements Transformer, MessageSource {
 		}
 
 		/**
-		 * @return the categoryOfValue
-		 */
-		public int getCategoryOfValue() {
-			return categoryOfValue;
-		}
-
-		/**
-		 * @param categoryOfValue
-		 *            the categoryOfValue to set
-		 */
-		public void setCategoryOfValue(int categoryOfValue) {
-			this.categoryOfValue = categoryOfValue;
-		}
-
-		/**
 		 * @return the stereotypes
 		 */
 		public Stereotypes getStereotypes() {
@@ -373,10 +360,11 @@ public class AttributeCreator implements Transformer, MessageSource {
 								+ genCi.id();
 
 						GenericPropertyInfo genPi = new GenericPropertyInfo(
-								model, id.toString(), attDef.getName(),
-								attDef.getCategoryOfValue());
+								model, id.toString(), attDef.getName());
 
-						genPi.setAliasName(attDef.getAliasName());
+//						genPi.setAliasNameAll(
+//								new Descriptors(attDef.getAliasName()));
+						genPi.descriptors().put(Descriptor.ALIAS, attDef.getAliasName());
 						genPi.setInitialValue(attDef.getInitialValue());
 						genPi.setDerived(attDef.isDerived());
 						genPi.setOrdered(attDef.isOrdered());
@@ -785,10 +773,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 			if (typeCi == null) {
 				result.addWarning(this, 4, indexForMsg, type, name);
 				tInfo.id = "unknown";
-				ad.setCategoryOfValue(Options.UNKNOWN);
 			} else {
 				tInfo.id = typeCi.id();
-				ad.setCategoryOfValue(typeCi.category());
 			}
 			ad.setType(tInfo);
 

@@ -15,6 +15,7 @@
 	<StereotypeAlias wellknown="DataType" alias="response" />
 	<StereotypeAlias wellknown="FeatureType" alias="feature" />	
 	<StereotypeAlias wellknown="Type" alias="interface" />
+	<StereotypeAlias wellknown="valueConcept" alias="attributeValueConcept" />
 	<!-- Mappings for stereotypes of properties -->
 	<StereotypeAlias wellknown="" alias="property" />
 </stereotypeAliases>

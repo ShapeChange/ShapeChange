@@ -110,7 +110,8 @@ public abstract class ModelImpl implements Model {
 			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
-			"vocabulary", "associativeTable", "jsonEncodingRule", "sqlEncodingRule" };
+			"vocabulary", "associativeTable", "jsonEncodingRule",
+			"sqlEncodingRule", "status" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -322,13 +323,20 @@ public abstract class ModelImpl implements Model {
 				classNames.add(className);
 		}
 
-		if (ci.category() != Options.BASICTYPE
-				&& ci.category() != Options.ENUMERATION
-				&& ci.category() != Options.CODELIST) {
-			for (PropertyInfo propi : ci.properties().values()) {
-				postprocessProperty(propi);
-			}
+		/*
+		 * 2017-03-28 JE: Pre-filtering of properties to postprocess based upon
+		 * the category of their inClass is not appropriate here, since this
+		 * would prevent general postprocessing of properties. If specific
+		 * postprocessing routines do not apply to all properties, apply the
+		 * filtering at the start of such routines.
+		 */
+		// if (ci.category() != Options.BASICTYPE
+		// && ci.category() != Options.ENUMERATION
+		// && ci.category() != Options.CODELIST) {
+		for (PropertyInfo propi : ci.properties().values()) {
+			postprocessProperty(propi);
 		}
+		// }
 
 		// TODO currently there is no way to get all operations of a class, so
 		// we cannot validate them right now
@@ -339,6 +347,7 @@ public abstract class ModelImpl implements Model {
 			return;
 
 		propi.postprocessAfterLoadingAndValidate();
+
 		if (!propi.isAttribute()) {
 			postprocessAssociation(propi.association());
 		}

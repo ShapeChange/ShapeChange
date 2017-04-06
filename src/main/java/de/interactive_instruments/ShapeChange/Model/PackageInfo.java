@@ -72,6 +72,11 @@ public interface PackageInfo extends Info {
 
 	public String schemaId();
 
+	/**
+	 * @return the package that represents a schema (isSchema() returns true),
+	 *         search begins with this package and continues with its ancestors
+	 *         (owners); <code>null</code> if no such package exists.
+	 */
 	public PackageInfo rootPackage();
 
 	/**
@@ -106,6 +111,10 @@ public interface PackageInfo extends Info {
 	 */
 	public SortedSet<ClassInfo> containedClasses();
 
+	/**
+	 * @return the set of ids of the packages on which this package depends; may
+	 *         be empty but not <code>null</code>
+	 */
 	public SortedSet<String> supplierIds();
 
 	/**

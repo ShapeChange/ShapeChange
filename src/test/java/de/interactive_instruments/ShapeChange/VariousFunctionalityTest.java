@@ -74,4 +74,13 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 				"testResults/notEncoded",
 				"src/test/resources/reference/notEncoded");
 	}
+	
+	@Test
+	public void testLoadingWithProhibitedStatusSetting() {
+		
+		multiTest("src/test/resources/config/testEA_loadingWithProhibitedStatusSetting.xml",
+				new String[] { "xsd", "xml" },
+				"testResults/loadingWithProhibitedStatusSetting/results",
+				"src/test/resources/reference/loadingWithProhibitedStatusSetting");
+	}
 }

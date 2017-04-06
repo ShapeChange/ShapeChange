@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://example.org/shapechange/profiling/withMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/profiling/withMetadata" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T1_FeatureA" substitutionGroup="gml:AbstractFeature" type="sc:T1_FeatureAType"/>
+  <complexType name="T1_FeatureAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="a1" type="integer"/>
+          <element maxOccurs="unbounded" name="a2" type="integer"/>
+          <element maxOccurs="10" minOccurs="5" name="a3" type="integer"/>
+          <element name="a4" type="integer"/>
+          <element name="a7" type="sc:T1_FeatureBPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FeatureAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T1_FeatureA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FeatureB" substitutionGroup="gml:AbstractFeature" type="sc:T1_FeatureBType"/>
+  <complexType name="T1_FeatureBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="b1" type="string"/>
+          <element name="b3" type="sc:T1_FeatureAPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FeatureBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T1_FeatureB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

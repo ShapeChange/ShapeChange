@@ -31,10 +31,14 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import java.util.List;
+
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.LangString;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
@@ -48,8 +52,8 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	protected Options options = null;
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
+
 	protected String id = null;
-	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected PropertyInfo end1 = null;
@@ -57,163 +61,18 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	protected ClassInfo assocClass = null;
 
 	/**
-	 * @param end1
-	 *            the end1 to set
-	 */
-	public void setEnd1(PropertyInfo end1) {
-		this.end1 = end1;
-	}
-
-	/**
-	 * @param end2
-	 *            the end2 to set
-	 */
-	public void setEnd2(PropertyInfo end2) {
-		this.end2 = end2;
-	}
-
-	/**
-	 * @param assocClass
-	 *            the assocClass to set
-	 */
-	public void setAssocClass(ClassInfo assocClass) {
-		this.assocClass = assocClass;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String aliasName() {
-		return aliasName;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String primaryCode() {
-		return primaryCode;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String definition() {
-		return definition;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String description() {
-		return description;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String language() {
-		return language;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String legalBasis() {
-		return legalBasis;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] examples() {
-		return examples;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] dataCaptureStatements() {
-		return dataCaptureStatements;
-	}
-
-	/**
-	 * In the generic model, always return an empty string, the other
-	 * descriptors should be used instead.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String documentation() {
-		return "";
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
-	 */
-	@Override
-	public String id() {
-		return id;
-	}
-
-	@Override
-	public String globalIdentifier() {
-		return globalIdentifier;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
-	 */
-	@Override
-	public GenericModel model() {
-		return model;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
-	 */
-	@Override
-	public String name() {
-		return name;
-	}
-
-	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#options()
 	 */
 	@Override
 	public Options options() {
 		return options;
+	}
+
+	/**
+	 * @param options
+	 */
+	public void setOptions(Options options) {
+		this.options = options;
 	}
 
 	/**
@@ -225,82 +84,19 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
+	 * @param result
 	 */
-	public void setAliasName(String aliasName) {
-		this.aliasName = aliasName;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDefinition(String definition) {
-		this.definition = definition;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setPrimaryCode(String primaryCode) {
-		this.primaryCode = primaryCode;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLegalBasis(String legalBasis) {
-		this.legalBasis = legalBasis;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setExamples(String[] examples) {
-		this.examples = examples;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDataCaptureStatements(String[] dataCaptureStatements) {
-		this.dataCaptureStatements = dataCaptureStatements;
-	}
-
-	/**
-	 * @param id
-	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setResult(ShapeChangeResult result) {
+		this.result = result;
 
 	}
 
 	/**
-	 * @param globalIdentifier
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
 	 */
-	public void setGlobalIdentifier(String globalIdentifier) {
-		this.globalIdentifier = options.internalize(globalIdentifier);
+	@Override
+	public GenericModel model() {
+		return model;
 	}
 
 	/**
@@ -312,6 +108,30 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
+	 */
+	@Override
+	public String id() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 */
+	public void setId(String id) {
+		this.id = id;
+
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
+	 */
+	@Override
+	public String name() {
+		return name;
+	}
+
+	/**
 	 * @param name
 	 */
 	public void setName(String name) {
@@ -320,19 +140,256 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * @param options
+	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end1()
 	 */
-	public void setOptions(Options options) {
-		this.options = options;
+	@Override
+	public PropertyInfo end1() {
+		return end1;
 	}
 
 	/**
-	 * @param result
+	 * @param end1
+	 *            the end1 to set
 	 */
-	public void setResult(ShapeChangeResult result) {
-		this.result = result;
-
+	public void setEnd1(PropertyInfo end1) {
+		this.end1 = end1;
 	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end2()
+	 */
+	@Override
+	public PropertyInfo end2() {
+		return end2;
+	}
+
+	/**
+	 * @param end2
+	 *            the end2 to set
+	 */
+	public void setEnd2(PropertyInfo end2) {
+		this.end2 = end2;
+	}
+
+	/**
+	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#assocClass()
+	 */
+	@Override
+	public ClassInfo assocClass() {
+		return assocClass;
+	}
+
+	/**
+	 * @param assocClass
+	 *            the assocClass to set
+	 */
+	public void setAssocClass(ClassInfo assocClass) {
+		this.assocClass = assocClass;
+	}
+
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String aliasName() {
+//		return aliasName;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String primaryCode() {
+//		return primaryCode;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String definition() {
+//		return definition;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String description() {
+//		return description;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String language() {
+//		return language;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String legalBasis() {
+//		return legalBasis;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String[] examples() {
+//		return examples;
+//	}
+//
+//	/**
+//	 * In the generic model, the values are actively managed and stored in the
+//	 * model elements.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String[] dataCaptureStatements() {
+//		return dataCaptureStatements;
+//	}
+//
+//	/**
+//	 * In the generic model, always return an empty string, the other
+//	 * descriptors should be used instead.
+//	 * 
+//	 * @return locally stored descriptor value
+//	 */
+//	@Override
+//	public String documentation() {
+//		return "";
+//	}
+//
+//	@Override
+//	public String globalIdentifier() {
+//		return globalIdentifier;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setAliasName(String aliasName) {
+//		this.aliasName = aliasName;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setDefinition(String definition) {
+//		this.definition = definition;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setDescription(String description) {
+//		this.description = description;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setLanguage(String language) {
+//		this.language = language;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setPrimaryCode(String primaryCode) {
+//		this.primaryCode = primaryCode;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setLegalBasis(String legalBasis) {
+//		this.legalBasis = legalBasis;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setExamples(String[] examples) {
+//		this.examples = examples;
+//	}
+//
+//	/**
+//	 * Set the value of this descriptor in the generic model. This invalidates
+//	 * the derived documentation so that it is derived again when needed
+//	 */
+//	public void setDataCaptureStatements(String[] dataCaptureStatements) {
+//		this.dataCaptureStatements = dataCaptureStatements;
+//	}
+	
+//	public void setAliasNameAll(Descriptors aliasName) {
+//		this.aliasName = aliasName;
+//	}
+//	
+//	public void setDefinitionAll(Descriptors definition) {
+//		this.definition = definition;
+//	}
+//
+//	public void setDescriptionAll(Descriptors description) {
+//		this.description = description;
+//	}
+//
+//	public void setLanguageAll(Descriptors language) {
+//		this.language = language;
+//	}
+//
+//	public void setPrimaryCodeAll(Descriptors primaryCode) {
+//		this.primaryCode = primaryCode;
+//	}
+//
+//	public void setLegalBasisAll(Descriptors legalBasis) {
+//		this.legalBasis = legalBasis;
+//	}
+//
+//	public void setExamplesAll(Descriptors examples) {
+//		this.examples = examples;
+//	}
+//
+//	public void setDataCaptureStatementsAll(Descriptors dataCaptureStatements) {
+//		this.dataCaptureStatements = dataCaptureStatements;
+//	}
+//
+//	public void setGlobalIdentifierAll(Descriptors globalIdentifier) {
+//		this.globalIdentifier = globalIdentifier;
+//	}
 
 	/** Save the (normalized) stereotypes in the cache. */
 	public void validateStereotypesCache() {
@@ -389,30 +446,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end1()
-	 */
-	@Override
-	public PropertyInfo end1() {
-		return end1;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end2()
-	 */
-	@Override
-	public PropertyInfo end2() {
-		return end2;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#assocClass()
-	 */
-	@Override
-	public ClassInfo assocClass() {
-		return assocClass;
-	}
-
-	/**
 	 * Adds the prefix to the 'id' of this class. Does NOT update the
 	 * 'globalIdentifier'.
 	 * 
@@ -423,7 +456,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	 * @param prefix
 	 */
 	public void addPrefixToModelElementIDs(String prefix) {
-		
+
 		this.id = prefix + id;
 	}
 

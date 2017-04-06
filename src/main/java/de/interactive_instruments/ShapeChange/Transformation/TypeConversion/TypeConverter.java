@@ -117,16 +117,6 @@ public class TypeConverter implements Transformer, MessageSource {
 		 */
 
 		/*
-		 * --- update category of value of properties ---
-		 */
-		for (GenericPropertyInfo genPi : genModel.getGenProperties().values()) {
-
-			if (genPi.categoryOfValue() == Options.ENUMERATION) {
-				genPi.setCategoryOfValue(Options.CODELIST);
-			}
-		}
-
-		/*
 		 * --- update class category ---
 		 */
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
