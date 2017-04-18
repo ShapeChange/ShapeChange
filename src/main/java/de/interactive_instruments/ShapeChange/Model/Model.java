@@ -59,6 +59,11 @@ public interface Model {
 	 * Collect and return all PackageInfo objects tagged as being a schema. If a
 	 * name is given, only the package with the specified name will be
 	 * considered.
+	 * 
+	 * @param name
+	 *            to restrict the search; can be <code>null</code>
+	 * 
+	 * @return relevant schemas; can be empty but not <code>null</code>
 	 */
 	public SortedSet<PackageInfo> schemas(String name);
 
@@ -106,7 +111,7 @@ public interface Model {
 	 * @return all {@link PackageInfo} objects contained in the model; can be
 	 *         empty but not <code>null</code>.
 	 */
-	public HashSet<PackageInfo> packages();
+	public SortedSet<PackageInfo> packages();
 
 	/**
 	 * @param schema
@@ -151,4 +156,11 @@ public interface Model {
 	 *         the result is <code>null</code> .
 	 */
 	public PackageInfo schemaPackage(ClassInfo ci);
+
+	/**
+	 * @return all packages that represent schemas selected for processing, or
+	 *         are subpackages of these schemas and in the same target
+	 *         namespace; can be empty but not <code>null</code>
+	 */
+	public SortedSet<PackageInfo> allPackagesFromSelectedSchemas();
 }

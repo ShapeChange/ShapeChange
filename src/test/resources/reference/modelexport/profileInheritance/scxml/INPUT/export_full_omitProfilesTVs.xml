@@ -1045,14 +1045,6 @@
                       <sc:name>xmlSchemaType</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="B"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                    <sc:Profile name="D"></sc:Profile>
-                    <sc:Profile name="E"></sc:Profile>
-                    <sc:Profile name="F"></sc:Profile>
-                  </sc:profiles>
                 </sc:Class>
                 <sc:Class>
                   <sc:name>CharacterString</sc:name>
@@ -1090,14 +1082,6 @@
                       <sc:name>xmlSchemaType</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="B"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                    <sc:Profile name="D"></sc:Profile>
-                    <sc:Profile name="E"></sc:Profile>
-                    <sc:Profile name="F"></sc:Profile>
-                  </sc:profiles>
                 </sc:Class>
                 <sc:Class>
                   <sc:name>Integer</sc:name>
@@ -1135,14 +1119,6 @@
                       <sc:name>xmlSchemaType</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="B"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                    <sc:Profile name="D"></sc:Profile>
-                    <sc:Profile name="E"></sc:Profile>
-                    <sc:Profile name="F"></sc:Profile>
-                  </sc:profiles>
                 </sc:Class>
                 <sc:Class>
                   <sc:name>Boolean</sc:name>
@@ -1151,14 +1127,6 @@
                     <sc:Stereotype>enumeration</sc:Stereotype>
                   </sc:stereotypes>
                   <sc:descriptors></sc:descriptors>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="B"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                    <sc:Profile name="D"></sc:Profile>
-                    <sc:Profile name="E"></sc:Profile>
-                    <sc:Profile name="F"></sc:Profile>
-                  </sc:profiles>
                 </sc:Class>
               </sc:classes>
             </sc:Package>

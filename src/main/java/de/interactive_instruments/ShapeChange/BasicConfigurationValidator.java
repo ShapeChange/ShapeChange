@@ -55,18 +55,20 @@ public class BasicConfigurationValidator implements MessageSource {
 
 		String imt = options.parameter("inputModelType");
 
-		if (imt.equalsIgnoreCase("EA7") && !options.isOnlyDeferrableOutputWrite()) {
-
-			/*
-			 * Check that we are running on 32bit Java in a windows environment.
-			 * NOTE: apparently, it is not trivial to detect if a java program
-			 * is executed with 32bit or 64bit JRE. The web has many suggestions
-			 * on how to do it. Here, we make the assumption that in order to
-			 * execute Enterprise Architect (EA), the JRE must be run in
-			 * Windows. Under that assumption, the java system property
-			 * 'os.arch' apparently is always 'x86' if the program is run with a
-			 * 32bit JRE.
-			 */
+		/*
+		 * If the input type is EA7 and we are not only executing deferrable
+		 * output writers, check that we are running on 32bit Java in a windows
+		 * environment.
+		 * 
+		 * NOTE: Apparently, it is not trivial to detect if a java program is
+		 * executed with 32bit or 64bit JRE. The web has many suggestions on how
+		 * to do it. Here, we make the assumption that in order to execute
+		 * Enterprise Architect (EA), the JRE must be run in Windows. Under that
+		 * assumption, the java system property 'os.arch' apparently is always
+		 * 'x86' if the program is run with a 32bit JRE.
+		 */
+		if (imt.equalsIgnoreCase("EA7")
+				&& !options.isOnlyDeferrableOutputWrite()) {
 
 			boolean isWindows = SystemUtils.IS_OS_WINDOWS;
 			String osArch = SystemUtils.OS_ARCH;

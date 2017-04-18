@@ -61,6 +61,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
 
 	public int compareTo(Info i) {
+		
 		String my = id();
 		String other = i.id();
 
@@ -388,8 +389,12 @@ public abstract class InfoImpl implements Info, MessageSource {
 						found = true;
 					for (String s : ss) {
 						if (found) {
-							result.add(new LangString(
-									options().internalize(s.trim())));
+
+							// ignore empty values
+							if (s.trim().length() != 0) {
+								result.add(new LangString(
+										options().internalize(s.trim())));
+							}
 							break;
 						} else if (s.trim().equalsIgnoreCase(token)) {
 							found = true;

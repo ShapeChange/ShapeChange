@@ -212,7 +212,7 @@ public class XMLWriter extends XMLFilterImpl {
 	private State state = State.SEEN_NOTHING;
 	private Stack<State> stateStack = new Stack<State>();
 	private boolean lastElementWasStart = false;
-//	private boolean wrapWithCDATA = false;
+	// private boolean wrapWithCDATA = false;
 
 	private int indentStep = 2;
 	private int depth = 0;
@@ -578,10 +578,25 @@ public class XMLWriter extends XMLFilterImpl {
 	public void startElement(String localName, String attributeName,
 			String attributeValue) throws SAXException {
 
+		startElement("", localName, attributeName, attributeValue);
+	}
+
+	/**
+	 * Convenience method: start an element with a single attribute.
+	 * 
+	 * @param uri
+	 * @param localName
+	 * @param attributeName
+	 * @param attributeValue
+	 * @throws SAXException
+	 */
+	public void startElement(String uri, String localName, String attributeName,
+			String attributeValue) throws SAXException {
+
 		AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", attributeName, "", "CDATA", attributeValue);
 
-		startElement("", localName, "", atts);
+		startElement(uri, localName, "", atts);
 	}
 
 	/**
@@ -611,7 +626,7 @@ public class XMLWriter extends XMLFilterImpl {
 
 		char[] tmp = LINESEPARATOR.toCharArray();
 
-//		writeEsc(tmp, 0, tmp.length, false);
+		// writeEsc(tmp, 0, tmp.length, false);
 		write(LINESEPARATOR);
 
 		super.characters(tmp, 0, tmp.length);
@@ -657,10 +672,10 @@ public class XMLWriter extends XMLFilterImpl {
 
 			writeEsc(newChars, 0, newChars.length, false);
 
-//			if (wrapWithCDATA) {
-//				write("]]>");
-//				wrapWithCDATA = false;
-//			}
+			// if (wrapWithCDATA) {
+			// write("]]>");
+			// wrapWithCDATA = false;
+			// }
 
 			super.characters(newChars, 0, newChars.length);
 		}
@@ -1251,19 +1266,19 @@ public class XMLWriter extends XMLFilterImpl {
 	 * @see #characters(String)
 	 * @see #endElement(String, String, String)
 	 */
-//	public void cdataElement(String uri, String localName, String qName,
-//			Attributes atts, String content) throws SAXException {
-//		startElement(uri, localName, qName, atts);
-//		if (content != null) {
-//			// TBD: CDATA event via lexical handler?
-//			wrapWithCDATA = true;
-//			write("<![CDATA[");
-//			characters(content);
-//			// NOTE: content and close of CDATA will be written by
-//			// endElement(...)
-//		}
-//		endElement(uri, localName, qName);
-//	}
+	// public void cdataElement(String uri, String localName, String qName,
+	// Attributes atts, String content) throws SAXException {
+	// startElement(uri, localName, qName, atts);
+	// if (content != null) {
+	// // TBD: CDATA event via lexical handler?
+	// wrapWithCDATA = true;
+	// write("<![CDATA[");
+	// characters(content);
+	// // NOTE: content and close of CDATA will be written by
+	// // endElement(...)
+	// }
+	// endElement(uri, localName, qName);
+	// }
 
 	public void emptyElement(String localName, Attributes atts)
 			throws SAXException {
@@ -1332,10 +1347,10 @@ public class XMLWriter extends XMLFilterImpl {
 		dataElement(uri, localName, "", EMPTY_ATTS, content);
 	}
 
-//	public void cdataElement(String uri, String localName, String content)
-//			throws SAXException {
-//		cdataElement(uri, localName, "", EMPTY_ATTS, content);
-//	}
+	// public void cdataElement(String uri, String localName, String content)
+	// throws SAXException {
+	// cdataElement(uri, localName, "", EMPTY_ATTS, content);
+	// }
 
 	/**
 	 * Write an element with character data content but no attributes or
@@ -1371,10 +1386,10 @@ public class XMLWriter extends XMLFilterImpl {
 		dataElement("", localName, "", EMPTY_ATTS, content);
 	}
 
-//	public void cdataElement(String localName, String content)
-//			throws SAXException {
-//		cdataElement("", localName, "", EMPTY_ATTS, content);
-//	}
+	// public void cdataElement(String localName, String content)
+	// throws SAXException {
+	// cdataElement("", localName, "", EMPTY_ATTS, content);
+	// }
 
 	public void dataElement(String localName, String content, Operation op)
 			throws SAXException {
@@ -1393,7 +1408,7 @@ public class XMLWriter extends XMLFilterImpl {
 
 		dataElement("", localName, "", atts, content);
 	}
-	
+
 	public void dataElement(String uri, String localName, String content,
 			String attributeName, String attributeValue) throws SAXException {
 

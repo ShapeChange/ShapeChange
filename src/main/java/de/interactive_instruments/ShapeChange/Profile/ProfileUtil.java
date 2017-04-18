@@ -54,16 +54,24 @@ public class ProfileUtil {
 
 	/**
 	 * @param model
-	 * @return Set with names of all profiles defined by elements of the given
+	 * @param searchInWholeModel
+	 *            <code>true</code> if profiles shall be looked up in the whole
+	 *            model, <code>false</code> if the lookup shall only be
+	 *            performed in the schemas selected for processing.
+	 * @return Set with names of profiles defined by elements of the given
 	 *         model. Can be empty but not <code>null</code>.
 	 */
-	public static SortedSet<String> findNamesOfAllProfiles(Model model) {
+	public static SortedSet<String> findNamesOfAllProfiles(Model model,
+			boolean searchInWholeModel) {
 
 		SortedSet<String> result = new TreeSet<String>();
 
 		if (model != null) {
 
-			for (PackageInfo pkg : model.packages()) {
+			Set<PackageInfo> packagesToSearchIn = searchInWholeModel
+					? model.packages() : model.allPackagesFromSelectedSchemas();
+
+			for (PackageInfo pkg : packagesToSearchIn) {
 
 				for (ClassInfo ci : pkg.containedClasses()) {
 
@@ -98,21 +106,22 @@ public class ProfileUtil {
 	 *            Regular expression to match the name of schemas in which the
 	 *            profile definitions shall be converted to explicit ones. If
 	 *            this parameter is <code>null</code>, the conversion will be
-	 *            applied to all classes and properties of the model.
-	 * @return A copy of the given model, with profile definitions converted to
-	 *         be explicit. NOTE: The returned model has not been postprocessed;
-	 *         if required (e.g. to ensure constraints have been parsed and
-	 *         validated), this must be performed outside of this method.
+	 *            applied to all classes and properties of the model if
+	 *            parameter 'convertWholeModel' is true, otherwise just of the
+	 *            schemas selected for processing.
+	 * @param convertWholeModel
+	 *            <code>true</code> if conversion shall be applied to all
+	 *            classes of the model, <code>false</code> if it shall only be
+	 *            applied to the schemas selected for processing; irrelevant if
+	 *            parameter 'schemaNameRegex' is not <code>null</code>
 	 */
-	public static GenericModel convertToExplicitProfileDefinitions(Model model,
+	public static void convertToExplicitProfileDefinitions(
+			GenericModel genModel,
 			Profiles profilesForClassesBelongingToAllProfiles,
-			Pattern schemaNameRegex) {
+			Pattern schemaNameRegex, boolean convertWholeModel) {
 
-		/*
-		 * Create model copy, convert profile definitions in that copy, and
-		 * return it
-		 */
-		GenericModel genModel = new GenericModel(model);
+		SortedSet<PackageInfo> selSchemaPkgs = genModel
+				.allPackagesFromSelectedSchemas();
 
 		Set<GenericClassInfo> genCisToProcess = new HashSet<GenericClassInfo>();
 
@@ -129,12 +138,9 @@ public class ProfileUtil {
 
 			} else {
 
-				genCisToProcess.add(genCi);
-
-				/*
-				 * Note: We cannot ignore the class even if it defines profiles,
-				 * since one if its properties may not do so.
-				 */
+				if (convertWholeModel || selSchemaPkgs.contains(genCi.pkg())) {
+					genCisToProcess.add(genCi);
+				}
 			}
 		}
 
@@ -158,7 +164,104 @@ public class ProfileUtil {
 				}
 			}
 		}
+	}
 
-		return genModel;
+	/**
+	 * Removes the profiles in all classes and properties of the given model.
+	 * Also removes the tagged value 'profiles' on these model elements.
+	 * 
+	 * @param genModel
+	 */
+	public static void removeProfiles(GenericModel genModel) {
+
+		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+			genCi.setProfiles(null);
+			genCi.removeTaggedValue("profiles");
+		}
+
+		for (GenericPropertyInfo genPi : genModel.getGenProperties().values()) {
+			genPi.setProfiles(null);
+			genPi.removeTaggedValue("profiles");
+		}
+	}
+
+	/**
+	 * Transfers a set of profiles from a source class to a target class. If the
+	 * target already contained a profile with the name of a profile that is
+	 * transferred, the transferred profile will replace the previously existing
+	 * profile.
+	 * 
+	 * @param namesOfProfilesToTransfer
+	 *            Names of profiles to transfer from the source to the target
+	 *            class. If <code>null</code>, all profiles shall be
+	 *            transferred.
+	 * @param sourceCi
+	 *            Source of profiles to be transferred
+	 * @param targetCi
+	 *            Target of the profile transfer
+	 */
+	public static void transferProfiles(
+			SortedSet<String> namesOfProfilesToTransfer, ClassInfo sourceCi,
+			ClassInfo targetCi) {
+
+		/*
+		 * Determine which profiles shall be transferred.
+		 */
+		SortedSet<ProfileIdentifier> profilesToTransfer;
+		if (namesOfProfilesToTransfer == null) {
+			profilesToTransfer = sourceCi.profiles().getProfileIdentifiers();
+		} else {
+			profilesToTransfer = sourceCi.profiles()
+					.getProfiles(namesOfProfilesToTransfer);
+		}
+
+		for (ProfileIdentifier profile : profilesToTransfer) {
+
+			/*
+			 * NOTE: This will override a previously existing profile with same
+			 * name
+			 */
+			targetCi.profiles().put(profile);
+		}
+	}
+
+	/**
+	 * Transfers a set of profiles from a source property to a target property.
+	 * If the target already contained a profile with the name of a profile that
+	 * is transferred, the transferred profile will replace the previously
+	 * existing profile.
+	 * 
+	 * @param namesOfProfilesToTransfer
+	 *            Names of profiles to transfer from the source to the target
+	 *            property. If <code>null</code>, all profiles shall be
+	 *            transferred.
+	 * @param sourcePi
+	 *            Source of profiles to be transferred
+	 * @param targetPi
+	 *            Target of the profile transfer
+	 */
+	public static void transferProfiles(
+			SortedSet<String> namesOfProfilesToTransfer, PropertyInfo sourcePi,
+			PropertyInfo targetPi) {
+
+		/*
+		 * Determine which profiles shall be transferred.
+		 */
+		SortedSet<ProfileIdentifier> profilesToTransfer;
+		if (namesOfProfilesToTransfer == null) {
+			profilesToTransfer = sourcePi.profiles().getProfileIdentifiers();
+		} else {
+			profilesToTransfer = sourcePi.profiles()
+					.getProfiles(namesOfProfilesToTransfer);
+		}
+
+		for (ProfileIdentifier profile : profilesToTransfer) {
+
+			/*
+			 * NOTE: This will override a previously existing profile with same
+			 * name
+			 */
+			targetPi.profiles().put(profile);
+		}
 	}
 }

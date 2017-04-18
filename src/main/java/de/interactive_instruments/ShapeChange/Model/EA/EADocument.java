@@ -37,8 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -731,31 +729,7 @@ public class EADocument extends ModelImpl implements Model {
 	public PackageInfo packageById(String id) {
 		return fPackageById.get(id);
 	} // packageById()
-
-	/**
-	 * Collect and return all PackageInfo objects tagged as being a schema. If a
-	 * name is given, only the package with the specified name will be
-	 * considered.
-	 */
-	public SortedSet<PackageInfo> schemas(String name) {
-		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
-		for (PackageInfo pi : fPackageById.values()) {
-			if (pi.isSchema())
-				if (name != null && !name.equals("")) {
-					if (pi.name().equals(name))
-						res.add(pi);
-				} else
-					res.add(pi);
-			else if (pi.isAppSchema()) {
-				// Validation is done later now, code can be removed
-				// MessageContext mc = result.addError(null, 146, pi.name(),
-				// "targetNamespace");
-				// if (mc!=null) mc.addDetail(null,400,"Package",pi.fullName());
-			}
-		}
-		return res;
-	} // schemas()
-
+	
 	/** Return the model input type */
 	public int type() {
 		return Options.EA7;
@@ -793,8 +767,8 @@ public class EADocument extends ModelImpl implements Model {
 	}
 
 	@Override
-	public HashSet<PackageInfo> packages() {
-		HashSet<PackageInfo> allPackages = new HashSet<PackageInfo>();
+	public SortedSet<PackageInfo> packages() {
+		SortedSet<PackageInfo> allPackages = new TreeSet<PackageInfo>();
 		for (PackageInfo pi : fPackageById.values()) {
 			allPackages.add(pi);
 		}

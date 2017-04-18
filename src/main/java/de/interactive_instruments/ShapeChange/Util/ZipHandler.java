@@ -45,8 +45,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  * 
  */
 public class ZipHandler {
@@ -85,6 +85,40 @@ public class ZipHandler {
 
 		zos.close();
 		fos.close();
+	}
+
+	/**
+	 * Creates a zip file containing the given file, with relative file paths.
+	 * 
+	 * @param fileToZip
+	 *            File that shall be zipped.
+	 * @param toFile
+	 *            File to zip to.
+	 * @throws IOException
+	 */
+	public static void zipFile(File fileToZip, File toFile) throws IOException {
+
+		FileOutputStream fout = new FileOutputStream(toFile);
+		ZipOutputStream zout = new ZipOutputStream(fout);
+
+		byte[] tmpBuf = new byte[1024];
+
+		// add an actual file to the zip
+		BufferedInputStream bis = new BufferedInputStream(
+				new FileInputStream(fileToZip));
+
+		zout.putNextEntry(new ZipEntry("" + fileToZip.getName()));
+
+		int len;
+		while ((len = bis.read(tmpBuf)) != -1) {
+			zout.write(tmpBuf, 0, len);
+		}
+
+		zout.closeEntry();
+		bis.close();
+
+		zout.close();
+		fout.close();
 	}
 
 	/**
@@ -158,44 +192,76 @@ public class ZipHandler {
 			String basePathSoFar) throws IOException {
 
 		File[] files = dir.listFiles();
-		byte[] tmpBuf = new byte[1024];
-		
-		if(files != null) {
+		// byte[] tmpBuf = new byte[1024];
+
+		if (files != null) {
 
 			for (File file : files) {
-	
+
 				if (file.isDirectory()) {
-	
+
 					if (file.list() == null || file.list().length == 0) {
-	
-						// an empty directory is encoded in a zip with a trailing
+
+						// an empty directory is encoded in a zip with a
+						// trailing
 						// "/"
-						zout.putNextEntry(new ZipEntry(basePathSoFar
-								+ file.getName() + "/"));
+						zout.putNextEntry(new ZipEntry(
+								basePathSoFar + file.getName() + "/"));
 						zout.closeEntry();
-	
+
 					} else {
-						addDirectory(file, zout, basePathSoFar
-								+ file.getName() + "/");
+						addDirectory(file, zout,
+								basePathSoFar + file.getName() + "/");
 					}
-	
+
 				} else {
-	
-					// add an actual file to the zip
-					BufferedInputStream bis = new BufferedInputStream(
-							new FileInputStream(file));
-	
-					zout.putNextEntry(new ZipEntry(basePathSoFar + file.getName()));
-	
-					int len;
-					while ((len = bis.read(tmpBuf)) != -1) {
-						zout.write(tmpBuf, 0, len);
-					}
-	
-					zout.closeEntry();
-					bis.close();
+
+					addFile(file, zout, basePathSoFar);
+					// // add an actual file to the zip
+					// BufferedInputStream bis = new BufferedInputStream(
+					// new FileInputStream(file));
+					//
+					// zout.putNextEntry(
+					// new ZipEntry(basePathSoFar + file.getName()));
+					//
+					// int len;
+					// while ((len = bis.read(tmpBuf)) != -1) {
+					// zout.write(tmpBuf, 0, len);
+					// }
+					//
+					// zout.closeEntry();
+					// bis.close();
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add the given file to the zip output stream, creating a new entry with
+	 * the given base path and name of the file.
+	 * 
+	 * @param fileToZip
+	 * @param zout
+	 * @param basePath
+	 * @throws IOException
+	 */
+	private void addFile(File fileToZip, ZipOutputStream zout, String basePath)
+			throws IOException {
+
+		byte[] tmpBuf = new byte[1024];
+
+		// add an actual file to the zip
+		BufferedInputStream bis = new BufferedInputStream(
+				new FileInputStream(fileToZip));
+
+		zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
+
+		int len;
+		while ((len = bis.read(tmpBuf)) != -1) {
+			zout.write(tmpBuf, 0, len);
+		}
+
+		zout.closeEntry();
+		bis.close();
 	}
 }

@@ -44,35 +44,34 @@ import java.util.TreeMap;
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  */
-public class ProfileIdentifier {
+public class ProfileIdentifier implements Comparable<ProfileIdentifier> {
 
 	private static final Joiner commaJoiner = Joiner.on(",").skipNulls();
-	
+
 	private String name;
 	private ProfileVersionIndicator versionIndicator;
 
 	/**
-	 * NOTE: this map can be <code>null</code> if no parameter is defined for the
-	 * profile
+	 * NOTE: this map can be <code>null</code> if no parameter is defined for
+	 * the profile
 	 * 
-	 * Key: parameter name Value: parameter value, can be <code>null</code> if no
-	 * value is present
+	 * Key: parameter name Value: parameter value, can be <code>null</code> if
+	 * no value is present
 	 */
 	private SortedMap<String, String> parameters;
 
 	/**
 	 * @param name
-	 * @param versionIndicator; can be <code>null</code>
+	 * @param versionIndicator;
+	 *            can be <code>null</code>
 	 * @param parameters
-	 *            parameters defined for the profile; can be <code>null</code> if
-	 *            no parameters are defined
+	 *            parameters defined for the profile; can be <code>null</code>
+	 *            if no parameters are defined
 	 * @param ownerName
 	 */
 	public ProfileIdentifier(String name,
 			ProfileVersionIndicator versionIndicator,
-			SortedMap<String, String> parameters
-	// , String ownerName
-	) {
+			SortedMap<String, String> parameters) {
 
 		this.name = name;
 		this.versionIndicator = versionIndicator;
@@ -82,13 +81,12 @@ public class ProfileIdentifier {
 		} else {
 			this.parameters = parameters;
 		}
-		// this.ownerName = ownerName;
 	}
 
 	/**
-	 * @return parameter map (can be empty but not null) with key: parameter name,
-	 *         value: parameter value, can be <code>null</code> if no value is
-	 *         present
+	 * @return parameter map (can be empty but not null) with key: parameter
+	 *         name, value: parameter value, can be <code>null</code> if no
+	 *         value is present
 	 */
 	public SortedMap<String, String> getParameter() {
 
@@ -102,14 +100,6 @@ public class ProfileIdentifier {
 	public String getName() {
 		return name;
 	}
-
-	// /**
-	// * @return name of the model element that owns the profile identifier
-	// * information
-	// */
-	// public String getOwnerName() {
-	// return ownerName;
-	// }
 
 	/**
 	 * @return the version indicator for this profile; can be <code>null</code>
@@ -129,22 +119,23 @@ public class ProfileIdentifier {
 			sb.append("[" + versionIndicator.toString() + "]");
 		}
 		if (this.parameters != null && !this.parameters.isEmpty()) {
-			
+
 			sb.append("(");
-			
+
 			List<String> parameterValues = new ArrayList<String>();
-			
+
 			for (Entry<String, String> entry : this.parameters.entrySet()) {
-				
+
 				if (entry.getValue() != null) {
-					parameterValues.add(entry.getKey() + "[" + entry.getValue() + "]");
+					parameterValues
+							.add(entry.getKey() + "[" + entry.getValue() + "]");
 				} else {
 					parameterValues.add(entry.getKey());
 				}
 			}
-			
+
 			sb.append(commaJoiner.join(parameterValues));
-			
+
 			sb.append(")");
 		}
 
@@ -214,7 +205,8 @@ public class ProfileIdentifier {
 		SortedMap<String, String> parameterCopy = new TreeMap<String, String>();
 		for (Entry<String, String> parameterEntry : this.getParameter()
 				.entrySet()) {
-			parameterCopy.put(parameterEntry.getKey(), parameterEntry.getValue());
+			parameterCopy.put(parameterEntry.getKey(),
+					parameterEntry.getValue());
 		}
 
 		ProfileVersionIndicator pviCopy = null;
@@ -230,11 +222,45 @@ public class ProfileIdentifier {
 	}
 
 	/**
-	 * @return <code>true</code> if one or more parameters are defined for
-	 *         the profile, else <code>false</code>
+	 * @return <code>true</code> if one or more parameters are defined for the
+	 *         profile, else <code>false</code>
 	 */
 	public boolean hasParameters() {
 		return this.parameters != null && !this.parameters.isEmpty();
+	}
+
+	/**
+	 * NOTE: Comparison is based on the textual representation of the profile
+	 * identifiers.
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object other) {
+
+		if (other == null) {
+			return false;
+		} else if (other == this) {
+			return true;
+		} else {
+			return this.toString().equals(other.toString());
+		}
+	}
+
+	/**
+	 * NOTE: Comparison is based on the textual representation of the profile
+	 * identifiers.
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(ProfileIdentifier other) {
+
+		if (other == null) {
+			throw new NullPointerException();
+		} else {
+			return this.toString().compareTo(other.toString());
+		}
 	}
 
 }

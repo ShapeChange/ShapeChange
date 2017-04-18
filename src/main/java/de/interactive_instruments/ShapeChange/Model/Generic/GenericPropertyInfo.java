@@ -1006,6 +1006,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 	}
 
+	/**
+	 * @param profiles
+	 *            new set of profiles for this property; may be
+	 *            <code>null</code>
+	 */
 	public void setProfiles(Profiles profiles) {
 
 		if (profiles == null) {

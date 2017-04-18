@@ -873,7 +873,7 @@ public class Options {
 	 * @param trimResults
 	 *            <code>true</code> if leading and trailing whitespace shall be
 	 *            removed from a value
-	 * @return (immutable) list of values (originally separated by commas) retrieved
+	 * @return List of values (originally separated by commas) retrieved
 	 *         from this parameter, or the default values if the parameter was
 	 *         not set or did not contain valid values; can be empty but not
 	 *         <code>null</code>
@@ -883,8 +883,9 @@ public class Options {
 			boolean omitEmptyStrings, boolean trimResults) {
 
 		List<String> defaultValuesList = defaultValues == null
-				? ImmutableList.<String>of() : ImmutableList.copyOf(defaultValues);
-				
+				? new ArrayList<String>()
+				: Arrays.asList(defaultValues);
+
 		String paramValue = this.parameter(className, parameterName);
 
 		if (paramValue == null) {
@@ -903,36 +904,15 @@ public class Options {
 			}
 
 			List<String> result = splitter.splitToList(paramValue);
+			
 			if (result.isEmpty()) {
+				
 				return defaultValuesList;
+				
 			} else {
-				return result;
+				
+				return new ArrayList<String>(result);
 			}
-
-			// String[] split = paramValue.split(",");
-			// List<String> result = new ArrayList<String>();
-			//
-			// for (String s : split) {
-			//
-			// if (s.trim().isEmpty() && !allowNonEmptyTrimmedStringValues) {
-			//
-			// // ignore this one
-			//
-			// } else {
-			//
-			// if (trimValues) {
-			// s = s.trim();
-			// }
-			//
-			// result.add(s);
-			// }
-			// }
-			//
-			// if (result.isEmpty()) {
-			// return new ArrayList<String>();
-			// } else {
-			// return Arrays.asList(defaultValues);
-			// }
 		}
 	}
 
@@ -3683,6 +3663,8 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-all-ignoreProfilesTaggedValue");
+		addRule("rule-exp-all-exportProfilesFromWholeModel");
+		addRule("rule-exp-pkg-allPackagesAreEditable");
 	}
 
 	/** Normalize a stereotype fetched from the model. */

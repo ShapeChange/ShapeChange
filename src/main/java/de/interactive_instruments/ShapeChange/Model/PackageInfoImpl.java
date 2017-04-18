@@ -175,6 +175,29 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return s;
 	} // xsdDocument()
 
+	@Override
+	public final SortedSet<PackageInfo> containedPackagesInSameTargetNamespace() {
+
+		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
+
+		if (containedPackages() != null) {
+
+			for (PackageInfo childPkg : containedPackages()) {
+				
+				if ((targetNamespace() == null
+						&& childPkg.targetNamespace() == null)
+						|| targetNamespace()
+								.equals(childPkg.targetNamespace())) {
+
+					result.add(childPkg);
+					result.addAll(childPkg.containedPackagesInSameTargetNamespace());
+				}
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * This is supposed to return the value of the tag "gmlProfileSchema", or
 	 * null in case such a tag does not exist on the package.
@@ -454,7 +477,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 		return result;
 	}
-	
+
 	@Override
 	public PackageInfo rootPackage() {
 		PackageInfo pi = this;

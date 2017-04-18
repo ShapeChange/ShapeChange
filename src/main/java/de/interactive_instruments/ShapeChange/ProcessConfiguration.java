@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.w3c.dom.Element;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Configuration information for a process.
@@ -171,21 +175,90 @@ public class ProcessConfiguration {
 		return parameters.get(parameterName);
 	}
 
+	public boolean parameterAsBoolean(String parameterName,
+			boolean defaultValue) {
+
+		boolean res;
+
+		String valueByConfig = this.parameters.get(parameterName);
+
+		if (valueByConfig == null) {
+			res = defaultValue;
+		} else {
+			res = Boolean.parseBoolean(valueByConfig.trim());
+		}
+
+		return res;
+	}
+
+	public String parameterAsString(String parameterName, String defaultValue,
+			boolean allowNonEmptyTrimmedStringValue, boolean trimValue) {
+
+		String result = this.parameters.get(parameterName);
+
+		if (result == null || (result.trim().isEmpty()
+				&& !allowNonEmptyTrimmedStringValue)) {
+			result = defaultValue;
+		} else if (trimValue) {
+			result = result.trim();
+		}
+
+		return result;
+	}
+
 	/**
 	 * @param parameterName
-	 *            Name of the parameter to get the values for.
-	 * @return The array of comma-separated values of the parameter, or
-	 *         <code>null</code> if no such parameter was declared in the
-	 *         configuration.
+	 *            name of the parameter to retrieve the comma separated values
+	 *            from
+	 * @param defaultValues
+	 *            values that will be returned if no values were found;
+	 *            <code>null</code> is converted to an empty list of strings
+	 * @param omitEmptyStrings
+	 *            <code>true</code> if values may NOT be empty if they were
+	 *            trimmed, else <code>false</code>
+	 * @param trimResults
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from a value
+	 * @return list of values (originally separated by commas)
+	 *         retrieved from this parameter, or the default values if the
+	 *         parameter was not set or did not contain valid values; can be
+	 *         empty but not <code>null</code>
 	 */
-	public String[] getParameterValues(String parameterName) {
+	public List<String> parameterAsStringList(String parameterName,
+			String[] defaultValues, boolean omitEmptyStrings,
+			boolean trimResults) {
 
-		String tmp = parameters.get(parameterName);
+		List<String> defaultValuesList = defaultValues == null
+				? new ArrayList<String>()
+				: Arrays.asList(defaultValues);
 
-		if (tmp == null || tmp.trim().length() == 0) {
-			return null;
+		String paramValue = this.parameters.get(parameterName);
+
+		if (paramValue == null) {
+
+			return defaultValuesList;
+
 		} else {
-			return tmp.trim().split(",");
+
+			Splitter splitter = Splitter.on(',');
+
+			if (omitEmptyStrings) {
+				splitter = splitter.omitEmptyStrings();
+			}
+			if (trimResults) {
+				splitter = splitter.trimResults();
+			}
+
+			List<String> result = splitter.splitToList(paramValue);
+			
+			if (result.isEmpty()) {
+				
+				return defaultValuesList;
+				
+			} else {
+				
+				return new ArrayList<String>(result);
+			}
 		}
 	}
 

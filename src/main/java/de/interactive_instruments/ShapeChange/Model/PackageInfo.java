@@ -128,4 +128,11 @@ public interface PackageInfo extends Info {
 	 *            metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
-};
+
+	/**
+	 * @return set of child packages (direct and indirect) that are in the same
+	 *         target namespace as this package; can be empty but not
+	 *         <code>null</code>
+	 */
+	public SortedSet<PackageInfo> containedPackagesInSameTargetNamespace();
+}

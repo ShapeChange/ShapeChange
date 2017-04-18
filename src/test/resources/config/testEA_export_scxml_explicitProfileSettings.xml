@@ -35,6 +35,7 @@
          <rules>
             <EncodingRule name="export">
             	<rule name="rule-exp-all-ignoreProfilesTaggedValue"/>
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>
          </rules>
       </Target>
@@ -48,6 +49,7 @@
          <rules>
             <EncodingRule name="export">
             	<rule name="rule-exp-all-restrictExistingProfiles"/>
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>
          </rules>
       </Target>
@@ -61,6 +63,7 @@
             <EncodingRule name="export">
             	<rule name="rule-exp-all-omitExistingProfiles"/>
             	<rule name="rule-exp-all-ignoreProfilesTaggedValue"/>
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>
          </rules>
       </Target>

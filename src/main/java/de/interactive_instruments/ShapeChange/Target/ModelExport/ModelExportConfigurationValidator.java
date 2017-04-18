@@ -33,8 +33,6 @@ package de.interactive_instruments.ShapeChange.Target.ModelExport;
 
 import java.io.File;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -57,7 +55,7 @@ public class ModelExportConfigurationValidator
 		boolean isValid = true;
 
 		// ensure that output directory exists
-		String outputDirectory = options.parameter(this.getClass().getName(),
+		String outputDirectory = options.parameter(ModelExport.class.getName(),
 				"outputDirectory");
 		if (outputDirectory == null)
 			outputDirectory = options.parameter("outputDirectory");
@@ -79,11 +77,11 @@ public class ModelExportConfigurationValidator
 		}
 
 		// validate PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES
-		if (options.hasParameter(this.getClass().getName(),
+		if (options.hasParameter(ModelExport.class.getName(),
 				ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
 
 			List<String> profilesForClassesWithoutExplicitProfiles = options
-					.parameterAsStringList(this.getClass().getName(),
+					.parameterAsStringList(ModelExport.class.getName(),
 							ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES,
 							null, true, true);
 
@@ -94,21 +92,22 @@ public class ModelExportConfigurationValidator
 		}
 
 		// validate PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX
-		if (options.hasParameter(this.getClass().getName(),
-				ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX)) {
-
-			try {
-				Pattern.compile(
-						options.parameterAsString(this.getClass().getName(),
-								ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-								"", false, true));
-			} catch (PatternSyntaxException e) {
-				isValid = false;
-				result.addError(this, 1,
-						ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-						e.getMessage());
-			}
-		}
+		// if (options.hasParameter(ModelExport.class.getName(),
+		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX))
+		// {
+		//
+		// try {
+		// Pattern.compile(
+		// options.parameterAsString(ModelExport.class.getName(),
+		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
+		// "", false, true));
+		// } catch (PatternSyntaxException e) {
+		// isValid = false;
+		// result.addError(this, 1,
+		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
+		// e.getMessage());
+		// }
+		// }
 
 		return isValid;
 	}

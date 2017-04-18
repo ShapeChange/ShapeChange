@@ -34,7 +34,6 @@ package de.interactive_instruments.ShapeChange.Model.Xmi10;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -970,25 +969,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 			addClassElements(root.getElementsByTagName("Foundation.Core.ModelElement"));
 		}
 	}
-
-	public SortedSet<PackageInfo> schemas(String name) {
-		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
-		for (Iterator<PackageInfo> i = fPackages.values().iterator(); i
-				.hasNext();) {
-			PackageInfo pi = i.next();
-			if (pi.isSchema()) {
-				if (name != null && !name.equals("")) {
-					if (pi.name().equals(name)) {
-						res.add(fPackages.get(pi.id()));
-					}
-				} else {
-					res.add(fPackages.get(pi.id()));
-				}
-			}
-		}
-		return res;
-	}
-
+	
 	public PackageInfo packageById(String id) {
 		return fPackages.get(id);
 	}
@@ -1087,8 +1068,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 	}
 	
 	@Override
-	public HashSet<PackageInfo> packages() {
-		HashSet<PackageInfo> allPackages = new HashSet<PackageInfo>();
+	public SortedSet<PackageInfo> packages() {
+		SortedSet<PackageInfo> allPackages = new TreeSet<PackageInfo>();
 		for (PackageInfo pi : fPackages.values()) {
 			allPackages.add(pi);
 		}

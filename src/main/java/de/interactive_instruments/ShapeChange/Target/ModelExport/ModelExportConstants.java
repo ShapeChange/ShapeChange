@@ -47,17 +47,20 @@ public class ModelExportConstants {
 	 */
 	public static final String PARAM_PROFILES_TO_EXPORT = "profilesToExport";
 
-	/**
-	 * Regular expression to match the name of schemas in which the profile
-	 * definition shall be converted to explicit definitions. By default, i.e.
-	 * if this parameter is not provided, the conversion will be applied to all
-	 * classes and properties of the model. This parameter is only relevant if
-	 * parameter {@value #PARAM_MODEL_EXPLICIT_PROFILES} is <code>false</code>
-	 * and if {@value #RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES} is not enabled.
-	 * <p>
-	 * Applies to rule: none - default behavior
-	 */
-	public static final String PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX = "convertToExplicitProfileDefinition_schemaNameRegex";
+//	/**
+//	 * Regular expression to match the name of schemas in which the profile
+//	 * definition shall be converted to explicit definitions. By default, i.e.
+//	 * if this parameter is not provided, the conversion will be applied to all
+//	 * classes and properties whose profiles will be exported (so by default the
+//	 * model elements belonging to schemas selected for processing, or the whole
+//	 * model if {@value #RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL} is
+//	 * enabled). This parameter is only relevant if parameter
+//	 * {@value #PARAM_MODEL_EXPLICIT_PROFILES} is <code>false</code> and if
+//	 * {@value #RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES} is not enabled.
+//	 * <p>
+//	 * Applies to rule: none - default behavior
+//	 */
+//	public static final String PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX = "convertToExplicitProfileDefinition_schemaNameRegex";
 
 	/**
 	 * Comma-separated list of names of profiles that will be set for classes
@@ -87,6 +90,16 @@ public class ModelExportConstants {
 	public static final String PARAM_MODEL_EXPLICIT_PROFILES = "profilesInModelSetExplicitly";
 
 	/**
+	 * Defines if the output should be compressed in a zip file (
+	 * <code>true</code>) or not (<code>false</code>).
+	 * <p>
+	 * default: false
+	 * <p>
+	 * applies to conversion rule: none - default behavior
+	 */
+	public static final String PARAM_ZIP_OUTPUT = "zipOutput";
+
+	/**
 	 * By default, existing profiles are exported. With this rule, that behavior
 	 * can be changed to omit existing profiles. This rule has higher priority
 	 * than {@link #RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES}.
@@ -108,5 +121,19 @@ public class ModelExportConstants {
 	 * on exported classes and properties.
 	 */
 	public static final String RULE_TGT_EXP_ALL_IGNORE_PROFILES_TAGGED_VALUE = "rule-exp-all-ignoreProfilesTaggedValue";
+
+	/**
+	 * By default, profiles are exported only for classes (and their properties)
+	 * from schemas that are selected for processing. If this rule is enabled,
+	 * profiles are exported for all model classes (and their properties).
+	 */
+	public static final String RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL = "rule-exp-all-exportProfilesFromWholeModel";
+
+	/**
+	 * By default, packages that do not belong to the schemas selected for
+	 * processing are marked as not editable. If this rule is enabled, all
+	 * packages are exported as editable.
+	 */
+	public static final String RULE_TGT_EXP_PKG_ALL_EDITABLE = "rule-exp-pkg-allPackagesAreEditable";
 
 }

@@ -59,7 +59,8 @@
 			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
 			input="B_and_C" id="B_and_C_homogeneousgeometry" mode="enabled">
 			<parameters>
-				<ProcessParameter name="separatorForGeometryTypeSuffix" value="_" />
+				<ProcessParameter name="separatorForGeometryTypeSuffix"
+					value="_" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">
@@ -119,7 +120,8 @@
 			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
 			input="E" id="E_homogeneousgeometry" mode="enabled">
 			<parameters>
-				<ProcessParameter name="separatorForGeometryTypeSuffix" value="_" />
+				<ProcessParameter name="separatorForGeometryTypeSuffix"
+					value="_" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">
@@ -157,10 +159,12 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/profiling_withProfileMetadata/results/scxml" />
 			<targetParameter name="outputFilename" value="profileDExport" />
-			<!-- <targetParameter name="defaultEncodingRule" value="export"/> -->
-			<!-- <rules> -->
-			<!-- <EncodingRule name="export"/> -->
-			<!-- </rules> -->
+			<targetParameter name="defaultEncodingRule" value="export" />
+			<rules>
+				<EncodingRule name="export">
+					<rule name="rule-exp-pkg-allPackagesAreEditable" />
+				</EncodingRule>
+			</rules>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

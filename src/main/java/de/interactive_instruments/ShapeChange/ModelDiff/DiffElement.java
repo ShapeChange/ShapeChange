@@ -137,11 +137,11 @@ public class DiffElement implements Comparable<DiffElement> {
 				return this.subElementType.toString()
 						.compareTo(o.subElementType.toString());
 			} else {
-				
+
 				// compare based on subElement if not null, otherwise the tag
-				if(this.subElement != null && o.subElement != null) {
+				if (this.subElement != null && o.subElement != null) {
 					return this.subElement.compareTo(o.subElement);
-				} else if (this.tag != null && o.tag != null){
+				} else if (this.tag != null && o.tag != null) {
 					return this.tag.compareTo(o.tag);
 				} else if (this.subElement != null) {
 					return -1;
@@ -150,5 +150,78 @@ public class DiffElement implements Comparable<DiffElement> {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Converts the diff list using the toString() method of each Diff.
+	 * 
+	 * @return textual representation of the diffs available for this list; can
+	 *         be empty but not <code>null</code>
+	 */
+	public String diff_toString() {
+
+		StringBuilder result = new StringBuilder();
+
+		if (this.diff != null) {
+
+			for (Diff aDiff : diff) {
+
+				switch (aDiff.operation) {
+				case INSERT:
+					result.append(aDiff.toString());
+					break;
+				case DELETE:
+					result.append(aDiff.toString());
+					break;
+				case EQUAL:
+					result.append(aDiff.text);
+					break;
+				}
+			}
+		}
+
+		return result.toString();
+	}
+
+	/**
+	 * Converts the diff list to a human readable text. The result shows the
+	 * reference text (FROM) and the input text (TO).
+	 * 
+	 * @return textual representation of the diffs available for this list; can
+	 *         be empty but not <code>null</code>
+	 */
+	public String diff_from_to() {
+
+		StringBuilder result = new StringBuilder();
+				
+		if (this.diff != null) {
+
+			StringBuilder from = new StringBuilder();
+			
+			StringBuilder to = new StringBuilder();
+			
+			for (Diff aDiff : diff) {
+
+				switch (aDiff.operation) {
+				case INSERT:
+					to.append(aDiff.text);
+					break;
+				case DELETE:
+					from.append(aDiff.text);
+					break;
+				case EQUAL:
+					from.append(aDiff.text);
+					to.append(aDiff.text);
+					break;
+				}
+			}
+			
+			result.append("FROM: ");
+			result.append(from);
+			result.append(" TO: ");
+			result.append(to);
+		}
+
+		return result.toString();
 	}
 }

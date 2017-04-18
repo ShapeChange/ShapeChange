@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -44,7 +45,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -80,6 +80,7 @@ import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Profile.VersionRange;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.XMLWriter;
+import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -96,12 +97,16 @@ public class ModelExport implements SingleTarget, MessageSource {
 	private static String outputFilename = null;
 	private static String encoding = null;
 	private static XMLWriter writer = null;
+	private static File outputXmlFile = null;
 
 	private static Model model = null;
+	private static SortedSet<PackageInfo> allSelectedSchemaPackages = null;
 
 	private static Set<String> profilesToExport = null;
 	private static boolean omitExistingProfiles = false;
 	private static boolean ignoreProfilesTaggedValue = true;
+	private static boolean exportProfilesFromWholeModel = false;
+	private static boolean zipOutput = false;
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -127,14 +132,17 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 				model = m;
 
-				outputDirectory = options.parameter(this.getClass().getName(),
+				allSelectedSchemaPackages = model
+						.allPackagesFromSelectedSchemas();
+
+				outputDirectory = options.parameter(ModelExport.class.getName(),
 						"outputDirectory");
 				if (outputDirectory == null)
 					outputDirectory = options.parameter("outputDirectory");
 				if (outputDirectory == null)
 					outputDirectory = ".";
 
-				outputFilename = options.parameter(this.getClass().getName(),
+				outputFilename = options.parameter(ModelExport.class.getName(),
 						"outputFilename");
 				if (outputFilename == null)
 					outputFilename = "ModelExport";
@@ -162,8 +170,9 @@ public class ModelExport implements SingleTarget, MessageSource {
 						: m.characterEncoding();
 				// String encoding_ = "UTF-8";
 
-				OutputStream fout = new FileOutputStream(
-						outputDirectory + "/" + xmlName);
+				outputXmlFile = new File(outputDirectory + "/" + xmlName);
+
+				OutputStream fout = new FileOutputStream(outputXmlFile);
 				OutputStream bout = new BufferedOutputStream(fout,
 						streamBufferSize);
 				OutputStreamWriter outputXML = new OutputStreamWriter(bout,
@@ -174,7 +183,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 				if (p.matches(
 						ModelExportConstants.RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES)) {
 					profilesToExport = new HashSet<String>(options
-							.parameterAsStringList(this.getClass().getName(),
+							.parameterAsStringList(ModelExport.class.getName(),
 									ModelExportConstants.PARAM_PROFILES_TO_EXPORT,
 									null, true, true));
 				}
@@ -185,8 +194,15 @@ public class ModelExport implements SingleTarget, MessageSource {
 				ignoreProfilesTaggedValue = p.matches(
 						ModelExportConstants.RULE_TGT_EXP_ALL_IGNORE_PROFILES_TAGGED_VALUE);
 
+				exportProfilesFromWholeModel = p.matches(
+						ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL);
+
+				zipOutput = options.parameterAsBoolean(
+						ModelExport.class.getName(),
+						ModelExportConstants.PARAM_ZIP_OUTPUT, false);
+
 				boolean profilesInModelSetExplicitly = options
-						.parameterAsBoolean(this.getClass().getName(),
+						.parameterAsBoolean(ModelExport.class.getName(),
 								ModelExportConstants.PARAM_MODEL_EXPLICIT_PROFILES,
 								true);
 
@@ -195,20 +211,21 @@ public class ModelExport implements SingleTarget, MessageSource {
 					// We need to convert the profile definitions in the model
 					SortedSet<String> profilesForClassesWithoutExplicitProfiles = null;
 
-					if (options.hasParameter(this.getClass().getName(),
+					if (options.hasParameter(ModelExport.class.getName(),
 							ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
 
 						profilesForClassesWithoutExplicitProfiles = new TreeSet<String>(
 								options.parameterAsStringList(
-										this.getClass().getName(),
+										ModelExport.class.getName(),
 										ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES,
 										null, true, true));
 
 					} else {
 
-						// gather the names of all profiles defined in the model
+						// gather the names of profiles from the model
 						profilesForClassesWithoutExplicitProfiles = ProfileUtil
-								.findNamesOfAllProfiles(m);
+								.findNamesOfAllProfiles(m,
+										exportProfilesFromWholeModel);
 					}
 
 					if (!profilesForClassesWithoutExplicitProfiles.isEmpty()) {
@@ -216,34 +233,36 @@ public class ModelExport implements SingleTarget, MessageSource {
 						Profiles profilesForClassesBelongingToAllProfiles = new Profiles();
 						for (String profileName : profilesForClassesWithoutExplicitProfiles) {
 							profilesForClassesBelongingToAllProfiles
-									.add(profileName);
+									.put(profileName);
 						}
 
 						Pattern schemaNameRegex = null;
 
-						if (options.hasParameter(this.getClass().getName(),
-								ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX)) {
-							try {
-								schemaNameRegex = Pattern
-										.compile(options.parameterAsString(
-												this.getClass().getName(),
-												ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-												"", false, true));
-							} catch (PatternSyntaxException e) {
-								result.addError(this, 11,
-										ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-										e.getMessage());
-							}
-						}
+						// if (options.hasParameter(ModelExport.getName(),
+						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX))
+						// {
+						// try {
+						// schemaNameRegex = Pattern
+						// .compile(options.parameterAsString(
+						// ModelExport.getName(),
+						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
+						// "", false, true));
+						// } catch (PatternSyntaxException e) {
+						// result.addError(this, 11,
+						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
+						// e.getMessage());
+						// }
+						// }
 						/*
 						 * Convert model to one with explicit profile
 						 * definitions and set it as the model to process by
 						 * this target
 						 */
-						GenericModel genModel = ProfileUtil
-								.convertToExplicitProfileDefinitions(m,
-										profilesForClassesBelongingToAllProfiles,
-										schemaNameRegex);
+						GenericModel genModel = new GenericModel(m);
+						ProfileUtil.convertToExplicitProfileDefinitions(
+								genModel,
+								profilesForClassesBelongingToAllProfiles,
+								schemaNameRegex, exportProfilesFromWholeModel);
 
 						/*
 						 * Postprocessing and validation of the generic model
@@ -284,15 +303,19 @@ public class ModelExport implements SingleTarget, MessageSource {
 		writer = null;
 
 		model = null;
+		allSelectedSchemaPackages = null;
 
 		outputDirectory = null;
 		outputFilename = null;
+		outputXmlFile = null;
 
 		encoding = null;
 
 		profilesToExport = null;
 		omitExistingProfiles = false;
 		ignoreProfilesTaggedValue = true;
+		exportProfilesFromWholeModel = false;
+		zipOutput = false;
 	}
 
 	@Override
@@ -371,6 +394,13 @@ public class ModelExport implements SingleTarget, MessageSource {
 			writer.endDocument();
 			writer.close();
 
+			if (zipOutput) {
+
+				File outputZipFile = new File(
+						outputDirectory + "/" + outputFilename + ".zip");
+				ZipHandler.zipFile(outputXmlFile, outputZipFile);
+			}
+
 		} catch (Exception e) {
 
 			String m = e.getMessage();
@@ -435,7 +465,12 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 	private void printPackage(PackageInfo pi) throws Exception {
 
-		writer.startElement(NS, "Package");
+		if (pi.matches(ModelExportConstants.RULE_TGT_EXP_PKG_ALL_EDITABLE)
+				|| allSelectedSchemaPackages.contains(pi)) {
+			writer.startElement(NS, "Package");
+		} else {
+			writer.startElement(NS, "Package", "editable", "false");
+		}
 
 		printInfoFields(pi);
 
@@ -580,7 +615,11 @@ public class ModelExport implements SingleTarget, MessageSource {
 			printDataElement("baseClassId", ci.baseClass().id());
 		}
 
-		printProfiles(ci.profiles());
+		if (ci.matches(
+				ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL)
+				|| allSelectedSchemaPackages.contains(ci.pkg())) {
+			printProfiles(ci.profiles());
+		}
 
 		if (!ci.supertypes().isEmpty()) {
 
@@ -784,7 +823,11 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printInfoFields(pi);
 
-		printProfiles(pi.profiles());
+		if (pi.matches(
+				ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL)
+				|| allSelectedSchemaPackages.contains(pi.inClass().pkg())) {
+			printProfiles(pi.profiles());
+		}
 
 		if (!(pi.cardinality().minOccurs == 1
 				&& pi.cardinality().maxOccurs == 1)) {
@@ -936,7 +979,21 @@ public class ModelExport implements SingleTarget, MessageSource {
 	private void printDescriptorElement(Descriptor descriptor,
 			Descriptors descriptors) throws SAXException {
 
-		List<LangString> descriptorValues = descriptors.values(descriptor);
+		List<LangString> descriptorValues_tmp = descriptors.values(descriptor);
+
+		/*
+		 * Ignore values that only contain whitespace. Empty values would lead
+		 * to validation errors. This is especially relevant for descriptors
+		 * that have the empty string as value by default, even if no source
+		 * defines it; an example is the descriptor 'definition'.
+		 */
+		List<LangString> descriptorValues = new ArrayList<LangString>();
+
+		for (LangString dv : descriptorValues_tmp) {
+			if (dv.getValue().trim().length() > 0) {
+				descriptorValues.add(dv);
+			}
+		}
 
 		if (!descriptorValues.isEmpty()) {
 

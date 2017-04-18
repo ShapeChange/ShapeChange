@@ -193,24 +193,14 @@ public class Profiler implements Transformer, MessageSource {
 	ConstraintHandling constraintHandling = ConstraintHandling.keep;
 	Profiles profilesFromConfig = null;
 
-	// private Map<String, Profiles> classByIdProfileIdMap = new TreeMap<String,
-	// Profiles>();
-	// private Map<String, Profiles> propertyByIdProfileIdMap = new
-	// TreeMap<String, Profiles>();
 	private boolean isExplicitProfileSettingsRuleEnabled = false;
 	private ShapeChangeResult result;
-	// private static final String PROFILER_ISSUE_LOG_MESSAGES_SEPARATOR = " ";
 
 	public Profiler() {
 		// nothing special to do here
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Transformation.Transformer#process(de.interactive_instruments.ShapeChange.Model.Model,
-	 *      de.interactive_instruments.ShapeChange.Options,
-	 *      de.interactive_instruments.ShapeChange.TransformerConfiguration,
-	 *      de.interactive_instruments.ShapeChange.ShapeChangeResult)
-	 */
+	@Override
 	public void process(GenericModel genModel, Options options,
 			TransformerConfiguration trfConfig, ShapeChangeResult result)
 			throws ShapeChangeAbortException {
@@ -280,52 +270,6 @@ public class Profiler implements Transformer, MessageSource {
 			}
 		}
 
-		// /*
-		// * Get profile identifiers
-		// */
-		// for (GenericClassInfo ci : genModel.selectedSchemaClasses()) {
-		//
-		// this.classByIdProfileIdMap.put(ci.id(), ci.profiles());
-		// }
-		//
-		// for (GenericPropertyInfo pi : genModel.selectedSchemaProperties()) {
-		//
-		// this.propertyByIdProfileIdMap.put(pi.id(), pi.profiles());
-		// }
-
-		// 1. Execute any preprocessing
-		// if (rules.contains(
-		// RULE_TRF_PROFILING_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK)) {
-		//
-		// StatusBoard.getStatusBoard().statusChanged(
-		// STATUS_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK);
-		//
-		// /*
-		// * Check that the values of the 'profiles' tagged value in classes
-		// * are consistent:
-		// *
-		// * NOTE: Undefined or empty 'profiles' tagged values are allowed,
-		// * but the interpretation depends on the rules that are set
-		// *
-		// * - future work: Ensure that profile identifiers are members of a
-		// * specific set (defined by enumeration in the model or a given list
-		// * of identifiers)
-		// */
-		//
-		// /*
-		// * Get profile identifiers
-		// */
-		// for (GenericClassInfo ci : genModel.selectedSchemaClasses()) {
-		//
-		// this.classByIdProfileIdMap.put(ci.id(), ci.profiles());
-		// }
-		//
-		// for (GenericPropertyInfo pi : genModel.selectedSchemaProperties()) {
-		//
-		// this.propertyByIdProfileIdMap.put(pi.id(), pi.profiles());
-		// }
-		// }
-
 		if (rules.contains(
 				RULE_TRF_PROFILING_PREPROCESSING_MODELCONSISTENCYCHECK)) {
 
@@ -340,93 +284,7 @@ public class Profiler implements Transformer, MessageSource {
 							RULE_TRF_PROFILING_PROCESSING_CLASS_REMOVAL_INCLUDES_ALL_SUBTYPES);
 
 			mpv.validateModelConsistency(isExplicitProfileSettingsRuleEnabled,
-					warnIfSupertypeProfilesDoNotContainSubtypeProfiles);
-
-			// for (GenericClassInfo ci : genModel.selectedSchemaClasses()) {
-			//
-			// Profiles ciPidMap = classByIdProfileIdMap.get(ci.id());
-			//
-			// // Test for subtypes
-			// if (!ci.subtypes().isEmpty()) {
-			//
-			// SortedSet<String> subtypeIds = ci.subtypes();
-			//
-			// for (String subtypeId : subtypeIds) {
-			//
-			// Profiles subtypePidMap = classByIdProfileIdMap
-			// .get(subtypeId);
-			//
-			// // used for logging messages
-			// List<String> messages = new ArrayList<String>();
-			//
-			// if (!contains(ciPidMap, ci.name(), subtypePidMap,
-			// genModel.classById(subtypeId).name(), false,
-			// messages)) {
-			//
-			// /*
-			// * This can be dangerous in case that the subtype
-			// * has constraints from properties of its supertype.
-			// * In such a case the constraints won't have a
-			// * proper context (because the properties they are
-			// * referring to may not exist in case that the
-			// * supertype is omitted in a profile for which the
-			// * subtype remains).
-			// *
-			// * However, if all subtypes would be removed as well
-			// * then it would be ok.
-			// */
-			//
-			// if (rules.contains(
-			// RULE_TRF_PROFILING_PROCESSING_CLASS_REMOVAL_INCLUDES_ALL_SUBTYPES))
-			// {
-			//
-			// /*
-			// * as all subtypes will be removed this is not
-			// * problematic - just log an info
-			// */
-			// result.addInfo(null, 20214, ci.name(),
-			// genModel.classById(subtypeId).name(),
-			// StringUtils.join(messages,
-			// PROFILER_ISSUE_LOG_MESSAGES_SEPARATOR));
-			//
-			// } else {
-			//
-			// result.addError(null, 20203, ci.name(),
-			// genModel.classById(subtypeId).name(),
-			// StringUtils.join(messages,
-			// PROFILER_ISSUE_LOG_MESSAGES_SEPARATOR));
-			// }
-			// }
-			// }
-			// }
-			//
-			// // Test for navigable properties
-			// for (PropertyInfo pi : ci.properties().values()) {
-			//
-			// if (pi.isNavigable()) {
-			//
-			// Profiles propertyPidMap = propertyByIdProfileIdMap
-			// .get(pi.id());
-			//
-			// List<String> messages = new ArrayList<String>();
-			//
-			// if (isExplicitProfileSettingsRuleEnabled
-			// && ciPidMap.isEmpty()) {
-			//
-			// // this is allowed
-			//
-			// } else if (!contains(ciPidMap, ci.name(),
-			// propertyPidMap,
-			// pi.name() + "(in class " + pi.inClass() + ")",
-			// true, messages)) {
-			//
-			// result.addWarning(null, 20204, ci.name(), pi.name(),
-			// StringUtils.join(messages,
-			// PROFILER_ISSUE_LOG_MESSAGES_SEPARATOR));
-			// }
-			// }
-			// }
-			// }
+					warnIfSupertypeProfilesDoNotContainSubtypeProfiles, true);
 		}
 
 		// 2. Execute profiling
@@ -434,7 +292,7 @@ public class Profiler implements Transformer, MessageSource {
 		StatusBoard.getStatusBoard().statusChanged(STATUS_PROCESSING_PROFILING);
 
 		/*
-		 * For each class in the generic model:
+		 * For each class in schemas selected for processing:
 		 * 
 		 * If it does not have 'profiles', keep it - unless the rule for
 		 * explicit profile settings is enabled; in that case the class shall be
@@ -521,16 +379,8 @@ public class Profiler implements Transformer, MessageSource {
 		// now delete the properties that were marked for removal
 		for (PropertyInfo pi : pisToRemove) {
 
-			/*
-			 * Cast should be safe because the pis originate from
-			 * GenericClassInfos (see previous loop)
-			 */
 			genModel.remove((GenericPropertyInfo) pi, true);
 
-			/*
-			 * Cast should be safe: if pi is a GenericPropertyInfo then so
-			 * should be its inClass()
-			 */
 			GenericClassInfo genCi = (GenericClassInfo) pi.inClass();
 
 			if (constraintHandling.equals(ConstraintHandling.remove)) {
@@ -583,11 +433,6 @@ public class Profiler implements Transformer, MessageSource {
 
 					for (PropertyInfo pi : genCi.properties().values()) {
 
-						/*
-						 * cast should be safe because the properties of a
-						 * GenericClassInfo should all be of type
-						 * GenericPropertyInfo
-						 */
 						GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 						List<Constraint> genPiConstraints = genPi.constraints();
@@ -802,7 +647,8 @@ public class Profiler implements Transformer, MessageSource {
 											.isNavigable();
 									boolean aiEnd2IsNavigable = ai.end2()
 											.isNavigable();
-									if(!(aiEnd1IsNavigable || aiEnd2IsNavigable)) {
+									if (!(aiEnd1IsNavigable
+											|| aiEnd2IsNavigable)) {
 										associationsToRemove.add(ai);
 									}
 								}
@@ -1132,116 +978,6 @@ public class Profiler implements Transformer, MessageSource {
 		}
 
 	}
-
-	// /**
-	// * Checks if one set of profiles contains another one.
-	// * <p>
-	// * Takes into account whether or not the rule for explicit profile
-	// settings
-	// * is enabled, which matters in case that a model element has no profile
-	// * information.
-	// * <p>
-	// * Useful for:
-	// * <ul>
-	// * <li>Checking if the profile information for a property is contained in
-	// * the profile set of its class (profileInheritance: true).</li>
-	// * <li>Checking if the profiles of the subtypes of a class are contained
-	// in
-	// * that classes profiles (profileInheritance: false).</li>
-	// * <li>Checking if the target profiles provided via the configuration are
-	// * contained in the profile information of a class (profileInheritance:
-	// * false).</li>
-	// * </ul>
-	// *
-	// * Profile inheritance: if profile map B is null but map A is not, map B
-	// * inherits the profiles from map A. This is irrelevant if the rule for
-	// * explicit profile settings is enabled.
-	// *
-	// *
-	// *
-	// * @param profilesA
-	// * profile map that contains profilesB (or not)
-	// * @param profilesB
-	// * profile map that is contained in profilesA (or not)
-	// * @param profileInheritance
-	// * true if profile inheritance shall be applied, else false
-	// * (irrelevant if rule for explicit profile settings is enabled)
-	// * @param messages
-	// * used to log the reason(s) why profilesA does not contain
-	// * profilesB
-	// * @return
-	// */
-	// public boolean contains(Profiles profilesA, String aOwnerName,
-	// Profiles profilesB, String bOwnerName, boolean profileInheritance,
-	// List<String> messages) {
-	//
-	// if (profilesA.isEmpty() && profilesB.isEmpty()) {
-	//
-	// return true;
-	//
-	// } else if (profilesA.isEmpty() && !profilesB.isEmpty()) {
-	//
-	// if (isExplicitProfileSettingsRuleEnabled) {
-	//
-	// /*
-	// * profiles A is empty while profiles B is not; the empty set
-	// * does not contain a non-empty set:
-	// */
-	// return false;
-	//
-	// } else {
-	//
-	// /*
-	// * profiles A is unlimited and thus contains profiles B (which
-	// * is limited):
-	// */
-	// return true;
-	// }
-	//
-	// } else if (!profilesA.isEmpty() && profilesB.isEmpty()) {
-	//
-	// if (isExplicitProfileSettingsRuleEnabled) {
-	//
-	// /*
-	// * profiles B is empty while profiles A is not; a non-empty set
-	// * always contains the empty set
-	// */
-	// return true;
-	//
-	// } else {
-	//
-	// /*
-	// * Now it depends if profile inheritance shall be applied or not
-	// * This is the case for properties but not for subtypes, for
-	// * example.
-	// */
-	// if (profileInheritance) {
-	// // Ok, profile map B inherits profile map A:
-	// return true;
-	// } else {
-	// /*
-	// * As profile inheritance is false, profile map B is
-	// * unlimited while profile map A is not, therefore the
-	// * latter does not contain the former:
-	// */
-	// if (messages != null) {
-	// messages.add("The profiles owned by '" + aOwnerName
-	// + "' do not contain the profiles owned by '"
-	// + bOwnerName
-	// + "' because the latter does not inherit the profiles from the former,
-	// and because the latter has an unlimited profile set while the former does
-	// not.");
-	// }
-	// return false;
-	// }
-	// }
-	//
-	// } else {
-	// // Both profiles are limited, thus compare their contents
-	// return profilesA.contains(profilesB, messages);
-	// }
-	//
-	// }
 
 	/**
 	 * Assesses the context model element of each constraint in the given

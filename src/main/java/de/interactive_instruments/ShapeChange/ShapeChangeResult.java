@@ -1173,6 +1173,11 @@ public class ShapeChangeResult {
 			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
 		case 30326:
 			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
+		
+		case 30327:
+			return "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
+		case 30328:
+			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
 
 		case 30500:
 			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
@@ -1185,7 +1190,8 @@ public class ShapeChangeResult {
 			return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
 		case 30803:
 			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
-
+		
+		
 		default:
 			return "(Unknown message with code '" + mnr + "')";
 		}

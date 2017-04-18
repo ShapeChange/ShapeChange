@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/profileLoading/explicitProfiles/testEA_profileLoading_explicitProfiles.xml" end="Tue Apr 18 11:35:15 CEST 2017" resultCode="0" start="Tue Apr 18 11:35:09 CEST 2017" version="2.3.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="(Converter.java) Now processing transformation 'Test1' for input ID: 'INPUT'."/>
+    <Info message="Removing profiles in input model."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model2.xml'."/>
+    <Info message="Validating profiles in resulting model."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'Test1' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileLoading/schema/a'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'Test1'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'Test1'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'Test2' for input ID: 'INPUT'."/>
+    <Info message="------ Start validating profiles in input model."/>
+    <Info message="------ End validating profiles in input model."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="------ Start validating profiles in model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="------ End validating profiles in model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="Validating profiles in resulting model."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'Test2' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileLoading/schema/a'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'Test2'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'Test2'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'Test3' for input ID: 'INPUT'."/>
+    <Info message="------ Start validating profiles in input model."/>
+    <Warning message="Class 'Integer' is the type of property 'propA2' (which is in class 'FeatureTypeA'). The profile set of type 'Integer' does not contain the profile set of the property. "/>
+    <Warning message="Class 'Real' is the type of property 'propA3' (which is in class 'FeatureTypeA'). The profile set of type 'Real' does not contain the profile set of the property. "/>
+    <Warning message="Class 'CharacterString' is the type of property 'propExt' (which is in class 'ExtFeatureType'). The profile set of type 'CharacterString' does not contain the profile set of the property. "/>
+    <Info message="------ End validating profiles in input model."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="------ Start validating profiles in model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Warning message="Class 'Integer' is the type of property 'propA2' (which is in class 'FeatureTypeA'). The profile set of type 'Integer' does not contain the profile set of the property. "/>
+    <Warning message="Class 'Real' is the type of property 'propA3' (which is in class 'FeatureTypeA'). The profile set of type 'Real' does not contain the profile set of the property. "/>
+    <Warning message="Class 'CharacterString' is the type of property 'propExt' (which is in class 'ExtFeatureType'). The profile set of type 'CharacterString' does not contain the profile set of the property. "/>
+    <Info message="------ End validating profiles in model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="Validating profiles in resulting model."/>
+    <Warning message="Class 'Integer' is the type of property 'propA2' (which is in class 'FeatureTypeA'). The profile set of type 'Integer' does not contain the profile set of the property. "/>
+    <Warning message="Class 'Real' is the type of property 'propA3' (which is in class 'FeatureTypeA'). The profile set of type 'Real' does not contain the profile set of the property. "/>
+    <Warning message="Class 'CharacterString' is the type of property 'propExt' (which is in class 'ExtFeatureType'). The profile set of type 'CharacterString' does not contain the profile set of the property. "/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'Test3' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileLoading/schema/a'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'Test3'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'Test3'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'Test4' for input ID: 'INPUT'."/>
+    <Info message="Removing profiles in input model."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model3.xml'."/>
+    <Info message="------ Start model diff (compare model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model3.xml' against input model)"/>
+    <Info message="Model difference - version of schema 'Model::Test Model::Test Schema A' from input model is '1', version of reference schema from loaded model is '0.9'."/>
+    <Info message="Model difference - Test Schema A">
+      <Detail message="DELETE CLASS OldSubType"/>
+      <Detail message="DELETE CLASS SuperType"/>
+      <Detail message="DELETE SUBPACKAGE OldSubpackage"/>
+      <Detail message="INSERT CLASS SubType"/>
+    </Info>
+    <Info message="Model difference - Test Schema A::FeatureTypeA">
+      <Detail message="DELETE PROPERTY propA4"/>
+      <Detail message="DELETE SUPERTYPE SuperType"/>
+      <Detail message="INSERT PROPERTY propA2"/>
+    </Info>
+    <Info message="Model difference - Test Schema A::FeatureTypeA::propA3">
+      <Detail message="CHANGE MULTIPLICITY FROM: 0..* TO: 0..1"/>
+      <Detail message="CHANGE VALUETYPE FROM: CharacterString TO: Real"/>
+    </Info>
+    <Info message="------ End model diff (compare model loaded from 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model3.xml' against input model)"/>
+    <Info message="Validating profiles in resulting model."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'Test4' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileLoading/schema/a'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'Test4'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'Test4'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'Test5' for input ID: 'INPUT'."/>
+    <Info message="Removing profiles in input model."/>
+    <Info message="Loading profiles from model located at 'C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\explicitProfiles\models_to_load\model1.xml'."/>
+    <Info message="Validating profiles in resulting model."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'Test5' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileLoading/schema/a'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'Test5'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'Test5'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

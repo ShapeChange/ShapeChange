@@ -122,23 +122,45 @@ public class Profiles {
 		}
 	}
 
-	public void add(ProfileIdentifier profile) {
+	/**
+	 * Adds the given profile to this set of profiles. If the profiles
+	 * previously contained a profile with the same name, the old profile is
+	 * replaced by the given one.
+	 * 
+	 * @param profile
+	 *            the profile to add to this set of profiles
+	 * @return The previous profile, if this set already contained a profile
+	 *         with the same name as the given profile, or null if there was no
+	 *         such profile.
+	 */
+	public ProfileIdentifier put(ProfileIdentifier profile) {
 
 		if (this.profileIdentifiersByName == null) {
 			this.profileIdentifiersByName = new TreeMap<String, ProfileIdentifier>();
 		}
 
-		this.profileIdentifiersByName.put(profile.getName(), profile);
+		return this.profileIdentifiersByName.put(profile.getName(), profile);
 	}
 
-	public void add(String profileName) {
+	/**
+	 * Adds a new profile with the given name to this set of profiles. If the
+	 * profiles previously contained a profile with the same name, the old
+	 * profile is replaced by the given one.
+	 * 
+	 * @param profileName
+	 *            the name of the new profile to add to this set of profiles
+	 * @return The previous profile, if this set already contained a profile
+	 *         with the same name as the given one, or null if there was no such
+	 *         profile.
+	 */
+	public ProfileIdentifier put(String profileName) {
 
 		if (this.profileIdentifiersByName == null) {
 			this.profileIdentifiersByName = new TreeMap<String, ProfileIdentifier>();
 		}
 
 		ProfileIdentifier pi = new ProfileIdentifier(profileName, null, null);
-		this.profileIdentifiersByName.put(pi.getName(), pi);
+		return this.profileIdentifiersByName.put(pi.getName(), pi);
 	}
 
 	public Profiles() {
@@ -276,9 +298,9 @@ public class Profiles {
 	 *         of the set of profile identifiers contained by this object); can
 	 *         be empty but not <code>null</code>.
 	 */
-	public List<ProfileIdentifier> getProfileIdentifiers() {
+	public SortedSet<ProfileIdentifier> getProfileIdentifiers() {
 
-		List<ProfileIdentifier> result = new ArrayList<ProfileIdentifier>();
+		SortedSet<ProfileIdentifier> result = new TreeSet<ProfileIdentifier>();
 
 		if (this.profileIdentifiersByName != null) {
 			result.addAll(this.profileIdentifiersByName.values());
@@ -420,7 +442,7 @@ public class Profiles {
 	 *            (irrelevant if rule for explicit profile settings is enabled)
 	 * @param messages
 	 *            used to log the reason(s) why these profiles do not contain
-	 *            the other profiles
+	 *            the other profiles; can be <code>null</code>
 	 * @return <code>true</code> if these profiles contain the other profiles
 	 */
 	public boolean contains(String ownerName, Profiles otherProfiles,
@@ -540,6 +562,30 @@ public class Profiles {
 		} else {
 			return this.profileIdentifiersByName.get(profileName);
 		}
+	}
+
+	/**
+	 * @param profileNames
+	 * @return the set of profile identifiers whose names are contained in the
+	 *         given set; can be empty (especially if the given set is
+	 *         <code>null</code> or empty) but not <code>null</code>
+	 */
+	public SortedSet<ProfileIdentifier> getProfiles(Set<String> profileNames) {
+
+		SortedSet<ProfileIdentifier> result = new TreeSet<ProfileIdentifier>();
+
+		if (profileNames != null && this.profileIdentifiersByName != null) {
+
+			for (Entry<String, ProfileIdentifier> profileEntry : this.profileIdentifiersByName
+					.entrySet()) {
+
+				if (profileNames.contains(profileEntry.getKey())) {
+					result.add(profileEntry.getValue());
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/**

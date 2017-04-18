@@ -1437,6 +1437,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
+	 * Look up the property with the given name in the direct properties of this
+	 * class. The search does not extend to supertypes of the class.
 	 * 
 	 * @param name
 	 * @return The property with the given name, or <code>null</code> if no such
@@ -1694,6 +1696,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
+	/**
+	 * @param profiles
+	 *            new set of profiles for this class; may be <code>null</code>
+	 */
 	public void setProfiles(Profiles profiles) {
 
 		if (profiles == null) {
