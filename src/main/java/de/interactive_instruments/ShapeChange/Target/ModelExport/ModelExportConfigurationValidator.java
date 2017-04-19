@@ -91,24 +91,6 @@ public class ModelExportConfigurationValidator
 			}
 		}
 
-		// validate PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX
-		// if (options.hasParameter(ModelExport.class.getName(),
-		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX))
-		// {
-		//
-		// try {
-		// Pattern.compile(
-		// options.parameterAsString(ModelExport.class.getName(),
-		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-		// "", false, true));
-		// } catch (PatternSyntaxException e) {
-		// isValid = false;
-		// result.addError(this, 1,
-		// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-		// e.getMessage());
-		// }
-		// }
-
 		return isValid;
 	}
 

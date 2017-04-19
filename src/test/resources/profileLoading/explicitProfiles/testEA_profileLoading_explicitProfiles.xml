@@ -61,7 +61,7 @@
 				<ProcessParameter name="directoryWithProfilesToLoad"
 					value="src/test/resources/profileLoading/explicitProfiles/models_to_load" />
 				<ProcessParameter name="regexToFilterProfilesToLoad"
-				value="model(1|2).xml" />
+					value="model(1|2).xml" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="profileLoading_test1">
@@ -111,7 +111,7 @@
 			id="Test3" mode="enabled">
 
 			<!-- Test 3 -->
-			<!-- + process whole model (-> still Test Schema only selected for processing) -->
+			<!-- + process all schemas (-> still Test Schema only selected for processing) -->
 			<!-- + validate input and loaded models -->
 			<!-- ++ will result in warnings related to ISO schema -->
 			<!-- + do NOT diff models -->
@@ -126,12 +126,13 @@
 					value="src/test/resources/profileLoading/explicitProfiles/models_to_load" />
 				<ProcessParameter name="regexToFilterProfilesToLoad"
 					value="model1.xml" />
+				<ProcessParameter name="processAllSchemas"
+					value="true" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="profileLoading_test3">
 					<rule
 						name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles" />
-					<rule name="rule-trf-profileLoader-processWholeModel" />
 					<rule name="rule-trf-profileLoader-validateLoadedModelProfiles" />
 					<rule
 						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
@@ -150,21 +151,22 @@
 			<!-- + diff loaded models -->
 			<!-- ++ load model 3 (remove, change, and add some model elements; also 
 				modify documentation) -->
-			<!-- ++ does not contain any profile -> we only want to test the diff functionality -->
+			<!-- ++ does not contain any profile -> we only want to test the diff 
+				functionality -->
 			<parameters>
 				<ProcessParameter name="directoryWithProfilesToLoad"
 					value="src/test/resources/profileLoading/explicitProfiles/models_to_load" />
 				<ProcessParameter name="regexToFilterProfilesToLoad"
 					value="model3.xml" />
-<!-- 					<ProcessParameter name="diffElementTypes" -->
-<!-- 					value="CLASS,ENUM,MULTIPLICITY,PROPERTY,NAME,STEREOTYPE,SUPERTYPE,SUBPACKAGE,VALUETYPE" /> -->
+				<!-- <ProcessParameter name="diffElementTypes" -->
+				<!-- value="CLASS,ENUM,MULTIPLICITY,PROPERTY,NAME,STEREOTYPE,SUPERTYPE,SUBPACKAGE,VALUETYPE" 
+					/> -->
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="profileLoading_test4">
-				<rule
-						name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles" />
 					<rule
-						name="rule-trf-profileLoader-diffModels" />
+						name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles" />
+					<rule name="rule-trf-profileLoader-diffModels" />
 					<rule
 						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
 				</ProcessRuleSet>
@@ -201,10 +203,11 @@
 			<targetParameter name="outputFilename" value="export" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="exportProfilesFromWholeModel"
+				value="true" />
 			<rules>
 				<EncodingRule name="export">
 					<rule name="rule-exp-pkg-allPackagesAreEditable" />
-					<rule name="rule-exp-all-exportProfilesFromWholeModel" />
 				</EncodingRule>
 			</rules>
 		</Target>
@@ -216,10 +219,11 @@
 		<!-- <targetParameter name="outputFilename" value="export" /> -->
 		<!-- <targetParameter name="sortedOutput" value="true" /> -->
 		<!-- <targetParameter name="defaultEncodingRule" value="export" /> -->
+		<!-- <targetParameter name="exportProfilesFromWholeModel" value="true" 
+			/> -->
 		<!-- <rules> -->
 		<!-- <EncodingRule name="export"> -->
 		<!-- <rule name="rule-exp-pkg-allPackagesAreEditable" /> -->
-		<!-- <rule name="rule-exp-all-exportProfilesFromWholeModel" /> -->
 		<!-- </EncodingRule> -->
 		<!-- </rules> -->
 		<!-- </Target> -->

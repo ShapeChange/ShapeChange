@@ -7,8 +7,8 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileLoading/explicitProfiles/helper_profileLoading_explicitProfiles_diffModel.eap" />
-		<parameter name="appSchemaNameRegex" value="Test Schema A" />
+			value="src/test/resources/profileTransfer/test_profileTransfer.eap" />
+		<!-- <parameter name="appSchemaNameRegex" value="Test Schema A" /> -->
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
 		<parameter name="sortedSchemaOutput" value="true" />
@@ -31,19 +31,19 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile"
-			value="testResults/profileLoading/explicitProfiles/log_helper_export_diffModel.xml" />
-	</log>	
+		<parameter name="logFile" value="testResults/profileTransfer/export/log.xml" />
+	</log>
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
 			mode="enabled">
 			<targetParameter name="outputDirectory"
-				value="testResults/profileLoading/explicitProfiles/diffModelExport" />
-			<targetParameter name="outputFilename" value="model3" />
+				value="testResults/profileTransfer/export" />
+			<targetParameter name="outputFilename" value="profiles" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="export" />
-			<targetParameter name="exportProfilesFromWholeModel" value="true" />
+			<targetParameter name="exportProfilesFromWholeModel"
+				value="true" />
 			<rules>
 				<EncodingRule name="export">
 					<rule name="rule-exp-pkg-allPackagesAreEditable" />

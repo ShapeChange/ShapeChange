@@ -118,7 +118,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** The EA element addressed by this ClassInfo */
 	protected org.sparx.Element eaClassElement = null;
-
+	
 	/** The EA object id of the class element object */
 	protected int eaClassId = 0;
 
@@ -366,6 +366,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	/** Inquire wrapped EA object */
 	public org.sparx.Element getEaClassElement() {
 		return eaClassElement;
+	}
+	
+	public int getEaElementId() {
+		return eaClassId;
 	}
 
 	/** Return EA model object. */

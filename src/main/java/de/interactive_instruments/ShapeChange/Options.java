@@ -129,6 +129,7 @@ public class Options {
 	public static final String TargetReplicationSchemaClass = "de.interactive_instruments.ShapeChange.Target.ReplicationSchema.ReplicationXmlSchema";
 	public static final String TargetApplicationSchemaMetadata = "de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata";
 	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
+	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -840,6 +841,26 @@ public class Options {
 		return this.fParameters.containsKey(key);
 	}
 
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the values
+	 *            of the parameter with given name shall be searched; can be
+	 *            <code>null</code> to search for an input parameter
+	 * @param parameterName
+	 *            name of the parameter to retrieve the value from
+	 * @param defaultValue
+	 *            value that will be returned if no valid value was found; NOTE:
+	 *            <code>null</code> is NOT converted
+	 * @param allowNonEmptyTrimmedStringValue
+	 *            <code>true</code> if the parameter value may be empty if it
+	 *            was trimmed, else <code>false</code>
+	 * @param trimValue
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from the parameter value
+	 * @return Value retrieved from this parameter, or the default value if the
+	 *         parameter was not set or did not contain a valid value; can be
+	 *         <code>null</code>
+	 */
 	public String parameterAsString(String className, String parameterName,
 			String defaultValue, boolean allowNonEmptyTrimmedStringValue,
 			boolean trimValue) {
@@ -848,7 +869,9 @@ public class Options {
 
 		if (result == null || (result.trim().isEmpty()
 				&& !allowNonEmptyTrimmedStringValue)) {
+
 			result = defaultValue;
+
 		} else if (trimValue) {
 			result = result.trim();
 		}
@@ -873,9 +896,9 @@ public class Options {
 	 * @param trimResults
 	 *            <code>true</code> if leading and trailing whitespace shall be
 	 *            removed from a value
-	 * @return List of values (originally separated by commas) retrieved
-	 *         from this parameter, or the default values if the parameter was
-	 *         not set or did not contain valid values; can be empty but not
+	 * @return List of values (originally separated by commas) retrieved from
+	 *         this parameter, or the default values if the parameter was not
+	 *         set or did not contain valid values; can be empty but not
 	 *         <code>null</code>
 	 */
 	public List<String> parameterAsStringList(String className,
@@ -883,8 +906,7 @@ public class Options {
 			boolean omitEmptyStrings, boolean trimResults) {
 
 		List<String> defaultValuesList = defaultValues == null
-				? new ArrayList<String>()
-				: Arrays.asList(defaultValues);
+				? new ArrayList<String>() : Arrays.asList(defaultValues);
 
 		String paramValue = this.parameter(className, parameterName);
 
@@ -904,13 +926,13 @@ public class Options {
 			}
 
 			List<String> result = splitter.splitToList(paramValue);
-			
+
 			if (result.isEmpty()) {
-				
+
 				return defaultValuesList;
-				
+
 			} else {
-				
+
 				return new ArrayList<String>(result);
 			}
 		}
@@ -3663,7 +3685,6 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-all-ignoreProfilesTaggedValue");
-		addRule("rule-exp-all-exportProfilesFromWholeModel");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
 	}
 

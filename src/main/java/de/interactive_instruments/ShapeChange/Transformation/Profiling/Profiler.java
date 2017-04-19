@@ -128,11 +128,11 @@ public class Profiler implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROFILING_PROCESSING_KEEP_ASSOCIATION_AS_IS = "rule-trf-profiling-processing-keepAssociationAsIs";
 
 	/**
-	 * If this rule is enabled, all profile information will be removed in the
-	 * processed model. This can be useful for cleaning up the model for
-	 * subsequent processing steps where profile information shall not be
-	 * included, like writing the profile back into an Enterprise Architect
-	 * repository.
+	 * If this rule is enabled, all profile information (including the
+	 * 'profiles' tagged value) will be removed in the processed model. This can
+	 * be useful for cleaning up the model for subsequent processing steps where
+	 * profile information shall not be included, like writing the profile back
+	 * into an Enterprise Architect repository.
 	 */
 	public static final String RULE_TRF_PROFILING_POSTPROCESSING_REMOVE_PROFILE_INFOS = "rule-trf-profiling-postprocessing-removeProfileInfos";
 

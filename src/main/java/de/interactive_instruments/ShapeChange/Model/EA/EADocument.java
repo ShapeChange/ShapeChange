@@ -729,7 +729,7 @@ public class EADocument extends ModelImpl implements Model {
 	public PackageInfo packageById(String id) {
 		return fPackageById.get(id);
 	} // packageById()
-	
+
 	/** Return the model input type */
 	public int type() {
 		return Options.EA7;
@@ -742,6 +742,13 @@ public class EADocument extends ModelImpl implements Model {
 			repository.Exit();
 			repository = null;
 		}
+	}
+
+	/**
+	 * @return the EA repository from which this model has been loaded
+	 */
+	public Repository getEARepository() {
+		return repository;
 	}
 
 	/**

@@ -4,10 +4,10 @@
 	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
-	<input>
+	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileLoading/explicitProfiles/helper_profileLoading_explicitProfiles_diffModel.eap" />
+			value="testResults/profileTransfer/results/transfer/LOAD_PROFILES/test_profileTransfer.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -32,23 +32,58 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/profileLoading/explicitProfiles/log_helper_export_diffModel.xml" />
+			value="testResults/profileTransfer/results/log_export.xml" />
 	</log>	
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+			id="A" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="A" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+					<rule name="rule-trf-profiling-postprocessing-removeProfileInfos" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+			id="C" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="C" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+					<rule name="rule-trf-profiling-postprocessing-removeProfileInfos" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
-			mode="enabled">
+			mode="enabled" inputs="INPUT A C">
 			<targetParameter name="outputDirectory"
-				value="testResults/profileLoading/explicitProfiles/diffModelExport" />
-			<targetParameter name="outputFilename" value="model3" />
+				value="testResults/profileTransfer/results/export" />
+			<targetParameter name="outputFilename" value="profileTransfer_export" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="export" />
-			<targetParameter name="exportProfilesFromWholeModel" value="true" />
+			<targetParameter name="exportProfilesFromWholeModel"
+				value="true" />
 			<rules>
 				<EncodingRule name="export">
 					<rule name="rule-exp-pkg-allPackagesAreEditable" />
 				</EncodingRule>
 			</rules>
-		</Target>
+		</Target>	
 	</targets>
 </ShapeChangeConfiguration>

@@ -320,6 +320,10 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 	} // validateStereotypesCache()
+	
+	public int getEAConnectorId() {
+		return this.eaConnectorId;
+	}
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...

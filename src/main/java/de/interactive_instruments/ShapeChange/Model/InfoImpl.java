@@ -760,6 +760,11 @@ public abstract class InfoImpl implements Info, MessageSource {
 						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
+			} else if (platform.equalsIgnoreCase("ptf")) {
+				s = options().parameter(Options.TargetModelExport,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
 			}
 		}
 		if (s != null)

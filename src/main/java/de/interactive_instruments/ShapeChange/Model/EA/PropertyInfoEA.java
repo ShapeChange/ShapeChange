@@ -103,6 +103,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** EA attribute object, if this is an attribute */
 	protected Attribute eaAttribute = null;
+	
+	protected int eaAttributeId = -1;
 
 	/** Association context and EA ConnectorEnd if this is a role */
 	AssociationInfoEA associationInfo = null;
@@ -153,11 +155,12 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		document = doc;
 		classInfo = ci;
 		eaAttribute = attr;
+		eaAttributeId = eaAttribute.GetAttributeID();
 
 		// The Id
 		eaPropertyId = ci.id();
 		eaPropertyId += "_";
-		eaPropertyId += new Integer(eaAttribute.GetAttributeID()).toString();
+		eaPropertyId += new Integer(eaAttributeId).toString();
 
 		// Property name
 		eaName = eaAttribute.GetName();
@@ -523,6 +526,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isAttribute() {
 		return eaAttribute != null;
 	} // isAttribute()
+	
+	public int getEAAttributeId() {
+		return this.eaAttributeId;
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isComposition()

@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileLoading/explicitProfiles/helper_profileLoading_explicitProfiles_diffModel.eap" />
+			value="src/test/resources/profileTransfer/test_profileTransfer.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -32,23 +32,35 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/profileLoading/explicitProfiles/log_helper_export_diffModel.xml" />
+			value="testResults/profileTransfer/results/log_transfer.xml" />
 	</log>	
+	<transformers>
+	<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader"
+			id="LOAD_PROFILES" mode="enabled">
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/test/resources/profileTransfer" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="profiles.xml" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading">					
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		</transformers>
 	<targets>
 		<Target
-			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
-			mode="enabled">
+			class="de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA"
+			mode="enabled" inputs="LOAD_PROFILES">
 			<targetParameter name="outputDirectory"
-				value="testResults/profileLoading/explicitProfiles/diffModelExport" />
-			<targetParameter name="outputFilename" value="model3" />
-			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="export" />
-			<targetParameter name="exportProfilesFromWholeModel" value="true" />
-			<rules>
-				<EncodingRule name="export">
-					<rule name="rule-exp-pkg-allPackagesAreEditable" />
-				</EncodingRule>
-			</rules>
-		</Target>
+				value="testResults/profileTransfer/results/transfer" />
+			<targetParameter name="transferToCopyOfEAP" value="true" />
+			<targetParameter name="deleteEAModelProfiles" value="true" />
+			<targetParameter name="profilesToTransfer" value="A,C" />
+		</Target>		
 	</targets>
 </ShapeChangeConfiguration>

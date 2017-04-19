@@ -114,6 +114,10 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
+	
+	public int getEaPackageId() {
+		return eaPackageId;
+	}
 
 	/** Cache for the IDs of the suppliers of this class */
 	protected TreeSet<String> supplierIds = null;

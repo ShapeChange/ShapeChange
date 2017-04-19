@@ -87,7 +87,7 @@ public abstract class BasicTest {
 
 	boolean testTime = false;
 	boolean exportModel = false;
-	boolean runWithExportedModel = true;
+	boolean runWithExportedModel = false;
 
 	protected void multiTest(String config, String[] fileFormatsToCheck,
 			String basedirResults, String basedirReference) {
@@ -119,6 +119,29 @@ public abstract class BasicTest {
 			multiTestInDirs(fileFormatsToCheckLC, basedirResults,
 					basedirReference);
 		}
+	}
+
+	/**
+	 * Simply processes the given configuration and ensures that no errors were
+	 * reported. This can be used whenever some processing needs to occur where
+	 * the result type is not yet supported for comparison (e.g. EA
+	 * repositories). It can also be useful if the execution of the
+	 * configuration is a necessary precondition for execution of another
+	 * configuration (that may require the output of the first process as
+	 * input).
+	 * 
+	 * @param config
+	 */
+	protected void execute(String config) {
+
+		long start = (new Date()).getTime();
+		TestInstance test = new TestInstance(config);
+		long end = (new Date()).getTime();
+		System.out.println(
+				"Execution time " + config + ": " + (end - start) + "ms");
+		assertTrue("Test model execution failed", test.noError());
+		if (testTime)
+			assertTrue("Execution time too long", end - start < 90000);
 	}
 
 	/**
@@ -157,9 +180,9 @@ public abstract class BasicTest {
 			}
 
 			return actualConfig;
-			
+
 		} else {
-			
+
 			return config;
 		}
 	}

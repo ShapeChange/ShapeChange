@@ -194,8 +194,10 @@ public class ModelExport implements SingleTarget, MessageSource {
 				ignoreProfilesTaggedValue = p.matches(
 						ModelExportConstants.RULE_TGT_EXP_ALL_IGNORE_PROFILES_TAGGED_VALUE);
 
-				exportProfilesFromWholeModel = p.matches(
-						ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL);
+				exportProfilesFromWholeModel = options.parameterAsBoolean(
+						ModelExport.class.getName(),
+						ModelExportConstants.PARAM_EXPORT_PROFILES_FROM_WHOLE_MODEL,
+						false);
 
 				zipOutput = options.parameterAsBoolean(
 						ModelExport.class.getName(),
@@ -238,21 +240,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 						Pattern schemaNameRegex = null;
 
-						// if (options.hasParameter(ModelExport.getName(),
-						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX))
-						// {
-						// try {
-						// schemaNameRegex = Pattern
-						// .compile(options.parameterAsString(
-						// ModelExport.getName(),
-						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-						// "", false, true));
-						// } catch (PatternSyntaxException e) {
-						// result.addError(this, 11,
-						// ModelExportConstants.PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-						// e.getMessage());
-						// }
-						// }
 						/*
 						 * Convert model to one with explicit profile
 						 * definitions and set it as the model to process by
@@ -357,11 +344,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 			atts.addAttribute("", "encoding", "", "string",
 					model.characterEncoding());
 			writer.startElement(NS, "Model", "", atts);
-
-			// TODO: create global profile information elements
-
-			// writer.dataElement(NS, "name", "ProfileA");
-			// writer.dataElement(NS, "description", "Lorem ipsum ...");
 
 			SortedSet<PackageInfo> packagesToPrint = new TreeSet<PackageInfo>();
 
@@ -615,8 +597,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 			printDataElement("baseClassId", ci.baseClass().id());
 		}
 
-		if (ci.matches(
-				ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL)
+		if (exportProfilesFromWholeModel
 				|| allSelectedSchemaPackages.contains(ci.pkg())) {
 			printProfiles(ci.profiles());
 		}
@@ -823,8 +804,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printInfoFields(pi);
 
-		if (pi.matches(
-				ModelExportConstants.RULE_TGT_EXP_ALL_EXPORT_PROFILES_FROM_WHOLE_MODEL)
+		if (exportProfilesFromWholeModel
 				|| allSelectedSchemaPackages.contains(pi.inClass().pkg())) {
 			printProfiles(pi.profiles());
 		}

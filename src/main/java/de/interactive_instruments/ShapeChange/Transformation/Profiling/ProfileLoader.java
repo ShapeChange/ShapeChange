@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Transformation.Profiling;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +55,7 @@ import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -68,7 +70,6 @@ import de.interactive_instruments.ShapeChange.Profile.ProfileUtil;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
-import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -77,114 +78,173 @@ import name.fraser.neil.plaintext.diff_match_patch;
  */
 public class ProfileLoader implements Transformer, MessageSource {
 
-	public static final String RULE_PRE_DELETE_INPUT_MODEL_PROFILES = "rule-trf-profileLoader-preProcessing-deleteInputModelProfiles";
-	public static final String RULE_PRE_VALIDATE_INPUT_MODEL_PROFILES = "rule-trf-profileLoader-preProcessing-validateInputModelProfiles";
-	public static final String RULE_POST_VALIDATE_RESULTING_MODEL_PROFILES = "rule-trf-profileLoader-postProcessing-validateResultingModelProfiles";
-	public static final String RULE_VALIDATE_LOADED_MODEL_PROFILES = "rule-trf-profileLoader-validateLoadedModelProfiles";
-	public static final String RULE_DIFF_MODELS = "rule-trf-profileLoader-diffModels";
 	/**
-	 * By default, only the profiles of classes (and their properties) from
-	 * schemas that are selected for processing are processed. If this rule is
-	 * enabled, all model classes (and their properties) are processed.
+	 * If this rule is enabled, the tagged value 'profiles' as well as the
+	 * profile information parsed from that tagged value are removed from all
+	 * classes and properties of the input model.
+	 * <p>
+	 * NOTE: This can be useful to create a 'clean slate' before loading
+	 * profiles into the model.
 	 */
-	public static final String RULE_PROCESS_WHOLE_MODEL = "rule-trf-profileLoader-processWholeModel";
-	// /**
-	// * By default, non-explicit profiles are converted only for classes (and
-	// * their properties) from schemas that are selected for processing. If
-	// this
-	// * rule is enabled, non-explicit profiles are converted for model classes
-	// * (and their properties) in packages whose name matches the regular
-	// * expression given by parameter
-	// * {@value #PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX}. This
-	// * rule is only relevant if parameter
-	// * {@value #PARAM_INPUT_MODEL_EXPLICIT_PROFILES} is <code>false</code>.
-	// */
-	// public static final String RULE_CONVERT_PROFILES_IN_PKG_MATCHING_REGEX =
-	// "rule-trf-profileLoader-convertNonExplicitProfilesInPackageThatMatchesRegex";
+	public static final String RULE_PRE_DELETE_INPUT_MODEL_PROFILES = "rule-trf-profileLoader-preProcessing-deleteInputModelProfiles";
 
 	/**
-	 * Indicates if profile definitions in the input model are explicitly set (
-	 * <code>true</code>) or not (<code>false</code>). If they are not, then
-	 * profile inheritance would apply, which must be converted before loading
-	 * (also see parameter
+	 * If this rule is enabled, the profiles defined in the input model are
+	 * validated during the pre-processing phase. This validation will not occur
+	 * if all profile information is removed in the input model via
+	 * {@value #RULE_PRE_DELETE_INPUT_MODEL_PROFILES}.
+	 */
+	public static final String RULE_PRE_VALIDATE_INPUT_MODEL_PROFILES = "rule-trf-profileLoader-preProcessing-validateInputModelProfiles";
+
+	/**
+	 * If this rule is enabled, the profiles in the resulting model are
+	 * validated during the post-processing phase (i.e., after profiles have
+	 * been loaded).
+	 */
+	public static final String RULE_POST_VALIDATE_RESULTING_MODEL_PROFILES = "rule-trf-profileLoader-postProcessing-validateResultingModelProfiles";
+
+	/**
+	 * If this rule is enabled, the profiles in each external model are
+	 * validated after that model has been loaded. The validation takes place
+	 * before the profiles are loaded into the input model. This rule supports
+	 * the identification of potential consistency issues with the profiles of
+	 * loaded models.
+	 */
+	public static final String RULE_VALIDATE_LOADED_MODEL_PROFILES = "rule-trf-profileLoader-validateLoadedModelProfiles";
+
+	/**
+	 * If this rule is enabled, differences between a loaded model and the input
+	 * model are logged. Differences are computed for either all or only
+	 * selected schemas (for further details, see
+	 * {@value #PARAM_PROCESS_ALL_SCHEMAS}). The schema version, if defined, is
+	 * always checked. Additional checks, more specifically the types of
+	 * differences, can be configured via {@value #PARAM_DIFF_ELEMENT_TYPES}.
+	 * This rule supports the identification of potential consistency issues of
+	 * resulting profiles, due to differences between loaded models and the
+	 * input model.
+	 */
+	public static final String RULE_DIFF_MODELS = "rule-trf-profileLoader-diffModels";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: Boolean
+	 * <p>
+	 * Default Value: <code>false</code>
+	 * <p>
+	 * Explanation: By default, only the profiles of classes (and their
+	 * properties) from schemas that are selected for processing are processed.
+	 * If this parameter is set to <code>true</code>, classes (and their
+	 * properties) from all schemas are processed.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_PROCESS_ALL_SCHEMAS = "processAllSchemas";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: Boolean
+	 * <p>
+	 * Default Value: <code>true</code>
+	 * <p>
+	 * Explanation: Indicates if profile definitions in the input model are
+	 * explicitly set ( <code>true</code>) or not (<code>false</code>). If they
+	 * are not, then profile inheritance would apply, which must be converted
+	 * before loading (also see parameter
 	 * {@value #PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES}).
 	 * <p>
-	 * default: true
-	 * <p>
-	 * applies to conversion rule: none - default behavior
+	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_INPUT_MODEL_EXPLICIT_PROFILES = "profilesInModelSetExplicitly";
-	// /**
-	// * Regular expression to match the name of schemas in which the profile
-	// * definition shall be converted to explicit definitions
-	// * {@value #PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES}.
-	// * <p>
-	// * Applies to rule: {@value #RULE_CONVERT_PROFILES_IN_PKG_MATCHING_REGEX}
-	// */
-	// public static final String
-	// PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX =
-	// "convertNonExplicitProfiles_schemaNameRegex";
 
 	/**
-	 * By default, the ProfileLoader loads all XML and ZIP files in the
-	 * directory that is stated by the transformation parameter
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (with regular expression)
+	 * <p>
+	 * Default Value: .*(\.xml|\.zip)$
+	 * <p>
+	 * Explanation: By default, the ProfileLoader loads all XML and ZIP files in
+	 * the directory that is stated by the transformation parameter
 	 * {@value #PARAM_LOAD_MODEL_DIRECTORY} (excluding subdirectories). That
 	 * behavior can be changed to only use the files from that directory whose
 	 * name matches the regular expression given by the parameter
 	 * {@value #PARAM_LOAD_MODEL_FILE_REGEX}.
 	 * <p>
-	 * Default: .*(\.xml|\.zip)$
-	 * <p>
-	 * Applies to rule: none - default behavior
+	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_LOAD_MODEL_FILE_REGEX = "regexToFilterProfilesToLoad";
 
 	/**
-	 * Comma-separated list of names of profiles that will be set for input
-	 * model classes that do not belong to a specific profile. This is relevant
-	 * while pre-processing the input model in case that the profiles are not
-	 * set explicitly in the input model (parameter
+	 * 
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (with comma separated values)
+	 * <p>
+	 * Default Value: all profiles defined in the input model
+	 * <p>
+	 * Explanation: Comma-separated list of names of profiles that will be set
+	 * for input model classes that do not belong to a specific profile. This is
+	 * relevant while pre-processing the input model in case that the profiles
+	 * are not set explicitly in the input model (parameter
 	 * {@value #PARAM_INPUT_MODEL_EXPLICIT_PROFILES} is <code>false</code>).
 	 * <p>
-	 * Default: all profiles defined in the input model
-	 * <p>
-	 * Applies to rule: none - default behavior
+	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES = "profilesForClassesWithoutExplicitProfileAssignments";
 
 	/**
-	 * Comma separated list of names of profiles to be loaded into the input
-	 * model.
+	 * Alias: none
 	 * <p>
-	 * Default: all profiles
+	 * Required / Optional: optional
 	 * <p>
-	 * Applies to rule: none - default behavior
+	 * Type: String (comma separated list of values)
+	 * <p>
+	 * Default Value: all profiles
+	 * <p>
+	 * Explanation: Names of profiles to be loaded into the input model.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_PROFILES_TO_LOAD = "profilesToLoad";
 
-	// /**
-	// * <code>true</code> if the validation of profiles for property types
-	// shall
-	// * only be conducted if the property type belongs to a schema that has
-	// been
-	// * selected for processing; else <code>false</code>.
-	// * <p>
-	// * Default: true
-	// * <p>
-	// * Applies to rule(s): {@value #RULE_PRE_VALIDATE_INPUT_MODEL_PROFILES}
-	// and
-	// * {@link #RULE_VALIDATE_LOADED_MODEL_PROFILES}
-	// */
-	// public static final String
-	// PARAM_VALIDATE_PROFILES_PROPERTY_TYPE_ONLY_FROM_SELECTED_SCHEMAS =
-	// "checkPropertyTypeConsistencyOnlyForPropertyTypeFromSelectedSchemas";
-
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: required
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: none
+	 * <p>
+	 * Explanation: The path to the folder that contains the profiles.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
 	public static final String PARAM_LOAD_MODEL_DIRECTORY = "directoryWithProfilesToLoad";
 
 	/**
-	 * Comma-separated list of names of diff element types. The diff result will
-	 * only provide information on these types of differences (in addition to a
-	 * possibly existing schema version difference).
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (with comma separated values)
+	 * <p>
+	 * Default Value: CLASS, ENUM, MULTIPLICITY, PROPERTY, NAME, STEREOTYPE,
+	 * SUPERTYPE, SUBPACKAGE, VALUETYPE
+	 * <p>
+	 * Explanation: Comma-separated list of names of diff element types. The
+	 * diff result will only provide information on these types of differences
+	 * (in addition to a possibly existing schema version difference).
 	 * <p>
 	 * The following diff element types are currently supported: NAME,
 	 * DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE,
@@ -192,10 +252,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 	 * PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, AAAMODELLART,
 	 * AAAGRUNDDATENBESTAND
 	 * <p>
-	 * Default: CLASS, ENUM, MULTIPLICITY, PROPERTY, NAME, STEREOTYPE,
-	 * SUPERTYPE, SUBPACKAGE, VALUETYPE
-	 * <p>
-	 * Applies to rule: {@value #RULE_DIFF_MODELS}
+	 * Applies to Rule(s): {@value #RULE_DIFF_MODELS}
 	 */
 	public static final String PARAM_DIFF_ELEMENT_TYPES = "diffElementTypes";
 	public static final String[] DEFAULT_DIFF_ELEMENT_TYPES = new String[] {
@@ -230,14 +287,8 @@ public class ProfileLoader implements Transformer, MessageSource {
 			}
 		}
 
-		boolean processWholeModel = rules.contains(RULE_PROCESS_WHOLE_MODEL);
-
-		// boolean
-		// checkPropertyTypeConsistencyOnlyForPropertyTypeFromSelectedSchemas =
-		// trfConfig
-		// .parameterAsBoolean(
-		// PARAM_VALIDATE_PROFILES_PROPERTY_TYPE_ONLY_FROM_SELECTED_SCHEMAS,
-		// true);
+		boolean processAllSchemas = trfConfig
+				.parameterAsBoolean(PARAM_PROCESS_ALL_SCHEMAS, false);
 
 		SortedSet<String> profilesToLoad = null;
 		if (trfConfig.hasParameter(PARAM_PROFILES_TO_LOAD)) {
@@ -326,9 +377,8 @@ public class ProfileLoader implements Transformer, MessageSource {
 		/*
 		 * 0.1 Delete all profiles in whole input model
 		 * 
-		 * 0.2 Validate profile definitions of input model (whole model or
-		 * selected schemas only) - irrelevant if input model profiles have been
-		 * removed
+		 * 0.2 Validate profile definitions of input model (all or only selected
+		 * schemas) - irrelevant if input model profiles have been removed
 		 * 
 		 * 1. Convert profile definitions of input model to explicit, if
 		 * necessary (profiles have not been deleted, and profiles in model not
@@ -338,18 +388,18 @@ public class ProfileLoader implements Transformer, MessageSource {
 		 * 
 		 * 2. For each loaded model:
 		 * 
-		 * 2.1 Validate profile definitions in loaded model (in whole model or
-		 * only selected schemas).
+		 * 2.1 Validate profile definitions in loaded model (in all or only
+		 * selected schemas).
 		 * 
-		 * 2.2 Perform a model diff (of whole model or only selected schemas).
-		 * Log relevant differences.
+		 * 2.2 Perform a model diff (of all or only selected schemas). Log
+		 * relevant differences.
 		 * 
-		 * 2.3 Load profile definitions for whole model or only selected schemas
-		 * (if requested, only load profiles defined via configuration;
-		 * overwrite in input model).
+		 * 2.3 Load profile definitions for all or only selected schemas (if
+		 * requested, only load profiles defined via configuration; overwrite in
+		 * input model).
 		 * 
-		 * 3. Validate profile definitions in resulting model (whole model or
-		 * selected schemas only).
+		 * 3. Validate profile definitions in resulting model (all or only
+		 * selected schemas).
 		 */
 
 		if (removeProfilesInInputModel) {
@@ -373,7 +423,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 				ModelProfileValidator mpv = new ModelProfileValidator(
 						inputModel, result);
 				mpv.validateModelConsistency(inputModelExplicitProfiles, true,
-						!processWholeModel);
+						!processAllSchemas);
 
 				result.addInfo(this, 115);
 			}
@@ -403,7 +453,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 					 */
 					profilesForClassesWithoutExplicitProfiles = ProfileUtil
 							.findNamesOfAllProfiles(inputModel,
-									processWholeModel);
+									processAllSchemas);
 				}
 
 				Profiles profilesForClassesBelongingToAllProfiles = new Profiles();
@@ -413,29 +463,12 @@ public class ProfileLoader implements Transformer, MessageSource {
 
 				Pattern schemaNameRegex = null;
 
-				// if
-				// (rules.contains(RULE_CONVERT_PROFILES_IN_PKG_MATCHING_REGEX)
-				// && !processWholeModel && trfConfig.hasParameter(
-				// PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX)) {
-				//
-				// try {
-				// schemaNameRegex = Pattern
-				// .compile(trfConfig.parameterAsString(
-				// PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-				// "", false, true));
-				// } catch (PatternSyntaxException e) {
-				// result.addError(this, 100,
-				// PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX,
-				// e.getMessage());
-				// }
-				// }
-
 				/*
 				 * Convert model to one with explicit profile definitions
 				 */
 				ProfileUtil.convertToExplicitProfileDefinitions(inputModel,
 						profilesForClassesBelongingToAllProfiles,
-						schemaNameRegex, processWholeModel);
+						schemaNameRegex, processAllSchemas);
 			}
 		}
 
@@ -444,9 +477,8 @@ public class ProfileLoader implements Transformer, MessageSource {
 		 * 
 		 * 2.1 Validate profile definitions in loaded model (enable via rule).
 		 * 
-		 * 2.2 Perform a model diff (enable via rule). Log relevant differences.
-		 * 
-		 * TBD: Restrict diff (output) to schemas selected for processing?
+		 * 2.2 Diff processed schemas (enable via rule). Log relevant
+		 * differences.
 		 * 
 		 * 2.3 Load profile definitions (if requested, only load profiles
 		 * defined via configuration; overwrite in input model).
@@ -455,10 +487,19 @@ public class ProfileLoader implements Transformer, MessageSource {
 		if (loadedProfileFiles != null && !loadedProfileFiles.isEmpty()) {
 
 			/*
-			 * Get all classes of the input model by their full name
+			 * Get all relevant classes of the input model
 			 */
-			SortedMap<String, GenericClassInfo> inputModelClassesByFullNameInSchema = getClassesByFullNameInSchema(
-					inputModel);
+			Map<String, Map<String, GenericClassInfo>> inputModelClassesByNameBySchemaName = new HashMap<String, Map<String, GenericClassInfo>>();
+
+			for (PackageInfo pi : inputModel.schemas(null)) {
+
+				Map<String, GenericClassInfo> genClassesByClassName = new HashMap<String, GenericClassInfo>();
+				for (ClassInfo ci : inputModel.classes(pi)) {
+					genClassesByClassName.put(ci.name(), (GenericClassInfo) ci);
+				}
+				inputModelClassesByNameBySchemaName.put(pi.name(),
+						genClassesByClassName);
+			}
 
 			// now process each model file with profiles to load
 			for (File loadedProfileFile : loadedProfileFiles) {
@@ -479,8 +520,16 @@ public class ProfileLoader implements Transformer, MessageSource {
 					 * infos
 					 */
 
-					SortedMap<String, GenericClassInfo> loadedModelClassesByFullNameInSchema = getClassesByFullNameInSchema(
-							loadedModel);
+					SortedMap<String, SortedSet<GenericClassInfo>> loadedModelClassesBySchemaName = new TreeMap<String, SortedSet<GenericClassInfo>>();
+
+					for (PackageInfo pi : loadedModel.schemas(null)) {
+						SortedSet<GenericClassInfo> genClasses = new TreeSet<GenericClassInfo>();
+						for (ClassInfo ci : loadedModel.classes(pi)) {
+							genClasses.add((GenericClassInfo) ci);
+						}
+						loadedModelClassesBySchemaName.put(pi.name(),
+								genClasses);
+					}
 
 					if (rules.contains(RULE_VALIDATE_LOADED_MODEL_PROFILES)) {
 
@@ -492,7 +541,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 						ModelProfileValidator mpv = new ModelProfileValidator(
 								loadedModel, result);
 						mpv.validateModelConsistency(true, true,
-								!processWholeModel);
+								!processAllSchemas);
 
 						result.addInfo(this, 116, loadedProfileFileLocation);
 					}
@@ -500,7 +549,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 					if (rules.contains(RULE_DIFF_MODELS)) {
 
 						/*
-						 * 2.2 Perform a model diff. Log relevant differences.
+						 * 2.2 Diff processed schemas. Log relevant differences.
 						 */
 
 						/*
@@ -510,7 +559,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 						 */
 						result.addInfo(this, 105, loadedProfileFileLocation);
 
-						SortedSet<? extends PackageInfo> schemasToDiff = processWholeModel
+						SortedSet<? extends PackageInfo> schemasToDiff = processAllSchemas
 								? inputModel.schemas(null)
 								: inputModel.selectedSchemas();
 
@@ -601,65 +650,76 @@ public class ProfileLoader implements Transformer, MessageSource {
 					 * model).
 					 */
 
-					SortedSet<PackageInfo> loadedModelSelectedSchemaPkgs = loadedModel
-							.allPackagesFromSelectedSchemas();
-
-					for (Entry<String, GenericClassInfo> loadedCiEntry : loadedModelClassesByFullNameInSchema
+					for (Entry<String, SortedSet<GenericClassInfo>> loadedSchemaEntry : loadedModelClassesBySchemaName
 							.entrySet()) {
 
-						String loadedCiFullNameInSchema = loadedCiEntry
-								.getKey();
-						GenericClassInfo loadedCi = loadedCiEntry.getValue();
+						String schemaName = loadedSchemaEntry.getKey();
 
-						/*
-						 * If the whole model is not processed, and the loaded
-						 * class is not contained in one of the packages of
-						 * schemas selected for processing, continue.
-						 */
-						if (!rules.contains(RULE_PROCESS_WHOLE_MODEL)
-								&& !loadedModelSelectedSchemaPkgs
-										.contains(loadedCi.pkg())) {
-							continue;
-						}
-
-						/*
-						 * Check if loaded class contains at least one profile
-						 * that may be transferred.
-						 */
-						if (loadedCi.profiles().isEmpty()
-								|| (profilesToLoad != null && loadedCi
-										.profiles().getProfiles(profilesToLoad)
-										.isEmpty())) {
+						if (!inputModelClassesByNameBySchemaName
+								.containsKey(schemaName)) {
 							/*
-							 * No profiles to transfer
+							 * No corresponding schema package in the input
+							 * model.
 							 */
-							continue;
-						}
-
-						if (inputModelClassesByFullNameInSchema
-								.containsKey(loadedCiFullNameInSchema)) {
-
-							GenericClassInfo inputCi = inputModelClassesByFullNameInSchema
-									.get(loadedCiFullNameInSchema);
-
-							ProfileUtil.transferProfiles(profilesToLoad,
-									loadedCi, inputCi);
-
-							for (PropertyInfo loadedCiPi : loadedCi.properties()
-									.values()) {
-
-								GenericPropertyInfo inputCiPi = inputCi
-										.propertyByName(loadedCiPi.name());
-
-								if (inputCiPi != null) {
-
-									ProfileUtil.transferProfiles(profilesToLoad,
-											loadedCiPi, inputCiPi);
-								}
-							}
 
 						} else {
-							// Ok. No corresponding class in input model.
+
+							SortedSet<GenericClassInfo> loadedSchemaCis = loadedSchemaEntry
+									.getValue();
+							Map<String, GenericClassInfo> inputSchemaCisByClassName = inputModelClassesByNameBySchemaName
+									.get(schemaName);
+
+							for (GenericClassInfo loadedCi : loadedSchemaCis) {
+
+								if (!processAllSchemas && !loadedModel
+										.isInSelectedSchemas(loadedCi)) {
+									/*
+									 * Not all schemas are processed, and the
+									 * loaded class does not belong to a schema
+									 * selected for processing.
+									 */
+
+								} else if (loadedCi.profiles().isEmpty()
+										|| (profilesToLoad != null
+												&& loadedCi.profiles()
+														.getProfiles(
+																profilesToLoad)
+														.isEmpty())) {
+									/*
+									 * No profiles to transfer
+									 */
+
+								} else if (inputSchemaCisByClassName
+										.containsKey(loadedCi.name())) {
+
+									GenericClassInfo inputCi = inputSchemaCisByClassName
+											.get(loadedCi.name());
+
+									ProfileUtil.transferProfiles(profilesToLoad,
+											loadedCi, inputCi);
+
+									for (PropertyInfo loadedCiPi : loadedCi
+											.properties().values()) {
+
+										GenericPropertyInfo inputCiPi = inputCi
+												.propertyByName(
+														loadedCiPi.name());
+
+										if (inputCiPi != null) {
+
+											ProfileUtil.transferProfiles(
+													profilesToLoad, loadedCiPi,
+													inputCiPi);
+										}
+									}
+
+								} else {
+									/*
+									 * Ok. No corresponding class in schema from
+									 * input model.
+									 */
+								}
+							}
 						}
 					}
 
@@ -681,26 +741,8 @@ public class ProfileLoader implements Transformer, MessageSource {
 			ModelProfileValidator mpv = new ModelProfileValidator(inputModel,
 					result);
 
-			mpv.validateModelConsistency(true, true, !processWholeModel);
+			mpv.validateModelConsistency(true, true, !processAllSchemas);
 		}
-	}
-
-	/**
-	 * @param model
-	 * @return map with classes of the given model (key: full name in schema of
-	 *         a class, value: the class); can be empty but not
-	 *         <code>null</code>
-	 */
-	private SortedMap<String, GenericClassInfo> getClassesByFullNameInSchema(
-			GenericModel model) {
-
-		SortedMap<String, GenericClassInfo> classesByFullNameInSchema = new TreeMap<String, GenericClassInfo>();
-
-		for (GenericClassInfo genCi : model.getGenClasses().values()) {
-			classesByFullNameInSchema.put(genCi.fullNameInSchema(), genCi);
-		}
-
-		return classesByFullNameInSchema;
 	}
 
 	@Override

@@ -337,6 +337,57 @@ public class EAModelUtil {
 	 * @param tvs
 	 *            collection of tagged values to add
 	 */
+	public static void addTaggedValue(Attribute att, EATaggedValue tv)
+			throws EAException {
+
+		if (tv == null) {
+			// nothing to do
+		} else {
+
+			Collection<AttributeTag> cTV = att.GetTaggedValues();
+
+			String tag = tv.getName();
+
+			List<String> values = tv.getValues();
+
+			if (values != null) {
+
+				for (String v : values) {
+
+					AttributeTag at = cTV.AddNew(tag, "");
+					cTV.Refresh();
+
+					if (v.length() > 255) {
+						at.SetValue("<memo>");
+						at.SetNotes(v);
+					} else {
+						at.SetValue(v);
+						at.SetNotes("");
+					}
+
+					if (!at.Update()) {
+						throw new EAException(
+								createMessage(401, tag, v, at.GetLastError()));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given collection of tagged values to the tagged values of the
+	 * given attribute, NOT checking for duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
+	 * 
+	 * @param att
+	 *            the attribute to which the tagged values shall be added
+	 * @param tvs
+	 *            collection of tagged values to add
+	 */
 	public static void addTaggedValues(Attribute att, TaggedValues tvs)
 			throws EAException {
 
@@ -376,120 +427,20 @@ public class EAModelUtil {
 	}
 
 	/**
-	 * Sets the given tagged values in the tagged values of the given attribute.
-	 * If tagged values with same tag names already exist, they will be
-	 * overwritten. If fewer values existed than shall be set, new values will
-	 * be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
-	 * 
-	 * @param att
-	 *            the attribute
-	 * @param tvs
-	 *            tagged values to set
-	 */
-	public static void setTaggedValues(Attribute att, TaggedValues tvs)
-			throws EAException {
-
-		if (tvs == null || tvs.isEmpty()) {
-			// nothing to do
-		} else {
-
-			Collection<AttributeTag> cTV = att.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<AttributeTag>> existingTvsByName = new HashMap<String, List<AttributeTag>>();
-			for (AttributeTag exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<AttributeTag> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<AttributeTag>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
-
-			for (String tag : tvs.keySet()) {
-
-				String[] values = tvs.get(tag);
-
-				if (values != null) {
-
-					List<AttributeTag> existingTvs;
-
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<AttributeTag>();
-					}
-
-					if (existingTvs.size() < values.length) {
-
-						// add new tagged values
-						for (int i = existingTvs
-								.size(); i < values.length; i++) {
-							AttributeTag eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.length) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.length; i++) {
-
-						String v = values[i];
-
-						AttributeTag tv = existingTvs.get(i);
-
-						if (v.length() > 255) {
-							tv.SetValue("<memo>");
-							tv.SetNotes(v);
-						} else {
-							tv.SetValue(v);
-							tv.SetNotes("");
-						}
-
-						if (!tv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									tv.GetLastError()));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Sets the given tagged values in the tagged values of the given element.
-	 * If tagged values with same tag names already exist, they will be
-	 * overwritten. If fewer values existed than shall be set, new values will
-	 * be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * Adds the given collection of tagged values to the tagged values of the
+	 * given element, NOT checking for duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
 	 * @param e
-	 *            the element
+	 *            the element to which the tagged values shall be added
 	 * @param tvs
-	 *            tagged values to set
+	 *            collection of tagged values to add
 	 */
-	public static void setTaggedValues(Element e, TaggedValues tvs)
+	public static void addTaggedValues(Element e, TaggedValues tvs)
 			throws EAException {
 
 		if (tvs == null || tvs.isEmpty()) {
@@ -497,25 +448,6 @@ public class EAModelUtil {
 		} else {
 
 			Collection<TaggedValue> cTV = e.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<TaggedValue>> existingTvsByName = new HashMap<String, List<TaggedValue>>();
-			for (TaggedValue exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<TaggedValue> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<TaggedValue>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
 
 			for (String tag : tvs.keySet()) {
 
@@ -523,39 +455,10 @@ public class EAModelUtil {
 
 				if (values != null) {
 
-					List<TaggedValue> existingTvs;
+					for (String v : values) {
 
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<TaggedValue>();
-					}
-
-					if (existingTvs.size() < values.length) {
-
-						// add new tagged values
-						for (int i = existingTvs
-								.size(); i < values.length; i++) {
-							TaggedValue eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
+						TaggedValue tv = cTV.AddNew(tag, "");
 						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.length) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.length; i++) {
-
-						String v = values[i];
-
-						TaggedValue tv = existingTvs.get(i);
 
 						if (v.length() > 255) {
 							tv.SetValue("<memo>");
@@ -575,105 +478,366 @@ public class EAModelUtil {
 		}
 	}
 
+	// /**
+	// * Sets the given tagged values in the tagged values of the given
+	// attribute.
+	// * If tagged values with same tag names already exist, they will be
+	// * overwritten. If fewer values existed than shall be set, new values will
+	// * be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param att
+	// * the attribute
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Attribute att, TaggedValues tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	// // nothing to do
+	// } else {
+	//
+	// Collection<AttributeTag> cTV = att.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<AttributeTag>> existingTvsByName = new HashMap<String,
+	// List<AttributeTag>>();
+	// for (AttributeTag exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<AttributeTag> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<AttributeTag>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (String tag : tvs.keySet()) {
+	//
+	// String[] values = tvs.get(tag);
+	//
+	// if (values != null) {
+	//
+	// List<AttributeTag> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<AttributeTag>();
+	// }
+	//
+	// if (existingTvs.size() < values.length) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs
+	// .size(); i < values.length; i++) {
+	// AttributeTag eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.length) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.length; i++) {
+	//
+	// String v = values[i];
+	//
+	// AttributeTag tv = existingTvs.get(i);
+	//
+	// if (v.length() > 255) {
+	// tv.SetValue("<memo>");
+	// tv.SetNotes(v);
+	// } else {
+	// tv.SetValue(v);
+	// tv.SetNotes("");
+	// }
+	//
+	// if (!tv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// tv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
 	/**
-	 * Sets the given list of tagged values in the tagged values of the given
-	 * element. If tagged values with same tag names already exist, they will be
-	 * overwritten. If fewer values existed than shall be set, new values will
-	 * be added.
+	 * Sets the given tagged value in the tagged values of the given attribute.
+	 * If tagged values with the same tag name already exist, they will be
+	 * deleted. Then the tagged value will be added.
 	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * @param att
+	 *            the attribute in which the tagged value shall be set
+	 * @param tv
+	 *            tagged value to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValue(Attribute att, EATaggedValue tv)
+			throws EAException {
+
+		deleteTaggedValue(att, tv.getName());
+		addTaggedValue(att, tv);
+	}
+
+	// /**
+	// * Sets the given tagged values in the tagged values of the given element.
+	// * If tagged values with same tag names already exist, they will be
+	// * overwritten. If fewer values existed than shall be set, new values will
+	// * be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param e
+	// * the element
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Element e, TaggedValues tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	// // nothing to do
+	// } else {
+	//
+	// Collection<TaggedValue> cTV = e.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<TaggedValue>> existingTvsByName = new HashMap<String,
+	// List<TaggedValue>>();
+	// for (TaggedValue exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<TaggedValue> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<TaggedValue>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (String tag : tvs.keySet()) {
+	//
+	// String[] values = tvs.get(tag);
+	//
+	// if (values != null) {
+	//
+	// List<TaggedValue> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<TaggedValue>();
+	// }
+	//
+	// if (existingTvs.size() < values.length) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs
+	// .size(); i < values.length; i++) {
+	// TaggedValue eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.length) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.length; i++) {
+	//
+	// String v = values[i];
+	//
+	// TaggedValue tv = existingTvs.get(i);
+	//
+	// if (v.length() > 255) {
+	// tv.SetValue("<memo>");
+	// tv.SetNotes(v);
+	// } else {
+	// tv.SetValue(v);
+	// tv.SetNotes("");
+	// }
+	//
+	// if (!tv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// tv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+
+	// /**
+	// * Sets the given list of tagged values in the tagged values of the given
+	// * element. If tagged values with same tag names already exist, they will
+	// be
+	// * overwritten. If fewer values existed than shall be set, new values will
+	// * be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param e
+	// * the element
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Element e, List<EATaggedValue> tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	// // nothing to do
+	// } else {
+	//
+	// Collection<TaggedValue> cTV = e.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<TaggedValue>> existingTvsByName = new HashMap<String,
+	// List<TaggedValue>>();
+	// for (TaggedValue exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<TaggedValue> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<TaggedValue>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (EATaggedValue tv : tvs) {
+	//
+	// String tag = tv.getName();
+	// List<String> values = tv.getValues();
+	//
+	// if (values != null) {
+	//
+	// List<TaggedValue> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<TaggedValue>();
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values
+	// .size(); i++) {
+	// TaggedValue eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// TaggedValue eaTv = existingTvs.get(i);
+	//
+	// if (tv.createAsMemoField() || v.length() > 255) {
+	// eaTv.SetValue("<memo>");
+	// eaTv.SetNotes(v);
+	// } else {
+	// eaTv.SetValue(v);
+	// eaTv.SetNotes("");
+	// }
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	/**
+	 * Sets the given tagged values in the given element. If tagged values with
+	 * the same name as the given ones already exist, they will be deleted. Then
+	 * the tagged values will be added.
 	 * 
 	 * @param e
-	 *            the element
+	 *            the element in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set
+	 *            tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Element e, List<EATaggedValue> tvs)
 			throws EAException {
 
-		if (tvs == null || tvs.isEmpty()) {
-			// nothing to do
-		} else {
-
-			Collection<TaggedValue> cTV = e.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<TaggedValue>> existingTvsByName = new HashMap<String, List<TaggedValue>>();
-			for (TaggedValue exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<TaggedValue> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<TaggedValue>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
-
-			for (EATaggedValue tv : tvs) {
-
-				String tag = tv.getName();
-				List<String> values = tv.getValues();
-
-				if (values != null) {
-
-					List<TaggedValue> existingTvs;
-
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<TaggedValue>();
-					}
-
-					if (existingTvs.size() < values.size()) {
-
-						// add new tagged values
-						for (int i = existingTvs.size(); i < values
-								.size(); i++) {
-							TaggedValue eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.size()) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.size(); i++) {
-
-						String v = values.get(i);
-
-						TaggedValue eaTv = existingTvs.get(i);
-
-						if (tv.createAsMemoField() || v.length() > 255) {
-							eaTv.SetValue("<memo>");
-							eaTv.SetNotes(v);
-						} else {
-							eaTv.SetValue(v);
-							eaTv.SetNotes("");
-						}
-
-						if (!eaTv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									eaTv.GetLastError()));
-						}
-					}
-				}
-			}
+		for (EATaggedValue tv : tvs) {
+			deleteTaggedValue(e, tv.getName());
 		}
+		addTaggedValues(e, tvs);
+	}
+
+	/**
+	 * Sets the given tagged values in the given element. If tagged values with
+	 * the same name as the given ones already exist, they will be deleted. Then
+	 * the tagged values will be added.
+	 * 
+	 * @param e
+	 *            the element in which the tagged values shall be set
+	 * @param tvs
+	 *            tagged values to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValues(Element e, TaggedValues tvs)
+			throws EAException {
+
+		for (String tvName : tvs.asMap().keySet()) {
+			deleteTaggedValue(e, tvName);
+		}
+		addTaggedValues(e, tvs);
 	}
 
 	/**
@@ -721,77 +885,157 @@ public class EAModelUtil {
 		}
 	}
 
+	public static void deleteTaggedValue(Element e, String nameOfTVToDelete) {
+
+		Collection<TaggedValue> cTV = e.GetTaggedValues();
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+			TaggedValue tv = cTV.GetAt(i);
+			if (tv.GetName().equalsIgnoreCase(nameOfTVToDelete)) {
+				cTV.Delete(i);
+			}
+		}
+
+		cTV.Refresh();
+	}
+
+	public static void deleteTaggedValue(Attribute a, String nameOfTVToDelete) {
+
+		Collection<AttributeTag> cTV = a.GetTaggedValues();
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+			AttributeTag tv = cTV.GetAt(i);
+			if (tv.GetName().equalsIgnoreCase(nameOfTVToDelete)) {
+				cTV.Delete(i);
+			}
+		}
+
+		cTV.Refresh();
+	}
+
+	public static void deleteTaggedValue(Connector con,
+			String nameOfTVToDelete) {
+
+		Collection<ConnectorTag> cTV = con.GetTaggedValues();
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+			ConnectorTag tv = cTV.GetAt(i);
+			if (tv.GetName().equalsIgnoreCase(nameOfTVToDelete)) {
+				cTV.Delete(i);
+			}
+		}
+
+		cTV.Refresh();
+	}
+
+	public static void deleteTaggedValue(ConnectorEnd ce,
+			String nameOfTVToDelete) {
+
+		Collection<RoleTag> cTV = ce.GetTaggedValues();
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+			RoleTag tv = cTV.GetAt(i);
+			if (tv.GetTag().equalsIgnoreCase(nameOfTVToDelete)) {
+				cTV.Delete(i);
+			}
+		}
+
+		cTV.Refresh();
+	}
+
+	// /**
+	// * Sets the given tagged value in the tagged values of the given element.
+	// If
+	// * tagged values with the same tag name already exist, they will be
+	// * overwritten. If fewer values existed than shall be set, new values will
+	// * be added.
+	// * <p>
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param e
+	// * the element in which the tagged value shall be set
+	// * @param tv
+	// * tagged value to set
+	// */
+	// public static void setTaggedValue(Element e, EATaggedValue tv)
+	// throws EAException {
+	//
+	// String name = tv.getName();
+	// List<String> values = tv.getValues();
+	//
+	// if (values != null) {
+	//
+	// Collection<TaggedValue> cTV = e.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values for given name
+	// List<TaggedValue> existingTvs = new ArrayList<TaggedValue>();
+	// for (TaggedValue exTv : cTV) {
+	// if (exTv.GetName().equalsIgnoreCase(name)) {
+	// existingTvs.add(exTv);
+	// }
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values.size(); i++) {
+	// TaggedValue eaTv = cTV.AddNew(name, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we keep track
+	// * of indices); shouldn't be required at the moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// TaggedValue eaTv = existingTvs.get(i);
+	//
+	// if (tv.createAsMemoField() || v.length() > 255) {
+	// eaTv.SetValue("<memo>");
+	// eaTv.SetNotes(v);
+	// } else {
+	// eaTv.SetValue(v);
+	// eaTv.SetNotes("");
+	// }
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(
+	// createMessage(401, name, v, eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
 	/**
 	 * Sets the given tagged value in the tagged values of the given element. If
-	 * tagged values with the same tag name already exist, they will be
-	 * overwritten. If fewer values existed than shall be set, new values will
-	 * be added.
-	 * <p>
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * tagged values with the same tag name already exist, they will be deleted.
+	 * Then the tagged value will be added.
 	 * 
 	 * @param e
 	 *            the element in which the tagged value shall be set
 	 * @param tv
-	 *            tagged value to set
+	 *            tagged value to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValue(Element e, EATaggedValue tv)
 			throws EAException {
 
-		String name = tv.getName();
-		List<String> values = tv.getValues();
-
-		if (values != null) {
-
-			Collection<TaggedValue> cTV = e.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values for given name
-			List<TaggedValue> existingTvs = new ArrayList<TaggedValue>();
-			for (TaggedValue exTv : cTV) {
-				if (exTv.GetName().equalsIgnoreCase(name)) {
-					existingTvs.add(exTv);
-				}
-			}
-
-			if (existingTvs.size() < values.size()) {
-
-				// add new tagged values
-				for (int i = existingTvs.size(); i < values.size(); i++) {
-					TaggedValue eaTv = cTV.AddNew(name, "");
-					existingTvs.add(eaTv);
-				}
-				cTV.Refresh();
-
-			} else if (existingTvs.size() > values.size()) {
-				/*
-				 * TODO remove excess tagged values (requires that we keep track
-				 * of indices); shouldn't be required at the moment
-				 */
-			}
-
-			// overwrite existing tagged value objects
-
-			for (int i = 0; i < values.size(); i++) {
-
-				String v = values.get(i);
-
-				TaggedValue eaTv = existingTvs.get(i);
-
-				if (tv.createAsMemoField() || v.length() > 255) {
-					eaTv.SetValue("<memo>");
-					eaTv.SetNotes(v);
-				} else {
-					eaTv.SetValue(v);
-					eaTv.SetNotes("");
-				}
-
-				if (!eaTv.Update()) {
-					throw new EAException(
-							createMessage(401, name, v, eaTv.GetLastError()));
-				}
-			}
-		}
+		deleteTaggedValue(e, tv.getName());
+		addTaggedValue(e, tv);
 	}
 
 	/**
@@ -904,107 +1148,148 @@ public class EAModelUtil {
 		}
 	}
 
+	// /**
+	// * Sets the given list of tagged values in the tagged values of the given
+	// * attribute. If tagged values with same tag names already exist, they
+	// will
+	// * be overwritten. If fewer values existed than shall be set, new values
+	// * will be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param att
+	// * the attribute
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Attribute att, List<EATaggedValue>
+	// tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	//
+	// // nothing to do
+	//
+	// } else {
+	//
+	// Collection<AttributeTag> cTV = att.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<AttributeTag>> existingTvsByName = new HashMap<String,
+	// List<AttributeTag>>();
+	// for (AttributeTag exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<AttributeTag> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<AttributeTag>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (EATaggedValue tv : tvs) {
+	//
+	// String tag = tv.getName();
+	// List<String> values = tv.getValues();
+	//
+	// if (values != null) {
+	//
+	// List<AttributeTag> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<AttributeTag>();
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values
+	// .size(); i++) {
+	// AttributeTag eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// AttributeTag eaTv = existingTvs.get(i);
+	//
+	// if (tv.createAsMemoField() || v.length() > 255) {
+	// eaTv.SetValue("<memo>");
+	// eaTv.SetNotes(v);
+	// } else {
+	// eaTv.SetValue(v);
+	// eaTv.SetNotes("");
+	// }
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
 	/**
-	 * Sets the given list of tagged values in the tagged values of the given
-	 * attribute. If tagged values with same tag names already exist, they will
-	 * be overwritten. If fewer values existed than shall be set, new values
-	 * will be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * Sets the given tagged values in the given attribute. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
 	 * 
 	 * @param att
-	 *            the attribute
+	 *            the attribute in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set
+	 *            tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Attribute att, List<EATaggedValue> tvs)
 			throws EAException {
 
-		if (tvs == null || tvs.isEmpty()) {
-
-			// nothing to do
-
-		} else {
-
-			Collection<AttributeTag> cTV = att.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<AttributeTag>> existingTvsByName = new HashMap<String, List<AttributeTag>>();
-			for (AttributeTag exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<AttributeTag> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<AttributeTag>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
-
-			for (EATaggedValue tv : tvs) {
-
-				String tag = tv.getName();
-				List<String> values = tv.getValues();
-
-				if (values != null) {
-
-					List<AttributeTag> existingTvs;
-
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<AttributeTag>();
-					}
-
-					if (existingTvs.size() < values.size()) {
-
-						// add new tagged values
-						for (int i = existingTvs.size(); i < values
-								.size(); i++) {
-							AttributeTag eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.size()) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.size(); i++) {
-
-						String v = values.get(i);
-
-						AttributeTag eaTv = existingTvs.get(i);
-
-						if (tv.createAsMemoField() || v.length() > 255) {
-							eaTv.SetValue("<memo>");
-							eaTv.SetNotes(v);
-						} else {
-							eaTv.SetValue(v);
-							eaTv.SetNotes("");
-						}
-
-						if (!eaTv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									eaTv.GetLastError()));
-						}
-					}
-				}
-			}
+		for (EATaggedValue tv : tvs) {
+			deleteTaggedValue(att, tv.getName());
 		}
+		addTaggedValues(att, tvs);
+	}
+
+	/**
+	 * Sets the given tagged values in the given attribute. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
+	 * 
+	 * @param att
+	 *            the attribute in which the tagged values shall be set
+	 * @param tvs
+	 *            tagged values to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValues(Attribute att, TaggedValues tvs)
+			throws EAException {
+
+		for (String tvName : tvs.asMap().keySet()) {
+			deleteTaggedValue(att, tvName);
+		}
+		addTaggedValues(att, tvs);
 	}
 
 	public static void createEAGeneralization(Repository rep, int c1ElementId,
@@ -1141,107 +1426,130 @@ public class EAModelUtil {
 		}
 	}
 
+	// /**
+	// * Sets the given list of tagged values in the tagged values of the given
+	// * connector. If tagged values with same tag names already exist, they
+	// will
+	// * be overwritten. If fewer values existed than shall be set, new values
+	// * will be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param con
+	// * the connector
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Connector con, List<EATaggedValue>
+	// tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	//
+	// // nothing to do
+	//
+	// } else {
+	//
+	// Collection<ConnectorTag> cTV = con.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<ConnectorTag>> existingTvsByName = new HashMap<String,
+	// List<ConnectorTag>>();
+	// for (ConnectorTag exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<ConnectorTag> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<ConnectorTag>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (EATaggedValue tv : tvs) {
+	//
+	// String tag = tv.getName();
+	// List<String> values = tv.getValues();
+	//
+	// if (values != null) {
+	//
+	// List<ConnectorTag> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<ConnectorTag>();
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values
+	// .size(); i++) {
+	// ConnectorTag eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// ConnectorTag eaTv = existingTvs.get(i);
+	//
+	// if (tv.createAsMemoField() || v.length() > 255) {
+	// eaTv.SetValue("<memo>");
+	// eaTv.SetNotes(v);
+	// } else {
+	// eaTv.SetValue(v);
+	// eaTv.SetNotes("");
+	// }
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+
 	/**
-	 * Sets the given list of tagged values in the tagged values of the given
-	 * connector. If tagged values with same tag names already exist, they will
-	 * be overwritten. If fewer values existed than shall be set, new values
-	 * will be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * Sets the given tagged values in the given connector. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
 	 * 
 	 * @param con
-	 *            the connector
+	 *            the connector in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set
+	 *            tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Connector con, List<EATaggedValue> tvs)
 			throws EAException {
 
-		if (tvs == null || tvs.isEmpty()) {
-
-			// nothing to do
-
-		} else {
-
-			Collection<ConnectorTag> cTV = con.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<ConnectorTag>> existingTvsByName = new HashMap<String, List<ConnectorTag>>();
-			for (ConnectorTag exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<ConnectorTag> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<ConnectorTag>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
-
-			for (EATaggedValue tv : tvs) {
-
-				String tag = tv.getName();
-				List<String> values = tv.getValues();
-
-				if (values != null) {
-
-					List<ConnectorTag> existingTvs;
-
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<ConnectorTag>();
-					}
-
-					if (existingTvs.size() < values.size()) {
-
-						// add new tagged values
-						for (int i = existingTvs.size(); i < values
-								.size(); i++) {
-							ConnectorTag eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.size()) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.size(); i++) {
-
-						String v = values.get(i);
-
-						ConnectorTag eaTv = existingTvs.get(i);
-
-						if (tv.createAsMemoField() || v.length() > 255) {
-							eaTv.SetValue("<memo>");
-							eaTv.SetNotes(v);
-						} else {
-							eaTv.SetValue(v);
-							eaTv.SetNotes("");
-						}
-
-						if (!eaTv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									eaTv.GetLastError()));
-						}
-					}
-				}
-			}
+		for (EATaggedValue tv : tvs) {
+			deleteTaggedValue(con, tv.getName());
 		}
+		addTaggedValues(con, tvs);
 	}
 
 	/**
@@ -1299,107 +1607,128 @@ public class EAModelUtil {
 		}
 	}
 
+	// /**
+	// * Sets the given list of tagged values in the tagged values of the given
+	// * connector. If tagged values with same tag names already exist, they
+	// will
+	// * be overwritten. If fewer values existed than shall be set, new values
+	// * will be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param con
+	// * the connector
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(Connector con, TaggedValues tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	//
+	// // nothing to do
+	//
+	// } else {
+	//
+	// Collection<ConnectorTag> cTV = con.GetTaggedValues();
+	// cTV.Refresh();
+	//
+	// // identify existing tagged values
+	// Map<String, List<ConnectorTag>> existingTvsByName = new HashMap<String,
+	// List<ConnectorTag>>();
+	// for (ConnectorTag exTv : cTV) {
+	//
+	// String name = exTv.GetName();
+	//
+	// List<ConnectorTag> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<ConnectorTag>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
+	//
+	// String tag = e.getKey();
+	// List<String> values = e.getValue();
+	//
+	// if (values != null) {
+	//
+	// List<ConnectorTag> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(tag)) {
+	// existingTvs = existingTvsByName.get(tag);
+	// } else {
+	// existingTvs = new ArrayList<ConnectorTag>();
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values
+	// .size(); i++) {
+	// ConnectorTag eaTv = cTV.AddNew(tag, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// ConnectorTag eaTv = existingTvs.get(i);
+	//
+	// if (v.length() > 255) {
+	// eaTv.SetValue("<memo>");
+	// eaTv.SetNotes(v);
+	// } else {
+	// eaTv.SetValue(v);
+	// eaTv.SetNotes("");
+	// }
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(createMessage(401, tag, v,
+	// eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
 	/**
-	 * Sets the given list of tagged values in the tagged values of the given
-	 * connector. If tagged values with same tag names already exist, they will
-	 * be overwritten. If fewer values existed than shall be set, new values
-	 * will be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * Sets the given tagged values in the given connector. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
 	 * 
 	 * @param con
-	 *            the connector
+	 *            the connector in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set
+	 *            tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Connector con, TaggedValues tvs)
 			throws EAException {
 
-		if (tvs == null || tvs.isEmpty()) {
-
-			// nothing to do
-
-		} else {
-
-			Collection<ConnectorTag> cTV = con.GetTaggedValues();
-			cTV.Refresh();
-
-			// identify existing tagged values
-			Map<String, List<ConnectorTag>> existingTvsByName = new HashMap<String, List<ConnectorTag>>();
-			for (ConnectorTag exTv : cTV) {
-
-				String name = exTv.GetName();
-
-				List<ConnectorTag> exTvs;
-
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
-				} else {
-					exTvs = new ArrayList<ConnectorTag>();
-					existingTvsByName.put(name, exTvs);
-				}
-
-				exTvs.add(exTv);
-			}
-
-			for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
-
-				String tag = e.getKey();
-				List<String> values = e.getValue();
-
-				if (values != null) {
-
-					List<ConnectorTag> existingTvs;
-
-					if (existingTvsByName.containsKey(tag)) {
-						existingTvs = existingTvsByName.get(tag);
-					} else {
-						existingTvs = new ArrayList<ConnectorTag>();
-					}
-
-					if (existingTvs.size() < values.size()) {
-
-						// add new tagged values
-						for (int i = existingTvs.size(); i < values
-								.size(); i++) {
-							ConnectorTag eaTv = cTV.AddNew(tag, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.size()) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.size(); i++) {
-
-						String v = values.get(i);
-
-						ConnectorTag eaTv = existingTvs.get(i);
-
-						if (v.length() > 255) {
-							eaTv.SetValue("<memo>");
-							eaTv.SetNotes(v);
-						} else {
-							eaTv.SetValue(v);
-							eaTv.SetNotes("");
-						}
-
-						if (!eaTv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									eaTv.GetLastError()));
-						}
-					}
-				}
-			}
+		for (String tvName : tvs.asMap().keySet()) {
+			deleteTaggedValue(con, tvName);
 		}
+		addTaggedValues(con, tvs);
 	}
 
 	/**
@@ -1440,10 +1769,26 @@ public class EAModelUtil {
 						cTV.Refresh();
 
 						/*
-						 * 2015-11-02 JE: apparently <memo> mechanism not
-						 * available for role tags
+						 * An EA memo-field is used to provide convenient
+						 * support (via a dialog in EA) for entering a tagged
+						 * value with very long text. Such fields always start
+						 * with the string '<memo>' (six characters long).
+						 * 
+						 * If a tagged value with a memo-field has an actual
+						 * textual value then the value starts with
+						 * '<memo>$ea_notes=' (16 characters long). So if a tag
+						 * with memo-field does not have an actual value, we
+						 * will only find '<memo>', but not followed by
+						 * '$ea_notes='.
+						 * 
+						 * Otherwise (no memo field) we can use the value as is.
 						 */
-						eaTv.SetValue(v);
+
+						if (v.length() > 255) {
+							eaTv.SetValue("<memo>$ea_notes=" + v);
+						} else {
+							eaTv.SetValue(v);
+						}
 
 						if (!eaTv.Update()) {
 							throw new EAException(createMessage(401, name, v,
@@ -1456,106 +1801,208 @@ public class EAModelUtil {
 	}
 
 	/**
-	 * Sets the given tagged values in the tagged values of the given connector
-	 * end. If tagged values with same tag names already exist, they will be
-	 * overwritten. If fewer values existed than shall be set, new values will
-	 * be added.
-	 * 
-	 * NOTE: does currently not delete excess values (those values that already
-	 * exist but that aren't needed to store the new values).
+	 * Adds the given tagged value to the given connector end, NOT checking for
+	 * duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
 	 * @param end
-	 *            the connector end
-	 * @param tvs
-	 *            tagged values to set
+	 *            the connector end to which the tagged value shall be added
+	 * @param tv
+	 *            tagged value to add, must not be <code>null</code>
 	 */
-	public static void setTaggedValues(ConnectorEnd end, TaggedValues tvs)
+	public static void addTaggedValue(ConnectorEnd end, EATaggedValue tv)
 			throws EAException {
 
-		if (tvs == null || tvs.isEmpty()) {
+		Collection<RoleTag> cTV = end.GetTaggedValues();
 
-			// nothing to do
+		String name = tv.getName();
+		List<String> values = tv.getValues();
 
-		} else {
+		if (values != null) {
 
-			Collection<RoleTag> cTV = end.GetTaggedValues();
+			for (String v : values) {
 
-			// identify existing tagged values
-			Map<String, List<RoleTag>> existingTvsByName = new HashMap<String, List<RoleTag>>();
-			for (RoleTag exTv : cTV) {
+				RoleTag eaTv = cTV.AddNew(name, "");
+				cTV.Refresh();
 
-				String name = exTv.GetTag();
+				/*
+				 * An EA memo-field is used to provide convenient support (via a
+				 * dialog in EA) for entering a tagged value with very long
+				 * text. Such fields always start with the string '<memo>' (six
+				 * characters long).
+				 * 
+				 * If a tagged value with a memo-field has an actual textual
+				 * value then the value starts with '<memo>$ea_notes=' (16
+				 * characters long). So if a tag with memo-field does not have
+				 * an actual value, we will only find '<memo>', but not followed
+				 * by '$ea_notes='.
+				 * 
+				 * Otherwise (no memo field) we can use the value as is.
+				 */
 
-				List<RoleTag> exTvs;
+				if (tv.createAsMemoField() || v.length() > 255) {
 
-				if (existingTvsByName.containsKey(name)) {
-					exTvs = existingTvsByName.get(name);
+					if (v.length() == 0) {
+						eaTv.SetValue("<memo>");
+					} else {
+						eaTv.SetValue("<memo>$ea_notes=" + v);
+					}
 				} else {
-					exTvs = new ArrayList<RoleTag>();
-					existingTvsByName.put(name, exTvs);
+					eaTv.SetValue(v);
 				}
 
-				exTvs.add(exTv);
-			}
-
-			for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
-
-				String name = e.getKey();
-				List<String> values = e.getValue();
-
-				if (values != null) {
-
-					List<RoleTag> existingTvs;
-
-					if (existingTvsByName.containsKey(name)) {
-						existingTvs = existingTvsByName.get(name);
-					} else {
-						existingTvs = new ArrayList<RoleTag>();
-					}
-
-					if (existingTvs.size() < values.size()) {
-
-						// add new tagged values
-						for (int i = existingTvs.size(); i < values
-								.size(); i++) {
-							RoleTag eaTv = cTV.AddNew(name, "");
-							existingTvs.add(eaTv);
-						}
-						cTV.Refresh();
-
-					} else if (existingTvs.size() > values.size()) {
-						/*
-						 * TODO remove excess tagged values (requires that we
-						 * keep track of indices); shouldn't be required at the
-						 * moment
-						 */
-					}
-
-					// overwrite existing tagged value objects
-
-					for (int i = 0; i < values.size(); i++) {
-
-						String v = values.get(i);
-
-						RoleTag eaTv = existingTvs.get(i);
-
-						/*
-						 * Association ends support a <memo> mechanism - see
-						 * PropertyInfoEA.validateTaggedValuesCache() for
-						 * further details.
-						 * 
-						 * For now we simply set the value as-is.
-						 */
-						eaTv.SetValue(v);
-
-						if (!eaTv.Update()) {
-							throw new EAException(createMessage(401, name, v,
-									eaTv.GetLastError()));
-						}
-					}
+				if (!eaTv.Update()) {
+					throw new EAException(
+							createMessage(401, name, v, eaTv.GetLastError()));
 				}
 			}
 		}
+	}
+
+	// /**
+	// * Sets the given tagged values in the tagged values of the given
+	// connector
+	// * end. If tagged values with same tag names already exist, they will be
+	// * overwritten. If fewer values existed than shall be set, new values will
+	// * be added.
+	// *
+	// * NOTE: does currently not delete excess values (those values that
+	// already
+	// * exist but that aren't needed to store the new values).
+	// *
+	// * @param end
+	// * the connector end
+	// * @param tvs
+	// * tagged values to set
+	// */
+	// public static void setTaggedValues(ConnectorEnd end, TaggedValues tvs)
+	// throws EAException {
+	//
+	// if (tvs == null || tvs.isEmpty()) {
+	//
+	// // nothing to do
+	//
+	// } else {
+	//
+	// Collection<RoleTag> cTV = end.GetTaggedValues();
+	//
+	// // identify existing tagged values
+	// Map<String, List<RoleTag>> existingTvsByName = new HashMap<String,
+	// List<RoleTag>>();
+	// for (RoleTag exTv : cTV) {
+	//
+	// String name = exTv.GetTag();
+	//
+	// List<RoleTag> exTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// exTvs = existingTvsByName.get(name);
+	// } else {
+	// exTvs = new ArrayList<RoleTag>();
+	// existingTvsByName.put(name, exTvs);
+	// }
+	//
+	// exTvs.add(exTv);
+	// }
+	//
+	// for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
+	//
+	// String name = e.getKey();
+	// List<String> values = e.getValue();
+	//
+	// if (values != null) {
+	//
+	// List<RoleTag> existingTvs;
+	//
+	// if (existingTvsByName.containsKey(name)) {
+	// existingTvs = existingTvsByName.get(name);
+	// } else {
+	// existingTvs = new ArrayList<RoleTag>();
+	// }
+	//
+	// if (existingTvs.size() < values.size()) {
+	//
+	// // add new tagged values
+	// for (int i = existingTvs.size(); i < values
+	// .size(); i++) {
+	// RoleTag eaTv = cTV.AddNew(name, "");
+	// existingTvs.add(eaTv);
+	// }
+	// cTV.Refresh();
+	//
+	// } else if (existingTvs.size() > values.size()) {
+	// /*
+	// * TODO remove excess tagged values (requires that we
+	// * keep track of indices); shouldn't be required at the
+	// * moment
+	// */
+	// }
+	//
+	// // overwrite existing tagged value objects
+	//
+	// for (int i = 0; i < values.size(); i++) {
+	//
+	// String v = values.get(i);
+	//
+	// RoleTag eaTv = existingTvs.get(i);
+	//
+	// /*
+	// * Association ends support a <memo> mechanism - see
+	// * PropertyInfoEA.validateTaggedValuesCache() for
+	// * further details.
+	// *
+	// * For now we simply set the value as-is.
+	// */
+	// eaTv.SetValue(v);
+	//
+	// if (!eaTv.Update()) {
+	// throw new EAException(createMessage(401, name, v,
+	// eaTv.GetLastError()));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+
+	/**
+	 * Sets the given tagged values in the given connector end. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
+	 * 
+	 * @param ce
+	 *            the connector end in which the tagged values shall be set
+	 * @param tvs
+	 *            tagged values to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValues(ConnectorEnd ce, TaggedValues tvs)
+			throws EAException {
+
+		for (String tvName : tvs.asMap().keySet()) {
+			deleteTaggedValue(ce, tvName);
+		}
+		addTaggedValues(ce, tvs);
+	}
+
+	/**
+	 * Sets the given tagged value in the given connector end. If a tagged value
+	 * with the same name as the given one already exists, it will be deleted.
+	 * Then the tagged value will be added.
+	 * 
+	 * @param ce
+	 *            the connector end in which the tagged value shall be set
+	 * @param tv
+	 *            tagged value to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValue(ConnectorEnd ce, EATaggedValue tv)
+			throws EAException {
+
+		deleteTaggedValue(ce, tv.getName());
+		addTaggedValue(ce, tv);
 	}
 
 	/**

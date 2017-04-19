@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Profile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -111,7 +112,7 @@ public class Profiles {
 		}
 	}
 
-	public Profiles(List<ProfileIdentifier> profileIdentifiers) {
+	public Profiles(Collection<ProfileIdentifier> profileIdentifiers) {
 		if (profileIdentifiers == null || profileIdentifiers.isEmpty()) {
 			this.profileIdentifiersByName = null;
 		} else {
@@ -121,6 +122,7 @@ public class Profiles {
 			}
 		}
 	}
+	
 
 	/**
 	 * Adds the given profile to this set of profiles. If the profiles
@@ -611,5 +613,12 @@ public class Profiles {
 		}
 
 		return null;
+	}
+
+	public void put(Set<ProfileIdentifier> profiles) {
+		
+		for(ProfileIdentifier profile : profiles) {
+			this.put(profile);
+		}		
 	}
 }
