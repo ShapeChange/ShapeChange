@@ -33,6 +33,8 @@ package de.interactive_instruments.ShapeChange.Target.ProfileTransfer;
 
 import java.io.File;
 
+import org.sparx.Repository;
+
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -53,117 +55,185 @@ public class ProfileTransferEAConfigurationValidator
 
 		boolean isValid = true;
 
-		// check that input model is an EA repository
-		String inputModelType = options.parameterAsString(null,
-				"inputModelType", null, false, true);
+		/*
+		 * Retrieve EA repo connection info either directly from the target, if
+		 * PARAM_REPO_CONNECTION_STRING is set, or from the input configuration.
+		 */
+		String repoConnectionInfo = null;
+		String username = null;
+		String password = null;
 
-		if (inputModelType == null || !inputModelType.equalsIgnoreCase("EA7")) {
+		if (options.hasParameter(ProfileTransferEA.class.getName(),
+				ProfileTransferEA.PARAM_REPO_CONNECTION_STRING)) {
 
-			result.addFatalError(this, 10);
-			isValid = false;
+			result.addInfo(this, 29);
+
+			repoConnectionInfo = options.parameterAsString(
+					ProfileTransferEA.class.getName(),
+					ProfileTransferEA.PARAM_REPO_CONNECTION_STRING, null, false,
+					true);
+
+			if (repoConnectionInfo == null) {
+
+				result.addError(this, 31);
+				isValid = false;
+
+			} else {
+
+				username = options.parameter(ProfileTransferEA.class.getName(),
+						ProfileTransferEA.PARAM_USER);
+				password = options.parameter(ProfileTransferEA.class.getName(),
+						ProfileTransferEA.PARAM_PWD);
+			}
 
 		} else {
 
-			String mdl = options.parameter("inputFile");
+			result.addInfo(this, 30);
 
-			String repoFileNameOrConnectionString = options
-					.parameter("repositoryFileNameOrConnectionString");
+			// check that input model is an EA repository
+			String inputModelType = options.parameter("inputModelType");
+
+			if (inputModelType == null
+					|| !inputModelType.equalsIgnoreCase("EA7")) {
+
+				result.addError(this, 10);
+				isValid = false;
+
+			} else {
+
+				String mdl = options.parameter("inputFile");
+
+				String repoFileNameOrConnectionString = options.parameter(
+						ProfileTransferEA.PARAM_REPO_CONNECTION_STRING);
+
+				username = options.parameter(ProfileTransferEA.PARAM_USER);
+				password = options.parameter(ProfileTransferEA.PARAM_PWD);
+
+				if (repoFileNameOrConnectionString != null
+						&& repoFileNameOrConnectionString.length() > 0) {
+					repoConnectionInfo = repoFileNameOrConnectionString;
+				} else if (mdl != null && mdl.length() > 0) {
+					repoConnectionInfo = mdl;
+				} else {
+					result.addError(this, 11);
+					isValid = false;
+				}
+			}
+		}
+
+		if (isValid) {
 
 			boolean transferToCopyOfEAP = options.parameterAsBoolean(
 					ProfileTransferEA.class.getName(),
 					ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, false);
 
 			/*
-			 * we accept path to EAP file or repository connection string via
-			 * both inputFile and repositoryFileNameOrConnectionString
-			 * parameters
+			 * Determine if we are dealing with a file or server based
+			 * repository
 			 */
-			String repoConnectionInfo = null;
+			if (repoConnectionInfo.contains("DBType=")
+					|| repoConnectionInfo.contains("Connect=Cloud")) {
 
-			if (repoFileNameOrConnectionString != null
-					&& repoFileNameOrConnectionString.length() > 0) {
-				repoConnectionInfo = repoFileNameOrConnectionString;
-			} else if (mdl != null && mdl.length() > 0) {
-				repoConnectionInfo = mdl;
+				/* We are dealing with a server based repository. */
+
+				if (transferToCopyOfEAP) {
+					result.addError(this, 13);
+					isValid = false;
+				}
+
 			} else {
-				result.addError(this, 11);
-				isValid = false;
-			}
 
-			if (isValid) {
+				/* We have an EAP file. Ensure that it exists */
 
-				/*
-				 * Determine if we are dealing with a file or server based
-				 * repository
-				 */
-				if (repoConnectionInfo.contains("DBType=")
-						|| repoConnectionInfo.contains("Connect=Cloud")) {
+				File repfile = new File(repoConnectionInfo);
 
-					/* We are dealing with a server based repository. */
+				boolean ex = true;
 
-					if (transferToCopyOfEAP) {
-						result.addError(this, 13);
-						isValid = false;
+				if (!repfile.exists()) {
+
+					ex = false;
+					if (!repoConnectionInfo.toLowerCase().endsWith(".eap")) {
+						repoConnectionInfo += ".eap";
+						repfile = new File(repoConnectionInfo);
+						ex = repfile.exists();
 					}
+				}
+
+				if (!ex) {
+
+					result.addError(this, 14, repoConnectionInfo);
+					isValid = false;
 
 				} else {
 
-					/* We have an EAP file. Ensure that it exists */
+					repoConnectionInfo = repfile.getAbsolutePath();
+				}
 
-					File repfile = new File(repoConnectionInfo);
+				if (transferToCopyOfEAP) {
 
-					boolean ex = true;
+					/*
+					 * EAP file shall be copied. Check that the output directory
+					 * exists and can be written to.
+					 */
+					String outputDirectory = options.parameter(
+							ProfileTransferEA.class.getName(),
+							"outputDirectory");
 
-					if (!repfile.exists()) {
+					if (outputDirectory == null)
+						outputDirectory = options.parameter("outputDirectory");
+					if (outputDirectory == null)
+						outputDirectory = ".";
 
-						ex = false;
-						if (!repoConnectionInfo.toLowerCase()
-								.endsWith(".eap")) {
-							repoConnectionInfo += ".eap";
-							repfile = new File(repoConnectionInfo);
-							ex = repfile.exists();
-						}
+					File outputDirectoryFile = new File(outputDirectory);
+					boolean exi = outputDirectoryFile.exists();
+					if (!exi) {
+						outputDirectoryFile.mkdirs();
+						exi = outputDirectoryFile.exists();
 					}
+					boolean dir = outputDirectoryFile.isDirectory();
+					boolean wrt = outputDirectoryFile.canWrite();
+					boolean rea = outputDirectoryFile.canRead();
 
-					if (!ex) {
+					if (!exi || !dir || !wrt || !rea) {
 
-						result.addError(this, 14, repoConnectionInfo);
+						result.addError(this, 12, outputDirectory);
 						isValid = false;
 
-					} else if (transferToCopyOfEAP) {
-
-						/*
-						 * EAP file shall be copied. Check that the output
-						 * directory exists and can be written to.
-						 */
-						String outputDirectory = options.parameter(
-								ProfileTransferEA.class.getName(),
-								"outputDirectory");
-
-						if (outputDirectory == null)
-							outputDirectory = options
-									.parameter("outputDirectory");
-						if (outputDirectory == null)
-							outputDirectory = ".";
-
-						File outputDirectoryFile = new File(outputDirectory);
-						boolean exi = outputDirectoryFile.exists();
-						if (!exi) {
-							outputDirectoryFile.mkdirs();
-							exi = outputDirectoryFile.exists();
-						}
-						boolean dir = outputDirectoryFile.isDirectory();
-						boolean wrt = outputDirectoryFile.canWrite();
-						boolean rea = outputDirectoryFile.canRead();
-
-						if (!exi || !dir || !wrt || !rea) {
-
-							result.addError(this, 12, outputDirectory);
-							isValid = false;
-
-						}
 					}
 				}
+			}
+		}
+
+		if (isValid) {
+
+			// ensure that we can connect to the repository
+			username = username == null ? "" : username;
+			password = password == null ? "" : password;
+
+			Repository eaRepo = new Repository();
+
+			if (username.length() == 0) {
+
+				if (!eaRepo.OpenFile(repoConnectionInfo)) {
+					String errormsg = eaRepo.GetLastError();
+					result.addError(this, 16, repoConnectionInfo, errormsg);
+					isValid = false;
+				}
+
+			} else {
+
+				if (!eaRepo.OpenFile2(repoConnectionInfo, username, password)) {
+					String errormsg = eaRepo.GetLastError();
+					result.addError(this, 17, repoConnectionInfo, username,
+							password, errormsg);
+					isValid = false;
+				}
+			}
+
+			if (eaRepo != null) {
+				eaRepo.CloseFile();
+				eaRepo.Exit();
+				eaRepo = null;
 			}
 		}
 
@@ -182,18 +252,30 @@ public class ProfileTransferEAConfigurationValidator
 		case 3:
 			return "";
 		case 10:
-			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the input model is an EA repository.";
+			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to which profiles are transferred is an EA repository.";
 		case 11:
 			return "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
 		case 12:
-			return "The target is configured to copy the EA project file that contains the input model to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer would not be executed.";
+			return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer would not be executed.";
 		case 13:
-			return "The target is configured to copy the EA project file that contains the input model to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer would not be executed.";
+			return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer would not be executed.";
 		case 14:
 			return "Enterprise Architect repository file named '$1$' not found.";
+		case 16:
+			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
+		case 17:
+			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', username is: '$2$', password is: '$3$', exception message is: '$4$'";
+		case 29:
+			return "Using EA repository connection info provided by target configuration.";
+		case 30:
+			return "Using EA repository connection info provided by input configuration.";
+		case 31:
+			return "Parameter '"
+					+ ProfileTransferEA.PARAM_REPO_CONNECTION_STRING
+					+ "' is set in the configuration of this target, but it does not contain a valid value. Provide such a value or remove the target parameter in order for the target to look up the EA repository connection info in the input configuration.";
 
 		default:
-			return "(" + ProfileTransferEA.class.getName()
+			return "(" + ProfileTransferEAConfigurationValidator.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
 	}

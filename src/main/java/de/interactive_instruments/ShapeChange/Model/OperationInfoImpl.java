@@ -41,7 +41,7 @@ public abstract class OperationInfoImpl extends InfoImpl implements OperationInf
 		return name();
 	}
 	
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang!=null && !lang.isEmpty())

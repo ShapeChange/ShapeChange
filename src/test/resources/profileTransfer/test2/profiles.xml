@@ -31,7 +31,7 @@
                 <sc:TaggedValue>
                   <sc:name>version</sc:name>
                   <sc:values>
-                    <sc:Value>1</sc:Value>
+                    <sc:Value>0.9</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
                 <sc:TaggedValue>
@@ -49,7 +49,7 @@
               </sc:taggedValues>
               <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
-              <sc:version>1</sc:version>
+              <sc:version>0.9</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileTransfer/schema/a</sc:targetNamespace>
               <sc:xmlns>sc</sc:xmlns>
               <sc:xsdDocument>a.xsd</sc:xsdDocument>
@@ -97,16 +97,10 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A,C</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
                   <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
                     <sc:Profile name="C"></sc:Profile>
+                    <sc:Profile name="D"></sc:Profile>
                   </sc:profiles>
                   <sc:subtypes>
                     <sc:SubtypeId>165</sc:SubtypeId>
@@ -141,12 +135,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,C</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>1</sc:Value>
@@ -154,8 +142,8 @@
                         </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
                         <sc:Profile name="C"></sc:Profile>
+                        <sc:Profile name="D"></sc:Profile>
                       </sc:profiles>
                       <sc:cardinality>0..*</sc:cardinality>
                       <sc:sequenceNumber>1</sc:sequenceNumber>
@@ -194,12 +182,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,C</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>2</sc:Value>
@@ -207,8 +189,8 @@
                         </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
                         <sc:Profile name="C"></sc:Profile>
+                        <sc:Profile name="D"></sc:Profile>
                       </sc:profiles>
                       <sc:sequenceNumber>2</sc:sequenceNumber>
                       <sc:typeId>88</sc:typeId>
@@ -244,12 +226,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,C(multiplicity[1])</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>3</sc:Value>
@@ -257,11 +233,10 @@
                         </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
-                        <sc:Profile name="C">
-                          <sc:parameter>
-                            <sc:ProfileParameter name="multiplicity" value="1"></sc:ProfileParameter>
-                          </sc:parameter>
+                        <sc:Profile name="C">                        
+                        	<sc:parameter>
+                        		<sc:ProfileParameter name="multiplicity" value="1"/>
+                        	</sc:parameter>
                         </sc:Profile>
                       </sc:profiles>
                       <sc:cardinality>0..1</sc:cardinality>
@@ -273,7 +248,7 @@
                   </sc:properties>
                 </sc:Class>
                 <sc:Class>
-                  <sc:name>SubType</sc:name>
+                  <sc:name>OldSubType</sc:name>
                   <sc:id>165</sc:id>
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
@@ -281,12 +256,12 @@
                   <sc:descriptors>
                     <sc:alias>
                       <sc:descriptorValues>
-                        <sc:DescriptorValue>ST</sc:DescriptorValue>
+                        <sc:DescriptorValue>OST</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:alias>
                     <sc:definition>
                       <sc:descriptorValues>
-                        <sc:DescriptorValue>Definition of Subtype</sc:DescriptorValue>
+                        <sc:DescriptorValue>Definition of OldSubtype</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
                   </sc:descriptors>
@@ -315,16 +290,10 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
                   <sc:baseClassId>163</sc:baseClassId>
                   <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
+                    <sc:Profile name="C"></sc:Profile>
                   </sc:profiles>
                   <sc:supertypes>
                     <sc:SupertypeId>163</sc:SupertypeId>
@@ -373,17 +342,11 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A,C</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
                   <sc:associationId>87</sc:associationId>
                   <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
                     <sc:Profile name="C"></sc:Profile>
+                    <sc:Profile name="D"></sc:Profile>
                   </sc:profiles>
                 </sc:Class>
               </sc:classes>
@@ -679,6 +642,10 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
+                  <sc:profiles>
+                    <sc:Profile name="C"></sc:Profile>
+                    <sc:Profile name="D"></sc:Profile>
+                  </sc:profiles>
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propExt</sc:name>
@@ -710,6 +677,10 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
+                      <sc:profiles>
+                        <sc:Profile name="C"></sc:Profile>
+                        <sc:Profile name="D"></sc:Profile>
+                      </sc:profiles>
                       <sc:sequenceNumber>1</sc:sequenceNumber>
                       <sc:typeId>87</sc:typeId>
                       <sc:typeName>CharacterString</sc:typeName>

@@ -231,6 +231,21 @@ public class Options {
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
 
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (comma separated list of values)
+	 * <p>
+	 * Default Value: notValid, retired, superseded
+	 * <p>
+	 * Explanation: Comma separated list of values that, if one of them is being
+	 * set as the 'status' tagged value of a class, will lead to the class not
+	 * being loaded.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
 	public static final String PARAM_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV = "prohibitLoadingClassesWithStatusTaggedValue";
 	public static final String[] DEFAULT_FOR_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV = new String[] {
 			"notValid", "retired", "superseded" };
@@ -808,7 +823,7 @@ public class Options {
 	 *            parameter
 	 * @param k1
 	 *            parameter name
-	 * @return
+	 * @return the parameter value, or <code>null</code> if no value was found
 	 */
 	public String parameter(String t, String k1) {
 		if (t == null) {
@@ -3684,7 +3699,6 @@ public class Options {
 		 */
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
-		addRule("rule-exp-all-ignoreProfilesTaggedValue");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
 	}
 

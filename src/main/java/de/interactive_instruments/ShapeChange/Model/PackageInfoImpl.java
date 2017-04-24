@@ -43,7 +43,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 	protected List<ImageMetadata> diagrams = null;
 
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {

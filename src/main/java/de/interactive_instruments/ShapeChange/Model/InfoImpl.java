@@ -123,13 +123,14 @@ public abstract class InfoImpl implements Info, MessageSource {
 		return copy;
 	}
 
+	@Override
 	public String taggedValue(String tag) {
 
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
 		String[] values = taggedValuesCache.get(tag);
-		if (values == null || values.length == 0)
+		if (values.length == 0)
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
@@ -164,13 +165,11 @@ public abstract class InfoImpl implements Info, MessageSource {
 		validateTaggedValuesCache();
 
 		String[] result = taggedValuesCache.get(tag);
-		if (result == null) {
-			return new String[] {};
-		} else {
+		if (result.length != 0) {
 			// we sort since order is important for UnitTests
-			Arrays.sort(result);
-			return result;
+			Arrays.sort(result);			
 		}
+		return result;
 	}
 
 	@Override

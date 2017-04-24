@@ -97,12 +97,6 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A,B</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
                   <sc:profiles>
                     <sc:Profile name="A"></sc:Profile>
@@ -140,12 +134,6 @@
                           <sc:name>isMetadata</sc:name>
                           <sc:values>
                             <sc:Value>false</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
@@ -196,12 +184,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,B</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>2</sc:Value>
@@ -245,12 +227,6 @@
                           <sc:name>isMetadata</sc:name>
                           <sc:values>
                             <sc:Value>false</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
@@ -313,12 +289,6 @@
                       <sc:name>noPropertyType</sc:name>
                       <sc:values>
                         <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
@@ -623,12 +593,6 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
                   <sc:profiles>
                     <sc:Profile name="A"></sc:Profile>
@@ -655,12 +619,6 @@
                           <sc:name>isMetadata</sc:name>
                           <sc:values>
                             <sc:Value>false</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>

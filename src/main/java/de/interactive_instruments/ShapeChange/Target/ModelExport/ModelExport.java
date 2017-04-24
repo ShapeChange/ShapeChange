@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -104,7 +105,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 	private static Set<String> profilesToExport = null;
 	private static boolean omitExistingProfiles = false;
-	private static boolean ignoreProfilesTaggedValue = true;
+	private static Pattern ignoreTaggedValuesPattern = null;
 	private static boolean exportProfilesFromWholeModel = false;
 	private static boolean zipOutput = false;
 
@@ -191,8 +192,19 @@ public class ModelExport implements SingleTarget, MessageSource {
 				omitExistingProfiles = p.matches(
 						ModelExportConstants.RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES);
 
-				ignoreProfilesTaggedValue = p.matches(
-						ModelExportConstants.RULE_TGT_EXP_ALL_IGNORE_PROFILES_TAGGED_VALUE);
+				try {
+					ignoreTaggedValuesPattern = Pattern.compile(options
+							.parameterAsString(ModelExport.class.getName(),
+									ModelExportConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
+									ModelExportConstants.DEFAULT_IGNORE_TAGGED_VALUES_REGEX,
+									true, false));
+				} catch (PatternSyntaxException e) {
+					result.addError(this, 11,
+							ModelExportConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
+							e.getMessage());
+					ignoreTaggedValuesPattern = Pattern.compile(
+							ModelExportConstants.DEFAULT_IGNORE_TAGGED_VALUES_REGEX);
+				}
 
 				exportProfilesFromWholeModel = options.parameterAsBoolean(
 						ModelExport.class.getName(),
@@ -238,8 +250,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 									.put(profileName);
 						}
 
-						Pattern schemaNameRegex = null;
-
 						/*
 						 * Convert model to one with explicit profile
 						 * definitions and set it as the model to process by
@@ -248,8 +258,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 						GenericModel genModel = new GenericModel(m);
 						ProfileUtil.convertToExplicitProfileDefinitions(
 								genModel,
-								profilesForClassesBelongingToAllProfiles,
-								schemaNameRegex, exportProfilesFromWholeModel);
+								profilesForClassesBelongingToAllProfiles, null,
+								exportProfilesFromWholeModel);
 
 						/*
 						 * Postprocessing and validation of the generic model
@@ -300,7 +310,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		profilesToExport = null;
 		omitExistingProfiles = false;
-		ignoreProfilesTaggedValue = true;
+		ignoreTaggedValuesPattern = null;
 		exportProfilesFromWholeModel = false;
 		zipOutput = false;
 	}
@@ -904,6 +914,11 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDescriptorElement(Descriptor.GLOBALIDENTIFIER, descriptors);
 		printDescriptorElement(Descriptor.DEFINITION, descriptors);
 		printDescriptorElement(Descriptor.DESCRIPTION, descriptors);
+		/*
+		 * TBD: We could add a parameter to list the descriptors that shall be
+		 * exported
+		 */
+		// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
 		printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
 		printDescriptorElement(Descriptor.LANGUAGE, descriptors);
 		printDescriptorElement(Descriptor.EXAMPLE, descriptors);
@@ -912,48 +927,40 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		TaggedValues tvs = i.taggedValuesAll();
 
-		if (!tvs.isEmpty()) {
-
-			if (ignoreProfilesTaggedValue && tvs.size() == 1
-					&& tvs.containsKey("profiles")) {
-				/*
-				 * then we do not print the tagged values, since they only
-				 * contain the tagged value "profiles" and that shall not be
-				 * exported
-				 */
-			} else {
-
-				writer.startElement(NS, "taggedValues");
-
-				for (String tagName : tvs.keySet()) {
-
-					if (ignoreProfilesTaggedValue
-							&& tagName.equalsIgnoreCase("profiles")) {
-						continue;
-					}
-
-					String[] values = tvs.get(tagName);
-					if (values != null && values.length > 0) {
-						writer.startElement(NS, "TaggedValue");
-						writer.dataElement(NS, "name", tagName);
-						if (values.length == 1 && (values[0] == null
-								|| values[0].length() == 0)) {
-							// ignore empty value
-						} else {
-							writer.startElement(NS, "values");
-							for (String value : values) {
-								writer.dataElement(NS, "Value", value);
-							}
-							writer.endElement(NS, "values");
-						}
-						writer.endElement(NS, "TaggedValue");
-					}
-				}
-
-				writer.endElement(NS, "taggedValues");
+		// identify set of tagged values to export
+		TaggedValues tvsToExport = options.taggedValueFactory();
+		for (String tagName : tvs.keySet()) {
+			if (!ignoreTaggedValuesPattern.matcher(tagName).matches()) {
+				tvsToExport.put(tagName, tvs.get(tagName));
 			}
 		}
 
+		if (!tvsToExport.isEmpty()) {
+
+			writer.startElement(NS, "taggedValues");
+
+			for (String tagName : tvsToExport.keySet()) {
+
+				String[] values = tvsToExport.get(tagName);
+				if (values != null && values.length > 0) {
+					writer.startElement(NS, "TaggedValue");
+					writer.dataElement(NS, "name", tagName);
+					if (values.length == 1
+							&& (values[0] == null || values[0].length() == 0)) {
+						// ignore empty value
+					} else {
+						writer.startElement(NS, "values");
+						for (String value : values) {
+							writer.dataElement(NS, "Value", value);
+						}
+						writer.endElement(NS, "values");
+					}
+					writer.endElement(NS, "TaggedValue");
+				}
+			}
+
+			writer.endElement(NS, "taggedValues");
+		}
 	}
 
 	private void printDescriptorElement(Descriptor descriptor,
@@ -1056,7 +1063,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		switch (mnr) {
 
 		case 11:
-			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The parameter will be ignored.";
+			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
 		case 12:
 			return "Directory named '$1$' does not exist or is not accessible.";
 

@@ -36,15 +36,27 @@ import org.junit.Test;
 public class ProfileTransferTest extends WindowsBasicTest {
 
 	@Test
-	public void profileTransfer() {
+	public void profileTransfer_test1_EARepoFromInputConfiguration() {
 
-		execute("src/test/resources/profileTransfer/testEA_profileTransfer_step1_transferToCopy.xml");
+		execute("src/test/resources/profileTransfer/test1/test1_profileTransfer_step1_transferToCopy.xml");
 
 		multiTest(
-				"src/test/resources/profileTransfer/testEA_profileTransfer_step2_export.xml",
-				new String[] { "xsd" },
-				"testResults/profileTransfer/results/export",
-				"src/test/resources/profileTransfer/reference/results/export");
+				"src/test/resources/profileTransfer/test1/test1_profileTransfer_step2_export.xml",
+				new String[] { "xml" },
+				"testResults/profileTransfer/test1/results/export",
+				"src/test/resources/profileTransfer/test1/reference/export");
+	}
+	
+	@Test
+	public void profileTransfer_test2_EARepoFromTargetConfiguration() {
+
+		execute("src/test/resources/profileTransfer/test2/test2_profileTransfer_step1_transferToCopy.xml");
+
+		multiTest(
+				"src/test/resources/profileTransfer/test2/test2_profileTransfer_step2_export.xml",
+				new String[] { "xml" },
+				"testResults/profileTransfer/test2/results/export",
+				"src/test/resources/profileTransfer/test2/reference/export");
 	}
 
 	/*

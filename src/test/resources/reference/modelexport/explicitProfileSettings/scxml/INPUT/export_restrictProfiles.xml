@@ -110,12 +110,6 @@
                             <sc:Value>false</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,B</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:profiles>
                         <sc:Profile name="A"></sc:Profile>
@@ -147,12 +141,6 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
-                              </sc:values>
-                            </sc:TaggedValue>
-                            <sc:TaggedValue>
-                              <sc:name>profiles</sc:name>
-                              <sc:values>
-                                <sc:Value>A,B</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -198,12 +186,6 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
-                              </sc:values>
-                            </sc:TaggedValue>
-                            <sc:TaggedValue>
-                              <sc:name>profiles</sc:name>
-                              <sc:values>
-                                <sc:Value>A,B</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -266,12 +248,6 @@
                             <sc:Value>false</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>B,C</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:profiles>
                         <sc:Profile name="C"></sc:Profile>
@@ -303,12 +279,6 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
-                              </sc:values>
-                            </sc:TaggedValue>
-                            <sc:TaggedValue>
-                              <sc:name>profiles</sc:name>
-                              <sc:values>
-                                <sc:Value>B,C</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -354,12 +324,6 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
-                              </sc:values>
-                            </sc:TaggedValue>
-                            <sc:TaggedValue>
-                              <sc:name>profiles</sc:name>
-                              <sc:values>
-                                <sc:Value>B,C</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -422,12 +386,6 @@
                             <sc:Value>false</sc:Value>
                           </sc:values>
                         </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A,B,C</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:associationId>80</sc:associationId>
                       <sc:profiles>
@@ -461,12 +419,6 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
-                              </sc:values>
-                            </sc:TaggedValue>
-                            <sc:TaggedValue>
-                              <sc:name>profiles</sc:name>
-                              <sc:values>
-                                <sc:Value>A,B,C</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>

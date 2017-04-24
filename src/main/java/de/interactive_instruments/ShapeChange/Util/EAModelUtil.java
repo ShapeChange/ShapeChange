@@ -163,6 +163,145 @@ public class EAModelUtil {
 		return res;
 	}
 
+	/**
+	 * Retrieves the first tagged value with given name of the given element.
+	 * Does not apply normalization of tags, i.e. comparison is performed using
+	 * string equality. With UML 2, there may be multiple values per tag. This
+	 * method does NOT issue a warning if more than one value exists for the
+	 * tag. I.e., use this method only for cases, where only one value per tag
+	 * may be provided.
+	 * 
+	 * @param elmt
+	 *            element that contains the tagged values to search
+	 * @param tvName
+	 *            name of the tagged value to retrieve
+	 * @return The tagged value for the tag with given name or <code>null</code>
+	 *         if the tagged value was not found. If there are multiple values
+	 *         with the tag only the first is provided.
+	 */
+	public static String taggedValue(Element elmt, String tvName) {
+
+		org.sparx.Collection<org.sparx.TaggedValue> tvs = elmt
+				.GetTaggedValues();
+
+		for (org.sparx.TaggedValue tv : tvs) {
+
+			if (tvName.equals(tv.GetName())) {
+				return tv.GetValue();
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Retrieves the first tagged value with given name of the given attribute.
+	 * Does not apply normalization of tags, i.e. comparison is performed using
+	 * string equality. With UML 2, there may be multiple values per tag. This
+	 * method does NOT issue a warning if more than one value exists for the
+	 * tag. I.e., use this method only for cases, where only one value per tag
+	 * may be provided.
+	 * 
+	 * @param att
+	 *            attribute that contains the tagged values to search
+	 * @param tvName
+	 *            name of the tagged value to retrieve
+	 * @return The tagged value for the tag with given name or <code>null</code>
+	 *         if the tagged value was not found. If there are multiple values
+	 *         with the tag only the first is provided.
+	 */
+	public static String taggedValue(Attribute att, String tvName) {
+
+		org.sparx.Collection<org.sparx.AttributeTag> tvs = att
+				.GetTaggedValues();
+
+		for (org.sparx.AttributeTag tv : tvs) {
+
+			if (tvName.equals(tv.GetName())) {
+				String v = tv.GetValue();
+				if (v.equals("<memo>"))
+					v = tv.GetNotes();
+				return v;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Retrieves the first tagged value with given name of the given attribute.
+	 * Does not apply normalization of tags, i.e. comparison is performed using
+	 * string equality. With UML 2, there may be multiple values per tag. This
+	 * method does NOT issue a warning if more than one value exists for the
+	 * tag. I.e., use this method only for cases, where only one value per tag
+	 * may be provided.
+	 * 
+	 * @param att
+	 *            attribute that contains the tagged values to search
+	 * @param tvName
+	 *            name of the tagged value to retrieve
+	 * @return The tagged value for the tag with given name or <code>null</code>
+	 *         if the tagged value was not found. If there are multiple values
+	 *         with the tag only the first is provided.
+	 */
+	public static String taggedValue(ConnectorEnd end, String tvName) {
+
+		org.sparx.Collection<org.sparx.RoleTag> tvs = end.GetTaggedValues();
+
+		for (org.sparx.RoleTag tv : tvs) {
+
+			if (tvName.equals(tv.GetTag())) {
+
+				String v = tv.GetValue();
+
+				/*
+				 * An EA memo-field is used to provide convenient support (via a
+				 * dialog in EA) for entering a tagged value with very long
+				 * text. Such fields always start with the string '<memo>' (six
+				 * characters long).
+				 * 
+				 * If a tagged value with a memo-field has an actual textual
+				 * value then the value starts with '<memo>$ea_notes=' (16
+				 * characters long). So if a tag with memo-field does not have
+				 * an actual value, we will only find '<memo>', but not followed
+				 * by '$ea_notes='.
+				 * 
+				 * If the tagged value does not use a memo-field, then it may
+				 * still contain or start with '$ea_notes='. In that case, the
+				 * part after '$ea_notes=' provides the documentation of the tag
+				 * (e.g. from the MDG Technology - UnitTests showed that the
+				 * documentation can be empty) and the part before provides the
+				 * actual value.
+				 * 
+				 * Otherwise (does not start with '<memo>' and does not contain
+				 * '$ea_notes=') we can use the value as is.
+				 */
+
+				if (v.startsWith("<memo>$ea_notes=")) {
+
+					v = v.substring(16);
+
+				} else if (v.startsWith("<memo>")) {
+
+					// no actual value in the memo-field
+					v = "";
+
+				} else if (v.contains("$ea_notes=")) {
+
+					// retrieve the value
+					v = v.substring(0, v.indexOf("$ea_notes="));
+
+				} else {
+					// fine - use the value as is
+				}
+
+				return v;
+			}
+		}
+
+		return null;
+	}
+
 	public static String createMessage(int mnr, String p1, String p2, String p3,
 			String p4) {
 		String m = message(mnr);
@@ -401,25 +540,22 @@ public class EAModelUtil {
 
 				String[] values = tvs.get(tag);
 
-				if (values != null) {
+				for (String v : values) {
 
-					for (String v : values) {
+					AttributeTag tv = cTV.AddNew(tag, "");
+					cTV.Refresh();
 
-						AttributeTag tv = cTV.AddNew(tag, "");
-						cTV.Refresh();
+					if (v.length() > 255) {
+						tv.SetValue("<memo>");
+						tv.SetNotes(v);
+					} else {
+						tv.SetValue(v);
+						tv.SetNotes("");
+					}
 
-						if (v.length() > 255) {
-							tv.SetValue("<memo>");
-							tv.SetNotes(v);
-						} else {
-							tv.SetValue(v);
-							tv.SetNotes("");
-						}
-
-						if (!tv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									tv.GetLastError()));
-						}
+					if (!tv.Update()) {
+						throw new EAException(
+								createMessage(401, tag, v, tv.GetLastError()));
 					}
 				}
 			}
@@ -453,25 +589,22 @@ public class EAModelUtil {
 
 				String[] values = tvs.get(tag);
 
-				if (values != null) {
+				for (String v : values) {
 
-					for (String v : values) {
+					TaggedValue tv = cTV.AddNew(tag, "");
+					cTV.Refresh();
 
-						TaggedValue tv = cTV.AddNew(tag, "");
-						cTV.Refresh();
+					if (v.length() > 255) {
+						tv.SetValue("<memo>");
+						tv.SetNotes(v);
+					} else {
+						tv.SetValue(v);
+						tv.SetNotes("");
+					}
 
-						if (v.length() > 255) {
-							tv.SetValue("<memo>");
-							tv.SetNotes(v);
-						} else {
-							tv.SetValue(v);
-							tv.SetNotes("");
-						}
-
-						if (!tv.Update()) {
-							throw new EAException(createMessage(401, tag, v,
-									tv.GetLastError()));
-						}
+					if (!tv.Update()) {
+						throw new EAException(
+								createMessage(401, tag, v, tv.GetLastError()));
 					}
 				}
 			}
@@ -595,6 +728,48 @@ public class EAModelUtil {
 
 		deleteTaggedValue(att, tv.getName());
 		addTaggedValue(att, tv);
+	}
+
+	/**
+	 * Sets the given tagged value in the tagged values of the given attribute.
+	 * If tagged values with the same tag name already exist, they will be
+	 * deleted. Then the tagged value will be added.
+	 * 
+	 * @param att
+	 *            the attribute in which the tagged value shall be set
+	 * @param name
+	 *            name of the tagged value to set, must not be <code>null</code>
+	 * @param value
+	 *            value of the tagged value to set, can be <code>null</code>
+	 */
+	public static void setTaggedValue(Attribute att, String name, String value)
+			throws EAException {
+
+		EATaggedValue tv = new EATaggedValue(name, value);
+
+		deleteTaggedValue(att, tv.getName());
+		addTaggedValue(att, tv);
+	}
+
+	/**
+	 * Sets the given tagged value in the tagged values of the given connector
+	 * end. If tagged values with the same tag name already exist, they will be
+	 * deleted. Then the tagged value will be added.
+	 * 
+	 * @param end
+	 *            the connector end in which the tagged value shall be set
+	 * @param name
+	 *            name of the tagged value to set, must not be <code>null</code>
+	 * @param value
+	 *            value of the tagged value to set, can be <code>null</code>
+	 */
+	public static void setTaggedValue(ConnectorEnd end, String name,
+			String value) throws EAException {
+
+		EATaggedValue tv = new EATaggedValue(name, value);
+
+		deleteTaggedValue(end, tv.getName());
+		addTaggedValue(end, tv);
 	}
 
 	// /**
@@ -885,6 +1060,13 @@ public class EAModelUtil {
 		}
 	}
 
+	/**
+	 * Deletes all tagged values whose name equals (ignoring case) the given
+	 * name in the given element.
+	 * 
+	 * @param e
+	 * @param nameOfTVToDelete
+	 */
 	public static void deleteTaggedValue(Element e, String nameOfTVToDelete) {
 
 		Collection<TaggedValue> cTV = e.GetTaggedValues();
@@ -1033,6 +1215,27 @@ public class EAModelUtil {
 	 */
 	public static void setTaggedValue(Element e, EATaggedValue tv)
 			throws EAException {
+
+		deleteTaggedValue(e, tv.getName());
+		addTaggedValue(e, tv);
+	}
+
+	/**
+	 * Sets the given tagged value in the tagged values of the given element. If
+	 * tagged values with the same tag name already exist, they will be deleted.
+	 * Then the tagged value will be added.
+	 * 
+	 * @param e
+	 *            the element in which the tagged value shall be set
+	 * @param name
+	 *            name of the tagged value to set, must not be <code>null</code>
+	 * @param value
+	 *            value of the tagged value to set, can be <code>null</code>
+	 */
+	public static void setTaggedValue(Element e, String name, String value)
+			throws EAException {
+
+		EATaggedValue tv = new EATaggedValue(name, value);
 
 		deleteTaggedValue(e, tv.getName());
 		addTaggedValue(e, tv);

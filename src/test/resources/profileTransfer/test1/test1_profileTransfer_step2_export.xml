@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="testResults/profileTransfer/results/transfer/LOAD_PROFILES/test_profileTransfer.eap" />
+			value="testResults/profileTransfer/test1/results/transfer/LOAD_PROFILES/test1_profileTransfer.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -32,7 +32,7 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/profileTransfer/results/log_export.xml" />
+			value="testResults/profileTransfer/test1/results/log_export.xml" />
 	</log>	
 	<transformers>
 		<Transformer
@@ -73,7 +73,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
 			mode="enabled" inputs="INPUT A C">
 			<targetParameter name="outputDirectory"
-				value="testResults/profileTransfer/results/export" />
+				value="testResults/profileTransfer/test1/results/export" />
 			<targetParameter name="outputFilename" value="profileTransfer_export" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="export" />

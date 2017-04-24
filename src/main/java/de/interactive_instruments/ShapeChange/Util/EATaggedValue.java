@@ -51,6 +51,8 @@ public class EATaggedValue {
 	/**
 	 * @param name
 	 * @param value
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
 	 */
 	public EATaggedValue(String name, String value) {
 
@@ -59,12 +61,16 @@ public class EATaggedValue {
 		this.name = name;
 
 		this.values = new ArrayList<String>();
-		this.values.add(value);
+		if (value != null) {
+			this.values.add(value);
+		}
 	}
 
 	/**
 	 * @param name
 	 * @param value
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
 	 * @param createAsMemoField
 	 *            set to <code>true</code> if the value shall be encoded using a
 	 *            &lt;memo&gt; field, regardless of the value length
@@ -76,17 +82,29 @@ public class EATaggedValue {
 		this.name = name;
 
 		this.values = new ArrayList<String>();
-		this.values.add(value);
+		if (value != null) {
+			this.values.add(value);
+		}
 
 		this.createAsMemoField = createAsMemoField;
 	}
 
+	/**
+	 * @param name
+	 * @param values
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
+	 */
 	public EATaggedValue(String name, List<String> values) {
 
 		super();
 
 		this.name = name;
-		this.values = values;
+		if (values != null) {
+			this.values = values;
+		} else {
+			this.values = new ArrayList<String>();
+		}
 	}
 
 	/**
@@ -97,12 +115,12 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @return the values
+	 * @return the values; can be empty but not <code>null</code>
 	 */
 	public List<String> getValues() {
 		return values;
 	}
-	
+
 	public boolean createAsMemoField() {
 		return createAsMemoField;
 	}

@@ -701,8 +701,8 @@ public class ProfileLoader implements Transformer, MessageSource {
 									for (PropertyInfo loadedCiPi : loadedCi
 											.properties().values()) {
 
-										GenericPropertyInfo inputCiPi = inputCi
-												.propertyByName(
+										GenericPropertyInfo inputCiPi = (GenericPropertyInfo) inputCi
+												.ownedProperty(
 														loadedCiPi.name());
 
 										if (inputCiPi != null) {

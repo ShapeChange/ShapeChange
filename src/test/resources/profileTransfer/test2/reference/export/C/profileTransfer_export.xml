@@ -25,7 +25,7 @@
                 <sc:TaggedValue>
                   <sc:name>targetNamespace</sc:name>
                   <sc:values>
-                    <sc:Value>http://example.org/shapechange/profileLoading/schema/a</sc:Value>
+                    <sc:Value>http://example.org/shapechange/profileTransfer/schema/a</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
                 <sc:TaggedValue>
@@ -50,7 +50,7 @@
               <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/a</sc:targetNamespace>
+              <sc:targetNamespace>http://example.org/shapechange/profileTransfer/schema/a</sc:targetNamespace>
               <sc:xmlns>sc</sc:xmlns>
               <sc:xsdDocument>a.xsd</sc:xsdDocument>
               <sc:classes>
@@ -98,15 +98,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="B"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                    <sc:Profile name="D"></sc:Profile>
-                  </sc:profiles>
-                  <sc:subtypes>
-                    <sc:SubtypeId>165</sc:SubtypeId>
-                  </sc:subtypes>
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propA1</sc:name>
@@ -143,10 +134,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
-                        <sc:Profile name="C"></sc:Profile>
-                      </sc:profiles>
                       <sc:cardinality>0..*</sc:cardinality>
                       <sc:sequenceNumber>1</sc:sequenceNumber>
                       <sc:typeId>164</sc:typeId>
@@ -190,12 +177,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
-                        <sc:Profile name="B"></sc:Profile>
-                        <sc:Profile name="C"></sc:Profile>
-                        <sc:Profile name="D"></sc:Profile>
-                      </sc:profiles>
                       <sc:sequenceNumber>2</sc:sequenceNumber>
                       <sc:typeId>88</sc:typeId>
                       <sc:typeName>Integer</sc:typeName>
@@ -236,11 +217,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
-                        <sc:Profile name="C"></sc:Profile>
-                      </sc:profiles>
-                      <sc:cardinality>0..1</sc:cardinality>
                       <sc:sequenceNumber>3</sc:sequenceNumber>
                       <sc:typeId>105</sc:typeId>
                       <sc:typeName>Real</sc:typeName>
@@ -249,20 +225,20 @@
                   </sc:properties>
                 </sc:Class>
                 <sc:Class>
-                  <sc:name>SubType</sc:name>
-                  <sc:id>165</sc:id>
+                  <sc:name>AssociationClass</sc:name>
+                  <sc:id>167</sc:id>
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
                   <sc:descriptors>
                     <sc:alias>
                       <sc:descriptorValues>
-                        <sc:DescriptorValue>ST</sc:DescriptorValue>
+                        <sc:DescriptorValue>ASC</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:alias>
                     <sc:definition>
                       <sc:descriptorValues>
-                        <sc:DescriptorValue>Definition of Subtype</sc:DescriptorValue>
+                        <sc:DescriptorValue>Definition of AssociationClass</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
                   </sc:descriptors>
@@ -292,14 +268,7 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>163</sc:baseClassId>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                  </sc:profiles>
-                  <sc:supertypes>
-                    <sc:SupertypeId>163</sc:SupertypeId>
-                  </sc:supertypes>
+                  <sc:associationId>87</sc:associationId>
                 </sc:Class>
               </sc:classes>
             </sc:Package>
@@ -317,7 +286,7 @@
                 <sc:TaggedValue>
                   <sc:name>targetNamespace</sc:name>
                   <sc:values>
-                    <sc:Value>http://example.org/shapechange/profileLoading/iso</sc:Value>
+                    <sc:Value>http://example.org/shapechange/profileTransfer/iso</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
                 <sc:TaggedValue>
@@ -342,7 +311,7 @@
               <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/iso</sc:targetNamespace>
+              <sc:targetNamespace>http://example.org/shapechange/profileTransfer/iso</sc:targetNamespace>
               <sc:xmlns>iso</sc:xmlns>
               <sc:xsdDocument>iso_stub.xsd</sc:xsdDocument>
               <sc:classes>
@@ -521,7 +490,7 @@
                 <sc:TaggedValue>
                   <sc:name>targetNamespace</sc:name>
                   <sc:values>
-                    <sc:Value>http://example.org/shapechange/profileLoading/schema/ext</sc:Value>
+                    <sc:Value>http://example.org/shapechange/profileTransfer/schema/ext</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
                 <sc:TaggedValue>
@@ -546,7 +515,7 @@
               <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1.0</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/ext</sc:targetNamespace>
+              <sc:targetNamespace>http://example.org/shapechange/profileTransfer/schema/ext</sc:targetNamespace>
               <sc:xmlns>ext</sc:xmlns>
               <sc:xsdDocument>ext.xsd</sc:xsdDocument>
               <sc:classes>
@@ -594,10 +563,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:profiles>
-                    <sc:Profile name="A"></sc:Profile>
-                    <sc:Profile name="C"></sc:Profile>
-                  </sc:profiles>
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propExt</sc:name>
@@ -629,10 +594,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:profiles>
-                        <sc:Profile name="A"></sc:Profile>
-                        <sc:Profile name="C"></sc:Profile>
-                      </sc:profiles>
                       <sc:sequenceNumber>1</sc:sequenceNumber>
                       <sc:typeId>87</sc:typeId>
                       <sc:typeName>CharacterString</sc:typeName>
@@ -652,6 +613,7 @@
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
       <sc:id>87</sc:id>
       <sc:descriptors></sc:descriptors>
+      <sc:assocClassId>167</sc:assocClassId>
       <sc:end1>
         <sc:Property>
           <sc:name>role_S87</sc:name>

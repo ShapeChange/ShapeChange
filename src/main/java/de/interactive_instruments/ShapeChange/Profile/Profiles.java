@@ -122,7 +122,6 @@ public class Profiles {
 			}
 		}
 	}
-	
 
 	/**
 	 * Adds the given profile to this set of profiles. If the profiles
@@ -615,10 +614,31 @@ public class Profiles {
 		return null;
 	}
 
+	/**
+	 * Adds the given profiles to this set of profiles. Any profile with the
+	 * same name as one of the given profiles is replaced.
+	 * 
+	 * @param profiles
+	 *            the profiles to add to this set of profiles
+	 */
 	public void put(Set<ProfileIdentifier> profiles) {
-		
-		for(ProfileIdentifier profile : profiles) {
+
+		for (ProfileIdentifier profile : profiles) {
 			this.put(profile);
-		}		
+		}
+	}
+
+	/**
+	 * Adds the given profiles to this set of profiles. Any profile with the
+	 * same name as one of the given profiles is replaced.
+	 * 
+	 * @param profiles
+	 *            the profiles to add to this set of profiles
+	 */
+	public void put(Profiles profiles) {
+
+		for (ProfileIdentifier profile : profiles.getProfileIdentifiers()) {
+			this.put(profile);
+		}
 	}
 }

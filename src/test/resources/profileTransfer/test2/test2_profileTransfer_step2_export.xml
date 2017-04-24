@@ -4,10 +4,10 @@
 	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
-	<input>
+	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileTransfer/test_profileTransfer.eap" />
+			value="testResults/profileTransfer/test2/results/transfer/INPUT/test2_profileTransfer.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -32,35 +32,42 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/profileTransfer/results/log_transfer.xml" />
+			value="testResults/profileTransfer/test2/results/log_export.xml" />
 	</log>	
 	<transformers>
-	<Transformer
-			class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader"
-			id="LOAD_PROFILES" mode="enabled">
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+			id="C" input="INPUT" mode="enabled">
 			<parameters>
-				<ProcessParameter name="directoryWithProfilesToLoad"
-					value="src/test/resources/profileTransfer" />
-				<ProcessParameter name="regexToFilterProfilesToLoad"
-					value="profiles.xml" />
+				<ProcessParameter name="profiles" value="C" />
 			</parameters>
 			<rules>
-				<ProcessRuleSet name="profileLoading">					
-					<rule
-						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				<ProcessRuleSet name="profiler">
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+					<rule name="rule-trf-profiling-postprocessing-removeProfileInfos" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
-		</transformers>
+	</transformers>
 	<targets>
 		<Target
-			class="de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA"
-			mode="enabled" inputs="LOAD_PROFILES">
+			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
+			mode="enabled" inputs="INPUT C">
 			<targetParameter name="outputDirectory"
-				value="testResults/profileTransfer/results/transfer" />
-			<targetParameter name="transferToCopyOfEAP" value="true" />
-			<targetParameter name="deleteEAModelProfiles" value="true" />
-			<targetParameter name="profilesToTransfer" value="A,C" />
-		</Target>		
+				value="testResults/profileTransfer/test2/results/export" />
+			<targetParameter name="outputFilename" value="profileTransfer_export" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="exportProfilesFromWholeModel"
+				value="true" />
+			<rules>
+				<EncodingRule name="export">
+					<rule name="rule-exp-pkg-allPackagesAreEditable" />
+				</EncodingRule>
+			</rules>
+		</Target>	
 	</targets>
 </ShapeChangeConfiguration>

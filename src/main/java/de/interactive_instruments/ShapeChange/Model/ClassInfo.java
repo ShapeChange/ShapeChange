@@ -171,6 +171,16 @@ public interface ClassInfo extends Info {
 	 * @return
 	 */
 	public PropertyInfo property(String name);
+	
+	/**
+	 * Look up the property with the given name in the properties owned by this
+	 * class. The search does not extend to supertypes of the class.
+	 * 
+	 * @param name
+	 * @return The property with the given name, or <code>null</code> if no such
+	 *         property exists.
+	 */
+	public PropertyInfo ownedProperty(String name);
 
 	public OperationInfo operation(String name, String[] types);
 

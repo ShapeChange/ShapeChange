@@ -998,8 +998,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			properties = new TreeMap<StructuredNumber, PropertyInfo>();
 		}
 
-		GenericPropertyInfo existingPropWithSameName = this
-				.propertyByName(newProperty.name());
+		GenericPropertyInfo existingPropWithSameName = (GenericPropertyInfo)this
+				.ownedProperty(newProperty.name());
 
 		if (existingPropWithSameName == null) {
 
@@ -1433,39 +1433,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 				this.addProperty(newProp, duplicateHandling);
 			}
 
-		}
-	}
-
-	/**
-	 * Look up the property with the given name in the direct properties of this
-	 * class. The search does not extend to supertypes of the class.
-	 * 
-	 * @param name
-	 * @return The property with the given name, or <code>null</code> if no such
-	 *         property exists.
-	 */
-	public GenericPropertyInfo propertyByName(String name) {
-
-		if (properties == null || properties.isEmpty()) {
-
-			return null;
-
-		} else {
-
-			for (PropertyInfo pi : properties.values()) {
-
-				if (pi.name().equals(name)) {
-
-					/*
-					 * NOTE for cast: the cast should be safe, because pi
-					 * belongs to this class which is a GenericClassInfo (this
-					 * is true once the GenericModel has fully been
-					 * parsed/created)
-					 */
-					return (GenericPropertyInfo) pi;
-				}
-			}
-			return null;
 		}
 	}
 

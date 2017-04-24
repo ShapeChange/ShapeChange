@@ -528,7 +528,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 					List<LangString> val;
 
-					if (tvs == null) {
+					if (tvs.length == 0) {
 						val = new ArrayList<LangString>();
 					} else {
 						val = LangString.parse(tvs);
@@ -542,7 +542,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 					List<LangString> val;
 
-					if (tvs == null) {
+					if (tvs.length == 0) {
 						val = new ArrayList<LangString>();
 					} else {
 						val = LangString.parse(tvs);

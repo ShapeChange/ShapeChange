@@ -137,12 +137,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>1</sc:Value>
@@ -236,12 +230,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                         <sc:TaggedValue>
-                          <sc:name>profiles</sc:name>
-                          <sc:values>
-                            <sc:Value>A</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
                           <sc:values>
                             <sc:Value>3</sc:Value>
@@ -301,12 +289,6 @@
                       <sc:name>noPropertyType</sc:name>
                       <sc:values>
                         <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A,B</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
@@ -626,12 +608,6 @@
                       <sc:name>noPropertyType</sc:name>
                       <sc:values>
                         <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>profiles</sc:name>
-                      <sc:values>
-                        <sc:Value>A</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>

@@ -124,11 +124,9 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 	@Override
 	public String[] get(String tag) {
 
-		if (!containsKey(tag))
-			return null;
-
 		List<String> list = tagMap.get(tag);
-		return list != null ? list.toArray(new String[list.size()]) : null;
+		return list != null ? list.toArray(new String[list.size()])
+				: new String[] {};
 	}
 
 	@Override

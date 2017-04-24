@@ -41,6 +41,7 @@ import org.apache.xml.serializer.utils.XMLChar;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
@@ -57,7 +58,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	protected List<ImageMetadata> diagrams = null;
 	protected Profiles profiles = null;
 
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -951,5 +952,19 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		}
 
 		return this.profiles;
+	}
+
+	@Override
+	public final PropertyInfo ownedProperty(String name) {
+
+		for (PropertyInfo pi : properties().values()) {
+
+			if (pi.name().equals(name)) {
+
+				return pi;
+			}
+		}
+
+		return null;
 	}
 }

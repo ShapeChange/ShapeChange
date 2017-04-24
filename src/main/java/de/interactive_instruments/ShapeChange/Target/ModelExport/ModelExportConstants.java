@@ -125,12 +125,26 @@ public class ModelExportConstants {
 	 */
 	public static final String RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES = "rule-exp-all-restrictExistingProfiles";
 
-	// TODO: always remove the profiles tagged value?
 	/**
 	 * If this rule is enabled, then the tagged value 'profiles' will be removed
 	 * on exported classes and properties.
 	 */
-	public static final String RULE_TGT_EXP_ALL_IGNORE_PROFILES_TAGGED_VALUE = "rule-exp-all-ignoreProfilesTaggedValue";
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (with regular expression)
+	 * <p>
+	 * Default Value: (profiles)
+	 * <p>
+	 * Explanation: A tagged value that matches the regular expression defined
+	 * by this parameter will not be exported.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_IGNORE_TAGGED_VALUES_REGEX = "ignoreTaggedValuesRegex";
+	public static final String DEFAULT_IGNORE_TAGGED_VALUES_REGEX = "(profiles)";
 
 	/**
 	 * Alias: none

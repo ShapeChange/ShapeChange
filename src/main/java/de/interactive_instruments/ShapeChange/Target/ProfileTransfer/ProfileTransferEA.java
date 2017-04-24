@@ -32,40 +32,35 @@
 package de.interactive_instruments.ShapeChange.Target.ProfileTransfer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.sparx.Attribute;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;
 import org.sparx.Element;
+import org.sparx.Package;
 import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Model.EA.AssociationInfoEA;
-import de.interactive_instruments.ShapeChange.Model.EA.ClassInfoEA;
-import de.interactive_instruments.ShapeChange.Model.EA.EADocument;
-import de.interactive_instruments.ShapeChange.Model.EA.PropertyInfoEA;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Util.EAException;
 import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
-import de.interactive_instruments.ShapeChange.Util.EATaggedValue;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -102,18 +97,21 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	 * <p>
 	 * Default Value: <code>false</code>
 	 * <p>
-	 * Explanation: By default, the profile information in the model that is
-	 * stored in the EA repository is overridden by this target for relevant
-	 * model elements (classes and properties that are processed; for further
-	 * details, see the explanation of parameter
-	 * {@value #PARAM_PROCESS_ALL_SCHEMAS}) that are also contained in the input
-	 * model. If this parameter is set to <code>true</code>, the profile
-	 * information will be deleted in the classes and properties of the model in
-	 * the EA repository before transferring any new profile information.
+	 * Explanation: By default, profiles that are transferred are merged with
+	 * existing profiles of a model element in the EA repository. Merging means
+	 * that only the profiles with names that match one of the names of profiles
+	 * to be transferred will be overwritten - all other profiles of the model
+	 * element will be kept.
+	 * <p>
+	 * If this parameter is set to <code>true</code>, any previously existing
+	 * profiles of a model element from the EA repository that is eligible for
+	 * profile transfer (see {@value #PARAM_PROCESS_ALL_SCHEMAS}) are deleted
+	 * before profiles are transferred to it (even if no corresponding model
+	 * elements could be found in the input model).
 	 * <p>
 	 * Applies to Rule(s): none – default behavior
 	 */
-	public static final String PARAM_DELETE_EA_MODEL_PROFILES = "deleteEAModelProfiles";
+	public static final String PARAM_DELETE_EXISTING_PROFILES = "deleteExistingProfiles";
 
 	/**
 	 * Alias: none
@@ -139,26 +137,104 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	 * <p>
 	 * Default Value: <code>false</code>
 	 * <p>
-	 * Explanation: By default, profiles are transferred only for classes (and
-	 * their properties) from schemas that are selected for processing. If this
-	 * parameter is set to <code>true</code>, profiles are transferred for
-	 * classes (and their properties) from all schemas.
+	 * Explanation: By default, profiles are transferred only for non-prohibited
+	 * classes (and their properties) from schemas that are selected for
+	 * processing. If this parameter is set to <code>true</code>, profiles are
+	 * transferred for non-prohibited classes (and their properties) from all
+	 * schemas. For details on non-prohibited classes, see the explanation of
+	 * input parameter
+	 * {@value de.interactive_instruments.ShapeChange.Options#PARAM_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV}
+	 * .
 	 * <p>
 	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_PROCESS_ALL_SCHEMAS = "processAllSchemas";
 
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: defaults to the value of the input parameters 'inputFile'
+	 * and 'repositoryFileNameOrConnectionString' (the former has higher
+	 * priority than the latter)
+	 * <p>
+	 * Explanation: If this parameter is set in the target configuration, it
+	 * provides the connection info to the EA repository in which profiles shall
+	 * be transferred. If the parameter is not set, the target will transfer the
+	 * profiles into the model that is defined in the input configuration of
+	 * ShapeChange. For further details on this parameter, see the explanation
+	 * for the input parameter with this name (but keep in mind that the target
+	 * will assume / requires that the connection to an EA repository is given).
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_REPO_CONNECTION_STRING = "repositoryFileNameOrConnectionString";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: none
+	 * <p>
+	 * Explanation: If the target parameter
+	 * 'repositoryFileNameOrConnectionString' is set, and the connection
+	 * requires a username and password, set the username with this target
+	 * parameter. NOTE: If the parameter 'repositoryFileNameOrConnectionString'
+	 * is not set in the target configuration, the target will fully rely on the
+	 * information provided in the input configuration. In other words, then
+	 * there is no need to set the parameter 'username' in the target
+	 * configuration.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_USER = "username";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: none
+	 * <p>
+	 * Explanation: If the target parameter
+	 * 'repositoryFileNameOrConnectionString' is set, and the connection
+	 * requires a username and password, set the password with this target
+	 * parameter. NOTE: If the parameter 'repositoryFileNameOrConnectionString'
+	 * is not set in the target configuration, the target will fully rely on the
+	 * information provided in the input configuration. In other words, then
+	 * there is no need to set the parameter 'password' in the target
+	 * configuration.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_PWD = "password";
+
 	private static boolean initialised = false;
 	private static boolean invalidConfiguration = false;
 
 	private static String connectionString = null;
-	private static String user = null;
 
 	private static Model inputModel = null;
-	private static EADocument eaModel = null;
+	/**
+	 * key: schema name
+	 * <p>
+	 * value: map with class as value and the key being the name of that class
+	 */
+	private static Map<String, Map<String, ClassInfo>> inputModelClassesByClassNameBySchemaName = null;
+	private static Repository eaRepo = null;
+	// private static Set<Integer> elementIdsOfNonProhibitedClassesInEARepo =
+	// new HashSet<Integer>();
 
 	private static boolean processAllSchemas = false;
-	private static boolean deleteEAModelProfiles = false;
+	private static boolean deleteExistingProfiles = false;
 	private static SortedSet<String> profilesToTransfer = null;
 
 	private Options options = null;
@@ -181,9 +257,9 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			processAllSchemas = options.parameterAsBoolean(
 					ProfileTransferEA.class.getName(),
 					PARAM_PROCESS_ALL_SCHEMAS, false);
-			deleteEAModelProfiles = options.parameterAsBoolean(
+			deleteExistingProfiles = options.parameterAsBoolean(
 					ProfileTransferEA.class.getName(),
-					PARAM_DELETE_EA_MODEL_PROFILES, false);
+					PARAM_DELETE_EXISTING_PROFILES, false);
 
 			if (options.hasParameter(ProfileTransferEA.class.getName(),
 					PARAM_PROFILES_TO_TRANSFER)) {
@@ -193,179 +269,213 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 								PARAM_PROFILES_TO_TRANSFER, null, true, true));
 			}
 
-			// check that input model is an EA repository
-			String inputModelType = options.parameter("inputModelType");
+			/*
+			 * Retrieve EA repo connection info either directly from the
+			 * target, if PARAM_REPO_CONNECTION_STRING is set, or from the input
+			 * configuration.
+			 */
+			String repoConnectionInfo = null;
+			String username = null;
+			String password = null;
 
-			if (inputModelType == null
-					|| !inputModelType.equalsIgnoreCase("EA7")) {
+			if (options.hasParameter(ProfileTransferEA.class.getName(),
+					PARAM_REPO_CONNECTION_STRING)) {
 
-				result.addFatalError(this, 10);
-				invalidConfiguration = true;
+				result.addInfo(this, 29);
+
+				repoConnectionInfo = options.parameterAsString(
+						ProfileTransferEA.class.getName(),
+						PARAM_REPO_CONNECTION_STRING, null, false, true);
+
+				if (repoConnectionInfo == null) {
+
+					result.addError(this, 31);
+					invalidConfiguration = true;
+
+				} else {
+
+					username = options.parameter(
+							ProfileTransferEA.class.getName(), PARAM_USER);
+					password = options.parameter(
+							ProfileTransferEA.class.getName(), PARAM_PWD);
+				}
 
 			} else {
 
-				String mdl = options.parameter("inputFile");
+				result.addInfo(this, 30);
 
-				String repoFileNameOrConnectionString = options
-						.parameter("repositoryFileNameOrConnectionString");
+				// check that input model is an EA repository
+				String inputModelType = options.parameter("inputModelType");
 
-				String username = options.parameter("username");
-				String password = options.parameter("password");
+				if (inputModelType == null
+						|| !inputModelType.equalsIgnoreCase("EA7")) {
 
-				user = username == null ? "" : username;
-				String pwd = password == null ? "" : password;
+					result.addError(this, 10);
+					invalidConfiguration = true;
+
+				} else {
+
+					String mdl = options.parameter("inputFile");
+
+					String repoFileNameOrConnectionString = options
+							.parameter(PARAM_REPO_CONNECTION_STRING);
+
+					username = options.parameter(PARAM_USER);
+					password = options.parameter(PARAM_PWD);
+
+					if (repoFileNameOrConnectionString != null
+							&& repoFileNameOrConnectionString.length() > 0) {
+						repoConnectionInfo = repoFileNameOrConnectionString;
+					} else if (mdl != null && mdl.length() > 0) {
+						repoConnectionInfo = mdl;
+					} else {
+						result.addError(this, 11);
+						invalidConfiguration = true;
+					}
+				}
+			}
+			
+			if (!invalidConfiguration) {
+
+				username = username == null ? "" : username;
+				password = password == null ? "" : password;
 
 				boolean transferToCopyOfEAP = options.parameterAsBoolean(
 						ProfileTransferEA.class.getName(),
 						ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, false);
 
 				/*
-				 * we accept path to EAP file or repository connection string
-				 * via both inputFile and repositoryFileNameOrConnectionString
-				 * parameters
+				 * Determine if we are dealing with a file or server based
+				 * repository
 				 */
-				String repoConnectionInfo = null;
+				if (repoConnectionInfo.contains("DBType=")
+						|| repoConnectionInfo.contains("Connect=Cloud")) {
 
-				if (repoFileNameOrConnectionString != null
-						&& repoFileNameOrConnectionString.length() > 0) {
-					repoConnectionInfo = repoFileNameOrConnectionString;
-				} else if (mdl != null && mdl.length() > 0) {
-					repoConnectionInfo = mdl;
+					/* We are dealing with a server based repository. */
+
+					if (transferToCopyOfEAP) {
+						result.addError(this, 13);
+						invalidConfiguration = true;
+
+					} else {
+
+						connectionString = repoConnectionInfo;
+					}
+
 				} else {
-					result.addFatalError(this, 11);
-					invalidConfiguration = true;
-				}
 
-				if (!invalidConfiguration) {
+					/* We have an EAP file. Ensure that it exists */
 
-					/*
-					 * Determine if we are dealing with a file or server based
-					 * repository
-					 */
-					if (repoConnectionInfo.contains("DBType=")
-							|| repoConnectionInfo.contains("Connect=Cloud")) {
+					File repfile = new File(repoConnectionInfo);
 
-						/* We are dealing with a server based repository. */
+					boolean ex = true;
 
-						if (transferToCopyOfEAP) {
-							result.addFatalError(this, 13);
+					if (!repfile.exists()) {
+
+						ex = false;
+						if (!repoConnectionInfo.toLowerCase()
+								.endsWith(".eap")) {
+							repoConnectionInfo += ".eap";
+							repfile = new File(repoConnectionInfo);
+							ex = repfile.exists();
+						}
+					}
+
+					if (!ex) {
+
+						result.addError(this, 14, repoConnectionInfo);
+						invalidConfiguration = true;
+
+					} else if (transferToCopyOfEAP) {
+
+						/*
+						 * EAP file shall be copied. Check that the output
+						 * directory exists and can be written to.
+						 */
+						String outputDirectory = options.parameter(
+								ProfileTransferEA.class.getName(),
+								"outputDirectory");
+
+						if (outputDirectory == null)
+							outputDirectory = options
+									.parameter("outputDirectory");
+						if (outputDirectory == null)
+							outputDirectory = ".";
+
+						File outputDirectoryFile = new File(outputDirectory);
+						boolean exi = outputDirectoryFile.exists();
+						if (!exi) {
+							outputDirectoryFile.mkdirs();
+							exi = outputDirectoryFile.exists();
+						}
+						boolean dir = outputDirectoryFile.isDirectory();
+						boolean wrt = outputDirectoryFile.canWrite();
+						boolean rea = outputDirectoryFile.canRead();
+
+						if (!exi || !dir || !wrt || !rea) {
+
+							result.addError(this, 12, outputDirectory);
 							invalidConfiguration = true;
 
 						} else {
 
-							connectionString = repoConnectionInfo;
+							// copy EA project file to output directory
+							File inputEAP = new File(repoConnectionInfo);
+							File copyEAP = new File(outputDirectoryFile,
+									inputEAP.getName());
+
+							try {
+								FileUtils.copyFile(inputEAP, copyEAP, false);
+								connectionString = copyEAP.getAbsolutePath();
+							} catch (Exception e) {
+								result.addError(this, 15, e.getMessage());
+								invalidConfiguration = true;
+							}
 						}
 
 					} else {
 
-						/* We have an EAP file. Ensure that it exists */
+						connectionString = repfile.getAbsolutePath();
+					}
+				}
 
-						File repfile = new File(repoConnectionInfo);
+				if (!invalidConfiguration) {
 
-						boolean ex = true;
+					eaRepo = new Repository();
 
-						if (!repfile.exists()) {
+					if (username.length() == 0) {
 
-							ex = false;
-							if (!repoConnectionInfo.toLowerCase()
-									.endsWith(".eap")) {
-								repoConnectionInfo += ".eap";
-								repfile = new File(repoConnectionInfo);
-								ex = repfile.exists();
-							}
+						if (!eaRepo.OpenFile(connectionString)) {
+							String errormsg = eaRepo.GetLastError();
+							result.addError(this, 16, connectionString,
+									errormsg);
+							invalidConfiguration = true;
 						}
 
-						if (!ex) {
+					} else {
 
-							result.addFatalError(this, 14, repoConnectionInfo);
+						if (!eaRepo.OpenFile2(connectionString, username,
+								password)) {
+							String errormsg = eaRepo.GetLastError();
+							result.addError(this, 17, connectionString,
+									username, password, errormsg);
 							invalidConfiguration = true;
-
-						} else if (transferToCopyOfEAP) {
-
-							/*
-							 * EAP file shall be copied. Check that the output
-							 * directory exists and can be written to.
-							 */
-							String outputDirectory = options.parameter(
-									ProfileTransferEA.class.getName(),
-									"outputDirectory");
-
-							if (outputDirectory == null)
-								outputDirectory = options
-										.parameter("outputDirectory");
-							if (outputDirectory == null)
-								outputDirectory = ".";
-
-							File outputDirectoryFile = new File(
-									outputDirectory);
-							boolean exi = outputDirectoryFile.exists();
-							if (!exi) {
-								outputDirectoryFile.mkdirs();
-								exi = outputDirectoryFile.exists();
-							}
-							boolean dir = outputDirectoryFile.isDirectory();
-							boolean wrt = outputDirectoryFile.canWrite();
-							boolean rea = outputDirectoryFile.canRead();
-
-							if (!exi || !dir || !wrt || !rea) {
-
-								result.addFatalError(this, 12, outputDirectory);
-								invalidConfiguration = true;
-
-							} else {
-
-								// copy EA project file to output directory
-								File inputEAP = new File(repoConnectionInfo);
-								File copyEAP = new File(outputDirectoryFile,
-										inputEAP.getName());
-
-								try {
-									FileUtils.copyFile(inputEAP, copyEAP,
-											false);
-									connectionString = copyEAP
-											.getAbsolutePath();
-								} catch (Exception e) {
-									result.addFatalError(this, 15,
-											e.getMessage());
-									invalidConfiguration = true;
-								}
-							}
-
-						} else {
-
-							connectionString = repfile.getAbsolutePath();
 						}
 					}
+				}
 
-					if (!invalidConfiguration) {
+				if (!invalidConfiguration) {
 
-						eaModel = new EADocument();
+					// identify schemas and their classes in input model
+					inputModelClassesByClassNameBySchemaName = new HashMap<String, Map<String, ClassInfo>>();
 
-						try {
-
-							if (user.length() == 0) {
-
-								eaModel.initialise(result, options,
-										connectionString);
-
-							} else {
-
-								eaModel.initialise(result, options,
-										repoConnectionInfo, user, pwd);
-							}
-
-						} catch (ShapeChangeAbortException e) {
-
-							if (user.length() == 0) {
-								result.addFatalError(this, 16, connectionString,
-										e.getMessage());
-							} else {
-								result.addFatalError(this, 17, connectionString,
-										user, pwd, e.getMessage());
-							}
-
-							invalidConfiguration = true;
+					for (PackageInfo inputModelPkg : inputModel.schemas(null)) {
+						Map<String, ClassInfo> classesByName = new HashMap<String, ClassInfo>();
+						for (ClassInfo ci : inputModel.classes(inputModelPkg)) {
+							classesByName.put(ci.name(), ci);
 						}
+						inputModelClassesByClassNameBySchemaName
+								.put(inputModelPkg.name(), classesByName);
 					}
 				}
 			}
@@ -394,264 +504,459 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			return;
 		}
 
-		Repository eaRepo = eaModel.getEARepository();
+		result = r;
+		options = r.options();
 
-		if (deleteEAModelProfiles) {
+		// Walk through models in EA repository
+		org.sparx.Collection<org.sparx.Package> eaModelPackages = eaRepo
+				.GetModels();
+		for (org.sparx.Package eaModelPkg : eaModelPackages) {
 
-			/*
-			 * NOTE: We get new wrapper objects (Element, Attribute,
-			 * ConnectorEnd) to avoid timeout issues, which can occur when
-			 * processing large models. This is experience from using the ArcGIS
-			 * workspace target.
-			 */
-			SortedSet<PackageInfo> eaSchemas = eaModel.schemas(null);
+			processProfiles(eaModelPkg, null, null);
+		}
 
-			for (PackageInfo eaSchema : eaSchemas) {
+		// shut down the EA repository
+		if (eaRepo != null) {
+			eaRepo.CloseFile();
+			eaRepo.Exit();
+			eaRepo = null;
+		}
+	}
 
-				SortedSet<ClassInfo> eaClasses = eaModel.classes(eaSchema);
+	/**
+	 * @param eaModelPkg
+	 * @param parentSchemaName
+	 *            name of the schema to which the parent of this package
+	 *            belongs; can be <code>null</code>
+	 * @param parentSchemaTargetNamespace
+	 *            target namespace of the schema to which the parent of this
+	 *            schema belongs; can be <code>null</code>
+	 */
+	private void processProfiles(Package eaModelPkg, String parentSchemaName,
+			String parentSchemaTargetNamespace) {
 
-				for (ClassInfo ci : eaClasses) {
+		String pkgName = eaModelPkg.GetName();
+		Element pkgElement = eaModelPkg.GetElement();
 
-					ClassInfoEA eaClass = (ClassInfoEA) ci;
-					Element eaClassElement = eaRepo
-							.GetElementByID(eaClass.getEaElementId());
-					EAModelUtil.deleteTaggedValue(eaClassElement, "profiles");
+		String targetNamespace = identifyTargetNamespace(pkgName, pkgElement);
 
-					for (PropertyInfo pi : ci.properties().values()) {
+		/*
+		 * Identify applicable schema name and target namespace. NOTE: Both may
+		 * be null if the package is not (in) a schema.
+		 */
+		String schemaName;
+		String schemaTargetNamespace;
 
-						PropertyInfoEA eaProperty = (PropertyInfoEA) pi;
+		if (targetNamespace != null
+				&& (parentSchemaTargetNamespace == null || !targetNamespace
+						.equalsIgnoreCase(parentSchemaTargetNamespace))) {
 
-						if (pi.isAttribute()) {
+			// this is a different schema
+			schemaName = pkgName;
+			schemaTargetNamespace = targetNamespace;
 
-							Attribute eaAttribute = eaRepo.GetAttributeByID(
-									eaProperty.getEAAttributeId());
-							EAModelUtil.deleteTaggedValue(eaAttribute,
-									"profiles");
+		} else {
 
-						} else {
+			// same schema as parent package, if that belongs to a schema
+			schemaName = parentSchemaName;
+			schemaTargetNamespace = parentSchemaTargetNamespace;
+		}
 
-							AssociationInfoEA eaAssociation = (AssociationInfoEA) pi
-									.association();
+		if (schemaTargetNamespace != null && (processAllSchemas
+				|| !skipSchema(schemaName, schemaTargetNamespace))) {
 
-							Connector con = eaRepo.GetConnectorByID(
-									eaAssociation.getEAConnectorId());
+			boolean hasCorrespondingInputSchema = inputModelClassesByClassNameBySchemaName
+					.containsKey(schemaName);
 
-							/*
-							 * Get the relevant connector end. NOTE: Since the
-							 * EA API does not provide access to connector ends
-							 * via an ID, we need to use the ID prefix
-							 * established by the constructor of PropertyInfoEA
-							 * to identify the relevant connector end.
-							 */
-							ConnectorEnd end;
-							if (pi.id().startsWith("S")) {
-								end = con.GetClientEnd();
-							} else {
-								end = con.GetSupplierEnd();
-							}
+			if (!hasCorrespondingInputSchema) {
+				result.addWarning(this, 20, schemaName, schemaTargetNamespace);
+			}
 
-							EAModelUtil.deleteTaggedValue(end, "profiles");
-						}
-					}
+			for (org.sparx.Element classElmt : eaModelPkg.GetElements()) {
+
+				String type = classElmt.GetType();
+				int classElementId = classElmt.GetElementID();
+
+				if (!type.equals("DataType") && !type.equals("Class")
+						&& !type.equals("Interface")
+						&& !type.equals("Enumeration")) {
+					continue;
 				}
-			}
-		}
 
-		// transfer profiles
-		SortedMap<String, SortedSet<ClassInfo>> inputModelClassesBySchemaName = new TreeMap<String, SortedSet<ClassInfo>>();
-
-		for (PackageInfo pi : inputModel.schemas(null)) {
-			SortedSet<ClassInfo> classes = new TreeSet<ClassInfo>();
-			for (ClassInfo ci : inputModel.classes(pi)) {
-				classes.add(ci);
-			}
-			inputModelClassesBySchemaName.put(pi.name(), classes);
-		}
-
-		Map<String, Map<String, ClassInfoEA>> eaModelClassesByNameBySchemaName = new HashMap<String, Map<String, ClassInfoEA>>();
-
-		for (PackageInfo pi : eaModel.schemas(null)) {
-
-			Map<String, ClassInfoEA> eaClassesByClassName = new HashMap<String, ClassInfoEA>();
-			for (ClassInfo ci : eaModel.classes(pi)) {
-				eaClassesByClassName.put(ci.name(), (ClassInfoEA) ci);
-			}
-			eaModelClassesByNameBySchemaName.put(pi.name(),
-					eaClassesByClassName);
-		}
-
-		for (Entry<String, SortedSet<ClassInfo>> inputSchemaEntry : inputModelClassesBySchemaName
-				.entrySet()) {
-
-			String schemaName = inputSchemaEntry.getKey();
-
-			if (!eaModelClassesByNameBySchemaName.containsKey(schemaName)) {
+				String statusTaggedValue = EAModelUtil.taggedValue(classElmt,
+						"status");
 
 				/*
-				 * No corresponding schema package in the ea model.
+				 * prevent loading of classes that have tagged value 'status'
+				 * with prohibited value
 				 */
+				if (statusTaggedValue != null
+						&& options.prohibitedStatusValuesWhenLoadingClasses()
+								.contains(statusTaggedValue)) {
+					continue;
+				}
 
-			} else {
+				/*
+				 * Delete the profiles tagged value of the class and its
+				 * properties if so configured. NOTE: This is independent of
+				 * whether or not a corresponding class can be found in the
+				 * input model.
+				 */
+				if (deleteExistingProfiles) {
 
-				SortedSet<ClassInfo> inputSchemaCis = inputSchemaEntry
-						.getValue();
-				Map<String, ClassInfoEA> eaSchemaCisByClassName = eaModelClassesByNameBySchemaName
-						.get(schemaName);
+					EAModelUtil.deleteTaggedValue(classElmt, "profiles");
 
-				for (ClassInfo inputCi : inputSchemaCis) {
+					for (Attribute att : classElmt.GetAttributes()) {
+						EAModelUtil.deleteTaggedValue(att, "profiles");
+					}
 
-					if (!processAllSchemas
-							&& !inputModel.isInSelectedSchemas(inputCi)) {
-						/*
-						 * Not all schemas are processed, and the input class
-						 * does not belong to a schema selected for processing.
-						 */
+					for (Connector con : classElmt.GetConnectors()) {
 
-					} else if (inputCi.profiles().isEmpty()
-							|| (profilesToTransfer != null && inputCi.profiles()
-									.getProfiles(profilesToTransfer)
-									.isEmpty())) {
-						/*
-						 * No profiles to transfer
-						 */
-
-					} else if (eaSchemaCisByClassName
-							.containsKey(inputCi.name())) {
-
-						ClassInfoEA eaCi = eaSchemaCisByClassName
-								.get(inputCi.name());
-
-						/*
-						 * Determine which profiles shall be transferred to the
-						 * class.
-						 */
-						Profiles ptt;
-						if (profilesToTransfer == null) {
-							ptt = inputCi.profiles();
-						} else {
-							ptt = new Profiles(inputCi.profiles()
-									.getProfiles(profilesToTransfer));
+						String conType = con.GetType();
+						if (!conType.equalsIgnoreCase("Association")
+								&& !conType.equalsIgnoreCase("Aggregation")) {
+							continue;
 						}
 
 						/*
-						 * NOTE: We currently do not merge the profiles. The
-						 * 'profiles' tagged value of the model element from the
-						 * EA repository is overwritten.
+						 * Delete profiles tagged value only for the roles that
+						 * belong to the current class.
 						 */
-
-						// transfer profiles to the class
-						EATaggedValue newClassProfiles = new EATaggedValue(
-								"profiles", ptt.toString());
-						Element eaClassElement = eaRepo
-								.GetElementByID(eaCi.getEaElementId());
-						try {
-							EAModelUtil.setTaggedValue(eaClassElement,
-									newClassProfiles);
-						} catch (EAException e) {
-							MessageContext mc = result.addError(this, 18,
-									eaCi.name(), e.getMessage());
-							if (mc != null) {
-								mc.addDetail(this, 1, eaCi.fullNameInSchema());
-							}
+						if (con.GetClientID() == classElementId
+								&& isNavigableEnd(con, con.GetSupplierEnd())) {
+							EAModelUtil.deleteTaggedValue(con.GetSupplierEnd(),
+									"profiles");
 						}
 
-						for (PropertyInfo inputCiPi : inputCi.properties()
-								.values()) {
-
-							PropertyInfo eaCiPi = eaCi
-									.property(inputCiPi.name());
-
-							if (eaCiPi != null) {
-
-								PropertyInfoEA eaProperty = (PropertyInfoEA) eaCiPi;
-
-								/*
-								 * Determine which profiles shall be transferred
-								 * to the property.
-								 */
-								Profiles pttPi;
-								if (profilesToTransfer == null) {
-									pttPi = inputCiPi.profiles();
-								} else {
-									pttPi = new Profiles(inputCiPi.profiles()
-											.getProfiles(profilesToTransfer));
-								}
-
-								/*
-								 * NOTE: We currently do not merge the profiles.
-								 * The 'profiles' tagged value of the model
-								 * element from the EA repository is
-								 * overwritten.
-								 */
-
-								// transfer profiles to the property
-								EATaggedValue newPropertyProfiles = new EATaggedValue(
-										"profiles", pttPi.toString());
-
-								try {
-									if (eaProperty.isAttribute()) {
-
-										Attribute eaAttribute = eaRepo
-												.GetAttributeByID(eaProperty
-														.getEAAttributeId());
-
-										EAModelUtil.setTaggedValue(eaAttribute,
-												newPropertyProfiles);
-
-									} else {
-
-										AssociationInfoEA eaAssociation = (AssociationInfoEA) eaProperty
-												.association();
-
-										Connector con = eaRepo
-												.GetConnectorByID(eaAssociation
-														.getEAConnectorId());
-
-										/*
-										 * Get the relevant connector end. NOTE:
-										 * Since the EA API does not provide
-										 * access to connector ends via an ID,
-										 * we need to use the ID prefix
-										 * established by the constructor of
-										 * PropertyInfoEA to identify the
-										 * relevant connector end.
-										 */
-										ConnectorEnd end;
-										if (eaProperty.id().startsWith("S")) {
-											end = con.GetClientEnd();
-										} else {
-											end = con.GetSupplierEnd();
-										}
-
-										EAModelUtil.setTaggedValue(end,
-												newPropertyProfiles);
-									}
-
-								} catch (EAException e) {
-									MessageContext mc = result.addError(this,
-											19, eaProperty.name(),
-											eaProperty.name(), e.getMessage());
-									if (mc != null) {
-										mc.addDetail(this, 1,
-												eaProperty.fullNameInSchema());
-									}
-								}
-							}
+						if (con.GetSupplierID() == classElementId
+								&& isNavigableEnd(con, con.GetClientEnd())) {
+							EAModelUtil.deleteTaggedValue(con.GetClientEnd(),
+									"profiles");
 						}
+					}
+				}
+
+				if (hasCorrespondingInputSchema) {
+
+					Map<String, ClassInfo> inputModelSchemaCisByCiName = inputModelClassesByClassNameBySchemaName
+							.get(schemaName);
+
+					// transfer class profiles
+					String className = classElmt.GetName();
+
+					// ensure that input model contains this class as well
+					if (!inputModelSchemaCisByCiName.containsKey(className)) {
+
+						result.addWarning(this, 21, className, schemaName,
+								schemaTargetNamespace);
 
 					} else {
+
+						Profiles newProfilesCi = new Profiles();
+						if (!deleteExistingProfiles) {
+							String profilesTV = EAModelUtil
+									.taggedValue(classElmt, "profiles");
+							if (profilesTV != null) {
+								try {
+									newProfilesCi = Profiles.parse(profilesTV,
+											false);
+								} catch (MalformedProfileIdentifierException e) {
+									result.addError(this, 22, className,
+											schemaName, e.getMessage());
+								}
+							}
+						}
+
+						ClassInfo inputModelCi = inputModelSchemaCisByCiName
+								.get(className);
+
+						// merge profiles
+						newProfilesCi.put(computeProfilesToTransfer(
+								inputModelCi.profiles()));
+
+						try {
+							EAModelUtil.setTaggedValue(classElmt, "profiles",
+									newProfilesCi.toString());
+						} catch (EAException e) {
+							result.addError(this, 23, className, schemaName,
+									e.getMessage());
+						}
+
+						// transfer attribute profiles
+						for (Attribute att : classElmt.GetAttributes()) {
+
+							String attName = att.GetName();
+
+							PropertyInfo inputModelPi = inputModelCi
+									.ownedProperty(attName);
+
+							if (inputModelPi == null) {
+								result.addWarning(this, 24, className,
+										schemaName, schemaTargetNamespace,
+										attName);
+							} else {
+
+								Profiles newProfilesPi = new Profiles();
+								if (!deleteExistingProfiles) {
+									String profilesTV = EAModelUtil
+											.taggedValue(att, "profiles");
+									if (profilesTV != null) {
+										try {
+											newProfilesPi = Profiles
+													.parse(profilesTV, false);
+										} catch (MalformedProfileIdentifierException e) {
+											result.addError(this, 25, className,
+													attName, schemaName,
+													e.getMessage());
+										}
+									}
+								}
+
+								// merge profiles
+								newProfilesPi.put(computeProfilesToTransfer(
+										inputModelPi.profiles()));
+
+								try {
+									EAModelUtil.setTaggedValue(att, "profiles",
+											newProfilesPi.toString());
+								} catch (EAException e) {
+									result.addError(this, 26, className,
+											attName, schemaName,
+											e.getMessage());
+								}
+							}
+						}
+
+						// transfer association role profiles
+						for (Connector con : classElmt.GetConnectors()) {
+
+							String conType = con.GetType();
+							if (!conType.equalsIgnoreCase("Association")
+									&& !conType
+											.equalsIgnoreCase("Aggregation")) {
+								continue;
+							}
+
+							if (con.GetClientID() == classElementId
+									&& isNavigableEnd(con,
+											con.GetSupplierEnd())) {
+
+								transferProfileForAssociationRole(
+										con.GetSupplierEnd(), inputModelCi,
+										schemaName, schemaTargetNamespace);
+							}
+
+							if (con.GetSupplierID() == classElementId
+									&& isNavigableEnd(con,
+											con.GetClientEnd())) {
+
+								transferProfileForAssociationRole(
+										con.GetClientEnd(), inputModelCi,
+										schemaName, schemaTargetNamespace);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// drill down into sub packages
+		org.sparx.Collection<org.sparx.Package> subPackages = eaModelPkg
+				.GetPackages();
+		for (org.sparx.Package subPkg : subPackages) {
+
+			processProfiles(subPkg, schemaName, schemaTargetNamespace);
+		}
+	}
+
+	private void transferProfileForAssociationRole(ConnectorEnd end,
+			ClassInfo inputModelCi, String schemaName,
+			String schemaTargetNamespace) {
+
+		String roleName = end.GetRole();
+
+		PropertyInfo inputModelPi = inputModelCi.ownedProperty(roleName);
+
+		if (inputModelPi == null) {
+			result.addWarning(this, 24, inputModelCi.name(), schemaName,
+					schemaTargetNamespace, roleName);
+		} else {
+
+			Profiles newProfilesPi = new Profiles();
+			if (!deleteExistingProfiles) {
+				String profilesTV = EAModelUtil.taggedValue(end, "profiles");
+				if (profilesTV != null) {
+					try {
+						newProfilesPi = Profiles.parse(profilesTV, false);
+					} catch (MalformedProfileIdentifierException e) {
+						result.addError(this, 27, inputModelCi.name(), roleName,
+								schemaName, e.getMessage());
+					}
+				}
+			}
+
+			// merge profiles
+			newProfilesPi
+					.put(computeProfilesToTransfer(inputModelPi.profiles()));
+
+			try {
+				EAModelUtil.setTaggedValue(end, "profiles",
+						newProfilesPi.toString());
+			} catch (EAException e) {
+				result.addError(this, 28, inputModelCi.name(), roleName,
+						schemaName, e.getMessage());
+			}
+		}
+	}
+
+	private boolean isNavigableEnd(Connector eaConnector,
+			ConnectorEnd eaConnectorEnd) {
+
+		// First get navigability from role
+		boolean nav = eaConnectorEnd.GetIsNavigable();
+
+		// If not explicitly set, also accept unspecified navigability,
+		// if present in both directions.
+		if (!nav) {
+			int navigability = 0;
+			String dirText = eaConnector.GetDirection();
+			if (dirText.equals("Source -> Destination")) {
+				navigability = 1;
+			} else if (dirText.equals("Destination -> Source")) {
+				navigability = -1;
+			}
+			nav = navigability == 0;
+		}
+
+		if (nav) {
+
+			// AssociationEnds with unknown stereotypes are skipped
+			String sn = eaConnectorEnd.GetStereotype();
+			if (sn != null)
+				sn = options.normalizeStereotype(sn);
+			if (sn != null && sn.length() > 0) {
+				boolean found = false;
+				for (String st : Options.propertyStereotypes) {
+					if (sn.equals(st)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					nav = false;
+				}
+			}
+
+			// navigable only with a name
+			String roleName = eaConnectorEnd.GetRole();
+			if (roleName == null || roleName.length() == 0) {
+				nav = false;
+			}
+		}
+
+		return nav;
+	}
+
+	private Profiles computeProfilesToTransfer(
+			Profiles profilesOfModelElement) {
+
+		Profiles ptt;
+
+		if (profilesToTransfer == null) {
+			ptt = profilesOfModelElement;
+		} else {
+			ptt = new Profiles(
+					profilesOfModelElement.getProfiles(profilesToTransfer));
+		}
+
+		return ptt;
+	}
+
+	/*
+	 * Only process schemas in a namespace and name that matches a user-selected
+	 * pattern
+	 */
+	private boolean skipSchema(String schemaName, String targetNamespace) {
+
+		// only process schemas with a given name
+		String schemaFilter;
+		schemaFilter = options.parameter("appSchemaName");
+
+		if (schemaFilter != null && schemaFilter.length() > 0
+				&& !schemaFilter.equals(schemaName))
+			return true;
+
+		// only process schemas with a name that matches a user-selected pattern
+		String appSchemaNameRegex;
+		appSchemaNameRegex = options.parameter("appSchemaNameRegex");
+
+		if (appSchemaNameRegex != null && appSchemaNameRegex != null
+				&& appSchemaNameRegex.length() > 0
+				&& !schemaName.matches(appSchemaNameRegex))
+			return true;
+
+		// only process schemas in a namespace that matches a user-selected
+		// pattern
+		String appSchemaNamespaceRegex;
+		appSchemaNamespaceRegex = options.parameter("appSchemaNamespaceRegex");
+
+		if (appSchemaNamespaceRegex != null
+				&& appSchemaNamespaceRegex.length() > 0
+				&& !targetNamespace.matches(appSchemaNamespaceRegex))
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * @param pkgName
+	 *            can be <code>null</code>
+	 * @param pkgElmt
+	 *            can be <code>null</code>
+	 * @return target namespace of the package (from tagged value
+	 *         'targetNamespace' or 'xmlNamespace', or from explicit package
+	 *         configuration); can be <code>null</code> if no target namespace
+	 *         was found
+	 */
+	private String identifyTargetNamespace(String pkgName, Element pkgElmt) {
+
+		String targetNamespace = null;
+
+		if (pkgElmt != null) {
+
+			List<String> tagNames = new ArrayList<String>();
+			tagNames.add("targetNamespace");
+			tagNames.add("xmlNamespace");
+
+			org.sparx.Collection<org.sparx.TaggedValue> tvs = pkgElmt
+					.GetTaggedValues();
+
+			if (tvs != null) {
+
+				for (org.sparx.TaggedValue tv : tvs) {
+
+					String tvName = tv.GetName();
+
+					if ("targetNamespace".equals(tvName)) {
+						targetNamespace = tv.GetValue();
+						break;
+					} else if ("xmlNamespace".equals(tvName)) {
+						targetNamespace = tv.GetValue();
 						/*
-						 * Ok. No corresponding class in schema from EA model.
+						 * do not break here, since we look at the remaining
+						 * tagged values to see if one is a 'targetNamespace',
+						 * which would be preferred
 						 */
 					}
 				}
 			}
 		}
 
-		// finally, shut down the EA repository
-		if (eaModel != null) {
-			eaModel.shutdown();
+		if (targetNamespace == null) {
+			targetNamespace = options.nsOfPackage(pkgName);
 		}
+
+		return targetNamespace;
 	}
 
 	@Override
@@ -661,12 +966,13 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 		invalidConfiguration = false;
 
 		connectionString = null;
-		user = null;
 
 		inputModel = null;
-		eaModel = null;
+		inputModelClassesByClassNameBySchemaName = null;
+		eaRepo = null;
+
 		processAllSchemas = false;
-		deleteEAModelProfiles = false;
+		deleteExistingProfiles = false;
 		profilesToTransfer = null;
 	}
 
@@ -680,17 +986,17 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 		case 2:
 			return "Directory named '$1$' does not exist or is not accessible.";
 		case 10:
-			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the input model is an EA repository.";
+			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to transfer profiles to is an EA repository.";
 		case 11:
 			return "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
 		case 12:
-			return "The target is configured to copy the EA project file that contains the input model to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer will not be executed.";
+			return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer will not be executed.";
 		case 13:
-			return "The target is configured to copy the EA project file that contains the input model to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer will not be executed.";
+			return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer will not be executed.";
 		case 14:
 			return "Enterprise Architect repository file named '$1$' not found.";
 		case 15:
-			return "The target is configured to copy the EA project file that contains the input model to the output directory, before transferring the profile infos. However, an exception occurred when copying the file: $1$. The transfer will not be executed.";
+			return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, an exception occurred when copying the file: $1$. The transfer will not be executed.";
 		case 16:
 			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
 		case 17:
@@ -699,6 +1005,31 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			return "Could not transfer profiles to class '$1$'. Exception message is: $2$.";
 		case 19:
 			return "Could not transfer profiles to property '$1$' in class '$2$'. Exception message is: $3$.";
+		case 20:
+			return "??The target EA repository contains the schema '$1$' with namespace '$2$' for which profiles shall be transferred. However, the input model does not contain a schema with that name. Consequently, no profiles can be transferred for this schema.";
+		case 21:
+			return "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') for which profiles shall be transferred. However, the according schema in the input model does not contain a class with that name. Consequently, no profiles can be transferred for the class.";
+		case 22:
+			return "Profiles tagged value of class '$1$' in schema '$2$' of the target EA repository is malformed: $3$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+		case 23:
+			return "Unexpected exception occurred while transferring the profiles of class '$1$' in schema '$2$' of the target EA repository: $3$.";
+		case 24:
+			return "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') with property '$4$' for which profiles shall be transferred. However, the according class in the input model does not contain a property with that name. Consequently, no profiles can be transferred for the property.";
+		case 25:
+			return "Profiles tagged value of attribute '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+		case 26:
+			return "Unexpected exception occurred while transferring the profiles of attribute '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
+		case 27:
+			return "Profiles tagged value of association role '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+		case 28:
+			return "Unexpected exception occurred while transferring the profiles of association role '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
+		case 29:
+			return "Using EA repository connection info provided by target configuration.";
+		case 30:
+			return "Using EA repository connection info provided by input configuration.";
+		case 31:
+			return "Parameter '" + PARAM_REPO_CONNECTION_STRING
+					+ "' is set in the configuration of this target, but it does not contain a valid value. Provide such a value or remove the target parameter in order for the target to look up the EA repository connection info in the input configuration.";
 
 		default:
 			return "(" + ProfileTransferEA.class.getName()

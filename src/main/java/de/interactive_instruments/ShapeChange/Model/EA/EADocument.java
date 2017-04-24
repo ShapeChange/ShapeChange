@@ -60,6 +60,7 @@ import de.interactive_instruments.ShapeChange.Model.ModelImpl;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
+import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharUtils;
@@ -227,8 +228,7 @@ public class EADocument extends ModelImpl implements Model {
 
 			// Check if this model and all its contents shall be excluded
 			String name = p.GetName();
-			if (excludedPackageNames != null
-					&& excludedPackageNames.contains(name)) {
+			if (excludedPackageNames.contains(name)) {
 				// stop processing this model and continue with the next
 				continue;
 			}
@@ -273,19 +273,18 @@ public class EADocument extends ModelImpl implements Model {
 					continue;
 				}
 
-				ClassInfoEA ci = new ClassInfoEA(this, pi, elmt);
-
 				/*
 				 * prevent loading of classes that have tagged value 'status'
 				 * with prohibited value
 				 */
-				String ciname = ci.name();
-				String statusTaggedValue = ci.taggedValue("status");
+				String statusTaggedValue = EAModelUtil.taggedValue(elmt, "status");
 				if (statusTaggedValue != null
-						&& options().prohibitedStatusValuesWhenLoadingClasses()
+						&& options.prohibitedStatusValuesWhenLoadingClasses()
 								.contains(statusTaggedValue)) {
 					continue;
 				}
+				
+				ClassInfoEA ci = new ClassInfoEA(this, pi, elmt);
 
 				fClassById.put(ci.id(), ci);
 				/*

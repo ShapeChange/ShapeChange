@@ -55,7 +55,7 @@ public abstract class TaggedValuesImpl implements TaggedValues {
 
 			res += "(" + tag;
 
-			if (values != null && values.length > 0) {
+			if (values.length > 0) {
 				res += ":" + StringUtils.join(values, ",");
 			}
 

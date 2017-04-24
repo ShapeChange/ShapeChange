@@ -71,7 +71,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return restriction;
 	} // restriction()
 
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -165,6 +165,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	protected boolean nilReasonAllowed = false;
 
 	public boolean nilReasonAllowed() {
+
 		String s = taggedValue("nilReasonAllowed");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return true;
@@ -173,7 +174,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 			return true;
 		}
 		return false;
-	} // nilReasonAllowed()
+	}
 
 	/** Mark the property as 'nilReasonAllowed'. */
 	public void nilReasonAllowed(boolean b) {
@@ -423,7 +424,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 				this.profiles = new Profiles();
 
 			} else {
-				
+
 				try {
 
 					Profiles tmp = Profiles.parse(profilesTV, false);
@@ -442,7 +443,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 				}
 			}
 		}
-		
+
 		return this.profiles;
 	}
 }
