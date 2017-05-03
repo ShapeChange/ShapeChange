@@ -1,3 +1,34 @@
+/**
+ * ShapeChange - processing application schemas for geographic information
+ *
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
+ * GML Application Schema or other implementation representations.
+ *
+ * Additional information about the software can be found at
+ * http://shapechange.net/
+ *
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * interactive instruments GmbH
+ * Trierer Strasse 70-72
+ * 53115 Bonn
+ * Germany
+ */
 package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 
 import java.util.Arrays;
@@ -16,6 +47,11 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericFolConstraint
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 
+/**
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
 public class ConstraintContentHandler extends AbstractContentHandler {
 
 	private static final Set<String> CONSTRAINT_FIELDS = new HashSet<String>(
@@ -92,7 +128,7 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			GenericFolConstraint con = new GenericFolConstraint();
 			this.constraint = con;
-			
+
 			con.setName(name);
 			con.setStatus(status);
 			con.setText(text);
@@ -105,16 +141,16 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 				con.setContextModelElmtType(ModelElmtContextType.CLASS);
 			}
 
-			returnToParent(uri,localName,qName);
+			returnToParent(uri, localName, qName);
 
 		} else if (localName.equals("OclConstraint")) {
 
 			GenericOclConstraint con = new GenericOclConstraint();
 			this.constraint = con;
-			
+
 			con.setName(name);
 			con.setStatus(status);
-			con.setText(text);			
+			con.setText(text);
 			if (this.contextModelElementType != null
 					&& this.contextModelElementType
 							.equalsIgnoreCase("ATTRIBUTE")) {
@@ -123,16 +159,16 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 				con.setContextModelElmtType(ModelElmtContextType.CLASS);
 			}
 
-			returnToParent(uri,localName,qName);
+			returnToParent(uri, localName, qName);
 
 		} else if (localName.equals("TextConstraint")) {
 
 			GenericTextConstraint con = new GenericTextConstraint();
 			this.constraint = con;
-			
+
 			con.setName(name);
 			con.setStatus(status);
-			con.setText(text);		
+			con.setText(text);
 			con.setType(type);
 			if (this.contextModelElementType != null
 					&& this.contextModelElementType
@@ -142,7 +178,7 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 				con.setContextModelElmtType(ModelElmtContextType.CLASS);
 			}
 
-			returnToParent(uri,localName,qName);
+			returnToParent(uri, localName, qName);
 
 		} else {
 			// do not throw an exception, just log a warning - the schema could
@@ -152,7 +188,8 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 		}
 	}
 
-	private void returnToParent(String uri, String localName, String qName) throws SAXException {
+	private void returnToParent(String uri, String localName, String qName)
+			throws SAXException {
 
 		// let parent know that we reached the end of the constraint entry
 		// (so that for example depth can properly be tracked)

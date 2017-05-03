@@ -183,12 +183,12 @@ public class Profiler implements Transformer, MessageSource {
 	}
 
 	/*
-	 * Profile metadata identifiers recognized by the Profiler itself (all other
-	 * profile metadata will be transformed into tagged values).
+	 * Profile parameter identifiers recognized by the Profiler itself (all other
+	 * profile parameters will be transformed into tagged values).
 	 */
-	public static final String METADATA_MULTIPLICITY = "multiplicity";
-	public static final String METADATA_ISNAVIGABLE = "isNavigable";
-	public static final String METADATA_GEOMETRY = "geometry";
+	public static final String PROFILE_PARAMETER_MULTIPLICITY = "multiplicity";
+	public static final String PROFILE_PARAMETER_ISNAVIGABLE = "isNavigable";
+	public static final String PROFILE_PARAMETER_GEOMETRY = "geometry";
 
 	ConstraintHandling constraintHandling = ConstraintHandling.keep;
 	Profiles profilesFromConfig = null;
@@ -494,7 +494,7 @@ public class Profiler implements Transformer, MessageSource {
 			String nameOfProfileFromConfig = this.profilesFromConfig.get(0)
 					.getName();
 
-			// handle profile metadata in remaining classes and their properties
+			// handle profile parameters in remaining classes and their properties
 			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
 				ProfileIdentifier profileOfCi = genCi.profiles()
@@ -502,18 +502,18 @@ public class Profiler implements Transformer, MessageSource {
 
 				if (profileOfCi != null && profileOfCi.hasParameters()) {
 
-					for (Entry<String, String> metadataEntry : profileOfCi
+					for (Entry<String, String> parameterEntry : profileOfCi
 							.getParameter().entrySet()) {
 
-						String metadataName = metadataEntry.getKey();
-						String metadataValue = metadataEntry.getValue();
+						String parameterName = parameterEntry.getKey();
+						String parameterValue = parameterEntry.getValue();
 
-						if (metadataName.equalsIgnoreCase(METADATA_GEOMETRY)) {
+						if (parameterName.equalsIgnoreCase(PROFILE_PARAMETER_GEOMETRY)) {
 
-							if (metadataValue != null) {
+							if (parameterValue != null) {
 
 								String geometryTV = genCi
-										.taggedValue(METADATA_GEOMETRY);
+										.taggedValue(PROFILE_PARAMETER_GEOMETRY);
 
 								if (geometryTV == null) {
 
@@ -522,8 +522,8 @@ public class Profiler implements Transformer, MessageSource {
 									 * so we can just set the 'geometry' tagged
 									 * value to the metadata value.
 									 */
-									genCi.setTaggedValue(METADATA_GEOMETRY,
-											metadataValue, false);
+									genCi.setTaggedValue(PROFILE_PARAMETER_GEOMETRY,
+											parameterValue, false);
 
 								} else {
 
@@ -539,7 +539,7 @@ public class Profiler implements Transformer, MessageSource {
 													.splitToList(geometryTV));
 									SortedSet<String> geometryProfileValues = new TreeSet<String>(
 											commaSplitter.splitToList(
-													metadataValue));
+													parameterValue));
 
 									SetView<String> intersection = Sets
 											.intersection(geometryProfileValues,
@@ -548,7 +548,7 @@ public class Profiler implements Transformer, MessageSource {
 									if (intersection.isEmpty()) {
 										// then do nothing
 									} else {
-										genCi.setTaggedValue(METADATA_GEOMETRY,
+										genCi.setTaggedValue(PROFILE_PARAMETER_GEOMETRY,
 												commaJoiner.join(intersection),
 												false);
 									}
@@ -561,9 +561,9 @@ public class Profiler implements Transformer, MessageSource {
 							 * Transform unknown metadata to tagged value of
 							 * class
 							 */
-							String newTagName = metadataName;
-							String newTagValue = metadataValue == null ? ""
-									: metadataValue;
+							String newTagName = parameterName;
+							String newTagValue = parameterValue == null ? ""
+									: parameterValue;
 
 							genCi.setTaggedValue(newTagName, newTagValue,
 									false);
@@ -594,7 +594,7 @@ public class Profiler implements Transformer, MessageSource {
 							String metadataValue = metadataEntry.getValue();
 
 							if (metadataName
-									.equalsIgnoreCase(METADATA_MULTIPLICITY)) {
+									.equalsIgnoreCase(PROFILE_PARAMETER_MULTIPLICITY)) {
 
 								if (metadataValue != null) {
 
@@ -629,7 +629,7 @@ public class Profiler implements Transformer, MessageSource {
 								}
 
 							} else if (metadataName
-									.equalsIgnoreCase(METADATA_ISNAVIGABLE)) {
+									.equalsIgnoreCase(PROFILE_PARAMETER_ISNAVIGABLE)) {
 
 								if (metadataValue != null
 										&& !genPi.isAttribute()) {

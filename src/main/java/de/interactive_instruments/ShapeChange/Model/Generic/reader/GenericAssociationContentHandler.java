@@ -1,21 +1,54 @@
+/**
+ * ShapeChange - processing application schemas for geographic information
+ *
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
+ * GML Application Schema or other implementation representations.
+ *
+ * Additional information about the software can be found at
+ * http://shapechange.net/
+ *
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * interactive instruments GmbH
+ * Trierer Strasse 70-72
+ * 53115 Bonn
+ * Germany
+ */
 package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import de.interactive_instruments.ShapeChange.Options;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 
+/**
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
 public class GenericAssociationContentHandler
 		extends AbstractGenericInfoContentHandler {
 
@@ -114,11 +147,11 @@ public class GenericAssociationContentHandler
 		} else if (localName.equals("id")) {
 
 			this.genAi.setId(sb.toString());
-			
-//			String id = sb.toString();
-//			// strip "_A" prefix added by ModelExport
-//			id = id.substring(2);
-//			this.genAi.setId(id);
+
+			// String id = sb.toString();
+			// // strip "_A" prefix added by ModelExport
+			// id = id.substring(2);
+			// this.genAi.setId(id);
 
 		} else if (localName.equals("stereotypes")) {
 
@@ -161,33 +194,33 @@ public class GenericAssociationContentHandler
 
 			// set descriptors in genAi
 			this.genAi.setDescriptors(descriptorsHandler.getDescriptors());
-//			for (Entry<Descriptor, Descriptors> entry : descriptors
-//					.getDescriptors().entrySet()) {
-//				
-//				if(entry.getKey() == Descriptor.ALIAS) {
-//					this.genAi.setAliasNameAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.PRIMARYCODE) {
-//					this.genAi.setPrimaryCodeAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
-//					this.genAi.setGlobalIdentifierAll(entry.getValue());
-//				}
-////				else if(entry.getKey() == Descriptor.DOCUMENTATION) {
-////					this.genAi.setDocumentationAll(entry.getValue());
-////				}
-//				else if(entry.getKey() == Descriptor.DEFINITION) {
-//					this.genAi.setDefinitionAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.DESCRIPTION) {
-//					this.genAi.setDescriptionAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.LEGALBASIS) {
-//					this.genAi.setLegalBasisAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.LANGUAGE) {
-//					this.genAi.setLanguageAll(entry.getValue());
-//				} else if(entry.getKey() == Descriptor.EXAMPLE) {
-//					this.genAi.setExamplesAll(entry.getValue());
-//				}  else if(entry.getKey() == Descriptor.DATACAPTURESTATEMENT) {
-//					this.genAi.setDataCaptureStatementsAll(entry.getValue());
-//				}  
-//			}
+			// for (Entry<Descriptor, Descriptors> entry : descriptors
+			// .getDescriptors().entrySet()) {
+			//
+			// if(entry.getKey() == Descriptor.ALIAS) {
+			// this.genAi.setAliasNameAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.PRIMARYCODE) {
+			// this.genAi.setPrimaryCodeAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
+			// this.genAi.setGlobalIdentifierAll(entry.getValue());
+			// }
+			//// else if(entry.getKey() == Descriptor.DOCUMENTATION) {
+			//// this.genAi.setDocumentationAll(entry.getValue());
+			//// }
+			// else if(entry.getKey() == Descriptor.DEFINITION) {
+			// this.genAi.setDefinitionAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.DESCRIPTION) {
+			// this.genAi.setDescriptionAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.LEGALBASIS) {
+			// this.genAi.setLegalBasisAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.LANGUAGE) {
+			// this.genAi.setLanguageAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.EXAMPLE) {
+			// this.genAi.setExamplesAll(entry.getValue());
+			// } else if(entry.getKey() == Descriptor.DATACAPTURESTATEMENT) {
+			// this.genAi.setDataCaptureStatementsAll(entry.getValue());
+			// }
+			// }
 
 			// let parent know that we reached the end of the Association entry
 			// (so that for example depth can properly be tracked)

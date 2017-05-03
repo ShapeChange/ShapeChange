@@ -64,8 +64,6 @@ import org.jgrapht.graph.DirectedMultigraph;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
@@ -82,7 +80,6 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Info;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -1759,12 +1756,6 @@ public class Flattener implements Transformer {
 
 					GenericClassInfo copiedClassUnion = copiedClassUnionsByOriginalClassId
 							.get(type.id);
-
-					/*
-					 * NOTE for cast: the cast should be safe, because pi
-					 * belongs to a GenericClassInfo (genCiToAdd)
-					 */
-					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 					type.name = copiedClassUnion.name();
 					type.id = copiedClassUnion.id();

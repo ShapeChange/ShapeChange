@@ -53,7 +53,6 @@ import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -86,7 +85,6 @@ public class AttributeCreator implements Transformer, MessageSource {
 		private Multiplicity multiplicity;
 		private TaggedValues tvs;
 		private Type type;
-		private int categoryOfValue;
 		private Stereotypes stereotypes;
 
 		/**

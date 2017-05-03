@@ -1005,20 +1005,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 		}
 	}
 
-	private void printDataElement(String groupingElementName,
-			String elementName, String[] sa) throws SAXException {
-
-		if (sa != null && sa.length > 0) {
-			// Arrays.sort(sa);
-			writer.startElement(NS, groupingElementName);
-			for (String s : sa) {
-				if (s != null)
-					writer.dataElement(NS, elementName, s);
-			}
-			writer.endElement(NS, groupingElementName);
-		}
-	}
-
 	/**
 	 * Creates an element with the given name, containing the given string as
 	 * value - if and only if the given string is not <code>null</code> and has

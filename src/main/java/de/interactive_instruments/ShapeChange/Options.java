@@ -68,7 +68,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 
 import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -1287,46 +1286,6 @@ public class Options {
 		}
 
 		return "Unknown (" + targetId + ")";
-
-		// switch (targetId) {
-		// case 0:
-		// return "-reserved-";
-		// case 1:
-		// return "XML Schema";
-		// case 2:
-		// return "-reserved-";
-		// case 3:
-		// return "RDF";
-		// case 4:
-		// return "Definitions";
-		// case 5:
-		// return "Excel Mapping";
-		// case 6:
-		// return "KML XSLT";
-		// case 7:
-		// return "JSON Schema";
-		// case 8:
-		// return "Code List Dictionary";
-		// case 9:
-		// return "Feature Catalogue";
-		// case 10:
-		// // FIXME shouldn't this be something like "SQL DDL"?
-		// return "Decoder";
-		// case 13:
-		// return "Replication XML Schema";
-		//
-		// // FIXME hevan: it seems that not all targets in ShapeChange are in
-		// this switch-statement
-		//
-		// case 401:
-		// return "Objektartenkatalog";
-		// case 402:
-		// return "AAA-Profil (3AP)";
-		// case 404:
-		// return "AAA-Modellart (3AM)";
-		// }
-		//
-		// return "Unknown (" + targetId + ")";
 	}
 
 	public void loadConfiguration() throws ShapeChangeAbortException {

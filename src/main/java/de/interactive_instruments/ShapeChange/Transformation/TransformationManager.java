@@ -64,7 +64,6 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
-import de.interactive_instruments.ShapeChange.Profile.ModelProfileValidator;
 
 /**
  * Manages the transformation of a model, executing common pre- and

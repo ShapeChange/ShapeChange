@@ -260,17 +260,6 @@ public class GenericModel extends ModelImpl {
 
 				genCi.setDescriptors(ci.descriptors().createCopy());
 				genCi.setProfiles(ci.profiles().createCopy());
-				// genCi.setAliasNameAll(ci.aliasNameAll().createCopy());
-				// genCi.setDefinitionAll(ci.definitionAll().createCopy());
-				// genCi.setDescriptionAll(ci.descriptionAll().createCopy());
-				// genCi.setPrimaryCodeAll(ci.primaryCodeAll().createCopy());
-				// genCi.setLanguageAll(ci.languageAll().createCopy());
-				// genCi.setLegalBasisAll(ci.legalBasisAll().createCopy());
-				// genCi.setDataCaptureStatementsAll(
-				// ci.dataCaptureStatementsAll().createCopy());
-				// genCi.setExamplesAll(ci.examplesAll().createCopy());
-				// genCi.setGlobalIdentifierAll(
-				// ci.globalIdentifierAll().createCopy());
 
 				// set properties required by ClassInfo interface
 
@@ -339,27 +328,12 @@ public class GenericModel extends ModelImpl {
 
 				genPi.setDescriptors(pi.descriptors().createCopy());
 				genPi.setProfiles(pi.profiles().createCopy());
-				// genPi.setAliasNameAll(pi.aliasNameAll().createCopy());
-				// genPi.setDefinitionAll(pi.definitionAll().createCopy());
-				// genPi.setDescriptionAll(pi.descriptionAll().createCopy());
-				// genPi.setPrimaryCodeAll(pi.primaryCodeAll().createCopy());
-				// genPi.setLanguageAll(pi.languageAll().createCopy());
-				// genPi.setLegalBasisAll(pi.legalBasisAll().createCopy());
-				// genPi.setDataCaptureStatementsAll(
-				// pi.dataCaptureStatementsAll().createCopy());
-				// genPi.setExamplesAll(pi.examplesAll().createCopy());
-				// genPi.setGlobalIdentifierAll(
-				// pi.globalIdentifierAll().createCopy());
 
 				// set remaining properties required by PropertyInfo interface
 
 				genPi.setDerived(pi.isDerived());
 				genPi.setReadOnly(pi.isReadOnly());
 				genPi.setAttribute(pi.isAttribute());
-				// Type newPiType = new Type();
-				// newPiType.id = pi.typeInfo().id;
-				// newPiType.name = pi.typeInfo().name;
-				// genPi.setTypeInfo(newPiType);
 				genPi.copyTypeInfo(pi.typeInfo());
 				genPi.setNavigable(pi.isNavigable());
 				genPi.setOrdered(pi.isOrdered());
@@ -1036,16 +1010,6 @@ public class GenericModel extends ModelImpl {
 			genPi.setName(pi.name());
 
 			genPi.setDescriptors(pi.descriptors().createCopy());
-			// genPi.setAliasNameAll(pi.aliasNameAll().createCopy());
-			// genPi.setDefinitionAll(pi.definitionAll().createCopy());
-			// genPi.setDescriptionAll(pi.descriptionAll().createCopy());
-			// genPi.setPrimaryCodeAll(pi.primaryCodeAll().createCopy());
-			// genPi.setLanguageAll(pi.languageAll().createCopy());
-			// genPi.setLegalBasisAll(pi.legalBasisAll().createCopy());
-			// genPi.setDataCaptureStatementsAll(
-			// pi.dataCaptureStatementsAll().createCopy());
-			// genPi.setExamplesAll(pi.examplesAll().createCopy());
-			// genPi.setGlobalIdentifierAll(pi.globalIdentifierAll().createCopy());
 
 			genPi.setTargetNamespace(pi.targetNamespace());
 			genPi.setXmlns(pi.xmlns());
@@ -1600,37 +1564,19 @@ public class GenericModel extends ModelImpl {
 		super.postprocessAfterLoadingAndValidate();
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#packageById(java.lang
-	 *      .String)
-	 */
+	@Override
 	public PackageInfo packageById(String id) {
-		// if (genPackageInfosById.containsKey(id)) {
 		return genPackageInfosById.get(id);
-		// } else {
-		// return model.packageById(id);
-		// }
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#classById(java.lang
-	 *      .String)
-	 */
+	@Override
 	public ClassInfo classById(String id) {
-		// if (genClassInfosById.containsKey(id)) {
 		return genClassInfosById.get(id);
-		// } else {
-		// return model.classById(id);
-		// }
 	}
 
 	@Override
 	public ClassInfo classByName(String name) {
-		// if (genClassInfosByName.containsKey(name)) {
 		return genClassInfosByName.get(name);
-		// } else {
-		// return model.classByName(name);
-		// }
 	}
 
 	/**
@@ -1727,18 +1673,8 @@ public class GenericModel extends ModelImpl {
 			ClassInfo classToAddProperty,
 			PropertyCopyDuplicatBehaviorIndicator behavior) {
 
-		// this.genPropertiesById.put(newProperty.id(), newProperty);
-
-		// if (classToAddProperty instanceof GenericClassInfo) {
-
 		((GenericClassInfo) classToAddProperty).addProperty(newProperty,
 				behavior);
-
-		// } else {
-		//
-		// result.addError(null, 30311, classToAddProperty.name(),
-		// newProperty.name);
-		// }
 	}
 
 	/**
@@ -2385,16 +2321,6 @@ public class GenericModel extends ModelImpl {
 		genAi.setName(ai.name());
 
 		genAi.setDescriptors(ai.descriptors().createCopy());
-		// genAi.setGlobalIdentifierAll(ai.globalIdentifierAll().createCopy());
-		// genAi.setAliasNameAll(ai.aliasNameAll().createCopy());
-		// genAi.setDefinitionAll(ai.definitionAll().createCopy());
-		// genAi.setDescriptionAll(ai.descriptionAll().createCopy());
-		// genAi.setPrimaryCodeAll(ai.primaryCodeAll().createCopy());
-		// genAi.setLanguageAll(ai.languageAll().createCopy());
-		// genAi.setLegalBasisAll(ai.legalBasisAll().createCopy());
-		// genAi.setDataCaptureStatementsAll(
-		// ai.dataCaptureStatementsAll().createCopy());
-		// genAi.setExamplesAll(ai.examplesAll().createCopy());
 
 		genAi.setStereotypes(ai.stereotypes());
 		genAi.setTaggedValues(ai.taggedValuesAll());
@@ -2431,16 +2357,6 @@ public class GenericModel extends ModelImpl {
 
 		genCi.setDescriptors(ci.descriptors().createCopy());
 		genCi.setProfiles(ci.profiles().createCopy());
-		// genCi.setAliasNameAll(ci.aliasNameAll().createCopy());
-		// genCi.setDefinitionAll(ci.definitionAll().createCopy());
-		// genCi.setDescriptionAll(ci.descriptionAll().createCopy());
-		// genCi.setPrimaryCodeAll(ci.primaryCodeAll().createCopy());
-		// genCi.setLanguageAll(ci.languageAll().createCopy());
-		// genCi.setLegalBasisAll(ci.legalBasisAll().createCopy());
-		// genCi.setDataCaptureStatementsAll(
-		// ci.dataCaptureStatementsAll().createCopy());
-		// genCi.setExamplesAll(ci.examplesAll().createCopy());
-		// genCi.setGlobalIdentifierAll(ci.globalIdentifierAll().createCopy());
 
 		// set properties required by ClassInfo interface
 		genCi.setXmlSchemaType(ci.xmlSchemaType());
@@ -2491,26 +2407,12 @@ public class GenericModel extends ModelImpl {
 
 		copy.setDescriptors(pi.descriptors().createCopy());
 		copy.setProfiles(pi.profiles().createCopy());
-		// copy.setGlobalIdentifierAll(pi.globalIdentifierAll().createCopy());
-		// copy.setAliasNameAll(pi.aliasNameAll().createCopy());
-		// copy.setDefinitionAll(pi.definitionAll().createCopy());
-		// copy.setDescriptionAll(pi.descriptionAll().createCopy());
-		// copy.setPrimaryCodeAll(pi.primaryCodeAll().createCopy());
-		// copy.setLanguageAll(pi.languageAll().createCopy());
-		// copy.setLegalBasisAll(pi.legalBasisAll().createCopy());
-		// copy.setDataCaptureStatementsAll(
-		// pi.dataCaptureStatementsAll().createCopy());
-		// copy.setExamplesAll(pi.examplesAll().createCopy());
 
 		copy.setStereotypes(pi.stereotypes());
 		copy.setTaggedValues(pi.taggedValuesAll(), false);
 		copy.setDerived(pi.isDerived());
 		copy.setReadOnly(pi.isReadOnly());
 		copy.setAttribute(pi.isAttribute());
-		// Type t = new Type();
-		// t.id = pi.typeInfo().id;
-		// t.name = pi.typeInfo().name;
-		// copy.setTypeInfo(t);
 		copy.copyTypeInfo(pi.typeInfo());
 		copy.setNavigable(pi.isNavigable());
 		copy.setOrdered(pi.isOrdered());

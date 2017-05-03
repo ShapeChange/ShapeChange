@@ -32,7 +32,6 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
-import java.util.HashSet;
 import java.util.SortedSet;
 
 import de.interactive_instruments.ShapeChange.Options;

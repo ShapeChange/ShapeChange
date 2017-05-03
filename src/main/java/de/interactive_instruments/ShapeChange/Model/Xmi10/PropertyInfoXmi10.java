@@ -32,7 +32,6 @@
 
 package de.interactive_instruments.ShapeChange.Model.Xmi10;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,12 +49,9 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.LangString;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
-import de.interactive_instruments.ShapeChange.Model.EA.ClassInfoEA;
-import de.interactive_instruments.ShapeChange.Model.EA.EADocument;
 
 public class PropertyInfoXmi10 extends PropertyInfoImpl
 		implements PropertyInfo {
@@ -119,19 +115,6 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		return s;
 	};
-
-	// @Override
-	// public Descriptors aliasNameAll() {
-	// // Obtain alias name from default implementation
-	// Descriptors a = super.aliasNameAll();
-	// // If not present, and if we are an attribute, read the "style" tagged
-	// // value, which is supposed to carry the contents of the alias field.
-	// if (a.isEmpty() && isAttribute()) {
-	// a = new Descriptors(new LangString(
-	// options().internalize(taggedValue("style"))));
-	// }
-	// return a;
-	// }
 
 	// Validate tagged values cache, the filtering on tagged values defined
 	// within ShapeChange has already been done during initial loading of the

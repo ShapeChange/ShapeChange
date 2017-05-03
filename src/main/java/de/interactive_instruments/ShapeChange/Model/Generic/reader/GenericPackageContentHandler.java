@@ -1,3 +1,34 @@
+/**
+ * ShapeChange - processing application schemas for geographic information
+ *
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
+ * GML Application Schema or other implementation representations.
+ *
+ * Additional information about the software can be found at
+ * http://shapechange.net/
+ *
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * interactive instruments GmbH
+ * Trierer Strasse 70-72
+ * 53115 Bonn
+ * Germany
+ */
 package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 
 import java.util.ArrayList;
@@ -8,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -16,14 +46,17 @@ import org.xml.sax.XMLReader;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
 
+/**
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
 public class GenericPackageContentHandler
 		extends AbstractGenericInfoContentHandler {
 
@@ -31,14 +64,10 @@ public class GenericPackageContentHandler
 			Arrays.asList(new String[] { "targetNamespace", "xmlns",
 					"xsdDocument", "gmlProfileSchema", "version", "isAppSchema",
 					"isSchema" }));
-	// , "schemaId", "ownerId", "rootPackageId"
 
 	private boolean isInPackages = false;
 
 	private GenericPackageInfo genPi;
-
-	// private String ownerId = null;
-	// private String rootPackageId = null;
 
 	private List<GenericPackageContentHandler> childPackageContentHandlers = new ArrayList<GenericPackageContentHandler>();
 	private List<GenericClassContentHandler> classContentHandlers = new ArrayList<GenericClassContentHandler>();
@@ -133,11 +162,11 @@ public class GenericPackageContentHandler
 		if (localName.equals("id")) {
 
 			this.genPi.setId(sb.toString());
-			
-//			String id = sb.toString();
-//			// strip "_PKG" prefix added by ModelExport
-//			id = id.substring(4);
-//			this.genPi.setId(id);
+
+			// String id = sb.toString();
+			// // strip "_PKG" prefix added by ModelExport
+			// id = id.substring(4);
+			// this.genPi.setId(id);
 
 		} else if (localName.equals("name")) {
 
@@ -190,13 +219,7 @@ public class GenericPackageContentHandler
 
 			this.genPi.setVersion(sb.toString());
 
-		}
-		// else if (localName.equals("schemaId")) {
-		//
-		// this.genPi.setSchemaId(sb.toString());
-		//
-		// }
-		else if (localName.equals("isAppSchema")) {
+		} else if (localName.equals("isAppSchema")) {
 
 			this.genPi.setIsAppSchema(toBooleanValue(sb));
 
@@ -204,17 +227,7 @@ public class GenericPackageContentHandler
 
 			this.genPi.setIsSchema(toBooleanValue(sb));
 
-		}
-		// else if (localName.equals("ownerId")) {
-		//
-		// this.ownerId = sb.toString();
-		//
-		// } else if (localName.equals("rootPackageId")) {
-		//
-		// this.rootPackageId = sb.toString();
-		//
-		// }
-		else if (localName.equals("supplierIds")) {
+		} else if (localName.equals("supplierIds")) {
 
 			this.genPi.setSupplierIds(new TreeSet<String>(this.stringList));
 
@@ -236,35 +249,6 @@ public class GenericPackageContentHandler
 
 				// set descriptors in genPi
 				this.genPi.setDescriptors(descriptorsHandler.getDescriptors());
-//				for (Entry<Descriptor, Descriptors> entry : descriptors
-//						.getDescriptors().entrySet()) {
-//
-//					if (entry.getKey() == Descriptor.ALIAS) {
-//						this.genPi.setAliasNameAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.PRIMARYCODE) {
-//						this.genPi.setPrimaryCodeAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
-//						this.genPi.setGlobalIdentifierAll(entry.getValue());
-//					}
-//					// else if(entry.getKey() == Descriptor.DOCUMENTATION) {
-//					// this.genPi.setDocumentationAll(entry.getValue());
-//					// }
-//					else if (entry.getKey() == Descriptor.DEFINITION) {
-//						this.genPi.setDefinitionAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.DESCRIPTION) {
-//						this.genPi.setDescriptionAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.LEGALBASIS) {
-//						this.genPi.setLegalBasisAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.LANGUAGE) {
-//						this.genPi.setLanguageAll(entry.getValue());
-//					} else if (entry.getKey() == Descriptor.EXAMPLE) {
-//						this.genPi.setExamplesAll(entry.getValue());
-//					} else if (entry
-//							.getKey() == Descriptor.DATACAPTURESTATEMENT) {
-//						this.genPi
-//								.setDataCaptureStatementsAll(entry.getValue());
-//					}
-//				}
 
 				// set contained packages
 				SortedSet<GenericPackageInfo> children = new TreeSet<GenericPackageInfo>();
@@ -314,20 +298,6 @@ public class GenericPackageContentHandler
 
 		this.genPi.setDiagrams(diagrams);
 	}
-
-	// /**
-	// * @return the ownerId
-	// */
-	// public String getOwnerId() {
-	// return ownerId;
-	// }
-	//
-	// /**
-	// * @return the rootPackageId
-	// */
-	// public String getRootPackageId() {
-	// return rootPackageId;
-	// }
 
 	/**
 	 * @return the content handlers for the child packages; can be empty but not

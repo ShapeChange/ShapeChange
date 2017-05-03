@@ -45,7 +45,6 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
@@ -489,114 +488,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.restriction = isRestriction;
 	}
 
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String aliasName() {
-	// return aliasName;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String primaryCode() {
-	// return primaryCode;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String definition() {
-	// return definition;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String description() {
-	// return description;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String language() {
-	// return language;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String legalBasis() {
-	// return legalBasis;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String[] examples() {
-	// return examples;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String[] dataCaptureStatements() {
-	// return dataCaptureStatements;
-	// }
-	//
-	// /**
-	// * In the generic model, always return an empty string, the other
-	// * descriptors should be used instead.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String documentation() {
-	// return "";
-	// }
-
 	@Override
 	public String id() {
 		return id;
 	}
-
-	// @Override
-	// public String globalIdentifier() {
-	// return globalIdentifier;
-	// }
 
 	@Override
 	public GenericModel model() {
@@ -617,43 +512,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	public ShapeChangeResult result() {
 		return result;
 	}
-
-	// public void setAliasNameAll(Descriptors aliasName) {
-	// this.aliasName = aliasName;
-	// }
-	//
-	// public void setDefinitionAll(Descriptors definition) {
-	// this.definition = definition;
-	// }
-	//
-	// public void setDescriptionAll(Descriptors description) {
-	// this.description = description;
-	// }
-	//
-	// public void setLanguageAll(Descriptors language) {
-	// this.language = language;
-	// }
-	//
-	// public void setPrimaryCodeAll(Descriptors primaryCode) {
-	// this.primaryCode = primaryCode;
-	// }
-	//
-	// public void setLegalBasisAll(Descriptors legalBasis) {
-	// this.legalBasis = legalBasis;
-	// }
-	//
-	// public void setExamplesAll(Descriptors examples) {
-	// this.examples = examples;
-	// }
-	//
-	// public void setDataCaptureStatementsAll(Descriptors
-	// dataCaptureStatements) {
-	// this.dataCaptureStatements = dataCaptureStatements;
-	// }
-	//
-	// public void setGlobalIdentifierAll(Descriptors globalIdentifier) {
-	// this.globalIdentifier = globalIdentifier;
-	// }
 
 	/**
 	 * @param id
@@ -768,27 +626,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		return implementedByNilReason;
 	}
 
-	// @Override
-	// public int categoryOfValue() {
-	// return categoryOfValue;
-	// }
-
 	public GenericPropertyInfo createCopy(String copyId) {
 
 		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
 
 		copy.setDescriptors(this.descriptors().createCopy());
 		copy.setProfiles(this.profiles().createCopy());
-		// copy.setGlobalIdentifierAll(globalIdentifier);
-		// copy.setAliasNameAll(aliasName);
-		// copy.setDefinitionAll(definition);
-		// copy.setDescriptionAll(description);
-		// copy.setPrimaryCodeAll(primaryCode);
-		// copy.setLanguageAll(language);
-		// copy.setLegalBasisAll(legalBasis);
-		// copy.setDataCaptureStatementsAll(dataCaptureStatements);
-		// copy.setExamplesAll(examples);
-		// copy.setStereotypes(stereotypesCache);
 
 		this.validateTaggedValuesCache();
 		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {

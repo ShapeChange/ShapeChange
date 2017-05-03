@@ -53,7 +53,6 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -117,31 +116,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.id = id;
 		this.name = name;
 		this.category = category;
-
-		// String stereotype;
-		//
-		// switch (category) {
-		// case Options.FEATURE:
-		// stereotype = "featuretype";
-		// case Options.CODELIST:
-		// stereotype = "codelist";
-		// case Options.ENUMERATION:
-		// stereotype = "enumeration";
-		// case Options.DATATYPE:
-		// stereotype = "datatype";
-		// case Options.OBJECT:
-		// stereotype = "type";
-		// case Options.BASICTYPE:
-		// stereotype = "basictype";
-		// case Options.UNION:
-		// stereotype = "union";
-		// default:
-		// stereotype = "";
-		// }
-		//
-		// this.stereotypes = new HashSet<String>();
-		// this.stereotypes.add(options.normalizeStereotype(stereotype));
-
 	}
 
 	/**
@@ -298,105 +272,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.asDictionaryGml33 = asDictionaryGml33;
 	}
 
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String aliasName() {
-	// return aliasName;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String primaryCode() {
-	// return primaryCode;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String definition() {
-	// return definition;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String description() {
-	// return description;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String language() {
-	// return language;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String legalBasis() {
-	// return legalBasis;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String[] examples() {
-	// return examples;
-	// }
-	//
-	// /**
-	// * In the generic model, the values are actively managed and stored in the
-	// * model elements.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String[] dataCaptureStatements() {
-	// return dataCaptureStatements;
-	// }
-	//
-	// /**
-	// * In the generic model, always return an empty string, the other
-	// * descriptors should be used instead.
-	// *
-	// * @return locally stored descriptor value
-	// */
-	// @Override
-	// public String documentation() {
-	// return "";
-	// }
-
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#fullName()
 	 */
@@ -414,11 +289,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	public String id() {
 		return id;
 	}
-
-	// @Override
-	// public String globalIdentifier() {
-	// return globalIdentifier;
-	// }
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
@@ -447,43 +317,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	public ShapeChangeResult result() {
 		return result;
 	}
-
-	// public void setAliasNameAll(Descriptors aliasName) {
-	// this.aliasName = aliasName;
-	// }
-	//
-	// public void setDefinitionAll(Descriptors definition) {
-	// this.definition = definition;
-	// }
-	//
-	// public void setDescriptionAll(Descriptors description) {
-	// this.description = description;
-	// }
-	//
-	// public void setLanguageAll(Descriptors language) {
-	// this.language = language;
-	// }
-	//
-	// public void setPrimaryCodeAll(Descriptors primaryCode) {
-	// this.primaryCode = primaryCode;
-	// }
-	//
-	// public void setLegalBasisAll(Descriptors legalBasis) {
-	// this.legalBasis = legalBasis;
-	// }
-	//
-	// public void setExamplesAll(Descriptors examples) {
-	// this.examples = examples;
-	// }
-	//
-	// public void setDataCaptureStatementsAll(Descriptors
-	// dataCaptureStatements) {
-	// this.dataCaptureStatements = dataCaptureStatements;
-	// }
-	//
-	// public void setGlobalIdentifierAll(Descriptors globalIdentifier) {
-	// this.globalIdentifier = globalIdentifier;
-	// }
 
 	/**
 	 * @param id
@@ -998,7 +831,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			properties = new TreeMap<StructuredNumber, PropertyInfo>();
 		}
 
-		GenericPropertyInfo existingPropWithSameName = (GenericPropertyInfo)this
+		GenericPropertyInfo existingPropWithSameName = (GenericPropertyInfo) this
 				.ownedProperty(newProperty.name());
 
 		if (existingPropWithSameName == null) {

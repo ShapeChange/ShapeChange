@@ -230,8 +230,6 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	 */
 	private static Map<String, Map<String, ClassInfo>> inputModelClassesByClassNameBySchemaName = null;
 	private static Repository eaRepo = null;
-	// private static Set<Integer> elementIdsOfNonProhibitedClassesInEARepo =
-	// new HashSet<Integer>();
 
 	private static boolean processAllSchemas = false;
 	private static boolean deleteExistingProfiles = false;

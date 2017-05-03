@@ -111,7 +111,7 @@ public abstract class ModelImpl implements Model {
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
 			"vocabulary", "associativeTable", "jsonEncodingRule",
-			"sqlEncodingRule", "status" };
+			"sqlEncodingRule", "status", "geometry" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
