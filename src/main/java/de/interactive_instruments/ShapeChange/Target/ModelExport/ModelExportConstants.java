@@ -82,10 +82,10 @@ public class ModelExportConstants {
 	 * Default Value: <code>true</code>
 	 * <p>
 	 * Explanation: Indicates if profile definitions in the input model are
-	 * explicitly set ( <code>true</code>) or not (<code>false</code>). If they
+	 * explicitly set (<code>true</code>) or not (<code>false</code>). If they
 	 * are not, then profile inheritance would apply, which is converted during
 	 * the export (see parameter
-	 * {@value #PARAM_CONVERT_TO_EXPLICIT_PROFILE_DEF_SCHEMA_NAME_REGEX}) unless
+	 * {@value #PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES}) unless
 	 * {@value #RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES} is enabled.
 	 * <p>
 	 * Applies to Rule(s): none – default behavior
@@ -111,7 +111,7 @@ public class ModelExportConstants {
 	/**
 	 * By default, existing profiles are exported. With this rule, that behavior
 	 * can be changed to omit existing profiles. This rule has higher priority
-	 * than {@link #RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES}.
+	 * than {@value #RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES}.
 	 */
 	public static final String RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES = "rule-exp-all-omitExistingProfiles";
 
