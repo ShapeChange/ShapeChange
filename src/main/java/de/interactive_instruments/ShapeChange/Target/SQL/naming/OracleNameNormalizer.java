@@ -69,7 +69,8 @@ public class OracleNameNormalizer extends UpperCaseNameNormalizer
 		case 1:
 			return "Name '$1$' is truncated to '$2$'";
 		default:
-			return "(Unknown message)";
+			return "(" + OracleNameNormalizer.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

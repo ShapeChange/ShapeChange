@@ -247,7 +247,8 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 			return "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
 
 		default:
-			return "(Unknown message)";
+			return "(" + FeatureCatalogue.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

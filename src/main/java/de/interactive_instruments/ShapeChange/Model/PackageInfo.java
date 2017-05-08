@@ -42,6 +42,10 @@ public interface PackageInfo extends Info {
 	 * generated. The item is used from the configuration or - if not present
 	 * there - from the tagged value either on this package or one of its
 	 * ancestors.
+	 * 
+	 * @return the target namespace of the package; can be <code>null</code> if
+	 *         no target namespace is defined for the package or one of its
+	 *         ancestors
 	 */
 	public String targetNamespace();
 

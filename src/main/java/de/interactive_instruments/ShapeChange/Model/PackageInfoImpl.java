@@ -60,8 +60,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	/** Return the encoding rule relevant on the package, given the platform */
 	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty()
-				|| options().ignoreEncodingRuleTaggedValues()) {
+		if (s == null || s.isEmpty() || options().ignoreEncodingRuleTaggedValues()) {
 			PackageInfo o = owner();
 			if (o != null) {
 				s = o.encodingRule(platform);
@@ -182,11 +181,9 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		if (containedPackages() != null) {
 
 			for (PackageInfo childPkg : containedPackages()) {
-				
-				if ((targetNamespace() == null
-						&& childPkg.targetNamespace() == null)
-						|| targetNamespace()
-								.equals(childPkg.targetNamespace())) {
+
+				if ((targetNamespace() == null && childPkg.targetNamespace() == null)
+						|| targetNamespace().equals(childPkg.targetNamespace())) {
 
 					result.add(childPkg);
 					result.addAll(childPkg.containedPackagesInSameTargetNamespace());
@@ -267,11 +264,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return "(null)";
 	} // schemaId()
 
-	/*
-	 * Full qualified UML name
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
-	 */
+	@Override
 	public String fullName() {
 		String qualname = null;
 		PackageInfo pi = this;
@@ -285,24 +278,26 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return qualname;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullNameInSchema()
-	 */
+	@Override
 	public String fullNameInSchema() {
 
-		String qualname = null;
-		PackageInfo pi = this;
-		while (pi != null && pi.targetNamespace() != null
-				&& pi.targetNamespace().equals(this.targetNamespace())) {
-			if (qualname == null)
-				qualname = pi.name();
-			else
+		if (this.targetNamespace() == null) {
+
+			return this.fullName();
+
+		} else {
+
+			String qualname = this.name();
+			PackageInfo pi = this.owner();
+
+			while (pi != null
+					&& (pi.targetNamespace() != null && pi.targetNamespace().equals(this.targetNamespace()))) {
+
 				qualname = pi.name() + "::" + qualname;
-			pi = pi.owner();
+				pi = pi.owner();
+			}
+			return qualname;
 		}
-		return qualname;
 	}
 
 	/*
@@ -323,20 +318,16 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = taggedValue("targetNamespace");
 			if (s == null || s.isEmpty()) {
 				if (isAppSchema()) {
-					MessageContext mc = result().addError(null, 146, name(),
-							"targetNamespace");
+					MessageContext mc = result().addError(null, 146, name(), "targetNamespace");
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", fullName());
 				}
 			} else if (s.equalsIgnoreCase("fixme")) {
-				MessageContext mc = result().addError(null, 150, name(),
-						"targetNamespace", s);
+				MessageContext mc = result().addError(null, 150, name(), "targetNamespace", s);
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
-			} else if (matches("req-xsd-pkg-namespace-schema-only")
-					&& !isAppSchema()) {
-				MessageContext mc = result().addError(null, 147, name(),
-						"targetNamespace");
+			} else if (matches("req-xsd-pkg-namespace-schema-only") && !isAppSchema()) {
+				MessageContext mc = result().addError(null, 147, name(), "targetNamespace");
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
@@ -346,20 +337,16 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = taggedValue("xmlns");
 			if (s == null || s.isEmpty()) {
 				if (isAppSchema()) {
-					MessageContext mc = result().addError(null, 146, name(),
-							"xmlns");
+					MessageContext mc = result().addError(null, 146, name(), "xmlns");
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", fullName());
 				}
 			} else if (s.equalsIgnoreCase("fixme")) {
-				MessageContext mc = result().addError(null, 150, name(),
-						"xmlns", s);
+				MessageContext mc = result().addError(null, 150, name(), "xmlns", s);
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
-			} else if (matches("req-xsd-pkg-namespace-schema-only")
-					&& !isAppSchema()) {
-				MessageContext mc = result().addError(null, 147, name(),
-						"xmlns");
+			} else if (matches("req-xsd-pkg-namespace-schema-only") && !isAppSchema()) {
+				MessageContext mc = result().addError(null, 147, name(), "xmlns");
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
@@ -369,14 +356,12 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = taggedValue("xsdDocument");
 			if (s == null || s.isEmpty()) {
 				if (isAppSchema()) {
-					MessageContext mc = result().addError(null, 146, name(),
-							"xsdDocument");
+					MessageContext mc = result().addError(null, 146, name(), "xsdDocument");
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", fullName());
 				}
 			} else if (s.equalsIgnoreCase("fixme")) {
-				MessageContext mc = result().addError(null, 150, name(),
-						"xsdDocument", s);
+				MessageContext mc = result().addError(null, 150, name(), "xsdDocument", s);
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
@@ -386,14 +371,12 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = taggedValue("version");
 			if (s == null || s.isEmpty()) {
 				if (isAppSchema()) {
-					MessageContext mc = result().addWarning(null, 146, name(),
-							"version");
+					MessageContext mc = result().addWarning(null, 146, name(), "version");
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", fullName());
 				}
 			} else if (s.equalsIgnoreCase("fixme")) {
-				MessageContext mc = result().addWarning(null, 150, name(),
-						"version", s);
+				MessageContext mc = result().addWarning(null, 150, name(), "version", s);
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
@@ -402,14 +385,12 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		if (matches("req-all-all-documentation")) {
 			s = documentation();
 			if (!s.contains(options().nameSeparator())) {
-				MessageContext mc = result().addError(null, 151, name(),
-						options().nameSeparator());
+				MessageContext mc = result().addError(null, 151, name(), options().nameSeparator());
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
 			if (!s.contains(options().definitionSeparator())) {
-				MessageContext mc = result().addError(null, 151, name(),
-						options().definitionSeparator());
+				MessageContext mc = result().addError(null, 151, name(), options().definitionSeparator());
 				if (mc != null)
 					mc.addDetail(null, 400, "Package", fullName());
 			}
@@ -424,14 +405,12 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 				}
 				PackageInfo pi = model().packageById(pid);
 				if (pi == null) {
-					MessageContext mc = result().addError(null, 161, "Package",
-							pid);
+					MessageContext mc = result().addError(null, 161, "Package", pid);
 					if (mc != null)
 						mc.addDetail(null, 400, "Package", fullName());
 				} else {
 					if (!pi.isSchema()) {
-						MessageContext mc = result().addError(null, 160,
-								pi.name(), name());
+						MessageContext mc = result().addError(null, 160, pi.name(), name());
 						if (mc != null)
 							mc.addDetail(null, 400, "Package", fullName());
 					}

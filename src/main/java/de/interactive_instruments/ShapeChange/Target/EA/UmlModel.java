@@ -679,7 +679,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			return "Relationship between association class '$1$' and the association between classes '$2$' and '$3$' could not be established because the association class '$1$' is not part of the target model.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + UmlModel.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

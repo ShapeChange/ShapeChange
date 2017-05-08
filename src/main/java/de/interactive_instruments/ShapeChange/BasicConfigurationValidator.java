@@ -96,7 +96,8 @@ public class BasicConfigurationValidator implements MessageSource {
 		case 2:
 			return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
 		default:
-			return "(Unknown message)";
+			return "(" + BasicConfigurationValidator.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

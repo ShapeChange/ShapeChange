@@ -139,7 +139,8 @@ public class TypeConverter implements Transformer, MessageSource {
 		case 1:
 			return "";
 		default:
-			return "(Unknown message)";
+			return "(" + TypeConverter.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

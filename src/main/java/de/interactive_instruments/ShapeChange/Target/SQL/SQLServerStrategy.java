@@ -148,7 +148,8 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 		case 0:
 			return "Context: class SQLServerStrategy";
 		default:
-			return "(Unknown message)";
+			return "(" + SQLServerStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

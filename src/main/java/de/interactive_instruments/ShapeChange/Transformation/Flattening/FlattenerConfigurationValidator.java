@@ -94,7 +94,8 @@ public class FlattenerConfigurationValidator
 					+ "'. The configuration does not contain this parameter with a non-empty string.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + FlattenerConfigurationValidator.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

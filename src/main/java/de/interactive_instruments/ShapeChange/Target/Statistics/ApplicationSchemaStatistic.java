@@ -317,7 +317,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 		case 0:
 			return "Context: class ApplicationSchemaStatistic";
 		default:
-			return "(Unknown message)";
+			return "(" + ApplicationSchemaStatistic.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

@@ -372,7 +372,8 @@ public class EAModelUtil {
 		case 601:
 			return "EA error encountered while updating EA connector end. Error message is: $1$";
 		default:
-			return "(Unknown message)";
+			return "(" + EAModelUtil.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

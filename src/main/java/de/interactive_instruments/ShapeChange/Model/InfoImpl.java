@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
@@ -48,7 +47,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
  * Note: this class has a natural ordering that is inconsistent with equals.
  *
  */
-public abstract class InfoImpl implements Info, MessageSource {
+public abstract class InfoImpl implements Info {
 
 	boolean postprocessed = false;
 	private String lf = System.getProperty("line.separator");
@@ -134,7 +133,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
-				MessageContext mc = model().result().addWarning(this, 201, tag,
+				MessageContext mc = model().result().addWarning(null, 701, tag,
 						values[0], values[i]);
 				addContextDetails(mc);
 			}
@@ -152,10 +151,10 @@ public abstract class InfoImpl implements Info, MessageSource {
 
 			PropertyInfo pi = (PropertyInfo) this;
 
-			mc.addDetail(this, 1, pi.name(), pi.inClass().name());
+			mc.addDetail(null, 791, pi.name(), pi.inClass().name());
 
 		} else {
-			mc.addDetail(this, 0, this.toString(), this.name());
+			mc.addDetail(null, 790, this.toString(), this.name());
 		}
 	}
 
@@ -188,7 +187,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 				if (result == null) {
 					result = options().internalize(ls.getValue());
 				} else {
-					MessageContext mc = model().result().addWarning(this, 202,
+					MessageContext mc = model().result().addWarning(null, 702,
 							tag, language, result, ls.toString());
 					addContextDetails(mc);
 				}
@@ -665,7 +664,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 					&& ls.getLang().equalsIgnoreCase(options().language())) {
 
 				if (descriptor.isSingleValued() && result.size() != 0) {
-					MessageContext mc = model().result().addWarning(this, 204,
+					MessageContext mc = model().result().addWarning(null, 704,
 							descriptor.getName(), result.get(0).toString(),
 							ls.toString());
 					addContextDetails(mc);
@@ -685,8 +684,8 @@ public abstract class InfoImpl implements Info, MessageSource {
 				if (!ls.hasLang()) {
 
 					if (descriptor.isSingleValued() && result.size() != 0) {
-						MessageContext mc = model().result().addWarning(this,
-								204, descriptor.getName(),
+						MessageContext mc = model().result().addWarning(null,
+								704, descriptor.getName(),
 								result.get(0).toString(), ls.toString());
 						addContextDetails(mc);
 					} else {
@@ -978,31 +977,5 @@ public abstract class InfoImpl implements Info, MessageSource {
 		validateTaggedValuesCache();
 
 		return taggedValuesCache.getFirstValues();
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
-	 */
-	public String message(int mnr) {
-
-		switch (mnr) {
-
-		case 0:
-			return "Context: class InfoImpl. Element: $1$. Name: $2$";
-		case 1:
-			return "Context: class InfoImpl (subtype: PropertyInfo). Name: $1$. In class: $2$";
-
-		case 201:
-			return "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
-		case 202:
-			return "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
-		case 203:
-			return "Multiple values were requested for descriptor '$1$', but the source '$2$' specified in the configuration only supports single values. No values have been returned.";
-		case 204:
-			return "Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
-
-		default:
-			return "(Unknown message)";
-		}
 	}
 }

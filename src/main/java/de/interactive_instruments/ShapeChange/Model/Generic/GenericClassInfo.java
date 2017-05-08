@@ -1442,7 +1442,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			return "(GenericClassInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set class field(s) for this tagged value.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + GenericClassInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

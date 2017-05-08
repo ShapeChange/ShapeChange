@@ -69,7 +69,8 @@ public class SQLServerNameNormalizer extends AbstractNameNormalizer
 		case 1:
 			return "Name '$1$' is truncated to '$2$'";
 		default:
-			return "(Unknown message)";
+			return "(" + SQLServerNameNormalizer.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

@@ -413,7 +413,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
 		default:
-			return "(Unknown message)";
+			return "(" + ApplicationSchemaMetadata.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

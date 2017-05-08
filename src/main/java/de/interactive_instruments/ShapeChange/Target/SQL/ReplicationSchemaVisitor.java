@@ -591,7 +591,8 @@ public class ReplicationSchemaVisitor
 		case 100:
 			return "Context: $1$";
 		default:
-			return "(Unknown message)";
+			return "(" + ReplicationSchemaVisitor.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

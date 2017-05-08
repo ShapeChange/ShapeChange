@@ -3504,7 +3504,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "Property: $1$";
 
 		default:
-			return "(Unknown message)";
+			return "(" + ArcGISWorkspace.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

@@ -823,7 +823,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 			return "Property with name '$1$' already exists in class '$2$'. Because overwriting an existing property is not allowed the AttributeDefinition will be ignored.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + AttributeDefinition.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

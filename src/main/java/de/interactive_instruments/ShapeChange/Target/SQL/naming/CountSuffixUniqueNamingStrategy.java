@@ -94,7 +94,8 @@ public class CountSuffixUniqueNamingStrategy
 		case 1:
 			return "Could not make name '$1$' unique. Last possible name '$2$' is already taken.";
 		default:
-			return "(Unknown message)";
+			return "(" + CountSuffixUniqueNamingStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

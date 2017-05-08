@@ -704,7 +704,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + GenericPropertyInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

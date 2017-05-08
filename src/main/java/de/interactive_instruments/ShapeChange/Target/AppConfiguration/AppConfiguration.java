@@ -543,7 +543,8 @@ public class AppConfiguration implements Target, MessageSource {
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
 		default:
-			return "(Unknown message)";
+			return "(" + AppConfiguration.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

@@ -720,7 +720,8 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		case 6:
 			return "The id() of Info object with full name '$1$' is already contained in AIXM schema infos. Info object '$1$' will not be added to the schema infos.";
 		default:
-			return "(Unknown message)";
+			return "(" + AIXMSchemaMerger.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

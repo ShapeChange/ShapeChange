@@ -3233,7 +3233,8 @@ public class OntologyModel implements MessageSource {
 			return "--- Context - Property 2: $1$";
 
 		default:
-			return "(Unknown message)";
+			return "(" + OntologyModel.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

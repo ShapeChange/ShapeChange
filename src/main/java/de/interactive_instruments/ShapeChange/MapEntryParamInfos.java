@@ -367,7 +367,8 @@ public class MapEntryParamInfos implements MessageSource {
 			return "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + MapEntryParamInfos.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

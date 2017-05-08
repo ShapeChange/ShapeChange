@@ -275,7 +275,8 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 		// 10001-10100: Exceptions
 
 		default:
-			return "(Unknown message)";
+			return "(" + AssociationClassMapper.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

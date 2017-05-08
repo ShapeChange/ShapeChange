@@ -1043,7 +1043,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
 		default:
-			return "(Unknown message)";
+			return "(" + ReplicationXmlSchema.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

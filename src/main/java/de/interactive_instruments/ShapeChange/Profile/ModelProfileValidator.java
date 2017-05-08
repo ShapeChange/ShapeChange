@@ -533,8 +533,8 @@ public class ModelProfileValidator implements MessageSource {
 			return "The set of profiles of required property '$1$' in class '$2$' does not equal the set of profiles of the class. The profile definition is inconsistent.";
 
 		default:
-			return "(Unknown message in " + this.getClass().getName()
-					+ ". Message number was: " + mnr + ")";
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }
