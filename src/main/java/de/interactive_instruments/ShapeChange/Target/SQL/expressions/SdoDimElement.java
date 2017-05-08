@@ -102,4 +102,19 @@ public class SdoDimElement {
 	public void setTolerance(String tolerance) {
 		this.tolerance = tolerance;
 	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("MDSYS.SDO_DIM_ELEMENT('");
+		sb.append(this.getDimName());
+		sb.append("', ");
+		sb.append(this.getLowerBound());
+		sb.append(", ");
+		sb.append(this.getUpperBound());
+		sb.append(", ");
+		sb.append(this.getTolerance());
+		sb.append(")");
+		return sb.toString();
+	}
 }
