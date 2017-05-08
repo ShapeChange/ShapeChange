@@ -16,6 +16,6 @@ target/
 
 # Tests
 testResults/
-test.xsd
+/test.xsd
 /log.html
 /log.xml
