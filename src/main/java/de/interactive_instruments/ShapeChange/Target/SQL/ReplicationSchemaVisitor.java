@@ -300,24 +300,23 @@ public class ReplicationSchemaVisitor
 
 			addAttribute(columnDefinitionElement, "type", type);
 
-			// Handle minOccurs
-			if (!table.isAssociativeTable() && propForColumn != null
-					&& propForColumn.matches(
-							ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL)) {
+			if (propForColumn != null) {
+				// Handle minOccurs
+				if (propForColumn.cardinality().minOccurs == 0 || (!table.isAssociativeTable()
+						&& propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL))) {
 
-				addAttribute(columnDefinitionElement, "minOccurs", "0");
-			}
+					addAttribute(columnDefinitionElement, "minOccurs", "0");
+				}
 
-			// Handle nillable
-			String columnSpec = column.getSpecifications() == null ? ""
-					: StringUtils.join(column.getSpecifications(), " ");
+				// Handle nillable
+				String columnSpec = column.getSpecifications() == null ? ""
+						: StringUtils.join(column.getSpecifications(), " ");
 
-			if (propForColumn != null
-					&& propForColumn.matches(
-							ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
-					&& !columnSpec.contains("NOT NULL")) {
+				if (propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
+						&& !columnSpec.contains("NOT NULL")) {
 
-				addAttribute(columnDefinitionElement, "nillable", "true");
+					addAttribute(columnDefinitionElement, "nillable", "true");
+				}
 			}
 
 			/*
