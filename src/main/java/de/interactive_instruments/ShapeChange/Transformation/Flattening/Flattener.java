@@ -4247,56 +4247,66 @@ public class Flattener implements Transformer {
 					maxOccurs = genPi.cardinality().maxOccurs;
 				}
 
-				// create copies of the property and add them to the class /
-				// model
-				StructuredNumber genPiSeqNum = genPi.sequenceNumber();
+				if (maxOccurs == 1) {
 
-				for (int i = 1; i <= maxOccurs; i++) {
+					/*
+					 * In this case we just need to update maxOccurs of the
+					 * property. No need to create copies.
+					 */
+					genPi.cardinality().maxOccurs = 1;
 
-					String newId = genPi.id() + i;
-					String newName = genPi.name()
-							+ separatorForPropertyIndexNumber + i;
+				} else {
 
-					GenericPropertyInfo copy = genPi.createCopy(newId);
-					copy.setName(newName);
+					/*
+					 * create copies of the property and add them to the class /
+					 * model
+					 */
+					for (int i = 1; i <= maxOccurs; i++) {
 
-					if (hasCode(genPi)) {
-						setCode(copy, getCode(genPi)
-								+ separatorForPropertyIndexNumber + i);
-					}
+						String newId = genPi.id() + i;
+						String newName = genPi.name()
+								+ separatorForPropertyIndexNumber + i;
 
-					Multiplicity card = new Multiplicity();
-					if (genPi.cardinality().minOccurs != 0) {
-						if (i <= genPi.cardinality().minOccurs) {
-							card.minOccurs = 1;
+						GenericPropertyInfo copy = genPi.createCopy(newId);
+						copy.setName(newName);
+
+						if (hasCode(genPi)) {
+							setCode(copy, getCode(genPi)
+									+ separatorForPropertyIndexNumber + i);
+						}
+
+						Multiplicity card = new Multiplicity();
+						if (genPi.cardinality().minOccurs != 0) {
+							if (i <= genPi.cardinality().minOccurs) {
+								card.minOccurs = 1;
+							} else {
+								card.minOccurs = 0;
+							}
 						} else {
 							card.minOccurs = 0;
 						}
-					} else {
-						card.minOccurs = 0;
+						card.maxOccurs = 1;
+						copy.setCardinality(card);
+
+						/*
+						 * ensure that "sequenceNumber" tagged value is also
+						 * updated
+						 */
+						copy.setSequenceNumber(
+								genPi.sequenceNumber().createCopyWithSuffix(i),
+								true);
+
+						if (genPi.globalIdentifier() != null) {
+							String newGlobalId = genPi.globalIdentifier()
+									.concat("[" + i + "]");
+
+							copy.descriptors().put(Descriptor.GLOBALIDENTIFIER,
+									newGlobalId);
+						}
+
+						propsToAdd.add(copy);
+						propsToRemove.add(genPi);
 					}
-					card.maxOccurs = 1;
-					copy.setCardinality(card);
-
-					/*
-					 * ensure that "sequenceNumber" tagged value is also updated
-					 */
-					copy.setSequenceNumber(genPiSeqNum.createCopyWithSuffix(i),
-							true);
-
-					// if (options.isLoadGlobalIdentifiers()) {
-					if (genPi.globalIdentifier() != null) {
-						String newGlobalId = genPi.globalIdentifier()
-								.concat("[" + i + "]");
-
-						copy.descriptors().put(Descriptor.GLOBALIDENTIFIER,
-								newGlobalId);
-						// copy.setGlobalIdentifierAll(
-						// new Descriptors(newGlobalId));
-					}
-
-					propsToAdd.add(copy);
-					propsToRemove.add(genPi);
 				}
 			}
 
