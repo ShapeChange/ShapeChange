@@ -259,7 +259,7 @@ public class ModelProfileValidator implements MessageSource {
 					List<String> messages = new ArrayList<String>();
 
 					if (!ci.profiles().contains(ci.name(), pi.profiles(),
-							pi.name() + "(in class " + pi.inClass().name()
+							pi.name() + " (in class " + pi.inClass().name()
 									+ ")",
 							isExplicitProfileSettings, true, messages)) {
 
@@ -364,11 +364,17 @@ public class ModelProfileValidator implements MessageSource {
 
 						List<String> messages2 = new ArrayList<String>();
 
+						Profiles applicableProfilesForPi = pi.profiles();
+						if (pi.profiles().isEmpty()
+								&& !isExplicitProfileSettings) {
+							applicableProfilesForPi = pi.inClass().profiles();
+						}
+
 						if (!typeCi.profiles().contains(
-								typeCi.name() + "(type of property " + pi.name()
-										+ ")",
-								pi.profiles(),
-								pi.name() + "(property of class "
+								typeCi.name() + " (type of property "
+										+ pi.name() + ")",
+								applicableProfilesForPi,
+								pi.name() + " (property of class "
 										+ pi.inClass().name() + ")",
 								isExplicitProfileSettings, false, messages2)) {
 

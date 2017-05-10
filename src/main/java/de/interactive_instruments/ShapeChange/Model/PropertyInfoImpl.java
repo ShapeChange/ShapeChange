@@ -233,101 +233,107 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		super.postprocessAfterLoadingAndValidate();
 
-		String s, s2;
-		if (matches("req-xsd-prop-ncname")) {
-			s = name();
-			if (!XMLChar.isValidNCName(s)) {
-				MessageContext mc = result().addError(null, 149, "property", s);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
+		if (inClass().category() != Options.BASICTYPE
+				&& inClass().category() != Options.ENUMERATION
+				&& inClass().category() != Options.CODELIST) {
 
-		if (matches("req-all-all-documentation")) {
-			s = documentation();
-			if (!s.contains(options().nameSeparator())) {
-				MessageContext mc = result().addError(null, 153, name(),
-						options().nameSeparator());
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-			if (!s.contains(options().definitionSeparator())) {
-				MessageContext mc = result().addError(null, 153, name(),
-						options().definitionSeparator());
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
-
-		ClassInfo ci = model().classById(typeInfo().id);
-		String pn = name();
-		int basecat = inClass().category();
-
-		if (matches("req-all-prop-sequenceNumber")
-				&& basecat != Options.ENUMERATION
-				&& basecat != Options.CODELIST) {
-			for (PackageInfo pkgi : model().selectedSchemas()) {
-				if (inClass().inSchema(pkgi)) {
-					String sn = taggedValue("sequenceNumber");
-					if (sn == null || sn.length() == 0) {
-						MessageContext mc = result().addError(null, 168, name(),
-								inClass().name());
-						if (mc != null)
-							mc.addDetail(null, 400, "Property", fullName());
-					}
-					break;
+			String s, s2;
+			if (matches("req-xsd-prop-ncname")) {
+				s = name();
+				if (!XMLChar.isValidNCName(s)) {
+					MessageContext mc = result().addError(null, 149, "property",
+							s);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
 				}
 			}
-		}
 
-		if (matches("req-xsd-prop-value-type-exists") && ci == null
-				&& basecat != Options.ENUMERATION
-				&& basecat != Options.CODELIST) {
-			MapEntry me = options().typeMapEntry(typeInfo().name,
-					encodingRule("xsd"));
-			if (me == null) {
-				MessageContext mc = result().addWarning(null, 131,
-						inClass().name() + "." + pn, typeInfo().name);
+			if (matches("req-all-all-documentation")) {
+				s = documentation();
+				if (!s.contains(options().nameSeparator())) {
+					MessageContext mc = result().addError(null, 153, name(),
+							options().nameSeparator());
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+				if (!s.contains(options().definitionSeparator())) {
+					MessageContext mc = result().addError(null, 153, name(),
+							options().definitionSeparator());
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			ClassInfo ci = model().classById(typeInfo().id);
+			String pn = name();
+			int basecat = inClass().category();
+
+			if (matches("req-all-prop-sequenceNumber")
+					&& basecat != Options.ENUMERATION
+					&& basecat != Options.CODELIST) {
+				for (PackageInfo pkgi : model().selectedSchemas()) {
+					if (inClass().inSchema(pkgi)) {
+						String sn = taggedValue("sequenceNumber");
+						if (sn == null || sn.length() == 0) {
+							MessageContext mc = result().addError(null, 168,
+									name(), inClass().name());
+							if (mc != null)
+								mc.addDetail(null, 400, "Property", fullName());
+						}
+						break;
+					}
+				}
+			}
+
+			if (matches("req-xsd-prop-value-type-exists") && ci == null
+					&& basecat != Options.ENUMERATION
+					&& basecat != Options.CODELIST) {
+				MapEntry me = options().typeMapEntry(typeInfo().name,
+						encodingRule("xsd"));
+				if (me == null) {
+					MessageContext mc = result().addWarning(null, 131,
+							inClass().name() + "." + pn, typeInfo().name);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			if (matches("req-xsd-prop-codelist-obligation") && ci != null
+					&& ci.category() == Options.CODELIST) {
+				s = ci.taggedValue("vocabulary");
+				s2 = taggedValue("obligation");
+				if (s2 != null && !s2.isEmpty()
+						&& !s2.equalsIgnoreCase("implementingRule")
+						&& !s2.equalsIgnoreCase("technicalGuidance")) {
+					MessageContext mc = result().addError(null, 203,
+							"obligation", inClass().name() + "." + pn, s2);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				} else if (s2 != null && !s2.isEmpty()
+						&& (s == null || s.isEmpty())) {
+					MessageContext mc = result().addError(null, 203,
+							"obligation", inClass().name() + "." + pn, s2);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+				s = taggedValue("extendableMyMS");
+				if (s != null && !s.isEmpty()) {
+					MessageContext mc = result().addError(null, 204,
+							"extendableMyMS", inClass().name() + "." + pn);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			if (matches("req-xsd-prop-data-type") && ci != null
+					&& (ci.category() == Options.DATATYPE
+							|| ci.category() == Options.UNION)
+					&& !isComposition() && !isAttribute() && isNavigable()) {
+				MessageContext mc = result().addError(null, 148,
+						inClass().name(), name(), ci.name());
 				if (mc != null)
 					mc.addDetail(null, 400, "Property", fullName());
 			}
-		}
-
-		if (matches("req-xsd-prop-codelist-obligation") && ci != null
-				&& ci.category() == Options.CODELIST) {
-			s = ci.taggedValue("vocabulary");
-			s2 = taggedValue("obligation");
-			if (s2 != null && !s2.isEmpty()
-					&& !s2.equalsIgnoreCase("implementingRule")
-					&& !s2.equalsIgnoreCase("technicalGuidance")) {
-				MessageContext mc = result().addError(null, 203, "obligation",
-						inClass().name() + "." + pn, s2);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			} else if (s2 != null && !s2.isEmpty()
-					&& (s == null || s.isEmpty())) {
-				MessageContext mc = result().addError(null, 203, "obligation",
-						inClass().name() + "." + pn, s2);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-			s = taggedValue("extendableMyMS");
-			if (s != null && !s.isEmpty()) {
-				MessageContext mc = result().addError(null, 204,
-						"extendableMyMS", inClass().name() + "." + pn);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
-
-		if (matches("req-xsd-prop-data-type") && ci != null
-				&& (ci.category() == Options.DATATYPE
-						|| ci.category() == Options.UNION)
-				&& !isComposition() && !isAttribute() && isNavigable()) {
-			MessageContext mc = result().addError(null, 148, inClass().name(),
-					name(), ci.name());
-			if (mc != null)
-				mc.addDetail(null, 400, "Property", fullName());
 		}
 
 		postprocessed = true;

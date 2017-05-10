@@ -76,7 +76,7 @@ public class Profiles {
 	 */
 	public static final Pattern PATTERN_VALIDATE_PROFILES_TAGGED_VALUE = Pattern
 			.compile(
-					"([\\w|-]+)(?:\\[([-;\\.0-9]+)\\])?(?:\\((.*?)\\))?(,([\\w|-]+)(?:\\[([-;\\.0-9]+)\\])?(?:\\((.*?)\\))?)*");
+					"([\\w|-]+)(?:\\[([-;\\.0-9]+)\\])?(?:\\((.*?)\\))?(,\\W*([\\w|-]+)(?:\\[([-;\\.0-9]+)\\])?(?:\\((.*?)\\))?)*");
 
 	/**
 	 * Pattern to find a string that defines a single profile. Group 1 contains
@@ -425,6 +425,11 @@ public class Profiles {
 	 * are not, the other profiles/owner inherit these profiles. This is
 	 * irrelevant if explicit profile settings is enabled.
 	 * 
+	 * WARNING: If the profiles of a property and the profiles of the type of
+	 * that property are compared, this method cannot compute the profiles of
+	 * the property that it would inherit from its inclass. Such a computation
+	 * must be performed externally.
+	 * 
 	 * @param ownerName
 	 *            Name of the owner of these profiles
 	 * @param otherProfiles
@@ -436,11 +441,14 @@ public class Profiles {
 	 *            profile assignments for a model element thus means that the
 	 *            element belongs to no profile, and would thus be removed by
 	 *            the profiler), else <code>false</code> (in that case, a lack
-	 *            of profile assignments for a model element would mean that it
-	 *            belongs to all profiles)
+	 *            of profile assignments for a class would mean that it belongs
+	 *            to all profiles, while for a property it would mean that it
+	 *            inherits the profiles from the class the property belongs to)
 	 * @param profileInheritance
-	 *            true if profile inheritance shall be applied, else false
-	 *            (irrelevant if rule for explicit profile settings is enabled)
+	 *            true if profile inheritance shall be applied (for the
+	 *            comparison of profiles of a class and one of its properties),
+	 *            else false (irrelevant if rule for explicit profile settings
+	 *            is enabled)
 	 * @param messages
 	 *            used to log the reason(s) why these profiles do not contain
 	 *            the other profiles; can be <code>null</code>
@@ -500,10 +508,10 @@ public class Profiles {
 					 * profiles doe not contain the other profiles:
 					 */
 					if (messages != null) {
-						messages.add("The profiles owned by '" + ownerName
-								+ "' do not contain the profiles owned by '"
+						messages.add("The profiles owned by " + ownerName
+								+ " do not contain the profiles owned by "
 								+ otherOwnerName
-								+ "' because the latter does not inherit the profiles from the former, and because the latter has an unlimited profile set while the former does not.");
+								+ " because the latter does not inherit the profiles from the former, and because the latter has an unlimited profile set while the former does not.");
 					}
 					return false;
 				}
