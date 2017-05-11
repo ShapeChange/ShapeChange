@@ -62,7 +62,7 @@ public class SdoDimArrayExpression implements Expression {
 	public void setElements(List<SdoDimElement> elements) {
 		this.elements = elements;
 	}
-	
+
 	public void addElement(SdoDimElement sde) {
 		this.elements.add(sde);
 	}
@@ -79,21 +79,13 @@ public class SdoDimArrayExpression implements Expression {
 
 		sb.append("MDSYS.SDO_DIM_ARRAY(");
 		if (hasElements()) {
-			
-			for(Iterator<SdoDimElement> iter = getElements().iterator(); iter.hasNext();) {
-				
+
+			for (Iterator<SdoDimElement> iter = getElements().iterator(); iter.hasNext();) {
+
 				SdoDimElement sde = iter.next();
-				sb.append("MDSYS.SDO_DIM_ELEMENT('");
-				sb.append(sde.getDimName());
-				sb.append("', ");
-				sb.append(sde.getLowerBound());
-				sb.append(", ");
-				sb.append(sde.getUpperBound());
-				sb.append(", ");
-				sb.append(sde.getTolerance());
-				sb.append(")");
-				
-				if(iter.hasNext()) {
+				sb.append(sde.toString());
+
+				if (iter.hasNext()) {
 					sb.append(", ");
 				}
 			}
@@ -104,4 +96,5 @@ public class SdoDimArrayExpression implements Expression {
 
 		return sb.toString();
 	}
+
 }
