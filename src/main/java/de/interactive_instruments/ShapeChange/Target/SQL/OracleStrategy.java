@@ -233,8 +233,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
 
 			ColumnExpression colexp = new ColumnExpression(columnForPi);
-			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS",
-					null);
+			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS");
 			StringValueExpression compareValue = new StringValueExpression("00:00:00");
 			EqualsExpression eexp = new EqualsExpression(tcexp, compareValue);
 

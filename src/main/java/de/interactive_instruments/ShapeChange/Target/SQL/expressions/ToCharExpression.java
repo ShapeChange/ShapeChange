@@ -38,51 +38,65 @@ package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
  */
 public class ToCharExpression implements Expression {
 
-	private String dateLanguage;
-	private Expression date;
+	/**
+	 * Oracle-specific property for setting National Language Support parameters.
+	 */
+	private String nlsParameters;
+	/**
+	 * Expression, e.g. a date, a date time, a number, ...
+	 */
+	private Expression expression;
 	private String format;
+	
+	/**
+	 * @param expression
+	 * @param format
+	 */
+	public ToCharExpression(Expression expression, String format) {
+		this(expression, format, null);
+	}
 
 	/**
-	 * @param date
+	 * @param expression
 	 * @param format
-	 * @param dateLanguage
+	 * @param nlsParameters
 	 */
-	public ToCharExpression(Expression date, String format,
-			String dateLanguage) {
+	public ToCharExpression(Expression expression, String format,
+			String nlsParameters) {
 		super();
-		this.dateLanguage = dateLanguage;
-		this.date = date;
+		this.nlsParameters = nlsParameters;
+		this.expression = expression;
 		this.format = format;
 	}
 
 	/**
-	 * @return the dateLanguage
+	 * @return the NLS parameters
 	 */
-	public String getDateLanguage() {
-		return dateLanguage;
+	public String getNlsParameters() {
+		return nlsParameters;
 	}
 
 	/**
-	 * @param dateLanguage
-	 *            the dateLanguage to set
+	 * @param nlsParameters
+	 *            the NLS parameters to set
 	 */
-	public void setDateLanguage(String dateLanguage) {
-		this.dateLanguage = dateLanguage;
+	public void setNlsParameters(String nlsParameters) {
+		this.nlsParameters = nlsParameters;
 	}
 
 	/**
-	 * @return the date
+	 * @return the expression
 	 */
-	public Expression getDate() {
-		return date;
+	public Expression getExpression() {
+		return expression;
 	}
 
 	/**
-	 * @param date
-	 *            the date to set
+	 * @param expression
+	 *            the expression to set
 	 */
-	public void setDate(Expression date) {
-		this.date = date;
+	public void setExpression(Expression expression) {
+		this.expression = expression;
 	}
 
 	/**
@@ -106,7 +120,7 @@ public class ToCharExpression implements Expression {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("TO_CHAR(");
-		sb.append(date.toString());
+		sb.append(expression.toString());
 
 		if (format != null) {
 			sb.append(", '");
@@ -114,9 +128,9 @@ public class ToCharExpression implements Expression {
 			sb.append("'");
 		}
 
-		if (dateLanguage != null) {
-			sb.append(", 'NLS_DATE_LANGUAGE = ");
-			sb.append(dateLanguage);
+		if (nlsParameters != null) {
+			sb.append(", '");
+			sb.append(nlsParameters);
 			sb.append("'");
 		}
 
