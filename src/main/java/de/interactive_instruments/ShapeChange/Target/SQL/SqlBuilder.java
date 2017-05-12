@@ -184,7 +184,7 @@ public class SqlBuilder implements MessageSource {
 				+ sqlddl.getIdColumnName();
 		Column cdInClassReference = createColumn(table, null,
 				classReferenceFieldName, sqlddl.getForeignKeyColumnDataType(),
-				"NOT NULL", false);
+				"NOT NULL", false, true);
 		Columns.add(cdInClassReference);
 
 		classOrPropertyInfoByColumnInAssociativeTable.put(cdInClassReference,
@@ -216,7 +216,7 @@ public class SqlBuilder implements MessageSource {
 			}
 
 			cdPi = createColumn(table, pi, piFieldName, fieldType, "NOT NULL",
-					false);
+					false, true);
 			this.classOrPropertyInfoByColumnInAssociativeTable.put(cdPi, pi);
 
 		} else {
@@ -443,7 +443,7 @@ public class SqlBuilder implements MessageSource {
 		// Add object identifier column
 		Column id_cd = createColumn(table, null, sqlddl.getIdColumnName(),
 				sqlddl.getDatabaseStrategy().primaryKeyDataType(),
-				sqlddl.getPrimaryKeyColumnSpec(), true);
+				sqlddl.getPrimaryKeyColumnSpec(), true, false);
 		Columns.add(id_cd);
 		id_cd.setObjectIdentifierColumn(true);
 
@@ -555,7 +555,7 @@ public class SqlBuilder implements MessageSource {
 				+ (reflexive ? "_" + pi1.name() : "")
 				+ sqlddl.getIdColumnName();
 		Column cd1 = createColumn(table, pi2, name_1,
-				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false);
+				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false, true);
 		Columns.add(cd1);
 
 		// add field for second reference
@@ -563,7 +563,7 @@ public class SqlBuilder implements MessageSource {
 				+ (reflexive ? "_" + pi2.name() : "")
 				+ sqlddl.getIdColumnName();
 		Column cd2 = createColumn(table, pi1, name_2,
-				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false);
+				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false, true);
 		Columns.add(cd2);
 
 		this.classOrPropertyInfoByColumnInAssociativeTable.put(cd1,
@@ -603,7 +603,8 @@ public class SqlBuilder implements MessageSource {
 
 		Column cd_codename = createColumn(table, null, name, fieldType,
 				"NOT NULL",
-				!ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS));
+				!ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS),
+				false);
 		Columns.add(cd_codename);
 
 		// keep track of code name column to add PODS specifics later on
@@ -628,7 +629,7 @@ public class SqlBuilder implements MessageSource {
 			}
 
 			Column cd_descriptor = createColumn(table, null,
-					descriptor.getColumnName(), descriptor_fieldType, "",
+					descriptor.getColumnName(), descriptor_fieldType, "", false,
 					false);
 			Columns.add(cd_descriptor);
 		}
@@ -930,7 +931,7 @@ public class SqlBuilder implements MessageSource {
 
 	private Column createColumn(Table inTable, PropertyInfo representedProperty,
 			String name, String type, String columnSpecification,
-			boolean isPrimaryKey) {
+			boolean isPrimaryKey, boolean isForeignKey) {
 
 		Column column = new Column(name, representedProperty, inTable);
 
@@ -947,6 +948,8 @@ public class SqlBuilder implements MessageSource {
 			columnSpecStrings.add("PRIMARY KEY");
 		}
 		column.setSpecifications(columnSpecStrings);
+
+		column.setForeignKeyColumn(isForeignKey);
 
 		return column;
 	}
@@ -969,8 +972,10 @@ public class SqlBuilder implements MessageSource {
 			boolean alwaysNotNull) {
 
 		String name;
+		boolean isForeignKeyColumn = false;
 		if (refersToTypeRepresentedByTable(pi)) {
 			name = pi.name() + identifyForeignKeyColumnSuffix(pi);
+			isForeignKeyColumn = true;
 		} else {
 			name = pi.name();
 		}
@@ -979,6 +984,8 @@ public class SqlBuilder implements MessageSource {
 		String type = identifyType(pi);
 		ColumnDataType colDataType = new ColumnDataType(type);
 		cd.setDataType(colDataType);
+		
+		cd.setForeignKeyColumn(isForeignKeyColumn);
 
 		List<String> columnSpecStrings = new ArrayList<String>();
 

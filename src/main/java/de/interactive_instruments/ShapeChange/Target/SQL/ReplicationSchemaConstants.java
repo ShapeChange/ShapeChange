@@ -46,6 +46,13 @@ public class ReplicationSchemaConstants {
 	public static final String PARAM_OBJECT_IDENTIFIER_FIELD_TYPE = "replicationSchemaObjectIdentifierFieldType";
 
 	/**
+	 * XML Schema type of an element that represents a column that is a foreign
+	 * key. This parameter is optional. The default is the value defined by
+	 * configuration parameter {@value #PARAM_OBJECT_IDENTIFIER_FIELD_TYPE}.
+	 */
+	public static final String PARAM_FOREIGN_KEY_FIELD_TYPE = "replicationSchemaForeignKeyFieldType";
+
+	/**
 	 * Supports setting a suffix that will be appended to the target namespace
 	 * of the replication schema that is produced by the target. This parameter
 	 * is optional.

@@ -128,6 +128,7 @@
 			
 			<targetParameter name="replicationSchemaTargetNamespaceSuffix" value="/rep" />
 			<targetParameter name="replicationSchemaObjectIdentifierFieldType" value="integer"/>
+			<targetParameter name="replicationSchemaForeignKeyFieldType" value="string"/>
 			<targetParameter name="replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType" value="Test documentation for fields with unlimited length character data type."/>
 			<rules>
 				<EncodingRule name="sql2" extends="sql">				

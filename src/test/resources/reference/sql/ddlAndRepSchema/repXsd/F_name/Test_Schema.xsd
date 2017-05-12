@@ -32,12 +32,12 @@
   </element>
   <complexType name="T1_Class2_p1Type">
     <sequence>
-      <element name="T1_Class2testobjectidentifier" type="integer">
+      <element name="T1_Class2testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_src8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
       </element>
-      <element name="T1_Class4testobjectidentifier" type="integer">
+      <element name="T1_Class4testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_dst8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
@@ -76,12 +76,12 @@
   </element>
   <complexType name="T1_Class3_p1Type">
     <sequence>
-      <element name="T1_Class3testobjectidentifier" type="integer">
+      <element name="T1_Class3testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_src8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
       </element>
-      <element name="T1_Class4testobjectidentifier" type="integer">
+      <element name="T1_Class4testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_dst8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
@@ -217,7 +217,7 @@
   <complexType name="T6_Class1Type">
     <sequence>
       <element name="testobjectidentifier" type="integer"/>
-      <element minOccurs="0" name="p1_FK" type="integer">
+      <element minOccurs="0" name="p1_FK" type="string">
         <annotation>
           <appinfo>EAID_dst5120FA_9D5B_4bbc_BCA7_AC2CCDC2FC74</appinfo>
         </annotation>

@@ -152,6 +152,7 @@ public class SqlDdl implements Target, MessageSource {
 	protected String repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
 	protected String repSchemaTargetNamespace = null;
 	protected String repSchemaObjectIdentifierFieldType;
+	protected String repSchemaForeignKeyFieldType;
 	protected Multiplicity repSchemaMultiplicity1 = new Multiplicity(1, 1);
 	protected String repSchemaTargetNamespaceSuffix;
 
@@ -446,6 +447,12 @@ public class SqlDdl implements Target, MessageSource {
 					this.getClass().getName(),
 					ReplicationSchemaConstants.PARAM_OBJECT_IDENTIFIER_FIELD_TYPE,
 					ReplicationSchemaConstants.DEFAULT_OBJECT_IDENTIFIER_FIELD_TYPE,
+					false, true);
+			
+			repSchemaForeignKeyFieldType = options.parameterAsString(
+					this.getClass().getName(),
+					ReplicationSchemaConstants.PARAM_FOREIGN_KEY_FIELD_TYPE,
+					repSchemaObjectIdentifierFieldType,
 					false, true);
 
 			repSchemaTargetNamespaceSuffix = options.parameterAsString(
@@ -861,6 +868,13 @@ public class SqlDdl implements Target, MessageSource {
 	 */
 	public String getRepSchemaObjectIdentifierFieldType() {
 		return repSchemaObjectIdentifierFieldType;
+	}
+	
+	/**
+	 * @return the repSchemaForeignKeyFieldType
+	 */
+	public String getRepSchemaForeignKeyFieldType() {
+		return repSchemaForeignKeyFieldType;
 	}
 
 	/**

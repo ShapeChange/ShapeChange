@@ -51,13 +51,15 @@ public class Column {
 	private PropertyInfo representedProperty = null;
 	private Table inTable = null;
 	private boolean isObjectIdentifierColumn = false;
+	private boolean isForeignKeyColumn = false;
 
 	public Column(String name, Table inTable) {
 		this.name = name;
 		this.inTable = inTable;
 	}
-	
-	public Column(String name, PropertyInfo representedProperty, Table inTable) {
+
+	public Column(String name, PropertyInfo representedProperty,
+			Table inTable) {
 		this.name = name;
 		this.representedProperty = representedProperty;
 		this.inTable = inTable;
@@ -120,7 +122,8 @@ public class Column {
 	}
 
 	/**
-	 * @param defaultValue the defaultValue to set
+	 * @param defaultValue
+	 *            the defaultValue to set
 	 */
 	public void setDefaultValue(Expression defaultValue) {
 		this.defaultValue = defaultValue;
@@ -134,7 +137,8 @@ public class Column {
 	}
 
 	/**
-	 * @param representedProperty the representedProperty to set
+	 * @param representedProperty
+	 *            the representedProperty to set
 	 */
 	public void setRepresentedProperty(PropertyInfo representedProperty) {
 		this.representedProperty = representedProperty;
@@ -148,22 +152,31 @@ public class Column {
 	}
 
 	/**
-	 * @param inTable the inTable to set
+	 * @param inTable
+	 *            the inTable to set
 	 */
 	public void setInTable(Table inTable) {
 		this.inTable = inTable;
 	}
-	
+
 	public boolean belongsToAssociativeTable(Column c) {
-		
+
 		return c.getInTable().isAssociativeTable();
 	}
 
 	public void setObjectIdentifierColumn(boolean isObjectIdentifierColumn) {
 		this.isObjectIdentifierColumn = isObjectIdentifierColumn;
 	}
-	
+
 	public boolean isObjectIdentifierColumn() {
 		return isObjectIdentifierColumn;
+	}
+
+	public boolean isForeignKeyColumn() {
+		return isForeignKeyColumn;
+	}
+
+	public void setForeignKeyColumn(boolean isForeignKeyColumn) {
+		this.isForeignKeyColumn = isForeignKeyColumn;
 	}
 }

@@ -119,7 +119,7 @@ public class SQLTest extends WindowsBasicTest {
 		
 		multiTest(
 				"src/test/resources/config/testEA_sqlDdlAndRepSchema.xml",
-				new String[] { "sql, xsd" },
+				new String[] { "sql","xsd" },
 				"testResults/sql/ddlAndRepSchema",
 				"src/test/resources/reference/sql/ddlAndRepSchema");
 	}

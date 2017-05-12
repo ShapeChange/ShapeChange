@@ -205,9 +205,6 @@ public class ReplicationSchemaVisitor
 				"sequence");
 		complexTypeElement.appendChild(sequence);
 
-		// BidiMap<Column, PropertyInfo> propertyByColumn = sqlbuilder
-		// .getPropertyByColumnMap();
-
 		for (Column column : table.getColumns()) {
 
 			/*
@@ -227,13 +224,6 @@ public class ReplicationSchemaVisitor
 
 			/*
 			 * Identify the type of the element
-			 * 
-			 * TODO Shouldn't we make a difference when assigning the value of
-			 * target parameter 'replicationSchemaObjectIdentifierFieldType' as
-			 * type, if target parameter 'foreignKeyColumnDatatype' is set as
-			 * well? In that case, foreign key fields have a different type in
-			 * the database schema - should they also have a different type in
-			 * the replication schema?
 			 */
 			String type;
 
@@ -286,9 +276,13 @@ public class ReplicationSchemaVisitor
 
 					} else {
 
-						type = sqlddl.getRepSchemaObjectIdentifierFieldType();
+						type = sqlddl.getRepSchemaForeignKeyFieldType();
 					}
 				}
+
+			} else if (column.isForeignKeyColumn()) {
+
+				type = sqlddl.getRepSchemaForeignKeyFieldType();
 
 			} else {
 
@@ -301,9 +295,12 @@ public class ReplicationSchemaVisitor
 			addAttribute(columnDefinitionElement, "type", type);
 
 			if (propForColumn != null) {
+
 				// Handle minOccurs
-				if (propForColumn.cardinality().minOccurs == 0 || (!table.isAssociativeTable()
-						&& propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL))) {
+				if (!table.isAssociativeTable() && (propForColumn
+						.cardinality().minOccurs == 0
+						|| propForColumn.matches(
+								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL))) {
 
 					addAttribute(columnDefinitionElement, "minOccurs", "0");
 				}
@@ -312,7 +309,8 @@ public class ReplicationSchemaVisitor
 				String columnSpec = column.getSpecifications() == null ? ""
 						: StringUtils.join(column.getSpecifications(), " ");
 
-				if (propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
+				if (propForColumn.matches(
+						ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
 						&& !columnSpec.contains("NOT NULL")) {
 
 					addAttribute(columnDefinitionElement, "nillable", "true");
