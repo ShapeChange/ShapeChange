@@ -391,15 +391,6 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#globalId()
-	 */
-	public String globalId() {
-		return null;
-	}
-
 	/** Find out whether the property owns the stereotype voidable. */
 	public boolean voidable() {
 		// Validate cache

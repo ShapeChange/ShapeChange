@@ -59,8 +59,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -237,12 +237,6 @@ public class Options {
 	 */
 	public static final String PARAM_TAGGED_VALUE_IMPL = "taggedValueImplementation";
 
-	/**
-	 * (applies to EA7 input only) Defines if global identifiers of model
-	 * elements shall be loaded ("true") or not. Default is to not load them.
-	 */
-	public static final String PARAM_LOAD_GLOBAL_IDENTIFIERS = "loadGlobalIdentifiers";
-
 	public static final String PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES = "dontConstructAssociationNames";
 
 	/**
@@ -342,8 +336,18 @@ public class Options {
 	protected HashMap<String, MapEntry> fAttributeMap = new HashMap<String, MapEntry>();
 	protected HashMap<String, MapEntry> fAttributeGroupMap = new HashMap<String, MapEntry>();
 
-	/** Map of type mapping tables for non-XMLSchema targets */
-	protected HashMap<String, HashMap<String, MapEntry>> fTargetTypeMap = new HashMap<String, HashMap<String, MapEntry>>();
+	/**
+	 * Map entries for a non-XML Schema target
+	 * 
+	 * key: {type attribute value}#{rule attribute value}
+	 * 
+	 * value: map entry with this combination of type and rule
+	 * 
+	 * NOTE: separation by class is not necessary, since the map is reset when
+	 * the converter is about to process a target (which also leads to loading
+	 * the specific configuration of that target)
+	 */
+	protected Map<String, ProcessMapEntry> targetMapEntryByTypeRuleKey = new HashMap<String, ProcessMapEntry>();
 
 	/** Hash table for all stereotype and tag aliases */
 	protected HashMap<String, String> fStereotypeAliases = new HashMap<String, String>();
@@ -359,7 +363,8 @@ public class Options {
 						"description"), EXAMPLE("example"), LEGALBASIS(
 								"legalBasis"), DATACAPTURESTATEMENT(
 										"dataCaptureStatement"), LANGUAGE(
-												"language");
+												"language"), GLOBALIDENTIFIER(
+														"globalIdentifier");
 
 		private String name = null;
 
@@ -497,7 +502,6 @@ public class Options {
 
 	protected boolean useStringInterning = false;
 	protected boolean dontConstructAssociationNames = false;
-	protected boolean loadGlobalIds = false;
 	protected String language = "en";
 
 	/**
@@ -618,26 +622,22 @@ public class Options {
 		return me;
 	}
 
-	public void addTargetTypeMapEntry(String cls, String type, String rule,
-			String ttype, String param) {
-		HashMap<String, MapEntry> fclass = fTargetTypeMap.get(cls);
-		if (fclass == null) {
-			fclass = new HashMap<String, MapEntry>();
-			fTargetTypeMap.put(cls, fclass);
-		}
-		fclass.put(type + "#" + rule, new MapEntry(rule, ttype, param));
+	public void addTargetTypeMapEntry(ProcessMapEntry pme) {
+
+		targetMapEntryByTypeRuleKey.put(pme.getType() + "#" + pme.getRule(),
+				pme);
 	}
 
-	public MapEntry targetTypeMapEntry(String cls, String type, String rule) {
-		HashMap<String, MapEntry> fclass = fTargetTypeMap.get(cls);
-		if (fclass == null)
-			return null;
-		MapEntry me = null;
-		while (me == null && rule != null) {
-			me = fclass.get(type + "#" + rule);
+	public ProcessMapEntry targetMapEntry(String type, String rule) {
+
+		ProcessMapEntry pme = null;
+
+		while (pme == null && rule != null) {
+			pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule);
 			rule = extendsEncRule(rule);
 		}
-		return me;
+
+		return pme;
 	}
 
 	/**
@@ -807,6 +807,68 @@ public class Options {
 
 	public String parameter(String t, String k1) {
 		return fParameters.get(t + "::" + k1);
+	}
+
+	public String parameterAsString(String className, String parameterName,
+			String defaultValue, boolean allowNonEmptyTrimmedStringValue,
+			boolean trimValue) {
+
+		String result = this.parameter(className, parameterName);
+
+		if (result == null || (result.trim().isEmpty()
+				&& !allowNonEmptyTrimmedStringValue)) {
+			result = defaultValue;
+		} else if (trimValue) {
+			result = result.trim();
+		}
+
+		return result;
+	}
+
+	public int parameterAsInteger(String className, String parameterName,
+			int defaultValue) {
+
+		int res;
+
+		String valueByConfig = this.parameter(className, parameterName);
+
+		if (valueByConfig == null) {
+
+			res = defaultValue;
+
+		} else {
+
+			try {
+				res = Integer.parseInt(valueByConfig);
+
+			} catch (NumberFormatException e) {
+
+				/*
+				 * Options does not have a ShapeChangeResult - check validity of
+				 * configuration parameters through target specific validation
+				 * routine
+				 */
+				res = defaultValue;
+			}
+		}
+
+		return res;
+	}
+
+	public boolean parameterAsBoolean(String className, String parameterName,
+			boolean defaultValue) {
+
+		boolean res;
+
+		String valueByConfig = this.parameter(className, parameterName);
+
+		if (valueByConfig == null) {
+			res = defaultValue;
+		} else {
+			res = Boolean.parseBoolean(valueByConfig.trim());
+		}
+
+		return res;
 	}
 
 	/** This returns the names of all parms whose names match a regex pattern */
@@ -1484,9 +1546,7 @@ public class Options {
 					// transformers)
 					if (tgtConfig.getMapEntries() != null) {
 						for (ProcessMapEntry pme : tgtConfig.getMapEntries()) {
-							addTargetTypeMapEntry(tgtConfig.getClassName(),
-									pme.getType(), pme.getRule(),
-									pme.getTargetType(), pme.getParam());
+							addTargetTypeMapEntry(pme);
 						}
 					}
 				}
@@ -1612,14 +1672,6 @@ public class Options {
 				this.dontConstructAssociationNames = true;
 			}
 
-			String loadGlobalIds_value = this
-					.parameter(PARAM_LOAD_GLOBAL_IDENTIFIERS);
-
-			if (loadGlobalIds_value != null
-					&& loadGlobalIds_value.trim().equalsIgnoreCase("true")) {
-				this.loadGlobalIds = true;
-			}
-
 			String language_value = inputConfig.getParameters()
 					.get(PARAM_LANGUAGE);
 
@@ -1674,7 +1726,7 @@ public class Options {
 		fElementMap = new HashMap<String, MapEntry>();
 		fAttributeMap = new HashMap<String, MapEntry>();
 		fAttributeGroupMap = new HashMap<String, MapEntry>();
-		fTargetTypeMap = new HashMap<String, HashMap<String, MapEntry>>();
+		targetMapEntryByTypeRuleKey = new HashMap<String, ProcessMapEntry>();
 		fStereotypeAliases = new HashMap<String, String>();
 		fTagAliases = new HashMap<String, String>();
 		fDescriptorSources = new HashMap<String, String>();
@@ -1864,10 +1916,7 @@ public class Options {
 				if (currentProcessConfig.getMapEntries() != null) {
 					for (ProcessMapEntry pme : currentProcessConfig
 							.getMapEntries()) {
-						addTargetTypeMapEntry(
-								currentProcessConfig.getClassName(),
-								pme.getType(), pme.getRule(),
-								pme.getTargetType(), pme.getParam());
+						addTargetTypeMapEntry(pme);
 					}
 				}
 
@@ -3372,6 +3421,8 @@ public class Options {
 		/*
 		 * JSON encoding rules
 		 */
+		addRule("rule-json-all-notEncoded");
+
 		addExtendsEncRule("geoservices", "*");
 		addExtendsEncRule("geoservices_extended", "*");
 
@@ -3384,17 +3435,41 @@ public class Options {
 		 * SQL encoding rules
 		 */
 
+		addRule("rule-sql-all-associativetables");
+		addRule("rule-sql-all-exclude-abstract");
+		addRule("rule-sql-all-notEncoded");
+
+		addRule("rule-sql-all-foreign-key-oracle-naming-style");
+		addRule("rule-sql-all-foreign-key-personhash-naming");
+		addRule("rule-sql-all-foreign-key-default-naming");
+		addRule("rule-sql-all-check-constraint-naming-oracle-default");
+		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
+		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
+		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
+
+		addRule("rule-sql-all-normalizing-ignore-case");
+		addRule("rule-sql-all-normalizing-lower-case");
+		addRule("rule-sql-all-normalizing-upper-case");
+		addRule("rule-sql-all-normalizing-sqlserver");
+		addRule("rule-sql-all-normalizing-oracle");
+
+		addRule("rule-sql-all-unique-naming-count-suffix");
+
+		addRule("rule-sql-cls-code-lists");
+		addRule("rule-sql-cls-code-lists-pods");
+		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-cls-feature-types");
 		addRule("rule-sql-cls-object-types");
 		addRule("rule-sql-cls-references-to-external-types");
-		addRule("rule-sql-all-associativetables");
-		addRule("rule-sql-prop-exclude-derived");
-		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
-		addRule("rule-sql-all-exclude-abstract");
-		addRule("rule-sql-all-foreign-key-oracle-naming-style");
-		addRule("rule-sql-cls-code-lists");
-		addRule("rule-sql-cls-code-lists-pods");
+		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
+		addRule("rule-sql-prop-exclude-derived");
+
+		addRule("rule-sql-all-replicationSchema");
+		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
+		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
+		addRule("rule-sql-prop-replicationSchema-nillable");
+		addRule("rule-sql-prop-replicationSchema-optional");
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
@@ -3457,7 +3532,7 @@ public class Options {
 		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
 		addRule("rule-owl-prop-range-global");
 		addRule("rule-owl-prop-range-local-withUniversalQuantification");
-		addRule("rule-owl-prop-voidable-as-minCardinality0");		
+		addRule("rule-owl-prop-voidable-as-minCardinality0");
 
 		/*
 		 * ArcGIS workspace encoding rules
@@ -3726,19 +3801,6 @@ public class Options {
 	 */
 	public Map<String, AIXMSchemaInfo> getAIXMSchemaInfos() {
 		return schemaInfos;
-	}
-
-	/**
-	 * Determine if global identifiers of model elements shall be loaded or not.
-	 * This depends upon the setting of the input element parameter
-	 * {@value #PARAM_LOAD_GLOBAL_IDENTIFIERS}.
-	 *
-	 * @return <code>true</code> if global identifiers shall be loaded, else
-	 *         <code>false</code>
-	 */
-	public boolean isLoadGlobalIdentifiers() {
-
-		return this.loadGlobalIds;
 	}
 
 	/**

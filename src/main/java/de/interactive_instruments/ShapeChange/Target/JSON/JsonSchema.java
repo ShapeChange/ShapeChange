@@ -44,17 +44,19 @@ import java.util.SortedSet;
 import org.apache.commons.lang.CharUtils;
 import org.apache.commons.lang.StringUtils;
 
-import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
@@ -105,6 +107,12 @@ public class JsonSchema implements Target, MessageSource {
 		options = o;
 		result = r;
 		diagnosticsOnly = diagOnly;
+		
+		if (!isEncoded(pi)) {
+			
+			result.addInfo(this, 7, pi.name());
+			return;
+		}
 		
 		outputDirectory = options.parameter(this.getClass().getName(),"outputDirectory");
 		if (outputDirectory==null)
@@ -198,11 +206,29 @@ public class JsonSchema implements Target, MessageSource {
 			
 		return false;
 	}
+	
+	public static boolean isEncoded(Info i) {
+
+		if (i.matches("rule-json-all-notEncoded")
+				&& i.encodingRule("json").equalsIgnoreCase("notencoded")) {
+			
+			return false;
+			
+		} else {
+			
+			return true;
+		}
+	}
 
 	public void process(ClassInfo ci) {
 		
 		int cat = ci.category();
 				
+		if (!isEncoded(ci)) {
+			result.addInfo(this,8,ci.name());
+			return;
+		}
+		
 		if (options.matchesEncRule(ci.encodingRule("json"),"geoservices")) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN) {
 				return;
@@ -350,8 +376,16 @@ public class JsonSchema implements Target, MessageSource {
 	}
 	
 	private Context ProcessProperties(Context ctx, ClassInfo ci, String propertyPrefix, boolean required) throws IOException {
-		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {
-			PropertyInfo propi = j.next();
+		
+		for (PropertyInfo propi : ci.properties().values()) {
+			
+			if(!isEncoded(propi)) {
+				MessageContext mc = result.addInfo(this,9,propi.name());
+				if(mc != null) {
+					mc.addDetail(this, 20000, propi.fullNameInSchema());
+				}
+				continue;
+			}
 			
 			Type ti = propi.typeInfo();
 			Multiplicity m = propi.cardinality();
@@ -369,17 +403,17 @@ public class JsonSchema implements Target, MessageSource {
 			boolean nillable = false;
 			boolean flatten = false;
 			// First handle well-known ones
-			MapEntry me = options.targetTypeMapEntry(getClass().getName(), ti.name, propi.encodingRule("json"));
+			ProcessMapEntry me = options.targetMapEntry(ti.name, propi.encodingRule("json"));
 			if (me!=null) {
-				if (me.p2.equalsIgnoreCase("geometry")) {
+				if ("geometry".equalsIgnoreCase(me.getParam())) {
 					result.addDebug(this, 10003, propi.inClass().name(), propi.name());
 					continue;
-				} else if (me.p1.startsWith("ref:")) {
-					ref = me.p1.substring(4);
+				} else if (me.getTargetType().startsWith("ref:")) {
+					ref = me.getTargetType().substring(4);
 				} else {
-					type = me.p1;
-					if (me.p2.startsWith("format:"))
-						format = me.p2.substring(7);
+					type = me.getTargetType();
+					if (me.hasParam() && me.getParam().startsWith("format:"))
+						format = me.getParam().substring(7);
 				}
 			}
 			
@@ -412,14 +446,19 @@ public class JsonSchema implements Target, MessageSource {
 						} else {
 						enums = "[";
 						boolean fst = true;
-						for (Iterator<PropertyInfo> k = cix.properties().values().iterator(); k.hasNext();) {
-							PropertyInfo propix = k.next();
+						for (PropertyInfo propix : cix.properties().values()) {
+							
+							if(!isEncoded(propix)) {
+								continue;
+							}
+							
 							if (fst)
 								fst = false;
 							else
 								enums += ",";
 							enums += "\""+propix.name()+"\"";
 						}
+						
 						enums += "]";
 						}
 					} else if (cat==Options.FEATURE || cat==Options.OBJECT || cat==Options.MIXIN) {
@@ -616,8 +655,11 @@ public class JsonSchema implements Target, MessageSource {
 			contexts.put(ci.qname(), geomType);
 		}
 
-		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {
-			PropertyInfo propi = j.next();
+		for (PropertyInfo propi : ci.properties().values()) {
+
+			if(!isEncoded(propi)) {
+				continue;
+			}
 			geomType = determineGeometryType(ci, propi);
 		}
 		return geomType;
@@ -636,13 +678,13 @@ public class JsonSchema implements Target, MessageSource {
 			return geomType;
 
 		String type = propi.typeInfo().name;
-		MapEntry me = options.targetTypeMapEntry(getClass().getName(), type, propi.encodingRule("json"));
-		if (me!=null && me.p2.equalsIgnoreCase("geometry")) {
+		ProcessMapEntry me = options.targetMapEntry(type, propi.encodingRule("json"));
+		if (me!=null && "geometry".equalsIgnoreCase(me.getParam())) {
 			if (m.maxOccurs>1)
 				result.addWarning(this,102,propi.name(),propi.inClass().name());
 			if (geomType==null) {
 				// remove "ref:" prefix
-				geomType = me.p1.substring(4);
+				geomType = me.getTargetType().substring(4);
 				contexts.put(ci.qname(), geomType);
 			} else {
 				result.addWarning(this,101,propi.name(),propi.inClass().name());
@@ -658,8 +700,10 @@ public class JsonSchema implements Target, MessageSource {
 			return;
 		}
 
-		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {
-			PropertyInfo propi = j.next();
+		for (PropertyInfo propi : ci.properties().values()) {
+			if(!isEncoded(propi)) {
+				continue;
+			}
 			verifyNoGeometry(ci, propi);
 		}
 	}		
@@ -675,8 +719,8 @@ public class JsonSchema implements Target, MessageSource {
 			return;
 
 		String type = propi.typeInfo().name;
-		MapEntry me = options.targetTypeMapEntry(getClass().getName(), type, propi.encodingRule("json"));
-		if (me!=null && me.p2.equalsIgnoreCase("geometry")) {
+		ProcessMapEntry me = options.targetMapEntry(type, propi.encodingRule("json"));
+		if (me!=null && "geometry".equalsIgnoreCase(me.getParam())) {
 			result.addWarning(this,106,propi.name(),propi.inClass().name());
 		}
 	}	
@@ -719,6 +763,12 @@ public class JsonSchema implements Target, MessageSource {
 	 */
 	protected String messageText( int mnr ) {
 		switch( mnr ) {
+		case 7:
+			return "Schema '$1$' is not encoded.";
+		case 8: 
+			return "Class '$1$' is not encoded.";
+		case 9: 
+			return "Property '$1$' is not encoded.";
 		case 10:
 			return "System error: Exception raised '$1$'. '$2$'";
 		case 11:
@@ -750,6 +800,8 @@ public class JsonSchema implements Target, MessageSource {
 		case 10003:
 			return "??Property '$2$' in class '$1$' is a geometry property and will be ignored.";			
 
+		case 20000:
+			return "Context: $1$";
 		}
 		return null;
 	}

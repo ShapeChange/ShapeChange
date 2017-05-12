@@ -66,4 +66,12 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 				"src/test/resources/reference/html/descriptors");
 	}
 
+	@Test
+	public void testNotEncoded() {
+		
+		multiTest("src/test/resources/config/testEA_notEncoded.xml",
+				new String[] { "xsd", "json", "sql" },
+				"testResults/notEncoded",
+				"src/test/resources/reference/notEncoded");
+	}
 }

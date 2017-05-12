@@ -106,6 +106,7 @@
      <enumeration value="dataCaptureStatement"/>
      <enumeration value="primaryCode"/>
      <enumeration value="language"/>
+     <enumeration value="globalIdentifier"/>
      <!-- more will be added incrementally -->
     </restriction>
    </simpleType>
@@ -134,6 +135,7 @@
      <enumeration value="dataCaptureStatement"/>
      <enumeration value="primaryCode"/>
      <enumeration value="language"/>
+     <enumeration value="globalIdentifier"/>
      <!-- more descriptors may be added as needed -->
     </restriction>
    </simpleType>
@@ -145,6 +147,7 @@
      <enumeration value="ea:notes"/>
      <enumeration value="ea:alias"/>
      <enumeration value="sc:extract"/>
+     <enumeration value="ea:guidtoxml"/>
      <enumeration value="none"/>
     </restriction>
    </simpleType>

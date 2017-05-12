@@ -4,9 +4,10 @@
 	<!-- param: used to indicate special nature of the type, for example 'geometry' to indicate that the map entry is for a geometry type. -->
 	
 	<!-- ISO/TS 19103 -->
-	<MapEntry type="Boolean" rule="*" targetType="bit" param=""/>
-	<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying"/>
+	<MapEntry type="Boolean" rule="*" targetType="bit" param="defaultValue{true=1;false=0}"/>
+	<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying" param="defaultValue{quoted=true}"/>
 	<MapEntry type="DateTime" rule="*" targetType="datetime2" param=""/>
+	<MapEntry type="Date" rule="*" targetType="date" param="defaultValue{quoted=true}"/>
 	<MapEntry type="Integer" rule="*" targetType="int" param=""/>
 	<MapEntry type="Real" rule="*" targetType="numeric" param=""/>
 	

@@ -583,6 +583,20 @@ public class Differ {
 				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
+		
+		// perform diff for the global identifier
+		s1 = ref.globalIdentifier();
+		if (s1 == null)
+			s1 = "";
+		s2 = curr.globalIdentifier();
+		if (s2 == null)
+			s2 = "";
+		diff = stringDiff(ElementType.GLOBALIDENTIFIER, s1, s2);
+		if (diff != null) {
+			if (!diffs.containsKey(curr))
+				diffs.put(curr, new TreeSet<DiffElement>());
+			diffs.get(curr).add(diff);
+		}
 
 		// perform diff for the stereotype
 		diff = stringDiff(ElementType.STEREOTYPE,

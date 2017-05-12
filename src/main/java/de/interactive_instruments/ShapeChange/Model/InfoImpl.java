@@ -58,6 +58,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 	protected String description = null;
 	protected String legalBasis = null;
 	protected String primaryCode = null;
+	protected String globalIdentifier = null;
 	protected String language = null;
 	protected String[] examples = null;
 	protected String[] dataCaptureStatements = null;
@@ -242,6 +243,9 @@ public abstract class InfoImpl implements Info, MessageSource {
 							Options.Descriptor.ALIAS.toString()))
 						source = "ea:alias";
 					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.GLOBALIDENTIFIER.toString()))
+						source = "none";
+					else if (descriptor.equalsIgnoreCase(
 							Options.Descriptor.DEFINITION.toString()))
 						source = "sc:extract#PROLOG";
 					else if (descriptor.equalsIgnoreCase(
@@ -257,6 +261,9 @@ public abstract class InfoImpl implements Info, MessageSource {
 					else if (descriptor.equalsIgnoreCase(
 							Options.Descriptor.ALIAS.toString()))
 						source = "tag#alias";
+					else if (descriptor.equalsIgnoreCase(
+							Options.Descriptor.GLOBALIDENTIFIER.toString()))
+						source = "tag#globalIdentifier";
 					else if (descriptor.equalsIgnoreCase(
 							Options.Descriptor.DEFINITION.toString()))
 						source = "sc:extract#PROLOG";
@@ -290,6 +297,8 @@ public abstract class InfoImpl implements Info, MessageSource {
 		} else if (source.equals("ea:alias") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
 		} else if (source.equals("ea:notes") && model().type() == Options.EA7) {
+			// do nothing now, this happens in the EA classes
+		} else if (source.equals("ea:guidtoxml") && model().type() == Options.EA7) {
 			// do nothing now, this happens in the EA classes
 		} else if (source.startsWith("sc:extract#")) {
 			String token = source.replace("sc:extract#", "");
@@ -377,6 +386,13 @@ public abstract class InfoImpl implements Info, MessageSource {
 					Options.Descriptor.PRIMARYCODE.toString(), true));
 		return primaryCode;
 	}
+	
+	public String globalIdentifier() {
+		if (globalIdentifier == null)
+			globalIdentifier = options().internalize(descriptorValue(
+					Options.Descriptor.GLOBALIDENTIFIER.toString(), true));
+		return globalIdentifier;
+	}
 
 	public String derivedDocumentation(String template, String novalue) {
 		String tmp = (template == null
@@ -415,6 +431,11 @@ public abstract class InfoImpl implements Info, MessageSource {
 		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("primaryCode", s.trim());
+		
+		s = this.globalIdentifier();
+		if (s == null || s.trim().isEmpty())
+			s = nov;
+		replacements.put("globalIdentifier", s.trim());
 
 		s = this.legalBasis();
 		if (s == null || s.trim().isEmpty())
@@ -708,6 +729,10 @@ public abstract class InfoImpl implements Info, MessageSource {
 				res = res || options().hasRule(rule, encRule);
 
 			encRule = encodingRule("sch");
+			if (encRule != null)
+				res = res || options().hasRule(rule, encRule);
+			
+			encRule = encodingRule("sql");
 			if (encRule != null)
 				res = res || options().hasRule(rule, encRule);
 

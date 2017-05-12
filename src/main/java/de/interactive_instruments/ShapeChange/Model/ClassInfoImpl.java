@@ -900,13 +900,4 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 		return result;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#globalId()
-	 */
-	public String globalId() {
-		return null;
-	}
 }

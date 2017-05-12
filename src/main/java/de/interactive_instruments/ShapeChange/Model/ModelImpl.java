@@ -110,7 +110,7 @@ public abstract class ModelImpl implements Model {
 			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
-			"vocabulary", "associativeTable" };
+			"vocabulary", "associativeTable", "jsonEncodingRule", "sqlEncodingRule" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to

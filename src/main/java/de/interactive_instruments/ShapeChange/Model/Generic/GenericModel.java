@@ -222,10 +222,10 @@ public class GenericModel extends ModelImpl {
 				genCi.setDataCaptureStatements(ci.dataCaptureStatements());
 				genCi.setExamples(ci.examples());
 				genCi.setStereotypes(ci.stereotypes());
+				genCi.setGlobalIdentifier(ci.globalIdentifier());
 
 				// set properties required by ClassInfo interface
 
-				genCi.setGlobalId(ci.globalId());
 				genCi.setXmlSchemaType(ci.xmlSchemaType());
 				genCi.setIncludePropertyType(ci.includePropertyType());
 				genCi.setIncludeByValuePropertyType(
@@ -246,7 +246,7 @@ public class GenericModel extends ModelImpl {
 				genCi.setConstraints(copy(ci.constraints()));
 				genCi.setSuppressed(ci.suppressed());
 				genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
-				
+
 				genCi.setDiagrams(ci.getDiagrams());
 
 				genericClassInfos.add(genCi);
@@ -296,10 +296,10 @@ public class GenericModel extends ModelImpl {
 				genPi.setDataCaptureStatements(pi.dataCaptureStatements());
 				genPi.setExamples(pi.examples());
 				genPi.setStereotypes(pi.stereotypes());
+				genPi.setGlobalIdentifier(pi.globalIdentifier());
 
 				// set remaining properties required by PropertyInfo interface
 
-				genPi.setGlobalId(pi.globalId());
 				genPi.setDerived(pi.isDerived());
 				genPi.setReadOnly(pi.isReadOnly());
 				genPi.setAttribute(pi.isAttribute());
@@ -341,7 +341,7 @@ public class GenericModel extends ModelImpl {
 				genPi.setAssociation(pi.association());
 				genPi.setRestriction(pi.isRestriction());
 				genPi.setNilReasonAllowed(pi.nilReasonAllowed());
-				
+
 				genPropertiesById.put(genPi.id, genPi);
 			}
 		}
@@ -358,8 +358,8 @@ public class GenericModel extends ModelImpl {
 			if (ai == null || genAssociationInfosById.containsKey(ai.id()))
 				continue;
 
-			GenericAssociationInfo genAi = createCopy(ai,ai.id());
-			
+			GenericAssociationInfo genAi = createCopy(ai, ai.id());
+
 			// ensure that generic representations of association end properties
 			// are created as well
 			if (!genPropertiesById.containsKey(ai.end1().id())
@@ -973,6 +973,7 @@ public class GenericModel extends ModelImpl {
 			genPi.setOptions(pi.options());
 			genPi.setResult(pi.result());
 			genPi.setModel(model);
+			genPi.setGlobalIdentifier(pi.globalIdentifier());
 
 			genPi.setTaggedValues(pi.taggedValuesAll(), false);
 
@@ -999,7 +1000,7 @@ public class GenericModel extends ModelImpl {
 
 			genPi.setIsAppSchema(pi.isAppSchema());
 			genPi.setIsSchema(pi.isSchema());
-			
+
 			genPi.setDiagrams(pi.getDiagrams());
 
 			SortedSet<GenericPackageInfo> genChildPi = new TreeSet<GenericPackageInfo>();
@@ -1985,6 +1986,13 @@ public class GenericModel extends ModelImpl {
 		// behavior
 
 		// TODO: copy operations
+
+		/*
+		 * TODO: maybe copy tagged values of fromClass to toClass; the TVs could
+		 * be specified via configuration, or be all of them - and do not
+		 * overwrite ones already explicitly defined in subtypes [may need to be
+		 * configurable])
+		 */
 	}
 
 	/**
@@ -2006,7 +2014,7 @@ public class GenericModel extends ModelImpl {
 		genAi.setResult(ai.result());
 		genAi.setModel(this);
 		genAi.setId(copyId);
-		genAi.setGlobalId(ai.globalId());
+		genAi.setGlobalIdentifier(ai.globalIdentifier());
 		genAi.setName(ai.name());
 		genAi.setAliasName(ai.aliasName());
 		genAi.setDefinition(ai.definition());
@@ -2056,10 +2064,9 @@ public class GenericModel extends ModelImpl {
 		genCi.setDataCaptureStatements(ci.dataCaptureStatements());
 		genCi.setExamples(ci.examples());
 		genCi.setStereotypes(ci.stereotypes());
+		genCi.setGlobalIdentifier(ci.globalIdentifier());
 
 		// set properties required by ClassInfo interface
-
-		genCi.setGlobalId(ci.globalId());
 		genCi.setXmlSchemaType(ci.xmlSchemaType());
 		genCi.setIncludePropertyType(ci.includePropertyType());
 		genCi.setIncludeByValuePropertyType(ci.includeByValuePropertyType());
@@ -2084,7 +2091,7 @@ public class GenericModel extends ModelImpl {
 		genCi.setConstraints(copy(ci.constraints()));
 		genCi.setSuppressed(ci.suppressed());
 		genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
-		
+
 		genCi.setDiagrams(ci.getDiagrams());
 
 		return genCi;
@@ -2106,7 +2113,7 @@ public class GenericModel extends ModelImpl {
 		GenericPropertyInfo copy = new GenericPropertyInfo(this, copyId,
 				pi.name(), pi.categoryOfValue());
 
-		copy.setGlobalId(pi.globalId());
+		copy.setGlobalIdentifier(pi.globalIdentifier());
 		copy.setAliasName(pi.aliasName());
 		copy.setDefinition(pi.definition());
 		copy.setDescription(pi.description());

@@ -119,6 +119,11 @@ public class ShapeChangeResult {
 		}
 
 		// Functions analogous to the standard message handlers
+		public void addDetail(MessageSource ms, int mnr, String p1, String p2, String p3) {
+			String m = ms == null ? result.message(mnr) : ms.message(mnr);
+			addDetail(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		}
+		
 		public void addDetail(MessageSource ms, int mnr, String p1, String p2) {
 			String m = ms == null ? result.message(mnr) : ms.message(mnr);
 			addDetail(m.replace("$1$", p1).replace("$2$", p2));

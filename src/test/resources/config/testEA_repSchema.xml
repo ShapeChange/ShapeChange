@@ -4,12 +4,16 @@
   xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+  <!-- WARNING: THIS CONFIGURATION IS FOR THE FIRST IMPLEMENTATION OF THE
+  REPLICATION SCHEMA, WHICH IS NOW DEPRECATED. -->
   <input id="INPUT">
     <parameter name="inputModelType" value="EA7"/>
     <parameter name="inputFile" value="src/test/resources/test_replicationSchema.EAP"/>
     <parameter name="appSchemaNameRegex" value="Test.*"/>
     <parameter name="sortedSchemaOutput" value="true"/>
-    <parameter name="loadGlobalIdentifiers" value="true"/>
+    <descriptorSources>
+		<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml"/>
+	</descriptorSources>
     <xi:include href="src/main/resources/config/StandardAliases.xml"/>
   </input>
   <log>
@@ -112,7 +116,34 @@
           <rule name="rule-rep-prop-maxLength-from-size"/>
         </EncodingRule>
       </rules>
-      <xi:include href="src/main/resources/config/StandardMapEntries_ReplicationSchema.xml"/>
+      <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+		  <!-- targetType: an XML Schema simple type -->
+		  <!-- param: use 'maxLengthFromSize' to indicate that properties of the
+		    given type shall receive a maxLength restriction if global or
+		    local (via tagged value on the property) setting for 'size' is available. -->
+		  <!-- ISO/TS 19103 -->
+		  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="CharacterString"/>
+		  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="URI"/>
+		  <MapEntry rule="*" targetType="boolean" type="Boolean"/>
+		  <MapEntry rule="*" targetType="integer" type="Integer"/>
+		  <MapEntry rule="*" targetType="double" type="Decimal"/>
+		  <MapEntry rule="*" targetType="double" type="Number"/>
+		  <MapEntry rule="*" targetType="double" type="Real"/>
+		  <MapEntry rule="*" targetType="double" type="Measure"/>
+		  <MapEntry rule="*" targetType="date" type="Date"/>
+		  <MapEntry rule="*" targetType="dateTime" type="DateTime"/>
+		  <!-- ISO/TS 19107 -->
+		  <MapEntry rule="*" targetType="string" type="GM_Point"/>
+		  <MapEntry rule="*" targetType="string" type="GM_MultiPoint"/>
+		  <MapEntry rule="*" targetType="string" type="GM_Curve"/>
+		  <MapEntry rule="*" targetType="string" type="GM_MultiCurve"/>
+		  <MapEntry rule="*" targetType="string" type="GM_Surface"/>
+		  <MapEntry rule="*" targetType="string" type="GM_MultiSurface"/>
+		  <MapEntry rule="*" targetType="string" type="GM_Object"/>
+		  <!-- ISO 19108 -->
+		  <MapEntry rule="*" targetType="duration" type="TM_PeriodDuration"/>
+		  <!-- ... more to be added as required -->
+		</mapEntries>
     </Target>
   </targets>
 </ShapeChangeConfiguration>

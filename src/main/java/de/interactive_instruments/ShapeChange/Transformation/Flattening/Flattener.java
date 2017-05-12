@@ -2619,21 +2619,21 @@ public class Flattener implements Transformer {
 						copy.setInClass(genCi);
 
 						// merge global identifier information
-						if (genCi.globalId() == null) {
+						if (genCi.globalIdentifier() == null) {
 							/*
 							 * globalId from uGPi can be used as-is, which is
 							 * the default for the copy
 							 */
-						} else if (uGPi.globalId() == null) {
+						} else if (uGPi.globalIdentifier() == null) {
 
 							// use the global id from genPi
-							copy.setGlobalId(relPi.globalId());
+							copy.setGlobalIdentifier(relPi.globalIdentifier());
 
 						} else {
 
 							// merge global ids
-							copy.setGlobalId(
-									relPi.globalId() + "." + uGPi.globalId());
+							copy.setGlobalIdentifier(relPi.globalIdentifier()
+									+ "." + uGPi.globalIdentifier());
 						}
 
 						/* handle derived properties */
@@ -2945,21 +2945,23 @@ public class Flattener implements Transformer {
 							GenericPropertyInfo copy = typeGPi.createCopy(id);
 
 							// merge global identifier information
-							if (genCi.globalId() == null) {
+							if (genCi.globalIdentifier() == null) {
 								/*
 								 * globalId from typeGPi can be used as-is,
 								 * which is the default for the copy
 								 */
-							} else if (typeGPi.globalId() == null) {
+							} else if (typeGPi.globalIdentifier() == null) {
 
 								// use the global id from genPi
-								copy.setGlobalId(genPi.globalId());
+								copy.setGlobalIdentifier(
+										genPi.globalIdentifier());
 
 							} else {
 
 								// merge global ids
-								copy.setGlobalId(genPi.globalId() + "."
-										+ typeGPi.globalId());
+								copy.setGlobalIdentifier(
+										genPi.globalIdentifier() + "."
+												+ typeGPi.globalIdentifier());
 							}
 
 							/* handle derived properties */
@@ -2975,7 +2977,8 @@ public class Flattener implements Transformer {
 							copy.setAssociation(null);
 
 							/*
-							 * handle descriptors (except name and alias)
+							 * handle descriptors (except name, alias, and
+							 * globalIdentifier)
 							 */
 							if (mergeDescriptors) {
 								copy.setDefinition(
@@ -4142,10 +4145,11 @@ public class Flattener implements Transformer {
 					copy.setSequenceNumber(genPiSeqNum.createCopyWithSuffix(i),
 							true);
 
-					if (options.isLoadGlobalIdentifiers()) {
-						String newGlobalId = genPi.globalId()
+//					if (options.isLoadGlobalIdentifiers()) {
+						if (genPi.globalIdentifier() != null) {
+						String newGlobalId = genPi.globalIdentifier()
 								.concat("[" + i + "]");
-						copy.setGlobalId(newGlobalId);
+						copy.setGlobalIdentifier(newGlobalId);
 					}
 
 					propsToAdd.add(copy);
@@ -4193,8 +4197,8 @@ public class Flattener implements Transformer {
 			inclusionPattern = Pattern.compile(inclusionRegex);
 		}
 
-		boolean addAttributesAtBottom = trfConfig
-				.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM);
+		boolean addAttributesAtBottom = trfConfig.hasRule(
+				RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM);
 
 		/*
 		 * Identify supertypes and leafs in selected schemas. A class is only
@@ -4295,7 +4299,7 @@ public class Flattener implements Transformer {
 
 				if (supertypesOfSuperclass == null
 						|| supertypesOfSuperclass.size() == 0) {
-					
+
 					// copy relevant contents down to subtypes
 					if (addAttributesAtBottom) {
 						copyContentToSubtypes(genModel, superclass,

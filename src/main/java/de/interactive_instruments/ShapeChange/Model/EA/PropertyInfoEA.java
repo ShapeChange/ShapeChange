@@ -135,8 +135,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	/** Cache set of constraints */
 	protected Vector<Constraint> constraintsCache = null;
 
-	protected String globalIdentifier = null;
-
 	/** Create a PropertyInfo object given an EA Attribute. */
 	public PropertyInfoEA(EADocument doc, ClassInfoEA ci, Attribute attr) {
 
@@ -154,11 +152,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		eaName = eaAttribute.GetName();
 		if (eaName != null)
 			eaName = eaName.trim();
-
-		if (options().isLoadGlobalIdentifiers()) {
-			globalIdentifier = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaAttribute.GetAttributeGUID());
-		}
 
 		// Assign sequence number. */
 		String s = taggedValue("sequenceNumber");
@@ -256,15 +249,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			eaName = "role_" + eaPropertyId;
 		}
 		eaName = eaName.trim();
-
-		if (options().isLoadGlobalIdentifiers()) {
-			String connectorGUID = ai.eaConnector.GetConnectorGUID();
-			String xmlGuid = document.repository.GetProjectInterface()
-					.GUIDtoXML(connectorGUID);
-			String assocRoleGUID = "EAID_" + (reversed ? "src" : "dst")
-					+ xmlGuid.substring(7);
-			globalIdentifier = assocRoleGUID;
-		}
 
 		// Type info
 		typeClassInfo = tci;
@@ -590,21 +574,25 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				// AssociationEnds with Tagged Value "xsdEncodingRule" ==
 				// "notEncoded" are skipped
-				if (nav) {
-					for (RoleTag rt : eaConnectorEnd.GetTaggedValues()) {
-						if (rt.GetTag().equals("xsdEncodingRule"))
-							if (rt.GetValue().toLowerCase()
-									.equals(Options.NOT_ENCODED))
-								nav = false;
-					}
-				}
+				
+				// 2017-02-21 JE: if xsdEncodingRule=notEncoded the role may 
+				// still be relevant for other encodings; thus, this needs 
+				// to be handled in the XmlSchema target.
+//				if (nav) {
+//					for (RoleTag rt : eaConnectorEnd.GetTaggedValues()) {
+//						if (rt.GetTag().equals("xsdEncodingRule"))
+//							if (rt.GetValue().toLowerCase()
+//									.equals(Options.NOT_ENCODED))
+//								nav = false;
+//					}
+//				}
 
 				// navigable only with a name, but not with a default name
 				if (eaName == null
 						|| eaName
 								.substring(0, eaName.length() < 5
 										? eaName.length() : 5)
-						.compareTo("role_") == 0)
+								.compareTo("role_") == 0)
 					nav = false;
 
 				isNavigableCache = nav;
@@ -1063,7 +1051,36 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	}
 
 	@Override
-	public String globalId() {
-		return globalIdentifier;
+	public String globalIdentifier() {
+
+		// Obtain global identifier from default implementation
+		String gi = super.globalIdentifier();
+		// If not present, obtain from EA model directly
+		if ((gi == null || gi.length() == 0)
+				&& descriptorSource(
+						Options.Descriptor.GLOBALIDENTIFIER.toString())
+								.equals("ea:guidtoxml")
+//				&& options().isLoadGlobalIdentifiers()
+				) {
+
+			if (this.isAttribute()) {
+
+				gi = document.repository.GetProjectInterface()
+						.GUIDtoXML(eaAttribute.GetAttributeGUID());
+
+			} else {
+
+				String connectorGUID = associationInfo.eaConnector
+						.GetConnectorGUID();
+				String xmlGuid = document.repository.GetProjectInterface()
+						.GUIDtoXML(connectorGUID);
+				String assocRoleGUID = "EAID_" + (reversedAssoc ? "src" : "dst")
+						+ xmlGuid.substring(7);
+				gi = assocRoleGUID;
+			}
+
+			super.globalIdentifier = options().internalize(gi);
+		}
+		return gi;
 	}
 }

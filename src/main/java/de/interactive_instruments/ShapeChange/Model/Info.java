@@ -51,6 +51,13 @@ public interface Info extends Comparable<Info> {
 	public Model model();
 
 	/**
+	 * @return an identifier of the model element that is globally unique, i.e.
+	 *         unique across models, or <code>null</code> if such an identifier
+	 *         is not available
+	 */
+	public String globalIdentifier();
+
+	/**
 	 * Return unique id of model element (unique within the model).
 	 */
 	public String id();

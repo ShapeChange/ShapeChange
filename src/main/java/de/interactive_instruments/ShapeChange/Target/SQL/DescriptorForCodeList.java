@@ -39,19 +39,19 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 public class DescriptorForCodeList {
 
 	private String descriptorName;
-	private String normalizedColumnName;
+	private String columnName;
 	private Integer size;
 
 	/**
 	 * @param descriptorName
-	 * @param normalizedColumnName
+	 * @param columnName
 	 * @param size
 	 */
 	public DescriptorForCodeList(String descriptorName,
-			String normalizedColumnName, Integer size) {
+			String columnName, Integer size) {
 		super();
 		this.descriptorName = descriptorName;
-		this.normalizedColumnName = normalizedColumnName;
+		this.columnName = columnName;
 		this.size = size;
 	}
 
@@ -63,10 +63,10 @@ public class DescriptorForCodeList {
 	}
 
 	/**
-	 * @return the normalizedColumnName
+	 * @return the columnName
 	 */
-	public String getNormalizedColumnName() {
-		return normalizedColumnName;
+	public String getColumnName() {
+		return columnName;
 	}
 
 	/**

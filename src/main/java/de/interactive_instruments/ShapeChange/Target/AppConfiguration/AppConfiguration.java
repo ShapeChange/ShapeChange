@@ -48,9 +48,9 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -389,15 +389,10 @@ public class AppConfiguration implements Target, MessageSource {
 		// try to get type from map entries
 		// TBD: we use 'sql' as platform code because it is one of the platforms
 		// registered in the implementation of encodingRule()
-		MapEntry me = options.targetTypeMapEntry(getClass().getName(),
-				piTypeName, pi.encodingRule("sql"));
+		ProcessMapEntry me = options.targetMapEntry(piTypeName, pi.encodingRule("sql"));
 
-		if (me != null) {
-			/*
-			 * me.p1 contains the value of the "targetType" attribute in the
-			 * MapEntry, while me.p1 contains the param attribute value
-			 */
-			return me.p1;
+		if (me != null && me.hasTargetType()) {
+			return me.getTargetType();
 		}
 
 		// try to identify a type mapping based upon the category of the

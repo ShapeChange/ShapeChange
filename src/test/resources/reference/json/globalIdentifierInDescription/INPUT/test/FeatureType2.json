@@ -1,0 +1,45 @@
+{
+	"$schema":"http://json-schema.org/draft-03/schema#",
+	"id":"http://portele.de/ows9/test/FeatureType2.json",
+	"title":"FeatureType2",
+	"description":"EAID_CC8E89F8_7CC8_4af4_942A_C928856361C4",
+	"type":"object",
+	"properties":{
+		"entityType":{
+			"title":"feature/object type",
+			"type":"string",
+			"default":"FeatureType2"
+		},
+		"attributes":{
+			"title":"feature attributes",
+			"type":"object",
+			"properties":{
+				"codelist":{
+					"title":"codelist",
+					"description":"EAID_32248B20_2C0F_4fd8_9B6B_4B25ECFE0834",
+					"type":["string","null"],
+					"format":"uri",
+					"required":true
+				},
+				"codelist_nullReason":{
+					"title":"Reason for null value in property codelist",
+					"type":"string"
+				},
+				"union":{
+					"title":"union",
+					"description":"EAID_D667C723_BB8D_4d52_A708_8CEC90AADFC3",
+					"$ref":"http://portele.de/ows9/test/Union.json"
+				},
+				"role1":{
+					"title":"role1",
+					"description":"EAID_src929FE8_B89A_48b3_913A_9865EC35C1C9",
+					"type":"array",
+					"items":{
+						"type":"string",
+						"format":"uri"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:t1="http://example.org/shapechange/schema/rep" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema/rep" version="1">
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AssociationClass" type="t1:AssociationClassType">
+    <annotation/>
+  </element>
+  <complexType name="AssociationClassType">
+    <sequence>
+      <element name="objectidentifier" type="string"/>
+      <element name="pOfAssociationClass" type="string"/>
+      <element name="roleFT4toFT3_FK" type="string"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType1" type="t1:FeatureType1Type">
+    <annotation/>
+  </element>
+  <complexType name="FeatureType1Type">
+    <sequence>
+      <element name="objectidentifier" type="string"/>
+      <element name="roleFT1toFT3_FK" type="string"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType1_roleFT1toFT2" type="t1:FeatureType1_roleFT1toFT2Type">
+    <annotation/>
+  </element>
+  <complexType name="FeatureType1_roleFT1toFT2Type">
+    <sequence>
+      <element name="FeatureType1objectidentifier" type="string"/>
+      <element name="MappingForFeatureType2objectidentifier" type="MappingForFeatureType2"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType3" type="t1:FeatureType3Type">
+    <annotation/>
+  </element>
+  <complexType name="FeatureType3Type">
+    <sequence>
+      <element name="objectidentifier" type="string"/>
+      <element name="pFT3" type="string"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType4" type="t1:FeatureType4Type">
+    <annotation/>
+  </element>
+  <complexType name="FeatureType4Type">
+    <sequence>
+      <element name="objectidentifier" type="string"/>
+      <element name="pWithUnmappedValueType" type="string"/>
+      <element name="roleFT4toFT3_FK" type="string"/>
+    </sequence>
+  </complexType>
+</schema>

@@ -35,21 +35,20 @@ import java.util.Map;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 public interface DatabaseStrategy {
-	
-	/**
-	 * @param b
-	 * @return the representation of the boolean value suitable for the strategy
-	 */
-	String convertDefaultValue(boolean b);
 
 	/**
 	 *
 	 * @return the database data type to be used as data type for primary key
 	 *         columns
 	 */
-	String primaryKeyDataType();
+	public String primaryKeyDataType();
 
 	/**
 	 *
@@ -60,62 +59,64 @@ public interface DatabaseStrategy {
 	 * @return (complex) database data type to be used as data type for the
 	 *         geometry column
 	 */
-	String geometryDataType(ProcessMapEntry me, int srid);
+	public String geometryDataType(ProcessMapEntry me, int srid);
 
-	String unlimitedLengthCharacterDataType();
+	public String unlimitedLengthCharacterDataType();
 
-	String limitedLengthCharacterDataType(int size);
+	public String limitedLengthCharacterDataType(int size);
 
 	/**
 	 * @param indexName
-	 * @param tableName
-	 * @param columnName
+	 * @param table
+	 * @param column
 	 * @param geometryCharacteristics
 	 *            additional geometry specific characteristics - can be
 	 *            <code>null</code>
 	 * @return
 	 */
-	String geometryIndexColumnPart(String indexName, String tableName, String columnName,
-			Map<String, String> geometryCharacteristics);
+	public Statement geometryIndexColumnPart(String indexName, Table table,
+			Column column, Map<String, String> geometryCharacteristics);
 
 	/**
 	 *
-	 * @param normalizedClassName
-	 * @param columnname
+	 * @param tableWithColumn
+	 * @param columForGeometryTypedProperty
 	 * @param srid
-	 * @return update statement, without ; and line ending, this is done in
-	 *         {@link SqlDdl}
+	 * @return update statement; may be <code>null</code> if this operation is
+	 *         not applicable to the actual database strategy
 	 */
-	String geometryMetadataUpdateStatement(String normalizedClassName,
-			String columnname, int srid);
-
-	/**
-	 *
-	 * @param name
-	 * @return name that is according to the default case of the database
-	 *         system, and that does not exceed the max length for names in the
-	 *         database system
-	 */
-	String normalizeName(String name);
+	public Statement geometryMetadataUpdateStatement(Table tableWithColumn,
+			Column columForGeometryTypedProperty, int srid);
 
 	/**
 	 * Database specific validation of the parameters (including their
 	 * characteristics) defined by the map entries declared for the SQL DDL
 	 * target.
+	 * 
 	 * @param mapEntryByType
 	 * @param mepp
-	 * @return <code>true</code> if the parameters are valid, else <code>false</code>
+	 * @return <code>true</code> if the parameters are valid, else
+	 *         <code>false</code>
 	 */
-	boolean validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp);
+	boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
+			MapEntryParamInfos mepp);
 
 	/**
-	 *
-	 * @param tableName
-	 * @param propertyName
-	 * @return name that is according to the default case of the database
-	 *         system, and that does not exceed the max length for names in the
-	 *         database system
+	 * For a property with a value type that does not store time (e.g. ISO 19103
+	 * - this check has already been performed), create an expression to
+	 * restrict the field (i.e., the given column representing the property) in
+	 * case that the data type of the field also stores time. In such a
+	 * situation, ensure that the time stored in the field is always 00:00:00.
+	 * Example: the value type of the property is (ISO 19103) "Date" and the
+	 * type of the database field is Oracle DATE (which stores both date and
+	 * time).
+	 * 
+	 * @param pi
+	 * @param columnForPi
+	 * @return the expression to restrict time of date, or <code>null</code> if
+	 *         this is not necessary (or not implemented; check the actual
+	 *         database strategies for details)
 	 */
-	String createNameCheckConstraint(String tableName, String propertyName);
-
+	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
+			PropertyInfo pi, Column columnForPi);
 }

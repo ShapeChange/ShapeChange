@@ -33,12 +33,17 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -54,14 +59,6 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 	public SQLServerStrategy(ShapeChangeResult result) {
 		this.result = result;
-	}
-
-	@Override
-	public String convertDefaultValue(boolean b) {
-		if (b)
-			return "'true'";
-		else
-			return "'false'";
 	}
 
 	@Override
@@ -82,67 +79,67 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public String limitedLengthCharacterDataType(int size) {
-		return "nvarchar(" + size + ")";
+
+		/*
+		 * Apparently there is a restriction how long a limited nvarchar can be
+		 * (4000). Source:
+		 * https://msdn.microsoft.com/de-de/library/ms186939.aspx
+		 */
+
+		if (size > 4000) {
+			// TODO: log warning?
+			return "nvarchar(max)";
+		} else {
+			return "nvarchar(" + size + ")";
+		}
 	}
 
 	@Override
-	public String geometryIndexColumnPart(String indexName, String tableName,
-			String columnName, Map<String, String> geometryCharacteristics) {
+	public Statement geometryIndexColumnPart(String indexName, Table table,
+			Column column, Map<String, String> geometryCharacteristics) {
+
+		Index index = new Index(indexName);
+		index.setType("SPATIAL");
+
+		index.addColumn(column);
 
 		// TBD: declaration of tesselation
-		String using = null;
 		if (geometryCharacteristics.containsKey(IDX_PARAM_USING)) {
-			using = geometryCharacteristics.get(IDX_PARAM_USING);
+			index.addSpec(
+					"USING " + geometryCharacteristics.get(IDX_PARAM_USING));
 		}
-		using = (using == null ? "" : "USING " + using + " ");
 
 		String boundingBox = "BOUNDING_BOX = (-180,-90,180,90)";
 		if (geometryCharacteristics.containsKey(IDX_PARAM_BOUNDING_BOX)) {
 			boundingBox = "BOUNDING_BOX = "
 					+ geometryCharacteristics.get(IDX_PARAM_BOUNDING_BOX);
 		}
+		index.addSpec("WITH (" + boundingBox + ")");
 
-		return "CREATE SPATIAL INDEX " + indexName + " ON " + tableName + "("
-				+ columnName + ") " + using + "WITH (" + boundingBox + ")";
+		CreateIndex cIndex = new CreateIndex();
+		cIndex.setIndex(index);
+		cIndex.setTable(table);
+
+		return cIndex;
 	}
 
 	@Override
-	public String geometryMetadataUpdateStatement(String normalizedClassName,
-			String columnname, int srid) {
+	public Statement geometryMetadataUpdateStatement(Table tableWithColumn,
+			Column columForGeometryTypedProperty, int srid) {
 
 		// TBD: should we constrain the SRID as follows?
 		// ALTER TABLE xyz ADD CONSTRAINT cname CHECK (column.STSrid = srid)
-		return "";
-	}
-
-	@Override
-	public String normalizeName(String name) {
-
-		String normalizedName = StringUtils.substring(name, 0, 128);
-		if (name.length() != normalizedName.length()) {
-			result.addWarning(this, 1, name, normalizedName);
-		}
-		return normalizedName;
+		return null;
 	}
 
 	@Override
 	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
 			MapEntryParamInfos mepp) {
-		
+
 		// TODO implement specific checks
-		
+
 		// BOUNDING_BOX must contain four numbers, etc.
 		return true;
-	}
-
-	@Override
-	public String createNameCheckConstraint(String tableName,
-			String propertyName) {
-
-		String truncatedName = StringUtils
-				.substring(tableName + "_" + propertyName, 0, 125);
-		String checkConstraintName = truncatedName + "_CK";
-		return checkConstraintName;
 	}
 
 	@Override
@@ -150,10 +147,20 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class SQLServerStrategy";
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
 		default:
 			return "(Unknown message)";
 		}
+	}
+
+	/**
+	 * TBD - not implemented yet
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Target.SQL.DatabaseStrategy#expressionForCheckConstraintToRestrictTimeOfDate(de.interactive_instruments.ShapeChange.Model.PropertyInfo,
+	 *      de.interactive_instruments.ShapeChange.Target.SQL.structure.Column)
+	 */
+	@Override
+	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
+			PropertyInfo pi, Column columnForPi) {
+		return null;
 	}
 }

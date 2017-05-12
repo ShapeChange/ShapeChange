@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
   <!-- targetType: an XML Schema simple type -->
-  <!-- param: use 'maxLengthFromSize' to indicate that properties of the
-    given type shall receive a maxLength restriction if global or
-    local (via tagged value on the property) setting for 'size' is available. -->
   <!-- ISO/TS 19103 -->
-  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="CharacterString"/>
-  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="URI"/>
-  <MapEntry rule="*" targetType="boolean" type="Boolean"/>
-  <MapEntry rule="*" targetType="integer" type="Integer"/>
-  <MapEntry rule="*" targetType="double" type="Decimal"/>
-  <MapEntry rule="*" targetType="double" type="Number"/>
-  <MapEntry rule="*" targetType="double" type="Real"/>
-  <MapEntry rule="*" targetType="double" type="Measure"/>
-  <MapEntry rule="*" targetType="date" type="Date"/>
-  <MapEntry rule="*" targetType="dateTime" type="DateTime"/>
+  <MapEntry rule="*" type="CharacterString" targetType="string" param="textOrCharacterVarying"/>
+  <MapEntry rule="*" type="URI" targetType="string" param="textOrCharacterVarying"/>
+  <MapEntry rule="*" type="Boolean" targetType="boolean"/>
+  <MapEntry rule="*" type="Integer" targetType="integer"/>
+  <MapEntry rule="*" type="Decimal" targetType="double"/>
+  <MapEntry rule="*" type="Number" targetType="double"/>
+  <MapEntry rule="*" type="Real" targetType="double"/>
+  <MapEntry rule="*" type="Measure" targetType="double"/>
+  <MapEntry rule="*" type="Date" targetType="date"/>
+  <MapEntry rule="*" type="DateTime" targetType="dateTime"/>
   <!-- ISO/TS 19107 -->
-  <MapEntry rule="*" targetType="string" type="GM_Point"/>
-  <MapEntry rule="*" targetType="string" type="GM_MultiPoint"/>
-  <MapEntry rule="*" targetType="string" type="GM_Curve"/>
-  <MapEntry rule="*" targetType="string" type="GM_MultiCurve"/>
-  <MapEntry rule="*" targetType="string" type="GM_Surface"/>
-  <MapEntry rule="*" targetType="string" type="GM_MultiSurface"/>
-  <MapEntry rule="*" targetType="string" type="GM_Object"/>
+  <MapEntry rule="*" type="GM_Point" targetType="string" param="geometry{layer_gtype=point}"/>
+  <MapEntry rule="*" type="GM_MultiPoint" targetType="string" param="geometry{layer_gtype=multipoint}"/>
+  <MapEntry rule="*" type="GM_Curve" targetType="string" param="geometry{layer_gtype=line}"/>
+  <MapEntry rule="*" type="GM_MultiCurve" targetType="string" param="geometry{layer_gtype=multiline}"/>
+  <MapEntry rule="*" type="GM_Surface" targetType="string" param="geometry{layer_gtype=polygon}"/>
+  <MapEntry rule="*" type="GM_MultiSurface" targetType="string" param="geometry{layer_gtype=multipolygon}"/>
+  <MapEntry rule="*" type="GM_Object" targetType="string" param="geometry{layer_gtype=collection}"/>
   <!-- ISO 19108 -->
-  <MapEntry rule="*" targetType="duration" type="TM_PeriodDuration"/>
+  <MapEntry rule="*" type="TM_PeriodDuration" targetType="duration"/>
   <!-- ... more to be added as required -->
 </mapEntries>

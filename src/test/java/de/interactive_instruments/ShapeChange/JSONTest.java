@@ -59,4 +59,13 @@ public class JSONTest extends WindowsBasicTest {
 				"src/test/resources/reference/json/geoservices_extended");
 	}
 
+	@Test
+	public void testJsonWithGlobalIdentifiers() {
+
+		multiTest("src/test/resources/config/testEA_JsonGsrExtended_globalIdentifiers.xml",
+				new String[] { "json" },
+				"testResults/json/globalIdentifierInDescription",
+				"src/test/resources/reference/json/globalIdentifierInDescription");
+	}
+
 }

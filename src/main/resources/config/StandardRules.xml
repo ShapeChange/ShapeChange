@@ -36,6 +36,8 @@
   </EncodingRule>
 	<EncodingRule name="notEncoded" extends="*">
 		<rule name="rule-xsd-all-notEncoded"/>
+		<rule name="rule-json-all-notEncoded"/>
+		<rule name="rule-sql-all-notEncoded"/>
 	</EncodingRule>
 	<EncodingRule name="citygml-ade" extends="iso19136_2007">
 		<rule name="req-xsd-cls-suppress-supertype"/>

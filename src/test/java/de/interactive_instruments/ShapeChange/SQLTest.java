@@ -85,6 +85,43 @@ public class SQLTest extends WindowsBasicTest {
 		multiTest("src/test/resources/config/testEA_sql_codelists.xml",
 				new String[] { "sql" }, "testResults/sql/codelists",
 				"src/test/resources/reference/sql/codelists");
+		
+		/*
+		 * SQL - codelist conversion with PODS specific rule
+		 */
+		multiTest("src/test/resources/config/testEA_sql_codelists_pods.xml",
+				new String[] { "sql" }, "testResults/sql/codelists_pods",
+				"src/test/resources/reference/sql/codelists_pods");
+	}
+	
+	@Test
+	public void testRuleSqlPropCheckConstraintRestrictTimeOfDate() {
+		
+		multiTest(
+				"src/test/resources/config/testEA_sql_restrictTimeOfDate.xml",
+				new String[] { "sql" },
+				"testResults/sql/restrictTimeOfDate",
+				"src/test/resources/reference/sql/restrictTimeOfDate");
+	}
+	
+	@Test
+	public void testDefaultValues() {
+		
+		multiTest(
+				"src/test/resources/config/testEA_sql_defaultValues.xml",
+				new String[] { "sql" },
+				"testResults/sql/defaultValues",
+				"src/test/resources/reference/sql/defaultValues");
+	}
+	
+	@Test
+	public void testDdlAndReplicationSchema() {
+		
+		multiTest(
+				"src/test/resources/config/testEA_sqlDdlAndRepSchema.xml",
+				new String[] { "sql, xsd" },
+				"testResults/sql/ddlAndRepSchema",
+				"src/test/resources/reference/sql/ddlAndRepSchema");
 	}
 
 }

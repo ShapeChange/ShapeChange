@@ -118,7 +118,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		eaPackage = pack;
 		eaPackageId = eaPackage.GetPackageID();
 		eaName = eaPackage.GetName().trim();
-
+		
 		// Store the possibly associated EA element (describing the package) and
 		// its id.
 		eaPackageElmt = packelmt;
@@ -381,4 +381,25 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		// invalidate cache
 		taggedValuesCache = null;
 	} // taggedValue()
+	
+	@Override
+	public String globalIdentifier() {
+
+		// Obtain global identifier from default implementation
+		String gi = super.globalIdentifier();
+		// If not present, obtain from EA model directly
+		if ((gi == null || gi.length() == 0)
+				&& descriptorSource(
+						Options.Descriptor.GLOBALIDENTIFIER.toString())
+								.equals("ea:guidtoxml")
+//				&& options().isLoadGlobalIdentifiers()
+				) {
+
+			gi = document.repository.GetProjectInterface()
+					.GUIDtoXML(eaPackage.GetPackageGUID());
+
+			super.globalIdentifier = options().internalize(gi);
+		}
+		return gi;
+	}
 }

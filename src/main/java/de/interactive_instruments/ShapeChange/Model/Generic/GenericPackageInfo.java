@@ -54,6 +54,7 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected ShapeChangeResult result = null;
 	protected GenericModel model = null;
 	protected String id = null;
+	protected String globalIdentifier = null;
 	protected String name = null;
 
 	protected String targetNamespace = null;
@@ -833,6 +834,19 @@ public class GenericPackageInfo extends PackageInfoImpl {
 			this.supplierIds = tmp_supplierIds;
 		}
 
+	}
+
+	
+	@Override
+	public String globalIdentifier() {
+		return globalIdentifier;
+	}
+
+	/**
+	 * @param globalIdentifier the globalIdentifier to set
+	 */
+	public void setGlobalIdentifier(String globalIdentifier) {
+		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 }

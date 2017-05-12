@@ -127,7 +127,9 @@ public abstract class BasicTest {
 			fail("Result directory " + dirResults
 					+ " is not a directory or an I/O error occurred.");
 		} else {
+
 			for (File fres : filesInResDir) {
+
 				if (fres.isDirectory()) {
 					String pathAdd = File.separator + fres.getName();
 					multiTestInDirs(fileFormatsToCheck, dirResults + pathAdd,
@@ -165,9 +167,15 @@ public abstract class BasicTest {
 											+ fres.getName(),
 									dirReference + File.separator
 											+ fres.getName(),
-									true, true);
+									true, true, true);
 						} else if (fresExtension.equals("ttl")) {
 							similarJenaModel(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
+						} else if (fresExtension.equals("json")) {
+							similarJson(
 									dirResults + File.separator
 											+ fres.getName(),
 									dirReference + File.separator
@@ -209,10 +217,17 @@ public abstract class BasicTest {
 											+ fres.getName(),
 									dirReference + File.separator
 											+ fres.getName(),
-									true, true);
+									true, true, true);
 						} else if (fresExtension.equals("ttl")
 								&& fileFormatsToCheck.contains("ttl")) {
 							similarJenaModel(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
+						} else if (fresExtension.equals("json")
+								&& fileFormatsToCheck.contains("json")) {
+							similarJson(
 									dirResults + File.separator
 											+ fres.getName(),
 									dirReference + File.separator
@@ -243,7 +258,8 @@ public abstract class BasicTest {
 	 *            trimmed before comparing
 	 */
 	private void similarTxt(String txtFileName, String referenceTxtFileName,
-			boolean normalizeWhitespace, boolean trimEachLine) {
+			boolean normalizeWhitespace, boolean trimEachLine,
+			boolean ignoreLinesWithWhitespaceOnly) {
 
 		List<String> lines = new ArrayList<String>();
 		List<String> linesReference = new ArrayList<String>();
@@ -256,7 +272,9 @@ public abstract class BasicTest {
 			reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 			String txt;
 			while ((txt = reader.readLine()) != null) {
-				lines.add(txt);
+				if (!txt.trim().isEmpty() || !ignoreLinesWithWhitespaceOnly) {
+					lines.add(txt);
+				}
 			}
 		} catch (Exception e) {
 			fail("Could not read file to compare at " + txtFileName);
@@ -279,7 +297,10 @@ public abstract class BasicTest {
 					new InputStreamReader(streamReference, "UTF-8"));
 			String txtReference;
 			while ((txtReference = readerReference.readLine()) != null) {
-				linesReference.add(txtReference);
+				if (!txtReference.trim().isEmpty()
+						|| !ignoreLinesWithWhitespaceOnly) {
+					linesReference.add(txtReference);
+				}
 			}
 		} catch (Exception e) {
 			fail("Could not read reference file at " + referenceTxtFileName);
@@ -297,11 +318,11 @@ public abstract class BasicTest {
 
 		if (lines.size() > linesReference.size()) {
 			fail("Reference file has " + linesReference.size()
-					+ " lines. File to be compared has less lines("
+					+ " lines. File to be compared has more lines("
 					+ lines.size() + ").");
 		} else if (lines.size() < linesReference.size()) {
 			fail("Reference file has " + linesReference.size()
-					+ " lines. File to be compared has more lines("
+					+ " lines. File to be compared has less lines("
 					+ lines.size() + ").");
 		} else {
 
@@ -420,13 +441,15 @@ public abstract class BasicTest {
 		if (sqls != null) {
 			for (String sql : sqls) {
 				similarTxt(basedirResults + "/" + sql + ".sql",
-						basedirReference + "/" + sql + ".sql", true, true);
+						basedirReference + "/" + sql + ".sql", true, true,
+						true);
 			}
 		}
 	}
 
 	protected void jsonTest(String config, String[] typenames,
 			String basedirResults, String basedirReference) {
+
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
 		long end = (new Date()).getTime();
@@ -436,26 +459,37 @@ public abstract class BasicTest {
 		if (testTime)
 			assertTrue("Exceution time too long", end - start < 60000);
 
-		ObjectMapper m = new ObjectMapper();
 		for (String typename : typenames) {
-			try {
-				JsonNode rootNodeResult = m.readValue(
-						new File(
-								basedirResults + "/test/" + typename + ".json"),
-						JsonNode.class);
-				JsonNode rootNodeReference = m.readValue(new File(
-						basedirReference + "/test/" + typename + ".json"),
-						JsonNode.class);
-				boolean equal = rootNodeResult.equals(rootNodeReference);
-				assertTrue("JSON output differs from reference result for type "
-						+ typename, equal);
-			} catch (JsonParseException e) {
-				fail("JSON Parse Exception: " + e.getMessage());
-			} catch (JsonMappingException e) {
-				fail("JSON Mapping Exception: " + e.getMessage());
-			} catch (IOException e) {
-				fail("IO Exception: " + e.getMessage());
-			}
+
+			String fileName = basedirResults + "/test/" + typename + ".json";
+			String referenceFileName = basedirReference + "/test/" + typename
+					+ ".json";
+
+			similarJson(fileName, referenceFileName);
+		}
+	}
+
+	private void similarJson(String fileName, String referenceFileName) {
+
+		ObjectMapper m = new ObjectMapper();
+
+		try {
+			JsonNode rootNodeResult = m.readValue(new File(fileName),
+					JsonNode.class);
+			JsonNode rootNodeReference = m
+					.readValue(new File(referenceFileName), JsonNode.class);
+			boolean equal = rootNodeResult.equals(rootNodeReference);
+			assertTrue(
+					"JSON output differs from reference result. Result file: "
+							+ fileName + " - Reference file: "
+							+ referenceFileName,
+					equal);
+		} catch (JsonParseException e) {
+			fail("JSON Parse Exception: " + e.getMessage());
+		} catch (JsonMappingException e) {
+			fail("JSON Mapping Exception: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IO Exception: " + e.getMessage());
 		}
 	}
 

@@ -75,8 +75,6 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	/** Cache set for stereotypes */
 	// this map is already defined in InfoImpl
 
-	protected String globalIdentifier = null;
-
 	/** AssociationInfoEA Ctor */
 	AssociationInfoEA(EADocument doc, Connector conn, int id) {
 
@@ -87,11 +85,6 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 		// Fetch the necessary data from the connector
 		name = eaConnector.GetName();
-
-		if (options().isLoadGlobalIdentifiers()) {
-			globalIdentifier = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaConnector.GetConnectorGUID());
-		}
 
 		String dirText = eaConnector.GetDirection();
 		if (dirText.equals("Source -> Destination"))
@@ -312,7 +305,23 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	}
 
 	@Override
-	public String globalId() {
-		return globalIdentifier;
+	public String globalIdentifier() {
+
+		// Obtain global identifier from default implementation
+		String gi = super.globalIdentifier();
+		// If not present, obtain from EA model directly
+		if ((gi == null || gi.length() == 0)
+				&& descriptorSource(
+						Options.Descriptor.GLOBALIDENTIFIER.toString())
+								.equals("ea:guidtoxml")
+//				&& options().isLoadGlobalIdentifiers()
+				) {
+
+			gi = document.repository.GetProjectInterface()
+					.GUIDtoXML(eaConnector.GetConnectorGUID());
+
+			super.globalIdentifier = options().internalize(gi);
+		}
+		return gi;
 	}
 }
