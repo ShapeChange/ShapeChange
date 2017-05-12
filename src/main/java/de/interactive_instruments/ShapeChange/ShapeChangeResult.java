@@ -68,15 +68,13 @@ public class ShapeChangeResult {
 	protected Element root = null;
 	protected Element messages = null;
 	protected Element resultFiles = null;
-	protected Properties outputFormat = OutputPropertiesFactory
-			.getDefaultMethodProperties("xml");
+	protected Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
 	protected Options options = null;
 
 	protected HashSet<String> duplicateMessageCheck;
 
 	protected static boolean printDateTime = false;
-	protected static DateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss.SSS");
+	protected static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	// MessageContext objects are returned when emitting messages via
 	// addXxxxx() functions. The object holds the generated DOM node and the
@@ -95,16 +93,13 @@ public class ShapeChangeResult {
 		}
 
 		// Ctor: Create message in log file
-		public MessageContext(ShapeChangeResult result, String level,
-				String mtext) {
+		public MessageContext(ShapeChangeResult result, String level, String mtext) {
 			this.result = result;
 			this.level = level;
-			System.err.println(level.substring(0, 1) + " "
-					+ (printDateTime ? dateTime() + " " : "") + mtext);
+			System.err.println(level.substring(0, 1) + " " + (printDateTime ? dateTime() + " " : "") + mtext);
 			message = result.document.createElementNS(Options.SCRS_NS, level);
 			result.messages.appendChild(message);
-			message.setAttribute("message",
-					(printDateTime ? dateTime() + " " : "") + mtext);
+			message.setAttribute("message", (printDateTime ? dateTime() + " " : "") + mtext);
 
 		}
 
@@ -123,7 +118,7 @@ public class ShapeChangeResult {
 			String m = ms == null ? result.message(mnr) : ms.message(mnr);
 			addDetail(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 		}
-		
+
 		public void addDetail(MessageSource ms, int mnr, String p1, String p2) {
 			String m = ms == null ? result.message(mnr) : ms.message(mnr);
 			addDetail(m.replace("$1$", p1).replace("$2$", p2));
@@ -149,21 +144,18 @@ public class ShapeChangeResult {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
 			dbf.setValidating(true);
-			dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE,
-					Options.W3C_XML_SCHEMA);
+			dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE, Options.W3C_XML_SCHEMA);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			document = db.newDocument();
 
-			root = document.createElementNS(Options.SCRS_NS,
-					"ShapeChangeResult");
+			root = document.createElementNS(Options.SCRS_NS, "ShapeChangeResult");
 			document.appendChild(root);
 			root.setAttribute("resultCode", "0");
 			root.setAttribute("xmlns:r", Options.SCRS_NS);
 			root.setAttribute("start", (new Date()).toString());
 
 			String version = "[dev]";
-			InputStream stream = getClass()
-					.getResourceAsStream("/sc.properties");
+			InputStream stream = getClass().getResourceAsStream("/sc.properties");
 			if (stream != null) {
 				Properties properties = new Properties();
 				properties.load(stream);
@@ -177,8 +169,7 @@ public class ShapeChangeResult {
 			resultFiles = document.createElementNS(Options.SCRS_NS, "Results");
 			root.appendChild(resultFiles);
 		} catch (ParserConfigurationException e) {
-			System.err.println(
-					"Bootstrap Error: XML parser was unable to be configured.");
+			System.err.println("Bootstrap Error: XML parser was unable to be configured.");
 			String m = e.getMessage();
 			if (m != null) {
 				System.err.println(m);
@@ -193,8 +184,7 @@ public class ShapeChangeResult {
 
 		outputFormat.setProperty("encoding", "UTF-8");
 		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
-				"2");
+		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
 	}
 
 	public void init() {
@@ -209,22 +199,17 @@ public class ShapeChangeResult {
 		}
 	};
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addDebug(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4));
+		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
-			String p2, String p3) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$",
-				safe(p3)));
+		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", safe(p3)));
 	};
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
-			String p2) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addDebug(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -240,8 +225,7 @@ public class ShapeChangeResult {
 	};
 
 	public MessageContext addDebug(String m) {
-		if (document == null
-				|| !options.parameter("reportLevel").equals("DEBUG")) {
+		if (document == null || !options.parameter("reportLevel").equals("DEBUG")) {
 			return null;
 		}
 		if (m.startsWith("??")) {
@@ -252,22 +236,17 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Debug", m);
 	}
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addInfo(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4));
+		return addInfo(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
-			String p2, String p3) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addInfo(
-				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addInfo(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
-			String p2) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addInfo(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -295,22 +274,17 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Info", m);
 	}
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addWarning(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4));
+		return addWarning(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
-			String p2, String p3) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addWarning(
-				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addWarning(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
-			String p2) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addWarning(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -327,8 +301,7 @@ public class ShapeChangeResult {
 
 	public MessageContext addWarning(String m) {
 		String l = options.parameter("reportLevel");
-		if (document == null || !l.equals("DEBUG") && !l.equals("INFO")
-				&& !l.equals("WARNING")) {
+		if (document == null || !l.equals("DEBUG") && !l.equals("INFO") && !l.equals("WARNING")) {
 			return null;
 		}
 		if (m.startsWith("??")) {
@@ -339,30 +312,24 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Warning", m);
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4, String p5, String p6, String p7) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4, String p5,
+			String p6, String p7) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4).replace("$5$", p5)
+		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4).replace("$5$", p5)
 				.replace("$6$", p6).replace("$7$", p7));
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4));
+		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1,
-			String p2, String p3) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(
-				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1,
-			String p2) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addError(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -389,22 +356,17 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Error", m);
 	}
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
-			String p2, String p3, String p4) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addFatalError(m.replace("$1$", p1).replace("$2$", p2)
-				.replace("$3$", p3).replace("$4$", p4));
+		return addFatalError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
-			String p2, String p3) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addFatalError(
-				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addFatalError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
-			String p2) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addFatalError(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -433,8 +395,7 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "FatalError", m);
 	}
 
-	public void addResult(int targetId, String dname, String fname,
-			String scope) {
+	public void addResult(int targetId, String dname, String fname, String scope) {
 		if (document == null) {
 			return;
 		}
@@ -455,7 +416,7 @@ public class ShapeChangeResult {
 		}
 		root.setAttribute("resultCode", Integer.toString(rc, 10));
 	}
-	
+
 	public Options options() {
 		return options;
 	}
@@ -476,8 +437,7 @@ public class ShapeChangeResult {
 			}
 
 			FileWriter outputXML = new FileWriter(filename);
-			Serializer serializer = SerializerFactory
-					.getSerializer(outputFormat);
+			Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
@@ -490,17 +450,14 @@ public class ShapeChangeResult {
 					// get xslt via URL
 					URL url = new URL(xsltfileName);
 					URLConnection urlConnection = url.openConnection();
-					xsltSource = new StreamSource(
-							urlConnection.getInputStream());
+					xsltSource = new StreamSource(urlConnection.getInputStream());
 				} else {
-					InputStream stream = getClass()
-							.getResourceAsStream("/xslt/result.xsl");
+					InputStream stream = getClass().getResourceAsStream("/xslt/result.xsl");
 					if (stream == null) {
 						// get it from the file system
 						File xsltFile = new File(xsltfileName);
 						if (!xsltFile.canRead()) {
-							throw new Exception(
-									"Cannot read " + xsltFile.getName());
+							throw new Exception("Cannot read " + xsltFile.getName());
 						}
 						xsltSource = new StreamSource(xsltFile);
 					} else {
@@ -518,8 +475,7 @@ public class ShapeChangeResult {
 					Source xmlSource = new DOMSource(document);
 					Result res = new StreamResult(outputHTML);
 
-					TransformerFactory transFact = TransformerFactory
-							.newInstance();
+					TransformerFactory transFact = TransformerFactory.newInstance();
 					Transformer trans = transFact.newTransformer(xsltSource);
 					trans.transform(xmlSource, res);
 				}
@@ -595,6 +551,8 @@ public class ShapeChangeResult {
 			return "Could not create temporary directory for ShapeChange run with read/write access at: $1$.";
 		case 24:
 			return "Neither 'inputFile' nor 'repositoryFileNameOrConnectionString' parameter set in configuration. Cannot connect to a repository.";
+		case 25:
+			return "Model repository file named '$1$' not found";
 
 		case 30:
 			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";
@@ -786,7 +744,7 @@ public class ShapeChangeResult {
 		case 204:
 			return "??Outdated tagged value '$1$' used in property '$2$'.";
 
-			// FeatureCatalogue related messages (TBC)
+		// FeatureCatalogue related messages (TBC)
 		case 301:
 			return "File '$1$' is not readable, processing of $2$ is skipped.";
 		case 303:
@@ -805,8 +763,8 @@ public class ShapeChangeResult {
 		case 400:
 			return "Context: $1$ '$2$'";
 
-			// 500-599 Converter messages (some messages used by Converter are
-			// contained in other number ranges)
+		// 500-599 Converter messages (some messages used by Converter are
+		// contained in other number ranges)
 		case 500:
 			return "(Converter.java) Executed deferred output write for target class '$1$' for input ID: '$2$'.";
 		case 501:
@@ -827,21 +785,43 @@ public class ShapeChangeResult {
 			return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
 		case 509:
 			return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
-		case 510: 
-			return "---------- Semantic validation of ShapeChange configuration: START ----------"; 
-		case 511: 
-			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"; 
+		case 510:
+			return "---------- Semantic validation of ShapeChange configuration: START ----------";
+		case 511:
+			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
 		case 512:
 			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
 		case 513:
-			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"+Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG+"' to 'true'.";
-			
-		// 600 - 699 Messages known to be used by multiple targets			
+			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
+					+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG + "' to 'true'.";
+
+		// 600 - 699 Messages known to be used by multiple targets
 		case 600:
 			return "File could not be deleted. Exception message: '$1$'.";
 		case 601:
 			return "Directory named '$1$' does not exist or is not accessible.";
-			
+
+		/*
+		 * 700-799 Messages used by InfoImpl (which should not define its own
+		 * message() method, since subtypes may override that method and then
+		 * the messages defined in InfoImpl would not be visible - or it would
+		 * be tedious to ensure that subtypes use message numbers not defined by
+		 * InfoImpl and call InfoImpl.message() to see if a code is covered
+		 * there.
+		 */
+		case 701:
+			return "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
+		case 702:
+			return "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
+		case 703:
+			return "Multiple values were requested for descriptor '$1$', but the source '$2$' specified in the configuration only supports single values. No values have been returned.";
+		case 704:
+			return "Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
+		case 790:
+			return "Context: class InfoImpl. Element: $1$. Name: $2$";
+		case 791:
+			return "Context: class InfoImpl (subtype: PropertyInfo). Name: $1$. In class: $2$";
+
 		case 1000:
 			return "Testing UML version 1.4.";
 		case 1001:
@@ -922,12 +902,12 @@ public class ShapeChangeResult {
 		case 10025:
 			return "OCL comment: '$1$'";
 
-			/* Transformation related messages */
-			// (20000-20099) Messages used in multiple transformer classes
-			// (20100-20199) TransformationManager messages
-			// (20200-20299) Profiler messages
-			// (20300-20399) Flattener messages
-			// (20400-20499)
+		/* Transformation related messages */
+		// (20000-20099) Messages used in multiple transformer classes
+		// (20100-20199) TransformationManager messages
+		// (20200-20299) Profiler messages
+		// (20300-20399) Flattener messages
+		// (20400-20499)
 
 		case 20001:
 			return "No non-empty string value provided for configuration parameter '$1$'. Execution of '$2$' aborted.";
@@ -935,7 +915,6 @@ public class ShapeChangeResult {
 			return "Configuration parameter '$1$' required for execution of '$2$' was not provided. Execution of '$2$' aborted.";
 		case 20003:
 			return "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of '$2$' aborted.";
-
 
 		case 20100:
 			return "Could not find application schema for Info type '$1$'";
@@ -961,39 +940,49 @@ public class ShapeChangeResult {
 			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
 		case 20111:
 			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
-			 
-			
-			
+
 		case 20201:
-			return "(Profiler.java) The profile identifier '$1$' in class '$2$' is not well-formed: $3$";
+			return "Profile identifier is not well-formed.";
 		case 20202:
-			return "(Profiler.java) The profile identifier '$1$' of property '$2$' in class '$3$' is not well-formed: $4$";
+			return "<UNUSED_20202>";
 		case 20203:
-			return "(Profiler.java) The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
+			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
 		case 20204:
-			return "(Profiler.java) The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
 		case 20205:
-			return "(Profiler.java) The application schema package '$1$' is completely empty after profiling.";
+			return "The application schema package '$1$' is completely empty after profiling.";
 		case 20206:
-			return "(Profiler.java) Error parsing component of '$1$' configuration parameter: $2$";
+			return "Error parsing component of '$1$' configuration parameter: $2$";
 		case 20207:
-			return "(Profiler.java) Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
+			return "Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
 		case 20208:
-			return "(Profiler.java) System Error: Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
+			return "System Error: Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
 		case 20209:
-			return "(Profiler.java) $1$";
+			return "$1$";
 		case 20210:
-			return "(Profiler.java) GenericPropertyInfo '$1$' is the context model element of the constraint named '$2$'. The property does no longer exist in the model after profiling, thus the constraint is removed.";
+			return "GenericPropertyInfo '$1$' is the context model element of the constraint named '$2$'. The property does no longer exist in the model after profiling, thus the constraint is removed.";
 		case 20211:
-			return "(Profiler.java) GenericClassInfo '$1$' is the context model element of the constraint named '$2$'. The class does no longer exist in the model after profiling, thus the constraint is removed.";
+			return "GenericClassInfo '$1$' is the context model element of the constraint named '$2$'. The class does no longer exist in the model after profiling, thus the constraint is removed.";
 		case 20212:
-			return "(Profiler.java) Unrecognized constraint context model element type: '$1$'.";
+			return "Unrecognized constraint context model element type: '$1$'.";
 		case 20213:
-			return "(Profiler.java) Unrecognized constraint type: '$1$'.";
+			return "Unrecognized constraint type: '$1$'.";
 		case 20214:
-			return "(Profiler.java) The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
+			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
 		case 20215:
-			return "??(Profiler.java) Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
+		case 20216:
+			return "Context: model element: '$1$'";
+		case 20217:
+			return "Context: parsing message: '$1$'";
+		case 20218:
+			return "Context: profiles string: '$1$'";
+		case 20219:
+			return "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
+		case 20220:
+			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
+		case 20221:
+			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
 
 		case 20301:
 			return "(Flattener.java) The type '$2$' of property '$1$' was not found.";
@@ -1020,13 +1009,13 @@ public class ShapeChangeResult {
 		case 20312:
 			return "(Flattener.java) Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
 		case 20313:
-			return "(Flattener.java) Class '$1$' has a geometry property. One of its subtypes also has one. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
+			return "(Flattener.java) Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
 		case 20314:
 			return "(Flattener.java) Could not find supertype with id '$1$' for class with name '$2$' in the model.";
 		case 20315:
 			return "(Flattener.java) Cannot properly update type of property named '$1$' to the union type named '$2$'.";
 		case 20316:
-			return "UNUSED";
+			return "(Flattener.java) Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
 		case 20317:
 			return "(Flattener.java) ========== $1$ phase ==========";
 		case 20318:
@@ -1086,15 +1075,16 @@ public class ShapeChangeResult {
 		case 20345:
 			return "(Flattener.java) '$1$' does not match regex '$2$', provided in parameter '$3$'";
 
-			/* Generic Model related messages */
-			// (30000-30099) Messages used in multiple generic model classes
-			// (30100-30199) GenericAssociationInfo messages
-			// (30200-30299) GenericClassInfo messages
-			// (30300-30399) GenericModel messages
-			// (30400-30499) GenericOclConstraint messages
-			// (30500-30599) GenericPackageInfo messages
-			// (30600-30699) GenericPropertyInfo messages
-			// (30700-30799) GenericTextConstraint messages
+		/* Generic Model related messages */
+		// (30000-30099) Messages used in multiple generic model classes
+		// (30100-30199) GenericAssociationInfo messages
+		// (30200-30299) GenericClassInfo messages
+		// (30300-30399) GenericModel messages
+		// (30400-30499) GenericOclConstraint messages
+		// (30500-30599) GenericPackageInfo messages
+		// (30600-30699) GenericPropertyInfo messages
+		// (30700-30799) GenericTextConstraint messages
+		// (30800-30899) Messages from generic model element reader
 		case 30200:
 			return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'ADD' the duplicate will nevertheless be added, resulting in two properties with the same name in the class.";
 		case 30201:
@@ -1158,12 +1148,25 @@ public class ShapeChangeResult {
 		case 30326:
 			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
 
+		case 30327:
+			return "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
+		case 30328:
+			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
 
 		case 30500:
 			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
 
+		case 30800:
+			return "(Generic model element reader) Unexpected start element found by $1$: '$2$'.";
+		case 30801:
+			return "(Generic model element reader) Unexpected end element found by $1$: '$2$'.";
+		case 30802:
+			return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
+		case 30803:
+			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
+
 		default:
-			return "(Unknown message)";
+			return "(" + ShapeChangeResult.class.getName() + ") Unknown message with number: " + mnr;
 		}
 	}
 }

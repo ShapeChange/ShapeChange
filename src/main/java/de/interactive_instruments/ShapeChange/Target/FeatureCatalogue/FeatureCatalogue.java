@@ -123,8 +123,8 @@ import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  * 
  */
 public class FeatureCatalogue implements SingleTarget, MessageSource, DeferrableOutputWriter {
@@ -792,7 +792,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (s != null && s.length() > 0) {
 			writer.dataElement("code", PrepareToPrint(s), op);
 		}
-		
+
 		s = i.globalIdentifier();
 		s = checkDiff(s, i, ElementType.GLOBALIDENTIFIER);
 		if (s != null && s.length() > 0) {
@@ -1851,17 +1851,22 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				if (refModel != null) {
 
 					ci = refModel.classById(id);
-				}
+					
+					if (ci != null) {
+						
+						/*
+						 * If we found it in the reference model, can we identify
+						 * the class in the input model by its full name?
+						 */
+						String fullNameInSchema = ci.fullNameInSchema();
+						String fullnamelowercase = fullNameInSchema.toLowerCase(Locale.ENGLISH);
 
-				/*
-				 * If we found it in the reference model, can we identify the
-				 * class in the input model by its full name?
-				 */
-				String fullnamelowercase = ci.fullNameInSchema().toLowerCase(Locale.ENGLISH);
-				if (ci != null && inputSchemaClassesByFullNameInSchema.containsKey(fullnamelowercase)) {
+						if (inputSchemaClassesByFullNameInSchema.containsKey(fullnamelowercase)) {
 
-					// then we'll use the class from the input model
-					ci = (ClassInfo) inputSchemaClassesByFullNameInSchema.get(fullnamelowercase);
+							// then we'll use the class from the input model
+							ci = (ClassInfo) inputSchemaClassesByFullNameInSchema.get(fullnamelowercase);
+						}
+					}
 				}
 			}
 		}

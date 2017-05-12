@@ -191,19 +191,9 @@
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">
@@ -397,19 +387,9 @@ NOTE Prop10 AC description!</documentation>
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">
@@ -603,19 +583,9 @@ NOTE Prop10 AC description!</documentation>
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">
@@ -778,19 +748,9 @@ NOTE FeatureType2 FC description!</documentation>
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">
@@ -1015,19 +975,9 @@ NOTE FeatureType2 FC description!</documentation>
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">
@@ -1252,19 +1202,9 @@ NOTE FeatureType2 FC description!</documentation>
               <documentation>prop8: Prop8 AC Definition.</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="propenumerationaalias_1" type="flat:EnumerationAFeatureEntityAliasType">
+          <element minOccurs="0" name="propenumerationaalias" type="flat:EnumerationAFeatureEntityAliasType">
             <annotation>
-              <documentation>propEnumerationA_1: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_2" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_2: PropEnumerationA AC Definition.</documentation>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="propenumerationaalias_3" type="flat:EnumerationAFeatureEntityAliasType">
-            <annotation>
-              <documentation>propEnumerationA_3: PropEnumerationA AC Definition.</documentation>
+              <documentation>propEnumerationA: PropEnumerationA AC Definition.</documentation>
             </annotation>
           </element>
           <element minOccurs="0" name="prop3alias" type="string">

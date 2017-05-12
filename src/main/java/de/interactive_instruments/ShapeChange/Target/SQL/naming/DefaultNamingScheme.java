@@ -119,7 +119,8 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 		case 2:
 			return "Name '$1$' for foreign key constraint is truncated to '$2$'";
 		default:
-			return "(Unknown message)";
+			return "(" + DefaultNamingScheme.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

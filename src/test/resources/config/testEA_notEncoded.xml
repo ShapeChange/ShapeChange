@@ -99,6 +99,7 @@
 				<MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
 				<MapEntry type="FeatureType2" rule="geoservices_extended" targetType="ref:http://example.org/json/observation.json" param=""/>
 			</mapEntries>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			inputs="F_name" mode="enabled">			

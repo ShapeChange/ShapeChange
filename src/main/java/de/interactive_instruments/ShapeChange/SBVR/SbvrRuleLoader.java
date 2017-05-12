@@ -572,7 +572,8 @@ public class SbvrRuleLoader implements MessageSource {
 			return "No main class name provided for rule '$1$'. Parsing the name from the rule text.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + SbvrRuleLoader.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

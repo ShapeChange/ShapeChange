@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange.Model.Xmi10;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -41,40 +42,49 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.LangString;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
 
-public class OperationInfoXmi10 extends OperationInfoImpl implements OperationInfo {
+public class OperationInfoXmi10 extends OperationInfoImpl
+		implements OperationInfo {
 	// Data
 	protected Element op = null;
 	protected Xmi10Document doc = null;
 	protected String id = null;
 
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the documentation
+	 * of this class.
+	 */
+	protected boolean documentationAccessed = false;
+
 	// Methods
 	public Model model() {
 		return doc;
 	}
-	
+
 	public Options options() {
 		return doc.options;
 	}
-	
+
 	public ShapeChangeResult result() {
 		return doc.result;
 	}
-	
+
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			stereotypesCache = doc.fStereotypes.get(id);
 		}
-		
+
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
 	};
 
-	// Validate tagged values cache, the filtering on tagged values defined 
-	// within ShapeChange has already been done during initial loading of the 
+	// Validate tagged values cache, the filtering on tagged values defined
+	// within ShapeChange has already been done during initial loading of the
 	// XMI document...
 	public void validateTaggedValuesCache() {
 		if (taggedValuesCache == null) {
@@ -83,8 +93,8 @@ public class OperationInfoXmi10 extends OperationInfoImpl implements OperationIn
 
 		if (taggedValuesCache == null)
 			taggedValuesCache = options().taggedValueFactory(0);
-	} // validateTaggedValuesCache()	
-	
+	} // validateTaggedValuesCache()
+
 	public String id() {
 		return id;
 	};
@@ -94,23 +104,52 @@ public class OperationInfoXmi10 extends OperationInfoImpl implements OperationIn
 		if (s != null) {
 			s = s.trim();
 		} else {
-			doc.result.addWarning(null,100,"operation", id);
+			doc.result.addWarning(null, 100, "operation", id);
 			s = id;
 		}
 		return s;
 	};
 
+	// @Override
+	// public Descriptors documentationAll() {
+	// String s = doc.taggedValue(id, "documentation");
+	// if (s == null) {
+	// s = doc.taggedValue(id, "description");
+	// if (s == null) {
+	// s = "";
+	// }
+	// }
+	//
+	// return new Descriptors(new LangString(options().internalize(s)));
+	// };
+
 	@Override
-	public String documentation() {
-		String s = doc.taggedValue(id, "documentation");
-		if (s == null) {
-			s = doc.taggedValue(id, "description");
-			if (s == null) {
-				s = "";
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
+
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
+
+		if (ls.isEmpty()) {
+
+			if (!documentationAccessed
+					&& descriptor == Descriptor.DOCUMENTATION) {
+
+				documentationAccessed = true;
+
+				String s = doc.taggedValue(id, "documentation");
+				if (s == null) {
+					s = doc.taggedValue(id, "description");
+				}
+
+				if (s != null) {
+					ls.add(new LangString(options().internalize(s)));
+					this.descriptors().put(descriptor, ls);
+				}
 			}
 		}
-		return s;
-	};
+
+		return ls;
+	}
 
 	public int parameterCount() {
 		Vector<String> pids = doc.idsOfProperty(op,
@@ -166,7 +205,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl implements OperationIn
 				s = "__RETURN__";
 			}
 			parameterNames.put(++parameterCount, s.trim());
-			doc.result.addDebug(null,10011,id,name(), s);
+			doc.result.addDebug(null, 10011, id, name(), s);
 		}
 		return parameterNames;
 	};
@@ -198,6 +237,6 @@ public class OperationInfoXmi10 extends OperationInfoImpl implements OperationIn
 		doc = d;
 		op = e;
 		id = op.getAttribute("xmi.id");
-		doc.result.addDebug(null,10013,"operation",id, name());
+		doc.result.addDebug(null, 10013, "operation", id, name());
 	}
 }

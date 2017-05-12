@@ -39,6 +39,7 @@ import org.apache.xml.serializer.utils.XMLChar;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 public abstract class PropertyInfoImpl extends InfoImpl
 		implements PropertyInfo {
@@ -49,6 +50,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	/** Inquire restriction of property. */
 	protected boolean restriction = false;
 	protected Boolean implementedByNilReason = null;
+	protected Profiles profiles = null;
 
 	private static int globalSequenceNumberForAttributes = GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ATTRIBUTES;
 	private static int globalSequenceNumberForAssociationRoles = GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ASSOCIATIONROLES;
@@ -69,19 +71,19 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return restriction;
 	} // restriction()
 
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang==null || lang.isEmpty()) {
+		if (lang == null || lang.isEmpty()) {
 			ClassInfo ci = inClass();
-			if (ci!=null)
+			if (ci != null)
 				return ci.language();
 		} else
 			return lang;
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Return the encoding rule relevant on the operation, given the platform
 	 */
@@ -163,6 +165,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	protected boolean nilReasonAllowed = false;
 
 	public boolean nilReasonAllowed() {
+
 		String s = taggedValue("nilReasonAllowed");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return true;
@@ -171,7 +174,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 			return true;
 		}
 		return false;
-	} // nilReasonAllowed()
+	}
 
 	/** Mark the property as 'nilReasonAllowed'. */
 	public void nilReasonAllowed(boolean b) {
@@ -212,7 +215,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	 * de.interactive_instruments.ShapeChange.Model.PropertyInfo#categoryOfValue
 	 * ()
 	 */
-	public int categoryOfValue() {
+	public final int categoryOfValue() {
 		ClassInfo ci = model().classById(typeInfo().id);
 		if (ci != null)
 			return ci.category();
@@ -230,101 +233,107 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		super.postprocessAfterLoadingAndValidate();
 
-		String s, s2;
-		if (matches("req-xsd-prop-ncname")) {
-			s = name();
-			if (!XMLChar.isValidNCName(s)) {
-				MessageContext mc = result().addError(null, 149, "property", s);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
+		if (inClass().category() != Options.BASICTYPE
+				&& inClass().category() != Options.ENUMERATION
+				&& inClass().category() != Options.CODELIST) {
 
-		if (matches("req-all-all-documentation")) {
-			s = documentation();
-			if (!s.contains(options().nameSeparator())) {
-				MessageContext mc = result().addError(null, 153, name(),
-						options().nameSeparator());
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-			if (!s.contains(options().definitionSeparator())) {
-				MessageContext mc = result().addError(null, 153, name(),
-						options().definitionSeparator());
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
-
-		ClassInfo ci = model().classById(typeInfo().id);
-		String pn = name();
-		int basecat = inClass().category();
-
-		if (matches("req-all-prop-sequenceNumber")
-				&& basecat != Options.ENUMERATION
-				&& basecat != Options.CODELIST) {
-			for (PackageInfo pkgi : model().selectedSchemas()) {
-				if (inClass().inSchema(pkgi)) {
-					String sn = taggedValue("sequenceNumber");
-					if (sn == null || sn.length() == 0) {
-						MessageContext mc = result().addError(null, 168, name(),
-								inClass().name());
-						if (mc != null)
-							mc.addDetail(null, 400, "Property", fullName());
-					}
-					break;
+			String s, s2;
+			if (matches("req-xsd-prop-ncname")) {
+				s = name();
+				if (!XMLChar.isValidNCName(s)) {
+					MessageContext mc = result().addError(null, 149, "property",
+							s);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
 				}
 			}
-		}
 
-		if (matches("req-xsd-prop-value-type-exists") && ci == null
-				&& basecat != Options.ENUMERATION
-				&& basecat != Options.CODELIST) {
-			MapEntry me = options().typeMapEntry(typeInfo().name,
-					encodingRule("xsd"));
-			if (me == null) {
-				MessageContext mc = result().addWarning(null, 131,
-						inClass().name() + "." + pn, typeInfo().name);
+			if (matches("req-all-all-documentation")) {
+				s = documentation();
+				if (!s.contains(options().nameSeparator())) {
+					MessageContext mc = result().addError(null, 153, name(),
+							options().nameSeparator());
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+				if (!s.contains(options().definitionSeparator())) {
+					MessageContext mc = result().addError(null, 153, name(),
+							options().definitionSeparator());
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			ClassInfo ci = model().classById(typeInfo().id);
+			String pn = name();
+			int basecat = inClass().category();
+
+			if (matches("req-all-prop-sequenceNumber")
+					&& basecat != Options.ENUMERATION
+					&& basecat != Options.CODELIST) {
+				for (PackageInfo pkgi : model().selectedSchemas()) {
+					if (inClass().inSchema(pkgi)) {
+						String sn = taggedValue("sequenceNumber");
+						if (sn == null || sn.length() == 0) {
+							MessageContext mc = result().addError(null, 168,
+									name(), inClass().name());
+							if (mc != null)
+								mc.addDetail(null, 400, "Property", fullName());
+						}
+						break;
+					}
+				}
+			}
+
+			if (matches("req-xsd-prop-value-type-exists") && ci == null
+					&& basecat != Options.ENUMERATION
+					&& basecat != Options.CODELIST) {
+				MapEntry me = options().typeMapEntry(typeInfo().name,
+						encodingRule("xsd"));
+				if (me == null) {
+					MessageContext mc = result().addWarning(null, 131,
+							inClass().name() + "." + pn, typeInfo().name);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			if (matches("req-xsd-prop-codelist-obligation") && ci != null
+					&& ci.category() == Options.CODELIST) {
+				s = ci.taggedValue("vocabulary");
+				s2 = taggedValue("obligation");
+				if (s2 != null && !s2.isEmpty()
+						&& !s2.equalsIgnoreCase("implementingRule")
+						&& !s2.equalsIgnoreCase("technicalGuidance")) {
+					MessageContext mc = result().addError(null, 203,
+							"obligation", inClass().name() + "." + pn, s2);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				} else if (s2 != null && !s2.isEmpty()
+						&& (s == null || s.isEmpty())) {
+					MessageContext mc = result().addError(null, 203,
+							"obligation", inClass().name() + "." + pn, s2);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+				s = taggedValue("extendableMyMS");
+				if (s != null && !s.isEmpty()) {
+					MessageContext mc = result().addError(null, 204,
+							"extendableMyMS", inClass().name() + "." + pn);
+					if (mc != null)
+						mc.addDetail(null, 400, "Property", fullName());
+				}
+			}
+
+			if (matches("req-xsd-prop-data-type") && ci != null
+					&& (ci.category() == Options.DATATYPE
+							|| ci.category() == Options.UNION)
+					&& !isComposition() && !isAttribute() && isNavigable()) {
+				MessageContext mc = result().addError(null, 148,
+						inClass().name(), name(), ci.name());
 				if (mc != null)
 					mc.addDetail(null, 400, "Property", fullName());
 			}
-		}
-
-		if (matches("req-xsd-prop-codelist-obligation") && ci != null
-				&& ci.category() == Options.CODELIST) {
-			s = ci.taggedValue("vocabulary");
-			s2 = taggedValue("obligation");
-			if (s2 != null && !s2.isEmpty()
-					&& !s2.equalsIgnoreCase("implementingRule")
-					&& !s2.equalsIgnoreCase("technicalGuidance")) {
-				MessageContext mc = result().addError(null, 203, "obligation",
-						inClass().name() + "." + pn, s2);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			} else
-				if (s2 != null && !s2.isEmpty() && (s == null || s.isEmpty())) {
-				MessageContext mc = result().addError(null, 203, "obligation",
-						inClass().name() + "." + pn, s2);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-			s = taggedValue("extendableMyMS");
-			if (s != null && !s.isEmpty()) {
-				MessageContext mc = result().addError(null, 204,
-						"extendableMyMS", inClass().name() + "." + pn);
-				if (mc != null)
-					mc.addDetail(null, 400, "Property", fullName());
-			}
-		}
-
-		if (matches("req-xsd-prop-data-type") && ci != null
-				&& (ci.category() == Options.DATATYPE
-						|| ci.category() == Options.UNION)
-				&& !isComposition() && !isAttribute() && isNavigable()) {
-			MessageContext mc = result().addError(null, 148, inClass().name(),
-					name(), ci.name());
-			if (mc != null)
-				mc.addDetail(null, 400, "Property", fullName());
 		}
 
 		postprocessed = true;
@@ -404,6 +413,43 @@ public abstract class PropertyInfoImpl extends InfoImpl
 				res = s.equalsIgnoreCase("true");
 		}
 		return res;
-	} // voidable()
+	}
 
+	@Override
+	public final Profiles profiles() {
+
+		if (this.profiles == null) {
+
+			// attempt to parse from profiles tagged value
+			String profilesTV = this
+					.taggedValue(Profiles.PROFILES_TAGGED_VALUE);
+
+			if (profilesTV == null || profilesTV.trim().length() == 0) {
+
+				// No specific profiles declared, which is valid.
+				this.profiles = new Profiles();
+
+			} else {
+
+				try {
+
+					Profiles tmp = Profiles.parse(profilesTV, false);
+
+					this.profiles = tmp;
+
+				} catch (MalformedProfileIdentifierException e) {
+
+					MessageContext mc = result().addWarning(null, 20201);
+					if (mc != null) {
+						mc.addDetail(null, 20216, fullNameInSchema());
+						mc.addDetail(null, 20217, e.getMessage());
+						mc.addDetail(null, 20218, profilesTV);
+					}
+					this.profiles = new Profiles();
+				}
+			}
+		}
+
+		return this.profiles;
+	}
 }

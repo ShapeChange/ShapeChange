@@ -32,6 +32,8 @@
 
 package de.interactive_instruments.ShapeChange.Model.EA;
 
+import java.util.List;
+
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;
@@ -42,6 +44,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
@@ -68,6 +72,24 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 	/** Source [0] and target [1] properties */
 	protected PropertyInfoEA[] properties = { null, null };
+
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the alias of this
+	 * association.
+	 */
+	protected boolean aliasAccessed = false;
+
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the documentation
+	 * of this property.
+	 */
+	protected boolean documentationAccessed = false;
+
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the global
+	 * identifier of this property.
+	 */
+	protected boolean globalIdentifierAccessed = false;
 
 	/** Cache map for tagged values */
 	// this map is already defined in InfoImpl
@@ -186,49 +208,82 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		return document;
 	} // model()
 
-	/** Return name of Association */
+	@Override
 	public String name() {
 		return name;
 	} // name()
 
-	/** Get alias name of the association. */
-	@Override
-	public String aliasName() {
-		// Obtain alias name from default implementation
-		String a = super.aliasName();
-		// If not present, obtain from EA model directly
-		if ((a == null || a.length() == 0)
-				&& descriptorSource(Options.Descriptor.ALIAS.toString())
-						.equals("ea:alias")) {
-			a = eaConnector.GetAlias();
-			super.aliasName = options().internalize(a);
-		}
-		return a;
-	} // aliasName()
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Retrieve/compute the alias only once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+	//
+	// String alias = eaConnector.GetAlias();
+	//
+	// if (alias != null && !alias.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(alias)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	// return super.aliasName;
+	// }
 
-	/**
-	 * Return the documentation attached to the property object. This is fetched
-	 * from tagged values and - if this is absent - from the 'notes' specific to
-	 * the EA objects model.
-	 */
-	@Override
-	public String documentation() {
-		// Fetch from tagged values
-		String s = super.documentation();
-		// Try EA notes, if both tagged values fail and ea:notes is the source
-		if ((s == null || s.length() == 0)
-				&& descriptorSource(Options.Descriptor.DOCUMENTATION.toString())
-						.equals("ea:notes")) {
-			s = eaConnector.GetNotes();
-			// Fix for EA7.5 bug
-			if (s != null) {
-				s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-				super.documentation = options().internalize(s);
-			}
-		}
-		// Return what we got or "" ...
-		return s != null ? s : "";
-	} // documentation()
+	// /**
+	// * Return the documentation attached to the property object. This is
+	// fetched
+	// * from tagged values and - if this is absent - from the 'notes' specific
+	// to
+	// * the EA objects model.
+	// */
+	// @Override
+	// public Descriptors documentationAll() {
+	//
+	// // Retrieve/compute the documentation only once
+	// // Cache the result for subsequent use
+	// if (!documentationAccessed) {
+	//
+	// documentationAccessed = true;
+	//
+	// // Fetch from tagged values
+	// Descriptors ls = super.documentationAll();
+	//
+	// // Try EA notes, if both tagged values fail and ea:notes is the
+	// // source
+	// if (ls.isEmpty() && descriptorSource(Descriptor.DOCUMENTATION)
+	// .equals("ea:notes")) {
+	//
+	// String s = eaConnector.GetNotes();
+	//
+	// // Fix for EA7.5 bug
+	// if (s != null) {
+	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// }
+	//
+	// if (s == null) {
+	// super.documentation = new Descriptors();
+	// } else {
+	// super.documentation = new Descriptors(
+	// new LangString(options().internalize(s)));
+	// }
+	// }
+	// }
+	// return super.documentation;
+	// }
 
 	/** Return options and configuration object. */
 	public Options options() {
@@ -263,6 +318,10 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 	} // validateStereotypesCache()
+	
+	public int getEAConnectorId() {
+		return this.eaConnectorId;
+	}
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -304,24 +363,89 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		return assocClass;
 	}
 
+	// @Override
+	// public Descriptors globalIdentifierAll() {
+	//
+	// // Obtain global identifier from default implementation
+	// Descriptors ls = super.globalIdentifierAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
+	// .equals("ea:guidtoxml")) {
+	//
+	// String gi = document.repository.GetProjectInterface()
+	// .GUIDtoXML(eaConnector.GetConnectorGUID());
+	//
+	// super.globalIdentifier = new Descriptors(
+	// new LangString(options().internalize(gi)));
+	// }
+	// return super.globalIdentifier;
+	// }
+
 	@Override
-	public String globalIdentifier() {
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
 
-		// Obtain global identifier from default implementation
-		String gi = super.globalIdentifier();
-		// If not present, obtain from EA model directly
-		if ((gi == null || gi.length() == 0)
-				&& descriptorSource(
-						Options.Descriptor.GLOBALIDENTIFIER.toString())
-								.equals("ea:guidtoxml")
-//				&& options().isLoadGlobalIdentifiers()
-				) {
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
 
-			gi = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaConnector.GetConnectorGUID());
+		if (ls.isEmpty()) {
 
-			super.globalIdentifier = options().internalize(gi);
+			if (!documentationAccessed
+					&& descriptor == Descriptor.DOCUMENTATION) {
+
+				documentationAccessed = true;
+
+				String s = eaConnector.GetNotes();
+
+				// Fix for EA7.5 bug
+				if (s != null) {
+					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				}
+
+				if (s != null) {
+					ls.add(new LangString(options().internalize(s)));
+					this.descriptors().put(descriptor, ls);
+				}
+
+			} else if (!globalIdentifierAccessed
+					&& descriptor == Descriptor.GLOBALIDENTIFIER) {
+
+				globalIdentifierAccessed = true;
+
+				// obtain from EA model directly
+				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+						.equals("ea:guidtoxml")) {
+
+					String gi = document.repository.GetProjectInterface()
+							.GUIDtoXML(eaConnector.GetConnectorGUID());
+
+					if (gi != null && !gi.isEmpty()) {
+						ls.add(new LangString(options().internalize(gi)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+
+			} else if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				/*
+				 * obtain from EA model directly if ea:alias is identified as
+				 * the source
+				 */
+				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+
+					String a = eaConnector.GetAlias();
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+			}
+
 		}
-		return gi;
+
+		return ls;
 	}
 }

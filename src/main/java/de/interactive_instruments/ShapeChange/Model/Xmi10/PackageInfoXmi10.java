@@ -154,10 +154,6 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo {
 		doc.result.addDebug(null, 10001, id, name(), targetNamespace());
 	}
 
-	public PackageInfo rootPackage() {
-		return doc.fPackages.get(schemaId());
-	};
-
 	public SortedSet<PackageInfo> containedPackages() {
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 		NodeList nl, nl2;

@@ -50,7 +50,7 @@ public abstract class AssociationInfoImpl extends InfoImpl implements Associatio
 		return s;
 	};
 	
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang==null || lang.isEmpty()) {

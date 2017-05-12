@@ -281,6 +281,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 			return "<<codeList>>";
 		case Options.ATTRIBUTECONCEPT:
 			return "<<attributeConcept>>";
+		case Options.ROLECONCEPT:
+			return "<<roleConcept>>";
 		case Options.FEATURECONCEPT:
 			return "<<featureConcept";
 		case Options.BASICTYPE:
@@ -315,7 +317,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 		case 0:
 			return "Context: class ApplicationSchemaStatistic";
 		default:
-			return "(Unknown message)";
+			return "(" + ApplicationSchemaStatistic.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

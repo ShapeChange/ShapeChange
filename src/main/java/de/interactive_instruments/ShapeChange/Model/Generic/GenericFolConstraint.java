@@ -41,6 +41,11 @@ import de.interactive_instruments.ShapeChange.Model.FolConstraintImpl;
  */
 public class GenericFolConstraint extends FolConstraintImpl {
 
+	
+	public GenericFolConstraint() {
+		super();
+	}
+	
 	/**
 	 * Creates a generic First Order Logic constraint.
 	 * 
@@ -109,4 +114,5 @@ public class GenericFolConstraint extends FolConstraintImpl {
 
 		folExpr = null;
 	}
+
 }

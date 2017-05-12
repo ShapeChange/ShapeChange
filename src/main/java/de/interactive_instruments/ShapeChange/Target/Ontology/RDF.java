@@ -283,7 +283,9 @@ public class RDF implements Target, MessageSource {
 	}
 
 	private String PrepareToPrint(String s) {
-		s = s.trim();
+		if (s != null) {
+			s = s.trim();
+		}
 		return s;
 	}
 

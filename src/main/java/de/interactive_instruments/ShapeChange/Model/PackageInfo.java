@@ -42,6 +42,10 @@ public interface PackageInfo extends Info {
 	 * generated. The item is used from the configuration or - if not present
 	 * there - from the tagged value either on this package or one of its
 	 * ancestors.
+	 * 
+	 * @return the target namespace of the package; can be <code>null</code> if
+	 *         no target namespace is defined for the package or one of its
+	 *         ancestors
 	 */
 	public String targetNamespace();
 
@@ -72,6 +76,11 @@ public interface PackageInfo extends Info {
 
 	public String schemaId();
 
+	/**
+	 * @return the package that represents a schema (isSchema() returns true),
+	 *         search begins with this package and continues with its ancestors
+	 *         (owners); <code>null</code> if no such package exists.
+	 */
 	public PackageInfo rootPackage();
 
 	/**
@@ -106,6 +115,10 @@ public interface PackageInfo extends Info {
 	 */
 	public SortedSet<ClassInfo> containedClasses();
 
+	/**
+	 * @return the set of ids of the packages on which this package depends; may
+	 *         be empty but not <code>null</code>
+	 */
 	public SortedSet<String> supplierIds();
 
 	/**
@@ -119,4 +132,11 @@ public interface PackageInfo extends Info {
 	 *            metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
-};
+
+	/**
+	 * @return set of child packages (direct and indirect) that are in the same
+	 *         target namespace as this package; can be empty but not
+	 *         <code>null</code>
+	 */
+	public SortedSet<PackageInfo> containedPackagesInSameTargetNamespace();
+}

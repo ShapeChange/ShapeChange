@@ -70,8 +70,9 @@ public interface TaggedValues {
 
 	/**
 	 * @param tag
-	 * @return An array with the values for the given tag, or <code>null</code>
-	 *         if this collection does not contain values for the tag.
+	 * @return An array with the values for the given tag, can be empty (but not
+	 *         <code>null</code>) if this collection does not contain values for
+	 *         the tag.
 	 */
 	public String[] get(String tag);
 

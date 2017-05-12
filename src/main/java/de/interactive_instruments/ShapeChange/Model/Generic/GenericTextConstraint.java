@@ -43,44 +43,24 @@ import de.interactive_instruments.ShapeChange.Model.TextConstraintImpl;
  */
 public class GenericTextConstraint extends TextConstraintImpl {
 
-//	private Info contextModelElmt = null;
-//	private ModelElmtContextType contextModelElmtType = null;
-//	private String name = null;
-//	private String status = null;
-//	private String text = null;
-//	private String type = null;
-
+	public GenericTextConstraint() {
+		super();
+	}
+			
 	/**
 	 * Creates a generic TextConstraint implementation from a given one.
 	 * 
 	 * @param constraint
 	 */
 	public GenericTextConstraint(TextConstraint constraint) {
+		super();
+		
 		contextModelElmt = constraint.contextModelElmt();
 		contextModelElmtType = constraint.contextModelElmtType();
 		constraintName = constraint.name();
 		constraintStatus = constraint.status();
 		constraintText = constraint.text();
 	}
-
-//	/**
-//	 * Constructor used in case that all constraint attributes shall be assigned
-//	 * via the set methods.
-//	 */
-//	public GenericConstraint() {
-//
-//	}
-	
-//	public GenericConstraint(Info contextModelElmt,
-//			ModelElmtContextType contextModelElmtType, String name,
-//			String status, String text) {
-//		super();
-//		this.contextModelElmt = contextModelElmt;
-//		this.contextModelElmtType = contextModelElmtType;
-//		this.name = name;
-//		this.status = status;
-//		this.text = text;
-//	}
 
 	/**
 	 * @param genCi context model element of the new constraint
@@ -107,26 +87,6 @@ public class GenericTextConstraint extends TextConstraintImpl {
 		constraintStatus = origCon.status();
 		constraintText = origCon.text();
 	}
-//
-//	public String name() {
-//		return name;
-//	}
-//
-//	public String status() {
-//		return status;
-//	}
-//
-//	public String text() {
-//		return text;
-//	}
-//
-//	public Info contextModelElmt() {
-//		return contextModelElmt;
-//	}
-//
-//	public ModelElmtContextType contextModelElmtType() {
-//		return contextModelElmtType;
-//	}
 
 	public void setContextModelElmt(Info contextModelElmt) {
 		this.contextModelElmt = contextModelElmt;
@@ -147,6 +107,10 @@ public class GenericTextConstraint extends TextConstraintImpl {
 
 	public void setText(String text) {
 		constraintText = text;
+	}
+	
+	public void setType(String type) {
+		constraintType = type;
 	}
 
 }

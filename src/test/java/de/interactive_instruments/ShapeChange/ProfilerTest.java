@@ -70,4 +70,16 @@ public class ProfilerTest extends WindowsBasicTest {
 				"src/test/resources/reference/profiling_explicitProfileSettings/xsd");
 	}
 
+	@Test
+	public void testProfilingWithMetadata() {
+		/*
+		 * Test the profiling functionality - with profile metadata
+		 */
+		multiTest(
+				"src/test/resources/config/testEA_Profiling_withMetadata.xml",
+				new String[] { "xsd", "xml" },
+				"testResults/profiling_withProfileMetadata/results",
+				"src/test/resources/reference/profiling_withProfileMetadata/results");
+	}
+
 }

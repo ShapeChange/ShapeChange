@@ -55,18 +55,20 @@ public class BasicConfigurationValidator implements MessageSource {
 
 		String imt = options.parameter("inputModelType");
 
-		if (imt.equalsIgnoreCase("EA7") && !options.isOnlyDeferrableOutputWrite()) {
-
-			/*
-			 * Check that we are running on 32bit Java in a windows environment.
-			 * NOTE: apparently, it is not trivial to detect if a java program
-			 * is executed with 32bit or 64bit JRE. The web has many suggestions
-			 * on how to do it. Here, we make the assumption that in order to
-			 * execute Enterprise Architect (EA), the JRE must be run in
-			 * Windows. Under that assumption, the java system property
-			 * 'os.arch' apparently is always 'x86' if the program is run with a
-			 * 32bit JRE.
-			 */
+		/*
+		 * If the input type is EA7 and we are not only executing deferrable
+		 * output writers, check that we are running on 32bit Java in a windows
+		 * environment.
+		 * 
+		 * NOTE: Apparently, it is not trivial to detect if a java program is
+		 * executed with 32bit or 64bit JRE. The web has many suggestions on how
+		 * to do it. Here, we make the assumption that in order to execute
+		 * Enterprise Architect (EA), the JRE must be run in Windows. Under that
+		 * assumption, the java system property 'os.arch' apparently is always
+		 * 'x86' if the program is run with a 32bit JRE.
+		 */
+		if (imt.equalsIgnoreCase("EA7")
+				&& !options.isOnlyDeferrableOutputWrite()) {
 
 			boolean isWindows = SystemUtils.IS_OS_WINDOWS;
 			String osArch = SystemUtils.OS_ARCH;
@@ -94,7 +96,8 @@ public class BasicConfigurationValidator implements MessageSource {
 		case 2:
 			return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
 		default:
-			return "(Unknown message)";
+			return "(" + BasicConfigurationValidator.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

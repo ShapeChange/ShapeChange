@@ -110,7 +110,8 @@ public abstract class ModelImpl implements Model {
 			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
-			"vocabulary", "associativeTable", "jsonEncodingRule", "sqlEncodingRule" };
+			"vocabulary", "associativeTable", "jsonEncodingRule",
+			"sqlEncodingRule", "status", "geometry" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -274,6 +275,20 @@ public abstract class ModelImpl implements Model {
 		return res;
 	}
 
+	@Override
+	public final SortedSet<PackageInfo> allPackagesFromSelectedSchemas() {
+
+		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
+
+		for (PackageInfo selSchema : selectedSchemas()) {
+
+			result.add(selSchema);
+			result.addAll(selSchema.containedPackagesInSameTargetNamespace());
+		}
+
+		return result;
+	}
+
 	private void postprocessPackage(PackageInfo pi, boolean processClasses) {
 		if (pi == null)
 			return;
@@ -321,13 +336,9 @@ public abstract class ModelImpl implements Model {
 			} else
 				classNames.add(className);
 		}
-
-		if (ci.category() != Options.BASICTYPE
-				&& ci.category() != Options.ENUMERATION
-				&& ci.category() != Options.CODELIST) {
-			for (PropertyInfo propi : ci.properties().values()) {
-				postprocessProperty(propi);
-			}
+		
+		for (PropertyInfo propi : ci.properties().values()) {
+			postprocessProperty(propi);
 		}
 
 		// TODO currently there is no way to get all operations of a class, so
@@ -339,6 +350,7 @@ public abstract class ModelImpl implements Model {
 			return;
 
 		propi.postprocessAfterLoadingAndValidate();
+
 		if (!propi.isAttribute()) {
 			postprocessAssociation(propi.association());
 		}
@@ -474,7 +486,7 @@ public abstract class ModelImpl implements Model {
 
 		if (pkg.targetNamespace() != null) {
 
-			HashSet<PackageInfo> allPackages = this.packages();
+			SortedSet<PackageInfo> allPackages = this.packages();
 
 			for (PackageInfo pi : allPackages) {
 				if (pi.targetNamespace() != null
@@ -485,5 +497,26 @@ public abstract class ModelImpl implements Model {
 		}
 
 		return result;
+	}
+	
+	@Override
+	public final SortedSet<PackageInfo> schemas(String name) {
+
+		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
+
+		for (PackageInfo pi : packages()) {
+
+			if (pi.isSchema()) {
+				if (name != null && !name.equals("")) {
+					if (pi.name().equals(name)) {
+
+						res.add(pi);
+					}
+				} else {
+					res.add(pi);
+				}
+			}
+		}
+		return res;
 	}
 }

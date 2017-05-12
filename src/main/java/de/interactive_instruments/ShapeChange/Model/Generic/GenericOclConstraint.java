@@ -49,6 +49,10 @@ import de.interactive_instruments.ShapeChange.Ocl.OclParser;
  */
 public class GenericOclConstraint extends OclConstraintImpl {
 
+	public GenericOclConstraint() {
+		super();
+	}
+	
 	/**
 	 * Creates a new OCL constraint from the given constraint (with same
 	 * context, but having parsed the OCL anew from the text of the given
@@ -249,4 +253,25 @@ public class GenericOclConstraint extends OclConstraintImpl {
 			// TODO debug info
 		}
 	}
+	
+	public void setContextModelElmt(Info contextModelElmt) {
+		this.contextModelElmt = contextModelElmt;
+	}
+
+	public void setContextModelElmtType(
+			ModelElmtContextType contextModelElmtType) {
+		this.contextModelElmtType = contextModelElmtType;
+	}
+
+	public void setName(String name) {
+		constraintName = name;
+	}
+
+	public void setStatus(String status) {
+		constraintStatus = status;
+	}
+
+	public void setText(String text) {
+		constraintText = text;
+	}	
 }

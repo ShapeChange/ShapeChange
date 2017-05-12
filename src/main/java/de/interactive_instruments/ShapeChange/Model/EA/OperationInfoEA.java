@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model.EA;
 
+import java.util.List;
 import java.util.TreeMap;
 
 import org.sparx.Collection;
@@ -42,12 +43,25 @@ import org.sparx.Parameter;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
 
 public class OperationInfoEA extends OperationInfoImpl
 		implements OperationInfo {
+
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the alias of this
+	 * property.
+	 */
+	protected boolean aliasAccessed = false;
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the
+	 * globalIdentifier of this class.
+	 */
+	protected boolean globalIdentifierAccessed = false;
 
 	/** Access to the document object */
 	protected EADocument document = null;
@@ -174,18 +188,34 @@ public class OperationInfoEA extends OperationInfoImpl
 		return eaName;
 	} // name()
 
-	/** Get alias name of the property. */
-	@Override
-	public String aliasName() {
-		// Obtain alias name from default implementation
-		String a = super.aliasName();
-		// If not present, obtain from EA model directly
-		if (a == null || a.length() == 0) {
-			a = eaMethod.GetStyle();
-			super.aliasName = a;
-		}
-		return a;
-	} // aliasName()
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Retrieve/compute the alias only once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty()) {
+	//
+	// String a = eaMethod.GetStyle();
+	//
+	// if (a != null && !a.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(a)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	// return super.aliasName;
+	// }
 
 	/** Return options and configuration object. */
 	public Options options() {
@@ -252,25 +282,74 @@ public class OperationInfoEA extends OperationInfoImpl
 			}
 		}
 	} // validateTaggedValuesCache()
-	
+
+	// @Override
+	// public Descriptors globalIdentifierAll() {
+	//
+	// // Obtain global identifier from default implementation
+	// Descriptors ls = super.globalIdentifierAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.GLOBALIDENTIFIER)
+	// .equals("ea:guidtoxml")) {
+	//
+	// String gi = document.repository.GetProjectInterface()
+	// .GUIDtoXML(eaMethod.GetMethodGUID());
+	//
+	// super.globalIdentifier = new Descriptors(
+	// new LangString(options().internalize(gi)));
+	// }
+	// return super.globalIdentifier;
+	// }
+
 	@Override
-	public String globalIdentifier() {
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
 
-		// Obtain global identifier from default implementation
-		String gi = super.globalIdentifier();
-		// If not present, obtain from EA model directly
-		if ((gi == null || gi.length() == 0)
-				&& descriptorSource(
-						Options.Descriptor.GLOBALIDENTIFIER.toString())
-								.equals("ea:guidtoxml")
-//				&& options().isLoadGlobalIdentifiers()
-				) {
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
 
-			gi = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaMethod.GetMethodGUID());
+		if (ls.isEmpty()) {
 
-			super.globalIdentifier = options().internalize(gi);
+			if (!globalIdentifierAccessed
+					&& descriptor == Descriptor.GLOBALIDENTIFIER) {
+
+				globalIdentifierAccessed = true;
+
+				// obtain from EA model directly
+				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+						.equals("ea:guidtoxml")) {
+
+					String gi = document.repository.GetProjectInterface()
+							.GUIDtoXML(eaMethod.GetMethodGUID());
+
+					if (gi != null && !gi.isEmpty()) {
+						ls.add(new LangString(options().internalize(gi)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+
+			} else if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				/*
+				 * obtain from EA model directly if ea:alias is identified as
+				 * the source
+				 */
+				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+
+					String a = eaMethod.GetStyle();
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+			}
+
 		}
-		return gi;
+
+		return ls;
 	}
 }

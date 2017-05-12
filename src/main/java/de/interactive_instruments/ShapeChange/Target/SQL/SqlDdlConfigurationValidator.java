@@ -253,7 +253,8 @@ public class SqlDdlConfigurationValidator
 			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + SqlDdlConfigurationValidator.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

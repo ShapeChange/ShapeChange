@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Model.Generic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -43,10 +44,14 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
+import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /**
  * 
@@ -59,34 +64,38 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected GenericModel model = null;
 
 	protected String id = null;
-	protected String globalIdentifier = null;
 	protected String name = null;
+
+	protected Multiplicity cardinality = null;
+	protected boolean isNavigable = true;
+	protected StructuredNumber sequenceNumber = null;
+	protected Type typeInfo = null;
 
 	protected boolean isDerived = false;
 	protected boolean isReadOnly = false;
 	protected boolean isAttribute = true;
-	protected Type typeInfo = null;
-	protected boolean isNavigable = true;
 	protected boolean isOrdered = false;
 	protected boolean isUnique = true;
 	protected boolean isComposition = false;
 	protected boolean isAggregation = false;
-	protected Multiplicity cardinality = null;
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
 	protected String defaultCodeSpace = null;
 	protected boolean isMetadata = false;
-	protected PropertyInfo reverseProperty = null;
-	protected ClassInfo inClass = null;
-	protected StructuredNumber sequenceNumber = null;
 	protected boolean implementedByNilReason = false;
 	protected boolean voidable = false;
-	protected List<Constraint> constraints = null;
-	protected AssociationInfo association = null;
-	protected int categoryOfValue = Options.UNKNOWN;
 
-	public GenericPropertyInfo(GenericModel model, String id, String name,
-			int categoryOfValue) {
+	protected PropertyInfo reverseProperty = null;
+	protected AssociationInfo association = null;
+	protected List<Constraint> constraints = null;
+
+	protected ClassInfo inClass = null;
+
+	public GenericPropertyInfo() {
+
+	}
+
+	public GenericPropertyInfo(GenericModel model, String id, String name) {
 
 		this.model = model;
 		this.options = model.options();
@@ -96,7 +105,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		setName(name);
 
 		this.cardinality = new Multiplicity("1");
-		this.categoryOfValue = categoryOfValue;
 	}
 
 	@Override
@@ -150,14 +158,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setAssociation(AssociationInfo association) {
 		this.association = association;
-	}
-
-	/**
-	 * @param categoryOfValue
-	 *            the categoryOfValue to set
-	 */
-	public void setCategoryOfValue(int categoryOfValue) {
-		this.categoryOfValue = categoryOfValue;
 	}
 
 	@Override
@@ -390,6 +390,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.isOrdered = isOrdered;
 	}
 
+	public void setQualifiers(Vector<Qualifier> qualifiers) {
+		this.qualifiers = qualifiers;
+	}
+
 	/**
 	 * @param isUnique
 	 *            the isUnique to set
@@ -484,113 +488,9 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.restriction = isRestriction;
 	}
 
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String aliasName() {
-		return aliasName;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String primaryCode() {
-		return primaryCode;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String definition() {
-		return definition;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String description() {
-		return description;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String language() {
-		return language;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String legalBasis() {
-		return legalBasis;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] examples() {
-		return examples;
-	}
-
-	/**
-	 * In the generic model, the values are actively managed and stored in the
-	 * model elements.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String[] dataCaptureStatements() {
-		return dataCaptureStatements;
-	}
-
-	/**
-	 * In the generic model, always return an empty string, the other
-	 * descriptors should be used instead.
-	 * 
-	 * @return locally stored descriptor value
-	 */
-	@Override
-	public String documentation() {
-		return "";
-	}
-
 	@Override
 	public String id() {
 		return id;
-	}
-
-	@Override
-	public String globalIdentifier() {
-		return globalIdentifier;
 	}
 
 	@Override
@@ -614,109 +514,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setAliasName(String aliasName) {
-		if (aliasName != null && aliasName.length() > 0) {
-			this.aliasName = options.internalize(aliasName);
-		} else {
-			this.aliasName = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDefinition(String definition) {
-		if (definition != null && definition.length() > 0) {
-			this.definition = options.internalize(definition);
-		} else {
-			this.definition = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDescription(String description) {
-		if (description != null && description.length() > 0) {
-			this.description = options.internalize(description);
-		} else {
-			this.description = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLanguage(String language) {
-		if (language != null && language.length() > 0) {
-			this.language = options.internalize(language);
-		} else {
-			this.language = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setPrimaryCode(String primaryCode) {
-
-		if (primaryCode != null && primaryCode.length() > 0) {
-			this.primaryCode = options.internalize(primaryCode);
-		} else {
-			this.primaryCode = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setLegalBasis(String legalBasis) {
-
-		if (legalBasis != null && legalBasis.length() > 0) {
-			this.legalBasis = options.internalize(legalBasis);
-		} else {
-			this.legalBasis = null;
-		}
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setExamples(String[] examples) {
-		this.examples = examples;
-	}
-
-	/**
-	 * Set the value of this descriptor in the generic model. This invalidates
-	 * the derived documentation so that it is derived again when needed
-	 */
-	public void setDataCaptureStatements(String[] dataCaptureStatements) {
-		this.dataCaptureStatements = dataCaptureStatements;
-	}
-
-	/**
 	 * @param id
 	 */
 	public void setId(String id) {
 
 		this.id = options.internalize(id);
-	}
-
-	/**
-	 * @param globalIdentifier
-	 */
-	public void setGlobalIdentifier(String globalIdentifier) {
-
-		this.globalIdentifier = options.internalize(globalIdentifier);
 	}
 
 	/**
@@ -824,26 +626,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		return implementedByNilReason;
 	}
 
-	@Override
-	public int categoryOfValue() {
-		return categoryOfValue;
-	}
-
 	public GenericPropertyInfo createCopy(String copyId) {
 
-		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name,
-				categoryOfValue);
+		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
 
-		copy.setGlobalIdentifier(globalIdentifier);
-		copy.setAliasName(aliasName);
-		copy.setDefinition(definition);
-		copy.setDescription(description);
-		copy.setPrimaryCode(primaryCode);
-		copy.setLanguage(language);
-		copy.setLegalBasis(legalBasis);
-		copy.setDataCaptureStatements(dataCaptureStatements);
-		copy.setExamples(examples);
-		copy.setStereotypes(stereotypesCache);
+		copy.setDescriptors(this.descriptors().createCopy());
+		copy.setProfiles(this.profiles().createCopy());
 
 		this.validateTaggedValuesCache();
 		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
@@ -916,7 +704,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + GenericPropertyInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 
@@ -1004,12 +793,19 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			}
 		} else if (tvName.equalsIgnoreCase("alias")) {
 
-			this.setAliasName(tvValue);
+			LangString ls = LangString.parse(tvValue);
+			this.descriptors.put(Descriptor.ALIAS, ls);
+
+			// this.setAliasNameAll(
+			// new Descriptors(options().internalize(tvValue)));
 
 		} else if (tvName.equalsIgnoreCase("documentation")) {
 
 			// we map this to the descriptor 'definition'
-			this.setDefinition(tvValue);
+			LangString ls = LangString.parse(tvValue);
+			this.descriptors.put(Descriptor.DEFINITION, ls);
+			// this.setDefinitionAll(
+			// new Descriptors(options().internalize(tvValue)));
 
 		} else if (tvName.equalsIgnoreCase("sequenceNumber")) {
 
@@ -1051,6 +847,20 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 		if (typeInfo.id != null) {
 			typeInfo.id = prefix + typeInfo.id;
+		}
+	}
+
+	/**
+	 * @param profiles
+	 *            new set of profiles for this property; may be
+	 *            <code>null</code>
+	 */
+	public void setProfiles(Profiles profiles) {
+
+		if (profiles == null) {
+			this.profiles = new Profiles();
+		} else {
+			this.profiles = profiles;
 		}
 	}
 }

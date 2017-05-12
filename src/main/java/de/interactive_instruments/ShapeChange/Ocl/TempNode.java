@@ -35,7 +35,6 @@ package de.interactive_instruments.ShapeChange.Ocl;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.SortedSet;
 
@@ -1426,7 +1425,7 @@ abstract class TempNode {
 					// ** Unconstrained search
 					// TODO Note: This is a bit hard because the interfaces do 
 					// not really support this well.
-					HashSet<PackageInfo> pckseed = model.packages();
+					SortedSet<PackageInfo> pckseed = model.packages();
 					// Get descend started from the hooks we got delivered
 					LinkedList<PackageInfo> eval = new LinkedList<PackageInfo>();
 					for( PackageInfo pck : pckseed ) eval.add( pck );

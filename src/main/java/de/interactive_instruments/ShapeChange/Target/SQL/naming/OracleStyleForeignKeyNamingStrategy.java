@@ -101,7 +101,8 @@ public class OracleStyleForeignKeyNamingStrategy
 			return "??More than eleven occurrences of foreign key '$1$'.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + OracleStyleForeignKeyNamingStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

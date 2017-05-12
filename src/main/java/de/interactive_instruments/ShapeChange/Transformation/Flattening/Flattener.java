@@ -62,6 +62,9 @@ import org.jgrapht.alg.cycle.TiernanSimpleCycles;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -75,6 +78,7 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -99,6 +103,10 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  *
  */
 public class Flattener implements Transformer {
+
+	private static final Splitter commaSplitter = Splitter.on(',')
+			.omitEmptyStrings().trimResults();
+	private static final Joiner commaJoiner = Joiner.on(",").skipNulls();
 
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
@@ -832,10 +840,12 @@ public class Flattener implements Transformer {
 				idsOfRelevantSupertypes.add(genCi.id());
 
 				genCi.setSubtypes(null);
-				
-				result.addDebug(null, 20344, genCi.name(), includeRegex, PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
+
+				result.addDebug(null, 20344, genCi.name(), includeRegex,
+						PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
 			} else {
-				result.addDebug(null, 20345, genCi.name(), includeRegex, PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
+				result.addDebug(null, 20345, genCi.name(), includeRegex,
+						PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
 			}
 		}
 
@@ -1059,7 +1069,8 @@ public class Flattener implements Transformer {
 		 *
 		 * 3. For each information set S that belongs to a property with a type
 		 * for which a target type as well as parameter are given in the type
-		 * mapping: create a copy of FT, remove all properties from the other
+		 * mapping AND for which the tagged value 'geometry', if present, has a
+		 * value: create a copy of FT, remove all properties from the other
 		 * information sets, set the type of the property represented by S to
 		 * the target type, and append the value of the type mapping parameter
 		 * to the name and alias of the copy.
@@ -1125,6 +1136,14 @@ public class Flattener implements Transformer {
 			if (genCi.category() != Options.FEATURE)
 				continue;
 
+			// parse 'geometry' tagged value, if present
+			SortedSet<String> geometryTVValues = new TreeSet<String>();
+			String geometryTV = genCi.taggedValue("geometry");
+			if (geometryTV != null) {
+				geometryTVValues = new TreeSet<String>(
+						commaSplitter.splitToList(geometryTV));
+			}
+
 			// identify all feature class properties that are of a geometry (ISO
 			// 19107) type
 			for (PropertyInfo pi : genCi.properties().values()) {
@@ -1185,15 +1204,105 @@ public class Flattener implements Transformer {
 			}
 
 			/*
-			 * if a supertype of genCi also has a geometry property and the rule
-			 * shall be applied on subtypes as well, issue a warning and
-			 * continue with the next class
+			 * Check supertypes if this class has a geometry typed property and
+			 * the rule shall be applied on subtypes as well.
 			 */
-			if (applyOnSubtypes && !propInfoSetsByGeomProperty.isEmpty()
-					&& anySupertypeHasGeometryProperty(genCi)) {
+			if (applyOnSubtypes && !propInfoSetsByGeomProperty.isEmpty()) {
 
-				result.addWarning(null, 20313, genCi.name());
-				continue;
+				SortedSet<ClassInfo> supertypesAll = genCi
+						.supertypesInCompleteHierarchy();
+
+				SortedSet<ClassInfo> supertypesWithGeometryProperty = new TreeSet<ClassInfo>();
+				SortedSet<ClassInfo> supertypesWithOtherGeometryDefinition = new TreeSet<ClassInfo>();
+
+				for (ClassInfo supertype : supertypesAll) {
+
+					// identify supertype with geometry property
+					for (PropertyInfo pi : supertype.properties().values()) {
+
+						if (pi.typeInfo().name.startsWith("GM_")) {
+							supertypesWithGeometryProperty.add(supertype);
+							break;
+						}
+					}
+
+					/*
+					 * identify supertype with other geometry definition
+					 */
+					if (geometryTV != null && !geometryTVValues.isEmpty()) {
+
+						SortedSet<String> supertypeGeometryTVValues = new TreeSet<String>();
+						String supertypeGeometryTV = supertype
+								.taggedValue("geometry");
+						if (supertypeGeometryTV != null) {
+							supertypeGeometryTVValues = new TreeSet<String>(
+									commaSplitter
+											.splitToList(supertypeGeometryTV));
+						}
+
+						if (supertypeGeometryTVValues.isEmpty()) {
+							/*
+							 * potentially problematic, since genCi does not
+							 * define the same geometry types that its supertype
+							 * does
+							 */
+							supertypesWithOtherGeometryDefinition
+									.add(supertype);
+						} else {
+
+							if (supertypeGeometryTVValues
+									.equals(geometryTVValues)) {
+								// fine - sets are equal
+							} else {
+								/*
+								 * potentially problematic, since genCi does not
+								 * define the same geometry types that its
+								 * supertype does
+								 */
+								supertypesWithOtherGeometryDefinition
+										.add(supertype);
+							}
+						}
+
+					} else {
+						/*
+						 * fine - genCi would be split according to its
+						 * supertype
+						 */
+					}
+				}
+
+				/*
+				 * if a supertype has a different geometry specification, issue
+				 * a warning
+				 */
+				if (!supertypesWithOtherGeometryDefinition.isEmpty()) {
+
+					List<String> names = new ArrayList<String>();
+
+					for (ClassInfo supertype : supertypesWithOtherGeometryDefinition) {
+						names.add(supertype.name());
+					}
+
+					result.addWarning(null, 20316, genCi.name(),
+							commaJoiner.join(names));
+				}
+
+				/*
+				 * if a subtype also has a geometry property, issue a warning
+				 */
+				if (!supertypesWithGeometryProperty.isEmpty()) {
+
+					List<String> names = new ArrayList<String>();
+
+					for (ClassInfo subtype : supertypesWithGeometryProperty) {
+						names.add(subtype.name());
+					}
+
+					result.addWarning(null, 20313, genCi.name(),
+							commaJoiner.join(names));
+					continue;
+				}
 			}
 
 			// identify related properties
@@ -1260,18 +1369,15 @@ public class Flattener implements Transformer {
 
 					/*
 					 * Remove all information sets that belong to one of the
-					 * types from the type mapping that have no target types or
-					 * no param. Also remove the according geometry properties
-					 * themselves.
+					 * types from the type mapping that: 1) have no target types
+					 * or 2) have no param or 3) the geometry tagged value is
+					 * present and defines a set of allowed geometries, but the
+					 * param value is not one of them. Also remove the according
+					 * geometry properties themselves.
 					 */
-					if (!mapEntry.hasTargetType() || !mapEntry.hasParam()) {
-
-						// TBD: this would also be the place to check geometry
-						// profile infos: ensure that mapEntry.param
-						// equalsIgnoreCase one of the geometry identifiers from
-						// the profile and prevent creation of the
-						// geometry-specific feature type if this condition is
-						// not met
+					if (!mapEntry.hasTargetType() || !mapEntry.hasParam()
+							|| (!geometryTVValues.isEmpty() && !geometryTVValues
+									.contains(mapEntry.getParam()))) {
 
 						for (GenericPropertyInfo geomTypeProperty : propMapByGeomTypeName
 								.get(geomType)) {
@@ -1545,8 +1651,7 @@ public class Flattener implements Transformer {
 				GenericPropertyInfo copiedClassUnionProp = new GenericPropertyInfo(
 						genModel,
 						copiedClassUnion.id() + "_choice" + seqNumIndex,
-						normaliseGeometryTypeSuffix(suffix),
-						classCopy.category());
+						normaliseGeometryTypeSuffix(suffix));
 
 				copiedClassUnionProp.setStereotype("");
 
@@ -1626,8 +1731,6 @@ public class Flattener implements Transformer {
 
 			if (copiedClassUnionsByOriginalClassId.containsKey(type.id)) {
 
-				genPi.setCategoryOfValue(Options.UNION);
-
 				GenericClassInfo copiedClassUnion = copiedClassUnionsByOriginalClassId
 						.get(type.id);
 
@@ -1653,14 +1756,6 @@ public class Flattener implements Transformer {
 
 					GenericClassInfo copiedClassUnion = copiedClassUnionsByOriginalClassId
 							.get(type.id);
-
-					/*
-					 * NOTE for cast: the cast should be safe, because pi
-					 * belongs to a GenericClassInfo (genCiToAdd)
-					 */
-					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
-
-					genPi.setCategoryOfValue(Options.UNION);
 
 					type.name = copiedClassUnion.name();
 					type.id = copiedClassUnion.id();
@@ -1980,44 +2075,46 @@ public class Flattener implements Transformer {
 
 	}
 
-	/**
-	 * @param genCi
-	 * @return true if any of the supertypes of genCi (to the highest level) has
-	 *         a property where the name of the type starts with "GM_", else
-	 *         false
-	 */
-	private boolean anySupertypeHasGeometryProperty(ClassInfo genCi) {
-
-		Set<String> supertypesOfGenCi = new HashSet<String>();
-		if (genCi.supertypes() != null) {
-			supertypesOfGenCi.addAll(genCi.supertypes());
-		}
-		if (genCi.baseClass() != null) {
-			supertypesOfGenCi.add(genCi.baseClass().id());
-		}
-
-		Model model = genCi.model();
-
-		for (String supertypeId : supertypesOfGenCi) {
-
-			ClassInfo supertypeCi = model.classById(supertypeId);
-
-			for (PropertyInfo pi : supertypeCi.properties().values()) {
-
-				if (pi.typeInfo().name.startsWith("GM_")) {
-					return true;
-				}
-			}
-
-			boolean supertypeOfSupertypeHasGeomProp = anySupertypeHasGeometryProperty(
-					supertypeCi);
-			if (supertypeOfSupertypeHasGeomProp) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+	// /**
+	// * @param genCi
+	// * @return true if any of the supertypes of genCi (to the highest level)
+	// has
+	// * a property where the name of the type starts with "GM_", else
+	// * false
+	// */
+	// private boolean anySupertypeHasGeometryProperty(ClassInfo genCi) {
+	//
+	// Set<String> supertypesOfGenCi = new HashSet<String>();
+	// if (genCi.supertypes() != null) {
+	// supertypesOfGenCi.addAll(genCi.supertypes());
+	// }
+	// if (genCi.baseClass() != null) {
+	// supertypesOfGenCi.add(genCi.baseClass().id());
+	// }
+	//
+	// Model model = genCi.model();
+	//
+	// for (String supertypeId : supertypesOfGenCi) {
+	//
+	// ClassInfo supertypeCi = model.classById(supertypeId);
+	//
+	// for (PropertyInfo pi : supertypeCi.properties().values()) {
+	//
+	// if (pi.typeInfo().name.startsWith("GM_")) {
+	// return true;
+	// }
+	// }
+	//
+	// boolean supertypeOfSupertypeHasGeomProp =
+	// anySupertypeHasGeometryProperty(
+	// supertypeCi);
+	// if (supertypeOfSupertypeHasGeomProp) {
+	// return true;
+	// }
+	// }
+	//
+	// return false;
+	// }
 
 	/**
 	 * Removes all non-word characters and the underscores in the given suffix,
@@ -2450,7 +2547,8 @@ public class Flattener implements Transformer {
 		if (tvNameForCodeValue == null) {
 
 			// store in the alias
-			genPi.setAliasName(codeValue);
+			// genPi.setAliasNameAll(new Descriptors(codeValue));
+			genPi.descriptors().put(Descriptor.ALIAS, codeValue);
 
 		} else {
 
@@ -2473,8 +2571,9 @@ public class Flattener implements Transformer {
 		if (tvNameForCodeValue == null) {
 
 			// store in the alias
-			genCi.setAliasName(codeValue);
+			// genCi.setAliasNameAll(new Descriptors(codeValue));
 
+			genCi.descriptors().put(Descriptor.ALIAS, codeValue);
 		} else {
 
 			// store in a tagged value
@@ -2552,9 +2651,13 @@ public class Flattener implements Transformer {
 						 * alright, then the type shall be excluded from
 						 * processing
 						 */
-						result.addDebug(null, 20344, genCi.name(), replaceUnionExcludePattern.pattern(), PARAM_REPLACE_UNION_EXCLUDE_REGEX);
+						result.addDebug(null, 20344, genCi.name(),
+								replaceUnionExcludePattern.pattern(),
+								PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 					} else {
-						result.addDebug(null, 20345, genCi.name(), replaceUnionExcludePattern.pattern(), PARAM_REPLACE_UNION_EXCLUDE_REGEX);
+						result.addDebug(null, 20345, genCi.name(),
+								replaceUnionExcludePattern.pattern(),
+								PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 						unionsToProcess.add(genCi);
 					}
 
@@ -2627,13 +2730,21 @@ public class Flattener implements Transformer {
 						} else if (uGPi.globalIdentifier() == null) {
 
 							// use the global id from genPi
-							copy.setGlobalIdentifier(relPi.globalIdentifier());
+							// copy.setGlobalIdentifierAll(
+							// new Descriptors(relPi.globalIdentifier()));
 
+							genCi.descriptors().put(Descriptor.GLOBALIDENTIFIER,
+									relPi.globalIdentifier());
 						} else {
 
 							// merge global ids
-							copy.setGlobalIdentifier(relPi.globalIdentifier()
-									+ "." + uGPi.globalIdentifier());
+							// copy.setGlobalIdentifierAll(
+							// new Descriptors(relPi.globalIdentifier()
+							// + "." + uGPi.globalIdentifier()));
+							genCi.descriptors().put(Descriptor.GLOBALIDENTIFIER,
+									relPi.globalIdentifier() + "."
+											+ uGPi.globalIdentifier());
+
 						}
 
 						/* handle derived properties */
@@ -2953,14 +3064,23 @@ public class Flattener implements Transformer {
 							} else if (typeGPi.globalIdentifier() == null) {
 
 								// use the global id from genPi
-								copy.setGlobalIdentifier(
+								// copy.setGlobalIdentifierAll(new Descriptors(
+								// genPi.globalIdentifier()));
+
+								copy.descriptors().put(
+										Descriptor.GLOBALIDENTIFIER,
 										genPi.globalIdentifier());
 
 							} else {
 
 								// merge global ids
-								copy.setGlobalIdentifier(
-										genPi.globalIdentifier() + "."
+								// copy.setGlobalIdentifierAll(new Descriptors(
+								// genPi.globalIdentifier() + "."
+								// + typeGPi.globalIdentifier()));
+
+								copy.descriptors()
+										.put(Descriptor.GLOBALIDENTIFIER, genPi
+												.globalIdentifier() + "."
 												+ typeGPi.globalIdentifier());
 							}
 
@@ -2981,19 +3101,19 @@ public class Flattener implements Transformer {
 							 * globalIdentifier)
 							 */
 							if (mergeDescriptors) {
-								copy.setDefinition(
+								copy.descriptors().put(Descriptor.DEFINITION,
 										StringUtils.join(
 												new String[] {
 														genPi.definition(),
 														copy.definition() },
 												" "));
-								copy.setDescription(
+								copy.descriptors().put(Descriptor.DESCRIPTION,
 										StringUtils.join(
 												new String[] {
 														genPi.description(),
 														copy.description() },
 												" "));
-								copy.setPrimaryCode(
+								copy.descriptors().put(Descriptor.PRIMARYCODE,
 										StringUtils.join(
 												new String[] {
 														genPi.primaryCode(),
@@ -3001,17 +3121,21 @@ public class Flattener implements Transformer {
 												" "));
 								// TBD: would it make sense to merge the
 								// language()?
-								copy.setLegalBasis(
+								copy.descriptors().put(Descriptor.LEGALBASIS,
 										StringUtils.join(
 												new String[] {
 														genPi.legalBasis(),
 														copy.legalBasis() },
 												" "));
-								copy.setDataCaptureStatements(ArrayUtils.addAll(
-										genPi.dataCaptureStatements(),
-										copy.dataCaptureStatements()));
-								copy.setExamples(ArrayUtils.addAll(
-										genPi.examples(), copy.examples()));
+								copy.descriptors().put(
+										Descriptor.DATACAPTURESTATEMENT,
+										ArrayUtils.addAll(
+												genPi.dataCaptureStatements(),
+												copy.dataCaptureStatements()));
+								copy.descriptors().put(Descriptor.EXAMPLE,
+										ArrayUtils.addAll(genPi.examples(),
+												copy.examples()));
+
 							} else {
 								// (NOTE: for backwards compatibility after
 								// mergeDescriptors has been introduced) Reset
@@ -3019,15 +3143,22 @@ public class Flattener implements Transformer {
 								// empty.
 								String s = copy.derivedDocumentation(
 										"[[definition]][[description]]", "");
+
 								if (s == null || s.length() == 0) {
-									copy.setDefinition(genPi.definition());
-									copy.setDescription(genPi.description());
-									copy.setPrimaryCode(genPi.primaryCode());
-									copy.setLanguage(genPi.language());
-									copy.setLegalBasis(genPi.legalBasis());
-									copy.setDataCaptureStatements(
-											genPi.dataCaptureStatements());
-									copy.setExamples(genPi.examples());
+
+									Descriptor[] descriptorsToCopy = new Descriptor[] {
+											Descriptor.DEFINITION,
+											Descriptor.DESCRIPTION,
+											Descriptor.PRIMARYCODE,
+											Descriptor.LANGUAGE,
+											Descriptor.LEGALBASIS,
+											Descriptor.DATACAPTURESTATEMENT,
+											Descriptor.EXAMPLE };
+
+									copy.descriptors().putCopy(
+											descriptorsToCopy,
+											genPi.descriptors());
+
 								}
 							}
 
@@ -3540,10 +3671,14 @@ public class Flattener implements Transformer {
 
 								if (m.matches()) {
 									processType = false;
-									result.addDebug(null, 20344, typeCi.name(), excludeDataTypeRegex, PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+									result.addDebug(null, 20344, typeCi.name(),
+											excludeDataTypeRegex,
+											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
 								} else {
 									processType = true;
-									result.addDebug(null, 20345, typeCi.name(), excludeDataTypeRegex, PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+									result.addDebug(null, 20345, typeCi.name(),
+											excludeDataTypeRegex,
+											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
 								}
 
 							} else {
@@ -3563,10 +3698,14 @@ public class Flattener implements Transformer {
 
 								if (m.matches()) {
 									processType = true;
-									result.addDebug(null, 20344, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
+									result.addDebug(null, 20344, typeCi.name(),
+											includeObjectTypeRegex,
+											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								} else {
 									processType = false;
-									result.addDebug(null, 20345, typeCi.name(), includeObjectTypeRegex, PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
+									result.addDebug(null, 20345, typeCi.name(),
+											includeObjectTypeRegex,
+											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 								}
 
 							} else {
@@ -4108,52 +4247,66 @@ public class Flattener implements Transformer {
 					maxOccurs = genPi.cardinality().maxOccurs;
 				}
 
-				// create copies of the property and add them to the class /
-				// model
-				StructuredNumber genPiSeqNum = genPi.sequenceNumber();
+				if (maxOccurs == 1) {
 
-				for (int i = 1; i <= maxOccurs; i++) {
+					/*
+					 * In this case we just need to update maxOccurs of the
+					 * property. No need to create copies.
+					 */
+					genPi.cardinality().maxOccurs = 1;
 
-					String newId = genPi.id() + i;
-					String newName = genPi.name()
-							+ separatorForPropertyIndexNumber + i;
+				} else {
 
-					GenericPropertyInfo copy = genPi.createCopy(newId);
-					copy.setName(newName);
+					/*
+					 * create copies of the property and add them to the class /
+					 * model
+					 */
+					for (int i = 1; i <= maxOccurs; i++) {
 
-					if (hasCode(genPi)) {
-						setCode(copy, getCode(genPi)
-								+ separatorForPropertyIndexNumber + i);
-					}
+						String newId = genPi.id() + i;
+						String newName = genPi.name()
+								+ separatorForPropertyIndexNumber + i;
 
-					Multiplicity card = new Multiplicity();
-					if (genPi.cardinality().minOccurs != 0) {
-						if (i <= genPi.cardinality().minOccurs) {
-							card.minOccurs = 1;
+						GenericPropertyInfo copy = genPi.createCopy(newId);
+						copy.setName(newName);
+
+						if (hasCode(genPi)) {
+							setCode(copy, getCode(genPi)
+									+ separatorForPropertyIndexNumber + i);
+						}
+
+						Multiplicity card = new Multiplicity();
+						if (genPi.cardinality().minOccurs != 0) {
+							if (i <= genPi.cardinality().minOccurs) {
+								card.minOccurs = 1;
+							} else {
+								card.minOccurs = 0;
+							}
 						} else {
 							card.minOccurs = 0;
 						}
-					} else {
-						card.minOccurs = 0;
-					}
-					card.maxOccurs = 1;
-					copy.setCardinality(card);
+						card.maxOccurs = 1;
+						copy.setCardinality(card);
 
-					/*
-					 * ensure that "sequenceNumber" tagged value is also updated
-					 */
-					copy.setSequenceNumber(genPiSeqNum.createCopyWithSuffix(i),
-							true);
+						/*
+						 * ensure that "sequenceNumber" tagged value is also
+						 * updated
+						 */
+						copy.setSequenceNumber(
+								genPi.sequenceNumber().createCopyWithSuffix(i),
+								true);
 
-//					if (options.isLoadGlobalIdentifiers()) {
 						if (genPi.globalIdentifier() != null) {
-						String newGlobalId = genPi.globalIdentifier()
-								.concat("[" + i + "]");
-						copy.setGlobalIdentifier(newGlobalId);
-					}
+							String newGlobalId = genPi.globalIdentifier()
+									.concat("[" + i + "]");
 
-					propsToAdd.add(copy);
-					propsToRemove.add(genPi);
+							copy.descriptors().put(Descriptor.GLOBALIDENTIFIER,
+									newGlobalId);
+						}
+
+						propsToAdd.add(copy);
+						propsToRemove.add(genPi);
+					}
 				}
 			}
 
@@ -4468,7 +4621,6 @@ public class Flattener implements Transformer {
 				 * itself
 				 */
 				if (!genPi.inClass().id().equals(superclassUnion.id())) {
-					genPi.setCategoryOfValue(superclassUnion.category());
 					type.name = superclassUnion.name();
 					type.id = superclassUnion.id();
 				}
@@ -5037,7 +5189,7 @@ public class Flattener implements Transformer {
 
 		GenericPropertyInfo genSuperClassUnionProp = new GenericPropertyInfo(
 				genModel, genSuperclassUnion.id() + "_choice" + seqNumIndex,
-				toLowerCase(genSuperclass.name()), genSuperclass.category());
+				toLowerCase(genSuperclass.name()));
 
 		genSuperClassUnionProp.setStereotype("");
 
@@ -5100,11 +5252,13 @@ public class Flattener implements Transformer {
 		Matcher m = regex.matcher(genCi.name());
 
 		if (m.matches()) {
-			result.addDebug(null, 20344, genCi.name(), regex.pattern(), PARAM_INHERITANCE_INCLUDE_REGEX);
+			result.addDebug(null, 20344, genCi.name(), regex.pattern(),
+					PARAM_INHERITANCE_INCLUDE_REGEX);
 			return true;
 
 		} else {
-			result.addDebug(null, 20345, genCi.name(), regex.pattern(), PARAM_INHERITANCE_INCLUDE_REGEX);
+			result.addDebug(null, 20345, genCi.name(), regex.pattern(),
+					PARAM_INHERITANCE_INCLUDE_REGEX);
 
 			GenericModel model = genCi.model();
 
@@ -5565,14 +5719,14 @@ public class Flattener implements Transformer {
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
 			if (genCi.name().endsWith("Meta") && genCi.properties().size() == 1
-					&& genCi.propertyByName("valueOrReason") != null) {
+					&& genCi.ownedProperty("valueOrReason") != null) {
 
 				/*
 				 * NOTE for cast: the cast should be safe, because the
 				 * valueOrReason property belongs to a GenericClassInfo (genCi)
 				 */
 				GenericPropertyInfo genPi = (GenericPropertyInfo) genCi
-						.propertyByName("valueOrReason");
+						.ownedProperty("valueOrReason");
 
 				ClassInfo typeCi = genModel.classById(genPi.typeInfo().id);
 
@@ -5649,9 +5803,15 @@ public class Flattener implements Transformer {
 								Options.ENUMERATION);
 
 						// set remaining properties required by Info interface
-						booleanWithOninaCi.setAliasName("");
+						booleanWithOninaCi.descriptors().put(Descriptor.ALIAS,
+								"");
+						// booleanWithOninaCi.setAliasNameAll(new
+						// Descriptors(""));
 						setCode(booleanWithOninaCi, "");
-						booleanWithOninaCi.setDefinition("");
+						booleanWithOninaCi.descriptors()
+								.put(Descriptor.DEFINITION, "");
+						// booleanWithOninaCi
+						// .setDefinitionAll(new Descriptors(""));
 
 						// TBD: is there an easy way to get all the relevant
 						// tagged values for an enumeration?
@@ -5700,7 +5860,10 @@ public class Flattener implements Transformer {
 						GenericPropertyInfo falseEnumProp = createEnumerationProperty(
 								model, "false", "1000", booleanWithOninaCi, s1);
 						setCode(falseEnumProp, "1000");
-						falseEnumProp.setDefinition("False");
+						falseEnumProp.descriptors().put(Descriptor.DEFINITION,
+								"False");
+						// falseEnumProp
+						// .setDefinitionAll(new Descriptors("False"));
 						properties.put(s1, falseEnumProp);
 
 						model.register(falseEnumProp);
@@ -5709,7 +5872,10 @@ public class Flattener implements Transformer {
 						GenericPropertyInfo trueEnumProp = createEnumerationProperty(
 								model, "true", "1001", booleanWithOninaCi, s2);
 						setCode(trueEnumProp, "1001");
-						trueEnumProp.setDefinition("True");
+						trueEnumProp.descriptors().put(Descriptor.DEFINITION,
+								"True");
+						// trueEnumProp.setDefinitionAll(new
+						// Descriptors("True"));
 						properties.put(s2, trueEnumProp);
 
 						model.register(trueEnumProp);
@@ -5719,7 +5885,10 @@ public class Flattener implements Transformer {
 								model, "noInformation", "-999999",
 								booleanWithOninaCi, s3);
 						setCode(noInfoProp, "-999999");
-						noInfoProp.setDefinition("No Information");
+						noInfoProp.descriptors().put(Descriptor.DEFINITION,
+								"No Information");
+						// noInfoProp.setDefinitionAll(
+						// new Descriptors("No Information"));
 						properties.put(s3, noInfoProp);
 
 						model.register(noInfoProp);
@@ -5868,7 +6037,8 @@ public class Flattener implements Transformer {
 								model, "noInformation", "-999999", genCi,
 								snNoInformation);
 						setCode(noInfoProp, "-999999");
-						noInfoProp.setDefinition("No Information");
+						noInfoProp.descriptors().put(Descriptor.DEFINITION,
+								"No Information");
 						model.add(noInfoProp, genCi,
 								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 
@@ -5879,7 +6049,8 @@ public class Flattener implements Transformer {
 								model, "notApplicable", "998", genCi,
 								snNotApplicable);
 						setCode(notApplicProp, "998");
-						notApplicProp.setDefinition("Not Applicable");
+						notApplicProp.descriptors().put(Descriptor.DEFINITION,
+								"Not Applicable");
 						model.add(notApplicProp, genCi,
 								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 
@@ -5889,7 +6060,8 @@ public class Flattener implements Transformer {
 						GenericPropertyInfo otherProp = createEnumerationProperty(
 								model, "other", "999", genCi, snOther);
 						setCode(otherProp, "999");
-						otherProp.setDefinition("Other");
+						otherProp.descriptors().put(Descriptor.DEFINITION,
+								"Other");
 						model.add(otherProp, genCi,
 								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 
@@ -5936,26 +6108,6 @@ public class Flattener implements Transformer {
 								.get(propTypeId);
 
 						genPi.copyTypeInfo(valueTypeToUse);
-
-						/*
-						 * Ensure that we use the correct value category. We
-						 * cannot simply use enumeration because in some cases
-						 * (e.g. when using complex datatypes as value) an
-						 * XxxReason <<union>> may not use an enumeration as
-						 * type of its 'value' property.
-						 */
-						ClassInfo valueTypeToUseCi = model
-								.classById(valueTypeToUse.id);
-
-						if (valueTypeToUseCi != null) {
-							genPi.setCategoryOfValue(
-									valueTypeToUseCi.category());
-						} else {
-							result.addWarning(null, 20340, genPi.name(),
-									genPi.inClass().name(),
-									valueTypeToUse.name);
-							genPi.setCategoryOfValue(Options.UNKNOWN);
-						}
 					}
 				}
 			}
@@ -6045,9 +6197,11 @@ public class Flattener implements Transformer {
 				if (matcher.matches()) {
 
 					genPisToRemove.add(genPi);
-					result.addDebug(null, 20344, genPi.inClass().name(), regex, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
+					result.addDebug(null, 20344, genPi.inClass().name(), regex,
+							PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
 				} else {
-					result.addDebug(null, 20345, genPi.inClass().name(), regex, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
+					result.addDebug(null, 20345, genPi.inClass().name(), regex,
+							PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
 				}
 			}
 		}
@@ -6151,15 +6305,15 @@ public class Flattener implements Transformer {
 			StructuredNumber strucNum) {
 
 		GenericPropertyInfo enumPi = new GenericPropertyInfo(model,
-				ci.id() + "_" + enumName, enumName, Options.UNKNOWN);
+				ci.id() + "_" + enumName, enumName);
 
 		// set remaining properties required by Info interface
 		if (enumAlias != null && enumAlias.trim().length() > 0) {
-			enumPi.setAliasName(enumAlias);
+			enumPi.descriptors().put(Descriptor.ALIAS, enumAlias);
 		} else {
-			enumPi.setAliasName(enumName);
+			enumPi.descriptors().put(Descriptor.ALIAS, enumName);
 		}
-		enumPi.setDefinition("");
+		enumPi.descriptors().put(Descriptor.DEFINITION, "");
 		// no need to set the stereotype in this case
 		// enumPi.setStereotypes(null);
 		TaggedValues taggedValues = options.taggedValueFactory();

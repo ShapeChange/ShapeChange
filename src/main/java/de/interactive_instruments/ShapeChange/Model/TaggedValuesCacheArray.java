@@ -238,6 +238,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 		return false;
 	}
 
+	@Override
 	public String[] get(String tag) {
 
 		// search in complexTags first, then in simple tags
@@ -258,7 +259,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 
 		}
 
-		return null;
+		return new String[]{};
 	}
 
 	@Override

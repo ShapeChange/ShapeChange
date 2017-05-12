@@ -41,6 +41,7 @@ import org.apache.xml.serializer.utils.XMLChar;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
@@ -54,8 +55,9 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	protected int processed = 0;
 
 	protected List<ImageMetadata> diagrams = null;
+	protected Profiles profiles = null;
 
-	public String language() {
+	public final String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -262,6 +264,8 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			category = Options.FEATURECONCEPT;
 		} else if (stereotype("attributeconcept")) {
 			category = Options.ATTRIBUTECONCEPT;
+		} else if (stereotype("roleconcept")) {
+			category = Options.ROLECONCEPT;
 		} else if (stereotype("valueconcept")) {
 			category = Options.VALUECONCEPT;
 		} else if (stereotype("schluesseltabelle")
@@ -880,24 +884,86 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	@Override
-	public SortedSet<String> subtypesInCompleteSubtypeHierarchy() {
+	public SortedSet<ClassInfo> subtypesInCompleteHierarchy() {
 
-		SortedSet<String> result = new TreeSet<String>();
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
 
-		result.addAll(this.subtypes());
+		for (String subtypeId : this.subtypes()) {
 
-		if (!this.subtypes().isEmpty()) {
+			ClassInfo subtype = model().classById(subtypeId);
 
-			for (String subtypeId : this.subtypes()) {
+			result.add(subtype);
+			result.addAll(subtype.subtypesInCompleteHierarchy());
+		}
 
-				ClassInfo ci = model().classById(subtypeId);
+		return result;
+	}
 
-				if (ci != null) {
-					result.addAll(ci.subtypesInCompleteSubtypeHierarchy());
+	@Override
+	public final SortedSet<ClassInfo> supertypesInCompleteHierarchy() {
+
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+		for (String supertypeId : this.supertypes()) {
+
+			ClassInfo supertype = model().classById(supertypeId);
+
+			result.add(supertype);
+			result.addAll(supertype.supertypesInCompleteHierarchy());
+		}
+
+		return result;
+	}
+
+	@Override
+	public final Profiles profiles() {
+
+		if (this.profiles == null) {
+
+			// attempt to parse from profiles tagged value
+			String profilesTV = this
+					.taggedValue(Profiles.PROFILES_TAGGED_VALUE);
+
+			if (profilesTV == null || profilesTV.trim().length() == 0) {
+
+				// No specific profiles declared, which is valid.
+				this.profiles = new Profiles();
+
+			} else {
+
+				try {
+
+					Profiles tmp = Profiles.parse(profilesTV, false);
+
+					this.profiles = tmp;
+
+				} catch (MalformedProfileIdentifierException e) {
+
+					MessageContext mc = result().addWarning(null, 20201);
+					if (mc != null) {
+						mc.addDetail(null, 20216, fullNameInSchema());
+						mc.addDetail(null, 20217, e.getMessage());
+						mc.addDetail(null, 20218, profilesTV);
+					}
+					this.profiles = new Profiles();
 				}
 			}
 		}
 
-		return result;
+		return this.profiles;
+	}
+
+	@Override
+	public final PropertyInfo ownedProperty(String name) {
+
+		for (PropertyInfo pi : properties().values()) {
+
+			if (pi.name().equals(name)) {
+
+				return pi;
+			}
+		}
+
+		return null;
 	}
 }

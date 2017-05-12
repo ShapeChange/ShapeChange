@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://example.org/shapechange/profiling/withMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/profiling/withMetadata" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T3_FeatureUnion" substitutionGroup="gml:AbstractObject" type="sc:T3_FeatureUnionType"/>
+  <complexType name="T3_FeatureUnionType">
+    <choice>
+      <element name="c" type="sc:T3_Feature_CPropertyType"/>
+      <element name="p" type="sc:T3_Feature_PPropertyType"/>
+      <element name="s" type="sc:T3_Feature_SPropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="T3_FeatureUnionPropertyType">
+    <sequence>
+      <element ref="sc:T3_FeatureUnion"/>
+    </sequence>
+  </complexType>
+  <element name="T3_Feature_C" substitutionGroup="gml:AbstractFeature" type="sc:T3_Feature_CType"/>
+  <complexType name="T3_Feature_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="integer"/>
+          <element name="att3" type="gml:CurvePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_Feature_CPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T3_Feature_C"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_Feature_P" substitutionGroup="gml:AbstractFeature" type="sc:T3_Feature_PType"/>
+  <complexType name="T3_Feature_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="integer"/>
+          <element name="att2" type="gml:PointPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_Feature_PPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T3_Feature_P"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T3_Feature_S" substitutionGroup="gml:AbstractFeature" type="sc:T3_Feature_SType"/>
+  <complexType name="T3_Feature_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="integer"/>
+          <element name="att4" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T3_Feature_SPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T3_Feature_S"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

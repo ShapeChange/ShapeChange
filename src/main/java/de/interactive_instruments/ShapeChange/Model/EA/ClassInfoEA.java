@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Model.EA;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -56,6 +56,8 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -78,6 +80,11 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	 * of this class.
 	 */
 	protected boolean documentationAccessed = false;
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the
+	 * globalIdentifier of this class.
+	 */
+	protected boolean globalIdentifierAccessed = false;
 	/**
 	 * Flag used to prevent duplicate retrieval/computation of the association
 	 * of this class.
@@ -111,7 +118,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** The EA element addressed by this ClassInfo */
 	protected org.sparx.Element eaClassElement = null;
-
+	
 	/** The EA object id of the class element object */
 	protected int eaClassId = 0;
 
@@ -360,6 +367,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public org.sparx.Element getEaClassElement() {
 		return eaClassElement;
 	}
+	
+	public int getEaElementId() {
+		return eaClassId;
+	}
 
 	/** Return EA model object. */
 	public Model model() {
@@ -376,13 +387,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return document.result;
 	} // result()
 
-	/**
-	 * This determines the particular base class of a class in the sense of
-	 * ISO19136 annex D+E. Only classes of categories resulting from the
-	 * acknowledged stereotypes are considered. A base class is selected if it
-	 * has the same category as this class or category unknown. However mixin
-	 * classes are always ignored.
-	 */
+	@Override
 	public ClassInfo baseClass() {
 		// Initialize
 		int stsize = 0; // # of proper base candidates
@@ -560,10 +565,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	// restricted to those defined within ShapeChange and 2. deprecated ones
 	// are normalized to the lastest definitions.
 	public void validateStereotypesCache() {
+
 		if (stereotypesCache == null) {
+
 			// Fetch stereotypes 'collection' ...
 			String sts = eaClassElement.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
+
 			// Allocate cache
 			stereotypesCache = options().stereotypesFactory();
 			// Copy stereotypes found in class selecting those defined in
@@ -576,6 +584,26 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (st.toLowerCase().equals(s))
 							stereotypesCache.add(s);
 					}
+			}
+
+			/*
+			 * 2017-03-23 JE: Apparently when calling
+			 * eaClassElement.GetStereotypeEx() the EA API does not return the
+			 * stereotype of a class that has been created in EA as an element
+			 * with type enumeration (which is different than a normal class).
+			 * We explicitly add the stereotype "enumeration" for such elements.
+			 * That will also help in case that the UML profile of an
+			 * application schema did not define a stereotype for enumerations
+			 * but still used EA elements of type enumeration (with the intent
+			 * to treat them as enumerations). The "enumeration" stereotype is
+			 * necessary when exporting a model without also exporting the
+			 * category of a class, since then the class category must be
+			 * established based upon the stereotype (and potentially existing
+			 * XML Schema conversion rules) when importing an SCXML model.
+			 */
+			if (!stereotypesCache.contains("enumeration") && eaClassElement
+					.GetType().equalsIgnoreCase("enumeration")) {
+				stereotypesCache.add("enumeration");
 			}
 		}
 	} // validateStereotypesCache()
@@ -603,72 +631,198 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return baseids;
 	} // supertypes()
 
-	/**
-	 * Return the documentation attached to the property object. This is fetched
-	 * from tagged values and - if this is absent - from the 'notes' specific to
-	 * the EA objects model.
-	 */
 	@Override
-	public String documentation() {
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
 
-		// Retrieve/compute the documentation only once
-		// Cache the result for subsequent use
-		if (!documentationAccessed) {
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
 
-			documentationAccessed = true;
+		if (ls.isEmpty()) {
 
-			// Try default first
-			String s = super.documentation();
+			if (!documentationAccessed
+					&& descriptor == Descriptor.DOCUMENTATION) {
 
-			// Try EA notes, if both tagged values fail and ea:notes is the
-			// source
-			if ((s == null || s.length() == 0) && descriptorSource(
-					Options.Descriptor.DOCUMENTATION.toString())
-							.equals("ea:notes")) {
-				s = eaClassElement.GetNotes();
-				// Fix for EA7.5 bug
+				documentationAccessed = true;
+
+				String s = null;
+
+				// Try EA notes if ea:notes is the source
+				if (descriptorSource(Descriptor.DOCUMENTATION)
+						.equals("ea:notes")) {
+					s = eaClassElement.GetNotes();
+					// Fix for EA7.5 bug
+					if (s != null) {
+						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					}
+				}
+
+				/*
+				 * If result is empty, check if we can get the documentation
+				 * from a dependency
+				 */
+				if (s == null || s.isEmpty()) {
+
+					for (String cid : this.supplierIds()) {
+
+						ClassInfoEA cix = document.fClassById.get(cid);
+
+						if (cix != null) {
+							if (cix.name().equalsIgnoreCase(this.name())
+									&& cix.stereotype("featureconcept")) {
+								s = cix.documentation();
+								break;
+							}
+						}
+					}
+				}
+
+				// If result is empty, check if we can get the documentation
+				// from a
+				// supertype with the same name (added for ELF/INSPIRE)
+				if (s == null || s.isEmpty()) {
+
+					HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
+
+					if (sts != null) {
+						for (ClassInfoEA stci : sts) {
+							if (stci.name().equals(this.name())) {
+								s = stci.documentation();
+								break;
+							}
+						}
+					}
+				}
+
 				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-					super.documentation = options().internalize(s);
+					ls.add(new LangString(options().internalize(s)));
+					this.descriptors().put(descriptor, ls);
 				}
-			}
 
-			// If result is empty, check if we can get the documentation from a
-			// dependency
-			if (s == null || s.isEmpty()) {
-				for (Iterator<String> i = this.supplierIds().iterator(); i
-						.hasNext();) {
-					String cid = i.next();
-					ClassInfoEA cix = document.fClassById.get(cid);
-					if (cix != null) {
-						if (cix.name().equalsIgnoreCase(this.name())
-								&& cix.stereotype("featureconcept")) {
-							s = cix.documentation();
-							break;
-						}
+			} else if (!globalIdentifierAccessed
+					&& descriptor == Descriptor.GLOBALIDENTIFIER) {
+
+				globalIdentifierAccessed = true;
+
+				// obtain from EA model directly
+				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+						.equals("ea:guidtoxml")) {
+
+					String gi = document.repository.GetProjectInterface()
+							.GUIDtoXML(eaClassElement.GetElementGUID());
+
+					if (gi != null && !gi.isEmpty()) {
+						ls.add(new LangString(options().internalize(gi)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+
+			} else if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				/*
+				 * obtain from EA model directly if ea:alias is identified as
+				 * the source
+				 */
+				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+
+					String a = eaClassElement.GetAlias();
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
 					}
 				}
 			}
 
-			// If result is empty, check if we can get the documentation from a
-			// supertype with the same name (added for ELF/INSPIRE)
-			if (s == null || s.isEmpty()) {
-				HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
-				if (sts != null) {
-					for (ClassInfoEA stci : sts) {
-						if (stci.name().equals(this.name())) {
-							s = stci.documentation();
-							break;
-						}
-					}
-				}
-			}
-
-			// Assign what we got or "" ...
-			super.documentation = options().internalize(s != null ? s : "");
 		}
-		return super.documentation;
-	} // documentation()
+
+		return ls;
+	}
+
+	// /**
+	// * Return the documentation attached to the property object. This is
+	// fetched
+	// * from tagged values and - if this is absent - from the 'notes' specific
+	// to
+	// * the EA objects model.
+	// */
+	// @Override
+	// public Descriptors documentationAll() {
+	//
+	// // Retrieve/compute the documentation only once
+	// // Cache the result for subsequent use
+	// if (!documentationAccessed) {
+	//
+	// documentationAccessed = true;
+	//
+	// // Try default first
+	// Descriptors ls = super.documentationAll();
+	//
+	// if (ls.isEmpty()) {
+	//
+	// String s = null;
+	//
+	// // Try EA notes if ea:notes is the source
+	// if (descriptorSource(Descriptor.DOCUMENTATION)
+	// .equals("ea:notes")) {
+	// s = eaClassElement.GetNotes();
+	// // Fix for EA7.5 bug
+	// if (s != null) {
+	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// }
+	// }
+	//
+	// // If result is empty, check if we can get the documentation
+	// // from a
+	// // dependency
+	// if (s == null || s.isEmpty()) {
+	//
+	// for (Iterator<String> i = this.supplierIds().iterator(); i
+	// .hasNext();) {
+	//
+	// String cid = i.next();
+	//
+	// ClassInfoEA cix = document.fClassById.get(cid);
+	//
+	// if (cix != null) {
+	// if (cix.name().equalsIgnoreCase(this.name())
+	// && cix.stereotype("featureconcept")) {
+	// s = cix.documentation();
+	// break;
+	// }
+	// }
+	// }
+	// }
+	//
+	// // If result is empty, check if we can get the documentation
+	// // from a
+	// // supertype with the same name (added for ELF/INSPIRE)
+	// if (s == null || s.isEmpty()) {
+	//
+	// HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
+	//
+	// if (sts != null) {
+	// for (ClassInfoEA stci : sts) {
+	// if (stci.name().equals(this.name())) {
+	// s = stci.documentation();
+	// break;
+	// }
+	// }
+	// }
+	// }
+	//
+	// // Assign what we got or "" ...
+	// if (s == null) {
+	// super.documentation = new Descriptors();
+	// } else {
+	// super.documentation = new Descriptors(
+	// new LangString(options().internalize(s)));
+	// }
+	// }
+	// }
+	// return super.documentation;
+	// }
 
 	/** Return model-unique id of class. */
 	public String id() {
@@ -689,28 +843,36 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return eaName;
 	} // name()
 
-	/** Get alias name of the class. */
-	@Override
-	public String aliasName() {
-		// Only retrieve/compute the alias once
-		// Cache the result for subsequent use
-		if (!aliasAccessed) {
-
-			aliasAccessed = true;
-
-			// Obtain alias name from default implementation
-			String a = super.aliasName();
-			// If not present, obtain from EA model directly, if ea:alias is
-			// identified as the source
-			if ((a == null || a.length() == 0)
-					&& descriptorSource(Options.Descriptor.ALIAS.toString())
-							.equals("ea:alias")) {
-				a = eaClassElement.GetAlias();
-				super.aliasName = options().internalize(a);
-			}
-		}
-		return super.aliasName;
-	} // aliasName()
+//	@Override
+//	public Descriptors aliasNameAll() {
+//
+//		// Only retrieve/compute the alias once
+//		// Cache the result for subsequent use
+//		if (!aliasAccessed) {
+//
+//			aliasAccessed = true;
+//
+//			// Obtain alias name from default implementation
+//			Descriptors ls = super.aliasNameAll();
+//
+//			// If not present, obtain from EA model directly, if ea:alias is
+//			// identified as the source
+//			if (ls.isEmpty()
+//					&& descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+//
+//				String a = eaClassElement.GetAlias();
+//
+//				if (a != null && !a.isEmpty()) {
+//
+//					super.aliasName = new Descriptors(
+//							new LangString(options().internalize(a)));
+//				} else {
+//					super.aliasName = new Descriptors();
+//				}
+//			}
+//		}
+//		return super.aliasName;
+//	}
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -1085,7 +1247,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	}
 
 	/**
-	 * @return set of ids of classes this class depends on
+	 * @return set of ids of classes this class depends on; can be empty but not
+	 *         <code>null</code>
 	 */
 	protected TreeSet<String> supplierIds() {
 
@@ -1111,17 +1274,18 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						// From the dependency grab the id of the supplier
 						int suppId = conn.GetSupplierID();
 						String suppIdS = Integer.toString(suppId);
-						// Since all connectors are delivered from both objects
-						// at the
-						// connector ends, we have to make sure it is not
-						// accidently us,
-						// which we found.
+						/*
+						 * Since all connectors are delivered from both objects
+						 * at the connector ends, we have to make sure it is not
+						 * accidently us, which we found.
+						 */
 						if (suppId == eaClassId)
 							continue;
-						// Now, this is an element id, not a package id. So we
-						// have to
-						// identify the package, which owns the element
-						// addressed.
+						/*
+						 * Now, this is an element id, not a package id. So we
+						 * have to identify the package, which owns the element
+						 * addressed.
+						 */
 						ClassInfoEA suppClass = (ClassInfoEA) document.fClassById
 								.get(suppIdS);
 
@@ -1141,25 +1305,22 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		}
 		return supplierIds;
 	} // supplierIds()
-
-	@Override
-	public String globalIdentifier() {
-
-		// Obtain global identifier from default implementation
-		String gi = super.globalIdentifier();
-		// If not present, obtain from EA model directly
-		if ((gi == null || gi.length() == 0)
-				&& descriptorSource(
-						Options.Descriptor.GLOBALIDENTIFIER.toString())
-								.equals("ea:guidtoxml")
-//				&& options().isLoadGlobalIdentifiers()
-				) {
-
-			gi = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaClassElement.GetElementGUID());
-
-			super.globalIdentifier = options().internalize(gi);
-		}
-		return gi;
-	}
+		//
+		// @Override
+		// public Descriptors descriptors() {
+		//
+		// // Obtain descriptors from default implementation
+		// Descriptors ls = super.descriptors();
+		// // If not present, obtain from EA model directly
+		// if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
+		// .equals("ea:guidtoxml")) {
+		//
+		// String gi = document.repository.GetProjectInterface()
+		// .GUIDtoXML(eaClassElement.GetElementGUID());
+		//
+		// super.globalIdentifier = new Descriptors(
+		// new LangString(options().internalize(gi)));
+		// }
+		// return super.globalIdentifier;
+		// }
 }

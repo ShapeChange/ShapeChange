@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model.EA;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -42,6 +43,8 @@ import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
@@ -64,6 +67,11 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	 * of this package.
 	 */
 	protected boolean documentationAccessed = false;
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the
+	 * globalIdentifier of this class.
+	 */
+	protected boolean globalIdentifierAccessed = false;
 
 	/** Access to the connectors of this package in the EA model */
 	protected Collection<Connector> conns = null;
@@ -105,6 +113,10 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
+	
+	public int getEaPackageId() {
+		return eaPackageId;
+	}
 
 	/** Cache for the IDs of the suppliers of this class */
 	protected TreeSet<String> supplierIds = null;
@@ -118,7 +130,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		eaPackage = pack;
 		eaPackageId = eaPackage.GetPackageID();
 		eaName = eaPackage.GetName().trim();
-		
+
 		// Store the possibly associated EA element (describing the package) and
 		// its id.
 		eaPackageElmt = packelmt;
@@ -198,18 +210,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return parentPI;
 	} // owner()
 
-	/**
-	 * Determine the root package. Search the package and its ancestors for one
-	 * representing a schema. Return null if no such package exists.
-	 */
-	public PackageInfo rootPackage() {
-		PackageInfoEA pi = this;
-		while (pi != null && !pi.isSchema())
-			pi = pi.parentPI;
-		return pi;
-	} // rootPackage()
-
-	/** Return the set of ids of the packages on which this package depends. */
+	@Override
 	public SortedSet<String> supplierIds() {
 
 		// Only retrieve/compute supplierIds once
@@ -261,36 +262,45 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return supplierIds;
 	} // supplierIds()
 
-	/**
-	 * Return the documentation attached to the property object. This is fetched
-	 * from tagged values and - if this is absent - from the 'notes' specific to
-	 * the EA objects model.
-	 */
-	@Override
-	public String documentation() {
-
-		// Retrieve/compute the documentation only once
-		// Cache the result for subsequent use
-		if (!documentationAccessed) {
-
-			documentationAccessed = true;
-
-			// Fetch from tagged values
-			String s = super.documentation();
-			// Try EA notes, if both tagged values fail
-			if ((s == null || s.length() == 0) && descriptorSource(
-					Options.Descriptor.DOCUMENTATION.toString())
-							.equals("ea:notes")) {
-				s = eaPackage.GetNotes();
-				// Fix for EA7.5 bug
-				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-					super.documentation = options().internalize(s);
-				}
-			}
-		}
-		return super.documentation;
-	} // documentation()
+	// /**
+	// * Return the documentation attached to the property object. This is
+	// fetched
+	// * from tagged values and - if this is absent - from the 'notes' specific
+	// to
+	// * the EA objects model.
+	// */
+	// @Override
+	// public Descriptors documentationAll() {
+	//
+	// // Retrieve/compute the documentation only once
+	// // Cache the result for subsequent use
+	// if (!documentationAccessed) {
+	//
+	// documentationAccessed = true;
+	//
+	// // Fetch from tagged values
+	// Descriptors ls = super.documentationAll();
+	//
+	// // Try EA notes, if both tagged values fail
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.DOCUMENTATION)
+	// .equals("ea:notes")) {
+	// String s = eaPackage.GetNotes();
+	// // Fix for EA7.5 bug
+	// if (s != null) {
+	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// }
+	//
+	// if (s == null) {
+	// super.documentation = new Descriptors();
+	// } else {
+	// super.documentation = new Descriptors(
+	// new LangString(options().internalize(s)));
+	// }
+	// }
+	// }
+	// return super.documentation;
+	// }
 
 	/** Return model-unique id of package. */
 	public String id() {
@@ -309,27 +319,34 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return eaName;
 	} // name();
 
-	/** Get alias name of the package. */
-	@Override
-	public String aliasName() {
-		// Retrieve/compute the alias only once
-		// Cache the result for subsequent use
-		if (!aliasAccessed) {
-
-			aliasAccessed = true;
-
-			// Obtain alias name from default implementation
-			String a = super.aliasName();
-			// If not present, obtain from EA model directly
-			if ((a == null || a.length() == 0)
-					&& descriptorSource(Options.Descriptor.ALIAS.toString())
-							.equals("ea:alias")) {
-				a = eaPackage.GetAlias();
-				super.aliasName = options().internalize(a);
-			}
-		}
-		return super.aliasName;
-	} // aliasName()
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Retrieve/compute the alias only once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty() && descriptorSource(Descriptor.ALIAS)
+	// .equals("ea:alias")) {
+	//
+	// String a = eaPackage.GetAlias();
+	//
+	// if (a != null && !a.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(a)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	// return super.aliasName;
+	// }
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -381,25 +398,92 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		// invalidate cache
 		taggedValuesCache = null;
 	} // taggedValue()
-	
+
+	// @Override
+	// public Descriptors globalIdentifierAll() {
+	//
+	// // Obtain global identifier from default implementation
+	// Descriptors ls = super.globalIdentifierAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.GLOBALIDENTIFIER)
+	// .equals("ea:guidtoxml")) {
+	//
+	// String gi = document.repository.GetProjectInterface()
+	// .GUIDtoXML(eaPackage.GetPackageGUID());
+	//
+	// super.globalIdentifier = new Descriptors(
+	// new LangString(options().internalize(gi)));
+	// }
+	//
+	// return super.globalIdentifier;
+	// }
+
 	@Override
-	public String globalIdentifier() {
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
 
-		// Obtain global identifier from default implementation
-		String gi = super.globalIdentifier();
-		// If not present, obtain from EA model directly
-		if ((gi == null || gi.length() == 0)
-				&& descriptorSource(
-						Options.Descriptor.GLOBALIDENTIFIER.toString())
-								.equals("ea:guidtoxml")
-//				&& options().isLoadGlobalIdentifiers()
-				) {
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
 
-			gi = document.repository.GetProjectInterface()
-					.GUIDtoXML(eaPackage.GetPackageGUID());
+		if (ls.isEmpty()) {
 
-			super.globalIdentifier = options().internalize(gi);
+			if (!documentationAccessed
+					&& descriptor == Descriptor.DOCUMENTATION) {
+
+				documentationAccessed = true;
+
+				String s = eaPackage.GetNotes();
+
+				// Fix for EA7.5 bug
+				if (s != null) {
+					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				}
+
+				if (s != null) {
+					ls.add(new LangString(options().internalize(s)));
+					this.descriptors().put(descriptor, ls);
+				}
+
+			} else if (!globalIdentifierAccessed
+					&& descriptor == Descriptor.GLOBALIDENTIFIER) {
+
+				globalIdentifierAccessed = true;
+
+				// obtain from EA model directly
+				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+						.equals("ea:guidtoxml")) {
+
+					String gi = document.repository.GetProjectInterface()
+							.GUIDtoXML(eaPackage.GetPackageGUID());
+
+					if (gi != null && !gi.isEmpty()) {
+						ls.add(new LangString(options().internalize(gi)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+
+			} else if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				/*
+				 * obtain from EA model directly if ea:alias is identified as
+				 * the source
+				 */
+				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+
+					String a = eaPackage.GetAlias();
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+			}
+
 		}
-		return gi;
+
+		return ls;
 	}
 }

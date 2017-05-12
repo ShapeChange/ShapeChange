@@ -63,23 +63,27 @@ public enum TargetIdentification {
 																					"Application Schema Statistics",
 																					14), APP_SCHEMA_METADATA(
 																							"Application Schema Metadata",
-																							15), CODELIST_REGISTER(
-																									"Codelist register",
-																									19), OWLISO19150(
-																											"ISO 19150-2 OWL Ontology",
-																											20), SQLDDL(
-																													"SQL DDL",
-																													30), UML_MODEL(
-																															"UML Model",
-																															67), ARCGIS_WORKSPACE(
-																																	"ArcGIS Workspace",
-																																	111), OBJEKTARTENKATALOG(
-																																			"Objektartenkatalog",
-																																			401), AAA_PROFIL(
-																																					"AAA-Profil (3AP)",
-																																					402), AAA_MODELLART(
-																																							"AAA-Modellart (3AM)",
-																																							404);
+																							15), PROFILE_TRANSFER_EA(
+																									"Profile Transfer EA",
+																									16), CODELIST_REGISTER(
+																											"Codelist register",
+																											19), OWLISO19150(
+																													"ISO 19150-2 OWL Ontology",
+																													20), SQLDDL(
+																															"SQL DDL",
+																															30), MODELEXPORT(
+																																	"Model Export",
+																																	40), UML_MODEL(
+																																			"UML Model",
+																																			67), ARCGIS_WORKSPACE(
+																																					"ArcGIS Workspace",
+																																					111), OBJEKTARTENKATALOG(
+																																							"Objektartenkatalog",
+																																							401), AAA_PROFIL(
+																																									"AAA-Profil (3AP)",
+																																									402), AAA_MODELLART(
+																																											"AAA-Modellart (3AM)",
+																																											404);
 
 	private final String name;
 	private final int id;

@@ -504,7 +504,8 @@ public class NamingModifier implements Transformer, MessageSource {
 					+ PARAM_SUFFIXES_TO_IGNORE
 					+ "' match the end of the model element name. Suffix '$1$' was chosen.";
 		default:
-			return "(Unknown message)";
+			return "(" + NamingModifier.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

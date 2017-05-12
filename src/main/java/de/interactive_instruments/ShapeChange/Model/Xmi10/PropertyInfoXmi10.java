@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model.Xmi10;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
@@ -46,6 +47,8 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
@@ -62,6 +65,12 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 	protected StructuredNumber sequenceNumber = null;
 	protected PropertyInfo reverseProperty = null;
+
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the alias of this
+	 * class.
+	 */
+	protected boolean aliasAccessed = false;
 
 	// Methods
 	public Model model() {
@@ -106,18 +115,6 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		return s;
 	};
-
-	/** Get alias name of attribute. */
-	@Override
-	public String aliasName() {
-		// Obtain alias name from default implementation
-		String a = super.aliasName();
-		// If not present, and if we are an attribute, read the "style" tagged
-		// value, which is supposed to carry the contents of the alias field.
-		if ((a == null || a.length() == 0) && isAttribute())
-			a = taggedValue("style");
-		return a;
-	} // aliasName()
 
 	// Validate tagged values cache, the filtering on tagged values defined
 	// within ShapeChange has already been done during initial loading of the
@@ -440,4 +437,31 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 	public AssociationInfo association() {
 		return associationInfo;
 	}
-};
+
+	@Override
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
+
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
+
+		if (ls.isEmpty()) {
+
+			if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				if (isAttribute()) {
+
+					String a = taggedValue("style");
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+			}
+		}
+
+		return ls;
+	}
+}

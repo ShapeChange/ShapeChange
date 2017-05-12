@@ -31,28 +31,50 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
+import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Constraint.ModelElmtContextType;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -61,12 +83,31 @@ import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TextConstraint;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.ConstraintContentHandler;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.GenericAssociationContentHandler;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.GenericClassContentHandler;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.GenericModelContentHandler;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.GenericPackageContentHandler;
+import de.interactive_instruments.ShapeChange.Model.Generic.reader.GenericPropertyContentHandler;
+import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
+import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
  * @author echterhoff
  * 
  */
 public class GenericModel extends ModelImpl {
+
+	protected static class ConstraintComparators {
+
+		public static Comparator<Constraint> NAME = new Comparator<Constraint>() {
+			@Override
+			public int compare(Constraint o1, Constraint o2) {
+				return o1.name().compareTo(o2.name());
+			}
+		};
+	}
 
 	protected Options options = null;
 	protected ShapeChangeResult result = null;
@@ -138,6 +179,14 @@ public class GenericModel extends ModelImpl {
 		OVERWRITE
 	}
 
+	/**
+	 * Constructor used when reading the model during the initialise(...)
+	 * method.
+	 */
+	public GenericModel() {
+
+	}
+
 	public GenericModel(Model model) {
 
 		this.options = model.options();
@@ -178,12 +227,6 @@ public class GenericModel extends ModelImpl {
 							.get(pi.owner().id());
 					genPi.setOwner(owner);
 				}
-
-				if (pi.rootPackage() != null) {
-					GenericPackageInfo root = this.genPackageInfosById
-							.get(pi.rootPackage().id());
-					genPi.setRootPackage(root);
-				}
 			}
 		}
 
@@ -213,16 +256,10 @@ public class GenericModel extends ModelImpl {
 				// set properties required by Info interface
 
 				genCi.setTaggedValues(ci.taggedValuesAll(), false);
-				genCi.setAliasName(ci.aliasName());
-				genCi.setDefinition(ci.definition());
-				genCi.setDescription(ci.description());
-				genCi.setPrimaryCode(ci.primaryCode());
-				genCi.setLanguage(ci.language());
-				genCi.setLegalBasis(ci.legalBasis());
-				genCi.setDataCaptureStatements(ci.dataCaptureStatements());
-				genCi.setExamples(ci.examples());
 				genCi.setStereotypes(ci.stereotypes());
-				genCi.setGlobalIdentifier(ci.globalIdentifier());
+
+				genCi.setDescriptors(ci.descriptors().createCopy());
+				genCi.setProfiles(ci.profiles().createCopy());
 
 				// set properties required by ClassInfo interface
 
@@ -283,30 +320,20 @@ public class GenericModel extends ModelImpl {
 				}
 
 				GenericPropertyInfo genPi = new GenericPropertyInfo(this,
-						pi.id(), pi.name(), pi.categoryOfValue());
+						pi.id(), pi.name());
 
 				// set remaining properties required by Info interface
 				genPi.setTaggedValues(pi.taggedValuesAll(), false);
-				genPi.setAliasName(pi.aliasName());
-				genPi.setDefinition(pi.definition());
-				genPi.setDescription(pi.description());
-				genPi.setPrimaryCode(pi.primaryCode());
-				genPi.setLanguage(pi.language());
-				genPi.setLegalBasis(pi.legalBasis());
-				genPi.setDataCaptureStatements(pi.dataCaptureStatements());
-				genPi.setExamples(pi.examples());
 				genPi.setStereotypes(pi.stereotypes());
-				genPi.setGlobalIdentifier(pi.globalIdentifier());
+
+				genPi.setDescriptors(pi.descriptors().createCopy());
+				genPi.setProfiles(pi.profiles().createCopy());
 
 				// set remaining properties required by PropertyInfo interface
 
 				genPi.setDerived(pi.isDerived());
 				genPi.setReadOnly(pi.isReadOnly());
 				genPi.setAttribute(pi.isAttribute());
-				// Type newPiType = new Type();
-				// newPiType.id = pi.typeInfo().id;
-				// newPiType.name = pi.typeInfo().name;
-				// genPi.setTypeInfo(newPiType);
 				genPi.copyTypeInfo(pi.typeInfo());
 				genPi.setNavigable(pi.isNavigable());
 				genPi.setOrdered(pi.isOrdered());
@@ -534,13 +561,15 @@ public class GenericModel extends ModelImpl {
 			PropertyInfo assocEnd) {
 
 		GenericPropertyInfo copy = this.createCopy(assocEnd, assocEnd.id());
-		/*
-		 * Ensure that tagged value "sequenceNumber" of copy reflects the value
-		 * from its sequenceNumber field - covering the case that there was a
-		 * mismatch in the input model
-		 */
-		copy.setTaggedValue("sequenceNumber", copy.sequenceNumber().getString(),
-				false);
+		// /*
+		// * Ensure that tagged value "sequenceNumber" of copy reflects the
+		// value
+		// * from its sequenceNumber field - covering the case that there was a
+		// * mismatch in the input model
+		// */
+		// copy.setTaggedValue("sequenceNumber",
+		// copy.sequenceNumber().getString(),
+		// false);
 
 		return copy;
 	}
@@ -973,21 +1002,14 @@ public class GenericModel extends ModelImpl {
 			genPi.setOptions(pi.options());
 			genPi.setResult(pi.result());
 			genPi.setModel(model);
-			genPi.setGlobalIdentifier(pi.globalIdentifier());
 
 			genPi.setTaggedValues(pi.taggedValuesAll(), false);
+			genPi.setStereotypes(pi.stereotypes());
 
 			genPi.setId(pi.id());
 			genPi.setName(pi.name());
-			genPi.setAliasName(pi.aliasName());
-			genPi.setDefinition(pi.definition());
-			genPi.setDescription(pi.description());
-			genPi.setPrimaryCode(pi.primaryCode());
-			genPi.setLanguage(pi.language());
-			genPi.setLegalBasis(pi.legalBasis());
-			genPi.setDataCaptureStatements(pi.dataCaptureStatements());
-			genPi.setExamples(pi.examples());
-			genPi.setStereotypes(pi.stereotypes());
+
+			genPi.setDescriptors(pi.descriptors().createCopy());
 
 			genPi.setTargetNamespace(pi.targetNamespace());
 			genPi.setXmlns(pi.xmlns());
@@ -995,7 +1017,7 @@ public class GenericModel extends ModelImpl {
 			genPi.setGmlProfileSchema(pi.gmlProfileSchema());
 			genPi.setVersion(pi.version());
 			// genPi.setOwner(pi.owner());
-			genPi.setSchemaId(pi.schemaId());
+			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
 			genPi.setIsAppSchema(pi.isAppSchema());
@@ -1013,7 +1035,7 @@ public class GenericModel extends ModelImpl {
 			for (String supId : pi.supplierIds()) {
 				genSupIds.add(supId);
 			}
-			genPi.setSupplierIds(genSupIds == null ? null : genSupIds);
+			genPi.setSupplierIds(genSupIds);
 
 			// creation is complete, add the object to map field for later
 			// reference
@@ -1098,10 +1120,350 @@ public class GenericModel extends ModelImpl {
 	 */
 	public void initialise(ShapeChangeResult r, Options o,
 			String repositoryFileName) throws ShapeChangeAbortException {
+
 		this.result = r;
 		this.options = o;
 
-		// TBD repositoryFileName does not seem to be needed for a generic model
+		// TODO check existence of repository file in applicable configuration
+		// validators
+		File modelfile = new File(repositoryFileName);
+		boolean ex = true;
+		if (!modelfile.exists()) {
+			ex = false;
+			if (!(repositoryFileName.toLowerCase().endsWith(".xml")
+					|| repositoryFileName.toLowerCase().endsWith(".zip"))) {
+				repositoryFileName += ".xml";
+				modelfile = new File(repositoryFileName);
+				ex = modelfile.exists();
+			}
+		}
+		if (!ex) {
+			r.addFatalError(null, 25, repositoryFileName);
+			throw new ShapeChangeAbortException();
+		}
+
+		boolean isZip = repositoryFileName.toLowerCase().endsWith(".zip");
+
+		try {
+
+			/*
+			 * Using pure input stream as argument for InputSource so that the
+			 * encoding is determined from the byte stream; for further details,
+			 * see http://stackoverflow.com/questions/3482494/howto-let-the-sax-
+			 * parser-determine-the-encoding-from-the-xml-declaration
+			 */
+			InputStream inputStream;
+
+			if (isZip) {
+
+				ZipFile zip = new ZipFile(modelfile);
+				Enumeration<? extends ZipEntry> entries = zip.entries();
+
+				if (entries.hasMoreElements()) {
+					ZipEntry zentry = entries.nextElement();
+					inputStream = zip.getInputStream(zentry);
+					if (entries.hasMoreElements()) {
+						result.addWarning(null, 30327, repositoryFileName,
+								zentry.getName());
+					}
+				} else {
+					inputStream = null;
+					result.addError(null, 30328, repositoryFileName);
+				}
+
+			} else {
+				inputStream = new FileInputStream(modelfile);
+			}
+
+			if (inputStream != null) {
+
+				InputSource is = new InputSource(inputStream);
+
+				// InputStream inputStream = new FileInputStream(modelfile);
+				// Reader reader = new InputStreamReader(inputStream, "UTF-8");
+				// Reader reader = new InputStreamReader(inputStream);
+				// InputSource is = new InputSource(reader);
+				// is.setEncoding("UTF-8");
+
+				SAXParserFactory spf = SAXParserFactory.newInstance();
+				spf.setNamespaceAware(true);
+				SAXParser saxParser = spf.newSAXParser();
+
+				// === Create XML Pipeline
+				XMLReader xmlReader = saxParser.getXMLReader();
+
+				GenericModelContentHandler modelHandler = new GenericModelContentHandler(
+						result, options, xmlReader);
+
+				xmlReader.setContentHandler(modelHandler);
+
+				xmlReader.parse(is);
+
+				this.characterEncoding = modelHandler.getEncoding();
+
+				Map<String, GenericPackageContentHandler> packageHandlers = modelHandler
+						.getAllPackageContentHandlers();
+				Map<String, GenericClassContentHandler> classHandlers = new HashMap<String, GenericClassContentHandler>();
+				Map<String, GenericAssociationContentHandler> associationHandlers = new HashMap<String, GenericAssociationContentHandler>();
+				Map<String, GenericPropertyContentHandler> propertyHandlers = new HashMap<String, GenericPropertyContentHandler>();
+
+				for (GenericPackageContentHandler pkgHandler : packageHandlers
+						.values()) {
+
+					GenericPackageInfo genPkg = pkgHandler.getGenericPackage();
+					genPkg.setModel(this);
+
+					this.genPackageInfosById.put(genPkg.id(),
+							pkgHandler.getGenericPackage());
+
+					for (GenericClassContentHandler clsHandler : pkgHandler
+							.getClassContentHandlers()) {
+
+						GenericClassInfo genCi = clsHandler.getGenericClass();
+						genCi.setModel(this);
+
+						classHandlers.put(genCi.id(), clsHandler);
+						this.genClassInfosById.put(genCi.id(), genCi);
+						this.genClassInfosByName.put(genCi.name(), genCi);
+
+						for (GenericPropertyContentHandler propHandler : clsHandler
+								.getPropertyContentHandlers()) {
+
+							GenericPropertyInfo genProp = propHandler
+									.getGenericProperty();
+							genProp.setModel(this);
+
+							propertyHandlers.put(genProp.id(), propHandler);
+							this.genPropertiesById.put(genProp.id(), genProp);
+						}
+					}
+				}
+
+				for (GenericAssociationContentHandler assocHandler : modelHandler
+						.getAssociationContentHandlers()) {
+
+					GenericAssociationInfo genAi = assocHandler
+							.getGenericAssociationInfo();
+					genAi.setModel(this);
+
+					associationHandlers.put(genAi.id(), assocHandler);
+					this.genAssociationInfosById.put(genAi.id(), genAi);
+
+					GenericPropertyContentHandler end1Handler = assocHandler
+							.getEnd1PropertyContentHandler();
+					GenericPropertyContentHandler end2Handler = assocHandler
+							.getEnd2PropertyContentHandler();
+
+					if (end1Handler != null) {
+						GenericPropertyInfo genPropEnd1 = end1Handler
+								.getGenericProperty();
+						genPropEnd1.setModel(this);
+						propertyHandlers.put(genPropEnd1.id(), end1Handler);
+						this.genPropertiesById.put(genPropEnd1.id(),
+								genPropEnd1);
+					}
+					if (end2Handler != null) {
+						GenericPropertyInfo genPropEnd2 = end2Handler
+								.getGenericProperty();
+						genPropEnd2.setModel(this);
+						propertyHandlers.put(genPropEnd2.id(), end2Handler);
+						this.genPropertiesById.put(genPropEnd2.id(),
+								genPropEnd2);
+					}
+				}
+
+				// update references (packages, classes, properties)
+				for (GenericPackageContentHandler pkgHandler : packageHandlers
+						.values()) {
+
+					GenericPackageInfo genPkg = pkgHandler.getGenericPackage();
+
+					for (GenericPackageContentHandler childPkgHandler : pkgHandler
+							.getChildPackageContentHandlers()) {
+
+						GenericPackageInfo childPkg = childPkgHandler
+								.getGenericPackage();
+						childPkg.setOwner(genPkg);
+					}
+
+					// if (pkgHandler.getOwnerId() != null) {
+					// genPkg.setOwner(this.genPackageInfosById
+					// .get(pkgHandler.getOwnerId()));
+					// }
+
+					for (GenericClassContentHandler clsHandler : pkgHandler
+							.getClassContentHandlers()) {
+						GenericClassInfo genCi = clsHandler.getGenericClass();
+						genCi.setPkg(genPkg);
+					}
+				}
+
+				for (GenericClassContentHandler clsHandler : classHandlers
+						.values()) {
+
+					GenericClassInfo genCi = clsHandler.getGenericClass();
+
+					if (clsHandler.getAssociationId() != null) {
+						genCi.setAssocInfo(this.genAssociationInfosById
+								.get(clsHandler.getAssociationId()));
+					}
+
+					// if (clsHandler.getPackageId() != null) {
+					// genCi.setPkg(this.genPackageInfosById
+					// .get(clsHandler.getPackageId()));
+					// }
+
+					/*
+					 * Base class is a member of the supertypes set. However,
+					 * specific rules apply for a base class. Thus we keep the
+					 * explicit element to store the relationship of a class and
+					 * its base class.
+					 */
+					if (clsHandler.getBaseClassId() != null) {
+						genCi.setBaseClass(this.genClassInfosById
+								.get(clsHandler.getBaseClassId()));
+					}
+
+					/*
+					 * Set inClass for navigable properties (does not cover
+					 * non-navigable association roles).
+					 */
+					for (GenericPropertyContentHandler propHandler : clsHandler
+							.getPropertyContentHandlers()) {
+						GenericPropertyInfo genPi = propHandler
+								.getGenericProperty();
+						genPi.setInClass(genCi);
+					}
+
+					for (ConstraintContentHandler conHandler : clsHandler
+							.getConstraintContentHandlers()) {
+
+						updateConstraintContext(conHandler);
+					}
+				}
+
+				for (GenericAssociationContentHandler assocHandler : associationHandlers
+						.values()) {
+
+					GenericAssociationInfo genAi = assocHandler
+							.getGenericAssociationInfo();
+
+					if (assocHandler.getAssocClassId() != null) {
+						genAi.setAssocClass(this.genClassInfosById
+								.get(assocHandler.getAssocClassId()));
+					}
+
+					GenericPropertyInfo end1;
+					GenericPropertyInfo end2;
+
+					if (assocHandler.getEnd1Id() != null) {
+						end1 = this.genPropertiesById
+								.get(assocHandler.getEnd1Id());
+					} else {
+						end1 = assocHandler.getEnd1PropertyContentHandler()
+								.getGenericProperty();
+					}
+
+					if (assocHandler.getEnd2Id() != null) {
+						end2 = this.genPropertiesById
+								.get(assocHandler.getEnd2Id());
+					} else {
+						end2 = assocHandler.getEnd2PropertyContentHandler()
+								.getGenericProperty();
+					}
+
+					genAi.setEnd1(end1);
+					genAi.setEnd2(end2);
+				}
+
+				for (GenericPropertyContentHandler propHandler : propertyHandlers
+						.values()) {
+
+					GenericPropertyInfo genPi = propHandler
+							.getGenericProperty();
+
+					if (propHandler.getAssociationId() != null) {
+						genPi.setAssociation(this.genAssociationInfosById
+								.get(propHandler.getAssociationId()));
+					}
+
+					if (propHandler.getReversePropertyId() != null) {
+						genPi.setReverseProperty(this.genPropertiesById
+								.get(propHandler.getReversePropertyId()));
+					}
+
+					/*
+					 * set inClass if the information is provided by the handler
+					 * - typically only for non-navigable association roles
+					 */
+					if (propHandler.getInClassId() != null) {
+						genPi.setInClass(this.genClassInfosById
+								.get(propHandler.getInClassId()));
+					}
+
+					for (ConstraintContentHandler conHandler : propHandler
+							.getConstraintContentHandlers()) {
+
+						updateConstraintContext(conHandler);
+					}
+				}
+
+				// identify the schemas selected for processing
+				for (PackageInfo pkg : super.selectedSchemas()) {
+					this.selectedSchemaPackageIds.add(pkg.id());
+				}
+
+				/*
+				 * establish categories for all classes (since the SCXML does
+				 * not contain that information)
+				 */
+				for (GenericClassInfo genCi : this.genClassInfosById.values()) {
+
+					genCi.establishCategory();
+				}
+			}
+		} catch (SAXException e) {
+			result.addFatalError(null, 30803, e.getMessage());
+			throw new ShapeChangeAbortException();
+		} catch (FileNotFoundException e) {
+			result.addFatalError(null, 30803, e.getMessage());
+			throw new ShapeChangeAbortException();
+		} catch (UnsupportedEncodingException e) {
+			result.addFatalError(null, 30803, e.getMessage());
+			throw new ShapeChangeAbortException();
+		} catch (ParserConfigurationException e) {
+			result.addFatalError(null, 30803, e.getMessage());
+			throw new ShapeChangeAbortException();
+		} catch (IOException e) {
+			result.addFatalError(null, 30803, e.getMessage());
+			throw new ShapeChangeAbortException();
+		}
+	}
+
+	private void updateConstraintContext(ConstraintContentHandler conHandler) {
+
+		Constraint con = conHandler.getConstraint();
+
+		Info contextModelElement;
+		if (con.contextModelElmtType() == ModelElmtContextType.ATTRIBUTE) {
+			contextModelElement = this.genPropertiesById
+					.get(conHandler.getContextModelElementId());
+		} else {
+			contextModelElement = this.genClassInfosById
+					.get(conHandler.getContextModelElementId());
+		}
+
+		if (con instanceof GenericFolConstraint) {
+			((GenericFolConstraint) con)
+					.setContextModelElmt(contextModelElement);
+		} else if (con instanceof GenericOclConstraint) {
+			((GenericOclConstraint) con)
+					.setContextModelElmt(contextModelElement);
+		} else {
+			// assume GenericTextConstraint
+			((GenericTextConstraint) con)
+					.setContextModelElmt(contextModelElement);
+		}
 	}
 
 	/*
@@ -1111,60 +1473,6 @@ public class GenericModel extends ModelImpl {
 	 */
 	public int type() {
 		return Options.GENERIC;
-	}
-
-	/**
-	 * Collect and return all PackageInfo objects tagged as being a schema. If a
-	 * name is given, only the package with the specified name will be
-	 * considered.
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#schemas(java.lang.
-	 *      String)
-	 */
-	public SortedSet<PackageInfo> schemas(String name) {
-
-		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
-
-		for (PackageInfo pi : this.genPackageInfosById.values()) {
-			// for (PackageInfo pi : model.schemas(name)) {
-
-			if (pi.isSchema()) {
-				if (name != null && !name.equals("")) {
-					if (pi.name().equals(name)) {
-						// look up GenericPackageInfo, if it exists
-						PackageInfo tmp = null;
-						for (GenericPackageInfo genPi : genPackageInfosById
-								.values()) {
-							if (genPi.name().equals(name)) {
-								tmp = genPi;
-								break;
-							}
-						}
-						if (tmp != null) {
-							res.add(tmp);
-						} else {
-							res.add(pi);
-						}
-					}
-				} else {
-					// look up GenericPackageInfo, if it exists
-					PackageInfo tmp = null;
-					for (GenericPackageInfo genPi : genPackageInfosById
-							.values()) {
-						if (genPi.name().equals(pi.name())) {
-							tmp = genPi;
-							break;
-						}
-					}
-					if (tmp != null) {
-						res.add(tmp);
-					} else {
-						res.add(pi);
-					}
-				}
-			}
-		}
-		return res;
 	}
 
 	/**
@@ -1230,40 +1538,45 @@ public class GenericModel extends ModelImpl {
 	 *      postprocessAfterLoadingAndValidate()
 	 */
 	public void postprocessAfterLoadingAndValidate() {
-		// nothing to do here
+
+		/*
+		 * Remove classes that have tagged value 'status' with prohibited value
+		 */
+		SortedSet<GenericClassInfo> classesToRemove = new TreeSet<GenericClassInfo>();
+		for (GenericClassInfo genCi : this.genClassInfosById.values()) {
+			String statusTaggedValue = genCi.taggedValue("status");
+			if (statusTaggedValue != null
+					&& options().prohibitedStatusValuesWhenLoadingClasses()
+							.contains(statusTaggedValue)) {
+				classesToRemove.add(genCi);
+			}
+		}
+		for (GenericClassInfo classToRemove : classesToRemove) {
+			this.remove(classToRemove);
+		}
+
+		/*
+		 * validate the constraints (includes parsing, taking into account the
+		 * current model)
+		 */
+		this.validateConstraints();
+
+		super.postprocessAfterLoadingAndValidate();
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#packageById(java.lang
-	 *      .String)
-	 */
+	@Override
 	public PackageInfo packageById(String id) {
-		// if (genPackageInfosById.containsKey(id)) {
 		return genPackageInfosById.get(id);
-		// } else {
-		// return model.packageById(id);
-		// }
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#classById(java.lang
-	 *      .String)
-	 */
+	@Override
 	public ClassInfo classById(String id) {
-		// if (genClassInfosById.containsKey(id)) {
 		return genClassInfosById.get(id);
-		// } else {
-		// return model.classById(id);
-		// }
 	}
 
 	@Override
 	public ClassInfo classByName(String name) {
-		// if (genClassInfosByName.containsKey(name)) {
 		return genClassInfosByName.get(name);
-		// } else {
-		// return model.classByName(name);
-		// }
 	}
 
 	/**
@@ -1360,18 +1673,8 @@ public class GenericModel extends ModelImpl {
 			ClassInfo classToAddProperty,
 			PropertyCopyDuplicatBehaviorIndicator behavior) {
 
-		// this.genPropertiesById.put(newProperty.id(), newProperty);
-
-		// if (classToAddProperty instanceof GenericClassInfo) {
-
 		((GenericClassInfo) classToAddProperty).addProperty(newProperty,
 				behavior);
-
-		// } else {
-		//
-		// result.addError(null, 30311, classToAddProperty.name(),
-		// newProperty.name);
-		// }
 	}
 
 	/**
@@ -2013,17 +2316,12 @@ public class GenericModel extends ModelImpl {
 		genAi.setOptions(ai.options());
 		genAi.setResult(ai.result());
 		genAi.setModel(this);
+
 		genAi.setId(copyId);
-		genAi.setGlobalIdentifier(ai.globalIdentifier());
 		genAi.setName(ai.name());
-		genAi.setAliasName(ai.aliasName());
-		genAi.setDefinition(ai.definition());
-		genAi.setDescription(ai.description());
-		genAi.setPrimaryCode(ai.primaryCode());
-		genAi.setLanguage(ai.language());
-		genAi.setLegalBasis(ai.legalBasis());
-		genAi.setDataCaptureStatements(ai.dataCaptureStatements());
-		genAi.setExamples(ai.examples());
+
+		genAi.setDescriptors(ai.descriptors().createCopy());
+
 		genAi.setStereotypes(ai.stereotypes());
 		genAi.setTaggedValues(ai.taggedValuesAll());
 
@@ -2055,16 +2353,10 @@ public class GenericModel extends ModelImpl {
 		// set properties required by Info interface
 
 		genCi.setTaggedValues(ci.taggedValuesAll(), false);
-		genCi.setAliasName(ci.aliasName());
-		genCi.setDefinition(ci.definition());
-		genCi.setDescription(ci.description());
-		genCi.setPrimaryCode(ci.primaryCode());
-		genCi.setLanguage(ci.language());
-		genCi.setLegalBasis(ci.legalBasis());
-		genCi.setDataCaptureStatements(ci.dataCaptureStatements());
-		genCi.setExamples(ci.examples());
 		genCi.setStereotypes(ci.stereotypes());
-		genCi.setGlobalIdentifier(ci.globalIdentifier());
+
+		genCi.setDescriptors(ci.descriptors().createCopy());
+		genCi.setProfiles(ci.profiles().createCopy());
 
 		// set properties required by ClassInfo interface
 		genCi.setXmlSchemaType(ci.xmlSchemaType());
@@ -2111,26 +2403,16 @@ public class GenericModel extends ModelImpl {
 	public GenericPropertyInfo createCopy(PropertyInfo pi, String copyId) {
 
 		GenericPropertyInfo copy = new GenericPropertyInfo(this, copyId,
-				pi.name(), pi.categoryOfValue());
+				pi.name());
 
-		copy.setGlobalIdentifier(pi.globalIdentifier());
-		copy.setAliasName(pi.aliasName());
-		copy.setDefinition(pi.definition());
-		copy.setDescription(pi.description());
-		copy.setPrimaryCode(pi.primaryCode());
-		copy.setLanguage(pi.language());
-		copy.setLegalBasis(pi.legalBasis());
-		copy.setDataCaptureStatements(pi.dataCaptureStatements());
-		copy.setExamples(pi.examples());
+		copy.setDescriptors(pi.descriptors().createCopy());
+		copy.setProfiles(pi.profiles().createCopy());
+
 		copy.setStereotypes(pi.stereotypes());
 		copy.setTaggedValues(pi.taggedValuesAll(), false);
 		copy.setDerived(pi.isDerived());
 		copy.setReadOnly(pi.isReadOnly());
 		copy.setAttribute(pi.isAttribute());
-		// Type t = new Type();
-		// t.id = pi.typeInfo().id;
-		// t.name = pi.typeInfo().name;
-		// copy.setTypeInfo(t);
 		copy.copyTypeInfo(pi.typeInfo());
 		copy.setNavigable(pi.isNavigable());
 		copy.setOrdered(pi.isOrdered());
@@ -2336,8 +2618,8 @@ public class GenericModel extends ModelImpl {
 	}
 
 	@Override
-	public HashSet<PackageInfo> packages() {
-		HashSet<PackageInfo> allPackages = new HashSet<PackageInfo>();
+	public SortedSet<PackageInfo> packages() {
+		SortedSet<PackageInfo> allPackages = new TreeSet<PackageInfo>();
 		for (PackageInfo pi : genPackageInfosById.values()) {
 			allPackages.add(pi);
 		}
@@ -2614,5 +2896,240 @@ public class GenericModel extends ModelImpl {
 			tmp_genPackageInfosById.put(newId, e.getValue());
 		}
 		genPackageInfosById = tmp_genPackageInfosById;
+	}
+
+	public void validateConstraints() {
+
+		Sbvr2FolParser sbvrParser = new Sbvr2FolParser(this, true);
+
+		/*
+		 * Handle actual constraints
+		 */
+		for (GenericPackageInfo pkg : this.selectedSchemas()) {
+
+			for (ClassInfo tmp : this.classes(pkg)) {
+
+				/*
+				 * Cast should be safe, because all classes of 'pkg' are
+				 * GenericClassInfos.
+				 */
+				GenericClassInfo genCi = (GenericClassInfo) tmp;
+
+				/*
+				 * Ignore constraints on AIXM <<extension>> types
+				 */
+				if (genCi.category() == Options.AIXMEXTENSION) {
+					continue;
+				}
+
+				List<Constraint> ciCons = genCi.constraints();
+
+				if (ciCons != null) {
+
+					// sort the constraints by name
+					Collections.sort(ciCons, ConstraintComparators.NAME);
+
+					Vector<Constraint> newConstraints = new Vector<Constraint>();
+
+					for (Constraint con : ciCons) {
+
+						if (con instanceof OclConstraint) {
+
+							OclConstraint oclCon = (OclConstraint) con;
+
+							newConstraints.add(parse(oclCon, genCi));
+
+						} else if (con instanceof FolConstraint) {
+
+							FolConstraint folCon = (FolConstraint) con;
+
+							newConstraints
+									.add(parse(folCon, sbvrParser, genCi));
+
+						} else if (con instanceof TextConstraint) {
+							/*
+							 * this can be ignored, because TextConstraint is
+							 * not validated
+							 */
+							newConstraints.add(con);
+						} else {
+
+							/*
+							 * for all other cases, simply add the constraint
+							 */
+
+							result.addInfo(null, 20111, con.name(),
+									genCi.fullNameInSchema());
+
+							newConstraints.add(con);
+						}
+					}
+
+					genCi.setConstraints(newConstraints);
+
+				}
+
+				// check constraints on properties
+				if (genCi.properties() != null) {
+
+					for (PropertyInfo pi : genCi.properties().values()) {
+
+						/*
+						 * Cast should be safe, because all properties of
+						 * 'genCi' are GenericPropertyInfos.
+						 */
+						GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+
+						List<Constraint> piCons = genPi.constraints();
+
+						if (piCons != null) {
+
+							// sort the constraints by name
+							Collections.sort(piCons,
+									ConstraintComparators.NAME);
+
+							Vector<Constraint> newConstraints = new Vector<Constraint>();
+
+							for (Constraint con : piCons) {
+
+								if (con instanceof OclConstraint) {
+
+									OclConstraint oclCon = (OclConstraint) con;
+
+									newConstraints.add(parse(oclCon, genPi));
+
+								} else if (con instanceof TextConstraint) {
+									/*
+									 * this can be ignored, because
+									 * TextConstraint is not validated
+									 */
+									newConstraints.add(con);
+								} else {
+
+									/*
+									 * For all other cases, simply add the
+									 * constraint.
+									 * 
+									 * 2016-07-12 JE: at the moment,
+									 * FolConstraints are only created with
+									 * classes as context element. Therefore
+									 * there is no need to handle FolConstraints
+									 * here.
+									 */
+
+									result.addInfo(null, 20111, con.name(),
+											genPi.fullNameInSchema());
+
+									newConstraints.add(con);
+								}
+							}
+
+							genPi.setConstraints(newConstraints);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	protected Constraint parse(FolConstraint con, Sbvr2FolParser parser,
+			GenericClassInfo genCi) {
+
+		if (con.sourceType().equals(SbvrConstants.FOL_SOURCE_TYPE)) {
+
+			con.setComments(new String[] { con.text() });
+
+			FolExpression folExpr = parser.parse(con);
+
+			if (folExpr != null) {
+
+				con.setFolExpression(folExpr);
+				return con;
+
+			} else {
+				/*
+				 * The parser already logged why the expression was not created;
+				 * use a text constraint as fallback.
+				 */
+
+				result.addWarning(null, 20110, con.name(),
+						genCi.fullNameInSchema());
+
+				return new GenericTextConstraint(genCi, con);
+			}
+
+		} else {
+
+			/*
+			 * Apparently a new source for FOL constraints exists - add parsing
+			 * it here; in the meantime, log this as an error and create a text
+			 * constraint as fallback.
+			 */
+			MessageContext ctx = result.addError(null, 38, con.sourceType());
+			ctx.addDetail(null, 39, con.name(),
+					con.contextModelElmt().fullNameInSchema());
+
+			return new GenericTextConstraint(genCi, con);
+		}
+	}
+
+	/**
+	 * @param con
+	 *            constraint to validate
+	 * 
+	 * @param genCi
+	 *            context of the constraint
+	 * 
+	 */
+	protected Constraint parse(OclConstraint con, GenericClassInfo genCi) {
+
+		GenericOclConstraint validated = new GenericOclConstraint(genCi, con);
+
+		if (validated.syntaxTree() != null) {
+			/*
+			 * Parsing succeeded
+			 */
+			return validated;
+
+		} else {
+
+			/*
+			 * The reason why parsing the constraint failed has already been
+			 * logged; use a text constraint as fallback.
+			 */
+
+			result.addWarning(null, 20110, con.name(),
+					genCi.fullNameInSchema());
+
+			GenericTextConstraint fallback = new GenericTextConstraint(genCi,
+					con);
+			return fallback;
+		}
+	}
+
+	protected Constraint parse(OclConstraint con, GenericPropertyInfo genPi) {
+
+		GenericOclConstraint validated = new GenericOclConstraint(genPi, con);
+
+		if (validated.syntaxTree() != null) {
+			/*
+			 * Parsing succeeded
+			 */
+			return validated;
+
+		} else {
+
+			/*
+			 * The reason why parsing the constraint failed has already been
+			 * logged; use a text constraint as fallback.
+			 */
+
+			result.addWarning(null, 20110, con.name(),
+					genPi.fullNameInSchema());
+
+			GenericTextConstraint fallback = new GenericTextConstraint(genPi,
+					con);
+			return fallback;
+		}
 	}
 }

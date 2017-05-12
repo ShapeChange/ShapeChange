@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P162">
+    <name>Test</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <Package id="_P179">
+    <name>Test1_ValueConcepts</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <Package id="_P180">
+    <name>Test2_AttributeValueConcepts</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <Package id="_P181">
+    <name>Test3_RoleConcepts</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <Package id="_P182">
+    <name>Test4_ChangeProposal_NEW</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <Package id="_P183">
+    <name>Test5_ChangeProposal_SUP</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <Package id="_P184">
+    <name>Test6_ChangeProposal_RET</name>
+    <title>leaf</title>
+    <parent idref="_P162"></parent>
+  </Package>
+  <FeatureType id="_C16409">
+    <name>T1Feature</name>
+    <definition>T1Feature FC definition.</definition>
+    <description>T1Feature FC description.</description>
+    <characterizedBy idref="_A16409_50934"></characterizedBy>
+    <characterizedBy idref="_A16409_50935"></characterizedBy>
+    <package idref="_P179"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16409_50934">
+    <name>attEnumA</name>
+    <definition>attEnumA AC definition</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="enumeration">AttEnumA_T1Feature</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A157_129"></enumeratedBy>
+    <enumeratedBy idref="_A157_127"></enumeratedBy>
+    <enumeratedBy idref="_A157_128"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16409_50935">
+    <name>attOther</name>
+    <definition>attOther AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C16016">Integer</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C16410">
+    <name>T2Feature</name>
+    <definition>T2Feature FC definition</definition>
+    <characterizedBy idref="_A16410_50936"></characterizedBy>
+    <characterizedBy idref="_A16410_50939"></characterizedBy>
+    <package idref="_P180"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16410_50936">
+    <name>attEnumB</name>
+    <definition>attEnumB AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="enumeration">T2Feature_attEnumB</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A16411_50937"></enumeratedBy>
+    <enumeratedBy idref="_A16411_50938"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16410_50939">
+    <name>attOther</name>
+    <definition>attOther AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C16016">Integer</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C16412">
+    <name>T3FeatureA</name>
+    <definition>T3FeatureA FC definition.</definition>
+    <description>T3FeatureA FC description</description>
+    <characterizedBy idref="_AT51450"></characterizedBy>
+    <package idref="_P181"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T51450">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT51450"></roles>
+    <roles idref="_AS51450"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT51450">
+    <name>roleOfT3FeatureA</name>
+    <definition>roleOfT3FeatureA RC definition</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16413" category="feature type">T3FeatureB</FeatureTypeIncluded>
+    <relation idref="__T51450"></relation>
+    <InverseRole idref="_AS51450"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AS51450">
+    <name>roleOfT3FeatureB</name>
+    <definition>roleOfT3FeatureB RC definition</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C16412" category="feature type">T3FeatureA</FeatureTypeIncluded>
+    <relation idref="__T51450"></relation>
+    <InverseRole idref="_AT51450"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C16413">
+    <name>T3FeatureB</name>
+    <definition>T3FeatureB FC definition</definition>
+    <characterizedBy idref="_AS51450"></characterizedBy>
+    <package idref="_P181"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16417">
+    <name>T4Feature</name>
+    <definition>T4Feature FC definition.</definition>
+    <description>T4Feature FC description</description>
+    <package idref="_P182"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16423">
+    <name>T5Feature</name>
+    <definition>T5Feature FC definition.</definition>
+    <subtypeOf idref="_C16424">T5FeatureSupertype</subtypeOf>
+    <subtypeOf idref="_C16425">T5FeatureMixin</subtypeOf>
+    <package idref="_P183"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>attOld_size</name>
+      <expression>inv: self.attOld.size() &lt;= 25</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C16425">
+    <name>T5FeatureMixin</name>
+    <definition>T5FeatureMixin FC definition.</definition>
+    <characterizedBy idref="_A16425_50942"></characterizedBy>
+    <characterizedBy idref="_A16425_50940"></characterizedBy>
+    <package idref="_P183"></package>
+    <constraint>
+      <name>attOld_size</name>
+      <expression>inv: self.attOld.size() &lt;= 25</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16425_50942">
+    <name>attNew</name>
+    <definition>attNew AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Boolean</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16425_50940">
+    <name>attOld</name>
+    <definition>attOld AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C16019">CharacterString</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C16424">
+    <name>T5FeatureSupertype</name>
+    <definition>T5FeatureSupertype FC definition.</definition>
+    <characterizedBy idref="_A16424_50943"></characterizedBy>
+    <package idref="_P183"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16424_50943">
+    <name>attSupertype</name>
+    <definition>attSupertype AC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C16012">Real</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C16427">
+    <name>T6Feature</name>
+    <definition>T6Feature FC definition.</definition>
+    <package idref="_P184"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <Value id="_A157_129">
+    <label>1</label>
+    <code>enum1</code>
+    <definition>enum1 VC definition.</definition>
+  </Value>
+  <Value id="_A157_127">
+    <label>2</label>
+    <code>enum2</code>
+    <definition>enum2 VC definition.</definition>
+  </Value>
+  <Value id="_A157_128">
+    <label>3</label>
+    <code>enum3</code>
+    <definition>enum3 VC definition.</definition>
+  </Value>
+  <Value id="_A16411_50937">
+    <label>enumA</label>
+    <code>enumA</code>
+    <definition>enumA AVC definition.</definition>
+  </Value>
+  <Value id="_A16411_50938">
+    <label>enumB</label>
+    <code>enumB</code>
+    <definition>enumB AVC definition.</definition>
+  </Value>
+</FeatureCatalogue>

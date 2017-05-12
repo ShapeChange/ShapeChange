@@ -33,13 +33,13 @@
 package de.interactive_instruments.ShapeChange.Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
@@ -47,27 +47,20 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
  * Note: this class has a natural ordering that is inconsistent with equals.
  *
  */
-public abstract class InfoImpl implements Info, MessageSource {
+public abstract class InfoImpl implements Info {
 
 	boolean postprocessed = false;
 	private String lf = System.getProperty("line.separator");
 
-	protected String documentation = null;
-	protected String aliasName = null;
-	protected String definition = null;
-	protected String description = null;
-	protected String legalBasis = null;
-	protected String primaryCode = null;
-	protected String globalIdentifier = null;
-	protected String language = null;
-	protected String[] examples = null;
-	protected String[] dataCaptureStatements = null;
+	protected Descriptors descriptors = null;
 	protected TaggedValues taggedValuesCache = null;
 	protected Stereotypes stereotypesCache = null;
+
 	private static final Pattern langPattern = Pattern
 			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
 
 	public int compareTo(Info i) {
+		
 		String my = id();
 		String other = i.id();
 
@@ -83,10 +76,12 @@ public abstract class InfoImpl implements Info, MessageSource {
 	}
 
 	public Stereotypes stereotypes() {
+
 		validateStereotypesCache();
+
 		// Return copy of cache
 		return options().stereotypesFactory(stereotypesCache);
-	} // stereotypes()
+	}
 
 	public boolean stereotype(String stereotype) {
 		Stereotypes stereotypes = stereotypes();
@@ -107,6 +102,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 	}
 
 	public TaggedValues taggedValuesForTagList(String tagList) {
+
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
@@ -117,6 +113,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 	}
 
 	public TaggedValues taggedValuesAll() {
+
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
@@ -125,22 +122,24 @@ public abstract class InfoImpl implements Info, MessageSource {
 		return copy;
 	}
 
+	@Override
 	public String taggedValue(String tag) {
+
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
 		String[] values = taggedValuesCache.get(tag);
-		if (values == null || values.length == 0)
+		if (values.length == 0)
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
-				MessageContext mc = model().result().addWarning(this, 201, tag,
+				MessageContext mc = model().result().addWarning(null, 701, tag,
 						values[0], values[i]);
 				addContextDetails(mc);
 			}
 
 		return options().internalize(values[0]);
-	} // taggedValue()
+	}
 
 	private void addContextDetails(MessageContext mc) {
 
@@ -152,76 +151,102 @@ public abstract class InfoImpl implements Info, MessageSource {
 
 			PropertyInfo pi = (PropertyInfo) this;
 
-			mc.addDetail(this, 1, pi.name(), pi.inClass().name());
+			mc.addDetail(null, 791, pi.name(), pi.inClass().name());
 
 		} else {
-			mc.addDetail(this, 0, this.toString(), this.name());
+			mc.addDetail(null, 790, this.toString(), this.name());
 		}
 	}
 
+	@Override
 	public String[] taggedValuesForTag(String tag) {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
 
 		String[] result = taggedValuesCache.get(tag);
-		return result == null ? new String[] {} : result;
+		if (result.length != 0) {
+			// we sort since order is important for UnitTests
+			Arrays.sort(result);			
+		}
+		return result;
 	}
 
+	@Override
 	public String taggedValueInLanguage(String tag, String language) {
-		validateTaggedValuesCache();
 
-		String[] values = taggedValuesCache.get(tag);
-		if (values == null || values.length == 0)
+		List<LangString> values = taggedValuesForTagAsLangStrings(tag);
+		if (values.isEmpty()) {
 			return null;
+		}
 
 		String result = null;
-		for (String value : values) {
-			if (value == null || value.length() == 0)
-				continue;
-			Matcher m = langPattern.matcher(value);
-			if (m.matches()) {
-				String lang = m.group(2);
-				if (!lang.equalsIgnoreCase(language))
-					continue;
-				value = m.group(1);
-			}
-			if (result == null)
-				result = value;
-			else {
-				MessageContext mc = model().result().addWarning(this, 202, tag,
-						language, result, value);
-				addContextDetails(mc);
+		for (LangString ls : values) {
+
+			if (ls.hasLang() && ls.getLang().equalsIgnoreCase(language)) {
+
+				if (result == null) {
+					result = options().internalize(ls.getValue());
+				} else {
+					MessageContext mc = model().result().addWarning(null, 702,
+							tag, language, result, ls.toString());
+					addContextDetails(mc);
+				}
 			}
 		}
 
-		return options().internalize(result);
+		return result;
 	}
 
+	@Override
 	public String[] taggedValuesInLanguage(String tag, String language) {
 		validateTaggedValuesCache();
 
-		String[] values = taggedValuesCache.get(tag);
-		if (values == null || values.length == 0)
+		List<LangString> values = taggedValuesForTagAsLangStrings(tag);
+		if (values.isEmpty()) {
 			return new String[0];
+		}
 
 		List<String> result = new ArrayList<String>();
-		for (String value : values) {
-			if (value == null || value.length() == 0)
-				continue;
-			Matcher m = langPattern.matcher(value);
-			if (m.matches()) {
-				String text = m.group(1);
-				String lang = m.group(2);
-				if (lang.equalsIgnoreCase(language))
-					result.add(options().internalize(text));
+		for (LangString ls : values) {
+
+			if (ls.hasLang() && ls.getLang().equalsIgnoreCase(language)) {
+				result.add(options().internalize(ls.getValue()));
 			} else {
-				result.add(options().internalize(value));
+				result.add(options().internalize(ls.getValue()));
 			}
 		}
 		return result.toArray(new String[result.size()]);
 	}
 
-	protected String descriptorSource(String descriptor) {
+	@Override
+	public List<LangString> taggedValuesForTagAsLangStrings(String tag) {
+
+		String[] values = taggedValuesForTag(tag);
+
+		List<LangString> result = new ArrayList<LangString>();
+
+		for (String value : values) {
+
+			if (value == null || value.length() == 0)
+				continue;
+
+			Matcher m = langPattern.matcher(value);
+
+			if (m.matches()) {
+				String text = m.group(1);
+				String lang = m.group(2);
+				result.add(new LangString(options().internalize(text),
+						options().internalize(lang)));
+			} else {
+				result.add(new LangString(options().internalize(value)));
+			}
+		}
+
+		// return new Descriptors(tmp);
+		return result;
+	}
+
+	protected String descriptorSource(Descriptor descriptor) {
 		String source = null;
 
 		if (model().type() == Options.GENERIC) {
@@ -231,44 +256,34 @@ public abstract class InfoImpl implements Info, MessageSource {
 			 */
 			source = "sc:internal";
 		} else {
-			source = options().descriptorSource(descriptor);
+			source = options().descriptorSource(descriptor.getName());
 
 			// if nothing has been configured, use defaults
 			if (source == null) {
 				if (model().type() == Options.EA7) {
-					if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DOCUMENTATION.toString()))
+					if (descriptor == Descriptor.DOCUMENTATION)
 						source = "ea:notes";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.ALIAS.toString()))
+					else if (descriptor == Descriptor.ALIAS)
 						source = "ea:alias";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.GLOBALIDENTIFIER.toString()))
+					else if (descriptor == Descriptor.GLOBALIDENTIFIER)
 						source = "none";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DEFINITION.toString()))
+					else if (descriptor == Descriptor.DEFINITION)
 						source = "sc:extract#PROLOG";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DESCRIPTION.toString()))
+					else if (descriptor == Descriptor.DESCRIPTION)
 						source = "none";
 					else
 						source = "tag#" + descriptor;
 				} else if (model().type() == Options.XMI10
 						|| model().type() == Options.GSIP) {
-					if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DOCUMENTATION.toString()))
+					if (descriptor == Descriptor.DOCUMENTATION)
 						source = "tag#documentation;description";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.ALIAS.toString()))
+					else if (descriptor == Descriptor.ALIAS)
 						source = "tag#alias";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.GLOBALIDENTIFIER.toString()))
+					else if (descriptor == Descriptor.GLOBALIDENTIFIER)
 						source = "tag#globalIdentifier";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DEFINITION.toString()))
+					else if (descriptor == Descriptor.DEFINITION)
 						source = "sc:extract#PROLOG";
-					else if (descriptor.equalsIgnoreCase(
-							Options.Descriptor.DESCRIPTION.toString()))
+					else if (descriptor == Descriptor.DESCRIPTION)
 						source = "none";
 					else
 						source = "tag#" + descriptor;
@@ -281,117 +296,154 @@ public abstract class InfoImpl implements Info, MessageSource {
 		return source;
 	}
 
-	private String descriptorValue(String descriptor, boolean language) {
-		String value = null;
-		String source = descriptorSource(descriptor);
-		if (source.startsWith("tag#")) {
-			String[] tags = source.replace("tag#", "").split(";");
-			for (String tag : tags) {
-				if (language)
-					value = taggedValueInLanguage(tag, options().language());
-				else
-					value = taggedValue(tag);
-				if (value != null && !value.isEmpty())
-					break;
-			}
-		} else if (source.equals("ea:alias") && model().type() == Options.EA7) {
-			// do nothing now, this happens in the EA classes
-		} else if (source.equals("ea:notes") && model().type() == Options.EA7) {
-			// do nothing now, this happens in the EA classes
-		} else if (source.equals("ea:guidtoxml") && model().type() == Options.EA7) {
-			// do nothing now, this happens in the EA classes
-		} else if (source.startsWith("sc:extract#")) {
-			String token = source.replace("sc:extract#", "");
-			String doc = documentation();
+	public Descriptors descriptors() {
 
-			if (doc == null || doc.trim().length() == 0) {
-				// nothing to extract from ...
-			} else {
-				String[] ss = doc.split(options().extractSeparator());
-				boolean found = false;
-				if (token.equals("PROLOG"))
-					// PROLOG is the start of the documentation before the first
-					// separator
-					found = true;
-				for (String s : ss) {
-					if (found) {
-						value = s.trim();
-						break;
-					} else if (s.trim().equalsIgnoreCase(token)) {
-						found = true;
-					}
-				}
-			}
-		}
+		validateDescriptorsCache();
+
+		return this.descriptors;
+	}
+
+	public void setDescriptors(Descriptors descriptors) {
+
+		this.descriptors = descriptors;
+	}
+
+	/**
+	 * Look up the values for the descriptor, using the source as defined by the
+	 * configuration (or the default source, if the configuration does not state
+	 * anything regarding the source). If the source is a tagged value then the
+	 * values in all available languages will be returned. For backwards
+	 * compatibility reasons, the empty string will be returned for the
+	 * descriptors DOCUMENTATION and DEFINITION if no values were found.
+	 * 
+	 * @param descriptor
+	 * @return values for the descriptor, can be empty but not null;
+	 */
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
+
+		validateDescriptorsCache();
 
 		/*
-		 * For backwards compatibility, the default differs by descriptor
+		 * Avoid loading and parsing descriptor values again if the cache
+		 * already contains a value list (even if it is empty) for the
+		 * descriptor. Subclasses that override this method will check if the
+		 * value list is empty and should only check once if they can provide
+		 * actual values (e.g. for alias or documentation). That means that
+		 * overriding methods should keep track, for example using class private
+		 * boolean fields, if an attempt has already been made to access the
+		 * values for a particular descriptor in a model specific way.
 		 */
-		if (value == null)
-			if (descriptor.equals(Options.Descriptor.DOCUMENTATION.toString())
-					|| descriptor
-							.equals(Options.Descriptor.DEFINITION.toString()))
-				value = "";
+		if (this.descriptors.has(descriptor)) {
 
-		return value;
-	}
+			return this.descriptors.values(descriptor);
 
-	private String[] descriptorValues(String descriptor, boolean language) {
-		String[] values = new String[0];
-		String source = descriptorSource(descriptor);
-		if (source.startsWith("tag#")) {
-			String[] tags = source.replace("tag#", "").split(";");
-			for (String tag : tags) {
-				if (language)
-					values = taggedValuesInLanguage(tag, options().language());
-				else
-					values = taggedValuesForTag(tag);
-				if (values != null && values.length > 0)
-					break;
-			}
-		} else if (source.equals("ea:alias") && model().type() == Options.EA7) {
-			// do nothing now, this happens in the EA classes
-		} else if (source.equals("ea:notes") && model().type() == Options.EA7) {
-			// do nothing now, this happens in the EA classes
-		} else if (source.startsWith("sc:extract#")) {
-			String token = source.replace("sc:extract#", "");
-			String doc = documentation();
+		} else {
 
-			if (doc == null || doc.trim().length() == 0) {
-				// nothing to extract from ...
-			} else {
-				String[] ss = doc.split(options().extractSeparator());
-				boolean found = false;
-				if (token.equals("PROLOG"))
-					// PROLOG is the start of the documentation before the first
-					// separator
-					found = true;
-				for (String s : ss) {
-					if (found) {
-						values = new String[] { s.trim() };
+			List<LangString> result = new ArrayList<LangString>();
+			this.descriptors.put(descriptor, result);
+
+			String source = descriptorSource(descriptor);
+			if (source.startsWith("tag#")) {
+
+				/*
+				 * NOTE: the default source for the descriptor 'documentation'
+				 * in XMI10 and GSIP is: tag#documentation;description, that is
+				 * why we split here and look at multiple tags in the subsequent
+				 * for-loop. If a value is found in one iteration, we can break.
+				 */
+				String[] tags = source.replace("tag#", "").split(";");
+				for (String tag : tags) {
+
+					result.addAll(taggedValuesForTagAsLangStrings(tag));
+
+					if (!result.isEmpty()) {
 						break;
-					} else if (s.trim().equalsIgnoreCase(token)) {
+					}
+				}
+
+			} else if (source.equals("ea:alias")
+					&& model().type() == Options.EA7) {
+				// do nothing now, this happens in the EA classes
+			} else if (source.equals("ea:notes")
+					&& model().type() == Options.EA7) {
+				// do nothing now, this happens in the EA classes
+			} else if (source.equals("ea:guidtoxml")
+					&& model().type() == Options.EA7) {
+				// do nothing now, this happens in the EA classes
+			} else if (source.startsWith("sc:extract#")) {
+				String token = source.replace("sc:extract#", "");
+				String doc = documentation();
+
+				if (doc == null || doc.trim().length() == 0) {
+					// nothing to extract from ...
+				} else {
+					String[] ss = doc.split(options().extractSeparator());
+					boolean found = false;
+					if (token.equals("PROLOG"))
+						/*
+						 * PROLOG is the start of the documentation before the
+						 * first separator
+						 */
 						found = true;
+					for (String s : ss) {
+						if (found) {
+
+							// ignore empty values
+							if (s.trim().length() != 0) {
+								result.add(new LangString(
+										options().internalize(s.trim())));
+							}
+							break;
+						} else if (s.trim().equalsIgnoreCase(token)) {
+							found = true;
+						}
 					}
 				}
 			}
+
+			/*
+			 * NOTE: Backwards compatibility for the descriptors DOCUMENTATION
+			 * and DEFINITION, to provide the empty string if no value is found
+			 * in the source, is handled by the methods documentation() and
+			 * definition().
+			 */
+
+			return result;
 		}
-
-		return values;
 	}
 
+	private void validateDescriptorsCache() {
+
+		if (this.descriptors == null) {
+
+			this.descriptors = new Descriptors();
+
+			for (Descriptor descriptor : Descriptor.values()) {
+
+				List<LangString> list = this.descriptorValues(descriptor);
+				this.descriptors.putCopy(descriptor, list);
+			}
+		}
+	}
+
+	@Override
 	public String primaryCode() {
-		if (primaryCode == null)
-			primaryCode = options().internalize(descriptorValue(
-					Options.Descriptor.PRIMARYCODE.toString(), true));
-		return primaryCode;
+		String[] values = filterDescriptorValues(Descriptor.PRIMARYCODE);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
 	}
-	
-	public String globalIdentifier() {
-		if (globalIdentifier == null)
-			globalIdentifier = options().internalize(descriptorValue(
-					Options.Descriptor.GLOBALIDENTIFIER.toString(), true));
-		return globalIdentifier;
+
+	@Override
+	public final String globalIdentifier() {
+		String[] values = filterDescriptorValues(Descriptor.GLOBALIDENTIFIER);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
 	}
 
 	public String derivedDocumentation(String template, String novalue) {
@@ -431,7 +483,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 		if (s == null || s.trim().isEmpty())
 			s = nov;
 		replacements.put("primaryCode", s.trim());
-		
+
 		s = this.globalIdentifier();
 		if (s == null || s.trim().isEmpty())
 			s = nov;
@@ -484,77 +536,166 @@ public abstract class InfoImpl implements Info, MessageSource {
 		return builder.toString();
 	}
 
-	/**
-	 * @return an empty string if no documentation exists
-	 */
-	public String documentation() {
-		if (documentation == null)
-			documentation = options().internalize(descriptorValue(
-					Options.Descriptor.DOCUMENTATION.toString(), true));
-		return documentation;
+	@Override
+	public final String documentation() {
+
+		String[] values = filterDescriptorValues(Descriptor.DOCUMENTATION);
+		if (values.length == 0) {
+			return "";
+		} else {
+			return values[0];
+		}
+	}
+
+	@Override
+	public final String definition() {
+		String[] values = filterDescriptorValues(Descriptor.DEFINITION);
+		if (values.length == 0) {
+			return "";
+		} else {
+			return values[0];
+		}
+	}
+
+	@Override
+	public final String description() {
+
+		String[] values = filterDescriptorValues(Descriptor.DESCRIPTION);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
+	}
+
+	@Override
+	public final String legalBasis() {
+		String[] values = filterDescriptorValues(Descriptor.LEGALBASIS);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
 	}
 
 	/**
-	 * Retrieve the part of a documentation of an information item that is
-	 * considered a definition
+	 * NOTE: this method is not final since several XXXInfoImpl classes override
+	 * it
 	 * 
-	 * @return the definition or an empty string if none exists
-	 */
-	public String definition() {
-		if (definition == null)
-			definition = options().internalize(descriptorValue(
-					Options.Descriptor.DEFINITION.toString(), true));
-		return definition;
-	}
-
-	/**
-	 * Retrieve the part of a documentation of an information item that is
-	 * considered an informative description
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#language()
 	 * 
-	 * @return the description or null if none exists
+	 * 
 	 */
-	public String description() {
-		if (description == null)
-			description = options().internalize(descriptorValue(
-					Options.Descriptor.DESCRIPTION.toString(), true));
-		return description;
-	}
-
-	public String legalBasis() {
-		if (legalBasis == null)
-			legalBasis = options().internalize(descriptorValue(
-					Options.Descriptor.LEGALBASIS.toString(), true));
-		return legalBasis;
-	}
-
+	@Override
 	public String language() {
-		if (language == null)
-			language = options().internalize(descriptorValue(
-					Options.Descriptor.LANGUAGE.toString(), true));
-		return language;
+
+		String[] values = filterDescriptorValues(Descriptor.LANGUAGE);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
 	}
 
-	public String[] dataCaptureStatements() {
-		if (dataCaptureStatements == null)
-			dataCaptureStatements = options().internalize(descriptorValues(
-					Options.Descriptor.DATACAPTURESTATEMENT.toString(), true));
-		return dataCaptureStatements;
+	@Override
+	public final String[] dataCaptureStatements() {
+
+		String[] values = filterDescriptorValues(
+				Descriptor.DATACAPTURESTATEMENT);
+
+		return values;
 	}
 
-	public String[] examples() {
-		if (examples == null)
-			examples = options().internalize(descriptorValues(
-					Options.Descriptor.EXAMPLE.toString(), true));
-		return examples;
+	@Override
+	public final String[] examples() {
+		String[] values = filterDescriptorValues(Descriptor.EXAMPLE);
+
+		return values;
 	}
 
-	public String aliasName() {
-		// it is important not to set any default alias as this blocks other
-		// aliases, e.g. from EA
-		if (aliasName == null)
-			aliasName = options().internalize(
-					descriptorValue(Options.Descriptor.ALIAS.toString(), true));
-		return aliasName;
+	@Override
+	public final String aliasName() {
+
+		String[] values = filterDescriptorValues(Descriptor.ALIAS);
+		if (values.length == 0) {
+			return null;
+		} else {
+			return values[0];
+		}
+	}
+
+	/**
+	 * Filters the given values depending upon the type of descriptor and the
+	 * language setting. At first, we search for strings with a language
+	 * identifier that matches the configured one. If that search does not yield
+	 * a result, search again for strings without a language identifier. In both
+	 * cases, only the first match is returned if the descriptor is single
+	 * valued - any additional match will be logged as a warning.
+	 * 
+	 * @param descriptor
+	 * @param values
+	 * @return array of values that apply to the descriptor; can be empty but
+	 *         not <code>null</code>
+	 */
+	private String[] filterDescriptorValues(Descriptor descriptor) {
+
+		/*
+		 * IMPORTANT: This method must not use #descriptors() to get the values
+		 * of a descriptor, because the validation of the descriptors cache
+		 * requires accessing some descriptors to compute others (e.g. when
+		 * extracting from the documentation). Those descriptors may not have
+		 * been loaded when descriptors that depend on them are being loaded
+		 * during validation of the descriptors cache. Access to the required
+		 * descriptors applies this method, i.e. filtering of descriptor values,
+		 * and since some input model types may provide a specific way to load
+		 * some descriptors (like alias, global identifier and documentation in
+		 * the case of an EA model) by overwriting the descriptorValues(...)
+		 * method, we use that method here to get the actual values for the
+		 * descriptor.
+		 */
+		List<LangString> lsList = descriptorValues(descriptor);
+
+		List<String> result = new ArrayList<String>();
+
+		// first search for strings with matching language identifier
+		for (LangString ls : lsList) {
+
+			if (ls.hasLang()
+					&& ls.getLang().equalsIgnoreCase(options().language())) {
+
+				if (descriptor.isSingleValued() && result.size() != 0) {
+					MessageContext mc = model().result().addWarning(null, 704,
+							descriptor.getName(), result.get(0).toString(),
+							ls.toString());
+					addContextDetails(mc);
+				} else {
+					result.add(ls.getValue());
+				}
+			}
+		}
+
+		/*
+		 * if no language specific strings exist, search for ones without
+		 * language tag
+		 */
+		if (result.isEmpty()) {
+			for (LangString ls : lsList) {
+
+				if (!ls.hasLang()) {
+
+					if (descriptor.isSingleValued() && result.size() != 0) {
+						MessageContext mc = model().result().addWarning(null,
+								704, descriptor.getName(),
+								result.get(0).toString(), ls.toString());
+						addContextDetails(mc);
+					} else {
+						result.add(ls.getValue());
+					}
+				}
+			}
+		}
+
+		return result.toArray(new String[0]);
 	}
 
 	public String encodingRule(String platform) {
@@ -612,14 +753,25 @@ public abstract class InfoImpl implements Info, MessageSource {
 						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
+			} else if (platform.equalsIgnoreCase("exp")) {
+				s = options().parameter(Options.TargetModelExport,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
+			} else if (platform.equalsIgnoreCase("ptf")) {
+				s = options().parameter(Options.TargetModelExport,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
 			}
 		}
 		if (s != null)
 			s = s.toLowerCase();
 		return s;
-	} // encodingRule()
+	}
 
 	public boolean matches(String rule) {
+
 		String encRule = null;
 		String[] ra = rule.toLowerCase().split("-", 4);
 		/*
@@ -731,7 +883,7 @@ public abstract class InfoImpl implements Info, MessageSource {
 			encRule = encodingRule("sch");
 			if (encRule != null)
 				res = res || options().hasRule(rule, encRule);
-			
+
 			encRule = encodingRule("sql");
 			if (encRule != null)
 				res = res || options().hasRule(rule, encRule);
@@ -804,7 +956,16 @@ public abstract class InfoImpl implements Info, MessageSource {
 		validateTaggedValuesCache();
 
 		return taggedValuesCache.getFirstValues(tagList);
-	} // taggedValues()
+	}
+
+	@Override
+	public final void removeTaggedValue(String tag) {
+
+		// Validate tagged values cache first
+		validateTaggedValuesCache();
+
+		taggedValuesCache.remove(tag);
+	}
 
 	/**
 	 * @deprecated With UML 2, there may be multiple values per tag. Use
@@ -816,29 +977,5 @@ public abstract class InfoImpl implements Info, MessageSource {
 		validateTaggedValuesCache();
 
 		return taggedValuesCache.getFirstValues();
-	} // taggedValues()
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
-	 */
-	public String message(int mnr) {
-
-		switch (mnr) {
-
-		case 0:
-			return "Context: class InfoImpl. Element: $1$. Name: $2$";
-		case 1:
-			return "Context: class InfoImpl (subtype: PropertyInfo). Name: $1$. In class: $2$";
-
-		case 201:
-			return "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
-		case 202:
-			return "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
-		case 203:
-			return "Multiple values were requested for descriptor '$1$', but the source '$2$' specified in the configuration only supports single values. No values have been returned.";
-
-		default:
-			return "(Unknown message)";
-		}
 	}
 }

@@ -56,11 +56,11 @@ public class TestInstance {
 	 * @param config
 	 *            URI/Path of the configuration file
 	 */
-	TestInstance(String config) {
+	public TestInstance(String config) {
 		init(config, null);
 	}
 
-	TestInstance(String config, HashMap<String, String> replacevalues) {
+	public TestInstance(String config, HashMap<String, String> replacevalues) {
 		init(config, replacevalues);
 	}
 
@@ -90,7 +90,10 @@ public class TestInstance {
 			result.addFatalError(e.getMessage());
 			fail("ShapeChange encountered an abort error.");
 		} catch (Exception e) {
-			result.addFatalError(e.getMessage());
+			if(e.getMessage() != null) {
+				result.addFatalError(e.getMessage());
+			}
+			e.printStackTrace();
 			fail("ShapeChange encountered an unknown error.");
 		}
 	}

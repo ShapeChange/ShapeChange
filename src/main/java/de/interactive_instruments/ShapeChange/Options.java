@@ -67,6 +67,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Splitter;
+
 import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -77,6 +79,11 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue;
 
+/**
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
 public class Options {
 
 	//
@@ -120,6 +127,8 @@ public class Options {
 	public static final String TargetArcGISWorkspaceClass = "de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace";
 	public static final String TargetReplicationSchemaClass = "de.interactive_instruments.ShapeChange.Target.ReplicationSchema.ReplicationXmlSchema";
 	public static final String TargetApplicationSchemaMetadata = "de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata";
+	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
+	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -140,7 +149,7 @@ public class Options {
 	public static final String[] classStereotypes = { "codelist", "enumeration",
 			"datatype", "featuretype", "type", "basictype", "interface",
 			"union", "abstract", "fachid", "schluesseltabelle", "adeelement",
-			"featureconcept", "attributeconcept", "valueconcept",
+			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
 			"aixmextension" };
 	public static final String[] assocStereotypes = { "disjoint" };
 	/**
@@ -192,6 +201,7 @@ public class Options {
 	public static final int ATTRIBUTECONCEPT = 14;
 	public static final int VALUECONCEPT = 15;
 	public static final int AIXMEXTENSION = 16;
+	public static final int ROLECONCEPT = 17;
 
 	/* These constants are used when loading diagrams from the input model */
 	public static final String ELEMENT_NAME_KEY_FOR_DIAGRAM_MATCHING = "NAME";
@@ -219,6 +229,28 @@ public class Options {
 	public static final String PARAM_ONLY_DEFERRABLE_OUTPUT_WRITE = "onlyDeferrableOutputWrite";
 	public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
 	public static final String PARAM_LANGUAGE = "language"; // TODO document
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String (comma separated list of values)
+	 * <p>
+	 * Default Value: notValid, retired, superseded
+	 * <p>
+	 * Explanation: Comma separated list of values that, if one of them is being
+	 * set as the 'status' tagged value of a class, will lead to the class not
+	 * being loaded.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV = "prohibitLoadingClassesWithStatusTaggedValue";
+	public static final String[] DEFAULT_FOR_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV = new String[] {
+			"notValid", "retired", "superseded" };
+	private boolean prohibitedStatusValuesWhenLoadingClasses_accessed = false;
+	protected Set<String> prohibitedStatusValuesWhenLoadingClasses = null;
+
 	/**
 	 * If 'true', semantic validation of the ShapeChange configuration will not
 	 * be performed.
@@ -355,27 +387,6 @@ public class Options {
 
 	/** Hash table for all descriptor sources */
 	protected HashMap<String, String> fDescriptorSources = new HashMap<String, String>();
-
-	/** Known descriptors */
-	public static enum Descriptor {
-		ALIAS("alias"), PRIMARYCODE("primaryCode"), DOCUMENTATION(
-				"documentation"), DEFINITION("definition"), DESCRIPTION(
-						"description"), EXAMPLE("example"), LEGALBASIS(
-								"legalBasis"), DATACAPTURESTATEMENT(
-										"dataCaptureStatement"), LANGUAGE(
-												"language"), GLOBALIDENTIFIER(
-														"globalIdentifier");
-
-		private String name = null;
-
-		Descriptor(String n) {
-			name = n;
-		};
-
-		public String toString() {
-			return name;
-		};
-	}
 
 	public static final String DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE = "[[definition]]";
 	public static final String DERIVED_DOCUMENTATION_DEFAULT_NOVALUE = "";
@@ -805,10 +816,65 @@ public class Options {
 		return fParameters.get(k1);
 	}
 
+	/**
+	 * @param t
+	 *            class name; can be <code>null</code> to search for an input
+	 *            parameter
+	 * @param k1
+	 *            parameter name
+	 * @return the parameter value, or <code>null</code> if no value was found
+	 */
 	public String parameter(String t, String k1) {
-		return fParameters.get(t + "::" + k1);
+		if (t == null) {
+			return fParameters.get(k1);
+		} else {
+			return fParameters.get(t + "::" + k1);
+		}
 	}
 
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the
+	 *            existence of the parameter with given name shall be
+	 *            determined; can be <code>null</code> to check the existence of
+	 *            an input parameter
+	 * @param parameterName
+	 *            name of the parameter to check
+	 * @return <code>true</code> if the parameter exists (i.e., is set in the
+	 *         configuration), else <code>false</code>
+	 */
+	public boolean hasParameter(String className, String parameterName) {
+
+		String key;
+		if (className == null) {
+			key = parameterName;
+		} else {
+			key = className + "::" + parameterName;
+		}
+
+		return this.fParameters.containsKey(key);
+	}
+
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the values
+	 *            of the parameter with given name shall be searched; can be
+	 *            <code>null</code> to search for an input parameter
+	 * @param parameterName
+	 *            name of the parameter to retrieve the value from
+	 * @param defaultValue
+	 *            value that will be returned if no valid value was found; NOTE:
+	 *            <code>null</code> is NOT converted
+	 * @param allowNonEmptyTrimmedStringValue
+	 *            <code>true</code> if the parameter value may be empty if it
+	 *            was trimmed, else <code>false</code>
+	 * @param trimValue
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from the parameter value
+	 * @return Value retrieved from this parameter, or the default value if the
+	 *         parameter was not set or did not contain a valid value; can be
+	 *         <code>null</code>
+	 */
 	public String parameterAsString(String className, String parameterName,
 			String defaultValue, boolean allowNonEmptyTrimmedStringValue,
 			boolean trimValue) {
@@ -817,12 +883,73 @@ public class Options {
 
 		if (result == null || (result.trim().isEmpty()
 				&& !allowNonEmptyTrimmedStringValue)) {
+
 			result = defaultValue;
+
 		} else if (trimValue) {
 			result = result.trim();
 		}
 
 		return result;
+	}
+
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the values
+	 *            of the parameter with given name shall be searched; can be
+	 *            <code>null</code> to search for an input parameter
+	 * @param parameterName
+	 *            name of the parameter to retrieve the comma separated values
+	 *            from
+	 * @param defaultValues
+	 *            values that will be returned if no values were found;
+	 *            <code>null</code> is converted to an empty list of strings
+	 * @param omitEmptyStrings
+	 *            <code>true</code> if values may NOT be empty if they were
+	 *            trimmed, else <code>false</code>
+	 * @param trimResults
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from a value
+	 * @return List of values (originally separated by commas) retrieved from
+	 *         this parameter, or the default values if the parameter was not
+	 *         set or did not contain valid values; can be empty but not
+	 *         <code>null</code>
+	 */
+	public List<String> parameterAsStringList(String className,
+			String parameterName, String[] defaultValues,
+			boolean omitEmptyStrings, boolean trimResults) {
+
+		List<String> defaultValuesList = defaultValues == null
+				? new ArrayList<String>() : Arrays.asList(defaultValues);
+
+		String paramValue = this.parameter(className, parameterName);
+
+		if (paramValue == null) {
+
+			return defaultValuesList;
+
+		} else {
+
+			Splitter splitter = Splitter.on(',');
+
+			if (omitEmptyStrings) {
+				splitter = splitter.omitEmptyStrings();
+			}
+			if (trimResults) {
+				splitter = splitter.trimResults();
+			}
+
+			List<String> result = splitter.splitToList(paramValue);
+
+			if (result.isEmpty()) {
+
+				return defaultValuesList;
+
+			} else {
+
+				return new ArrayList<String>(result);
+			}
+		}
 	}
 
 	public int parameterAsInteger(String className, String parameterName,
@@ -1159,46 +1286,6 @@ public class Options {
 		}
 
 		return "Unknown (" + targetId + ")";
-
-		// switch (targetId) {
-		// case 0:
-		// return "-reserved-";
-		// case 1:
-		// return "XML Schema";
-		// case 2:
-		// return "-reserved-";
-		// case 3:
-		// return "RDF";
-		// case 4:
-		// return "Definitions";
-		// case 5:
-		// return "Excel Mapping";
-		// case 6:
-		// return "KML XSLT";
-		// case 7:
-		// return "JSON Schema";
-		// case 8:
-		// return "Code List Dictionary";
-		// case 9:
-		// return "Feature Catalogue";
-		// case 10:
-		// // FIXME shouldn't this be something like "SQL DDL"?
-		// return "Decoder";
-		// case 13:
-		// return "Replication XML Schema";
-		//
-		// // FIXME hevan: it seems that not all targets in ShapeChange are in
-		// this switch-statement
-		//
-		// case 401:
-		// return "Objektartenkatalog";
-		// case 402:
-		// return "AAA-Profil (3AP)";
-		// case 404:
-		// return "AAA-Modellart (3AM)";
-		// }
-		//
-		// return "Unknown (" + targetId + ")";
 	}
 
 	public void loadConfiguration() throws ShapeChangeAbortException {
@@ -1610,6 +1697,9 @@ public class Options {
 						} else if (sForCons.equals("attributeconcept")) {
 							this.classTypesToCreateConstraintsFor
 									.add(new Integer(ATTRIBUTECONCEPT));
+						} else if (sForCons.equals("roleconcept")) {
+							this.classTypesToCreateConstraintsFor
+									.add(new Integer(ROLECONCEPT));
 						} else if (sForCons.equals("valueconcept")) {
 							this.classTypesToCreateConstraintsFor
 									.add(new Integer(VALUECONCEPT));
@@ -1735,6 +1825,7 @@ public class Options {
 		fSchemaLocations = new HashMap<String, String>();
 		fAllRules = new HashSet<String>();
 		fExtendsEncRule = new HashMap<String, String>();
+		fRulesInEncRule = new HashSet<String>();
 
 		// repopulate fields
 
@@ -3562,6 +3653,12 @@ public class Options {
 		 */
 		addRule("rule-asm-all-identify-profiles");
 
+		/*
+		 * Model export conversion rules
+		 */
+		addRule("rule-exp-all-omitExistingProfiles");
+		addRule("rule-exp-all-restrictExistingProfiles");
+		addRule("rule-exp-pkg-allPackagesAreEditable");
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3652,6 +3749,8 @@ public class Options {
 			return Options.TargetReplicationSchemaClass;
 		else if (ra[1].equals("asm"))
 			return Options.TargetApplicationSchemaMetadata;
+		else if (ra[1].equals("exp"))
+			return Options.TargetModelExport;
 
 		return null;
 	}
@@ -3824,7 +3923,8 @@ public class Options {
 
 	/**
 	 * Depending upon whether or not string interning shall be used during
-	 * processing, this method interns the given string.
+	 * processing, this method interns the given string. <code>null</code> is
+	 * simply returned.
 	 *
 	 * @param string
 	 * @return
@@ -3928,5 +4028,33 @@ public class Options {
 
 	public Stereotypes stereotypesFactory(Stereotypes stereotypes) {
 		return new StereotypesCacheSet(stereotypes, this);
+	}
+
+	/**
+	 * @return values that, if one of them is being set as the 'status' tagged
+	 *         value of a class, will lead to the class not being loaded; can be
+	 *         empty but not <code>null</code>
+	 */
+	public Set<String> prohibitedStatusValuesWhenLoadingClasses() {
+
+		if (!prohibitedStatusValuesWhenLoadingClasses_accessed) {
+
+			prohibitedStatusValuesWhenLoadingClasses_accessed = true;
+
+			if (this.hasParameter(null,
+					PARAM_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV)) {
+
+				prohibitedStatusValuesWhenLoadingClasses = new HashSet<String>(
+						this.parameterAsStringList(null,
+								PARAM_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV,
+								DEFAULT_FOR_PROHIBIT_LOADING_CLASSES_WITH_STATUS_TV,
+								true, true));
+			} else {
+
+				prohibitedStatusValuesWhenLoadingClasses = new HashSet<String>();
+			}
+		}
+
+		return prohibitedStatusValuesWhenLoadingClasses;
 	}
 }

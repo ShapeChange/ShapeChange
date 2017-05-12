@@ -277,7 +277,8 @@ public class Sbvr2FolParser implements MessageSource {
 			return "Translation to First Order Logic expression was not successfull but no errors were reported.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + Sbvr2FolParser.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

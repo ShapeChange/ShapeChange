@@ -830,7 +830,9 @@ public class Converter {
 			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
 		else if (imt.equalsIgnoreCase("gsip"))
 			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-
+		else if (imt.equalsIgnoreCase("scxml"))
+			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
+		
 		// Transformations of the model are only supported for EA models
 		if (imt.equals(
 				"de.interactive_instruments.ShapeChange.Model.EA.EADocument")) {

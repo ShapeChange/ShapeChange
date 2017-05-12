@@ -98,7 +98,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 	public void process(GenericModel m, Options o,
 			TransformerConfiguration trfConfig, ShapeChangeResult r)
 
-	throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		this.model = m;
 		this.options = o;
@@ -394,7 +394,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 
 			// create timeSlice property
 			GenericPropertyInfo tsPi = new GenericPropertyInfo(model,
-					"timeSlice_for_" + ft.id(), "timeSlice", tsType.category());
+					"timeSlice_for_" + ft.id(), "timeSlice");
 
 			Multiplicity mult = new Multiplicity();
 			mult.minOccurs = 1;
@@ -412,7 +412,6 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 			t.id = tsType.id();
 			t.name = tsType.name();
 			tsPi.setTypeInfo(t);
-
 
 			/*
 			 * register timeSlice property in model and add it to feature
@@ -467,8 +466,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 			GenericClassInfo inClass) {
 
 		GenericPropertyInfo pi = new GenericPropertyInfo(model,
-				"interpretation_for_" + inClass.id(), "interpretation",
-				inClass.category());
+				"interpretation_for_" + inClass.id(), "interpretation");
 
 		Multiplicity mult = new Multiplicity();
 		mult.minOccurs = 1;
@@ -480,13 +478,12 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		pi.setInClass(inClass);
 		pi.setInlineOrByReference("inline");
 		pi.setTaggedValues(options.taggedValueFactory(), false);
-		pi.setSequenceNumber(new StructuredNumber("1"),true);
+		pi.setSequenceNumber(new StructuredNumber("1"), true);
 		Type t = new Type();
 		ClassInfo ci = model.classByName("CharacterString");
 		t.id = ci != null ? ci.id() : "unknown";
 		t.name = "CharacterString";
 		pi.setTypeInfo(t);
-		
 
 		return pi;
 	}
@@ -624,15 +621,25 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				// set properties required by Info interface
 
 				assocCopy.setTaggedValues(assocCi.taggedValuesAll(), false);
-				assocCopy.setAliasName(assocCi.aliasName());
-				assocCopy.setDefinition(assocCi.definition());
-				assocCopy.setDescription(assocCi.description());
-				assocCopy.setPrimaryCode(assocCi.primaryCode());
-				assocCopy.setGlobalIdentifier(assocCi.globalIdentifier());
-				assocCopy.setLanguage(assocCi.language());
-				assocCopy.setLegalBasis(assocCi.legalBasis());
-				assocCopy.setDataCaptureStatements(assocCi.dataCaptureStatements());
-				assocCopy.setExamples(assocCi.examples());
+
+				assocCopy.setDescriptors(assocCi.descriptors().createCopy());
+				assocCopy.setProfiles(assocCi.profiles().createCopy());
+//				assocCopy.setAliasNameAll(assocCi.aliasNameAll().createCopy());
+//				assocCopy
+//						.setDefinitionAll(assocCi.definitionAll().createCopy());
+//				assocCopy.setDescriptionAll(
+//						assocCi.descriptionAll().createCopy());
+//				assocCopy.setPrimaryCodeAll(
+//						assocCi.primaryCodeAll().createCopy());
+//				assocCopy.setGlobalIdentifierAll(
+//						assocCi.globalIdentifierAll().createCopy());
+//				assocCopy.setLanguageAll(assocCi.languageAll().createCopy());
+//				assocCopy
+//						.setLegalBasisAll(assocCi.legalBasisAll().createCopy());
+//				assocCopy.setDataCaptureStatementsAll(
+//						assocCi.dataCaptureStatementsAll().createCopy());
+//				assocCopy.setExamplesAll(assocCi.examplesAll().createCopy());
+
 				assocCopy.setStereotypes(assocCi.stereotypes());
 				assocCopy.setXmlSchemaType(assocCi.xmlSchemaType());
 				assocCopy.setIncludePropertyType(assocCi.includePropertyType());
@@ -713,7 +720,8 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		case 6:
 			return "The id() of Info object with full name '$1$' is already contained in AIXM schema infos. Info object '$1$' will not be added to the schema infos.";
 		default:
-			return "(Unknown message)";
+			return "(" + AIXMSchemaMerger.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:om="http://www.opengis.net/om/2.0" xmlns:t1="http://example.org/shapechange/schema" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="http://www.opengis.net/om/2.0" schemaLocation="http://schemas.opengis.net/om/2.0/observation.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AssociationClass" substitutionGroup="gml:AbstractFeature" type="t1:AssociationClassType"/>
+  <complexType name="AssociationClassType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pOfAssociationClass" type="boolean"/>
+          <element name="roleFT4toFT3" type="t1:FeatureType3PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleFT3toFT4</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClassPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:AssociationClass"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1" substitutionGroup="gml:AbstractFeature" type="t1:FeatureType1Type"/>
+  <complexType name="FeatureType1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="roleFT1toFT2" type="om:OM_ObservationPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleFT2toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="roleFT1toFT3" type="t1:FeatureType3PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleFT3toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3" substitutionGroup="gml:AbstractFeature" type="t1:FeatureType3Type"/>
+  <complexType name="FeatureType3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="pFT3" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:FeatureType3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType4" substitutionGroup="gml:AbstractFeature" type="t1:FeatureType4Type"/>
+  <complexType name="FeatureType4Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleFT4toFT5"/>
+          <element name="roleFT4toFT3" type="t1:AssociationClassPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleFT3toFT4</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:FeatureType4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

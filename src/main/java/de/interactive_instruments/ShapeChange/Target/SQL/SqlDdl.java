@@ -837,7 +837,8 @@ public class SqlDdl implements Target, MessageSource {
 			return "File has been deleted.";
 
 		default:
-			return "(Unknown message)";
+			return "(" + SqlDdl.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

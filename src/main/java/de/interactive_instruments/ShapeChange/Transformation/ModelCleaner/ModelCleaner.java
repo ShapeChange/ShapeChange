@@ -311,7 +311,8 @@ public class ModelCleaner implements Transformer, MessageSource {
 		case 6:
 			return "$1$::$2$: set 'implementedByNilReason' field to true.";
 		default:
-			return "(Unknown message)";
+			return "(" + ModelCleaner.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 

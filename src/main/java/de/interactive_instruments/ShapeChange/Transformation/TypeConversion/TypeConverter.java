@@ -44,7 +44,6 @@ import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
@@ -117,16 +116,6 @@ public class TypeConverter implements Transformer, MessageSource {
 		 */
 
 		/*
-		 * --- update category of value of properties ---
-		 */
-		for (GenericPropertyInfo genPi : genModel.getGenProperties().values()) {
-
-			if (genPi.categoryOfValue() == Options.ENUMERATION) {
-				genPi.setCategoryOfValue(Options.CODELIST);
-			}
-		}
-
-		/*
 		 * --- update class category ---
 		 */
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
@@ -150,7 +139,8 @@ public class TypeConverter implements Transformer, MessageSource {
 		case 1:
 			return "";
 		default:
-			return "(Unknown message)";
+			return "(" + TypeConverter.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

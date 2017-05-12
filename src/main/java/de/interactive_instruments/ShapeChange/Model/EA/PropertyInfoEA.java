@@ -32,7 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model.EA;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -51,6 +51,8 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
@@ -69,6 +71,11 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 * of this property.
 	 */
 	protected boolean documentationAccessed = false;
+	/**
+	 * Flag used to prevent duplicate retrieval/computation of the global
+	 * identifier of this property.
+	 */
+	protected boolean globalIdentifierAccessed = false;
 
 	/** Access to the document object */
 	protected EADocument document = null;
@@ -92,6 +99,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** EA attribute object, if this is an attribute */
 	protected Attribute eaAttribute = null;
+	
+	protected int eaAttributeId = -1;
 
 	/** Association context and EA ConnectorEnd if this is a role */
 	AssociationInfoEA associationInfo = null;
@@ -142,11 +151,12 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		document = doc;
 		classInfo = ci;
 		eaAttribute = attr;
+		eaAttributeId = eaAttribute.GetAttributeID();
 
 		// The Id
 		eaPropertyId = ci.id();
 		eaPropertyId += "_";
-		eaPropertyId += new Integer(eaAttribute.GetAttributeID()).toString();
+		eaPropertyId += new Integer(eaAttributeId).toString();
 
 		// Property name
 		eaName = eaAttribute.GetName();
@@ -376,7 +386,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return s != null ? s : "";
 	} // defaultCodeSpace()
 
-	/** Return the class object to which this property belongs. */
+	@Override
 	public ClassInfo inClass() {
 		return classInfo;
 	} // incClass()
@@ -512,6 +522,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isAttribute() {
 		return eaAttribute != null;
 	} // isAttribute()
+	
+	public int getEAAttributeId() {
+		return this.eaAttributeId;
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isComposition()
@@ -574,18 +588,18 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				// AssociationEnds with Tagged Value "xsdEncodingRule" ==
 				// "notEncoded" are skipped
-				
-				// 2017-02-21 JE: if xsdEncodingRule=notEncoded the role may 
-				// still be relevant for other encodings; thus, this needs 
+
+				// 2017-02-21 JE: if xsdEncodingRule=notEncoded the role may
+				// still be relevant for other encodings; thus, this needs
 				// to be handled in the XmlSchema target.
-//				if (nav) {
-//					for (RoleTag rt : eaConnectorEnd.GetTaggedValues()) {
-//						if (rt.GetTag().equals("xsdEncodingRule"))
-//							if (rt.GetValue().toLowerCase()
-//									.equals(Options.NOT_ENCODED))
-//								nav = false;
-//					}
-//				}
+				// if (nav) {
+				// for (RoleTag rt : eaConnectorEnd.GetTaggedValues()) {
+				// if (rt.GetTag().equals("xsdEncodingRule"))
+				// if (rt.GetValue().toLowerCase()
+				// .equals(Options.NOT_ENCODED))
+				// nav = false;
+				// }
+				// }
 
 				// navigable only with a name, but not with a default name
 				if (eaName == null
@@ -842,88 +856,118 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return typeInfo;
 	} // typeInfo
 
-	/**
-	 * Return the documentation attached to the property object. This is fetched
-	 * from tagged values and - if this is absent - from the 'notes' specific to
-	 * the EA objects model.
-	 */
-	@Override
-	public String documentation() {
+	// /**
+	// * Return the documentation attached to the property object. This is
+	// fetched
+	// * from tagged values and - if this is absent - from the 'notes' specific
+	// to
+	// * the EA objects model.
+	// */
+	// @Override
+	// public Descriptors documentationAll() {
+	//
+	// // Retrieve/compute the documentation only once
+	// // Cache the result for subsequent use
+	// if (!documentationAccessed) {
+	//
+	// documentationAccessed = true;
+	//
+	// // Fetch from tagged values
+	// Descriptors ls = super.documentationAll();
+	//
+	// // Try EA notes, if both tagged values fail
+	// if (ls.isEmpty()) {
 
-		// Retrieve/compute the documentation only once
-		// Cache the result for subsequent use
-		if (!documentationAccessed) {
-
-			documentationAccessed = true;
-
-			// Fetch from tagged values
-			String s = super.documentation();
-
-			// Try EA notes, if both tagged values fail
-			if ((s == null || s.length() == 0) && descriptorSource(
-					Options.Descriptor.DOCUMENTATION.toString())
-							.equals("ea:notes")) {
-				if (isAttribute())
-					s = eaAttribute.GetNotes();
-				else
-					s = eaConnectorEnd.GetRoleNote();
-				// Fix for EA7.5 bug
-				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-					super.documentation = options().internalize(s);
-				}
-			}
-			// If result is empty, check if we can get the documentation from a
-			// dependency
-			if (s == null || s.isEmpty()) {
-
-				/*
-				 * Computing lower case names for this property and (can only be
-				 * done later on) names of suppliers of this property's class
-				 * (if any suppliers exist) for performance reasons.
-				 * 
-				 * NOTE: the string comparison approach chosen here (with
-				 * comparison of strings that were converted to lower case) may
-				 * not work in every case. See
-				 * http://stackoverflow.com/a/6996550 for further details.
-				 */
-				String thisNameLowerCase = this.name().trim()
-						.toLowerCase(Locale.ENGLISH);
-				String thisNameLowerCaseForValueConcept = "_"
-						+ thisNameLowerCase;
-				String cixNameLowerCase = null;
-
-				for (Iterator<String> i = classInfo.supplierIds().iterator(); i
-						.hasNext();) {
-					String cid = i.next();
-					ClassInfoEA cix = document.fClassById.get(cid);
-					if (cix != null) {
-
-						cixNameLowerCase = cix.name().trim()
-								.toLowerCase(Locale.ENGLISH);
-
-						if (cixNameLowerCase.equals(thisNameLowerCase)) {
-							if (classInfo.category() != Options.ENUMERATION
-									&& cix.stereotype("attributeconcept")) {
-								s = cix.documentation();
-								break;
-							}
-						} else if (cixNameLowerCase
-								.endsWith(thisNameLowerCaseForValueConcept)) {
-							if (classInfo.category() == Options.ENUMERATION
-									&& cix.stereotype("valueconcept")) {
-								s = cix.documentation();
-								break;
-							}
-						}
-					}
-				}
-			}
-			// Assign what we got or "" ...
-			super.documentation = options().internalize(s != null ? s : "");
-		}
-		return super.documentation;
-	} // documentation()
+	// String s = null;
+	//
+	// if (descriptorSource(Descriptor.DOCUMENTATION)
+	// .equals("ea:notes")) {
+	//
+	// if (isAttribute())
+	// s = eaAttribute.GetNotes();
+	// else
+	// s = eaConnectorEnd.GetRoleNote();
+	// // Fix for EA7.5 bug
+	// if (s != null) {
+	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// }
+	// }
+	//
+	// /*
+	// * If result is empty, check if we can get the documentation
+	// * from a dependency
+	// */
+	// if (s == null || s.isEmpty()) {
+	//
+	// /*
+	// * NOTE: the string comparison approach chosen here (with
+	// * comparison of strings that were converted to lower case)
+	// * may not work in every case. See
+	// * http://stackoverflow.com/a/6996550 for further details.
+	// */
+	// String thisNameLowerCase = this.name().trim()
+	// .toLowerCase(Locale.ENGLISH);
+	// String thisNameLowerCaseForValueConcept = "_"
+	// + thisNameLowerCase;
+	//
+	// for (String cid : classInfo.supplierIds()) {
+	//
+	// ClassInfoEA cix = document.fClassById.get(cid);
+	//
+	// if (cix != null) {
+	//
+	// String cixNameLowerCase = cix.name().trim()
+	// .toLowerCase(Locale.ENGLISH);
+	//
+	// if (classInfo.category() == Options.ENUMERATION
+	// && cix.stereotype("valueconcept")
+	// && (cixNameLowerCase
+	// .equals(thisNameLowerCase)
+	// || cixNameLowerCase.endsWith(
+	// thisNameLowerCaseForValueConcept))) {
+	// s = cix.documentation();
+	// break;
+	//
+	// } else if (classInfo
+	// .category() != Options.ENUMERATION
+	// && (cix.stereotype("attributeconcept")
+	// || cix.stereotype("roleconcept"))
+	// && cixNameLowerCase
+	// .equals(thisNameLowerCase)) {
+	// s = cix.documentation();
+	// break;
+	// }
+	//
+	// // if (cixNameLowerCase.equals(thisNameLowerCase)) {
+	// // if (classInfo.category() != Options.ENUMERATION
+	// // && cix.stereotype("attributeconcept")) {
+	// // s = cix.documentation();
+	// // break;
+	// // }
+	// // } else if (cixNameLowerCase.endsWith(
+	// // thisNameLowerCaseForValueConcept)) {
+	// // if (classInfo.category() == Options.ENUMERATION
+	// // && cix.stereotype("valueconcept")) {
+	// // s = cix.documentation();
+	// // break;
+	// // }
+	// // }
+	// }
+	// }
+	// }
+	//
+	// if (s == null) {
+	// super.documentation = new Descriptors();
+	// } else {
+	// super.documentation = new Descriptors(
+	// new LangString(options().internalize(s)));
+	// }
+	// }
+	// }
+	//
+	// return super.documentation;
+	//
+	// }
 
 	/** Return model-unique id of property. */
 	public String id() {
@@ -951,31 +995,40 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return eaName;
 	} // name()
 
-	/** Get alias name of the property. */
-	@Override
-	public String aliasName() {
-
-		// Retrieve/compute the alias only once
-		// Cache the result for subsequent use
-		if (!aliasAccessed) {
-			aliasAccessed = true;
-			// Obtain alias name from default implementation
-			String a = super.aliasName();
-			// If not present, obtain from EA model directly
-			if ((a == null || a.length() == 0)
-					&& descriptorSource(Options.Descriptor.ALIAS.toString())
-							.equals("ea:alias")) {
-
-				if (isAttribute())
-					a = eaAttribute.GetStyle();
-				else
-					a = eaConnectorEnd.GetAlias();
-
-				super.aliasName = a;
-			}
-		}
-		return super.aliasName;
-	} // aliasName()
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Retrieve/compute the alias only once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+	//
+	// String alias;
+	// if (isAttribute())
+	// alias = eaAttribute.GetStyle();
+	// else
+	// alias = eaConnectorEnd.GetAlias();
+	//
+	// if (alias != null && !alias.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(alias)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	//
+	// return super.aliasName;
+	// }
 
 	// Validate constraints cache. This makes sure the constraints cache
 	// contains all constraints ordered by their appearance in the property.
@@ -1051,36 +1104,245 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	}
 
 	@Override
-	public String globalIdentifier() {
+	protected List<LangString> descriptorValues(Descriptor descriptor) {
 
-		// Obtain global identifier from default implementation
-		String gi = super.globalIdentifier();
-		// If not present, obtain from EA model directly
-		if ((gi == null || gi.length() == 0)
-				&& descriptorSource(
-						Options.Descriptor.GLOBALIDENTIFIER.toString())
-								.equals("ea:guidtoxml")
-//				&& options().isLoadGlobalIdentifiers()
-				) {
+		// get default first
+		List<LangString> ls = super.descriptorValues(descriptor);
 
-			if (this.isAttribute()) {
+		if (ls.isEmpty()) {
 
-				gi = document.repository.GetProjectInterface()
-						.GUIDtoXML(eaAttribute.GetAttributeGUID());
+			if (!documentationAccessed
+					&& descriptor == Descriptor.DOCUMENTATION) {
 
-			} else {
+				documentationAccessed = true;
 
-				String connectorGUID = associationInfo.eaConnector
-						.GetConnectorGUID();
-				String xmlGuid = document.repository.GetProjectInterface()
-						.GUIDtoXML(connectorGUID);
-				String assocRoleGUID = "EAID_" + (reversedAssoc ? "src" : "dst")
-						+ xmlGuid.substring(7);
-				gi = assocRoleGUID;
+				String s = null;
+
+				if (descriptorSource(Descriptor.DOCUMENTATION)
+						.equals("ea:notes")) {
+
+					if (isAttribute())
+						s = eaAttribute.GetNotes();
+					else
+						s = eaConnectorEnd.GetRoleNote();
+					// Fix for EA7.5 bug
+					if (s != null) {
+						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					}
+				}
+
+				/*
+				 * If result is empty, check if we can get the documentation
+				 * from a dependency
+				 */
+				if (s == null || s.isEmpty()) {
+
+					/*
+					 * NOTE: the string comparison approach chosen here (with
+					 * comparison of strings that were converted to lower case)
+					 * may not work in every case. See
+					 * http://stackoverflow.com/a/6996550 for further details.
+					 */
+					String thisNameLowerCase = this.name().trim()
+							.toLowerCase(Locale.ENGLISH);
+					String thisNameLowerCaseForValueConcept = "_"
+							+ thisNameLowerCase;
+
+					for (String cid : classInfo.supplierIds()) {
+
+						ClassInfoEA cix = document.fClassById.get(cid);
+
+						if (cix != null) {
+
+							String cixNameLowerCase = cix.name().trim()
+									.toLowerCase(Locale.ENGLISH);
+
+							if (classInfo.category() == Options.ENUMERATION
+									&& cix.stereotype("valueconcept")
+									&& (cixNameLowerCase
+											.equals(thisNameLowerCase)
+											|| cixNameLowerCase.endsWith(
+													thisNameLowerCaseForValueConcept))) {
+								s = cix.documentation();
+								break;
+
+							} else if (classInfo
+									.category() != Options.ENUMERATION
+									&& (cix.stereotype("attributeconcept")
+											|| cix.stereotype("roleconcept"))
+									&& cixNameLowerCase
+											.equals(thisNameLowerCase)) {
+								s = cix.documentation();
+								break;
+							}
+
+							// if (cixNameLowerCase.equals(thisNameLowerCase)) {
+							// if (classInfo.category() != Options.ENUMERATION
+							// && cix.stereotype("attributeconcept")) {
+							// s = cix.documentation();
+							// break;
+							// }
+							// } else if (cixNameLowerCase.endsWith(
+							// thisNameLowerCaseForValueConcept)) {
+							// if (classInfo.category() == Options.ENUMERATION
+							// && cix.stereotype("valueconcept")) {
+							// s = cix.documentation();
+							// break;
+							// }
+							// }
+						}
+					}
+				}
+				// String s = null;
+				//
+				// // Try EA notes if ea:notes is the source
+				// if (descriptorSource(Descriptor.DOCUMENTATION)
+				// .equals("ea:notes")) {
+				// s = eaClassElement.GetNotes();
+				// // Fix for EA7.5 bug
+				// if (s != null) {
+				// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				// }
+				// }
+				//
+				// /*
+				// * If result is empty, check if we can get the documentation
+				// * from a dependency
+				// */
+				// if (s == null || s.isEmpty()) {
+				//
+				// for (String cid : this.supplierIds()) {
+				//
+				// ClassInfoEA cix = document.fClassById.get(cid);
+				//
+				// if (cix != null) {
+				// if (cix.name().equalsIgnoreCase(this.name())
+				// && cix.stereotype("featureconcept")) {
+				// s = cix.documentation();
+				// break;
+				// }
+				// }
+				// }
+				// }
+				//
+				// // If result is empty, check if we can get the documentation
+				// // from a
+				// // supertype with the same name (added for ELF/INSPIRE)
+				// if (s == null || s.isEmpty()) {
+				//
+				// HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
+				//
+				// if (sts != null) {
+				// for (ClassInfoEA stci : sts) {
+				// if (stci.name().equals(this.name())) {
+				// s = stci.documentation();
+				// break;
+				// }
+				// }
+				// }
+				// }
+				//
+				if (s != null) {
+					ls.add(new LangString(options().internalize(s)));
+					this.descriptors().put(descriptor, ls);
+				}
+
+			} else if (!globalIdentifierAccessed
+					&& descriptor == Descriptor.GLOBALIDENTIFIER) {
+
+				globalIdentifierAccessed = true;
+
+				// obtain from EA model directly
+				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+						.equals("ea:guidtoxml")) {
+
+					String gi;
+
+					if (this.isAttribute()) {
+
+						gi = document.repository.GetProjectInterface()
+								.GUIDtoXML(eaAttribute.GetAttributeGUID());
+
+					} else {
+
+						String connectorGUID = associationInfo.eaConnector
+								.GetConnectorGUID();
+						String xmlGuid = document.repository
+								.GetProjectInterface().GUIDtoXML(connectorGUID);
+						String assocRoleGUID = "EAID_"
+								+ (reversedAssoc ? "src" : "dst")
+								+ xmlGuid.substring(7);
+						gi = assocRoleGUID;
+					}
+
+					// String gi = document.repository.GetProjectInterface()
+					// .GUIDtoXML(eaClassElement.GetElementGUID());
+
+					if (gi != null && !gi.isEmpty()) {
+						ls.add(new LangString(options().internalize(gi)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
+
+			} else if (!aliasAccessed && descriptor == Descriptor.ALIAS) {
+
+				aliasAccessed = true;
+
+				/*
+				 * obtain from EA model directly if ea:alias is identified as
+				 * the source
+				 */
+				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+
+					String a;
+					if (isAttribute())
+						a = eaAttribute.GetStyle();
+					else
+						a = eaConnectorEnd.GetAlias();
+
+					if (a != null && !a.isEmpty()) {
+						ls.add(new LangString(options().internalize(a)));
+						this.descriptors().put(descriptor, ls);
+					}
+				}
 			}
 
-			super.globalIdentifier = options().internalize(gi);
 		}
-		return gi;
+
+		return ls;
 	}
+
+	// @Override
+	// public Descriptors globalIdentifierAll() {
+	//
+	// // Obtain global identifier from default implementation
+	// Descriptors ls = super.globalIdentifierAll();
+	//
+	// // If not present, obtain from EA model directly
+	// if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
+	// .equals("ea:guidtoxml")) {
+	//
+	// String gi;
+	//
+	// if (this.isAttribute()) {
+	//
+	// gi = document.repository.GetProjectInterface()
+	// .GUIDtoXML(eaAttribute.GetAttributeGUID());
+	//
+	// } else {
+	//
+	// String connectorGUID = associationInfo.eaConnector
+	// .GetConnectorGUID();
+	// String xmlGuid = document.repository.GetProjectInterface()
+	// .GUIDtoXML(connectorGUID);
+	// String assocRoleGUID = "EAID_" + (reversedAssoc ? "src" : "dst")
+	// + xmlGuid.substring(7);
+	// gi = assocRoleGUID;
+	// }
+	//
+	// super.globalIdentifier = new Descriptors(
+	// new LangString(options().internalize(gi)));
+	// }
+	// return super.globalIdentifier;
+	// }
 }
