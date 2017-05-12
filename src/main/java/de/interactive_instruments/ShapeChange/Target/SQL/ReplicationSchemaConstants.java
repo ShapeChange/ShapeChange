@@ -52,8 +52,18 @@ public class ReplicationSchemaConstants {
 	 */
 	public static final String PARAM_TARGET_NAMESPACE_SUFFIX = "replicationSchemaTargetNamespaceSuffix";
 
+	/**
+	 * Provides the value to be set as documentation of elements whose length is
+	 * not restricted.
+	 */
 	public static final String PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE = "replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType";
 
+	/**
+	 * (available since after v2.3.0) If this rule is included, the target
+	 * creates an internal SQL structure. However, instead of deriving DDL from
+	 * this structure, a replication schema is derived.
+	 * 
+	 */
 	public static final String RULE_TGT_SQL_ALL_REPSCHEMA = "rule-sql-all-replicationSchema";
 
 	/**
@@ -65,18 +75,17 @@ public class ReplicationSchemaConstants {
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL = "rule-sql-prop-replicationSchema-optional";
 
 	/**
-	 * If this rule is enabled then properties with specific value types receive
-	 * a length restriction. The types are identified by map entries: a map
-	 * entry must identify the value type in its 'type' attribute and have a
-	 * 'param' attribute with value 'maxLengthFromSize'. Whenever a property has
-	 * an according value type its maxLength is determined by the setting of the
-	 * {@value TV_SIZE} tagged value on the property or the global target
-	 * parameter {@value PARAM_SIZE}. The tagged value takes precedence over the
-	 * target parameter. If neither tagged value nor target parameter are set,
-	 * no maxLength restriction is created.
+	 * If this rule is enabled then the length of properties with a size > 0 is
+	 * restricted using a maxLength restriction.
 	 */
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_MAXLENGTHFROMSIZE = "rule-sql-prop-replicationSchema-maxLength-from-size";
 
+	/**
+	 * If this rule is included, and the size of the property represented by a
+	 * column is unlimited, the follow-ing documentation is added to the XML
+	 * element that represents the column: “May contain a very large character
+	 * string.”
+	 */
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE = "rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType";
 
 	/**

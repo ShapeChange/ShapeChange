@@ -341,6 +341,20 @@ public class SqlBuilder implements MessageSource {
 
 				PropertyInfo revPi = pi.reverseProperty();
 
+				/*
+				 * If the inClass of the reverse property is not encoded and no
+				 * map entry exists, the relationship does not exist in the SQL
+				 * encoding. Log a warning and continue.
+				 */
+				if (!SqlDdl.isEncoded(revPi.inClass())
+						&& options.targetMapEntry(revPi.inClass().name(),
+								revPi.inClass().encodingRule("sql")) == null) {
+
+					result.addWarning(this, 19, revPi.inClass().name(),
+							revPi.name(), pi.inClass().name(), pi.name());
+					continue;
+				}
+
 				int maxOccursPi = pi.cardinality().maxOccurs;
 				int maxOccursRevPi = revPi.cardinality().maxOccurs;
 
@@ -355,22 +369,34 @@ public class SqlBuilder implements MessageSource {
 
 				} else {
 
-					if (revPi.isNavigable() && SqlDdl.isEncoded(revPi)
-							&& maxOccursRevPi == 1) {
+					if (revPi.isNavigable() && maxOccursRevPi == 1) {
 
 						/*
-						 * MaxOccurs = 1 on both ends -> the relationship will
+						 * MaxOccurs = 1 on other end -> the relationship will
 						 * be represented by the foreign key field that
 						 * represents the reverse property in its inClass.
 						 */
+
+						/*
+						 * If a map entry exists for the inClass of the reverse
+						 * property, then a foreign key field would have to be
+						 * added to the table that represents that class,
+						 * referencing the table that represents the inClass of
+						 * pi. Log an according warning.
+						 */
+						if (options.targetMapEntry(revPi.inClass().name(),
+								revPi.inClass().encodingRule("sql")) != null) {
+							result.addWarning(this, 22, revPi.inClass().name(),
+									revPi.name(), pi.inClass().name(),
+									pi.name());
+						}
 
 					} else {
 
 						/*
 						 * The reverse property is not navigable or both
 						 * association roles have a maximum multiplicity greater
-						 * than 1 - both situations represent an n:m
-						 * relationship
+						 * than 1 - then we have an n:m relationship
 						 */
 
 						if (sqlddl.isCreateAssociativeTables()) {
@@ -965,6 +991,16 @@ public class SqlBuilder implements MessageSource {
 			String booleanTrue = "TRUE";
 			String booleanFalse = "FALSE";
 			boolean quoted = false;
+
+			/*
+			 * If the value type is a code list or enumeration, quote the
+			 * default value. This can be overridden via map entry param
+			 * characteristics.
+			 */
+			if (pi.categoryOfValue() == Options.CODELIST
+					|| pi.categoryOfValue() == Options.ENUMERATION) {
+				quoted = true;
+			}
 
 			/*
 			 * Check map entry parameter infos for any defaultValue
@@ -1871,11 +1907,14 @@ public class SqlBuilder implements MessageSource {
 			return "Could not find type '$1$' in the model. It was required to identify the correct map entry that applies for this type (based upon the encoding rule that applies to the type), when trying to determine if property '$2$' (that has this type) is a geometry typed property. Proceeding with the map entry that is retrieved when using the encoding rule that applies to the property.";
 		case 18:
 			return "Could not find enumeration '$1$' in the model - or no enum values defined for it. Check constraint for '$2$' will not be created.";
-
+		case 19:
+			return "Class $1$ is not encoded and no map entry (that applies in the SQL encoding) is defined for it. The relationship between class $1$ (context property is $2$) and class $3$ (context property is $4$), which in the model is defined via an association, thus does not exist in the SQL encoding.";
 		case 20:
 			return "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
 		case 21:
 			return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
+		case 22:
+			return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
 
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";

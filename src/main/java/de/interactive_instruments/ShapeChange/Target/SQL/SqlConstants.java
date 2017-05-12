@@ -80,7 +80,14 @@ public class SqlConstants {
 	public static final String PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE = "foreignKeyColumnDataType";
 
 	/**
-	 * Set of SDO_DIM_ELEMENT values, in the following structure:
+	 * NOTE: This parameter applies to the Oracle database system only. Set of
+	 * SDO_DIM_ELEMENT values, to be used for constructing a SDO_DIM_ARRAY when
+	 * inserting data into USER_SDO_GEOM_METADATA. Each value has the following
+	 * structure: (&lt;first_dimension_name&gt;,
+	 * &lt;first_dimension_lower_bound&gt;, &lt;first_dimension_upper_bound&gt;,
+	 * &lt;first_dimension_tolerance&gt;). There is no separator between
+	 * individual values (the parentheses serve as separator). Example:
+	 * (dim1,-1,1,1.1)(dim2,2,-2.2,2)(dim3,3.3,3,-3).
 	 */
 	public static final String PARAM_SDO_DIM_ELEMENTS = "sdoDimElements";
 
@@ -268,7 +275,7 @@ public class SqlConstants {
 	 * assigned; it ranges from 0-9 and can also be omitted, thus supporting
 	 * eleven unambiguous uses of the foreign key identifier (NOTE: if the
 	 * foreign key identifier is used more than eleven times, ShapeChange logs
-	 * an error)</li>
+	 * a warning)</li>
 	 * </ul>
 	 */
 	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
@@ -285,10 +292,10 @@ public class SqlConstants {
 	 * regardless of the rule for normalizing names.
 	 */
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE = "rule-sql-all-normalizing-ignore-case";
-	public static final String RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE = "rule-sql-all-normalizing-lower-case";
-	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
-	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
-	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
+//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE = "rule-sql-all-normalizing-lower-case";
+//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
+//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
+//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
 
 	public static final String RULE_TGT_SQL_ALL_UNIQUE_NAMING_COUNT_SUFFIX = "rule-sql-all-unique-naming-count-suffix";
 
@@ -334,7 +341,7 @@ public class SqlConstants {
 	public static final String ME_PARAM_DEFAULTVALUE_CHARACT_TRUE = "true";
 	/**
 	 * Characteristic for the parameter {@value #ME_PARAM_DEFAULTVALUE} that
-	 * specifies the value to represent the Boolean value 'true' in the mapping
+	 * specifies the value to represent the Boolean value 'false' in the mapping
 	 * that the parameter applies to. Default is FALSE.
 	 */
 	public static final String ME_PARAM_DEFAULTVALUE_CHARACT_FALSE = "false";
