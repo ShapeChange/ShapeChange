@@ -592,4 +592,10 @@ public class ReplicationSchemaVisitor
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
+
+	@Override
+	public void visit(
+			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
+		// ignore
+	}
 }

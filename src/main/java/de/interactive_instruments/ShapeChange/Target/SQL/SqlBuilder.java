@@ -66,6 +66,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpressi
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CheckConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
@@ -126,6 +127,7 @@ public class SqlBuilder implements MessageSource {
 	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<Statement>();
 	private List<Statement> geometryIndexStatements = new ArrayList<Statement>();
 	private List<Insert> insertStatements = new ArrayList<Insert>();
+	private List<Comment> commentStatements = new ArrayList<Comment>();
 
 	private SqlNamingScheme namingScheme;
 
@@ -437,6 +439,10 @@ public class SqlBuilder implements MessageSource {
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
+		if (ci.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
+			createExplicitCommentUnlessNoDocumentation(table, null, ci);
+		}
 
 		List<Column> Columns = new ArrayList<Column>();
 
@@ -454,6 +460,34 @@ public class SqlBuilder implements MessageSource {
 		}
 
 		table.setColumns(Columns);
+	}
+
+	/**
+	 * Creates a comment statement for the given table or column, with the
+	 * documentation derived from the given Info object. If the derived
+	 * documentation is empty or if both table and column are <code>null</code>
+	 * then no comment statement will be created.
+	 * 
+	 * @param table
+	 * @param column
+	 * @param i
+	 */
+	private void createExplicitCommentUnlessNoDocumentation(Table table,
+			Column column, Info i) {
+
+		String s = i.derivedDocumentation(sqlddl.getDocumentationTemplate(),
+				sqlddl.getDocumentationNoValue());
+
+		if (s != null && !s.trim().isEmpty()) {
+
+			Comment comment;
+			if (column == null) {
+				comment = new Comment(table, s.trim());
+			} else {
+				comment = new Comment(column, s.trim());
+			}
+			commentStatements.add(comment);
+		}
 	}
 
 	private boolean tableForAssociationExists(AssociationInfo ai) {
@@ -584,6 +618,10 @@ public class SqlBuilder implements MessageSource {
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
+		if (ci.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
+			createExplicitCommentUnlessNoDocumentation(table, null, ci);
+		}
 
 		// --- create the columns for codes
 		List<Column> Columns = new ArrayList<Column>();
@@ -935,6 +973,12 @@ public class SqlBuilder implements MessageSource {
 
 		Column column = new Column(name, representedProperty, inTable);
 
+		if (representedProperty != null && representedProperty.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
+			createExplicitCommentUnlessNoDocumentation(inTable, column,
+					representedProperty);
+		}
+
 		ColumnDataType colDataType = new ColumnDataType(type);
 		column.setDataType(colDataType);
 
@@ -981,10 +1025,15 @@ public class SqlBuilder implements MessageSource {
 		}
 		Column cd = new Column(name, pi, inTable);
 
+		if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
+			createExplicitCommentUnlessNoDocumentation(inTable, cd, pi);
+		}
+
 		String type = identifyType(pi);
 		ColumnDataType colDataType = new ColumnDataType(type);
 		cd.setDataType(colDataType);
-		
+
 		cd.setForeignKeyColumn(isForeignKeyColumn);
 
 		List<String> columnSpecStrings = new ArrayList<String>();
@@ -1058,7 +1107,9 @@ public class SqlBuilder implements MessageSource {
 
 			if (defaultValue == null) {
 
-				defaultValue = quoted ? new StringValueExpression(columnDefault)
+				defaultValue = quoted
+						? new StringValueExpression(
+								columnDefault.replaceAll("'", "''"))
 						: new UnquotedStringExpression(columnDefault);
 			}
 
@@ -1737,10 +1788,10 @@ public class SqlBuilder implements MessageSource {
 		// -------------
 		List<Statement> result = this.statements();
 
-		Collections.sort(result, STATEMENT_COMPARATOR);
-
 		// normalize names
 		this.namingScheme.getNameNormalizer().visit(result);
+
+		Collections.sort(result, STATEMENT_COMPARATOR);
 
 		return result;
 	}
@@ -1755,6 +1806,7 @@ public class SqlBuilder implements MessageSource {
 		stmts.addAll(this.geometryMetadataUpdateStatements);
 		stmts.addAll(this.geometryIndexStatements);
 		stmts.addAll(this.insertStatements);
+		stmts.addAll(this.commentStatements);
 
 		return stmts;
 	}

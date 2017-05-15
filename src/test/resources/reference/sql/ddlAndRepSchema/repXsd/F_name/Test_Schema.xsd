@@ -224,6 +224,45 @@
       </element>
     </sequence>
   </complexType>
+  <element name="T6_Class1_p2" type="rep:T6_Class1_p2Type">
+    <annotation>
+      <appinfo>EAID_647F2E72_CA64_424f_99B9_199499DA320A.EAID_4AFD4869_09D2_4330_90C0_D438EE9FEE57</appinfo>
+    </annotation>
+  </element>
+  <complexType name="T6_Class1_p2Type">
+    <sequence>
+      <element name="T6_Class1testobjectidentifier" type="string"/>
+      <element name="p2">
+        <annotation>
+          <appinfo>EAID_4AFD4869_09D2_4330_90C0_D438EE9FEE57</appinfo>
+        </annotation>
+        <simpleType>
+          <restriction base="string">
+            <maxLength value="4000"/>
+          </restriction>
+        </simpleType>
+      </element>
+    </sequence>
+  </complexType>
+  <element name="T6_Class1_p3" type="rep:T6_Class1_p3Type">
+    <annotation>
+      <appinfo>EAID_27534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
+    </annotation>
+  </element>
+  <complexType name="T6_Class1_p3Type">
+    <sequence>
+      <element name="T6_Class1testobjectidentifier" type="string">
+        <annotation>
+          <appinfo>EAID_src534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
+        </annotation>
+      </element>
+      <element name="T6_Class2testobjectidentifier" type="string">
+        <annotation>
+          <appinfo>EAID_dst534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
   <element name="T6_Class2" type="rep:T6_Class2Type">
     <annotation>
       <appinfo>EAID_53B60DE7_A347_4eae_9931_DA87E6AE8B26</appinfo>

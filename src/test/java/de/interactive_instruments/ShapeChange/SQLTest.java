@@ -38,7 +38,7 @@ public class SQLTest extends WindowsBasicTest {
 	@Test
 	public void testBasicSQL() {
 		/*
-		 * SQL - basic text
+		 * SQL - basic test
 		 */
 		multiTest("src/test/resources/config/testEA_sql.xml",
 				new String[] { "sql" }, "testResults/sql/basic",
@@ -122,6 +122,17 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql","xsd" },
 				"testResults/sql/ddlAndRepSchema",
 				"src/test/resources/reference/sql/ddlAndRepSchema");
+	}
+	
+	@Test
+	public void testDocumentationViaExplicitComments() {
+		
+		/*
+		 * SQL - Documentation via explicit comments
+		 */
+		multiTest("src/test/resources/sql/explicitComments/testEA_sql_explicitComments.xml",
+				new String[] { "sql" }, "testResults/sql/explicitComments",
+				"src/test/resources/sql/explicitComments/reference");
 	}
 
 }

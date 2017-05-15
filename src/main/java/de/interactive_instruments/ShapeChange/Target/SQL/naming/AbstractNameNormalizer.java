@@ -36,6 +36,7 @@ import java.util.List;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
@@ -120,6 +121,11 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 		for (Statement stmt : stmts) {
 			stmt.accept(this);
 		}
+	}
+	
+	@Override
+	public void visit(Comment comment) {
+		// ignore
 	}
 
 	public String normalize(String stringToNormalize) {

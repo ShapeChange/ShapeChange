@@ -37,6 +37,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionL
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToStringExpressionVisitor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
@@ -177,6 +178,14 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 				return ilv1.getResult().compareTo(ilv2.getResult());
 			}
+
+		} else if (o1 instanceof Comment) {
+
+			Comment comment1 = (Comment) o1;
+			Comment comment2 = (Comment) o2;
+
+			return comment1.computeTargetName()
+					.compareTo(comment2.computeTargetName());
 		}
 
 		return 0;
@@ -192,6 +201,8 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			return 30;
 		} else if (o1 instanceof Insert) {
 			return 40;
+		} else if (o1 instanceof Comment) {
+			return 50;
 		} else {
 			return 1000;
 		}

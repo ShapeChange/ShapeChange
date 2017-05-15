@@ -77,9 +77,12 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.LowerCaseNameNor
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.NameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.OracleNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.OracleStyleForeignKeyNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.PearsonHashCheckConstraintNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.PearsonHashForeignKeyNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SQLServerNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 
 /**
@@ -143,7 +146,7 @@ public class SqlDdl implements Target, MessageSource {
 	private List<ClassInfo> cisToProcess = new ArrayList<ClassInfo>();
 
 	private SdoDimArrayExpression sdae = new SdoDimArrayExpression();
-	
+
 	/* ------- */
 	/* Replication schema specific fields */
 	protected String repSchemaOutputFilename;
@@ -236,20 +239,50 @@ public class SqlDdl implements Target, MessageSource {
 		UniqueNamingStrategy uniqueConstraintNaming = new CountSuffixUniqueNamingStrategy(
 				result);
 
-		// TODO: implement specification of normalizer and naming strategies via
-		// configuration; think about factory to bundle logic for creating the
-		// database strategy and naming scheme
+		// identify normalizer strategy
+		if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE)) {
+			normalizer = new LowerCaseNameNormalizer();
+		} else if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE)) {
+			normalizer = new UpperCaseNameNormalizer();
+		} else if (pi
+				.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_ORACLE)) {
+			normalizer = new OracleNameNormalizer(result);
+		} else if (pi
+				.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER)) {
+			normalizer = new SQLServerNameNormalizer(result);
+		}
+
+		// identify foreign key naming strategy
 		if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING)) {
+			fkNaming = new PearsonHashForeignKeyNamingStrategy();
+		} else if (pi.matches(
 				SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE)) {
 			fkNaming = new OracleStyleForeignKeyNamingStrategy(result);
 		} else {
 			fkNaming = new DefaultForeignKeyNamingStrategy();
 		}
 
+		// identify check constraint naming strategy
+		if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_ORACLE_DEFAULT)) {
+			ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
+		} else if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH)) {
+			ckNaming = new PearsonHashCheckConstraintNamingStrategy();
+		} else if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT)) {
+			ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
+		} else if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT)) {
+			ckNaming = new DefaultSQLServerCheckConstraintNamingStrategy();
+		}
+
 		if (databaseSystem != null
 				&& "oracle".equalsIgnoreCase(databaseSystem)) {
 
-			databaseStrategy = new OracleStrategy(result,this);
+			databaseStrategy = new OracleStrategy(result, this);
 			if (normalizer == null) {
 				normalizer = new OracleNameNormalizer(result);
 			}
@@ -335,6 +368,14 @@ public class SqlDdl implements Target, MessageSource {
 				this.getClass().getName(),
 				SqlConstants.PARAM_CREATE_DOCUMENTATION,
 				SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
+		/*
+		 * override parameter 'createDocumentation' if configured via conversion
+		 * rule
+		 */
+		if (pi.matches(
+				SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
+			createDocumentation = false;
+		}
 
 		// change the default documentation template?
 		documentationTemplate = options.parameter(this.getClass().getName(),
@@ -448,12 +489,11 @@ public class SqlDdl implements Target, MessageSource {
 					ReplicationSchemaConstants.PARAM_OBJECT_IDENTIFIER_FIELD_TYPE,
 					ReplicationSchemaConstants.DEFAULT_OBJECT_IDENTIFIER_FIELD_TYPE,
 					false, true);
-			
+
 			repSchemaForeignKeyFieldType = options.parameterAsString(
 					this.getClass().getName(),
 					ReplicationSchemaConstants.PARAM_FOREIGN_KEY_FIELD_TYPE,
-					repSchemaObjectIdentifierFieldType,
-					false, true);
+					repSchemaObjectIdentifierFieldType, false, true);
 
 			repSchemaTargetNamespaceSuffix = options.parameterAsString(
 					this.getClass().getName(),
@@ -475,16 +515,16 @@ public class SqlDdl implements Target, MessageSource {
 
 			Pattern p = Pattern.compile(SqlConstants.PATTERN_SDO_DIM_ELEMENTS);
 			Matcher m = p.matcher(sdoDimElement_value.trim());
-			
+
 			if (!m.matches()) {
 				result.addError(this, 16, sdoDimElement_value,
 						SqlConstants.PATTERN_SDO_DIM_ELEMENTS);
 			} else {
-				
+
 				String[] elements = sdoDimElement_value.trim().split("\\)");
-				
-				for(String element : elements) {
-					
+
+				for (String element : elements) {
+
 					String s = element.substring(1);
 					String[] parts = s.split(",");
 
@@ -493,7 +533,7 @@ public class SqlDdl implements Target, MessageSource {
 					sde.setLowerBound(parts[1]);
 					sde.setUpperBound(parts[2]);
 					sde.setTolerance(parts[3]);
-					
+
 					sdae.addElement(sde);
 				}
 			}
@@ -621,8 +661,8 @@ public class SqlDdl implements Target, MessageSource {
 
 				// Create DDL
 				StringBuffer sb = new StringBuffer();
-				DdlVisitor visitor = new DdlVisitor(
-						SqlConstants.CRLF, SqlConstants.INDENT, this);
+				DdlVisitor visitor = new DdlVisitor(SqlConstants.CRLF,
+						SqlConstants.INDENT, this);
 				visitor.visit(stmts);
 				sb.append(visitor.getDdl());
 
@@ -869,7 +909,7 @@ public class SqlDdl implements Target, MessageSource {
 	public String getRepSchemaObjectIdentifierFieldType() {
 		return repSchemaObjectIdentifierFieldType;
 	}
-	
+
 	/**
 	 * @return the repSchemaForeignKeyFieldType
 	 */
@@ -890,7 +930,7 @@ public class SqlDdl implements Target, MessageSource {
 	public String getPrimaryKeyColumnSpec() {
 		return primaryKeyColumnSpec;
 	}
-	
+
 	public SdoDimArrayExpression getSdoDimArrayExpression() {
 		return sdae;
 	}

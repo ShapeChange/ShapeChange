@@ -274,14 +274,37 @@ public class SqlConstants {
 	 * <li>count is the number of times the foreign key identifier has been
 	 * assigned; it ranges from 0-9 and can also be omitted, thus supporting
 	 * eleven unambiguous uses of the foreign key identifier (NOTE: if the
-	 * foreign key identifier is used more than eleven times, ShapeChange logs
-	 * a warning)</li>
+	 * foreign key identifier is used more than eleven times, ShapeChange logs a
+	 * warning)</li>
 	 * </ul>
 	 */
 	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
+	/**
+	 * Under this rule, foreign key identifiers are generated as follows:
+	 * <p>
+	 * "fk_" + tableName + "_" + targetTableName + "_" + fieldName + pearsonHash
+	 * <p>
+	 * where:
+	 * <ul>
+	 * <li>tableName is the name of the table that contains the field with the
+	 * foreign key, clipped to the first seven characters</li>
+	 * <li>targetTableName is the name of the table that the field with foreign
+	 * key references, clipped to the first seven characters</li>
+	 * <li>fieldName is the name of the field that contains the foreign key,
+	 * clipped to the first seven characters</li>
+	 * <li>pearsonHash is the pearson hash (see
+	 * https://en.wikipedia.org/wiki/Pearson_hashing and the original paper:
+	 * Pearson, Peter K. (June 1990),
+	 * "Fast Hashing of Variable-Length Text Strings", Communications of the
+	 * ACM, 33 (6): 677, doi:10.1145/78973.78978) of the concatenation of
+	 * tableName, targetTableName, and fieldName, padded with zeros so it has a
+	 * length of 3</li>
+	 * </ul>
+	 * NOTE: The total length of the foreign key constraint will not exceed 29
+	 * characters.
+	 * 
+	 */
 	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING = "rule-sql-all-foreign-key-personhash-naming";
-	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_DEFAULT_NAMING = "rule-sql-all-foreign-key-default-naming";
-
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_ORACLE_DEFAULT = "rule-sql-all-check-constraint-naming-oracle-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT = "rule-sql-all-check-constraint-naming-postgresql-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT = "rule-sql-all-check-constraint-naming-sqlserver-default";
@@ -292,12 +315,25 @@ public class SqlConstants {
 	 * regardless of the rule for normalizing names.
 	 */
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE = "rule-sql-all-normalizing-ignore-case";
-//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE = "rule-sql-all-normalizing-lower-case";
-//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
-//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
-//	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
+	public static final String RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE = "rule-sql-all-normalizing-lower-case";
+	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
+	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
+	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
 
 	public static final String RULE_TGT_SQL_ALL_UNIQUE_NAMING_COUNT_SUFFIX = "rule-sql-all-unique-naming-count-suffix";
+
+	/**
+	 * Prevents creation of documentation of schema elements via inline
+	 * comments. This rule overrides parameter
+	 * {@value #PARAM_CREATE_DOCUMENTATION}.
+	 */
+	public static final String RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION = "rule-sql-all-suppressDocumentationViaInlineComments";
+
+	/**
+	 * Creates COMMENT statements to document tables and columns that represent
+	 * application schema elements.
+	 */
+	public static final String RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS = "rule-sql-all-documentationViaExplicitCommentStatements";
 
 	/* --------------------- */
 	/* --- Tagged Values --- */

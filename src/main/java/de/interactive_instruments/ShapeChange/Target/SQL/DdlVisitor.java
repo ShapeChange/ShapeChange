@@ -40,6 +40,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
@@ -155,9 +156,9 @@ public class DdlVisitor implements StatementVisitor {
 					sb.append(" ");
 					sb.append(StringUtils.join(col.getSpecifications(), " "));
 				}
-				
-				if(col.getDefaultValue() != null) {
-					sb.append(" DEFAULT "+col.getDefaultValue());
+
+				if (col.getDefaultValue() != null) {
+					sb.append(" DEFAULT " + col.getDefaultValue());
 				}
 
 				if (iter.hasNext() || table.hasConstraints()) {
@@ -176,24 +177,24 @@ public class DdlVisitor implements StatementVisitor {
 						}
 					}
 				}
-				
+
 				sb.append(crlf);
 			}
 		}
 
 		if (table.hasConstraints()) {
 
-			for (Iterator<SqlConstraint> iter = table.getConstraints().iterator(); iter
-					.hasNext();) {
-				
+			for (Iterator<SqlConstraint> iter = table.getConstraints()
+					.iterator(); iter.hasNext();) {
+
 				SqlConstraint constr = iter.next();
-				
+
 				sb.append(indent).append(constr);
-				
-				if(iter.hasNext()) {
+
+				if (iter.hasNext()) {
 					sb.append(",");
 				}
-				
+
 				sb.append(crlf);
 			}
 		}
@@ -256,5 +257,13 @@ public class DdlVisitor implements StatementVisitor {
 
 	public String getDdl() {
 		return sb.toString();
+	}
+
+	@Override
+	public void visit(Comment comment) {
+		
+		sb.append(comment.toString());
+		sb.append(";");
+		sb.append(crlf);
 	}
 }

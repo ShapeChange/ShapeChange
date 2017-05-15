@@ -3546,6 +3546,9 @@ public class Options {
 
 		addRule("rule-sql-all-unique-naming-count-suffix");
 
+		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
+		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
+		
 		addRule("rule-sql-cls-code-lists");
 		addRule("rule-sql-cls-code-lists-pods");
 		addRule("rule-sql-cls-data-types");
@@ -3561,6 +3564,7 @@ public class Options {
 		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
 		addRule("rule-sql-prop-replicationSchema-nillable");
 		addRule("rule-sql-prop-replicationSchema-optional");
+		
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");
