@@ -188,31 +188,31 @@ public class Table {
 
 		String globalId = null;
 
-		/*
-		 * If the table represents an associative table, construct the global ID
-		 * from the according Info object; otherwise (the table represents a
-		 * 'normal' table) use global ID from its class
-		 */
-		if (isAssociativeTable) {
-
-			if (representedProperty != null) {
-
-				if (representedProperty.inClass().globalIdentifier() != null
-						&& representedProperty.globalIdentifier() != null) {
-					globalId = representedProperty.inClass().globalIdentifier()
-							+ "." + representedProperty.globalIdentifier();
-				}
-
-			} else if (representedAssociation != null) {
-
-				globalId = representedAssociation.globalIdentifier();
-			}
-
-		} else {
+		if (representedClass != null) {
 
 			globalId = representedClass.globalIdentifier();
+
+		} else if (representedProperty != null
+				&& representedProperty.inClass().globalIdentifier() != null
+				&& representedProperty.globalIdentifier() != null) {
+
+			globalId = representedProperty.inClass().globalIdentifier() + "."
+					+ representedProperty.globalIdentifier();
+
+		} else if (representedAssociation != null) {
+
+			globalId = representedAssociation.globalIdentifier();
 		}
 
 		return globalId;
+	}
+
+	public void addColumn(Column column) {
+
+		if (this.columns == null) {
+			this.columns = new ArrayList<Column>();
+		}
+
+		this.columns.add(column);
 	}
 }

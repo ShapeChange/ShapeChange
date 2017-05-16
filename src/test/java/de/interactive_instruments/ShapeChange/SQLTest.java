@@ -134,5 +134,15 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/explicitComments",
 				"src/test/resources/sql/explicitComments/reference");
 	}
-
+	
+	@Test
+	public void testDataTypeOneToMany() {
+		
+		/*
+		 * SQL - Conversion of one to many relationships with data types
+		 */
+		multiTest("src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml",
+				new String[] { "sql" }, "testResults/sql/dataTypeEncoding_oneToMany",
+				"src/test/resources/sql/dataTypeEncoding_oneToMany/reference");
+	}
 }

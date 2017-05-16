@@ -172,6 +172,25 @@ public class SqlConstants {
 	public static final String PARAM_CODE_NAME_SIZE = "codeNameSize";
 
 	/**
+	 * Defines the first part of the name of the column in a data type table
+	 * that is used to reference tables that represent types from the conceptual
+	 * model which have a one to many relationship with the data type. Applies
+	 * to {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}. This
+	 * parameter is optional. The default is
+	 * {@value #DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME}.
+	 */
+	public static final String PARAM_ONE_TO_MANY_REF_COLUMN_NAME = "oneToManyReferenceColumnName";
+
+	public static final String DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME = "dataTypeOwner";
+
+	/**
+	 * Name of the tagged value that overwrites the value of configuration
+	 * parameter {@value #PARAM_ONE_TO_MANY_REF_COLUMN_NAME} for a given
+	 * datatype.
+	 */
+	public static final String TV_ONE_TO_MANY_REF_COLUMN_NAME = "oneToManyReferenceColumnName";
+
+	/**
 	 * Ensures that table creation statements are generated for feature types.
 	 */
 	public static final String RULE_TGT_SQL_CLS_FEATURE_TYPES = "rule-sql-cls-feature-types";
@@ -200,6 +219,25 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_CLS_DATATYPES = "rule-sql-cls-data-types";
 
 	/**
+	 * Specific implementation of a one to many relationship to a data type: the
+	 * table that represents the data type contains an additional column that
+	 * references other table (which represent classes that have a one-to-many
+	 * relationship with the data type). The type of the column is configured
+	 * via parameter {@value #PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE}. The name of
+	 * the column is set via tagged value
+	 * {@value #TV_ONE_TO_MANY_REF_COLUMN_NAME} on the data type or, if the
+	 * tagged value is not available, via the configuration parameter
+	 * {@value #PARAM_ONE_TO_MANY_REF_COLUMN_NAME}. NOTE: This approach does not
+	 * support specification of a foreign key constraint for the column, since
+	 * the data type may be used as property value type in multiple other types.
+	 * Thus, in this approach, one cannot directly identify which table is
+	 * referenced by the column, for a given row of the data type table.
+	 */
+	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE = "rule-sql-cls-data-types-oneToMany-oneTable";
+
+	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES = "rule-sql-cls-data-types-oneToMany-severalTables";
+
+	/**
 	 * Tables are generated for code lists. Insert statements are created for
 	 * the codes of a code list. Properties with a code list as value type will
 	 * be converted to fields with foreign key type.
@@ -210,6 +248,22 @@ public class SqlConstants {
 	 * 
 	 */
 	public static final String RULE_TGT_SQL_CLS_CODELISTS_PODS = "rule-sql-cls-code-lists-pods";
+
+	/**
+	 * Define the name for the column that stores the value of the active
+	 * indicator (a logical field, values are 'Y' and 'N'). Applies to rule
+	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is:
+	 * {@value #DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN}.
+	 */
+	public static final String PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN = "nameForActiveIndicatorLFColumn";
+	public static final String DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN = "ACTIVE_INDICATOR_LF";
+	/**
+	 * /** Define the name for the column that stores the value of the source
+	 * gcl. Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default
+	 * value is: {@value #DEFAULT_NAME_SOURCE_GCL_COLUMN}.
+	 */
+	public static final String PARAM_NAME_SOURCE_GCL_COLUMN = "nameForSourceGCLColumn";
+	public static final String DEFAULT_NAME_SOURCE_GCL_COLUMN = "SOURCE_GCL";
 
 	/**
 	 * If this rule is enabled, then a property whose type is neither covered by

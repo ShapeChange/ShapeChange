@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml" end="Tue May 16 11:19:04 CEST 2017" resultCode="0" start="Tue May 16 11:18:56 CEST 2017" version="2.3.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
+    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
+    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/oneTable/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/severalTables/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+  </Results>
+</ShapeChangeResult>

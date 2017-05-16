@@ -123,10 +123,13 @@ public class SqlDdl implements Target, MessageSource {
 	private String outputDirectory;
 
 	private String idColumnName;
+	protected String oneToManyReferenceColumnName;
 	private String foreignKeyColumnSuffix;
 	private String foreignKeyColumnSuffixDatatype;
 	private String foreignKeyColumnDataType;
 	private String primaryKeyColumnSpec;
+	protected String nameActiveIndicatorLFColumn;
+	protected String nameSourceGCLColumn;
 	private int defaultSize;
 	private int srid;
 	private boolean createReferences = false;
@@ -328,6 +331,11 @@ public class SqlDdl implements Target, MessageSource {
 				SqlConstants.PARAM_ID_COLUMN_NAME,
 				SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
 
+		oneToManyReferenceColumnName = options.parameterAsString(
+				this.getClass().getName(),
+				SqlConstants.PARAM_ONE_TO_MANY_REF_COLUMN_NAME,
+				SqlConstants.DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME, false, true);
+
 		foreignKeyColumnSuffix = options.parameterAsString(
 				this.getClass().getName(),
 				SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
@@ -348,6 +356,17 @@ public class SqlDdl implements Target, MessageSource {
 				this.getClass().getName(),
 				SqlConstants.PARAM_PRIMARYKEY_COLUMNSPEC,
 				SqlConstants.DEFAULT_PRIMARYKEY_COLUMNSPEC, true, true);
+
+		nameActiveIndicatorLFColumn = options.parameterAsString(
+				this.getClass().getName(),
+				SqlConstants.PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN,
+				SqlConstants.DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN, false,
+				true);
+
+		nameSourceGCLColumn = options.parameterAsString(
+				this.getClass().getName(),
+				SqlConstants.PARAM_NAME_SOURCE_GCL_COLUMN,
+				SqlConstants.DEFAULT_NAME_SOURCE_GCL_COLUMN, false, true);
 
 		String sdoDimElement_value = options.parameterAsString(
 				this.getClass().getName(), SqlConstants.PARAM_SDO_DIM_ELEMENTS,

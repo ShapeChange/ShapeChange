@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 
 /**
@@ -48,8 +49,11 @@ public class Column {
 	private List<String> specifications = new ArrayList<String>();
 	private ColumnDataType dataType = null;
 	private Expression defaultValue = null;
-	private PropertyInfo representedProperty = null;
 	private Table inTable = null;
+	
+	private PropertyInfo representedProperty = null;
+	
+	private Table referencedTable = null;
 	private boolean isObjectIdentifierColumn = false;
 	private boolean isForeignKeyColumn = false;
 
@@ -159,11 +163,6 @@ public class Column {
 		this.inTable = inTable;
 	}
 
-	public boolean belongsToAssociativeTable(Column c) {
-
-		return c.getInTable().isAssociativeTable();
-	}
-
 	public void setObjectIdentifierColumn(boolean isObjectIdentifierColumn) {
 		this.isObjectIdentifierColumn = isObjectIdentifierColumn;
 	}
@@ -172,11 +171,33 @@ public class Column {
 		return isObjectIdentifierColumn;
 	}
 
+	/**
+	 * @return <code>true</code> if this column is intended to store a foreign
+	 *         key, otherwise <code>false</code> NOTE: Even if this object does
+	 *         not reference a specific table, it may still be intended to be
+	 *         used as foreign key (to one or more tables, see
+	 *         {@link SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}
+	 *         . That a column is a foreign key is of interest when creating a
+	 *         replication schema.
+	 */
 	public boolean isForeignKeyColumn() {
 		return isForeignKeyColumn;
 	}
 
 	public void setForeignKeyColumn(boolean isForeignKeyColumn) {
 		this.isForeignKeyColumn = isForeignKeyColumn;
+	}
+
+	/**
+	 * @return The table that is referenced by this column (which can be
+	 *         represented by a foreign key constraint); can be
+	 *         <code>null</code>
+	 */
+	public Table getReferencedTable() {
+		return this.referencedTable;
+	}
+
+	public void setReferencedTable(Table refTable) {
+		this.referencedTable = refTable;
 	}
 }

@@ -111,7 +111,8 @@ public abstract class ModelImpl implements Model {
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
 			"vocabulary", "associativeTable", "jsonEncodingRule",
-			"sqlEncodingRule", "status", "geometry" };
+			"sqlEncodingRule", "status", "geometry",
+			"oneToManyReferenceColumnName" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -336,7 +337,7 @@ public abstract class ModelImpl implements Model {
 			} else
 				classNames.add(className);
 		}
-		
+
 		for (PropertyInfo propi : ci.properties().values()) {
 			postprocessProperty(propi);
 		}
@@ -498,7 +499,7 @@ public abstract class ModelImpl implements Model {
 
 		return result;
 	}
-	
+
 	@Override
 	public final SortedSet<PackageInfo> schemas(String name) {
 

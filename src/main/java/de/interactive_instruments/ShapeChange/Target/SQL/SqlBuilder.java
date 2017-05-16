@@ -121,6 +121,16 @@ public class SqlBuilder implements MessageSource {
 	 */
 	private Map<CreateTable, Column> codeNameColumnByCreateTable = new HashMap<CreateTable, Column>();
 
+	/**
+	 * Key: Type from the conceptual model that is encoded as a table
+	 * <p>
+	 * Value: Table that represents the type; can be <code>null</code> if the
+	 * type is not represented by a table. NOTE: Map entries are not taken into
+	 * account here
+	 * 
+	 */
+	private Map<ClassInfo, Table> tableByType = new HashMap<ClassInfo, Table>();
+
 	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
 	private List<Alter> foreignKeyConstraints = new ArrayList<Alter>();
 	private List<Alter> checkConstraints = new ArrayList<Alter>();
@@ -235,7 +245,17 @@ public class SqlBuilder implements MessageSource {
 	 * 
 	 * @param ci
 	 */
-	private void createTables(ClassInfo ci) {
+	private Table createTables(ClassInfo ci) {
+		return createTables(ci, ci.name());
+	}
+
+	/**
+	 * Will create a table to represent the given class. Will also create
+	 * associative tables, as applicable.
+	 * 
+	 * @param ci
+	 */
+	private Table createTables(ClassInfo ci, String tableName) {
 
 		/*
 		 * Identify all properties that will be converted to columns. Create
@@ -298,16 +318,6 @@ public class SqlBuilder implements MessageSource {
 				continue;
 			}
 
-			/*
-			 * TODO Ignore property if it is a data type and the TBD rule to
-			 * ensure one-to-many relationship for data types is enabled. In
-			 * such a case, each table created for the data type (for each case
-			 * in which a class has an attribute with that data type as value
-			 * type) contains one (or more) field(s) to reference a table that
-			 * represents a type (feature type, but also other data type) in
-			 * which the data type is used as value type of a property.
-			 */
-
 			if (pi.isAttribute()) {
 
 				if (pi.cardinality().maxOccurs == 1) {
@@ -316,7 +326,24 @@ public class SqlBuilder implements MessageSource {
 
 				} else if (sqlddl.isCreateAssociativeTables()) {
 
-					createAssociativeTableForAttribute(pi);
+					if (typeCi != null && typeCi.category() == Options.DATATYPE
+							&& typeCi.matches(
+									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+							&& (typeCi.matches(
+									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
+									|| typeCi.matches(
+											SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES))) {
+						/*
+						 * ignore the property; it will be represented by a
+						 * foreign key column in the according table (depends on
+						 * the conversion rule, i.e. if one or several tables
+						 * represent the datatype and the one-to-many
+						 * relationships to it).
+						 */
+
+					} else {
+						createAssociativeTableForAttribute(pi);
+					}
 
 				} else {
 					/*
@@ -435,7 +462,7 @@ public class SqlBuilder implements MessageSource {
 		CreateTable createTable = new CreateTable();
 		createTableStatements.add(createTable);
 
-		Table table = new Table(ci.name());
+		Table table = new Table(tableName);
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
@@ -444,22 +471,24 @@ public class SqlBuilder implements MessageSource {
 			createExplicitCommentUnlessNoDocumentation(table, null, ci);
 		}
 
-		List<Column> Columns = new ArrayList<Column>();
+		List<Column> columns = new ArrayList<Column>();
 
 		// Add object identifier column
 		Column id_cd = createColumn(table, null, sqlddl.getIdColumnName(),
 				sqlddl.getDatabaseStrategy().primaryKeyDataType(),
 				sqlddl.getPrimaryKeyColumnSpec(), true, false);
-		Columns.add(id_cd);
+		columns.add(id_cd);
 		id_cd.setObjectIdentifierColumn(true);
 
 		for (PropertyInfo pi : propertyInfosForColumns) {
 
 			Column cd = createColumn(table, pi, false);
-			Columns.add(cd);
+			columns.add(cd);
 		}
 
-		table.setColumns(Columns);
+		table.setColumns(columns);
+
+		return table;
 	}
 
 	/**
@@ -609,7 +638,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * @param ci
 	 */
-	private void createTableForCodeList(ClassInfo ci) {
+	private Table createTableForCodeList(ClassInfo ci) {
 
 		CreateTable createTable = new CreateTable();
 		this.createTableStatements.add(createTable);
@@ -671,6 +700,8 @@ public class SqlBuilder implements MessageSource {
 					false);
 			Columns.add(cd_descriptor);
 		}
+
+		return table;
 	}
 
 	/**
@@ -692,6 +723,8 @@ public class SqlBuilder implements MessageSource {
 			return pme.getTargetType();
 
 		} else {
+
+			// TODO Revise, since this can be found via tableByTypeName map
 
 			for (CreateTable ct : this.createTableStatements) {
 				if (ct.getTable().representsClass(ci)) {
@@ -1403,21 +1436,122 @@ public class SqlBuilder implements MessageSource {
 		// ----------------------------------------
 		for (ClassInfo ci : cisToProcess) {
 
+			Table tableForCi;
+
 			if (ci.category() == Options.CODELIST) {
 
-				createTableForCodeList(ci);
+				tableForCi = createTableForCodeList(ci);
 
 			} else {
 
+				tableForCi = createTables(ci);
+			}
+
+			this.tableByType.put(ci, tableForCi);
+		}
+
+		// ------------------------------------------------------
+		/*
+		 * Handle table creation and/or modification for
+		 * rule-sql-cls-data-types-oneToMany-oneTable and
+		 * rule-sql-cls-data-types-oneToMany-severalTables.
+		 */
+		// ------------------------------------------------------
+		for (ClassInfo ci : cisToProcess) {
+
+			if (ci.category() == Options.DATATYPE
+					&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)) {
+
 				/*
-				 * TODO determine if ci is a data type; if it is and TBD rule to
-				 * ensure one-to-many relationships for data types is enabled,
-				 * screen all cisToProcess to identify properties that have ci
-				 * as value type; then a specific table must be created for each
-				 * such case.
+				 * NOTE: rule-sql-cls-data-types-oneToMany-severalTables has
+				 * higher priority than
+				 * rule-sql-cls-data-types-oneToMany-oneTable
 				 */
 
-				createTables(ci);
+				if (ci.matches(
+						SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
+
+					/*
+					 * Screen all cisToProcess to identify properties that have
+					 * ci as value type (in a one-to-many relationship); then a
+					 * specific table must be created for each such case.
+					 */
+					for (ClassInfo ci_other : cisToProcess) {
+
+						if (ci_other != ci) {
+
+							for (PropertyInfo pi_other : ci_other.properties()
+									.values()) {
+
+								if (pi_other.isAttribute()
+										&& pi_other.cardinality().maxOccurs > 1
+										&& ci.id().equals(
+												pi_other.typeInfo().id)) {
+
+									String tableName = ci_other.name() + "_"
+											+ pi_other.name();
+
+									Table table = createTables(ci, tableName);
+									table.setRepresentedProperty(pi_other);
+
+									/*
+									 * Add the column that supports referencing
+									 * the owner of the data type.
+									 */
+
+									String columnName = ci_other.name()
+											+ sqlddl.getIdColumnName();
+
+									Column dtOwner_cd = createColumn(table,
+											null, columnName,
+											sqlddl.getForeignKeyColumnDataType(),
+											null, false, true);
+
+									/*
+									 * Set referencedTable in column for
+									 * creation of foreign key constraints later
+									 * on
+									 */
+									dtOwner_cd.setReferencedTable(
+											this.tableByType.get(ci_other));
+
+									table.addColumn(dtOwner_cd);
+								}
+							}
+						}
+					}
+
+				} else if (ci.matches(
+						SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)) {
+
+					/*
+					 * Get the table that has already been created for the data
+					 * type and add the column that supports referencing the
+					 * owner of the data type.
+					 */
+
+					Table table = this.tableByType.get(ci);
+
+					/*
+					 * Use name defined via configuration parameter, unless TV
+					 * is set on the datatype.
+					 */
+					String columnName = sqlddl.oneToManyReferenceColumnName;
+					String tv_oneToManyReferenceColumnName = ci.taggedValue(
+							SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME);
+					if (tv_oneToManyReferenceColumnName != null
+							&& tv_oneToManyReferenceColumnName.trim()
+									.length() > 0) {
+						columnName = tv_oneToManyReferenceColumnName.trim();
+					}
+
+					Column dtOwnerRef_cd = createColumn(table, null,
+							columnName + sqlddl.getIdColumnName(),
+							sqlddl.getForeignKeyColumnDataType(), null, false,
+							true);
+
+					table.addColumn(dtOwnerRef_cd);
+				}
 			}
 		}
 
@@ -1567,43 +1701,37 @@ public class SqlBuilder implements MessageSource {
 
 						PropertyInfo pi = cd.getRepresentedProperty();
 
-						if (pi == null) {
-							continue;
-						}
+						if (pi != null) {
 
-						if (refersToTypeRepresentedByTable(pi)) {
+							if (refersToTypeRepresentedByTable(pi)) {
 
-							Table t_main = cd.getInTable();
+								Table t_main = cd.getInTable();
 
-							String t_foreign_tablename;
-
-							String valueTypeName = pi.typeInfo().name;
-							String piEncodingRule = pi.encodingRule("sql");
-
-							ProcessMapEntry pme = options.targetMapEntry(
-									valueTypeName, piEncodingRule);
-
-							if (pme != null && sqlddl.getMapEntryParamInfos()
-									.hasParameter(pme,
-											SqlConstants.ME_PARAM_TABLE)) {
-
-								t_foreign_tablename = pme.getTargetType();
-
-							} else {
-
-								t_foreign_tablename = determineTableNameForValueType(
+								String targetTableName = determineTableNameForValueType(
 										pi);
+
+								Alter alter = alterTableAddForeignKeyConstraint(
+										t_main,
+										namingScheme
+												.nameForForeignKeyConstraint(
+														pi.inClass().name(),
+														pi.name(),
+														targetTableName),
+										cd, new Table(targetTableName));
+
+								foreignKeyConstraints.add(alter);
 							}
 
-							String targetTableName = determineTableNameForValueType(
-									pi);
+						} else if (cd.getReferencedTable() != null) {
+
+							Table t_main = cd.getInTable();
 
 							Alter alter = alterTableAddForeignKeyConstraint(
 									t_main,
 									namingScheme.nameForForeignKeyConstraint(
-											pi.inClass().name(), pi.name(),
-											targetTableName),
-									cd, new Table(t_foreign_tablename));
+											t_main.getName(), cd.getName(),
+											cd.getReferencedTable().getName()),
+									cd, cd.getReferencedTable());
 
 							foreignKeyConstraints.add(alter);
 						}
@@ -1704,6 +1832,7 @@ public class SqlBuilder implements MessageSource {
 					if (codePi.initialValue() != null) {
 						codeName = codePi.initialValue();
 					}
+					codeName = codeName.replaceAll("'", "''");
 
 					values.add(new StringValueExpression(codeName));
 
@@ -1765,10 +1894,16 @@ public class SqlBuilder implements MessageSource {
 						}
 
 						if (value == null) {
+
 							values.add(new NullValueExpression());
+
 						} else {
 
-							values.add(new StringValueExpression(value));
+							String valueWithEscapedQuotes = value
+									.replaceAll("'", "''");
+
+							values.add(new StringValueExpression(
+									valueWithEscapedQuotes));
 						}
 					}
 
@@ -1817,7 +1952,10 @@ public class SqlBuilder implements MessageSource {
 		List<Column> columns = table.getColumns();
 
 		// add column "ACTIVE_INDICATOR_LF CHAR(1) NULL"
-		Column cd_activeIndicatorLF = new Column("ACTIVE_INDICATOR_LF", table);
+		Column cd_activeIndicatorLF = new Column(
+				sqlddl.nameActiveIndicatorLFColumn, table);
+		// TODO map data type to limited length datatype using database
+		// strategy?
 		ColumnDataType cd_activeIndicatorLFDataType = new ColumnDataType(
 				"CHAR(1)");
 		cd_activeIndicatorLF.setDataType(cd_activeIndicatorLFDataType);
@@ -1851,7 +1989,9 @@ public class SqlBuilder implements MessageSource {
 		ct.getTable().addConstraint(ckc);
 
 		// add column "SOURCE_GCL VARCHAR(16) NULL"
-		Column cd_sourceGcl = new Column("SOURCE_GCL", table);
+		Column cd_sourceGcl = new Column(sqlddl.nameSourceGCLColumn, table);
+		// TODO map data type to limited length datatype using database
+		// strategy?
 		ColumnDataType cd_sourceGclDataType = new ColumnDataType("VARCHAR(16)");
 		cd_sourceGcl.setDataType(cd_sourceGclDataType);
 		cd_sourceGcl.addSpecification("NULL");
