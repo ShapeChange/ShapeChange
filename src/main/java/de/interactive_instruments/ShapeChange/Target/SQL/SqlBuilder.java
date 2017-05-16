@@ -466,17 +466,56 @@ public class SqlBuilder implements MessageSource {
 
 		List<Column> columns = new ArrayList<Column>();
 
-		// Add object identifier column
-		Column id_cd = createColumn(table, null, sqlddl.getIdColumnName(),
-				sqlddl.getDatabaseStrategy().primaryKeyDataType(),
-				sqlddl.getPrimaryKeyColumnSpec(), true, false);
-		columns.add(id_cd);
-		id_cd.setObjectIdentifierColumn(true);
+		// Add object identifier column or use <<identifier>> attribute
+		int countIdentifierAttributes = 0;
+		for (PropertyInfo pi : propertyInfosForColumns) {
+			if (pi.isAttribute() && pi.stereotype("identifier") && ci.matches(
+					SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
+				countIdentifierAttributes++;
+			}
+		}
+
+		if (countIdentifierAttributes > 1) {
+
+			/*
+			 * TBD: Define requirements on input model (like <<identifier>> only
+			 * on single attribute) and check on input model?
+			 */
+
+			MessageContext mc = result.addWarning(this, 24, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, 101, ci.fullNameInSchema());
+			}
+
+		} else if (countIdentifierAttributes == 0) {
+
+			Column id_cd = createColumn(table, null, sqlddl.getIdColumnName(),
+					sqlddl.getDatabaseStrategy().primaryKeyDataType(),
+					sqlddl.getPrimaryKeyColumnSpec(), true, false);
+			columns.add(id_cd);
+			id_cd.setObjectIdentifierColumn(true);
+
+		}
+
+		/*
+		 * Flag to keep track if an attribute with stereotype <<identifier>> has
+		 * already been set as primary key; if so, subsequent occurrences of
+		 * <<identifier>> attributes are ignored.
+		 */
+		boolean identifierSet = false;
 
 		for (PropertyInfo pi : propertyInfosForColumns) {
 
 			Column cd = createColumn(table, pi, false);
 			columns.add(cd);
+
+			if (!identifierSet && pi.isAttribute()
+					&& pi.stereotype("identifier") && ci.matches(
+							SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
+
+				cd.addSpecification("PRIMARY KEY");
+				identifierSet = true;
+			}
 		}
 
 		table.setColumns(columns);
@@ -1550,6 +1589,34 @@ public class SqlBuilder implements MessageSource {
 			}
 		}
 
+		// -----------------------------------------------------------------------
+		/*
+		 * Adjust data type of foreign key columns according to primary key
+		 * column type of referenced table. For auto-generated ID columns that
+		 * type is provided by the database strategy. For <<identifier>> columns
+		 * the data type can be different.
+		 */
+		// -----------------------------------------------------------------------
+		for (Table table : tables) {
+
+			for (Column col : table.getColumns()) {
+
+				Table refTable = col.getReferencedTable();
+
+				if (refTable != null) {
+
+					for (Column refCol : refTable.getColumns()) {
+
+						if (refCol.isPrimaryKeyColumn()) {
+
+							col.getDataType()
+									.setName(refCol.getDataType().getName());
+						}
+					}
+				}
+			}
+		}
+
 		// ----------------------------------------
 		// normalize table and column names (alter
 		// statements use the latter as literals)
@@ -2036,9 +2103,13 @@ public class SqlBuilder implements MessageSource {
 			return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
 		case 23:
 			return "Creating table with name '$1$'";
+		case 24:
+			return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be set as primary key.";
 
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";
+		case 101:
+			return "Context: class '$1$'.";
 		default:
 			return "(" + SqlBuilder.class.getName()
 					+ ") Unknown message with number: " + mnr;

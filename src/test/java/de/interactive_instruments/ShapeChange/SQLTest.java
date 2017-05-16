@@ -145,4 +145,15 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/dataTypeEncoding_oneToMany",
 				"src/test/resources/sql/dataTypeEncoding_oneToMany/reference");
 	}
+	
+	@Test
+	public void testIdentifierStereotype() {
+		
+		/*
+		 * SQL - Using stereotype <<identifier>>
+		 */
+		multiTest("src/test/resources/sql/identifierStereotype/testEA_sql_identifierStereotype.xml",
+				new String[] { "sql" }, "testResults/sql/identifierStereotype",
+				"src/test/resources/sql/identifierStereotype/reference");
+	}
 }

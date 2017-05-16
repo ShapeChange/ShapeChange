@@ -46,7 +46,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 public class Table {
 
 	private String name = null;
-	private List<Column> columns = null;
+	private List<Column> columns = new ArrayList<Column>();
 	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
 	private boolean isAssociativeTable = false;
 	private ClassInfo representedClass = null;
@@ -73,7 +73,7 @@ public class Table {
 	}
 
 	/**
-	 * @return the columns
+	 * @return the columns of this table; can be empty but not <code>null</code>
 	 */
 	public List<Column> getColumns() {
 		return columns;
@@ -84,7 +84,11 @@ public class Table {
 	 *            the columns to set
 	 */
 	public void setColumns(List<Column> columns) {
-		this.columns = columns;
+		if (columns != null) {
+			this.columns = columns;
+		} else {
+			this.columns = new ArrayList<Column>();
+		}
 	}
 
 	/**
@@ -208,10 +212,6 @@ public class Table {
 	}
 
 	public void addColumn(Column column) {
-
-		if (this.columns == null) {
-			this.columns = new ArrayList<Column>();
-		}
 
 		this.columns.add(column);
 	}

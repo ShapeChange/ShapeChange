@@ -152,9 +152,7 @@ public class Options {
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
 			"aixmextension" };
 	public static final String[] assocStereotypes = { "disjoint" };
-	/**
-	 * NOTE: stereotype "identifier" is deprecated
-	 */
+	
 	public static final String[] propertyStereotypes = { "voidable",
 			"identifier", "version", "property", "estimated" };
 	public static final String[] packageStereotypes = { "application schema",
@@ -3555,6 +3553,7 @@ public class Options {
 		addRule("rule-sql-cls-data-types-oneToMany-oneTable");
 		addRule("rule-sql-cls-data-types-oneToMany-severalTables");
 		addRule("rule-sql-cls-feature-types");
+		addRule("rule-sql-cls-identifierStereotype");
 		addRule("rule-sql-cls-object-types");
 		addRule("rule-sql-cls-references-to-external-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");

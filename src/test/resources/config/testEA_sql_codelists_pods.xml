@@ -120,5 +120,35 @@
 				</EncodingRule>
 			</rules>
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="step1" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="mysql" />
+			<targetParameter name="outputDirectory" value="testResults/sql/codelists_pods/ddl2" />
+			<targetParameter name="outputFilename" value="ddl" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="31467" />
+			<targetParameter name="databaseSystem" value="Oracle"/>
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="createDocumentation" value="true" />
+			<targetParameter name="documentationTemplate"
+				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<targetParameter name="descriptorsForCodelist"
+				value="name(columnName=DESCRIPTION;size=255),definition(columnName=NAME;size=255)" />
+			<targetParameter name="codeNameColumnName" value="CODE" />
+			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="nameForActiveIndicatorLFColumn" value="customActiveIndicatorLF"/>
+			<targetParameter name="nameForSourceGCLColumn" value="customSourceGCLColumn"/>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />
+			<rules>
+				<EncodingRule extends="sql" name="mysql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-foreign-key-oracle-naming-style"/>
+					<rule name="rule-sql-cls-code-lists" />
+					<rule name="rule-sql-cls-code-lists-pods" />
+				</EncodingRule>
+			</rules>
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

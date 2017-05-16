@@ -50,9 +50,9 @@ public class Column {
 	private ColumnDataType dataType = null;
 	private Expression defaultValue = null;
 	private Table inTable = null;
-	
+
 	private PropertyInfo representedProperty = null;
-	
+
 	private Table referencedTable = null;
 	private boolean isObjectIdentifierColumn = false;
 	private boolean isForeignKeyColumn = false;
@@ -182,6 +182,21 @@ public class Column {
 	 */
 	public boolean isForeignKeyColumn() {
 		return isForeignKeyColumn;
+	}
+
+	/**
+	 * @return <code>true</code> if this column contains a 'PRIMARY KEY'
+	 *         specification (case is ignored), else <code>false</code>
+	 */
+	public boolean isPrimaryKeyColumn() {
+		if (specifications != null) {
+			for (String spec : specifications) {
+				if (spec.equalsIgnoreCase("primary key")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void setForeignKeyColumn(boolean isForeignKeyColumn) {

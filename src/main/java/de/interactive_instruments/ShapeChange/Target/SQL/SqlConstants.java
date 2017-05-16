@@ -245,6 +245,14 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_CLS_CODELISTS = "rule-sql-cls-code-lists";
 
 	/**
+	 * Enables use of stereotype 'identifier' on class attributes. If an
+	 * attribute with that stereotype belongs to a class, then the column to
+	 * represent that attribute will be used as primary key (and no extra
+	 * identifier column will be generated).
+	 */
+	public static final String RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE = "rule-sql-cls-identifierStereotype";
+
+	/**
 	 * 
 	 */
 	public static final String RULE_TGT_SQL_CLS_CODELISTS_PODS = "rule-sql-cls-code-lists-pods";

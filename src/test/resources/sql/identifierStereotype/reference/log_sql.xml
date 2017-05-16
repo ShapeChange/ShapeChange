@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/identifierStereotype/testEA_sql_identifierStereotype.xml" end="Tue May 16 17:01:59 CEST 2017" resultCode="0" start="Tue May 16 17:01:51 CEST 2017" version="2.3.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/identifierStereotype'"/>
+    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
+    <Info message="(Flattener.java) ========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+    <Info message="(Flattener.java) ========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'F_inheritance' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/identifierStereotype'"/>
+    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'F_inheritance'."/>
+    <Info message="Type 'FeatureType3Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'MixinUnion' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2toFT1') and FeatureType1 (context property 'roleFT1toFT2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1toFT2'."/>
+    <Info message="Creating associative table to represent attribute 'p2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_p2'."/>
+    <Error message="Multiple attributes with stereotype &lt;&lt;identifier&gt;&gt; found for class 'FeatureType2'. The first - arbitrary one - will be set as primary key.">
+      <Detail message="Context: class 'Test Schema::FeatureType2'."/>
+    </Error>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'F_inheritance'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/identifierStereotype/xsd/INPUT/dtotm.xsd" scope="http://example.org/shapechange/sql/dataType/identifierStereotype" target="XML Schema">dtotm.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/identifierStereotype/ddl/F_inheritance/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+  </Results>
+</ShapeChangeResult>

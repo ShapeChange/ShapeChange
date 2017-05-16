@@ -637,6 +637,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
 			copy.setTaggedValues(taggedValuesCache, false);
 		}
+		
+		copy.setStereotypes(this.stereotypesCache);
 
 		copy.setDerived(isDerived);
 		copy.setReadOnly(isReadOnly);
