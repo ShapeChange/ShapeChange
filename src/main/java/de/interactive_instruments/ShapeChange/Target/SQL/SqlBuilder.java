@@ -102,17 +102,6 @@ public class SqlBuilder implements MessageSource {
 	private Map<PropertyInfo, Integer> sizeByCharacterValuedProperty = new HashMap<PropertyInfo, Integer>();
 
 	/**
-	 * NOTE: Used to store the relationship between a column in an associative
-	 * table and the 'normal' table the field references.
-	 * <p>
-	 * key: A column
-	 * <p>
-	 * value: Either the ClassInfo that is represented by the table the column
-	 * references, or it is the PropertyInfo represented by the column.
-	 */
-	private Map<Column, Info> classOrPropertyInfoByColumnInAssociativeTable = new HashMap<Column, Info>();
-
-	/**
 	 * Required for adding PODS specific columns to tables that represent code
 	 * lists.
 	 * 
@@ -121,15 +110,7 @@ public class SqlBuilder implements MessageSource {
 	 */
 	private Map<CreateTable, Column> codeNameColumnByCreateTable = new HashMap<CreateTable, Column>();
 
-	/**
-	 * Key: Type from the conceptual model that is encoded as a table
-	 * <p>
-	 * Value: Table that represents the type; can be <code>null</code> if the
-	 * type is not represented by a table. NOTE: Map entries are not taken into
-	 * account here
-	 * 
-	 */
-	private Map<ClassInfo, Table> tableByType = new HashMap<ClassInfo, Table>();
+	private List<Table> tables = new ArrayList<Table>();
 
 	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
 	private List<Alter> foreignKeyConstraints = new ArrayList<Alter>();
@@ -158,10 +139,10 @@ public class SqlBuilder implements MessageSource {
 	 *
 	 * @param pi
 	 */
-	private void createAssociativeTableForAttribute(PropertyInfo pi) {
+	private Table createAssociativeTableForAttribute(PropertyInfo pi) {
 
 		if (!pi.isAttribute()) {
-			return;
+			return null;
 		}
 
 		// identify table name - using tagged value or default name
@@ -178,14 +159,14 @@ public class SqlBuilder implements MessageSource {
 		CreateTable createTable = new CreateTable();
 		this.createTableStatements.add(createTable);
 
-		Table table = new Table(tableName);
+		Table table = map(tableName);
 		createTable.setTable(table);
 
 		table.setAssociativeTable(true);
 		table.setRepresentedProperty(pi);
 
-		List<Column> Columns = new ArrayList<Column>();
-		table.setColumns(Columns);
+		List<Column> columns = new ArrayList<Column>();
+		table.setColumns(columns);
 
 		/*
 		 * Add field to reference pi.inClass
@@ -197,10 +178,8 @@ public class SqlBuilder implements MessageSource {
 		Column cdInClassReference = createColumn(table, null,
 				classReferenceFieldName, sqlddl.getForeignKeyColumnDataType(),
 				"NOT NULL", false, true);
-		Columns.add(cdInClassReference);
-
-		classOrPropertyInfoByColumnInAssociativeTable.put(cdInClassReference,
-				pi.inClass());
+		cdInClassReference.setReferencedTable(map(pi.inClass()));
+		columns.add(cdInClassReference);
 
 		Column cdPi;
 
@@ -229,14 +208,27 @@ public class SqlBuilder implements MessageSource {
 
 			cdPi = createColumn(table, pi, piFieldName, fieldType, "NOT NULL",
 					false, true);
-			this.classOrPropertyInfoByColumnInAssociativeTable.put(cdPi, pi);
+			cdPi.setReferencedTable(map(pi));
 
 		} else {
 
 			cdPi = createColumn(table, pi, true);
 		}
 
-		Columns.add(cdPi);
+		columns.add(cdPi);
+
+		PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
+		pkc.setColumns(columns);
+		table.addConstraint(pkc);
+
+		return table;
+	}
+
+	private Table map(PropertyInfo pi) {
+
+		String tableName = determineTableNameForValueType(pi);
+
+		return map(tableName);
 	}
 
 	/**
@@ -462,10 +454,11 @@ public class SqlBuilder implements MessageSource {
 		CreateTable createTable = new CreateTable();
 		createTableStatements.add(createTable);
 
-		Table table = new Table(tableName);
+		Table table = map(tableName);
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
+
 		if (ci.matches(
 				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
 			createExplicitCommentUnlessNoDocumentation(table, null, ci);
@@ -537,7 +530,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * @param ai
 	 */
-	private void createAssociativeTable(AssociationInfo ai) {
+	private Table createAssociativeTable(AssociationInfo ai) {
 
 		// identify table name - using tagged value or default name
 		String tableName = ai.taggedValuesAll()
@@ -582,14 +575,14 @@ public class SqlBuilder implements MessageSource {
 		CreateTable createTable = new CreateTable();
 		this.createTableStatements.add(createTable);
 
-		Table table = new Table(tableName);
+		Table table = map(tableName);
 		createTable.setTable(table);
 
 		table.setAssociativeTable(true);
 		table.setRepresentedAssociation(ai);
 
-		List<Column> Columns = new ArrayList<Column>();
-		table.setColumns(Columns);
+		List<Column> columns = new ArrayList<Column>();
+		table.setColumns(columns);
 
 		/*
 		 * ensure that reference fields are created in lexicographical order of
@@ -619,7 +612,8 @@ public class SqlBuilder implements MessageSource {
 				+ sqlddl.getIdColumnName();
 		Column cd1 = createColumn(table, pi2, name_1,
 				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false, true);
-		Columns.add(cd1);
+		cd1.setReferencedTable(map(pi1.inClass()));
+		columns.add(cd1);
 
 		// add field for second reference
 		String name_2 = determineTableNameForType(pi2.inClass())
@@ -627,12 +621,21 @@ public class SqlBuilder implements MessageSource {
 				+ sqlddl.getIdColumnName();
 		Column cd2 = createColumn(table, pi1, name_2,
 				sqlddl.getForeignKeyColumnDataType(), "NOT NULL", false, true);
-		Columns.add(cd2);
+		cd2.setReferencedTable(map(pi2.inClass()));
+		columns.add(cd2);
 
-		this.classOrPropertyInfoByColumnInAssociativeTable.put(cd1,
-				pi1.inClass());
-		this.classOrPropertyInfoByColumnInAssociativeTable.put(cd2,
-				pi2.inClass());
+		PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
+		pkc.setColumns(columns);
+		table.addConstraint(pkc);
+
+		return table;
+	}
+
+	private Table map(ClassInfo ci) {
+
+		String tableName = determineTableNameForType(ci);
+
+		return map(tableName);
 	}
 
 	/**
@@ -643,7 +646,7 @@ public class SqlBuilder implements MessageSource {
 		CreateTable createTable = new CreateTable();
 		this.createTableStatements.add(createTable);
 
-		Table table = new Table(ci.name());
+		Table table = map(ci);
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
@@ -653,8 +656,8 @@ public class SqlBuilder implements MessageSource {
 		}
 
 		// --- create the columns for codes
-		List<Column> Columns = new ArrayList<Column>();
-		table.setColumns(Columns);
+		List<Column> columns = new ArrayList<Column>();
+		table.setColumns(columns);
 
 		// create required column to store the code name
 		String name = sqlddl.getCodeNameColumnName();
@@ -672,7 +675,7 @@ public class SqlBuilder implements MessageSource {
 				"NOT NULL",
 				!ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS),
 				false);
-		Columns.add(cd_codename);
+		columns.add(cd_codename);
 
 		// keep track of code name column to add PODS specifics later on
 		if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
@@ -698,7 +701,7 @@ public class SqlBuilder implements MessageSource {
 			Column cd_descriptor = createColumn(table, null,
 					descriptor.getColumnName(), descriptor_fieldType, "", false,
 					false);
-			Columns.add(cd_descriptor);
+			columns.add(cd_descriptor);
 		}
 
 		return table;
@@ -724,10 +727,9 @@ public class SqlBuilder implements MessageSource {
 
 		} else {
 
-			// TODO Revise, since this can be found via tableByTypeName map
-
 			for (CreateTable ct : this.createTableStatements) {
-				if (ct.getTable().representsClass(ci)) {
+				if (ct.getTable() != null
+						&& ct.getTable().representsClass(ci)) {
 					return ct.getTable().getName();
 				}
 			}
@@ -1067,7 +1069,10 @@ public class SqlBuilder implements MessageSource {
 		ColumnDataType colDataType = new ColumnDataType(type);
 		cd.setDataType(colDataType);
 
-		cd.setForeignKeyColumn(isForeignKeyColumn);
+		if (isForeignKeyColumn) {
+			cd.setForeignKeyColumn(true);
+			cd.setReferencedTable(map(pi));
+		}
 
 		List<String> columnSpecStrings = new ArrayList<String>();
 
@@ -1436,18 +1441,14 @@ public class SqlBuilder implements MessageSource {
 		// ----------------------------------------
 		for (ClassInfo ci : cisToProcess) {
 
-			Table tableForCi;
-
 			if (ci.category() == Options.CODELIST) {
 
-				tableForCi = createTableForCodeList(ci);
+				createTableForCodeList(ci);
 
 			} else {
 
-				tableForCi = createTables(ci);
+				createTables(ci);
 			}
-
-			this.tableByType.put(ci, tableForCi);
 		}
 
 		// ------------------------------------------------------
@@ -1506,14 +1507,8 @@ public class SqlBuilder implements MessageSource {
 											null, columnName,
 											sqlddl.getForeignKeyColumnDataType(),
 											null, false, true);
-
-									/*
-									 * Set referencedTable in column for
-									 * creation of foreign key constraints later
-									 * on
-									 */
-									dtOwner_cd.setReferencedTable(
-											this.tableByType.get(ci_other));
+									dtOwner_cd
+											.setReferencedTable(map(ci_other));
 
 									table.addColumn(dtOwner_cd);
 								}
@@ -1530,7 +1525,7 @@ public class SqlBuilder implements MessageSource {
 					 * owner of the data type.
 					 */
 
-					Table table = this.tableByType.get(ci);
+					Table table = map(ci);
 
 					/*
 					 * Use name defined via configuration parameter, unless TV
@@ -1571,23 +1566,6 @@ public class SqlBuilder implements MessageSource {
 				.entrySet()) {
 
 			addPodsSpecificsToCodelistTable(entry.getKey(), entry.getValue());
-		}
-
-		// ------------------------------------------
-		// Create primary keys for associative tables
-		// ------------------------------------------
-		// NOTE: order of processing is irrelevant since we just add
-		for (CreateTable ct : this.createTableStatements) {
-
-			Table t = ct.getTable();
-
-			if (t.isAssociativeTable()) {
-
-				PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
-				pkc.setColumns(t.getColumns());
-
-				ct.getTable().addConstraint(pkc);
-			}
 		}
 
 		// -------------------------------------------------
@@ -1642,99 +1620,19 @@ public class SqlBuilder implements MessageSource {
 				List<Column> columns = new ArrayList<Column>(t.getColumns());
 				Collections.sort(columns, COLUMN_DEFINITION_COMPARATOR);
 
-				if (t.isAssociativeTable()) {
+				for (Column cd : columns) {
 
-					/*
-					 * Create foreign keys for fields in associative tables that
-					 * reference the primary key of 'normal' tables.
-					 */
+					if (cd.getReferencedTable() != null) {
 
-					for (Column cd : columns) {
+						Table t_main = cd.getInTable();
 
-						if (this.classOrPropertyInfoByColumnInAssociativeTable
-								.containsKey(cd)) {
+						Alter alter = alterTableAddForeignKeyConstraint(t_main,
+								namingScheme.nameForForeignKeyConstraint(
+										t_main.getName(), cd.getName(),
+										cd.getReferencedTable().getName()),
+								cd, cd.getReferencedTable());
 
-							Info info = classOrPropertyInfoByColumnInAssociativeTable
-									.get(cd);
-
-							Table t_owner = cd.getInTable();
-
-							String t_foreign_tablename;
-
-							if (info instanceof ClassInfo) {
-
-								ClassInfo ci = (ClassInfo) info;
-
-								t_foreign_tablename = determineTableNameForType(
-										ci);
-
-							} else if (info instanceof PropertyInfo) {
-
-								PropertyInfo pi = (PropertyInfo) info;
-
-								t_foreign_tablename = determineTableNameForValueType(
-										pi);
-
-							} else {
-								/*
-								 * Should not happen, since we only store Class-
-								 * and PropertyInfos in
-								 * classOrPropertyInfoByColumnInAssociativeTable
-								 */
-								t_foreign_tablename = null;
-							}
-
-							Alter alter = alterTableAddForeignKeyConstraint(
-									t_owner,
-									namingScheme.nameForForeignKeyConstraint(
-											t_owner.getName(), cd.getName(),
-											t_foreign_tablename),
-									cd, new Table(t_foreign_tablename));
-
-							foreignKeyConstraints.add(alter);
-						}
-					}
-
-				} else {
-
-					for (Column cd : columns) {
-
-						PropertyInfo pi = cd.getRepresentedProperty();
-
-						if (pi != null) {
-
-							if (refersToTypeRepresentedByTable(pi)) {
-
-								Table t_main = cd.getInTable();
-
-								String targetTableName = determineTableNameForValueType(
-										pi);
-
-								Alter alter = alterTableAddForeignKeyConstraint(
-										t_main,
-										namingScheme
-												.nameForForeignKeyConstraint(
-														pi.inClass().name(),
-														pi.name(),
-														targetTableName),
-										cd, new Table(targetTableName));
-
-								foreignKeyConstraints.add(alter);
-							}
-
-						} else if (cd.getReferencedTable() != null) {
-
-							Table t_main = cd.getInTable();
-
-							Alter alter = alterTableAddForeignKeyConstraint(
-									t_main,
-									namingScheme.nameForForeignKeyConstraint(
-											t_main.getName(), cd.getName(),
-											cd.getReferencedTable().getName()),
-									cd, cd.getReferencedTable());
-
-							foreignKeyConstraints.add(alter);
-						}
+						foreignKeyConstraints.add(alter);
 					}
 				}
 			}
@@ -2063,6 +1961,28 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	/**
+	 * Looks up the table with the given name. If no such table exists, a new
+	 * one is created (this is logged on debug level) and returned.
+	 * 
+	 * @param tableName
+	 *            name of the table to look up, must not be <code>null</code>
+	 * @return
+	 */
+	private Table map(String tableName) {
+
+		for (Table t : this.tables) {
+			if (tableName.equals(t.getName())) {
+				return t;
+			}
+		}
+
+		result.addDebug(this, 23, tableName);
+		Table t = new Table(tableName);
+		this.tables.add(t);
+		return t;
+	}
+
+	/**
 	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
 	 */
 	public String message(int mnr) {
@@ -2114,6 +2034,8 @@ public class SqlBuilder implements MessageSource {
 			return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
 		case 22:
 			return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
+		case 23:
+			return "Creating table with name '$1$'";
 
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";

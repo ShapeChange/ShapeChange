@@ -68,6 +68,8 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 	private ShapeChangeResult result;
 	private SqlDdl sqlddl;
+	private Table userSdoGeomMetadataTable = new Table(
+			"USER_SDO_GEOM_METADATA");
 
 	public OracleStrategy(ShapeChangeResult result, SqlDdl sqlddl) {
 		this.result = result;
@@ -133,11 +135,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			Column columnForGeometryTypedProperty, int srid) {
 
 		Insert ins = new Insert();
-		Table table = new Table("USER_SDO_GEOM_METADATA");
-		ins.setTable(table);
 
-		ins.setColumns(SqlUtil.toColumnList(table,"TABLE_NAME", "COLUMN_NAME",
-				"DIMINFO", "SRID"));
+		ins.setTable(userSdoGeomMetadataTable);
+
+		ins.setColumns(SqlUtil.toColumnList(userSdoGeomMetadataTable,
+				"TABLE_NAME", "COLUMN_NAME", "DIMINFO", "SRID"));
 
 		List<Expression> items = new ArrayList<Expression>();
 		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
@@ -235,7 +237,8 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 			ColumnExpression colexp = new ColumnExpression(columnForPi);
 			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS");
-			StringValueExpression compareValue = new StringValueExpression("00:00:00");
+			StringValueExpression compareValue = new StringValueExpression(
+					"00:00:00");
 			EqualsExpression eexp = new EqualsExpression(tcexp, compareValue);
 
 			return eexp;
