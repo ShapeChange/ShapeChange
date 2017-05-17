@@ -40,6 +40,10 @@ import de.interactive_instruments.ShapeChange.Options;
  */
 public class SqlConstants {
 
+	/* ------------------ */
+	/* --- Parameters --- */
+	/* ------------------ */
+
 	/**
 	 * Name for the identifier column when generating table creation statements.
 	 * This parameter is optional. The default is
@@ -184,11 +188,24 @@ public class SqlConstants {
 	public static final String DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME = "dataTypeOwner";
 
 	/**
-	 * Name of the tagged value that overwrites the value of configuration
-	 * parameter {@value #PARAM_ONE_TO_MANY_REF_COLUMN_NAME} for a given
-	 * datatype.
+	 * Define the name for the column that stores the value of the active
+	 * indicator (a logical field, values are 'Y' and 'N'). Applies to rule
+	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is:
+	 * {@value #DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN}.
 	 */
-	public static final String TV_ONE_TO_MANY_REF_COLUMN_NAME = "oneToManyReferenceColumnName";
+	public static final String PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN = "nameForActiveIndicatorLFColumn";
+	public static final String DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN = "ACTIVE_INDICATOR_LF";
+	/**
+	 * Define the name for the column that stores the value of the source gcl.
+	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
+	 * is: {@value #DEFAULT_NAME_SOURCE_GCL_COLUMN}.
+	 */
+	public static final String PARAM_NAME_SOURCE_GCL_COLUMN = "nameForSourceGCLColumn";
+	public static final String DEFAULT_NAME_SOURCE_GCL_COLUMN = "SOURCE_GCL";
+
+	/* ------------------------ */
+	/* --- Conversion rules --- */
+	/* ------------------------ */
 
 	/**
 	 * Ensures that table creation statements are generated for feature types.
@@ -221,7 +238,7 @@ public class SqlConstants {
 	/**
 	 * Specific implementation of a one to many relationship to a data type: the
 	 * table that represents the data type contains an additional column that
-	 * references other table (which represent classes that have a one-to-many
+	 * references other tables (which represent classes that have a one-to-many
 	 * relationship with the data type). The type of the column is configured
 	 * via parameter {@value #PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE}. The name of
 	 * the column is set via tagged value
@@ -231,10 +248,24 @@ public class SqlConstants {
 	 * support specification of a foreign key constraint for the column, since
 	 * the data type may be used as property value type in multiple other types.
 	 * Thus, in this approach, one cannot directly identify which table is
-	 * referenced by the column, for a given row of the data type table.
+	 * referenced by the column, for a given row of the data type table. NOTE:
+	 * This rule has lower priority than
+	 * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES}.
 	 */
 	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE = "rule-sql-cls-data-types-oneToMany-oneTable";
 
+	/**
+	 * Specific implementation of a one to many relationship between a type A
+	 * and a data type B: for each such relationship, a new table is created for
+	 * the data type (as defined by {@value #RULE_TGT_SQL_CLS_DATATYPES}. The
+	 * name of such a table is constructed as follows: name of type A (that
+	 * references the data type) + "_" + name of the property with the data type
+	 * as value type. A column is added to the table to reference the table that
+	 * represents type A.
+	 * <p>
+	 * NOTE: This rule has higher priority than
+	 * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}.
+	 */
 	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES = "rule-sql-cls-data-types-oneToMany-severalTables";
 
 	/**
@@ -256,22 +287,6 @@ public class SqlConstants {
 	 * 
 	 */
 	public static final String RULE_TGT_SQL_CLS_CODELISTS_PODS = "rule-sql-cls-code-lists-pods";
-
-	/**
-	 * Define the name for the column that stores the value of the active
-	 * indicator (a logical field, values are 'Y' and 'N'). Applies to rule
-	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is:
-	 * {@value #DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN}.
-	 */
-	public static final String PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN = "nameForActiveIndicatorLFColumn";
-	public static final String DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN = "ACTIVE_INDICATOR_LF";
-	/**
-	 * /** Define the name for the column that stores the value of the source
-	 * gcl. Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default
-	 * value is: {@value #DEFAULT_NAME_SOURCE_GCL_COLUMN}.
-	 */
-	public static final String PARAM_NAME_SOURCE_GCL_COLUMN = "nameForSourceGCLColumn";
-	public static final String DEFAULT_NAME_SOURCE_GCL_COLUMN = "SOURCE_GCL";
 
 	/**
 	 * If this rule is enabled, then a property whose type is neither covered by
@@ -381,9 +396,7 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
-
-	public static final String RULE_TGT_SQL_ALL_UNIQUE_NAMING_COUNT_SUFFIX = "rule-sql-all-unique-naming-count-suffix";
-
+	
 	/**
 	 * Prevents creation of documentation of schema elements via inline
 	 * comments. This rule overrides parameter
@@ -402,6 +415,13 @@ public class SqlConstants {
 	/* --------------------- */
 
 	public static final String TV_ASSOCIATIVETABLE = "associativeTable";
+
+	/**
+	 * Name of the tagged value that overwrites the value of configuration
+	 * parameter {@value #PARAM_ONE_TO_MANY_REF_COLUMN_NAME} for a given
+	 * datatype.
+	 */
+	public static final String TV_ONE_TO_MANY_REF_COLUMN_NAME = "oneToManyReferenceColumnName";
 
 	/* -------------------- */
 	/* --- other fields --- */

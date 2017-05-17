@@ -2541,9 +2541,10 @@ public class GenericModel extends ModelImpl {
 
 					if (!genPi.isNavigable()) {
 
-						// fine, then the property does not belong to any class
-						// and
-						// can simply be removed
+						/*
+						 * fine, then the property does not belong to any class
+						 * and can simply be removed
+						 */
 						this.genPropertiesById.remove(genPi.id());
 
 					} else {
@@ -2690,8 +2691,8 @@ public class GenericModel extends ModelImpl {
 	}
 
 	/**
-	 * @return a set with all properties that belong to the classes from
-	 *         selected schemas; can be empty but not <code>null</code>.
+	 * @return a set with all navigable properties that belong to the classes
+	 *         from selected schemas; can be empty but not <code>null</code>.
 	 */
 	public SortedSet<GenericPropertyInfo> selectedSchemaProperties() {
 

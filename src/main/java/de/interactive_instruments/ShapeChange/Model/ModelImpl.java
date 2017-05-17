@@ -112,7 +112,7 @@ public abstract class ModelImpl implements Model {
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
 			"vocabulary", "associativeTable", "jsonEncodingRule",
 			"sqlEncodingRule", "status", "geometry",
-			"oneToManyReferenceColumnName" };
+			"oneToManyReferenceColumnName", "dissolveAssociation" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to

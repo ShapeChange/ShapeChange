@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:da="http://example.org/shapechange/typeConverter/dissolveAssociations" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/typeConverter/dissolveAssociations" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType1" substitutionGroup="gml:AbstractFeature" type="da:FeatureType1Type">
+    <annotation>
+      <documentation>Def FeatureType
+NOTE Desc FeatureType</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureType1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="rFt1_nto1_directID" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFt1_ntom_direct_keep" type="da:FeatureType2PropertyType"/>
+          <element name="rFt1_1to1ID" type="integer"/>
+          <element name="rFt1_nto1ID" type="integer"/>
+          <element maxOccurs="unbounded" name="rFt1_ntom_keep" type="da:FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">da:rFt2_ntom_keep</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="rFt1_nto1_keep" type="da:FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">da:rFt2_nto1_keep</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="rFt1toExt_1to1ID" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="da:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="da:FeatureType2Type"/>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="rFt2_1to1ID" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFt2_ntom_keep" type="da:FeatureType1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">da:rFt1_ntom_keep</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFt2_nto1_keep" type="da:FeatureType1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">da:rFt1_nto1_keep</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="da:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

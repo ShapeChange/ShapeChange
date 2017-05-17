@@ -475,27 +475,19 @@ public class SqlBuilder implements MessageSource {
 			}
 		}
 
-		if (countIdentifierAttributes > 1) {
-
-			/*
-			 * TBD: Define requirements on input model (like <<identifier>> only
-			 * on single attribute) and check on input model?
-			 */
-
-			MessageContext mc = result.addWarning(this, 24, ci.name());
-			if (mc != null) {
-				mc.addDetail(this, 101, ci.fullNameInSchema());
-			}
-
-		} else if (countIdentifierAttributes == 0) {
+		if (countIdentifierAttributes == 0) {
 
 			Column id_cd = createColumn(table, null, sqlddl.getIdColumnName(),
 					sqlddl.getDatabaseStrategy().primaryKeyDataType(),
 					sqlddl.getPrimaryKeyColumnSpec(), true, false);
 			columns.add(id_cd);
 			id_cd.setObjectIdentifierColumn(true);
-
 		}
+
+		/*
+		 * NOTE: check if countIdentifierAttributes is > 1 is performed in
+		 * checkRequirements(...)
+		 */
 
 		/*
 		 * Flag to keep track if an attribute with stereotype <<identifier>> has
@@ -513,6 +505,8 @@ public class SqlBuilder implements MessageSource {
 					&& pi.stereotype("identifier") && ci.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
 
+				cd.removeSpecification("not null");
+				cd.addSpecification(sqlddl.getPrimaryKeyColumnSpec());
 				cd.addSpecification("PRIMARY KEY");
 				identifierSet = true;
 			}
@@ -1056,16 +1050,13 @@ public class SqlBuilder implements MessageSource {
 		ColumnDataType colDataType = new ColumnDataType(type);
 		column.setDataType(colDataType);
 
-		List<String> columnSpecStrings = new ArrayList<String>();
-
 		if (columnSpecification != null
 				&& !columnSpecification.trim().isEmpty()) {
-			columnSpecStrings.add(columnSpecification.trim());
+			column.addSpecification(columnSpecification.trim());
 		}
 		if (isPrimaryKey) {
-			columnSpecStrings.add("PRIMARY KEY");
+			column.addSpecification("PRIMARY KEY");
 		}
-		column.setSpecifications(columnSpecStrings);
 
 		column.setForeignKeyColumn(isForeignKey);
 
@@ -1441,7 +1432,7 @@ public class SqlBuilder implements MessageSource {
 						SqlConstants.PARAM_SIZE, e.getMessage(),
 						"" + sqlddl.getDefaultSize());
 				mc.addDetail(this, 0);
-				mc.addDetail(this, 100, pi.name(), pi.inClass().name());
+				mc.addDetail(this, 100, pi.fullNameInSchema());
 				size = sqlddl.getDefaultSize();
 			}
 		}
@@ -1474,6 +1465,8 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	public List<Statement> process(List<ClassInfo> cisToProcess) {
+
+		checkRequirements(cisToProcess);
 
 		// ----------------------------------------
 		// Create tables ("normal" and associative)
@@ -1896,6 +1889,51 @@ public class SqlBuilder implements MessageSource {
 		return result;
 	}
 
+	private void checkRequirements(List<ClassInfo> cisToProcess) {
+
+		// TODO Checking requirements on an input model should be a common
+		// pre-processing routine for targets
+		// and transformations
+
+		for (ClassInfo ci : cisToProcess) {
+
+			/*
+			 * If rule for using <<identifier>> stereotype on attributes is
+			 * enabled, check that a type does not have more than one such
+			 * attribute, and that such an attribute has max cardinality 1.
+			 */
+			if (ci.matches(
+					SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
+
+				int countIdentifierAttributes = 0;
+
+				for (PropertyInfo pi : ci.properties().values()) {
+
+					if (pi.isAttribute() && pi.stereotype("identifier")) {
+
+						countIdentifierAttributes++;
+
+						if (pi.cardinality().maxOccurs > 1) {
+							MessageContext mc = result.addError(this, 25,
+									pi.name());
+							if (mc != null) {
+								mc.addDetail(this, 100, pi.fullNameInSchema());
+							}
+						}
+					}
+				}
+
+				if (countIdentifierAttributes > 1) {
+
+					MessageContext mc = result.addWarning(this, 24, ci.name());
+					if (mc != null) {
+						mc.addDetail(this, 101, ci.fullNameInSchema());
+					}
+				}
+			}
+		}
+	}
+
 	private List<Statement> statements() {
 
 		List<Statement> stmts = new ArrayList<Statement>();
@@ -2105,9 +2143,11 @@ public class SqlBuilder implements MessageSource {
 			return "Creating table with name '$1$'";
 		case 24:
 			return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be set as primary key.";
+		case 25:
+			return "Identifier attribute '$1$' has max multiplicity > 1.";
 
 		case 100:
-			return "Context: property '$1$' in class '$2$'.";
+			return "Context: property '$1$'.";
 		case 101:
 			return "Context: class '$1$'.";
 		default:

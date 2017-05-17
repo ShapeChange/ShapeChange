@@ -46,4 +46,16 @@ public class TypeConverterTest extends WindowsBasicTest {
 				"testResults/typeConversion/enumerationToCodelist",
 				"src/test/resources/reference/typeConversion/enumerationToCodelist");
 	}
+	
+	@Test
+	public void testRuleTrfDissolveAssociations() {
+		/*
+		 * Test rule-trf-dissolveAssociations of TypeConverter transformation
+		 */
+		multiTest(
+				"src/test/resources/typeConverter/dissolveAssociations/testEA_typeConverter_dissolveAssociations.xml",
+				new String[] { "xsd" },
+				"testResults/typeConversion/dissolveAssociations",
+				"src/test/resources/typeConverter/dissolveAssociations/reference");
+	}
 }

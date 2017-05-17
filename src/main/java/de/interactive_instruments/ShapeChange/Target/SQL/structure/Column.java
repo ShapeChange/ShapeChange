@@ -119,6 +119,21 @@ public class Column {
 	}
 
 	/**
+	 * @param specIn
+	 * @return <code>true</code> if one of the specifications of this column
+	 *         equals - ignoring case - the given specification; else
+	 *         <code>false</code>.
+	 */
+	public boolean hasSpecificationIgnoringCase(String specIn) {
+		for (String spec : this.specifications) {
+			if (spec.equalsIgnoreCase(specIn)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @return the defaultValue
 	 */
 	public Expression getDefaultValue() {
@@ -214,5 +229,15 @@ public class Column {
 
 	public void setReferencedTable(Table refTable) {
 		this.referencedTable = refTable;
+	}
+
+	public void removeSpecification(String specIn) {
+		List<String> result = new ArrayList<String>();
+		for (String s : this.specifications) {
+			if (!s.equalsIgnoreCase(specIn)) {
+				result.add(s);
+			}
+		}
+		this.specifications = result;
 	}
 }
