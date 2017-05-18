@@ -68,13 +68,15 @@ public class ShapeChangeResult {
 	protected Element root = null;
 	protected Element messages = null;
 	protected Element resultFiles = null;
-	protected Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+	protected Properties outputFormat = OutputPropertiesFactory
+			.getDefaultMethodProperties("xml");
 	protected Options options = null;
 
 	protected HashSet<String> duplicateMessageCheck;
 
 	protected static boolean printDateTime = false;
-	protected static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	protected static DateFormat dateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss.SSS");
 
 	// MessageContext objects are returned when emitting messages via
 	// addXxxxx() functions. The object holds the generated DOM node and the
@@ -93,13 +95,16 @@ public class ShapeChangeResult {
 		}
 
 		// Ctor: Create message in log file
-		public MessageContext(ShapeChangeResult result, String level, String mtext) {
+		public MessageContext(ShapeChangeResult result, String level,
+				String mtext) {
 			this.result = result;
 			this.level = level;
-			System.err.println(level.substring(0, 1) + " " + (printDateTime ? dateTime() + " " : "") + mtext);
+			System.err.println(level.substring(0, 1) + " "
+					+ (printDateTime ? dateTime() + " " : "") + mtext);
 			message = result.document.createElementNS(Options.SCRS_NS, level);
 			result.messages.appendChild(message);
-			message.setAttribute("message", (printDateTime ? dateTime() + " " : "") + mtext);
+			message.setAttribute("message",
+					(printDateTime ? dateTime() + " " : "") + mtext);
 
 		}
 
@@ -114,9 +119,11 @@ public class ShapeChangeResult {
 		}
 
 		// Functions analogous to the standard message handlers
-		public void addDetail(MessageSource ms, int mnr, String p1, String p2, String p3) {
+		public void addDetail(MessageSource ms, int mnr, String p1, String p2,
+				String p3) {
 			String m = ms == null ? result.message(mnr) : ms.message(mnr);
-			addDetail(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+			addDetail(
+					m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 		}
 
 		public void addDetail(MessageSource ms, int mnr, String p1, String p2) {
@@ -144,18 +151,21 @@ public class ShapeChangeResult {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
 			dbf.setValidating(true);
-			dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE, Options.W3C_XML_SCHEMA);
+			dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE,
+					Options.W3C_XML_SCHEMA);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			document = db.newDocument();
 
-			root = document.createElementNS(Options.SCRS_NS, "ShapeChangeResult");
+			root = document.createElementNS(Options.SCRS_NS,
+					"ShapeChangeResult");
 			document.appendChild(root);
 			root.setAttribute("resultCode", "0");
 			root.setAttribute("xmlns:r", Options.SCRS_NS);
 			root.setAttribute("start", (new Date()).toString());
 
 			String version = "[dev]";
-			InputStream stream = getClass().getResourceAsStream("/sc.properties");
+			InputStream stream = getClass()
+					.getResourceAsStream("/sc.properties");
 			if (stream != null) {
 				Properties properties = new Properties();
 				properties.load(stream);
@@ -169,7 +179,8 @@ public class ShapeChangeResult {
 			resultFiles = document.createElementNS(Options.SCRS_NS, "Results");
 			root.appendChild(resultFiles);
 		} catch (ParserConfigurationException e) {
-			System.err.println("Bootstrap Error: XML parser was unable to be configured.");
+			System.err.println(
+					"Bootstrap Error: XML parser was unable to be configured.");
 			String m = e.getMessage();
 			if (m != null) {
 				System.err.println(m);
@@ -184,7 +195,8 @@ public class ShapeChangeResult {
 
 		outputFormat.setProperty("encoding", "UTF-8");
 		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
+				"2");
 	}
 
 	public void init() {
@@ -199,17 +211,22 @@ public class ShapeChangeResult {
 		}
 	};
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
+		return addDebug(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2, String p3) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
+			String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", safe(p3)));
+		return addDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$",
+				safe(p3)));
 	};
 
-	public MessageContext addDebug(MessageSource ms, int mnr, String p1, String p2) {
+	public MessageContext addDebug(MessageSource ms, int mnr, String p1,
+			String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addDebug(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -225,7 +242,8 @@ public class ShapeChangeResult {
 	};
 
 	public MessageContext addDebug(String m) {
-		if (document == null || !options.parameter("reportLevel").equals("DEBUG")) {
+		if (document == null
+				|| !options.parameter("reportLevel").equals("DEBUG")) {
 			return null;
 		}
 		if (m.startsWith("??")) {
@@ -236,17 +254,22 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Debug", m);
 	}
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addInfo(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
+		return addInfo(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2, String p3) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
+			String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addInfo(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addInfo(
+				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addInfo(MessageSource ms, int mnr, String p1, String p2) {
+	public MessageContext addInfo(MessageSource ms, int mnr, String p1,
+			String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addInfo(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -274,17 +297,22 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Info", m);
 	}
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addWarning(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
+		return addWarning(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2, String p3) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
+			String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addWarning(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addWarning(
+				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addWarning(MessageSource ms, int mnr, String p1, String p2) {
+	public MessageContext addWarning(MessageSource ms, int mnr, String p1,
+			String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addWarning(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -301,7 +329,8 @@ public class ShapeChangeResult {
 
 	public MessageContext addWarning(String m) {
 		String l = options.parameter("reportLevel");
-		if (document == null || !l.equals("DEBUG") && !l.equals("INFO") && !l.equals("WARNING")) {
+		if (document == null || !l.equals("DEBUG") && !l.equals("INFO")
+				&& !l.equals("WARNING")) {
 			return null;
 		}
 		if (m.startsWith("??")) {
@@ -312,24 +341,30 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Warning", m);
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4, String p5,
-			String p6, String p7) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4, String p5, String p6, String p7) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4).replace("$5$", p5)
+		return addError(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4).replace("$5$", p5)
 				.replace("$6$", p6).replace("$7$", p7));
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
+		return addError(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2, String p3) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1,
+			String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addError(
+				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addError(MessageSource ms, int mnr, String p1, String p2) {
+	public MessageContext addError(MessageSource ms, int mnr, String p1,
+			String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addError(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -356,17 +391,22 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "Error", m);
 	}
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
+			String p2, String p3, String p4) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addFatalError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
+		return addFatalError(m.replace("$1$", p1).replace("$2$", p2)
+				.replace("$3$", p3).replace("$4$", p4));
 	}
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2, String p3) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
+			String p2, String p3) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
-		return addFatalError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
+		return addFatalError(
+				m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3));
 	};
 
-	public MessageContext addFatalError(MessageSource ms, int mnr, String p1, String p2) {
+	public MessageContext addFatalError(MessageSource ms, int mnr, String p1,
+			String p2) {
 		String m = ms == null ? message(mnr) : ms.message(mnr);
 		return addFatalError(m.replace("$1$", p1).replace("$2$", p2));
 	};
@@ -395,7 +435,8 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "FatalError", m);
 	}
 
-	public void addResult(int targetId, String dname, String fname, String scope) {
+	public void addResult(int targetId, String dname, String fname,
+			String scope) {
 		if (document == null) {
 			return;
 		}
@@ -437,7 +478,8 @@ public class ShapeChangeResult {
 			}
 
 			FileWriter outputXML = new FileWriter(filename);
-			Serializer serializer = SerializerFactory.getSerializer(outputFormat);
+			Serializer serializer = SerializerFactory
+					.getSerializer(outputFormat);
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
@@ -450,14 +492,17 @@ public class ShapeChangeResult {
 					// get xslt via URL
 					URL url = new URL(xsltfileName);
 					URLConnection urlConnection = url.openConnection();
-					xsltSource = new StreamSource(urlConnection.getInputStream());
+					xsltSource = new StreamSource(
+							urlConnection.getInputStream());
 				} else {
-					InputStream stream = getClass().getResourceAsStream("/xslt/result.xsl");
+					InputStream stream = getClass()
+							.getResourceAsStream("/xslt/result.xsl");
 					if (stream == null) {
 						// get it from the file system
 						File xsltFile = new File(xsltfileName);
 						if (!xsltFile.canRead()) {
-							throw new Exception("Cannot read " + xsltFile.getName());
+							throw new Exception(
+									"Cannot read " + xsltFile.getName());
 						}
 						xsltSource = new StreamSource(xsltFile);
 					} else {
@@ -475,7 +520,8 @@ public class ShapeChangeResult {
 					Source xmlSource = new DOMSource(document);
 					Result res = new StreamResult(outputHTML);
 
-					TransformerFactory transFact = TransformerFactory.newInstance();
+					TransformerFactory transFact = TransformerFactory
+							.newInstance();
 					Transformer trans = transFact.newTransformer(xsltSource);
 					trans.transform(xmlSource, res);
 				}
@@ -793,7 +839,12 @@ public class ShapeChangeResult {
 			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
 		case 513:
 			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
-					+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG + "' to 'true'.";
+					+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG
+					+ "' to 'true'.";
+		case 514:
+			return "--- Validating transformer with @id '$1$' ...";
+		case 515:
+			return "--- Validating target with @class '$1$' and @inputs '$2$' ...";
 
 		// 600 - 699 Messages known to be used by multiple targets
 		case 600:
@@ -1166,7 +1217,8 @@ public class ShapeChangeResult {
 			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
 
 		default:
-			return "(" + ShapeChangeResult.class.getName() + ") Unknown message with number: " + mnr;
+			return "(" + ShapeChangeResult.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

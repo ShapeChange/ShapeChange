@@ -118,15 +118,20 @@ public class TypeConverter implements Transformer, MessageSource {
 	 */
 	public static final String RULE_DISSOLVE_ASSOCIATIONS_REMOVE_TRANSFORMED_ROLE_IF_MULTIPLE = "rule-trf-dissolveAssociations-removeTransformedAttributeIfMultiple";
 
+	private GenericModel genModel = null;
 	private Options options = null;
+	private TransformerConfiguration trfConfig = null;
 	private ShapeChangeResult result = null;
 
 	@Override
 	public void process(GenericModel genModel, Options options,
 			TransformerConfiguration trfConfig, ShapeChangeResult result)
+
 			throws ShapeChangeAbortException {
 
+		this.genModel = genModel;
 		this.options = options;
+		this.trfConfig = trfConfig;
 		this.result = result;
 
 		Map<String, ProcessRuleSet> ruleSets = trfConfig.getRuleSets();
@@ -262,17 +267,14 @@ public class TypeConverter implements Transformer, MessageSource {
 			genModel.dissolveAssociation(genAi);
 
 			handleAttributeAfterDissolvingAssociation(end1_sn, end1_inClass,
-					trfConfig, genModel, attributeTypeInfoTemplate,
-					attributeNameSuffix);
+					attributeTypeInfoTemplate, attributeNameSuffix);
 			handleAttributeAfterDissolvingAssociation(end2_sn, end2_inClass,
-					trfConfig, genModel, attributeTypeInfoTemplate,
-					attributeNameSuffix);
+					attributeTypeInfoTemplate, attributeNameSuffix);
 		}
 	}
 
 	private void handleAttributeAfterDissolvingAssociation(StructuredNumber sn,
-			GenericClassInfo ci, TransformerConfiguration trfConfig,
-			GenericModel genModel, Type attributeTypeInfoTemplate,
+			GenericClassInfo ci, Type attributeTypeInfoTemplate,
 			String attributeNameSuffix) {
 
 		if (sn != null) {

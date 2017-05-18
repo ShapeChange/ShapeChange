@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -162,6 +163,18 @@ public class Converter {
 
 					ConfigurationValidator validator = (ConfigurationValidator) theClass
 							.newInstance();
+
+					if (pConfig instanceof TransformerConfiguration) {
+
+						TransformerConfiguration tconfig = (TransformerConfiguration) pConfig;
+						result.addInfo(null, 514, tconfig.getId());
+
+					} else {
+
+						TargetConfiguration tconfig = (TargetConfiguration) pConfig;
+						result.addInfo(null, 515, tconfig.getClassName(),
+								StringUtils.join(tconfig.getInputIds(), " "));
+					}
 
 					isValid = isValid
 							& validator.isValid(pConfig, options, result);
@@ -832,7 +845,7 @@ public class Converter {
 			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
 		else if (imt.equalsIgnoreCase("scxml"))
 			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
-		
+
 		// Transformations of the model are only supported for EA models
 		if (imt.equals(
 				"de.interactive_instruments.ShapeChange.Model.EA.EADocument")) {

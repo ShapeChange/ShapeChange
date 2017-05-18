@@ -558,9 +558,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return assocClass;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#supertypes()
-	 */
+	@Override
 	public TreeSet<String> supertypes() {
 
 		if (supertypes == null) {
@@ -590,6 +588,13 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	public boolean hasSupertypes() {
 		if (supertypes != null && supertypes.size() > 0)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean hasSubtypes() {
+		if (subtypes != null && subtypes.size() > 0)
 			return true;
 		else
 			return false;
@@ -1448,6 +1453,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
+	 * Puts the given tagged value into the existing tagged values cache,
+	 * updating fields if requested via parameter.
+	 * 
 	 * @param tvName
 	 * @param tvValue
 	 * @param updateFields

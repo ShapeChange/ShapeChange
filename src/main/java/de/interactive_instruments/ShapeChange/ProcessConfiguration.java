@@ -191,10 +191,27 @@ public class ProcessConfiguration {
 		return res;
 	}
 
+	/**
+	 * @param parameterName
+	 *            name of the parameter to retrieve the value from
+	 * @param defaultValue
+	 *            value that will be returned if no valid parameter value was
+	 *            found; can be <code>null</code>
+	 * @param allowNonEmptyTrimmedStringValue
+	 *            <code>true</code> if the parameter value may be empty, if
+	 *            trimmed, else <code>false</code>
+	 * @param trimValue
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from the parameter value before returning it
+	 * @return the parameter value, or the given default value (which can be
+	 *         <code>null</code>) if the parameter value does not fulfill the
+	 *         criteria
+	 */
 	public String parameterAsString(String parameterName, String defaultValue,
 			boolean allowNonEmptyTrimmedStringValue, boolean trimValue) {
 
-		String result = this.parameters.get(parameterName);
+		String result = this.parameters == null ? null
+				: this.parameters.get(parameterName);
 
 		if (result == null || (result.trim().isEmpty()
 				&& !allowNonEmptyTrimmedStringValue)) {
@@ -219,18 +236,17 @@ public class ProcessConfiguration {
 	 * @param trimResults
 	 *            <code>true</code> if leading and trailing whitespace shall be
 	 *            removed from a value
-	 * @return list of values (originally separated by commas)
-	 *         retrieved from this parameter, or the default values if the
-	 *         parameter was not set or did not contain valid values; can be
-	 *         empty but not <code>null</code>
+	 * @return list of values (originally separated by commas) retrieved from
+	 *         this parameter, or the default values if the parameter was not
+	 *         set or did not contain valid values; can be empty but not
+	 *         <code>null</code>
 	 */
 	public List<String> parameterAsStringList(String parameterName,
 			String[] defaultValues, boolean omitEmptyStrings,
 			boolean trimResults) {
 
 		List<String> defaultValuesList = defaultValues == null
-				? new ArrayList<String>()
-				: Arrays.asList(defaultValues);
+				? new ArrayList<String>() : Arrays.asList(defaultValues);
 
 		String paramValue = this.parameters.get(parameterName);
 
@@ -250,13 +266,13 @@ public class ProcessConfiguration {
 			}
 
 			List<String> result = splitter.splitToList(paramValue);
-			
+
 			if (result.isEmpty()) {
-				
+
 				return defaultValuesList;
-				
+
 			} else {
-				
+
 				return new ArrayList<String>(result);
 			}
 		}
