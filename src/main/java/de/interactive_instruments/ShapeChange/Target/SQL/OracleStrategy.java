@@ -145,7 +145,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
 				columnForGeometryTypedProperty.getName()));
 
-		SdoDimArrayExpression dimArray = sqlddl.getSdoDimArrayExpression();
+		SdoDimArrayExpression dimArray = sqlddl.sdoDimArrayExpression;
 
 		items.add(dimArray);
 		items.add(new LongValueExpression(srid));

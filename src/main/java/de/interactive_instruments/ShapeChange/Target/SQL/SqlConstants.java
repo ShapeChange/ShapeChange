@@ -45,6 +45,29 @@ public class SqlConstants {
 	/* ------------------ */
 
 	/**
+	 * Set to <code>true</code> if empty lines should be removed in SQL DDL
+	 * files created by the target. Some SQL clients choke on such lines.
+	 * Default is <code>false</code>.
+	 */
+	public static final String PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT = "removeEmptyLinesInDdlOutput";
+
+	/**
+	 * Absolute or relative path to the text file (character encoding is assumed
+	 * to be UTF-8) whose contents shall be added at the top of DDL files
+	 * produced by the target. This parameter is optional. No default value
+	 * exists.
+	 */
+	public static final String PARAM_FILE_DDL_TOP = "fileDdlTop";
+
+	/**
+	 * Absolute or relative path to the text file (character encoding is assumed
+	 * to be UTF-8) whose contents shall be added at the bottom of DDL files
+	 * produced by the target. This parameter is optional. No default value
+	 * exists.
+	 */
+	public static final String PARAM_FILE_DDL_BOTTOM = "fileDdlBottom";
+
+	/**
 	 * Name for the identifier column when generating table creation statements.
 	 * This parameter is optional. The default is
 	 * {@value #DEFAULT_ID_COLUMN_NAME}.
@@ -52,15 +75,21 @@ public class SqlConstants {
 	public static final String PARAM_ID_COLUMN_NAME = "idColumnName";
 
 	/**
-	 * Specification for the primary key column that is created for a 'normal'
-	 * table (neither an associative table nor representing a code list).
-	 * Default is {@value #DEFAULT_PRIMARYKEY_COLUMNSPEC}. For example, if the
-	 * parameter is set to 'GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT
-	 * BY 1 ORDER NOCACHE)' then the primary key field would be 'OBJECTID
-	 * INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER
-	 * NOCACHE) PRIMARY KEY' instead of 'OBJECTID INTEGER NOT NULL PRIMARY KEY'.
+	 * Specification for the primary key of a 'normal' table (neither an
+	 * associative table nor representing a code list). Default is
+	 * {@value #DEFAULT_PRIMARYKEY_SPEC}. For example, if the parameter is set
+	 * to 'GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER
+	 * NOCACHE)' then the primary key would be 'OBJECTID INTEGER GENERATED
+	 * ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE) PRIMARY
+	 * KEY' instead of 'OBJECTID INTEGER NOT NULL PRIMARY KEY'.
 	 */
-	public static final String PARAM_PRIMARYKEY_COLUMNSPEC = "primaryKeyColumnSpecification";
+	public static final String PARAM_PRIMARYKEY_SPEC = "primaryKeySpecification";
+
+	/**
+	 * Specification for the primary key of a code list table. Default is
+	 * {@value #DEFAULT_PRIMARYKEY_SPEC_CODELIST}.
+	 */
+	public static final String PARAM_PRIMARYKEY_SPEC_CODELIST = "primaryKeySpecificationCodelist";
 
 	/**
 	 * Suffix to append to the name of columns that contain foreign keys (except
@@ -159,6 +188,13 @@ public class SqlConstants {
 	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
 	 */
 	public static final String PARAM_DESCRIPTORS_FOR_CODELIST = "descriptorsForCodelist";
+
+	/**
+	 * Specify the conceptual type that applies to the activeIndicatorLF column
+	 * added by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
+	 * {@value #DEFAULT_ACTIVEINDICATORLF_TYPE}.
+	 */
+	public static final String PARAM_ACTIVEINDICATORLF_TYPE = "activeIndicatorLFType";
 
 	/**
 	 * This parameter controls the name of the column that contains the name or
@@ -396,7 +432,7 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE = "rule-sql-all-normalizing-upper-case";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
-	
+
 	/**
 	 * Prevents creation of documentation of schema elements via inline
 	 * comments. This rule overrides parameter
@@ -434,11 +470,13 @@ public class SqlConstants {
 	 */
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
+	public static final String DEFAULT_ACTIVEINDICATORLF_TYPE = "YesNoNacl";
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE = "";
-	public static final String DEFAULT_PRIMARYKEY_COLUMNSPEC = "NOT NULL";
+	public static final String DEFAULT_PRIMARYKEY_SPEC = "NOT NULL PRIMARY KEY";
+	public static final String DEFAULT_PRIMARYKEY_SPEC_CODELIST = "NOT NULL PRIMARY KEY";
 	public static final int DEFAULT_SIZE = 1024;
 	public static final int DEFAULT_CODE_NAME_SIZE = 0;
 	public static final int DEFAULT_SRID = 4326;

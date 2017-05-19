@@ -104,10 +104,10 @@ public class ReplicationSchemaVisitor
 		this.sqlddl = sqlddl;
 		this.sqlbuilder = sqlbuilder;
 
-		this.options = sqlddl.getOptions();
-		this.result = sqlddl.getResult();
+		this.options = sqlddl.options;
+		this.result = sqlddl.result;
 
-		this.schema = sqlddl.getSchema();
+		this.schema = sqlddl.schema;
 		this.model = schema.model();
 
 		// Identify the enumerations contained in the schema
@@ -144,7 +144,7 @@ public class ReplicationSchemaVisitor
 
 		addAttribute(root, "version", schema.version());
 		targetNamespace = schema.targetNamespace()
-				+ sqlddl.getRepSchemaTargetNamespaceSuffix();
+				+ sqlddl.repSchemaTargetNamespaceSuffix;
 		addAttribute(root, "targetNamespace", targetNamespace);
 		addAttribute(root, "xmlns:" + schema.xmlns(), targetNamespace);
 
@@ -229,7 +229,7 @@ public class ReplicationSchemaVisitor
 
 			if (column.isObjectIdentifierColumn()) {
 
-				type = sqlddl.getRepSchemaObjectIdentifierFieldType();
+				type = sqlddl.repSchemaObjectIdentifierFieldType;
 
 			} else if (propForColumn != null) {
 
@@ -276,13 +276,13 @@ public class ReplicationSchemaVisitor
 
 					} else {
 
-						type = sqlddl.getRepSchemaForeignKeyFieldType();
+						type = sqlddl.repSchemaForeignKeyFieldType;
 					}
 				}
 
 			} else if (column.isForeignKeyColumn()) {
 
-				type = sqlddl.getRepSchemaForeignKeyFieldType();
+				type = sqlddl.repSchemaForeignKeyFieldType;
 
 			} else {
 
@@ -336,8 +336,7 @@ public class ReplicationSchemaVisitor
 						&& sizeForFieldWithCharacterDataType < 1
 						&& propForColumn.matches(
 								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE)) {
-					documentationForColumnElement = sqlddl
-							.getRepSchemaDocumentationUnlimitedLengthCharacterDataType();
+					documentationForColumnElement = sqlddl.repSchemaDocumentationUnlimitedLengthCharacterDataType;
 				}
 			}
 
@@ -562,14 +561,14 @@ public class ReplicationSchemaVisitor
 
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
 					packageInfo.targetNamespace()
-							+ sqlddl.getRepSchemaTargetNamespaceSuffix());
+							+ sqlddl.repSchemaTargetNamespaceSuffix);
 
 			Element importElement = document
 					.createElementNS(Options.W3C_XML_SCHEMA, "import");
 
 			addAttribute(importElement, "namespace",
 					packageInfo.targetNamespace()
-							+ sqlddl.getRepSchemaTargetNamespaceSuffix());
+							+ sqlddl.repSchemaTargetNamespaceSuffix);
 
 			root.insertBefore(importElement, hook);
 		}

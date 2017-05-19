@@ -48,10 +48,12 @@ public class Table {
 	private String name = null;
 	private List<Column> columns = new ArrayList<Column>();
 	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
+	
 	private boolean isAssociativeTable = false;
 	private ClassInfo representedClass = null;
 	private AssociationInfo representedAssociation = null;
 	private PropertyInfo representedProperty = null;
+	private boolean representsActiveIndicatorLFType = false;
 
 	public Table(String tableName) {
 		this.name = tableName;
@@ -214,5 +216,20 @@ public class Table {
 	public void addColumn(Column column) {
 
 		this.columns.add(column);
+	}
+
+	/**
+	 * @return the representsActiveIndicatorLFType
+	 */
+	public boolean representsActiveIndicatorLFType() {
+		return representsActiveIndicatorLFType;
+	}
+
+	/**
+	 * @param representsActiveIndicatorLFType the representsActiveIndicatorLFType to set
+	 */
+	public void setRepresentsActiveIndicatorLFType(
+			boolean representsActiveIndicatorLFType) {
+		this.representsActiveIndicatorLFType = representsActiveIndicatorLFType;
 	}
 }

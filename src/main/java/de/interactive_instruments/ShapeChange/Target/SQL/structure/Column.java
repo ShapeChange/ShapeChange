@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
@@ -81,7 +82,8 @@ public class Column {
 	}
 
 	/**
-	 * @return the constraints
+	 * @return the specification of this column; can be empty but not
+	 *         <code>null</code>
 	 */
 	public List<String> getSpecifications() {
 		return specifications;
@@ -92,7 +94,11 @@ public class Column {
 	 *            the specifications to set
 	 */
 	public void setSpecifications(List<String> specifications) {
-		this.specifications = specifications;
+		if (specifications != null) {
+			this.specifications = specifications;
+		} else {
+			this.specifications = new ArrayList<String>();
+		}
 	}
 
 	public void addSpecification(String spec) {
@@ -116,21 +122,6 @@ public class Column {
 
 	public String toString() {
 		return name;
-	}
-
-	/**
-	 * @param specIn
-	 * @return <code>true</code> if one of the specifications of this column
-	 *         equals - ignoring case - the given specification; else
-	 *         <code>false</code>.
-	 */
-	public boolean hasSpecificationIgnoringCase(String specIn) {
-		for (String spec : this.specifications) {
-			if (spec.equalsIgnoreCase(specIn)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -204,14 +195,8 @@ public class Column {
 	 *         specification (case is ignored), else <code>false</code>
 	 */
 	public boolean isPrimaryKeyColumn() {
-		if (specifications != null) {
-			for (String spec : specifications) {
-				if (spec.equalsIgnoreCase("primary key")) {
-					return true;
-				}
-			}
-		}
-		return false;
+
+		return hasSpecificationIgnoringCase("primary key");
 	}
 
 	public void setForeignKeyColumn(boolean isForeignKeyColumn) {
@@ -239,5 +224,20 @@ public class Column {
 			}
 		}
 		this.specifications = result;
+	}
+
+	public boolean hasSpecificationIgnoringCase(String specIn) {
+
+		String specInLower = specIn.toLowerCase(Locale.ENGLISH);
+
+		for (String specification : this.specifications) {
+			String specificationLower = specification
+					.toLowerCase(Locale.ENGLISH);
+			if (specificationLower.contains(specInLower)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

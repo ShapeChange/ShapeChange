@@ -63,10 +63,10 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  */
 public class DdlVisitor implements StatementVisitor {
 
-	private StringBuffer sb = new StringBuffer();
-	private String crlf;
-	private String indent;
-	private SqlDdl sqlddl;
+	protected StringBuffer sb = new StringBuffer();
+	protected String crlf;
+	protected String indent;
+	protected SqlDdl sqlddl;
 
 	public DdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
 		this.crlf = crlf;
@@ -165,12 +165,12 @@ public class DdlVisitor implements StatementVisitor {
 					sb.append(",");
 				}
 
-				if (sqlddl.isCreateDocumentation()) {
+				if (sqlddl.createDocumentation) {
 					PropertyInfo pi = col.getRepresentedProperty();
 					if (pi != null) {
 						String s = pi.derivedDocumentation(
-								sqlddl.getDocumentationTemplate(),
-								sqlddl.getDocumentationNoValue());
+								sqlddl.documentationTemplate,
+								sqlddl.documentationNoValue);
 						if (s != null && !s.trim().isEmpty()) {
 							sb.append(
 									" -- " + s.replaceAll("\\s+", " ").trim());
@@ -261,7 +261,7 @@ public class DdlVisitor implements StatementVisitor {
 
 	@Override
 	public void visit(Comment comment) {
-		
+
 		sb.append(comment.toString());
 		sb.append(";");
 		sb.append(crlf);

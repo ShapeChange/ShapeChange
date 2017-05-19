@@ -37,6 +37,19 @@ CREATE TABLE t3_featuretype1_propalpcode (
    PRIMARY KEY (t3_featuretype1_id, t3_codelist2_id)
 );
 
+CREATE TABLE t3_yesnonacl (
+
+   myname character varying(50) NOT NULL PRIMARY KEY,
+   myalias character varying(255),
+   mydatacapturestatement text,
+   mydefinition text,
+   mydescription text,
+   mydocumentation text,
+   myexample text,
+   mylegalbasis text,
+   myprimarycode text
+);
+
 
 ALTER TABLE t3_featuretype1 ADD CONSTRAINT fk_t3_featuretype1_propnumcode FOREIGN KEY (propnumcode) REFERENCES t3_codelist1;
 ALTER TABLE t3_featuretype1_propalpcode ADD CONSTRAINT fk_t3_featuretype1_propalpcode_t3_codelist2_id FOREIGN KEY (t3_codelist2_id) REFERENCES t3_codelist2;
@@ -53,3 +66,6 @@ codeA''s example 2; LB: codeA''s legal basis; DCS: codeA data capture statement
 
 codeA data capture statement 2; PC: codeA''s primary code', 'codeA''s example 1
 codeA''s example 2', 'codeA''s legal basis', 'codeA''s primary code');
+INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('No', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('NotApplicable', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('Yes', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);

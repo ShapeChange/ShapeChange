@@ -124,7 +124,7 @@
 			<targetParameter name="documentationNoValue" value="" />			
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
 <!-- 			<targetParameter name="foreignKeyColumnDataType" value="VARCHAR2(100)" /> -->
-			<targetParameter name="primaryKeyColumnSpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE)"/>
+			<targetParameter name="primaryKeySpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE) PRIMARY KEY"/>
 			
 			<targetParameter name="replicationSchemaTargetNamespaceSuffix" value="/rep" />
 			<targetParameter name="replicationSchemaObjectIdentifierFieldType" value="integer"/>
@@ -175,7 +175,7 @@
 			<targetParameter name="documentationNoValue" value="" />			
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
 <!-- 			<targetParameter name="foreignKeyColumnDataType" value="VARCHAR2(100)" /> -->
-			<targetParameter name="primaryKeyColumnSpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE)"/>
+			<targetParameter name="primaryKeySpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE) PRIMARY KEY"/>
 			<rules>
 				<EncodingRule name="sql2" extends="sql">				
 					<rule name="rule-sql-cls-object-types" />

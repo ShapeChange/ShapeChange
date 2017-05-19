@@ -85,7 +85,7 @@ public class SQLTest extends WindowsBasicTest {
 		multiTest("src/test/resources/config/testEA_sql_codelists.xml",
 				new String[] { "sql" }, "testResults/sql/codelists",
 				"src/test/resources/reference/sql/codelists");
-		
+
 		/*
 		 * SQL - codelist conversion with PODS specific rule
 		 */
@@ -93,67 +93,75 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/codelists_pods",
 				"src/test/resources/reference/sql/codelists_pods");
 	}
-	
+
 	@Test
 	public void testRuleSqlPropCheckConstraintRestrictTimeOfDate() {
-		
-		multiTest(
-				"src/test/resources/config/testEA_sql_restrictTimeOfDate.xml",
-				new String[] { "sql" },
-				"testResults/sql/restrictTimeOfDate",
+
+		multiTest("src/test/resources/config/testEA_sql_restrictTimeOfDate.xml",
+				new String[] { "sql" }, "testResults/sql/restrictTimeOfDate",
 				"src/test/resources/reference/sql/restrictTimeOfDate");
 	}
-	
+
 	@Test
 	public void testDefaultValues() {
-		
-		multiTest(
-				"src/test/resources/config/testEA_sql_defaultValues.xml",
-				new String[] { "sql" },
-				"testResults/sql/defaultValues",
+
+		multiTest("src/test/resources/config/testEA_sql_defaultValues.xml",
+				new String[] { "sql" }, "testResults/sql/defaultValues",
 				"src/test/resources/reference/sql/defaultValues");
 	}
-	
+
 	@Test
 	public void testDdlAndReplicationSchema() {
-		
-		multiTest(
-				"src/test/resources/config/testEA_sqlDdlAndRepSchema.xml",
-				new String[] { "sql","xsd" },
+
+		multiTest("src/test/resources/config/testEA_sqlDdlAndRepSchema.xml",
+				new String[] { "sql", "xsd" },
 				"testResults/sql/ddlAndRepSchema",
 				"src/test/resources/reference/sql/ddlAndRepSchema");
 	}
-	
+
 	@Test
 	public void testDocumentationViaExplicitComments() {
-		
+
 		/*
 		 * SQL - Documentation via explicit comments
 		 */
-		multiTest("src/test/resources/sql/explicitComments/testEA_sql_explicitComments.xml",
+		multiTest(
+				"src/test/resources/sql/explicitComments/testEA_sql_explicitComments.xml",
 				new String[] { "sql" }, "testResults/sql/explicitComments",
 				"src/test/resources/sql/explicitComments/reference");
 	}
-	
+
 	@Test
 	public void testDataTypeOneToMany() {
-		
+
 		/*
 		 * SQL - Conversion of one to many relationships with data types
 		 */
-		multiTest("src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml",
-				new String[] { "sql" }, "testResults/sql/dataTypeEncoding_oneToMany",
+		multiTest(
+				"src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml",
+				new String[] { "sql" },
+				"testResults/sql/dataTypeEncoding_oneToMany",
 				"src/test/resources/sql/dataTypeEncoding_oneToMany/reference");
 	}
-	
+
 	@Test
 	public void testIdentifierStereotype() {
-		
+
 		/*
 		 * SQL - Using stereotype <<identifier>>
 		 */
-		multiTest("src/test/resources/sql/identifierStereotype/testEA_sql_identifierStereotype.xml",
+		multiTest(
+				"src/test/resources/sql/identifierStereotype/testEA_sql_identifierStereotype.xml",
 				new String[] { "sql" }, "testResults/sql/identifierStereotype",
 				"src/test/resources/sql/identifierStereotype/reference");
+	}
+
+	@Test
+	public void testOutputDdlModification() {
+
+		multiTest(
+				"src/test/resources/sql/outputDdlModification/testEA_sql_outputDdlModification.xml",
+				new String[] { "sql" }, "testResults/sql/outputDdlModification",
+				"src/test/resources/sql/outputDdlModification/reference");
 	}
 }

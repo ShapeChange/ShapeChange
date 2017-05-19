@@ -45,6 +45,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -155,8 +156,19 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Insert ins1 = (Insert) o1;
 			Insert ins2 = (Insert) o2;
 
-			String tableName_o1 = ins1.getTable().getName();
-			String tableName_o2 = ins2.getTable().getName();
+			Table tins1 = ins1.getTable();
+			Table tins2 = ins2.getTable();
+
+			if (tins1.representsActiveIndicatorLFType()
+					&& !tins2.representsActiveIndicatorLFType()) {
+				return -1;
+			} else if (!tins1.representsActiveIndicatorLFType()
+					&& tins2.representsActiveIndicatorLFType()) {
+				return 1;
+			}
+
+			String tableName_o1 = tins1.getName();
+			String tableName_o2 = tins2.getName();
 
 			int compareTableName = tableName_o1.compareTo(tableName_o2);
 

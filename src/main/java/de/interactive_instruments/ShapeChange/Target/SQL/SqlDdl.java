@@ -31,11 +31,17 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +51,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -98,57 +103,60 @@ public class SqlDdl implements Target, MessageSource {
 
 	private String[] descriptorsForCodelistFromConfig = new String[] {
 			"documentation" };
-	private List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
+	protected List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
-	private String codeNameColumnName = "name";
-	private int codeNameSize = 0;
+	protected String codeNameColumnName = "name";
+	protected int codeNameSize = 0;
 
-	private ShapeChangeResult result = null;
-	private PackageInfo schema = null;
-	private Model model = null;
-	private Options options = null;
-	private boolean printed = false;
-	private boolean diagnosticsOnly = false;
+	protected ShapeChangeResult result = null;
+	protected PackageInfo schema = null;
+	protected Model model = null;
+	protected Options options = null;
+	protected boolean printed = false;
+	protected boolean diagnosticsOnly = false;
 	/**
 	 * NOTE: If not set via the configuration, the default applies which is
 	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
 	 */
-	private String documentationTemplate = null;
+	protected String documentationTemplate = null;
 	/**
 	 * NOTE: If not set via the configuration, the default applies which is
 	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_NOVALUE}.
 	 */
-	private String documentationNoValue = null;
+	protected String documentationNoValue = null;
 
 	private String outputDirectory;
 
-	private String idColumnName;
+	protected String activeIndicatorLFType;
+	protected String idColumnName;
 	protected String oneToManyReferenceColumnName;
-	private String foreignKeyColumnSuffix;
-	private String foreignKeyColumnSuffixDatatype;
-	private String foreignKeyColumnDataType;
-	private String primaryKeyColumnSpec;
+	protected String foreignKeyColumnSuffix;
+	protected String foreignKeyColumnSuffixDatatype;
+	protected String foreignKeyColumnDataType;
+	protected String primaryKeySpec;
+	protected String primaryKeySpecCodelist;
 	protected String nameActiveIndicatorLFColumn;
 	protected String nameSourceGCLColumn;
-	private int defaultSize;
-	private int srid;
-	private boolean createReferences = false;
-	private boolean createDocumentation = true;
-	private boolean createAssociativeTables = false;
+	protected int defaultSize;
+	protected int srid;
+	protected boolean createReferences = false;
+	protected boolean createDocumentation = true;
+	protected boolean createAssociativeTables = false;
+	protected boolean removeEmptyLinesInDdlOutput = false;
 
 	/**
 	 * Contains information parsed from the 'param' attributes of each map entry
 	 * defined for this target.
 	 */
-	private MapEntryParamInfos mepp = null;
+	protected MapEntryParamInfos mapEntryParamInfos = null;
 
-	private DatabaseStrategy databaseStrategy;
+	protected DatabaseStrategy databaseStrategy;
 
-	private SqlNamingScheme namingScheme;
+	protected SqlNamingScheme namingScheme;
 
-	private List<ClassInfo> cisToProcess = new ArrayList<ClassInfo>();
+	protected List<ClassInfo> cisToProcess = new ArrayList<ClassInfo>();
 
-	private SdoDimArrayExpression sdae = new SdoDimArrayExpression();
+	protected SdoDimArrayExpression sdoDimArrayExpression = new SdoDimArrayExpression();
 
 	/* ------- */
 	/* Replication schema specific fields */
@@ -327,6 +335,11 @@ public class SqlDdl implements Target, MessageSource {
 		this.namingScheme = new DefaultNamingScheme(result, normalizer,
 				fkNaming, ckNaming, uniqueConstraintNaming);
 
+		activeIndicatorLFType = options.parameterAsString(
+				this.getClass().getName(),
+				SqlConstants.PARAM_ACTIVEINDICATORLF_TYPE,
+				SqlConstants.DEFAULT_ACTIVEINDICATORLF_TYPE, false, true);
+
 		idColumnName = options.parameterAsString(this.getClass().getName(),
 				SqlConstants.PARAM_ID_COLUMN_NAME,
 				SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
@@ -352,10 +365,14 @@ public class SqlDdl implements Target, MessageSource {
 				SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
 				databaseStrategy.primaryKeyDataType(), false, true);
 
-		primaryKeyColumnSpec = options.parameterAsString(
+		primaryKeySpec = options.parameterAsString(this.getClass().getName(),
+				SqlConstants.PARAM_PRIMARYKEY_SPEC,
+				SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
+
+		primaryKeySpecCodelist = options.parameterAsString(
 				this.getClass().getName(),
-				SqlConstants.PARAM_PRIMARYKEY_COLUMNSPEC,
-				SqlConstants.DEFAULT_PRIMARYKEY_COLUMNSPEC, true, true);
+				SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST,
+				SqlConstants.DEFAULT_PRIMARYKEY_SPEC_CODELIST, true, true);
 
 		nameActiveIndicatorLFColumn = options.parameterAsString(
 				this.getClass().getName(),
@@ -387,6 +404,11 @@ public class SqlDdl implements Target, MessageSource {
 				this.getClass().getName(),
 				SqlConstants.PARAM_CREATE_DOCUMENTATION,
 				SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
+
+		removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
+				this.getClass().getName(),
+				SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
+
 		/*
 		 * override parameter 'createDocumentation' if configured via conversion
 		 * rule
@@ -493,7 +515,7 @@ public class SqlDdl implements Target, MessageSource {
 			/*
 			 * Parse all parameter information
 			 */
-			mepp = new MapEntryParamInfos(result, mapEntries);
+			mapEntryParamInfos = new MapEntryParamInfos(result, mapEntries);
 		}
 
 		// ======================================
@@ -553,7 +575,7 @@ public class SqlDdl implements Target, MessageSource {
 					sde.setUpperBound(parts[2]);
 					sde.setTolerance(parts[3]);
 
-					sdae.addElement(sde);
+					sdoDimArrayExpression.addElement(sde);
 				}
 			}
 		}
@@ -632,7 +654,6 @@ public class SqlDdl implements Target, MessageSource {
 		 * Create representation (DDL or replication schema) and write the
 		 * results
 		 */
-		BufferedWriter writer = null;
 		try {
 
 			if (schema.matches(
@@ -661,39 +682,84 @@ public class SqlDdl implements Target, MessageSource {
 
 				File repXsd = new File(outputDirectory, fileName);
 
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(repXsd), "UTF-8"));
+				try (BufferedWriter writer = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(repXsd),
+								"UTF-8"))) {
 
-				Serializer serializer = SerializerFactory
-						.getSerializer(outputFormat);
-				serializer.setWriter(writer);
-				serializer.asDOMSerializer().serialize(visitor.getDocument());
+					Serializer serializer = SerializerFactory
+							.getSerializer(outputFormat);
+					serializer.setWriter(writer);
+					serializer.asDOMSerializer()
+							.serialize(visitor.getDocument());
 
-				// writer.close();
+					result.addResult(getTargetID(), outputDirectory, fileName,
+							schema.targetNamespace());
 
-				result.addResult(getTargetID(), outputDirectory, fileName,
-						schema.targetNamespace());
-
-				printed = true;
+					printed = true;
+				}
 
 			} else {
 
-				// Create DDL
+				// --- Create DDL
 				StringBuffer sb = new StringBuffer();
 				DdlVisitor visitor = new DdlVisitor(SqlConstants.CRLF,
 						SqlConstants.INDENT, this);
 				visitor.visit(stmts);
 				sb.append(visitor.getDdl());
 
-				// Write DDL to file
+				// --- Write DDL to file
 				String fileName = schema.name().replace("/", "_").replace(" ",
 						"_") + ".sql";
 
-				File file = new File(outputDirectory, fileName);
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(file), "UTF-8"));
-				writer.write(sb.toString());
-				// writer.close();
+				File outputFile = new File(outputDirectory, fileName);
+
+				try (BufferedWriter writer = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(outputFile),
+								"UTF-8"))) {
+
+					String ddlTop = readDdl(SqlConstants.PARAM_FILE_DDL_TOP);
+					if (ddlTop != null) {
+						writer.write(ddlTop);
+					}
+
+					writer.write(sb.toString());
+
+					String ddlBottom = readDdl(
+							SqlConstants.PARAM_FILE_DDL_BOTTOM);
+					if (ddlBottom != null) {
+						writer.write(ddlBottom);
+					}
+				}
+
+				if (removeEmptyLinesInDdlOutput) {
+
+					File outputWithoutEmptyLines = new File(outputDirectory,
+							fileName + ".tmp");
+
+					try (BufferedReader originalDdlReader = new BufferedReader(
+							new InputStreamReader(
+									new FileInputStream(outputFile)));
+							BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(
+									new OutputStreamWriter(
+											new FileOutputStream(
+													outputWithoutEmptyLines),
+											"UTF-8"));) {
+
+						String aLine = null;
+						while ((aLine = originalDdlReader.readLine()) != null) {
+							if (!aLine.trim().isEmpty()) {
+								ddlWithoutEmptyLinesWriter.write(aLine);
+								ddlWithoutEmptyLinesWriter.newLine();
+							}
+						}
+
+					}
+
+					Files.move(outputWithoutEmptyLines.toPath(),
+							outputFile.toPath(),
+							StandardCopyOption.REPLACE_EXISTING);
+				}
+
 				result.addResult(getTargetID(), outputDirectory, fileName,
 						null);
 
@@ -708,131 +774,37 @@ public class SqlDdl implements Target, MessageSource {
 			}
 
 			e.printStackTrace(System.err);
-
-		} finally {
-
-			IOUtils.closeQuietly(writer);
 		}
+	}
+
+	private String readDdl(String paramFileDdl) {
+
+		String res = null;
+
+		String fileDdl = options.parameterAsString(this.getClass().getName(),
+				paramFileDdl, null, false, true);
+
+		if (fileDdl != null) {
+			File ddlTop = new File(fileDdl);
+			if (!ddlTop.exists() || ddlTop.isDirectory() || !ddlTop.canRead()) {
+
+				result.addError(this, 25, SqlConstants.PARAM_FILE_DDL_TOP,
+						fileDdl);
+			} else {
+				try {
+					res = FileUtils.readFileToString(ddlTop,
+							StandardCharsets.UTF_8);
+				} catch (IOException e) {
+					result.addError(this, 26, fileDdl, e.getMessage());
+				}
+			}
+		}
+
+		return res;
 	}
 
 	public int getTargetID() {
 		return TargetIdentification.SQLDDL.getId();
-	}
-
-	public String getForeignKeyColumnDataType() {
-		return foreignKeyColumnDataType;
-	}
-
-	/**
-	 * @return the idColumnName
-	 */
-	public String getIdColumnName() {
-		return idColumnName;
-	}
-
-	/**
-	 * @return the mepp
-	 */
-	public MapEntryParamInfos getMapEntryParamInfos() {
-		return mepp;
-	}
-
-	/**
-	 * @return the schema
-	 */
-	public PackageInfo getSchema() {
-		return schema;
-	}
-
-	/**
-	 * @return the codeNameSize
-	 */
-	public int getCodeNameSize() {
-		return codeNameSize;
-	}
-
-	/**
-	 * @return the databaseStrategy
-	 */
-	public DatabaseStrategy getDatabaseStrategy() {
-		return databaseStrategy;
-	}
-
-	/**
-	 * @return the defaultSize
-	 */
-	public int getDefaultSize() {
-		return defaultSize;
-	}
-
-	/**
-	 * @return the srid
-	 */
-	public int getSrid() {
-		return srid;
-	}
-
-	/**
-	 * @return the foreignKeyColumnSuffix
-	 */
-	public String getForeignKeyColumnSuffix() {
-		return foreignKeyColumnSuffix;
-	}
-
-	/**
-	 * @return the foreignKeyColumnSuffixDatatype
-	 */
-	public String getForeignKeyColumnSuffixDatatype() {
-		return foreignKeyColumnSuffixDatatype;
-	}
-
-	/**
-	 * @return the createReferences
-	 */
-	public boolean isCreateReferences() {
-		return createReferences;
-	}
-
-	/**
-	 * @return the createAssociativeTables
-	 */
-	public boolean isCreateAssociativeTables() {
-		return createAssociativeTables;
-	}
-
-	/**
-	 * @return the codeNameColumnName
-	 */
-	public String getCodeNameColumnName() {
-		return codeNameColumnName;
-	}
-
-	/**
-	 * @return the descriptorsForCodelist
-	 */
-	public List<DescriptorForCodeList> getDescriptorsForCodelist() {
-		return descriptorsForCodelist;
-	}
-
-	/**
-	 * @return the documentationTemplate
-	 */
-	public String getDocumentationTemplate() {
-		return documentationTemplate;
-	}
-
-	/**
-	 * @return the documentationNoValue
-	 */
-	public String getDocumentationNoValue() {
-		return documentationNoValue;
-	}
-
-	/**
-	 * @return the createDocumentation
-	 */
-	public boolean isCreateDocumentation() {
-		return createDocumentation;
 	}
 
 	public static boolean isEncoded(Info i) {
@@ -844,13 +816,6 @@ public class SqlDdl implements Target, MessageSource {
 		} else {
 			return true;
 		}
-	}
-
-	/**
-	 * @return the repSchemaTargetNamespaceSuffix
-	 */
-	public String getRepSchemaTargetNamespaceSuffix() {
-		return repSchemaTargetNamespaceSuffix;
 	}
 
 	/**
@@ -896,6 +861,10 @@ public class SqlDdl implements Target, MessageSource {
 			return "Configuration parameter '"
 					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 					+ "' did not contain a well-known identifier. Using default value 'documentation'.";
+		case 25:
+			return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+		case 26:
+			return "Exception occurred while transferring contents of file '$1$': $2$";
 
 		case 503:
 			return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
@@ -906,51 +875,5 @@ public class SqlDdl implements Target, MessageSource {
 			return "(" + SqlDdl.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
-	}
-
-	/**
-	 * @return the options
-	 */
-	public Options getOptions() {
-		return options;
-	}
-
-	/**
-	 * @return the result
-	 */
-	public ShapeChangeResult getResult() {
-		return result;
-	}
-
-	/**
-	 * @return the repSchemaObjectIdentifierFieldType
-	 */
-	public String getRepSchemaObjectIdentifierFieldType() {
-		return repSchemaObjectIdentifierFieldType;
-	}
-
-	/**
-	 * @return the repSchemaForeignKeyFieldType
-	 */
-	public String getRepSchemaForeignKeyFieldType() {
-		return repSchemaForeignKeyFieldType;
-	}
-
-	/**
-	 * @return the repSchemaDocumentationUnlimitedLengthCharacterDataType
-	 */
-	public String getRepSchemaDocumentationUnlimitedLengthCharacterDataType() {
-		return repSchemaDocumentationUnlimitedLengthCharacterDataType;
-	}
-
-	/**
-	 * @return the primaryKeyColumnSpec
-	 */
-	public String getPrimaryKeyColumnSpec() {
-		return primaryKeyColumnSpec;
-	}
-
-	public SdoDimArrayExpression getSdoDimArrayExpression() {
-		return sdae;
 	}
 }
