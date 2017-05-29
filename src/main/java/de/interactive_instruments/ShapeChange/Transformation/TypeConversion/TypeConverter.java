@@ -319,12 +319,16 @@ public class TypeConverter implements Transformer, MessageSource {
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
 			if (genCi.category() == Options.ENUMERATION) {
+				
 				genCi.setCategory(Options.CODELIST);
+				
 				Stereotypes st = genCi.stereotypes();
 				st.remove("enumeration");
 				st.add("codelist");
 				// we need to explicitly set the new Stereotypes cache
 				genCi.setStereotypes(st);
+				
+				genCi.setTaggedValue("asDictionary", "false", false);
 			}
 		}
 	}

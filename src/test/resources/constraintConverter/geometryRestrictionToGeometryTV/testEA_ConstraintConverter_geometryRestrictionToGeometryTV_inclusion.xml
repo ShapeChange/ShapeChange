@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="representTaggedValues" value="geometry" />
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/test_ConstraintConverter_geometryRestrictionToGeometryTV.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test Schema - Inclusion" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/constraintConverter/geometryRestrictionToGeometryTV/inclusion/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter"
+			id="trf" mode="enabled">
+			<parameters>
+				<ProcessParameter name="geometryRepresentationTypes"
+					value="PointPositionInfo = P, CurvePositionInfo = C, SurfacePositionInfo = S" />
+				<ProcessParameter name="geometryRepresentationConstraintRegex"
+					value="Place Representations Allowed" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule
+						name="rule-trf-cls-constraints-geometryRestrictionToGeometryTV-inclusion" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="trf" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/constraintConverter/geometryRestrictionToGeometryTV/inclusion" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="gml33-with-TV" />
+			<rules>
+				<EncodingRule name="gml33-with-TV" extends="gml33">
+					<rule name="rule-xsd-all-tagged-values" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>
