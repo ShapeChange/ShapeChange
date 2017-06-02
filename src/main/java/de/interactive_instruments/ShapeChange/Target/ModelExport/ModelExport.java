@@ -587,18 +587,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDiagrams(ci.getDiagrams());
 
 		printDataElement("isAbstract", ci.isAbstract(), false);
-		printDataElement("includePropertyType", ci.includePropertyType(), true);
-		printDataElement("includeByValuePropertyType",
-				ci.includeByValuePropertyType(), false);
-		printDataElement("isCollection", ci.isCollection(), false);
-		printDataElement("asDictionary", ci.asDictionary(), false);
-		printDataElement("asDictionaryGml33", ci.asDictionaryGml33(), false);
-		printDataElement("asGroup", ci.asGroup(), false);
-		printDataElement("asCharacterString", ci.asCharacterString(), false);
 		printDataElement("hasNilReason", ci.hasNilReason(), false);
 		printDataElement("isLeaf", ci.isLeaf(), false);
-		printDataElement("suppressed", ci.suppressed(), false);
-		printDataElement("xmlSchemaType", ci.xmlSchemaType());
 
 		if (ci.isAssocClass() != null) {
 			printDataElement("associationId", ci.isAssocClass().id());
@@ -850,7 +840,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("inlineOrByReference", pi.inlineOrByReference(),
 				"inlineOrByReference");
 		printDataElement("defaultCodeSpace", pi.defaultCodeSpace());
-		printDataElement("isMetadata", pi.isMetadata(), false);
 
 		printDataElement("implementedByNilReason", pi.implementedByNilReason(),
 				false);

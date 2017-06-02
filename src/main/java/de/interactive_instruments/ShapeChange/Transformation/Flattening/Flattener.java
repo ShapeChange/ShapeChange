@@ -331,6 +331,15 @@ public class Flattener implements Transformer {
 	 */
 	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
 
+	/**
+	 * Behavior: For each type that has a supertype whose name starts with
+	 * "GM_", remove that inheritance relationship and add a new property
+	 * "geometry" with the supertype as value type.
+	 * <p>
+	 * Parameters: none
+	 */
+	public static final String RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE = "rule-trf-cls-flatten-geometryTypeInheritance";
+
 	// =============================
 	/* Flattener requirements */
 	// =============================
@@ -722,6 +731,12 @@ public class Flattener implements Transformer {
 			applyRuleRemoveInheritanceRelationship(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE);
+			applyRuleFlattenGeometryTypeInheritance(genModel, trfConfig);
+		}
+
 		// postprocessing
 		result.addInfo(null, 20317, "postprocessing");
 
@@ -772,6 +787,54 @@ public class Flattener implements Transformer {
 						genPi.setConstraints(newConstraints);
 					}
 				}
+			}
+		}
+	}
+
+	private void applyRuleFlattenGeometryTypeInheritance(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			Set<String> supertypeIdsToRemove = new HashSet<String>();
+
+			for (String supertypeId : genCi.supertypes()) {
+
+				GenericClassInfo supertype = (GenericClassInfo) genModel
+						.classById(supertypeId);
+
+				if (supertype.name().startsWith("GM_")) {
+
+					supertypeIdsToRemove.add(supertypeId);
+					supertype.removeSubtype(genCi.id());
+
+					GenericPropertyInfo genPi = new GenericPropertyInfo(
+							genModel, genCi.id() + "_propForGeomSupertype_"
+									+ supertype.name(),
+							"geometry");
+
+					genPi.setInClass(genCi);
+
+					genPi.setComposition(true);
+					genPi.setSequenceNumber(new StructuredNumber(1), false);
+
+					Type typeInfo = new Type();
+					typeInfo.id = supertype.id();
+					typeInfo.name = supertype.name();
+					genPi.setTypeInfo(typeInfo);
+
+					genCi.addPropertyAtBottom(genPi,
+							PropertyCopyDuplicatBehaviorIndicator.ADD);
+				}
+			}
+
+			for (String supertypeIdToRemove : supertypeIdsToRemove) {
+
+				if (genCi.baseClass() != null
+						&& genCi.baseClass().id().equals(supertypeIdToRemove)) {
+					genCi.setBaseClass(null);
+				}
+				genCi.removeSupertype(supertypeIdToRemove);
 			}
 		}
 	}
@@ -5825,15 +5888,6 @@ public class Flattener implements Transformer {
 						booleanWithOninaCi.setTaggedValues(taggedValues, false);
 
 						// set properties required by ClassInfo interface
-						booleanWithOninaCi.setXmlSchemaType(null);
-						booleanWithOninaCi.setIncludePropertyType(
-								ci.includePropertyType());
-						booleanWithOninaCi.setIncludeByValuePropertyType(
-								ci.includeByValuePropertyType());
-						booleanWithOninaCi.setIsCollection(false);
-						booleanWithOninaCi.setAsDictionary(false);
-						booleanWithOninaCi.setAsGroup(false);
-						booleanWithOninaCi.setAsCharacterString(false);
 						booleanWithOninaCi.setHasNilReason(false);
 						booleanWithOninaCi.setPkg(ci.pkg());
 						/*
@@ -5917,8 +5971,6 @@ public class Flattener implements Transformer {
 
 						booleanWithOninaCi
 								.setConstraints(new Vector<Constraint>());
-						booleanWithOninaCi.setSuppressed(false);
-						booleanWithOninaCi.setAsDictionaryGml33(false);
 
 						model.addClass(booleanWithOninaCi);
 
@@ -6349,7 +6401,6 @@ public class Flattener implements Transformer {
 		enumPi.setInitialValue(null);
 		enumPi.setInlineOrByReference("inlineOrByReference");
 		enumPi.setDefaultCodeSpace("");
-		enumPi.setMetadata(false);
 		enumPi.setReverseProperty(null);
 		enumPi.setInClass(ci);
 		/*

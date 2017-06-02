@@ -486,6 +486,19 @@ public class NamingModifier implements Transformer, MessageSource {
 				genModel.updateClassName(genCi, newName);
 			}
 		}
+		
+		// TODO document that rule applies to properties as well
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+			Matcher matcher = suffixPattern.matcher(genPi.name());
+
+			if (matcher.matches()) {
+
+				String newName = genPi.name() + suffix;
+
+				genPi.setName(newName);
+			}
+		}
 	}
 
 	public String message(int mnr) {

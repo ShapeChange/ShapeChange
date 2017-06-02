@@ -70,6 +70,7 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Splitter;
 
 import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
+import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry.ModelElementType;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
@@ -107,6 +108,8 @@ public class Options {
 	public static final String SCHEMATRON_NS = "http://purl.oclc.org/dsdl/schematron";
 	public static final String DGIWGSP_NSABR = "gmldgiwgsp";
 	public static final String DGIWGSP_NS = "http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/";
+	public static final String GMLSF_NSABR = "gmlsf";
+	public static final String GMLSF_NS = "http://www.opengis.net/gmlsf/2.0";
 
 	// TODO move these to each target
 	public static final String DEF_NS = "http://www.interactive-instruments.de/ShapeChange/Definitions/0.5";
@@ -152,7 +155,7 @@ public class Options {
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
 			"aixmextension" };
 	public static final String[] assocStereotypes = { "disjoint" };
-	
+
 	public static final String[] propertyStereotypes = { "voidable",
 			"identifier", "version", "property", "estimated" };
 	public static final String[] packageStereotypes = { "application schema",
@@ -3137,6 +3140,17 @@ public class Options {
 							modelElementStereotypePattern = Pattern
 									.compile(modelElementStereotype);
 						}
+						
+						Pattern propertyValueTypeStereotypePattern = null;
+
+						if (taggedValueE
+								.hasAttribute("propertyValueTypeStereotype")) {
+
+							String propertyValueTypeStereotype = taggedValueE
+									.getAttribute("propertyValueTypeStereotype");
+							propertyValueTypeStereotypePattern = Pattern
+									.compile(propertyValueTypeStereotype);
+						}
 
 						Pattern applicationSchemaNamePattern = null;
 
@@ -3149,10 +3163,33 @@ public class Options {
 									.compile(applicationSchemaName);
 						}
 
+						ModelElementType modelElementType = null;
+
+						if (taggedValueE.hasAttribute("modelElementType")) {
+
+							String mdeValue = taggedValueE
+									.getAttribute("modelElementType");
+
+							if (mdeValue.equalsIgnoreCase("Association")) {
+								modelElementType = ModelElementType.ASSOCIATION;
+							} else if (mdeValue.equalsIgnoreCase("Class")) {
+								modelElementType = ModelElementType.CLASS;
+							} else if (mdeValue.equalsIgnoreCase("Package")) {
+								modelElementType = ModelElementType.PACKAGE;
+							} else if (mdeValue.equalsIgnoreCase("PROPERTY")) {
+								modelElementType = ModelElementType.PROPERTY;
+							} else if (mdeValue.equalsIgnoreCase("Attribute")) {
+								modelElementType = ModelElementType.ATTRIBUTE;
+							} else if (mdeValue
+									.equalsIgnoreCase("AssociationRole")) {
+								modelElementType = ModelElementType.ASSOCIATIONROLE;
+							}
+						}
+
 						result.add(new TaggedValueConfigurationEntry(
 								taggedValueE.getAttribute("name"), value,
-								modelElementStereotypePattern,
-								modelElementNamePattern,
+								modelElementType, modelElementStereotypePattern,
+								modelElementNamePattern, propertyValueTypeStereotypePattern,
 								applicationSchemaNamePattern));
 
 					}
@@ -3498,6 +3535,7 @@ public class Options {
 		addRule("rule-xsd-cls-local-enumeration");
 		addRule("rule-xsd-cls-local-basictype");
 		addRule("rule-xsd-pkg-dgiwgsp");
+		addRule("rule-xsd-pkg-gmlsf");
 		addRule("rule-xsd-pkg-schematron");
 		addRule("rule-xsd-all-tagged-values");
 		addRule("rule-xsd-cls-adehook");
@@ -3546,7 +3584,7 @@ public class Options {
 
 		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
 		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
-		
+
 		addRule("rule-sql-cls-code-lists");
 		addRule("rule-sql-cls-code-lists-pods");
 		addRule("rule-sql-cls-data-types");
@@ -3565,7 +3603,6 @@ public class Options {
 		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
 		addRule("rule-sql-prop-replicationSchema-nillable");
 		addRule("rule-sql-prop-replicationSchema-optional");
-		
 
 		// declare rule sets
 		addExtendsEncRule(SQL, "*");

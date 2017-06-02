@@ -41,21 +41,31 @@ import java.util.regex.Pattern;
  */
 public class TaggedValueConfigurationEntry {
 
+	public enum ModelElementType {
+		ASSOCIATION, CLASS, PACKAGE, PROPERTY, ATTRIBUTE, ASSOCIATIONROLE
+	};
+
 	private String name = null;
 	private String value = null;
+	private ModelElementType modelElementType = null;
 	private Pattern modelElementStereotypePattern = null;
 	private Pattern modelElementNamePattern = null;
+	private Pattern propertyValueTypeStereotypePattern = null;
 	private Pattern applicationSchemaNamePattern = null;
 
 	public TaggedValueConfigurationEntry(String name, String value,
+			ModelElementType modelElementType,
 			Pattern modelElementStereotypePattern,
 			Pattern modelElementNamePattern,
+			Pattern propertyValueTypeStereotypePattern,
 			Pattern applicationSchemaNamePattern) {
 		super();
 		this.name = name;
 		this.value = value;
+		this.modelElementType = modelElementType;
 		this.modelElementStereotypePattern = modelElementStereotypePattern;
 		this.modelElementNamePattern = modelElementNamePattern;
+		this.propertyValueTypeStereotypePattern = propertyValueTypeStereotypePattern;
 		this.applicationSchemaNamePattern = applicationSchemaNamePattern;
 	}
 
@@ -90,6 +100,15 @@ public class TaggedValueConfigurationEntry {
 	public Pattern getModelElementStereotypePattern() {
 		return modelElementStereotypePattern;
 	}
+	
+	/**
+	 * @return the pattern representing the regular expression of the
+	 *         propertyValueTypeStereotype attribute, or <code>null</code> if this
+	 *         filter criterium was not set in the configuration.
+	 */
+	public Pattern getPropertyValueTypeStereotypePattern() {
+		return propertyValueTypeStereotypePattern;
+	}
 
 	/**
 	 * @return the pattern representing the regular expression of the
@@ -98,6 +117,15 @@ public class TaggedValueConfigurationEntry {
 	 */
 	public Pattern getModelElementNamePattern() {
 		return modelElementNamePattern;
+	}
+
+	/**
+	 * @return the value defined by the modelElementType attribute, or
+	 *         <code>null</code> if this filter criterium was not set in the
+	 *         configuration.
+	 */
+	public ModelElementType getModelElementType() {
+		return modelElementType;
 	}
 
 	/**
@@ -124,6 +152,14 @@ public class TaggedValueConfigurationEntry {
 	public boolean hasModelElementStereotypePattern() {
 		return modelElementStereotypePattern != null;
 	}
+	
+	/**
+	 * @return true if this configuration entry has a value for the
+	 *         propertyValueTypeStereotype attribute, else false
+	 */
+	public boolean hasPropertyValueTypeStereotypePattern() {
+		return propertyValueTypeStereotypePattern != null;
+	}
 
 	/**
 	 * @return true if this configuration entry has a value for the
@@ -133,4 +169,11 @@ public class TaggedValueConfigurationEntry {
 		return applicationSchemaNamePattern != null;
 	}
 
+	/**
+	 * @return true if this configuration entry has a value for the
+	 *         modelElementType attribute, else false
+	 */
+	public boolean hasModelElementType() {
+		return modelElementType != null;
+	}
 }

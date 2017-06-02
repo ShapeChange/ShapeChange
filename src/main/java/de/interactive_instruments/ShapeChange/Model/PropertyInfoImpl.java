@@ -97,11 +97,8 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s;
 	} // encodingRule()
 
-	/**
-	 * This inquires whether the property represents metadata, i.e. if it
-	 * carries an appropriate tagged value.
-	 */
-	public boolean isMetadata() {
+	@Override
+	public final boolean isMetadata() {
 		String s = taggedValue("isMetadata");
 		if (s != null && s.toLowerCase().equals("true"))
 			return true;

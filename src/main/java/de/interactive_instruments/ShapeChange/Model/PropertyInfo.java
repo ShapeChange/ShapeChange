@@ -149,6 +149,10 @@ public interface PropertyInfo extends Info {
 	 */
 	public String defaultCodeSpace();
 
+	/**
+	 * @return <code>true</code> if the property has tagged value 'isMetadata'
+	 *         with value 'true', else <code>false</code> .
+	 */
 	public boolean isMetadata();
 
 	/**

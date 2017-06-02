@@ -730,7 +730,7 @@ public class SqlBuilder implements MessageSource {
 							.setReferencedTable(map(activeIndicatorLFType));
 				} else {
 					result.addError(this, 26, sqlddl.activeIndicatorLFType,
-							sqlddl.nameActiveIndicatorLFColumn);
+							sqlddl.nameActiveIndicatorLFColumn, table.getName());
 				}
 
 				ColumnDataType cd_activeIndicatorLFDataType = new ColumnDataType(
@@ -2096,7 +2096,7 @@ public class SqlBuilder implements MessageSource {
 		case 25:
 			return "Identifier attribute '$1$' has max multiplicity > 1.";
 		case 26:
-			return "?? Type '$1$' is configured to be used as conceptual type of the $2$ column in tables representing code lists. However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
+			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
 
 		case 100:
 			return "Context: property '$1$'.";

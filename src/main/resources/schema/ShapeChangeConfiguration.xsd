@@ -14,6 +14,7 @@
    <element ref="sc:log"/>
    <element ref="sc:transformers"/>
    <element ref="sc:targets"/>
+   <element ref="xi:include"/>
   </choice>
  </complexType>
  <element name="input">
@@ -420,6 +421,19 @@
   <attribute name="modelElementStereotype" type="string"/>
   <attribute name="modelElementName" type="string"/>
   <attribute name="applicationSchemaName" type="string"/>
+  <attribute name="modelElementType">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="Association"/>
+     <enumeration value="Class"/>
+     <enumeration value="Package"/>
+     <enumeration value="Property"/>
+     <enumeration value="Attribute"/>
+     <enumeration value="AssociationRole"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="propertyValueTypeStereotype" type="string"/>
  </complexType>
  <element name="TargetOwl" type="sc:TargetOwlType">
   <unique name="uniqueConstraintType">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_inclusion.xml" end="Mon May 29 17:20:15 CEST 2017" resultCode="0" start="Mon May 29 17:20:07 CEST 2017" version="2.3.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_inclusion.xml" end="Tue May 30 16:43:44 CEST 2017" resultCode="0" start="Tue May 30 16:43:34 CEST 2017" version="2.3.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating transformer with @id 'trf' ..."/>

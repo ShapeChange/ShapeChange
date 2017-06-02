@@ -287,6 +287,28 @@ public class XsdDocument implements MessageSource {
 					addImport(Options.DGIWGSP_NSABR, Options.DGIWGSP_NS);
 				}
 			}
+			
+			if (info.matches("rule-xsd-pkg-gmlsf")) {
+
+				String gmlsfComplianceLevel = pi
+						.taggedValue("gmlsfComplianceLevel");
+
+				if (gmlsfComplianceLevel != null
+						&& !gmlsfComplianceLevel.trim().isEmpty()) {
+					
+					e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+							"appinfo");
+					addAttribute(e2, "source", options
+							.schemaLocationOfNamespace(Options.GMLSF_NS));
+					Element e0 = document.createElementNS(Options.GMLSF_NS,
+							"ComplianceLevel");
+					e2.appendChild(e0);
+					e0.appendChild(
+							document.createTextNode(gmlsfComplianceLevel));
+					
+					addImport(Options.GMLSF_NSABR, Options.GMLSF_NS);
+				}
+			}
 		}
 
 		if (info instanceof PropertyInfo) {

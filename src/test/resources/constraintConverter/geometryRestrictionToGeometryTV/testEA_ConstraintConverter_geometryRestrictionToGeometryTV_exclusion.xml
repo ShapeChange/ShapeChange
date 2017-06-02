@@ -24,14 +24,18 @@
 			id="trf" mode="enabled">
 			<parameters>
 				<ProcessParameter name="geometryRepresentationTypes"
-					value="PointPositionInfo = P, CurvePositionInfo = C, SurfacePositionInfo = S" />
+					value="PointPositionInfo = P; CurvePositionInfo = C; SurfacePositionInfo = S" />
 				<ProcessParameter name="geometryRepresentationConstraintRegex"
-					value="Place Representations Allowed" />
+					value=".*Place Representations Allowed.*" />
+				<ProcessParameter name="geometryRepresentationValueTypeRegex"
+					value="PlaceInfo" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="trf">
 					<rule
 						name="rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion" />
+					<rule
+						name="rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>

@@ -151,6 +151,17 @@ public interface ClassInfo extends Info {
 	public SortedMap<StructuredNumber, PropertyInfo> properties();
 
 	/**
+	 * Get a set of all navigable properties (attributes and association roles)
+	 * that belong to this class or one of the types in its supertype hierarchy.
+	 * 
+	 * @return A map containing all navigable properties (attributes and
+	 *         association roles) that belong to this class or one of the types
+	 *         in its supertype hierarchy. The set can be empty but not
+	 *         <code>null</code>.
+	 */
+	public SortedSet<PropertyInfo> propertiesAll();
+
+	/**
 	 * This method returns the constraints associated with the class.
 	 * 
 	 * @return the constraints associated with the class; can be empty but not
@@ -171,7 +182,7 @@ public interface ClassInfo extends Info {
 	 * @return
 	 */
 	public PropertyInfo property(String name);
-	
+
 	/**
 	 * Look up the property with the given name in the properties owned by this
 	 * class. The search does not extend to supertypes of the class.

@@ -641,14 +641,6 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 //				assocCopy.setExamplesAll(assocCi.examplesAll().createCopy());
 
 				assocCopy.setStereotypes(assocCi.stereotypes());
-				assocCopy.setXmlSchemaType(assocCi.xmlSchemaType());
-				assocCopy.setIncludePropertyType(assocCi.includePropertyType());
-				assocCopy.setIncludeByValuePropertyType(
-						assocCi.includeByValuePropertyType());
-				assocCopy.setIsCollection(assocCi.isCollection());
-				assocCopy.setAsDictionary(assocCi.asDictionary());
-				assocCopy.setAsGroup(assocCi.asGroup());
-				assocCopy.setAsCharacterString(assocCi.asCharacterString());
 				assocCopy.setHasNilReason(assocCi.hasNilReason());
 				assocCopy.setIsAbstract(assocCi.isAbstract());
 				assocCopy.setIsLeaf(assocCi.isLeaf());
@@ -656,8 +648,6 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				assocCopy.setSubtypes(model.copy(assocCi.subtypes()));
 				assocCopy.setBaseClass(assocCi.baseClass());
 				assocCopy.setConstraints(model.copy(assocCi.constraints()));
-				assocCopy.setSuppressed(assocCi.suppressed());
-				assocCopy.setAsDictionaryGml33(assocCi.asDictionaryGml33());
 
 				// now to the interesting part
 

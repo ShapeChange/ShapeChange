@@ -68,5 +68,8 @@
 			<targetParameter name="versionDate" value="n/a"/>
 			<targetParameter name="producer" value="interactive instruments GmbH"/>	
 		</Target>
+<!-- 		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel" mode="enabled" inputs="step1"> -->
+<!-- 		  <targetParameter name="modelFilename" value="testResults/flattening/inheritance/uml/flattenedInheritance.eap"/> -->
+<!-- 		</Target> -->
 	</targets>
 </ShapeChangeConfiguration>

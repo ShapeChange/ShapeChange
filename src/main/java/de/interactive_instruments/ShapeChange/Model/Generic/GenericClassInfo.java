@@ -76,17 +76,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected String name = null;
 
 	protected boolean isAbstract = false;
-	protected boolean includePropertyType = true;
-	protected boolean includeByValuePropertyType = false;
-	protected boolean isCollection = false;
-	protected boolean asDictionary = false;
-	protected boolean asDictionaryGml33 = false;
-	protected boolean asGroup = false;
-	protected boolean asCharacterString = false;
 	protected boolean hasNilReason = false;
 	protected boolean isLeaf = false;
-	protected boolean suppressed = false;
-	protected String xmlSchemaType = null;
 
 	protected PackageInfo pkg = null;
 
@@ -116,63 +107,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.id = id;
 		this.name = name;
 		this.category = category;
-	}
-
-	/**
-	 * @param xmlSchemaType
-	 *            the xmlSchemaType to set
-	 */
-	public void setXmlSchemaType(String xmlSchemaType) {
-		this.xmlSchemaType = xmlSchemaType;
-	}
-
-	/**
-	 * @param includePropertyType
-	 *            the includePropertyType to set
-	 */
-	public void setIncludePropertyType(boolean includePropertyType) {
-		this.includePropertyType = includePropertyType;
-	}
-
-	/**
-	 * @param includeByValuePropertyType
-	 *            the includeByValuePropertyType to set
-	 */
-	public void setIncludeByValuePropertyType(
-			boolean includeByValuePropertyType) {
-		this.includeByValuePropertyType = includeByValuePropertyType;
-	}
-
-	/**
-	 * @param isCollection
-	 *            the isCollection to set
-	 */
-	public void setIsCollection(boolean isCollection) {
-		this.isCollection = isCollection;
-	}
-
-	/**
-	 * @param asDictionary
-	 *            the asDictionary to set
-	 */
-	public void setAsDictionary(boolean asDictionary) {
-		this.asDictionary = asDictionary;
-	}
-
-	/**
-	 * @param asGroup
-	 *            the asGroup to set
-	 */
-	public void setAsGroup(boolean asGroup) {
-		this.asGroup = asGroup;
-	}
-
-	/**
-	 * @param asCharacterString
-	 *            the asCharacterString to set
-	 */
-	public void setAsCharacterString(boolean asCharacterString) {
-		this.asCharacterString = asCharacterString;
 	}
 
 	/**
@@ -254,22 +188,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 */
 	public void setConstraints(Vector<Constraint> list) {
 		this.constraints = list;
-	}
-
-	/**
-	 * @param suppressed
-	 *            the suppressed to set
-	 */
-	public void setSuppressed(boolean suppressed) {
-		this.suppressed = suppressed;
-	}
-
-	/**
-	 * @param asDictionaryGml33
-	 *            the asDictionaryGml33 to set
-	 */
-	public void setAsDictionaryGml33(boolean asDictionaryGml33) {
-		this.asDictionaryGml33 = asDictionaryGml33;
 	}
 
 	/**
@@ -437,67 +355,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("gmlAsCharacterString")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsCharacterString(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsCharacterString(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("asDictionary")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsDictionary(true);
-				this.setAsDictionaryGml33(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsDictionary(false);
-				this.setAsDictionaryGml33(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("gmlAsGroup")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsGroup(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsGroup(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("byValuePropertyType")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIncludeByValuePropertyType(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIncludeByValuePropertyType(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("noPropertyType")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIncludePropertyType(false);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIncludePropertyType(true);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("isCollection")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIsCollection(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIsCollection(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("xmlSchemaType")) {
-
-			this.setXmlSchemaType(tvValue);
-
-		} else if (tvName.equalsIgnoreCase("alias")) {
+		if (tvName.equalsIgnoreCase("alias")) {
 
 			LangString ls = LangString.parse(tvValue);
 			this.descriptors.put(Descriptor.ALIAS, ls);
@@ -511,15 +369,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			this.descriptors.put(Descriptor.DEFINITION, ls);
 			// this.setDefinitionAll(new Descriptors(tvValue));
 
-		} else if (tvName.equalsIgnoreCase("suppress")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setSuppressed(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setSuppressed(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
 		}
 	}
 
@@ -640,13 +489,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * Find the property given by its name in this class or (if not present
-	 * there) recursively in its base classes / supertypes.
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#property(java.
-	 *      lang.String)
-	 */
+	@Override
 	public PropertyInfo property(String name) {
 		// Search in own properties
 		for (PropertyInfo pi : properties.values()) {
@@ -683,87 +526,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	public OperationInfo operation(String name, String[] types) {
 		// currently not supported
 		return null;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#xmlSchemaType()
-	 */
-	@Override
-	public String xmlSchemaType() {
-
-		return xmlSchemaType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#includeByValuePropertyType()
-	 */
-	@Override
-	public boolean includeByValuePropertyType() {
-
-		return includeByValuePropertyType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#includePropertyType()
-	 */
-	@Override
-	public boolean includePropertyType() {
-
-		return includePropertyType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#isCollection()
-	 */
-	@Override
-	public boolean isCollection() {
-
-		return isCollection;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asDictionary()
-	 */
-	@Override
-	public boolean asDictionary() {
-
-		return asDictionary;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asDictionaryGml33()
-	 */
-	@Override
-	public boolean asDictionaryGml33() {
-
-		return asDictionaryGml33;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asGroup()
-	 */
-	@Override
-	public boolean asGroup() {
-
-		return asGroup;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asCharacterString()
-	 */
-	@Override
-	public boolean asCharacterString() {
-
-		return asCharacterString;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#suppressed()
-	 */
-	@Override
-	public boolean suppressed() {
-
-		return suppressed;
 	}
 
 	public String printAsString(String indent) {
@@ -1108,12 +870,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		copy.setStereotypes(stereotypesCache);
 		copy.setTaggedValues(taggedValuesCache, false);
-		copy.setIncludePropertyType(includePropertyType);
-		copy.setIncludeByValuePropertyType(includeByValuePropertyType);
-		copy.setIsCollection(isCollection);
-		copy.setAsDictionary(asDictionary);
-		copy.setAsGroup(asGroup);
-		copy.setAsCharacterString(asCharacterString);
 		copy.setHasNilReason(hasNilReason);
 		copy.setPkg(pkg);
 		copy.setIsAbstract(isAbstract);
@@ -1155,9 +911,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		copy.setProperties(copyProperties);
 
 		copy.setConstraints((Vector<Constraint>) constraints.clone());
-		copy.setSuppressed(suppressed);
-		copy.setAsDictionaryGml33(asDictionaryGml33);
-		copy.setXmlSchemaType(xmlSchemaType);
 
 		return copy;
 	}

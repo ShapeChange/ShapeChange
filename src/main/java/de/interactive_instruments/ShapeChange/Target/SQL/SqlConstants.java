@@ -470,7 +470,7 @@ public class SqlConstants {
 	 */
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
-	public static final String DEFAULT_ACTIVEINDICATORLF_TYPE = "YesNoNacl";
+	public static final String DEFAULT_ACTIVEINDICATORLF_TYPE = "YesNoNaCL";
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";

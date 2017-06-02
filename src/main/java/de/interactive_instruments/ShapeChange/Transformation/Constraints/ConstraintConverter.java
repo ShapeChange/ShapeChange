@@ -44,14 +44,17 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
@@ -70,6 +73,11 @@ public class ConstraintConverter implements Transformer, MessageSource {
 	/* ------------------------------------------- */
 
 	/**
+	 *
+	 */
+	public static final String PARAM_GEOM_REP_CONSTRAINT_REGEX = "geometryRepresentationConstraintRegex";
+
+	/**
 	 * 
 	 */
 	public static final String PARAM_GEOM_REP_TYPES = "geometryRepresentationTypes";
@@ -77,7 +85,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 	/**
 	 *
 	 */
-	public static final String PARAM_GEOM_REP_CONSTRAINT_REGEX = "geometryRepresentationConstraintRegex";
+	public static final String PARAM_GEOM_REP_VALUE_TYPE_REGEX = "geometryRepresentationValueTypeRegex";
 
 	/* ------------------------ */
 	/* --- rule identifiers --- */
@@ -92,6 +100,8 @@ public class ConstraintConverter implements Transformer, MessageSource {
 	 * 
 	 */
 	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion";
+
+	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch";
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -134,7 +144,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			result.addInfo(null, 20103,
 					RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL);
 			applyRuleGeometryRestrictionToGeometryTaggedValue(genModel,
-					trfConfig, true);
+					trfConfig, rules, true);
 
 		} else if (rules.contains(
 				RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL)) {
@@ -142,7 +152,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			result.addInfo(null, 20103,
 					RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
 			applyRuleGeometryRestrictionToGeometryTaggedValue(genModel,
-					trfConfig, false);
+					trfConfig, rules, false);
 		}
 
 		// apply post-processing (nothing to do right now)
@@ -150,7 +160,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 
 	private void applyRuleGeometryRestrictionToGeometryTaggedValue(
 			GenericModel genModel, TransformerConfiguration config,
-			boolean isInclusion) {
+			Set<String> rules, boolean isInclusion) {
 
 		String geomRepConstrRegex = config.parameterAsString(
 				PARAM_GEOM_REP_CONSTRAINT_REGEX, null, false, false);
@@ -165,8 +175,24 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			}
 		}
 
+		String geomRepValueTypeRegex = config.parameterAsString(
+				PARAM_GEOM_REP_VALUE_TYPE_REGEX, null, false, false);
+		Pattern geomRepValueTypePattern = null;
+
+		if (geomRepValueTypeRegex != null && rules.contains(
+				RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE)) {
+			// parse regex
+			try {
+				geomRepValueTypePattern = Pattern
+						.compile(geomRepValueTypeRegex);
+			} catch (PatternSyntaxException e) {
+				// reported via configuration validator
+			}
+		}
+
 		List<String> geomRepTypesIn = config.parameterAsStringList(
-				ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true, true);
+				ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true, true,
+				";");
 
 		Map<String, String> geomRepTypes = new HashMap<String, String>();
 		boolean foundInvalidGeomRepTypeValue = false;
@@ -199,41 +225,90 @@ public class ConstraintConverter implements Transformer, MessageSource {
 		} else {
 
 			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+				
+				if(genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST) {
+					continue;
+				}
+
+				SortedSet<String> geometryTVValues = new TreeSet<String>();
+
+				int countGeomRepConstrFound = 0;
 
 				for (Constraint con : genCi.constraints()) {
 
-					Matcher matcher = geomRepConstrPattern.matcher(con.name());
+					Matcher matcherOnConstraintName = geomRepConstrPattern
+							.matcher(con.name());
 
-					if (matcher.matches()) {
+					if (matcherOnConstraintName.matches()) {
 
-						SortedSet<String> geometryTVValues = new TreeSet<String>();
+						countGeomRepConstrFound++;
 
-						for (Entry<String, String> geomRepType : geomRepTypes
-								.entrySet()) {
+						if (countGeomRepConstrFound == 1) {
 
-							String geomTypeName = geomRepType.getKey();
-							String geomTypeAbbrev = geomRepType.getValue();
+							for (Entry<String, String> geomRepType : geomRepTypes
+									.entrySet()) {
 
-							if ((isInclusion
-									&& con.text().contains(geomTypeName))
-									|| (!isInclusion && !con.text()
-											.contains(geomTypeName))) {
+								String geomTypeName = geomRepType.getKey();
+								String geomTypeAbbrev = geomRepType.getValue();
+
+								if ((isInclusion
+										&& con.text().contains(geomTypeName))
+										|| (!isInclusion && !con.text()
+												.contains(geomTypeName))) {
+
+									geometryTVValues.add(geomTypeAbbrev);
+								}
+							}
+						}
+					}
+				}
+
+				if (countGeomRepConstrFound > 1) {
+
+					MessageContext mc = result.addError(this, 101,
+							"" + countGeomRepConstrFound, genCi.name());
+					if (mc != null) {
+						mc.addDetail(this, 1, genCi.fullName());
+					}
+
+				} else if (countGeomRepConstrFound == 0
+						&& geomRepValueTypePattern != null) {
+
+					for (PropertyInfo pi : genCi.propertiesAll()) {
+
+						Matcher matcherOnPiTypeName = geomRepValueTypePattern
+								.matcher(pi.typeInfo().name);
+
+						if (matcherOnPiTypeName.matches()) {
+
+							for (String geomTypeAbbrev : geomRepTypes
+									.values()) {
 
 								geometryTVValues.add(geomTypeAbbrev);
 							}
+
+							break;
 						}
-
-						if (geometryTVValues.size() > 0) {
-
-							String join = commaJoiner.join(geometryTVValues);
-							genCi.setTaggedValue("geometry", join, false);
-						}
-
-						break;
 					}
+				}
+
+				if (geometryTVValues.size() > 0) {
+
+					String join = commaJoiner.join(geometryTVValues);
+
+					String geometryTV = genCi.taggedValue("geometry");
+					if (geometryTV != null) {
+						MessageContext mc = result.addWarning(this, 102, genCi.name(), geometryTV, join);
+						if(mc != null) {
+							mc.addDetail(this, 1, genCi.fullName());
+						}
+					}
+
+					genCi.setTaggedValue("geometry", join, false);
 				}
 			}
 		}
+
 	}
 
 	@Override
@@ -255,7 +330,11 @@ public class ConstraintConverter implements Transformer, MessageSource {
 					+ PARAM_GEOM_REP_CONSTRAINT_REGEX + "' and/or '"
 					+ PARAM_GEOM_REP_TYPES
 					+ "'. For further details, check the configuration validator log messages.";
-
+		case 101:
+			return "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
+		case 102:
+			return "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
+			
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

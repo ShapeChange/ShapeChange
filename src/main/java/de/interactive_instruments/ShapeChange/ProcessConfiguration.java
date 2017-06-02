@@ -245,6 +245,33 @@ public class ProcessConfiguration {
 			String[] defaultValues, boolean omitEmptyStrings,
 			boolean trimResults) {
 
+		return parameterAsStringList(parameterName, defaultValues,
+				omitEmptyStrings, trimResults, ",");
+	}
+
+	/**
+	 * @param parameterName
+	 *            name of the parameter to retrieve the separated values from
+	 * @param defaultValues
+	 *            values that will be returned if no values were found;
+	 *            <code>null</code> is converted to an empty list of strings
+	 * @param omitEmptyStrings
+	 *            <code>true</code> if values may NOT be empty if they were
+	 *            trimmed, else <code>false</code>
+	 * @param trimResults
+	 *            <code>true</code> if leading and trailing whitespace shall be
+	 *            removed from a value
+	 * @param separator
+	 *            the literal, nonempty string to recognize as a separator
+	 * @return list of values (originally separated via the given separator)
+	 *         retrieved from this parameter, or the default values if the
+	 *         parameter was not set or did not contain valid values; can be
+	 *         empty but not <code>null</code>
+	 */
+	public List<String> parameterAsStringList(String parameterName,
+			String[] defaultValues, boolean omitEmptyStrings,
+			boolean trimResults, String separator) {
+
 		List<String> defaultValuesList = defaultValues == null
 				? new ArrayList<String>() : Arrays.asList(defaultValues);
 
@@ -256,7 +283,7 @@ public class ProcessConfiguration {
 
 		} else {
 
-			Splitter splitter = Splitter.on(',');
+			Splitter splitter = Splitter.on(separator);
 
 			if (omitEmptyStrings) {
 				splitter = splitter.omitEmptyStrings();

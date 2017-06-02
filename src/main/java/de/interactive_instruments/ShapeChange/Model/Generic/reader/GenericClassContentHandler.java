@@ -64,11 +64,8 @@ public class GenericClassContentHandler
 		extends AbstractGenericInfoContentHandler {
 
 	private static final Set<String> SIMPLE_CLASS_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "includePropertyType",
-					"includeByValuePropertyType", "isCollection",
-					"asDictionary", "asDictionaryGml33", "asGroup",
-					"asCharacterString", "hasNilReason", "isAbstract", "isLeaf",
-					"suppressed", "xmlSchemaType", "associationId",
+			Arrays.asList(new String[] { "hasNilReason", "isAbstract", "isLeaf",
+					"associationId",
 					"baseClassId" }));
 
 	private GenericClassInfo genCi = new GenericClassInfo();
@@ -221,34 +218,6 @@ public class GenericClassContentHandler
 			 * ignore - DiagramsContentHandler calls this.setDiagrams(...)
 			 */
 
-		} else if (localName.equals("includePropertyType")) {
-
-			this.genCi.setIncludePropertyType(toBooleanValue(sb));
-
-		} else if (localName.equals("includeByValuePropertyType")) {
-
-			this.genCi.setIncludeByValuePropertyType(toBooleanValue(sb));
-
-		} else if (localName.equals("isCollection")) {
-
-			this.genCi.setIsCollection(toBooleanValue(sb));
-
-		} else if (localName.equals("asDictionary")) {
-
-			this.genCi.setAsDictionary(toBooleanValue(sb));
-
-		} else if (localName.equals("asDictionaryGml33")) {
-
-			this.genCi.setAsDictionaryGml33(toBooleanValue(sb));
-
-		} else if (localName.equals("asGroup")) {
-
-			this.genCi.setAsGroup(toBooleanValue(sb));
-
-		} else if (localName.equals("asCharacterString")) {
-
-			this.genCi.setAsCharacterString(toBooleanValue(sb));
-
 		} else if (localName.equals("hasNilReason")) {
 
 			this.genCi.setHasNilReason(toBooleanValue(sb));
@@ -260,14 +229,6 @@ public class GenericClassContentHandler
 		} else if (localName.equals("isLeaf")) {
 
 			this.genCi.setIsLeaf(toBooleanValue(sb));
-
-		} else if (localName.equals("suppressed")) {
-
-			this.genCi.setSuppressed(toBooleanValue(sb));
-
-		} else if (localName.equals("xmlSchemaType")) {
-
-			this.genCi.setXmlSchemaType(sb.toString());
 
 		} else if (localName.equals("associationId")) {
 

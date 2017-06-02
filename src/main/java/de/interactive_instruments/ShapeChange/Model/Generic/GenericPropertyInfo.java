@@ -39,6 +39,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -81,7 +82,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
 	protected String defaultCodeSpace = null;
-	protected boolean isMetadata = false;
 	protected boolean implementedByNilReason = false;
 	protected boolean voidable = false;
 
@@ -107,25 +107,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.cardinality = new Multiplicity("1");
 	}
 
-	@Override
-	public boolean isMetadata() {
-		return isMetadata;
-	}
-
 	/**
 	 * @param isAttribute
 	 *            the isAttribute to set
 	 */
 	public void setAttribute(boolean isAttribute) {
 		this.isAttribute = isAttribute;
-	}
-
-	/**
-	 * @param isMetadata
-	 *            the isMetadata to set
-	 */
-	public void setMetadata(boolean isMetadata) {
-		this.isMetadata = isMetadata;
 	}
 
 	/**
@@ -653,7 +640,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setInitialValue(initialValue);
 		copy.setInlineOrByReference(inlineOrByReference);
 		copy.setDefaultCodeSpace(defaultCodeSpace);
-		copy.setMetadata(isMetadata);
 		copy.setReverseProperty(reverseProperty);
 		copy.setInClass(inClass);
 
@@ -695,20 +681,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		sb.append(System.getProperty("line.separator"));
 
 		return sb.toString();
-	}
-
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 1:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
-		case 2:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
-
-		default:
-			return "(" + GenericPropertyInfo.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
 	}
 
 	@Override
@@ -754,16 +726,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("isMetadata")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setMetadata(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setMetadata(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("gmlImplementedByNilReason")
+		if (tvName.equalsIgnoreCase("gmlImplementedByNilReason")
 				|| tvName.equalsIgnoreCase("implementedByNilReason")) {
 
 			if (tvValue.equalsIgnoreCase("true")) {
@@ -771,7 +734,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			} else if (tvValue.equalsIgnoreCase("false")) {
 				this.setImplementedByNilReason(false);
 			} else {
-				result.addWarning(this, 1, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
+				if(mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
 		} else if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
 
@@ -780,18 +746,24 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			} else if (tvValue.equalsIgnoreCase("false")) {
 				this.setNilReasonAllowed(false);
 			} else {
-				result.addWarning(this, 1, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
+				if(mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
 		} else if (tvName.equalsIgnoreCase("inlineOrByReference")) {
 
 			if (tvValue.equalsIgnoreCase("inline")) {
 				this.setInlineOrByReference("inline");
 			} else if (tvValue.equalsIgnoreCase("byReference")) {
-				this.setInlineOrByReference("byReference");
+				this.setInlineOrByReference("byreference");
 			} else if (tvValue.equalsIgnoreCase("inlineOrByReference")) {
 				this.setInlineOrByReference("inlineOrByReference");
 			} else {
-				result.addWarning(this, 2, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
+				if(mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
 		} else if (tvName.equalsIgnoreCase("alias")) {
 
@@ -828,7 +800,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			} else if (tvValue.equalsIgnoreCase("false")) {
 				this.setVoidable(false);
 			} else {
-				result.addWarning(this, 1, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
+				if(mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
 		}
 	}
@@ -863,6 +838,22 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			this.profiles = new Profiles();
 		} else {
 			this.profiles = profiles;
+		}
+	}
+	
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: property '$1$'.";
+		case 1:
+			return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
+		case 2:
+			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
+
+		default:
+			return "(" + GenericPropertyInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

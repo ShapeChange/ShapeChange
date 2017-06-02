@@ -70,14 +70,14 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return null;
 	}
 
-	public String nsabr() {
+	public final String nsabr() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.xmlns();
 		return null;
 	}
 
-	public String ns() {
+	public final String ns() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.targetNamespace();
@@ -85,7 +85,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	/** Return the encoding rule relevant on the class, given the platform */
-	public String encodingRule(String platform) {
+	public final String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
 		if (s == null || s.isEmpty()
 				|| options().ignoreEncodingRuleTaggedValues()) {
@@ -114,24 +114,20 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	// follow the standard UML-to-GML
 	// encoding rules in some cases, for example where a compact structure based
 	// on "simpleContent" is already well known within the application domain.
-	public String xmlSchemaType() {
+	public final String xmlSchemaType() {
 		return taggedValue("xmlSchemaType");
 	} // xmlSchemaType()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#includeByValuePropertyType()
-	 */
-	public boolean includeByValuePropertyType() {
+	@Override
+	public final boolean includeByValuePropertyType() {
 		String s = taggedValue("byValuePropertyType");
 		if (s != null && s.toLowerCase().equals("true"))
 			return true;
 		return false;
 	} // includeByValuePropertyType()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#includePropertyType()
-	 */
-	public boolean includePropertyType() {
+	@Override
+	public final boolean includePropertyType() {
 		String s = taggedValue("noPropertyType");
 		if (s != null && s.toLowerCase().equals("true"))
 			return false;
@@ -142,7 +138,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * This predicate determines if the class is a collection. This is done by
 	 * inspecting the associated tagged value.
 	 */
-	public boolean isCollection() {
+	public final boolean isCollection() {
 		String s = taggedValue("isCollection");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return true;
@@ -151,7 +147,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	} // isCollection()
 
 	/** Find out if this class has to be output as a dictionary. */
-	public boolean asDictionary() {
+	public final boolean asDictionary() {
 		if (category() != Options.CODELIST)
 			return false;
 		String s = taggedValue("asDictionary");
@@ -162,7 +158,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	} // asDictionary()
 
 	/** Find out if this class has to be output as a dictionary. */
-	public boolean asDictionaryGml33() {
+	public final boolean asDictionaryGml33() {
 		if (category() != Options.CODELIST)
 			return false;
 		String s = taggedValue("asDictionary");
@@ -179,7 +175,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * is only valid, if it is clear from the context how to map the individual
 	 * values to the conceptual model.
 	 */
-	public boolean asGroup() {
+	public final boolean asGroup() {
 		String s = taggedValue("gmlAsGroup");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return !this.isUnionDirect();
@@ -194,7 +190,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * Note: This is experimental code which is prone to being removed as soon
 	 * as a better solution for the problem at hand is found.
 	 */
-	public boolean asCharacterString() {
+	public final boolean asCharacterString() {
 		String s = taggedValue("gmlAsCharacterString");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return !this.isUnionDirect();
@@ -226,7 +222,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * stereotype. It is an error, if a class carries a stereotype not
 	 * recognized by ShapeChange.
 	 */
-	public void establishCategory() throws ShapeChangeAbortException {
+	public final void establishCategory() throws ShapeChangeAbortException {
 		if (stereotype("enumeration")) {
 			category = Options.ENUMERATION;
 		} else if (stereotype("codelist")) {
@@ -293,7 +289,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * been assigned UNKONWN. The correction is applied by fetching the missing
 	 * category from one of the supertypes.
 	 */
-	public void fixIfCategoryIsUnknown() {
+	public final void fixIfCategoryIsUnknown() {
 		if (category == Options.UNKNOWN && supertypes() != null) {
 			if (isAbstract() && checkSupertypes(Options.MIXIN)) {
 				category = Options.MIXIN;
@@ -312,7 +308,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#inSchema(de.interactive_instruments.ShapeChange.Model.PackageInfo)
 	 */
-	public boolean inSchema(PackageInfo pi) {
+	public final boolean inSchema(PackageInfo pi) {
 		String ns1 = null;
 		String ns2 = null;
 		PackageInfo pi2 = this.pkg();
@@ -336,7 +332,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 */
 	// TODO If a class is in no package or is not associated with a namespace,
 	// report an error?
-	public String qname() {
+	public final String qname() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.xmlns() + ":" + name();
@@ -362,6 +358,23 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			processed = processed & ~t;
 		}
 	} // processed()
+
+	@Override
+	public SortedSet<PropertyInfo> propertiesAll() {
+
+		SortedSet<PropertyInfo> allProps = new TreeSet<PropertyInfo>();
+
+		allProps.addAll(this.properties().values());
+
+		for (String supertypeId : this.supertypes()) {
+			ClassInfo supertype = this.model().classById(supertypeId);
+			SortedSet<PropertyInfo> allSupertypeProps = supertype
+					.propertiesAll();
+			allProps.addAll(allSupertypeProps);
+		}
+
+		return allProps;
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#checkSupertypes(int)
@@ -447,10 +460,8 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return false;
 	} // isSubtype()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#isKindOf(java.lang.String)
-	 */
-	public boolean isKindOf(String supertype) {
+	@Override
+	public final boolean isKindOf(String supertype) {
 		SortedSet<String> st = supertypes();
 		if (st != null) {
 			for (Iterator<String> i = st.iterator(); i.hasNext();) {
@@ -469,7 +480,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * attaching constraints to its next direct or indirect unsuppressed
 	 * superclass.
 	 */
-	public boolean suppressed() {
+	public final boolean suppressed() {
 		String supval = taggedValue("suppress");
 		if (supval != null && supval.equalsIgnoreCase("true"))
 			return true;
@@ -489,7 +500,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * we start (this class) is already found unsuppressed, then this class is
 	 * returned.
 	 */
-	public ClassInfo unsuppressedSupertype(boolean permitAbstract) {
+	public final ClassInfo unsuppressedSupertype(boolean permitAbstract) {
 		for (ClassInfo sci = this; sci != null; sci = sci.baseClass()) {
 			if (sci.suppressed())
 				continue;
@@ -504,7 +515,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * Find out whether this class owns a constraint of the given name. More
 	 * efficient overwrites should be added in the various models.
 	 */
-	public boolean hasConstraint(String name) {
+	public final boolean hasConstraint(String name) {
 		List<Constraint> vc = constraints();
 		for (Constraint c : vc) {
 			if (c.name().equals(name))
@@ -513,19 +524,13 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return false;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
-	 */
+	@Override
 	public String fullName() {
 		return pkg().fullName() + "::" + name();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullNameInSchema()
-	 */
-	public String fullNameInSchema() {
+	@Override
+	public final String fullNameInSchema() {
 		return pkg().fullNameInSchema() + "::" + name();
 	}
 
@@ -869,7 +874,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		postprocessed = true;
 	}
 
-	public boolean isUnionDirect() {
+	public final boolean isUnionDirect() {
 		return category() == Options.UNION
 				&& matches("rule-xsd-cls-union-direct") && hasNilReason()
 				&& properties().size() == 2;
@@ -884,7 +889,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	@Override
-	public SortedSet<ClassInfo> subtypesInCompleteHierarchy() {
+	public final SortedSet<ClassInfo> subtypesInCompleteHierarchy() {
 
 		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
 

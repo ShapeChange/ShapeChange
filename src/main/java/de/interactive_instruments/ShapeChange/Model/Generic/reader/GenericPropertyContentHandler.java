@@ -67,7 +67,7 @@ public class GenericPropertyContentHandler
 					"isReadOnly", "isAttribute", "isNavigable", "isOrdered",
 					"isUnique", "isComposition", "isAggregation",
 					"initialValue", "inlineOrByReference", "defaultCodeSpace",
-					"isMetadata", "sequenceNumber", "implementedByNilReason",
+					"sequenceNumber", "implementedByNilReason",
 					"voidable", "reversePropertyId", "associationId", "typeId",
 					"typeName", "inClassId" }));
 
@@ -250,10 +250,6 @@ public class GenericPropertyContentHandler
 		} else if (localName.equals("defaultCodeSpace")) {
 
 			this.genPi.setDefaultCodeSpace(sb.toString());
-
-		} else if (localName.equals("isMetadata")) {
-
-			this.genPi.setMetadata(toBooleanValue(sb));
 
 		} else if (localName.equals("sequenceNumber")) {
 

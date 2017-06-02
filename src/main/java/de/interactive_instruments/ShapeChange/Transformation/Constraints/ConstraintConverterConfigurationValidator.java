@@ -111,7 +111,8 @@ public class ConstraintConverterConfigurationValidator
 			}
 
 			List<String> geomRepTypesIn = config.parameterAsStringList(
-					ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true, true);
+					ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true, true,
+					";");
 
 			if (geomRepTypesIn == null || geomRepTypesIn.isEmpty()) {
 				isValid = false;
@@ -132,6 +133,34 @@ public class ConstraintConverterConfigurationValidator
 				}
 			}
 
+		}
+
+		if (rules.contains(
+				ConstraintConverter.RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE)) {
+
+			// check that required parameter is set
+
+			String geomRepValueTypeRegex = config.parameterAsString(
+					ConstraintConverter.PARAM_GEOM_REP_VALUE_TYPE_REGEX, null,
+					false, false);
+
+			if (geomRepValueTypeRegex == null) {
+				isValid = false;
+				result.addError(this, 100,
+						ConstraintConverter.PARAM_GEOM_REP_VALUE_TYPE_REGEX,
+						ConstraintConverter.RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE);
+			} else {
+
+				// ensure that regex is valid
+				try {
+					Pattern.compile(geomRepValueTypeRegex);
+				} catch (PatternSyntaxException e) {
+					isValid = false;
+					result.addError(this, 4,
+							ConstraintConverter.PARAM_GEOM_REP_VALUE_TYPE_REGEX,
+							geomRepValueTypeRegex, e.getMessage());
+				}
+			}
 		}
 
 		return isValid;
@@ -157,7 +186,7 @@ public class ConstraintConverterConfigurationValidator
 			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
 		case 101:
 			return "Parameter '" + ConstraintConverter.PARAM_GEOM_REP_TYPES
-					+ "' is malformed. Multiple values must be separated by commas, and each value must contain two non-empty strings, separated by '='. Found: '$1$' (check the other values as well).";
+					+ "' is malformed. Multiple values must be separated by semicolon, and each value must contain two non-empty strings, separated by '='. Found: '$1$' (check the other values as well).";
 
 		default:
 			return "(" + this.getClass().getName()

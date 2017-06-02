@@ -36,20 +36,14 @@ import org.junit.Test;
 public class FlattenerTest extends WindowsBasicTest {
 
 	@Test
-	public void testFlattening1() {
-		/*
-		 * Flattening transformation
-		 */
+	public void test_flatten() {
 		multiTest("src/test/resources/config/testEA_Flattening.xml",
 				new String[] { "xsd" }, "testResults/flattening/xsd",
 				"src/test/resources/reference/flattening/xsd");
 	}
 
 	@Test
-	public void testFlattening2() {
-		/*
-		 * Flattening transformation - only homogeneous geometries
-		 */
+	public void test_flatten_homogeneousGeometries() {
 		multiTest(
 				"src/test/resources/config/testEA_Flattening_homogeneousGeometries.xml",
 				new String[] { "xsd" },
@@ -58,11 +52,7 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testFlattening3() {
-		/*
-		 * Flattening transformation - only homogeneous geometries - Test1
-		 * (handling of associations)
-		 */
+	public void test_flatten_homogeneousGeometries_associations() {
 		multiTest(
 				"src/test/resources/config/testEA_Flattening_homogeneousGeometries_test1.xml",
 				new String[] { "xsd" },
@@ -71,20 +61,14 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testFlattening4() {
-		/*
-		 * Flattening transformation - only inheritance
-		 */
+	public void test_flatten_inheritance() {
 		multiTest("src/test/resources/config/testEA_Flattening_inheritance.xml",
 				new String[] { "xsd" }, "testResults/flattening/inheritance/",
 				"src/test/resources/reference/flattening/inheritance");
 	}
 
 	@Test
-	public void testFlattening5() {
-		/*
-		 * Flattening transformation - removing inheritance
-		 */
+	public void test_flatten_removeInheritance() {
 		multiTest(
 				"src/test/resources/config/testEA_Flattening_removeInheritance.xml",
 				new String[] { "xsd" },
@@ -93,10 +77,7 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testFlattening6() {
-		/*
-		 * Flattening transformation - cycles (and isFlatTarget setting)
-		 */
+	public void test_flatten_cycles() {
 		multiTest("src/test/resources/config/testEA_Flattening_cycles.xml",
 				new String[] { "xsd" },
 				"testResults/flattening/xsd/cycles_step1",
@@ -104,10 +85,7 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testFlattening7() {
-		/*
-		 * Flattening transformation - remove feature-2-feature relationships
-		 */
+	public void test_flatten_removeFeatureToFeatureTypeRelationships() {
 		multiTest(
 				"src/test/resources/config/testEA_Flattening_removeFeatureTypeRelationships.xml",
 				new String[] { "xsd" },
@@ -116,11 +94,7 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testFlattening8() {
-		/*
-		 * Flattening transformation - remove object-2-feature relationships for
-		 * specific object types
-		 */
+	public void test_flatten_removeObjectToFeatureTypeRelationships() {
 		multiTest(
 				"src/test/resources/config/testEA_Flattening_removeObjectToFeatureTypeNavigability.xml",
 				new String[] { "xsd" },
@@ -129,7 +103,7 @@ public class FlattenerTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void testRuleTrfClsFlattenInheritanceAddAttributesAtBottom() {
+	public void test_flatten_inheritance_addAttributesAtBottom() {
 		/*
 		 * Test rule-trf-cls-flatten-inheritance-add-attributes-at-bottom
 		 */
@@ -140,4 +114,12 @@ public class FlattenerTest extends WindowsBasicTest {
 				"src/test/resources/reference/flattening/inheritanceAddAttributesAtBottom");
 	}
 
+	@Test
+	public void test_flatten_geometryTypeInheritance() {
+		multiTest(
+				"src/test/resources/flattener/flattenGeometryTypeInheritance/testEA_Flattener_geometryTypeInheritance.xml",
+				new String[] { "xsd" },
+				"testResults/flattening/flattenGeometryTypeInheritance",
+				"src/test/resources/flattener/flattenGeometryTypeInheritance/reference");
+	}
 }

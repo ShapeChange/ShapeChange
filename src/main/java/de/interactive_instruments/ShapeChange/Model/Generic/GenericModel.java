@@ -263,14 +263,6 @@ public class GenericModel extends ModelImpl {
 
 				// set properties required by ClassInfo interface
 
-				genCi.setXmlSchemaType(ci.xmlSchemaType());
-				genCi.setIncludePropertyType(ci.includePropertyType());
-				genCi.setIncludeByValuePropertyType(
-						ci.includeByValuePropertyType());
-				genCi.setIsCollection(ci.isCollection());
-				genCi.setAsDictionary(ci.asDictionary());
-				genCi.setAsGroup(ci.asGroup());
-				genCi.setAsCharacterString(ci.asCharacterString());
 				genCi.setHasNilReason(ci.hasNilReason());
 				genCi.setPkg(ci.pkg());
 				genCi.setIsAbstract(ci.isAbstract());
@@ -281,8 +273,6 @@ public class GenericModel extends ModelImpl {
 				genCi.setBaseClass(ci.baseClass());
 				genCi.setProperties(ci.properties());
 				genCi.setConstraints(copy(ci.constraints()));
-				genCi.setSuppressed(ci.suppressed());
-				genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
 
 				genCi.setDiagrams(ci.getDiagrams());
 
@@ -348,7 +338,6 @@ public class GenericModel extends ModelImpl {
 				genPi.setInitialValue(pi.initialValue());
 				genPi.setInlineOrByReference(pi.inlineOrByReference());
 				genPi.setDefaultCodeSpace(pi.defaultCodeSpace());
-				genPi.setMetadata(pi.isMetadata());
 				genPi.setReverseProperty(pi.reverseProperty());
 				genPi.setInClass(pi.inClass());
 				StructuredNumber strucNum = pi.sequenceNumber();
@@ -2359,13 +2348,6 @@ public class GenericModel extends ModelImpl {
 		genCi.setProfiles(ci.profiles().createCopy());
 
 		// set properties required by ClassInfo interface
-		genCi.setXmlSchemaType(ci.xmlSchemaType());
-		genCi.setIncludePropertyType(ci.includePropertyType());
-		genCi.setIncludeByValuePropertyType(ci.includeByValuePropertyType());
-		genCi.setIsCollection(ci.isCollection());
-		genCi.setAsDictionary(ci.asDictionary());
-		genCi.setAsGroup(ci.asGroup());
-		genCi.setAsCharacterString(ci.asCharacterString());
 		genCi.setHasNilReason(ci.hasNilReason());
 
 		genCi.setPkg(ci.pkg());
@@ -2381,8 +2363,6 @@ public class GenericModel extends ModelImpl {
 		genCi.setProperties(ci.properties());
 
 		genCi.setConstraints(copy(ci.constraints()));
-		genCi.setSuppressed(ci.suppressed());
-		genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
 
 		genCi.setDiagrams(ci.getDiagrams());
 
@@ -2423,7 +2403,6 @@ public class GenericModel extends ModelImpl {
 		copy.setInitialValue(pi.initialValue());
 		copy.setInlineOrByReference(pi.inlineOrByReference());
 		copy.setDefaultCodeSpace(pi.defaultCodeSpace());
-		copy.setMetadata(pi.isMetadata());
 		copy.setReverseProperty(pi.reverseProperty());
 		copy.setInClass(pi.inClass());
 

@@ -52,10 +52,12 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry;
+import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry.ModelElementType;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -356,7 +358,7 @@ public class TransformationManager {
 			result.addInfo(null, 20109);
 
 			genModel.validateConstraints();
-			
+
 		}
 	}
 
@@ -487,8 +489,33 @@ public class TransformationManager {
 			TaggedValueConfigurationEntry tvce) {
 
 		boolean modelElementStereotypeMatch = true;
+		boolean propertyValueTypeStereotypeMatch = true;
 		boolean modelElementNameMatch = true;
 		boolean applicationSchemaNameMatch = true;
+		boolean modelElementTypeMatch = true;
+
+		if (tvce.hasModelElementType()) {
+
+			modelElementTypeMatch = false;
+			ModelElementType met = tvce.getModelElementType();
+
+			if ((infoType instanceof AssociationInfo
+					&& met.equals(ModelElementType.ASSOCIATION))
+					|| (infoType instanceof ClassInfo
+							&& met.equals(ModelElementType.CLASS))
+					|| (infoType instanceof PackageInfo
+							&& met.equals(ModelElementType.PACKAGE))
+					|| (infoType instanceof PropertyInfo
+							&& met.equals(ModelElementType.PROPERTY))
+					|| (infoType instanceof PropertyInfo
+							&& met.equals(ModelElementType.ATTRIBUTE)
+							&& ((PropertyInfo) infoType).isAttribute())
+					|| (infoType instanceof PropertyInfo
+							&& met.equals(ModelElementType.ASSOCIATIONROLE)
+							&& !((PropertyInfo) infoType).isAttribute())) {
+				modelElementTypeMatch = true;
+			}
+		}
 
 		if (tvce.hasModelElementStereotypePattern()) {
 
@@ -526,6 +553,51 @@ public class TransformationManager {
 			}
 		}
 
+		if (tvce.hasPropertyValueTypeStereotypePattern()
+				&& infoType instanceof PropertyInfo) {
+
+			PropertyInfo pi = (PropertyInfo) infoType;
+
+			/*
+			 * Try to get the value type from the model
+			 */
+			Model model = pi.model();
+
+			ClassInfo valueType = null;
+			if (pi.typeInfo().id != null) {
+				valueType = model.classById(pi.typeInfo().id);
+			}
+			if (valueType == null && pi.typeInfo().name != null) {
+				valueType = model.classByName(pi.typeInfo().name);
+			}
+
+			if (valueType != null) {
+
+				propertyValueTypeStereotypeMatch = false;
+
+				Stereotypes stereotypes = valueType.stereotypes();
+
+				// TBD: what if a model element has no stereotype?
+				// stereotypes in info types have been normalized
+				if (stereotypes.isEmpty()) {
+					stereotypes = options.stereotypesFactory();
+					stereotypes.add("");
+				}
+
+				Pattern pattern = tvce.getPropertyValueTypeStereotypePattern();
+
+				for (String stereotype : stereotypes.asArray()) {
+
+					Matcher matcher = pattern.matcher(stereotype);
+
+					if (matcher.matches()) {
+						propertyValueTypeStereotypeMatch = true;
+						break;
+					}
+				}
+			}
+		}
+
 		if (tvce.hasModelElementNamePattern()) {
 
 			modelElementNameMatch = false;
@@ -550,6 +622,7 @@ public class TransformationManager {
 		}
 
 		return modelElementStereotypeMatch && modelElementNameMatch
+				&& propertyValueTypeStereotypeMatch && modelElementTypeMatch
 				&& applicationSchemaNameMatch;
 	}
 
@@ -635,6 +708,5 @@ public class TransformationManager {
 		}
 
 	}
-
 
 }

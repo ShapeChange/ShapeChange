@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gti="http://example.org/shapechange/flattener/geometryTypeInheritance" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/flattener/geometryTypeInheritance" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="CurvePositionInfo" substitutionGroup="gml:AbstractGML" type="gti:CurvePositionInfoType"/>
+  <complexType name="CurvePositionInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="geometry" type="gml:CurvePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CurvePositionInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gti:CurvePositionInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="gti:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="place">
+            <complexType>
+              <choice minOccurs="0">
+                <element ref="gti:CurvePositionInfo"/>
+                <element ref="gti:LocationInfo"/>
+                <element ref="gti:PointPositionInfo"/>
+                <element ref="gti:SurfacePositionInfo"/>
+              </choice>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="gti:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="LocationInfo" substitutionGroup="gml:AbstractGML" type="gti:LocationInfoType"/>
+  <complexType name="LocationInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="LocationInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gti:LocationInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="PlaceInfoPropertyType">
+    <choice minOccurs="0">
+      <element ref="gti:CurvePositionInfo"/>
+      <element ref="gti:LocationInfo"/>
+      <element ref="gti:PointPositionInfo"/>
+      <element ref="gti:SurfacePositionInfo"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="PointPositionInfo" substitutionGroup="gml:AbstractGML" type="gti:PointPositionInfoType"/>
+  <complexType name="PointPositionInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="geometry" type="gml:PointPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PointPositionInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gti:PointPositionInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="PositionInfoPropertyType">
+    <choice minOccurs="0">
+      <element ref="gti:CurvePositionInfo"/>
+      <element ref="gti:PointPositionInfo"/>
+      <element ref="gti:SurfacePositionInfo"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SurfacePositionInfo" substitutionGroup="gml:AbstractGML" type="gti:SurfacePositionInfoType"/>
+  <complexType name="SurfacePositionInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SurfacePositionInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="gti:SurfacePositionInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
