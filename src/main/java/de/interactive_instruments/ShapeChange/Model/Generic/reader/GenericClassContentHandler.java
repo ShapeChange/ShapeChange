@@ -64,7 +64,7 @@ public class GenericClassContentHandler
 		extends AbstractGenericInfoContentHandler {
 
 	private static final Set<String> SIMPLE_CLASS_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "hasNilReason", "isAbstract", "isLeaf",
+			Arrays.asList(new String[] { "isAbstract", "isLeaf",
 					"associationId",
 					"baseClassId" }));
 
@@ -217,10 +217,6 @@ public class GenericClassContentHandler
 			/*
 			 * ignore - DiagramsContentHandler calls this.setDiagrams(...)
 			 */
-
-		} else if (localName.equals("hasNilReason")) {
-
-			this.genCi.setHasNilReason(toBooleanValue(sb));
 
 		} else if (localName.equals("isAbstract")) {
 

@@ -469,14 +469,10 @@ public class AttributeCreator implements Transformer, MessageSource {
 						genPi.setTaggedValues(tvsForPi, true);
 
 						/*
-						 * set stereotypes - also setVoidable if voidable
-						 * stereotype is contained
+						 * set stereotypes
 						 */
 						genPi.setStereotypes(attDef.getStereotypes());
-						if (genPi.stereotypes().contains("voidable")) {
-							genPi.setVoidable(true);
-						}
-
+						
 						/*
 						 * Determine if new property would be a restriction. We
 						 * already checked that ci itself does not have a

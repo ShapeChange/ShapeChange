@@ -197,10 +197,6 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 		return res;
 	};
 
-	public boolean hasNilReason() {
-		return hasNilReason;
-	};
-
 	protected TreeMap<StructuredNumber, PropertyInfo> properties = null;
 
 	public TreeMap<StructuredNumber, PropertyInfo> properties() {
@@ -228,8 +224,6 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 		}
 		return null;
 	}
-
-	protected boolean hasNilReason = false;
 
 	public TreeMap<Integer, OperationInfo> operations;
 
@@ -282,9 +276,6 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 						piTemp.name());
 			}
 			properties.put(atti.sequenceNumber(), atti);
-			if (atti.implementedByNilReason()) {
-				hasNilReason = true;
-			}
 		}
 
 		// add all navigable association ends
@@ -299,9 +290,6 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 							piTemp.name());
 				}
 				properties.put(ri.sequenceNumber(), ri);
-				if (ri.implementedByNilReason()) {
-					hasNilReason = true;
-				}
 			}
 		}
 

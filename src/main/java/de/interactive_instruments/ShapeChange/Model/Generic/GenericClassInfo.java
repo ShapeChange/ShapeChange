@@ -76,7 +76,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected String name = null;
 
 	protected boolean isAbstract = false;
-	protected boolean hasNilReason = false;
 	protected boolean isLeaf = false;
 
 	protected PackageInfo pkg = null;
@@ -107,14 +106,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.id = id;
 		this.name = name;
 		this.category = category;
-	}
-
-	/**
-	 * @param hasNilReason
-	 *            the hasNilReason to set
-	 */
-	public void setHasNilReason(boolean hasNilReason) {
-		this.hasNilReason = hasNilReason;
 	}
 
 	/**
@@ -371,14 +362,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		}
 	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#hasNilReason()
-	 */
-	public boolean hasNilReason() {
-		return hasNilReason;
-	}
-
+	
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#pkg()
 	 */
@@ -870,7 +854,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		copy.setStereotypes(stereotypesCache);
 		copy.setTaggedValues(taggedValuesCache, false);
-		copy.setHasNilReason(hasNilReason);
 		copy.setPkg(pkg);
 		copy.setIsAbstract(isAbstract);
 		copy.setIsLeaf(isLeaf);

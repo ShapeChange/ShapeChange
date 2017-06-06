@@ -5888,7 +5888,6 @@ public class Flattener implements Transformer {
 						booleanWithOninaCi.setTaggedValues(taggedValues, false);
 
 						// set properties required by ClassInfo interface
-						booleanWithOninaCi.setHasNilReason(false);
 						booleanWithOninaCi.setPkg(ci.pkg());
 						/*
 						 * NOTE for cast: the cast should be safe, because ci is
@@ -6400,15 +6399,12 @@ public class Flattener implements Transformer {
 		enumPi.setCardinality(mult);
 		enumPi.setInitialValue(null);
 		enumPi.setInlineOrByReference("inlineOrByReference");
-		enumPi.setDefaultCodeSpace("");
 		enumPi.setReverseProperty(null);
 		enumPi.setInClass(ci);
 		/*
 		 * ensure that "sequenceNumber" tagged value is also set
 		 */
 		enumPi.setSequenceNumber(strucNum, true);
-		enumPi.setImplementedByNilReason(false);
-		enumPi.setVoidable(false);
 		enumPi.setConstraints(null);
 		enumPi.setAssociation(null);
 		enumPi.setRestriction(false);

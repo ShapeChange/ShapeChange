@@ -262,8 +262,6 @@ public class GenericModel extends ModelImpl {
 				genCi.setProfiles(ci.profiles().createCopy());
 
 				// set properties required by ClassInfo interface
-
-				genCi.setHasNilReason(ci.hasNilReason());
 				genCi.setPkg(ci.pkg());
 				genCi.setIsAbstract(ci.isAbstract());
 				genCi.setIsLeaf(ci.isLeaf());
@@ -337,7 +335,6 @@ public class GenericModel extends ModelImpl {
 				genPi.setCardinality(multC);
 				genPi.setInitialValue(pi.initialValue());
 				genPi.setInlineOrByReference(pi.inlineOrByReference());
-				genPi.setDefaultCodeSpace(pi.defaultCodeSpace());
 				genPi.setReverseProperty(pi.reverseProperty());
 				genPi.setInClass(pi.inClass());
 				StructuredNumber strucNum = pi.sequenceNumber();
@@ -351,8 +348,6 @@ public class GenericModel extends ModelImpl {
 				 * updating the sequence number).
 				 */
 				genPi.setSequenceNumber(copy(strucNum), true);
-				genPi.setImplementedByNilReason(pi.implementedByNilReason());
-				genPi.setVoidable(pi.voidable());
 				genPi.setConstraints(copy(pi.constraints()));
 				genPi.setAssociation(pi.association());
 				genPi.setRestriction(pi.isRestriction());
@@ -1003,13 +998,11 @@ public class GenericModel extends ModelImpl {
 			genPi.setTargetNamespace(pi.targetNamespace());
 			genPi.setXmlns(pi.xmlns());
 			genPi.setXsdDocument(pi.xsdDocument());
-			genPi.setGmlProfileSchema(pi.gmlProfileSchema());
 			genPi.setVersion(pi.version());
 			// genPi.setOwner(pi.owner());
 			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
-			genPi.setIsAppSchema(pi.isAppSchema());
 			genPi.setIsSchema(pi.isSchema());
 
 			genPi.setDiagrams(pi.getDiagrams());
@@ -2348,7 +2341,6 @@ public class GenericModel extends ModelImpl {
 		genCi.setProfiles(ci.profiles().createCopy());
 
 		// set properties required by ClassInfo interface
-		genCi.setHasNilReason(ci.hasNilReason());
 
 		genCi.setPkg(ci.pkg());
 		genCi.setIsAbstract(ci.isAbstract());
@@ -2402,7 +2394,6 @@ public class GenericModel extends ModelImpl {
 		copy.setCardinality(new Multiplicity(pi.cardinality().toString()));
 		copy.setInitialValue(pi.initialValue());
 		copy.setInlineOrByReference(pi.inlineOrByReference());
-		copy.setDefaultCodeSpace(pi.defaultCodeSpace());
 		copy.setReverseProperty(pi.reverseProperty());
 		copy.setInClass(pi.inClass());
 
@@ -2419,8 +2410,6 @@ public class GenericModel extends ModelImpl {
 		 * we didn't change it here.
 		 */
 		copy.setSequenceNumber(res, false);
-		copy.setImplementedByNilReason(pi.implementedByNilReason());
-		copy.setVoidable(pi.voidable());
 		copy.setConstraints(pi.constraints());
 		copy.setAssociation(pi.association());
 		copy.setRestriction(pi.isRestriction());

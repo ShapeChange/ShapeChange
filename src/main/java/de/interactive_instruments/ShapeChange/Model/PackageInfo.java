@@ -59,6 +59,10 @@ public interface PackageInfo extends Info {
 
 	public String xsdDocument();
 
+	/**
+	 * @return the value of the tag "gmlProfileSchema", or <code>null</code> in
+	 *         case such a tag does not exist on the package.
+	 */
 	public String gmlProfileSchema();
 
 	/**

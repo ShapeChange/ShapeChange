@@ -62,8 +62,7 @@ public class GenericPackageContentHandler
 
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "targetNamespace", "xmlns",
-					"xsdDocument", "gmlProfileSchema", "version", "isAppSchema",
-					"isSchema" }));
+					"xsdDocument", "version", "isSchema" }));
 
 	private boolean isInPackages = false;
 
@@ -211,17 +210,9 @@ public class GenericPackageContentHandler
 
 			this.genPi.setXsdDocument(sb.toString());
 
-		} else if (localName.equals("gmlProfileSchema")) {
-
-			this.genPi.setGmlProfileSchema(sb.toString());
-
 		} else if (localName.equals("version")) {
 
 			this.genPi.setVersion(sb.toString());
-
-		} else if (localName.equals("isAppSchema")) {
-
-			this.genPi.setIsAppSchema(toBooleanValue(sb));
 
 		} else if (localName.equals("isSchema")) {
 

@@ -378,14 +378,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return multiplicity;
 	} // cardinality()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#defaultCodeSpace()
-	 */
-	public String defaultCodeSpace() {
-		String s = taggedValue("defaultCodeSpace");
-		return s != null ? s : "";
-	} // defaultCodeSpace()
-
 	@Override
 	public ClassInfo inClass() {
 		return classInfo;

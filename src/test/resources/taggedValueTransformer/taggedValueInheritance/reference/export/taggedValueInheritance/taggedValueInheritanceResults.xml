@@ -47,7 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/core</sc:targetNamespace>
@@ -241,7 +240,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:targetNamespace>

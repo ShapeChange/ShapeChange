@@ -194,13 +194,10 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return result;
 	}
 
-	/**
-	 * This is supposed to return the value of the tag "gmlProfileSchema", or
-	 * null in case such a tag does not exist on the package.
-	 */
-	public String gmlProfileSchema() {
+	@Override
+	public final String gmlProfileSchema() {
 		return taggedValue("gmlProfileSchema");
-	} // gmlProfileSchema()
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#version()
@@ -223,10 +220,8 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return s;
 	} // version()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#isAppSchema()
-	 */
-	public boolean isAppSchema() {
+	@Override
+	public final boolean isAppSchema() {
 		if (stereotype("application schema")) {
 			return true;
 		}

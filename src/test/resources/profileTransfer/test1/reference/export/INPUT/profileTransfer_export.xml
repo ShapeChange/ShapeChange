@@ -47,7 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileTransfer/schema/a</sc:targetNamespace>
@@ -388,7 +387,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileTransfer/iso</sc:targetNamespace>
@@ -592,7 +590,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
               <sc:isSchema>true</sc:isSchema>
               <sc:version>1.0</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileTransfer/schema/ext</sc:targetNamespace>

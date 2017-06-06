@@ -63,10 +63,8 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected String targetNamespace = null;
 	protected String xmlns = null;
 	protected String xsdDocument = null;
-	protected String gmlProfileSchema = null;
 	protected String version = null;
 	protected GenericPackageInfo owner = null;
-	protected boolean isAppSchema = false;
 	protected boolean isSchema = false;
 	protected SortedSet<GenericPackageInfo> childPi = null;
 	protected SortedSet<String> supplierIds = null;
@@ -126,26 +124,10 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#gmlProfileSchema()
-	 */
-	@Override
-	public String gmlProfileSchema() {
-		return gmlProfileSchema;
-	}
-
-	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
 	 */
 	public String id() {
 		return id;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#isAppSchema()
-	 */
-	@Override
-	public boolean isAppSchema() {
-		return isAppSchema;
 	}
 
 	/**
@@ -204,26 +186,10 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * @param gmlProfileSchema
-	 */
-	public void setGmlProfileSchema(String gmlProfileSchema) {
-		this.gmlProfileSchema = gmlProfileSchema;
-
-	}
-
-	/**
 	 * @param id
 	 */
 	public void setId(String id) {
 		this.id = id;
-
-	}
-
-	/**
-	 * @param isAppSchema
-	 */
-	public void setIsAppSchema(boolean isAppSchema) {
-		this.isAppSchema = isAppSchema;
 
 	}
 
@@ -377,13 +343,6 @@ public class GenericPackageInfo extends PackageInfoImpl {
 				} else if (key.equalsIgnoreCase("xsdDocument")) {
 
 					this.setXsdDocument(taggedValuesCache.getFirstValue(key));
-
-				} else if (key.equalsIgnoreCase("gmlProfileSchema")) {
-
-					this.setGmlProfileSchema(
-							taggedValuesCache.getFirstValue(key)); // FIXME
-																	// multiple
-																	// values
 
 				} else if (key.equalsIgnoreCase("alias")) {
 

@@ -192,19 +192,6 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		}
 	} // validateStereotypesCache()
 
-	/**
-	 * Determine whether the package represents an 'application schema'. The
-	 * package is regarded an 'application schema', if it carries a stereotype
-	 * with normalized name "application schema".
-	 */
-	@Override
-	public boolean isAppSchema() {
-		// Validate stereotypes cache.
-		validateStereotypesCache();
-		// Find out if the package has the requested stereotype.
-		return stereotypesCache.contains("application schema");
-	} // isAppSchema()
-
 	/** Return the parent package if present, null otherwise. */
 	public PackageInfo owner() {
 		return parentPI;

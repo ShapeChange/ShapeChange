@@ -172,12 +172,26 @@ public interface PropertyInfo extends Info {
 
 	public StructuredNumber sequenceNumber();
 
+	/**
+	 * @return <code>true</code> if the property allows for nil value treatment.
+	 *         That is the case if either 1. the tagged value
+	 *         implementedByNilReason/gmlImplementedByNilReason is
+	 *         <code>true</code>, or 2. the inClass is a union whose name ends
+	 *         with "Reason", that has two properties, and the name of the
+	 *         property itself is equal to (ignoring case) "reason", or 3. the
+	 *         input parameter "isAIXM" is <code>true</code> and the inClass is
+	 *         a feature type, object type, or AIXM extension.
+	 */
 	public boolean implementedByNilReason();
 
 	public boolean nilReasonAllowed();
 
 	public void nilReasonAllowed(boolean b);
 
+	/**
+	 * @return <code>true</code> if the property owns the stereotype 'voidable',
+	 *         or has tagged value 'nillable' = <code>true</code>
+	 */
 	public boolean voidable();
 
 	public List<Constraint> constraints();

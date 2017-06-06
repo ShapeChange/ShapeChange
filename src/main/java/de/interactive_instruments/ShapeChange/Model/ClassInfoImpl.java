@@ -444,10 +444,8 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			checkForBasicType(this, encodingRule("xsd"));
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#isSubtype(de.interactive_instruments.ShapeChange.Model.ClassInfo)
-	 */
-	public boolean isSubtype(ClassInfo ci) {
+	@Override
+	public final boolean isSubtype(ClassInfo ci) {
 		if (this == ci)
 			return true;
 		SortedSet<String> idsuper = supertypes();
@@ -886,6 +884,17 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		this.diagrams = diagrams;
+	}
+	
+	@Override
+	public final boolean hasNilReason() {
+		
+		for (PropertyInfo pi : properties().values()) {
+			if (pi.implementedByNilReason())
+				return true;
+		}
+		
+		return false;
 	}
 
 	@Override

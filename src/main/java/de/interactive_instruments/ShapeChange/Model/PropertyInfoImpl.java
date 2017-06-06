@@ -105,6 +105,12 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return false;
 	} // isMetadata()
 
+	@Override
+	public final String defaultCodeSpace() {
+		String s = taggedValue("defaultCodeSpace");
+		return s != null ? s : "";
+	}
+	
 	/**
 	 * This returns the name of the property adorned with the namespace prefix
 	 * of its class's package.
@@ -114,12 +120,8 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s + ":" + name();
 	} // qname()
 
-	/**
-	 * Check the tagged value "gmlImplementedByNilReason" to find out whether
-	 * the property shall allow for nil value treatment. Alternatively check the
-	 * characteristics of the property
-	 */
-	public boolean implementedByNilReason() {
+	@Override
+	public final boolean implementedByNilReason() {
 
 		if (implementedByNilReason == null) {
 
@@ -397,8 +399,8 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s;
 	}
 
-	/** Find out whether the property owns the stereotype voidable. */
-	public boolean voidable() {
+	@Override
+	public final boolean voidable() {
 		// Validate cache
 		validateStereotypesCache();
 		// get info from the cache

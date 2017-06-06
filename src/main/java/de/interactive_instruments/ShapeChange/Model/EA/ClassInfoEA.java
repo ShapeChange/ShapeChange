@@ -147,9 +147,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	/** Cache set of constraints */
 	protected Vector<Constraint> constraintsCache = null;
 
-	/** Does this class possess nilReason properties? */
-	protected boolean hasNilReason = false;
-
 	private Boolean realization = null;
 
 	/**
@@ -933,18 +930,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return isLeaf;
 	} // isLeaf()
 
-	/**
-	 * This an indication that the class has a property that has the tagged
-	 * value "implementedByNilReason" is set to "true". This is a specific
-	 * encoding rule to support a modelling pattern that NGA uses (they do not
-	 * like the <<voidable>> stereotype and think it hides concepts). These
-	 * extensions need to be separated better from the core rules.
-	 */
-	public boolean hasNilReason() {
-		validatePropertiesCache();
-		return hasNilReason;
-	} // hasNilReason()
-
 	// Validate constraints cache. This makes sure the constraints cache
 	// contains all constraints ordered by their appearance in the class.
 	// If constraints are disabled the cache is empty.
@@ -1149,17 +1134,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				}
 				// Add to properties cache
 				propertiesCache.put(pi.sequenceNumber(), pi);
-			}
-
-			// Are there any nilReason implementation uses in the class ?
-			// This is called at the end of loading all properties,
-			// as there could be cases in which the order of the property
-			// loading
-			// matters, for example the detection of the union direct case
-			// in the implementedByNilReason() method.
-			for (PropertyInfo pi : propertiesCache.values()) {
-				if (pi.implementedByNilReason())
-					hasNilReason = true;
 			}
 		}
 	} // validatePropertiesCache()

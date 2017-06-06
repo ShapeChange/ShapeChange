@@ -344,21 +344,6 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		return s.toLowerCase();
 	};
 
-	public String defaultCodeSpace() {
-		String s = doc.taggedValue(id, "defaultCodeSpace");
-		if (s == null) {
-			s = "";
-		}
-		return s;
-	};
-
-	public boolean voidable() {
-		if (stereotype("voidable")) {
-			return true;
-		}
-		return false;
-	};
-
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			stereotypesCache = doc.fStereotypes.get(id);

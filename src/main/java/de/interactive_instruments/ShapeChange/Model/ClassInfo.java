@@ -63,6 +63,12 @@ public interface ClassInfo extends Info {
 
 	public boolean asCharacterString();
 
+	/**
+	 * @return <code>true</code> if the class has a property (not inherited from
+	 *         a supertype) for which
+	 *         {@link PropertyInfo#implementedByNilReason()} is
+	 *         <code>true</code>, else <code>false</code>.
+	 */
 	public boolean hasNilReason();
 
 	public PackageInfo pkg();

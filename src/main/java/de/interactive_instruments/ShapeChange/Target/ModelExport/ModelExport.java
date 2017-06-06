@@ -466,13 +466,11 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printInfoFields(pi);
 
-		printDataElement("isAppSchema", pi.isAppSchema(), false);
 		printDataElement("isSchema", pi.isSchema(), false);
 		printDataElement("version", pi.version());
 		printDataElement("targetNamespace", pi.targetNamespace());
 		printDataElement("xmlns", pi.xmlns());
 		printDataElement("xsdDocument", pi.xsdDocument());
-		printDataElement("gmlProfileSchema", pi.gmlProfileSchema());
 
 		if (pi.supplierIds() != null && !pi.supplierIds().isEmpty()) {
 
@@ -587,7 +585,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDiagrams(ci.getDiagrams());
 
 		printDataElement("isAbstract", ci.isAbstract(), false);
-		printDataElement("hasNilReason", ci.hasNilReason(), false);
 		printDataElement("isLeaf", ci.isLeaf(), false);
 
 		if (ci.isAssocClass() != null) {
@@ -831,19 +828,14 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("isDerived", pi.isDerived(), false);
 		printDataElement("isReadOnly", pi.isReadOnly(), false);
 		printDataElement("isAttribute", pi.isAttribute(), true);
-
 		printDataElement("isOrdered", pi.isOrdered(), false);
 		printDataElement("isUnique", pi.isUnique(), true);
 		printDataElement("isComposition", pi.isComposition(), false);
 		printDataElement("isAggregation", pi.isAggregation(), false);
+		
 		printDataElement("initialValue", pi.initialValue());
 		printDataElement("inlineOrByReference", pi.inlineOrByReference(),
 				"inlineOrByReference");
-		printDataElement("defaultCodeSpace", pi.defaultCodeSpace());
-
-		printDataElement("implementedByNilReason", pi.implementedByNilReason(),
-				false);
-		printDataElement("voidable", pi.voidable(), false);
 
 		if (pi.qualifiers() != null && !pi.qualifiers().isEmpty()) {
 			writer.startElement(NS, "qualifiers");
@@ -907,7 +899,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		 * TBD: We could add a parameter to list the descriptors that shall be
 		 * exported
 		 */
-		// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
+//		printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
 		printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
 		printDescriptorElement(Descriptor.LANGUAGE, descriptors);
 		printDescriptorElement(Descriptor.EXAMPLE, descriptors);

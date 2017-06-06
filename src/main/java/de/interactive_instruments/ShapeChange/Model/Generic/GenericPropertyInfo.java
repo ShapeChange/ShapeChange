@@ -81,9 +81,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected boolean isAggregation = false;
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
-	protected String defaultCodeSpace = null;
-	protected boolean implementedByNilReason = false;
-	protected boolean voidable = false;
 
 	protected PropertyInfo reverseProperty = null;
 	protected AssociationInfo association = null;
@@ -129,14 +126,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setInClass(ClassInfo inClass) {
 		this.inClass = inClass;
-	}
-
-	/**
-	 * @param implementedByNilReason
-	 *            the implementedByNilReason to set
-	 */
-	public void setImplementedByNilReason(boolean implementedByNilReason) {
-		this.implementedByNilReason = implementedByNilReason;
 	}
 
 	/**
@@ -221,16 +210,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	@Override
-	public String defaultCodeSpace() {
-
-		if (defaultCodeSpace != null) {
-			return defaultCodeSpace;
-		} else {
-			return "";
-		}
-	}
-
-	@Override
 	public PropertyInfo reverseProperty() {
 		return reverseProperty;
 	}
@@ -254,11 +233,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	@Override
 	public StructuredNumber sequenceNumber() {
 		return sequenceNumber;
-	}
-
-	@Override
-	public boolean voidable() {
-		return voidable;
 	}
 
 	@Override
@@ -294,19 +268,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			this.constraints = list;
 		} else {
 			this.constraints = null;
-		}
-	}
-
-	/**
-	 * @param defaultCodeSpace
-	 *            the defaultCodeSpace to set
-	 */
-	public void setDefaultCodeSpace(String defaultCodeSpace) {
-
-		if (defaultCodeSpace != null && defaultCodeSpace.length() > 0) {
-			this.defaultCodeSpace = options.internalize(defaultCodeSpace);
-		} else {
-			this.defaultCodeSpace = null;
 		}
 	}
 
@@ -459,14 +420,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.typeInfo.name = typeInfo.name;
 	}
 
-	/**
-	 * @param voidable
-	 *            the voidable to set
-	 */
-	public void setVoidable(boolean voidable) {
-		this.voidable = voidable;
-	}
-
 	public void setNilReasonAllowed(boolean nilReasonAllowed) {
 		this.nilReasonAllowed = nilReasonAllowed;
 	}
@@ -608,11 +561,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 	}
 
-	@Override
-	public boolean implementedByNilReason() {
-		return implementedByNilReason;
-	}
-
 	public GenericPropertyInfo createCopy(String copyId) {
 
 		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
@@ -639,7 +587,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setCardinality(new Multiplicity(cardinality.toString()));
 		copy.setInitialValue(initialValue);
 		copy.setInlineOrByReference(inlineOrByReference);
-		copy.setDefaultCodeSpace(defaultCodeSpace);
 		copy.setReverseProperty(reverseProperty);
 		copy.setInClass(inClass);
 
@@ -656,8 +603,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		 * we didn't change it here.
 		 */
 		copy.setSequenceNumber(res, false);
-		copy.setImplementedByNilReason(implementedByNilReason);
-		copy.setVoidable(voidable);
 		copy.setConstraints(constraints);
 		copy.setAssociation(association);
 		copy.setRestriction(restriction);
@@ -726,20 +671,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("gmlImplementedByNilReason")
-				|| tvName.equalsIgnoreCase("implementedByNilReason")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setImplementedByNilReason(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setImplementedByNilReason(false);
-			} else {
-				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
-				if(mc != null) {
-					mc.addDetail(this, 0, this.fullName());
-				}
-			}
-		} else if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
+		if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
 
 			if (tvValue.equalsIgnoreCase("true")) {
 				this.setNilReasonAllowed(true);
@@ -789,22 +721,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			 */
 			this.setSequenceNumber(new StructuredNumber(tvValue), false);
 
-		} else if (tvName.equalsIgnoreCase("defaultCodeSpace")) {
-
-			this.setDefaultCodeSpace(tvValue);
-
-		} else if (tvName.equalsIgnoreCase("nillable")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setVoidable(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setVoidable(false);
-			} else {
-				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
-				if(mc != null) {
-					mc.addDetail(this, 0, this.fullName());
-				}
-			}
 		}
 	}
 
