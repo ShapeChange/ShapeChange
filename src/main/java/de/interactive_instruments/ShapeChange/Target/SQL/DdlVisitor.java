@@ -151,14 +151,15 @@ public class DdlVisitor implements StatementVisitor {
 				sb.append(col.getName());
 				sb.append(" ");
 				sb.append(col.getDataType().getName());
+				
+				if (col.getDefaultValue() != null) {
+					sb.append(" DEFAULT " + col.getDefaultValue());
+				}
+				
 				if (col.getSpecifications() != null
 						&& !col.getSpecifications().isEmpty()) {
 					sb.append(" ");
 					sb.append(StringUtils.join(col.getSpecifications(), " "));
-				}
-
-				if (col.getDefaultValue() != null) {
-					sb.append(" DEFAULT " + col.getDefaultValue());
 				}
 
 				if (iter.hasNext() || table.hasConstraints()) {

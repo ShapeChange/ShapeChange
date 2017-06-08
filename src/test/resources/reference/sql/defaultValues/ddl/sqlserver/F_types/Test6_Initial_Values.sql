@@ -11,7 +11,7 @@ CREATE TABLE T6_Class1 (
 CREATE TABLE T6_Class1_propStrings (
 
    T6_Class1_id bigint NOT NULL,
-   propStrings nvarchar(50) NOT NULL DEFAULT 'abc',
+   propStrings nvarchar(50) DEFAULT 'abc' NOT NULL,
    PRIMARY KEY (T6_Class1_id, propStrings)
 );
 

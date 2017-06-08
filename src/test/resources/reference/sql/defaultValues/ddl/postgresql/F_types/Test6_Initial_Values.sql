@@ -11,7 +11,7 @@ CREATE TABLE t6_class1 (
 CREATE TABLE t6_class1_propstrings (
 
    t6_class1_id bigserial NOT NULL,
-   propstrings character varying(50) NOT NULL DEFAULT 'abc',
+   propstrings character varying(50) DEFAULT 'abc' NOT NULL,
    PRIMARY KEY (t6_class1_id, propstrings)
 );
 

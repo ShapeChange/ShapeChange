@@ -3,7 +3,7 @@ CREATE TABLE f1 (
    _id bigserial NOT NULL PRIMARY KEY,
    type text NOT NULL, -- Notes propertyType
    spec text NOT NULL, -- Notes propertySpecies
-   pmix1 integer NOT NULL DEFAULT 300, -- Notes propertyMix1
+   pmix1 integer DEFAULT 300 NOT NULL, -- Notes propertyMix1
    pmix2_1 character varying(50) NOT NULL, -- Notes propertyMix2
    pmix2_2 character varying(50), -- Notes propertyMix2
    pmix2_3 character varying(50), -- Notes propertyMix2
@@ -37,7 +37,7 @@ CREATE TABLE f3_suffix (
    _id bigserial NOT NULL PRIMARY KEY,
    geom geometry(GEOMETRY,31467) NOT NULL, -- Notes geometry (GM_Object)
    type text NOT NULL, -- Notes propertyType
-   p1 boolean NOT NULL DEFAULT TRUE, -- Notes property1
+   p1 boolean DEFAULT TRUE NOT NULL, -- Notes property1
    p2_f2 bigserial, -- Notes property2 (MixinB)
    p2_f4 bigserial, -- Notes property2 (MixinB)
    pafb_f2 bigserial -- Notes propAFeatureB
@@ -48,7 +48,7 @@ CREATE TABLE f4 (
    _id bigserial NOT NULL PRIMARY KEY,
    geom geometry(GEOMETRY,31467) NOT NULL, -- Notes geometry (GM_Object)
    type text NOT NULL, -- Notes propertyType
-   p1 boolean NOT NULL DEFAULT TRUE, -- Notes property1
+   p1 boolean DEFAULT TRUE NOT NULL, -- Notes property1
    pmix3 boolean, -- Notes propertyMix3
    pafb_f1 bigserial, -- Notes propAFeatureB
    pafb_f2 bigserial -- Notes propAFeatureB
