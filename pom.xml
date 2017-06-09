@@ -156,6 +156,26 @@
 			</resource>
 		</resources>
 		<plugins>
+            <plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+				    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>validate</phase>
+				  </execution>
+                </executions>
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <dateFormatTimeZone>${user.timezone}</dateFormatTimeZone>
+                    <skipPoms>false</skipPoms>
+                    <verbose>false</verbose>
+                </configuration>
+            </plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -210,6 +230,12 @@
 									<addClasspath>true</addClasspath>
 									<classpathPrefix>lib</classpathPrefix>
 								</manifest>
+								<manifestEntries>
+									<Project-Version>${project.version}</Project-Version>
+									<Git-Revision>${git.commit.id}</Git-Revision>
+									<Build-Timestamp>${build.timestamp}</Build-Timestamp>
+									<Build-Branch>${git.branch}</Build-Branch>
+								</manifestEntries>
 							</archive>
 						</configuration>
 					</execution>
