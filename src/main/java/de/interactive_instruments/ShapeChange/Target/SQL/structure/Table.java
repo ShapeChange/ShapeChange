@@ -54,6 +54,7 @@ public class Table {
 	private AssociationInfo representedAssociation = null;
 	private PropertyInfo representedProperty = null;
 	private boolean representsActiveIndicatorLFType = false;
+	private boolean representsSourceCLType = false;
 
 	public Table(String tableName) {
 		this.name = tableName;
@@ -231,5 +232,20 @@ public class Table {
 	public void setRepresentsActiveIndicatorLFType(
 			boolean representsActiveIndicatorLFType) {
 		this.representsActiveIndicatorLFType = representsActiveIndicatorLFType;
+	}
+	
+	/**
+	 * @return the representsSourceCLType
+	 */
+	public boolean representsSourceCLType() {
+		return representsSourceCLType;
+	}
+
+	/**
+	 * @param representsSourceCLType the representsSourceCLType to set
+	 */
+	public void setRepresentsSourceCLType(
+			boolean representsSourceCLType) {
+		this.representsSourceCLType = representsSourceCLType;
 	}
 }

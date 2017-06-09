@@ -719,7 +719,9 @@ public class SqlBuilder implements MessageSource {
 			ClassInfo activeIndicatorLFType = model
 					.classByName(sqlddl.activeIndicatorLFType);
 
-			if (ci != activeIndicatorLFType) {
+			ClassInfo sourceCLType = model.classByName(sqlddl.sourceCLType);
+
+			if (ci != activeIndicatorLFType && ci != sourceCLType) {
 
 				// add activeIndicatorLF column
 				Column cd_activeIndicatorLF = new Column(
@@ -730,7 +732,8 @@ public class SqlBuilder implements MessageSource {
 							.setReferencedTable(map(activeIndicatorLFType));
 				} else {
 					result.addError(this, 26, sqlddl.activeIndicatorLFType,
-							sqlddl.nameActiveIndicatorLFColumn, table.getName());
+							sqlddl.nameActiveIndicatorLFColumn,
+							table.getName());
 				}
 
 				ColumnDataType cd_activeIndicatorLFDataType = new ColumnDataType(
@@ -766,20 +769,31 @@ public class SqlBuilder implements MessageSource {
 				// "CKC_AI_" + table.getName(), orExp);
 				// table.addConstraint(ckc);
 
-				// add sourceGCL column
-				Column cd_sourceGcl = new Column(sqlddl.nameSourceGCLColumn,
+				// add sourceCL column
+				Column cd_sourceCl = new Column(sqlddl.nameSourceCLColumn,
 						table);
-				ColumnDataType cd_sourceGclDataType = new ColumnDataType(
-						sqlddl.databaseStrategy
-								.limitedLengthCharacterDataType(16));
-				cd_sourceGcl.setDataType(cd_sourceGclDataType);
-				// cd_sourceGcl.addSpecification("NULL");
 
-				columns.add(cd_sourceGcl);
+				if (sourceCLType != null) {
+					cd_sourceCl.setReferencedTable(map(sourceCLType));
+				} else {
+					result.addError(this, 26, sqlddl.sourceCLType,
+							sqlddl.nameSourceCLColumn, table.getName());
+				}
 
-			} else {
+				ColumnDataType cd_sourceClDataType = new ColumnDataType(
+						sqlddl.foreignKeyColumnDataType);
+				cd_sourceCl.setDataType(cd_sourceClDataType);
+				// cd_sourceCl.addSpecification("NULL");
+
+				columns.add(cd_sourceCl);
+
+			} else if (ci == activeIndicatorLFType) {
 
 				table.setRepresentsActiveIndicatorLFType(true);
+
+			} else if (ci == sourceCLType) {
+
+				table.setRepresentsSourceCLType(true);
 			}
 		}
 
@@ -1896,7 +1910,8 @@ public class SqlBuilder implements MessageSource {
 
 					if (representedClass.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)
-							&& !t.representsActiveIndicatorLFType()) {
+							&& !(t.representsActiveIndicatorLFType()
+									|| t.representsSourceCLType())) {
 						values.add(new StringValueExpression("Yes"));
 						values.add(new NullValueExpression());
 					}

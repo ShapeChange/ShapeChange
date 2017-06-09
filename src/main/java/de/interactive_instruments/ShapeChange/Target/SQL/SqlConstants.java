@@ -195,6 +195,13 @@ public class SqlConstants {
 	 * {@value #DEFAULT_ACTIVEINDICATORLF_TYPE}.
 	 */
 	public static final String PARAM_ACTIVEINDICATORLF_TYPE = "activeIndicatorLFType";
+	
+	/**
+	 * Specify the conceptual type that applies to the sourceCL column
+	 * added by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
+	 * {@value #DEFAULT_SOURCECL_TYPE}.
+	 */
+	public static final String PARAM_SOURCECL_TYPE = "sourceCLType";
 
 	/**
 	 * This parameter controls the name of the column that contains the name or
@@ -232,12 +239,12 @@ public class SqlConstants {
 	public static final String PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN = "nameForActiveIndicatorLFColumn";
 	public static final String DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN = "ACTIVE_INDICATOR_LF";
 	/**
-	 * Define the name for the column that stores the value of the source gcl.
+	 * Define the name for the column that stores the value of the source code list.
 	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
-	 * is: {@value #DEFAULT_NAME_SOURCE_GCL_COLUMN}.
+	 * is: {@value #DEFAULT_NAME_SOURCE_CL_COLUMN}.
 	 */
-	public static final String PARAM_NAME_SOURCE_GCL_COLUMN = "nameForSourceGCLColumn";
-	public static final String DEFAULT_NAME_SOURCE_GCL_COLUMN = "SOURCE_GCL";
+	public static final String PARAM_NAME_SOURCE_CL_COLUMN = "nameForSourceCLColumn";
+	public static final String DEFAULT_NAME_SOURCE_CL_COLUMN = "SOURCE_CL";
 
 	/* ------------------------ */
 	/* --- Conversion rules --- */
@@ -471,6 +478,7 @@ public class SqlConstants {
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
 	public static final String DEFAULT_ACTIVEINDICATORLF_TYPE = "YesNoNaCL";
+	public static final String DEFAULT_SOURCECL_TYPE = "SourceCL";
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";

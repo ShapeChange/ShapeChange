@@ -37,6 +37,19 @@ CREATE TABLE t3_featuretype1_propalpcode (
    PRIMARY KEY (t3_featuretype1_id, t3_codelist2_id)
 );
 
+CREATE TABLE t3_sourcecl (
+
+   myname character varying(50) NOT NULL PRIMARY KEY,
+   myalias character varying(255),
+   mydatacapturestatement text,
+   mydefinition text,
+   mydescription text,
+   mydocumentation text,
+   myexample text,
+   mylegalbasis text,
+   myprimarycode text
+);
+
 CREATE TABLE t3_yesnonacl (
 
    myname character varying(50) NOT NULL PRIMARY KEY,

@@ -2614,14 +2614,7 @@ public class GenericModel extends ModelImpl {
 		this.genAssociationInfosById.put(ai.id(), ai);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * WARNING: The set of selected schemas may be changed through
-	 * transformations.
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ModelImpl#selectedSchemas()
-	 */
+	@Override
 	public SortedSet<GenericPackageInfo> selectedSchemas() {
 
 		SortedSet<GenericPackageInfo> selectedSchemas = new TreeSet<GenericPackageInfo>();

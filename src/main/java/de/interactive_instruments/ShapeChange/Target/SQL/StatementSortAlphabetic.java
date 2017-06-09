@@ -159,11 +159,21 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Table tins1 = ins1.getTable();
 			Table tins2 = ins2.getTable();
 
+			/*
+			 * Ensure that inserts for the ActiveIndicatorLF type come first,
+			 * then inserts for the SourceCL type, then inserts for other types.
+			 */
 			if (tins1.representsActiveIndicatorLFType()
 					&& !tins2.representsActiveIndicatorLFType()) {
 				return -1;
-			} else if (!tins1.representsActiveIndicatorLFType()
-					&& tins2.representsActiveIndicatorLFType()) {
+			} else if (tins1.representsSourceCLType()) {
+				if (tins2.representsActiveIndicatorLFType()) {
+					return 1;
+				} else if (!tins2.representsSourceCLType()) {
+					return -1;
+				}
+			} else if (tins2.representsActiveIndicatorLFType()
+					|| tins2.representsSourceCLType()) {
 				return 1;
 			}
 
@@ -209,9 +219,9 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			return 10;
 		} else if (o1 instanceof Alter) {
 			return 20;
-		} else if (o1 instanceof CreateIndex) {
-			return 30;
 		} else if (o1 instanceof Insert) {
+			return 30;
+		} else if (o1 instanceof CreateIndex) {
 			return 40;
 		} else if (o1 instanceof Comment) {
 			return 50;

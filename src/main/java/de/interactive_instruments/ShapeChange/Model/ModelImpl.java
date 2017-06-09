@@ -131,9 +131,7 @@ public abstract class ModelImpl implements Model {
 	 */
 	protected HashSet<String> allowedTags = null;
 
-	/**
-	 * Execute postprocessing and validation checks before the conversion
-	 */
+	@Override
 	public void postprocessAfterLoadingAndValidate() {
 
 		if (postprocessed)
@@ -226,9 +224,7 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#loadInformationFromExternalSources()
-	 */
+	@Override
 	public void loadInformationFromExternalSources() {
 
 		// do not execute this once the model has been postprocessed
@@ -261,10 +257,7 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
-	/**
-	 * Return all schemas that are selected using the relevant parameters:
-	 * appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex
-	 */
+	@Override
 	public SortedSet<? extends PackageInfo> selectedSchemas() {
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 
@@ -434,10 +427,8 @@ public abstract class ModelImpl implements Model {
 				"Initialization of repository with username and password not supported for this type of input model.");
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#isInSelectedSchemas(de.interactive_instruments.ShapeChange.Model.ClassInfo)
-	 */
-	public boolean isInSelectedSchemas(ClassInfo ci) {
+	@Override
+	public final boolean isInSelectedSchemas(ClassInfo ci) {
 
 		SortedSet<? extends PackageInfo> selectedSchemas = this
 				.selectedSchemas();
@@ -460,10 +451,8 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#schemaPackage(de.interactive_instruments.ShapeChange.Model.ClassInfo)
-	 */
-	public PackageInfo schemaPackage(ClassInfo ci) {
+	@Override
+	public final PackageInfo schemaPackage(ClassInfo ci) {
 
 		PackageInfo p = ci.pkg();
 
@@ -478,10 +467,8 @@ public abstract class ModelImpl implements Model {
 		return null;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#packages(de.interactive_instruments.ShapeChange.Model.PackageInfo)
-	 */
-	public SortedSet<PackageInfo> packages(PackageInfo pkg) {
+	@Override
+	public final SortedSet<PackageInfo> packages(PackageInfo pkg) {
 
 		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
 

@@ -678,17 +678,17 @@ public class EADocument extends ModelImpl implements Model {
 		return characterEncoding;
 	} // charEncoding()
 
-	/** Return ClassInfo object given the id of a class */
+	@Override
 	public ClassInfo classById(String id) {
 		return fClassById.get(id);
-	} // classById()
-
-	/** Return ClassInfo object given the name of the class */
+	}
+	
 	// TODO To be clarified: How are classes treated, which have identical names
 	// but reside in different packages? See above.
+	@Override
 	public ClassInfo classByName(String nam) {
 		return fClassByName.get(nam);
-	} // classByName()
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Model#classes(de.interactive_instruments.ShapeChange.Model.PackageInfo)
@@ -724,15 +724,15 @@ public class EADocument extends ModelImpl implements Model {
 		return res;
 	} // addClasses()
 
-	/** Return PackageInfo object given the id of a package */
+	@Override
 	public PackageInfo packageById(String id) {
 		return fPackageById.get(id);
-	} // packageById()
+	}
 
-	/** Return the model input type */
+	@Override
 	public int type() {
 		return Options.EA7;
-	} // type()
+	}
 
 	/** Shutdown EA model and quit EA */
 	public void shutdown() {
