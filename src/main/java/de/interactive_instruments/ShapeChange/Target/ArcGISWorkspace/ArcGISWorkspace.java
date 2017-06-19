@@ -66,7 +66,6 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -3270,7 +3269,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				}
 			}
 		}
-		
+
 		if (pi.matches(RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE)) {
 
 			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
@@ -3329,8 +3328,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.ARCGIS_WORKSPACE.getId();
+	@Override
+	public String getTargetName() {
+		return "ArcGIS Workspace";
 	}
 
 	public void reset() {

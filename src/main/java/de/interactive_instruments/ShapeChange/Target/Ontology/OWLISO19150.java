@@ -53,7 +53,6 @@ import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -354,8 +353,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
 
-	public int getTargetID() {
-		return TargetIdentification.OWLISO19150.getId();
+	@Override
+	public String getTargetName(){
+		return "ISO 19150-2 OWL Ontology";
 	}
 
 	// TBD: New diagnostics-only flag is to be considered
@@ -1092,7 +1092,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			OutputStream bout = new BufferedOutputStream(fout);
 
 			RDFDataMgr.write(bout, ontmodel, rdfFormat);
-			r.addResult(getTargetID(), outDirForOntology, filename, ontName);
+			r.addResult(getTargetName(), outDirForOntology, filename, ontName);
 
 		} catch (Exception e) {
 			r.addError(this, 5, fname);

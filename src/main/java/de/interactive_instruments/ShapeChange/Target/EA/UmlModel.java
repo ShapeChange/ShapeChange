@@ -56,7 +56,6 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
@@ -498,8 +497,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 		// writeAll()
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.UML_MODEL.getId();
+	@Override
+	public String getTargetName() {
+		return "UML Model";
 	}
 
 	public void writeAll(ShapeChangeResult r) {

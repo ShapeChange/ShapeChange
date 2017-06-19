@@ -165,18 +165,6 @@ public interface ClassInfo extends Info {
 	public String qname();
 
 	/**
-	 * Check if the class has been processed already for a target type (the
-	 * target types are bit masked).
-	 */
-	public boolean processed(int t);
-
-	/**
-	 * Set that the class has been processed already for a target type (the
-	 * target types are bit masked).
-	 */
-	public void processed(int t, boolean p);
-
-	/**
 	 * Return the category of the class.
 	 */
 	public int category();

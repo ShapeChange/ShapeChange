@@ -37,7 +37,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -71,7 +70,6 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
@@ -209,13 +207,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 				for (ProcessMapEntry pme : mapEntries) {
 					mapEntryByType.put(pme.getType(), pme);
 				}
-			}
-
-			// reset processed flags on all classes in the schema
-			for (Iterator<ClassInfo> k = model.classes(schemaPi).iterator(); k
-					.hasNext();) {
-				ClassInfo ci = k.next();
-				ci.processed(getTargetID(), false);
 			}
 
 			// ======================================
@@ -383,8 +374,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.APP_SCHEMA_METADATA.getId();
+	public String getTargetName(){
+		return "Application Schema Metadata";
 	}
 
 	@Override
@@ -449,7 +440,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 			writer.close();
 
-			r.addResult(getTargetID(), outputDirectory, outputFilename,
+			r.addResult(getTargetName(), outputDirectory, outputFilename,
 					schemaTargetNamespace);
 
 		} catch (IOException ioe) {

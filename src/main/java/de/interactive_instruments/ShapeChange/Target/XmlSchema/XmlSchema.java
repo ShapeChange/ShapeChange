@@ -51,7 +51,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -108,20 +107,11 @@ public class XmlSchema implements Target {
 	        if(!trgdir.exists()){
 	        	trgdir.mkdirs();
 	        }
-		}		
-		
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(pi).iterator(); k.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
-		}		
+		}			
 	}
 
 	public void process(ClassInfo ci) {
 		if (ci==null || ci.pkg()==null)
-			return;
-
-		if (ci.processed(getTargetID()))
 			return;
 
 		int cat = ci.category();
@@ -302,10 +292,7 @@ public class XmlSchema implements Target {
 			}
 			break;
 		}
-		;
-
-		ci.processed(getTargetID(), true);
-	};
+	}
 
 	public void write() {
 		if (printed) {
@@ -327,7 +314,7 @@ public class XmlSchema implements Target {
 			if (!xsd.printed()) {
 				try {
 					xsd.printFile(outputFormat);
-					result.addResult(getTargetID(), outputDirectory, xsd.name, pi.targetNamespace());
+					result.addResult(getTargetName(), outputDirectory, xsd.name, pi.targetNamespace());
 				} catch (Exception e) {
 					String m = e.getMessage();
 					if (m != null) {
@@ -465,8 +452,9 @@ public class XmlSchema implements Target {
 		}
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.XML_SCHEMA.getId();
+	@Override
+	public String getTargetName(){
+		return "XML Schema";
 	}
 
 	/**

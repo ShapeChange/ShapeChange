@@ -58,7 +58,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -93,8 +92,9 @@ public class RDF implements Target, MessageSource {
 	private String idReplaceChar = "-";
 	private boolean codeListOnly = false;
 
-	public int getTargetID() {
-		return TargetIdentification.RDF.getId();
+	@Override
+	public String getTargetName(){
+		return "RDF";
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
@@ -857,7 +857,7 @@ public class RDF implements Target, MessageSource {
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
-			result.addResult(getTargetID(), outputDirectory, fileName,
+			result.addResult(getTargetName(), outputDirectory, fileName,
 					pi.targetNamespace() + "#");
 		} catch (Exception e) {
 			String m = e.getMessage();

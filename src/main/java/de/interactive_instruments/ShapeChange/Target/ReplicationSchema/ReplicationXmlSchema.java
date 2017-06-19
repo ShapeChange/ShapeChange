@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -70,7 +69,6 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
 
@@ -284,13 +282,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 			}
 		}
 
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(schemaPi).iterator(); k
-				.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
-		}
-
 		// ======================================
 		// Parse configuration parameters
 		// ======================================
@@ -383,9 +374,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		if (ci == null || ci.pkg() == null)
 			return;
 
-		if (ci.processed(getTargetID()))
-			return;
-
 		result.addDebug(this, 6, ci.name());
 
 		int cat = ci.category();
@@ -426,8 +414,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 			processLocalProperties(ci, propertyHook);
 			break;
 		}
-
-		ci.processed(getTargetID(), true);
 	}
 
 	/**
@@ -969,7 +955,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 			writer.close();
 
-			result.addResult(getTargetID(), outputDirectory, outputFilename,
+			result.addResult(getTargetName(), outputDirectory, outputFilename,
 					schemaPi.targetNamespace());
 
 		} catch (IOException ioe) {
@@ -997,8 +983,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.REPLICATION_SCHEMA.getId();
+	public String getTargetName(){
+		return "Replication XML Schema";
 	}
 
 	@Override

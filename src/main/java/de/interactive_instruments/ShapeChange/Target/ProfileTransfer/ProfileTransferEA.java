@@ -51,7 +51,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -491,8 +490,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.PROFILE_TRANSFER_EA.getId();
+	public String getTargetName(){
+		return "Profile Transfer EA";
 	}
 
 	@Override

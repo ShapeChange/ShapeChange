@@ -56,7 +56,6 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -594,7 +593,7 @@ public class CodelistDictionariesML implements Target {
 					serializer.setWriter(outputXML);
 					serializer.asDOMSerializer().serialize(cDocument);
 					outputXML.close();
-					result.addResult(getTargetID(), dir, ci.name()+".xml", ci.qname());
+					result.addResult(getTargetName(), dir, ci.name()+".xml", ci.qname());
 					
 				}
 			}
@@ -609,7 +608,8 @@ public class CodelistDictionariesML implements Target {
 		printed = true;
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.CODELIST_DICTIONARY.getId();
+	@Override
+	public String getTargetName(){
+		return "Code List Dictionary";
 	}
 }

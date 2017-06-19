@@ -64,7 +64,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.FOL.AndOr;
 import de.interactive_instruments.ShapeChange.FOL.AndOrType;
 import de.interactive_instruments.ShapeChange.FOL.BinaryComparisonPredicate;
@@ -266,20 +265,10 @@ public class FOL2Schematron implements Target, MessageSource {
 		// to be generated
 		pattern = document.createElementNS(Options.SCHEMATRON_NS, "pattern");
 		root.appendChild(pattern);
-
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(schema).iterator(); k
-				.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
-		}
 	}
 
 	@Override
 	public void process(ClassInfo ci) {
-
-		if (ci.processed(getTargetID()))
-			return;
 
 		result.addDebug(this, 2, ci.name());
 
@@ -294,7 +283,6 @@ public class FOL2Schematron implements Target, MessageSource {
 			if (ci.category() == Options.AIXMEXTENSION) {
 
 				result.addDebug(this, 4, ci.name());
-				ci.processed(getTargetID(), true);
 				return;
 			}
 
@@ -341,8 +329,6 @@ public class FOL2Schematron implements Target, MessageSource {
 				}
 			}
 		}
-
-		ci.processed(getTargetID(), true);
 	}
 
 	/**
@@ -1201,8 +1187,8 @@ public class FOL2Schematron implements Target, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.FOL2SCHEMATRON.getId();
+	public String getTargetName() {
+		return "First Order Logic to Schematron";
 	}
 
 	/**

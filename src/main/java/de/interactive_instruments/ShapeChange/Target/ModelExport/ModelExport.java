@@ -55,7 +55,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -326,9 +325,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-
-		return TargetIdentification.MODELEXPORT.getId();
+	public String getTargetName(){
+		return "Model Export";
 	}
 
 	@Override

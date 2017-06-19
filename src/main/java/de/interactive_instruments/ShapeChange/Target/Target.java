@@ -77,6 +77,10 @@ public interface Target {
 
 	public void write();
 
-	public int getTargetID();
+	/**
+	 * @return human readable name for the target, primarily used in log
+	 *         messages
+	 */
+	public String getTargetName();
 
 };

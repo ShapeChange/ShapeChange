@@ -62,7 +62,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -698,7 +697,7 @@ public class SqlDdl implements Target, MessageSource {
 					serializer.asDOMSerializer()
 							.serialize(visitor.getDocument());
 
-					result.addResult(getTargetID(), outputDirectory, fileName,
+					result.addResult(getTargetName(), outputDirectory, fileName,
 							schema.targetNamespace());
 
 					printed = true;
@@ -766,7 +765,7 @@ public class SqlDdl implements Target, MessageSource {
 							StandardCopyOption.REPLACE_EXISTING);
 				}
 
-				result.addResult(getTargetID(), outputDirectory, fileName,
+				result.addResult(getTargetName(), outputDirectory, fileName,
 						null);
 
 				printed = true;
@@ -809,8 +808,9 @@ public class SqlDdl implements Target, MessageSource {
 		return res;
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.SQLDDL.getId();
+	@Override
+	public String getTargetName(){
+		return "SQL DDL";
 	}
 
 	public static boolean isEncoded(Info i) {

@@ -51,9 +51,6 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 */
 	protected int category = Options.UNKNOWN;
 
-	/** Bit mask for target types for which the class has been processed */
-	protected int processed = 0;
-
 	protected List<ImageMetadata> diagrams = null;
 	protected Profiles profiles = null;
 
@@ -416,34 +413,6 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		if (pi != null)
 			return pi.xmlns() + ":" + name();
 		return name();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * WARNING: This method is intended to be "final", but not actually declared
-	 * as such. A depending project can thus extend the method, if absolutely
-	 * necessary.
-	 */
-	@Override
-	public boolean processed(int t) {
-		return (processed & t) == t;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * WARNING: This method is intended to be "final", but not actually declared
-	 * as such. A depending project can thus extend the method, if absolutely
-	 * necessary.
-	 */
-	@Override
-	public void processed(int t, boolean p) {
-		if (p) {
-			processed = processed | t;
-		} else {
-			processed = processed & ~t;
-		}
 	}
 
 	@Override

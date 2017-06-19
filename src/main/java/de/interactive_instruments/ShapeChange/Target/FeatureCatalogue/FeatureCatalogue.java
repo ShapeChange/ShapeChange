@@ -98,7 +98,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Fop.FopErrorListener;
 import de.interactive_instruments.ShapeChange.Fop.FopMsgHandler;
@@ -289,8 +288,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 */
 	private TreeMap<String, URI> hrefMappings = new TreeMap<String, URI>();
 
-	public int getTargetID() {
-		return TargetIdentification.FEATURE_CATALOGUE.getId();
+	@Override
+	public String getTargetName() {
+		return "Feature Catalogue";
 	}
 
 	public void reset() {
@@ -2300,7 +2300,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				result.addWarning(this, 20, e.getMessage());
 			}
 
-			result.addResult(getTargetID(), outputDirectory, docxfileName, null);
+			result.addResult(getTargetName(), outputDirectory, docxfileName, null);
 
 		} catch (Exception e) {
 			String m = e.getMessage();
@@ -2425,7 +2425,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						skip = true;
 					} finally {
 						out.close();
-						result.addResult(getTargetID(), outputDirectory, outfileName, null);
+						result.addResult(getTargetName(), outputDirectory, outfileName, null);
 						if (deleteXmlFile)
 							xmlFile.delete();
 					}
@@ -2676,9 +2676,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 				String outputDir = outputDirectory + "/" + outputFilename;
 
-				result.addResult(getTargetID(), outputDir, "index.html", null);
+				result.addResult(getTargetName(), outputDir, "index.html", null);
 			} else {
-				result.addResult(getTargetID(), outputDirectory, transformationTarget.getName(), null);
+				result.addResult(getTargetName(), outputDirectory, transformationTarget.getName(), null);
 			}
 
 		} catch (Exception e) {

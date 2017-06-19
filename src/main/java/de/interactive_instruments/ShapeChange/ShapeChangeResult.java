@@ -435,14 +435,14 @@ public class ShapeChangeResult {
 		return new MessageContext(this, "FatalError", m);
 	}
 
-	public void addResult(int targetId, String dname, String fname,
+	public void addResult(String targetName, String dname, String fname,
 			String scope) {
 		if (document == null) {
 			return;
 		}
 		Element resfile = document.createElementNS(Options.SCRS_NS, "Result");
 		resultFiles.appendChild(resfile);
-		resfile.setAttribute("target", options.nameOfTarget(targetId));
+		resfile.setAttribute("target", targetName);
 		File file = new File(dname + "/" + fname);
 		String path = file.toURI().toASCIIString();
 		resfile.setAttribute("href", path);

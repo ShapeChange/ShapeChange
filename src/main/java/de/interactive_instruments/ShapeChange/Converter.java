@@ -599,8 +599,7 @@ public class Converter {
 
 					targetCalled = true;
 
-					result.addInfo(null, 503,
-							options.nameOfTarget(target.getTargetID()),
+					result.addInfo(null, 503, target.getTargetName(),
 							modelProviderId);
 
 					StatusBoard.getStatusBoard()
@@ -812,13 +811,6 @@ public class Converter {
 				}
 			}
 		}
-	}
-
-	public int getCurrentTargetID() {
-		if (target == null)
-			return 0;
-		else
-			return target.getTargetID();
 	}
 
 	private Model getModel() throws ShapeChangeAbortException {

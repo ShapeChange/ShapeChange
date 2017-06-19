@@ -1271,18 +1271,6 @@ public class Options {
 		return loc;
 	}
 
-	public String nameOfTarget(int targetId) {
-
-		for (TargetIdentification ti : TargetIdentification.values()) {
-
-			if (ti.getId() == targetId) {
-				return ti.getName();
-			}
-		}
-
-		return "Unknown (" + targetId + ")";
-	}
-
 	public void loadConfiguration() throws ShapeChangeAbortException {
 
 		InputStream configStream = null;
