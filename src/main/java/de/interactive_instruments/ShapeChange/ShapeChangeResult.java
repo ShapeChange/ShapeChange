@@ -599,6 +599,10 @@ public class ShapeChangeResult {
 			return "Neither 'inputFile' nor 'repositoryFileNameOrConnectionString' parameter set in configuration. Cannot connect to a repository.";
 		case 25:
 			return "Model repository file named '$1$' not found";
+		case 26:
+			return "Required input parameter 'inputModelType' not found in the configuration.";
+		case 27:
+			return "Value of input parameter 'inputModelType' (which defines the model implementation) is '$1$'.";
 
 		case 30:
 			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";

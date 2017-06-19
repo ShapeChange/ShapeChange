@@ -269,8 +269,15 @@ public abstract class ModelImpl implements Model {
 		return res;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<PackageInfo> allPackagesFromSelectedSchemas() {
+	public SortedSet<PackageInfo> allPackagesFromSelectedSchemas() {
 
 		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
 
@@ -427,8 +434,15 @@ public abstract class ModelImpl implements Model {
 				"Initialization of repository with username and password not supported for this type of input model.");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean isInSelectedSchemas(ClassInfo ci) {
+	public boolean isInSelectedSchemas(ClassInfo ci) {
 
 		SortedSet<? extends PackageInfo> selectedSchemas = this
 				.selectedSchemas();
@@ -451,8 +465,15 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final PackageInfo schemaPackage(ClassInfo ci) {
+	public PackageInfo schemaPackage(ClassInfo ci) {
 
 		PackageInfo p = ci.pkg();
 
@@ -467,8 +488,15 @@ public abstract class ModelImpl implements Model {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<PackageInfo> packages(PackageInfo pkg) {
+	public SortedSet<PackageInfo> packages(PackageInfo pkg) {
 
 		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
 
@@ -487,8 +515,15 @@ public abstract class ModelImpl implements Model {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<PackageInfo> schemas(String name) {
+	public SortedSet<PackageInfo> schemas(String name) {
 
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 

@@ -837,14 +837,20 @@ public class Converter {
 		String pwd = password == null ? "" : password;
 
 		// Support original model type codes
-		if (imt.equalsIgnoreCase("ea7"))
+		if (imt == null) {
+			result.addFatalError(null, 26);
+			throw new ShapeChangeAbortException();
+		} else if (imt.equalsIgnoreCase("ea7")) {
 			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		else if (imt.equalsIgnoreCase("xmi10"))
+		} else if (imt.equalsIgnoreCase("xmi10")) {
 			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		else if (imt.equalsIgnoreCase("gsip"))
+		} else if (imt.equalsIgnoreCase("gsip")) {
 			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-		else if (imt.equalsIgnoreCase("scxml"))
+		} else if (imt.equalsIgnoreCase("scxml")) {
 			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
+		} else {
+			result.addInfo(null, 27, imt);
+		}
 
 		// Transformations of the model are only supported for EA models
 		if (imt.equals(

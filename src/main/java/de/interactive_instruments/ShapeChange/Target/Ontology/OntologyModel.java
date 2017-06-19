@@ -2363,7 +2363,7 @@ public class OntologyModel implements MessageSource {
 	 */
 	private Resource mapClass(String qname) {
 
-		String[] qnamePars = qname.split(":");
+		String[] qnamePars = qname.split(":",2);
 		String prefix = qnamePars[0];
 		String resourceName = qnamePars[1];
 

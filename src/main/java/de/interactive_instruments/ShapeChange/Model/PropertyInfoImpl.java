@@ -71,7 +71,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return restriction;
 	} // restriction()
 
-	public final String language() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -95,22 +103,36 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		else
 			s = s.toLowerCase();
 		return s;
-	} // encodingRule()
+	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean isMetadata() {
+	public boolean isMetadata() {
 		String s = taggedValue("isMetadata");
 		if (s != null && s.toLowerCase().equals("true"))
 			return true;
 		return false;
-	} // isMetadata()
+	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String defaultCodeSpace() {
+	public String defaultCodeSpace() {
 		String s = taggedValue("defaultCodeSpace");
 		return s != null ? s : "";
 	}
-	
+
 	/**
 	 * This returns the name of the property adorned with the namespace prefix
 	 * of its class's package.
@@ -120,8 +142,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s + ":" + name();
 	} // qname()
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean implementedByNilReason() {
+	public boolean implementedByNilReason() {
 
 		if (implementedByNilReason == null) {
 
@@ -206,15 +235,16 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		return ci.fullNameInSchema() + "::" + name();
 	}
-
-	/*
-	 * Try to determine the category of the property value
-	 * 
-	 * @see
-	 * de.interactive_instruments.ShapeChange.Model.PropertyInfo#categoryOfValue
-	 * ()
+	
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final int categoryOfValue() {
+	@Override
+	public int categoryOfValue() {
 		ClassInfo ci = model().classById(typeInfo().id);
 		if (ci != null)
 			return ci.category();
@@ -399,8 +429,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean voidable() {
+	public boolean voidable() {
 		// Validate cache
 		validateStereotypesCache();
 		// get info from the cache
@@ -414,8 +451,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return res;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final Profiles profiles() {
+	public Profiles profiles() {
 
 		if (this.profiles == null) {
 

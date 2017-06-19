@@ -42,6 +42,9 @@ import java.util.regex.Pattern;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Model.EA.EADocument;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
+import de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -60,7 +63,7 @@ public abstract class InfoImpl implements Info {
 			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
 
 	public int compareTo(Info i) {
-		
+
 		String my = id();
 		String other = i.id();
 
@@ -166,7 +169,7 @@ public abstract class InfoImpl implements Info {
 		String[] result = taggedValuesCache.get(tag);
 		if (result.length != 0) {
 			// we sort since order is important for UnitTests
-			Arrays.sort(result);			
+			Arrays.sort(result);
 		}
 		return result;
 	}
@@ -249,7 +252,7 @@ public abstract class InfoImpl implements Info {
 	protected String descriptorSource(Descriptor descriptor) {
 		String source = null;
 
-		if (model().type() == Options.GENERIC) {
+		if (model() instanceof GenericModel) {
 			/*
 			 * special treatment for generic models, which always store the
 			 * descriptor values directly
@@ -260,7 +263,7 @@ public abstract class InfoImpl implements Info {
 
 			// if nothing has been configured, use defaults
 			if (source == null) {
-				if (model().type() == Options.EA7) {
+				if (model() instanceof EADocument) {
 					if (descriptor == Descriptor.DOCUMENTATION)
 						source = "ea:notes";
 					else if (descriptor == Descriptor.ALIAS)
@@ -273,8 +276,7 @@ public abstract class InfoImpl implements Info {
 						source = "none";
 					else
 						source = "tag#" + descriptor;
-				} else if (model().type() == Options.XMI10
-						|| model().type() == Options.GSIP) {
+				} else if (model() instanceof Xmi10Document) {
 					if (descriptor == Descriptor.DOCUMENTATION)
 						source = "tag#documentation;description";
 					else if (descriptor == Descriptor.ALIAS)
@@ -362,13 +364,13 @@ public abstract class InfoImpl implements Info {
 				}
 
 			} else if (source.equals("ea:alias")
-					&& model().type() == Options.EA7) {
+					&& model() instanceof EADocument) {
 				// do nothing now, this happens in the EA classes
 			} else if (source.equals("ea:notes")
-					&& model().type() == Options.EA7) {
+					&& model() instanceof EADocument) {
 				// do nothing now, this happens in the EA classes
 			} else if (source.equals("ea:guidtoxml")
-					&& model().type() == Options.EA7) {
+					&& model() instanceof EADocument) {
 				// do nothing now, this happens in the EA classes
 			} else if (source.startsWith("sc:extract#")) {
 				String token = source.replace("sc:extract#", "");
@@ -436,8 +438,15 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String globalIdentifier() {
+	public String globalIdentifier() {
 		String[] values = filterDescriptorValues(Descriptor.GLOBALIDENTIFIER);
 		if (values.length == 0) {
 			return null;
@@ -536,8 +545,15 @@ public abstract class InfoImpl implements Info {
 		return builder.toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String documentation() {
+	public String documentation() {
 
 		String[] values = filterDescriptorValues(Descriptor.DOCUMENTATION);
 		if (values.length == 0) {
@@ -547,8 +563,15 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String definition() {
+	public String definition() {
 		String[] values = filterDescriptorValues(Descriptor.DEFINITION);
 		if (values.length == 0) {
 			return "";
@@ -557,8 +580,15 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String description() {
+	public String description() {
 
 		String[] values = filterDescriptorValues(Descriptor.DESCRIPTION);
 		if (values.length == 0) {
@@ -568,8 +598,15 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String legalBasis() {
+	public String legalBasis() {
 		String[] values = filterDescriptorValues(Descriptor.LEGALBASIS);
 		if (values.length == 0) {
 			return null;
@@ -581,10 +618,6 @@ public abstract class InfoImpl implements Info {
 	/**
 	 * NOTE: this method is not final since several XXXInfoImpl classes override
 	 * it
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#language()
-	 * 
-	 * 
 	 */
 	@Override
 	public String language() {
@@ -597,8 +630,15 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String[] dataCaptureStatements() {
+	public String[] dataCaptureStatements() {
 
 		String[] values = filterDescriptorValues(
 				Descriptor.DATACAPTURESTATEMENT);
@@ -606,15 +646,29 @@ public abstract class InfoImpl implements Info {
 		return values;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String[] examples() {
+	public String[] examples() {
 		String[] values = filterDescriptorValues(Descriptor.EXAMPLE);
 
 		return values;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String aliasName() {
+	public String aliasName() {
 
 		String[] values = filterDescriptorValues(Descriptor.ALIAS);
 		if (values.length == 0) {
@@ -958,8 +1012,15 @@ public abstract class InfoImpl implements Info {
 		return taggedValuesCache.getFirstValues(tagList);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final void removeTaggedValue(String tag) {
+	public void removeTaggedValue(String tag) {
 
 		// Validate tagged values cache first
 		validateTaggedValuesCache();

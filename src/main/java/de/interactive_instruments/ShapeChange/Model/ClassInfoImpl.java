@@ -57,7 +57,17 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	protected List<ImageMetadata> diagrams = null;
 	protected Profiles profiles = null;
 
-	public final String language() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.InfoImpl#language()
+	 */
+	@Override
+	public String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -70,22 +80,38 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return null;
 	}
 
-	public final String nsabr() {
+	/**
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	public String nsabr() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.xmlns();
 		return null;
 	}
 
-	public final String ns() {
+	/**
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	public String ns() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.targetNamespace();
 		return null;
 	}
 
-	/** Return the encoding rule relevant on the class, given the platform */
-	public final String encodingRule(String platform) {
+	/**
+	 * Return the encoding rule relevant on the class, given the platform
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
 		if (s == null || s.isEmpty()
 				|| options().ignoreEncodingRuleTaggedValues()) {
@@ -101,11 +127,6 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return s;
 	};
 
-	/**
-	 * Return the XML schema type corresponding to the class. This is contained
-	 * in the tagged value with tag 'xmlSchemaType'. If this is not specified,
-	 * null is returned.
-	 */
 	// Standard ISO 19136 tagged value: If a class with the stereotype
 	// <<Type>> has a canonical XML Schema encoding (e.g. from XML Schema) the
 	// XML Schema typename corresponding to the data type shall be given as the
@@ -114,40 +135,73 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	// follow the standard UML-to-GML
 	// encoding rules in some cases, for example where a compact structure based
 	// on "simpleContent" is already well known within the application domain.
-	public final String xmlSchemaType() {
-		return taggedValue("xmlSchemaType");
-	} // xmlSchemaType()
-
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean includeByValuePropertyType() {
+	public String xmlSchemaType() {
+		return taggedValue("xmlSchemaType");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public boolean includeByValuePropertyType() {
 		String s = taggedValue("byValuePropertyType");
 		if (s != null && s.toLowerCase().equals("true"))
 			return true;
 		return false;
-	} // includeByValuePropertyType()
+	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean includePropertyType() {
+	public boolean includePropertyType() {
 		String s = taggedValue("noPropertyType");
 		if (s != null && s.toLowerCase().equals("true"))
 			return false;
 		return true;
-	} // includePropertyType()
+	}
 
 	/**
-	 * This predicate determines if the class is a collection. This is done by
-	 * inspecting the associated tagged value.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean isCollection() {
+	@Override
+	public boolean isCollection() {
 		String s = taggedValue("isCollection");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return true;
 		}
 		return false;
-	} // isCollection()
+	}
 
-	/** Find out if this class has to be output as a dictionary. */
-	public final boolean asDictionary() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public boolean asDictionary() {
 		if (category() != Options.CODELIST)
 			return false;
 		String s = taggedValue("asDictionary");
@@ -155,10 +209,17 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			return true;
 		}
 		return false;
-	} // asDictionary()
+	}
 
-	/** Find out if this class has to be output as a dictionary. */
-	public final boolean asDictionaryGml33() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public boolean asDictionaryGml33() {
 		if (category() != Options.CODELIST)
 			return false;
 		String s = taggedValue("asDictionary");
@@ -166,37 +227,39 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			return false;
 		}
 		return true;
-	} // asDictionary()
+	}
 
 	/**
-	 * If a <<Union>> class has a tagged value "asGroup" with a value "true"
-	 * then it is encoded as a global group which is referenced wherever a
-	 * property is defined that has the union class as its value. Note that this
-	 * is only valid, if it is clear from the context how to map the individual
-	 * values to the conceptual model.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean asGroup() {
+	@Override
+	public boolean asGroup() {
 		String s = taggedValue("gmlAsGroup");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return !this.isUnionDirect();
 		}
 		return false;
-	} // asGroup()
+	}
 
 	/**
-	 * If a <<Union>> class has a tagged value "gmlAsCharacterString" with a
-	 * value "true" it will be translated into an xsd:string simple type
-	 * regardless of how it is actually built. <br>
-	 * Note: This is experimental code which is prone to being removed as soon
-	 * as a better solution for the problem at hand is found.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean asCharacterString() {
+	@Override
+	public boolean asCharacterString() {
 		String s = taggedValue("gmlAsCharacterString");
 		if (s != null && s.toLowerCase().equals("true")) {
 			return !this.isUnionDirect();
 		}
 		return false;
-	} // asCharacterString()
+	}
 
 	private boolean isMixin() {
 		if (matches("rule-xsd-cls-mixin-classes")) {
@@ -221,8 +284,12 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * the class (being a FeatureType, a Codelist, a Union etc) from its
 	 * stereotype. It is an error, if a class carries a stereotype not
 	 * recognized by ShapeChange.
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final void establishCategory() throws ShapeChangeAbortException {
+	public void establishCategory() throws ShapeChangeAbortException {
 		if (stereotype("enumeration")) {
 			category = Options.ENUMERATION;
 		} else if (stereotype("codelist")) {
@@ -277,19 +344,23 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 					encodingRule("xsd"));
 			category = Options.UNKNOWN;
 		}
-	} // establishCategory()
+	}
 
-	/** Return the category of the class. */
+	@Override
 	public int category() {
 		return category;
-	} // category()
+	}
 
 	/**
 	 * Fix the category of a class, which from its stereotypes alone has not
 	 * been assigned UNKONWN. The correction is applied by fetching the missing
 	 * category from one of the supertypes.
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final void fixIfCategoryIsUnknown() {
+	public void fixIfCategoryIsUnknown() {
 		if (category == Options.UNKNOWN && supertypes() != null) {
 			if (isAbstract() && checkSupertypes(Options.MIXIN)) {
 				category = Options.MIXIN;
@@ -306,9 +377,14 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#inSchema(de.interactive_instruments.ShapeChange.Model.PackageInfo)
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean inSchema(PackageInfo pi) {
+	@Override
+	public boolean inSchema(PackageInfo pi) {
 		String ns1 = null;
 		String ns2 = null;
 		PackageInfo pi2 = this.pkg();
@@ -323,41 +399,52 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			return false;
 		}
 		return true;
-	} // inSchema()
+	}
 
-	/**
-	 * Return the namespace-prefixed class name. The namespace prefix is fetched
-	 * from the package the class belongs to. If no prefix is found, the class
-	 * name alone is returned.
-	 */
 	// TODO If a class is in no package or is not associated with a namespace,
 	// report an error?
-	public final String qname() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public String qname() {
 		PackageInfo pi = pkg();
 		if (pi != null)
 			return pi.xmlns() + ":" + name();
 		return name();
-	} // qname()
+	}
 
 	/**
-	 * Check if the class has been processed already for a target type (the
-	 * target types are bit masked).
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public boolean processed(int t) {
 		return (processed & t) == t;
-	} // processed()
+	}
 
 	/**
-	 * Set that the class has been processed already for a target type (the
-	 * target types are bit masked).
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public void processed(int t, boolean p) {
 		if (p) {
 			processed = processed | t;
 		} else {
 			processed = processed & ~t;
 		}
-	} // processed()
+	}
 
 	@Override
 	public SortedSet<PropertyInfo> propertiesAll() {
@@ -376,9 +463,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return allProps;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#checkSupertypes(int)
-	 */
+	@Override
 	public boolean checkSupertypes(int cat) {
 		SortedSet<String> ts = supertypes();
 		if (ts == null) {
@@ -444,8 +529,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			checkForBasicType(this, encodingRule("xsd"));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean isSubtype(ClassInfo ci) {
+	public boolean isSubtype(ClassInfo ci) {
 		if (this == ci)
 			return true;
 		SortedSet<String> idsuper = supertypes();
@@ -456,10 +548,17 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			return sci.isSubtype(ci);
 		}
 		return false;
-	} // isSubtype()
+	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean isKindOf(String supertype) {
+	public boolean isKindOf(String supertype) {
 		SortedSet<String> st = supertypes();
 		if (st != null) {
 			for (Iterator<String> i = st.iterator(); i.hasNext();) {
@@ -474,11 +573,14 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	/**
-	 * Determine whether this is a 'suppressed' class. A suppressed class is for
-	 * attaching constraints to its next direct or indirect unsuppressed
-	 * superclass.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean suppressed() {
+	@Override
+	public boolean suppressed() {
 		String supval = taggedValue("suppress");
 		if (supval != null && supval.equalsIgnoreCase("true"))
 			return true;
@@ -488,17 +590,14 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	/**
-	 * Find the next direct or indirect superclass of this class which is not
-	 * suppressed. Only concrete classes are considered if permitAbstract is
-	 * false, otherwise also abstract classes are deemed a valid return values.
-	 * <br>
-	 * The logic of superclass determination is as defined by method
-	 * baseClass().<br>
-	 * If no such class can be found <i>null</i> is returned. If the class where
-	 * we start (this class) is already found unsuppressed, then this class is
-	 * returned.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final ClassInfo unsuppressedSupertype(boolean permitAbstract) {
+	@Override
+	public ClassInfo unsuppressedSupertype(boolean permitAbstract) {
 		for (ClassInfo sci = this; sci != null; sci = sci.baseClass()) {
 			if (sci.suppressed())
 				continue;
@@ -510,10 +609,14 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	/**
-	 * Find out whether this class owns a constraint of the given name. More
-	 * efficient overwrites should be added in the various models.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final boolean hasConstraint(String name) {
+	@Override
+	public boolean hasConstraint(String name) {
 		List<Constraint> vc = constraints();
 		for (Constraint c : vc) {
 			if (c.name().equals(name))
@@ -527,8 +630,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return pkg().fullName() + "::" + name();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final String fullNameInSchema() {
+	public String fullNameInSchema() {
 		return pkg().fullNameInSchema() + "::" + name();
 	}
 
@@ -872,7 +982,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		postprocessed = true;
 	}
 
-	public final boolean isUnionDirect() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public boolean isUnionDirect() {
 		return category() == Options.UNION
 				&& matches("rule-xsd-cls-union-direct") && hasNilReason()
 				&& properties().size() == 2;
@@ -885,20 +1003,34 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		this.diagrams = diagrams;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final boolean hasNilReason() {
-		
+	public boolean hasNilReason() {
+
 		for (PropertyInfo pi : properties().values()) {
 			if (pi.implementedByNilReason())
 				return true;
 		}
-		
+
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<ClassInfo> subtypesInCompleteHierarchy() {
+	public SortedSet<ClassInfo> subtypesInCompleteHierarchy() {
 
 		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
 
@@ -913,8 +1045,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<ClassInfo> supertypesInCompleteHierarchy() {
+	public SortedSet<ClassInfo> supertypesInCompleteHierarchy() {
 
 		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
 
@@ -929,8 +1068,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final Profiles profiles() {
+	public Profiles profiles() {
 
 		if (this.profiles == null) {
 
@@ -967,8 +1113,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return this.profiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final PropertyInfo ownedProperty(String name) {
+	public PropertyInfo ownedProperty(String name) {
 
 		for (PropertyInfo pi : properties().values()) {
 

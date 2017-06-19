@@ -729,11 +729,6 @@ public class EADocument extends ModelImpl implements Model {
 		return fPackageById.get(id);
 	}
 
-	@Override
-	public int type() {
-		return Options.EA7;
-	}
-
 	/** Shutdown EA model and quit EA */
 	public void shutdown() {
 		if (repository != null) {

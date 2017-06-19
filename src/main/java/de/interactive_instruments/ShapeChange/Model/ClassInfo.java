@@ -40,6 +40,12 @@ import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /** Information about a UML class. */
 public interface ClassInfo extends Info {
+
+	/**
+	 * @return the XML schema type corresponding to the class. This is contained
+	 *         in the tagged value with tag 'xmlSchemaType'. If this is not
+	 *         specified, <code>null</code> is returned.
+	 */
 	public String xmlSchemaType();
 
 	/**
@@ -55,12 +61,33 @@ public interface ClassInfo extends Info {
 	 */
 	public boolean includeByValuePropertyType();
 
+	/**
+	 * This predicate determines if the class is a collection. This is done by
+	 * inspecting the associated tagged value.
+	 */
 	public boolean isCollection();
 
+	/**
+	 * Find out if this class has to be output as a dictionary.
+	 */
 	public boolean asDictionary();
 
+	/**
+	 * If a <<Union>> class has a tagged value "asGroup" with a value "true"
+	 * then it is encoded as a global group which is referenced wherever a
+	 * property is defined that has the union class as its value. Note that this
+	 * is only valid, if it is clear from the context how to map the individual
+	 * values to the conceptual model.
+	 */
 	public boolean asGroup();
 
+	/**
+	 * If a <<Union>> class has a tagged value "gmlAsCharacterString" with a
+	 * value "true" it will be translated into an xsd:string simple type
+	 * regardless of how it is actually built. <br>
+	 * Note: This is experimental code which is prone to being removed as soon
+	 * as a better solution for the problem at hand is found.
+	 */
 	public boolean asCharacterString();
 
 	/**
@@ -130,12 +157,28 @@ public interface ClassInfo extends Info {
 	 */
 	public ClassInfo baseClass();
 
+	/**
+	 * Return the namespace-prefixed class name. The namespace prefix is fetched
+	 * from the package the class belongs to. If no prefix is found, the class
+	 * name alone is returned.
+	 */
 	public String qname();
 
+	/**
+	 * Check if the class has been processed already for a target type (the
+	 * target types are bit masked).
+	 */
 	public boolean processed(int t);
 
+	/**
+	 * Set that the class has been processed already for a target type (the
+	 * target types are bit masked).
+	 */
 	public void processed(int t, boolean p);
 
+	/**
+	 * Return the category of the class.
+	 */
 	public int category();
 
 	/**
@@ -175,6 +218,10 @@ public interface ClassInfo extends Info {
 	 */
 	public List<Constraint> constraints();
 
+	/**
+	 * Find out whether this class owns a constraint of the given name. More
+	 * efficient overwrites should be added in the various models.
+	 */
 	public boolean hasConstraint(String name);
 
 	/**
@@ -216,10 +263,29 @@ public interface ClassInfo extends Info {
 	 */
 	public boolean isKindOf(String supertypeName);
 
+	/**
+	 * Determine whether this is a 'suppressed' class. A suppressed class is for
+	 * attaching constraints to its next direct or indirect unsuppressed
+	 * superclass.
+	 */
 	public boolean suppressed();
 
+	/**
+	 * Find the next direct or indirect superclass of this class which is not
+	 * suppressed. Only concrete classes are considered if permitAbstract is
+	 * false, otherwise also abstract classes are deemed a valid return values.
+	 * <br>
+	 * The logic of superclass determination is as defined by method
+	 * baseClass().<br>
+	 * If no such class can be found <i>null</i> is returned. If the class where
+	 * we start (this class) is already found unsuppressed, then this class is
+	 * returned.
+	 */
 	public ClassInfo unsuppressedSupertype(boolean permitAbstract);
 
+	/**
+	 * Find out if this class has to be output as a dictionary.
+	 */
 	public boolean asDictionaryGml33();
 
 	/**

@@ -32,34 +32,53 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
-public abstract class OperationInfoImpl extends InfoImpl implements OperationInfo {
+public abstract class OperationInfoImpl extends InfoImpl
+		implements OperationInfo {
 
-	/* (non-Javadoc)
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public String fullName() {
 		return name();
 	}
-	
-	public final String language() {
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang!=null && !lang.isEmpty())
+		if (lang != null && !lang.isEmpty())
 			return lang;
-		
+
 		return null;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public String fullNameInSchema() {
 		return name();
 	}
 
 	/*
-	 * Validate the operation against all applicable requirements and recommendations
+	 * Validate the operation against all applicable requirements and
+	 * recommendations
 	 */
 	public void postprocessAfterLoadingAndValidate() {
 		if (postprocessed)

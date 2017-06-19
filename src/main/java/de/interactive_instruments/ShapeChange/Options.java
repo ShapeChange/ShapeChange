@@ -165,12 +165,6 @@ public class Options {
 	/** Carriage Return and Line Feed characters. */
 	public static final String CRLF = "\r\n";
 
-	/** Model types. */
-	public static final int XMI10 = 1;
-	public static final int EA7 = 2;
-	public static final int GSIP = 3;
-	public static final int GENERIC = 4;
-
 	/** SQL targets. TODO move the relevant targets */
 	public static final int NONE = 0;
 	// public static final int SFSQL = 1;

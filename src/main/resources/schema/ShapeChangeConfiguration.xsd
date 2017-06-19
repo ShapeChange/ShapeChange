@@ -95,23 +95,7 @@
  <element name="TagAlias" type="sc:TagAliasType"/>
  <complexType name="TagAliasType">
   <sequence/>
-  <attribute name="wellknown" use="required">
-   <simpleType>
-    <restriction base="string">
-     <enumeration value="documentation"/>
-     <enumeration value="definition"/>
-     <enumeration value="description"/>
-     <enumeration value="example"/>
-     <enumeration value="alias"/>
-     <enumeration value="legalBasis"/>
-     <enumeration value="dataCaptureStatement"/>
-     <enumeration value="primaryCode"/>
-     <enumeration value="language"/>
-     <enumeration value="globalIdentifier"/>
-     <!-- more will be added incrementally -->
-    </restriction>
-   </simpleType>
-  </attribute>
+  <attribute name="wellknown" use="required" type="string"/>
   <attribute name="alias" type="string" use="required"/>
  </complexType>
  <element name="descriptorSources">

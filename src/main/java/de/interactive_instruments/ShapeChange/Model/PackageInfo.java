@@ -57,6 +57,13 @@ public interface PackageInfo extends Info {
 	 */
 	public String xmlns();
 
+	/**
+	 * Determine the file name of the xsd document to be generated from the
+	 * package. This is either configured explicitly for the package or is
+	 * otherwise obtained from the tagged value 'xsdDocument' on the package. If
+	 * none of these are found and if the package is an application schema
+	 * package, the file name is derived from the package name.
+	 */
 	public String xsdDocument();
 
 	/**

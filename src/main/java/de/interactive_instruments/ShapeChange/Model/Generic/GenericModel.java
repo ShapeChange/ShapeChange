@@ -1448,15 +1448,6 @@ public class GenericModel extends ModelImpl {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#type()
-	 */
-	public int type() {
-		return Options.GENERIC;
-	}
-
 	/**
 	 * Return all ClassInfo objects contained in the given package and in sub-
 	 * packages, which do not belong to an app schema different to the one of

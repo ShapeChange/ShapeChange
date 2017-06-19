@@ -192,7 +192,7 @@
      <element minOccurs="0" name="profiles">
       <complexType>
        <sequence>
-        <element maxOccurs="unbounded" ref="sc:Profile"/>
+        <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
        </sequence>
       </complexType>
      </element>
@@ -247,7 +247,7 @@
      <element minOccurs="0" name="profiles">
       <complexType>
        <sequence>
-        <element maxOccurs="unbounded" ref="sc:Profile"/>
+        <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
        </sequence>
       </complexType>
      </element>

@@ -53,11 +53,6 @@ public interface Model {
 			String password) throws ShapeChangeAbortException;
 
 	/**
-	 * @return the code that represents the model input type
-	 */
-	public int type();
-
-	/**
 	 * Collect and return all PackageInfo objects tagged as being a schema. If a
 	 * name is given, only the package with the specified name will be
 	 * considered.

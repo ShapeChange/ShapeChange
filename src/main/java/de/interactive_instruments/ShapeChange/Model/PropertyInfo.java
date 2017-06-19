@@ -198,6 +198,9 @@ public interface PropertyInfo extends Info {
 
 	public AssociationInfo association();
 
+	/**
+	 * @return the category of the property value
+	 */
 	public int categoryOfValue();
 
 	public Qualifier qualifier(String name);

@@ -55,6 +55,11 @@ public class BasicConfigurationValidator implements MessageSource {
 
 		String imt = options.parameter("inputModelType");
 
+		if(imt == null) {
+			result.addError(null,26);
+			isValid = false;
+		}
+		
 		/*
 		 * If the input type is EA7 and we are not only executing deferrable
 		 * output writers, check that we are running on 32bit Java in a windows
@@ -80,8 +85,8 @@ public class BasicConfigurationValidator implements MessageSource {
 				result.addError(this, 2, osArch);
 				isValid = false;
 			}
-		}
-
+		} 
+		
 		return isValid;
 	}
 

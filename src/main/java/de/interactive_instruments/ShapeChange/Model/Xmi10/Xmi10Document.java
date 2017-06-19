@@ -1059,10 +1059,6 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return m;
 	}
 
-	public int type() {
-		return Options.XMI10;
-	}
-
 	public void shutdown() {
 		// nothing to be done for XMI files
 	}
