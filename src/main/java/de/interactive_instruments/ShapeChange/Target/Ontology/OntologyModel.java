@@ -1997,7 +1997,7 @@ public class OntologyModel implements MessageSource {
 			if (cat == Options.ENUMERATION) {
 				ClassInfo enumeration = model.classById(pi.typeInfo().id);
 				if (enumeration == null
-						|| this.ontClassByClassInfo.containsKey(enumeration)) {
+						|| this.map(enumeration) != null) {
 					return false;
 				} else {
 					return true;

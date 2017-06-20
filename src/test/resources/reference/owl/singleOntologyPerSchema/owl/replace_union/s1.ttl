@@ -1,22 +1,14 @@
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
 @prefix ce:    <http://my.org/enumerations#> .
 @prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix gml:   <http://www.opengis.net/ont/gml#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
-@prefix sc:    <http://shapechange.net/resources/ont/base#> .
-@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
-@prefix sf:    <http://www.opengis.net/ont/sf#> .
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix locn:  <https://www.w3.org/ns/locn#> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
 @prefix s1:    <http://ontology.base.uri/s1#> .
 @prefix ex1:   <http://example.org/1#> .
-@prefix dc:    <http://purl.org/dc/elements/1.1/> .
 
 s1:TP6_Class1.tp6p1  a      owl:DatatypeProperty ;
         rdfs:domain         s1:TP6_Class1 ;
@@ -178,15 +170,15 @@ s1:T6_Class1.t6u1p1  a  owl:DatatypeProperty ;
         rdfs:domain  s1:T6_Class1 ;
         rdfs:range   xsd:integer .
 
+s1:T6_Class1.t6u3p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:double .
+
 s1:TP1_Class3  a         owl:Class ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP1_Class3.t1c3p1
                          ] .
-
-s1:T6_Class1.t6u3p1  a  owl:DatatypeProperty ;
-        rdfs:domain  s1:T6_Class1 ;
-        rdfs:range   xsd:double .
 
 s1:T2_Supertype_B  a  owl:Class .
 
@@ -472,7 +464,7 @@ s1:TP7_Class2.tp7c2p1
 s1:TP2_Class2  a         owl:Class ;
         rdfs:subClassOf  geo:Feature .
 
-s1:T7_Class1.t7c1p1  a  owl:DatatypeProperty ;
+s1:T7_Class1.t7c1p1  a  owl:ObjectProperty ;
         rdfs:domain  s1:T7_Class1 ;
         rdfs:range   ce:T7_Enumeration1 .
 
@@ -537,10 +529,6 @@ s1:TP5_Class2.tp5c2p3
         rdfs:domain  s1:TP5_Class2 ;
         rdfs:range   s1:TP5_Class1 .
 
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( s1:T3_Elephant s1:T3_Fish s1:T3_Mosquito )
-] .
-
 s1:TP6_Class2.tp6p1  a  owl:DatatypeProperty ;
         rdfs:domain  s1:TP6_Class2 ;
         rdfs:range   xsd:boolean .
@@ -554,6 +542,10 @@ s1:TP7_Class1.tp7c1p1
 
 s1:T3_Fish  a            owl:Class ;
         rdfs:subClassOf  s1:T3_Animal , geo:Feature .
+
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( s1:T3_Elephant s1:T3_Fish s1:T3_Mosquito )
+] .
 
 s1:T3_Elephant  a        owl:Class ;
         rdfs:subClassOf  s1:T3_Animal , geo:Feature .
