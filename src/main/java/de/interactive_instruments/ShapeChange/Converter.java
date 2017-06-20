@@ -403,9 +403,7 @@ public class Converter {
 
 		for (TransformerConfiguration trf : transformerConfigs) {
 
-			// first of all reset options for the transformer
 			options.setCurrentProcessConfig(trf);
-			options.resetFields();
 
 			// execute the transformer
 			GenericModel modelOutput = null;
@@ -458,6 +456,27 @@ public class Converter {
 								"Creation of GenericModel is not required.");
 						modelInput = (GenericModel) model;
 					}
+
+					// FIXME
+					/*
+					 * 2017-06-20 JE: For the execution of the first
+					 * transformers, we need to have the rules from all targets
+					 * in Options.java. The reason is that some checks are
+					 * performed that try to match on specific target conversion
+					 * rules. An example is method ClassInfoEA.baseClass(),
+					 * which at some point may need to match on
+					 * "rule-xsd-cls-mixin-classes-non-mixin-supertypes". When
+					 * creating a copy from an EA model, it would be problematic
+					 * if the rules configured by the targets were no longer
+					 * known. Thus, we reset the fields of Options.java only
+					 * after the GenericModel copy has been created. Eventually,
+					 * what we really want is to avoid dependencies on target
+					 * conversion rules when loading a model. Target specific
+					 * model checks should be performed separately. Refactoring
+					 * them into target specific model validation classes may be
+					 * the way to go.
+					 */
+					options.resetFields();
 
 					TransformationManager trfManager = new TransformationManager();
 
