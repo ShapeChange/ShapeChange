@@ -32,9 +32,12 @@
 package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -49,6 +52,10 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  *
  */
 public class GenericModelContentHandler extends AbstractContentHandler {
+
+	private static final Set<String> ELEMENTS_TO_IGNORE = new HashSet<String>(
+			Arrays.asList(new String[] { "globalProfileInfos", "Profile",
+					"name", "description" }));
 
 	private List<GenericPackageContentHandler> packageContentHandlers = new ArrayList<GenericPackageContentHandler>();
 	private List<GenericAssociationContentHandler> associationContentHandlers = new ArrayList<GenericAssociationContentHandler>();
@@ -67,7 +74,11 @@ public class GenericModelContentHandler extends AbstractContentHandler {
 			throw new GenericModelReaderConfigurationException(
 					"localName is empty. No Namespace support in the SAXParser?");
 
-		if (localName.equals("Model")) {
+		if (ELEMENTS_TO_IGNORE.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("Model")) {
 
 			if (atts != null) {
 				String encoding_ = atts.getValue("encoding");

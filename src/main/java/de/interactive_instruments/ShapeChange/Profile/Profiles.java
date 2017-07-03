@@ -374,11 +374,14 @@ public class Profiles {
 		List<ProfileIdentifier> identifiers = new ArrayList<ProfileIdentifier>(
 				this.getProfileIdentifiersByName().values());
 
-		for (int i = 0; i < identifiers.size() - 1; i++) {
-			ProfileIdentifier pi = identifiers.get(i);
-			sb.append(pi + ",");
+		if (identifiers.size() > 0) {
+
+			for (int i = 0; i < identifiers.size() - 1; i++) {
+				ProfileIdentifier pi = identifiers.get(i);
+				sb.append(pi + ",");
+			}
+			sb.append(identifiers.get(identifiers.size() - 1));
 		}
-		sb.append(identifiers.get(identifiers.size() - 1));
 
 		return sb.toString();
 	}
