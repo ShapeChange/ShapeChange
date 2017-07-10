@@ -45,6 +45,7 @@ import com.google.common.collect.Sets.SetView;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
+import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -95,8 +96,9 @@ public class ModelProfileValidator implements MessageSource {
 	 * <li>The profile set of a class contains the profile sets of its
 	 * properties (unless explicit profile settings is enabled and the class
 	 * does not belong to a profile).</li>
-	 * <li>Mandatory properties belong to the profiles of the class they are in.
-	 * </li>
+	 * <li>Mandatory properties belong to the profiles of the class they are in,
+	 * except in case of enumerations and code lists (in future maybe unions as
+	 * well).</li>
 	 * 
 	 * Furthermore, the consistency of the following profile parameters is
 	 * checked: geometry and multiplicity.
@@ -258,24 +260,30 @@ public class ModelProfileValidator implements MessageSource {
 
 					List<String> messages = new ArrayList<String>();
 
-					if (!ci.profiles().contains(ci.name(), pi.profiles(),
-							pi.name() + " (in class " + pi.inClass().name()
-									+ ")",
-							isExplicitProfileSettings, true, messages)) {
+					if (ci.category() != Options.ENUMERATION
+							&& ci.category() != Options.CODELIST
+							&& !ci.profiles().contains(ci.name(), pi.profiles(),
+									pi.name() + " (in class "
+											+ pi.inClass().name() + ")",
+									isExplicitProfileSettings, true,
+									messages)) {
 
 						result.addWarning(null, 20204, ci.name(), pi.name(),
 								StringUtils.join(messages, " "));
 					}
 
 					/*
-					 * If the property is mandatory, check that the profile sets
-					 * of the property and its inClass() are equal.
+					 * If the property is mandatory (and does not belong to an
+					 * enumeration or codelist), check that the profile sets of
+					 * the property and its inClass() are equal.
 					 * 
 					 * NOTE: This check is not covered by the previous check
 					 * (via the contains() method).
 					 */
 
-					if (pi.cardinality().minOccurs > 0) {
+					if (pi.cardinality().minOccurs > 0
+							&& ci.category() != Options.ENUMERATION
+							&& ci.category() != Options.CODELIST) {
 
 						if (ci.profiles().isEmpty()
 								&& pi.profiles().isEmpty()) {

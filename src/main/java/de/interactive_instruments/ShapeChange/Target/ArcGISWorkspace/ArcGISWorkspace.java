@@ -1149,7 +1149,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				"<no description available>");
 
 		EAModelUtil.setTaggedValue(e,
-				new EATaggedValue("description", documentation, true));
+				new EATaggedValue("Description", documentation, true));
 
 		// identify field type for the coded value domain
 		String fieldType = "esriFieldTypeString";
@@ -1231,7 +1231,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		EAModelUtil.setEAStereotype(e, "RangeDomain");
 
 		EAModelUtil.setTaggedValue(e,
-				new EATaggedValue("description",
+				new EATaggedValue("Description",
 						rangeDomainDocumentation == null
 								? "<no description available>"
 								: rangeDomainDocumentation,
