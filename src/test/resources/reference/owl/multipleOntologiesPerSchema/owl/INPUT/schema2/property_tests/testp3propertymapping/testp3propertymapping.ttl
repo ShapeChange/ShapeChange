@@ -1,18 +1,16 @@
-@prefix s24:   <http://ontology.base.uri/schema2/property_tests/testp3propertymapping/1.2.3/> .
 @prefix dct:   <http://purl.org/dc/terms/> .
-@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150/-2/2012/base#> .
+@prefix s24:   <http://ontology.base.uri/schema2/property_tests/testp3propertymapping/1.2.3/> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix dc:    <http://purl.org/dc/elements/1.1/> .
 
 <http://ontology.base.uri/schema2/property_tests/testp3propertymapping/1.2.3>
         a            owl:Ontology ;
         rdfs:label   "FIXME"@en ;
         dct:source   "FIXME"@en ;
-        owl:imports  <http://def.isotc211.org/iso19150-2/2012/base/LOCATION> .
+        owl:imports  <http://def.isotc211.org/iso19150/-2/2012/base> .
 
 s24:TP3_Class1  a   owl:Class ;
         rdfs:label  "FIXME"@en .

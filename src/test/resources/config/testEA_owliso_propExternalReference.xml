@@ -40,7 +40,7 @@
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="encrule" />
 			<!-- turtle ntriples nquads rdfxml jsonld rdfjson trig trix rdfthrift -->
-			<targetParameter name="outputFormat" value="turtle" />
+			<targetParameter name="outputFormat" value="rdfxml" />
 			<targetParameter name="URIbase" value="http://ontology.base.uri" />	
 			<targetParameter name="propExternalReference_targetProperty" value="rdfs:isDefinedBy" />	
 

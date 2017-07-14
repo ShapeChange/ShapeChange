@@ -49,6 +49,7 @@
 				value="ontologyNameTV" />
 			<targetParameter name="sourceTaggedValueName" value="sourceTV" />
 			<targetParameter name="rdfNamespaceSeparator" value="/" />
+			<xi:include href="src/main/resources/config/StandardNamespaces-owl.xml" />
 			<rules>
 				<EncodingRule name="encrule" extends="*">
 					<rule name="rule-owl-cls-encode-featuretypes" />
@@ -59,14 +60,6 @@
 					<rule name="rule-owl-pkg-importISO191502Base" />
 				</EncodingRule>
 			</rules>
-			<namespaces>
-				<Namespace nsabr="iso19150-2"
-					ns="http://def.isotc211.org/iso19150-2/2012/base#" location="http://def.isotc211.org/iso19150-2/2012/base/LOCATION" />
-				<Namespace nsabr="skos" ns="http://www.w3.org/2004/02/skos/core#"
-					location="https://www.w3.org/2009/08/skos-reference/skos.rdf" />
-				<Namespace nsabr="rdfs" ns="http://www.w3.org/2000/01/rdf-schema#"
-					location="http://www.w3.org/2000/01/rdf-schema" />
-			</namespaces>
 			<descriptorTargets>
 				<DescriptorTarget target="rdfs:label" template="[[alias]]"
 					noValueBehavior="populateOnce" noValueText="FIXME" />

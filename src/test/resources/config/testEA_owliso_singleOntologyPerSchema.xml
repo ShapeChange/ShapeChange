@@ -145,7 +145,7 @@
 
 			<rdfConversionParameters>
 				<StereotypeConversionParameter
-					wellknown="FeatureType" subClassOf="geo:Feature" />
+					wellknown="FeatureType" subClassOf="gsp:Feature" />
 				<TypeConversionParameter type="T4_Class1"
 					schema="Schema1" subClassOf="ex1:C ex1:D" />
 				<PropertyConversionParameter property="TP4_Class1::p2"

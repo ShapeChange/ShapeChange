@@ -42,6 +42,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.RDFWriter;
 import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -76,7 +77,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RDF_NS_DC = "http://purl.org/dc/elements/1.1/";
 	public static final String RDF_NS_DCT = "http://purl.org/dc/terms/";
 	public static final String RDF_NS_W3C_SKOS = "http://www.w3.org/2004/02/skos/core#";
-	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150-2/2012/base#";
+	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150/-2/2012/base#";
 	public static final String RDF_NS_OGC_GEOSPARQL = "http://www.opengis.net/ont/geosparql#";
 	public static final String RDF_NS_ISO_GFM = "http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#";
 
@@ -354,7 +355,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
 
 	@Override
-	public String getTargetName(){
+	public String getTargetName() {
 		return "ISO 19150-2 OWL Ontology";
 	}
 
@@ -1038,16 +1039,18 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		for (OntologyModel om : ontologyByRdfNs.values()) {
 
-			OntModel ont = om.getOntologyModel();
-			print(ont, om.getName(), outputDirectory, om.getPath(),
-					om.getFileName(), r);
+			print(om, outputDirectory, r);
 		}
 
 		printed = true;
 	}
 
-	public void print(OntModel ontmodel, String ontName, String outputDirectory,
-			String path, String filenameWithoutExtension, ShapeChangeResult r) {
+	public void print(OntologyModel om, String outputDirectory, ShapeChangeResult r) {
+				
+		OntModel ontmodel = om.getOntologyModel();
+		String ontName = om.getName();
+		String path = om.getPath();
+		String filenameWithoutExtension = om.getFileName();
 
 		ValidityReport report = ontmodel.validate();
 		if (report != null && !report.isValid())
@@ -1091,7 +1094,17 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			OutputStream fout = new FileOutputStream(outFile);
 			OutputStream bout = new BufferedOutputStream(fout);
 
-			RDFDataMgr.write(bout, ontmodel, rdfFormat);
+			if (rdfFormat.equals(RDFFormat.RDFXML)) {
+
+				RDFWriter writer = ontmodel.getWriter("RDF/XML");
+				writer.setProperty("xmlbase", om.getName());
+				writer.write(ontmodel, bout, null);
+				
+			} else {
+
+				RDFDataMgr.write(bout, ontmodel, rdfFormat);
+			}
+			
 			r.addResult(getTargetName(), outDirForOntology, filename, ontName);
 
 		} catch (Exception e) {

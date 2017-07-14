@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+ <!-- ISO 19107 Geometry - mapped to GML geometry -->
+ <RdfTypeMapEntry type="DirectPosition" target="gmlowl:Point"/>
+ <RdfTypeMapEntry type="GM_Aggregate" target="gmlowl:MultiGeometry"/>
+ <RdfTypeMapEntry type="GM_Curve" target="gmlowl:Curve"/> <!-- alternative: gmlowl:LineString -->
+ <RdfTypeMapEntry type="GM_MultiCurve" target="gmlowl:MultiCurve"/>
+ <RdfTypeMapEntry type="GM_MultiPoint" target="gmlowl:MultiPoint"/>
+ <RdfTypeMapEntry type="GM_MultiPrimitive" target="gmlowl:MultiGeometry"/>
+ <RdfTypeMapEntry type="GM_MultiSurface" target="gmlowl:MultiSurface"/>
+ <RdfTypeMapEntry type="GM_Object" target="gmlowl:AbstractGeometry"/>
+ <RdfTypeMapEntry type="GM_Point" target="gmlowl:Point"/>
+ <RdfTypeMapEntry type="GM_PolyhedralSurface" target="gmlowl:PolyhedralSurface"/>
+ <RdfTypeMapEntry type="GM_Primitive" target="gmlowl:AbstractGeometricPrimitive"/>
+ <RdfTypeMapEntry type="GM_Ring" target="gmlowl:Ring"/> <!-- alternative: gmlowl:LinearRing -->
+ <RdfTypeMapEntry type="GM_Ring" target="gmlowl:Solid"/>
+ <RdfTypeMapEntry type="GM_Surface" target="gmlowl:Surface"/> <!-- alternative: gmlowl:Polygon -->
+ <RdfTypeMapEntry type="GM_Solid" target="gmlowl:Solid"/>
+ <RdfTypeMapEntry type="GM_Tin" target="gmlowl:Tin"/>
+ <RdfTypeMapEntry type="GM_Triangle" target="gmlowl:Triangle"/>
+ 
+  <!-- ... more to be added as required -->
+</rdfMapEntries>

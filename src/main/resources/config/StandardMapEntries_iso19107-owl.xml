@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
   <!-- ISO 19107 Geometry -->
-  <RdfTypeMapEntry type="GM_Object" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Point" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Curve" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Surface" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Solid" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_MultiPoint" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_MultiCurve" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_MultiSurface" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_MultiSolid" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Aggregate" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_CompositePoint" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_CompositeCurve" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_CompositeSurface" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_CompositeSolid" target="geo:Geometry"/>
-  <RdfTypeMapEntry type="GM_Complex" target="geo:Geometry"/>
+ <RdfTypeMapEntry type="DirectPosition" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Object" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Point" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Curve" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Surface" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Solid" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_MultiPoint" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_MultiCurve" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_MultiSurface" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_MultiSolid" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Aggregate" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_CompositePoint" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_CompositeCurve" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_CompositeSurface" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_CompositeSolid" target="gsp:Geometry"/>
+  <RdfTypeMapEntry type="GM_Complex" target="gsp:Geometry"/>
 
   <!--	Alternative:
   <RdfTypeMapEntry target="gml:AbstractGeometry" type="GM_Object"/>
