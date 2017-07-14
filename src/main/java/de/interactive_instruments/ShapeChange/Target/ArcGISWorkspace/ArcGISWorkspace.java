@@ -167,6 +167,19 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	public static final String RULE_PROP_ISNULLABLE = "rule-arcgis-prop-isNullable";
 
+	/**
+	 * If this rule is enabled, then the base name of a relationship class will
+	 * be constructed from the short names of the source and target class,
+	 * combined by an underscore. The short name of a class is given via the
+	 * tagged value specified by parameter
+	 * {@value #PARAM_SHORT_NAME_BY_TAGGED_VALUE}. If no short name is
+	 * specified, the original class name will be used as fallback. Note that
+	 * the base name can be subject to additional modifications (such as
+	 * normalization, addition of suffix to make the name unique, and clipping
+	 * in case that the name exceeds the allowed length).
+	 */
+	public static final String RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES = "rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses";
+
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
 	/* ------------------------------------------- */
@@ -219,6 +232,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
 	public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
+
+	/**
+	 * Name of the tagged value that provides the short name for a model
+	 * element, when used in constructing specific names of the ArcGIS
+	 * workspace. Default is 'shortName'.
+	 */
+	public static final String PARAM_SHORT_NAME_BY_TAGGED_VALUE = "shortNameByTaggedValue";
 
 	/* --------------------------------------------------------------- */
 	/* --- Constants for elements of the ArcGIS workspace template --- */
@@ -460,6 +480,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	protected String nameOfTVToDetermineFieldLength = "size";
 
 	private String absolutePathOfOutputEAPFile;
+
+	private String shortNameByTaggedValue;
 
 	/**
 	 * key: name of the class element; value: the range domain element
@@ -780,6 +802,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				PARAM_DOCUMENTATION_TEMPLATE);
 		documentationNoValue = options.parameter(this.getClass().getName(),
 				PARAM_DOCUMENTATION_NOVALUE);
+
+		// parse
+		this.shortNameByTaggedValue = options.parameterAsString(
+				this.getClass().getName(), PARAM_SHORT_NAME_BY_TAGGED_VALUE,
+				"shortName", false, true);
+
 	}
 
 	public void process(ClassInfo ci) {
@@ -1520,7 +1548,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
+		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId,
+				"ArcGIS::ObjectClass");
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, e.GetElementID());
@@ -2509,9 +2538,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					 * to a single association)
 					 */
 
-					String relClassName = source_.name() + "_" + target_.name();
-					relClassName = this
-							.checkRelationshipClassName(relClassName);
+					String relClassName = computeRelationshipClassName(source_,
+							target_);
 
 					String assocClassName = normalizeName(relClassName);
 
@@ -2695,6 +2723,29 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
+	private String computeRelationshipClassName(ClassInfo source,
+			ClassInfo target) {
+
+		String sourceName = source.name();
+		String targetName = target.name();
+
+		if (source.matches(RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES)) {
+
+			if (source.taggedValue(shortNameByTaggedValue) != null) {
+				sourceName = source.taggedValue(shortNameByTaggedValue);
+			}
+			if (target.taggedValue(shortNameByTaggedValue) != null) {
+				targetName = target.taggedValue(shortNameByTaggedValue);
+			}
+		}
+
+		String relClassName = sourceName + "_" + targetName;
+
+		relClassName = this.checkRelationshipClassName(relClassName);
+
+		return relClassName;
+	}
+
 	/**
 	 * Creates a <<RelationshipClass>> association between the class that the
 	 * given property is in and the the class that is the type of the property.
@@ -2872,8 +2923,8 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					Connector con = EAModelUtil.createEAAssociation(sourceElmt,
 							targetElmt);
 
-					String relClassName = source_.name() + "_" + target_.name();
-					relClassName = checkRelationshipClassName(relClassName);
+					String relClassName = computeRelationshipClassName(source_,
+							target_);
 
 					if (exceedsMaxLength(relClassName)) {
 						this.result.addWarning(this, 234, relClassName,

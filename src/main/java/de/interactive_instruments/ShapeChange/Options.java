@@ -3122,14 +3122,15 @@ public class Options {
 							modelElementStereotypePattern = Pattern
 									.compile(modelElementStereotype);
 						}
-						
+
 						Pattern propertyValueTypeStereotypePattern = null;
 
 						if (taggedValueE
 								.hasAttribute("propertyValueTypeStereotype")) {
 
 							String propertyValueTypeStereotype = taggedValueE
-									.getAttribute("propertyValueTypeStereotype");
+									.getAttribute(
+											"propertyValueTypeStereotype");
 							propertyValueTypeStereotypePattern = Pattern
 									.compile(propertyValueTypeStereotype);
 						}
@@ -3171,7 +3172,8 @@ public class Options {
 						result.add(new TaggedValueConfigurationEntry(
 								taggedValueE.getAttribute("name"), value,
 								modelElementType, modelElementStereotypePattern,
-								modelElementNamePattern, propertyValueTypeStereotypePattern,
+								modelElementNamePattern,
+								propertyValueTypeStereotypePattern,
 								applicationSchemaNamePattern));
 
 					}
@@ -3285,6 +3287,14 @@ public class Options {
 	}
 
 	private void addStandardRules() {
+
+		/*
+		 * FIXME: Targets should be able to register rules with options. By
+		 * requiring that Options knows all rules up front, one cannot add a new
+		 * target dynamically (e.g. via an additional library on the classpath)
+		 * and make use of the Info.matches(String) function.
+		 */
+
 		/*
 		 * mandatory rules
 		 */
@@ -3663,6 +3673,7 @@ public class Options {
 		addRule("rule-arcgis-prop-precision");
 		addRule("rule-arcgis-prop-scale");
 		addRule("rule-arcgis-prop-isNullable");
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 
 		/*
 		 * Replication schema encoding rules
