@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Transformation.Adding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.regex.Pattern;
@@ -53,6 +54,8 @@ import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -86,6 +89,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 		private TaggedValues tvs;
 		private Type type;
 		private Stereotypes stereotypes;
+		private Descriptors descriptors;
 
 		/**
 		 * @return the ps
@@ -281,6 +285,14 @@ public class AttributeCreator implements Transformer, MessageSource {
 		public void setStereotypes(Stereotypes stereotypes) {
 			this.stereotypes = stereotypes;
 		}
+
+		public Descriptors getDescriptors() {
+			return descriptors;
+		}
+
+		public void setDescriptors(Descriptors descriptors) {
+			this.descriptors = descriptors;
+		}
 	}
 
 	private ShapeChangeResult result = null;
@@ -360,9 +372,16 @@ public class AttributeCreator implements Transformer, MessageSource {
 						GenericPropertyInfo genPi = new GenericPropertyInfo(
 								model, id.toString(), attDef.getName());
 
-//						genPi.setAliasNameAll(
-//								new Descriptors(attDef.getAliasName()));
-						genPi.descriptors().put(Descriptor.ALIAS, attDef.getAliasName());
+						if (attDef.getDescriptors() != null) {
+							genPi.setDescriptors(
+									attDef.getDescriptors().createCopy());
+						}
+
+						if (attDef.getAliasName() != null) {
+							genPi.descriptors().put(Descriptor.ALIAS,
+									attDef.getAliasName());
+						}
+
 						genPi.setInitialValue(attDef.getInitialValue());
 						genPi.setDerived(attDef.isDerived());
 						genPi.setOrdered(attDef.isOrdered());
@@ -472,7 +491,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 						 * set stereotypes
 						 */
 						genPi.setStereotypes(attDef.getStereotypes());
-						
+
 						/*
 						 * Determine if new property would be a restriction. We
 						 * already checked that ci itself does not have a
@@ -629,6 +648,80 @@ public class AttributeCreator implements Transformer, MessageSource {
 				String alias = aliasE.getTextContent().trim();
 				if (alias.length() != 0) {
 					ad.setAliasName(alias);
+				}
+			}
+
+			// parse descriptors
+			Element descriptorsE = getFirstElement(attDefE, "descriptors");
+			if (descriptorsE != null) {
+
+				Descriptors descriptors = new Descriptors();
+
+				NodeList descriptorsNl = descriptorsE
+						.getElementsByTagName("Descriptor");
+
+				if (descriptorsNl != null && descriptorsNl.getLength() != 0) {
+					for (int j = 0; j < descriptorsNl.getLength(); j++) {
+						Node n = descriptorsNl.item(j);
+						if (n.getNodeType() == Node.ELEMENT_NODE) {
+
+							Element descriptorE = (Element) n;
+							List<LangString> descriptorValues = new ArrayList<LangString>();
+
+							Element descriptorValuesE = getFirstElement(
+									descriptorE, "descriptorValues");
+
+							NodeList descriptorValuesNl = descriptorValuesE
+									.getElementsByTagName("DescriptorValue");
+
+							if (descriptorValuesNl != null
+									&& descriptorValuesNl.getLength() != 0) {
+								for (int k = 0; k < descriptorValuesNl
+										.getLength(); k++) {
+									Node dv = descriptorValuesNl.item(k);
+									if (dv.getNodeType() == Node.ELEMENT_NODE) {
+
+										Element descriptorValueE = (Element) dv;
+
+										String value = descriptorValueE
+												.getTextContent().trim();
+										String lang = null;
+										if (descriptorValueE
+												.hasAttribute("lang")) {
+											lang = descriptorValueE
+													.getAttribute("lang");
+										}
+
+										if (value != null
+												&& value.length() > 0) {
+											descriptorValues.add(new LangString(
+													value, lang));
+										}
+									}
+								}
+							}
+
+							if (descriptorValues.size() > 0) {
+
+								String descriptorName = descriptorE
+										.getAttribute("name").trim();
+
+								try {
+									Descriptor descriptor = Descriptor
+											.valueOf(descriptorName.toUpperCase(
+													Locale.ENGLISH));
+
+									descriptors.put(descriptor,
+											descriptorValues);
+									ad.setDescriptors(descriptors);
+
+								} catch (IllegalArgumentException
+										| NullPointerException e) {
+									result.addError(this, 7, descriptorName);
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -817,6 +910,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 			return "No classes were selected for definition of attribute '$1$'. AttributeDefinition will be ignored.";
 		case 6:
 			return "Property with name '$1$' already exists in class '$2$'. Because overwriting an existing property is not allowed the AttributeDefinition will be ignored.";
+		case 7:
+			return "Unknown descriptor '$1$' encountered while loading the attribute definition. The according descriptor element will be ignored.";
 
 		default:
 			return "(" + AttributeDefinition.class.getName()

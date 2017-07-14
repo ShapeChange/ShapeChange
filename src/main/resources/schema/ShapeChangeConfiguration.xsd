@@ -505,6 +505,13 @@
     </complexType>
    </element>
    <element maxOccurs="1" minOccurs="0" name="aliasName" type="string"/>
+   <element maxOccurs="1" minOccurs="0" name="descriptors">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Descriptor"/>
+     </sequence>
+    </complexType>
+   </element>
    <element minOccurs="0" name="initialValue" type="string"/>
    <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
    <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
@@ -813,4 +820,26 @@
    </sequence>
   </complexType>
  </element>
+ <element name="Descriptor" type="sc:DescriptorType"/>
+ <complexType name="DescriptorType">
+  <sequence>
+   <element minOccurs="1" name="descriptorValues">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="DescriptorValue">
+       <complexType>
+        <simpleContent>
+         <extension base="string">
+          <attribute name="lang" type="string"/>
+         </extension>
+        </simpleContent>
+       </complexType>
+      </element>
+     </sequence>
+    </complexType>
+   </element>
+  </sequence>
+  <attribute name="name" type="string" use="required"/>
+ </complexType>
+
 </schema>
