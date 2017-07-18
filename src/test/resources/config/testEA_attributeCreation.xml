@@ -30,7 +30,13 @@
               stereotypeRegex="leaf"/>
             <ClassSelector/>
           </classSelection>
-          <aliasName>Alias</aliasName>
+          <descriptors>
+          	<Descriptor name="alias">
+          		<descriptorValues>
+          			<DescriptorValue>Alias</DescriptorValue>
+          		</descriptorValues>
+          	</Descriptor>
+          </descriptors>
           <initialValue>initialvalue</initialValue>
           <name>GMLID</name>
           <taggedValues>

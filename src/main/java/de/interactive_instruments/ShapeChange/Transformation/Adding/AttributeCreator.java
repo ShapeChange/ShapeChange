@@ -642,7 +642,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			ad.setClassSelector(cs);
 
-			// parse aliasName
+			// parse aliasName (kept for backwards compatibility)
 			Element aliasE = getFirstElement(attDefE, "aliasName");
 			if (aliasE != null) {
 				String alias = aliasE.getTextContent().trim();
