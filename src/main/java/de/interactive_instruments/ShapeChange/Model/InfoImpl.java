@@ -146,18 +146,20 @@ public abstract class InfoImpl implements Info {
 
 	private void addContextDetails(MessageContext mc) {
 
-		/*
-		 * we want to provide as much information as possible to locate the
-		 * element in the model
-		 */
-		if (this instanceof PropertyInfo) {
-
-			PropertyInfo pi = (PropertyInfo) this;
-
-			mc.addDetail(null, 791, pi.name(), pi.inClass().name());
-
-		} else {
-			mc.addDetail(null, 790, this.toString(), this.name());
+		if(mc != null) {
+			/*
+			 * we want to provide as much information as possible to locate the
+			 * element in the model
+			 */
+			if (this instanceof PropertyInfo) {
+	
+				PropertyInfo pi = (PropertyInfo) this;
+	
+				mc.addDetail(null, 791, pi.name(), pi.inClass().name());
+	
+			} else {
+				mc.addDetail(null, 790, this.toString(), this.name());
+			}
 		}
 	}
 

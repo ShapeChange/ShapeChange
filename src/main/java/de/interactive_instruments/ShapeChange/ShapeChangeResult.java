@@ -871,7 +871,7 @@ public class ShapeChangeResult {
 		case 703:
 			return "Multiple values were requested for descriptor '$1$', but the source '$2$' specified in the configuration only supports single values. No values have been returned.";
 		case 704:
-			return "Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
+			return "??Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
 		case 790:
 			return "Context: class InfoImpl. Element: $1$. Name: $2$";
 		case 791:

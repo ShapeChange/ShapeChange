@@ -367,6 +367,7 @@ public abstract class ModelImpl implements Model {
 	// Tagged values normalization. This returns the tag given or a
 	// de-deprecated tag or null.
 	public String normalizeTaggedValue(String tag) {
+		
 		// If not yet done, set up the tagged values, which we allow
 		if (allowedTags == null) {
 			allowedTags = new HashSet<String>(100);
@@ -401,7 +402,10 @@ public abstract class ModelImpl implements Model {
 			// tagged value is qualified - remove name space
 			tag = tag.substring(tag.lastIndexOf("::") + 2);
 		}
-
+		
+		// Now check tag aliases provided in the configuration
+		tag = options().normalizeTag(tag);
+		
 		// So, if it's one of these just return the argument ...
 		if (allowedTags.contains(tag))
 			return tag;
@@ -416,11 +420,6 @@ public abstract class ModelImpl implements Model {
 			return "gmlAsGroup";
 		if (tag.equals("implementedByNilReason"))
 			return "gmlImplementedByNilReason";
-
-		// Now check tag aliases provided in the configuration
-		String s = options().normalizeTag(tag);
-		if (!s.equalsIgnoreCase(tag))
-			return s;
 
 		// None of these, return null
 		return null;

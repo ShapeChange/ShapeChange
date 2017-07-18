@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -1064,19 +1065,18 @@ public class Options {
 	 * Adds a tag alias mapping.
 	 * 
 	 * @param alias
-	 *            - the tag alias (in lower case)
+	 *            - the tag alias (will be converted to lower case)
 	 * @param wellknown
-	 *            - the wellknown tag (in lower case) to which the alias maps
+	 *            - the tag to which the alias maps
 	 */
 	protected void addTagAlias(String alias, String wellknown) {
-		fTagAliases.put(alias, wellknown);
+		fTagAliases.put(alias.toLowerCase(Locale.ENGLISH), wellknown);
 	}
 
 	/**
 	 * Retrieves the wellknown tag to which the given alias maps, or
 	 * <code>null</code> if no such mapping exists. The alias will automatically
-	 * be converte to lower case to look up the mapping (the according key
-	 * values in the tag map have also been converted to lower case).
+	 * be converted to lower case to look up the mapping.
 	 * 
 	 * @param alias
 	 *            tag for which a mapping to a wellknown tag is being looked up
@@ -1084,7 +1084,7 @@ public class Options {
 	 *         if no such mapping exists
 	 */
 	public String tagAlias(String alias) {
-		return fTagAliases.get(alias.toLowerCase());
+		return fTagAliases.get(alias.toLowerCase(Locale.ENGLISH));
 	}
 
 	/**
@@ -3705,7 +3705,10 @@ public class Options {
 		return stereotype;
 	};
 
-	/** Normalize a tag fetched from the model. */
+	/** 
+	 * Normalize a tag fetched from the model.
+	 * @return the mapping for the tag, or the given tag itself if no mapping is configured
+	 *  */
 	public String normalizeTag(String tag) {
 		// Map tag alias to well-known tag
 		String s = tagAlias(tag.trim());
