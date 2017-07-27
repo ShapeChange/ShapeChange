@@ -291,7 +291,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	public void setInlineOrByReference(String inlineOrByReference) {
 
 		if (inlineOrByReference != null
-				&& !inlineOrByReference.equals("inlineOrByReference")) {
+				&& !inlineOrByReference.equalsIgnoreCase("inlineOrByReference")) {
 			this.inlineOrByReference = options.internalize(inlineOrByReference);
 		} else {
 			this.inlineOrByReference = null;

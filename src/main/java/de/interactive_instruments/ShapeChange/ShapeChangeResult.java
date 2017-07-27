@@ -1116,7 +1116,7 @@ public class ShapeChangeResult {
 		case 20338:
 			return "??(Flattener.java) Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
 		case 20339:
-			return "??(Flattener.java) No 'value' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' property.";
+			return "??(Flattener.java) No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
 		case 20340:
 			return "??(Flattener.java) The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
 		case 20341:

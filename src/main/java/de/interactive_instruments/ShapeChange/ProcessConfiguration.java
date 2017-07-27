@@ -43,7 +43,6 @@ import java.util.Set;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Configuration information for a process.

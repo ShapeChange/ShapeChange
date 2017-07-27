@@ -287,7 +287,7 @@ public class XsdDocument implements MessageSource {
 					addImport(Options.DGIWGSP_NSABR, Options.DGIWGSP_NS);
 				}
 			}
-			
+
 			if (info.matches("rule-xsd-pkg-gmlsf")) {
 
 				String gmlsfComplianceLevel = pi
@@ -295,7 +295,7 @@ public class XsdDocument implements MessageSource {
 
 				if (gmlsfComplianceLevel != null
 						&& !gmlsfComplianceLevel.trim().isEmpty()) {
-					
+
 					e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
 							"appinfo");
 					addAttribute(e2, "source", options
@@ -305,7 +305,7 @@ public class XsdDocument implements MessageSource {
 					e2.appendChild(e0);
 					e0.appendChild(
 							document.createTextNode(gmlsfComplianceLevel));
-					
+
 					addImport(Options.GMLSF_NSABR, Options.GMLSF_NS);
 				}
 			}
@@ -327,14 +327,24 @@ public class XsdDocument implements MessageSource {
 						if (e2 == null)
 							e2 = document.createElementNS(
 									Options.W3C_XML_SCHEMA, "appinfo");
-						Element e3 = document.createElementNS(options.GML_NS,
-								"targetElement");
-						e2.appendChild(e3);
+
 						String s = mapElement(ci);
-						if (s != null)
+						if (s == null) {
+							s = ci.qname();
+						}
+
+						if (info.matches("rule-xsd-prop-targetElement-gmlsf")) {
+
+							e2.setAttribute("source",
+									"urn:x-gml:targetElement");
+							e2.appendChild(document.createTextNode(s));
+
+						} else {
+							Element e3 = document.createElementNS(
+									options.GML_NS, "targetElement");
+							e2.appendChild(e3);
 							e3.appendChild(document.createTextNode(s));
-						else
-							e3.appendChild(document.createTextNode(ci.qname()));
+						}
 					}
 				}
 				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
@@ -1255,8 +1265,8 @@ public class XsdDocument implements MessageSource {
 					baseType = me.p1;
 				}
 			}
-			
-			if(baseType == null) {
+
+			if (baseType == null) {
 				baseType = base;
 			}
 
@@ -2486,7 +2496,16 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 
-		if (ci.category() == Options.OKSTRAKEY
+		// FIXME TB13TBD
+		if (ci.category() == Options.UNION
+				&& ci.matches(
+						"rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+				&& "true".equalsIgnoreCase(
+						ci.taggedValue("representsTypeSet"))) {
+			addAttribute(e, "type", "gml:ReferenceType");
+			addImport("gml", options.fullNamespace("gml"));
+			
+		} else if (ci.category() == Options.OKSTRAKEY
 				&& ci.matches("rule-xsd-cls-okstra-schluesseltabelle")) {
 			addAttribute(e, "type", propertyTypeName(ci, true));
 			addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
@@ -2685,8 +2704,41 @@ public class XsdDocument implements MessageSource {
 			} else if (ci.category() == Options.CODELIST && ((ci.matches(
 					"rule-xsd-cls-codelist-asDictionary") && ci.asDictionary())
 					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-							&& ci.asDictionaryGml33()))) {
-				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+							&& ci.asDictionaryGml33())
+					|| ci.matches("rule-xsd-cls-codelist-gmlsf"))) {
+
+				// FIXME TB13TBD
+				if (ci.matches("rule-xsd-cls-codelist-gmlsf")) {
+
+					e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
+							"complexType");
+					e.appendChild(e1);
+
+					Element simpleContent = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "simpleContent");
+					e1.appendChild(simpleContent);
+
+					Element restriction = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "restriction");
+					addAttribute(restriction, "base", "gml:CodeType");
+					simpleContent.appendChild(restriction);
+
+					String codeListUri = ci.taggedValue("codeList");
+					if (codeListUri == null) {
+						codeListUri = ci.taggedValue("vocabulary");
+					}
+
+					if (codeListUri != null
+							&& codeListUri.trim().length() > 0) {
+						Element attribute = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "attribute");
+						addAttribute(attribute, "name", "codeSpace");
+						addAttribute(attribute, "type", "anyURI");
+						addAttribute(attribute, "fixed", codeListUri.trim());
+						restriction.appendChild(attribute);
+					}
+
+				} else if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 						&& ci.asDictionaryGml33()) {
 					addAttribute(e, "type", "gml:ReferenceType");
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
@@ -3016,6 +3068,14 @@ public class XsdDocument implements MessageSource {
 			if (cibase.matches("rule-xsd-cls-standard-swe-property-types")) {
 				addAttribute(e, "type", "swe:ReferenceType");
 				addImport("swe", options.fullNamespace("swe"));
+				return false;
+			}
+
+			// FIXME TB13TBD
+			if (cibase.matches("rule-xsd-cls-featureType-gmlsf-byReference")
+					&& cibase.category() == Options.FEATURE) {
+				addAttribute(e, "type", "gml:ReferenceType");
+				addImport("gml", options.fullNamespace("gml"));
 				return false;
 			}
 

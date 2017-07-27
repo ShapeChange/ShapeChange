@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -78,7 +80,24 @@ public class TypeConverter implements Transformer, MessageSource {
 	public static final String PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE = "attributeType";
 	public static final String DEFAULT_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE = "CharacterString";
 
+	/**
+	 * Regular expression to identify types from the schemas selected for
+	 * processing to convert to feature types with {@value #RULE_TO_FEATURETYPE}
+	 * . Identification is based on a match on the name of the type. There is no
+	 * default value.
+	 */
+	public static final String PARAM_TO_FEATURE_TYPE_NAME_REGEX = "toFeatureTypeNameRegex";
+
 	public static final String RULE_ENUMERATION_TO_CODELIST = "rule-trf-enumeration-to-codelist";
+
+	// TB13TBD
+	/**
+	 * Convert types either identified via parameter
+	 * {@value #PARAM_TO_FEATURE_TYPE_NAME_REGEX} or with tagged value
+	 * 'toFeatureType=true' to feature types. All subtypes of these types are
+	 * also converted to feature types.
+	 */
+	public static final String RULE_TO_FEATURETYPE = "rule-trf-toFeatureType";
 
 	/**
 	 * Dissolves associations that are navigable from types in the schemas
@@ -117,6 +136,13 @@ public class TypeConverter implements Transformer, MessageSource {
 	 * are removed.
 	 */
 	public static final String RULE_DISSOLVE_ASSOCIATIONS_REMOVE_TRANSFORMED_ROLE_IF_MULTIPLE = "rule-trf-dissolveAssociations-removeTransformedAttributeIfMultiple";
+
+	/**
+	 * TB13TBD If this rule is included, then the type of resulting attributes
+	 * is kept as-is, i.e. parameter
+	 * {@value #PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE} will have no effect.
+	 */
+	public static final String RULE_DISSOLVE_ASSOCIATIONS_KEEP_TYPE = "rule-trf-dissolveAssociations-keepType";
 
 	private GenericModel genModel = null;
 	private Options options = null;
@@ -166,7 +192,73 @@ public class TypeConverter implements Transformer, MessageSource {
 			applyRuleDissolveAssociations(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TO_FEATURETYPE)) {
+			applyRuleToFeatureType(genModel, trfConfig);
+		}
+
 		// apply post-processing (nothing to do right now)
+	}
+
+	private void applyRuleToFeatureType(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		String typeNameRegexParamValue = trfConfig.parameterAsString(
+				PARAM_TO_FEATURE_TYPE_NAME_REGEX, null, false, true);
+
+		try {
+
+			Pattern typeNameRegex = null;
+			if (typeNameRegexParamValue != null) {
+				typeNameRegex = Pattern.compile(typeNameRegexParamValue);
+			}
+
+			SortedSet<GenericClassInfo> relevantTypes = new TreeSet<GenericClassInfo>();
+
+			SortedSet<GenericClassInfo> selCis = genModel
+					.selectedSchemaClasses();
+
+			for (GenericClassInfo genCi : selCis) {
+
+				if ((typeNameRegex != null
+						&& typeNameRegex.matcher(genCi.name()).matches())
+						|| "true".equalsIgnoreCase(
+								genCi.taggedValue("toFeatureType"))) {
+
+					relevantTypes.add(genCi);
+
+					SortedSet<ClassInfo> allSubtypes = genCi
+							.subtypesInCompleteHierarchy();
+
+					/*
+					 * add all subtypes that belong to schemas selected for
+					 * processing
+					 */
+					for (ClassInfo subtype : allSubtypes) {
+
+						if (selCis.contains(subtype)) {
+							relevantTypes.add((GenericClassInfo) subtype);
+						}
+					}
+				}
+			}
+
+			for (GenericClassInfo type : relevantTypes) {
+
+				/*
+				 * overwrite stereotypes cache
+				 */
+				Stereotypes stereo = options.stereotypesFactory();
+				stereo.add("featuretype");
+				type.setStereotypes(stereo);
+
+				type.setCategory(Options.FEATURE);
+			}
+
+		} catch (PatternSyntaxException e) {
+			result.addError(this, 10, typeNameRegexParamValue,
+					PARAM_TO_FEATURE_TYPE_NAME_REGEX, e.getMessage(),
+					RULE_TO_FEATURETYPE);
+		}
 	}
 
 	private void applyRuleDissolveAssociations(GenericModel genModel,
@@ -183,7 +275,12 @@ public class TypeConverter implements Transformer, MessageSource {
 		attributeTypeInfoTemplate.name = attributeTypeName;
 		if (attributeType != null) {
 			attributeTypeInfoTemplate.id = attributeType.id();
+		} else {
+			attributeTypeInfoTemplate.id = "UNKNOWN";
 		}
+
+		boolean keepType = trfConfig
+				.hasRule(RULE_DISSOLVE_ASSOCIATIONS_KEEP_TYPE);
 
 		SortedSet<GenericAssociationInfo> associations = new TreeSet<GenericAssociationInfo>();
 
@@ -243,53 +340,43 @@ public class TypeConverter implements Transformer, MessageSource {
 				}
 			}
 
-			// Dissolve the association
-			StructuredNumber end1_sn = null;
-			GenericClassInfo end1_inClass = null;
-
-			StructuredNumber end2_sn = null;
-			GenericClassInfo end2_inClass = null;
-
-			if (genAi.end1().isNavigable()) {
-				end1_sn = genAi.end1().sequenceNumber();
-				end1_inClass = (GenericClassInfo) genAi.end1().inClass();
-			}
-
-			if (genAi.end2().isNavigable()) {
-				end2_sn = genAi.end2().sequenceNumber();
-				end2_inClass = (GenericClassInfo) genAi.end2().inClass();
-			}
+			GenericPropertyInfo end1 = (GenericPropertyInfo) genAi.end1();
+			GenericPropertyInfo end2 = (GenericPropertyInfo) genAi.end2();
 
 			/*
-			 * Transform association roles into attributes, remove possibly
-			 * existing association class, remove association
+			 * Dissolve the association: Transform association roles into
+			 * attributes, remove possibly existing association class, remove
+			 * association
 			 */
 			genModel.dissolveAssociation(genAi);
 
-			handleAttributeAfterDissolvingAssociation(end1_sn, end1_inClass,
-					attributeTypeInfoTemplate, attributeNameSuffix);
-			handleAttributeAfterDissolvingAssociation(end2_sn, end2_inClass,
-					attributeTypeInfoTemplate, attributeNameSuffix);
+			if (end1.isNavigable()) {
+				handleAttributeAfterDissolvingAssociation(end1,
+						attributeTypeInfoTemplate, attributeNameSuffix,
+						keepType);
+			}
+			if (end2.isNavigable()) {
+				handleAttributeAfterDissolvingAssociation(end2,
+						attributeTypeInfoTemplate, attributeNameSuffix,
+						keepType);
+			}
 		}
 	}
 
-	private void handleAttributeAfterDissolvingAssociation(StructuredNumber sn,
-			GenericClassInfo ci, Type attributeTypeInfoTemplate,
-			String attributeNameSuffix) {
+	private void handleAttributeAfterDissolvingAssociation(
+			GenericPropertyInfo attribute, Type attributeTypeInfoTemplate,
+			String attributeNameSuffix, boolean keepType) {
 
-		if (sn != null) {
+		if (attribute.cardinality().maxOccurs > 1 && trfConfig.hasRule(
+				RULE_DISSOLVE_ASSOCIATIONS_REMOVE_TRANSFORMED_ROLE_IF_MULTIPLE)) {
 
-			GenericPropertyInfo attribute = ci.propertyBySequenceNumber(sn);
+			genModel.remove(attribute, false);
 
-			if (attribute.cardinality().maxOccurs > 1 && trfConfig.hasRule(
-					RULE_DISSOLVE_ASSOCIATIONS_REMOVE_TRANSFORMED_ROLE_IF_MULTIPLE)) {
+		} else {
 
-				genModel.remove(attribute, false);
-
-			} else {
-
-				// Add suffix to attribute name and set attribute type
-				attribute.setName(attribute.name() + attributeNameSuffix);
+			// Add suffix to attribute name and set attribute type
+			attribute.setName(attribute.name() + attributeNameSuffix);
+			if (!keepType) {
 				attribute.setTypeInfo(attributeTypeInfoTemplate.createCopy());
 			}
 		}
@@ -319,15 +406,15 @@ public class TypeConverter implements Transformer, MessageSource {
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
 			if (genCi.category() == Options.ENUMERATION) {
-				
+
 				genCi.setCategory(Options.CODELIST);
-				
+
 				Stereotypes st = genCi.stereotypes();
 				st.remove("enumeration");
 				st.add("codelist");
 				// we need to explicitly set the new Stereotypes cache
 				genCi.setStereotypes(st);
-				
+
 				genCi.setTaggedValue("asDictionary", "false", false);
 			}
 		}
@@ -345,6 +432,9 @@ public class TypeConverter implements Transformer, MessageSource {
 			return "Context: association class '$1$'.";
 		case 3:
 			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
+		case 10:
+			return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
 
 		// Messages for RULE_DISSOLVE_ASSOCIATIONS
 		case 100:

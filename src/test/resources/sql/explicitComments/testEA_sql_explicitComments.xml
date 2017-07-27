@@ -103,7 +103,6 @@
 			<targetParameter name="defaultEncodingRule" value="sqlWithExplicitComments" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/explicitComments/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true" />

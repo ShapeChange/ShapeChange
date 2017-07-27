@@ -73,7 +73,7 @@ import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Util.EAException;
 import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
 import de.interactive_instruments.ShapeChange.Util.EATaggedValue;
@@ -82,7 +82,7 @@ import de.interactive_instruments.ShapeChange.Util.EATaggedValue;
  * @author Johannes Echterhoff
  *
  */
-public class ArcGISWorkspace implements Target, MessageSource {
+public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	/* ------------------------------------------------------ */
 	/* --- Rules to modify or extend the default behavior --- */
@@ -263,8 +263,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	public static final int DEFAULT_MAX_NAME_LENGTH = 30;
 
-	private int maxNameLength = DEFAULT_MAX_NAME_LENGTH;
-
 	public static final double NUM_RANGE_DELTA = 0.01;
 
 	public static final Double DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY = new Double(
@@ -273,7 +271,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			1000000000);
 
 	public static final int LENGTH_TAGGED_VALUE_DEFAULT = 255;
-	public int lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
 
 	public static final String ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX = "\\W";
 
@@ -300,120 +297,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	/* --- other fields --- */
 	/* -------------------- */
 
-	private static String workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
-
-	private double numRangeDelta = NUM_RANGE_DELTA;
-
-	private Set<String> esriTypesSuitedForRangeConstraint = new HashSet<String>();
-
-	private String outputDirectory = null;
-	private File outputDirectoryFile = null;
-	private String documentationTemplate = null;
-	private String documentationNoValue = null;
-
-	private Repository rep = null;
-
-	private Set<ClassInfo> ignoredCis = new HashSet<ClassInfo>();
-
-	private Map<ClassInfo, ArcGISGeometryType> geometryTypeCache = new HashMap<ClassInfo, ArcGISGeometryType>();
-
-	private Map<ClassInfo, Integer> elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
-	private Map<ClassInfo, String> elementNameByClassInfo = new HashMap<ClassInfo, String>();
-
-	private Map<ClassInfo, String> objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
-	private Map<ClassInfo, ClassInfo> generalisations = new HashMap<ClassInfo, ClassInfo>();
-	private Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
-
-	/**
-	 * key: name that would usually be assigned to a relationship class; value:
-	 * counter for the number of occurrences of this particular name (assume 0
-	 * if a name is not contained as key yet)
-	 */
-	private Map<String, Integer> counterByRelationshipClassName = new HashMap<String, Integer>();
-
-	/**
-	 * key: class info object; value: map that keeps track of property names
-	 * used [key: name that would usually be assigned to the property; value:
-	 * counter for the number of occurrences of this particular name (assume 0
-	 * if a name is not contained as key yet)]
-	 */
-	private Map<ClassInfo, Map<String, Integer>> counterByPropertyNameByClass = new HashMap<ClassInfo, Map<String, Integer>>();
-
-	private Model model = null;
-	private Options options = null;
-	private ShapeChangeResult result = null;
-
-	protected PackageInfo appSchemaPkg;
-
-	/**
-	 * &lt;&lt;ArcGIS&gt;&gt; workspace package that represents the application
-	 * schema package.
-	 */
-	protected Integer workspacePkgId;
-
-	/**
-	 * &lt;&lt;FeatureDataset&gt;&gt; package where all feature types with
-	 * supported ArcGIS geometry are stored (in package itself or sub-packages
-	 * according to package hierarchy in the application schema).
-	 */
-	protected Integer featuresPkgId;
-
-	/**
-	 * Package where all feature types without geometry and object types are
-	 * stored (in package itself or sub-packages according to package hierarchy
-	 * in the application schema).
-	 */
-	protected Integer tablesPkgId;
-
-	/**
-	 * Package where all association classes used to represent n:m relationships
-	 * are stored.
-	 */
-	protected Integer assocClassesPkgId;
-
-	/**
-	 * Package where all code lists and enumerations are stored (in package
-	 * itself or sub-packages according to package hierarchy in the application
-	 * schema).
-	 */
-	protected Integer domainsPkgId;
-
-	/**
-	 * key: workspace sub package; value: {key: application schema package;
-	 * value: corresponding EA package within the workspace sub package}
-	 */
-	protected Map<Integer, Map<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
-
-	/**
-	 * TODO: value of 'rule' attribute is currently ignored
-	 * 
-	 * key: 'type' attribute value of map entry defined for the target; value:
-	 * according map entry
-	 */
-	protected Map<String, ProcessMapEntry> processMapEntries = null;
-
-	protected Map<String, Integer> lengthMappingByTypeName = new HashMap<String, Integer>();
-	protected Map<String, Integer> precisionMappingByTypeName = new HashMap<String, Integer>();
-	protected Map<String, Integer> scaleMappingByTypeName = new HashMap<String, Integer>();
-
-	/**
-	 * Contains information about the maximum length of a property value
-	 * (usually of a textual type).
-	 * 
-	 * key: {class name}_{property name}; value: the max length of the property
-	 * value
-	 */
-	protected Map<String, Integer> lengthByClassPropName = new HashMap<String, Integer>();
-
-	/**
-	 * Contains information about the numeric ranges defined for specific class
-	 * properties via OCL constraints.
-	 * 
-	 * key: class; value: map with [key: property name; value: the numeric range
-	 * for the property]
-	 */
-	protected Map<ClassInfo, Map<String, NumericRangeConstraintMetadata>> numericRangeConstraintByPropNameByClassName = new HashMap<ClassInfo, Map<String, NumericRangeConstraintMetadata>>();
-
 	/**
 	 * Pattern to parse length constraints for property values, i.e. the
 	 * property name and maximum length.
@@ -426,7 +309,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * <li>group 2: max length value</li>
 	 * </ul>
 	 */
-	private Pattern lengthConstraintPattern = Pattern
+	private static final Pattern lengthConstraintPattern = Pattern
 			.compile("(?:self\\.)?(\\w+)[\\.\\w+]*\\.size\\(\\)\\D*(\\d+)");
 
 	/**
@@ -442,7 +325,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * <li>group 2: comparison value (e.g. '0', '30.3', '.045')</li>
 	 * </ul>
 	 */
-	private Pattern numRangeConstraintLowerBoundaryPattern = Pattern
+	private static final Pattern numRangeConstraintLowerBoundaryPattern = Pattern
 			.compile("\\.value\\s*(?=>)(.*?)\\s*([\\+-]?[\\.|\\d]+)");
 
 	/**
@@ -458,7 +341,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * <li>group 2: comparison value (e.g. '0', '30.3', '.045')</li>
 	 * </ul>
 	 */
-	private Pattern numRangeConstraintUpperBoundaryPattern = Pattern
+	private static final Pattern numRangeConstraintUpperBoundaryPattern = Pattern
 			.compile("\\.value\\s*(?=<)(.*?)\\s*([\\+-]?[\\.|\\d]+)");
 
 	/**
@@ -474,19 +357,138 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 * specifically relevant for HOK or DGIM models)</li>
 	 * </ul>
 	 */
-	private Pattern numRangeConstraintPropertyNamePattern = Pattern
+	private static final Pattern numRangeConstraintPropertyNamePattern = Pattern
 			.compile("(?:self\\.|\\s)?(\\w+)\\.[\\w\\.]*?value(?:[,\\s])");
 
-	protected String nameOfTVToDetermineFieldLength = "size";
+	private static boolean initialised = false;
+	private static String workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
 
-	private String absolutePathOfOutputEAPFile;
+	private static int maxNameLength = DEFAULT_MAX_NAME_LENGTH;
+	private static int lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
 
-	private String shortNameByTaggedValue;
+	private static double numRangeDelta = NUM_RANGE_DELTA;
+
+	private static Set<String> esriTypesSuitedForRangeConstraint = new HashSet<String>();
+
+	private static String outputDirectory = null;
+	private static File outputDirectoryFile = null;
+	private static String documentationTemplate = null;
+	private static String documentationNoValue = null;
+
+	private static Repository rep = null;
+
+	private static Set<ClassInfo> ignoredCis = new HashSet<ClassInfo>();
+
+	private static Map<ClassInfo, ArcGISGeometryType> geometryTypeCache = new HashMap<ClassInfo, ArcGISGeometryType>();
+
+	private static Map<ClassInfo, Integer> elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
+	private static Map<ClassInfo, String> elementNameByClassInfo = new HashMap<ClassInfo, String>();
+
+	private static Map<ClassInfo, String> objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+	private static Map<ClassInfo, ClassInfo> generalisations = new HashMap<ClassInfo, ClassInfo>();
+	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
+
+	/**
+	 * key: name that would usually be assigned to a relationship class; value:
+	 * counter for the number of occurrences of this particular name (assume 0
+	 * if a name is not contained as key yet)
+	 */
+	private static Map<String, Integer> counterByRelationshipClassName = new HashMap<String, Integer>();
+
+	/**
+	 * key: class info object; value: map that keeps track of property names
+	 * used [key: name that would usually be assigned to the property; value:
+	 * counter for the number of occurrences of this particular name (assume 0
+	 * if a name is not contained as key yet)]
+	 */
+	private static Map<ClassInfo, Map<String, Integer>> counterByPropertyNameByClass = new HashMap<ClassInfo, Map<String, Integer>>();
+
+	private static Model model = null;
+
+	private Options options = null;
+	private ShapeChangeResult result = null;
+
+	protected static int numberOfSchemasSelectedForProcessing = 0;
+
+	/**
+	 * &lt;&lt;ArcGIS&gt;&gt; workspace package that represents the application
+	 * schema package.
+	 */
+	protected static Integer workspacePkgId;
+
+	/**
+	 * &lt;&lt;FeatureDataset&gt;&gt; package where all feature types with
+	 * supported ArcGIS geometry are stored (in package itself or sub-packages
+	 * according to package hierarchy in the application schema).
+	 */
+	protected static Integer featuresPkgId;
+
+	/**
+	 * Package where all feature types without geometry and object types are
+	 * stored (in package itself or sub-packages according to package hierarchy
+	 * in the application schema).
+	 */
+	protected static Integer tablesPkgId;
+
+	/**
+	 * Package where all association classes used to represent n:m relationships
+	 * are stored.
+	 */
+	protected static Integer assocClassesPkgId;
+
+	/**
+	 * Package where all code lists and enumerations are stored (in package
+	 * itself or sub-packages according to package hierarchy in the application
+	 * schema).
+	 */
+	protected static Integer domainsPkgId;
+
+	/**
+	 * key: workspace sub package; value: {key: application schema package;
+	 * value: corresponding EA package within the workspace sub package}
+	 */
+	protected static Map<Integer, Map<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
+
+	/**
+	 * TODO: value of 'rule' attribute is currently ignored
+	 * 
+	 * key: 'type' attribute value of map entry defined for the target; value:
+	 * according map entry
+	 */
+	protected static Map<String, ProcessMapEntry> processMapEntries = null;
+
+	protected static Map<String, Integer> lengthMappingByTypeName = new HashMap<String, Integer>();
+	protected static Map<String, Integer> precisionMappingByTypeName = new HashMap<String, Integer>();
+	protected static Map<String, Integer> scaleMappingByTypeName = new HashMap<String, Integer>();
+
+	/**
+	 * Contains information about the maximum length of a property value
+	 * (usually of a textual type).
+	 * 
+	 * key: {class name}_{property name}; value: the max length of the property
+	 * value
+	 */
+	protected static Map<String, Integer> lengthByClassPropName = new HashMap<String, Integer>();
+
+	/**
+	 * Contains information about the numeric ranges defined for specific class
+	 * properties via OCL constraints.
+	 * 
+	 * key: class; value: map with [key: property name; value: the numeric range
+	 * for the property]
+	 */
+	protected static Map<ClassInfo, Map<String, NumericRangeConstraintMetadata>> numericRangeConstraintByPropNameByClassName = new HashMap<ClassInfo, Map<String, NumericRangeConstraintMetadata>>();
+
+	protected static String nameOfTVToDetermineFieldLength = "size";
+
+	private static String absolutePathOfOutputEAPFile;
+
+	private static String shortNameByTaggedValue;
 
 	/**
 	 * key: name of the class element; value: the range domain element
 	 */
-	private Map<String, Integer> numericRangeElementIdsByClassName = new HashMap<String, Integer>();
+	private static Map<String, Integer> numericRangeElementIdsByClassName = new HashMap<String, Integer>();
 
 	// TODO Unit Test
 
@@ -494,320 +496,304 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			ShapeChangeResult r, boolean diagOnly)
 			throws ShapeChangeAbortException {
 
-		appSchemaPkg = p;
-		model = m;
 		options = o;
 		result = r;
 
-		// initialize mappings
-		this.lengthMappingByTypeName.put("esriFieldTypeInteger", 0);
-		this.lengthMappingByTypeName.put("esriFieldTypeDouble", 0);
-		this.lengthMappingByTypeName.put("esriFieldTypeDate", 0);
+		if (!initialised) {
+			initialised = true;
 
-		this.precisionMappingByTypeName.put("esriFieldTypeString", 0);
-		this.precisionMappingByTypeName.put("esriFieldTypeInteger", 9);
-		this.precisionMappingByTypeName.put("esriFieldTypeDouble", 10);
-		this.precisionMappingByTypeName.put("esriFieldTypeDate", 0);
+			model = m;
 
-		this.scaleMappingByTypeName.put("esriFieldTypeString", 0);
-		this.scaleMappingByTypeName.put("esriFieldTypeInteger", 0);
-		this.scaleMappingByTypeName.put("esriFieldTypeDouble", 6);
-		this.scaleMappingByTypeName.put("esriFieldTypeDate", 0);
+			numberOfSchemasSelectedForProcessing = m.selectedSchemas().size();
 
-		// get output location
-		outputDirectory = options.parameter(this.getClass().getName(),
-				PARAM_OUTPUT_DIR);
-		if (outputDirectory == null)
-			outputDirectory = options.parameter("outputDirectory");
-		if (outputDirectory == null)
-			outputDirectory = options.parameter(".");
+			// initialize mappings
+			lengthMappingByTypeName.put("esriFieldTypeInteger", 0);
+			lengthMappingByTypeName.put("esriFieldTypeDouble", 0);
+			lengthMappingByTypeName.put("esriFieldTypeDate", 0);
 
-		String outputFilename = appSchemaPkg.name().replace("/", "_")
-				.replace(" ", "_") + ".eap";
+			precisionMappingByTypeName.put("esriFieldTypeString", 0);
+			precisionMappingByTypeName.put("esriFieldTypeInteger", 9);
+			precisionMappingByTypeName.put("esriFieldTypeDouble", 10);
+			precisionMappingByTypeName.put("esriFieldTypeDate", 0);
 
-		// parse default length parameter
-		String defaultLengthParamValue = options.parameter(
-				this.getClass().getName(), PARAM_LENGTH_TAGGED_VALUE_DEFAULT);
-		if (defaultLengthParamValue != null) {
+			scaleMappingByTypeName.put("esriFieldTypeString", 0);
+			scaleMappingByTypeName.put("esriFieldTypeInteger", 0);
+			scaleMappingByTypeName.put("esriFieldTypeDouble", 6);
+			scaleMappingByTypeName.put("esriFieldTypeDate", 0);
 
-			try {
+			// get output location
+			outputDirectory = options.parameter(this.getClass().getName(),
+					PARAM_OUTPUT_DIR);
+			if (outputDirectory == null)
+				outputDirectory = options.parameter("outputDirectory");
+			if (outputDirectory == null)
+				outputDirectory = options.parameter(".");
 
-				int length = Integer.parseInt(defaultLengthParamValue);
-				this.lengthTaggedValueDefault = length;
-
-			} catch (NumberFormatException e) {
-
-				result.addError(this, 13, PARAM_LENGTH_TAGGED_VALUE_DEFAULT,
-						"" + LENGTH_TAGGED_VALUE_DEFAULT);
+			String outputFilename = options.parameter(this.getClass().getName(),
+					"outputFilename");
+			if (outputFilename == null) {
+				outputFilename = p.name();
 			}
-		}
+			outputFilename = outputFilename.replace("/", "_").replace(" ", "_")
+					+ ".eap";
 
-		// parse max name length parameter
-		String maxNameLengthParamValue = options
-				.parameter(this.getClass().getName(), PARAM_MAX_NAME_LENGTH);
-		if (maxNameLengthParamValue != null) {
-			try {
-				int maxNameLengthTmp = Integer
-						.parseInt(maxNameLengthParamValue);
-				this.maxNameLength = maxNameLengthTmp;
-			} catch (NumberFormatException e) {
-				result.addError(this, 13, PARAM_MAX_NAME_LENGTH,
-						"" + DEFAULT_MAX_NAME_LENGTH);
-			}
-		}
+			// parse default length parameter
+			String defaultLengthParamValue = options.parameter(
+					this.getClass().getName(),
+					PARAM_LENGTH_TAGGED_VALUE_DEFAULT);
+			if (defaultLengthParamValue != null) {
 
-		// check parameter with name of the tagged value that determines the
-		// field length
-		String nameOfTVToDetermineFieldLengthParamValue = options.parameter(
-				this.getClass().getName(),
-				PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH);
-		if (nameOfTVToDetermineFieldLengthParamValue != null
-				&& nameOfTVToDetermineFieldLengthParamValue.trim()
-						.length() > 0) {
-			this.nameOfTVToDetermineFieldLength = nameOfTVToDetermineFieldLengthParamValue
-					.trim();
-		}
-
-		// Check if we can use the output directory; create it if it
-		// does not exist
-		outputDirectoryFile = new File(outputDirectory);
-		boolean exi = outputDirectoryFile.exists();
-		if (!exi) {
-			try {
-				FileUtils.forceMkdir(outputDirectoryFile);
-			} catch (IOException e) {
-				result.addError(this, 5, e.getMessage());
-				e.printStackTrace(System.err);
-			}
-			exi = outputDirectoryFile.exists();
-		}
-		boolean dir = outputDirectoryFile.isDirectory();
-		boolean wrt = outputDirectoryFile.canWrite();
-		boolean rea = outputDirectoryFile.canRead();
-		if (!exi || !dir || !wrt || !rea) {
-			result.addFatalError(this, 1, outputDirectory);
-			throw new ShapeChangeAbortException();
-		}
-
-		File outputFile = new File(outputDirectoryFile, outputFilename);
-
-		// check if output file already exists - if so, attempt to delete it
-		exi = outputFile.exists();
-		if (exi) {
-
-			result.addInfo(this, 2, outputFilename, outputDirectory);
-
-			try {
-				FileUtils.forceDelete(outputFile);
-				result.addInfo(this, 3);
-			} catch (IOException e) {
-				result.addInfo(this, 4, e.getMessage());
-				e.printStackTrace(System.err);
-			}
-		}
-
-		// read workspace template
-
-		// String pathToWorkspaceTemplateFileInput = options.parameter(this
-		// .getClass().getName(), PARAM_WORKSPACE_TEMPLATE);
-		// File workspaceTemplateFileInput = null;
-		//
-		// if (pathToWorkspaceTemplateFileInput == null) {
-		// result.addFatalError(this, 6);
-		// throw new ShapeChangeAbortException();
-		// } else {
-		// workspaceTemplateFileInput = new File(
-		// pathToWorkspaceTemplateFileInput);
-		// if (!workspaceTemplateFileInput.canRead()) {
-		// result.addFatalError(this, 7, pathToWorkspaceTemplateFileInput);
-		// throw new ShapeChangeAbortException();
-		// }
-		// }
-
-		workspaceTemplateFilePath = options.parameter(this.getClass().getName(),
-				PARAM_WORKSPACE_TEMPLATE);
-
-		if (workspaceTemplateFilePath == null) {
-			workspaceTemplateFilePath = options
-					.parameter(PARAM_WORKSPACE_TEMPLATE);
-		}
-		// if no path is provided, use the directory of the default template
-		if (workspaceTemplateFilePath == null) {
-			workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
-			result.addInfo(this, 9, PARAM_WORKSPACE_TEMPLATE,
-					WORKSPACE_TEMPLATE_URL);
-		}
-
-		// copy template file either from remote or local URI
-		if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
-			try {
-				URL templateUrl = new URL(workspaceTemplateFilePath);
-				FileUtils.copyURLToFile(templateUrl, outputFile);
-			} catch (MalformedURLException e1) {
-				result.addFatalError(this, 6, workspaceTemplateFilePath,
-						e1.getMessage());
-				throw new ShapeChangeAbortException();
-			} catch (IOException e2) {
-				result.addFatalError(this, 8, e2.getMessage());
-				throw new ShapeChangeAbortException();
-			}
-		} else {
-			File workspacetemplate = new File(workspaceTemplateFilePath);
-			if (workspacetemplate.exists()) {
 				try {
-					FileUtils.copyFile(workspacetemplate, outputFile);
+
+					int length = Integer.parseInt(defaultLengthParamValue);
+					lengthTaggedValueDefault = length;
+
+				} catch (NumberFormatException e) {
+
+					result.addError(this, 13, PARAM_LENGTH_TAGGED_VALUE_DEFAULT,
+							"" + LENGTH_TAGGED_VALUE_DEFAULT);
+				}
+			}
+
+			// parse max name length parameter
+			String maxNameLengthParamValue = options.parameter(
+					this.getClass().getName(), PARAM_MAX_NAME_LENGTH);
+			if (maxNameLengthParamValue != null) {
+				try {
+					int maxNameLengthTmp = Integer
+							.parseInt(maxNameLengthParamValue);
+					maxNameLength = maxNameLengthTmp;
+				} catch (NumberFormatException e) {
+					result.addError(this, 13, PARAM_MAX_NAME_LENGTH,
+							"" + DEFAULT_MAX_NAME_LENGTH);
+				}
+			}
+
+			// check parameter with name of the tagged value that determines the
+			// field length
+			String nameOfTVToDetermineFieldLengthParamValue = options.parameter(
+					this.getClass().getName(),
+					PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH);
+			if (nameOfTVToDetermineFieldLengthParamValue != null
+					&& nameOfTVToDetermineFieldLengthParamValue.trim()
+							.length() > 0) {
+				nameOfTVToDetermineFieldLength = nameOfTVToDetermineFieldLengthParamValue
+						.trim();
+			}
+
+			// Check if we can use the output directory; create it if it
+			// does not exist
+			outputDirectoryFile = new File(outputDirectory);
+			boolean exi = outputDirectoryFile.exists();
+			if (!exi) {
+				try {
+					FileUtils.forceMkdir(outputDirectoryFile);
 				} catch (IOException e) {
-					result.addFatalError(this, 8, e.getMessage());
+					result.addError(this, 5, e.getMessage());
+					e.printStackTrace(System.err);
+				}
+				exi = outputDirectoryFile.exists();
+			}
+			boolean dir = outputDirectoryFile.isDirectory();
+			boolean wrt = outputDirectoryFile.canWrite();
+			boolean rea = outputDirectoryFile.canRead();
+			if (!exi || !dir || !wrt || !rea) {
+				result.addFatalError(this, 1, outputDirectory);
+				throw new ShapeChangeAbortException();
+			}
+
+			File outputFile = new File(outputDirectoryFile, outputFilename);
+
+			// check if output file already exists - if so, attempt to delete it
+			exi = outputFile.exists();
+			if (exi) {
+
+				result.addInfo(this, 2, outputFilename, outputDirectory);
+
+				try {
+					FileUtils.forceDelete(outputFile);
+					result.addInfo(this, 3);
+				} catch (IOException e) {
+					result.addInfo(this, 4, e.getMessage());
+					e.printStackTrace(System.err);
+				}
+			}
+
+			// read workspace template
+
+			workspaceTemplateFilePath = options.parameter(
+					this.getClass().getName(), PARAM_WORKSPACE_TEMPLATE);
+
+			if (workspaceTemplateFilePath == null) {
+				workspaceTemplateFilePath = options
+						.parameter(PARAM_WORKSPACE_TEMPLATE);
+			}
+			// if no path is provided, use the directory of the default template
+			if (workspaceTemplateFilePath == null) {
+				workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
+				result.addInfo(this, 9, PARAM_WORKSPACE_TEMPLATE,
+						WORKSPACE_TEMPLATE_URL);
+			}
+
+			// copy template file either from remote or local URI
+			if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
+				try {
+					URL templateUrl = new URL(workspaceTemplateFilePath);
+					FileUtils.copyURLToFile(templateUrl, outputFile);
+				} catch (MalformedURLException e1) {
+					result.addFatalError(this, 6, workspaceTemplateFilePath,
+							e1.getMessage());
+					throw new ShapeChangeAbortException();
+				} catch (IOException e2) {
+					result.addFatalError(this, 8, e2.getMessage());
 					throw new ShapeChangeAbortException();
 				}
 			} else {
-				result.addFatalError(this, 7,
-						workspacetemplate.getAbsolutePath());
+				File workspacetemplate = new File(workspaceTemplateFilePath);
+				if (workspacetemplate.exists()) {
+					try {
+						FileUtils.copyFile(workspacetemplate, outputFile);
+					} catch (IOException e) {
+						result.addFatalError(this, 8, e.getMessage());
+						throw new ShapeChangeAbortException();
+					}
+				} else {
+					result.addFatalError(this, 7,
+							workspacetemplate.getAbsolutePath());
+					throw new ShapeChangeAbortException();
+				}
+			}
+
+			// connect to EA repository in outputFile
+			absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
+
+			rep = new Repository();
+
+			if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
+				String errormsg = rep.GetLastError();
+				r.addError(null, 30, errormsg, outputFilename);
+				rep = null;
 				throw new ShapeChangeAbortException();
 			}
-		}
 
-		// File workspaceTemplateFileInput = new File(
-		// workspaceTemplateFilePath);
-		// if (!workspaceTemplateFileInput.canRead()) {
-		// result.addFatalError(this, 7, pathToWorkspaceTemplateFileInput);
-		// throw new ShapeChangeAbortException();
-		// }
+			// get template packages
+			rep.RefreshModelView(0);
 
-		// // copy template to outputFile
-		// try {
-		// FileUtils.copyFile(workspaceTemplateFileInput, outputFile);
-		// } catch (IOException e) {
-		// result.addFatalError(this, 8, e.getMessage());
-		// e.printStackTrace(System.err);
-		// throw new ShapeChangeAbortException();
-		// }
+			Collection<Package> c = rep.GetModels();
+			Package root = c.GetAt((short) 0);
 
-		// connect to EA repository in outputFile
-		absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
-
-		rep = new Repository();
-
-		if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
-			String errormsg = rep.GetLastError();
-			r.addError(null, 30, errormsg, outputFilename);
-			rep = null;
-			throw new ShapeChangeAbortException();
-		}
-
-		// get template packages
-		rep.RefreshModelView(0);
-
-		Collection<Package> c = rep.GetModels();
-		Package root = c.GetAt((short) 0);
-
-		Collection<Package> modelPkgs = root.GetPackages();
-		if (modelPkgs.GetCount() == 0 || !modelPkgs.GetAt((short) 0)
-				.GetStereotypeEx().equalsIgnoreCase("ArcGIS")) {
-			result.addError(this, 9);
-			throw new ShapeChangeAbortException();
-		} else {
-			Package workspacePkg = modelPkgs.GetAt((short) 0);
-			this.workspacePkgId = workspacePkg.GetPackageID();
-
-			// eaPkgByModelPkg.put(appSchemaPkg, workspacePkg);
-		}
-
-		Integer features = EAModelUtil.getEAChildPackageByName(rep,
-				workspacePkgId, TEMPLATE_PKG_FEATURES_NAME);
-		if (features == null) {
-			result.addError(this, 102, TEMPLATE_PKG_FEATURES_NAME);
-			throw new ShapeChangeAbortException();
-		} else {
-			this.featuresPkgId = features;
-			this.eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(featuresPkgId,
-					new HashMap<PackageInfo, Integer>());
-		}
-
-		Integer domains = EAModelUtil.getEAChildPackageByName(rep,
-				workspacePkgId, TEMPLATE_PKG_DOMAINS_NAME);
-		if (domains == null) {
-			result.addError(this, 102, TEMPLATE_PKG_DOMAINS_NAME);
-			throw new ShapeChangeAbortException();
-		} else {
-			this.domainsPkgId = domains;
-			this.eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(domainsPkgId,
-					new HashMap<PackageInfo, Integer>());
-		}
-
-		Integer tables = EAModelUtil.getEAChildPackageByName(rep,
-				workspacePkgId, TEMPLATE_PKG_TABLES_NAME);
-		if (tables == null) {
-			result.addError(this, 102, TEMPLATE_PKG_TABLES_NAME);
-			throw new ShapeChangeAbortException();
-		} else {
-			this.tablesPkgId = tables;
-			this.eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(tablesPkgId,
-					new HashMap<PackageInfo, Integer>());
-		}
-
-		Integer assocClasses = EAModelUtil.getEAChildPackageByName(rep,
-				workspacePkgId, TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
-		if (assocClasses == null) {
-			result.addError(this, 102, TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
-			throw new ShapeChangeAbortException();
-		} else {
-			this.assocClassesPkgId = assocClasses;
-			this.eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(assocClassesPkgId,
-					new HashMap<PackageInfo, Integer>());
-		}
-
-		ProcessConfiguration pc = o.getCurrentProcessConfig();
-
-		// parse map entries
-		List<ProcessMapEntry> mapEntries = pc.getMapEntries();
-
-		Map<String, ProcessMapEntry> mes = new HashMap<String, ProcessMapEntry>();
-
-		for (ProcessMapEntry pme : mapEntries) {
-			// TODO ignores value of 'rule' attribute in map entry, so if there
-			// were map entries for different rules with same 'type' attribute
-			// value, this needs to be updated
-			if (pme.hasTargetType()) {
-				mes.put(pme.getType(), pme);
+			Collection<Package> modelPkgs = root.GetPackages();
+			if (modelPkgs.GetCount() == 0 || !modelPkgs.GetAt((short) 0)
+					.GetStereotypeEx().equalsIgnoreCase("ArcGIS")) {
+				result.addError(this, 9);
+				throw new ShapeChangeAbortException();
 			} else {
-				result.addError(this, 11, pme.getType());
+				Package workspacePkg = modelPkgs.GetAt((short) 0);
+				workspacePkgId = workspacePkg.GetPackageID();
+
+				// eaPkgByModelPkg.put(appSchemaPkg, workspacePkg);
 			}
-		}
 
-		this.processMapEntries = mes;
-
-		// initialize set with esri types suited for numeric range constraints
-		esriTypesSuitedForRangeConstraint.add("esriFieldTypeInteger");
-		esriTypesSuitedForRangeConstraint.add("esriFieldTypeDouble");
-
-		// parse numeric range delta parameter
-		String numRangeDeltaParamValue = options
-				.parameter(this.getClass().getName(), PARAM_VALUE_RANGE_DELTA);
-		if (numRangeDeltaParamValue != null) {
-
-			try {
-
-				double delta = Double.parseDouble(numRangeDeltaParamValue);
-				this.numRangeDelta = delta;
-
-			} catch (NumberFormatException e) {
-
-				result.addError(this, 12);
+			Integer features = EAModelUtil.getEAChildPackageByName(rep,
+					workspacePkgId, TEMPLATE_PKG_FEATURES_NAME);
+			if (features == null) {
+				result.addError(this, 102, TEMPLATE_PKG_FEATURES_NAME);
+				throw new ShapeChangeAbortException();
+			} else {
+				featuresPkgId = features;
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(featuresPkgId,
+						new HashMap<PackageInfo, Integer>());
 			}
+
+			Integer domains = EAModelUtil.getEAChildPackageByName(rep,
+					workspacePkgId, TEMPLATE_PKG_DOMAINS_NAME);
+			if (domains == null) {
+				result.addError(this, 102, TEMPLATE_PKG_DOMAINS_NAME);
+				throw new ShapeChangeAbortException();
+			} else {
+				domainsPkgId = domains;
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(domainsPkgId,
+						new HashMap<PackageInfo, Integer>());
+			}
+
+			Integer tables = EAModelUtil.getEAChildPackageByName(rep,
+					workspacePkgId, TEMPLATE_PKG_TABLES_NAME);
+			if (tables == null) {
+				result.addError(this, 102, TEMPLATE_PKG_TABLES_NAME);
+				throw new ShapeChangeAbortException();
+			} else {
+				tablesPkgId = tables;
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(tablesPkgId,
+						new HashMap<PackageInfo, Integer>());
+			}
+
+			Integer assocClasses = EAModelUtil.getEAChildPackageByName(rep,
+					workspacePkgId, TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
+			if (assocClasses == null) {
+				result.addError(this, 102,
+						TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
+				throw new ShapeChangeAbortException();
+			} else {
+				assocClassesPkgId = assocClasses;
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(assocClassesPkgId,
+						new HashMap<PackageInfo, Integer>());
+			}
+
+			ProcessConfiguration pc = o.getCurrentProcessConfig();
+
+			// parse map entries
+			List<ProcessMapEntry> mapEntries = pc.getMapEntries();
+
+			Map<String, ProcessMapEntry> mes = new HashMap<String, ProcessMapEntry>();
+
+			for (ProcessMapEntry pme : mapEntries) {
+				/*
+				 * TODO ignores value of 'rule' attribute in map entry, so if
+				 * there were map entries for different rules with same 'type'
+				 * attribute value, this needs to be updated
+				 */
+				if (pme.hasTargetType()) {
+					mes.put(pme.getType(), pme);
+				} else {
+					result.addError(this, 11, pme.getType());
+				}
+			}
+
+			processMapEntries = mes;
+
+			// initialize set with esri types suited for numeric range
+			// constraints
+			esriTypesSuitedForRangeConstraint.add("esriFieldTypeInteger");
+			esriTypesSuitedForRangeConstraint.add("esriFieldTypeDouble");
+
+			// parse numeric range delta parameter
+			String numRangeDeltaParamValue = options.parameter(
+					this.getClass().getName(), PARAM_VALUE_RANGE_DELTA);
+			if (numRangeDeltaParamValue != null) {
+
+				try {
+
+					double delta = Double.parseDouble(numRangeDeltaParamValue);
+					numRangeDelta = delta;
+
+				} catch (NumberFormatException e) {
+
+					result.addError(this, 12);
+				}
+			}
+
+			// change the default documentation template?
+			documentationTemplate = options.parameter(this.getClass().getName(),
+					PARAM_DOCUMENTATION_TEMPLATE);
+			documentationNoValue = options.parameter(this.getClass().getName(),
+					PARAM_DOCUMENTATION_NOVALUE);
+
+			// parse
+			shortNameByTaggedValue = options.parameterAsString(
+					this.getClass().getName(), PARAM_SHORT_NAME_BY_TAGGED_VALUE,
+					"shortName", false, true);
+
 		}
-
-		// change the default documentation template?
-		documentationTemplate = options.parameter(this.getClass().getName(),
-				PARAM_DOCUMENTATION_TEMPLATE);
-		documentationNoValue = options.parameter(this.getClass().getName(),
-				PARAM_DOCUMENTATION_NOVALUE);
-
-		// parse
-		this.shortNameByTaggedValue = options.parameterAsString(
-				this.getClass().getName(), PARAM_SHORT_NAME_BY_TAGGED_VALUE,
-				"shortName", false, true);
-
 	}
 
 	public void process(ClassInfo ci) {
@@ -816,9 +802,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		 * if a map entry provides a mapping for this class to an esri field
 		 * type, we can ignore it
 		 */
-		if (this.processMapEntries.containsKey(ci.name())) {
+		if (processMapEntries.containsKey(ci.name())) {
 
-			ProcessMapEntry pme = this.processMapEntries.get(ci.name());
+			ProcessMapEntry pme = processMapEntries.get(ci.name());
 
 			result.addInfo(this, 240, ci.name(), pme.getTargetType());
 			ignoredCis.add(ci);
@@ -922,7 +908,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 				Double lowerBoundaryValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
 				Double upperBoundaryValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
 
-				Matcher matcher = this.numRangeConstraintLowerBoundaryPattern
+				Matcher matcher = numRangeConstraintLowerBoundaryPattern
 						.matcher(ocl);
 
 				boolean foundLowerBoundary = matcher.find();
@@ -948,8 +934,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					// constraint type
 				}
 
-				matcher = this.numRangeConstraintUpperBoundaryPattern
-						.matcher(ocl);
+				matcher = numRangeConstraintUpperBoundaryPattern.matcher(ocl);
 
 				boolean foundUpperBoundary = matcher.find();
 
@@ -976,7 +961,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 				if (foundLowerBoundary || foundUpperBoundary) {
 
-					matcher = this.numRangeConstraintPropertyNamePattern
+					matcher = numRangeConstraintPropertyNamePattern
 							.matcher(ocl);
 
 					boolean foundPropertyName = matcher.find();
@@ -1016,18 +1001,18 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						Map<String, NumericRangeConstraintMetadata> map;
 
-						if (this.numericRangeConstraintByPropNameByClassName
+						if (numericRangeConstraintByPropNameByClassName
 								.containsKey(ci)) {
 							// fine, we don't need to initialize the map for the
 							// class
-							map = this.numericRangeConstraintByPropNameByClassName
+							map = numericRangeConstraintByPropNameByClassName
 									.get(ci);
 						} else {
 
 							map = new HashMap<String, NumericRangeConstraintMetadata>();
 
-							this.numericRangeConstraintByPropNameByClassName
-									.put(ci, map);
+							numericRangeConstraintByPropNameByClassName.put(ci,
+									map);
 						}
 
 						map.put(propertyName, nrcm);
@@ -1097,17 +1082,17 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					Map<String, NumericRangeConstraintMetadata> map;
 
-					if (this.numericRangeConstraintByPropNameByClassName
+					if (numericRangeConstraintByPropNameByClassName
 							.containsKey(ci)) {
 						// fine, we don't need to initialize the map for the
 						// class
-						map = this.numericRangeConstraintByPropNameByClassName
+						map = numericRangeConstraintByPropNameByClassName
 								.get(ci);
 					} else {
 
 						map = new HashMap<String, NumericRangeConstraintMetadata>();
 
-						this.numericRangeConstraintByPropNameByClassName.put(ci,
+						numericRangeConstraintByPropNameByClassName.put(ci,
 								map);
 					}
 
@@ -1127,7 +1112,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 				String ocl = cons.text();
 
-				Matcher matcher = this.lengthConstraintPattern.matcher(ocl);
+				Matcher matcher = lengthConstraintPattern.matcher(ocl);
 
 				boolean found = matcher.find();
 
@@ -1151,14 +1136,14 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private void createCodedValueDomain(ClassInfo ci) throws EAException {
 
-		int eaPkgId = establishEAPackageHierarchy(ci, this.domainsPkgId);
+		int eaPkgId = establishEAPackageHierarchy(ci, domainsPkgId);
 
 		// create class element
 		String name = normalizeName(ci.name());
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + this.maxNameLength);
+					"" + maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -1233,7 +1218,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			ClassInfo rangeDomainSource) throws EAException {
 
 		int eaPkgId = establishEAPackageHierarchy(rangeDomainSource,
-				this.domainsPkgId);
+				domainsPkgId);
 
 		// create class element
 		String name = rangeDomainName;
@@ -1251,7 +1236,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between class name and EA Element
-		this.numericRangeElementIdsByClassName.put(rangeDomainName,
+		numericRangeElementIdsByClassName.put(rangeDomainName,
 				e.GetElementID());
 
 		// TBD: set alias or notes?
@@ -1283,14 +1268,14 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private void createFeatureClass(ClassInfo ci) throws EAException {
 
-		int eaPkgId = establishEAPackageHierarchy(ci, this.featuresPkgId);
+		int eaPkgId = establishEAPackageHierarchy(ci, featuresPkgId);
 
 		// create class element
 		String name = normalizeName(ci.name());
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + this.maxNameLength);
+					"" + maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -1537,14 +1522,14 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	private void createObjectClass(ClassInfo ci) throws EAException {
 
-		int eaPkgId = establishEAPackageHierarchy(ci, this.tablesPkgId);
+		int eaPkgId = establishEAPackageHierarchy(ci, tablesPkgId);
 
 		// create class element
 		String name = normalizeName(ci.name());
 
 		if (exceedsMaxLength(name)) {
 			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + this.maxNameLength);
+					"" + maxNameLength);
 			name = clipToMaxLength(name);
 		}
 
@@ -1663,7 +1648,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			return false;
 
-		} else if (s.length() <= this.maxNameLength) {
+		} else if (s.length() <= maxNameLength) {
 
 			return false;
 
@@ -1679,13 +1664,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			return null;
 
-		} else if (s.length() <= this.maxNameLength) {
+		} else if (s.length() <= maxNameLength) {
 
 			return s;
 
 		} else {
 
-			return s.substring(0, this.maxNameLength);
+			return s.substring(0, maxNameLength);
 		}
 	}
 
@@ -1729,14 +1714,32 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	private int establishEAPackageHierarchy(ClassInfo ci,
 			int mainWorkspaceSubPkgId) throws EAException {
 
-		// get path up to but not including the application schema package
+		/*
+		 * Get path up to the application schema package. Include the
+		 * application schema if the number of schemas selected for processing
+		 * is greater than 1, since then we want/need to include the separation
+		 * by application schema.
+		 */
 		Deque<PackageInfo> pathToAppSchemaAsStack = new ArrayDeque<PackageInfo>();
 
-		if (ci.pkg() != this.appSchemaPkg) {
+		if (numberOfSchemasSelectedForProcessing > 1) {
+
+			PackageInfo pkg = ci.pkg();
+			PackageInfo lastPkg = null;
+
+			while (pkg != null && (lastPkg == null
+					|| pkg.targetNamespace() == lastPkg.targetNamespace())) {
+
+				pathToAppSchemaAsStack.addFirst(pkg);
+				lastPkg = pkg;
+				pkg = pkg.owner();
+			}
+
+		} else if (!ci.pkg().isSchema()) {
 
 			PackageInfo pkg = ci.pkg();
 
-			while (pkg != null && pkg != this.appSchemaPkg) {
+			while (pkg != null && !pkg.isSchema()) {
 
 				pathToAppSchemaAsStack.addFirst(pkg);
 
@@ -1746,8 +1749,12 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		if (pathToAppSchemaAsStack.isEmpty()) {
 
-			// class is situated in app schema package and thus shall be created
-			// in main workspace sub-package
+			/*
+			 * Class shall be created in main workspace sub-package; typically
+			 * the case for a single application schema being selected for
+			 * processing and the class being situated in the app schema
+			 * package.
+			 */
 			return mainWorkspaceSubPkgId;
 
 		} else {
@@ -1842,7 +1849,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 
 		// cache the result for later use
-		this.geometryTypeCache.put(ci, result);
+		geometryTypeCache.put(ci, result);
 
 		return result;
 	}
@@ -1937,472 +1944,10 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		return result;
 	}
 
+	@Override
 	public void write() {
 
-		if (rep == null)
-			return; // repository not initialised
-
-		// establish generalization relationships
-		for (Entry<ClassInfo, ClassInfo> entry : generalisations.entrySet()) {
-
-			ClassInfo ci1 = entry.getKey();
-			ClassInfo ci2 = entry.getValue();
-
-			if (!elementIdByClassInfo.containsKey(ci1))
-				result.addWarning(this, 207, ci1.name(), ci2.name());
-			else if (!elementIdByClassInfo.containsKey(ci2))
-				result.addWarning(this, 208, ci1.name(), ci2.name());
-			else {
-
-				String c1Name = elementNameByClassInfo.get(ci1);
-				String c2Name = elementNameByClassInfo.get(ci2);
-
-				try {
-					EAModelUtil.createEAGeneralization(rep,
-							elementIdByClassInfo.get(ci1), c1Name,
-							elementIdByClassInfo.get(ci2), c2Name);
-				} catch (EAException e) {
-					result.addWarning(this, 10002, c1Name, c2Name,
-							e.getMessage());
-				}
-			}
-		}
-
-		// process properties of all classes
-		for (ClassInfo ci : elementIdByClassInfo.keySet()) {
-
-			if (ci.category() == Options.ENUMERATION
-					|| ci.category() == Options.CODELIST) {
-				/* enumerations and codelists have already been fully created */
-				continue;
-			}
-
-			int eaElementId = elementIdByClassInfo.get(ci);
-			Element eaClass = rep.GetElementByID(eaElementId);
-
-			for (PropertyInfo pi : ci.properties().values()) {
-
-				if (!pi.isAttribute()) {
-					// keep track of the association for later
-					this.associations.add(pi.association());
-					continue;
-				}
-
-				String initialValue = null;
-				if (pi.matches(RULE_PROP_INITIAL_VALUE)) {
-					initialValue = pi.initialValue();
-				}
-
-				Type typeInfo = pi.typeInfo();
-				String mappedTypeName = typeInfo.name;
-
-				// omit reflexive relationships
-				if (typeInfo.id.equals(ci.id())) {
-					result.addWarning(this, 236, ci.name(), pi.name());
-					continue;
-				}
-
-				if (pi.cardinality().maxOccurs > 1
-						&& !(pi.categoryOfValue() == Options.FEATURE
-								|| pi.categoryOfValue() == Options.OBJECT
-								|| pi.categoryOfValue() == Options.GMLOBJECT)) {
-
-					/*
-					 * multiplicity must have been flattened, at least for
-					 * actual attributes - unless the category of value for the
-					 * property is object or feature type (then establish a one
-					 * to many or many to many relationship - which is covered
-					 * later on in the decision tree)
-					 */
-					result.addWarning(this, 212, pi.name(), ci.name());
-					continue;
-				}
-
-				String normalizedPiName = normalizeName(pi.name());
-
-				if (exceedsMaxLength(normalizedPiName)) {
-					this.result.addWarning(this, 205, normalizedPiName,
-							pi.name(), ci.name(), "" + this.maxNameLength);
-					normalizedPiName = clipToMaxLength(normalizedPiName);
-				}
-
-				String normalizedPiAlias = pi.aliasName() == null ? null
-						: normalizeAlias(pi.aliasName(), ci);
-
-				ClassInfo typeCi = this.model.classById(typeInfo.id);
-
-				/*
-				 * first, determine if a type mapping is available - if so,
-				 * apply it
-				 */
-				if (this.processMapEntries.containsKey(typeInfo.name)) {
-
-					ProcessMapEntry pme = processMapEntries.get(typeInfo.name);
-
-					// during initialization we ensured that the map entry
-					// has a target type, so no need to check again here
-
-					/*
-					 * now it depends: is the target type one that supports
-					 * numeric range constraints, and is such a constraint
-					 * actually defined for the property?
-					 */
-
-					Element numericRange = null;
-
-					if (esriTypesSuitedForRangeConstraint
-							.contains(pme.getTargetType())
-							&& this.numericRangeConstraintByPropNameByClassName
-									.containsKey(ci)) {
-
-						/*
-						 * determine if pi has a name or alias that starts with
-						 * a property name in the range constraint map for ci.
-						 * We must check via a 'startsWith' instead of equals
-						 * because flattening can change the name of a property;
-						 * a prominent example is where a numeric property can
-						 * have a single or interval value (then you'd have
-						 * three properties instead of one after flattening).
-						 * Name flattening may have switched the name of a model
-						 * element with its alias, so we have to check both
-						 * fields.
-						 */
-						Set<String> originalPropertyNames = numericRangeConstraintByPropNameByClassName
-								.get(ci).keySet();
-
-						for (String origPropName : originalPropertyNames) {
-
-							if (pi.name().startsWith(origPropName)
-									|| (pi.aliasName() != null && pi.aliasName()
-											.startsWith(origPropName))) {
-
-								// apply range constraint!
-
-								// check if a range domain already exists - if
-								// so, reuse it
-								String rangeDomainName = ci.name() + "_"
-										+ origPropName + "_NumRange";
-
-								if (this.numericRangeElementIdsByClassName
-										.containsKey(rangeDomainName)) {
-
-									int numRangeElementId = this.numericRangeElementIdsByClassName
-											.get(rangeDomainName);
-									numericRange = rep
-											.GetElementByID(numRangeElementId);
-
-								} else {
-
-									// create range domain element
-
-									NumericRangeConstraintMetadata nrcm = numericRangeConstraintByPropNameByClassName
-											.get(ci).get(origPropName);
-
-									double minValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-									double maxValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
-
-									if (nrcm.hasLowerBoundaryValue()) {
-										if (nrcm.isLowerBoundaryInclusive()) {
-											minValue = nrcm
-													.getLowerBoundaryValue();
-										} else {
-											minValue = nrcm
-													.getLowerBoundaryValue()
-													+ this.numRangeDelta;
-										}
-									}
-
-									if (nrcm.hasUpperBoundaryValue()) {
-										if (nrcm.isUpperBoundaryInclusive()) {
-											maxValue = nrcm
-													.getUpperBoundaryValue();
-										} else {
-											maxValue = nrcm
-													.getUpperBoundaryValue()
-													- this.numRangeDelta;
-										}
-									}
-
-									try {
-
-										// TODO parse documentation from range
-										// constraint
-										Element rd = this.createRangeDomain(
-												rangeDomainName, null,
-												pme.getTargetType(), ci);
-
-										// create min and max fields
-										EAModelUtil.createEAAttribute(rd,
-												"MinValue", null, null, null,
-												null, false, false,
-												doubleToString(minValue),
-												new Multiplicity(1, 1), null,
-												null);
-										EAModelUtil.createEAAttribute(rd,
-												"MaxValue", null, null, null,
-												null, false, false,
-												doubleToString(maxValue),
-												new Multiplicity(1, 1), null,
-												null);
-
-										numericRange = rd;
-
-									} catch (EAException e) {
-
-										// log an error, but proceed
-										result.addError(this, 230,
-												rangeDomainName,
-												e.getMessage());
-										numericRange = null;
-									}
-
-								}
-
-								break;
-							}
-						}
-					}
-
-					if (numericRange != null) {
-
-						try {
-							String valueType = numericRange.GetName();
-							createField(eaClass, normalizedPiName,
-									normalizedPiAlias,
-									pi.derivedDocumentation(
-											documentationTemplate,
-											documentationNoValue),
-									valueType, "0",
-									"" + computePrecision(pi, valueType),
-									"" + computeScale(pi, valueType),
-									numericRange.GetElementID(), initialValue,
-									computeIsNullable(pi));
-
-						} catch (EAException e) {
-							result.addError(this, 10003, pi.name(), ci.name(),
-									e.getMessage());
-						}
-
-					} else {
-
-						/*
-						 * try to find the target type in the model (for
-						 * updating the type info of pi)
-						 */
-						ClassInfo targetTypeCi = this.model
-								.classByName(pme.getTargetType());
-
-						mappedTypeName = pme.getTargetType();
-
-						/*
-						 * now try to find the target type in the class map - if
-						 * it is available there we can set the classifier ID
-						 * correctly; otherwise we simply don't set the
-						 * classifier ID
-						 */
-						String eaTargetType;
-						Integer eaTargetClassifierId = null;
-
-						if (targetTypeCi == null || !elementIdByClassInfo
-								.containsKey(targetTypeCi)) {
-							// it's alright to not have an actual class for the
-							// target type defined in the map entry
-							eaTargetType = pme.getTargetType();
-
-						} else {
-
-							int eaTargetTypeElementId = elementIdByClassInfo
-									.get(targetTypeCi);
-							Element eaTargetTypeClass = rep
-									.GetElementByID(eaTargetTypeElementId);
-
-							eaTargetType = eaTargetTypeClass.GetName();
-							eaTargetClassifierId = eaTargetTypeClass
-									.GetElementID();
-						}
-
-						try {
-							createField(eaClass, normalizedPiName,
-									normalizedPiAlias,
-									pi.derivedDocumentation(
-											documentationTemplate,
-											documentationNoValue),
-									eaTargetType,
-									"" + computeLength(pi, mappedTypeName),
-									"" + computePrecision(pi, mappedTypeName),
-									"" + computeScale(pi, mappedTypeName),
-									eaTargetClassifierId, initialValue,
-									computeIsNullable(pi));
-
-						} catch (EAException e) {
-							result.addError(this, 10003, pi.name(), ci.name(),
-									e.getMessage());
-						}
-					}
-
-				} else if (typeInfo.name.startsWith("GM_")) {
-
-					/*
-					 * ignore geometry typed properties - the geometry is
-					 * implicit for an ArcGIS feature class (<<Point>> etc).
-					 */
-					result.addDebug(this, 213, pi.name(), ci.name());
-
-				} else if (typeCi != null && !typeCi.inSchema(appSchemaPkg)) {
-
-					/*
-					 * type does not belong to application schema - ignore the
-					 * property
-					 */
-					result.addWarning(this, 222, typeInfo.name, pi.name(),
-							ci.name());
-
-				} else if (pi.categoryOfValue() == Options.FEATURE
-						|| pi.categoryOfValue() == Options.OBJECT
-						|| pi.categoryOfValue() == Options.GMLOBJECT) {
-
-					if (pi.cardinality().maxOccurs > 1) {
-
-						createManyToManyRelationshipClass(pi);
-
-					} else {
-
-						createOneToManyRelationshipClass(pi);
-					}
-
-				} else if (pi.categoryOfValue() == Options.ENUMERATION
-						|| pi.categoryOfValue() == Options.CODELIST) {
-
-					String eaType;
-					Integer eaClassifierId = null;
-
-					if (typeCi == null
-							|| !elementIdByClassInfo.containsKey(typeCi)) {
-						result.addWarning(this, 216, typeInfo.name, pi.name(),
-								ci.name());
-						eaType = clipToMaxLength(typeInfo.name);
-					} else {
-						int eaTypeElementId = elementIdByClassInfo.get(typeCi);
-						Element eaTypeClass = rep
-								.GetElementByID(eaTypeElementId);
-						eaType = eaTypeClass.GetName();
-						eaClassifierId = eaTypeClass.GetElementID();
-					}
-
-					try {
-						createField(eaClass, normalizedPiName,
-								normalizedPiAlias,
-								pi.derivedDocumentation(documentationTemplate,
-										documentationNoValue),
-								eaType,
-								"" + computeLengthForCodelistOrEnumerationValueType(
-										pi),
-								"0", "0", eaClassifierId, initialValue,
-								computeIsNullable(pi));
-					} catch (EAException e) {
-						result.addError(this, 10003, pi.name(), ci.name(),
-								e.getMessage());
-					}
-
-				} else if (pi.categoryOfValue() == Options.UNION) {
-
-					// unions aren't supported
-					result.addWarning(this, 214, pi.name(), ci.name());
-
-				} else if (pi.categoryOfValue() == Options.DATATYPE) {
-
-					// data types aren't supported
-					result.addWarning(this, 215, pi.name(), ci.name());
-
-				} else {
-
-					// This case is unexpected
-					result.addError(this, 217, pi.name(),
-							"" + pi.categoryOfValue(), ci.name());
-
-				}
-			}
-		}
-
-		// process associations
-		for (AssociationInfo ai : this.associations) {
-
-			// upper bound of either end can be > 1
-
-			/*
-			 * 2014-11-26 NOTE: flattening of multiplicity normally dissolves
-			 * associations where one end has max cardinality > 1; this behavior
-			 * can be suppressed for associations between feature and object
-			 * types via a configuration parameter
-			 */
-
-			PropertyInfo end1 = ai.end1();
-			int end1CiCat = end1.inClass().category();
-			PropertyInfo end2 = ai.end2();
-			int end2CiCat = end2.inClass().category();
-
-			// omit reflexive relationships
-			if (end1.inClass().id().equals(end2.inClass().id())) {
-				result.addWarning(this, 235, end1.inClass().name());
-				continue;
-			}
-
-			/*
-			 * only process associations between feature and object types,
-			 * ignore those where one end is a union, datatype, enumeration,
-			 * codelist etc.
-			 */
-			if (!(end1CiCat == Options.FEATURE || end1CiCat == Options.GMLOBJECT
-					|| end1CiCat == Options.OBJECT)
-					&& !(end2CiCat == Options.FEATURE
-							|| end2CiCat == Options.GMLOBJECT
-							|| end2CiCat == Options.OBJECT)) {
-
-				// we only process associations between feature and object types
-				result.addDebug(this, 223, end1.inClass().name(),
-						end2.inClass().name());
-				continue;
-			}
-
-			if (!(end1.inClass().inSchema(appSchemaPkg)
-					&& end2.inClass().inSchema(appSchemaPkg))) {
-
-				// we only process associations where both ends are in the app
-				// schema
-				result.addDebug(this, 224, end1.inClass().name(),
-						end2.inClass().name());
-				continue;
-
-			}
-
-			// alright, now we should have an association between two feature
-			// and/or object types that are both part of the application schema
-
-			// differentiate between one to many and many to many
-			if (end1.cardinality().maxOccurs == 1
-					|| end2.cardinality().maxOccurs == 1) {
-
-				// one to many relationship
-
-				createOneToManyRelationshipClass(ai);
-
-				// if (end2.cardinality().maxOccurs == 1) {
-				// createOneToManyRelationshipClass(end1);
-				// } else {
-				// createOneToManyRelationshipClass(end2);
-				// }
-
-			} else {
-
-				// many to many relationship
-				createManyToManyRelationshipClass(end1, end2);
-			}
-		}
-
-		// 2015-06-25 JE: compact() no longer supported in EA v12 API
-		// rep.Compact();
-		rep.CloseFile();
-		rep.Exit();
+		// nothing to do here (SingleTarget)
 	}
 
 	/**
@@ -2423,7 +1968,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		ClassInfo ciSource = pi.inClass();
 
 		Type ti = pi.typeInfo();
-		ClassInfo ciTarget = this.model.classById(ti.id);
+		ClassInfo ciTarget = model.classById(ti.id);
 
 		if (ciTarget == null) {
 
@@ -2545,7 +2090,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					if (exceedsMaxLength(assocClassName)) {
 						this.result.addWarning(this, 226, assocClassName,
-								"" + this.maxNameLength);
+								"" + maxNameLength);
 						assocClassName = clipToMaxLength(assocClassName);
 					}
 
@@ -2582,7 +2127,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						if (exceedsMaxLength(fkSrcName)) {
 							this.result.addWarning(this, 227, fkSrcName,
-									"" + this.maxNameLength);
+									"" + maxNameLength);
 							fkSrcName = clipToMaxLength(fkSrcName);
 						}
 
@@ -2604,7 +2149,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 						if (exceedsMaxLength(fkTgtName)) {
 							this.result.addWarning(this, 227, fkTgtName,
-									"" + this.maxNameLength);
+									"" + maxNameLength);
 							fkTgtName = clipToMaxLength(fkTgtName);
 						}
 
@@ -2635,7 +2180,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					tvs.add(new EATaggedValue("DestinationForeignKey",
 							foreignKeyFieldTgt.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("DestinationPrimaryKey",
-							this.objectIdAttributeGUIDByClass.get(target_)));
+							objectIdAttributeGUIDByClass.get(target_)));
 					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
 					tvs.add(new EATaggedValue("IsAttachmentRelationship",
 							"false"));
@@ -2653,7 +2198,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					tvs.add(new EATaggedValue("OriginForeignKey",
 							foreignKeyFieldSrc.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							this.objectIdAttributeGUIDByClass.get(source_)));
+							objectIdAttributeGUIDByClass.get(source_)));
 					tvs.add(new EATaggedValue("RasterFieldName", ""));
 					tvs.add(new EATaggedValue("Versioned", "false"));
 
@@ -2758,13 +2303,13 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		Type typeInfo = pi.typeInfo();
 
-		ClassInfo typeCi = this.model.classById(typeInfo.id);
+		ClassInfo typeCi = model.classById(typeInfo.id);
 
 		/*
 		 * create <<RelationshipClass>> association to that type
 		 */
 
-		if (typeCi == null || !this.elementIdByClassInfo.containsKey(typeCi)) {
+		if (typeCi == null || !elementIdByClassInfo.containsKey(typeCi)) {
 
 			// we cannot establish the connection
 			result.addError(this, 218, pi.name(), pi.inClass().name(),
@@ -2774,8 +2319,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			this.createOneToManyRelationshipClass(ci, typeCi,
 					toLowerCamelCase(ci.name()), pi.name(), Integer.MAX_VALUE,
-					pi.cardinality().maxOccurs);
-
+					false);
 		}
 	}
 
@@ -2788,19 +2332,17 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		String roleNameOnCi2 = ai.end2().name();
 
 		int maxOccursOnCi1 = ai.end1().cardinality().maxOccurs;
-		int maxOccursOnCi2 = ai.end2().cardinality().maxOccurs;
 
 		this.createOneToManyRelationshipClass(ci1, ci2, roleNameOnCi1,
-				roleNameOnCi2, maxOccursOnCi1, maxOccursOnCi2);
-
+				roleNameOnCi2, maxOccursOnCi1, ai.end1().isNavigable());
 	}
 
 	/**
 	 * The relationship association will be created with the source being the
-	 * class that has maxOccurs <= 1. The other end will be the target. Source
-	 * multiplicity for the association will be set to 1, target multiplicity to
-	 * 0..*. The target class will get the foreign key ID field that is used to
-	 * point to the source.
+	 * class where a navigable role with maxOccurs 1 ends. The other class will
+	 * be the target. Source multiplicity for the association will be set to 1,
+	 * target multiplicity to 0..*. The target class will get the foreign key ID
+	 * field that is used to point to the source.
 	 * 
 	 * @param ci1
 	 *            first class
@@ -2812,17 +2354,17 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	 *            role name that belongs to the second class
 	 * @param maxOccursOnCi1
 	 *            maximum multiplicity that belongs to the first class
-	 * @param maxOccursOnCi2
-	 *            maximum multiplicity that belongs to the second class
+	 * @param isNavigableOnCi1
+	 *            whether the role that belongs to the first class is navigable
 	 */
 	private void createOneToManyRelationshipClass(ClassInfo ci1, ClassInfo ci2,
 			String roleNameOnCi1, String roleNameOnCi2, int maxOccursOnCi1,
-			int maxOccursOnCi2) {
+			boolean isNavigableOnCi1) {
 
 		ClassInfo source, target;
 		String roleNameSource, roleNameTarget;
 
-		if (maxOccursOnCi1 <= 1) {
+		if (maxOccursOnCi1 <= 1 && isNavigableOnCi1) {
 			// use ci1 as source
 			source = ci1;
 			target = ci2;
@@ -2853,7 +2395,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			if (exceedsMaxLength(name)) {
 				this.result.addWarning(this, 205, name, roleNameSource,
-						target.name(), "" + this.maxNameLength);
+						target.name(), "" + maxNameLength);
 				name = clipToMaxLength(name);
 
 			}
@@ -2928,7 +2470,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 					if (exceedsMaxLength(relClassName)) {
 						this.result.addWarning(this, 234, relClassName,
-								"" + this.maxNameLength);
+								"" + maxNameLength);
 						relClassName = clipToMaxLength(relClassName);
 					}
 
@@ -2976,7 +2518,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					tvs.add(new EATaggedValue("ClassKey",
 							"esriRelClassKeyUndefined"));
 					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							this.objectIdAttributeGUIDByClass.get(source_)));
+							objectIdAttributeGUIDByClass.get(source_)));
 					tvs.add(new EATaggedValue("OriginForeignKey",
 							foreignKeyField.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("DestinationPrimaryKey", ""));
@@ -3087,7 +2629,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			for (String subtypeId : ci.subtypes()) {
 
-				ClassInfo subtype = this.model.classById(subtypeId);
+				ClassInfo subtype = model.classById(subtypeId);
 
 				if (subtype == null) {
 
@@ -3095,7 +2637,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 					continue;
 				}
 
-				if (subtype.inSchema(appSchemaPkg)) {
+				if (model.isInSelectedSchemas(subtype)) {
 
 					if (subtype.isAbstract()) {
 
@@ -3132,45 +2674,6 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 	}
 
-	private Set<ClassInfo> computeListOfDirectNonAbstractSubtypes(
-			ClassInfo ci) {
-
-		Set<ClassInfo> directNonAbstractSubtypes = new HashSet<ClassInfo>();
-
-		if (ci.subtypes() != null) {
-
-			for (String subtypeId : ci.subtypes()) {
-
-				ClassInfo subtype = this.model.classById(subtypeId);
-
-				if (subtype == null) {
-
-					result.addWarning(this, 219, subtypeId, ci.name());
-					continue;
-				}
-
-				if (subtype.inSchema(appSchemaPkg)) {
-
-					if (subtype.isAbstract()) {
-
-						directNonAbstractSubtypes
-								.addAll(computeListOfDirectNonAbstractSubtypes(
-										subtype));
-
-					} else {
-						directNonAbstractSubtypes.add(subtype);
-					}
-
-				} else {
-
-					result.addWarning(this, 220, subtype.name(), ci.name());
-				}
-			}
-		}
-
-		return directNonAbstractSubtypes;
-	}
-
 	private Integer computeScale(PropertyInfo pi, String valueTypeName) {
 
 		String nameOfScaleTV = "scale";
@@ -3190,9 +2693,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 
 		// if the property type is known, use the known value
-		if (this.scaleMappingByTypeName.containsKey(valueTypeName)) {
+		if (scaleMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.scaleMappingByTypeName.get(valueTypeName);
+			return scaleMappingByTypeName.get(valueTypeName);
 
 		} else {
 
@@ -3220,9 +2723,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 		}
 
 		// if the property type is known, use the known value
-		if (this.precisionMappingByTypeName.containsKey(valueTypeName)) {
+		if (precisionMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.precisionMappingByTypeName.get(valueTypeName);
+			return precisionMappingByTypeName.get(valueTypeName);
 
 		} else {
 
@@ -3249,9 +2752,9 @@ public class ArcGISWorkspace implements Target, MessageSource {
 	private int computeLength(PropertyInfo pi, String valueTypeName) {
 
 		// if the property type is known, use the known value
-		if (this.lengthMappingByTypeName.containsKey(valueTypeName)) {
+		if (lengthMappingByTypeName.containsKey(valueTypeName)) {
 
-			return this.lengthMappingByTypeName.get(valueTypeName);
+			return lengthMappingByTypeName.get(valueTypeName);
 
 		} else {
 
@@ -3283,8 +2786,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 			Integer length = null;
 
-			length = this.lengthByClassPropName
-					.get(ci.name() + "_" + pi.name());
+			length = lengthByClassPropName.get(ci.name() + "_" + pi.name());
 
 			if (length == null) {
 
@@ -3323,7 +2825,7 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 		if (pi.matches(RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE)) {
 
-			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
+			ClassInfo typeCi = model.classById(pi.typeInfo().id);
 
 			if (typeCi == null) {
 
@@ -3386,7 +2888,44 @@ public class ArcGISWorkspace implements Target, MessageSource {
 
 	public void reset() {
 
+		initialised = false;
+		model = null;
+		numberOfSchemasSelectedForProcessing = 0;
 		workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
+		maxNameLength = DEFAULT_MAX_NAME_LENGTH;
+		lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
+		numRangeDelta = NUM_RANGE_DELTA;
+		esriTypesSuitedForRangeConstraint = new HashSet<String>();
+		outputDirectory = null;
+		outputDirectoryFile = null;
+		documentationTemplate = null;
+		documentationNoValue = null;
+		rep = null;
+		ignoredCis = new HashSet<ClassInfo>();
+		geometryTypeCache = new HashMap<ClassInfo, ArcGISGeometryType>();
+		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
+		elementNameByClassInfo = new HashMap<ClassInfo, String>();
+		objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+		generalisations = new HashMap<ClassInfo, ClassInfo>();
+		associations = new HashSet<AssociationInfo>();
+		counterByRelationshipClassName = new HashMap<String, Integer>();
+		counterByPropertyNameByClass = new HashMap<ClassInfo, Map<String, Integer>>();
+		workspacePkgId = null;
+		featuresPkgId = null;
+		tablesPkgId = null;
+		assocClassesPkgId = null;
+		domainsPkgId = null;
+		eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
+		processMapEntries = null;
+		lengthMappingByTypeName = new HashMap<String, Integer>();
+		precisionMappingByTypeName = new HashMap<String, Integer>();
+		scaleMappingByTypeName = new HashMap<String, Integer>();
+		lengthByClassPropName = new HashMap<String, Integer>();
+		numericRangeConstraintByPropNameByClassName = new HashMap<ClassInfo, Map<String, NumericRangeConstraintMetadata>>();
+		nameOfTVToDetermineFieldLength = "size";
+		absolutePathOfOutputEAPFile = null;
+		shortNameByTaggedValue = null;
+		numericRangeElementIdsByClassName = new HashMap<String, Integer>();
 	}
 
 	/**
@@ -3558,5 +3097,473 @@ public class ArcGISWorkspace implements Target, MessageSource {
 			return "(" + ArcGISWorkspace.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
+	}
+
+	@Override
+	public void writeAll(ShapeChangeResult r) {
+
+		if (rep == null)
+			return; // repository not initialised
+
+		this.result = r;
+		this.options = r.options();
+
+		// establish generalization relationships
+		for (Entry<ClassInfo, ClassInfo> entry : generalisations.entrySet()) {
+
+			ClassInfo ci1 = entry.getKey();
+			ClassInfo ci2 = entry.getValue();
+
+			if (!elementIdByClassInfo.containsKey(ci1))
+				result.addWarning(this, 207, ci1.name(), ci2.name());
+			else if (!elementIdByClassInfo.containsKey(ci2))
+				result.addWarning(this, 208, ci1.name(), ci2.name());
+			else {
+
+				String c1Name = elementNameByClassInfo.get(ci1);
+				String c2Name = elementNameByClassInfo.get(ci2);
+
+				try {
+					EAModelUtil.createEAGeneralization(rep,
+							elementIdByClassInfo.get(ci1), c1Name,
+							elementIdByClassInfo.get(ci2), c2Name);
+				} catch (EAException e) {
+					result.addWarning(this, 10002, c1Name, c2Name,
+							e.getMessage());
+				}
+			}
+		}
+
+		// process properties of all classes
+		for (ClassInfo ci : elementIdByClassInfo.keySet()) {
+
+			if (ci.category() == Options.ENUMERATION
+					|| ci.category() == Options.CODELIST) {
+				/* enumerations and codelists have already been fully created */
+				continue;
+			}
+
+			int eaElementId = elementIdByClassInfo.get(ci);
+			Element eaClass = rep.GetElementByID(eaElementId);
+
+			for (PropertyInfo pi : ci.properties().values()) {
+
+				if (!pi.isAttribute()) {
+					// keep track of the association for later
+					associations.add(pi.association());
+					continue;
+				}
+
+				String initialValue = null;
+				if (pi.matches(RULE_PROP_INITIAL_VALUE)) {
+					initialValue = pi.initialValue();
+				}
+
+				Type typeInfo = pi.typeInfo();
+				String mappedTypeName = typeInfo.name;
+
+				// omit reflexive relationships
+				if (typeInfo.id.equals(ci.id())) {
+					result.addWarning(this, 236, ci.name(), pi.name());
+					continue;
+				}
+
+				if (pi.cardinality().maxOccurs > 1
+						&& !(pi.categoryOfValue() == Options.FEATURE
+								|| pi.categoryOfValue() == Options.OBJECT
+								|| pi.categoryOfValue() == Options.GMLOBJECT)) {
+
+					/*
+					 * multiplicity must have been flattened, at least for
+					 * actual attributes - unless the category of value for the
+					 * property is object or feature type (then establish a one
+					 * to many or many to many relationship - which is covered
+					 * later on in the decision tree)
+					 */
+					result.addWarning(this, 212, pi.name(), ci.name());
+					continue;
+				}
+
+				String normalizedPiName = normalizeName(pi.name());
+
+				if (exceedsMaxLength(normalizedPiName)) {
+					this.result.addWarning(this, 205, normalizedPiName,
+							pi.name(), ci.name(), "" + maxNameLength);
+					normalizedPiName = clipToMaxLength(normalizedPiName);
+				}
+
+				String normalizedPiAlias = pi.aliasName() == null ? null
+						: normalizeAlias(pi.aliasName(), ci);
+
+				ClassInfo typeCi = model.classById(typeInfo.id);
+
+				/*
+				 * first, determine if a type mapping is available - if so,
+				 * apply it
+				 */
+				if (processMapEntries.containsKey(typeInfo.name)) {
+
+					ProcessMapEntry pme = processMapEntries.get(typeInfo.name);
+
+					// during initialization we ensured that the map entry
+					// has a target type, so no need to check again here
+
+					/*
+					 * now it depends: is the target type one that supports
+					 * numeric range constraints, and is such a constraint
+					 * actually defined for the property?
+					 */
+
+					Element numericRange = null;
+
+					if (esriTypesSuitedForRangeConstraint
+							.contains(pme.getTargetType())
+							&& numericRangeConstraintByPropNameByClassName
+									.containsKey(ci)) {
+
+						/*
+						 * determine if pi has a name or alias that starts with
+						 * a property name in the range constraint map for ci.
+						 * We must check via a 'startsWith' instead of equals
+						 * because flattening can change the name of a property;
+						 * a prominent example is where a numeric property can
+						 * have a single or interval value (then you'd have
+						 * three properties instead of one after flattening).
+						 * Name flattening may have switched the name of a model
+						 * element with its alias, so we have to check both
+						 * fields.
+						 */
+						Set<String> originalPropertyNames = numericRangeConstraintByPropNameByClassName
+								.get(ci).keySet();
+
+						for (String origPropName : originalPropertyNames) {
+
+							if (pi.name().startsWith(origPropName)
+									|| (pi.aliasName() != null && pi.aliasName()
+											.startsWith(origPropName))) {
+
+								// apply range constraint!
+
+								// check if a range domain already exists - if
+								// so, reuse it
+								String rangeDomainName = ci.name() + "_"
+										+ origPropName + "_NumRange";
+
+								if (numericRangeElementIdsByClassName
+										.containsKey(rangeDomainName)) {
+
+									int numRangeElementId = numericRangeElementIdsByClassName
+											.get(rangeDomainName);
+									numericRange = rep
+											.GetElementByID(numRangeElementId);
+
+								} else {
+
+									// create range domain element
+
+									NumericRangeConstraintMetadata nrcm = numericRangeConstraintByPropNameByClassName
+											.get(ci).get(origPropName);
+
+									double minValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+									double maxValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+
+									if (nrcm.hasLowerBoundaryValue()) {
+										if (nrcm.isLowerBoundaryInclusive()) {
+											minValue = nrcm
+													.getLowerBoundaryValue();
+										} else {
+											minValue = nrcm
+													.getLowerBoundaryValue()
+													+ numRangeDelta;
+										}
+									}
+
+									if (nrcm.hasUpperBoundaryValue()) {
+										if (nrcm.isUpperBoundaryInclusive()) {
+											maxValue = nrcm
+													.getUpperBoundaryValue();
+										} else {
+											maxValue = nrcm
+													.getUpperBoundaryValue()
+													- numRangeDelta;
+										}
+									}
+
+									try {
+
+										// TODO parse documentation from range
+										// constraint
+										Element rd = this.createRangeDomain(
+												rangeDomainName, null,
+												pme.getTargetType(), ci);
+
+										// create min and max fields
+										EAModelUtil.createEAAttribute(rd,
+												"MinValue", null, null, null,
+												null, false, false,
+												doubleToString(minValue),
+												new Multiplicity(1, 1), null,
+												null);
+										EAModelUtil.createEAAttribute(rd,
+												"MaxValue", null, null, null,
+												null, false, false,
+												doubleToString(maxValue),
+												new Multiplicity(1, 1), null,
+												null);
+
+										numericRange = rd;
+
+									} catch (EAException e) {
+
+										// log an error, but proceed
+										result.addError(this, 230,
+												rangeDomainName,
+												e.getMessage());
+										numericRange = null;
+									}
+
+								}
+
+								break;
+							}
+						}
+					}
+
+					if (numericRange != null) {
+
+						try {
+							String valueType = numericRange.GetName();
+							createField(eaClass, normalizedPiName,
+									normalizedPiAlias,
+									pi.derivedDocumentation(
+											documentationTemplate,
+											documentationNoValue),
+									valueType, "0",
+									"" + computePrecision(pi, valueType),
+									"" + computeScale(pi, valueType),
+									numericRange.GetElementID(), initialValue,
+									computeIsNullable(pi));
+
+						} catch (EAException e) {
+							result.addError(this, 10003, pi.name(), ci.name(),
+									e.getMessage());
+						}
+
+					} else {
+
+						/*
+						 * try to find the target type in the model (for
+						 * updating the type info of pi)
+						 */
+						ClassInfo targetTypeCi = model
+								.classByName(pme.getTargetType());
+
+						mappedTypeName = pme.getTargetType();
+
+						/*
+						 * now try to find the target type in the class map - if
+						 * it is available there we can set the classifier ID
+						 * correctly; otherwise we simply don't set the
+						 * classifier ID
+						 */
+						String eaTargetType;
+						Integer eaTargetClassifierId = null;
+
+						if (targetTypeCi == null || !elementIdByClassInfo
+								.containsKey(targetTypeCi)) {
+							// it's alright to not have an actual class for the
+							// target type defined in the map entry
+							eaTargetType = pme.getTargetType();
+
+						} else {
+
+							int eaTargetTypeElementId = elementIdByClassInfo
+									.get(targetTypeCi);
+							Element eaTargetTypeClass = rep
+									.GetElementByID(eaTargetTypeElementId);
+
+							eaTargetType = eaTargetTypeClass.GetName();
+							eaTargetClassifierId = eaTargetTypeClass
+									.GetElementID();
+						}
+
+						try {
+							createField(eaClass, normalizedPiName,
+									normalizedPiAlias,
+									pi.derivedDocumentation(
+											documentationTemplate,
+											documentationNoValue),
+									eaTargetType,
+									"" + computeLength(pi, mappedTypeName),
+									"" + computePrecision(pi, mappedTypeName),
+									"" + computeScale(pi, mappedTypeName),
+									eaTargetClassifierId, initialValue,
+									computeIsNullable(pi));
+
+						} catch (EAException e) {
+							result.addError(this, 10003, pi.name(), ci.name(),
+									e.getMessage());
+						}
+					}
+
+				} else if (typeInfo.name.startsWith("GM_")) {
+
+					/*
+					 * ignore geometry typed properties - the geometry is
+					 * implicit for an ArcGIS feature class (<<Point>> etc).
+					 */
+					result.addDebug(this, 213, pi.name(), ci.name());
+
+				} else if (typeCi != null
+						&& !model.isInSelectedSchemas(typeCi)) {
+
+					/*
+					 * type does not belong to application schema - ignore the
+					 * property
+					 */
+					result.addWarning(this, 222, typeInfo.name, pi.name(),
+							ci.name());
+
+				} else if (pi.categoryOfValue() == Options.FEATURE
+						|| pi.categoryOfValue() == Options.OBJECT
+						|| pi.categoryOfValue() == Options.GMLOBJECT) {
+
+					if (pi.cardinality().maxOccurs > 1) {
+
+						createManyToManyRelationshipClass(pi);
+
+					} else {
+
+						createOneToManyRelationshipClass(pi);
+					}
+
+				} else if (pi.categoryOfValue() == Options.ENUMERATION
+						|| pi.categoryOfValue() == Options.CODELIST) {
+
+					String eaType;
+					Integer eaClassifierId = null;
+
+					if (typeCi == null
+							|| !elementIdByClassInfo.containsKey(typeCi)) {
+						result.addWarning(this, 216, typeInfo.name, pi.name(),
+								ci.name());
+						eaType = clipToMaxLength(typeInfo.name);
+					} else {
+						int eaTypeElementId = elementIdByClassInfo.get(typeCi);
+						Element eaTypeClass = rep
+								.GetElementByID(eaTypeElementId);
+						eaType = eaTypeClass.GetName();
+						eaClassifierId = eaTypeClass.GetElementID();
+					}
+
+					try {
+						createField(eaClass, normalizedPiName,
+								normalizedPiAlias,
+								pi.derivedDocumentation(documentationTemplate,
+										documentationNoValue),
+								eaType,
+								"" + computeLengthForCodelistOrEnumerationValueType(
+										pi),
+								"0", "0", eaClassifierId, initialValue,
+								computeIsNullable(pi));
+					} catch (EAException e) {
+						result.addError(this, 10003, pi.name(), ci.name(),
+								e.getMessage());
+					}
+
+				} else if (pi.categoryOfValue() == Options.UNION) {
+
+					// unions aren't supported
+					result.addWarning(this, 214, pi.name(), ci.name());
+
+				} else if (pi.categoryOfValue() == Options.DATATYPE) {
+
+					// data types aren't supported
+					result.addWarning(this, 215, pi.name(), ci.name());
+
+				} else {
+
+					// This case is unexpected
+					result.addError(this, 217, pi.name(),
+							"" + pi.categoryOfValue(), ci.name());
+
+				}
+			}
+		}
+
+		// process associations
+		for (AssociationInfo ai : associations) {
+
+			// upper bound of either end can be > 1
+
+			/*
+			 * 2014-11-26 NOTE: flattening of multiplicity normally dissolves
+			 * associations where one end has max cardinality > 1; this behavior
+			 * can be suppressed for associations between feature and object
+			 * types via a configuration parameter
+			 */
+
+			PropertyInfo end1 = ai.end1();
+			int end1CiCat = end1.inClass().category();
+			PropertyInfo end2 = ai.end2();
+			int end2CiCat = end2.inClass().category();
+
+			// omit reflexive relationships
+			if (end1.inClass().id().equals(end2.inClass().id())) {
+				result.addWarning(this, 235, end1.inClass().name());
+				continue;
+			}
+
+			/*
+			 * only process associations between feature and object types,
+			 * ignore those where one end is a union, datatype, enumeration,
+			 * codelist etc.
+			 */
+			if (!(end1CiCat == Options.FEATURE || end1CiCat == Options.GMLOBJECT
+					|| end1CiCat == Options.OBJECT)
+					&& !(end2CiCat == Options.FEATURE
+							|| end2CiCat == Options.GMLOBJECT
+							|| end2CiCat == Options.OBJECT)) {
+
+				// we only process associations between feature and object types
+				result.addDebug(this, 223, end1.inClass().name(),
+						end2.inClass().name());
+				continue;
+			}
+
+			if (!(model.isInSelectedSchemas(end1.inClass())
+					&& model.isInSelectedSchemas(end2.inClass()))) {
+
+				// we only process associations where both ends are in the app
+				// schema
+				result.addDebug(this, 224, end1.inClass().name(),
+						end2.inClass().name());
+				continue;
+
+			}
+
+			/*
+			 * Alright, now we should have an association between two feature
+			 * and/or object types that are both part of schemas selected for
+			 * processing
+			 */
+
+			// differentiate between one to many and many to many
+			if ((end1.isNavigable() && end1.cardinality().maxOccurs == 1)
+					|| (end2.isNavigable()
+							&& end2.cardinality().maxOccurs == 1)) {
+
+				createOneToManyRelationshipClass(ai);
+
+			} else {
+
+				createManyToManyRelationshipClass(end1, end2);
+			}
+		}
+
+		// 2015-06-25 JE: compact() no longer supported in EA v12 API
+		// rep.Compact();
+		rep.CloseFile();
+		rep.Exit();
 	}
 }

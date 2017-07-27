@@ -96,7 +96,6 @@
 			inputs="step1" mode="enabled">
 			<targetParameter name="defaultEncodingRule" value="mysql" />
 			<targetParameter name="outputDirectory" value="testResults/sql/codelists/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true" />

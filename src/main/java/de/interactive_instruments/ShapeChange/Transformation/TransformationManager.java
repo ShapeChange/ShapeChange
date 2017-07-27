@@ -372,7 +372,9 @@ public class TransformationManager {
 	private void setTaggedValues(GenericModel genModel,
 			List<TaggedValueConfigurationEntry> taggedValues) {
 
-		for (GenericPackageInfo genPackage : genModel.selectedSchemas()) {
+		for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
+			
+			GenericPackageInfo genPackage = (GenericPackageInfo)pi;
 
 			TaggedValues genPaTVs = genPackage.taggedValuesAll();
 

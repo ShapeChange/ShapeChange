@@ -80,7 +80,6 @@ public class ReplicationSchemaVisitor
 	protected Options options;
 	protected ShapeChangeResult result;
 
-	protected PackageInfo schema;
 	protected Model model;
 	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>();
 
@@ -107,11 +106,10 @@ public class ReplicationSchemaVisitor
 		this.options = sqlddl.options;
 		this.result = sqlddl.result;
 
-		this.schema = sqlddl.schema;
-		this.model = schema.model();
+		this.model = SqlDdl.model;
 
 		// Identify the enumerations contained in the schema
-		for (ClassInfo ci : model.classes(schema)) {
+		for (ClassInfo ci : model.selectedSchemaClasses()) {
 			if (ci.category() == Options.ENUMERATION) {
 				this.enumerationsInSchema.add(ci);
 			}
@@ -142,11 +140,11 @@ public class ReplicationSchemaVisitor
 		addAttribute(root, "xmlns", Options.W3C_XML_SCHEMA);
 		addAttribute(root, "elementFormDefault", "qualified");
 
-		addAttribute(root, "version", schema.version());
-		targetNamespace = schema.targetNamespace()
-				+ sqlddl.repSchemaTargetNamespaceSuffix;
+		addAttribute(root, "version", SqlDdl.repSchemaTargetVersion);
+		targetNamespace = SqlDdl.repSchemaTargetNamespace
+				+ SqlDdl.repSchemaTargetNamespaceSuffix;
 		addAttribute(root, "targetNamespace", targetNamespace);
-		addAttribute(root, "xmlns:" + schema.xmlns(), targetNamespace);
+		addAttribute(root, "xmlns:" + SqlDdl.repSchemaTargetXmlns, targetNamespace);
 
 		hook = document.createComment(
 				"XML Schema document created by ShapeChange - http://shapechange.net/");
@@ -184,7 +182,7 @@ public class ReplicationSchemaVisitor
 
 		addAttribute(globalElement, "name", table.getName());
 		addAttribute(globalElement, "type",
-				schema.xmlns() + ":" + table.getName() + "Type");
+				SqlDdl.repSchemaTargetXmlns + ":" + table.getName() + "Type");
 
 		// -------------------------------------------
 		// Add global identifier annotation for table
@@ -229,7 +227,7 @@ public class ReplicationSchemaVisitor
 
 			if (column.isObjectIdentifierColumn()) {
 
-				type = sqlddl.repSchemaObjectIdentifierFieldType;
+				type = SqlDdl.repSchemaObjectIdentifierFieldType;
 
 			} else if (propForColumn != null) {
 
@@ -265,7 +263,7 @@ public class ReplicationSchemaVisitor
 						 * Enumerations may reside in another namespace, they
 						 * are usually not flattened
 						 */
-						if (!enumeration.inSchema(schema)) {
+						if (!model.isInSelectedSchemas(enumeration)) {
 							repSchemaPackagesForImport.add(enumeration.pkg());
 						}
 
@@ -276,13 +274,13 @@ public class ReplicationSchemaVisitor
 
 					} else {
 
-						type = sqlddl.repSchemaForeignKeyFieldType;
+						type = SqlDdl.repSchemaForeignKeyFieldType;
 					}
 				}
 
 			} else if (column.isForeignKeyColumn()) {
 
-				type = sqlddl.repSchemaForeignKeyFieldType;
+				type = SqlDdl.repSchemaForeignKeyFieldType;
 
 			} else {
 
@@ -336,7 +334,7 @@ public class ReplicationSchemaVisitor
 						&& sizeForFieldWithCharacterDataType < 1
 						&& propForColumn.matches(
 								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE)) {
-					documentationForColumnElement = sqlddl.repSchemaDocumentationUnlimitedLengthCharacterDataType;
+					documentationForColumnElement = SqlDdl.repSchemaDocumentationUnlimitedLengthCharacterDataType;
 				}
 			}
 
@@ -561,19 +559,25 @@ public class ReplicationSchemaVisitor
 
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
 					packageInfo.targetNamespace()
-							+ sqlddl.repSchemaTargetNamespaceSuffix);
+							+ SqlDdl.repSchemaTargetNamespaceSuffix);
 
 			Element importElement = document
 					.createElementNS(Options.W3C_XML_SCHEMA, "import");
 
 			addAttribute(importElement, "namespace",
 					packageInfo.targetNamespace()
-							+ sqlddl.repSchemaTargetNamespaceSuffix);
+							+ SqlDdl.repSchemaTargetNamespaceSuffix);
 
 			root.insertBefore(importElement, hook);
 		}
 	}
 
+	@Override
+	public void visit(
+			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
+		// ignore
+	}
+	
 	@Override
 	public String message(int mnr) {
 
@@ -590,11 +594,5 @@ public class ReplicationSchemaVisitor
 			return "(" + ReplicationSchemaVisitor.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
-	}
-
-	@Override
-	public void visit(
-			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
-		// ignore
 	}
 }

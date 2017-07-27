@@ -142,6 +142,15 @@ public interface TaggedValues {
 	public void put(String tag, List<String> values);
 
 	/**
+	 * Put all given tagged values into this collection. Any value(s) previously
+	 * stored for one of these tags will be replaced with the given values.
+	 * 
+	 * @param other
+	 *            can be empty or <code>null</code>
+	 */
+	public void putAll(TaggedValues other);
+
+	/**
 	 * Adds the given tag and its value to this collection. If the collection
 	 * already contains values for this tag, the new value is added at the end
 	 * of the list of existing values.

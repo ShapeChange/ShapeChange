@@ -254,12 +254,15 @@ public class Flattener implements Transformer {
 	public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
+	// FIXME TB13TBD
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
 	public static final String RULE_TRF_PROP_OPTIONALITY = "rule-trf-prop-optionality";
 
 	/**
@@ -1703,6 +1706,9 @@ public class Flattener implements Transformer {
 			((GenericPackageInfo) copiedClassUnion.pkg())
 					.addClass(copiedClassUnion);
 
+			// FIXME TB13TBD better TV name, and document
+			copiedClassUnion.setTaggedValue("representsTypeSet", "true", false);
+
 			// add property for each geometry specific copy of the class
 
 			int seqNumIndex = 1;
@@ -1740,6 +1746,7 @@ public class Flattener implements Transformer {
 				taggedValues.add("securityClassification", "");
 				taggedValues.add("sequenceNumber", "" + seqNumIndex);
 				taggedValues.add("xsdEncodingRule", "");
+
 				copiedClassUnionProp.setTaggedValues(taggedValues, false);
 
 				/*
@@ -2911,7 +2918,7 @@ public class Flattener implements Transformer {
 		 * exists, apply it - otherwise, if the type of the property is a data
 		 * type, object type or union in the app schema, log that type (unless
 		 * configuration parameters tell otherwise - which is covered by the
-		 * method computTypesToProcessForFlattenTypes).
+		 * method computeTypesToProcessForFlattenTypes).
 		 */
 
 		// key: id of GenericClassInfo, value: GenericClassInfo
@@ -2975,6 +2982,10 @@ public class Flattener implements Transformer {
 				mergeDescriptors = true;
 			}
 		}
+
+		boolean ignoreSelfReferenceByPropertyWithAssociationClassOrigin = trfConfig
+				.hasRule(
+						RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN);
 
 		/*
 		 * Now process all app schema class properties with types that were
@@ -3054,10 +3065,6 @@ public class Flattener implements Transformer {
 						continue;
 					}
 
-					/*
-					 * NOTE for cast: the cast should be safe, because pi
-					 * belongs to a GenericClassInfo (genCi)
-					 */
 					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 					Type type = genPi.typeInfo();
@@ -3107,11 +3114,19 @@ public class Flattener implements Transformer {
 						for (PropertyInfo typePi : typeToProcess.properties()
 								.values()) {
 
-							/*
-							 * NOTE for cast: the cast should be safe, because
-							 * pi belongs to a GenericClassInfo (typeToProcess)
-							 */
 							GenericPropertyInfo typeGPi = (GenericPropertyInfo) typePi;
+
+							if (ignoreSelfReferenceByPropertyWithAssociationClassOrigin
+									&& genPi.taggedValue(
+											"toAssociationClassFrom") != null
+									&& typeGPi.taggedValue(
+											"fromAssociationClassTo") != null
+									&& genPi.taggedValue(
+											"toAssociationClassFrom")
+											.equals(typeGPi.taggedValue(
+													"fromAssociationClassTo"))) {
+								continue;
+							}
 
 							String id = genPi.id() + "_replacedBy_"
 									+ typeGPi.name();
@@ -3570,7 +3585,40 @@ public class Flattener implements Transformer {
 			}
 		}
 
-		genModel.removeByClassCategory(Options.UNION);
+		// FIXME TB13TBD rule name, document
+		boolean ignoreUnionsRepresentingTypeSets = trfConfig.hasRule(
+				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingTypeSets");
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()
+				.toArray(new GenericClassInfo[genModel.selectedSchemaClasses()
+						.size()])) {
+
+			if (genCi.category() == Options.UNION) {
+
+				if (!ignoreUnionsRepresentingTypeSets || !Boolean
+						.parseBoolean(genCi.taggedValue("representsTypeSet"))) {
+					genModel.remove(genCi);
+				}
+			}
+		}
+
+		// FIXME TB13TBD
+		if (trfConfig
+				.hasRule("rule-trf-prop-flatten-types-removeMappedTypes")) {
+			/*
+			 * identify all types for which map entries have been declared and
+			 * remove them from the model
+			 */
+			List<ProcessMapEntry> mapEntries = trfConfig.getMapEntries();
+			for (ProcessMapEntry pme : mapEntries) {
+				if (pme.getRule()
+						.equalsIgnoreCase(RULE_TRF_PROP_FLATTEN_TYPES)) {
+					String mappedTypeName = pme.getType();
+					ClassInfo mappedType = genModel.classByName(mappedTypeName);
+					genModel.remove((GenericClassInfo) mappedType);
+				}
+			}
+		}
 	}
 
 	/**
@@ -3603,6 +3651,10 @@ public class Flattener implements Transformer {
 			GenericModel genModel, TransformerConfiguration trfConfig) {
 
 		TreeMap<String, GenericClassInfo> typesToProcessById = new TreeMap<String, GenericClassInfo>();
+
+		// FIXME TB13TBD review and document
+		boolean ignoreUnionsRepresentingTypeSets = trfConfig.hasRule(
+				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingTypeSets");
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -3721,7 +3773,10 @@ public class Flattener implements Transformer {
 						 */
 						boolean processType = false;
 
-						if (typeCi.category() == Options.UNION) {
+						if (typeCi.category() == Options.UNION
+								&& !(ignoreUnionsRepresentingTypeSets && Boolean
+										.parseBoolean(typeCi.taggedValue(
+												"representsTypeSet")))) {
 
 							processType = true;
 
@@ -4402,7 +4457,13 @@ public class Flattener implements Transformer {
 		Map<String, GenericClassInfo> genSuperclassesById = new HashMap<String, GenericClassInfo>();
 		Map<String, GenericClassInfo> genLeafclassesById = new HashMap<String, GenericClassInfo>();
 
-		Map<String, GenericClassInfo> genSuperclassUnionsByName = new TreeMap<String, GenericClassInfo>();
+		/*
+		 * Key: superclass name
+		 * 
+		 * value: union created to represent the inheritance tree with that
+		 * supertype at the top
+		 */
+		Map<String, GenericClassInfo> genSuperclassUnionsBySuperclassName = new TreeMap<String, GenericClassInfo>();
 
 		Pattern inclusionPattern = null;
 
@@ -4588,18 +4649,12 @@ public class Flattener implements Transformer {
 			// TBD it would be good to use java enums for stereotypes
 			genSuperclassUnion.setStereotype("union");
 			genSuperclassUnion.setPkg(genSuperclass.pkg());
-			/*
-			 * NOTE for cast: the cast should be safe, because the package of
-			 * genSuperclassUnion is that of genSuperclass, which is a
-			 * GenericClassInfo (that always belongs to a GenericPackageInfo
-			 */
+
 			((GenericPackageInfo) genSuperclassUnion.pkg())
 					.addClass(genSuperclassUnion);
 
-			// add property for each non-abstract subclass
-			HashSet<GenericClassInfo> subclasses = getAllSubclasses(
-					genSuperclass,
-					"The union created for all subtypes within the inheritance tree will thus be incomplete.");
+			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
+					genSuperclass);
 			int seqNumIndex = 1;
 
 			// sort the subclasses by name so that the resulting order of
@@ -4655,7 +4710,13 @@ public class Flattener implements Transformer {
 
 			}
 
-			genSuperclassUnionsByName.put(genSuperclass.name(),
+			// FIXME TB13TBD better TV name, and document
+			if (genSuperclass.category() == Options.FEATURE) {
+				genSuperclassUnion.setTaggedValue("representsTypeSet", "true",
+						false);
+			}
+
+			genSuperclassUnionsBySuperclassName.put(genSuperclass.name(),
 					genSuperclassUnion);
 			genModel.addClass(genSuperclassUnion);
 		}
@@ -4664,8 +4725,13 @@ public class Flattener implements Transformer {
 		 * change the type of all attributes in the model that use one of the
 		 * superclasses to the corresponding union, with the exception of the
 		 * property being contained in the union itself (for the case that the
-		 * superclass is neither abstract nor a mixin)
+		 * superclass is neither abstract nor a mixin) or being contained in one
+		 * of the generated unions
 		 */
+
+		Collection<GenericClassInfo> superclassUnions = genSuperclassUnionsBySuperclassName
+				.values();
+
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
 			// ignore association roles - they will be handled later on
@@ -4676,14 +4742,17 @@ public class Flattener implements Transformer {
 
 			if (genSuperclassesById.containsKey(type.id)) {
 
-				GenericClassInfo superclassUnion = genSuperclassUnionsByName
+				GenericClassInfo superclassUnion = genSuperclassUnionsBySuperclassName
 						.get(type.name);
 
 				/*
-				 * don't switch the type if the property is part of the union
-				 * itself
+				 * Don't switch the type if the property is part of the union
+				 * itself, or if the property belongs to a union that was
+				 * generated before (and represent the choice between a
+				 * supertype and its non-abstract subtypes).
 				 */
-				if (!genPi.inClass().id().equals(superclassUnion.id())) {
+				if (!genPi.inClass().id().equals(superclassUnion.id())
+						&& !superclassUnions.contains(genPi.inClass())) {
 					type.name = superclassUnion.name();
 					type.id = superclassUnion.id();
 				}
@@ -4784,10 +4853,11 @@ public class Flattener implements Transformer {
 			 * (WARNING: NOT for the subtype specific property copies) which
 			 * will be set later on, depending on the actual case
 			 */
-			String newGenPi1OrigName = pi1.name() + separator
-					+ pi2.inClass().name();
-			String newGenPi2OrigName = pi2.name() + separator
-					+ pi1.inClass().name();
+
+			String newGenPi1OrigName = computeAssociationRoleNameForFlattenInheritance(
+					pi1, pi2.inClass(), separator);
+			String newGenPi2OrigName = computeAssociationRoleNameForFlattenInheritance(
+					pi2, pi1.inClass(), separator);
 
 			String codePi1 = hasCode(pi1) ? getCode(pi1) : pi1.name();
 			String codePi2 = hasCode(pi2) ? getCode(pi2) : pi2.name();
@@ -4856,10 +4926,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ subclassPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ subclassPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, subclassPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, subclassPi1InClass, separator);
 
 						String codesubclassPi1InClass = hasCode(
 								subclassPi1InClass)
@@ -4915,10 +4985,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ subclassPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ genPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, subclassPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, genPi1InClass, separator);
 
 						String codesubclassPi2InClass = hasCode(
 								subclassPi2InClass)
@@ -4972,10 +5042,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi1InClass : subclassesPi1InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ genPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ subclassPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, genPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, subclassPi1InClass, separator);
 
 						String codesubclassPi1InClass = hasCode(
 								subclassPi1InClass)
@@ -5056,8 +5126,8 @@ public class Flattener implements Transformer {
 							mPi2.minOccurs = 0;
 
 							// compute new name and code/alias
-							String newNamePi2 = pi2.name() + separator
-									+ subclassPi1InClass.name();
+							String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+									pi2, subclassPi1InClass, separator);
 
 							String codesubclassPi1InClass = hasCode(
 									subclassPi1InClass)
@@ -5132,8 +5202,8 @@ public class Flattener implements Transformer {
 							mPi1.minOccurs = 0;
 
 							// compute new name and code/alias
-							String newNamePi1 = pi1.name() + separator
-									+ subclassPi2InClass.name();
+							String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+									pi1, subclassPi2InClass, separator);
 
 							String codesubclassPi2InClass = hasCode(
 									subclassPi2InClass)
@@ -5204,7 +5274,7 @@ public class Flattener implements Transformer {
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 			leafCi.setBaseClass(null);
-			leafCi.setSupertypes(new TreeSet<String>()); // TODO use null
+			leafCi.setSupertypes(null);
 		}
 
 		/*
@@ -5218,11 +5288,25 @@ public class Flattener implements Transformer {
 				genModel.remove(superclass);
 			} else {
 				superclass.setBaseClass(null);
-				superclass.setSupertypes(new TreeSet<String>()); // TODO use
-																	// null
-				superclass.setSubtypes(new TreeSet<String>()); // TODO use null
+				superclass.setSupertypes(null);
+				superclass.setSubtypes(null);
 			}
 		}
+	}
+
+	private String computeAssociationRoleNameForFlattenInheritance(
+			PropertyInfo pi, ClassInfo valueType, String separator) {
+
+		String piName = pi.name();
+		String valueTypeName = valueType.name();
+
+		if (rules.contains(
+				RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE)
+				&& hasCode(valueType)) {
+			valueTypeName = getCode(valueType);
+		}
+
+		return piName + separator + valueTypeName;
 	}
 
 	/**
@@ -5583,43 +5667,34 @@ public class Flattener implements Transformer {
 
 	/**
 	 * @param genCi
-	 * @param message
-	 *            If a subtype that is not an instance of GenericClassInfo
-	 *            (likely because the subtype is not part of the schema selected
-	 *            for processing - is encountered, this message details the
-	 *            potential issue this could cause. Can be <code>null</code>.
-	 * @return The set of all direct or indirect subclasses of the given class,
-	 *         or <code>null</code> if the class has no subclasses.
+	 * @return The set of all direct or indirect subclasses of the given class
+	 *         that belong to schemas selected for processing, can be empty (if
+	 *         the class has no subclasses that belong to the schemas selected
+	 *         for processing) but not null.
 	 */
-	private HashSet<GenericClassInfo> getAllSubclasses(GenericClassInfo genCi,
-			String message) {
+	private Set<GenericClassInfo> getAllSubclassesFromSchemasSelectedForProcessing(
+			GenericClassInfo genCi) {
 
-		String issueMessage = message == null ? "" : message;
+		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()) {
 
-		if (genCi.subtypes() == null || genCi.subtypes().isEmpty())
-			return null;
-		else {
-			HashSet<GenericClassInfo> subtypes = new HashSet<GenericClassInfo>();
+			return new HashSet<GenericClassInfo>();
+
+		} else {
+
+			Set<GenericClassInfo> subtypes = new HashSet<GenericClassInfo>();
 
 			for (String subtypeId : genCi.subtypes()) {
 
 				ClassInfo subtype = genCi.model().classById(subtypeId);
 
-				if (subtype instanceof GenericClassInfo) {
+				if (genCi.model().isInSelectedSchemas(subtype)) {
 
 					GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
 					subtypes.add(genSubtype);
-					HashSet<GenericClassInfo> subsubtypes = getAllSubclasses(
-							genSubtype, message);
-					if (subsubtypes != null) {
-						subtypes.addAll(subsubtypes);
-					}
-
-				} else {
-
-					result.addWarning(null, 20320, subtype.name(), genCi.name(),
-							issueMessage);
+					Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
+							genSubtype);
+					subtypes.addAll(subsubtypes);
 				}
 			}
 
@@ -5818,6 +5893,10 @@ public class Flattener implements Transformer {
 
 		Options options = model.options();
 
+		// FIXME TB13TBD
+		boolean onlyRemoveReasons = trfConfig
+				.hasRule("rule-trf-prop-flatten-ONINAs-onlyRemoveReasons");
+
 		SortedSet<GenericPackageInfo> appSchemas = model.selectedSchemas();
 		if (appSchemas == null || appSchemas.size() == 0)
 			return;
@@ -5836,6 +5915,7 @@ public class Flattener implements Transformer {
 				continue;
 
 			Map<String, Type> reasonTypeIdToValueType = new HashMap<String, Type>();
+			Map<String, Multiplicity> reasonTypeIdToValuePropMultiplicity = new HashMap<String, Multiplicity>();
 			Map<String, GenericClassInfo> reasonUnionsByName = new HashMap<String, GenericClassInfo>();
 			Set<String> reasonTypeValueTypeNames = new HashSet<String>();
 			Set<String> reasonPropertyValueTypeIds = new HashSet<String>();
@@ -5849,16 +5929,11 @@ public class Flattener implements Transformer {
 				if (ci.category() == Options.UNION
 						&& ci.name().endsWith("Reason")) {
 
-					/*
-					 * NOTE for cast: the cast should be safe, because ci is
-					 * part of a schema that has been selected for processing
-					 * (the contents of which should have been parsed to generic
-					 * types)
-					 */
 					reasonUnionsByName.put(ci.name(), (GenericClassInfo) ci);
 
 					if (ci.name().equals("BooleanReason")
-							&& booleanWithOninaCi == null) {
+							&& booleanWithOninaCi == null
+							&& !onlyRemoveReasons) {
 
 						// create new enumeration BooleanWithONINA
 						booleanWithOninaCi = new GenericClassInfo(model,
@@ -5868,13 +5943,9 @@ public class Flattener implements Transformer {
 						// set remaining properties required by Info interface
 						booleanWithOninaCi.descriptors().put(Descriptor.ALIAS,
 								"");
-						// booleanWithOninaCi.setAliasNameAll(new
-						// Descriptors(""));
 						setCode(booleanWithOninaCi, "");
 						booleanWithOninaCi.descriptors()
 								.put(Descriptor.DEFINITION, "");
-						// booleanWithOninaCi
-						// .setDefinitionAll(new Descriptors(""));
 
 						// TBD: is there an easy way to get all the relevant
 						// tagged values for an enumeration?
@@ -5889,14 +5960,7 @@ public class Flattener implements Transformer {
 
 						// set properties required by ClassInfo interface
 						booleanWithOninaCi.setPkg(ci.pkg());
-						/*
-						 * NOTE for cast: the cast should be safe, because ci is
-						 * part of a schema that has been selected for
-						 * processing (the contents of which should have been
-						 * parsed to generic types) - and thus is a
-						 * GenericClassInfo, which always belongs to a
-						 * GenericPackageInfo
-						 */
+
 						((GenericPackageInfo) ci.pkg())
 								.addClass(booleanWithOninaCi);
 						booleanWithOninaCi.setIsAbstract(false);
@@ -5992,16 +6056,22 @@ public class Flattener implements Transformer {
 
 				PropertyInfo valueP = reasonUnionCi.property("value");
 				if (valueP == null) {
+					valueP = reasonUnionCi.property("values");
+				}
+				if (valueP == null) {
 
 					result.addWarning(null, 20339, reasonUnionCi.name());
 					continue;
 				}
 
-				// get the type info for value property: internal id within the
-				// model and the local, unqualified name
+				/*
+				 * get the type info for value(s) property: internal id within
+				 * the model and the local, unqualified name
+				 */
 				Type valuePType = valueP.typeInfo();
 
-				if (valuePType.name.equalsIgnoreCase("Boolean")) {
+				if (valuePType.name.equalsIgnoreCase("Boolean")
+						&& !onlyRemoveReasons) {
 					reasonTypeIdToValueType.put(reasonUnionCi.id(),
 							booleanWithOninaType);
 				} else {
@@ -6017,6 +6087,12 @@ public class Flattener implements Transformer {
 					// use the id?
 					reasonTypeValueTypeNames.add(valuePType.name);
 				}
+
+				/*
+				 * Also keep track of the multiplicity of the value(s) property
+				 */
+				reasonTypeIdToValuePropMultiplicity.put(reasonUnionCi.id(),
+						valueP.cardinality());
 			}
 
 			/*
@@ -6047,86 +6123,89 @@ public class Flattener implements Transformer {
 				}
 			}
 
-			/*
-			 * Add ONINA enum properties to all enumerations (except
-			 * BooleanWithONINA enumeration which is already complete [if used
-			 * at all]).
-			 *
-			 * Do not add ONINA enums if they already exist in an enumeration
-			 * (ignore duplicates).
-			 */
-			for (String typeName : reasonTypeValueTypeNames) {
+			if (!onlyRemoveReasons) {
+				/*
+				 * Add ONINA enum properties to all enumerations (except
+				 * BooleanWithONINA enumeration which is already complete [if
+				 * used at all]).
+				 *
+				 * Do not add ONINA enums if they already exist in an
+				 * enumeration (ignore duplicates).
+				 */
+				for (String typeName : reasonTypeValueTypeNames) {
 
-				ClassInfo ci = model.classByName(typeName);
+					ClassInfo ci = model.classByName(typeName);
 
-				if (ci == null) {
+					if (ci == null) {
 
-					this.result.addWarning(null, 20303, typeName);
+						this.result.addWarning(null, 20303, typeName);
 
-				} else if (ci.category() == Options.ENUMERATION) {
+					} else if (ci.category() == Options.ENUMERATION) {
 
-					if (ci instanceof GenericClassInfo) {
+						if (ci instanceof GenericClassInfo) {
 
-						GenericClassInfo genCi = (GenericClassInfo) ci;
+							GenericClassInfo genCi = (GenericClassInfo) ci;
 
-						int maxSequenceNumber = Integer.MIN_VALUE;
-						Set<StructuredNumber> enumSeqNumbers = genCi
-								.properties().keySet();
-						// look up highest sequence number in list of existing
-						// properties (via first component of the structured
-						// number)
-						for (StructuredNumber strucNum : enumSeqNumbers) {
-							if (strucNum.components[0] > maxSequenceNumber) {
-								maxSequenceNumber = strucNum.components[0];
+							int maxSequenceNumber = Integer.MIN_VALUE;
+							Set<StructuredNumber> enumSeqNumbers = genCi
+									.properties().keySet();
+							// look up highest sequence number in list of
+							// existing
+							// properties (via first component of the structured
+							// number)
+							for (StructuredNumber strucNum : enumSeqNumbers) {
+								if (strucNum.components[0] > maxSequenceNumber) {
+									maxSequenceNumber = strucNum.components[0];
+								}
 							}
+
+							maxSequenceNumber++;
+							StructuredNumber snNoInformation = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo noInfoProp = createEnumerationProperty(
+									model, "noInformation", "-999999", genCi,
+									snNoInformation);
+							setCode(noInfoProp, "-999999");
+							noInfoProp.descriptors().put(Descriptor.DEFINITION,
+									"No Information");
+							model.add(noInfoProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+							maxSequenceNumber++;
+							StructuredNumber snNotApplicable = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo notApplicProp = createEnumerationProperty(
+									model, "notApplicable", "998", genCi,
+									snNotApplicable);
+							setCode(notApplicProp, "998");
+							notApplicProp.descriptors().put(
+									Descriptor.DEFINITION, "Not Applicable");
+							model.add(notApplicProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+							maxSequenceNumber++;
+							StructuredNumber snOther = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo otherProp = createEnumerationProperty(
+									model, "other", "999", genCi, snOther);
+							setCode(otherProp, "999");
+							otherProp.descriptors().put(Descriptor.DEFINITION,
+									"Other");
+							model.add(otherProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+						} else {
+
+							result.addWarning(null, 20323, ci.name());
 						}
 
-						maxSequenceNumber++;
-						StructuredNumber snNoInformation = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo noInfoProp = createEnumerationProperty(
-								model, "noInformation", "-999999", genCi,
-								snNoInformation);
-						setCode(noInfoProp, "-999999");
-						noInfoProp.descriptors().put(Descriptor.DEFINITION,
-								"No Information");
-						model.add(noInfoProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
-						maxSequenceNumber++;
-						StructuredNumber snNotApplicable = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo notApplicProp = createEnumerationProperty(
-								model, "notApplicable", "998", genCi,
-								snNotApplicable);
-						setCode(notApplicProp, "998");
-						notApplicProp.descriptors().put(Descriptor.DEFINITION,
-								"Not Applicable");
-						model.add(notApplicProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
-						maxSequenceNumber++;
-						StructuredNumber snOther = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo otherProp = createEnumerationProperty(
-								model, "other", "999", genCi, snOther);
-						setCode(otherProp, "999");
-						otherProp.descriptors().put(Descriptor.DEFINITION,
-								"Other");
-						model.add(otherProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
 					} else {
-
-						result.addWarning(null, 20323, ci.name());
+						/*
+						 * fine - can be another simple type like
+						 * CharacterString, Integer, Measure - for which ONINAs
+						 * are encoded as special values
+						 */
 					}
-
-				} else {
-					/*
-					 * fine - can be another simple type like CharacterString,
-					 * Integer, Measure - for which ONINAs are encoded as
-					 * special values
-					 */
 				}
 			}
 
@@ -6147,18 +6226,34 @@ public class Flattener implements Transformer {
 
 					if (reasonTypeIdToValueType.containsKey(propTypeId)) {
 
-						/*
-						 * NOTE for cast: the cast should be safe, because pi
-						 * belongs to a ClassInfo (ci) that is part of an
-						 * application schema which has been selected for
-						 * processing (and thus should be a GenericClassInfo).
-						 */
 						GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 						Type valueTypeToUse = reasonTypeIdToValueType
 								.get(propTypeId);
 
 						genPi.copyTypeInfo(valueTypeToUse);
+
+						// FIXME TB13TBD: also update multiplicity based on
+						// multiplicity of value(s) property
+
+						Multiplicity reasonTypeValuesPropMult = reasonTypeIdToValuePropMultiplicity
+								.get(propTypeId);
+
+						int newMinOccurs = genPi.cardinality().minOccurs
+								* reasonTypeValuesPropMult.minOccurs;
+
+						int genPiMaxOccurs = genPi.cardinality().maxOccurs;
+						int reasonTypeValuesPropMaxOccurs = reasonTypeValuesPropMult.maxOccurs;
+						int newMaxOccurs;
+						if (genPiMaxOccurs == Integer.MAX_VALUE
+								|| reasonTypeValuesPropMaxOccurs == Integer.MAX_VALUE) {
+							newMaxOccurs = Integer.MAX_VALUE;
+						} else {
+							newMaxOccurs = genPiMaxOccurs
+									* reasonTypeValuesPropMaxOccurs;
+						}
+						genPi.setCardinality(
+								new Multiplicity(newMinOccurs, newMaxOccurs));
 					}
 				}
 			}
@@ -6238,10 +6333,18 @@ public class Flattener implements Transformer {
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-			if (genPi.inClass().category() == Options.OBJECT && (genPi
-					.categoryOfValue() == Options.FEATURE
-					|| (includeObjectTypes
-							&& genPi.categoryOfValue() == Options.OBJECT))) {
+			ClassInfo genPiValueType = genModel.classById(genPi.typeInfo().id);
+			if (genPiValueType == null) {
+				genPiValueType = genModel.classByName(genPi.typeInfo().name);
+			}
+
+			if (genPi.inClass().category() == Options.OBJECT
+					&& (genPi.categoryOfValue() == Options.FEATURE
+							|| (includeObjectTypes
+									&& genPi.categoryOfValue() == Options.OBJECT))
+					|| (genPiValueType != null
+							&& genPiValueType.category() == Options.MIXIN
+							&& genPiValueType.stereotype("featuretype"))) {
 
 				Matcher matcher = pattern.matcher(genPi.inClass().name());
 

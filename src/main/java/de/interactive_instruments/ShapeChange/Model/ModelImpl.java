@@ -41,6 +41,7 @@ import java.util.TreeSet;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
@@ -268,6 +269,25 @@ public abstract class ModelImpl implements Model {
 		}
 		return res;
 	}
+	
+	@Override
+	public SortedSet<? extends ClassInfo> selectedSchemaClasses() {
+
+		SortedSet<ClassInfo> res = new TreeSet<ClassInfo>();
+
+		for (PackageInfo selectedSchema : selectedSchemas()) {
+
+			SortedSet<ClassInfo> cisOfSelectedSchema = this
+					.classes(selectedSchema);
+
+			for (ClassInfo ci : cisOfSelectedSchema) {
+				
+				res.add(ci);
+			}
+		}
+
+		return res;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -367,7 +387,7 @@ public abstract class ModelImpl implements Model {
 	// Tagged values normalization. This returns the tag given or a
 	// de-deprecated tag or null.
 	public String normalizeTaggedValue(String tag) {
-		
+
 		// If not yet done, set up the tagged values, which we allow
 		if (allowedTags == null) {
 			allowedTags = new HashSet<String>(100);
@@ -402,10 +422,10 @@ public abstract class ModelImpl implements Model {
 			// tagged value is qualified - remove name space
 			tag = tag.substring(tag.lastIndexOf("::") + 2);
 		}
-		
+
 		// Now check tag aliases provided in the configuration
 		tag = options().normalizeTag(tag);
-		
+
 		// So, if it's one of these just return the argument ...
 		if (allowedTags.contains(tag))
 			return tag;
@@ -540,5 +560,18 @@ public abstract class ModelImpl implements Model {
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public ClassInfo classByIdOrName(Type typeInfo) {
+		if (typeInfo == null) {
+			return null;
+		} else {
+			ClassInfo result = this.classById(typeInfo.id);
+			if (result == null) {
+				result = this.classByName(typeInfo.name);
+			}
+			return result;
+		}
 	}
 }

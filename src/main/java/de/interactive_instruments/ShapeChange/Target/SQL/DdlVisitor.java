@@ -166,12 +166,12 @@ public class DdlVisitor implements StatementVisitor {
 					sb.append(",");
 				}
 
-				if (sqlddl.createDocumentation) {
+				if (SqlDdl.createDocumentation) {
 					PropertyInfo pi = col.getRepresentedProperty();
 					if (pi != null) {
 						String s = pi.derivedDocumentation(
-								sqlddl.documentationTemplate,
-								sqlddl.documentationNoValue);
+								SqlDdl.documentationTemplate,
+								SqlDdl.documentationNoValue);
 						if (s != null && !s.trim().isEmpty()) {
 							sb.append(
 									" -- " + s.replaceAll("\\s+", " ").trim());

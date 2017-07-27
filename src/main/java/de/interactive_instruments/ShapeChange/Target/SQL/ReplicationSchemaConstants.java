@@ -60,6 +60,29 @@ public class ReplicationSchemaConstants {
 	public static final String PARAM_TARGET_NAMESPACE_SUFFIX = "replicationSchemaTargetNamespaceSuffix";
 
 	/**
+	 * The target namespace of the replication schema that is produced by the
+	 * target. This parameter is optional. Default is the target namespace of
+	 * the first schema that the target encounters, and which is actually
+	 * encoded.
+	 */
+	public static final String PARAM_TARGET_NAMESPACE = "replicationSchemaTargetNamespace";
+
+	/**
+	 * Version of the replication schema that is produced by the target. This
+	 * parameter is optional. Default is the version of the first schema that
+	 * the target encounters, and which is actually encoded.
+	 */
+	public static final String PARAM_TARGET_VERSION = "replicationSchemaTargetVersion";
+
+	/**
+	 * XML namespace abbreviation (xmlns) of the replication schema that is
+	 * produced by the target. This parameter is optional. Default is the XML
+	 * namespace abbreviation of the first schema that the target encounters,
+	 * and which is actually encoded.
+	 */
+	public static final String PARAM_TARGET_XMLNS = "replicationSchemaTargetXmlns";
+
+	/**
 	 * Provides the value to be set as documentation of elements whose length is
 	 * not restricted.
 	 */

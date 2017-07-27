@@ -320,9 +320,10 @@
  </complexType>
  <element name="xmlNamespaces">
   <complexType>
-   <sequence minOccurs="0" maxOccurs="unbounded">
+   <choice maxOccurs="unbounded" minOccurs="0">
     <element ref="sc:XmlNamespace"/>
-   </sequence>
+    <element ref="sc:xmlNamespaces"/>
+   </choice>
   </complexType>
  </element>
  <element name="XmlNamespace" type="sc:XmlNamespaceType"/>

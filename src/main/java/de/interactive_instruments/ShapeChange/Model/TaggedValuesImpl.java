@@ -32,6 +32,9 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.List;
+import java.util.SortedMap;
+
 import org.apache.commons.lang.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Options;
@@ -62,5 +65,18 @@ public abstract class TaggedValuesImpl implements TaggedValues {
 			res += ")";
 		}
 		return res;
+	}
+
+	@Override
+	public void putAll(TaggedValues other) {
+
+		if (other != null) {
+
+			SortedMap<String,List<String>> tvmap = other.asMap();
+			
+			for(String tag : tvmap.keySet()) {
+				this.put(tag, tvmap.get(tag));
+			}
+		}
 	}
 }

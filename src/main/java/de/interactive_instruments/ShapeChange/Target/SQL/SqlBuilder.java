@@ -86,7 +86,6 @@ public class SqlBuilder implements MessageSource {
 	private static Comparator<CreateTable> CREATE_TABLE_COMPARATOR = new CreateTableSortAlphabetic();
 	private static Comparator<Column> COLUMN_DEFINITION_COMPARATOR = new ColumnSortAlphabetic();
 
-	private SqlDdl sqlddl;
 	private ShapeChangeResult result;
 	private Options options;
 	private Model model;
@@ -112,8 +111,6 @@ public class SqlBuilder implements MessageSource {
 
 	public SqlBuilder(SqlDdl sqlddl, ShapeChangeResult result, Options options,
 			Model model, SqlNamingScheme namingScheme) {
-
-		this.sqlddl = sqlddl;
 
 		this.result = result;
 		this.options = options;
@@ -162,9 +159,9 @@ public class SqlBuilder implements MessageSource {
 		 * NOTE: the primary key for the table will be defined later
 		 */
 		String classReferenceFieldName = pi.inClass().name()
-				+ sqlddl.idColumnName;
+				+ SqlDdl.idColumnName;
 		Column cdInClassReference = createColumn(table, null,
-				classReferenceFieldName, sqlddl.foreignKeyColumnDataType,
+				classReferenceFieldName, SqlDdl.foreignKeyColumnDataType,
 				"NOT NULL", false, true);
 		cdInClassReference.setReferencedTable(map(pi.inClass()));
 		columns.add(cdInClassReference);
@@ -174,24 +171,24 @@ public class SqlBuilder implements MessageSource {
 		if (refersToTypeRepresentedByTable(pi)) {
 
 			String piFieldName = determineTableNameForValueType(pi)
-					+ sqlddl.idColumnName;
+					+ SqlDdl.idColumnName;
 
 			String fieldType;
 			if (pi.categoryOfValue() == Options.CODELIST && pi.inClass()
 					.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS)) {
 
-				if (sqlddl.codeNameSize < 1) {
-					fieldType = sqlddl.databaseStrategy
+				if (SqlDdl.codeNameSize < 1) {
+					fieldType = SqlDdl.databaseStrategy
 							.unlimitedLengthCharacterDataType();
 				} else {
-					fieldType = sqlddl.databaseStrategy
+					fieldType = SqlDdl.databaseStrategy
 							.limitedLengthCharacterDataType(
-									sqlddl.codeNameSize);
+									SqlDdl.codeNameSize);
 				}
 
 			} else {
 
-				fieldType = sqlddl.foreignKeyColumnDataType;
+				fieldType = SqlDdl.foreignKeyColumnDataType;
 			}
 
 			cdPi = createColumn(table, pi, piFieldName, fieldType, "NOT NULL",
@@ -271,7 +268,7 @@ public class SqlBuilder implements MessageSource {
 			if (typeCi != null
 					&& options.targetMapEntry(pi.typeInfo().name,
 							pi.encodingRule("sql")) == null
-					&& typeCi.inSchema(sqlddl.schema)
+					&& model.isInSelectedSchemas(typeCi)
 					&& ((typeCi.category() == Options.OBJECT && !typeCi.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_OBJECT_TYPES))
 							|| (typeCi.category() == Options.FEATURE
@@ -304,7 +301,7 @@ public class SqlBuilder implements MessageSource {
 
 					propertyInfosForColumns.add(pi);
 
-				} else if (sqlddl.createAssociativeTables) {
+				} else if (SqlDdl.createAssociativeTables) {
 
 					if (typeCi != null && typeCi.category() == Options.DATATYPE
 							&& typeCi.matches(
@@ -408,7 +405,7 @@ public class SqlBuilder implements MessageSource {
 						 * than 1 - then we have an n:m relationship
 						 */
 
-						if (sqlddl.createAssociativeTables) {
+						if (SqlDdl.createAssociativeTables) {
 
 							createAssociativeTable(ai);
 
@@ -465,9 +462,9 @@ public class SqlBuilder implements MessageSource {
 
 		if (countIdentifierAttributes == 0) {
 
-			Column id_cd = createColumn(table, null, sqlddl.idColumnName,
-					sqlddl.databaseStrategy.primaryKeyDataType(),
-					sqlddl.primaryKeySpec, true, false);
+			Column id_cd = createColumn(table, null, SqlDdl.idColumnName,
+					SqlDdl.databaseStrategy.primaryKeyDataType(),
+					SqlDdl.primaryKeySpec, true, false);
 			columns.add(id_cd);
 			id_cd.setObjectIdentifierColumn(true);
 		}
@@ -494,7 +491,7 @@ public class SqlBuilder implements MessageSource {
 							SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
 
 				cd.removeSpecification("not null");
-				cd.addSpecification(sqlddl.primaryKeySpec);
+				cd.addSpecification(SqlDdl.primaryKeySpec);
 				identifierSet = true;
 			}
 		}
@@ -517,8 +514,8 @@ public class SqlBuilder implements MessageSource {
 	private void createExplicitCommentUnlessNoDocumentation(Table table,
 			Column column, Info i) {
 
-		String s = i.derivedDocumentation(sqlddl.documentationTemplate,
-				sqlddl.documentationNoValue);
+		String s = i.derivedDocumentation(SqlDdl.documentationTemplate,
+				SqlDdl.documentationNoValue);
 
 		if (s != null && !s.trim().isEmpty()) {
 
@@ -628,17 +625,17 @@ public class SqlBuilder implements MessageSource {
 
 		// add field for first reference
 		String name_1 = determineTableNameForType(pi1.inClass())
-				+ (reflexive ? "_" + pi1.name() : "") + sqlddl.idColumnName;
+				+ (reflexive ? "_" + pi1.name() : "") + SqlDdl.idColumnName;
 		Column cd1 = createColumn(table, pi2, name_1,
-				sqlddl.foreignKeyColumnDataType, "NOT NULL", false, true);
+				SqlDdl.foreignKeyColumnDataType, "NOT NULL", false, true);
 		cd1.setReferencedTable(map(pi1.inClass()));
 		columns.add(cd1);
 
 		// add field for second reference
 		String name_2 = determineTableNameForType(pi2.inClass())
-				+ (reflexive ? "_" + pi2.name() : "") + sqlddl.idColumnName;
+				+ (reflexive ? "_" + pi2.name() : "") + SqlDdl.idColumnName;
 		Column cd2 = createColumn(table, pi1, name_2,
-				sqlddl.foreignKeyColumnDataType, "NOT NULL", false, true);
+				SqlDdl.foreignKeyColumnDataType, "NOT NULL", false, true);
 		cd2.setReferencedTable(map(pi2.inClass()));
 		columns.add(cd2);
 
@@ -678,33 +675,33 @@ public class SqlBuilder implements MessageSource {
 		table.setColumns(columns);
 
 		// create required column to store the code name
-		String name = sqlddl.codeNameColumnName;
+		String name = SqlDdl.codeNameColumnName;
 		String fieldType;
 
-		if (sqlddl.codeNameSize < 1) {
-			fieldType = sqlddl.databaseStrategy
+		if (SqlDdl.codeNameSize < 1) {
+			fieldType = SqlDdl.databaseStrategy
 					.unlimitedLengthCharacterDataType();
 		} else {
-			fieldType = sqlddl.databaseStrategy
-					.limitedLengthCharacterDataType(sqlddl.codeNameSize);
+			fieldType = SqlDdl.databaseStrategy
+					.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
 		}
 
 		Column cd_codename = createColumn(table, null, name, fieldType,
-				sqlddl.primaryKeySpecCodelist, true, false);
+				SqlDdl.primaryKeySpecCodelist, true, false);
 		columns.add(cd_codename);
 
 		/*
 		 * now add one column for each descriptor, as specified via the
 		 * configuration
 		 */
-		for (DescriptorForCodeList descriptor : sqlddl.descriptorsForCodelist) {
+		for (DescriptorForCodeList descriptor : SqlDdl.descriptorsForCodelist) {
 
 			String descriptor_fieldType;
 			if (descriptor.getSize() == null) {
-				descriptor_fieldType = sqlddl.databaseStrategy
+				descriptor_fieldType = SqlDdl.databaseStrategy
 						.unlimitedLengthCharacterDataType();
 			} else {
-				descriptor_fieldType = sqlddl.databaseStrategy
+				descriptor_fieldType = SqlDdl.databaseStrategy
 						.limitedLengthCharacterDataType(descriptor.getSize());
 			}
 
@@ -717,27 +714,27 @@ public class SqlBuilder implements MessageSource {
 		if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
 
 			ClassInfo activeIndicatorLFType = model
-					.classByName(sqlddl.activeIndicatorLFType);
+					.classByName(SqlDdl.activeIndicatorLFType);
 
-			ClassInfo sourceCLType = model.classByName(sqlddl.sourceCLType);
+			ClassInfo sourceCLType = model.classByName(SqlDdl.sourceCLType);
 
 			if (ci != activeIndicatorLFType && ci != sourceCLType) {
 
 				// add activeIndicatorLF column
 				Column cd_activeIndicatorLF = new Column(
-						sqlddl.nameActiveIndicatorLFColumn, table);
+						SqlDdl.nameActiveIndicatorLFColumn, table);
 
 				if (activeIndicatorLFType != null) {
 					cd_activeIndicatorLF
 							.setReferencedTable(map(activeIndicatorLFType));
 				} else {
-					result.addError(this, 26, sqlddl.activeIndicatorLFType,
-							sqlddl.nameActiveIndicatorLFColumn,
+					result.addError(this, 26, SqlDdl.activeIndicatorLFType,
+							SqlDdl.nameActiveIndicatorLFColumn,
 							table.getName());
 				}
 
 				ColumnDataType cd_activeIndicatorLFDataType = new ColumnDataType(
-						sqlddl.foreignKeyColumnDataType);
+						SqlDdl.foreignKeyColumnDataType);
 				cd_activeIndicatorLF.setDataType(cd_activeIndicatorLFDataType);
 
 				// cd_activeIndicatorLF.addSpecification("NULL");
@@ -770,18 +767,18 @@ public class SqlBuilder implements MessageSource {
 				// table.addConstraint(ckc);
 
 				// add sourceCL column
-				Column cd_sourceCl = new Column(sqlddl.nameSourceCLColumn,
+				Column cd_sourceCl = new Column(SqlDdl.nameSourceCLColumn,
 						table);
 
 				if (sourceCLType != null) {
 					cd_sourceCl.setReferencedTable(map(sourceCLType));
 				} else {
-					result.addError(this, 26, sqlddl.sourceCLType,
-							sqlddl.nameSourceCLColumn, table.getName());
+					result.addError(this, 26, SqlDdl.sourceCLType,
+							SqlDdl.nameSourceCLColumn, table.getName());
 				}
 
 				ColumnDataType cd_sourceClDataType = new ColumnDataType(
-						sqlddl.foreignKeyColumnDataType);
+						SqlDdl.foreignKeyColumnDataType);
 				cd_sourceCl.setDataType(cd_sourceClDataType);
 				// cd_sourceCl.addSpecification("NULL");
 
@@ -813,7 +810,7 @@ public class SqlBuilder implements MessageSource {
 		ProcessMapEntry pme = options.targetMapEntry(ci.name(),
 				ci.encodingRule("sql"));
 
-		if (pme != null && sqlddl.mapEntryParamInfos.hasParameter(pme,
+		if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(pme,
 				SqlConstants.ME_PARAM_TABLE)) {
 
 			return pme.getTargetType();
@@ -914,7 +911,7 @@ public class SqlBuilder implements MessageSource {
 	private void alterTableAddCheckConstraintToRestrictTimeOfDate(Column column,
 			PropertyInfo pi) {
 
-		Expression expr = sqlddl.databaseStrategy
+		Expression expr = SqlDdl.databaseStrategy
 				.expressionForCheckConstraintToRestrictTimeOfDate(pi, column);
 
 		if (expr != null) {
@@ -958,7 +955,7 @@ public class SqlBuilder implements MessageSource {
 		ProcessMapEntry pme = options.targetMapEntry(valueTypeName,
 				piEncodingRule);
 
-		return pme != null && sqlddl.mapEntryParamInfos.hasParameter(
+		return pme != null && SqlDdl.mapEntryParamInfos.hasParameter(
 				valueTypeName, piEncodingRule, SqlConstants.ME_PARAM_GEOMETRY);
 	}
 
@@ -977,10 +974,10 @@ public class SqlBuilder implements MessageSource {
 		ProcessMapEntry pme = options.targetMapEntry(valueTypeName,
 				piEncodingRule);
 
-		if (pme != null && sqlddl.mapEntryParamInfos.hasParameter(valueTypeName,
+		if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName,
 				piEncodingRule, SqlConstants.ME_PARAM_TABLE)) {
 
-			return sqlddl.mapEntryParamInfos
+			return SqlDdl.mapEntryParamInfos
 					.getMapEntry(valueTypeName, piEncodingRule).getTargetType();
 		} else {
 
@@ -1030,7 +1027,7 @@ public class SqlBuilder implements MessageSource {
 
 		if (pme != null) {
 
-			if (sqlddl.mapEntryParamInfos.hasParameter(valueTypeName,
+			if (SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName,
 					piEncodingRule, SqlConstants.ME_PARAM_TABLE)) {
 				return true;
 			} else {
@@ -1062,7 +1059,7 @@ public class SqlBuilder implements MessageSource {
 
 				} else {
 
-					if (typeCi.inSchema(sqlddl.schema) || typeCi.matches(
+					if (model.isInSelectedSchemas(typeCi) || typeCi.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
 
 						return true;
@@ -1187,7 +1184,7 @@ public class SqlBuilder implements MessageSource {
 			 * Check map entry parameter infos for any defaultValue
 			 * characteristics defined for the value type of pi.
 			 */
-			Map<String, String> characteristics = sqlddl.mapEntryParamInfos
+			Map<String, String> characteristics = SqlDdl.mapEntryParamInfos
 					.getCharacteristics(pi.typeInfo().name,
 							pi.encodingRule("sql"),
 							SqlConstants.ME_PARAM_DEFAULTVALUE);
@@ -1270,24 +1267,24 @@ public class SqlBuilder implements MessageSource {
 
 		ProcessMapEntry pme = options.targetMapEntry(typeName, piEncodingRule);
 
-		if (pme != null && sqlddl.mapEntryParamInfos.hasCharacteristic(typeName,
+		if (pme != null && SqlDdl.mapEntryParamInfos.hasCharacteristic(typeName,
 				piEncodingRule, SqlConstants.ME_PARAM_TABLE,
 				SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT)) {
 
-			String repCat = sqlddl.mapEntryParamInfos.getCharacteristic(
+			String repCat = SqlDdl.mapEntryParamInfos.getCharacteristic(
 					typeName, piEncodingRule, SqlConstants.ME_PARAM_TABLE,
 					SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT);
 
 			if (repCat != null && repCat.equalsIgnoreCase("datatype")) {
-				return sqlddl.foreignKeyColumnSuffixDatatype;
+				return SqlDdl.foreignKeyColumnSuffixDatatype;
 			} else {
-				return sqlddl.foreignKeyColumnSuffix;
+				return SqlDdl.foreignKeyColumnSuffix;
 			}
 
 		} else if (pi.categoryOfValue() == Options.DATATYPE) {
-			return sqlddl.foreignKeyColumnSuffixDatatype;
+			return SqlDdl.foreignKeyColumnSuffixDatatype;
 		} else {
-			return sqlddl.foreignKeyColumnSuffix;
+			return SqlDdl.foreignKeyColumnSuffix;
 		}
 	}
 
@@ -1316,16 +1313,16 @@ public class SqlBuilder implements MessageSource {
 
 		if (me != null) {
 
-			if (sqlddl.mapEntryParamInfos.hasParameter(me,
+			if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 					SqlConstants.ME_PARAM_GEOMETRY)) {
 
-				return sqlddl.databaseStrategy.geometryDataType(me,
-						sqlddl.srid);
+				return SqlDdl.databaseStrategy.geometryDataType(me,
+						SqlDdl.srid);
 
-			} else if (sqlddl.mapEntryParamInfos.hasParameter(me,
+			} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 					SqlConstants.ME_PARAM_TABLE)) {
 
-				return sqlddl.foreignKeyColumnDataType;
+				return SqlDdl.foreignKeyColumnDataType;
 
 			} else {
 
@@ -1340,7 +1337,7 @@ public class SqlBuilder implements MessageSource {
 						return determineCharacterVaryingOrText(pi);
 					}
 
-				} else if (sqlddl.mapEntryParamInfos.hasParameter(me,
+				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 						SqlConstants.ME_PARAM_TEXTORCHARACTERVARYING)) {
 
 					return determineCharacterVaryingOrText(pi);
@@ -1385,23 +1382,23 @@ public class SqlBuilder implements MessageSource {
 
 				} else {
 
-					if (typeCi.inSchema(sqlddl.schema) || typeCi.matches(
+					if (model.isInSelectedSchemas(typeCi) || typeCi.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
 
 						if (catOfValue == Options.CODELIST) {
 
-							if (sqlddl.codeNameSize < 1) {
-								return sqlddl.databaseStrategy
+							if (SqlDdl.codeNameSize < 1) {
+								return SqlDdl.databaseStrategy
 										.unlimitedLengthCharacterDataType();
 							} else {
-								return sqlddl.databaseStrategy
+								return SqlDdl.databaseStrategy
 										.limitedLengthCharacterDataType(
-												sqlddl.codeNameSize);
+												SqlDdl.codeNameSize);
 							}
 
 						} else {
 
-							return sqlddl.foreignKeyColumnDataType;
+							return SqlDdl.foreignKeyColumnDataType;
 						}
 
 					} else {
@@ -1456,9 +1453,9 @@ public class SqlBuilder implements MessageSource {
 		 */
 
 		if (size < 1) {
-			return sqlddl.databaseStrategy.unlimitedLengthCharacterDataType();
+			return SqlDdl.databaseStrategy.unlimitedLengthCharacterDataType();
 		} else {
-			return sqlddl.databaseStrategy.limitedLengthCharacterDataType(size);
+			return SqlDdl.databaseStrategy.limitedLengthCharacterDataType(size);
 		}
 	}
 
@@ -1477,7 +1474,7 @@ public class SqlBuilder implements MessageSource {
 		String tvSize = pi.taggedValuesAll()
 				.getFirstValue(SqlConstants.PARAM_SIZE);
 
-		int size = sqlddl.defaultSize;
+		int size = SqlDdl.defaultSize;
 
 		if (tvSize != null) {
 			try {
@@ -1485,10 +1482,10 @@ public class SqlBuilder implements MessageSource {
 			} catch (NumberFormatException e) {
 				MessageContext mc = result.addWarning(this, 5,
 						SqlConstants.PARAM_SIZE, e.getMessage(),
-						"" + sqlddl.defaultSize);
+						"" + SqlDdl.defaultSize);
 				mc.addDetail(this, 0);
 				mc.addDetail(this, 100, pi.fullNameInSchema());
-				size = sqlddl.defaultSize;
+				size = SqlDdl.defaultSize;
 			}
 		}
 
@@ -1503,7 +1500,7 @@ public class SqlBuilder implements MessageSource {
 	private Statement generateGeometryIndex(Table tableWithColumn,
 			Column columnForProperty, PropertyInfo pi) {
 
-		Map<String, String> geometryCharacteristics = sqlddl.mapEntryParamInfos
+		Map<String, String> geometryCharacteristics = SqlDdl.mapEntryParamInfos
 				.getCharacteristics(pi.typeInfo().name, pi.encodingRule("sql"),
 						SqlConstants.ME_PARAM_GEOMETRY);
 
@@ -1512,7 +1509,7 @@ public class SqlBuilder implements MessageSource {
 		String indexName = "idx_" + tableWithColumn.getName() + "_"
 				+ columnForProperty.getName();
 
-		Statement result = sqlddl.databaseStrategy.geometryIndexColumnPart(
+		Statement result = SqlDdl.databaseStrategy.geometryIndexColumnPart(
 				indexName, tableWithColumn, columnForProperty,
 				geometryCharacteristics);
 
@@ -1588,11 +1585,11 @@ public class SqlBuilder implements MessageSource {
 									 */
 
 									String columnName = ci_other.name()
-											+ sqlddl.idColumnName;
+											+ SqlDdl.idColumnName;
 
 									Column dtOwner_cd = createColumn(table,
 											null, columnName,
-											sqlddl.foreignKeyColumnDataType,
+											SqlDdl.foreignKeyColumnDataType,
 											null, false, true);
 									dtOwner_cd
 											.setReferencedTable(map(ci_other));
@@ -1618,7 +1615,7 @@ public class SqlBuilder implements MessageSource {
 					 * Use name defined via configuration parameter, unless TV
 					 * is set on the datatype.
 					 */
-					String columnName = sqlddl.oneToManyReferenceColumnName;
+					String columnName = SqlDdl.oneToManyReferenceColumnName;
 					String tv_oneToManyReferenceColumnName = ci.taggedValue(
 							SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME);
 					if (tv_oneToManyReferenceColumnName != null
@@ -1628,8 +1625,8 @@ public class SqlBuilder implements MessageSource {
 					}
 
 					Column dtOwnerRef_cd = createColumn(table, null,
-							columnName + sqlddl.idColumnName,
-							sqlddl.foreignKeyColumnDataType, null, false, true);
+							columnName + SqlDdl.idColumnName,
+							SqlDdl.foreignKeyColumnDataType, null, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}
@@ -1710,7 +1707,7 @@ public class SqlBuilder implements MessageSource {
 		// -------------------------------------------------------
 		// NOTE: order is important, since naming scheme is involved
 		// which may adjust constraint names to make them unique
-		if (sqlddl.createReferences) {
+		if (SqlDdl.createReferences) {
 
 			// Process in order of table and column names
 			List<CreateTable> cts = new ArrayList<CreateTable>(
@@ -1758,9 +1755,9 @@ public class SqlBuilder implements MessageSource {
 
 					if (isGeometryTypedProperty(pi)) {
 
-						Statement stmt = sqlddl.databaseStrategy
+						Statement stmt = SqlDdl.databaseStrategy
 								.geometryMetadataUpdateStatement(t, col,
-										sqlddl.srid);
+										SqlDdl.srid);
 
 						if (stmt != null) {
 							this.geometryMetadataUpdateStatements.add(stmt);
@@ -1838,7 +1835,7 @@ public class SqlBuilder implements MessageSource {
 
 					values.add(new StringValueExpression(codeName));
 
-					for (DescriptorForCodeList descriptor : sqlddl.descriptorsForCodelist) {
+					for (DescriptorForCodeList descriptor : SqlDdl.descriptorsForCodelist) {
 
 						String descName = descriptor.getDescriptorName();
 						String value = null;
@@ -1850,8 +1847,8 @@ public class SqlBuilder implements MessageSource {
 						} else if (descName.equalsIgnoreCase("documentation")) {
 
 							value = codePi.derivedDocumentation(
-									sqlddl.documentationTemplate,
-									sqlddl.documentationNoValue);
+									SqlDdl.documentationTemplate,
+									SqlDdl.documentationNoValue);
 
 						} else if (descName.equalsIgnoreCase("alias")) {
 

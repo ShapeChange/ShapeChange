@@ -464,26 +464,13 @@ public class GenericModel extends ModelImpl {
 
 				PropertyInfo pValue = updatePropertyInfo(origPi);
 
-				StructuredNumber sn = origPi.sequenceNumber();
-
 				// TBD: pValue.sequenceNumber() has been updated for
 				// GenericPropertyInfos; if other classes relied on the identity
 				// of the key (a StructuredNumber) in the properties TreeMap
 				// then there could be side-effects when using the new
 				// StructuredNumber object as key for GenericPropertyInfos
 
-				/*
-				 * The following checks were introduced to ensure that the
-				 * GenericPropertyInfo copies as well as sequence numbers have
-				 * been created correctly. At some point NullPointerException
-				 * have been thrown here; the log messages should help to
-				 * identify the issue.
-				 */
-				if (origPi == null) {
-
-					result.addError(null, 30320, sn.getString(), gci.name());
-
-				} else if (pValue == null) {
+				if (pValue == null) {
 
 					result.addError(null, 30321, origPi.name(), gci.name());
 
@@ -1899,7 +1886,7 @@ public class GenericModel extends ModelImpl {
 
 				if (ciToRemoveSubtype == null) {
 
-					result.addWarning(null, 30324, ciToRemove.name(),
+					result.addDebug(null, 30324, ciToRemove.name(),
 							ciToRemoveSubtypeId);
 
 				} else if (!(ciToRemoveSubtype instanceof GenericClassInfo)) {
@@ -2484,47 +2471,28 @@ public class GenericModel extends ModelImpl {
 	 */
 	public void dissolveAssociation(GenericAssociationInfo genAI) {
 
-		ArrayList<PropertyInfo> associationends = new ArrayList<PropertyInfo>();
-		associationends.add(genAI.end1());
-		associationends.add(genAI.end2());
+		ArrayList<GenericPropertyInfo> associationends = new ArrayList<GenericPropertyInfo>();
+		associationends.add((GenericPropertyInfo) genAI.end1());
+		associationends.add((GenericPropertyInfo) genAI.end2());
 
 		for (int i = 0; i < associationends.size(); i++) {
 
-			PropertyInfo pi = associationends.get(i);
+			GenericPropertyInfo genPi = associationends.get(i);
 
-			if (pi != null) {
+			if (!genPi.isNavigable()) {
 
-				if (pi instanceof GenericPropertyInfo) {
+				this.genPropertiesById.remove(genPi.id());
+				((GenericClassInfo)genPi.inClass()).removePropertyById(genPi.id());
 
-					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+			} else {
 
-					if (!genPi.isNavigable()) {
+				// turn this property into an attribute one
+				genPi.setReverseProperty(null);
+				genPi.setAssociation(null);
 
-						/*
-						 * fine, then the property does not belong to any class
-						 * and can simply be removed
-						 */
-						this.genPropertiesById.remove(genPi.id());
-
-					} else {
-
-						// turn this property into an attribute one
-						genPi.setReverseProperty(null);
-						genPi.setAssociation(null);
-
-						genPi.setAttribute(true);
-						genPi.setAggregation(false);
-						genPi.setComposition(true);
-					}
-
-				} else {
-
-					/*
-					 * actually, pi should then belong to a class that is not
-					 * contained in one of the selected schema, and thus is
-					 * irrelevant for target processing
-					 */
-				}
+				genPi.setAttribute(true);
+				genPi.setAggregation(false);
+				genPi.setComposition(true);
 			}
 		}
 
@@ -2543,7 +2511,6 @@ public class GenericModel extends ModelImpl {
 
 		// now remove the association
 		this.genAssociationInfosById.remove(genAI.id());
-
 	}
 
 	/**

@@ -142,7 +142,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param supertypes
-	 *            the supertypes to set
+	 *            the supertypes to set, can be <code>null</code>
 	 */
 	public void setSupertypes(TreeSet<String> supertypes) {
 		this.supertypes = supertypes;
@@ -150,7 +150,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param subtypes
-	 *            the subtypes to set
+	 *            the subtypes to set, can be <code>null</code>
 	 */
 	public void setSubtypes(TreeSet<String> subtypes) {
 		this.subtypes = subtypes;
@@ -158,7 +158,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param baseClass
-	 *            the baseClass to set
+	 *            the baseClass to set, can be <code>null</code>
 	 */
 	public void setBaseClass(ClassInfo baseClass) {
 		this.baseClass = baseClass;
@@ -362,7 +362,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		}
 	}
-	
+
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#pkg()
 	 */
@@ -543,7 +543,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	public void removeSubtype(String subtypeId) {
-		this.subtypes.remove(subtypeId);
+		if (this.subtypes != null) {
+			this.subtypes.remove(subtypeId);
+		}
 	}
 
 	/**
@@ -858,8 +860,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		copy.setIsAbstract(isAbstract);
 		copy.setIsLeaf(isLeaf);
 		copy.setAssocInfo(assocClass);
-		copy.setSupertypes((TreeSet<String>) supertypes.clone());
-		copy.setSubtypes((TreeSet<String>) subtypes.clone());
+		copy.setSupertypes(supertypes == null ? null
+				: (TreeSet<String>) supertypes.clone());
+		copy.setSubtypes(
+				subtypes == null ? null : (TreeSet<String>) subtypes.clone());
 		copy.setBaseClass(baseClass);
 
 		copy.setDiagrams(diagrams);

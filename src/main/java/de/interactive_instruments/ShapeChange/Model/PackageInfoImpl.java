@@ -67,15 +67,19 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 	/** Return the encoding rule relevant on the package, given the platform */
 	public String encodingRule(String platform) {
-		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty()
-				|| options().ignoreEncodingRuleTaggedValues()) {
-			PackageInfo o = owner();
-			if (o != null) {
-				s = o.encodingRule(platform);
+		String s;
+		if (options().ignoreEncodingRuleTaggedValues()) {
+			s = super.encodingRule(platform);
+		} else {
+			s = taggedValue(platform + "EncodingRule");
+			if (s == null || s.isEmpty()) {
+				PackageInfo o = owner();
+				if (o != null) {
+					s = o.encodingRule(platform);
+				}
+				if (s == null)
+					s = super.encodingRule(platform);
 			}
-			if (s == null)
-				s = super.encodingRule(platform);
 		}
 		if (s != null)
 			s = s.toLowerCase();

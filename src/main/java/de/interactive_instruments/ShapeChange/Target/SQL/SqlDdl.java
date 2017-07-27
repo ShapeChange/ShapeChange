@@ -66,7 +66,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
-import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArrayExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimElement;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.CheckConstraintNamingStrategy;
@@ -96,80 +96,93 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
  *         <dot> de)
  *
  */
-public class SqlDdl implements Target, MessageSource {
+public class SqlDdl implements SingleTarget, MessageSource {
 
 	public static final String PLATFORM = "sql";
+	
+	protected static Model model = null;
 
-	private String[] descriptorsForCodelistFromConfig = new String[] {
+	private static String[] descriptorsForCodelistFromConfig = new String[] {
 			"documentation" };
-	protected List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
+	protected static List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
-	protected String codeNameColumnName = "name";
-	protected int codeNameSize = 0;
+	protected static String codeNameColumnName = "name";
+	protected static int codeNameSize = 0;
 
-	protected ShapeChangeResult result = null;
-	protected PackageInfo schema = null;
-	protected Model model = null;
-	protected Options options = null;
-	protected boolean printed = false;
-	protected boolean diagnosticsOnly = false;
+	private static boolean initialised = false;
+	protected static boolean diagnosticsOnly = false;
+	protected static boolean atLeastOneSchemaIsEncoded = false;
 	/**
 	 * NOTE: If not set via the configuration, the default applies which is
 	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
 	 */
-	protected String documentationTemplate = null;
+	protected static String documentationTemplate = null;
 	/**
 	 * NOTE: If not set via the configuration, the default applies which is
 	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_NOVALUE}.
 	 */
-	protected String documentationNoValue = null;
+	protected static String documentationNoValue = null;
 
-	private String outputDirectory;
+	private static String outputDirectory = null;
+	private static String outputFilename = null;
 
-	protected String activeIndicatorLFType;
-	protected String sourceCLType;
-	protected String idColumnName;
-	protected String oneToManyReferenceColumnName;
-	protected String foreignKeyColumnSuffix;
-	protected String foreignKeyColumnSuffixDatatype;
-	protected String foreignKeyColumnDataType;
-	protected String primaryKeySpec;
-	protected String primaryKeySpecCodelist;
-	protected String nameActiveIndicatorLFColumn;
-	protected String nameSourceCLColumn;
-	protected int defaultSize;
-	protected int srid;
-	protected boolean createReferences = false;
-	protected boolean createDocumentation = true;
-	protected boolean createAssociativeTables = false;
-	protected boolean removeEmptyLinesInDdlOutput = false;
+	protected static String activeIndicatorLFType;
+	protected static String sourceCLType;
+	protected static String idColumnName;
+	protected static String oneToManyReferenceColumnName;
+	protected static String foreignKeyColumnSuffix;
+	protected static String foreignKeyColumnSuffixDatatype;
+	protected static String foreignKeyColumnDataType;
+	protected static String primaryKeySpec;
+	protected static String primaryKeySpecCodelist;
+	protected static String nameActiveIndicatorLFColumn;
+	protected static String nameSourceCLColumn;
+	protected static int defaultSize;
+	protected static int srid;
+	protected static boolean createReferences = false;
+	protected static boolean createDocumentation = true;
+	protected static boolean createAssociativeTables = false;
+	protected static boolean removeEmptyLinesInDdlOutput = false;
 
 	/**
 	 * Contains information parsed from the 'param' attributes of each map entry
 	 * defined for this target.
 	 */
-	protected MapEntryParamInfos mapEntryParamInfos = null;
+	protected static MapEntryParamInfos mapEntryParamInfos = null;
 
-	protected DatabaseStrategy databaseStrategy;
+	protected static DatabaseStrategy databaseStrategy;
 
-	protected SqlNamingScheme namingScheme;
+	protected static SqlNamingScheme namingScheme;
 
-	protected List<ClassInfo> cisToProcess = new ArrayList<ClassInfo>();
+	protected static List<ClassInfo> cisToProcess = new ArrayList<ClassInfo>();
 
-	protected SdoDimArrayExpression sdoDimArrayExpression = new SdoDimArrayExpression();
+	protected static SdoDimArrayExpression sdoDimArrayExpression = new SdoDimArrayExpression();
 
 	/* ------- */
 	/* Replication schema specific fields */
-	protected String repSchemaOutputFilename;
-	protected Map<String, ProcessMapEntry> repSchemaMapEntryByType = new HashMap<String, ProcessMapEntry>();
+	protected static boolean createRepSchema = false;
+	protected static Map<String, ProcessMapEntry> repSchemaMapEntryByType = new HashMap<String, ProcessMapEntry>();
 
-	protected String repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
-	protected String repSchemaTargetNamespace = null;
-	protected String repSchemaObjectIdentifierFieldType;
-	protected String repSchemaForeignKeyFieldType;
-	protected Multiplicity repSchemaMultiplicity1 = new Multiplicity(1, 1);
-	protected String repSchemaTargetNamespaceSuffix;
-
+	protected static String repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
+	protected static String repSchemaTargetNamespace = null;
+	protected static String repSchemaTargetNamespaceSuffix = null;
+	protected static String repSchemaTargetVersion = null;
+	protected static String repSchemaTargetXmlns = null;
+	protected static String repSchemaObjectIdentifierFieldType;
+	protected static String repSchemaForeignKeyFieldType;
+	protected static Multiplicity repSchemaMultiplicity1 = new Multiplicity(1,
+			1);
+	
+	/* ------ */
+	/*
+	 * Non-static fields
+	 */
+	protected ShapeChangeResult result = null;
+	protected Options options = null;
+	
+	private PackageInfo schema = null;
+	private boolean schemaNotEncoded = false;
+	
 	@Override
 	public void initialise(PackageInfo pi, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
@@ -179,379 +192,417 @@ public class SqlDdl implements Target, MessageSource {
 		model = m;
 		options = o;
 		result = r;
+
 		diagnosticsOnly = diagOnly;
 
 		if (!isEncoded(schema)) {
 
+			schemaNotEncoded = true;
 			result.addInfo(this, 7, schema.name());
 			return;
+		} else {
+			atLeastOneSchemaIsEncoded = true;
 		}
 
-		result.addDebug(this, 1, pi.name());
+		if (!initialised) {
+			initialised = true;
 
-		outputDirectory = options.parameter(this.getClass().getName(),
-				"outputDirectory");
-		if (outputDirectory == null)
-			outputDirectory = options.parameter("outputDirectory");
-		if (outputDirectory == null)
-			outputDirectory = options.parameter(".");
+			outputDirectory = options.parameter(this.getClass().getName(),
+					"outputDirectory");
+			if (outputDirectory == null)
+				outputDirectory = options.parameter("outputDirectory");
+			if (outputDirectory == null)
+				outputDirectory = options.parameter(".");
 
-		// create output directory, if necessary
-		if (!this.diagnosticsOnly) {
+			// create output directory, if necessary
+			if (!diagnosticsOnly) {
 
-			// Check whether we can use the given output directory
-			File outputDirectoryFile = new File(outputDirectory);
-			boolean exi = outputDirectoryFile.exists();
-			if (!exi) {
-				outputDirectoryFile.mkdirs();
-				exi = outputDirectoryFile.exists();
-			}
-			boolean dir = outputDirectoryFile.isDirectory();
-			boolean wrt = outputDirectoryFile.canWrite();
-			boolean rea = outputDirectoryFile.canRead();
-			if (!exi || !dir || !wrt || !rea) {
-				result.addFatalError(this, 3, outputDirectory);
-				return;
-			}
+				// Check whether we can use the given output directory
+				File outputDirectoryFile = new File(outputDirectory);
+				boolean exi = outputDirectoryFile.exists();
+				if (!exi) {
+					outputDirectoryFile.mkdirs();
+					exi = outputDirectoryFile.exists();
+				}
+				boolean dir = outputDirectoryFile.isDirectory();
+				boolean wrt = outputDirectoryFile.canWrite();
+				boolean rea = outputDirectoryFile.canRead();
+				if (!exi || !dir || !wrt || !rea) {
+					result.addFatalError(this, 3, outputDirectory);
+					return;
+				}
 
-			repSchemaOutputFilename = schema.name().replace("/", "_")
-					.replace(" ", "_") + ".xsd";
+				outputFilename = options.parameter(this.getClass().getName(),
+						"outputFilename");
+				if (outputFilename == null) {
+					outputFilename = schema.name();
+				}
+				outputFilename = outputFilename.replace("/", "_")
+						.replace(" ", "_");
+				
+				String repSchemaOutputFilename = outputFilename + ".xsd";
 
-			File repSchemaOutputFile = new File(outputDirectoryFile,
-					repSchemaOutputFilename);
+				File repSchemaOutputFile = new File(outputDirectoryFile,
+						repSchemaOutputFilename);
 
-			// check if output file already exists - if so, attempt to delete it
-			exi = repSchemaOutputFile.exists();
-			if (exi) {
+				/*
+				 * check if output file already exists - if so, attempt to
+				 * delete it
+				 */
+				exi = repSchemaOutputFile.exists();
+				if (exi) {
 
-				result.addInfo(this, 503, repSchemaOutputFilename,
-						outputDirectory);
+					result.addInfo(this, 503, repSchemaOutputFilename,
+							outputDirectory);
 
-				try {
-					FileUtils.forceDelete(repSchemaOutputFile);
-					result.addInfo(this, 504);
-				} catch (IOException e) {
-					result.addInfo(null, 600, e.getMessage());
-					e.printStackTrace(System.err);
+					try {
+						FileUtils.forceDelete(repSchemaOutputFile);
+						result.addInfo(this, 504);
+					} catch (IOException e) {
+						result.addInfo(null, 600, e.getMessage());
+						e.printStackTrace(System.err);
+					}
 				}
 			}
-		}
 
-		if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
-			this.createAssociativeTables = true;
-		}
+			if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
+				createAssociativeTables = true;
+			}
 
-		String databaseSystem = options.parameter(this.getClass().getName(),
-				SqlConstants.PARAM_DATABASE_SYSTEM);
+			String databaseSystem = options.parameter(this.getClass().getName(),
+					SqlConstants.PARAM_DATABASE_SYSTEM);
 
-		NameNormalizer normalizer = null;
-		ForeignKeyNamingStrategy fkNaming = null;
-		CheckConstraintNamingStrategy ckNaming = null;
-		UniqueNamingStrategy uniqueConstraintNaming = new CountSuffixUniqueNamingStrategy(
-				result);
+			NameNormalizer normalizer = null;
+			ForeignKeyNamingStrategy fkNaming = null;
+			CheckConstraintNamingStrategy ckNaming = null;
+			UniqueNamingStrategy uniqueConstraintNaming = new CountSuffixUniqueNamingStrategy(
+					result);
 
-		// identify normalizer strategy
-		if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE)) {
-			normalizer = new LowerCaseNameNormalizer();
-		} else if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE)) {
-			normalizer = new UpperCaseNameNormalizer();
-		} else if (pi
-				.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_ORACLE)) {
-			normalizer = new OracleNameNormalizer(result);
-		} else if (pi
-				.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER)) {
-			normalizer = new SQLServerNameNormalizer(result);
-		}
-
-		// identify foreign key naming strategy
-		if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING)) {
-			fkNaming = new PearsonHashForeignKeyNamingStrategy();
-		} else if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE)) {
-			fkNaming = new OracleStyleForeignKeyNamingStrategy(result);
-		} else {
-			fkNaming = new DefaultForeignKeyNamingStrategy();
-		}
-
-		// identify check constraint naming strategy
-		if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_ORACLE_DEFAULT)) {
-			ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
-		} else if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH)) {
-			ckNaming = new PearsonHashCheckConstraintNamingStrategy();
-		} else if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT)) {
-			ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
-		} else if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT)) {
-			ckNaming = new DefaultSQLServerCheckConstraintNamingStrategy();
-		}
-
-		if (databaseSystem != null
-				&& "oracle".equalsIgnoreCase(databaseSystem)) {
-
-			databaseStrategy = new OracleStrategy(result, this);
-			if (normalizer == null) {
+			// identify normalizer strategy
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE)) {
+				normalizer = new LowerCaseNameNormalizer();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE)) {
+				normalizer = new UpperCaseNameNormalizer();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_ORACLE)) {
 				normalizer = new OracleNameNormalizer(result);
-			}
-			if (ckNaming == null) {
-				ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
-			}
-
-		} else if (databaseSystem != null
-				&& "sqlserver".equalsIgnoreCase(databaseSystem)) {
-
-			databaseStrategy = new SQLServerStrategy(result);
-			if (normalizer == null) {
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER)) {
 				normalizer = new SQLServerNameNormalizer(result);
 			}
-			if (ckNaming == null) {
+
+			// identify foreign key naming strategy
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING)) {
+				fkNaming = new PearsonHashForeignKeyNamingStrategy();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE)) {
+				fkNaming = new OracleStyleForeignKeyNamingStrategy(result);
+			} else {
+				fkNaming = new DefaultForeignKeyNamingStrategy();
+			}
+
+			// identify check constraint naming strategy
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_ORACLE_DEFAULT)) {
+				ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH)) {
+				ckNaming = new PearsonHashCheckConstraintNamingStrategy();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT)) {
+				ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
+			} else if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT)) {
 				ckNaming = new DefaultSQLServerCheckConstraintNamingStrategy();
 			}
 
-		} else {
-
 			if (databaseSystem != null
-					&& !"postgresql".equalsIgnoreCase(databaseSystem)) {
-				result.addError(this, 6, databaseSystem);
-			}
-			databaseStrategy = new PostgreSQLStrategy();
-			if (normalizer == null) {
-				normalizer = new LowerCaseNameNormalizer();
-			}
-			if (ckNaming == null) {
-				ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
-			}
-		}
+					&& "oracle".equalsIgnoreCase(databaseSystem)) {
 
-		if (schema.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE)) {
-			normalizer.setIgnoreCaseWhenNormalizing(true);
-		}
-
-		this.namingScheme = new DefaultNamingScheme(result, normalizer,
-				fkNaming, ckNaming, uniqueConstraintNaming);
-
-		activeIndicatorLFType = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_ACTIVEINDICATORLF_TYPE,
-				SqlConstants.DEFAULT_ACTIVEINDICATORLF_TYPE, false, true);
-		
-		sourceCLType = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_SOURCECL_TYPE,
-				SqlConstants.DEFAULT_SOURCECL_TYPE, false, true);
-
-		idColumnName = options.parameterAsString(this.getClass().getName(),
-				SqlConstants.PARAM_ID_COLUMN_NAME,
-				SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
-
-		oneToManyReferenceColumnName = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_ONE_TO_MANY_REF_COLUMN_NAME,
-				SqlConstants.DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME, false, true);
-
-		foreignKeyColumnSuffix = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
-				SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX, true, false);
-
-		foreignKeyColumnSuffixDatatype = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
-				SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE, true,
-				false);
-
-		foreignKeyColumnDataType = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
-				databaseStrategy.primaryKeyDataType(), false, true);
-
-		primaryKeySpec = options.parameterAsString(this.getClass().getName(),
-				SqlConstants.PARAM_PRIMARYKEY_SPEC,
-				SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
-
-		primaryKeySpecCodelist = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST,
-				SqlConstants.DEFAULT_PRIMARYKEY_SPEC_CODELIST, true, true);
-
-		nameActiveIndicatorLFColumn = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN,
-				SqlConstants.DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN, false,
-				true);
-
-		nameSourceCLColumn = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_NAME_SOURCE_CL_COLUMN,
-				SqlConstants.DEFAULT_NAME_SOURCE_CL_COLUMN, false, true);
-
-		String sdoDimElement_value = options.parameterAsString(
-				this.getClass().getName(), SqlConstants.PARAM_SDO_DIM_ELEMENTS,
-				null, false, true);
-		parseSdoDimElementValue(sdoDimElement_value);
-
-		defaultSize = options.parameterAsInteger(this.getClass().getName(),
-				SqlConstants.PARAM_SIZE, SqlConstants.DEFAULT_SIZE);
-
-		srid = options.parameterAsInteger(this.getClass().getName(),
-				SqlConstants.PARAM_SRID, SqlConstants.DEFAULT_SRID);
-
-		createReferences = options.parameterAsBoolean(this.getClass().getName(),
-				SqlConstants.PARAM_CREATE_REFERENCES,
-				SqlConstants.DEFAULT_CREATE_REFERNCES);
-
-		createDocumentation = options.parameterAsBoolean(
-				this.getClass().getName(),
-				SqlConstants.PARAM_CREATE_DOCUMENTATION,
-				SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
-
-		removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
-				this.getClass().getName(),
-				SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
-
-		/*
-		 * override parameter 'createDocumentation' if configured via conversion
-		 * rule
-		 */
-		if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
-			createDocumentation = false;
-		}
-
-		// change the default documentation template?
-		documentationTemplate = options.parameter(this.getClass().getName(),
-				SqlConstants.PARAM_DOCUMENTATION_TEMPLATE);
-		documentationNoValue = options.parameter(this.getClass().getName(),
-				SqlConstants.PARAM_DOCUMENTATION_NOVALUE);
-
-		String descriptorsForCodelistByConfig = options.parameter(
-				this.getClass().getName(),
-				SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
-		if (descriptorsForCodelistByConfig != null
-				&& !descriptorsForCodelistByConfig.trim().isEmpty()) {
-			descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
-					.trim().split(",");
-		}
-		boolean unknownDescriptorFound = false;
-
-		for (String tmp : descriptorsForCodelistFromConfig) {
-
-			if (tmp.matches(SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
-
-				// parse descriptor string
-				String name = null;
-				String columnName = null;
-				Integer size = null;
-
-				if (tmp.contains("(")) {
-
-					name = tmp.substring(0, tmp.indexOf("("));
-					String tmp2 = tmp.substring(tmp.indexOf("(") + 1,
-							tmp.length() - 1);
-					String[] metadata = tmp2.split(";");
-					for (String meta : metadata) {
-						String[] meta_parts = meta.split("=");
-						if (meta_parts[0].equalsIgnoreCase("columnName")) {
-							columnName = meta_parts[1];
-						} else if (meta_parts[0].equalsIgnoreCase("size")) {
-							size = new Integer(meta_parts[1]);
-						}
-					}
-
-				} else {
-					// no metadata defined for descriptor
-					name = tmp;
+				databaseStrategy = new OracleStrategy(result);
+				if (normalizer == null) {
+					normalizer = new OracleNameNormalizer(result);
+				}
+				if (ckNaming == null) {
+					ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
 				}
 
-				if (columnName == null) {
-					columnName = name;
-				}
+			} else if (databaseSystem != null
+					&& "sqlserver".equalsIgnoreCase(databaseSystem)) {
 
-				descriptorsForCodelist
-						.add(new DescriptorForCodeList(name, columnName, size));
+				databaseStrategy = new SQLServerStrategy(result);
+				if (normalizer == null) {
+					normalizer = new SQLServerNameNormalizer(result);
+				}
+				if (ckNaming == null) {
+					ckNaming = new DefaultSQLServerCheckConstraintNamingStrategy();
+				}
 
 			} else {
-				unknownDescriptorFound = true;
+
+				if (databaseSystem != null
+						&& !"postgresql".equalsIgnoreCase(databaseSystem)) {
+					result.addError(this, 6, databaseSystem);
+				}
+				databaseStrategy = new PostgreSQLStrategy();
+				if (normalizer == null) {
+					normalizer = new LowerCaseNameNormalizer();
+				}
+				if (ckNaming == null) {
+					ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
+				}
 			}
-		}
-		if (unknownDescriptorFound) {
-			result.addWarning(this, 23, descriptorsForCodelistByConfig,
-					SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
-		}
-		if (descriptorsForCodelist.isEmpty()) {
-			result.addWarning(this, 24);
-			descriptorsForCodelist.add(
-					new DescriptorForCodeList("documentation", null, null));
-		}
 
-		/*
-		 * set of parameters for naming of columns when converting code list to
-		 * table
-		 */
-		codeNameColumnName = options.parameterAsString(
-				this.getClass().getName(),
-				SqlConstants.PARAM_CODE_NAME_COLUMN_NAME,
-				SqlConstants.DEFAULT_CODE_NAME_COLUMN_NAME, false, true);
+			if (schema.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE)) {
+				normalizer.setIgnoreCaseWhenNormalizing(true);
+			}
 
-		codeNameSize = options.parameterAsInteger(this.getClass().getName(),
-				SqlConstants.PARAM_CODE_NAME_SIZE,
-				SqlConstants.DEFAULT_CODE_NAME_SIZE);
+			namingScheme = new DefaultNamingScheme(result, normalizer,
+					fkNaming, ckNaming, uniqueConstraintNaming);
 
-		// identify map entries defined in the target configuration
-		List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
-				.getMapEntries();
+			activeIndicatorLFType = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_ACTIVEINDICATORLF_TYPE,
+					SqlConstants.DEFAULT_ACTIVEINDICATORLF_TYPE, false, true);
 
-		if (mapEntries == null || mapEntries.isEmpty()) {
+			sourceCLType = options.parameterAsString(this.getClass().getName(),
+					SqlConstants.PARAM_SOURCECL_TYPE,
+					SqlConstants.DEFAULT_SOURCECL_TYPE, false, true);
+
+			idColumnName = options.parameterAsString(this.getClass().getName(),
+					SqlConstants.PARAM_ID_COLUMN_NAME,
+					SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
+
+			oneToManyReferenceColumnName = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_ONE_TO_MANY_REF_COLUMN_NAME,
+					SqlConstants.DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME, false,
+					true);
+
+			foreignKeyColumnSuffix = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
+					SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX, true,
+					false);
+
+			foreignKeyColumnSuffixDatatype = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
+					SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
+					true, false);
+
+			foreignKeyColumnDataType = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
+					databaseStrategy.primaryKeyDataType(), false, true);
+
+			primaryKeySpec = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_PRIMARYKEY_SPEC,
+					SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
+
+			primaryKeySpecCodelist = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST,
+					SqlConstants.DEFAULT_PRIMARYKEY_SPEC_CODELIST, true, true);
+
+			nameActiveIndicatorLFColumn = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN,
+					SqlConstants.DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN, false,
+					true);
+
+			nameSourceCLColumn = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_NAME_SOURCE_CL_COLUMN,
+					SqlConstants.DEFAULT_NAME_SOURCE_CL_COLUMN, false, true);
+
+			String sdoDimElement_value = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_SDO_DIM_ELEMENTS, null, false, true);
+			parseSdoDimElementValue(sdoDimElement_value);
+
+			defaultSize = options.parameterAsInteger(this.getClass().getName(),
+					SqlConstants.PARAM_SIZE, SqlConstants.DEFAULT_SIZE);
+
+			srid = options.parameterAsInteger(this.getClass().getName(),
+					SqlConstants.PARAM_SRID, SqlConstants.DEFAULT_SRID);
+
+			createReferences = options.parameterAsBoolean(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CREATE_REFERENCES,
+					SqlConstants.DEFAULT_CREATE_REFERNCES);
+
+			createDocumentation = options.parameterAsBoolean(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CREATE_DOCUMENTATION,
+					SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
+
+			removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
+					this.getClass().getName(),
+					SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
 
 			/*
-			 * It is unlikely but not impossible that an application schema does
-			 * not make use of types that require a type mapping in order to be
-			 * converted into a database schema.
+			 * override parameter 'createDocumentation' if configured via
+			 * conversion rule
 			 */
-			result.addWarning(this, 15);
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
+				createDocumentation = false;
+			}
 
-		} else {
+			// change the default documentation template?
+			documentationTemplate = options.parameter(this.getClass().getName(),
+					SqlConstants.PARAM_DOCUMENTATION_TEMPLATE);
+			documentationNoValue = options.parameter(this.getClass().getName(),
+					SqlConstants.PARAM_DOCUMENTATION_NOVALUE);
+
+			String descriptorsForCodelistByConfig = options.parameter(
+					this.getClass().getName(),
+					SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
+			if (descriptorsForCodelistByConfig != null
+					&& !descriptorsForCodelistByConfig.trim().isEmpty()) {
+				descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
+						.trim().split(",");
+			}
+			boolean unknownDescriptorFound = false;
+
+			for (String tmp : descriptorsForCodelistFromConfig) {
+
+				if (tmp.matches(SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
+
+					// parse descriptor string
+					String name = null;
+					String columnName = null;
+					Integer size = null;
+
+					if (tmp.contains("(")) {
+
+						name = tmp.substring(0, tmp.indexOf("("));
+						String tmp2 = tmp.substring(tmp.indexOf("(") + 1,
+								tmp.length() - 1);
+						String[] metadata = tmp2.split(";");
+						for (String meta : metadata) {
+							String[] meta_parts = meta.split("=");
+							if (meta_parts[0].equalsIgnoreCase("columnName")) {
+								columnName = meta_parts[1];
+							} else if (meta_parts[0].equalsIgnoreCase("size")) {
+								size = new Integer(meta_parts[1]);
+							}
+						}
+
+					} else {
+						// no metadata defined for descriptor
+						name = tmp;
+					}
+
+					if (columnName == null) {
+						columnName = name;
+					}
+
+					descriptorsForCodelist.add(
+							new DescriptorForCodeList(name, columnName, size));
+
+				} else {
+					unknownDescriptorFound = true;
+				}
+			}
+			if (unknownDescriptorFound) {
+				result.addWarning(this, 23, descriptorsForCodelistByConfig,
+						SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
+			}
+			if (descriptorsForCodelist.isEmpty()) {
+				result.addWarning(this, 24);
+				descriptorsForCodelist.add(
+						new DescriptorForCodeList("documentation", null, null));
+			}
 
 			/*
-			 * Parse all parameter information
+			 * set of parameters for naming of columns when converting code list
+			 * to table
 			 */
-			mapEntryParamInfos = new MapEntryParamInfos(result, mapEntries);
-		}
-
-		// ======================================
-		// Replication schema configuration
-		// ======================================
-
-		if (schema.matches(
-				ReplicationSchemaConstants.RULE_TGT_SQL_ALL_REPSCHEMA)) {
-
-			repSchemaObjectIdentifierFieldType = options.parameterAsString(
+			codeNameColumnName = options.parameterAsString(
 					this.getClass().getName(),
-					ReplicationSchemaConstants.PARAM_OBJECT_IDENTIFIER_FIELD_TYPE,
-					ReplicationSchemaConstants.DEFAULT_OBJECT_IDENTIFIER_FIELD_TYPE,
-					false, true);
+					SqlConstants.PARAM_CODE_NAME_COLUMN_NAME,
+					SqlConstants.DEFAULT_CODE_NAME_COLUMN_NAME, false, true);
 
-			repSchemaForeignKeyFieldType = options.parameterAsString(
-					this.getClass().getName(),
-					ReplicationSchemaConstants.PARAM_FOREIGN_KEY_FIELD_TYPE,
-					repSchemaObjectIdentifierFieldType, false, true);
+			codeNameSize = options.parameterAsInteger(this.getClass().getName(),
+					SqlConstants.PARAM_CODE_NAME_SIZE,
+					SqlConstants.DEFAULT_CODE_NAME_SIZE);
 
-			repSchemaTargetNamespaceSuffix = options.parameterAsString(
-					this.getClass().getName(),
-					ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE_SUFFIX,
-					ReplicationSchemaConstants.DEFAULT_TARGET_NAMESPACE_SUFFIX,
-					false, true);
+			// identify map entries defined in the target configuration
+			List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
+					.getMapEntries();
 
-			repSchemaDocumentationUnlimitedLengthCharacterDataType = options
-					.parameterAsString(this.getClass().getName(),
-							ReplicationSchemaConstants.PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
-							ReplicationSchemaConstants.DEFAULT_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
-							false, true);
+			if (mapEntries == null || mapEntries.isEmpty()) {
+
+				/*
+				 * It is unlikely but not impossible that an application schema
+				 * does not make use of types that require a type mapping in
+				 * order to be converted into a database schema.
+				 */
+				result.addWarning(this, 15);
+
+			} else {
+
+				/*
+				 * Parse all parameter information
+				 */
+				mapEntryParamInfos = new MapEntryParamInfos(result, mapEntries);
+			}
+
+			// ======================================
+			// Replication schema configuration
+			// ======================================
+
+			if (schema.matches(
+					ReplicationSchemaConstants.RULE_TGT_SQL_ALL_REPSCHEMA)) {
+				
+				createRepSchema = true;
+
+				repSchemaObjectIdentifierFieldType = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_OBJECT_IDENTIFIER_FIELD_TYPE,
+						ReplicationSchemaConstants.DEFAULT_OBJECT_IDENTIFIER_FIELD_TYPE,
+						false, true);
+
+				repSchemaForeignKeyFieldType = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_FOREIGN_KEY_FIELD_TYPE,
+						repSchemaObjectIdentifierFieldType, false, true);
+
+				repSchemaTargetNamespaceSuffix = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE_SUFFIX,
+						ReplicationSchemaConstants.DEFAULT_TARGET_NAMESPACE_SUFFIX,
+						false, true);
+				
+				repSchemaTargetNamespace = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE,
+						schema.targetNamespace() == null ? "" : schema.targetNamespace(),
+						true, true);
+				repSchemaTargetVersion = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_TARGET_VERSION,
+						schema.version() == null ? "" : schema.version(),
+						true, true);
+				repSchemaTargetXmlns = options.parameterAsString(
+						this.getClass().getName(),
+						ReplicationSchemaConstants.PARAM_TARGET_XMLNS,
+						schema.xmlns() == null ? "" : schema.xmlns(),
+						true, true);
+
+				repSchemaDocumentationUnlimitedLengthCharacterDataType = options
+						.parameterAsString(this.getClass().getName(),
+								ReplicationSchemaConstants.PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
+								ReplicationSchemaConstants.DEFAULT_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
+								false, true);
+			}
 		}
 	}
 
@@ -598,12 +649,17 @@ public class SqlDdl implements Target, MessageSource {
 		}
 
 		result.addDebug(this, 2, ci.name());
-
+		
 		ProcessMapEntry pme = options.targetMapEntry(ci.name(),
 				ci.encodingRule("sql"));
 
 		if (pme != null) {
 			result.addInfo(this, 22, ci.name(), pme.getTargetType());
+			return;
+		}
+		
+		if(schemaNotEncoded) {
+			result.addInfo(this,18,schema.name(),ci.name());
 			return;
 		}
 
@@ -641,12 +697,61 @@ public class SqlDdl implements Target, MessageSource {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Target.Target#write()
-	 */
+	@Override
 	public void write() {
+		
+		// nothing to do here (this is a SingleTarget)
+	}
 
-		if (printed || diagnosticsOnly || !isEncoded(schema)) {
+	private String readDdl(String paramFileDdl) {
+
+		String res = null;
+
+		String fileDdl = options.parameterAsString(this.getClass().getName(),
+				paramFileDdl, null, false, true);
+
+		if (fileDdl != null) {
+			File ddlTop = new File(fileDdl);
+			if (!ddlTop.exists() || ddlTop.isDirectory() || !ddlTop.canRead()) {
+
+				result.addError(this, 25, SqlConstants.PARAM_FILE_DDL_TOP,
+						fileDdl);
+			} else {
+				try {
+					res = FileUtils.readFileToString(ddlTop,
+							StandardCharsets.UTF_8);
+				} catch (IOException e) {
+					result.addError(this, 26, fileDdl, e.getMessage());
+				}
+			}
+		}
+
+		return res;
+	}
+
+	@Override
+	public String getTargetName() {
+		return "SQL DDL";
+	}
+
+	public static boolean isEncoded(Info i) {
+
+		if (i.matches(SqlConstants.RULE_TGT_SQL_ALL_NOTENCODED)
+				&& i.encodingRule("sql").equalsIgnoreCase("notencoded")) {
+
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void writeAll(ShapeChangeResult r) {
+		
+		this.result = r;
+		this.options = r.options();
+
+		if (diagnosticsOnly || !atLeastOneSchemaIsEncoded) {
 			return;
 		}
 
@@ -660,9 +765,8 @@ public class SqlDdl implements Target, MessageSource {
 		 * results
 		 */
 		try {
-
-			if (schema.matches(
-					ReplicationSchemaConstants.RULE_TGT_SQL_ALL_REPSCHEMA)) {
+						
+			if (createRepSchema) {
 
 				// Create replication schema
 				ReplicationSchemaVisitor visitor = new ReplicationSchemaVisitor(
@@ -676,8 +780,7 @@ public class SqlDdl implements Target, MessageSource {
 						"{http://xml.apache.org/xalan}indent-amount", "2");
 				outputFormat.setProperty("encoding", "UTF-8");
 
-				String fileName = schema.name().replace("/", "_").replace(" ",
-						"_") + ".xsd";
+				String fileName = outputFilename + ".xsd";
 
 				/*
 				 * Uses OutputStreamWriter instead of FileWriter to set
@@ -698,9 +801,7 @@ public class SqlDdl implements Target, MessageSource {
 							.serialize(visitor.getDocument());
 
 					result.addResult(getTargetName(), outputDirectory, fileName,
-							schema.targetNamespace());
-
-					printed = true;
+							repSchemaTargetNamespace);
 				}
 
 			} else {
@@ -713,8 +814,7 @@ public class SqlDdl implements Target, MessageSource {
 				sb.append(visitor.getDdl());
 
 				// --- Write DDL to file
-				String fileName = schema.name().replace("/", "_").replace(" ",
-						"_") + ".sql";
+				String fileName = outputFilename + ".sql";
 
 				File outputFile = new File(outputDirectory, fileName);
 
@@ -767,8 +867,6 @@ public class SqlDdl implements Target, MessageSource {
 
 				result.addResult(getTargetName(), outputDirectory, fileName,
 						null);
-
-				printed = true;
 			}
 
 		} catch (Exception e) {
@@ -782,46 +880,61 @@ public class SqlDdl implements Target, MessageSource {
 		}
 	}
 
-	private String readDdl(String paramFileDdl) {
-
-		String res = null;
-
-		String fileDdl = options.parameterAsString(this.getClass().getName(),
-				paramFileDdl, null, false, true);
-
-		if (fileDdl != null) {
-			File ddlTop = new File(fileDdl);
-			if (!ddlTop.exists() || ddlTop.isDirectory() || !ddlTop.canRead()) {
-
-				result.addError(this, 25, SqlConstants.PARAM_FILE_DDL_TOP,
-						fileDdl);
-			} else {
-				try {
-					res = FileUtils.readFileToString(ddlTop,
-							StandardCharsets.UTF_8);
-				} catch (IOException e) {
-					result.addError(this, 26, fileDdl, e.getMessage());
-				}
-			}
-		}
-
-		return res;
-	}
-
 	@Override
-	public String getTargetName(){
-		return "SQL DDL";
-	}
+	public void reset() {
+		
+		model = null;
+		
+		descriptorsForCodelistFromConfig = new String[] { "documentation" };
+		descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
-	public static boolean isEncoded(Info i) {
+		codeNameColumnName = "name";
+		codeNameSize = 0;
 
-		if (i.matches(SqlConstants.RULE_TGT_SQL_ALL_NOTENCODED)
-				&& i.encodingRule("sql").equalsIgnoreCase("notencoded")) {
+		initialised = false;
+		diagnosticsOnly = false;
+		atLeastOneSchemaIsEncoded = false;
+		
+		documentationTemplate = null;
+		documentationNoValue = null;
 
-			return false;
-		} else {
-			return true;
-		}
+		outputDirectory = null;
+		outputFilename = null;
+
+		activeIndicatorLFType = null;
+		sourceCLType = null;
+		idColumnName = null;
+		oneToManyReferenceColumnName = null;
+		foreignKeyColumnSuffix = null;
+		foreignKeyColumnSuffixDatatype = null;
+		foreignKeyColumnDataType = null;
+		primaryKeySpec = null;
+		primaryKeySpecCodelist = null;
+		nameActiveIndicatorLFColumn = null;
+		nameSourceCLColumn = null;
+		defaultSize = 0;
+		srid = 0;
+		createReferences = false;
+		createDocumentation = true;
+		createAssociativeTables = false;
+		removeEmptyLinesInDdlOutput = false;
+
+		mapEntryParamInfos = null;
+		databaseStrategy = null;
+		namingScheme = null;
+		cisToProcess = new ArrayList<ClassInfo>();
+		sdoDimArrayExpression = new SdoDimArrayExpression();
+
+		createRepSchema = false;
+		repSchemaMapEntryByType = new HashMap<String, ProcessMapEntry>();
+		repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
+		repSchemaTargetNamespace = null;
+		repSchemaTargetNamespaceSuffix = null;
+		repSchemaTargetVersion = null;
+		repSchemaTargetXmlns = null;
+		repSchemaObjectIdentifierFieldType = null;
+		repSchemaForeignKeyFieldType = null;
+		repSchemaMultiplicity1 = new Multiplicity(1, 1);
 	}
 
 	/**
@@ -832,8 +945,8 @@ public class SqlDdl implements Target, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class SqlDdl";
-		case 1:
-			return "Generating SQL DDL for application schema '$1$'.";
+//		case 1:
+//			return "";
 		case 2:
 			return "Processing class '$1$'.";
 		case 3:
@@ -856,7 +969,9 @@ public class SqlDdl implements Target, MessageSource {
 			return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
 		case 17:
 			return "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
-
+		case 18:
+			return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+			
 		case 22:
 			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 		case 23:
@@ -882,4 +997,5 @@ public class SqlDdl implements Target, MessageSource {
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
+
 }

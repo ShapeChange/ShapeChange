@@ -32,7 +32,6 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -90,7 +89,7 @@ public class SqlDdlConfigurationValidator
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new PostgreSQLStrategy();
 		} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
-			databaseStrategy = new OracleStrategy(result, null);
+			databaseStrategy = new OracleStrategy(result);
 		} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new SQLServerStrategy(result);
 		} else {

@@ -44,6 +44,14 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/basic",
 				"src/test/resources/reference/sql/basic");
 	}
+	
+	@Test
+	public void testExtensionSchema() {
+
+		multiTest("src/test/resources/config/testEA_sql_extensionSchema.xml",
+				new String[] { "sql" }, "testResults/sql/extensionSchema",
+				"src/test/resources/sql/extensionSchema");
+	}
 
 	@Test
 	public void testGeometryParameters() {

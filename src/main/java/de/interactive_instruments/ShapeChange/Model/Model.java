@@ -37,6 +37,7 @@ import java.util.SortedSet;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Type;
 
 public interface Model {
 
@@ -74,6 +75,12 @@ public interface Model {
 	 */
 	public SortedSet<? extends PackageInfo> selectedSchemas();
 
+	/**
+	 * @return a set with all classes that belong to selected schemas; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<? extends ClassInfo> selectedSchemaClasses();
+	
 	/**
 	 * Return all ClassInfo objects contained in the given package and in sub-
 	 * packages, which belong to the same targetNamespace as the given package.
@@ -116,6 +123,13 @@ public interface Model {
 	 *         such a class was not found
 	 */
 	public ClassInfo classByName(String nam);
+
+	/**
+	 * @return the ClassInfo object with the id from the given type info, or
+	 *         name (if lookup by id was not successful), or <code>null</code>
+	 *         if such a class was not found
+	 */
+	public ClassInfo classByIdOrName(Type typeInfo);
 
 	public String characterEncoding();
 

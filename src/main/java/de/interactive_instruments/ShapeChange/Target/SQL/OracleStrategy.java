@@ -67,13 +67,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
 	private ShapeChangeResult result;
-	private SqlDdl sqlddl;
 	private Table userSdoGeomMetadataTable = new Table(
 			"USER_SDO_GEOM_METADATA");
 
-	public OracleStrategy(ShapeChangeResult result, SqlDdl sqlddl) {
+	public OracleStrategy(ShapeChangeResult result) {
 		this.result = result;
-		this.sqlddl = sqlddl;
 	}
 
 	@Override
@@ -145,7 +143,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
 				columnForGeometryTypedProperty.getName()));
 
-		SdoDimArrayExpression dimArray = sqlddl.sdoDimArrayExpression;
+		SdoDimArrayExpression dimArray = SqlDdl.sdoDimArrayExpression;
 
 		items.add(dimArray);
 		items.add(new LongValueExpression(srid));

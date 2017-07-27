@@ -3499,8 +3499,11 @@ public class Options {
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
 		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
+		// FIXME TB13TBD
+		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
 		addRule("rule-xsd-cls-enum-supertypes");
+		addRule("rule-xsd-cls-featureType-gmlsf-byReference");
 		addRule("rule-xsd-cls-mixin-classes-as-group");
 		addRule("rule-xsd-cls-mixin-classes");
 		addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
@@ -3515,6 +3518,8 @@ public class Options {
 		addRule("rule-xsd-cls-union-asGroup");
 		addRule("rule-xsd-cls-union-direct");
 		addRule("rule-xsd-cls-union-direct-optionality");
+		// FIXME TB13TBD
+		addRule("rule-xsd-cls-union-omitUnionsRepresentingTypeSets");
 		addRule("rule-xsd-prop-att-map-entry");
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
@@ -3523,6 +3528,8 @@ public class Options {
 		addRule("rule-xsd-prop-gmlArrayProperty");
 		addRule("rule-xsd-prop-gmlListProperty");
 		addRule("rule-xsd-prop-qualified-associations");
+		// FIXME TB13TBD
+		addRule("rule-xsd-prop-targetElement-gmlsf");
 		addRule("rule-xsd-all-no-documentation");
 		addRule("rule-xsd-cls-local-enumeration");
 		addRule("rule-xsd-cls-local-basictype");
