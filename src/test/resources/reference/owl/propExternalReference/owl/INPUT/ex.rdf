@@ -6,18 +6,18 @@
     xmlns:ex="http://ontology.base.uri/ex#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
   xml:base="http://ontology.base.uri/ex">
-  <owl:Ontology rdf:about="">
+  <owl:Ontology rdf:about="http://ontology.base.uri/ex">
     <owl:imports rdf:resource="http://www.w3.org/2004/02/skos/core"/>
   </owl:Ontology>
-  <owl:Class rdf:ID="TestFeatureType"/>
-  <owl:ObjectProperty rdf:ID="TestFeatureType.propTypeEnumeration">
+  <owl:Class rdf:about="http://ontology.base.uri/ex#TestFeatureType"/>
+  <owl:ObjectProperty rdf:about="http://ontology.base.uri/ex#TestFeatureType.propTypeEnumeration">
     <rdfs:isDefinedBy rdf:resource="http://example.org/shapechange/enumeration"/>
     <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-    <rdfs:domain rdf:resource="#TestFeatureType"/>
+    <rdfs:domain rdf:resource="http://ontology.base.uri/ex#TestFeatureType"/>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:ID="TestFeatureType.propTypeCodelist">
+  <owl:ObjectProperty rdf:about="http://ontology.base.uri/ex#TestFeatureType.propTypeCodelist">
     <rdfs:isDefinedBy rdf:resource="http://example.org/shapechange/codelist"/>
     <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-    <rdfs:domain rdf:resource="#TestFeatureType"/>
+    <rdfs:domain rdf:resource="http://ontology.base.uri/ex#TestFeatureType"/>
   </owl:ObjectProperty>
 </rdf:RDF>

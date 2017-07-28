@@ -1098,6 +1098,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 				RDFWriter writer = ontmodel.getWriter("RDF/XML");
 				writer.setProperty("xmlbase", om.getName());
+				writer.setProperty("blockRules", "idAttr,daml:collection");
+				writer.setProperty("relativeURIs", "");
 				writer.write(ontmodel, bout, null);
 				
 			} else {
