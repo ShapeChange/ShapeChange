@@ -1882,7 +1882,47 @@ public class XsdDocument implements MessageSource {
 				if (mc != null)
 					mc.addDetail(null, 400, "Class", cibase.fullName());
 			}
+
+		} else if (ci != null && ci.category() == Options.CODELIST
+				&& ci.matches("rule-xsd-cls-codelist-gmlsf")) {
+
+			// FIXME TB13TBD
+
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+			addStandardAnnotation(e1, pi);
+			addAttribute(e1, "name", pi.name());
+
+			Element e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+					"complexType");
+			e1.appendChild(e2);
+
+			Element simpleContent = document
+					.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
+			e2.appendChild(simpleContent);
+
+			Element restriction = document
+					.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			addAttribute(restriction, "base", "gml:CodeType");
+			simpleContent.appendChild(restriction);
+
+			String codeListUri = ci.taggedValue("codeList");
+			if (codeListUri == null) {
+				codeListUri = ci.taggedValue("vocabulary");
+			}
+
+			if (codeListUri != null && codeListUri.trim().length() > 0) {
+				Element attribute = document
+						.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
+				addAttribute(attribute, "name", "codeSpace");
+				addAttribute(attribute, "type", "anyURI");
+				addAttribute(attribute, "fixed", codeListUri.trim());
+				restriction.appendChild(attribute);
+			}
+			addMinMaxOccurs(e1, m);
+			addImport("gml", options.fullNamespace("gml"));
+
 		} else {
+
 			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 			addStandardAnnotation(e1, pi);
 			addAttribute(e1, "name", pi.name());
@@ -1913,8 +1953,9 @@ public class XsdDocument implements MessageSource {
 
 			if (!multiplicityAlreadySet) {
 				if (ci != null && ci.isKindOf("historisches_Objekt")
-						&& ci.matches("rule-xsd-cls-okstra-lifecycle"))
+						&& ci.matches("rule-xsd-cls-okstra-lifecycle")) {
 					m.maxOccurs = Integer.MAX_VALUE;
+				}
 				addMinMaxOccurs(e1, m);
 			}
 
@@ -1929,6 +1970,7 @@ public class XsdDocument implements MessageSource {
 					&& (pi.taggedValue("length") != null
 							|| (pi.taggedValue("size") != null
 									&& pi.taggedValue("pattern") != null))) {
+
 				Element simpleType = document
 						.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
 				e1.appendChild(simpleType);
@@ -2504,7 +2546,7 @@ public class XsdDocument implements MessageSource {
 						ci.taggedValue("representsTypeSet"))) {
 			addAttribute(e, "type", "gml:ReferenceType");
 			addImport("gml", options.fullNamespace("gml"));
-			
+
 		} else if (ci.category() == Options.OKSTRAKEY
 				&& ci.matches("rule-xsd-cls-okstra-schluesseltabelle")) {
 			addAttribute(e, "type", propertyTypeName(ci, true));
@@ -2704,41 +2746,9 @@ public class XsdDocument implements MessageSource {
 			} else if (ci.category() == Options.CODELIST && ((ci.matches(
 					"rule-xsd-cls-codelist-asDictionary") && ci.asDictionary())
 					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-							&& ci.asDictionaryGml33())
-					|| ci.matches("rule-xsd-cls-codelist-gmlsf"))) {
+							&& ci.asDictionaryGml33()))) {
 
-				// FIXME TB13TBD
-				if (ci.matches("rule-xsd-cls-codelist-gmlsf")) {
-
-					e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
-							"complexType");
-					e.appendChild(e1);
-
-					Element simpleContent = document.createElementNS(
-							Options.W3C_XML_SCHEMA, "simpleContent");
-					e1.appendChild(simpleContent);
-
-					Element restriction = document.createElementNS(
-							Options.W3C_XML_SCHEMA, "restriction");
-					addAttribute(restriction, "base", "gml:CodeType");
-					simpleContent.appendChild(restriction);
-
-					String codeListUri = ci.taggedValue("codeList");
-					if (codeListUri == null) {
-						codeListUri = ci.taggedValue("vocabulary");
-					}
-
-					if (codeListUri != null
-							&& codeListUri.trim().length() > 0) {
-						Element attribute = document.createElementNS(
-								Options.W3C_XML_SCHEMA, "attribute");
-						addAttribute(attribute, "name", "codeSpace");
-						addAttribute(attribute, "type", "anyURI");
-						addAttribute(attribute, "fixed", codeListUri.trim());
-						restriction.appendChild(attribute);
-					}
-
-				} else if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 						&& ci.asDictionaryGml33()) {
 					addAttribute(e, "type", "gml:ReferenceType");
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
