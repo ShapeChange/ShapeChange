@@ -2482,7 +2482,8 @@ public class GenericModel extends ModelImpl {
 			if (!genPi.isNavigable()) {
 
 				this.genPropertiesById.remove(genPi.id());
-				((GenericClassInfo)genPi.inClass()).removePropertyById(genPi.id());
+				((GenericClassInfo) genPi.inClass())
+						.removePropertyById(genPi.id());
 
 			} else {
 
@@ -2820,6 +2821,8 @@ public class GenericModel extends ModelImpl {
 
 	public void validateConstraints() {
 
+		boolean invalidConstraintsEncountered = false;
+
 		Sbvr2FolParser sbvrParser = new Sbvr2FolParser(this, true);
 
 		/*
@@ -2857,21 +2860,35 @@ public class GenericModel extends ModelImpl {
 
 							OclConstraint oclCon = (OclConstraint) con;
 
-							newConstraints.add(parse(oclCon, genCi));
+							Constraint parsedConstraint = parse(oclCon, genCi);
+
+							if (parsedConstraint instanceof TextConstraint) {
+								invalidConstraintsEncountered = true;
+							}
+
+							newConstraints.add(parsedConstraint);
 
 						} else if (con instanceof FolConstraint) {
 
 							FolConstraint folCon = (FolConstraint) con;
 
-							newConstraints
-									.add(parse(folCon, sbvrParser, genCi));
+							Constraint parsedConstraint = parse(folCon,
+									sbvrParser, genCi);
+
+							if (parsedConstraint instanceof TextConstraint) {
+								invalidConstraintsEncountered = true;
+							}
+
+							newConstraints.add(parsedConstraint);
 
 						} else if (con instanceof TextConstraint) {
+
 							/*
 							 * this can be ignored, because TextConstraint is
 							 * not validated
 							 */
 							newConstraints.add(con);
+
 						} else {
 
 							/*
@@ -2916,14 +2933,23 @@ public class GenericModel extends ModelImpl {
 
 									OclConstraint oclCon = (OclConstraint) con;
 
-									newConstraints.add(parse(oclCon, genPi));
+									Constraint parsedConstraint = parse(oclCon,
+											genPi);
+
+									if (parsedConstraint instanceof TextConstraint) {
+										invalidConstraintsEncountered = true;
+									}
+
+									newConstraints.add(parsedConstraint);
 
 								} else if (con instanceof TextConstraint) {
+
 									/*
 									 * this can be ignored, because
 									 * TextConstraint is not validated
 									 */
 									newConstraints.add(con);
+
 								} else {
 
 									/*
@@ -2950,6 +2976,10 @@ public class GenericModel extends ModelImpl {
 				}
 			}
 		}
+		
+		if(invalidConstraintsEncountered) {
+			result.addWarning(null,30329);
+		}
 	}
 
 	protected Constraint parse(FolConstraint con, Sbvr2FolParser parser,
@@ -2972,7 +3002,7 @@ public class GenericModel extends ModelImpl {
 				 * use a text constraint as fallback.
 				 */
 
-				result.addWarning(null, 20110, con.name(),
+				result.addInfo(null, 20110, con.name(),
 						genCi.fullNameInSchema());
 
 				return new GenericTextConstraint(genCi, con);
@@ -3018,7 +3048,7 @@ public class GenericModel extends ModelImpl {
 			 * logged; use a text constraint as fallback.
 			 */
 
-			result.addWarning(null, 20110, con.name(),
+			result.addInfo(null, 20110, con.name(),
 					genCi.fullNameInSchema());
 
 			GenericTextConstraint fallback = new GenericTextConstraint(genCi,
@@ -3044,7 +3074,7 @@ public class GenericModel extends ModelImpl {
 			 * logged; use a text constraint as fallback.
 			 */
 
-			result.addWarning(null, 20110, con.name(),
+			result.addInfo(null, 20110, con.name(),
 					genPi.fullNameInSchema());
 
 			GenericTextConstraint fallback = new GenericTextConstraint(genPi,

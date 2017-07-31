@@ -3519,8 +3519,10 @@ public class Options {
 		addRule("rule-xsd-cls-union-direct");
 		addRule("rule-xsd-cls-union-direct-optionality");
 		// FIXME TB13TBD
-		addRule("rule-xsd-cls-union-omitUnionsRepresentingTypeSets");
+		addRule("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets");
 		addRule("rule-xsd-prop-att-map-entry");
+		// FIXME TB13TBD
+		addRule("rule-xsd-prop-constrainingFacets");
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
 		addRule("rule-xsd-prop-nillable");

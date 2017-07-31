@@ -1771,7 +1771,18 @@ public class XsdDocument implements MessageSource {
 		}
 	};
 
-	/** Process a single property. */
+	/**
+	 * Process a single property.
+	 * 
+	 * @param cibase
+	 *            a class
+	 * @param pi
+	 *            property of cibase
+	 * @param m
+	 *            multiplicity of the property, can be <code>null</code>
+	 * @param schDoc
+	 * @return
+	 */
 	protected Element addProperty(ClassInfo cibase, PropertyInfo pi,
 			Multiplicity m, SchematronSchema schDoc) {
 
@@ -2000,6 +2011,126 @@ public class XsdDocument implements MessageSource {
 				if (concreteRestriction != null)
 					restriction.appendChild(concreteRestriction);
 
+			}
+
+			if (pi.matches("rule-xsd-prop-constrainingFacets")) {
+
+				String length = pi.taggedValue("length");
+				if (length == null) {
+					length = pi.taggedValue("maxLength");
+				}
+				if (length == null) {
+					length = pi.taggedValue("size");
+				}
+				String pattern = pi.taggedValue("pattern");
+				String min = pi.taggedValue("rangeMinimum");
+				String max = pi.taggedValue("rangeMaximum");
+				String typecontent = "simple/simple";
+
+				if (length != null || pattern != null || min != null
+						|| max != null) {
+
+					/*
+					 * baseType is the simple type that is the foundation of the
+					 * restriction.
+					 */
+					String baseType = null;
+					String base = null;
+
+					MapEntry me = options.baseMapEntry(pi.typeInfo().name,
+							pi.encodingRule("xsd"));
+					if (me != null) {
+						base = me.p1;
+						typecontent = me.p2;
+					} else if (ci != null) {
+						base = ci.qname() + "Type";
+					}
+
+					if (baseType == null) {
+						baseType = base;
+					}
+
+					if (base != null) {
+
+						e1.removeAttribute("type");
+
+						Element e2; // complexType or simpleType
+						Element e3; // restriction or extension
+						Element e4; // complexContent or simpleContent
+						if (typecontent.equals("complex/simple")) {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexType");
+							// addStandardAnnotation(e2, ci);
+							e1.appendChild(e2);
+							e4 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "simpleContent");
+							e2.appendChild(e4);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "restriction");
+							e4.appendChild(e3);
+						} else if (typecontent.equals("simple/simple")) {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "simpleType");
+							e1.appendChild(e2);
+							// addStandardAnnotation(e2, ci);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "restriction");
+							e2.appendChild(e3);
+						} else {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexType");
+							e1.appendChild(e2);
+							// addStandardAnnotation(e2, ci);
+							e4 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexContent");
+							e2.appendChild(e4);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "extension");
+							e4.appendChild(e3);
+						}
+						addAttribute(e3, "base", base);
+						if (facetSupported("totalDigits", baseType)
+								&& length != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "totalDigits");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", length);
+						}
+						if (facetSupported("maxLength", baseType)
+								&& length != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "maxLength");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", length);
+						}
+						if (facetSupported("pattern", baseType)
+								&& pattern != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "pattern");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", pattern);
+						}
+						if (facetSupported("minInclusive", baseType)
+								&& min != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "minInclusive");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", min);
+						}
+						if (facetSupported("maxInclusive", baseType)
+								&& max != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "maxInclusive");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", max);
+						}
+					} else {
+						MessageContext mc = result.addError(null, 180,
+								ci.name(), pi.name());
+						if (mc != null)
+							mc.addDetail(null, 400, "Property", pi.fullName());
+					}
+				}
 			}
 		}
 
@@ -2541,9 +2672,9 @@ public class XsdDocument implements MessageSource {
 		// FIXME TB13TBD
 		if (ci.category() == Options.UNION
 				&& ci.matches(
-						"rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 				&& "true".equalsIgnoreCase(
-						ci.taggedValue("representsTypeSet"))) {
+						ci.taggedValue("representsFeatureTypeSet"))) {
 			addAttribute(e, "type", "gml:ReferenceType");
 			addImport("gml", options.fullNamespace("gml"));
 

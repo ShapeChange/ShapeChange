@@ -782,7 +782,9 @@ public class ShapeChangeResult {
 			return "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
 		case 179:
 			return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
-
+		case 180:
+			return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+			
 		case 200:
 			return "??Tagged value '$1$' missing in class '$2$'.";
 		case 201:
@@ -1202,11 +1204,12 @@ public class ShapeChangeResult {
 			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
 		case 30326:
 			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
-
 		case 30327:
 			return "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
 		case 30328:
 			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
+		case 30329:
+			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the log. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
 
 		case 30500:
 			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";

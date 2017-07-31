@@ -1707,7 +1707,7 @@ public class Flattener implements Transformer {
 					.addClass(copiedClassUnion);
 
 			// FIXME TB13TBD better TV name, and document
-			copiedClassUnion.setTaggedValue("representsTypeSet", "true", false);
+			copiedClassUnion.setTaggedValue("representsFeatureTypeSet", "true", false);
 
 			// add property for each geometry specific copy of the class
 
@@ -3586,8 +3586,8 @@ public class Flattener implements Transformer {
 		}
 
 		// FIXME TB13TBD rule name, document
-		boolean ignoreUnionsRepresentingTypeSets = trfConfig.hasRule(
-				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingTypeSets");
+		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
+				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets");
 
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()
 				.toArray(new GenericClassInfo[genModel.selectedSchemaClasses()
@@ -3595,8 +3595,8 @@ public class Flattener implements Transformer {
 
 			if (genCi.category() == Options.UNION) {
 
-				if (!ignoreUnionsRepresentingTypeSets || !Boolean
-						.parseBoolean(genCi.taggedValue("representsTypeSet"))) {
+				if (!ignoreUnionsRepresentingFeatureTypeSets || !Boolean
+						.parseBoolean(genCi.taggedValue("representsFeatureTypeSet"))) {
 					genModel.remove(genCi);
 				}
 			}
@@ -3653,8 +3653,8 @@ public class Flattener implements Transformer {
 		TreeMap<String, GenericClassInfo> typesToProcessById = new TreeMap<String, GenericClassInfo>();
 
 		// FIXME TB13TBD review and document
-		boolean ignoreUnionsRepresentingTypeSets = trfConfig.hasRule(
-				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingTypeSets");
+		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
+				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets");
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -3774,9 +3774,9 @@ public class Flattener implements Transformer {
 						boolean processType = false;
 
 						if (typeCi.category() == Options.UNION
-								&& !(ignoreUnionsRepresentingTypeSets && Boolean
+								&& !(ignoreUnionsRepresentingFeatureTypeSets && Boolean
 										.parseBoolean(typeCi.taggedValue(
-												"representsTypeSet")))) {
+												"representsFeatureTypeSet")))) {
 
 							processType = true;
 
@@ -4712,7 +4712,7 @@ public class Flattener implements Transformer {
 
 			// FIXME TB13TBD better TV name, and document
 			if (genSuperclass.category() == Options.FEATURE) {
-				genSuperclassUnion.setTaggedValue("representsTypeSet", "true",
+				genSuperclassUnion.setTaggedValue("representsFeatureTypeSet", "true",
 						false);
 			}
 

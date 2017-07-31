@@ -184,9 +184,9 @@ public class XmlSchema implements Target {
 			if (ci.isUnionDirect())
 				break;
 			// FIXME TB13TBD
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
-							ci.taggedValue("representsTypeSet")))
+							ci.taggedValue("representsFeatureTypeSet")))
 				break;
 		case Options.OKSTRAFID:
 		case Options.FEATURE:
@@ -221,9 +221,9 @@ public class XmlSchema implements Target {
 			break;
 		case Options.UNION:
 			// FIXME TB13TBD
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
-							ci.taggedValue("representsTypeSet")))
+							ci.taggedValue("representsFeatureTypeSet")))
 				break;
 			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup())
 					|| (ci.matches("rule-xsd-cls-union-asCharacterString")
@@ -280,9 +280,9 @@ public class XmlSchema implements Target {
 			if (ci.isUnionDirect())
 				break;
 			// FIXME TB13TBD
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
-							ci.taggedValue("representsTypeSet")))
+							ci.taggedValue("representsFeatureTypeSet")))
 				break;
 		case Options.FEATURE:
 		case Options.OBJECT:
@@ -310,9 +310,9 @@ public class XmlSchema implements Target {
 		switch (cat) {
 		case Options.UNION:
 			// FIXME TB13TBD
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingTypeSets")
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
-							ci.taggedValue("representsTypeSet")))
+							ci.taggedValue("representsFeatureTypeSet")))
 				break;
 			if (ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup()) {
 				Element propertyHook = xsd.pGroup(ci, cibase);
