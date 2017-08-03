@@ -134,6 +134,7 @@ public class EADocument extends ModelImpl implements Model {
 		
 		/* Connect to EA repository */
 		repository = new Repository();
+		r.addInfo(null, 43, connectionString);
 
 		if (!repository.OpenFile2(connectionString,
 				username, password)) {
@@ -142,8 +143,9 @@ public class EADocument extends ModelImpl implements Model {
 					repositoryFileNameOrConnectionString, username, password);
 			throw new ShapeChangeAbortException();
 		}
+		r.addInfo(null, 44, connectionString);
 
-		executeCommonInitializationProcedure();
+		executeCommonInitializationProcedure(r);
 	}
 
 	/** Connect to EA Repository without security information */
@@ -164,14 +166,16 @@ public class EADocument extends ModelImpl implements Model {
 
 		/** Connect to EA Repository */
 		repository = new Repository();
+		r.addInfo(null, 43, connectionString);
 
 		if (!repository.OpenFile(connectionString)) {
 			String errormsg = repository.GetLastError();
 			r.addFatalError(null, 30, errormsg, connectionString);
 			throw new ShapeChangeAbortException();
 		}
+		r.addInfo(null, 44, connectionString);
 
-		executeCommonInitializationProcedure();
+		executeCommonInitializationProcedure(r);
 	}
 
 	/**
@@ -222,9 +226,9 @@ public class EADocument extends ModelImpl implements Model {
 		}
 	}
 
-	public void executeCommonInitializationProcedure()
+	private void executeCommonInitializationProcedure(ShapeChangeResult r)
 			throws ShapeChangeAbortException {
-
+		r.addInfo(null, 45, repository.GetConnectionString());
 		// determine if specific packages should not be loaded
 		this.excludedPackageNames = options.getExcludedPackages();
 
@@ -416,7 +420,7 @@ public class EADocument extends ModelImpl implements Model {
 						escapeFileName(tmpDir.getName()), pi);
 			}
 		}
-
+		r.addInfo(null, 46, repository.GetConnectionString());
 	} // EA Document Ctor
 
 	/**

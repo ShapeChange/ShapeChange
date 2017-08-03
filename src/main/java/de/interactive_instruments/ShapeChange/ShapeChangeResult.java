@@ -594,7 +594,7 @@ public class ShapeChangeResult {
 		case 18:
 			return "Unsupported Java version: '$1$'. Java 1.6 or higher required.";
 		case 19:
-			return "Model object could not be instaniated: '$1$'.";
+			return "Model object could not be instantiated: '$1$'.";
 		case 20:
 			return "Model object could not be accessed: '$1$'.";
 		case 21:
@@ -639,6 +639,14 @@ public class ShapeChangeResult {
 			return "Microsoft Access Database file named '$1$' not found";
 		case 42:
 			return "Error reading from Microsoft Access Database '$2$'.  Error message is: '$1$'";
+		case 43:
+			return "Connecting to $1$";
+		case 44:
+			return "Connected to $1$";
+		case 45:
+			return "Starting reading $1$";
+		case 46:
+			return "Finished reading $1$";
 
 		case 100:
 			return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";
