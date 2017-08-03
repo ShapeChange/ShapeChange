@@ -1164,6 +1164,14 @@ public class Options {
 	protected String extendsEncRule(String rule1) {
 		return fExtendsEncRule.get(rule1.toLowerCase());
 	}
+	
+	public boolean encRuleExists(String encRule) {
+		if ("*".equals(encRule)) {
+			return true;
+		} else {
+			return fExtendsEncRule.containsKey(encRule);
+		}
+	}
 
 	protected void addPackage(String k1, String s1, String s2, String s3,
 			String s4) {

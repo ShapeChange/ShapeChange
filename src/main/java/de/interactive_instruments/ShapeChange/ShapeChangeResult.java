@@ -784,6 +784,8 @@ public class ShapeChangeResult {
 			return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
 		case 180:
 			return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+		case 181:
+			return "??Encoding rule $1$ is specified as default encoding rule for platform $2$ but is not configured.";
 			
 		case 200:
 			return "??Tagged value '$1$' missing in class '$2$'.";
