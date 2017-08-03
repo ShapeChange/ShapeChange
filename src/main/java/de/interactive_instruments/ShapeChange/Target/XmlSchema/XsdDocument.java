@@ -1932,6 +1932,16 @@ public class XsdDocument implements MessageSource {
 			addMinMaxOccurs(e1, m);
 			addImport("gml", options.fullNamespace("gml"));
 
+		} else if (pi.categoryOfValue() == Options.FEATURE
+				&& pi.matches("rule-xsd-prop-featureType-gmlsf-byReference")) {
+			// FIXME TB13TBD
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+			addStandardAnnotation(e1, pi);
+			addAttribute(e1, "name", pi.name());
+			addAttribute(e1, "type", "gml:ReferenceType");
+			addMinMaxOccurs(e1, m);
+			addImport("gml", options.fullNamespace("gml"));
+
 		} else {
 
 			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
@@ -2032,25 +2042,56 @@ public class XsdDocument implements MessageSource {
 
 					/*
 					 * baseType is the simple type that is the foundation of the
-					 * restriction.
+					 * restriction. It is defined by a map entry for the value
+					 * type or a map entry in the supertypes (direct and
+					 * indirect) of the value type that maps to a simple type
+					 * with simple content.
 					 */
 					String baseType = null;
 					String base = null;
 
+					/*
+					 * Identify base and type content from the value type; this
+					 * is important for correct declaration
+					 */
 					MapEntry me = options.baseMapEntry(pi.typeInfo().name,
 							pi.encodingRule("xsd"));
 					if (me != null) {
 						base = me.p1;
+						baseType = me.p1;
 						typecontent = me.p2;
-					} else if (ci != null) {
+					}
+					if (base == null && ci != null) {
 						base = ci.qname() + "Type";
 					}
 
-					if (baseType == null) {
-						baseType = base;
+					if (ci != null) {
+
+						/*
+						 * Identify base type of value type that has
+						 * xmlTypeType="simple" (otherwise ="complex") and
+						 * xmlTypeContent="simple"
+						 */
+						MapEntry me2 = findBaseMapEntryInSupertypes(ci,
+								pi.encodingRule("xsd"), "simple", "simple");
+						if (me2 == null) {
+							me2 = findBaseMapEntryInSupertypes(ci,
+									pi.encodingRule("xsd"), "complex",
+									"simple");
+						}
+						if (me2 != null) {
+							baseType = me2.p1;
+						}
 					}
 
-					if (base != null) {
+					/*
+					 * We do NOT use the base as fallback if baseType is null,
+					 * since this would lead to always adding facets (since the
+					 * check if a facet is supported by the baseType returns
+					 * true if a qname is given as baseType).
+					 */
+
+					if (base != null && baseType != null) {
 
 						e1.removeAttribute("type");
 
@@ -2574,7 +2615,6 @@ public class XsdDocument implements MessageSource {
 			} else if (me.rule.equals("metadataPropertyType")) {
 				multiplicityAlreadySet = addAnonymousPropertyType(e, propi,
 						me.p1, null, true);
-
 			}
 			return multiplicityAlreadySet;
 		}
@@ -3188,6 +3228,14 @@ public class XsdDocument implements MessageSource {
 		// First address cases where no property type is necessary or only a
 		// very simple one
 
+		// FIXME TB13TBD
+		if ((propi.isMetadata() || valueIsMetadata)
+				&& propi.matches("rule-xsd-prop-metadata-gmlsf-byReference")) {
+			addAttribute(e, "type", "gml:ReferenceType");
+			addImport("gml", options.fullNamespace("gml"));
+			return false;
+		}
+
 		if (propi.matches("rule-xsd-prop-inlineOrByReference")
 				&& propi.inlineOrByReference().equals("byreference")) {
 
@@ -3209,14 +3257,6 @@ public class XsdDocument implements MessageSource {
 			if (cibase.matches("rule-xsd-cls-standard-swe-property-types")) {
 				addAttribute(e, "type", "swe:ReferenceType");
 				addImport("swe", options.fullNamespace("swe"));
-				return false;
-			}
-
-			// FIXME TB13TBD
-			if (cibase.matches("rule-xsd-cls-featureType-gmlsf-byReference")
-					&& cibase.category() == Options.FEATURE) {
-				addAttribute(e, "type", "gml:ReferenceType");
-				addImport("gml", options.fullNamespace("gml"));
 				return false;
 			}
 

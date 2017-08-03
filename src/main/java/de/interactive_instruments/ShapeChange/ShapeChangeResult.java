@@ -71,6 +71,7 @@ public class ShapeChangeResult {
 	protected Properties outputFormat = OutputPropertiesFactory
 			.getDefaultMethodProperties("xml");
 	protected Options options = null;
+	protected boolean fatalErrorReceived = false;
 
 	protected HashSet<String> duplicateMessageCheck;
 
@@ -202,6 +203,10 @@ public class ShapeChangeResult {
 	public void init() {
 		duplicateMessageCheck = new HashSet<String>(50);
 	}
+	
+    public boolean isFatalErrorReceived() {
+        return fatalErrorReceived;
+    }
 
 	private String safe(String s) {
 		if (s == null) {
@@ -424,6 +429,9 @@ public class ShapeChangeResult {
 	};
 
 	public MessageContext addFatalError(String m) {
+		
+		fatalErrorReceived = true;
+		
 		if (document == null) {
 			return null;
 		}
@@ -586,7 +594,7 @@ public class ShapeChangeResult {
 		case 18:
 			return "Unsupported Java version: '$1$'. Java 1.6 or higher required.";
 		case 19:
-			return "Model object could not be instaniated: '$1$'.";
+			return "Model object could not be instantiated: '$1$'.";
 		case 20:
 			return "Model object could not be accessed: '$1$'.";
 		case 21:
@@ -631,6 +639,14 @@ public class ShapeChangeResult {
 			return "Microsoft Access Database file named '$1$' not found";
 		case 42:
 			return "Error reading from Microsoft Access Database '$2$'.  Error message is: '$1$'";
+		case 43:
+			return "Connecting to $1$";
+		case 44:
+			return "Connected to $1$";
+		case 45:
+			return "Starting reading $1$";
+		case 46:
+			return "Finished reading $1$";
 
 		case 100:
 			return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";
@@ -1211,7 +1227,7 @@ public class ShapeChangeResult {
 		case 30328:
 			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
 		case 30329:
-			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the log. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
+			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
 
 		case 30500:
 			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";

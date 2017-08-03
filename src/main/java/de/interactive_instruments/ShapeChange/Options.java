@@ -3510,8 +3510,7 @@ public class Options {
 		// FIXME TB13TBD
 		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
-		addRule("rule-xsd-cls-enum-supertypes");
-		addRule("rule-xsd-cls-featureType-gmlsf-byReference");
+		addRule("rule-xsd-cls-enum-supertypes");		
 		addRule("rule-xsd-cls-mixin-classes-as-group");
 		addRule("rule-xsd-cls-mixin-classes");
 		addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
@@ -3533,6 +3532,10 @@ public class Options {
 		addRule("rule-xsd-prop-constrainingFacets");
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
+		// FIXME TB13TBD
+		addRule("rule-xsd-prop-featureType-gmlsf-byReference");		
+		// FIXME TB13TBD
+		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 		addRule("rule-xsd-prop-nillable");
 		addRule("rule-xsd-prop-nilReasonAllowed");
 		addRule("rule-xsd-prop-gmlArrayProperty");
