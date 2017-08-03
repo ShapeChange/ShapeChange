@@ -823,6 +823,9 @@ public abstract class InfoImpl implements Info {
 		}
 		if (s != null)
 			s = s.toLowerCase();
+		if (!options().encRuleExists(s)) {
+			result().addError(null, 181, s, platform);
+		}
 		return s;
 	}
 
