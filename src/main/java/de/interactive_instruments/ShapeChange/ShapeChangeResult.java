@@ -203,10 +203,10 @@ public class ShapeChangeResult {
 	public void init() {
 		duplicateMessageCheck = new HashSet<String>(50);
 	}
-	
-    public boolean isFatalErrorReceived() {
-        return fatalErrorReceived;
-    }
+
+	public boolean isFatalErrorReceived() {
+		return fatalErrorReceived;
+	}
 
 	private String safe(String s) {
 		if (s == null) {
@@ -429,9 +429,9 @@ public class ShapeChangeResult {
 	};
 
 	public MessageContext addFatalError(String m) {
-		
+
 		fatalErrorReceived = true;
-		
+
 		if (document == null) {
 			return null;
 		}
@@ -532,6 +532,15 @@ public class ShapeChangeResult {
 							.newInstance();
 					Transformer trans = transFact.newTransformer(xsltSource);
 					trans.transform(xmlSource, res);
+
+					/*
+					 * Apparently, the following is necessary to close streams
+					 * appropriately when running ShapeChange in a separate
+					 * process that was spawned by another process (in the given
+					 * case, a server application):
+					 */
+					xsltSource.getInputStream().close();
+					outputHTML.close();
 				}
 			}
 
@@ -802,7 +811,7 @@ public class ShapeChangeResult {
 			return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
 		case 181:
 			return "??Encoding rule $1$ is specified as default encoding rule for platform $2$ but is not configured.";
-			
+
 		case 200:
 			return "??Tagged value '$1$' missing in class '$2$'.";
 		case 201:
