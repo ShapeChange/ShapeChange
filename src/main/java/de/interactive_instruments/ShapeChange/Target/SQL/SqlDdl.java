@@ -126,8 +126,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	private static String outputDirectory = null;
 	private static String outputFilename = null;
 
-	protected static String activeIndicatorLFType;
-	protected static String sourceCLType;
+	protected static String codeStatusCLType;
 	protected static String idColumnName;
 	protected static String oneToManyReferenceColumnName;
 	protected static String foreignKeyColumnSuffix;
@@ -135,8 +134,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String foreignKeyColumnDataType;
 	protected static String primaryKeySpec;
 	protected static String primaryKeySpecCodelist;
-	protected static String nameActiveIndicatorLFColumn;
-	protected static String nameSourceCLColumn;
+	protected static String nameCodeStatusCLColumn;
+	protected static String nameCodeStatusNotesColumn;
 	protected static int defaultSize;
 	protected static int srid;
 	protected static boolean createReferences = false;
@@ -364,14 +363,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			namingScheme = new DefaultNamingScheme(result, normalizer,
 					fkNaming, ckNaming, uniqueConstraintNaming);
 
-			activeIndicatorLFType = options.parameterAsString(
-					this.getClass().getName(),
-					SqlConstants.PARAM_ACTIVEINDICATORLF_TYPE,
-					SqlConstants.DEFAULT_ACTIVEINDICATORLF_TYPE, false, true);
-
-			sourceCLType = options.parameterAsString(this.getClass().getName(),
-					SqlConstants.PARAM_SOURCECL_TYPE,
-					SqlConstants.DEFAULT_SOURCECL_TYPE, false, true);
+			codeStatusCLType = options.parameterAsString(this.getClass().getName(),
+					SqlConstants.PARAM_CODESTATUSCL_TYPE,
+					SqlConstants.DEFAULT_CODESTATUSCL_TYPE, false, true);
 
 			idColumnName = options.parameterAsString(this.getClass().getName(),
 					SqlConstants.PARAM_ID_COLUMN_NAME,
@@ -410,16 +404,15 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST,
 					SqlConstants.DEFAULT_PRIMARYKEY_SPEC_CODELIST, true, true);
 
-			nameActiveIndicatorLFColumn = options.parameterAsString(
+			nameCodeStatusCLColumn = options.parameterAsString(
 					this.getClass().getName(),
-					SqlConstants.PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN,
-					SqlConstants.DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN, false,
-					true);
-
-			nameSourceCLColumn = options.parameterAsString(
+					SqlConstants.PARAM_NAME_CODESTATUS_CL_COLUMN,
+					SqlConstants.DEFAULT_NAME_CODESTATUS_CL_COLUMN, false, true);
+			
+			nameCodeStatusNotesColumn = options.parameterAsString(
 					this.getClass().getName(),
-					SqlConstants.PARAM_NAME_SOURCE_CL_COLUMN,
-					SqlConstants.DEFAULT_NAME_SOURCE_CL_COLUMN, false, true);
+					SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
+					SqlConstants.DEFAULT_NAME_CODESTATUSNOTES_COLUMN, false, true);
 
 			String sdoDimElement_value = options.parameterAsString(
 					this.getClass().getName(),
@@ -901,8 +894,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		outputDirectory = null;
 		outputFilename = null;
 
-		activeIndicatorLFType = null;
-		sourceCLType = null;
+		codeStatusCLType = null;
 		idColumnName = null;
 		oneToManyReferenceColumnName = null;
 		foreignKeyColumnSuffix = null;
@@ -910,8 +902,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		foreignKeyColumnDataType = null;
 		primaryKeySpec = null;
 		primaryKeySpecCodelist = null;
-		nameActiveIndicatorLFColumn = null;
-		nameSourceCLColumn = null;
+		nameCodeStatusCLColumn = null;
+		nameCodeStatusNotesColumn = null;
 		defaultSize = 0;
 		srid = 0;
 		createReferences = false;

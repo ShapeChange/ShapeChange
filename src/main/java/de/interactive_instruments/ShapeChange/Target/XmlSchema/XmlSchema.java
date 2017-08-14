@@ -397,9 +397,8 @@ public class XmlSchema implements Target {
 		} else {
 			xsd = xsdcurr;
 			if (xsd == null) {
-				result.addFatalError(null, 15, pi.name());
-				// throw new ShapeChangeAbortException();
 				xsdDocument = pi.name() + ".xsd";
+				result.addWarning(null, 15, pi.name(),xsdDocument);				
 				try {
 					result.addDebug(null, 10017, xsdDocument, pi.name());
 					xsd = new XsdDocument(pi, model, options, result,

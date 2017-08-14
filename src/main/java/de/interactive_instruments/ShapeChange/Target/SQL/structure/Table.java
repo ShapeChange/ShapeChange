@@ -53,8 +53,7 @@ public class Table {
 	private ClassInfo representedClass = null;
 	private AssociationInfo representedAssociation = null;
 	private PropertyInfo representedProperty = null;
-	private boolean representsActiveIndicatorLFType = false;
-	private boolean representsSourceCLType = false;
+	private boolean representsCodeStatusCLType = false;
 
 	public Table(String tableName) {
 		this.name = tableName;
@@ -218,34 +217,13 @@ public class Table {
 
 		this.columns.add(column);
 	}
-
-	/**
-	 * @return the representsActiveIndicatorLFType
-	 */
-	public boolean representsActiveIndicatorLFType() {
-		return representsActiveIndicatorLFType;
-	}
-
-	/**
-	 * @param representsActiveIndicatorLFType the representsActiveIndicatorLFType to set
-	 */
-	public void setRepresentsActiveIndicatorLFType(
-			boolean representsActiveIndicatorLFType) {
-		this.representsActiveIndicatorLFType = representsActiveIndicatorLFType;
-	}
 	
-	/**
-	 * @return the representsSourceCLType
-	 */
-	public boolean representsSourceCLType() {
-		return representsSourceCLType;
+	public boolean representsCodeStatusCLType() {
+		return representsCodeStatusCLType;
 	}
 
-	/**
-	 * @param representsSourceCLType the representsSourceCLType to set
-	 */
-	public void setRepresentsSourceCLType(
-			boolean representsSourceCLType) {
-		this.representsSourceCLType = representsSourceCLType;
+	public void setRepresentsCodeStatusCLType(
+			boolean representsCodeStatusCLType) {
+		this.representsCodeStatusCLType = representsCodeStatusCLType;
 	}
 }

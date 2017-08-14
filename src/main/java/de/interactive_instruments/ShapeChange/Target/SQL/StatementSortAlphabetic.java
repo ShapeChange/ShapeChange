@@ -160,20 +160,11 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Table tins2 = ins2.getTable();
 
 			/*
-			 * Ensure that inserts for the ActiveIndicatorLF type come first,
-			 * then inserts for the SourceCL type, then inserts for other types.
+			 * Ensure that inserts for the CodeStatusCL type come first, then inserts for other types.
 			 */
-			if (tins1.representsActiveIndicatorLFType()
-					&& !tins2.representsActiveIndicatorLFType()) {
+			if (tins1.representsCodeStatusCLType()) {
 				return -1;
-			} else if (tins1.representsSourceCLType()) {
-				if (tins2.representsActiveIndicatorLFType()) {
-					return 1;
-				} else if (!tins2.representsSourceCLType()) {
-					return -1;
-				}
-			} else if (tins2.representsActiveIndicatorLFType()
-					|| tins2.representsSourceCLType()) {
+			} else if(tins2.representsCodeStatusCLType()) {
 				return 1;
 			}
 

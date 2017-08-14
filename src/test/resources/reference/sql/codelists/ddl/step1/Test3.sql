@@ -24,6 +24,19 @@ CREATE TABLE t3_codelist2 (
    myprimarycode text
 );
 
+CREATE TABLE t3_codestatuscl (
+
+   myname character varying(50) NOT NULL PRIMARY KEY,
+   myalias character varying(255),
+   mydatacapturestatement text,
+   mydefinition text,
+   mydescription text,
+   mydocumentation text,
+   myexample text,
+   mylegalbasis text,
+   myprimarycode text
+);
+
 CREATE TABLE t3_featuretype1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
@@ -35,32 +48,6 @@ CREATE TABLE t3_featuretype1_propalpcode (
    t3_featuretype1_id bigserial NOT NULL,
    t3_codelist2_id character varying(50) NOT NULL, -- DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC:
    PRIMARY KEY (t3_featuretype1_id, t3_codelist2_id)
-);
-
-CREATE TABLE t3_sourcecl (
-
-   myname character varying(50) NOT NULL PRIMARY KEY,
-   myalias character varying(255),
-   mydatacapturestatement text,
-   mydefinition text,
-   mydescription text,
-   mydocumentation text,
-   myexample text,
-   mylegalbasis text,
-   myprimarycode text
-);
-
-CREATE TABLE t3_yesnonacl (
-
-   myname character varying(50) NOT NULL PRIMARY KEY,
-   myalias character varying(255),
-   mydatacapturestatement text,
-   mydefinition text,
-   mydescription text,
-   mydocumentation text,
-   myexample text,
-   mylegalbasis text,
-   myprimarycode text
 );
 
 
@@ -79,6 +66,6 @@ codeA''s example 2; LB: codeA''s legal basis; DCS: codeA data capture statement
 
 codeA data capture statement 2; PC: codeA''s primary code', 'codeA''s example 1
 codeA''s example 2', 'codeA''s legal basis', 'codeA''s primary code');
-INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('No', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
-INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('NotApplicable', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
-INSERT INTO t3_yesnonacl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('Yes', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('invalid', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('unknown', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('valid', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);

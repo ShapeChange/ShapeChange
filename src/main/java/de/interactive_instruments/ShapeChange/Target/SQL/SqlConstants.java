@@ -188,20 +188,13 @@ public class SqlConstants {
 	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
 	 */
 	public static final String PARAM_DESCRIPTORS_FOR_CODELIST = "descriptorsForCodelist";
-
-	/**
-	 * Specify the conceptual type that applies to the activeIndicatorLF column
-	 * added by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
-	 * {@value #DEFAULT_ACTIVEINDICATORLF_TYPE}.
-	 */
-	public static final String PARAM_ACTIVEINDICATORLF_TYPE = "activeIndicatorLFType";
 	
 	/**
-	 * Specify the conceptual type that applies to the sourceCL column
+	 * Specify the conceptual type that applies to the codeStatusCL column
 	 * added by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
-	 * {@value #DEFAULT_SOURCECL_TYPE}.
+	 * {@value #DEFAULT_CODESTATUSCL_TYPE}.
 	 */
-	public static final String PARAM_SOURCECL_TYPE = "sourceCLType";
+	public static final String PARAM_CODESTATUSCL_TYPE = "codeStatusCLType";
 
 	/**
 	 * This parameter controls the name of the column that contains the name or
@@ -231,20 +224,20 @@ public class SqlConstants {
 	public static final String DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME = "dataTypeOwner";
 
 	/**
-	 * Define the name for the column that stores the value of the active
-	 * indicator (a logical field, values are 'Y' and 'N'). Applies to rule
-	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is:
-	 * {@value #DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN}.
-	 */
-	public static final String PARAM_NAME_ACTIVE_INDICATOR_LF_COLUMN = "nameForActiveIndicatorLFColumn";
-	public static final String DEFAULT_NAME_ACTIVE_INDICATOR_LF_COLUMN = "ACTIVE_INDICATOR_LF";
-	/**
-	 * Define the name for the column that stores the value of the source code list.
+	 * Define the name for the column that stores the value of the code status code list.
 	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
-	 * is: {@value #DEFAULT_NAME_SOURCE_CL_COLUMN}.
+	 * is: {@value #DEFAULT_NAME_CODESTATUS_CL_COLUMN}.
 	 */
-	public static final String PARAM_NAME_SOURCE_CL_COLUMN = "nameForSourceCLColumn";
-	public static final String DEFAULT_NAME_SOURCE_CL_COLUMN = "SOURCE_CL";
+	public static final String PARAM_NAME_CODESTATUS_CL_COLUMN = "nameForCodeStatusCLColumn";
+	public static final String DEFAULT_NAME_CODESTATUS_CL_COLUMN = "CODE_STATUS_CL";
+	
+	/**
+	 * Define the name for the column that stores a note on the code status.
+	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
+	 * is: {@value #DEFAULT_NAME_CODESTATUSNOTES_COLUMN}.
+	 */
+	public static final String PARAM_NAME_CODESTATUSNOTES_COLUMN = "nameForCodeStatusNotesColumn";
+	public static final String DEFAULT_NAME_CODESTATUSNOTES_COLUMN = "CODE_STATUS_NOTES";
 
 	/* ------------------------ */
 	/* --- Conversion rules --- */
@@ -477,8 +470,7 @@ public class SqlConstants {
 	 */
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
-	public static final String DEFAULT_ACTIVEINDICATORLF_TYPE = "YesNoNaCL";
-	public static final String DEFAULT_SOURCECL_TYPE = "SourceCL";
+	public static final String DEFAULT_CODESTATUSCL_TYPE = "CodeStatusCL";
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";

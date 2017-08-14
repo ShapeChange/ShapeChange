@@ -401,7 +401,22 @@ public class Options {
 	 */
 	protected HashMap<String, MapEntry> fNamespaces = new HashMap<String, MapEntry>();
 
-	/** Hash table for packages */
+	/**
+	 * Hash table for packages
+	 * <p>
+	 * key: package name <br/>
+	 * value: MapEntry with:
+	 * <ul>
+	 * <li>rule: namespace URL of the schema (value of XML attribute 'ns' of
+	 * PackageInfo configuration element)</li>
+	 * <li>p1: namespace abbreviation (value of XML attribute 'nsabr' of
+	 * PackageInfo configuration element)</li>
+	 * <li>p2: desired filename of the output XML Schema document (value of XML
+	 * attribute 'xsdDocument' of PackageInfo configuration element)</li>
+	 * <li>p3: version of the schema (value of XML attribute 'version' of
+	 * PackageInfo configuration element)</li>
+	 * </ul>
+	 */
 	protected HashMap<String, MapEntry> fPackages = new HashMap<String, MapEntry>();
 
 	/**
@@ -1164,7 +1179,7 @@ public class Options {
 	protected String extendsEncRule(String rule1) {
 		return fExtendsEncRule.get(rule1.toLowerCase());
 	}
-	
+
 	public boolean encRuleExists(String encRule) {
 		if ("*".equals(encRule)) {
 			return true;
@@ -3510,7 +3525,7 @@ public class Options {
 		// FIXME TB13TBD
 		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
-		addRule("rule-xsd-cls-enum-supertypes");		
+		addRule("rule-xsd-cls-enum-supertypes");
 		addRule("rule-xsd-cls-mixin-classes-as-group");
 		addRule("rule-xsd-cls-mixin-classes");
 		addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
@@ -3533,7 +3548,7 @@ public class Options {
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
 		// FIXME TB13TBD
-		addRule("rule-xsd-prop-featureType-gmlsf-byReference");		
+		addRule("rule-xsd-prop-featureType-gmlsf-byReference");
 		// FIXME TB13TBD
 		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 		addRule("rule-xsd-prop-nillable");
@@ -3725,10 +3740,12 @@ public class Options {
 		return stereotype;
 	};
 
-	/** 
+	/**
 	 * Normalize a tag fetched from the model.
-	 * @return the mapping for the tag, or the given tag itself if no mapping is configured
-	 *  */
+	 * 
+	 * @return the mapping for the tag, or the given tag itself if no mapping is
+	 *         configured
+	 */
 	public String normalizeTag(String tag) {
 		// Map tag alias to well-known tag
 		String s = tagAlias(tag.trim());

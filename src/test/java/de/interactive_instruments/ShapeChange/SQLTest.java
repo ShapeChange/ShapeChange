@@ -93,7 +93,10 @@ public class SQLTest extends WindowsBasicTest {
 		multiTest("src/test/resources/config/testEA_sql_codelists.xml",
 				new String[] { "sql" }, "testResults/sql/codelists",
 				"src/test/resources/reference/sql/codelists");
-
+	}
+	
+	@Test
+	public void testRuleSqlClsCodelistsPods() {		
 		/*
 		 * SQL - codelist conversion with PODS specific rule
 		 */

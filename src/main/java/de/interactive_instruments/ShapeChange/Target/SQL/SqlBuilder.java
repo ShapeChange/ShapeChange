@@ -713,84 +713,40 @@ public class SqlBuilder implements MessageSource {
 
 		if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)) {
 
-			ClassInfo activeIndicatorLFType = model
-					.classByName(SqlDdl.activeIndicatorLFType);
+			ClassInfo codeStatusCLType = model
+					.classByName(SqlDdl.codeStatusCLType);
 
-			ClassInfo sourceCLType = model.classByName(SqlDdl.sourceCLType);
+			if (ci != codeStatusCLType) {
 
-			if (ci != activeIndicatorLFType && ci != sourceCLType) {
+				// add codeStatusCL column
+				Column cd_codeStatusCl = new Column(
+						SqlDdl.nameCodeStatusCLColumn, table);
 
-				// add activeIndicatorLF column
-				Column cd_activeIndicatorLF = new Column(
-						SqlDdl.nameActiveIndicatorLFColumn, table);
-
-				if (activeIndicatorLFType != null) {
-					cd_activeIndicatorLF
-							.setReferencedTable(map(activeIndicatorLFType));
+				if (codeStatusCLType != null) {
+					cd_codeStatusCl.setReferencedTable(map(codeStatusCLType));
 				} else {
-					result.addError(this, 26, SqlDdl.activeIndicatorLFType,
-							SqlDdl.nameActiveIndicatorLFColumn,
-							table.getName());
+					result.addError(this, 26, SqlDdl.codeStatusCLType,
+							SqlDdl.nameCodeStatusCLColumn, table.getName());
 				}
 
-				ColumnDataType cd_activeIndicatorLFDataType = new ColumnDataType(
+				ColumnDataType cd_codeStatusClDataType = new ColumnDataType(
 						SqlDdl.foreignKeyColumnDataType);
-				cd_activeIndicatorLF.setDataType(cd_activeIndicatorLFDataType);
+				cd_codeStatusCl.setDataType(cd_codeStatusClDataType);
 
-				// cd_activeIndicatorLF.addSpecification("NULL");
+				columns.add(cd_codeStatusCl);
 
-				columns.add(cd_activeIndicatorLF);
-
-				/*
-				 * add "CONSTRAINT CKC_AI_" + ct.getTable().getName() +
-				 * " CHECK (ACTIVE_INDICATOR_LF IS NULL OR (ACTIVE_INDICATOR_LF IN ('Y','N'))),"
-				 */
-				// ColumnExpression colExp = new ColumnExpression(
-				// cd_activeIndicatorLF);
-				//
-				// IsNullExpression isnExp = new IsNullExpression();
-				// isnExp.setExpression(colExp);
-				//
-				// InExpression inExp = new InExpression();
-				// inExp.setLeftExpression(colExp);
-				// ExpressionList expList = new ExpressionList();
-				// List<Expression> values = new ArrayList<Expression>();
-				// values.add(new StringValueExpression("Y"));
-				// values.add(new StringValueExpression("N"));
-				// expList.setExpressions(values);
-				// inExp.setRightExpressionsList(expList);
-				//
-				// OrExpression orExp = new OrExpression(isnExp, inExp);
-				//
-				// CheckConstraint ckc = new CheckConstraint(
-				// "CKC_AI_" + table.getName(), orExp);
-				// table.addConstraint(ckc);
-
-				// add sourceCL column
-				Column cd_sourceCl = new Column(SqlDdl.nameSourceCLColumn,
+				// add codeStatusNotes column
+				Column cd_codeStatusNotes = new Column(SqlDdl.nameCodeStatusNotesColumn,
 						table);
+				ColumnDataType cd_codeStatusNotesDataType = new ColumnDataType(
+						SqlDdl.databaseStrategy
+								.limitedLengthCharacterDataType(255));
+				cd_codeStatusNotes.setDataType(cd_codeStatusNotesDataType);
+				columns.add(cd_codeStatusNotes);
 
-				if (sourceCLType != null) {
-					cd_sourceCl.setReferencedTable(map(sourceCLType));
-				} else {
-					result.addError(this, 26, SqlDdl.sourceCLType,
-							SqlDdl.nameSourceCLColumn, table.getName());
-				}
+			} else if (ci == codeStatusCLType) {
 
-				ColumnDataType cd_sourceClDataType = new ColumnDataType(
-						SqlDdl.foreignKeyColumnDataType);
-				cd_sourceCl.setDataType(cd_sourceClDataType);
-				// cd_sourceCl.addSpecification("NULL");
-
-				columns.add(cd_sourceCl);
-
-			} else if (ci == activeIndicatorLFType) {
-
-				table.setRepresentsActiveIndicatorLFType(true);
-
-			} else if (ci == sourceCLType) {
-
-				table.setRepresentsSourceCLType(true);
+				table.setRepresentsCodeStatusCLType(true);
 			}
 		}
 
@@ -1907,9 +1863,8 @@ public class SqlBuilder implements MessageSource {
 
 					if (representedClass.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)
-							&& !(t.representsActiveIndicatorLFType()
-									|| t.representsSourceCLType())) {
-						values.add(new StringValueExpression("Yes"));
+							&& !(t.representsCodeStatusCLType())) {
+						values.add(new StringValueExpression("valid"));
 						values.add(new NullValueExpression());
 					}
 				}

@@ -106,13 +106,12 @@
 				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="descriptorsForCodelist"
-				value="name(columnName=DESCRIPTION;size=255),definition(columnName=NAME;size=255)" />
+				value="definition(columnName=DESCRIPTION;size=255)" />
 			<targetParameter name="codeNameColumnName" value="CODE" />
 			<targetParameter name="codeNameSize" value="50"/>
-			<targetParameter name="nameForActiveIndicatorLFColumn" value="customActiveIndicatorLF"/>
-			<targetParameter name="nameForSourceCLColumn" value="customSourceCLColumn"/>
-			<targetParameter name="activeIndicatorLFType" value="T3_YesNoNacl"/>
-			<targetParameter name="sourceCLType" value="T3_SourceCL"/>
+			<targetParameter name="nameForCodeStatusCLColumn" value="customCodeStatusCLColumn"/>
+			<targetParameter name="nameForCodeStatusNotesColumn" value="customnameCodeStatusNotesColumn"/>
+			<targetParameter name="codeStatusCLType" value="T3_CodeStatusCl"/>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />
 			<rules>
@@ -137,11 +136,10 @@
 				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="descriptorsForCodelist"
-				value="name(columnName=DESCRIPTION;size=255),definition(columnName=NAME;size=255)" />
+				value="definition(columnName=DESCRIPTION;size=255)" />
 			<targetParameter name="codeNameColumnName" value="CODE" />
 			<targetParameter name="codeNameSize" value="50"/>
-			<targetParameter name="activeIndicatorLFType" value="T3_YesNoNacl"/>
-			<targetParameter name="sourceCLType" value="T3_SourceCL"/>
+			<targetParameter name="codeStatusCLType" value="T3_CodeStatusCl"/>
 			<targetParameter name="primaryKeySpecificationCodelist" value="NOT NULL PRIMARY KEY NONCLUSTERED"/>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-SQLServer.xml" />
