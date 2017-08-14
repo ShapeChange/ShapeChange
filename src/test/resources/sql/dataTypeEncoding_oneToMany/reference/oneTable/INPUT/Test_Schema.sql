@@ -27,14 +27,14 @@ CREATE TABLE mydatatype (
    _id bigserial NOT NULL PRIMARY KEY,
    attribute4 text NOT NULL,
    attribute5 integer NOT NULL,
-   datatypeowner_id bigserial
+   datatypeowner_id bigserial NOT NULL
 );
 
 CREATE TABLE myotherdatatype (
 
    _id bigserial NOT NULL PRIMARY KEY,
    attribute9 integer NOT NULL,
-   owner_id bigserial
+   owner_id bigserial NOT NULL
 );
 
 

@@ -162,7 +162,7 @@ public class SqlBuilder implements MessageSource {
 				+ SqlDdl.idColumnName;
 		Column cdInClassReference = createColumn(table, null,
 				classReferenceFieldName, SqlDdl.foreignKeyColumnDataType,
-				"NOT NULL", false, true);
+				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cdInClassReference.setReferencedTable(map(pi.inClass()));
 		columns.add(cdInClassReference);
 
@@ -191,7 +191,7 @@ public class SqlBuilder implements MessageSource {
 				fieldType = SqlDdl.foreignKeyColumnDataType;
 			}
 
-			cdPi = createColumn(table, pi, piFieldName, fieldType, "NOT NULL",
+			cdPi = createColumn(table, pi, piFieldName, fieldType, SqlConstants.NOT_NULL_COLUMN_SPEC,
 					false, true);
 			cdPi.setReferencedTable(map(pi));
 
@@ -490,7 +490,7 @@ public class SqlBuilder implements MessageSource {
 					&& pi.stereotype("identifier") && ci.matches(
 							SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
 
-				cd.removeSpecification("not null");
+				cd.removeSpecification(SqlConstants.NOT_NULL_COLUMN_SPEC);
 				cd.addSpecification(SqlDdl.primaryKeySpec);
 				identifierSet = true;
 			}
@@ -627,7 +627,7 @@ public class SqlBuilder implements MessageSource {
 		String name_1 = determineTableNameForType(pi1.inClass())
 				+ (reflexive ? "_" + pi1.name() : "") + SqlDdl.idColumnName;
 		Column cd1 = createColumn(table, pi2, name_1,
-				SqlDdl.foreignKeyColumnDataType, "NOT NULL", false, true);
+				SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd1.setReferencedTable(map(pi1.inClass()));
 		columns.add(cd1);
 
@@ -635,7 +635,7 @@ public class SqlBuilder implements MessageSource {
 		String name_2 = determineTableNameForType(pi2.inClass())
 				+ (reflexive ? "_" + pi2.name() : "") + SqlDdl.idColumnName;
 		Column cd2 = createColumn(table, pi1, name_2,
-				SqlDdl.foreignKeyColumnDataType, "NOT NULL", false, true);
+				SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd2.setReferencedTable(map(pi2.inClass()));
 		columns.add(cd2);
 
@@ -1241,7 +1241,7 @@ public class SqlBuilder implements MessageSource {
 		// ----- add constraints
 
 		if (alwaysNotNull) {
-			columnSpecStrings.add("NOT NULL");
+			columnSpecStrings.add(SqlConstants.NOT_NULL_COLUMN_SPEC);
 		} else {
 			// set NOT NULL if required
 			if (pi.implementedByNilReason() || pi.nilReasonAllowed()
@@ -1251,7 +1251,7 @@ public class SqlBuilder implements MessageSource {
 				 * NULL) is ok
 				 */
 			} else {
-				columnSpecStrings.add("NOT NULL");
+				columnSpecStrings.add(SqlConstants.NOT_NULL_COLUMN_SPEC);
 			}
 		}
 
@@ -1590,7 +1590,7 @@ public class SqlBuilder implements MessageSource {
 									Column dtOwner_cd = createColumn(table,
 											null, columnName,
 											SqlDdl.foreignKeyColumnDataType,
-											null, false, true);
+											SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 									dtOwner_cd
 											.setReferencedTable(map(ci_other));
 
@@ -1626,7 +1626,7 @@ public class SqlBuilder implements MessageSource {
 
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType, null, false, true);
+							SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}
