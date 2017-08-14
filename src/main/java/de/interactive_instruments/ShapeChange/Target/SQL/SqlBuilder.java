@@ -1590,7 +1590,7 @@ public class SqlBuilder implements MessageSource {
 									Column dtOwner_cd = createColumn(table,
 											null, columnName,
 											SqlDdl.foreignKeyColumnDataType,
-											null, false, true);
+											SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 									dtOwner_cd
 											.setReferencedTable(map(ci_other));
 
@@ -1626,7 +1626,7 @@ public class SqlBuilder implements MessageSource {
 
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType, null, false, true);
+							SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}
