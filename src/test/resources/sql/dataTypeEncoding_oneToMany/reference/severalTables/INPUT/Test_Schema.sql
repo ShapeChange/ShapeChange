@@ -9,7 +9,7 @@ CREATE TABLE featuretype1_attribute1 (
    _id bigserial NOT NULL PRIMARY KEY,
    attribute4 text NOT NULL,
    attribute5 integer NOT NULL,
-   featuretype1_id bigserial
+   featuretype1_id bigserial NOT NULL
 );
 
 CREATE TABLE featuretype1_attribute2 (
@@ -35,14 +35,14 @@ CREATE TABLE featuretype3_attribute7 (
    _id bigserial NOT NULL PRIMARY KEY,
    attribute4 text NOT NULL,
    attribute5 integer NOT NULL,
-   featuretype3_id bigserial
+   featuretype3_id bigserial NOT NULL
 );
 
 CREATE TABLE featuretype3_attribute8 (
 
    _id bigserial NOT NULL PRIMARY KEY,
    attribute9 integer NOT NULL,
-   featuretype3_id bigserial
+   featuretype3_id bigserial NOT NULL
 );
 
 CREATE TABLE mydatatype (

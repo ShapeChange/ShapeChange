@@ -8,7 +8,7 @@ CREATE TABLE featuretype1_p1 (
 
    p1 text NOT NULL,
    p2 integer NOT NULL PRIMARY KEY,
-   featuretype1_id bigserial
+   featuretype1_id bigserial NOT NULL
 );
 
 CREATE TABLE featuretype1_p2 (

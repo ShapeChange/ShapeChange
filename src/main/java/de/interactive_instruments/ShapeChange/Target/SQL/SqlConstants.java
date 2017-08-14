@@ -548,4 +548,6 @@ public class SqlConstants {
 
 	public static final String CRLF = Options.CRLF;
 	public static final String INDENT = "   ";
+
+	public static final String NOT_NULL_COLUMN_SPEC = "NOT NULL";
 }
