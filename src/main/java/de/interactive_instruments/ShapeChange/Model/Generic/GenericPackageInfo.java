@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -52,7 +53,8 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
  * @author echterhoff
  * 
  */
-public class GenericPackageInfo extends PackageInfoImpl {
+public class GenericPackageInfo extends PackageInfoImpl
+		implements MessageSource {
 
 	protected Options options = null;
 	protected ShapeChangeResult result = null;
@@ -616,6 +618,24 @@ public class GenericPackageInfo extends PackageInfoImpl {
 				tmp_supplierIds.add(prefix + id);
 			}
 			this.supplierIds = tmp_supplierIds;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 30500:
+			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

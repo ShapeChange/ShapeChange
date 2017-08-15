@@ -220,7 +220,8 @@ public interface ClassInfo extends Info {
 	 * properties occur in directed associations and are only referenced there.
 	 * 
 	 * @param name
-	 * @return
+	 * @return a property with that name (from the class or one of its
+	 *         supertypes), or <code>null</code> if no property was found
 	 */
 	public PropertyInfo property(String name);
 

@@ -45,6 +45,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -74,7 +75,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  */
-public class TransformationManager {
+public class TransformationManager implements MessageSource {
 
 	public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
 	public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
@@ -237,7 +238,7 @@ public class TransformationManager {
 			if (schemaAssocsByKey.isEmpty()) {
 
 				// log that no relevant associations were found in this schema
-				result.addInfo(null, 20104, selSchema.name());
+				result.addInfo(this, 20104, selSchema.name());
 
 			} else {
 
@@ -246,7 +247,7 @@ public class TransformationManager {
 					countAssocs += aiSet.size();
 				}
 
-				result.addInfo(null, 20108, "" + countAssocs, selSchema.name());
+				result.addInfo(this, 20108, "" + countAssocs, selSchema.name());
 
 				for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
 					for (AssociationInfo ai : aiSet) {
@@ -305,9 +306,9 @@ public class TransformationManager {
 						MessageContext mc;
 
 						if (logLevelWarn) {
-							mc = result.addWarning(null, 20105, pi1Ci, pi2Ci);
+							mc = result.addWarning(this, 20105, pi1Ci, pi2Ci);
 						} else {
-							mc = result.addInfo(null, 20105, pi1Ci, pi2Ci);
+							mc = result.addInfo(this, 20105, pi1Ci, pi2Ci);
 						}
 
 						/*
@@ -317,11 +318,11 @@ public class TransformationManager {
 						 */
 
 						if (pi1.isNavigable()) {
-							mc.addDetail(null, 20107, pi1.name(),
+							mc.addDetail(this, 20107, pi1.name(),
 									pi1.inClass().name());
 						}
 						if (pi2.isNavigable()) {
-							mc.addDetail(null, 20107, pi2.name(),
+							mc.addDetail(this, 20107, pi2.name(),
 									pi2.inClass().name());
 						}
 					}
@@ -355,7 +356,7 @@ public class TransformationManager {
 		if (!trfConfig.getAllRules()
 				.contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
 
-			result.addInfo(null, 20109);
+			result.addInfo(this, 20109);
 
 			genModel.validateConstraints();
 
@@ -373,8 +374,8 @@ public class TransformationManager {
 			List<TaggedValueConfigurationEntry> taggedValues) {
 
 		for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
-			
-			GenericPackageInfo genPackage = (GenericPackageInfo)pi;
+
+			GenericPackageInfo genPackage = (GenericPackageInfo) pi;
 
 			TaggedValues genPaTVs = genPackage.taggedValuesAll();
 
@@ -647,7 +648,7 @@ public class TransformationManager {
 			pi = propI.inClass().pkg();
 
 		} else {
-			result.addWarning(null, 20101, infoType.name());
+			result.addWarning(this, 20101, infoType.name());
 		}
 
 		if (pi != null) {
@@ -661,7 +662,7 @@ public class TransformationManager {
 		 * if we got here we could not find an application schema, log a warning
 		 * but continue
 		 */
-		result.addWarning(null, 20100, infoType.name());
+		result.addWarning(this, 20100, infoType.name());
 
 		return "";
 	}
@@ -711,4 +712,40 @@ public class TransformationManager {
 
 	}
 
+	@Override
+	public String message(int mnr) {
+
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 20100:
+			return "Could not find application schema for Info type '$1$'";
+		case 20101:
+			return "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
+		case 20102:
+			return "Value of configuration parameter '$1$' after parsing is '$2$'.";
+		case 20104:
+			return "No associations between feature and feature / object types found in schema '$1$'.";
+		case 20105:
+			return "Association exists between '$1$' and '$2$'.";
+		case 20106:
+			return "Association name is '$1$'.";
+		case 20107:
+			return "Navigable via property '$1$' of class '$2$'.";
+		case 20108:
+			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
+		case 20109:
+			return "---------- TransformationManager postprocessing: validating constraints ----------";
+		case 20110:
+			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
+		case 20111:
+			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
 }

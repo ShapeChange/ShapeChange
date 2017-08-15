@@ -242,7 +242,7 @@ public class Profiler implements Transformer, MessageSource {
 					true);
 		} catch (MalformedProfileIdentifierException e) {
 			this.profilesFromConfig = new Profiles();
-			result.addError(null, 20219, PROFILES_PARAMETER, e.getMessage());
+			result.addError(this, 20219, PROFILES_PARAMETER, e.getMessage());
 		}
 
 		// 'constraintHandling'
@@ -264,7 +264,7 @@ public class Profiler implements Transformer, MessageSource {
 			}
 
 			if (!validConstraintHandlingParameter) {
-				result.addError(null, 20220, CONSTRAINTHANDLING_PARAMETER,
+				result.addError(this, 20220, CONSTRAINTHANDLING_PARAMETER,
 						constraintHandlingValue);
 				this.constraintHandling = ConstraintHandling.keep;
 			}
@@ -464,7 +464,7 @@ public class Profiler implements Transformer, MessageSource {
 								if (genCi
 										.property(targetPropertyName) == null) {
 
-									result.addInfo(null, 20207, con.name(),
+									result.addInfo(this, 20207, con.name(),
 											genCi.name());
 
 								} else {
@@ -783,7 +783,7 @@ public class Profiler implements Transformer, MessageSource {
 				appSchemaPackage.getEmptyPackages(emptyPackages);
 
 				if (emptyPackages.contains(appSchemaPackage)) {
-					result.addWarning(null, 20205, appSchemaPackage.name());
+					result.addWarning(this, 20205, appSchemaPackage.name());
 					emptyPackages.remove(appSchemaPackage);
 				}
 
@@ -1015,7 +1015,7 @@ public class Profiler implements Transformer, MessageSource {
 						&& !(con instanceof GenericOclConstraint)
 						&& !(con instanceof GenericFolConstraint)) {
 
-					result.addError(null, 20208, con.name(),
+					result.addError(this, 20208, con.name(),
 							con.contextModelElmt().name());
 					continue;
 				}
@@ -1051,7 +1051,7 @@ public class Profiler implements Transformer, MessageSource {
 								+ owner.name() + "'.");
 					}
 
-					result.addWarning(null, 20209, sb.toString());
+					result.addWarning(this, 20209, sb.toString());
 					continue;
 				}
 
@@ -1066,7 +1066,7 @@ public class Profiler implements Transformer, MessageSource {
 
 						if (genPi == null) {
 
-							result.addError(null, 20210,
+							result.addError(this, 20210,
 									contextModelElement.name(), con.name());
 
 						} else {
@@ -1083,7 +1083,7 @@ public class Profiler implements Transformer, MessageSource {
 
 						if (genCi == null) {
 
-							result.addError(null, 20211,
+							result.addError(this, 20211,
 									contextModelElement.name(), con.name());
 
 						} else {
@@ -1092,12 +1092,12 @@ public class Profiler implements Transformer, MessageSource {
 						}
 
 					} else {
-						result.addWarning(null, 20212,
+						result.addWarning(this, 20212,
 								con.contextModelElmtType().name());
 					}
 
 				} else {
-					result.addWarning(null, 20213, con.getClass().getName());
+					result.addWarning(this, 20213, con.getClass().getName());
 				}
 			}
 		}
@@ -1141,7 +1141,7 @@ public class Profiler implements Transformer, MessageSource {
 
 				} else {
 
-					result.addInfo(null, 20215, ciSub.name(), genCi.name());
+					result.addInfo(this, 20215, ciSub.name(), genCi.name());
 				}
 			}
 
@@ -1167,6 +1167,49 @@ public class Profiler implements Transformer, MessageSource {
 			return "";
 		case 103:
 			return "";
+
+		case 20201:
+			return "Profile identifier is not well-formed.";
+		case 20202:
+			return "<UNUSED_20202>";
+		case 20203:
+			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
+		case 20204:
+			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+		case 20205:
+			return "The application schema package '$1$' is completely empty after profiling.";
+		case 20206:
+			return "Error parsing component of '$1$' configuration parameter: $2$";
+		case 20207:
+			return "Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
+		case 20208:
+			return "System Error: Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
+		case 20209:
+			return "$1$";
+		case 20210:
+			return "GenericPropertyInfo '$1$' is the context model element of the constraint named '$2$'. The property does no longer exist in the model after profiling, thus the constraint is removed.";
+		case 20211:
+			return "GenericClassInfo '$1$' is the context model element of the constraint named '$2$'. The class does no longer exist in the model after profiling, thus the constraint is removed.";
+		case 20212:
+			return "Unrecognized constraint context model element type: '$1$'.";
+		case 20213:
+			return "Unrecognized constraint type: '$1$'.";
+		case 20214:
+			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
+		case 20215:
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
+		case 20216:
+			return "Context: model element: '$1$'";
+		case 20217:
+			return "Context: parsing message: '$1$'";
+		case 20218:
+			return "Context: profiles string: '$1$'";
+		case 20219:
+			return "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
+		case 20220:
+			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
+		case 20221:
+			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
 
 		default:
 			return "(Unknown message in " + this.getClass().getName()

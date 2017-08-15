@@ -757,6 +757,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 	}
 	
+	@Override
 	public String message(int mnr) {
 
 		switch (mnr) {

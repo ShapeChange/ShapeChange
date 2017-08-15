@@ -268,7 +268,7 @@ public class ModelProfileValidator implements MessageSource {
 									isExplicitProfileSettings, true,
 									messages)) {
 
-						result.addWarning(null, 20204, ci.name(), pi.name(),
+						result.addWarning(this, 20204, ci.name(), pi.name(),
 								StringUtils.join(messages, " "));
 					}
 
@@ -546,6 +546,10 @@ public class ModelProfileValidator implements MessageSource {
 		case 108:
 			return "The set of profiles of required property '$1$' in class '$2$' does not equal the set of profiles of the class. The profile definition is inconsistent.";
 
+		case 20204:
+			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+		
+			
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;
