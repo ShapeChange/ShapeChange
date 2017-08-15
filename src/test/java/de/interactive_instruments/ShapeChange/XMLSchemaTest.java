@@ -111,7 +111,7 @@ public class XMLSchemaTest extends WindowsBasicTest {
 	}
 
 	@Test
-	public void xmlSchemaTest6() {
+	public void test_codelist_constraints_codeAbsenceInModelAllowed() {
 		/*
 		 * Test rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed.
 		 */
