@@ -551,10 +551,10 @@ public class TransformationManager implements MessageSource {
 
 				if (matcher.matches()) {
 					modelElementStereotypeMatch = true;
-					result.addInfo(this, 20112, stereotype, pattern.pattern());
+					result.addDebug(this, 20112, stereotype, pattern.pattern());
 					break;
 				} else {
-					result.addInfo(this, 20113, stereotype, pattern.pattern());
+					result.addDebug(this, 20113, stereotype, pattern.pattern());
 				}
 			}
 		}
@@ -598,10 +598,10 @@ public class TransformationManager implements MessageSource {
 
 					if (matcher.matches()) {
 						propertyValueTypeStereotypeMatch = true;
-						result.addInfo(this, 20112, stereotype, pattern.pattern());
+						result.addDebug(this, 20112, stereotype, pattern.pattern());
 						break;
 					} else {
-						result.addInfo(this, 20113, stereotype, pattern.pattern());
+						result.addDebug(this, 20113, stereotype, pattern.pattern());
 					}
 				}
 			}
@@ -616,9 +616,9 @@ public class TransformationManager implements MessageSource {
 					.matcher(infoType.name());
 			if (matcher.matches()) {
 				modelElementNameMatch = true;
-				result.addInfo(this, 20112, infoType.name(), pattern.pattern());
+				result.addDebug(this, 20112, infoType.name(), pattern.pattern());
 			} else {
-				result.addInfo(this, 20113, infoType.name(), pattern.pattern());
+				result.addDebug(this, 20113, infoType.name(), pattern.pattern());
 			}
 		}
 
@@ -633,9 +633,9 @@ public class TransformationManager implements MessageSource {
 
 			if (matcher.matches()) {
 				applicationSchemaNameMatch = true;
-				result.addInfo(this, 20112, applicationSchemaName, pattern.pattern());
+				result.addDebug(this, 20112, applicationSchemaName, pattern.pattern());
 			} else {
-				result.addInfo(this, 20113, applicationSchemaName, pattern.pattern());
+				result.addDebug(this, 20113, applicationSchemaName, pattern.pattern());
 			}
 		}
 
