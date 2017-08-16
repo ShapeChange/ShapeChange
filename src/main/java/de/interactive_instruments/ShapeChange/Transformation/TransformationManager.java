@@ -146,7 +146,7 @@ public class TransformationManager implements MessageSource {
 		if (rules.contains(
 				REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS)) {
 
-			result.addInfo(this, 20103,
+			result.addInfo(null, 20103,
 					REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS);
 
 			identifyFeatureAndObjectAssociations(genModel, trfConfig);
