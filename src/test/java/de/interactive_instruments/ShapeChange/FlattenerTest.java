@@ -122,4 +122,11 @@ public class FlattenerTest extends WindowsBasicTest {
 				"testResults/flattening/flattenGeometryTypeInheritance",
 				"src/test/resources/flattener/flattenGeometryTypeInheritance/reference");
 	}
+
+	@Test
+	public void test_flatten_removeNameAndCodeComponents_duplicateProperties() {
+		executeAndError(
+				"src/test/resources/flattener/duplicateProperties_removeNameAndCodeComponent/test_Flattener_duplicateProps_removeNameAndCodeComponent.xml",
+				"It is expected that the log contains an error, informing the user about classes with duplicate properties as result of the transformation.");
+	}
 }

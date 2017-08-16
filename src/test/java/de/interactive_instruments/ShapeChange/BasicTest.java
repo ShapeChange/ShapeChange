@@ -145,6 +145,27 @@ public abstract class BasicTest {
 	}
 
 	/**
+	 * Simply processes the given configuration and ensure that an error was
+	 * reported.
+	 * 
+	 * @param config
+	 */
+	protected void executeAndError(String config,
+			String detailsOnExpectedError) {
+
+		String details = detailsOnExpectedError != null ? detailsOnExpectedError
+				: "<no details on expected error provided in test configuration>";
+
+		long start = (new Date()).getTime();
+		TestInstance test = new TestInstance(config);
+		long end = (new Date()).getTime();
+		System.out.println(
+				"Execution time " + config + ": " + (end - start) + "ms");
+		assertTrue("Test model execution did not fail with an error. " + details,
+				!test.noError());
+	}
+
+	/**
 	 * Modifies the configuration file path depending upon whether the model
 	 * shall be exported or whether the test should be run with the exported
 	 * model.

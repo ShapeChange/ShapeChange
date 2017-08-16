@@ -1020,20 +1020,11 @@ public class Flattener implements Transformer, MessageSource {
 				|| propNameCodeComponentsToRemove.length == 0)
 			return;
 
-		boolean resultContainsDuplicatePropertyNames = false;
-
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
 			for (String compToRemove : propNameCodeComponentsToRemove) {
 
-				String newName = genPi.name().replaceAll(compToRemove, "");
-
-				if (genPi.inClass().property(newName) != null) {
-					resultContainsDuplicatePropertyNames = true;
-					result.addInfo(this,20346,genPi.name(),genPi.inClass().name(),newName,compToRemove);
-				}
-
-				genPi.setName(newName);
+				genPi.setName(genPi.name().replaceAll(compToRemove, ""));
 
 				if (hasCode(genPi)) {
 					String oldCode = getCode(genPi);
@@ -1041,10 +1032,61 @@ public class Flattener implements Transformer, MessageSource {
 					setCode(genPi, newCode);
 				}
 			}
-			
-			if(resultContainsDuplicatePropertyNames) {
-				result.addError(this, 20347);
+		}
+
+		/*
+		 * Postprocessing: check if classes in schemas selected for processing
+		 * contain multiple properties with same name
+		 */
+		boolean resultContainsDuplicatePropertyNames = false;
+		Joiner joiner = Joiner.on(", ");
+
+		for (GenericClassInfo ci : genModel.selectedSchemaClasses()) {
+
+			SortedSet<String> duplicatePropertyNames = new TreeSet<String>();
+
+			for (PropertyInfo pi : ci.properties().values()) {
+
+				PropertyInfo otherPropertyWithSameName = null;
+
+				// Search in own properties
+				for (PropertyInfo otherPi : ci.properties().values()) {
+					if (otherPi != pi && otherPi.name().equals(pi.name())) {
+						otherPropertyWithSameName = otherPi;
+						break;
+					}
+				}
+
+				if (otherPropertyWithSameName == null) {
+
+					// search supertypes
+					supertypesearch: for (ClassInfo supertype : ci
+							.supertypesInCompleteHierarchy()) {
+
+						for (PropertyInfo supertypePi : supertype.properties()
+								.values()) {
+							if (supertypePi.name().equals(pi.name())) {
+								otherPropertyWithSameName = supertypePi;
+								break supertypesearch;
+							}
+						}
+					}
+				}
+
+				if (otherPropertyWithSameName != null) {
+					resultContainsDuplicatePropertyNames = true;
+					duplicatePropertyNames.add(pi.name());
+				}
 			}
+
+			if (!duplicatePropertyNames.isEmpty()) {
+				result.addInfo(this, 20346, ci.name(),
+						joiner.join(duplicatePropertyNames));
+			}
+		}
+
+		if (resultContainsDuplicatePropertyNames) {
+			result.addError(this, 20347);
 		}
 	}
 
@@ -6674,10 +6716,10 @@ public class Flattener implements Transformer, MessageSource {
 		case 20345:
 			return "(Flattener.java) '$1$' does not match regex '$2$', provided in parameter '$3$'";
 		case 20346:
-			return "The name of property '$1$' in class '$2$' is changed to '$3$', due to applying the regular expression '$4$'. The class will have multiple properties with the same name.";
+			return "After the transformation, class '$1$' has multiple properties with the same name (either in the class itself, or through inheritance from supertypes). The names of duplicate properties are: '$2$'.";
 		case 20347:
 			return "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
-			
+
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

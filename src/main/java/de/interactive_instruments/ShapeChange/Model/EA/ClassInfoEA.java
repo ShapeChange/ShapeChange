@@ -210,16 +210,14 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		// check that this class has connectors
 		if (conns != null) {
 
-			// Enumerate connectors selecting those where this class is the
-			// client,
-			// from these select "Generalization" and "Realisation". Retrieve
-			// the
-			// supplier class wrappers. For "Realisation" type suppliers also
-			// make
-			// sure the class is an interface. The classes found are registered
-			// as
-			// base classes. In the base classes register this class as
-			// subclass.
+			/*
+			 * Enumerate connectors selecting those where this class is the
+			 * client, from these select "Generalization" and "Realisation".
+			 * Retrieve the supplier class wrappers. For "Realisation" type
+			 * suppliers also make sure the class is an interface. The classes
+			 * found are registered as base classes. In the base classes
+			 * register this class as subclass.
+			 */
 			int nbcl = 0;
 			int clientid, bclid, cat;
 			String conntype;
@@ -258,11 +256,11 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (cat != Options.MIXIN)
 							continue;
 					}
-					// Establish as base class. Since most classes indeed
-					// possess
-					// at most one base class, this case will be treated
-					// somewhat
-					// storage-optimized.
+					/*
+					 * Establish as base class. Since most classes indeed
+					 * possess at most one base class, this case will be treated
+					 * somewhat storage-optimized.
+					 */
 					if (++nbcl == 1) {
 						baseclassInfo = baseCI;
 					} else {
