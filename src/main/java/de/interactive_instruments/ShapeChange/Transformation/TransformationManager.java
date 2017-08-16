@@ -146,7 +146,7 @@ public class TransformationManager implements MessageSource {
 		if (rules.contains(
 				REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS)) {
 
-			result.addInfo(null, 20103,
+			result.addInfo(this, 20103,
 					REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS);
 
 			identifyFeatureAndObjectAssociations(genModel, trfConfig);
@@ -551,7 +551,10 @@ public class TransformationManager implements MessageSource {
 
 				if (matcher.matches()) {
 					modelElementStereotypeMatch = true;
+					result.addInfo(this, 20112, stereotype, pattern.pattern());
 					break;
+				} else {
+					result.addInfo(this, 20113, stereotype, pattern.pattern());
 				}
 			}
 		}
@@ -595,7 +598,10 @@ public class TransformationManager implements MessageSource {
 
 					if (matcher.matches()) {
 						propertyValueTypeStereotypeMatch = true;
+						result.addInfo(this, 20112, stereotype, pattern.pattern());
 						break;
+					} else {
+						result.addInfo(this, 20113, stereotype, pattern.pattern());
 					}
 				}
 			}
@@ -605,10 +611,14 @@ public class TransformationManager implements MessageSource {
 
 			modelElementNameMatch = false;
 
-			Matcher matcher = tvce.getModelElementNamePattern()
+			Pattern pattern = tvce.getModelElementNamePattern();
+			Matcher matcher = pattern
 					.matcher(infoType.name());
 			if (matcher.matches()) {
 				modelElementNameMatch = true;
+				result.addInfo(this, 20112, infoType.name(), pattern.pattern());
+			} else {
+				result.addInfo(this, 20113, infoType.name(), pattern.pattern());
 			}
 		}
 
@@ -616,11 +626,16 @@ public class TransformationManager implements MessageSource {
 
 			applicationSchemaNameMatch = false;
 
-			Matcher matcher = tvce.getApplicationSchemaNamePattern()
-					.matcher(determineApplicationSchemaName(infoType));
+			Pattern pattern = tvce.getApplicationSchemaNamePattern();
+			String applicationSchemaName = determineApplicationSchemaName(infoType);
+			Matcher matcher = pattern
+					.matcher(applicationSchemaName);
 
 			if (matcher.matches()) {
 				applicationSchemaNameMatch = true;
+				result.addInfo(this, 20112, applicationSchemaName, pattern.pattern());
+			} else {
+				result.addInfo(this, 20113, applicationSchemaName, pattern.pattern());
 			}
 		}
 
@@ -743,6 +758,10 @@ public class TransformationManager implements MessageSource {
 			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
 		case 20111:
 			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+		case 20112:
+			return "??'$1$' matches regex '$2$'";
+		case 20113:
+			return "??'$1$' does not match regex '$2$'";
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;
