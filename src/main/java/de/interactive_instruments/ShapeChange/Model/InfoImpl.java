@@ -41,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessMode;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.EA.EADocument;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
@@ -855,13 +856,13 @@ public abstract class InfoImpl implements Info {
 		 */
 		if (ra[0].equals("rule") && !ra[1].equals("all")) {
 			if (!options().targetMode(options().targetClassName(rule))
-					.equals("enabled"))
+					.equals(ProcessMode.enabled))
 				return false;
 		}
 
 		if (ra[0].matches("re[cq]") && !ra[1].equals("all")) {
 			if (options().targetMode(options().targetClassName(rule))
-					.equals("disabled"))
+					.equals(ProcessMode.disabled))
 				return false;
 		}
 

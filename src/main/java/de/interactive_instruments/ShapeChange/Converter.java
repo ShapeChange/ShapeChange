@@ -583,7 +583,7 @@ public class Converter {
 					.selectedSchemas();
 
 			String classname = tgt.getClassName();
-			String tmode = options.targetMode(classname);
+			ProcessMode tmode = options.targetMode(classname);
 			Class theClass = Class.forName(classname);
 			boolean targetCalled = false;
 
@@ -808,7 +808,7 @@ public class Converter {
 			target = (Target) theClass.newInstance();
 
 			if (target != null) {
-				String tmode = options.targetMode(classname);
+				ProcessMode tmode = options.targetMode(classname);
 				if (tmode.equals(ProcessMode.disabled))
 					continue;
 
