@@ -131,8 +131,9 @@ public abstract class BasicTest {
 	 * input).
 	 * 
 	 * @param config
+	 * @return result of ShapeChange, can be used to inspect e.g. the options object in it
 	 */
-	protected void execute(String config) {
+	protected ShapeChangeResult execute(String config) {
 
 		long start = (new Date()).getTime();
 		TestInstance test = new TestInstance(config);
@@ -142,6 +143,7 @@ public abstract class BasicTest {
 		assertTrue("Test model execution failed", test.noError());
 		if (testTime)
 			assertTrue("Execution time too long", end - start < 90000);
+		return test.result;
 	}
 
 	/**
