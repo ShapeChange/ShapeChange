@@ -332,10 +332,11 @@ public class Options {
 	/**
 	 * Map of targets to generate from the input model. Keys are the names of
 	 * the Java classes which must implement the Target interface and values are
-	 * the requested processing modes, one of "enabled", "disabled",
-	 * "diagnostics-only".
+	 * the requested processing modes.
+	 * 
+	 * @see ProcessMode
 	 */
-	protected HashMap<String, String> fTargets = new HashMap<String, String>();
+	protected HashMap<String, ProcessMode> fTargets = new HashMap<String, ProcessMode>();
 
 	/** Hash table for additional parameters */
 	protected HashMap<String, String> fParameters = new HashMap<String, String>();
@@ -791,7 +792,7 @@ public class Options {
 		return me;
 	}
 
-	protected void addTarget(String k1, String k2) {
+	protected void addTarget(String k1, ProcessMode k2) {
 		fTargets.put(k1, k2);
 	}
 
@@ -803,18 +804,19 @@ public class Options {
 		return res;
 	}
 
-	public String targetMode(String tn) {
-		if (tn == null)
-			return "disabled";
-
-		String s = fTargets.get(tn);
-		if (s == null)
-			return "disabled";
-
-		return s;
+	public ProcessMode targetMode(String targetClassName) {
+		ProcessMode processMode;
+		if (targetClassName == null) {
+			processMode = ProcessMode.disabled;
+		} else if (fTargets.get(targetClassName) == null) {
+			processMode = ProcessMode.disabled;
+		} else {
+			processMode = fTargets.get(targetClassName);
+		}
+		return processMode;
 	}
 
-	public String setTargetMode(String tn, String mode) {
+	public ProcessMode setTargetMode(String tn, ProcessMode mode) {
 		return fTargets.put(tn, mode);
 	}
 
@@ -1520,7 +1522,7 @@ public class Options {
 
 				// System.out.println(tgtConfig);
 				String className = tgtConfig.getClassName();
-				String mode = tgtConfig.getProcessMode().name();
+				ProcessMode mode = tgtConfig.getProcessMode();
 
 				// set targets and their mode; if a target occurs multiple
 				// times, keep the enabled one(s)

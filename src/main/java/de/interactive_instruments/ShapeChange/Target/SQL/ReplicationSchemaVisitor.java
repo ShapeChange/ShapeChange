@@ -217,8 +217,17 @@ public class ReplicationSchemaVisitor
 			 */
 			PropertyInfo propForColumn = column.getRepresentedProperty();
 
-			Integer sizeForFieldWithCharacterDataType = sqlbuilder
-					.getSizeForCharacterValuedProperty(propForColumn);
+			Integer sizeForFieldWithCharacterDataType = null;
+			if (propForColumn != null) {
+				String taggedValueSize = propForColumn.taggedValuesAll().getFirstValue(SqlConstants.PARAM_SIZE);
+				if (StringUtils.isNotBlank(taggedValueSize)) {
+					try {
+						sizeForFieldWithCharacterDataType = Integer.parseInt(taggedValueSize);
+					} catch (NumberFormatException e) {
+						result.addError(this, 4, taggedValueSize, e.getMessage());
+					}
+				}
+			}
 
 			Element columnDefinitionElement = document
 					.createElementNS(Options.W3C_XML_SCHEMA, "element");
@@ -601,6 +610,8 @@ public class ReplicationSchemaVisitor
 			return "??No target type defined in map entry with type '$1$'. Using '$2$' instead.";
 		case 3:
 			return "Column '$1$' in table '$2$' neither represents a specific property nor an object identifier. Using '$3$' as type.";
+		case 4:
+			return "Could not parse tagged value size (value = $1$, error message = $2$)";
 		case 100:
 			return "Context: $1$";
 		default:
