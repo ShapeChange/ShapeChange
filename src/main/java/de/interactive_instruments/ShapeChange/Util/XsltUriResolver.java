@@ -30,7 +30,7 @@
  * Germany
  */
 
-package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
+package de.interactive_instruments.ShapeChange.Util;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -42,26 +42,31 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  * 
  */
 public class XsltUriResolver implements URIResolver {
 
 	private Map<String, URI> hrefMappings = null;
 
+	/**
+	 * @param hrefMappings
+	 *            - can be <code>null</code>
+	 */
 	public XsltUriResolver(Map<String, URI> hrefMappings) {
 		this.hrefMappings = hrefMappings;
 	}
 
-	public Source resolve(String href, String base) throws TransformerException {
+	public Source resolve(String href, String base)
+			throws TransformerException {
 
 		InputStream inputStream = null;
 		StreamSource source = null;
 
 		try {
 
-			if (hrefMappings.containsKey(href)) {
+			if (hrefMappings != null && hrefMappings.containsKey(href)) {
 				// handle case where we have a mapping
 				inputStream = hrefMappings.get(href).toURL().openStream();
 				source = new StreamSource(inputStream);

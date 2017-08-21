@@ -1,0 +1,1 @@
+The singleSchema test processes a single schema. The difference to the multipleSchemas test is that with a single schema, the output of a SingleTarget that is not a DeferrableOutputWriter can be augmented with the schema version. That is the case for the name of the sql file created by the workflow.

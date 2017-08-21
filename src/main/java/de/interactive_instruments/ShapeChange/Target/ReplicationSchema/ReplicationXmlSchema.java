@@ -55,6 +55,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -70,6 +71,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
 
 /**
@@ -186,7 +188,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	protected Document document = null;
 	protected Element root = null;
 	protected Map<String, ProcessMapEntry> mapEntryByType = new HashMap<String, ProcessMapEntry>();
-	private Comment hook;
 
 	protected String targetNamespace = null;
 	protected String objectIdentifierFieldName;
@@ -356,9 +357,13 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		addAttribute(root, "targetNamespace", targetNamespace);
 		addAttribute(root, "xmlns:" + schemaPi.xmlns(), targetNamespace);
 
-		hook = document.createComment(
-				"XML Schema document created by ShapeChange - http://shapechange.net/");
-		root.appendChild(hook);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			Comment generationComment = document.createComment(
+					"XML Schema document created by ShapeChange - http://shapechange.net/");
+			root.appendChild(generationComment);
+		}
 	}
 
 	/** Add attribute to an element */
@@ -970,6 +975,9 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 * Add &lt;import&gt; tags as the first content in the &lt;schema&gt; tag.
 	 */
 	private void addImports() {
+
+		Node anchor = null;
+
 		Element importElement;
 		for (PackageInfo packageInfo : packagesForImport) {
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
@@ -978,12 +986,18 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 					"import");
 			addAttribute(importElement, "namespace",
 					packageInfo.targetNamespace() + targetNamespaceSuffix);
-			root.insertBefore(importElement, hook);
+
+			if (anchor == null) {
+				root.insertBefore(importElement, root.getFirstChild());
+			} else {
+				root.insertBefore(importElement, anchor.getNextSibling());
+			}
+			anchor = importElement;
 		}
 	}
 
 	@Override
-	public String getTargetName(){
+	public String getTargetName() {
 		return "Replication XML Schema";
 	}
 

@@ -29,7 +29,7 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
+package de.interactive_instruments.ShapeChange.Util;
 
 import org.xml.sax.SAXException;
 

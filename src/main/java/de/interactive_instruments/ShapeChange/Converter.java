@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
@@ -56,10 +59,11 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Transformation.TransformationManager;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
-public class Converter {
+public class Converter implements MessageSource {
 
 	public static final int STATUS_TARGET_INITSTART = 201;
 	public static final int STATUS_TARGET_PROCESS = 202;
@@ -73,11 +77,13 @@ public class Converter {
 	protected Options options = null;
 	protected Target target = null;
 	protected Set<String> processIdsToIgnore = new HashSet<String>();
+	protected TargetOutputProcessor outputProcessor = null;
 
 	public Converter(Options o, ShapeChangeResult r) {
 		options = o;
 		result = r;
 		target = null;
+		outputProcessor = new TargetOutputProcessor(r);
 	};
 
 	public void convert() throws ShapeChangeAbortException {
@@ -101,7 +107,7 @@ public class Converter {
 
 		if (skipSemanticValidation) {
 
-			result.addInfo(null, 512);
+			result.addInfo(this, 512);
 
 		} else {
 
@@ -110,13 +116,13 @@ public class Converter {
 			 * call with a try-catch to catch any Exception that might be
 			 * thrown? That could create a warning or error message in the log.
 			 */
-			result.addInfo(null, 510);
+			result.addInfo(this, 510);
 			boolean isValidConfig = validateConfiguration();
-			result.addInfo(null, 511);
+			result.addInfo(this, 511);
 			if (!isValidConfig) {
-				MessageContext mc = result.addError(null, 509);
+				MessageContext mc = result.addError(this, 509);
 				if (mc != null)
-					mc.addDetail(null, 513);
+					mc.addDetail(this, 513);
 				return;
 			}
 		}
@@ -167,12 +173,12 @@ public class Converter {
 					if (pConfig instanceof TransformerConfiguration) {
 
 						TransformerConfiguration tconfig = (TransformerConfiguration) pConfig;
-						result.addInfo(null, 514, tconfig.getId());
+						result.addInfo(this, 514, tconfig.getId());
 
 					} else {
 
 						TargetConfiguration tconfig = (TargetConfiguration) pConfig;
-						result.addInfo(null, 515, tconfig.getClassName(),
+						result.addInfo(this, 515, tconfig.getClassName(),
 								StringUtils.join(tconfig.getInputIds(), " "));
 					}
 
@@ -186,7 +192,7 @@ public class Converter {
 
 				} catch (Exception e) {
 
-					result.addWarning(null, 508, pConfig.getClassName(),
+					result.addWarning(this, 508, pConfig.getClassName(),
 							e.getMessage());
 				}
 			}
@@ -228,7 +234,7 @@ public class Converter {
 
 		try {
 			if (model == null) {
-				result.addFatalError(null, 14);
+				result.addFatalError(this, 14);
 				throw new ShapeChangeAbortException();
 			}
 
@@ -243,7 +249,7 @@ public class Converter {
 
 			if (selectedSchema == null || selectedSchema.isEmpty()) {
 
-				result.addWarning(null, 507);
+				result.addWarning(this, 507);
 				release(model);
 
 			} else {
@@ -319,17 +325,8 @@ public class Converter {
 
 			String classname = tgt.getClassName();
 			Class theClass = Class.forName(classname);
-			boolean isDeferrableOutputWriter = false;
-			for (Class intfc : theClass.getInterfaces()) {
-				String in = intfc.getName();
-				if (in.equals(
-						"de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter")) {
-					isDeferrableOutputWriter = true;
-					break;
-				}
-			}
 
-			if (!isDeferrableOutputWriter) {
+			if (!isDeferrableOutputWriter(theClass)) {
 				continue;
 			}
 
@@ -337,8 +334,10 @@ public class Converter {
 			options.setCurrentProcessConfig(tgt);
 			options.resetFields();
 
-			// update the outputDirectory parameter by appending the id of the
-			// model provider
+			/*
+			 * update the outputDirectory parameter by appending the id of the
+			 * model provider
+			 */
 			String outputDirectoryForTarget = options
 					.parameter(tgt.getClassName(), "outputDirectory");
 
@@ -348,14 +347,30 @@ public class Converter {
 					continue;
 				}
 
+				/*
+				 * === configure actual output directory ===
+				 */
+				String outputDirectory = outputDirectoryForTarget;
+
 				if (outputDirectoryForTarget != null
 						&& outputDirectoryForTarget.length() > 0) {
-					String outputDirectory = outputDirectoryForTarget.trim()
+					outputDirectory = outputDirectoryForTarget.trim()
 							+ File.separator + modelProviderId;
 					options.setParameter(tgt.getClassName(), "outputDirectory",
 							outputDirectory);
 				}
 
+				/*
+				 * set up monitoring of output directory, to identify output
+				 * files (i.e. new and modified files)
+				 */
+				OutputFileAlterationListener faListener = new OutputFileAlterationListener();
+				FileAlterationObserver outputObserver = setupOutputFileAlterationObserver(
+						outputDirectory, faListener, tgt);
+
+				/*
+				 * === initialise deferrable output writer and write output ===
+				 */
 				DeferrableOutputWriter dowTarget = (DeferrableOutputWriter) theClass
 						.newInstance();
 
@@ -367,8 +382,65 @@ public class Converter {
 
 				dowTarget = null;
 
-				result.addInfo(null, 500, tgt.getClassName(), modelProviderId);
+				/*
+				 * === process output files ===
+				 */
+				if (outputObserver != null) {
+					outputObserver.checkAndNotify();
+
+					List<File> newOutputFiles = faListener.getNewOutputFiles();
+
+					outputProcessor.process(newOutputFiles, tgt, null);
+
+					try {
+						outputObserver.destroy();
+					} catch (Exception e) {
+						// ignore
+					}
+				}
+
+				result.addInfo(this, 500, tgt.getClassName(), modelProviderId);
 			}
+		}
+	}
+
+	/**
+	 * @param outputDirectory
+	 *            directory to observe, if <code>null</code> then "." is assumed
+	 * @param listener
+	 * @param tgt
+	 * @return observer for the given output directory, can be <code>null</code>
+	 *         if an error occurred while setting up the observer (in that case,
+	 *         the error is logged)
+	 */
+	private FileAlterationObserver setupOutputFileAlterationObserver(
+			String outputDirectory, OutputFileAlterationListener listener,
+			TargetConfiguration tgt) {
+
+		String outputDir = outputDirectory != null ? outputDirectory : ".";
+		File outputDirectoryFile = new File(outputDir);
+		if (!outputDirectoryFile.exists()) {
+			try {
+				FileUtils.forceMkdir(outputDirectoryFile);
+			} catch (IOException e) {
+				result.addError(this, 516, outputDir);
+				return null;
+			}
+		}
+
+		try {
+			// 20170818 JE: File filters could be added here as well
+			FileAlterationObserver observer = new FileAlterationObserver(
+					outputDirectoryFile);
+
+			observer.initialize();
+			observer.addListener(listener);
+			return observer;
+
+		} catch (Exception e) {
+
+			result.addError(this, 517, outputDir);
+			return null;
 		}
 	}
 
@@ -417,7 +489,7 @@ public class Converter {
 				 */
 				processIdsToIgnore.add(trf.getId());
 
-				result.addInfo(null, 506, trf.getId());
+				result.addInfo(this, 506, trf.getId());
 
 			} else if (processIdsToIgnore.contains(trf.getInputId())) {
 				/*
@@ -443,7 +515,7 @@ public class Converter {
 
 				// process the model
 				try {
-					result.addInfo(null, 501, trf.getId(), trf.getInputId());
+					result.addInfo(this, 501, trf.getId(), trf.getInputId());
 
 					GenericModel modelInput;
 					if (modelCopyRequired) {
@@ -501,13 +573,13 @@ public class Converter {
 						this.release(model);
 					}
 
-					result.addInfo(null, 502, trf.getId(), trf.getInputId());
+					result.addInfo(this, 502, trf.getId(), trf.getInputId());
 
 				} catch (ClassCastException e) {
 
 					processIdsToIgnore.add(trf.getId());
 
-					result.addError(null, 505, e.getMessage(), trf.getId());
+					result.addError(this, 505, e.getMessage(), trf.getId());
 
 					StackTraceElement[] stes = e.getStackTrace();
 
@@ -579,6 +651,10 @@ public class Converter {
 						outputDirectory);
 			}
 
+			OutputFileAlterationListener faListener = new OutputFileAlterationListener();
+			FileAlterationObserver outputObserver = setupOutputFileAlterationObserver(
+					outputDirectory, faListener, tgt);
+
 			SortedSet<? extends PackageInfo> selectedSchema = model
 					.selectedSchemas();
 
@@ -603,7 +679,7 @@ public class Converter {
 				if (ns == null) {
 					ns = "(no namespace)";
 				}
-				result.addInfo(null, 1012, name, ns);
+				result.addInfo(this, 1012, name, ns);
 
 				if (tmode.equals(ProcessMode.disabled))
 					continue;
@@ -618,7 +694,7 @@ public class Converter {
 
 					targetCalled = true;
 
-					result.addInfo(null, 503, target.getTargetName(),
+					result.addInfo(this, 503, target.getTargetName(),
 							modelProviderId);
 
 					StatusBoard.getStatusBoard()
@@ -642,6 +718,46 @@ public class Converter {
 					 * 2016-03-05 JE: does not seem to be used by StatusReaders
 					 * StatusBoard.getStatusBoard().statusChanged(0);
 					 */
+
+					/*
+					 * === process output files, if applicable ===
+					 */
+					if (outputObserver != null) {
+
+						if (isSingleTarget(theClass)
+								|| isDeferrableOutputWriter(theClass)) {
+
+							/*
+							 * postprocessing of output files from single
+							 * targets and deferrable output writers not handled
+							 * here
+							 */
+
+						} else {
+
+							/*
+							 * Postprocess output files
+							 */
+
+							outputObserver.checkAndNotify();
+
+							List<File> newOutputFiles = faListener
+									.getNewOutputFiles();
+
+							outputProcessor.process(newOutputFiles, tgt, pi);
+						}
+
+						/*
+						 * re-initialize the observer, i.e. let the observer get
+						 * all files that now exist in the output directory and
+						 * use these files as baseline for next comparison
+						 */
+						try {
+							outputObserver.initialize();
+						} catch (Exception e) {
+							result.addError(this, 517, outputDirectory);
+						}
+					}
 				}
 
 				target = null;
@@ -650,16 +766,9 @@ public class Converter {
 			// write results for targets where the results are ready only after
 			// all schemas have been processed
 			if (!tmode.equals(ProcessMode.disabled) && targetCalled) {
-				boolean isSingleTarget = false;
-				for (Class intfc : theClass.getInterfaces()) {
-					String in = intfc.getName();
-					if (in.equals(
-							"de.interactive_instruments.ShapeChange.Target.SingleTarget")) {
-						isSingleTarget = true;
-						break;
-					}
-				}
-				if (isSingleTarget) {
+
+				if (isSingleTarget(theClass)) {
+
 					SingleTarget starget = (SingleTarget) theClass
 							.newInstance();
 
@@ -669,9 +778,55 @@ public class Converter {
 					 */
 					target = starget;
 					if (starget != null) {
+
 						StatusBoard.getStatusBoard()
 								.statusChanged(STATUS_TARGET_WRITEALL);
+
 						starget.writeAll(result);
+
+						/*
+						 * === process output files, if applicable ===
+						 */
+						if (outputObserver != null) {
+							if (isDeferrableOutputWriter(theClass)) {
+
+								/*
+								 * Processing of output files from deferrable
+								 * output writers not handled here
+								 */
+
+							} else {
+
+								/*
+								 * Process output files
+								 */
+
+								outputObserver.checkAndNotify();
+
+								List<File> newOutputFiles = faListener
+										.getNewOutputFiles();
+
+								if (selectedSchema.size() == 1) {
+									outputProcessor.process(newOutputFiles, tgt,
+											selectedSchema.first());
+								} else {
+									outputProcessor.process(newOutputFiles, tgt,
+											null);
+								}
+
+								/*
+								 * re-initialize the observer, i.e. let the
+								 * observer get all files that now exist in the
+								 * output directory and use these files as
+								 * baseline for next comparison
+								 */
+								try {
+									outputObserver.initialize();
+								} catch (Exception e) {
+									result.addError(this, 517, outputDirectory);
+								}
+							}
+						}
 					}
 					/*
 					 * ... now we no longer need to keep track of the target
@@ -679,9 +834,18 @@ public class Converter {
 					target = null;
 				}
 			}
-			result.addInfo(null, 504, tgt.getClassName(), modelProviderId);
-		}
+			
+			if (outputObserver != null) {
 
+				try {
+					outputObserver.destroy();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+
+			result.addInfo(this, 504, tgt.getClassName(), modelProviderId);
+		}
 	}
 
 	/**
@@ -731,7 +895,7 @@ public class Converter {
 			try {
 				ClassInfo.class.getMethod(compField, (Class[]) paramTypes);
 			} catch (NoSuchMethodException e) {
-				result.addError(null, 165, sortedOpt,
+				result.addError(this, 165, sortedOpt,
 						target.getClass().getName());
 				return classArr;
 			}
@@ -771,28 +935,6 @@ public class Converter {
 	}
 
 	/*
-	 * 2013-12-16 CP: deprecated as it is unused private PackageInfo[]
-	 * schemas(Model model, String appSchemaName) throws
-	 * ShapeChangeAbortException { Set<PackageInfo> schemas =
-	 * model.schemas(appSchemaName);
-	 * 
-	 * if (schemas.isEmpty()) { if (appSchemaName.equals("")) {
-	 * result.addFatalError(null, 12); } else { result.addFatalError(null, 13,
-	 * appSchemaName); } throw new ShapeChangeAbortException(); }
-	 * 
-	 * PackageInfo[] schemaArr = new PackageInfo[schemas.size()];
-	 * schemas.toArray(schemaArr);
-	 * 
-	 * // Sort packages if the parameter "sortedSchemaOutput" is set to "true"
-	 * if (options.sortedSchemaOutput || "true".equalsIgnoreCase(options
-	 * .parameter("sortedSchemaOutput"))) { Arrays.sort(schemaArr, new
-	 * Comparator<PackageInfo>() { public int compare(PackageInfo pi1,
-	 * PackageInfo pi2) { return pi1.name().compareTo(pi2.name()); } }); }
-	 * 
-	 * return schemaArr; }
-	 */
-
-	/*
 	 * SingleTarget store information on the class level (due to the fact that a
 	 * Target instance is created for each processed schema, but for
 	 * SingleTarget instances the result can only be created after all schemas
@@ -812,16 +954,7 @@ public class Converter {
 				if (tmode.equals(ProcessMode.disabled))
 					continue;
 
-				boolean isSingleTarget = false;
-				for (Class intfc : theClass.getInterfaces()) {
-					String in = intfc.getName();
-					if (in.equals(
-							"de.interactive_instruments.ShapeChange.Target.SingleTarget")) {
-						isSingleTarget = true;
-						break;
-					}
-				}
-				if (isSingleTarget) {
+				if (isSingleTarget(theClass)) {
 					SingleTarget starget = (SingleTarget) theClass
 							.newInstance();
 					if (starget != null) {
@@ -830,6 +963,33 @@ public class Converter {
 				}
 			}
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private boolean isSingleTarget(Class theClass) {
+
+		for (Class intfc : theClass.getInterfaces()) {
+			String in = intfc.getName();
+			if (in.equals(
+					"de.interactive_instruments.ShapeChange.Target.SingleTarget")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private boolean isDeferrableOutputWriter(Class theClass) {
+
+		for (Class intfc : theClass.getInterfaces()) {
+			String in = intfc.getName();
+			if (in.equals(
+					"de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter")) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private Model getModel() throws ShapeChangeAbortException {
@@ -849,7 +1009,7 @@ public class Converter {
 
 		// Support original model type codes
 		if (imt == null) {
-			result.addFatalError(null, 26);
+			result.addFatalError(this, 26);
 			throw new ShapeChangeAbortException();
 		} else if (imt.equalsIgnoreCase("ea7")) {
 			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
@@ -860,7 +1020,7 @@ public class Converter {
 		} else if (imt.equalsIgnoreCase("scxml")) {
 			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
 		} else {
-			result.addInfo(null, 27, imt);
+			result.addInfo(this, 27, imt);
 		}
 
 		// Transformations of the model are only supported for EA models
@@ -920,7 +1080,7 @@ public class Converter {
 				} else if (mdl != null && mdl.length() > 0) {
 					repoConnectionInfo = mdl;
 				} else {
-					result.addFatalError(null, 24);
+					result.addFatalError(this, 24);
 					throw new ShapeChangeAbortException();
 				}
 
@@ -947,4 +1107,71 @@ public class Converter {
 		return m;
 	}
 
-} // class ShapeChange.Converter
+	@Override
+	public String message(int mnr) {
+
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 14:
+			return "No model has been loaded to convert.";
+		case 24:
+			return "Neither 'inputFile' nor 'repositoryFileNameOrConnectionString' parameter set in configuration. Cannot connect to a repository.";
+		case 26:
+			return "Required input parameter 'inputModelType' not found in the configuration.";
+		case 27:
+			return "Value of input parameter 'inputModelType' (which defines the model implementation) is '$1$'.";
+		case 165:
+			return "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
+
+		case 500:
+			return "Executed deferred output write for target class '$1$' for input ID: '$2$'.";
+		case 501:
+			return "Now processing transformation '$1$' for input ID: '$2$'.";
+		case 502:
+			return "Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+		case 503:
+			return "Now processing target '$1$' for input '$2$'.";
+		case 504:
+			return "Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+		case 505:
+			return "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
+		case 506:
+			return "Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
+		case 507:
+			return "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
+		case 508:
+			return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
+		case 509:
+			return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
+		case 510:
+			return "---------- Semantic validation of ShapeChange configuration: START ----------";
+		case 511:
+			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
+		case 512:
+			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
+		case 513:
+			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
+					+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG
+					+ "' to 'true'.";
+		case 514:
+			return "--- Validating transformer with @id '$1$' ...";
+		case 515:
+			return "--- Validating target with @class '$1$' and @inputs '$2$' ...";
+		case 516:
+			return "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+		case 517:
+			return "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+
+		case 1012:
+			return "Application schema found, package name: '$1$', target namespace: '$2$'";
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
+}

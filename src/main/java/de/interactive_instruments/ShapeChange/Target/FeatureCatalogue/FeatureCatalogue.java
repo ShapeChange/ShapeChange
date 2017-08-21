@@ -118,6 +118,8 @@ import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Transformation.TransformationConstants;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
+import de.interactive_instruments.ShapeChange.Util.XMLWriter;
+import de.interactive_instruments.ShapeChange.Util.XsltWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**

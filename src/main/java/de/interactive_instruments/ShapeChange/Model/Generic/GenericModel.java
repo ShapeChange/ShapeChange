@@ -1108,7 +1108,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			}
 		}
 		if (!ex) {
-			r.addFatalError(null, 25, repositoryFileName);
+			r.addFatalError(this, 25, repositoryFileName);
 			throw new ShapeChangeAbortException();
 		}
 
@@ -3087,6 +3087,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		switch (mnr) {
 
+		case 25:
+			return "Model repository file named '$1$' not found";
+			
 		case 20110:
 			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
 		case 20111:

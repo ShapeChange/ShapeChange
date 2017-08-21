@@ -31,7 +31,16 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+
 import org.apache.commons.lang.SystemUtils;
+import org.apache.jena.ext.com.google.common.base.Joiner;
+
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -55,11 +64,11 @@ public class BasicConfigurationValidator implements MessageSource {
 
 		String imt = options.parameter("inputModelType");
 
-		if(imt == null) {
-			result.addError(null,26);
+		if (imt == null) {
+			result.addError(null, 26);
 			isValid = false;
 		}
-		
+
 		/*
 		 * If the input type is EA7 and we are not only executing deferrable
 		 * output writers, check that we are running on 32bit Java in a windows
@@ -85,8 +94,62 @@ public class BasicConfigurationValidator implements MessageSource {
 				result.addError(this, 2, osArch);
 				isValid = false;
 			}
-		} 
-		
+		}
+
+		/* === check output processing parameters === */
+		List<TargetConfiguration> targetConfigs = options
+				.getTargetConfigurations();
+
+		for (TargetConfiguration conf : targetConfigs) {
+
+			boolean applyXslt = conf.parameterAsBoolean(
+					TargetOutputProcessor.PARAM_APPLY_XSLT, false);
+
+			if (applyXslt) {
+
+				Joiner joiner = Joiner.on(", ");
+
+				String pathToXsltDirectory = conf.parameterAsString(
+						TargetOutputProcessor.PARAM_PATH_TO_XSLT_DIRECTORY, ".",
+						false, true);
+				String xsltFileName = conf.parameterAsString(
+						TargetOutputProcessor.PARAM_XSLT_FILENAME, null, false,
+						true);
+
+				if (xsltFileName == null) {
+
+					result.addError(this, 102, conf.getClassName(),
+							joiner.join(conf.getInputIds()));
+					isValid = false;
+
+				} else if (pathToXsltDirectory.toLowerCase()
+						.startsWith("http")) {
+
+					String urlString = pathToXsltDirectory + "/" + xsltFileName;
+					try {
+						URL url = new URL(urlString);
+						url.toURI();
+					} catch (URISyntaxException | MalformedURLException e) {
+						result.addError(this, 100, conf.getClassName(),
+								joiner.join(conf.getInputIds()), urlString,
+								e.getMessage());
+						isValid = false;
+					}
+
+				} else {
+
+					File xsl = new File(
+							pathToXsltDirectory + "/" + xsltFileName);
+					if (!xsl.exists()) {
+						result.addError(this, 101, conf.getClassName(),
+								joiner.join(conf.getInputIds()),
+								xsl.getAbsolutePath());
+						isValid = false;
+					}
+				}
+			}
+		}
+
 		return isValid;
 	}
 
@@ -100,6 +163,23 @@ public class BasicConfigurationValidator implements MessageSource {
 			return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS. ShapeChange detected that it is run in a different OS.";
 		case 2:
 			return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
+
+		// 100-199: Validation of output processing parameters
+		case 100:
+			return "XSL transformation of output files is requested via configuration parameter '"
+					+ TargetOutputProcessor.PARAM_APPLY_XSLT
+					+ "' for target with class name '$1$' and input(s) '$2$'. The URL that results from concatenating the path to the XSL directory and the XSLT file name - '$3$' - could not be converted to a URI. Exception message is: '$4$'.";
+		case 101:
+			return "XSL transformation of output files is requested via configuration parameter '"
+					+ TargetOutputProcessor.PARAM_APPLY_XSLT
+					+ "' for target with class name '$1$' and input(s) '$2$'. No XSL file was found at location '$3$'.";
+		case 102:
+			return "XSL transformation of output files is requested via configuration parameter '"
+					+ TargetOutputProcessor.PARAM_APPLY_XSLT
+					+ "' for target with class name '$1$' and input(s) '$2$'. Required parameter '"
+					+ TargetOutputProcessor.PARAM_APPLY_XSLT
+					+ "' was not configured (or does not contain a non-empty value).";
+
 		default:
 			return "(" + BasicConfigurationValidator.class.getName()
 					+ ") Unknown message with number: " + mnr;

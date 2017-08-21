@@ -6626,95 +6626,95 @@ public class Flattener implements Transformer, MessageSource {
 			return "Value of configuration parameter '$1$' after parsing is '$2$'.";
 
 		case 20301:
-			return "(Flattener.java) The type '$2$' of property '$1$' was not found.";
+			return "The type '$2$' of property '$1$' was not found.";
 		case 20302:
-			return "(Flattener.java) The type '$1$' to replace type '$2$' was not found. Replacing type without changing the id.";
+			return "The type '$1$' to replace type '$2$' was not found. Replacing type without changing the id.";
 		case 20303:
-			return "(Flattener.java) The ClassInfo for type '$1$' was not found in the model.";
+			return "The ClassInfo for type '$1$' was not found in the model.";
 		case 20304:
-			return "(Flattener.java) maxOccurs parameter configured to be '$1$' - using default value 3";
+			return "maxOccurs parameter configured to be '$1$' - using default value 3";
 		case 20305:
-			return "(Flattener.java) maxOccurs tagged value for property '$1$' in class '$2$' was set to '$3$' - using global value: '$4$'";
+			return "maxOccurs tagged value for property '$1$' in class '$2$' was set to '$3$' - using global value: '$4$'";
 		case 20306:
-			return "(Flattener.java) No type information given via configuration parameter 'enforceOptionality'. Rule will not be executed.";
+			return "No type information given via configuration parameter 'enforceOptionality'. Rule will not be executed.";
 		case 20307:
-			return "(Flattener.java) applyRulePropUnionDirectOptionality encountered unknown content model of Union-Direct type for type '$1$'.";
+			return "applyRulePropUnionDirectOptionality encountered unknown content model of Union-Direct type for type '$1$'.";
 		case 20308:
-			return "(Flattener.java) Context: $1$ '$2$'";
+			return "Context: $1$ '$2$'";
 		case 20309:
-			return "(Flattener.java) Cannot apply rule for flattening name if no value is provided via the configuration parameter '$1$'.";
+			return "Cannot apply rule for flattening name if no value is provided via the configuration parameter '$1$'.";
 		case 20310:
-			return "(Flattener.java) Invalid pattern encountered for configuration parameter '$1$': $2$";
+			return "Invalid pattern encountered for configuration parameter '$1$': $2$";
 		case 20311:
-			return "(Flattener.java) When creating copy of the subtype hierarchy for '$1$', subtype with id '$2$' either was not found in the model or is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). A copy won't be created for this subtype.";
+			return "When creating copy of the subtype hierarchy for '$1$', subtype with id '$2$' either was not found in the model or is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). A copy won't be created for this subtype.";
 		case 20312:
-			return "(Flattener.java) Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
+			return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
 		case 20313:
-			return "(Flattener.java) Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
+			return "Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
 		case 20314:
-			return "(Flattener.java) Could not find supertype with id '$1$' for class with name '$2$' in the model.";
+			return "Could not find supertype with id '$1$' for class with name '$2$' in the model.";
 		case 20315:
-			return "(Flattener.java) Cannot properly update type of property named '$1$' to the union type named '$2$'.";
+			return "Cannot properly update type of property named '$1$' to the union type named '$2$'.";
 		case 20316:
-			return "(Flattener.java) Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
+			return "Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
 		case 20317:
-			return "(Flattener.java) ========== $1$ phase ==========";
+			return "========== $1$ phase ==========";
 		case 20318:
-			return "(Flattener.java) Model does not contain class '$1$' which is the target type to which the type of property '$2$' (from class '$3$') shall be mapped. Setting type.id of property to UNKNOWN.";
+			return "Model does not contain class '$1$' which is the target type to which the type of property '$2$' (from class '$3$') shall be mapped. Setting type.id of property to UNKNOWN.";
 		case 20319:
-			return "??(Flattener.java) Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). The contents of '$2$' won't be copied to '$1$', which should be fine because '$1$' is not part of a schema selected for processing.";
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). The contents of '$2$' won't be copied to '$1$', which should be fine because '$1$' is not part of a schema selected for processing.";
 		case 20320:
-			return "??(Flattener.java) Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be added to the list of subtypes for class '$2$'. $3$";
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be added to the list of subtypes for class '$2$'. $3$";
 		case 20321:
-			return "??(Flattener.java) Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Thus it cannot be removed from the model.";
+			return "??Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Thus it cannot be removed from the model.";
 		case 20322:
-			return "(Flattener.java) Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (updating the id for subtype '$2$' in $1$'s subtype list from '$3$' to that of its copy, which has id '$4$').";
+			return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (updating the id for subtype '$2$' in $1$'s subtype list from '$3$' to that of its copy, which has id '$4$').";
 		case 20323:
-			return "(Flattener.java) Class '$1$' - which is an enumeration - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot add ONINA enums to the enumeration.";
+			return "Class '$1$' - which is an enumeration - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot add ONINA enums to the enumeration.";
 		case 20324:
-			return "(Flattener.java) No type information given via configuration parameter 'removeType'. Rule will not be executed.";
+			return "No type information given via configuration parameter 'removeType'. Rule will not be executed.";
 		case 20325:
-			return "??(Flattener.java) isFlatTarget tagged value setting(s) will lead to removal of whole association (with one end being property '$1$' in class '$2$' - the other end being property '$3$' in class '$4$').";
+			return "??isFlatTarget tagged value setting(s) will lead to removal of whole association (with one end being property '$1$' in class '$2$' - the other end being property '$3$' in class '$4$').";
 		case 20326:
-			return "(Flattener.java) --- Found cycle:";
+			return "--- Found cycle:";
 		case 20327:
-			return "(Flattener.java)    Class '$1$' -> class '$2$' (via properties: $3$)";
+			return "   Class '$1$' -> class '$2$' (via properties: $3$)";
 		case 20328:
-			return "(Flattener.java) --- No cycles found.";
+			return "--- No cycles found.";
 		case 20329:
-			return "(Flattener.java) ---------- Checking for reflexive relationships and cyles in types to process (for type flattening) ----------";
+			return "---------- Checking for reflexive relationships and cyles in types to process (for type flattening) ----------";
 		case 20330:
-			return "(Flattener.java) --- Reflexive relationship detected for class '$1$' (via properties: $2$).";
+			return "--- Reflexive relationship detected for class '$1$' (via properties: $2$).";
 		case 20331:
-			return "(Flattener.java) --- No reflexive relationships detected.";
+			return "--- No reflexive relationships detected.";
 		case 20332:
-			return "(Flattener.java) The Flattener configuration lists type '$1$' for removal but could not find it in the model.";
+			return "The Flattener configuration lists type '$1$' for removal but could not find it in the model.";
 		case 20333:
-			return "??(Flattener.java) Homogeneous geometry rule would update the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. The association won't be updated and will thus eventually be removed.";
+			return "??Homogeneous geometry rule would update the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. The association won't be updated and will thus eventually be removed.";
 		case 20334:
-			return "??(Flattener.java) Creating a copy of an association to connect classes '$1$' and '$2$'. The original association has an association class. Copying the association class is currently not supported. The association copy will therefore not have an association class.";
+			return "??Creating a copy of an association to connect classes '$1$' and '$2$'. The original association has an association class. Copying the association class is currently not supported. The association copy will therefore not have an association class.";
 		case 20335:
-			return "??(Flattener.java) The map for geometry type specific copies of '$1$' is empty.";
+			return "??The map for geometry type specific copies of '$1$' is empty.";
 		case 20336:
-			return "??(Flattener.java) Inheritance rule would create subtype specific copies of the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. Copies of the association won't be created.";
+			return "??Inheritance rule would create subtype specific copies of the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. Copies of the association won't be created.";
 		case 20337:
-			return "??(Flattener.java) The list of subtypes of superclass '$1$' is empty.";
+			return "??The list of subtypes of superclass '$1$' is empty.";
 		case 20338:
-			return "??(Flattener.java) Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
+			return "??Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
 		case 20339:
-			return "??(Flattener.java) No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
+			return "??No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
 		case 20340:
-			return "??(Flattener.java) The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
+			return "??The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
 		case 20341:
-			return "(Flattener.java) Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
+			return "Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
 		case 20342:
-			return "(Flattener.java) Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
+			return "Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
 		case 20343:
-			return "(Flattener.java) Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
+			return "Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
 		case 20344:
-			return "(Flattener.java) '$1$' matches regex '$2$', provided in parameter '$3$'";
+			return "'$1$' matches regex '$2$', provided in parameter '$3$'";
 		case 20345:
-			return "(Flattener.java) '$1$' does not match regex '$2$', provided in parameter '$3$'";
+			return "'$1$' does not match regex '$2$', provided in parameter '$3$'";
 		case 20346:
 			return "After the transformation, class '$1$' has multiple properties with the same name (either in the class itself, or through inheritance from supertypes). The names of duplicate properties are: '$2$'.";
 		case 20347:

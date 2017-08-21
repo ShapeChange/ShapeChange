@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:s1="http://example.org/shapechange/outputProcessing/schema1"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/outputProcessing/schema1"
+        version="1.1"><!--Created by ShapeChange - http://shapechange.net/-->
+  <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <element name="FeatureTypeS1"
+            substitutionGroup="gml:AbstractFeature"
+            type="s1:FeatureTypeS1Type">
+      <annotation>
+         <documentation>Def FeatureType
+NOTE Desc FeatureType</documentation>
+      </annotation>
+  </element>
+  <complexType name="FeatureTypeS1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="propA" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeS1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="s1:FeatureTypeS1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

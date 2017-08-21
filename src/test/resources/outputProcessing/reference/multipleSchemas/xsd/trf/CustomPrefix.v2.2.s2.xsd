@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:s2="http://example.org/shapechange/outputProcessing/schema2"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/outputProcessing/schema2"
+        version="2.2"><!--Created by ShapeChange - http://shapechange.net/-->
+  <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <element name="FeatureTypeS2"
+            substitutionGroup="gml:AbstractFeature"
+            type="s2:FeatureTypeS2Type"/>
+  <complexType name="FeatureTypeS2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="propB" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeS2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="s2:FeatureTypeS2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

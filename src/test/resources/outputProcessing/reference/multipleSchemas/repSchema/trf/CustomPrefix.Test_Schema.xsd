@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:s1="http://example.org/shapechange/outputProcessing/schema1/rep"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/outputProcessing/schema1/rep"
+        version="1.1"><!--Created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureTypeS1" type="s1:FeatureTypeS1Type">
+      <annotation>
+         <appinfo>EAID_7378DB31_0CA9_4b9e_8A34_F339F808C50F</appinfo>
+      </annotation>
+  </element>
+  <complexType name="FeatureTypeS1Type">
+      <sequence>
+         <element name="_id" type="integer"/>
+         <element minOccurs="0" name="propA" type="integer">
+            <annotation>
+               <appinfo>EAID_0859C112_962D_4645_AE54_E0E3EC4696FA</appinfo>
+            </annotation>
+         </element>
+      </sequence>
+  </complexType>
+  <element name="FeatureTypeS2" type="s1:FeatureTypeS2Type">
+      <annotation>
+         <appinfo>EAID_44514D73_05A6_4e3b_9AD8_1F2E91DA3B83</appinfo>
+      </annotation>
+  </element>
+  <complexType name="FeatureTypeS2Type">
+      <sequence>
+         <element name="_id" type="integer"/>
+         <element minOccurs="0" name="propB" type="string">
+            <annotation>
+               <appinfo>EAID_E8FCEC41_2492_49cc_8FED_FA2F567A6ED4</appinfo>
+               <documentation>Test documentation for fields with unlimited length character data type.</documentation>
+            </annotation>
+         </element>
+      </sequence>
+  </complexType>
+</schema>

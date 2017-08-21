@@ -29,7 +29,7 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
+package de.interactive_instruments.ShapeChange.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,7 +91,7 @@ public class XsltWriter {
 
 	private String xslTransformerFactory;
 	private Map<String, URI> hrefMappings;
-	private Map<String, String> transformationParameters;
+	private Map<String, String> transformationParameters = new HashMap<String, String>();
 
 	private ShapeChangeResult result;
 
@@ -99,8 +99,11 @@ public class XsltWriter {
 	 * 
 	 * 
 	 * @param xslTransformerFactory
+	 *            - can be <code>null</code>
 	 * @param hrefMappings
+	 *            - can be <code>null</code>
 	 * @param transformationParameters
+	 *            - can be <code>null</code>
 	 * @param result
 	 *            used to log exception messages; can be <code>null</code> if
 	 *            the XSL transformation was invoked via the main(...) method
@@ -112,7 +115,9 @@ public class XsltWriter {
 
 		this.xslTransformerFactory = xslTransformerFactory;
 		this.hrefMappings = hrefMappings;
-		this.transformationParameters = transformationParameters;
+		if (transformationParameters != null) {
+			this.transformationParameters = transformationParameters;
+		}
 		this.result = result;
 	}
 
@@ -330,7 +335,7 @@ public class XsltWriter {
 			Source xsltSource = new StreamSource(stream);
 			xsltSource.setSystemId(xsltMainFileUri.toString());
 			Source xmlSource = new StreamSource(transformationSource);
-			
+
 			/*
 			 * Create StreamResult differently to avoid issues with whitespace
 			 * in file path, depending upon the actual TransformerFactory

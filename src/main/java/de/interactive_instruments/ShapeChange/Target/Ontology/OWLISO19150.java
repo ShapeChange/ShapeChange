@@ -1103,13 +1103,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		File outFile = new File(outputDirectoryFile, filename);
 
-		try {
+		try (OutputStream fout = new FileOutputStream(outFile);
+				OutputStream bout = new BufferedOutputStream(fout)) {
 
 			String canpath = new File(fname).getCanonicalPath();
 			r.addDebug(this, 20000, ontName, canpath);
-
-			OutputStream fout = new FileOutputStream(outFile);
-			OutputStream bout = new BufferedOutputStream(fout);
 
 			if (rdfFormat.equals(RDFFormat.RDFXML)) {
 

@@ -1,0 +1,13 @@
+# Created by ShapeChange - http://shapechange.net/
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s2:    <http://ontology.base.uri/s2#> .
+
+<http://ontology.base.uri/s2>
+        a                owl:Ontology ;
+        owl:versionIRI   "http://ontology.base.uri/s2/2.2" ;
+        owl:versionInfo  "2.2" .
+
+s2:FeatureTypeS2  a  owl:Class .

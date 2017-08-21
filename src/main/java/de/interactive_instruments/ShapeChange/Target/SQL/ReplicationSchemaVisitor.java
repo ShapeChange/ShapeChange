@@ -45,6 +45,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -55,6 +56,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
@@ -85,7 +87,6 @@ public class ReplicationSchemaVisitor
 
 	protected Document document;
 	protected Element root;
-	protected Comment hook;
 	protected String targetNamespace;
 
 	private TreeSet<PackageInfo> repSchemaPackagesForImport = new TreeSet<PackageInfo>(
@@ -144,11 +145,16 @@ public class ReplicationSchemaVisitor
 		targetNamespace = SqlDdl.repSchemaTargetNamespace
 				+ SqlDdl.repSchemaTargetNamespaceSuffix;
 		addAttribute(root, "targetNamespace", targetNamespace);
-		addAttribute(root, "xmlns:" + SqlDdl.repSchemaTargetXmlns, targetNamespace);
+		addAttribute(root, "xmlns:" + SqlDdl.repSchemaTargetXmlns,
+				targetNamespace);
 
-		hook = document.createComment(
-				"XML Schema document created by ShapeChange - http://shapechange.net/");
-		root.appendChild(hook);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			Comment generationComment = document.createComment(
+					"XML Schema document created by ShapeChange - http://shapechange.net/");
+			root.appendChild(generationComment);
+		}
 	}
 
 	@Override
@@ -555,6 +561,8 @@ public class ReplicationSchemaVisitor
 	 */
 	private void addImports() {
 
+		Node anchor = null;
+
 		for (PackageInfo packageInfo : repSchemaPackagesForImport) {
 
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
@@ -568,7 +576,12 @@ public class ReplicationSchemaVisitor
 					packageInfo.targetNamespace()
 							+ SqlDdl.repSchemaTargetNamespaceSuffix);
 
-			root.insertBefore(importElement, hook);
+			if (anchor == null) {
+				root.insertBefore(importElement, root.getFirstChild());
+			} else {
+				root.insertBefore(importElement, anchor.getNextSibling());
+			}
+			anchor = importElement;
 		}
 	}
 
@@ -577,7 +590,7 @@ public class ReplicationSchemaVisitor
 			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
 		// ignore
 	}
-	
+
 	@Override
 	public String message(int mnr) {
 

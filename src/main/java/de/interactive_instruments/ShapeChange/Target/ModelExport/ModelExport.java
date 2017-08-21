@@ -79,7 +79,7 @@ import de.interactive_instruments.ShapeChange.Profile.ProfileIdentifier;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Profile.VersionRange;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.XMLWriter;
+import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**

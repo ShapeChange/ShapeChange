@@ -60,6 +60,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -77,13 +78,14 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathFragment;
 
 public class XsdDocument implements MessageSource {
 
 	protected Document document = null;
 	protected Element root = null;
-	protected Comment hook = null;
+	protected Element rootAnnotation = null;
 	protected Options options = null;
 	public ShapeChangeResult result = null;
 	protected Model model = null;
@@ -169,9 +171,13 @@ public class XsdDocument implements MessageSource {
 		addAttribute(root, "targetNamespace", targetNamespace);
 		addAttribute(root, "xmlns:" + pi.xmlns(), targetNamespace);
 
-		addStandardAnnotation(root, pi);
+		rootAnnotation = addStandardAnnotation(root, pi);
 
-		hook = addHook(root);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			addCreationComment(root);
+		}
 	};
 
 	/** Add attribute to an element */
@@ -182,15 +188,20 @@ public class XsdDocument implements MessageSource {
 	}
 
 	/** Add a comment */
-	protected Comment addHook(Element e) {
+	protected Comment addCreationComment(Element e) {
 		Comment e1 = document.createComment(
 				"XML Schema document created by ShapeChange - http://shapechange.net/");
 		e.appendChild(e1);
 		return e1;
 	}
 
-	/** Add documentation and tagged values to an element */
-	protected void addStandardAnnotation(Element e, Info info) {
+	/**
+	 * Add documentation and tagged values to an element
+	 * 
+	 * @return the annotation element, if one was created, else
+	 *         <code>null</code>
+	 */
+	protected Element addStandardAnnotation(Element e, Info info) {
 
 		// documentation
 		Element e1 = null;
@@ -431,7 +442,10 @@ public class XsdDocument implements MessageSource {
 			if (e2 != null)
 				e0.appendChild(e2);
 			e.appendChild(e0);
+			return e0;
 		}
+
+		return null;
 	}
 
 	private boolean classHasObjectType(ClassInfo ci) {
@@ -3572,13 +3586,22 @@ public class XsdDocument implements MessageSource {
 			return;
 		}
 
+		Node anchor = rootAnnotation;
+
 		Element e;
 		Collections.sort(includes);
 		for (Iterator<String> i = includes.iterator(); i.hasNext();) {
 			e = document.createElementNS(Options.W3C_XML_SCHEMA, "include");
 			addAttribute(e, "schemaLocation", i.next());
-			root.insertBefore(e, hook);
+
+			if (anchor == null) {
+				root.insertBefore(e, root.getFirstChild());
+			} else {
+				root.insertBefore(e, anchor.getNextSibling());
+			}
+			anchor = e;
 		}
+
 		String s;
 		String loc;
 		Collections.sort(imports);
@@ -3590,7 +3613,13 @@ public class XsdDocument implements MessageSource {
 			if (loc != null) {
 				addAttribute(e, "schemaLocation", loc);
 			}
-			root.insertBefore(e, hook);
+
+			if (anchor == null) {
+				root.insertBefore(e, root.getFirstChild());
+			} else {
+				root.insertBefore(e, anchor.getNextSibling());
+			}
+			anchor = e;
 		}
 
 		// Check whether we can use the given output directory

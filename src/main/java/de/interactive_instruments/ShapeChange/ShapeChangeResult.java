@@ -592,8 +592,6 @@ public class ShapeChangeResult {
 			return "No application schema found.";
 		case 13:
 			return "Application schema '$1$' not found.";
-		case 14:
-			return "No model has been loaded to convert.";
 		case 15:
 			return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 		case 16:
@@ -612,14 +610,6 @@ public class ShapeChangeResult {
 			return "??Reference model '$1$' could not be loaded and is ignored.";
 		case 23:
 			return "Could not create temporary directory for ShapeChange run with read/write access at: $1$.";
-		case 24:
-			return "Neither 'inputFile' nor 'repositoryFileNameOrConnectionString' parameter set in configuration. Cannot connect to a repository.";
-		case 25:
-			return "Model repository file named '$1$' not found";
-		case 26:
-			return "Required input parameter 'inputModelType' not found in the configuration.";
-		case 27:
-			return "Value of input parameter 'inputModelType' (which defines the model implementation) is '$1$'.";
 
 		case 30:
 			return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";
@@ -777,8 +767,6 @@ public class ShapeChangeResult {
 			return "??Class name '$1$' is used more than once in application schema '$2$'.";
 		case 164:
 			return "??Rule '$1$' is unknown, but referenced in the ShapeChange source code. This is a system error.";
-		case 165:
-			return "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
 		case 166:
 			return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
 		case 167:
@@ -842,43 +830,6 @@ public class ShapeChangeResult {
 		case 400:
 			return "Context: $1$ '$2$'";
 
-		// 500-599 Converter messages (some messages used by Converter are
-		// contained in other number ranges)
-		case 500:
-			return "(Converter.java) Executed deferred output write for target class '$1$' for input ID: '$2$'.";
-		case 501:
-			return "(Converter.java) Now processing transformation '$1$' for input ID: '$2$'.";
-		case 502:
-			return "(Converter.java) Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
-		case 503:
-			return "(Converter.java) Now processing target '$1$' for input '$2$'.";
-		case 504:
-			return "(Converter.java) Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
-		case 505:
-			return "(Converter.java) Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
-		case 506:
-			return "(Converter.java) Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
-		case 507:
-			return "(Converter.java) None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
-		case 508:
-			return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
-		case 509:
-			return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
-		case 510:
-			return "---------- Semantic validation of ShapeChange configuration: START ----------";
-		case 511:
-			return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
-		case 512:
-			return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
-		case 513:
-			return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
-					+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG
-					+ "' to 'true'.";
-		case 514:
-			return "--- Validating transformer with @id '$1$' ...";
-		case 515:
-			return "--- Validating target with @class '$1$' and @inputs '$2$' ...";
-
 		// 600 - 699 Messages known to be used by multiple targets
 		case 600:
 			return "File could not be deleted. Exception message: '$1$'.";
@@ -930,8 +881,6 @@ public class ShapeChangeResult {
 			return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
 		case 1011:
 			return "The constraint '$1$' cannot be associated with a modeling object (ID '$2$').";
-		case 1012:
-			return "Application schema found, package name: '$1$', target namespace: '$2$'";
 
 		case 10000:
 			return "Added tagged value '$1$' for element with ID '$2$' with value: '$3$'.";

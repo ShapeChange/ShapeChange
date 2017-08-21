@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P10">
+    <name>Test Schema</name>
+    <versionNumber>1.1</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C75">
+    <name>FeatureTypeS1</name>
+    <definition>Def FeatureType</definition>
+    <description>Desc FeatureType</description>
+    <characterizedBy idref="_A75_122"></characterizedBy>
+    <package idref="_P10"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A75_122">
+    <name>propA</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+</FeatureCatalogue>
