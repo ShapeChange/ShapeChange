@@ -30,7 +30,6 @@
          <element minOccurs="0" name="propB" type="string">
             <annotation>
                <appinfo>EAID_E8FCEC41_2492_49cc_8FED_FA2F567A6ED4</appinfo>
-               <documentation>Test documentation for fields with unlimited length character data type.</documentation>
             </annotation>
          </element>
       </sequence>
