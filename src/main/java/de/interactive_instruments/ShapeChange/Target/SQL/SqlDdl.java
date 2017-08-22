@@ -51,6 +51,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -574,22 +575,29 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						ReplicationSchemaConstants.DEFAULT_TARGET_NAMESPACE_SUFFIX,
 						false, true);
 				
-				repSchemaTargetNamespace = options.parameterAsString(
-						this.getClass().getName(),
-						ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE,
-						schema.targetNamespace() == null ? "" : schema.targetNamespace(),
-						true, true);
-				repSchemaTargetVersion = options.parameterAsString(
-						this.getClass().getName(),
-						ReplicationSchemaConstants.PARAM_TARGET_VERSION,
-						schema.version() == null ? "" : schema.version(),
-						true, true);
-				repSchemaTargetXmlns = options.parameterAsString(
-						this.getClass().getName(),
-						ReplicationSchemaConstants.PARAM_TARGET_XMLNS,
-						schema.xmlns() == null ? "" : schema.xmlns(),
-						true, true);
-
+				String mainSchemaName = options.parameterAsString(this.getClass().getName(),
+						"replicationSchemaMainAppSchema", "", false, true);
+				if (StringUtils.isNotBlank(mainSchemaName)) {
+					for (PackageInfo packageInfo : model.selectedSchemas()) {
+						if (packageInfo.name().equals(mainSchemaName)) {
+							repSchemaTargetNamespace = packageInfo.targetNamespace();
+							repSchemaTargetVersion = packageInfo.version();
+							repSchemaTargetXmlns = packageInfo.xmlns();
+						}
+					}
+				} else {
+					repSchemaTargetNamespace = options.parameterAsString(this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE, schema.targetNamespace(), true, true);
+					repSchemaTargetVersion = options.parameterAsString(this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_VERSION, schema.version(), true, true);
+					repSchemaTargetXmlns = options.parameterAsString(this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_XMLNS, schema.xmlns(), true, true);
+				}
+				// make sure parameters are never null
+				repSchemaTargetNamespace = StringUtils.defaultString(repSchemaTargetNamespace);
+				repSchemaTargetVersion = StringUtils.defaultString(repSchemaTargetVersion);
+				repSchemaTargetXmlns = StringUtils.defaultString(repSchemaTargetXmlns);
+				
 				repSchemaDocumentationUnlimitedLengthCharacterDataType = options
 						.parameterAsString(this.getClass().getName(),
 								ReplicationSchemaConstants.PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
