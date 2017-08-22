@@ -39,9 +39,17 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 public class ColumnDataType {
 
 	private String name = null;
+	private Integer precision = null;
+	private Integer scale = null;
 
 	public ColumnDataType(String name) {
 		this.name = name;
+	}
+
+	public ColumnDataType(String name, Integer precision, Integer scale) {
+		this.name = name;
+		this.precision = precision;
+		this.scale = scale;
 	}
 
 	/**
@@ -57,5 +65,43 @@ public class ColumnDataType {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the precision
+	 */
+	public Integer getPrecision() {
+		return precision;
+	}
+
+	/**
+	 * @param precision
+	 *            the precision to set
+	 */
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
+	}
+
+	public boolean hasPrecision() {
+		return this.precision != null;
+	}
+
+	/**
+	 * @return the scale
+	 */
+	public Integer getScale() {
+		return scale;
+	}
+
+	/**
+	 * @param scale
+	 *            the scale to set
+	 */
+	public void setScale(Integer scale) {
+		this.scale = scale;
+	}
+
+	public boolean hasScale() {
+		return this.scale != null;
 	}
 }

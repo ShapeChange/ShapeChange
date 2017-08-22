@@ -175,4 +175,13 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/outputDdlModification",
 				"src/test/resources/sql/outputDdlModification/reference");
 	}
+	
+	@Test
+	public void testPrecisionAndScale() {
+
+		multiTest(
+				"src/test/resources/sql/precisionAndScale/testEA_sql_precisionAndScale.xml",
+				new String[] { "sql" }, "testResults/sql/precisionAndScale",
+				"src/test/resources/sql/precisionAndScale/reference");
+	}
 }

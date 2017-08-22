@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +62,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -344,18 +346,10 @@ public class XsdDocument implements MessageSource {
 							s = ci.qname();
 						}
 
-						if (info.matches("rule-xsd-prop-targetElement-gmlsf")) {
-
-							e2.setAttribute("source",
-									"urn:x-gml:targetElement");
-							e2.appendChild(document.createTextNode(s));
-
-						} else {
-							Element e3 = document.createElementNS(
-									options.GML_NS, "targetElement");
-							e2.appendChild(e3);
-							e3.appendChild(document.createTextNode(s));
-						}
+						Element e3 = document.createElementNS(options.GML_NS,
+								"targetElement");
+						e2.appendChild(e3);
+						e3.appendChild(document.createTextNode(s));
 					}
 				}
 				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
@@ -2729,8 +2723,55 @@ public class XsdDocument implements MessageSource {
 						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 				&& "true".equalsIgnoreCase(
 						ci.taggedValue("representsFeatureTypeSet"))) {
+			
 			addAttribute(e, "type", "gml:ReferenceType");
 			addImport("gml", options.fullNamespace("gml"));
+
+			if (propi.matches("rule-xsd-prop-targetElement") && options.GML_NS
+					.equals("http://www.opengis.net/gml/3.2")) {
+
+				Element annotationElement;
+				NodeList annotationElements = e.getElementsByTagName("annotation");
+				if (annotationElements != null && annotationElements.getLength() != 0) {
+					annotationElement = (Element)annotationElements.item(0);
+				} else {
+					annotationElement = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "annotation");
+					e.appendChild(annotationElement);
+				}				
+
+				Element appinfoElement = document
+						.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
+				annotationElement.appendChild(appinfoElement);
+
+				/*
+				 * get all properties from the union, recursively drill down to
+				 * get all options from unions that represent feature type sets
+				 */
+				List<ClassInfo> representedFeatures = new ArrayList<ClassInfo>(
+						findAllRepresentedFeatures(ci));
+				Collections.sort(representedFeatures,
+						new Comparator<ClassInfo>() {
+
+							@Override
+							public int compare(ClassInfo o1, ClassInfo o2) {
+								return o1.name().compareTo(o2.name());
+							}
+						});
+
+				for (ClassInfo representedFeatureType : representedFeatures) {
+
+					String s = mapElement(representedFeatureType);
+					if (s == null) {
+						s = representedFeatureType.qname();
+					}
+
+					Element targetElement = document
+							.createElementNS(options.GML_NS, "gml:targetElement");
+					appinfoElement.appendChild(targetElement);
+					targetElement.appendChild(document.createTextNode(s));
+				}
+			}
 
 		} else if (ci.category() == Options.OKSTRAKEY
 				&& ci.matches("rule-xsd-cls-okstra-schluesseltabelle")) {
@@ -3060,6 +3101,49 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		return multiplicityAlreadySet;
+	}
+
+	/**
+	 * *
+	 * 
+	 * @param ci
+	 * @return The set of feature types represented by the given union (with
+	 *         tagged value "representsFeatureTypeSet=true"), as well as
+	 *         indirect unions that may be implied by this union; can be empty
+	 *         but not <code>null</code>
+	 */
+	private SortedSet<ClassInfo> findAllRepresentedFeatures(ClassInfo ci) {
+
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+		if (ci != null && ci.category() == Options.UNION && "true"
+				.equalsIgnoreCase(ci.taggedValue("representsFeatureTypeSet"))) {
+
+			for (PropertyInfo option : ci.propertiesAll()) {
+
+				ClassInfo type = model.classById(option.typeInfo().id);
+
+				if (type == null) {
+					type = model.classByName(option.typeInfo().name);
+				}
+
+				if (type != null) {
+
+					if (type.category() == Options.UNION
+							&& "true".equalsIgnoreCase(ci
+									.taggedValue("representsFeatureTypeSet"))) {
+
+						result.addAll(findAllRepresentedFeatures(type));
+
+					} else if (type.category() == Options.FEATURE) {
+
+						result.add(type);
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private void addAssertionForCodelistUri(ClassInfo cibase,

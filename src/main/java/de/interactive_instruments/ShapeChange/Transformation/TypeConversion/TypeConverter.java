@@ -88,14 +88,23 @@ public class TypeConverter implements Transformer, MessageSource {
 	 */
 	public static final String PARAM_TO_FEATURE_TYPE_NAME_REGEX = "toFeatureTypeNameRegex";
 
+	/**
+	 * Identify the name of the tagged value that is used to tag types that
+	 * shall be converted to feature types under {@value #RULE_TO_FEATURETYPE}.
+	 * Default is 'toFeatureType'.
+	 */
+	public static final String PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME = "toFeatureTypeTaggedValueName";
+
 	public static final String RULE_ENUMERATION_TO_CODELIST = "rule-trf-enumeration-to-codelist";
 
 	// TB13TBD
 	/**
 	 * Convert types either identified via parameter
 	 * {@value #PARAM_TO_FEATURE_TYPE_NAME_REGEX} or with tagged value
-	 * 'toFeatureType=true' to feature types. All subtypes of these types are
-	 * also converted to feature types.
+	 * 'toFeatureType=true' to feature types. The name of the tagged value can
+	 * be configured via parameter
+	 * {@value #PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME}. All subtypes of these
+	 * types are also converted to feature types.
 	 */
 	public static final String RULE_TO_FEATURETYPE = "rule-trf-toFeatureType";
 
@@ -205,6 +214,10 @@ public class TypeConverter implements Transformer, MessageSource {
 		String typeNameRegexParamValue = trfConfig.parameterAsString(
 				PARAM_TO_FEATURE_TYPE_NAME_REGEX, null, false, true);
 
+		String toFeatureTypeTVName = trfConfig.parameterAsString(
+				PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME, "toFeatureType", false,
+				true);
+
 		try {
 
 			Pattern typeNameRegex = null;
@@ -222,7 +235,7 @@ public class TypeConverter implements Transformer, MessageSource {
 				if ((typeNameRegex != null
 						&& typeNameRegex.matcher(genCi.name()).matches())
 						|| "true".equalsIgnoreCase(
-								genCi.taggedValue("toFeatureType"))) {
+								genCi.taggedValue(toFeatureTypeTVName))) {
 
 					relevantTypes.add(genCi);
 

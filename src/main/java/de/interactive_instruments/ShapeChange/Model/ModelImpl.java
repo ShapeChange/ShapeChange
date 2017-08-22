@@ -84,8 +84,7 @@ public abstract class ModelImpl implements Model {
 	/*
 	 * the list of tagged values specified by the ArcGIS encoding rule
 	 */
-	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType",
-			"precision", "scale" };
+	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType" };
 
 	/*
 	 * the list of tagged values specified by other encoding rules
@@ -113,7 +112,8 @@ public abstract class ModelImpl implements Model {
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
 			"vocabulary", "associativeTable", "jsonEncodingRule",
 			"sqlEncodingRule", "status", "geometry",
-			"oneToManyReferenceColumnName", "dissolveAssociation" };
+			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
+			"scale" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -269,7 +269,7 @@ public abstract class ModelImpl implements Model {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public SortedSet<? extends ClassInfo> selectedSchemaClasses() {
 
@@ -281,7 +281,7 @@ public abstract class ModelImpl implements Model {
 					.classes(selectedSchema);
 
 			for (ClassInfo ci : cisOfSelectedSchema) {
-				
+
 				res.add(ci);
 			}
 		}

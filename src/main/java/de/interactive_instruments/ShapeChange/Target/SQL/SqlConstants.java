@@ -188,10 +188,10 @@ public class SqlConstants {
 	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
 	 */
 	public static final String PARAM_DESCRIPTORS_FOR_CODELIST = "descriptorsForCodelist";
-	
+
 	/**
-	 * Specify the conceptual type that applies to the codeStatusCL column
-	 * added by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
+	 * Specify the conceptual type that applies to the codeStatusCL column added
+	 * by {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value is
 	 * {@value #DEFAULT_CODESTATUSCL_TYPE}.
 	 */
 	public static final String PARAM_CODESTATUSCL_TYPE = "codeStatusCLType";
@@ -224,13 +224,13 @@ public class SqlConstants {
 	public static final String DEFAULT_ONE_TO_MANY_REF_COLUMN_NAME = "dataTypeOwner";
 
 	/**
-	 * Define the name for the column that stores the value of the code status code list.
-	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
-	 * is: {@value #DEFAULT_NAME_CODESTATUS_CL_COLUMN}.
+	 * Define the name for the column that stores the value of the code status
+	 * code list. Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}.
+	 * Default value is: {@value #DEFAULT_NAME_CODESTATUS_CL_COLUMN}.
 	 */
 	public static final String PARAM_NAME_CODESTATUS_CL_COLUMN = "nameForCodeStatusCLColumn";
 	public static final String DEFAULT_NAME_CODESTATUS_CL_COLUMN = "CODE_STATUS_CL";
-	
+
 	/**
 	 * Define the name for the column that stores a note on the code status.
 	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
@@ -364,6 +364,15 @@ public class SqlConstants {
 	 * If this rule is enabled derived properties will be ignored.
 	 */
 	public static final String RULE_TGT_SQL_PROP_EXCLUDE_DERIVED = "rule-sql-prop-exclude-derived";
+
+	/**
+	 * For properties with tagged value 'precision' and 'scale' (both with
+	 * integer value), an according suffix is added to the datatype declaration,
+	 * resulting in, for example, 'number(5,2)' instead of just 'number'. Scale
+	 * can be omitted. If scale is provided but precision is omitted, a warning
+	 * is logged and the datatype is not changed.
+	 */
+	public static final String RULE_TGT_SQL_PROP_PRECISION_AND_SCALE = "rule-sql-prop-precisionAndScale";
 
 	/**
 	 * If this rule is enabled, abstract classes will be ignored by the target.

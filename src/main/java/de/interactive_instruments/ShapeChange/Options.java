@@ -3558,8 +3558,6 @@ public class Options {
 		addRule("rule-xsd-prop-gmlArrayProperty");
 		addRule("rule-xsd-prop-gmlListProperty");
 		addRule("rule-xsd-prop-qualified-associations");
-		// FIXME TB13TBD
-		addRule("rule-xsd-prop-targetElement-gmlsf");
 		addRule("rule-xsd-all-no-documentation");
 		addRule("rule-xsd-cls-local-enumeration");
 		addRule("rule-xsd-cls-local-basictype");
@@ -3626,6 +3624,7 @@ public class Options {
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
+		addRule("rule-sql-prop-precisionAndScale");
 
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");

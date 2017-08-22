@@ -40,6 +40,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
@@ -150,12 +151,23 @@ public class DdlVisitor implements StatementVisitor {
 
 				sb.append(col.getName());
 				sb.append(" ");
-				sb.append(col.getDataType().getName());
-				
+				ColumnDataType colDataType = col.getDataType();
+				sb.append(colDataType.getName());
+
+				if (colDataType.hasPrecision()) {
+					sb.append("(");
+					sb.append(colDataType.getPrecision().toString());
+					if (colDataType.hasScale()) {
+						sb.append(",");
+						sb.append(colDataType.getScale().toString());
+					}
+					sb.append(")");
+				}
+
 				if (col.getDefaultValue() != null) {
 					sb.append(" DEFAULT " + col.getDefaultValue());
 				}
-				
+
 				if (col.getSpecifications() != null
 						&& !col.getSpecifications().isEmpty()) {
 					sb.append(" ");

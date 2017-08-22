@@ -191,8 +191,8 @@ public class SqlBuilder implements MessageSource {
 				fieldType = SqlDdl.foreignKeyColumnDataType;
 			}
 
-			cdPi = createColumn(table, pi, piFieldName, fieldType, SqlConstants.NOT_NULL_COLUMN_SPEC,
-					false, true);
+			cdPi = createColumn(table, pi, piFieldName, fieldType,
+					SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 			cdPi.setReferencedTable(map(pi));
 
 		} else {
@@ -627,7 +627,8 @@ public class SqlBuilder implements MessageSource {
 		String name_1 = determineTableNameForType(pi1.inClass())
 				+ (reflexive ? "_" + pi1.name() : "") + SqlDdl.idColumnName;
 		Column cd1 = createColumn(table, pi2, name_1,
-				SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+				SqlDdl.foreignKeyColumnDataType,
+				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd1.setReferencedTable(map(pi1.inClass()));
 		columns.add(cd1);
 
@@ -635,7 +636,8 @@ public class SqlBuilder implements MessageSource {
 		String name_2 = determineTableNameForType(pi2.inClass())
 				+ (reflexive ? "_" + pi2.name() : "") + SqlDdl.idColumnName;
 		Column cd2 = createColumn(table, pi1, name_2,
-				SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+				SqlDdl.foreignKeyColumnDataType,
+				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd2.setReferencedTable(map(pi2.inClass()));
 		columns.add(cd2);
 
@@ -736,8 +738,8 @@ public class SqlBuilder implements MessageSource {
 				columns.add(cd_codeStatusCl);
 
 				// add codeStatusNotes column
-				Column cd_codeStatusNotes = new Column(SqlDdl.nameCodeStatusNotesColumn,
-						table);
+				Column cd_codeStatusNotes = new Column(
+						SqlDdl.nameCodeStatusNotesColumn, table);
 				ColumnDataType cd_codeStatusNotesDataType = new ColumnDataType(
 						SqlDdl.databaseStrategy
 								.limitedLengthCharacterDataType(255));
@@ -1105,8 +1107,7 @@ public class SqlBuilder implements MessageSource {
 			createExplicitCommentUnlessNoDocumentation(inTable, cd, pi);
 		}
 
-		String type = identifyType(pi);
-		ColumnDataType colDataType = new ColumnDataType(type);
+		ColumnDataType colDataType = identifyType(pi);
 		cd.setDataType(colDataType);
 
 		if (isForeignKeyColumn) {
@@ -1259,7 +1260,7 @@ public class SqlBuilder implements MessageSource {
 	 * @param pi
 	 * @return the type to use in the SQL definition of the property
 	 */
-	private String identifyType(PropertyInfo pi) {
+	private ColumnDataType identifyType(PropertyInfo pi) {
 
 		// first apply well-known mappings
 
@@ -1272,13 +1273,13 @@ public class SqlBuilder implements MessageSource {
 			if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 					SqlConstants.ME_PARAM_GEOMETRY)) {
 
-				return SqlDdl.databaseStrategy.geometryDataType(me,
-						SqlDdl.srid);
+				return new ColumnDataType(SqlDdl.databaseStrategy
+						.geometryDataType(me, SqlDdl.srid));
 
 			} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 					SqlConstants.ME_PARAM_TABLE)) {
 
-				return SqlDdl.foreignKeyColumnDataType;
+				return new ColumnDataType(SqlDdl.foreignKeyColumnDataType);
 
 			} else {
 
@@ -1290,17 +1291,69 @@ public class SqlBuilder implements MessageSource {
 
 					if (conditionalCriterium.equalsIgnoreCase(
 							SqlConstants.MAP_TARGETTYPE_COND_TEXTORCHARACTERVARYING)) {
-						return determineCharacterVaryingOrText(pi);
+						return new ColumnDataType(
+								determineCharacterVaryingOrText(pi));
 					}
 
 				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 						SqlConstants.ME_PARAM_TEXTORCHARACTERVARYING)) {
 
-					return determineCharacterVaryingOrText(pi);
+					return new ColumnDataType(
+							determineCharacterVaryingOrText(pi));
 
 				} else {
 
-					return me.getTargetType();
+					Integer precision = null;
+					Integer scale = null;
+
+					if (pi.matches(
+							SqlConstants.RULE_TGT_SQL_PROP_PRECISION_AND_SCALE)) {
+
+						if (StringUtils
+								.isNotBlank(pi.taggedValue("precision"))) {
+
+							String precisionValue = pi.taggedValue("precision")
+									.trim();
+							try {
+								precision = Integer.parseInt(precisionValue);
+							} catch (NumberFormatException e) {
+								MessageContext mc = result.addError(this, 6,
+										"precision", precisionValue);
+								if (mc != null) {
+									mc.addDetail(this, 2,
+											pi.fullNameInSchema());
+								}
+							}
+						}
+
+						if (StringUtils.isNotBlank(pi.taggedValue("scale"))) {
+
+							if (precision != null) {
+
+								String scaleValue = pi.taggedValue("scale")
+										.trim();
+								try {
+									scale = Integer.parseInt(scaleValue);
+								} catch (NumberFormatException e) {
+									MessageContext mc = result.addError(this, 6,
+											"scale", scaleValue);
+									if (mc != null) {
+										mc.addDetail(this, 2,
+												pi.fullNameInSchema());
+									}
+								}
+							} else {
+								MessageContext mc = result.addWarning(this, 27);
+								if (mc != null) {
+									mc.addDetail(this, 2,
+											pi.fullNameInSchema());
+								}
+							}
+						}
+					}
+
+					return new ColumnDataType(me.getTargetType(), precision,
+							scale);
 				}
 			}
 		}
@@ -1311,7 +1364,7 @@ public class SqlBuilder implements MessageSource {
 
 		if (catOfValue == Options.ENUMERATION) {
 
-			return determineCharacterVaryingOrText(pi);
+			return new ColumnDataType(determineCharacterVaryingOrText(pi));
 
 		} else if (catOfValue == Options.OBJECT || catOfValue == Options.FEATURE
 				|| catOfValue == Options.DATATYPE
@@ -1334,7 +1387,8 @@ public class SqlBuilder implements MessageSource {
 					 * table creation for this category is not enabled -> assign
 					 * textual type
 					 */
-					return determineCharacterVaryingOrText(pi);
+					return new ColumnDataType(
+							determineCharacterVaryingOrText(pi));
 
 				} else {
 
@@ -1344,37 +1398,41 @@ public class SqlBuilder implements MessageSource {
 						if (catOfValue == Options.CODELIST) {
 
 							if (SqlDdl.codeNameSize < 1) {
-								return SqlDdl.databaseStrategy
-										.unlimitedLengthCharacterDataType();
+								return new ColumnDataType(
+										SqlDdl.databaseStrategy
+												.unlimitedLengthCharacterDataType());
 							} else {
-								return SqlDdl.databaseStrategy
-										.limitedLengthCharacterDataType(
-												SqlDdl.codeNameSize);
+								return new ColumnDataType(
+										SqlDdl.databaseStrategy
+												.limitedLengthCharacterDataType(
+														SqlDdl.codeNameSize));
 							}
 
 						} else {
 
-							return SqlDdl.foreignKeyColumnDataType;
+							return new ColumnDataType(
+									SqlDdl.foreignKeyColumnDataType);
 						}
 
 					} else {
 						result.addWarning(this, 9, typeCi.name(), pi.name(),
 								pi.inClass().name());
-						return determineCharacterVaryingOrText(pi);
+						return new ColumnDataType(
+								determineCharacterVaryingOrText(pi));
 					}
 				}
 
 			} else {
 				result.addWarning(this, 10, pi.typeInfo().name, pi.name(),
 						pi.inClass().name());
-				return determineCharacterVaryingOrText(pi);
+				return new ColumnDataType(determineCharacterVaryingOrText(pi));
 			}
 
 		}
 
 		result.addWarning(this, 21, pi.typeInfo().name);
 
-		return "unknown";
+		return new ColumnDataType("unknown");
 	}
 
 	/**
@@ -1546,7 +1604,8 @@ public class SqlBuilder implements MessageSource {
 									Column dtOwner_cd = createColumn(table,
 											null, columnName,
 											SqlDdl.foreignKeyColumnDataType,
-											SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+											SqlConstants.NOT_NULL_COLUMN_SPEC,
+											false, true);
 									dtOwner_cd
 											.setReferencedTable(map(ci_other));
 
@@ -1582,7 +1641,8 @@ public class SqlBuilder implements MessageSource {
 
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+							SqlDdl.foreignKeyColumnDataType,
+							SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}
@@ -2012,9 +2072,15 @@ public class SqlBuilder implements MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class SqlBuilder";
+		case 1:
+			return "Context: class '$1$'";
+		case 2:
+			return "Context: property '$1$'";
 
 		case 5:
 			return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+		case 6:
+			return "??Number format exception while converting the tagged value '$1$' with value '$2$' to an integer.";
 
 		case 8:
 			return "??Many-to-many relationship represented by association between types with identity and maximum multiplicity > 1 on all navigable ends (in this case for classes: '$1$' [context is property '$2$'] <-> '$3$' [context is property '$4$']) is only supported if creation for associative tables is enabled (via inclusion of rule "
@@ -2064,6 +2130,8 @@ public class SqlBuilder implements MessageSource {
 			return "Identifier attribute '$1$' has max multiplicity > 1.";
 		case 26:
 			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
+		case 27:
+			return "Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
 
 		case 100:
 			return "Context: property '$1$'.";

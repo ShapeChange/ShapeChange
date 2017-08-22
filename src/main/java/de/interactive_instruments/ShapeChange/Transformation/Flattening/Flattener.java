@@ -198,6 +198,16 @@ public class Flattener implements Transformer, MessageSource {
 	 * property can have values from more than one union option).
 	 */
 	public static final String PARAM_INCLUDE_UNION_IDENTIFIER_TV = "includeUnionIdentifierTaggedValue";
+
+	/**
+	 * List of names of types that represent simple base types, as required by
+	 * {@value #RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE}. Default
+	 * is the list of CharacterString, Integer, Measure, and Real.
+	 */
+	public static final String PARAM_SIMPLE_BASE_TYPES = "simpleBaseTypes";
+	public static final String[] DEFAULT_SIMPLE_BASE_TYPES = new String[] {
+			"CharacterString", "Integer", "Measure", "Real" };
+
 	/**
 	 * If, during execution of {@value #RULE_TRF_PROP_FLATTEN_TYPES}, a union is
 	 * flattened, then by default the minimum multiplicity of the flattened
@@ -262,6 +272,16 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
+	// FIXME TB13TBD
+	/**
+	 * Identify basic types in the schemas selected for processing that have one
+	 * of the simple base types specified via parameter
+	 * {@value #PARAM_SIMPLE_BASE_TYPES} as supertype. For each property of
+	 * classes in the schemas selected for processing with such a basic type as
+	 * type, change the type to the according simple base type. Finally, remove
+	 * all basic types with simple base type that have been identified before.
+	 */
+	public static final String RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-basicType-mapToSimpleBaseType";
 	// FIXME TB13TBD
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
 	public static final String RULE_TRF_PROP_OPTIONALITY = "rule-trf-prop-optionality";
@@ -668,6 +688,13 @@ public class Flattener implements Transformer, MessageSource {
 			applyRuleOptionality(genModel, trfConfig);
 		}
 
+		if (rules.contains(
+				RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE);
+			applyRuleBasicTypeToSimpleBaseType(genModel, trfConfig);
+		}
+
 		if (rules.contains(RULE_TRF_CLS_FLATTEN_INHERITANCE)) {
 			result.addInfo(null, 20103, RULE_TRF_CLS_FLATTEN_INHERITANCE);
 			applyRuleInheritance(genModel, trfConfig);
@@ -793,6 +820,75 @@ public class Flattener implements Transformer, MessageSource {
 				}
 			}
 		}
+	}
+
+	private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		SortedSet<String> simpleBaseTypes = new TreeSet<String>(
+				trfConfig.parameterAsStringList(PARAM_SIMPLE_BASE_TYPES,
+						DEFAULT_SIMPLE_BASE_TYPES, true, true));
+
+		List<GenericClassInfo> basicTypesToRemove = new ArrayList<GenericClassInfo>();
+		Map<String, Type> basicTypeNameToSimpleBaseType = new HashMap<String, Type>();
+
+		/*
+		 * first identify all basic types from schemas selected for processing
+		 * that have a simple base type
+		 */
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			if (genCi.category() == Options.BASICTYPE) {
+
+				/*
+				 * FIXME TB13TBD: map basic type to its simple base type, if
+				 * such a type can be found
+				 */
+				String simpleBaseTypeName = identifySimpleBaseType(genCi,
+						simpleBaseTypes);
+
+				if (simpleBaseTypeName != null) {
+
+					ClassInfo simpleBaseType = genModel
+							.classByName(simpleBaseTypeName);
+
+					Type typeInfo = new Type();
+
+					if (simpleBaseType == null) {
+						typeInfo.id = UNKNOWN;
+						typeInfo.name = simpleBaseTypeName;
+					} else {
+						typeInfo.id = simpleBaseType.id();
+						typeInfo.name = simpleBaseType.name();
+					}
+
+					basicTypesToRemove.add(genCi);
+
+					// add Type template to map
+					basicTypeNameToSimpleBaseType.put(genCi.name(), typeInfo);
+				}
+			}
+		}
+
+		/*
+		 * map type of all properties that have a basic type as type to the
+		 * applicable simple base type (if one exists)
+		 */
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+			if (basicTypeNameToSimpleBaseType
+					.containsKey(genPi.typeInfo().name)) {
+
+				// set copy of applicable Type template as type of the property
+				genPi.setTypeInfo(basicTypeNameToSimpleBaseType
+						.get(genPi.typeInfo().name).createCopy());
+			}
+		}
+
+		/*
+		 * finally, remove the basic types that have a simple base type
+		 */
+		genModel.remove(basicTypesToRemove);
 	}
 
 	private void applyRuleFlattenGeometryTypeInheritance(GenericModel genModel,
@@ -3014,31 +3110,16 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		// compute some general parameter values
-		boolean includeUnionIdentifierTV = false;
-		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
-			String tmp = trfConfig
-					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
-			if (tmp.trim().equalsIgnoreCase("true")) {
-				includeUnionIdentifierTV = true;
-			}
-		}
+		boolean includeUnionIdentifierTV = trfConfig
+				.parameterAsBoolean(PARAM_INCLUDE_UNION_IDENTIFIER_TV, false);
 
-		boolean setMinCardinalityToZeroWhenMergingUnion = true;
-		if (trfConfig.hasParameter(
-				PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION)) {
-			String tmp = trfConfig.getParameterValue(
-					PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION);
-			if (tmp.trim().equalsIgnoreCase("false")) {
-				setMinCardinalityToZeroWhenMergingUnion = false;
-			}
-		}
-		boolean mergeDescriptors = false;
-		if (trfConfig.hasParameter(PARAM_MERGE_DESCRIPTORS)) {
-			String tmp = trfConfig.getParameterValue(PARAM_MERGE_DESCRIPTORS);
-			if (tmp.trim().equalsIgnoreCase("true")) {
-				mergeDescriptors = true;
-			}
-		}
+		boolean setMinCardinalityToZeroWhenMergingUnion = trfConfig
+				.parameterAsBoolean(
+						PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION,
+						true);
+
+		boolean mergeDescriptors = trfConfig
+				.parameterAsBoolean(PARAM_MERGE_DESCRIPTORS, false);
 
 		boolean ignoreSelfReferenceByPropertyWithAssociationClassOrigin = trfConfig
 				.hasRule(
@@ -3766,147 +3847,113 @@ public class Flattener implements Transformer, MessageSource {
 					type.name = targetCi.name();
 				}
 
+			} else if (type.id.equals(UNKNOWN)) {
+
+				/*
+				 * Then we cannot flatten the type. For a type.id to be
+				 * 'unknown' the reason why should have already been reported.
+				 */
+
 			} else {
 
-				if (type.id.equals(UNKNOWN)) {
+				ClassInfo typeCi = genModel.classById(type.id);
 
-					/*
-					 * Then we cannot flatten the type. For a type.id to be
-					 * 'unknown' the reason why should have already been
-					 * reported.
-					 */
+				if (typeCi == null) {
+
+					MessageContext mc = result.addDebug(this, 20301,
+							genPi.inClass().name() + "." + genPi.name(),
+							type.name);
+					if (mc != null)
+						mc.addDetail(this, 20308, "Property", genPi.fullName());
+
+					type.id = UNKNOWN;
 
 				} else {
 
-					ClassInfo typeCi = genModel.classById(type.id);
+					/*
+					 * Check category of the type of the property based upon the
+					 * desired processing (unions, datatypes [unless excluded]
+					 * and types [depending upon the value of the
+					 * flattenObjectTypes parameter]). If the type category does
+					 * not belong to one targeted for processing, directly
+					 * continue with the next property.
+					 */
+					boolean processType = false;
 
-					if (typeCi == null) {
+					if (typeCi.category() == Options.UNION
+							&& !(ignoreUnionsRepresentingFeatureTypeSets
+									&& Boolean.parseBoolean(typeCi.taggedValue(
+											"representsFeatureTypeSet")))) {
 
-						// We cannot flatten the type if it is not available.
-						//
-						// /*
-						// * We can replace the type, however, if a type mapping
-						// exists
-						// * for it in the configuration.
-						// */
-						// if
-						// (trfConfig.hasMappingForType(RULE_TRF_PROP_FLATTEN_TYPES,
-						// type.name)) {
-						//
-						// // update the type of the property to the target type
-						// String targetTypeName = trfConfig
-						// .getMappingForType(RULE_TRF_PROP_FLATTEN_TYPES,
-						// type.name)
-						// .getTargetType();
-						//
-						// MessageContext mc = result.addWarning(this, 20302,
-						// targetTypeName, type.name);
-						// if (mc != null)
-						// mc.addDetail(this, 20308, "Property",
-						// genPi.fullName());
-						//
-						// type.id = UNKNOWN;
-						// type.name = targetTypeName;
-						//
-						// } else {
-						MessageContext mc = result.addDebug(this, 20301,
-								genPi.inClass().name() + "." + genPi.name(),
-								type.name);
-						if (mc != null)
-							mc.addDetail(this, 20308, "Property",
-									genPi.fullName());
+						processType = true;
 
-						type.id = UNKNOWN;
-						// }
-						// continue;
-					} else {
+					} else if (typeCi.category() == Options.DATATYPE) {
 
-						/*
-						 * Check category of the type of the property based upon
-						 * the desired processing (unions, datatypes [unless
-						 * excluded] and types [depending upon the value of the
-						 * flattenObjectTypes parameter]). If the type category
-						 * does not belong to one targeted for processing,
-						 * directly continue with the next property.
-						 */
-						boolean processType = false;
+						if (excludeDataTypeRegex != null) {
 
-						if (typeCi.category() == Options.UNION
-								&& !(ignoreUnionsRepresentingFeatureTypeSets
-										&& Boolean.parseBoolean(
-												typeCi.taggedValue(
-														"representsFeatureTypeSet")))) {
+							Matcher m = excludeDataTypePattern
+									.matcher(typeCi.name());
+
+							if (m.matches()) {
+								processType = false;
+								result.addDebug(this, 20344, typeCi.name(),
+										excludeDataTypeRegex,
+										PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+							} else {
+								processType = true;
+								result.addDebug(this, 20345, typeCi.name(),
+										excludeDataTypeRegex,
+										PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+							}
+
+						} else {
+							processType = true;
+						}
+
+					} else if (typeCi.category() == Options.OBJECT) {
+
+						if (flattenObjectTypes) {
 
 							processType = true;
 
-						} else if (typeCi.category() == Options.DATATYPE) {
+						} else if (includeObjectTypeRegex != null) {
 
-							if (excludeDataTypeRegex != null) {
+							Matcher m = includeObjectTypePattern
+									.matcher(typeCi.name());
 
-								Matcher m = excludeDataTypePattern
-										.matcher(typeCi.name());
-
-								if (m.matches()) {
-									processType = false;
-									result.addDebug(this, 20344, typeCi.name(),
-											excludeDataTypeRegex,
-											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
-								} else {
-									processType = true;
-									result.addDebug(this, 20345, typeCi.name(),
-											excludeDataTypeRegex,
-											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
-								}
-
-							} else {
+							if (m.matches()) {
 								processType = true;
-							}
-
-						} else if (typeCi.category() == Options.OBJECT) {
-
-							if (flattenObjectTypes) {
-
-								processType = true;
-
-							} else if (includeObjectTypeRegex != null) {
-
-								Matcher m = includeObjectTypePattern
-										.matcher(typeCi.name());
-
-								if (m.matches()) {
-									processType = true;
-									result.addDebug(this, 20344, typeCi.name(),
-											includeObjectTypeRegex,
-											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
-								} else {
-									processType = false;
-									result.addDebug(this, 20345, typeCi.name(),
-											includeObjectTypeRegex,
-											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
-								}
-
+								result.addDebug(this, 20344, typeCi.name(),
+										includeObjectTypeRegex,
+										PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 							} else {
 								processType = false;
+								result.addDebug(this, 20345, typeCi.name(),
+										includeObjectTypeRegex,
+										PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 							}
-						}
 
-						if (processType) {
+						} else {
+							processType = false;
+						}
+					}
+
+					if (processType) {
+
+						/*
+						 * TBD: only if the type of the property is in the app
+						 * schema, note it for further processing
+						 */
+						if (genModel.isInAppSchema(typeCi)) {
 
 							/*
-							 * TBD: only if the type of the property is in the
-							 * app schema, note it for further processing
+							 * NOTE for cast: the cast should be safe, because
+							 * typeCi belongs to an application schema selected
+							 * for processing (the contents of which are parsed
+							 * to the generic types)
 							 */
-							if (genModel.isInAppSchema(typeCi)) {
-
-								/*
-								 * NOTE for cast: the cast should be safe,
-								 * because typeCi belongs to an application
-								 * schema selected for processing (the contents
-								 * of which are parsed to the generic types)
-								 */
-								typesToProcessById.put(typeCi.id(),
-										(GenericClassInfo) typeCi);
-							}
+							typesToProcessById.put(typeCi.id(),
+									(GenericClassInfo) typeCi);
 						}
 					}
 				}
@@ -3914,6 +3961,39 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		return typesToProcessById;
+	}
+
+	/**
+	 * Identify which of the class names in the given set is the name of one of
+	 * the (direct and indirect) supertypes of the given type, or of the type
+	 * itself.
+	 * 
+	 * @param ci
+	 * @param simpleBaseTypes
+	 *            Set with names of types that can be simple base types of basic
+	 *            types; may be empty but not <code>null</code>
+	 * @return the name of the simple base type that applies to the given type,
+	 *         or <code>null</code> if none was found
+	 */
+	private String identifySimpleBaseType(ClassInfo ci,
+			SortedSet<String> simpleBaseTypes) {
+
+		if (simpleBaseTypes.contains(ci.name())) {
+			return ci.name();
+		} else {
+			for (String supertypeId : ci.supertypes()) {
+				ClassInfo supertype = ci.model().classById(supertypeId);
+				if (supertype != null) {
+					String res = identifySimpleBaseType(supertype,
+							simpleBaseTypes);
+					if (res != null) {
+						return res;
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
