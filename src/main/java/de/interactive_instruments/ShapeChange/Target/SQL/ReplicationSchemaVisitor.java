@@ -270,15 +270,15 @@ public class ReplicationSchemaVisitor
 						// get enumeration class
 						ClassInfo enumeration = getValueType(propForColumn);
 
-						// if (enumeration != null) {
-
-						type = enumeration.qname() + "Type";
 
 						/*
 						 * Enumerations may reside in another namespace, they
 						 * are usually not flattened
 						 */
-						if (!model.isInSelectedSchemas(enumeration)) {
+						if (model.isInSelectedSchemas(enumeration)) {
+							type = SqlDdl.repSchemaTargetXmlns + ":" + enumeration.name() + "Type";
+						} else {
+							type = enumeration.qname() + "Type";
 							repSchemaPackagesForImport.add(enumeration.pkg());
 						}
 
