@@ -83,7 +83,13 @@ public class ReplicationSchemaVisitor
 	protected ShapeChangeResult result;
 
 	protected Model model;
-	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>();
+	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>(new Comparator<ClassInfo>() {
+
+		@Override
+		public int compare(ClassInfo ci1, ClassInfo ci2) {
+			return ci1.name().compareTo(ci2.name());
+		}
+	});
 
 	protected Document document;
 	protected Element root;
