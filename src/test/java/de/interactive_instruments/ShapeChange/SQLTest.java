@@ -184,4 +184,13 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/precisionAndScale",
 				"src/test/resources/sql/precisionAndScale/reference");
 	}
+	
+	@Test
+	public void testNumericallyValuedCodeLists() {
+
+		multiTest(
+				"src/test/resources/sql/numericallyValuedCodeLists/testEA_sql_numericallyValuedCodeList.xml",
+				new String[] { "sql" }, "testResults/sql/numericallyValuedCodeLists",
+				"src/test/resources/sql/numericallyValuedCodeLists/reference");
+	}
 }

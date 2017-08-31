@@ -46,6 +46,14 @@ public class ColumnDataType {
 		this.name = name;
 	}
 
+	/**
+	 * @param name
+	 *            should not be <code>null</code>
+	 * @param precision
+	 *            can be <code>null</code>
+	 * @param scale
+	 *            can be <code>null</code>
+	 */
 	public ColumnDataType(String name, Integer precision, Integer scale) {
 		this.name = name;
 		this.precision = precision;
@@ -68,7 +76,7 @@ public class ColumnDataType {
 	}
 
 	/**
-	 * @return the precision
+	 * @return the precision, can be <code>null</code>
 	 */
 	public Integer getPrecision() {
 		return precision;
@@ -76,7 +84,7 @@ public class ColumnDataType {
 
 	/**
 	 * @param precision
-	 *            the precision to set
+	 *            the precision to set, can be <code>null</code>
 	 */
 	public void setPrecision(Integer precision) {
 		this.precision = precision;
@@ -87,7 +95,7 @@ public class ColumnDataType {
 	}
 
 	/**
-	 * @return the scale
+	 * @return the scale, can be <code>null</code>
 	 */
 	public Integer getScale() {
 		return scale;
@@ -95,7 +103,7 @@ public class ColumnDataType {
 
 	/**
 	 * @param scale
-	 *            the scale to set
+	 *            the scale to set, can be <code>null</code>
 	 */
 	public void setScale(Integer scale) {
 		this.scale = scale;

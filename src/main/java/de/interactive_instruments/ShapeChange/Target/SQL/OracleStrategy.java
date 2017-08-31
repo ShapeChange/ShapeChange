@@ -213,21 +213,6 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String message(int mnr) {
-		switch (mnr) {
-		case 0:
-			return "Context: class OracleStrategy";
-		case 3:
-			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
-		case 4:
-			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
-		default:
-			return "(" + OracleStrategy.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
-	@Override
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
 			PropertyInfo pi, Column columnForPi) {
 
@@ -243,6 +228,21 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+		switch (mnr) {
+		case 0:
+			return "Context: class OracleStrategy";
+		case 3:
+			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+		case 4:
+			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+		default:
+			return "(" + OracleStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

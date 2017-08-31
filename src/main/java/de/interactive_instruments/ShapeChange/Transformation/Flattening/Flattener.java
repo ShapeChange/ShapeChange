@@ -51,7 +51,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
@@ -81,6 +81,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -201,8 +202,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	/**
 	 * List of names of types that represent simple base types, as required by
-	 * {@value #RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE}. Default
-	 * is the list of CharacterString, Integer, Measure, and Real.
+	 * {@value #RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE}. Default is
+	 * the list of CharacterString, Integer, Measure, and Real.
 	 */
 	public static final String PARAM_SIMPLE_BASE_TYPES = "simpleBaseTypes";
 	public static final String[] DEFAULT_SIMPLE_BASE_TYPES = new String[] {
@@ -267,6 +268,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
+	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES_APPEND_SUFFIX_TO_PRIMARYCODE = "rule-trf-prop-flatten-homogeneousgeometries-appendSuffixToPrimaryCode";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
@@ -274,14 +276,14 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
 	// FIXME TB13TBD
 	/**
-	 * Identify basic types in the schemas selected for processing that have one
-	 * of the simple base types specified via parameter
+	 * Identify types in the schemas selected for processing that have one of
+	 * the simple base types specified via parameter
 	 * {@value #PARAM_SIMPLE_BASE_TYPES} as supertype. For each property of
 	 * classes in the schemas selected for processing with such a basic type as
 	 * type, change the type to the according simple base type. Finally, remove
-	 * all basic types with simple base type that have been identified before.
+	 * all types with simple base type that have been identified before.
 	 */
-	public static final String RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-basicType-mapToSimpleBaseType";
+	public static final String RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-type-mapToSimpleBaseType";
 	// FIXME TB13TBD
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
 	public static final String RULE_TRF_PROP_OPTIONALITY = "rule-trf-prop-optionality";
@@ -688,10 +690,9 @@ public class Flattener implements Transformer, MessageSource {
 			applyRuleOptionality(genModel, trfConfig);
 		}
 
-		if (rules.contains(
-				RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE)) {
+		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE)) {
 			result.addInfo(null, 20103,
-					RULE_TRF_PROP_FLATTEN_BASICTYPE_MAP_TO_SIMPLEBASETYPE);
+					RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE);
 			applyRuleBasicTypeToSimpleBaseType(genModel, trfConfig);
 		}
 
@@ -829,66 +830,58 @@ public class Flattener implements Transformer, MessageSource {
 				trfConfig.parameterAsStringList(PARAM_SIMPLE_BASE_TYPES,
 						DEFAULT_SIMPLE_BASE_TYPES, true, true));
 
-		List<GenericClassInfo> basicTypesToRemove = new ArrayList<GenericClassInfo>();
-		Map<String, Type> basicTypeNameToSimpleBaseType = new HashMap<String, Type>();
+		List<GenericClassInfo> typesToRemove = new ArrayList<GenericClassInfo>();
+		Map<String, Type> typeNameToSimpleBaseType = new HashMap<String, Type>();
 
 		/*
-		 * first identify all basic types from schemas selected for processing
-		 * that have a simple base type
+		 * first identify all types from schemas selected for processing that
+		 * have a simple base type
 		 */
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-			if (genCi.category() == Options.BASICTYPE) {
+			String simpleBaseTypeName = identifySimpleBaseType(genCi,
+					simpleBaseTypes);
 
-				/*
-				 * FIXME TB13TBD: map basic type to its simple base type, if
-				 * such a type can be found
-				 */
-				String simpleBaseTypeName = identifySimpleBaseType(genCi,
-						simpleBaseTypes);
+			if (simpleBaseTypeName != null) {
 
-				if (simpleBaseTypeName != null) {
+				ClassInfo simpleBaseType = genModel
+						.classByName(simpleBaseTypeName);
 
-					ClassInfo simpleBaseType = genModel
-							.classByName(simpleBaseTypeName);
+				Type typeInfo = new Type();
 
-					Type typeInfo = new Type();
-
-					if (simpleBaseType == null) {
-						typeInfo.id = UNKNOWN;
-						typeInfo.name = simpleBaseTypeName;
-					} else {
-						typeInfo.id = simpleBaseType.id();
-						typeInfo.name = simpleBaseType.name();
-					}
-
-					basicTypesToRemove.add(genCi);
-
-					// add Type template to map
-					basicTypeNameToSimpleBaseType.put(genCi.name(), typeInfo);
+				if (simpleBaseType == null) {
+					typeInfo.id = UNKNOWN;
+					typeInfo.name = simpleBaseTypeName;
+				} else {
+					typeInfo.id = simpleBaseType.id();
+					typeInfo.name = simpleBaseType.name();
 				}
+
+				typesToRemove.add(genCi);
+
+				// add Type template to map
+				typeNameToSimpleBaseType.put(genCi.name(), typeInfo);
 			}
 		}
 
 		/*
-		 * map type of all properties that have a basic type as type to the
-		 * applicable simple base type (if one exists)
+		 * map type of all properties to the applicable simple base type (if one
+		 * exists)
 		 */
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-			if (basicTypeNameToSimpleBaseType
-					.containsKey(genPi.typeInfo().name)) {
+			if (typeNameToSimpleBaseType.containsKey(genPi.typeInfo().name)) {
 
 				// set copy of applicable Type template as type of the property
-				genPi.setTypeInfo(basicTypeNameToSimpleBaseType
+				genPi.setTypeInfo(typeNameToSimpleBaseType
 						.get(genPi.typeInfo().name).createCopy());
 			}
 		}
 
 		/*
-		 * finally, remove the basic types that have a simple base type
+		 * finally, remove the types that have a simple base type
 		 */
-		genModel.remove(basicTypesToRemove);
+		genModel.remove(typesToRemove);
 	}
 
 	private void applyRuleFlattenGeometryTypeInheritance(GenericModel genModel,
@@ -1624,6 +1617,22 @@ public class Flattener implements Transformer, MessageSource {
 								genCi.name() + separatorForGeometryTypeSuffix
 										+ mapEntry.getParam(),
 								Options.FEATURE);
+
+						if (trfConfig.hasRule(
+								RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES_APPEND_SUFFIX_TO_PRIMARYCODE)
+								&& StringUtils.isNotBlank(
+										featureCopy.primaryCode())) {
+
+							List<LangString> primaryCodeValues = featureCopy
+									.descriptors()
+									.values(Descriptor.PRIMARYCODE);
+							for (LangString ls : primaryCodeValues) {
+								ls.setValue(ls.getValue()
+										+ separatorForGeometryTypeSuffix
+										+ mapEntry.getParam());
+							}
+						}
+
 						/*
 						 * NOTE: we have not added the properties of the copy to
 						 * the model yet
@@ -3318,31 +3327,19 @@ public class Flattener implements Transformer, MessageSource {
 							 */
 							if (mergeDescriptors) {
 								copy.descriptors().put(Descriptor.DEFINITION,
-										StringUtils.join(
-												new String[] {
-														genPi.definition(),
-														copy.definition() },
-												" "));
+										mergeDescriptors(genPi.definition(),
+												copy.definition(), " "));
 								copy.descriptors().put(Descriptor.DESCRIPTION,
-										StringUtils.join(
-												new String[] {
-														genPi.description(),
-														copy.description() },
-												" "));
+										mergeDescriptors(genPi.description(),
+												copy.description(), " "));
 								copy.descriptors().put(Descriptor.PRIMARYCODE,
-										StringUtils.join(
-												new String[] {
-														genPi.primaryCode(),
-														copy.primaryCode() },
-												" "));
+										mergeDescriptors(genPi.primaryCode(),
+												copy.primaryCode(), " "));
 								// TBD: would it make sense to merge the
 								// language()?
 								copy.descriptors().put(Descriptor.LEGALBASIS,
-										StringUtils.join(
-												new String[] {
-														genPi.legalBasis(),
-														copy.legalBasis() },
-												" "));
+										mergeDescriptors(genPi.legalBasis(),
+												copy.legalBasis(), " "));
 								copy.descriptors().put(
 										Descriptor.DATACAPTURESTATEMENT,
 										ArrayUtils.addAll(
@@ -3757,6 +3754,39 @@ public class Flattener implements Transformer, MessageSource {
 					genModel.remove((GenericClassInfo) mappedType);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Stripts both descriptors to <code>null</code>, i.e. strips whitespace
+	 * from the start and end of a String and assigning <code>null</code> if the
+	 * String is empty ("") after the strip. If both strings are not
+	 * <code>null</code>, then they are joined using the given separator.
+	 * Otherwise, the non-<code>null</code> string is returned, or
+	 * <code>null</code> if both strings end up as <code>null</code>.
+	 * 
+	 * @param descriptor1
+	 * @param descriptor2
+	 * @param separator
+	 *            the string used to join the two descriptors; can be
+	 *            <code>null</code> (equals the empty string)
+	 * @return joined descriptors (see method description), can be
+	 *         <code>null</code>
+	 */
+	private String mergeDescriptors(String descriptor1, String descriptor2,
+			String separator) {
+
+		String d1 = StringUtils.stripToNull(descriptor1);
+		String d2 = StringUtils.stripToNull(descriptor2);
+
+		if (d1 != null && d2 != null) {
+			return StringUtils.join(new String[] { d1, d2 }, separator);
+		} else if (d1 != null) {
+			return d1;
+		} else if (d2 != null) {
+			return d2;
+		} else {
+			return null;
 		}
 	}
 

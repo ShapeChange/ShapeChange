@@ -141,17 +141,6 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 		return true;
 	}
 
-	@Override
-	public String message(int mnr) {
-		switch (mnr) {
-		case 0:
-			return "Context: class SQLServerStrategy";
-		default:
-			return "(" + SQLServerStrategy.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
 	/**
 	 * TBD - not implemented yet
 	 * 
@@ -162,5 +151,16 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
 			PropertyInfo pi, Column columnForPi) {
 		return null;
+	}
+	
+	@Override
+	public String message(int mnr) {
+		switch (mnr) {
+		case 0:
+			return "Context: class SQLServerStrategy";
+		default:
+			return "(" + SQLServerStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

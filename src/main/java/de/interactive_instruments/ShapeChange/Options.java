@@ -133,6 +133,7 @@ public class Options {
 	public static final String TargetApplicationSchemaMetadata = "de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata";
 	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
 	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
+	public static final String TargetCDB = "de.interactive_instruments.ShapeChange.Target.CDB.CDB";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -3607,6 +3608,8 @@ public class Options {
 		addRule("rule-sql-all-normalizing-sqlserver");
 		addRule("rule-sql-all-normalizing-oracle");
 
+		addRule("rule-sql-all-precisionAndScale");
+
 		addRule("rule-sql-all-unique-naming-count-suffix");
 
 		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
@@ -3624,8 +3627,7 @@ public class Options {
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
-		addRule("rule-sql-prop-precisionAndScale");
-
+		
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
 		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
@@ -3730,6 +3732,12 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
+		
+		/*
+		 * CDB conversion rules
+		 */
+		addRule("rule-cdb-all-notEncoded");
+		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3827,6 +3835,8 @@ public class Options {
 			return Options.TargetApplicationSchemaMetadata;
 		else if (ra[1].equals("exp"))
 			return Options.TargetModelExport;
+		else if (ra[1].equals("cdb"))
+			return Options.TargetCDB;
 
 		return null;
 	}

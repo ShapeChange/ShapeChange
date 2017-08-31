@@ -346,21 +346,25 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("alias")) {
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.ALIAS, ls);
-			// this.setAliasNameAll(new Descriptors(tvValue));
-
-		} else if (tvName.equalsIgnoreCase("documentation")) {
-
-			// we map this to the descriptor 'definition'
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.DEFINITION, ls);
-			// this.setDefinitionAll(new Descriptors(tvValue));
-
-		}
+		/*
+		 * TBD: Descriptors should not be modified right away, since the
+		 * descriptor source might not be the tagged value
+		 */
+//		if (tvName.equalsIgnoreCase("alias")) {
+//
+//			LangString ls = LangString.parse(tvValue);
+//			this.descriptors.put(Descriptor.ALIAS, ls);
+//			// this.setAliasNameAll(new Descriptors(tvValue));
+//
+//		} else if (tvName.equalsIgnoreCase("documentation")) {
+//
+//			// we map this to the descriptor 'definition'
+//
+//			LangString ls = LangString.parse(tvValue);
+//			this.descriptors.put(Descriptor.DEFINITION, ls);
+//			// this.setDefinitionAll(new Descriptors(tvValue));
+//
+//		}
 	}
 
 	/**

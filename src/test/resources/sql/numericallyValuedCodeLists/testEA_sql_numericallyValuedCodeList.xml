@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/precisionAndScale/test_sql_precisionAndScale.EAP" />
+			value="src/test/resources/sql/numericallyValuedCodeLists/test_sql_numericallyValuedCodeList.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />
@@ -31,7 +31,7 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/sql/precisionAndScale/log_sql.xml" />
+			value="testResults/sql/numericallyValuedCodeLists/log_sql.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -56,41 +56,24 @@
 				<ProcessRuleSet name="flattener">
 					<rule name="rule-trf-prop-flatten-multiplicity" />
 					<rule
-						name="rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations" />
-					<rule
 						name="rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold" />
-				</ProcessRuleSet>
-			</rules>
-		</Transformer>
-		<Transformer
-			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
-			id="F_types" input="F_multiplicity" mode="enabled">
-			<parameters>
-				<ProcessParameter name="flattenObjectTypes" value="false" />
-				<ProcessParameter name="flattenDataTypesExcludeRegex"
-					value="DataType" />
-			</parameters>
-			<rules>
-				<ProcessRuleSet name="flattener">
-					<rule name="rule-trf-prop-flatten-types" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
 	</transformers>
 	<targets>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
-			inputs="F_types" mode="enabled">
+			inputs="F_multiplicity" mode="enabled">
 			<targetParameter name="defaultEncodingRule" value="customRule" />
 			<targetParameter name="outputDirectory"
-				value="testResults/sql/precisionAndScale/ddl" />
+				value="testResults/sql/numericallyValuedCodeLists/ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true" />
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
-					<rule name="rule-sql-cls-data-types" />
-					<rule name="rule-sql-cls-object-types" />
+					<rule name="rule-sql-cls-code-lists" />
 					<rule name="rule-sql-all-precisionAndScale" />
 				</EncodingRule>
 			</rules>

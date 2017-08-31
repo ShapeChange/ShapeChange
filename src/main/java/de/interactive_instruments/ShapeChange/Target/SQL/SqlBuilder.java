@@ -35,8 +35,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +99,7 @@ public class SqlBuilder implements MessageSource {
 
 	private Map<PropertyInfo, Integer> sizeByCharacterValuedProperty = new HashMap<PropertyInfo, Integer>();
 
+	private Set<ClassInfo> numericallyValuedCodeLists = new HashSet<ClassInfo>();
 	private List<Table> tables = new ArrayList<Table>();
 
 	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
@@ -678,18 +681,82 @@ public class SqlBuilder implements MessageSource {
 
 		// create required column to store the code name
 		String name = SqlDdl.codeNameColumnName;
-		String fieldType;
 
-		if (SqlDdl.codeNameSize < 1) {
-			fieldType = SqlDdl.databaseStrategy
-					.unlimitedLengthCharacterDataType();
-		} else {
-			fieldType = SqlDdl.databaseStrategy
-					.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
+		String nvclTV = StringUtils.stripToNull(
+				ci.taggedValue(SqlConstants.TV_NUMERICALLY_VALUED_CODELIST));
+
+		String fieldType;
+		Column cd_codename = null;
+
+		if (nvclTV != null) {
+
+			ProcessMapEntry pme = options.targetMapEntry(nvclTV,
+					ci.encodingRule("sql"));
+
+			if (pme == null) {
+
+				MessageContext mc = result.addError(this, 28, nvclTV,
+						ci.name());
+				if (mc != null) {
+					mc.addDetail(this, 1, ci.fullNameInSchema());
+				}
+
+			} else {
+
+				numericallyValuedCodeLists.add(ci);
+
+				fieldType = pme.getTargetType();
+
+				cd_codename = createColumn(table, null, name, fieldType,
+						SqlDdl.primaryKeySpecCodelist, true, false);
+
+				// add precision and scale, if applicable
+				if (ci.matches(
+						SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
+
+					Integer precision = parseTaggedValue("precision", ci);
+					Integer scale = parseTaggedValue("scale", ci);
+
+					if (scale != null && precision == null) {
+
+						MessageContext mc = result.addWarning(this, 27);
+						if (mc != null) {
+							mc.addDetail(this, 1, ci.fullNameInSchema());
+						}
+
+						scale = null;
+					}
+
+					if (precision != null) {
+						cd_codename.getDataType().setPrecision(precision);
+					}
+
+					if (scale != null) {
+						cd_codename.getDataType().setScale(scale);
+					}
+				}
+			}
 		}
 
-		Column cd_codename = createColumn(table, null, name, fieldType,
-				SqlDdl.primaryKeySpecCodelist, true, false);
+		if (cd_codename == null) {
+
+			// codes stored as text
+
+			if (SqlDdl.codeNameSize < 1) {
+
+				fieldType = SqlDdl.databaseStrategy
+						.unlimitedLengthCharacterDataType();
+
+			} else {
+
+				fieldType = SqlDdl.databaseStrategy
+						.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
+			}
+
+			cd_codename = createColumn(table, null, name, fieldType,
+					SqlDdl.primaryKeySpecCodelist, true, false);
+		}
+
 		columns.add(cd_codename);
 
 		/*
@@ -1307,48 +1374,19 @@ public class SqlBuilder implements MessageSource {
 					Integer scale = null;
 
 					if (pi.matches(
-							SqlConstants.RULE_TGT_SQL_PROP_PRECISION_AND_SCALE)) {
+							SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
 
-						if (StringUtils
-								.isNotBlank(pi.taggedValue("precision"))) {
+						precision = parseTaggedValue("precision", pi);
+						scale = parseTaggedValue("scale", pi);
 
-							String precisionValue = pi.taggedValue("precision")
-									.trim();
-							try {
-								precision = Integer.parseInt(precisionValue);
-							} catch (NumberFormatException e) {
-								MessageContext mc = result.addError(this, 6,
-										"precision", precisionValue);
-								if (mc != null) {
-									mc.addDetail(this, 2,
-											pi.fullNameInSchema());
-								}
+						if (scale != null && precision == null) {
+
+							MessageContext mc = result.addWarning(this, 27);
+							if (mc != null) {
+								mc.addDetail(this, 2, pi.fullNameInSchema());
 							}
-						}
 
-						if (StringUtils.isNotBlank(pi.taggedValue("scale"))) {
-
-							if (precision != null) {
-
-								String scaleValue = pi.taggedValue("scale")
-										.trim();
-								try {
-									scale = Integer.parseInt(scaleValue);
-								} catch (NumberFormatException e) {
-									MessageContext mc = result.addError(this, 6,
-											"scale", scaleValue);
-									if (mc != null) {
-										mc.addDetail(this, 2,
-												pi.fullNameInSchema());
-									}
-								}
-							} else {
-								MessageContext mc = result.addWarning(this, 27);
-								if (mc != null) {
-									mc.addDetail(this, 2,
-											pi.fullNameInSchema());
-								}
-							}
+							scale = null;
 						}
 					}
 
@@ -1433,6 +1471,32 @@ public class SqlBuilder implements MessageSource {
 		result.addWarning(this, 21, pi.typeInfo().name);
 
 		return new ColumnDataType("unknown");
+	}
+
+	private Integer parseTaggedValue(String taggedValueName, Info i) {
+
+		Integer res = null;
+
+		String value = StringUtils.stripToNull(i.taggedValue(taggedValueName));
+
+		if (value != null) {
+
+			try {
+				res = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				MessageContext mc = result.addError(this, 6, taggedValueName,
+						value);
+				if (mc != null) {
+					if (i instanceof ClassInfo) {
+						mc.addDetail(this, 1, i.fullNameInSchema());
+					} else {
+						mc.addDetail(this, 2, i.fullNameInSchema());
+					}
+				}
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -1849,7 +1913,11 @@ public class SqlBuilder implements MessageSource {
 					}
 					codeName = codeName.replaceAll("'", "''");
 
-					values.add(new StringValueExpression(codeName));
+					if (numericallyValuedCodeLists.contains(representedClass)) {
+						values.add(new UnquotedStringExpression(codeName));
+					} else {
+						values.add(new StringValueExpression(codeName));
+					}
 
 					for (DescriptorForCodeList descriptor : SqlDdl.descriptorsForCodelist) {
 
@@ -2132,6 +2200,10 @@ public class SqlBuilder implements MessageSource {
 			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
 		case 27:
 			return "Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
+		case 28:
+			return "Tagged value '"
+					+ SqlConstants.TV_NUMERICALLY_VALUED_CODELIST
+					+ "' is not blank. It has value '$1$'. No map entry was found (for the encoding rule that applies to class '$2$') with this value as type. The tagged value will be ignored.";
 
 		case 100:
 			return "Context: property '$1$'.";

@@ -10,6 +10,7 @@
 	<MapEntry type="DateTime" rule="*" targetType="TIMESTAMP" param=""/>
 	<MapEntry type="Integer" rule="*" targetType="INTEGER" param=""/>
 	<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
+	<MapEntry type="Number" rule="*" targetType="NUMBER" param=""/>
 	<MapEntry type="Scale" rule="*" targetType="INTEGER" param=""/>
 	
 	<!-- ISO/TS 19107 -->

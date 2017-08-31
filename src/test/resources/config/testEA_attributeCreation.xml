@@ -36,12 +36,14 @@
           			<DescriptorValue>Alias</DescriptorValue>
           		</descriptorValues>
           	</Descriptor>
+          	<Descriptor name="definition">
+          		<descriptorValues>
+          			<DescriptorValue>abcdefghijklmn</DescriptorValue>
+          		</descriptorValues>
+          	</Descriptor>
           </descriptors>
           <initialValue>initialvalue</initialValue>
           <name>GMLID</name>
-          <taggedValues>
-            <TaggedValue name="documentation" value="abcdefghijklmn"/>
-          </taggedValues>
           <!-- TBD: require full name for type? -->
           <type>CharacterString</type>
         </AttributeDefinition>

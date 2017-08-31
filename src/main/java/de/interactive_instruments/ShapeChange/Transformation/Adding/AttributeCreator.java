@@ -66,6 +66,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.Propert
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -560,7 +561,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			AttributeDefinition ad = new AttributeDefinition();
 
 			// parse name
-			Element nE = getFirstElement(attDefE, "name");
+			Element nE = XMLUtil.getFirstElement(attDefE, "name");
 			String name = nE.getTextContent().trim();
 			if (name.length() == 0) {
 				result.addError(this, 3, "name", indexForMsg);
@@ -569,10 +570,10 @@ public class AttributeCreator implements Transformer, MessageSource {
 			ad.setName(name);
 
 			// parse PackageSelector and ClassSelector
-			Element selections = getFirstElement(attDefE, "classSelection");
+			Element selections = XMLUtil.getFirstElement(attDefE, "classSelection");
 
 			PackageSelector ps = new PackageSelector();
-			Element psE = getFirstElement(selections, "PackageSelector");
+			Element psE = XMLUtil.getFirstElement(selections, "PackageSelector");
 
 			if (psE.hasAttribute("schemaNameRegex")) {
 				String snr = psE.getAttribute("schemaNameRegex");
@@ -614,7 +615,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			ad.setPackageSelector(ps);
 
 			ClassSelector cs = new ClassSelector();
-			Element csE = getFirstElement(selections, "ClassSelector");
+			Element csE = XMLUtil.getFirstElement(selections, "ClassSelector");
 
 			if (csE.hasAttribute("nameRegex")) {
 				String nr = csE.getAttribute("nameRegex");
@@ -643,7 +644,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			ad.setClassSelector(cs);
 
 			// parse aliasName (kept for backwards compatibility)
-			Element aliasE = getFirstElement(attDefE, "aliasName");
+			Element aliasE = XMLUtil.getFirstElement(attDefE, "aliasName");
 			if (aliasE != null) {
 				String alias = aliasE.getTextContent().trim();
 				if (alias.length() != 0) {
@@ -652,7 +653,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			}
 
 			// parse descriptors
-			Element descriptorsE = getFirstElement(attDefE, "descriptors");
+			Element descriptorsE = XMLUtil.getFirstElement(attDefE, "descriptors");
 			if (descriptorsE != null) {
 
 				Descriptors descriptors = new Descriptors();
@@ -668,7 +669,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 							Element descriptorE = (Element) n;
 							List<LangString> descriptorValues = new ArrayList<LangString>();
 
-							Element descriptorValuesE = getFirstElement(
+							Element descriptorValuesE = XMLUtil.getFirstElement(
 									descriptorE, "descriptorValues");
 
 							NodeList descriptorValuesNl = descriptorValuesE
@@ -726,7 +727,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			}
 
 			// parse initialValue
-			Element ivE = getFirstElement(attDefE, "initialValue");
+			Element ivE = XMLUtil.getFirstElement(attDefE, "initialValue");
 			if (ivE != null) {
 				String iv = ivE.getTextContent();
 				if (iv.length() != 0) {
@@ -736,7 +737,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse isDerived
 			boolean isDerived = false;
-			Element isDerivedE = getFirstElement(attDefE, "isDerived");
+			Element isDerivedE = XMLUtil.getFirstElement(attDefE, "isDerived");
 			if (isDerivedE != null) {
 				String isDerivedS = isDerivedE.getTextContent().trim();
 				if (isDerivedS.equalsIgnoreCase("true")
@@ -748,7 +749,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse isOrdered
 			boolean isOrdered = false;
-			Element isOrderedE = getFirstElement(attDefE, "isOrdered");
+			Element isOrderedE = XMLUtil.getFirstElement(attDefE, "isOrdered");
 			if (isOrderedE != null) {
 				String isOrderedS = isOrderedE.getTextContent().trim();
 				if (isOrderedS.equalsIgnoreCase("true")
@@ -760,7 +761,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse isUnique
 			boolean isUnique = true;
-			Element isUniqueE = getFirstElement(attDefE, "isUnique");
+			Element isUniqueE = XMLUtil.getFirstElement(attDefE, "isUnique");
 			if (isUniqueE != null) {
 				String isUniqueS = isUniqueE.getTextContent().trim();
 				if (isUniqueS.equalsIgnoreCase("false")
@@ -772,7 +773,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse isReadOnly
 			boolean isReadOnly = false;
-			Element isReadOnlyE = getFirstElement(attDefE, "isReadOnly");
+			Element isReadOnlyE = XMLUtil.getFirstElement(attDefE, "isReadOnly");
 			if (isReadOnlyE != null) {
 				String isReadOnlyS = isReadOnlyE.getTextContent().trim();
 				if (isReadOnlyS.equalsIgnoreCase("true")
@@ -784,7 +785,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse multiplicity
 			Multiplicity m = new Multiplicity();
-			Element multE = getFirstElement(attDefE, "multiplicity");
+			Element multE = XMLUtil.getFirstElement(attDefE, "multiplicity");
 			if (multE != null) {
 				String mult = multE.getTextContent().trim();
 				if (mult.length() != 0) {
@@ -795,7 +796,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse stereotypes
 			Stereotypes sts = options.stereotypesFactory();
-			Element stsE = getFirstElement(attDefE, "stereotypes");
+			Element stsE = XMLUtil.getFirstElement(attDefE, "stereotypes");
 
 			if (stsE != null) {
 
@@ -825,7 +826,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 			// parse taggedValues
 			TaggedValues tvs = options.taggedValueFactory();
-			Element tvsE = getFirstElement(attDefE, "taggedValues");
+			Element tvsE = XMLUtil.getFirstElement(attDefE, "taggedValues");
 
 			if (tvsE != null) {
 
@@ -848,7 +849,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 			ad.setTaggedValues(tvs);
 
 			// parse type
-			Element typeE = getFirstElement(attDefE, "type");
+			Element typeE = XMLUtil.getFirstElement(attDefE, "type");
 			String type = typeE.getTextContent().trim();
 			if (type.length() == 0) {
 				result.addError(this, 3, "type", indexForMsg);
@@ -870,25 +871,6 @@ public class AttributeCreator implements Transformer, MessageSource {
 		}
 
 		return attDefs;
-	}
-
-	private Element getFirstElement(Element parent, String elementName) {
-
-		NodeList nl = parent.getElementsByTagName(elementName);
-
-		if (nl != null && nl.getLength() != 0) {
-
-			for (int k = 0; k < nl.getLength(); k++) {
-
-				Node n = nl.item(k);
-				if (n.getNodeType() == Node.ELEMENT_NODE) {
-
-					return (Element) n;
-				}
-			}
-		}
-
-		return null;
 	}
 
 	@Override

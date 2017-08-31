@@ -366,13 +366,14 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_PROP_EXCLUDE_DERIVED = "rule-sql-prop-exclude-derived";
 
 	/**
-	 * For properties with tagged value 'precision' and 'scale' (both with
-	 * integer value), an according suffix is added to the datatype declaration,
-	 * resulting in, for example, 'number(5,2)' instead of just 'number'. Scale
-	 * can be omitted. If scale is provided but precision is omitted, a warning
-	 * is logged and the datatype is not changed.
+	 * For properties or numerically valued code lists with tagged value
+	 * 'precision' and 'scale' (both with integer value), an according suffix is
+	 * added to the datatype declaration, resulting in, for example,
+	 * 'number(5,2)' instead of just 'number'. Scale can be omitted. If scale is
+	 * provided but precision is omitted, a warning is logged and the datatype
+	 * is not changed.
 	 */
-	public static final String RULE_TGT_SQL_PROP_PRECISION_AND_SCALE = "rule-sql-prop-precisionAndScale";
+	public static final String RULE_TGT_SQL_ALL_PRECISION_AND_SCALE = "rule-sql-all-precisionAndScale";
 
 	/**
 	 * If this rule is enabled, abstract classes will be ignored by the target.
@@ -467,6 +468,16 @@ public class SqlConstants {
 	 * datatype.
 	 */
 	public static final String TV_ONE_TO_MANY_REF_COLUMN_NAME = "oneToManyReferenceColumnName";
+
+	/**
+	 * Setting this tagged value on a code list indicates that the codes are
+	 * numeric. The tagged value contains the name of the conceptual type that
+	 * represents the code values best, for example 'Number' or 'Integer'. The
+	 * SQL data type will be determined by mapping that type using the map
+	 * entries defined in the configuration, resulting in a DBMS specific
+	 * implementation of the SQL data type.
+	 */
+	public static final String TV_NUMERICALLY_VALUED_CODELIST = "numericallyValuedCodeList";
 
 	/* -------------------- */
 	/* --- other fields --- */

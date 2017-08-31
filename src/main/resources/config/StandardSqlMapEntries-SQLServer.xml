@@ -10,6 +10,7 @@
 	<MapEntry type="Date" rule="*" targetType="date" param="defaultValue{quoted=true}"/>
 	<MapEntry type="Integer" rule="*" targetType="int" param=""/>
 	<MapEntry type="Real" rule="*" targetType="numeric" param=""/>
+	<MapEntry type="Number" rule="*" targetType="numeric" param=""/>
 	
 	<!-- ISO/TS 19107 -->
 	<MapEntry type="GM_Curve" rule="*" targetType="geometry" param="geometry"/>

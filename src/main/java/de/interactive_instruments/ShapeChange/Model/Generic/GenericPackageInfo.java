@@ -346,33 +346,39 @@ public class GenericPackageInfo extends PackageInfoImpl
 
 					this.setXsdDocument(taggedValuesCache.getFirstValue(key));
 
-				} else if (key.equalsIgnoreCase("alias")) {
-
-					String[] tvs = taggedValuesCache.get(key);
-
-					List<LangString> val;
-
-					if (tvs.length == 0) {
-						val = new ArrayList<LangString>();
-					} else {
-						val = LangString.parse(tvs);
-					}
-					this.descriptors.put(Descriptor.ALIAS, val);
-
-				} else if (key.equalsIgnoreCase("documentation")) {
-
-					// we map this to the descriptor 'definition'
-					String[] tvs = taggedValuesCache.get(key);
-
-					List<LangString> val;
-
-					if (tvs.length == 0) {
-						val = new ArrayList<LangString>();
-					} else {
-						val = LangString.parse(tvs);
-					}
-					this.descriptors.put(Descriptor.DOCUMENTATION, val);
 				}
+
+				/*
+				 * TBD: Descriptors should not be modified right away, since the
+				 * descriptor source might not be the tagged value
+				 */
+				// else if (key.equalsIgnoreCase("alias")) {
+				//
+				// String[] tvs = taggedValuesCache.get(key);
+				//
+				// List<LangString> val;
+				//
+				// if (tvs.length == 0) {
+				// val = new ArrayList<LangString>();
+				// } else {
+				// val = LangString.parse(tvs);
+				// }
+				// this.descriptors.put(Descriptor.ALIAS, val);
+				//
+				// } else if (key.equalsIgnoreCase("documentation")) {
+				//
+				// // we map this to the descriptor 'definition'
+				// String[] tvs = taggedValuesCache.get(key);
+				//
+				// List<LangString> val;
+				//
+				// if (tvs.length == 0) {
+				// val = new ArrayList<LangString>();
+				// } else {
+				// val = LangString.parse(tvs);
+				// }
+				// this.descriptors.put(Descriptor.DOCUMENTATION, val);
+				// }
 			}
 		}
 	}

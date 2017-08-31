@@ -816,7 +816,12 @@ public abstract class InfoImpl implements Info {
 				if (s == null)
 					s = "*";
 			} else if (platform.equalsIgnoreCase("ptf")) {
-				s = options().parameter(Options.TargetModelExport,
+				s = options().parameter(Options.TargetProfileTransferEA,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
+			} else if (platform.equalsIgnoreCase("cdb")) {
+				s = options().parameter(Options.TargetCDB,
 						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
@@ -945,6 +950,10 @@ public abstract class InfoImpl implements Info {
 				res = res || options().hasRule(rule, encRule);
 
 			encRule = encodingRule("sql");
+			if (encRule != null)
+				res = res || options().hasRule(rule, encRule);
+			
+			encRule = encodingRule("cdb");
 			if (encRule != null)
 				res = res || options().hasRule(rule, encRule);
 

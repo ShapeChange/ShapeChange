@@ -121,6 +121,13 @@ public class ShapeChangeResult {
 
 		// Functions analogous to the standard message handlers
 		public void addDetail(MessageSource ms, int mnr, String p1, String p2,
+				String p3, String p4) {
+			String m = ms == null ? result.message(mnr) : ms.message(mnr);
+			addDetail(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3)
+					.replace("$4$", p4));
+		}
+
+		public void addDetail(MessageSource ms, int mnr, String p1, String p2,
 				String p3) {
 			String m = ms == null ? result.message(mnr) : ms.message(mnr);
 			addDetail(
@@ -934,10 +941,10 @@ public class ShapeChangeResult {
 			return "OCL syntax tree: '$1$'";
 		case 10025:
 			return "OCL comment: '$1$'";
-	
+
 		case 20103:
 			return "---------- now processing: $1$ ----------";
-			
+
 		case 30800:
 			return "(Generic model element reader) Unexpected start element found by $1$: '$2$'.";
 		case 30801:
@@ -947,7 +954,6 @@ public class ShapeChangeResult {
 		case 30803:
 			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
 
-			
 		default:
 			return "(" + ShapeChangeResult.class.getName()
 					+ ") Unknown message with number: " + mnr;

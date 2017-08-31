@@ -290,8 +290,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setInlineOrByReference(String inlineOrByReference) {
 
-		if (inlineOrByReference != null
-				&& !inlineOrByReference.equalsIgnoreCase("inlineOrByReference")) {
+		if (inlineOrByReference != null && !inlineOrByReference
+				.equalsIgnoreCase("inlineOrByReference")) {
 			this.inlineOrByReference = options.internalize(inlineOrByReference);
 		} else {
 			this.inlineOrByReference = null;
@@ -572,7 +572,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
 			copy.setTaggedValues(taggedValuesCache, false);
 		}
-		
+
 		copy.setStereotypes(this.stereotypesCache);
 
 		copy.setDerived(isDerived);
@@ -662,7 +662,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * Encapsulates the logic to update property fields based upon the value of
-	 * a named tagged value.
+	 * a named tagged value. Updates 'nilReasonAllowed', 'inlineOrByReference',
+	 * and 'sequenceNumber'.
 	 * 
 	 * @param taggedValueName
 	 * @param taggedValueValue
@@ -679,10 +680,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 				this.setNilReasonAllowed(false);
 			} else {
 				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
-				if(mc != null) {
+				if (mc != null) {
 					mc.addDetail(this, 0, this.fullName());
 				}
 			}
+
 		} else if (tvName.equalsIgnoreCase("inlineOrByReference")) {
 
 			if (tvValue.equalsIgnoreCase("inline")) {
@@ -693,25 +695,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 				this.setInlineOrByReference("inlineOrByReference");
 			} else {
 				MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
-				if(mc != null) {
+				if (mc != null) {
 					mc.addDetail(this, 0, this.fullName());
 				}
 			}
-		} else if (tvName.equalsIgnoreCase("alias")) {
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.ALIAS, ls);
-
-			// this.setAliasNameAll(
-			// new Descriptors(options().internalize(tvValue)));
-
-		} else if (tvName.equalsIgnoreCase("documentation")) {
-
-			// we map this to the descriptor 'definition'
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.DEFINITION, ls);
-			// this.setDefinitionAll(
-			// new Descriptors(options().internalize(tvValue)));
 
 		} else if (tvName.equalsIgnoreCase("sequenceNumber")) {
 
@@ -720,8 +707,29 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			 * because this method is only called after setting a tagged value.
 			 */
 			this.setSequenceNumber(new StructuredNumber(tvValue), false);
-
 		}
+
+		/*
+		 * TBD: Descriptors should not be modified right away, since the
+		 * descriptor source might not be the tagged value
+		 */
+		// else if (tvName.equalsIgnoreCase("alias")) {
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.ALIAS, ls);
+		//
+		// // this.setAliasNameAll(
+		// // new Descriptors(options().internalize(tvValue)));
+		//
+		// } else if (tvName.equalsIgnoreCase("documentation")) {
+		//
+		// // we map this to the descriptor 'definition'
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.DEFINITION, ls);
+		// // this.setDefinitionAll(
+		// // new Descriptors(options().internalize(tvValue)));
+		//
+		// }
 	}
 
 	/**
@@ -756,7 +764,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			this.profiles = profiles;
 		}
 	}
-	
+
 	@Override
 	public String message(int mnr) {
 

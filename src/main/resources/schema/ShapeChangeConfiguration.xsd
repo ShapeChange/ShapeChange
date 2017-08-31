@@ -491,6 +491,8 @@
   <complexType>
    <choice maxOccurs="unbounded">
     <element maxOccurs="1" ref="sc:AttributeDefinition"/>
+    <element ref="sc:CDBUnitDefinition"/>
+    <any namespace="##other"/>
    </choice>
   </complexType>
  </element>
@@ -540,6 +542,16 @@
    </element>
    <element name="type" type="string"/>
   </sequence>
+ </complexType>
+ <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType"/>
+ <complexType name="CDBUnitDefinitionType">
+  <sequence>
+   <element name="name" type="token"/>
+   <element maxOccurs="unbounded" minOccurs="0" name="alias" type="token"/>
+   <element name="description" type="string" minOccurs="0"/>
+  </sequence>
+  <attribute name="code" type="positiveInteger"/>
+  <attribute name="symbol" type="token" use="required"/>
  </complexType>
  <element name="PackageSelector">
   <complexType>

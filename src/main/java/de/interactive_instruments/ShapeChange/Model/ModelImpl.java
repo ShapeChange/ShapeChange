@@ -113,7 +113,7 @@ public abstract class ModelImpl implements Model {
 			"vocabulary", "associativeTable", "jsonEncodingRule",
 			"sqlEncodingRule", "status", "geometry",
 			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
-			"scale" };
+			"scale", "numericallyValuedCodeList" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -440,6 +440,8 @@ public abstract class ModelImpl implements Model {
 			return "gmlAsGroup";
 		if (tag.equals("implementedByNilReason"))
 			return "gmlImplementedByNilReason";
+		
+		// TBD: add input parameter to allow any tag
 
 		// None of these, return null
 		return null;
