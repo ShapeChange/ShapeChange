@@ -60,6 +60,7 @@ import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
+import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 import de.interactive_instruments.ShapeChange.Transformation.TransformationManager;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
@@ -71,14 +72,15 @@ public class Converter implements MessageSource {
 	public static final int STATUS_TARGET_WRITEALL = 204;
 	public static final int STATUS_TARGET_DEFERRED_WRITE = 205;
 	public static final int STATUS_TRANSFORMER_PROCESS = 206;
-
+	
 	/** Result object. */
 	protected ShapeChangeResult result = null;
 	protected Options options = null;
 	protected Target target = null;
 	protected Set<String> processIdsToIgnore = new HashSet<String>();
 	protected TargetOutputProcessor outputProcessor = null;
-
+	private PackageInfo mainSchemaForSingleTargets;
+	
 	public Converter(Options o, ShapeChangeResult r) {
 		options = o;
 		result = r;
@@ -655,15 +657,17 @@ public class Converter implements MessageSource {
 			FileAlterationObserver outputObserver = setupOutputFileAlterationObserver(
 					outputDirectory, faListener, tgt);
 
-			SortedSet<? extends PackageInfo> selectedSchema = model
+			SortedSet<? extends PackageInfo> selectedSchemas = model
 					.selectedSchemas();
+			
+			mainSchemaForSingleTargets = TargetUtil.findMainSchemaForSingleTargets(selectedSchemas, options, result);
 
 			String classname = tgt.getClassName();
 			ProcessMode tmode = options.targetMode(classname);
 			Class theClass = Class.forName(classname);
 			boolean targetCalled = false;
 
-			for (PackageInfo pi : selectedSchema) {
+			for (PackageInfo pi : selectedSchemas) {
 
 				if (pi == null) {
 					continue;
@@ -806,14 +810,8 @@ public class Converter implements MessageSource {
 								List<File> newOutputFiles = faListener
 										.getNewOutputFiles();
 
-								if (selectedSchema.size() == 1) {
-									outputProcessor.process(newOutputFiles, tgt,
-											selectedSchema.first());
-								} else {
-									outputProcessor.process(newOutputFiles, tgt,
-											null);
-								}
-
+								outputProcessor.process(newOutputFiles, tgt, mainSchemaForSingleTargets);
+								
 								/*
 								 * re-initialize the observer, i.e. let the
 								 * observer get all files that now exist in the
@@ -977,6 +975,8 @@ public class Converter implements MessageSource {
 		}
 		return false;
 	}
+	
+	
 
 	@SuppressWarnings("rawtypes")
 	private boolean isDeferrableOutputWriter(Class theClass) {
