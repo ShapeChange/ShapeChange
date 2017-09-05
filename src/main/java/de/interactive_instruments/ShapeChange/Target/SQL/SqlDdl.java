@@ -68,6 +68,7 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArrayExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimElement;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.CheckConstraintNamingStrategy;
@@ -182,6 +183,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	
 	private PackageInfo schema = null;
 	private boolean schemaNotEncoded = false;
+
+	private PackageInfo mainAppSchema;
 	
 	@Override
 	public void initialise(PackageInfo pi, Model m, Options o,
@@ -192,6 +195,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		model = m;
 		options = o;
 		result = r;
+		mainAppSchema = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
 
 		diagnosticsOnly = diagOnly;
 
@@ -235,7 +239,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				outputFilename = options.parameter(this.getClass().getName(),
 						"outputFilename");
 				if (outputFilename == null) {
-					outputFilename = schema.name();
+					if (mainAppSchema == null) {
+						outputFilename = schema.name();
+					} else {
+						outputFilename = mainAppSchema.name();
+					}
 				}
 				outputFilename = outputFilename.replace("/", "_")
 						.replace(" ", "_");
@@ -575,16 +583,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						ReplicationSchemaConstants.DEFAULT_TARGET_NAMESPACE_SUFFIX,
 						false, true);
 				
-				String mainSchemaName = options.parameterAsString(this.getClass().getName(),
-						"replicationSchemaMainAppSchema", "", false, true);
-				if (StringUtils.isNotBlank(mainSchemaName)) {
-					for (PackageInfo packageInfo : model.selectedSchemas()) {
-						if (packageInfo.name().equals(mainSchemaName)) {
-							repSchemaTargetNamespace = packageInfo.targetNamespace();
-							repSchemaTargetVersion = packageInfo.version();
-							repSchemaTargetXmlns = packageInfo.xmlns();
-						}
-					}
+				if (mainAppSchema != null) {
+					repSchemaTargetNamespace = mainAppSchema.targetNamespace();
+					repSchemaTargetVersion = mainAppSchema.version();
+					repSchemaTargetXmlns = mainAppSchema.xmlns();
 				} else {
 					repSchemaTargetNamespace = options.parameterAsString(this.getClass().getName(),
 							ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE, schema.targetNamespace(), true, true);
