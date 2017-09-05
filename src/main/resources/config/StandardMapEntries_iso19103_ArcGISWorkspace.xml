@@ -5,6 +5,7 @@
 	<MapEntry type="CharacterString" rule="ArcGIS" targetType="esriFieldTypeString"/>
 	<MapEntry type="Integer" rule="ArcGIS" targetType="esriFieldTypeInteger"/>
 	<MapEntry type="Real" rule="ArcGIS" targetType="esriFieldTypeDouble"/>
+	<MapEntry type="Number" rule="ArcGIS" targetType="esriFieldTypeDouble"/>
 	<MapEntry type="Date" rule="ArcGIS" targetType="esriFieldTypeDate"/>
 	<MapEntry type="DateTime" rule="ArcGIS" targetType="esriFieldTypeDate"/>
 	<!-- ... more to be added as required -->

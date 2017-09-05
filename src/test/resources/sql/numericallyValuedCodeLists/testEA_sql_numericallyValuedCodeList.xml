@@ -75,6 +75,7 @@
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-cls-code-lists" />
 					<rule name="rule-sql-all-precisionAndScale" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations" />
 				</EncodingRule>
 			</rules>
 			<xi:include

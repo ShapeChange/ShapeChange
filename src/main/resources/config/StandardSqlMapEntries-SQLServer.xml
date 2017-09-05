@@ -25,6 +25,8 @@
 	<MapEntry type="CI_Citation" rule="*" targetType="nvarchar(max)" param=""/>
 	
 	<!-- ... more to be added as required -->
+	<MapEntry type="Short" rule="*" targetType="smallint" param=""/>
+	<MapEntry type="Long" rule="*" targetType="bigint" param=""/>
 	
 	<!-- other ISO -->
 	<MapEntry type="Date" rule="*" targetType="date" param=""/>

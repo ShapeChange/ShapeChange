@@ -23,6 +23,8 @@
 	<MapEntry type="GM_Surface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=polygon}"/>
 	
 	<!-- ... more to be added as required -->
+	<MapEntry type="Short" rule="*" targetType="SHORTINTEGER" param=""/>
+	<MapEntry type="Long" rule="*" targetType="LONGINTEGER" param=""/>
 	
 	<!-- other ISO -->
 	<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param=""/>

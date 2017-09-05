@@ -477,7 +477,7 @@ public class SqlConstants {
 	 * entries defined in the configuration, resulting in a DBMS specific
 	 * implementation of the SQL data type.
 	 */
-	public static final String TV_NUMERICALLY_VALUED_CODELIST = "numericallyValuedCodeList";
+	public static final String TV_NUMERIC_TYPE = "numericType";
 
 	/* -------------------- */
 	/* --- other fields --- */

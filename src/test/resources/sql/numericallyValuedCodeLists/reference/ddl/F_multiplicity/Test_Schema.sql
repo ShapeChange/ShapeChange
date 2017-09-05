@@ -1,10 +1,12 @@
 CREATE TABLE featuretype (
 
    _id bigserial NOT NULL PRIMARY KEY,
-   att2 numeric NOT NULL,
+   att2 numeric(10,2) NOT NULL,
    att3 integer NOT NULL,
    att4 text NOT NULL,
-   att5 numeric NOT NULL
+   att5 numeric NOT NULL,
+   att6 numeric(5,2) NOT NULL,
+   att7 text NOT NULL
 );
 
 CREATE TABLE featuretype_att1 (
@@ -45,6 +47,8 @@ CREATE TABLE textcodelist (
 );
 
 
+ALTER TABLE featuretype ADD CONSTRAINT featuretype_att6_chk CHECK (att6 IN (100.1, 100.2));
+ALTER TABLE featuretype ADD CONSTRAINT featuretype_att7_chk CHECK (att7 IN ('X', 'Y'));
 ALTER TABLE featuretype ADD CONSTRAINT fk_featuretype_att2 FOREIGN KEY (att2) REFERENCES numericcodelistwithvalidprecisionandscale;
 ALTER TABLE featuretype ADD CONSTRAINT fk_featuretype_att3 FOREIGN KEY (att3) REFERENCES integercodelist;
 ALTER TABLE featuretype ADD CONSTRAINT fk_featuretype_att4 FOREIGN KEY (att4) REFERENCES textcodelist;

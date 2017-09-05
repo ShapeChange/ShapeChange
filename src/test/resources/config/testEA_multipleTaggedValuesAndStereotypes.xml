@@ -17,7 +17,7 @@
     <parameter name="language" value="de"/>
 	<descriptorSources>
 		<DescriptorSource descriptor="documentation" source="ea:notes"/>
-		<DescriptorSource descriptor="alias" source="tag" token="designation"/>
+		<DescriptorSource descriptor="alias" source="tag" tag="designation"/>
 		<DescriptorSource descriptor="definition" source="sc:extract" token="PROLOG"/>
 		<DescriptorSource descriptor="description" source="tag" tag="description"/>
 		<DescriptorSource descriptor="example" source="none"/>

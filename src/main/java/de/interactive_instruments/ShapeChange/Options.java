@@ -3708,8 +3708,10 @@ public class Options {
 		addRule("rule-arcgis-prop-lengthFromTaggedValue");
 		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
 		addRule("rule-arcgis-prop-initialValue");
-		addRule("rule-arcgis-prop-precision");
-		addRule("rule-arcgis-prop-scale");
+		addRule("rule-arcgis-all-precision");
+		addRule("rule-arcgis-prop-precision"); // deprecated
+		addRule("rule-arcgis-all-scale");
+		addRule("rule-arcgis-prop-scale"); // deprecated
 		addRule("rule-arcgis-prop-isNullable");
 		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 
@@ -4142,5 +4144,9 @@ public class Options {
 		}
 
 		return prohibitedStatusValuesWhenLoadingClasses;
+	}
+	
+	public InputConfiguration getInputConfig() {
+		return this.inputConfig;
 	}
 }

@@ -36,9 +36,14 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.jena.ext.com.google.common.base.Joiner;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+
+import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
@@ -150,6 +155,30 @@ public class BasicConfigurationValidator implements MessageSource {
 			}
 		}
 
+		/* === Validate descriptor sources === */
+		SortedMap<String, String> descriptorSources = options.getInputConfig()
+				.getDescriptorSources();
+		for (Entry<String, String> entry : descriptorSources.entrySet()) {
+
+			/*
+			 * Value is either 'sc:extract#sometoken' or 'tag#sometag'
+			 */
+			String[] components = StringUtils
+					.splitPreserveAllTokens(entry.getValue(), "#");
+			if (components[0].equalsIgnoreCase("sc:extract")
+					&& components[1].length() == 0) {
+
+				result.addError(this, 200, entry.getKey());
+				isValid = false;
+
+			} else if (components[0].equalsIgnoreCase("tag")
+					&& components[1].length() == 0) {
+
+				result.addError(this, 201, entry.getKey());
+				isValid = false;
+			}
+		}
+
 		return isValid;
 	}
 
@@ -179,6 +208,12 @@ public class BasicConfigurationValidator implements MessageSource {
 					+ "' for target with class name '$1$' and input(s) '$2$'. Required parameter '"
 					+ TargetOutputProcessor.PARAM_APPLY_XSLT
 					+ "' was not configured (or does not contain a non-empty value).";
+
+		// 200-299: Validation of descriptor sources
+		case 200:
+			return "Source for descriptor '$1$' is 'sc:extract', but required token is not provided.";
+		case 201:
+			return "Source for descriptor '$1$' is 'tag', but required tag is not provided.";
 
 		default:
 			return "(" + BasicConfigurationValidator.class.getName()

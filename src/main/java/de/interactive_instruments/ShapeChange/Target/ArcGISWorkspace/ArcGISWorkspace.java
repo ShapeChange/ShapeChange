@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.Collection;
 import org.sparx.Connector;
@@ -70,6 +71,7 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -161,8 +163,18 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	public static final String RULE_PROP_INITIAL_VALUE = "rule-arcgis-prop-initialValue";
 
+	public static final String RULE_ALL_PRECISION = "rule-arcgis-all-precision";
+	/**
+	 * NOTE: This rule identifier is deprecated. Use
+	 * {@value #RULE_ALL_PRECISION} instead.
+	 */
 	public static final String RULE_PROP_PRECISION = "rule-arcgis-prop-precision";
 
+	public static final String RULE_ALL_SCALE = "rule-arcgis-all-scale";
+	/**
+	 * NOTE: This rule identifier is deprecated. Use {@value #RULE_ALL_SCALE}
+	 * instead.
+	 */
 	public static final String RULE_PROP_SCALE = "rule-arcgis-prop-scale";
 
 	public static final String RULE_PROP_ISNULLABLE = "rule-arcgis-prop-isNullable";
@@ -273,6 +285,21 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	public static final int LENGTH_TAGGED_VALUE_DEFAULT = 255;
 
 	public static final String ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX = "\\W";
+
+	/**
+	 * Setting this tagged value on a code list or enumeration indicates that
+	 * the codes are numeric. The tagged value contains the name of the
+	 * conceptual type that represents the code values best, for example
+	 * 'Number' or 'Integer'. The ArcGIS data type will be determined by mapping
+	 * that type using the map entries defined in the configuration.
+	 * <p>
+	 * NOTE: The field type determined by processing this tagged value will be
+	 * overridden if tagged value {@value #TV_FIELD_TYPE} is also set on the
+	 * code list / enumeration.
+	 */
+	public static final String TV_NUMERIC_TYPE = "numericType";
+
+	public static final String TV_FIELD_TYPE = "fieldType";
 
 	/* -------------------- */
 	/* --- enumerations --- */
@@ -451,7 +478,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	/**
 	 * TODO: value of 'rule' attribute is currently ignored
-	 * 
+	 * <p>
 	 * key: 'type' attribute value of map entry defined for the target; value:
 	 * according map entry
 	 */
@@ -1166,7 +1193,24 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// identify field type for the coded value domain
 		String fieldType = "esriFieldTypeString";
-		String fieldTypeTV = ci.taggedValue("fieldType");
+
+		if (isNumericallyValued(ci)) {
+			String numericFieldConceptualType = ci.taggedValue(TV_NUMERIC_TYPE)
+					.trim();
+			if (processMapEntries.containsKey(numericFieldConceptualType)) {
+				// use target type defined by map entry for the conceptual type
+				fieldType = processMapEntries.get(numericFieldConceptualType)
+						.getTargetType();
+			} else {
+				// log error and keep fieldType as is
+				MessageContext mc = result.addError(this, 245,
+						numericFieldConceptualType);
+				if (mc != null) {
+					mc.addDetail(this, -1, ci.fullNameInSchema());
+				}
+			}
+		}
+		String fieldTypeTV = ci.taggedValue(TV_FIELD_TYPE);
 		if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
 			fieldType = fieldTypeTV.trim();
 		}
@@ -2674,13 +2718,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
-	private Integer computeScale(PropertyInfo pi, String valueTypeName) {
+	private boolean isNumericallyValued(ClassInfo ci) {
+		return StringUtils.isNotBlank(ci.taggedValue(TV_NUMERIC_TYPE));
+	}
+
+	private Integer computeScale(Info pi, String valueTypeName) {
 
 		String nameOfScaleTV = "scale";
 		String scaleTV = pi.taggedValue(nameOfScaleTV);
 
-		if (pi.matches(RULE_PROP_SCALE) && scaleTV != null
-				&& scaleTV.trim().length() > 0) {
+		if ((pi.matches(RULE_ALL_SCALE) || pi.matches(RULE_PROP_SCALE))
+				&& scaleTV != null && scaleTV.trim().length() > 0) {
 
 			try {
 				Integer scale = Integer.parseInt(scaleTV.trim());
@@ -2704,13 +2752,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
-	private Integer computePrecision(PropertyInfo pi, String valueTypeName) {
+	private Integer computePrecision(Info pi, String valueTypeName) {
 
 		String nameOfPrecisionTV = "precision";
 		String precisionTV = pi.taggedValue(nameOfPrecisionTV);
 
-		if (pi.matches(RULE_PROP_PRECISION) && precisionTV != null
-				&& precisionTV.trim().length() > 0) {
+		if ((pi.matches(RULE_ALL_PRECISION) || pi.matches(RULE_PROP_PRECISION))
+				&& precisionTV != null && precisionTV.trim().length() > 0) {
 
 			try {
 				Integer prec = Integer.parseInt(precisionTV.trim());
@@ -2926,177 +2974,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		absolutePathOfOutputEAPFile = null;
 		shortNameByTaggedValue = null;
 		numericRangeElementIdsByClassName = new HashMap<String, Integer>();
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
-	 */
-	public String message(int mnr) {
-
-		/**
-		 * Number ranges defined as follows:
-		 * <ul>
-		 * <li>1-100: Initialization related messages</li>
-		 * <li>101-200: ArcGIS workspace template related messages</li>
-		 * <li>201-300: other messages</li>
-		 * <li>10001-10100: EA exceptions
-		 * </ul>
-		 */
-
-		switch (mnr) {
-
-		case 0:
-			return "Context: class ArcGISWorkspace";
-
-		// 1-100: Initialization related messages
-		case 1:
-			return "Directory named '$1$' does not exist or is not accessible.";
-		case 2:
-			return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-		case 3:
-			return "File has been deleted.";
-		case 4:
-			return "File could not be deleted. Exception message: '$1$'.";
-		case 5:
-			return "Could not create output directory. Exception message: '$1$'.";
-		case 6:
-			return "URL '$1$' provided for configuration parameter "
-					+ PARAM_WORKSPACE_TEMPLATE
-					+ " is malformed. Execution will be aborted. Exception message is: '$2$'.";
-		case 7:
-			return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-					+ PARAM_WORKSPACE_TEMPLATE
-					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-		case 8:
-			return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
-		case 9:
-			return "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
-		case 10:
-			return "Encountered package '$1$' (child of package '$2$') which is an application schema. The package will be ignored.";
-		case 11:
-			return "Target configuration map entry for type '$1$' does not have a target type. The map entry will be ignored.";
-		case 12:
-			return "Value of configuration parameter '"
-					+ PARAM_VALUE_RANGE_DELTA
-					+ "' could not be parsed as a double value. The default value of "
-					+ NUM_RANGE_DELTA + " will be used for processing.";
-		case 13:
-			return "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
-
-		// 101-200: ArcGIS workspace template related messages
-		case 101:
-			return "Invalid ArcGIS workspace template: expected package with stereotype <<ArcGIS>> as child of root package.";
-		case 102:
-			return "Invalid ArcGIS workspace template: could not find required package '$1$'.";
-
-		// 201-300: other messages
-		case 201:
-			return "Class '$1$' will be ignored.";
-		case 202:
-			// see also 206
-			return "Unknown subtype encountered for class '$1$' - ID of subtype is '$2$'.";
-		case 203:
-			return "Different ArcGIS geometry types encountered in supertypes of class '$1$'. Geometry type will be determined based upon first occurrence of supertype with geometry type that is not 'unknown' (or 'unknown' will be used if no such supertype exists).";
-		case 204:
-			return "Could not set abstract on class '$1$'. Exception message is: '$2$'.";
-		case 205:
-			return "Length of normalized name '$1$' (original name is '$2$') of property in class '$3$' or of the class itself exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
-		case 206:
-			// see also 202
-			return "Unknown supertype encountered for class '$1$' - ID of supertype is '$2$'.";
-		case 207:
-			return "Generalisation '$1$' - '$2$' not set because the first class is not part of the target model.";
-		case 208:
-			return "Generalisation '$1$' - '$2$' not set because the second class is not part of the target model.";
-		case 209:
-			return "Processing class with category $1$ is not supported. Class '$2$' will be ignored.";
-		case 210:
-			return "Class '$1$' has geometry property of unknown type. The class will be ignored.";
-		case 211:
-			return "Class '$1$' has multiple geometry properties. All but one will be ignored.";
-		case 212:
-			return "Property '$1$' of class '$2$' has max occurrence > 1. The property will be ignored.";
-		case 213:
-			return "Property '$1$' of class '$2$' is of a geometry type. The property will be ignored.";
-		case 214:
-			return "Property '$1$' of class '$2$' is of a <<union>> type. The property will be ignored.";
-		case 215:
-			return "Property '$1$' of class '$2$' is of a <<dataType>> type. The property will be ignored.";
-		case 216:
-			return "Class '$1$' is the type of property '$2$' (from class '$3$') but was not found in the model. A proper link to '$1$' cannot be set.";
-		case 217:
-			return "Unrecognized case of property conversion. Context is property '$1$' (category of value is '$2$') in class '$3$'.";
-		case 218:
-			return "Cannot establish a <<RelationshipClass>> association for property '$1$' in class '$2$' to class '$3$' (which is the type of the property) because that class is not part of the application schema.";
-		case 219:
-			return "Subtype with id '$1$' of type '$2$' not found in the model. Cannot create a <<RelationshipClass>> association for this subtype.";
-		case 220:
-			return "Subtype '$1$' of type '$2$' is not part of the application schema. Cannot create a <<RelationshipClass>> association for this subtype.";
-		case 221:
-			return "Could not properly establish <<RelationshipClass>> association between classes '$1$' and '$2$' due to an EA exception. Error message is: $3$";
-		case 222:
-			return "Type '$1$' of property '$2$' in class '$3$' does not belong to the application schema. The property will be ignored.";
-		case 223:
-			return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not a feature or object type.";
-		case 224:
-			return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not contained in the application schema.";
-		case 225:
-			return "Cannot create association between classes '$1$' and '$2$' because at least one of them has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-		case 226:
-			return "Length of normalized name '$1$' for new association class (as well as the according relationship class) exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-		case 227:
-			return "Length of normalized name '$1$' for foreign key field in new association class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-		case 228:
-			return "Detected numeric range constraint in class '$1$' but could not find the property name in it. OCL is: $2$";
-		case 229:
-			return "Detected numeric range constraint for property named '$1$' in class '$2$' but could not actually find the property in that class. The property name has been parsed from the OCL text, which is: $3$";
-		case 230:
-			return "Could not create <<RangeDomain>> with name '$1$' due to an EA exception: $2$";
-		case 231:
-			return "Could not parse lower boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
-		case 232:
-			return "Could not parse upper boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
-		case 233:
-			return "Association between class '$1$' (which is the inClass for property '$2$') and class '$3$' (which is the type of the property) will be ignored because class '$3$' is not contained in the application schema.";
-		case 234:
-			return "Length of normalized name '$1$' for new relationship class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-		case 235:
-			return "Encoding for reflexive association (found on class '$1$') is not defined. The association will be ignored.";
-		case 236:
-			return "Encoding for reflexive relationship (found on class '$1$', for property '$2$') is not defined. The property will be ignored.";
-		case 237:
-			return "Cannot create one to many relationship between classes '$1$' and '$2$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-		case 238:
-			return "One to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-		case 239:
-			return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-		case 240:
-			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-		case 241:
-			return "Could not parse lower boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
-		case 242:
-			return "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
-		case 243:
-			return "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
-		case 244:
-			return "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
-
-		// 10001-10100: EA exceptions
-		case 10001:
-			return "EA exception encountered: $1$";
-		case 10002:
-			return "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
-		case 10003:
-			return "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
-
-		// 20001 - 20100: message context
-		case 20001:
-			return "Property: $1$";
-
-		default:
-			return "(" + ArcGISWorkspace.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
 	}
 
 	@Override
@@ -3388,6 +3265,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						}
 
 						try {
+
 							createField(eaClass, normalizedPiName,
 									normalizedPiAlias,
 									pi.derivedDocumentation(
@@ -3457,15 +3335,50 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					}
 
 					try {
+
+						int length = computeLengthForCodelistOrEnumerationValueType(
+								pi);
+						Integer precision = computePrecision(pi,
+								pi.typeInfo().name);
+						Integer scale = computeScale(pi, pi.typeInfo().name);
+
+						if (typeCi != null && isNumericallyValued(typeCi)) {
+
+							/*
+							 * NOTE: We don't check here that a mapping exists
+							 * for the numeric conceptual type specified by the
+							 * numeric type tagged value of typeCi. If it cannot
+							 * be mapped then an error will be logged when
+							 * constructing the coded value domain for typeCi.
+							 * Another check here should therefore not be
+							 * necessary.
+							 */
+
+							if (precision <= 0 && scale <= 0) {
+								/*
+								 * Precision and scale on property override the
+								 * same settings on a numerically valued code
+								 * list / enumeration. Only if precision and
+								 * scale are not set (<= 0), try to get a useful
+								 * value from the code list / enumeration
+								 * itself.
+								 */
+								precision = computePrecision(typeCi,
+										typeCi.name());
+								scale = computeScale(typeCi, typeCi.name());
+							}
+
+							length = 0;
+						}
+
 						createField(eaClass, normalizedPiName,
 								normalizedPiAlias,
 								pi.derivedDocumentation(documentationTemplate,
 										documentationNoValue),
-								eaType,
-								"" + computeLengthForCodelistOrEnumerationValueType(
-										pi),
-								"0", "0", eaClassifierId, initialValue,
+								eaType, "" + length, "" + precision, "" + scale,
+								eaClassifierId, initialValue,
 								computeIsNullable(pi));
+
 					} catch (EAException e) {
 						result.addError(this, 10003, pi.name(), ci.name(),
 								e.getMessage());
@@ -3565,5 +3478,179 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// rep.Compact();
 		rep.CloseFile();
 		rep.Exit();
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		/**
+		 * Number ranges defined as follows:
+		 * <ul>
+		 * <li>1-100: Initialization related messages</li>
+		 * <li>101-200: ArcGIS workspace template related messages</li>
+		 * <li>201-300: other messages</li>
+		 * <li>10001-10100: EA exceptions
+		 * </ul>
+		 */
+
+		switch (mnr) {
+
+		case -1:
+			return "Context: class '$1$'";
+		case 0:
+			return "Context: class ArcGISWorkspace";
+
+		// 1-100: Initialization related messages
+		case 1:
+			return "Directory named '$1$' does not exist or is not accessible.";
+		case 2:
+			return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+		case 3:
+			return "File has been deleted.";
+		case 4:
+			return "File could not be deleted. Exception message: '$1$'.";
+		case 5:
+			return "Could not create output directory. Exception message: '$1$'.";
+		case 6:
+			return "URL '$1$' provided for configuration parameter "
+					+ PARAM_WORKSPACE_TEMPLATE
+					+ " is malformed. Execution will be aborted. Exception message is: '$2$'.";
+		case 7:
+			return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+					+ PARAM_WORKSPACE_TEMPLATE
+					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
+		case 8:
+			return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
+		case 9:
+			return "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
+		case 10:
+			return "Encountered package '$1$' (child of package '$2$') which is an application schema. The package will be ignored.";
+		case 11:
+			return "Target configuration map entry for type '$1$' does not have a target type. The map entry will be ignored.";
+		case 12:
+			return "Value of configuration parameter '"
+					+ PARAM_VALUE_RANGE_DELTA
+					+ "' could not be parsed as a double value. The default value of "
+					+ NUM_RANGE_DELTA + " will be used for processing.";
+		case 13:
+			return "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
+
+		// 101-200: ArcGIS workspace template related messages
+		case 101:
+			return "Invalid ArcGIS workspace template: expected package with stereotype <<ArcGIS>> as child of root package.";
+		case 102:
+			return "Invalid ArcGIS workspace template: could not find required package '$1$'.";
+
+		// 201-300: other messages
+		case 201:
+			return "Class '$1$' will be ignored.";
+		case 202:
+			// see also 206
+			return "Unknown subtype encountered for class '$1$' - ID of subtype is '$2$'.";
+		case 203:
+			return "Different ArcGIS geometry types encountered in supertypes of class '$1$'. Geometry type will be determined based upon first occurrence of supertype with geometry type that is not 'unknown' (or 'unknown' will be used if no such supertype exists).";
+		case 204:
+			return "Could not set abstract on class '$1$'. Exception message is: '$2$'.";
+		case 205:
+			return "Length of normalized name '$1$' (original name is '$2$') of property in class '$3$' or of the class itself exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
+		case 206:
+			// see also 202
+			return "Unknown supertype encountered for class '$1$' - ID of supertype is '$2$'.";
+		case 207:
+			return "Generalisation '$1$' - '$2$' not set because the first class is not part of the target model.";
+		case 208:
+			return "Generalisation '$1$' - '$2$' not set because the second class is not part of the target model.";
+		case 209:
+			return "Processing class with category $1$ is not supported. Class '$2$' will be ignored.";
+		case 210:
+			return "Class '$1$' has geometry property of unknown type. The class will be ignored.";
+		case 211:
+			return "Class '$1$' has multiple geometry properties. All but one will be ignored.";
+		case 212:
+			return "Property '$1$' of class '$2$' has max occurrence > 1. The property will be ignored.";
+		case 213:
+			return "Property '$1$' of class '$2$' is of a geometry type. The property will be ignored.";
+		case 214:
+			return "Property '$1$' of class '$2$' is of a <<union>> type. The property will be ignored.";
+		case 215:
+			return "Property '$1$' of class '$2$' is of a <<dataType>> type. The property will be ignored.";
+		case 216:
+			return "Class '$1$' is the type of property '$2$' (from class '$3$') but was not found in the model. A proper link to '$1$' cannot be set.";
+		case 217:
+			return "Unrecognized case of property conversion. Context is property '$1$' (category of value is '$2$') in class '$3$'.";
+		case 218:
+			return "Cannot establish a <<RelationshipClass>> association for property '$1$' in class '$2$' to class '$3$' (which is the type of the property) because that class is not part of the application schema.";
+		case 219:
+			return "Subtype with id '$1$' of type '$2$' not found in the model. Cannot create a <<RelationshipClass>> association for this subtype.";
+		case 220:
+			return "Subtype '$1$' of type '$2$' is not part of the application schema. Cannot create a <<RelationshipClass>> association for this subtype.";
+		case 221:
+			return "Could not properly establish <<RelationshipClass>> association between classes '$1$' and '$2$' due to an EA exception. Error message is: $3$";
+		case 222:
+			return "Type '$1$' of property '$2$' in class '$3$' does not belong to the application schema. The property will be ignored.";
+		case 223:
+			return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not a feature or object type.";
+		case 224:
+			return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not contained in the application schema.";
+		case 225:
+			return "Cannot create association between classes '$1$' and '$2$' because at least one of them has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+		case 226:
+			return "Length of normalized name '$1$' for new association class (as well as the according relationship class) exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+		case 227:
+			return "Length of normalized name '$1$' for foreign key field in new association class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+		case 228:
+			return "Detected numeric range constraint in class '$1$' but could not find the property name in it. OCL is: $2$";
+		case 229:
+			return "Detected numeric range constraint for property named '$1$' in class '$2$' but could not actually find the property in that class. The property name has been parsed from the OCL text, which is: $3$";
+		case 230:
+			return "Could not create <<RangeDomain>> with name '$1$' due to an EA exception: $2$";
+		case 231:
+			return "Could not parse lower boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
+		case 232:
+			return "Could not parse upper boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
+		case 233:
+			return "Association between class '$1$' (which is the inClass for property '$2$') and class '$3$' (which is the type of the property) will be ignored because class '$3$' is not contained in the application schema.";
+		case 234:
+			return "Length of normalized name '$1$' for new relationship class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+		case 235:
+			return "Encoding for reflexive association (found on class '$1$') is not defined. The association will be ignored.";
+		case 236:
+			return "Encoding for reflexive relationship (found on class '$1$', for property '$2$') is not defined. The property will be ignored.";
+		case 237:
+			return "Cannot create one to many relationship between classes '$1$' and '$2$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+		case 238:
+			return "One to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+		case 239:
+			return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+		case 240:
+			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+		case 241:
+			return "Could not parse lower boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+		case 242:
+			return "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+		case 243:
+			return "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
+		case 244:
+			return "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
+		case 245:
+			return "Tagged value '" + TV_NUMERIC_TYPE
+					+ "' is not blank. It has value '$1$'. No map entry was found with this value as type. The tagged value will be ignored.";
+
+		// 10001-10100: EA exceptions
+		case 10001:
+			return "EA exception encountered: $1$";
+		case 10002:
+			return "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
+		case 10003:
+			return "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+
+		// 20001 - 20100: message context
+		case 20001:
+			return "Property: $1$";
+
+		default:
+			return "(" + ArcGISWorkspace.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

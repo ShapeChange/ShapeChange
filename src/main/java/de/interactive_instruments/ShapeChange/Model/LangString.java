@@ -175,4 +175,8 @@ public class LangString {
 		}
 		return result.toString();
 	}
+
+	public void appendSuffix(String s) {
+		this.value += s;
+	}
 }

@@ -35,10 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -99,7 +97,6 @@ public class SqlBuilder implements MessageSource {
 
 	private Map<PropertyInfo, Integer> sizeByCharacterValuedProperty = new HashMap<PropertyInfo, Integer>();
 
-	private Set<ClassInfo> numericallyValuedCodeLists = new HashSet<ClassInfo>();
 	private List<Table> tables = new ArrayList<Table>();
 
 	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
@@ -169,33 +166,58 @@ public class SqlBuilder implements MessageSource {
 		cdInClassReference.setReferencedTable(map(pi.inClass()));
 		columns.add(cdInClassReference);
 
-		Column cdPi;
+		Column cdPi = null;
 
 		if (refersToTypeRepresentedByTable(pi)) {
 
 			String piFieldName = determineTableNameForValueType(pi)
 					+ SqlDdl.idColumnName;
 
-			String fieldType;
 			if (pi.categoryOfValue() == Options.CODELIST && pi.inClass()
 					.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS)) {
 
-				if (SqlDdl.codeNameSize < 1) {
-					fieldType = SqlDdl.databaseStrategy
-							.unlimitedLengthCharacterDataType();
-				} else {
-					fieldType = SqlDdl.databaseStrategy
-							.limitedLengthCharacterDataType(
-									SqlDdl.codeNameSize);
+				if (isNumericallyValued(pi)) {
+
+					ColumnDataType mappedType = identifyNumericType(pi);
+
+					if (mappedType != null) {
+						cdPi = createColumn(table, pi, piFieldName, mappedType,
+								SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+
+					} else {
+
+						MessageContext mc = result.addError(this, 29,
+								pi.typeInfo().name, pi.name());
+						if (mc != null) {
+							mc.addDetail(this, 2, pi.fullNameInSchema());
+						}
+					}
+				}
+
+				if (cdPi == null) {
+
+					String fieldType = null;
+
+					if (SqlDdl.codeNameSize < 1) {
+						fieldType = SqlDdl.databaseStrategy
+								.unlimitedLengthCharacterDataType();
+					} else {
+						fieldType = SqlDdl.databaseStrategy
+								.limitedLengthCharacterDataType(
+										SqlDdl.codeNameSize);
+					}
+
+					cdPi = createColumn(table, pi, piFieldName, fieldType,
+							SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 				}
 
 			} else {
 
-				fieldType = SqlDdl.foreignKeyColumnDataType;
+				cdPi = createColumn(table, pi, piFieldName,
+						SqlDdl.foreignKeyColumnDataType,
+						SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 			}
 
-			cdPi = createColumn(table, pi, piFieldName, fieldType,
-					SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 			cdPi.setReferencedTable(map(pi));
 
 		} else {
@@ -682,65 +704,31 @@ public class SqlBuilder implements MessageSource {
 		// create required column to store the code name
 		String name = SqlDdl.codeNameColumnName;
 
-		String nvclTV = StringUtils.stripToNull(
-				ci.taggedValue(SqlConstants.TV_NUMERICALLY_VALUED_CODELIST));
-
-		String fieldType;
 		Column cd_codename = null;
 
-		if (nvclTV != null) {
+		if (isNumericallyValued(ci)) {
 
-			ProcessMapEntry pme = options.targetMapEntry(nvclTV,
-					ci.encodingRule("sql"));
+			ColumnDataType numericType = identifyNumericType(ci);
 
-			if (pme == null) {
+			if (numericType == null) {
 
-				MessageContext mc = result.addError(this, 28, nvclTV,
-						ci.name());
+				MessageContext mc = result.addError(this, 28, ci.name());
 				if (mc != null) {
 					mc.addDetail(this, 1, ci.fullNameInSchema());
 				}
 
 			} else {
 
-				numericallyValuedCodeLists.add(ci);
-
-				fieldType = pme.getTargetType();
-
-				cd_codename = createColumn(table, null, name, fieldType,
+				cd_codename = createColumn(table, null, name, numericType,
 						SqlDdl.primaryKeySpecCodelist, true, false);
-
-				// add precision and scale, if applicable
-				if (ci.matches(
-						SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
-
-					Integer precision = parseTaggedValue("precision", ci);
-					Integer scale = parseTaggedValue("scale", ci);
-
-					if (scale != null && precision == null) {
-
-						MessageContext mc = result.addWarning(this, 27);
-						if (mc != null) {
-							mc.addDetail(this, 1, ci.fullNameInSchema());
-						}
-
-						scale = null;
-					}
-
-					if (precision != null) {
-						cd_codename.getDataType().setPrecision(precision);
-					}
-
-					if (scale != null) {
-						cd_codename.getDataType().setScale(scale);
-					}
-				}
 			}
 		}
 
 		if (cd_codename == null) {
 
-			// codes stored as text
+			// store codes as text
+
+			String fieldType;
 
 			if (SqlDdl.codeNameSize < 1) {
 
@@ -919,18 +907,49 @@ public class SqlBuilder implements MessageSource {
 					value = enumPi.initialValue();
 				}
 
-				// escape single quotes in the enumeration value
-				value = StringUtils.replace(value, "'", "''");
+				if (isNumericallyValued(enumCi)) {
 
-				StringValueExpression sv = new StringValueExpression(value);
+					UnquotedStringExpression use = new UnquotedStringExpression(
+							value);
+					el_tmp.add(use);
 
-				el_tmp.add(sv);
+				} else {
+
+					// escape single quotes in the enumeration value
+					value = StringUtils.replace(value, "'", "''");
+					StringValueExpression sv = new StringValueExpression(value);
+					el_tmp.add(sv);
+				}
 			}
 
 			iexp.setRightExpressionsList(el);
 
 			this.checkConstraints.add(alter);
 		}
+	}
+
+	private boolean isNumericallyValued(Info i) {
+
+		if (i instanceof ClassInfo || i instanceof PropertyInfo) {
+
+			ClassInfo type = null;
+
+			if (i instanceof PropertyInfo) {
+
+				PropertyInfo pi = (PropertyInfo) i;
+				type = model.classByIdOrName(pi.typeInfo());
+
+			} else {
+				type = (ClassInfo) i;
+			}
+
+			if (type != null && StringUtils.isNotBlank(
+					type.taggedValue(SqlConstants.TV_NUMERIC_TYPE))) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void alterTableAddCheckConstraintToRestrictTimeOfDate(Column column,
@@ -1142,6 +1161,18 @@ public class SqlBuilder implements MessageSource {
 		return column;
 	}
 
+	private Column createColumn(Table inTable, PropertyInfo representedProperty,
+			String name, ColumnDataType dataType, String columnSpecification,
+			boolean isPrimaryKey, boolean isForeignKey) {
+
+		Column res = createColumn(inTable, representedProperty, name,
+				dataType.getName(), columnSpecification, isPrimaryKey,
+				isForeignKey);
+		res.setDataType(dataType);
+
+		return res;
+	}
+
 	/**
 	 * Creates the column definition based upon the property name, its type, and
 	 * a possibly defined initial value. Also adds "NOT NULL" if indicated via
@@ -1196,12 +1227,17 @@ public class SqlBuilder implements MessageSource {
 
 			/*
 			 * If the value type is a code list or enumeration, quote the
-			 * default value. This can be overridden via map entry param
-			 * characteristics.
+			 * default value - unless it is a numerically valued code list. This
+			 * can be overridden via map entry param characteristics.
 			 */
 			if (pi.categoryOfValue() == Options.CODELIST
 					|| pi.categoryOfValue() == Options.ENUMERATION) {
-				quoted = true;
+
+				ClassInfo valueType = pi.model().classByIdOrName(pi.typeInfo());
+
+				if (valueType == null || !isNumericallyValued(valueType)) {
+					quoted = true;
+				}
 			}
 
 			/*
@@ -1402,6 +1438,20 @@ public class SqlBuilder implements MessageSource {
 
 		if (catOfValue == Options.ENUMERATION) {
 
+			if (isNumericallyValued(pi)) {
+
+				ColumnDataType mappedType = identifyNumericType(pi);
+				if (mappedType != null) {
+					return mappedType;
+				} else {
+					MessageContext mc = result.addError(this, 29,
+							pi.typeInfo().name, pi.name());
+					if (mc != null) {
+						mc.addDetail(this, 2, pi.fullNameInSchema());
+					}
+				}
+			}
+
 			return new ColumnDataType(determineCharacterVaryingOrText(pi));
 
 		} else if (catOfValue == Options.OBJECT || catOfValue == Options.FEATURE
@@ -1421,6 +1471,23 @@ public class SqlBuilder implements MessageSource {
 						|| (catOfValue == Options.CODELIST && !typeCi.matches(
 								SqlConstants.RULE_TGT_SQL_CLS_CODELISTS))) {
 
+					if (catOfValue == Options.CODELIST) {
+
+						if (isNumericallyValued(pi)) {
+							ColumnDataType mappedType = identifyNumericType(pi);
+							if (mappedType != null) {
+								return mappedType;
+							} else {
+								MessageContext mc = result.addError(this, 29,
+										pi.typeInfo().name, pi.name());
+								if (mc != null) {
+									mc.addDetail(this, 2,
+											pi.fullNameInSchema());
+								}
+							}
+						}
+					}
+
 					/*
 					 * table creation for this category is not enabled -> assign
 					 * textual type
@@ -1434,6 +1501,21 @@ public class SqlBuilder implements MessageSource {
 							SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
 
 						if (catOfValue == Options.CODELIST) {
+
+							if (isNumericallyValued(pi)) {
+								ColumnDataType mappedType = identifyNumericType(
+										pi);
+								if (mappedType != null) {
+									return mappedType;
+								} else {
+									MessageContext mc = result.addError(this,
+											29, pi.typeInfo().name, pi.name());
+									if (mc != null) {
+										mc.addDetail(this, 2,
+												pi.fullNameInSchema());
+									}
+								}
+							}
 
 							if (SqlDdl.codeNameSize < 1) {
 								return new ColumnDataType(
@@ -1473,6 +1555,84 @@ public class SqlBuilder implements MessageSource {
 		return new ColumnDataType("unknown");
 	}
 
+	/**
+	 * @param i
+	 * @return the numeric data type identified via the tagged value
+	 *         {@value SqlConstants#TV_NUMERIC_TYPE}, either on the given class
+	 *         or on the value type of the given property. Precision and scale
+	 *         would also be used. Can be <code>null</code> if the tagged value
+	 *         does not exist or if no mapping is defined by configuration map
+	 *         entries
+	 */
+	private ColumnDataType identifyNumericType(Info i) {
+
+		if (i instanceof ClassInfo || i instanceof PropertyInfo) {
+
+			ClassInfo type = null;
+
+			if (i instanceof PropertyInfo) {
+
+				PropertyInfo pi = (PropertyInfo) i;
+				type = model.classByIdOrName(pi.typeInfo());
+
+			} else {
+				type = (ClassInfo) i;
+			}
+
+			String numericConceptualType = type
+					.taggedValue(SqlConstants.TV_NUMERIC_TYPE);
+
+			if (type != null && StringUtils.isNotBlank(numericConceptualType)) {
+
+				String encodingRule = i.encodingRule("sql");
+
+				ProcessMapEntry pme = options.targetMapEntry(
+						numericConceptualType.trim(), encodingRule);
+
+				if (pme != null && pme.hasTargetType()) {
+
+					Integer precision = null;
+					Integer scale = null;
+
+					if (type.matches(
+							SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
+
+						precision = parseTaggedValue("precision", type);
+						scale = parseTaggedValue("scale", type);
+
+						if (scale != null && precision == null) {
+
+							MessageContext mc = result.addWarning(this, 27);
+							if (mc != null) {
+								mc.addDetail(this, 1, type.fullNameInSchema());
+							}
+
+							scale = null;
+						}
+					}
+
+					return new ColumnDataType(pme.getTargetType(), precision,
+							scale);
+
+				} else {
+					/*
+					 * TBD: log error?
+					 */
+				}
+			}
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * @param taggedValueName
+	 * @param i
+	 * @return The precision parsed from the tagged value with given name on the
+	 *         given info object. Can be <code>null</code> if the object does
+	 *         not have such a tagged value with valid integer value.
+	 */
 	private Integer parseTaggedValue(String taggedValueName, Info i) {
 
 		Integer res = null;
@@ -1733,8 +1893,16 @@ public class SqlBuilder implements MessageSource {
 
 						if (refCol.isPrimaryKeyColumn()) {
 
-							col.getDataType()
-									.setName(refCol.getDataType().getName());
+							ColumnDataType coldt = col.getDataType();
+							ColumnDataType refColdt = refCol.getDataType();
+
+							coldt.setName(refColdt.getName());
+							/*
+							 * e.g. for reference to numerically valued code
+							 * list
+							 */
+							coldt.setPrecision(refColdt.getPrecision());
+							coldt.setScale(refColdt.getScale());
 						}
 					}
 				}
@@ -1913,7 +2081,7 @@ public class SqlBuilder implements MessageSource {
 					}
 					codeName = codeName.replaceAll("'", "''");
 
-					if (numericallyValuedCodeLists.contains(representedClass)) {
+					if (isNumericallyValued(representedClass)) {
 						values.add(new UnquotedStringExpression(codeName));
 					} else {
 						values.add(new StringValueExpression(codeName));
@@ -2199,11 +2367,15 @@ public class SqlBuilder implements MessageSource {
 		case 26:
 			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
 		case 27:
-			return "Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
+			return "??Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
 		case 28:
-			return "Tagged value '"
-					+ SqlConstants.TV_NUMERICALLY_VALUED_CODELIST
-					+ "' is not blank. It has value '$1$'. No map entry was found (for the encoding rule that applies to class '$2$') with this value as type. The tagged value will be ignored.";
+			return "Type '$1$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+					+ SqlConstants.TV_NUMERIC_TYPE
+					+ "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
+		case 29:
+			return "Type '$1$' of property '$2$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+					+ SqlConstants.TV_NUMERIC_TYPE
+					+ "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
 
 		case 100:
 			return "Context: property '$1$'.";

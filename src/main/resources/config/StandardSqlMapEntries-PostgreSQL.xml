@@ -22,4 +22,6 @@
 	<MapEntry type="GM_MultiSurface" rule="*" targetType="MULTIPOLYGON" param="geometry"/>
 	<MapEntry type="GM_Object" rule="*" targetType="GEOMETRY" param="geometry"/>
 	<!-- ... more to be added as required -->
+	<MapEntry type="Short" rule="*" targetType="smallint" param=""/>
+	<MapEntry type="Long" rule="*" targetType="bigint" param=""/>
 </mapEntries>
