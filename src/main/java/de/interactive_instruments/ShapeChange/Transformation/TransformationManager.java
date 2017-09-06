@@ -42,8 +42,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -53,15 +51,11 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry;
-import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry.ModelElementType;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Info;
-import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
@@ -381,7 +375,7 @@ public class TransformationManager implements MessageSource {
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genPackage, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genPackage)) {
 
 					if (genPaTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -415,7 +409,7 @@ public class TransformationManager implements MessageSource {
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genCi, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genCi)) {
 
 					if (genCiTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -449,7 +443,7 @@ public class TransformationManager implements MessageSource {
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genPi, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genPi)) {
 
 					if (genPiTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -477,225 +471,6 @@ public class TransformationManager implements MessageSource {
 			genPi.setTaggedValues(genPiTVs, true);
 		}
 
-	}
-
-	/**
-	 * Determines if the given info type matches the patterns defined by the
-	 * given tagged value configuration entry.
-	 * 
-	 * @param infoType
-	 * @param tvce
-	 * @return true if the info type matches the pattern(s) defined in the given
-	 *         tagged value configuration entry.
-	 */
-	private boolean matchesTaggedValuePatterns(Info infoType,
-			TaggedValueConfigurationEntry tvce) {
-
-		boolean modelElementStereotypeMatch = true;
-		boolean propertyValueTypeStereotypeMatch = true;
-		boolean modelElementNameMatch = true;
-		boolean applicationSchemaNameMatch = true;
-		boolean modelElementTypeMatch = true;
-
-		if (tvce.hasModelElementType()) {
-
-			modelElementTypeMatch = false;
-			ModelElementType met = tvce.getModelElementType();
-
-			if ((infoType instanceof AssociationInfo
-					&& met.equals(ModelElementType.ASSOCIATION))
-					|| (infoType instanceof ClassInfo
-							&& met.equals(ModelElementType.CLASS))
-					|| (infoType instanceof PackageInfo
-							&& met.equals(ModelElementType.PACKAGE))
-					|| (infoType instanceof PropertyInfo
-							&& met.equals(ModelElementType.PROPERTY))
-					|| (infoType instanceof PropertyInfo
-							&& met.equals(ModelElementType.ATTRIBUTE)
-							&& ((PropertyInfo) infoType).isAttribute())
-					|| (infoType instanceof PropertyInfo
-							&& met.equals(ModelElementType.ASSOCIATIONROLE)
-							&& !((PropertyInfo) infoType).isAttribute())) {
-				modelElementTypeMatch = true;
-			}
-		}
-
-		if (tvce.hasModelElementStereotypePattern()) {
-
-			modelElementStereotypeMatch = false;
-
-			Stereotypes stereotypes = infoType.stereotypes();
-
-			// TBD: what if a model element has no stereotype?
-			// stereotypes in info types have been normalized
-			if (stereotypes.isEmpty()) {
-
-				String stereotype = null;
-
-				if (infoType instanceof PropertyInfo)
-					stereotype = "";
-				else if (infoType instanceof ClassInfo)
-					stereotype = "";
-				else if (infoType instanceof PackageInfo)
-					stereotype = "";
-
-				stereotypes = options.stereotypesFactory();
-				stereotypes.add(stereotype);
-			}
-
-			Pattern pattern = tvce.getModelElementStereotypePattern();
-
-			for (String stereotype : stereotypes.asArray()) {
-
-				Matcher matcher = pattern.matcher(stereotype);
-
-				if (matcher.matches()) {
-					modelElementStereotypeMatch = true;
-					result.addDebug(this, 20112, stereotype, pattern.pattern());
-					break;
-				} else {
-					result.addDebug(this, 20113, stereotype, pattern.pattern());
-				}
-			}
-		}
-
-		if (tvce.hasPropertyValueTypeStereotypePattern()
-				&& infoType instanceof PropertyInfo) {
-
-			PropertyInfo pi = (PropertyInfo) infoType;
-
-			/*
-			 * Try to get the value type from the model
-			 */
-			Model model = pi.model();
-
-			ClassInfo valueType = null;
-			if (pi.typeInfo().id != null) {
-				valueType = model.classById(pi.typeInfo().id);
-			}
-			if (valueType == null && pi.typeInfo().name != null) {
-				valueType = model.classByName(pi.typeInfo().name);
-			}
-
-			if (valueType != null) {
-
-				propertyValueTypeStereotypeMatch = false;
-
-				Stereotypes stereotypes = valueType.stereotypes();
-
-				// TBD: what if a model element has no stereotype?
-				// stereotypes in info types have been normalized
-				if (stereotypes.isEmpty()) {
-					stereotypes = options.stereotypesFactory();
-					stereotypes.add("");
-				}
-
-				Pattern pattern = tvce.getPropertyValueTypeStereotypePattern();
-
-				for (String stereotype : stereotypes.asArray()) {
-
-					Matcher matcher = pattern.matcher(stereotype);
-
-					if (matcher.matches()) {
-						propertyValueTypeStereotypeMatch = true;
-						result.addDebug(this, 20112, stereotype, pattern.pattern());
-						break;
-					} else {
-						result.addDebug(this, 20113, stereotype, pattern.pattern());
-					}
-				}
-			}
-		}
-
-		if (tvce.hasModelElementNamePattern()) {
-
-			modelElementNameMatch = false;
-
-			Pattern pattern = tvce.getModelElementNamePattern();
-			Matcher matcher = pattern
-					.matcher(infoType.name());
-			if (matcher.matches()) {
-				modelElementNameMatch = true;
-				result.addDebug(this, 20112, infoType.name(), pattern.pattern());
-			} else {
-				result.addDebug(this, 20113, infoType.name(), pattern.pattern());
-			}
-		}
-
-		if (tvce.hasApplicationSchemaNamePattern()) {
-
-			applicationSchemaNameMatch = false;
-
-			Pattern pattern = tvce.getApplicationSchemaNamePattern();
-			String applicationSchemaName = determineApplicationSchemaName(infoType);
-			Matcher matcher = pattern
-					.matcher(applicationSchemaName);
-
-			if (matcher.matches()) {
-				applicationSchemaNameMatch = true;
-				result.addDebug(this, 20112, applicationSchemaName, pattern.pattern());
-			} else {
-				result.addDebug(this, 20113, applicationSchemaName, pattern.pattern());
-			}
-		}
-
-		return modelElementStereotypeMatch && modelElementNameMatch
-				&& propertyValueTypeStereotypeMatch && modelElementTypeMatch
-				&& applicationSchemaNameMatch;
-	}
-
-	private String determineApplicationSchemaName(Info infoType) {
-
-		PackageInfo pi = null;
-
-		if (infoType instanceof PackageInfo) {
-
-			pi = (PackageInfo) infoType;
-
-		} else if (infoType instanceof ClassInfo) {
-
-			ClassInfo ci = (ClassInfo) infoType;
-			pi = ci.pkg();
-
-		} else if (infoType instanceof PropertyInfo) {
-
-			PropertyInfo propI = (PropertyInfo) infoType;
-			pi = propI.inClass().pkg();
-
-		} else {
-			result.addWarning(this, 20101, infoType.name());
-		}
-
-		if (pi != null) {
-			PackageInfo piAS = identifyApplicationSchema(pi);
-			if (piAS != null) {
-				return piAS.name();
-			}
-		}
-
-		/*
-		 * if we got here we could not find an application schema, log a warning
-		 * but continue
-		 */
-		result.addWarning(this, 20100, infoType.name());
-
-		return "";
-	}
-
-	private PackageInfo identifyApplicationSchema(PackageInfo pi) {
-
-		if (pi.isAppSchema()) {
-
-			return pi;
-
-		} else {
-
-			if (pi.owner() != null) {
-				return identifyApplicationSchema(pi.owner());
-			} else {
-				return null;
-			}
-		}
 	}
 
 	/**
@@ -736,32 +511,17 @@ public class TransformationManager implements MessageSource {
 		 */
 		switch (mnr) {
 
-		case 20100:
-			return "Could not find application schema for Info type '$1$'";
-		case 20101:
-			return "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
-		case 20102:
-			return "Value of configuration parameter '$1$' after parsing is '$2$'.";
 		case 20104:
 			return "No associations between feature and feature / object types found in schema '$1$'.";
 		case 20105:
 			return "Association exists between '$1$' and '$2$'.";
-		case 20106:
-			return "Association name is '$1$'.";
 		case 20107:
 			return "Navigable via property '$1$' of class '$2$'.";
 		case 20108:
 			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
 		case 20109:
 			return "---------- TransformationManager postprocessing: validating constraints ----------";
-		case 20110:
-			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
-		case 20111:
-			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
-		case 20112:
-			return "??'$1$' matches regex '$2$'";
-		case 20113:
-			return "??'$1$' does not match regex '$2$'";
+
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

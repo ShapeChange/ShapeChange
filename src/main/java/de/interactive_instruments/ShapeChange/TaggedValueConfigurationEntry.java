@@ -31,7 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import java.util.regex.Pattern;
+import org.w3c.dom.Element;
 
 /**
  * Configuration information for a tagged value.
@@ -41,32 +41,16 @@ import java.util.regex.Pattern;
  */
 public class TaggedValueConfigurationEntry {
 
-	public enum ModelElementType {
-		ASSOCIATION, CLASS, PACKAGE, PROPERTY, ATTRIBUTE, ASSOCIATIONROLE
-	};
-
 	private String name = null;
 	private String value = null;
-	private ModelElementType modelElementType = null;
-	private Pattern modelElementStereotypePattern = null;
-	private Pattern modelElementNamePattern = null;
-	private Pattern propertyValueTypeStereotypePattern = null;
-	private Pattern applicationSchemaNamePattern = null;
+	private ModelElementSelectionInfo modelElementSelectionInfo = null;
 
 	public TaggedValueConfigurationEntry(String name, String value,
-			ModelElementType modelElementType,
-			Pattern modelElementStereotypePattern,
-			Pattern modelElementNamePattern,
-			Pattern propertyValueTypeStereotypePattern,
-			Pattern applicationSchemaNamePattern) {
+			ModelElementSelectionInfo modelElementSelectionInfo) {
 		super();
 		this.name = name;
 		this.value = value;
-		this.modelElementType = modelElementType;
-		this.modelElementStereotypePattern = modelElementStereotypePattern;
-		this.modelElementNamePattern = modelElementNamePattern;
-		this.propertyValueTypeStereotypePattern = propertyValueTypeStereotypePattern;
-		this.applicationSchemaNamePattern = applicationSchemaNamePattern;
+		this.modelElementSelectionInfo = modelElementSelectionInfo;
 	}
 
 	/**
@@ -93,87 +77,40 @@ public class TaggedValueConfigurationEntry {
 	}
 
 	/**
-	 * @return the pattern representing the regular expression of the
-	 *         modelElementStereotype attribute, or <code>null</code> if this
-	 *         filter criterium was not set in the configuration.
+	 * @return the modelElementSelectionInfo; cannot be <code>null</code>
 	 */
-	public Pattern getModelElementStereotypePattern() {
-		return modelElementStereotypePattern;
-	}
-	
-	/**
-	 * @return the pattern representing the regular expression of the
-	 *         propertyValueTypeStereotype attribute, or <code>null</code> if this
-	 *         filter criterium was not set in the configuration.
-	 */
-	public Pattern getPropertyValueTypeStereotypePattern() {
-		return propertyValueTypeStereotypePattern;
+	public ModelElementSelectionInfo getModelElementSelectionInfo() {
+		return modelElementSelectionInfo;
 	}
 
 	/**
-	 * @return the pattern representing the regular expression of the
-	 *         modelElementName attribute, or <code>null</code> if this filter
-	 *         criterium was not set in the configuration.
+	 * @param modelElementSelectionInfo
+	 *            the modelElementSelectionInfo to set; if <code>null</code>,
+	 *            the default ModelElementSelectionInfo will be set, i.e. any
+	 *            model element will be selected
 	 */
-	public Pattern getModelElementNamePattern() {
-		return modelElementNamePattern;
+	public void setModelElementSelectionInfo(
+			ModelElementSelectionInfo modelElementSelectionInfo) {
+
+		if (modelElementSelectionInfo == null) {
+			this.modelElementSelectionInfo = new ModelElementSelectionInfo();
+		} else {
+			this.modelElementSelectionInfo = modelElementSelectionInfo;
+		}
 	}
 
-	/**
-	 * @return the value defined by the modelElementType attribute, or
-	 *         <code>null</code> if this filter criterium was not set in the
-	 *         configuration.
-	 */
-	public ModelElementType getModelElementType() {
-		return modelElementType;
+	public static TaggedValueConfigurationEntry parse(Element taggedValueE) {
+
+		String name = taggedValueE.getAttribute("name");
+		String value = null;
+
+		if (taggedValueE.hasAttribute("value")) {
+			value = taggedValueE.getAttribute("value");
+		}
+		
+		ModelElementSelectionInfo meselect = ModelElementSelectionInfo.parse(taggedValueE);
+
+		return new TaggedValueConfigurationEntry(name, value, meselect);
 	}
 
-	/**
-	 * @return the pattern representing the regular expression of the
-	 *         applicationSchemaName attribute, or <code>null</code> if this
-	 *         filter criterium was not set in the configuration.
-	 */
-	public Pattern getApplicationSchemaNamePattern() {
-		return applicationSchemaNamePattern;
-	}
-
-	/**
-	 * @return true if this configuration entry has a value for the
-	 *         modelElementName attribute, else false
-	 */
-	public boolean hasModelElementNamePattern() {
-		return modelElementNamePattern != null;
-	}
-
-	/**
-	 * @return true if this configuration entry has a value for the
-	 *         modelElementStereotype attribute, else false
-	 */
-	public boolean hasModelElementStereotypePattern() {
-		return modelElementStereotypePattern != null;
-	}
-	
-	/**
-	 * @return true if this configuration entry has a value for the
-	 *         propertyValueTypeStereotype attribute, else false
-	 */
-	public boolean hasPropertyValueTypeStereotypePattern() {
-		return propertyValueTypeStereotypePattern != null;
-	}
-
-	/**
-	 * @return true if this configuration entry has a value for the
-	 *         applicationSchemaName attribute, else false
-	 */
-	public boolean hasApplicationSchemaNamePattern() {
-		return applicationSchemaNamePattern != null;
-	}
-
-	/**
-	 * @return true if this configuration entry has a value for the
-	 *         modelElementType attribute, else false
-	 */
-	public boolean hasModelElementType() {
-		return modelElementType != null;
-	}
 }

@@ -82,9 +82,7 @@ public class CDBAttribute {
 		String piEncodingRule = pi.encodingRule("cdb");
 		Options options = pi.options();
 
-		// TODO should the code just be the property name or its primaryCode?
-		symbol = StringUtils.defaultIfBlank(pi.primaryCode(), pi.name()).trim();
-		// symbol = pi.name().trim();
+		symbol = pi.name();
 		
 		name = StringUtils.defaultIfBlank(pi.aliasName(), pi.name()).trim();
 

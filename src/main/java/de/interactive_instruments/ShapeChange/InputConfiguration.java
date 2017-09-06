@@ -32,10 +32,12 @@
 package de.interactive_instruments.ShapeChange;
 
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  */
 public class InputConfiguration {
 
@@ -52,7 +54,7 @@ public class InputConfiguration {
 	 */
 	private Map<String, String> stereotypeAliasesByAlias;
 	private Map<String, String> tagAliasesByAlias;
-	private Map<String, String> descriptorSources;
+	private SortedMap<String, String> descriptorSources = new TreeMap<String, String>();
 
 	/**
 	 * key: packageName, value: package info
@@ -65,21 +67,25 @@ public class InputConfiguration {
 	 * @param stereotypeAliasesByAlias
 	 *            map with stereotype alias (in lower case) as key, and with
 	 *            wellknown stereotype (in lower case) as value
-	 * @param descriptorSources 
-	 * @param tagAliases 
-	 *            map with tag alias (in lower case) as key, and with
-	 *            wellknown tag (in lower case) as value
+	 * @param descriptorSources, can be <code>null</code> or empty
+	 * @param tagAliases
+	 *            map with tag alias (in lower case) as key, and with wellknown
+	 *            tag (in lower case) as value
 	 * @param packageInfosByName
 	 */
 	public InputConfiguration(String id, Map<String, String> parametersByName,
 			Map<String, String> stereotypeAliasesByAlias,
-			Map<String, String> tagAliasesByAlias, Map<String, String> descriptorSources, Map<String, PackageInfoConfiguration> packageInfosByName) {
+			Map<String, String> tagAliasesByAlias,
+			Map<String, String> descriptorSources,
+			Map<String, PackageInfoConfiguration> packageInfosByName) {
 		super();
 		this.id = id;
 		this.parametersByName = parametersByName;
 		this.stereotypeAliasesByAlias = stereotypeAliasesByAlias;
 		this.tagAliasesByAlias = tagAliasesByAlias;
-		this.descriptorSources = descriptorSources;
+		if(descriptorSources != null) {
+			this.descriptorSources.putAll(descriptorSources);
+		}
 		this.packageInfosByName = packageInfosByName;
 	}
 
@@ -92,7 +98,8 @@ public class InputConfiguration {
 	}
 
 	public boolean hasParameter(String paramName) {
-		if (parametersByName != null && parametersByName.containsKey(paramName)) {
+		if (parametersByName != null
+				&& parametersByName.containsKey(paramName)) {
 			return true;
 		} else {
 			return false;
@@ -112,11 +119,12 @@ public class InputConfiguration {
 	public Map<String, String> getTagAliases() {
 		return tagAliasesByAlias;
 	}
-	
+
 	/**
-	 * @return map with key: descriptor (lower case), value: source (lower case)
+	 * @return map (can be empty but not <code>null</code>) with key: descriptor
+	 *         (lower case), value: source (lower case)
 	 */
-	public Map<String, String> getDescriptorSources() {
+	public SortedMap<String, String> getDescriptorSources() {
 		return descriptorSources;
 	}
 
@@ -189,26 +197,24 @@ public class InputConfiguration {
 		}
 
 		sb.append("\ttagaliases: ");
-		if (this.tagAliasesByAlias == null
-				|| tagAliasesByAlias.isEmpty()) {
+		if (this.tagAliasesByAlias == null || tagAliasesByAlias.isEmpty()) {
 			sb.append("none\r\n");
 		} else {
 			sb.append("\r\n");
 			for (String key : tagAliasesByAlias.keySet()) {
-				sb.append("\t\t(" + key + " | "
-						+ tagAliasesByAlias.get(key) + ")\r\n");
+				sb.append("\t\t(" + key + " | " + tagAliasesByAlias.get(key)
+						+ ")\r\n");
 			}
 		}
 
 		sb.append("\tdescriptorsources: ");
-		if (this.descriptorSources == null
-				|| descriptorSources.isEmpty()) {
+		if (this.descriptorSources.isEmpty()) {
 			sb.append("none\r\n");
 		} else {
 			sb.append("\r\n");
 			for (String key : descriptorSources.keySet()) {
-				sb.append("\t\t(" + key + " | "
-						+ descriptorSources.get(key) + ")\r\n");
+				sb.append("\t\t(" + key + " | " + descriptorSources.get(key)
+						+ ")\r\n");
 			}
 		}
 

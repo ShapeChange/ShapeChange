@@ -71,7 +71,6 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Splitter;
 
 import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
-import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry.ModelElementType;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
@@ -3123,85 +3122,9 @@ public class Options {
 
 						taggedValueE = (Element) taggedValueN;
 
-						String value = null;
-
-						if (taggedValueE.hasAttribute("value")) {
-							value = taggedValueE.getAttribute("value");
-						}
-
-						Pattern modelElementNamePattern = null;
-
-						if (taggedValueE.hasAttribute("modelElementName")) {
-							String modelElementName = taggedValueE
-									.getAttribute("modelElementName");
-							modelElementNamePattern = Pattern
-									.compile(modelElementName);
-						}
-
-						Pattern modelElementStereotypePattern = null;
-
-						if (taggedValueE
-								.hasAttribute("modelElementStereotype")) {
-
-							String modelElementStereotype = taggedValueE
-									.getAttribute("modelElementStereotype");
-							modelElementStereotypePattern = Pattern
-									.compile(modelElementStereotype);
-						}
-
-						Pattern propertyValueTypeStereotypePattern = null;
-
-						if (taggedValueE
-								.hasAttribute("propertyValueTypeStereotype")) {
-
-							String propertyValueTypeStereotype = taggedValueE
-									.getAttribute(
-											"propertyValueTypeStereotype");
-							propertyValueTypeStereotypePattern = Pattern
-									.compile(propertyValueTypeStereotype);
-						}
-
-						Pattern applicationSchemaNamePattern = null;
-
-						if (taggedValueE
-								.hasAttribute("applicationSchemaName")) {
-
-							String applicationSchemaName = taggedValueE
-									.getAttribute("applicationSchemaName");
-							applicationSchemaNamePattern = Pattern
-									.compile(applicationSchemaName);
-						}
-
-						ModelElementType modelElementType = null;
-
-						if (taggedValueE.hasAttribute("modelElementType")) {
-
-							String mdeValue = taggedValueE
-									.getAttribute("modelElementType");
-
-							if (mdeValue.equalsIgnoreCase("Association")) {
-								modelElementType = ModelElementType.ASSOCIATION;
-							} else if (mdeValue.equalsIgnoreCase("Class")) {
-								modelElementType = ModelElementType.CLASS;
-							} else if (mdeValue.equalsIgnoreCase("Package")) {
-								modelElementType = ModelElementType.PACKAGE;
-							} else if (mdeValue.equalsIgnoreCase("PROPERTY")) {
-								modelElementType = ModelElementType.PROPERTY;
-							} else if (mdeValue.equalsIgnoreCase("Attribute")) {
-								modelElementType = ModelElementType.ATTRIBUTE;
-							} else if (mdeValue
-									.equalsIgnoreCase("AssociationRole")) {
-								modelElementType = ModelElementType.ASSOCIATIONROLE;
-							}
-						}
-
-						result.add(new TaggedValueConfigurationEntry(
-								taggedValueE.getAttribute("name"), value,
-								modelElementType, modelElementStereotypePattern,
-								modelElementNamePattern,
-								propertyValueTypeStereotypePattern,
-								applicationSchemaNamePattern));
-
+						TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry
+								.parse(taggedValueE);
+						result.add(tvce);
 					}
 				}
 			}
@@ -3627,7 +3550,7 @@ public class Options {
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
-		
+
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
 		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
@@ -3734,7 +3657,7 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
-		
+
 		/*
 		 * CDB conversion rules
 		 */
@@ -4145,7 +4068,7 @@ public class Options {
 
 		return prohibitedStatusValuesWhenLoadingClasses;
 	}
-	
+
 	public InputConfiguration getInputConfig() {
 		return this.inputConfig;
 	}

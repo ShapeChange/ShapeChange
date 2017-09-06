@@ -36,6 +36,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Cache for descriptors.
  * 
@@ -100,6 +102,19 @@ public class Descriptors {
 
 			return result;
 		}
+
+		void appendSuffix(String s) {
+
+			if (s != null) {
+				if (singleValue != null) {
+					singleValue.appendSuffix(s);
+				} else if (multipleValues != null) {
+					for (LangString val : multipleValues) {
+						val.appendSuffix(s);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -143,7 +158,7 @@ public class Descriptors {
 
 	public void put(Descriptor descriptor, List<LangString> descriptorValues) {
 
-		if (descriptorValues == null || descriptorValues.isEmpty()) {
+		if (descriptorValues.isEmpty()) {
 			this.descriptorValues.put(descriptor, null);
 		} else {
 			DescriptorValue dv = new DescriptorValue(descriptorValues);
@@ -216,6 +231,10 @@ public class Descriptors {
 
 	}
 
+	public void remove(Descriptor descriptor) {
+		this.descriptorValues.remove(descriptor);
+	}
+
 	public Descriptors createCopy() {
 
 		Descriptors copy = new Descriptors();
@@ -235,5 +254,47 @@ public class Descriptors {
 		}
 
 		return copy;
+	}
+
+	/**
+	 * Appends suffixes for descriptors that a) are available as key in the
+	 * given map and for which b) values are stored in this collection. The
+	 * value pairs of the given map contain the separator and the suffix to be
+	 * used when appending to a descriptor value.
+	 * 
+	 * @param separatorAndSuffixByDescriptor
+	 *            Map (can be empty or null) with key: Descriptor; value: pair
+	 *            of first the separator to use, then the suffix
+	 */
+	public void appendSuffix(
+			EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor,
+			boolean addDescriptorIfMissing) {
+
+		if (separatorAndSuffixByDescriptor != null) {
+
+			for (Descriptor descriptor : separatorAndSuffixByDescriptor
+					.keySet()) {
+
+				Pair<String, String> separatorAndSuffix = separatorAndSuffixByDescriptor
+						.get(descriptor);
+
+				if (addDescriptorIfMissing && (!this.descriptorValues
+						.containsKey(descriptor)
+						|| this.descriptorValues.get(descriptor) == null)) {
+
+					this.put(descriptor, separatorAndSuffix.getRight());
+
+				} else if (this.descriptorValues != null
+						&& this.descriptorValues.containsKey(descriptor)) {
+
+					DescriptorValue dv = this.descriptorValues.get(descriptor);
+
+					if (dv != null) {
+						dv.appendSuffix(separatorAndSuffix.getLeft()
+								+ separatorAndSuffix.getRight());
+					}
+				}
+			}
+		}
 	}
 }

@@ -53,8 +53,8 @@ public class CDBFeature {
 
 		classInfo = ci;
 
-		code = StringUtils.isNotBlank(ci.primaryCode())
-				? ci.primaryCode().trim() : ci.name();
+		code = ci.name();
+		
 		label = StringUtils.isNotBlank(ci.aliasName()) ? ci.aliasName().trim()
 				: ci.name();
 

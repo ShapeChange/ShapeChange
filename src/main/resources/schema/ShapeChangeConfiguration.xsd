@@ -399,13 +399,8 @@
    </choice>
   </complexType>
  </element>
- <element name="TaggedValue" type="sc:TaggedValueType"/>
- <complexType name="TaggedValueType">
-  <attribute name="name" type="string" use="required"/>
-  <attribute name="value" type="string"/>
-  <attribute name="modelElementStereotype" type="string"/>
+ <attributeGroup name="modelElementSelectionGroup">
   <attribute name="modelElementName" type="string"/>
-  <attribute name="applicationSchemaName" type="string"/>
   <attribute name="modelElementType">
    <simpleType>
     <restriction base="string">
@@ -418,7 +413,43 @@
     </restriction>
    </simpleType>
   </attribute>
+  <attribute name="modelElementStereotype" type="string"/>
+  <attribute name="modelElementOwnerName" type="string"/>
   <attribute name="propertyValueTypeStereotype" type="string"/>
+  <attribute name="applicationSchemaName" type="string"/>
+ </attributeGroup>
+ <element name="TaggedValue" type="sc:TaggedValueType"/>
+ <complexType name="TaggedValueType">
+  <attribute name="name" type="string" use="required"/>
+  <attribute name="value" type="string"/>
+  <attributeGroup ref="sc:modelElementSelectionGroup"/>
+ </complexType>
+ <element name="DescriptorValue" substitutionGroup="sc:AdvancedProcessConfigurationElement"
+  type="sc:DescriptorValueType"/>
+ <complexType name="DescriptorValueType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element minOccurs="0" name="values">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:LangString"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+    <attribute name="descriptorName" type="string" use="required"/>
+    <attributeGroup ref="sc:modelElementSelectionGroup"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="LangString" type="sc:LangStringType"/>
+ <complexType name="LangStringType">
+  <simpleContent>
+   <extension base="string">
+    <attribute name="lang" type="string"/>
+   </extension>
+  </simpleContent>
  </complexType>
  <element name="TargetOwl" type="sc:TargetOwlType">
   <unique name="uniqueConstraintType">
@@ -490,68 +521,80 @@
  <element name="advancedProcessConfigurations">
   <complexType>
    <choice maxOccurs="unbounded">
-    <element maxOccurs="1" ref="sc:AttributeDefinition"/>
-    <element ref="sc:CDBUnitDefinition"/>
+    <element ref="sc:AdvancedProcessConfigurationElement"/>
     <any namespace="##other"/>
    </choice>
   </complexType>
  </element>
- <element name="AttributeDefinition" type="sc:AttributeDefinitionType"/>
+ <element abstract="true" name="AdvancedProcessConfigurationElement"
+  type="sc:AdvancedProcessConfigurationType"/>
+ <complexType name="AdvancedProcessConfigurationType"/>
+ <element name="AttributeDefinition" type="sc:AttributeDefinitionType"
+  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="AttributeDefinitionType">
-  <sequence>
-   <element name="classSelection">
-    <complexType>
-     <sequence>
-      <element ref="sc:PackageSelector"/>
-      <element ref="sc:ClassSelector"/>
-     </sequence>
-    </complexType>
-   </element>
-   <element maxOccurs="1" minOccurs="0" name="aliasName" type="string"/>
-   <element maxOccurs="1" minOccurs="0" name="descriptors">
-    <complexType>
-     <sequence>
-      <element maxOccurs="unbounded" ref="sc:Descriptor"/>
-     </sequence>
-    </complexType>
-   </element>
-   <element minOccurs="0" name="initialValue" type="string"/>
-   <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
-   <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
-   <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
-   <element name="name" type="string"/>
-   <element default="1" minOccurs="0" name="multiplicity" type="string"/>
-   <element minOccurs="0" name="stereotypes">
-    <complexType>
-     <sequence>
-      <element maxOccurs="unbounded" name="Stereotype" type="string"/>
-     </sequence>
-    </complexType>
-   </element>
-   <element minOccurs="0" name="taggedValues">
-    <complexType>
-     <sequence>
-      <element maxOccurs="unbounded" name="TaggedValue">
-       <complexType>
-        <attribute name="name" use="required"/>
-        <attribute name="value" use="required"/>
-       </complexType>
-      </element>
-     </sequence>
-    </complexType>
-   </element>
-   <element name="type" type="string"/>
-  </sequence>
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element name="classSelection">
+      <complexType>
+       <sequence>
+        <element ref="sc:PackageSelector"/>
+        <element ref="sc:ClassSelector"/>
+       </sequence>
+      </complexType>
+     </element>
+     <element maxOccurs="1" minOccurs="0" name="aliasName" type="string"/>
+     <element maxOccurs="1" minOccurs="0" name="descriptors">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:Descriptor"/>
+       </sequence>
+      </complexType>
+     </element>
+     <element minOccurs="0" name="initialValue" type="string"/>
+     <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
+     <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
+     <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
+     <element name="name" type="string"/>
+     <element default="1" minOccurs="0" name="multiplicity" type="string"/>
+     <element minOccurs="0" name="stereotypes">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" name="Stereotype" type="string"/>
+       </sequence>
+      </complexType>
+     </element>
+     <element minOccurs="0" name="taggedValues">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" name="TaggedValue">
+         <complexType>
+          <attribute name="name" use="required"/>
+          <attribute name="value" use="required"/>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+     <element name="type" type="string"/>
+    </sequence>
+   </extension>
+  </complexContent>
  </complexType>
- <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType"/>
+ <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType"
+  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="CDBUnitDefinitionType">
-  <sequence>
-   <element name="name" type="token"/>
-   <element maxOccurs="unbounded" minOccurs="0" name="alias" type="token"/>
-   <element name="description" type="string" minOccurs="0"/>
-  </sequence>
-  <attribute name="code" type="positiveInteger"/>
-  <attribute name="symbol" type="token" use="required"/>
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element name="name" type="token"/>
+     <element maxOccurs="unbounded" minOccurs="0" name="alias" type="token"/>
+     <element name="description" type="string" minOccurs="0"/>
+    </sequence>
+    <attribute name="code" type="positiveInteger"/>
+    <attribute name="symbol" type="token" use="required"/>
+   </extension>
+  </complexContent>
  </complexType>
  <element name="PackageSelector">
   <complexType>

@@ -31,6 +31,9 @@
  */
 package de.interactive_instruments.ShapeChange.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -68,5 +71,35 @@ public class XMLUtil {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param parentElement
+	 *            Element in which to look up the children with given name
+	 * @param elementName
+	 *            name of child elements to look up
+	 * @return List of child elements of the given parent element that have the
+	 *         given element name. Can be empty but not <code>null</code>.
+	 */
+	public static List<Element> getChildElements(Element parentElement,
+			String elementName) {
+
+		List<Element> result = new ArrayList<Element>();
+
+		NodeList nl = parentElement.getElementsByTagName(elementName);
+
+		if (nl != null && nl.getLength() != 0) {
+			for (int k = 0; k < nl.getLength(); k++) {
+
+				Node n = nl.item(k);
+
+				if (n.getNodeType() == Node.ELEMENT_NODE) {
+
+					result.add((Element) n);
+				}
+			}
+		}
+
+		return result;
 	}
 }

@@ -31,7 +31,9 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Flattening;
 
+import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -40,6 +42,7 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -78,6 +81,31 @@ public class FlattenerConfigurationValidator
 			}
 		}
 
+		// validate
+		String descModSeparator = trfConfig.parameterAsString(
+				Flattener.PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, null, false,
+				true);
+
+		if (descModSeparator != null) {
+
+			Matcher matcher = Flattener.descriptorModBasicPattern
+					.matcher(descModSeparator);
+
+			while (matcher.find()) {
+
+				String descriptorAsString = matcher.group(1);
+				try {
+					Descriptor.valueOf(
+							descriptorAsString.toUpperCase(Locale.ENGLISH));
+				} catch (IllegalArgumentException e) {
+					result.addError(this, 20348,
+							Flattener.PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR,
+							descriptorAsString);
+					isValid = false;
+				}
+			}
+		}
+
 		return isValid;
 	}
 
@@ -92,6 +120,8 @@ public class FlattenerConfigurationValidator
 					+ "' is required for the execution of '"
 					+ Flattener.RULE_TRF_ALL_REMOVETYPE
 					+ "'. The configuration does not contain this parameter with a non-empty string.";
+		case 20348:
+			return "Configuration parameter '$1$' contains unknown descriptor '$2$'. ";
 
 		default:
 			return "(" + FlattenerConfigurationValidator.class.getName()
