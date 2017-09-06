@@ -205,8 +205,7 @@ public class TargetOutputProcessor implements MessageSource {
 
 		boolean modifyFileName = tgt.parameterAsBoolean(PARAM_MODIFY_FILE_NAME,
 				false);
-		boolean addComment = tgt
-				.parameterAsBoolean(PARAM_ADD_COMMENT, false);
+		boolean addComment = tgt.parameterAsBoolean(PARAM_ADD_COMMENT, false);
 		boolean applyXslt = tgt.parameterAsBoolean(PARAM_APPLY_XSLT, false);
 
 		// check if processing is required
@@ -257,8 +256,13 @@ public class TargetOutputProcessor implements MessageSource {
 				Path to = from.getParent().resolve(newFileName.toString());
 
 				try {
+
 					Files.move(from, to, StandardCopyOption.REPLACE_EXISTING);
 					modifiedFiles.add(to.toFile());
+
+					// update the result entry of the log
+					result.updateResult(from.toFile(), to.toFile());
+
 				} catch (IOException e) {
 					result.addError(this, 10, from.toAbsolutePath().toString(),
 							to.toAbsolutePath().toString(), e.getMessage());
@@ -285,9 +289,8 @@ public class TargetOutputProcessor implements MessageSource {
 				}
 				defaultComment += " - http://shapechange.net/";
 
-				String comment = tgt.parameterAsString(
-						PARAM_COMMENT, defaultComment,
-						false, true);
+				String comment = tgt.parameterAsString(PARAM_COMMENT,
+						defaultComment, false, true);
 
 				String fileExtension = FilenameUtils
 						.getExtension(file.getName());
@@ -374,9 +377,25 @@ public class TargetOutputProcessor implements MessageSource {
 					writer.xsltWrite(file, xsltMainFileUri,
 							transformationTargetFile);
 
-					if (deleteInputAfterTransform && !file.toPath()
+					if (!file.toPath()
 							.equals(transformationTargetFile.toPath())) {
-						FileUtils.deleteQuietly(file);
+
+						if (deleteInputAfterTransform) {
+
+							FileUtils.deleteQuietly(file);
+
+							// update the result entry of the log
+							result.updateResult(file, transformationTargetFile);
+
+						} else {
+
+							/*
+							 * Create a new result entry for the new transformed
+							 * file
+							 */
+							result.copyResultAndUpdateFileReference(file,
+									transformationTargetFile);
+						}
 					}
 
 				} catch (Exception e) {

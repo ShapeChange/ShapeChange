@@ -39,9 +39,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -68,6 +71,7 @@ public class ShapeChangeResult {
 	protected Element root = null;
 	protected Element messages = null;
 	protected Element resultFiles = null;
+	protected Set<Element> resultElements = new HashSet<Element>();
 	protected Properties outputFormat = OutputPropertiesFactory
 			.getDefaultMethodProperties("xml");
 	protected Options options = null;
@@ -186,6 +190,7 @@ public class ShapeChangeResult {
 
 			resultFiles = document.createElementNS(Options.SCRS_NS, "Results");
 			root.appendChild(resultFiles);
+
 		} catch (ParserConfigurationException e) {
 			System.err.println(
 					"Bootstrap Error: XML parser was unable to be configured.");
@@ -464,6 +469,75 @@ public class ShapeChangeResult {
 		if (scope != null)
 			resfile.setAttribute("scope", scope);
 		resfile.appendChild(document.createTextNode(fname));
+
+		resultElements.add(resfile);
+	}
+
+	public void updateResult(File originalFile, File newFile) {
+
+		String originalFilePath = originalFile.toURI().toASCIIString();
+		String newFilePath = newFile.toURI().toASCIIString();
+
+		for (Element resultE : this.resultElements) {
+
+			if (resultE.getAttribute("href").equals(originalFilePath)) {
+
+				resultE.setAttribute("href", newFilePath);
+				resultE.setTextContent(newFile.getName());
+			}
+		}
+	}
+
+	/**
+	 * Copies 'Result' elements with the URI of the given original file as
+	 * 'href' attribute, and sets the URI of the given new file as 'href' and
+	 * text content of these copies. 'scope' and 'target' will be kept as-is.
+	 * 
+	 * @param originalFile
+	 * @param newFile
+	 */
+	public void copyResultAndUpdateFileReference(File originalFile,
+			File newFile) {
+
+		if (document == null) {
+			return;
+		}
+
+		String originalFilePath = originalFile.toURI().toASCIIString();
+		String newFilePath = newFile.toURI().toASCIIString();
+
+		List<Element> newResultElements = new ArrayList<Element>();
+
+		for (Element resultElementForOriginalFile : this.resultElements) {
+
+			if (resultElementForOriginalFile.getAttribute("href")
+					.equals(originalFilePath)) {
+
+				Element resultElementForNewFile = document
+						.createElementNS(Options.SCRS_NS, "Result");
+
+				// append the new 'Result' element after resultE
+				resultFiles.insertBefore(resultElementForNewFile,
+						resultElementForOriginalFile.getNextSibling());
+
+				resultElementForNewFile.setAttribute("target",
+						resultElementForOriginalFile.getAttribute("target"));
+				
+				resultElementForNewFile.setAttribute("href", newFilePath);
+				
+				if (resultElementForOriginalFile.hasAttribute("scope")) {
+					resultElementForNewFile.setAttribute("scope",
+							resultElementForOriginalFile.getAttribute("scope"));
+				}
+				
+				resultElementForNewFile.setTextContent(newFile.getName());
+
+				newResultElements.add(resultElementForNewFile);
+			}
+		}
+
+		resultElements.addAll(newResultElements);
+
 	}
 
 	public void setResultCode(int rc) {
