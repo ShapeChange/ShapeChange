@@ -378,6 +378,13 @@ public class NamingModifier implements Transformer, MessageSource {
 					 * codePoint1 is a number [0-9], add it to newName
 					 */
 					newName.append((char) codePoint1);
+
+				} else {
+
+					/*
+					 * Replace unknown codePoint1 with a single underscore
+					 */
+					newName.append("_");
 				}
 
 				if (!reachedEndOfName) {
@@ -486,7 +493,7 @@ public class NamingModifier implements Transformer, MessageSource {
 				genModel.updateClassName(genCi, newName);
 			}
 		}
-		
+
 		// TODO document that rule applies to properties as well
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
