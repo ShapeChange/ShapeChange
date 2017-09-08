@@ -33,9 +33,12 @@ package de.interactive_instruments.ShapeChange.Model;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -156,6 +159,11 @@ public class Descriptors {
 		return result;
 	}
 
+	public DescriptorValue get(Descriptor descriptor) {
+
+		return this.descriptorValues.get(descriptor);
+	}
+
 	public void put(Descriptor descriptor, List<LangString> descriptorValues) {
 
 		if (descriptorValues.isEmpty()) {
@@ -257,6 +265,22 @@ public class Descriptors {
 	}
 
 	/**
+	 * @param descriptor
+	 * @return a deep copy of the values stored for the given descriptor; can be
+	 *         empty but not <code>null</code>
+	 */
+	public List<LangString> createValueCopy(Descriptor descriptor) {
+
+		List<LangString> valueCopy = new ArrayList<LangString>();
+
+		for (LangString ls : this.values(descriptor)) {
+			valueCopy.add(new LangString(ls.getValue(), ls.getLang()));
+		}
+
+		return valueCopy;
+	}
+
+	/**
 	 * Appends suffixes for descriptors that a) are available as key in the
 	 * given map and for which b) values are stored in this collection. The
 	 * value pairs of the given map contain the separator and the suffix to be
@@ -296,5 +320,116 @@ public class Descriptors {
 				}
 			}
 		}
+	}
+
+	public static List<LangString> merge(Descriptor descriptor, Info info1,
+			Info info2, EnumMap<Descriptor, String> separatorByDescriptor,
+			String defaultSeparator) {
+
+		String separator = defaultSeparator;
+		if (separatorByDescriptor.containsKey(descriptor)) {
+			separator = separatorByDescriptor.get(descriptor);
+		}
+
+		return merge(descriptor, info1, info2, separator);
+	}
+
+	public static List<LangString> merge(Descriptor descriptor, Info info1,
+			Info info2, String separator) {
+
+		Set<LangString> result = new HashSet<LangString>();
+
+		List<LangString> info1DVs = info1.descriptors()
+				.createValueCopy(descriptor);
+		List<LangString> info2DVs = info2.descriptors()
+				.createValueCopy(descriptor);
+
+		Set<LangString> unmatched_info2DVs = new HashSet<LangString>(info2DVs);
+
+		if (descriptor.isSingleValued()) {
+
+			/*
+			 * Merge matching values; just keep the other ones
+			 */
+			for (LangString i1val : info1DVs) {
+
+				String d1 = StringUtils.stripToNull(i1val.getValue());
+
+				/*
+				 * Keep track if a value in info2DVs has the same lang as i1val.
+				 */
+				boolean matchFound = false;
+
+				for (LangString i2val : info2DVs) {
+
+					String d2 = StringUtils.stripToNull(i2val.getValue());
+
+					/*
+					 * Both i1val and i2val must either have no long, or both
+					 * have the same lang.
+					 */
+					if ((!i1val.hasLang() && !i2val.hasLang())
+							|| (i1val.hasLang() && i2val.hasLang()
+									&& i1val.getLang().equalsIgnoreCase(
+											i2val.getLang()))) {
+
+						matchFound = true;
+
+						if (d1 == null && d2 == null) {
+							/*
+							 * No actual value for this particular language id.
+							 * Nothing to merge.
+							 */
+							result.add(i1val);
+						} else if (d1 == null) {
+							/*
+							 * No actual value for i1val. Nothing to merge.
+							 */
+							result.add(i2val);
+						} else if (d2 == null) {
+							/*
+							 * No actual value for i2val. Nothing to merge.
+							 */
+							result.add(i1val);
+						} else {
+							LangString merge = new LangString(StringUtils
+									.join(new String[] { d1, d2 }, separator));
+							result.add(merge);
+						}
+
+						/*
+						 * i2val no longer matters in any case
+						 */
+						unmatched_info2DVs.remove(i2val);
+					}
+				}
+
+				/*
+				 * No value in info2DVs had the same lang as i1val. Add i1val to
+				 * the result.
+				 */
+				if (!matchFound) {
+					result.add(i1val);
+				}
+			}
+
+			/*
+			 * Add the remaining values from info2, the ones that have not been
+			 * matched.
+			 */
+			for (LangString i2val : unmatched_info2DVs) {
+				result.add(i2val);
+			}
+
+		} else {
+
+			/*
+			 * Simply add all values to the result.
+			 */
+			result.addAll(info1DVs);
+			result.addAll(info2DVs);
+		}
+
+		return new ArrayList<LangString>(result);
 	}
 }

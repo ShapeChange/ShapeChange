@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +53,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
@@ -86,6 +84,7 @@ import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -2513,7 +2512,8 @@ public class Flattener implements Transformer, MessageSource {
 	 * @param geometryTypeSuffixSeparatorByDescriptor
 	 *            map with separators to append the geometry type suffix, that
 	 *            have specifically been configured via the configuration
-	 *            parameter {@value #PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR}
+	 *            parameter
+	 *            {@value #PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR}
 	 * @param suffixByGeometryTypeByDescriptor
 	 *            map with specific suffixes to use when appending the suffix to
 	 *            descriptors of a class with a particular geometry type
@@ -3308,15 +3308,22 @@ public class Flattener implements Transformer, MessageSource {
 
 		EnumMap<Descriptor, String> nonUnionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
 				PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, trfConfig);
-		/*
-		 * Note if the separator map is empty, so that backwards compatible
-		 * behavior can be invoked later on, if necessary.
-		 */
-		boolean separatorMapEmpty = nonUnionSeparatorByDescriptor.isEmpty();
+
+		EnumMap<Descriptor, String> unionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_UNION_SEPARATOR, trfConfig);
+
+		boolean nonUnionSeparatorMapEmpty = nonUnionSeparatorByDescriptor
+				.isEmpty();
+		boolean unionSeparatorMapEmpty = unionSeparatorByDescriptor.isEmpty();
+
 		// ensure that a separator is defined for merging global identifiers
 		if (!nonUnionSeparatorByDescriptor
 				.containsKey(Descriptor.GLOBALIDENTIFIER)) {
 			nonUnionSeparatorByDescriptor.put(Descriptor.GLOBALIDENTIFIER, ".");
+		}
+		if (!unionSeparatorByDescriptor
+				.containsKey(Descriptor.GLOBALIDENTIFIER)) {
+			unionSeparatorByDescriptor.put(Descriptor.GLOBALIDENTIFIER, ".");
 		}
 
 		boolean ignoreSelfReferenceByPropertyWithAssociationClassOrigin = trfConfig
@@ -3356,11 +3363,22 @@ public class Flattener implements Transformer, MessageSource {
 			 * current class is a union, the separator to put between the name
 			 * of the class property and the copied property shall be the value
 			 * of separatorForPropertyFromUnion; otherwise it shall be the value
-			 * of separatorForPropertyFromNonUnion
+			 * of separatorForPropertyFromNonUnion. Apply same reasoning for the
+			 * separators of descriptors.
 			 */
+
 			String separator = separatorForPropertyFromNonUnion;
+			EnumMap<Descriptor, String> separatorByDescriptor = nonUnionSeparatorByDescriptor;
+			/*
+			 * Note if the separator map is empty, so that backwards compatible
+			 * behavior can be invoked later on, if necessary.
+			 */
+			boolean separatorMapEmpty = nonUnionSeparatorMapEmpty;
+
 			if (typeToProcess.category() == Options.UNION) {
 				separator = separatorForPropertyFromUnion;
+				separatorByDescriptor = unionSeparatorByDescriptor;
+				separatorMapEmpty = unionSeparatorMapEmpty;
 			}
 
 			/*
@@ -3481,73 +3499,55 @@ public class Flattener implements Transformer, MessageSource {
 							copy.setAttribute(true);
 							copy.setAssociation(null);
 
-							if (nonUnionSeparatorByDescriptor
+							if (separatorByDescriptor
 									.containsKey(Descriptor.GLOBALIDENTIFIER)) {
-								copy.descriptors().put(
-										Descriptor.GLOBALIDENTIFIER,
-										mergeDescriptors(
-												genPi.globalIdentifier(),
-												copy.globalIdentifier(),
-												nonUnionSeparatorByDescriptor
-														.get(Descriptor.GLOBALIDENTIFIER)));
+								
+								mergeDescriptorsAndAssignToCopy(
+										Descriptor.GLOBALIDENTIFIER, genPi, copy,
+										separatorByDescriptor, separator);								
 							}
 
 							if (!separatorMapEmpty) {
 
-								if (nonUnionSeparatorByDescriptor
-										.containsKey(Descriptor.DEFINITION)) {
-									copy.descriptors().put(
-											Descriptor.DEFINITION,
-											mergeDescriptors(genPi.definition(),
-													copy.definition(),
-													nonUnionSeparatorByDescriptor
-															.get(Descriptor.DEFINITION)));
+								/*
+								 * NOTE: only merges the main descriptor value,
+								 * not all values in all languages.
+								 */
+
+								/*
+								 * If omitWhenFlattened, simply keep the
+								 * descriptor of the copy. Otherwise, merge the
+								 * descriptor values from genPi and the copy.
+								 */
+								if (!omitWhenFlattened) {
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DEFINITION, genPi, copy,
+											separatorByDescriptor, separator);
+									
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DESCRIPTION, genPi, copy,
+											separatorByDescriptor, separator);
+									
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.PRIMARYCODE, genPi, copy,
+											separatorByDescriptor, separator);
+									
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.LEGALBASIS, genPi, copy,
+											separatorByDescriptor, separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DATACAPTURESTATEMENT, genPi, copy,
+											separatorByDescriptor, separator);
+									
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.EXAMPLE, genPi, copy,
+											separatorByDescriptor, separator);
+									
+									// TBD: would it make sense to merge the
+									// language()?
 								}
-
-								if (nonUnionSeparatorByDescriptor
-										.containsKey(Descriptor.DESCRIPTION)) {
-									copy.descriptors().put(
-											Descriptor.DESCRIPTION,
-											mergeDescriptors(
-													genPi.description(),
-													copy.description(),
-													nonUnionSeparatorByDescriptor
-															.get(Descriptor.DESCRIPTION)));
-								}
-
-								if (nonUnionSeparatorByDescriptor
-										.containsKey(Descriptor.PRIMARYCODE)) {
-									copy.descriptors().put(
-											Descriptor.PRIMARYCODE,
-											mergeDescriptors(
-													genPi.primaryCode(),
-													copy.primaryCode(),
-													nonUnionSeparatorByDescriptor
-															.get(Descriptor.PRIMARYCODE)));
-								}
-
-								if (nonUnionSeparatorByDescriptor
-										.containsKey(Descriptor.LEGALBASIS)) {
-									copy.descriptors().put(
-											Descriptor.LEGALBASIS,
-											mergeDescriptors(genPi.legalBasis(),
-													copy.legalBasis(),
-													nonUnionSeparatorByDescriptor
-															.get(Descriptor.LEGALBASIS)));
-								}
-
-								// TBD: would it make sense to merge the
-								// language()?
-
-								copy.descriptors().put(
-										Descriptor.DATACAPTURESTATEMENT,
-										ArrayUtils.addAll(
-												genPi.dataCaptureStatements(),
-												copy.dataCaptureStatements()));
-
-								copy.descriptors().put(Descriptor.EXAMPLE,
-										ArrayUtils.addAll(genPi.examples(),
-												copy.examples()));
 
 							} else {
 
@@ -3610,13 +3610,20 @@ public class Flattener implements Transformer, MessageSource {
 
 							if (!separatorMapEmpty) {
 
-								if (nonUnionSeparatorByDescriptor
+								if (separatorByDescriptor
 										.containsKey(Descriptor.ALIAS)) {
-									copy.descriptors().put(Descriptor.ALIAS,
-											mergeDescriptors(genPi.aliasName(),
-													copy.aliasName(),
-													nonUnionSeparatorByDescriptor
-															.get(Descriptor.ALIAS)));
+
+									/*
+									 * If omitWhenFlattened, simply keep the
+									 * descriptor of the copy. Otherwise, merge
+									 * the descriptor values from genPi and the
+									 * copy.
+									 */
+									if (!omitWhenFlattened) {
+										mergeDescriptorsAndAssignToCopy(
+												Descriptor.ALIAS, genPi, copy,
+												separatorByDescriptor, separator);										
+									}
 								}
 							} else {
 
@@ -3982,37 +3989,14 @@ public class Flattener implements Transformer, MessageSource {
 		}
 	}
 
-	/**
-	 * Stripts both descriptors to <code>null</code>, i.e. strips whitespace
-	 * from the start and end of a String and assigning <code>null</code> if the
-	 * String is empty ("") after the strip. If both strings are not
-	 * <code>null</code>, then they are joined using the given separator.
-	 * Otherwise, the non-<code>null</code> string is returned, or
-	 * <code>null</code> if both strings end up as <code>null</code>.
-	 * 
-	 * @param descriptor1
-	 * @param descriptor2
-	 * @param separator
-	 *            the string used to join the two descriptors; can be
-	 *            <code>null</code> (equals the empty string)
-	 * @return joined descriptors (see method description), can be
-	 *         <code>null</code>
-	 */
-	private String mergeDescriptors(String descriptor1, String descriptor2,
+	private void mergeDescriptorsAndAssignToCopy(Descriptor descriptor,
+			GenericPropertyInfo genPi, GenericPropertyInfo copy,
+			EnumMap<Descriptor, String> separatorByDescriptor,
 			String separator) {
 
-		String d1 = StringUtils.stripToNull(descriptor1);
-		String d2 = StringUtils.stripToNull(descriptor2);
-
-		if (d1 != null && d2 != null) {
-			return StringUtils.join(new String[] { d1, d2 }, separator);
-		} else if (d1 != null) {
-			return d1;
-		} else if (d2 != null) {
-			return d2;
-		} else {
-			return null;
-		}
+		List<LangString> mergedDescriptorValues = Descriptors.merge(descriptor,
+				genPi, copy, separatorByDescriptor, separator);
+		copy.descriptors().put(descriptor, mergedDescriptorValues);
 	}
 
 	/**
