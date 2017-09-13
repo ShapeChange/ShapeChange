@@ -54,6 +54,10 @@ public interface PackageInfo extends Info {
 	 * generated. The item is used from the configuration or - if not present
 	 * there - from the tagged value either on this package or one of its
 	 * ancestors.
+	 * 
+	 * @return namespace abbreviation defined for the package (or one of its
+	 *         ancestors); can be <code>null</code> if no such abbreviation is
+	 *         defined
 	 */
 	public String xmlns();
 

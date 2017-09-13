@@ -1258,8 +1258,15 @@ public class Options {
 		return null;
 	}
 
-	public String nsabrOfPackage(String k1) {
-		MapEntry me = fPackages.get(k1);
+	/**
+	 * @param packageName
+	 *            name of a package
+	 * @return namespace abbreviation (nsabr) defined by a package configuration
+	 *         entry for a package with given name; can be <code>null</code> if
+	 *         no such entry exists
+	 */
+	public String nsabrOfPackage(String packageName) {
+		MapEntry me = fPackages.get(packageName);
 		if (me != null) {
 			return me.p1;
 		}
@@ -3518,7 +3525,7 @@ public class Options {
 		addRule("rule-sql-all-notEncoded");
 
 		addRule("rule-sql-all-foreign-key-oracle-naming-style");
-		addRule("rule-sql-all-foreign-key-personhash-naming");
+		addRule("rule-sql-all-foreign-key-pearsonhash-naming");
 		addRule("rule-sql-all-foreign-key-default-naming");
 		addRule("rule-sql-all-check-constraint-naming-oracle-default");
 		addRule("rule-sql-all-check-constraint-naming-postgresql-default");

@@ -98,6 +98,10 @@ public interface ClassInfo extends Info {
 	 */
 	public boolean hasNilReason();
 
+	/**
+	 * @return the parent package of the class, i.e. the package the class
+	 *         belongs to
+	 */
 	public PackageInfo pkg();
 
 	public boolean isAbstract();

@@ -350,21 +350,21 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		 * TBD: Descriptors should not be modified right away, since the
 		 * descriptor source might not be the tagged value
 		 */
-//		if (tvName.equalsIgnoreCase("alias")) {
-//
-//			LangString ls = LangString.parse(tvValue);
-//			this.descriptors.put(Descriptor.ALIAS, ls);
-//			// this.setAliasNameAll(new Descriptors(tvValue));
-//
-//		} else if (tvName.equalsIgnoreCase("documentation")) {
-//
-//			// we map this to the descriptor 'definition'
-//
-//			LangString ls = LangString.parse(tvValue);
-//			this.descriptors.put(Descriptor.DEFINITION, ls);
-//			// this.setDefinitionAll(new Descriptors(tvValue));
-//
-//		}
+		// if (tvName.equalsIgnoreCase("alias")) {
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.ALIAS, ls);
+		// // this.setAliasNameAll(new Descriptors(tvValue));
+		//
+		// } else if (tvName.equalsIgnoreCase("documentation")) {
+		//
+		// // we map this to the descriptor 'definition'
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.DEFINITION, ls);
+		// // this.setDefinitionAll(new Descriptors(tvValue));
+		//
+		// }
 	}
 
 	/**
@@ -445,9 +445,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#baseClass()
-	 */
+	@Override
 	public ClassInfo baseClass() {
 		return baseClass;
 	}
@@ -553,6 +551,18 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
+	 * @param subtypeId
+	 * @return <code>true</code> if the specified subtype was not already
+	 *         contained in the set of subtypes
+	 */
+	public boolean addSubtype(String subtypeId) {
+		if (this.subtypes == null) {
+			this.subtypes = new TreeSet<String>();
+		}
+		return this.subtypes.add(subtypeId);
+	}
+
+	/**
 	 * Removes the supertype with given ID from the list of supertypes defined
 	 * for this class.
 	 * 
@@ -563,6 +573,20 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			return;
 		else
 			this.supertypes.remove(supertypeId);
+	}
+
+	/**
+	 * @param supertypeId
+	 * @return <code>true</code> if the specified supertypeId was not already
+	 *         contained in the set of supertypes
+	 */
+	public boolean addSupertype(String supertypeId) {
+
+		if (this.supertypes == null) {
+			this.supertypes = new TreeSet<String>();
+		}
+
+		return this.supertypes().add(supertypeId);
 	}
 
 	/**

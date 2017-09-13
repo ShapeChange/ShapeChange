@@ -427,7 +427,7 @@ public class SqlConstants {
 	 * characters.
 	 * 
 	 */
-	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING = "rule-sql-all-foreign-key-personhash-naming";
+	public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_PEARSONHASH_NAMING = "rule-sql-all-foreign-key-pearsonhash-naming";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_ORACLE_DEFAULT = "rule-sql-all-check-constraint-naming-oracle-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT = "rule-sql-all-check-constraint-naming-postgresql-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT = "rule-sql-all-check-constraint-naming-sqlserver-default";

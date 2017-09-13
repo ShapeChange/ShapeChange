@@ -118,7 +118,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** The EA element addressed by this ClassInfo */
 	protected org.sparx.Element eaClassElement = null;
-	
+
 	/** The EA object id of the class element object */
 	protected int eaClassId = 0;
 
@@ -362,7 +362,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public org.sparx.Element getEaClassElement() {
 		return eaClassElement;
 	}
-	
+
 	public int getEaElementId() {
 		return eaClassId;
 	}
@@ -419,7 +419,21 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						// and we are a mixin
 						if (cat == Options.MIXIN && matches(
 								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+
 							// do nothing and ignore
+
+							/*
+							 * FIXME 2017-09-12 JE: Method baseClass() should be
+							 * in ClassInfoImpl(). However, that we are matching
+							 * on a specific target rule here is an issue.
+							 * Everything in the XxxImpl classes should not
+							 * depend on specific target rules, since
+							 * transformations can produce models for multiple
+							 * targets. Rules such as the one above should be
+							 * general rules that apply for the whole processing
+							 * chain.
+							 */
+
 						} else if (this.model().isInSelectedSchemas(this)) {
 							// Not compatible and not mixin: An error
 							MessageContext mc = document.result.addError(null,
@@ -517,10 +531,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return res;
 	} // checkSupertypes()
 
-	/** Return the parent package of the class. */
+	@Override
 	public PackageInfo pkg() {
 		return packageInfo;
-	} // pkg()
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#properties()
@@ -838,36 +852,36 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return eaName;
 	} // name()
 
-//	@Override
-//	public Descriptors aliasNameAll() {
-//
-//		// Only retrieve/compute the alias once
-//		// Cache the result for subsequent use
-//		if (!aliasAccessed) {
-//
-//			aliasAccessed = true;
-//
-//			// Obtain alias name from default implementation
-//			Descriptors ls = super.aliasNameAll();
-//
-//			// If not present, obtain from EA model directly, if ea:alias is
-//			// identified as the source
-//			if (ls.isEmpty()
-//					&& descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
-//
-//				String a = eaClassElement.GetAlias();
-//
-//				if (a != null && !a.isEmpty()) {
-//
-//					super.aliasName = new Descriptors(
-//							new LangString(options().internalize(a)));
-//				} else {
-//					super.aliasName = new Descriptors();
-//				}
-//			}
-//		}
-//		return super.aliasName;
-//	}
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Only retrieve/compute the alias once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	//
+	// // If not present, obtain from EA model directly, if ea:alias is
+	// // identified as the source
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+	//
+	// String a = eaClassElement.GetAlias();
+	//
+	// if (a != null && !a.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(a)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	// return super.aliasName;
+	// }
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
