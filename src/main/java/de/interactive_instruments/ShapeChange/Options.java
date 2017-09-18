@@ -3489,6 +3489,7 @@ public class Options {
 		addRule("rule-xsd-prop-gmlArrayProperty");
 		addRule("rule-xsd-prop-gmlListProperty");
 		addRule("rule-xsd-prop-qualified-associations");
+		addRule("rule-xsd-prop-targetCodeListURI");
 		addRule("rule-xsd-all-no-documentation");
 		addRule("rule-xsd-cls-local-enumeration");
 		addRule("rule-xsd-cls-local-basictype");

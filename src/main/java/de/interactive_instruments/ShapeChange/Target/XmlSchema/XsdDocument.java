@@ -55,6 +55,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
@@ -362,6 +363,28 @@ public class XsdDocument implements MessageSource {
 					e2.appendChild(e3);
 					e3.appendChild(document.createTextNode(ci.name()));
 					addImport("gmlexr", Options.GMLEXR_NS);
+				}
+				if (ci.category() == Options.CODELIST
+						&& propi.matches("rule-xsd-prop-targetCodeListURI")) {
+
+					String codeListURI = StringUtils
+							.stripToNull(ci.taggedValue("codeList"));
+					if (codeListURI == null) {
+						codeListURI = StringUtils
+								.stripToNull(ci.taggedValue("vocabulary"));
+					}
+
+					if (codeListURI != null) {
+
+						if (e2 == null)
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "appinfo");
+						Element e3 = document.createElementNS(Options.SCAI_NS,
+								"targetCodeListURI");
+						e2.appendChild(e3);
+						e3.appendChild(document.createTextNode(codeListURI));
+						addImport("sc", Options.SCAI_NS);
+					}
 				}
 			}
 			if (info.matches("rule-xsd-prop-reverseProperty")
@@ -2723,7 +2746,7 @@ public class XsdDocument implements MessageSource {
 						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 				&& "true".equalsIgnoreCase(
 						ci.taggedValue("representsFeatureTypeSet"))) {
-			
+
 			addAttribute(e, "type", "gml:ReferenceType");
 			addImport("gml", options.fullNamespace("gml"));
 
@@ -2731,14 +2754,16 @@ public class XsdDocument implements MessageSource {
 					.equals("http://www.opengis.net/gml/3.2")) {
 
 				Element annotationElement;
-				NodeList annotationElements = e.getElementsByTagName("annotation");
-				if (annotationElements != null && annotationElements.getLength() != 0) {
-					annotationElement = (Element)annotationElements.item(0);
+				NodeList annotationElements = e
+						.getElementsByTagName("annotation");
+				if (annotationElements != null
+						&& annotationElements.getLength() != 0) {
+					annotationElement = (Element) annotationElements.item(0);
 				} else {
 					annotationElement = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "annotation");
 					e.appendChild(annotationElement);
-				}				
+				}
 
 				Element appinfoElement = document
 						.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
@@ -2766,8 +2791,8 @@ public class XsdDocument implements MessageSource {
 						s = representedFeatureType.qname();
 					}
 
-					Element targetElement = document
-							.createElementNS(options.GML_NS, "gml:targetElement");
+					Element targetElement = document.createElementNS(
+							options.GML_NS, "gml:targetElement");
 					appinfoElement.appendChild(targetElement);
 					targetElement.appendChild(document.createTextNode(s));
 				}

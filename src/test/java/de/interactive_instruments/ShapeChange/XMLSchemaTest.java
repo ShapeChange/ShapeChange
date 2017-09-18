@@ -222,4 +222,12 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"src/test/resources/reference/xsd/swe");
 	}
 
+	@Test
+	public void test_targetCodeListURI() {
+
+		String[] xsd = { "test" };
+		xsdTest("src/test/resources/xsd/targetCodeListURI/testEA_xsd_targetCodeListURI.xml", xsd, null,
+				"testResults/xsd/targetCodeListURI/INPUT",
+				"src/test/resources/xsd/targetCodeListURI/reference");
+	}
 }
