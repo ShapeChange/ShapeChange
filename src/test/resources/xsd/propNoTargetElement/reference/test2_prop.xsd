@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test2="http://shapechange.net/test2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test2" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="test2:FeatureType2Type"/>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="role" type="gml:ReferenceType" />
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test2:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
