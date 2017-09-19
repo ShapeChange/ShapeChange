@@ -221,7 +221,7 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/ea/swe/INPUT",
 				"src/test/resources/reference/xsd/swe");
 	}
-
+	
 	@Test
 	public void test_targetCodeListURI() {
 
@@ -229,5 +229,16 @@ public class XMLSchemaTest extends WindowsBasicTest {
 		xsdTest("src/test/resources/xsd/targetCodeListURI/testEA_xsd_targetCodeListURI.xml", xsd, null,
 				"testResults/xsd/targetCodeListURI/INPUT",
 				"src/test/resources/xsd/targetCodeListURI/reference");
+	}
+	
+	@Test
+	public void test_propNoTargetElement() {
+		/*
+		 * Test XML Schema creation for TODO
+		 */
+		String[] xsd = { "test2_prop" };
+		xsdTest("src/test/resources/xsd/propNoTargetElement/testEA_propNoTargetElement.xml", xsd, null,
+				"testResults/xsd/propNoTargetElement/INPUT",
+				"src/test/resources/xsd/propNoTargetElement/reference");
 	}
 }

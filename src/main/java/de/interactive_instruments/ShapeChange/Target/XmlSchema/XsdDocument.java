@@ -2826,6 +2826,7 @@ public class XsdDocument implements MessageSource {
 			} else if (ci.matches("rule-xsd-cls-standard-gml-property-types")
 					|| ci.matches("rule-xsd-cls-standard-swe-property-types")) {
 				boolean embedPropertyType = false;
+				boolean addImport = true;
 
 				if (propi.matches("rule-xsd-prop-inlineOrByReference")
 						&& propi.inlineOrByReference().equals("byreference")) {
@@ -2833,6 +2834,9 @@ public class XsdDocument implements MessageSource {
 					 * For by-reference we never use the standard property type
 					 */
 					embedPropertyType = true;
+					if (!propi.matches("rule-xsd-prop-targetElement")) {
+						addImport = false;
+					}
 				} else if (propi.matches("rule-xsd-prop-inlineOrByReference")
 						&& propi.inlineOrByReference().equals("inline")) {
 					/*
@@ -2963,7 +2967,9 @@ public class XsdDocument implements MessageSource {
 						addAttribute(e, "minOccurs", "0");
 				}
 
-				addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
+				if (addImport) {
+					addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
+				}
 			}
 
 		} else if ((ci.matches("rule-xsd-cls-mixin-classes")
