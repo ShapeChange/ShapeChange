@@ -296,8 +296,7 @@ public class CDB implements SingleTarget, MessageSource {
 					 */
 					Set<String> aliasNames = new HashSet<String>();
 					List<Element> aliasNameElmts = new ArrayList<Element>();
-					NodeList anNl = unitDefE
-							.getElementsByTagName("alias");
+					NodeList anNl = unitDefE.getElementsByTagName("alias");
 
 					if (anNl != null && anNl.getLength() != 0) {
 						for (int k = 0; k < anNl.getLength(); k++) {
@@ -309,9 +308,10 @@ public class CDB implements SingleTarget, MessageSource {
 						}
 					}
 
-					for (int anIndex = 0; anIndex < aliasNameElmts.size(); anIndex++) {
-						String aliasName = StringUtils
-								.stripToEmpty(aliasNameElmts.get(anIndex).getTextContent());
+					for (int anIndex = 0; anIndex < aliasNameElmts
+							.size(); anIndex++) {
+						String aliasName = StringUtils.stripToEmpty(
+								aliasNameElmts.get(anIndex).getTextContent());
 						if (aliasName.isEmpty()) {
 							result.addError(this, 13, "alias", indexForMsg);
 							continue;
@@ -337,9 +337,10 @@ public class CDB implements SingleTarget, MessageSource {
 								.stripToEmpty(descrE.getTextContent());
 					}
 
-					CDBUnit unit = new CDBUnit(code, symbol, name, aliasNames, description);
+					CDBUnit unit = new CDBUnit(code, symbol, name, aliasNames,
+							description);
 					unitDefsFromConfigByName.put(name, unit);
-					for(String aliasName : aliasNames) {
+					for (String aliasName : aliasNames) {
 						unitDefsFromConfigByName.put(aliasName, unit);
 					}
 				}
@@ -393,7 +394,6 @@ public class CDB implements SingleTarget, MessageSource {
 			return;
 		}
 
-		// Create table creation statements
 		if (ci.category() == Options.FEATURE) {
 
 			featureTypes.add(ci);
@@ -549,15 +549,15 @@ public class CDB implements SingleTarget, MessageSource {
 					CDBAttribute exAtt = attributesBySymbol
 							.get(attribute.getSymbol());
 
-					String exAttMin = exAtt.hasRange()
-							? exAtt.getRange().getMin() : "";
-					String exAttMax = exAtt.hasRange()
-							? exAtt.getRange().getMax() : "";
+					String exAttMin = exAtt.hasRange() ? StringUtils
+							.stripToEmpty(exAtt.getRange().getMin()) : "";
+					String exAttMax = exAtt.hasRange() ? StringUtils
+							.stripToEmpty(exAtt.getRange().getMax()) : "";
 
-					String attMin = attribute.hasRange()
-							? attribute.getRange().getMin() : "";
-					String attMax = attribute.hasRange()
-							? attribute.getRange().getMax() : "";
+					String attMin = attribute.hasRange() ? StringUtils
+							.stripToEmpty(attribute.getRange().getMin()) : "";
+					String attMax = attribute.hasRange() ? StringUtils
+							.stripToEmpty(attribute.getRange().getMax()) : "";
 
 					if (!attribute.getDescription()
 							.equalsIgnoreCase(exAtt.getDescription())

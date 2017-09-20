@@ -220,12 +220,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * <code>true</code>).
 	 */
 	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
-	/**
-	 * If set to <code>true</code>, then descriptors of properties will be
-	 * merged during type flattening.
-	 */
-	public static final String PARAM_MERGE_DESCRIPTORS = "mergeDescriptors";
-
+	
 	/**
 	 * If this parameter is set to true, then type flattening is not performed
 	 * for a (navigable) property that has its inClass (or one of its
@@ -274,6 +269,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
+	public static final String RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS = "rule-trf-prop-flatten-ONINAs-onlyRemoveReasons";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
 	// FIXME TB13TBD
 	/**
@@ -287,6 +283,9 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-type-mapToSimpleBaseType";
 	// FIXME TB13TBD
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS = "rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets";
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES = "rule-trf-prop-flatten-types-removeMappedTypes";
+
 	public static final String RULE_TRF_PROP_OPTIONALITY = "rule-trf-prop-optionality";
 
 	/**
@@ -3501,10 +3500,10 @@ public class Flattener implements Transformer, MessageSource {
 
 							if (separatorByDescriptor
 									.containsKey(Descriptor.GLOBALIDENTIFIER)) {
-								
+
 								mergeDescriptorsAndAssignToCopy(
-										Descriptor.GLOBALIDENTIFIER, genPi, copy,
-										separatorByDescriptor, separator);								
+										Descriptor.GLOBALIDENTIFIER, genPi,
+										copy, separatorByDescriptor, separator);
 							}
 
 							if (!separatorMapEmpty) {
@@ -3524,27 +3523,28 @@ public class Flattener implements Transformer, MessageSource {
 									mergeDescriptorsAndAssignToCopy(
 											Descriptor.DEFINITION, genPi, copy,
 											separatorByDescriptor, separator);
-									
+
 									mergeDescriptorsAndAssignToCopy(
 											Descriptor.DESCRIPTION, genPi, copy,
 											separatorByDescriptor, separator);
-									
+
 									mergeDescriptorsAndAssignToCopy(
 											Descriptor.PRIMARYCODE, genPi, copy,
 											separatorByDescriptor, separator);
-									
+
 									mergeDescriptorsAndAssignToCopy(
 											Descriptor.LEGALBASIS, genPi, copy,
 											separatorByDescriptor, separator);
 
 									mergeDescriptorsAndAssignToCopy(
-											Descriptor.DATACAPTURESTATEMENT, genPi, copy,
-											separatorByDescriptor, separator);
-									
+											Descriptor.DATACAPTURESTATEMENT,
+											genPi, copy, separatorByDescriptor,
+											separator);
+
 									mergeDescriptorsAndAssignToCopy(
 											Descriptor.EXAMPLE, genPi, copy,
 											separatorByDescriptor, separator);
-									
+
 									// TBD: would it make sense to merge the
 									// language()?
 								}
@@ -3622,7 +3622,8 @@ public class Flattener implements Transformer, MessageSource {
 									if (!omitWhenFlattened) {
 										mergeDescriptorsAndAssignToCopy(
 												Descriptor.ALIAS, genPi, copy,
-												separatorByDescriptor, separator);										
+												separatorByDescriptor,
+												separator);
 									}
 								}
 							} else {
@@ -3954,7 +3955,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		// FIXME TB13TBD rule name, document
 		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
-				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets");
+				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
 
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()
 				.toArray(new GenericClassInfo[genModel.selectedSchemaClasses()
@@ -3972,7 +3973,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		// FIXME TB13TBD
 		if (trfConfig
-				.hasRule("rule-trf-prop-flatten-types-removeMappedTypes")) {
+				.hasRule(RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES)) {
 			/*
 			 * identify all types for which map entries have been declared and
 			 * remove them from the model
@@ -4032,7 +4033,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		// FIXME TB13TBD review and document
 		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
-				"rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets");
+				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -6349,7 +6350,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		// FIXME TB13TBD
 		boolean onlyRemoveReasons = trfConfig
-				.hasRule("rule-trf-prop-flatten-ONINAs-onlyRemoveReasons");
+				.hasRule(RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS);
 
 		SortedSet<GenericPackageInfo> appSchemas = model.selectedSchemas();
 		if (appSchemas == null || appSchemas.size() == 0)
