@@ -220,7 +220,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * <code>true</code>).
 	 */
 	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
-	
+
 	/**
 	 * If this parameter is set to true, then type flattening is not performed
 	 * for a (navigable) property that has its inClass (or one of its
@@ -253,6 +253,7 @@ public class Flattener implements Transformer, MessageSource {
 	// =============================
 	public static final String RULE_TRF_ALL_FLATTEN_CODELISTS = "rule-trf-prop-flatten-codelists";
 	public static final String RULE_TRF_ALL_FLATTEN_CONSTRAINTS = "rule-trf-all-flatten-constraints";
+	public static final String RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS = "rule-trf-all-flatten-removeConstraints";
 	public static final String RULE_TRF_ALL_FLATTEN_NAME = "rule-trf-all-flatten-name";
 	public static final String RULE_TRF_ALL_REMOVETYPE = "rule-trf-all-removeType";
 
@@ -678,6 +679,12 @@ public class Flattener implements Transformer, MessageSource {
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CONSTRAINTS)) {
 			result.addInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CONSTRAINTS);
 			applyRuleClsFlattenConstraints(genModel, trfConfig);
+		}
+
+		if (rules.contains(RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS);
+			applyRuleClsFlattenRemoveConstraints(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CODELISTS)) {
@@ -2772,6 +2779,27 @@ public class Flattener implements Transformer, MessageSource {
 
 				genPi.setConstraints(newConstraints);
 			}
+		}
+	}
+
+	/**
+	 * Removes all class and property constraints.
+	 *
+	 * Note: at the moment this only processes constraints belonging to classes
+	 * and properties of the application schema.
+	 *
+	 * @param genModel
+	 * @param trfConfig
+	 */
+	private void applyRuleClsFlattenRemoveConstraints(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+			genCi.setConstraints(null);
+		}
+
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+			genPi.setConstraints(null);
 		}
 	}
 

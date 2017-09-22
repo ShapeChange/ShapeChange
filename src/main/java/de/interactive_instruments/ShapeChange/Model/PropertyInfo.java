@@ -194,6 +194,12 @@ public interface PropertyInfo extends Info {
 	 */
 	public boolean voidable();
 
+	/**
+	 * This method returns the constraints associated with the property.
+	 * 
+	 * @return the constraints associated with the property; can be empty but
+	 *         not <code>null</code>
+	 */
 	public List<Constraint> constraints();
 
 	public AssociationInfo association();

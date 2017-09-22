@@ -38,6 +38,7 @@ CREATE TABLE f3_suffix (
    geom geometry(GEOMETRY,31467) NOT NULL, -- Notes geometry (GM_Object)
    type text NOT NULL, -- Notes propertyType
    p1 boolean DEFAULT TRUE NOT NULL, -- Notes property1
+   pafb_f1 bigserial, -- Notes propAFeatureB
    p2_f2 bigserial, -- Notes property2 (MixinB)
    p2_f4 bigserial, -- Notes property2 (MixinB)
    pafb_f2 bigserial -- Notes propAFeatureB
@@ -65,6 +66,7 @@ ALTER TABLE f2_suffix ADD CONSTRAINT fk_f2_suffix_pf1 FOREIGN KEY (pf1) REFERENC
 ALTER TABLE f2_suffix ADD CONSTRAINT fk_f2_suffix_pf1ac FOREIGN KEY (pf1ac) REFERENCES f1;
 ALTER TABLE f3_suffix ADD CONSTRAINT fk_f3_suffix_p2_f2 FOREIGN KEY (p2_f2) REFERENCES f2_suffix;
 ALTER TABLE f3_suffix ADD CONSTRAINT fk_f3_suffix_p2_f4 FOREIGN KEY (p2_f4) REFERENCES f4;
+ALTER TABLE f3_suffix ADD CONSTRAINT fk_f3_suffix_pafb_f1 FOREIGN KEY (pafb_f1) REFERENCES f1;
 ALTER TABLE f3_suffix ADD CONSTRAINT fk_f3_suffix_pafb_f2 FOREIGN KEY (pafb_f2) REFERENCES f2_suffix;
 ALTER TABLE f4 ADD CONSTRAINT fk_f4_pafb_f1 FOREIGN KEY (pafb_f1) REFERENCES f1;
 ALTER TABLE f4 ADD CONSTRAINT fk_f4_pafb_f2 FOREIGN KEY (pafb_f2) REFERENCES f2_suffix;

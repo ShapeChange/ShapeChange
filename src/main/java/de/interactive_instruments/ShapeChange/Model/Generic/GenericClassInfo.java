@@ -52,8 +52,6 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -89,9 +87,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected ClassInfo baseClass = null;
 	protected SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
 	/**
-	 * Not null
+	 * May be null
 	 */
-	protected Vector<Constraint> constraints = new Vector<Constraint>();
+	protected Vector<Constraint> constraints = null;
 
 	public GenericClassInfo() {
 
@@ -175,7 +173,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param list
-	 *            the constraints to set
+	 *            the constraints to set, may be <code>null</code>
 	 */
 	public void setConstraints(Vector<Constraint> list) {
 		this.constraints = list;
@@ -463,10 +461,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#constraints()
-	 */
+	@Override
 	public List<Constraint> constraints() {
 		if (constraints == null) {
 			return new Vector<Constraint>(1);
@@ -669,118 +664,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * Adds the new properties to the set of properties of this class. The
-	 * behavior for adding a property that has the same name as an existing one
-	 * is determined by a parameter.
-	 * 
-	 * WARNING: if a new property does not have the same name as an existing one
-	 * but the same sequence number, this will overwrite the existing property
-	 * with that sequence number!
-	 * 
-	 * @param newProperty
-	 * @param duplicateHandling
-	 */
-	public void addProperties(List<GenericPropertyInfo> newProperties,
-			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
-
-		if (this.properties == null) {
-			properties = new TreeMap<StructuredNumber, PropertyInfo>();
-		}
-
-		if (this.properties.isEmpty()) {
-
-			// simply add all new properties
-			for (GenericPropertyInfo newProperty : newProperties) {
-
-				properties.put(newProperty.sequenceNumber(), newProperty);
-
-				this.model.genPropertiesById.put(newProperty.id(), newProperty);
-			}
-
-		} else {
-
-			// compute map with all existing props by name first
-			Map<String, GenericPropertyInfo> existingPropsByName = new HashMap<String, GenericPropertyInfo>();
-
-			for (PropertyInfo existingProp : this.properties.values()) {
-
-				existingPropsByName.put(existingProp.name(),
-						(GenericPropertyInfo) existingProp);
-			}
-
-			for (GenericPropertyInfo newProperty : newProperties) {
-
-				GenericPropertyInfo existingPropWithSameName = existingPropsByName
-						.get(newProperty.name());
-
-				if (existingPropWithSameName == null) {
-
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
-
-					// add but log a warning
-					result.addWarning(this, 30200, newProperty.name(),
-							this.name());
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE) {
-
-					/*
-					 * alright, we do not add the new property to the properties
-					 * of this class, but log a warning
-					 */
-
-					result.addWarning(this, 30201, newProperty.name(),
-							this.name());
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
-
-					/*
-					 * alright, we do not add the new property to the properties
-					 * of this class, but we need to "unrestrict" the existing
-					 * one - and log a warning
-					 */
-
-					result.addWarning(this, 30202, newProperty.name(),
-							this.name());
-
-					existingPropWithSameName.setRestriction(false);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.OVERWRITE) {
-
-					/*
-					 * Remove the existing property and add the new one - and
-					 * log a warning
-					 */
-
-					result.addWarning(this, 30203, newProperty.name(),
-							this.name());
-
-					properties
-							.remove(existingPropWithSameName.sequenceNumber());
-					this.model.genPropertiesById
-							.remove(existingPropWithSameName.id());
-
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-				}
-			}
-		}
-	}
-
 	public StructuredNumber getNextSequenceNumber() {
 
 		int maxSequenceNumber = Integer.MIN_VALUE;
@@ -802,6 +685,13 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return new StructuredNumber(result);
 	}
 
+	/**
+	 * Adds the given constraints to the constraints of this class, preventing
+	 * duplicates (references to same constraint object).
+	 * 
+	 * @param list
+	 *            constraints to add; can be empty or <code>null</code>
+	 */
 	public void addConstraints(List<Constraint> list) {
 		if (list == null || list.isEmpty())
 			return;
@@ -809,7 +699,11 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			if (this.constraints == null) {
 				this.constraints = new Vector<Constraint>();
 			}
-			this.constraints.addAll(list);
+			for (Constraint con : list) {
+				if (!this.constraints.contains(con)) {
+					this.constraints.addElement(con);
+				}
+			}
 		}
 	}
 
@@ -925,7 +819,11 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 		copy.setProperties(copyProperties);
 
-		copy.setConstraints((Vector<Constraint>) constraints.clone());
+		if (this.constraints == null) {
+			copy.setConstraints(null);
+		} else {
+			copy.setConstraints((Vector<Constraint>) constraints.clone());
+		}
 
 		return copy;
 	}
@@ -1075,9 +973,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * Adds the given list of new properties to this class. Their sequence
-	 * numbers are used as-is. The sequence/list of new properties will thus be
-	 * merged with the existing properties. Sequence numbers may be duplicate
-	 * (though still be different objects).
+	 * numbers are used as-is - unless a property with different name but same
+	 * sequence number already exists; in that case a suffix is added to the
+	 * sequence number of the new property. The sequence/list of new properties
+	 * will thus be merged with the existing properties.
 	 * 
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
@@ -1094,17 +993,118 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		} else {
 
-			// if (properties == null) {
-			// properties = new TreeMap<StructuredNumber, PropertyInfo>();
-			// }
+			if (this.properties == null) {
+				properties = new TreeMap<StructuredNumber, PropertyInfo>();
+			}
 
-			// add the new properties
-			this.addProperties(newProps, duplicateHandling);
+			if (this.properties.isEmpty()) {
 
-			// // add the new properties
-			// for (GenericPropertyInfo newProp : newProps) {
-			// this.addProperty(newProp, duplicateHandling);
-			// }
+				// simply add all new properties
+				for (GenericPropertyInfo newProperty : newProps) {
+
+					properties.put(newProperty.sequenceNumber(), newProperty);
+
+					this.model.genPropertiesById.put(newProperty.id(),
+							newProperty);
+				}
+
+			} else {
+
+				// compute map with all existing props by name first
+				Map<String, GenericPropertyInfo> existingPropsByName = new HashMap<String, GenericPropertyInfo>();
+
+				for (PropertyInfo existingProp : this.properties.values()) {
+
+					existingPropsByName.put(existingProp.name(),
+							(GenericPropertyInfo) existingProp);
+				}
+
+				for (GenericPropertyInfo newProperty : newProps) {
+
+					/*
+					 * ensure that sequence number of the new property is unique
+					 * within the set of existing properties
+					 */
+					StructuredNumber newpropsn = newProperty.sequenceNumber();
+					if (this.properties.containsKey(newpropsn)) {
+						newProperty.setSequenceNumber(
+								newpropsn.createCopyWithSuffix(1), true);
+					}
+
+					GenericPropertyInfo existingPropWithSameName = existingPropsByName
+							.get(newProperty.name());
+
+					if (existingPropWithSameName == null) {
+
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
+
+						// add but log a warning
+						result.addWarning(this, 30200, newProperty.name(),
+								this.name());
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE) {
+
+						/*
+						 * alright, we do not add the new property to the
+						 * properties of this class, but log a warning
+						 */
+
+						result.addWarning(this, 30201, newProperty.name(),
+								this.name());
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
+
+						/*
+						 * alright, we do not add the new property to the
+						 * properties of this class, but we need to "unrestrict"
+						 * the existing one - and log a warning
+						 */
+
+						result.addWarning(this, 30202, newProperty.name(),
+								this.name());
+
+						existingPropWithSameName.setRestriction(false);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.OVERWRITE) {
+
+						/*
+						 * Remove the existing property and add the new one -
+						 * and log a warning
+						 */
+
+						result.addWarning(this, 30203, newProperty.name(),
+								this.name());
+
+						properties.remove(
+								existingPropWithSameName.sequenceNumber());
+						this.model.genPropertiesById
+								.remove(existingPropWithSameName.id());
+
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+					}
+				}
+			}
 		}
 	}
 

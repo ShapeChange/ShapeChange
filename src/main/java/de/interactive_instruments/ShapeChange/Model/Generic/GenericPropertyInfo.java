@@ -260,7 +260,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param list
-	 *            the constraints to set
+	 *            the constraints to set; can be empty or <code>null</code>
 	 */
 	public void setConstraints(List<Constraint> list) {
 
