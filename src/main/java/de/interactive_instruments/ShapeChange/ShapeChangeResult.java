@@ -32,9 +32,11 @@
 
 package de.interactive_instruments.ShapeChange;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -566,7 +568,8 @@ public class ShapeChangeResult {
 				FileUtils.forceMkdir(f);
 			}
 
-			FileWriter outputXML = new FileWriter(filename);
+			BufferedWriter outputXML = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(filename), "UTF-8"));
 			Serializer serializer = SerializerFactory
 					.getSerializer(outputFormat);
 			serializer.setWriter(outputXML);
@@ -603,7 +606,8 @@ public class ShapeChangeResult {
 				File outHTML = new File(filename.replace(".xml", ".html"));
 				if (outHTML.exists())
 					outHTML.delete();
-				FileWriter outputHTML = new FileWriter(outHTML);
+				BufferedWriter outputHTML = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream(outHTML), "UTF-8"));;
 
 				if (xsltSource != null) {
 					Source xmlSource = new DOMSource(document);
