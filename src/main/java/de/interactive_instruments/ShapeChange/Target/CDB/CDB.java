@@ -664,8 +664,10 @@ public class CDB implements SingleTarget, MessageSource {
 			}
 		}
 		for (CDBUnit unit : usedUnitsByName.values()) {
-			unitCounter++;
-			unit.setCode(unitCounter);
+			if (!unit.hasCode()) {
+				unitCounter++;
+				unit.setCode(unitCounter);
+			}
 		}
 
 		// === Create XML representation of attributes dictionary
