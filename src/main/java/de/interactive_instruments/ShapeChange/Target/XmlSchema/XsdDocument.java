@@ -2054,7 +2054,9 @@ public class XsdDocument implements MessageSource {
 
 			}
 
-			if (pi.matches("rule-xsd-prop-constrainingFacets")) {
+			if (pi.matches("rule-xsd-prop-constrainingFacets")
+					&& pi.categoryOfValue() != Options.CODELIST
+					&& pi.categoryOfValue() != Options.ENUMERATION) {
 
 				String length = pi.taggedValue("length");
 				if (length == null) {
@@ -2196,7 +2198,9 @@ public class XsdDocument implements MessageSource {
 							e3.appendChild(e5);
 							addAttribute(e5, "value", max);
 						}
+
 					} else {
+
 						MessageContext mc = result.addError(null, 180,
 								ci.name(), pi.name());
 						if (mc != null)
