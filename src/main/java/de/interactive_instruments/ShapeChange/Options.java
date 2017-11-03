@@ -3632,6 +3632,7 @@ public class Options {
 		 * ArcGIS workspace encoding rules
 		 */
 		addRule("rule-arcgis-prop-initialValueByAlias");
+		addRule("rule-arcgis-cls-identifierStereotype");
 		addRule("rule-arcgis-cls-hasZ");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");

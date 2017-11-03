@@ -31,7 +31,9 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Naming;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -48,6 +50,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
@@ -96,6 +99,12 @@ public class NamingModifier implements Transformer, MessageSource {
 	 */
 	public static final String PARAM_SUFFIXES_TO_IGNORE = "suffixesToIgnore";
 
+	/**
+	 * Comma-separated list of names of tagged values to modify by
+	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_TAGGED_VALUES}.
+	 */
+	public static final String PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES = "camelCaseToUpperCase_taggedValues";
+
 	/* ------------------------ */
 	/* --- rule identifiers --- */
 	/* ------------------------ */
@@ -107,8 +116,8 @@ public class NamingModifier implements Transformer, MessageSource {
 	public static final String RULE_TRF_ADD_SUFFIX = "rule-trf-add-suffix";
 
 	/**
-	 * Updates the names of application schema classes and their properties as
-	 * follows:
+	 * Updates the names of application schema classes, their properties, and
+	 * their tagged values as follows:
 	 * <ul>
 	 * <li>All lower case letters are replaced with upper case letters.</li>
 	 * <li>If a letter or decimal digit is followed by an upper-case letter, the
@@ -124,11 +133,17 @@ public class NamingModifier implements Transformer, MessageSource {
 	 * This rule can be useful when Oracle DB naming conventions play a role,
 	 * and when the name transformation shall be reversible.
 	 * <p/>
-	 * NOTE: This rule does not modify the names of enums and codes (i.e. the
+	 * NOTE1: This rule does not modify the names of enums and codes (i.e. the
 	 * properties of enumeration and codelist classes). If these names shall be
 	 * modified as well, add
 	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_ENUMS} and
 	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_CODES}.
+	 * <p/>
+	 * NOTE2: The rule only processes tagged values of included classes and
+	 * properties if
+	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_TAGGED_VALUES} is
+	 * enabled. The tags to modify are identified via the configuration
+	 * parameter {@value #PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES}.
 	 * <p/>
 	 * Examples:
 	 * <ul>
@@ -169,6 +184,14 @@ public class NamingModifier implements Transformer, MessageSource {
 	 * well.
 	 */
 	public static final String RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_CODES = "rule-trf-camelcase-to-uppercase-include-codes";
+
+	/**
+	 * Extends the behavior of {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE} so
+	 * that tagged values (identified via parameter
+	 * {@value #PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES}) of included
+	 * classes and properties are modified as well.
+	 */
+	public static final String RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_TAGGED_VALUES = "rule-trf-camelcase-to-uppercase-include-taggedTalues";
 
 	/* -------------------- */
 	/* --- other fields --- */
@@ -239,6 +262,9 @@ public class NamingModifier implements Transformer, MessageSource {
 	private void applyRuleCamelCaseToUpperCase(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
 
+		boolean includeTaggedValues = trfConfig.hasRule(
+				RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_TAGGED_VALUES);
+
 		SortedSet<String> suffixesToIgnore = new TreeSet<String>();
 
 		/* --- determine and validate parameter values --- */
@@ -257,6 +283,11 @@ public class NamingModifier implements Transformer, MessageSource {
 			}
 		}
 
+		SortedSet<String> taggedValueNames = new TreeSet<String>(
+				trfConfig.parameterAsStringList(
+						PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES, null,
+						true, true));
+
 		/*
 		 * --- update names of properties ---
 		 * 
@@ -274,24 +305,70 @@ public class NamingModifier implements Transformer, MessageSource {
 				continue;
 			}
 
-			String newName = camelCaseToUpperCaseName(genPi, suffixesToIgnore);
+			String newName = camelCaseToUpperCaseName(genPi.name(),
+					genPi.fullNameInSchema(), suffixesToIgnore);
 
 			genPi.setName(newName);
+
+			if (includeTaggedValues) {
+				TaggedValues tvs = camelCaseToUpperCaseTaggedValues(
+						genPi.taggedValuesAll(), taggedValueNames,
+						suffixesToIgnore);
+				genPi.setTaggedValues(tvs, false);
+			}
 		}
 
 		/* --- update names of classes --- */
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-			String newName = camelCaseToUpperCaseName(genCi, suffixesToIgnore);
+			String newName = camelCaseToUpperCaseName(genCi.name(),
+					genCi.fullNameInSchema(), suffixesToIgnore);
 
 			genModel.updateClassName(genCi, newName);
+
+			if (includeTaggedValues) {
+				TaggedValues tvs = camelCaseToUpperCaseTaggedValues(
+						genCi.taggedValuesAll(), taggedValueNames,
+						suffixesToIgnore);
+				genCi.setTaggedValues(tvs, false);
+			}
 		}
 	}
 
-	private String camelCaseToUpperCaseName(Info modelElement,
+	private TaggedValues camelCaseToUpperCaseTaggedValues(TaggedValues tvsIn,
+			SortedSet<String> taggedValueNames,
 			SortedSet<String> suffixesToIgnore) {
 
-		String name = modelElement.name();
+		TaggedValues result = options.taggedValueFactory(tvsIn);
+
+		for (String tag : result.keySet()) {
+
+			if (taggedValueNames.contains(tag)) {
+
+				List<String> updatedValues = new ArrayList<String>();
+
+				for (String tagValue : result.get(tag)) {
+					String updatedValue = camelCaseToUpperCaseName(tagValue,
+							null, suffixesToIgnore);
+					updatedValues.add(updatedValue);
+				}
+
+				result.put(tag, updatedValues);
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param name
+	 * @param modelContext
+	 *            identifies the model element; can be <code>null</code>
+	 * @param suffixesToIgnore
+	 * @return
+	 */
+	private String camelCaseToUpperCaseName(String name, String modelContext,
+			SortedSet<String> suffixesToIgnore) {
 
 		StringBuffer newName = new StringBuffer();
 		String identifiedSuffix = null;
@@ -322,9 +399,9 @@ public class NamingModifier implements Transformer, MessageSource {
 			}
 		}
 
-		if (multipleSuffixesMatch) {
+		if (multipleSuffixesMatch && modelContext != null) {
 			MessageContext mc = result.addWarning(this, 4, identifiedSuffix);
-			mc.addDetail(modelElement.fullName());
+			mc.addDetail(modelContext);
 		}
 
 		if (identifiedSuffix != null) {

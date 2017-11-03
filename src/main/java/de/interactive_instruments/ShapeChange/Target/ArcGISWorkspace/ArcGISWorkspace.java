@@ -100,6 +100,18 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	public static final String RULE_ENUM_INITIAL_VALUE_BY_ALIAS = "rule-arcgis-prop-initialValueByAlias";
 
 	/**
+	 * Enables use of stereotype &lt;&lt;identifier>> on class attributes. If an
+	 * attribute with that stereotype belongs to a class, then it will be used
+	 * as primary key (the OBJECTID field will still be generated).
+	 * 
+	 * NOTE: Multiple <<identifier>> attributes per class are not supported. In
+	 * such a case, ShapeChange will log a warning and use only one of them as
+	 * primary key. If the maximum multiplicity of an <<identifier>> attribute
+	 * is greater than 1, ShapeChange will log an error.
+	 */
+	public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-arcgis-cls-identifierStereotype";
+
+	/**
 	 * If a feature type has the tagged value 'HasZ' set to 'true', and the
 	 * feature type is converted to an ArcGIS feature class (Point, Polyline,
 	 * etc.), then with this rule enabled the ArcGIS feature class will have the
@@ -242,6 +254,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 */
 	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
+
+	/**
+	 * Suffix to append to the name of foreign keys. Default is 'ID'.
+	 */
+	public static final String PARAM_FOREIGN_KEY_SUFFIX = "foreignKeySuffix";
+
+	/**
+	 * If set to 'true', do not switch the first character of a target or source
+	 * role name in a relationship class to lower case. Default is 'false'.
+	 */
+	public static final String PARAM_KEEP_CASE_OF_ROLENAME = "keepCaseOfRoleName";
 
 	public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
 
@@ -412,6 +435,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static Map<ClassInfo, String> elementNameByClassInfo = new HashMap<ClassInfo, String>();
 
 	private static Map<ClassInfo, String> objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+	private static Map<ClassInfo, String> identifierAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+
 	private static Map<ClassInfo, ClassInfo> generalisations = new HashMap<ClassInfo, ClassInfo>();
 	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
 
@@ -511,6 +536,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static String absolutePathOfOutputEAPFile;
 
 	private static String shortNameByTaggedValue;
+
+	private static boolean keepCaseOfRolename = false;
+
+	private static String foreignKeySuffix;
 
 	/**
 	 * key: name of the class element; value: the range domain element
@@ -820,6 +849,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					this.getClass().getName(), PARAM_SHORT_NAME_BY_TAGGED_VALUE,
 					"shortName", false, true);
 
+			keepCaseOfRolename = options.parameterAsBoolean(
+					this.getClass().getName(), PARAM_KEEP_CASE_OF_ROLENAME,
+					false);
+
+			foreignKeySuffix = options.parameterAsString(
+					this.getClass().getName(), PARAM_FOREIGN_KEY_SUFFIX, "ID",
+					false, true);
 		}
 	}
 
@@ -1312,6 +1348,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private void createFeatureClass(ClassInfo ci) throws EAException {
 
+		checkRequirements(ci);
+
 		int eaPkgId = establishEAPackageHierarchy(ci, featuresPkgId);
 
 		// create class element
@@ -1566,6 +1604,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private void createObjectClass(ClassInfo ci) throws EAException {
 
+		checkRequirements(ci);
+
 		int eaPkgId = establishEAPackageHierarchy(ci, tablesPkgId);
 
 		// create class element
@@ -1618,6 +1658,50 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// keep track of generalizations
 		identifyGeneralisationRelationships(ci);
 
+	}
+
+	private void checkRequirements(ClassInfo ci) {
+
+		/*
+		 * If rule for using <<identifier>> stereotype on attributes is enabled,
+		 * check that a type does not have more than one such attribute, and
+		 * that such an attribute has max cardinality 1.
+		 */
+		if (ci.matches(RULE_CLS_IDENTIFIER_STEREOTYPE)) {
+
+			int countIdentifierAttributes = 0;
+
+			for (PropertyInfo pi : ci.properties().values()) {
+
+				if (pi.isAttribute() && pi.stereotype("identifier")) {
+
+					countIdentifierAttributes++;
+
+					if (pi.cardinality().maxOccurs > 1) {
+						MessageContext mc = result.addError(this, 247,
+								pi.name());
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+					}
+				}
+			}
+
+			if (countIdentifierAttributes > 1) {
+
+				MessageContext mc = result.addWarning(this, 246, ci.name());
+				if (mc != null) {
+					mc.addDetail(this, -1, ci.fullNameInSchema());
+				}
+
+			} else if (countIdentifierAttributes == 0) {
+
+				MessageContext mc = result.addWarning(this, 248, ci.name());
+				if (mc != null) {
+					mc.addDetail(this, -1, ci.fullNameInSchema());
+				}
+			}
+		}
 	}
 
 	private void identifyGeneralisationRelationships(ClassInfo ci) {
@@ -2163,7 +2247,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					 * target
 					 */
 
-					String fkSrcName = roleNameSource + "ID";
+					String fkSrcName = roleNameSource + foreignKeySuffix;
 
 					try {
 
@@ -2185,7 +2269,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						return;
 					}
 
-					String fkTgtName = roleNameTarget + "ID";
+					String fkTgtName = roleNameTarget + foreignKeySuffix;
 
 					try {
 
@@ -2224,7 +2308,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					tvs.add(new EATaggedValue("DestinationForeignKey",
 							foreignKeyFieldTgt.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("DestinationPrimaryKey",
-							objectIdAttributeGUIDByClass.get(target_)));
+							determinePrimaryKeyGUID(target_)));
 					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
 					tvs.add(new EATaggedValue("IsAttachmentRelationship",
 							"false"));
@@ -2242,7 +2326,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					tvs.add(new EATaggedValue("OriginForeignKey",
 							foreignKeyFieldSrc.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							objectIdAttributeGUIDByClass.get(source_)));
+							determinePrimaryKeyGUID(source_)));
 					tvs.add(new EATaggedValue("RasterFieldName", ""));
 					tvs.add(new EATaggedValue("Versioned", "false"));
 
@@ -2309,6 +2393,26 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				}
 			}
 
+		}
+	}
+
+	/**
+	 * Identify the GUID of the primary key field for the given class.
+	 * 
+	 * @param ci
+	 * @return the GUID of an attribute with stereotype 'identifier' - if
+	 *         {@value #RULE_CLS_IDENTIFIER_STEREOTYPE} is enabled and such an
+	 *         attribute exists - or the GUID of the OBJECTID system field.
+	 */
+	private String determinePrimaryKeyGUID(ClassInfo ci) {
+
+		if (identifierAttributeGUIDByClass.containsKey(ci)) {
+
+			return identifierAttributeGUIDByClass.get(ci);
+
+		} else {
+
+			return objectIdAttributeGUIDByClass.get(ci);
 		}
 	}
 
@@ -2435,7 +2539,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Attribute foreignKeyField = null;
 
 		try {
-			String name = normalizeName(roleNameSource + "ID");
+			String name = normalizeName(roleNameSource + foreignKeySuffix);
 
 			if (exceedsMaxLength(name)) {
 				this.result.addWarning(this, 205, name, roleNameSource,
@@ -2562,7 +2666,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					tvs.add(new EATaggedValue("ClassKey",
 							"esriRelClassKeyUndefined"));
 					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							objectIdAttributeGUIDByClass.get(source_)));
+							determinePrimaryKeyGUID(source_)));
 					tvs.add(new EATaggedValue("OriginForeignKey",
 							foreignKeyField.GetAttributeGUID()));
 					tvs.add(new EATaggedValue("DestinationPrimaryKey", ""));
@@ -2706,7 +2810,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private String toLowerCamelCase(String s) {
 
-		if (s == null || s.length() == 0) {
+		if (keepCaseOfRolename || s == null || s.length() == 0) {
 
 			return s;
 
@@ -2954,6 +3058,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
 		elementNameByClassInfo = new HashMap<ClassInfo, String>();
 		objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+		identifierAttributeGUIDByClass = new HashMap<ClassInfo, String>();
 		generalisations = new HashMap<ClassInfo, ClassInfo>();
 		associations = new HashSet<AssociationInfo>();
 		counterByRelationshipClassName = new HashMap<String, Integer>();
@@ -2973,6 +3078,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		nameOfTVToDetermineFieldLength = "size";
 		absolutePathOfOutputEAPFile = null;
 		shortNameByTaggedValue = null;
+		keepCaseOfRolename = false;
+		foreignKeySuffix = "ID";
 		numericRangeElementIdsByClassName = new HashMap<String, Integer>();
 	}
 
@@ -3011,7 +3118,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
-		// process properties of all classes
+		List<PropertyInfo> pisToCreateRelationshipClassesWith = new ArrayList<PropertyInfo>();
+
+		/*
+		 * Process properties of all classes. Do not create relationship classes
+		 * in this loop, just keep track of the relevant properties. The reason
+		 * is that <<identifier>> attributes may be significant. Such attributes
+		 * need to be created in this loop. Afterwards, they can be used when
+		 * creating relationship classes.
+		 */
 		for (ClassInfo ci : elementIdByClassInfo.keySet()) {
 
 			if (ci.category() == Options.ENUMERATION
@@ -3266,8 +3381,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 						try {
 
-							createField(eaClass, normalizedPiName,
-									normalizedPiAlias,
+							Attribute eaAtt = createField(eaClass,
+									normalizedPiName, normalizedPiAlias,
 									pi.derivedDocumentation(
 											documentationTemplate,
 											documentationNoValue),
@@ -3277,6 +3392,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 									"" + computeScale(pi, mappedTypeName),
 									eaTargetClassifierId, initialValue,
 									computeIsNullable(pi));
+
+							if (ci.matches(RULE_CLS_IDENTIFIER_STEREOTYPE)
+									&& pi.stereotype("identifier")
+									&& !identifierAttributeGUIDByClass
+											.containsKey(ci)) {
+
+								identifierAttributeGUIDByClass.put(ci,
+										eaAtt.GetAttributeGUID());
+							}
 
 						} catch (EAException e) {
 							result.addError(this, 10003, pi.name(), ci.name(),
@@ -3306,14 +3430,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						|| pi.categoryOfValue() == Options.OBJECT
 						|| pi.categoryOfValue() == Options.GMLOBJECT) {
 
-					if (pi.cardinality().maxOccurs > 1) {
-
-						createManyToManyRelationshipClass(pi);
-
-					} else {
-
-						createOneToManyRelationshipClass(pi);
-					}
+					pisToCreateRelationshipClassesWith.add(pi);
 
 				} else if (pi.categoryOfValue() == Options.ENUMERATION
 						|| pi.categoryOfValue() == Options.CODELIST) {
@@ -3401,6 +3518,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 							"" + pi.categoryOfValue(), ci.name());
 
 				}
+			}
+		}
+
+		// process properties to create relationship classes
+		for (PropertyInfo pi : pisToCreateRelationshipClassesWith) {
+
+			if (pi.cardinality().maxOccurs > 1) {
+
+				createManyToManyRelationshipClass(pi);
+
+			} else {
+
+				createOneToManyRelationshipClass(pi);
 			}
 		}
 
@@ -3495,6 +3625,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		switch (mnr) {
 
+		case -2:
+			return "Context: property '$1$'";
 		case -1:
 			return "Context: class '$1$'";
 		case 0:
@@ -3635,6 +3767,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		case 245:
 			return "Tagged value '" + TV_NUMERIC_TYPE
 					+ "' is not blank. It has value '$1$'. No map entry was found with this value as type. The tagged value will be ignored.";
+		case 246:
+			return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be used as primary key in relationship classes.";
+		case 247:
+			return "Identifier attribute '$1$' has max multiplicity > 1.";
+		case 248:
+			return "Class '$1$' does not have an <<identifier>> attribute.";
 
 		// 10001-10100: EA exceptions
 		case 10001:

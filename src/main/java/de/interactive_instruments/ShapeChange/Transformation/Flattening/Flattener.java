@@ -5122,6 +5122,17 @@ public class Flattener implements Transformer, MessageSource {
 				setCode(genSuperclassUnion, genSuperclass.name() + "Union");
 			}
 
+			/*
+			 * Check if the superclass has tagged value omitWhenFlattened. If
+			 * so, set it on the union as well.
+			 */
+			String tvOmitWhenFlattened = genSuperclass
+					.taggedValue("omitWhenFlattened");
+			if ("true".equalsIgnoreCase(tvOmitWhenFlattened)) {
+				genSuperclassUnion.setTaggedValue("omitWhenFlattened", "true",
+						false);
+			}
+
 			// TBD it would be good to use java enums for stereotypes
 			genSuperclassUnion.setStereotype("union");
 			genSuperclassUnion.setPkg(genSuperclass.pkg());

@@ -1337,12 +1337,16 @@ public class SqlBuilder implements MessageSource {
 
 			if (repCat != null && repCat.equalsIgnoreCase("datatype")) {
 				return SqlDdl.foreignKeyColumnSuffixDatatype;
+			} else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
+				return SqlDdl.foreignKeyColumnSuffixCodelist;
 			} else {
 				return SqlDdl.foreignKeyColumnSuffix;
 			}
 
 		} else if (pi.categoryOfValue() == Options.DATATYPE) {
 			return SqlDdl.foreignKeyColumnSuffixDatatype;
+		} else if (pi.categoryOfValue() == Options.CODELIST) {
+			return SqlDdl.foreignKeyColumnSuffixCodelist;
 		} else {
 			return SqlDdl.foreignKeyColumnSuffix;
 		}
@@ -1865,8 +1869,7 @@ public class SqlBuilder implements MessageSource {
 
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType,
-							SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+							SqlDdl.foreignKeyColumnDataType, null, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}

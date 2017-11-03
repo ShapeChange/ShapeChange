@@ -100,6 +100,14 @@ public class SqlConstants {
 
 	/**
 	 * Suffix to append to the name of columns that contain foreign keys
+	 * referencing tables that represent code lists. This parameter is optional.
+	 * The default is the value of parameter
+	 * {@value #PARAM_FOREIGN_KEY_COLUMN_SUFFIX} (for backwards compatibility).
+	 */
+	public static final String PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
+
+	/**
+	 * Suffix to append to the name of columns that contain foreign keys
 	 * referencing tables that represent data types. This parameter is optional.
 	 * The default is the empty string.
 	 */
@@ -552,11 +560,10 @@ public class SqlConstants {
 	 */
 	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT = "representedCategory";
 	/**
-	 * Regular expression (?i:datatype) to check that a given string is one of a
-	 * list of allowed values (NOTE1: check is case-insensitive; NOTE2: at the
-	 * moment there is only one valid value).
+	 * Regular expression to check that a given string is one of a
+	 * list of allowed values (NOTE: check is case-insensitive).
 	 */
-	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:datatype)";
+	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
 	public static final String ME_PARAM_TEXTORCHARACTERVARYING = "textOrCharacterVarying";
 
 	/*

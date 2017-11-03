@@ -193,4 +193,13 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/numericallyValuedCodeLists",
 				"src/test/resources/sql/numericallyValuedCodeLists/reference");
 	}
+	
+	@Test
+	public void testForeignKeyColumnSuffixCodelist() {
+
+		multiTest(
+				"src/test/resources/sql/foreignKeyColumnSuffixCodelist/testEA_sql_foreignKeyColumnSuffixCodelist.xml",
+				new String[] { "sql" }, "testResults/sql/foreignKeyColumnSuffixCodelist",
+				"src/test/resources/sql/foreignKeyColumnSuffixCodelist/reference");
+	}
 }

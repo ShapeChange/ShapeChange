@@ -133,6 +133,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String oneToManyReferenceColumnName;
 	protected static String foreignKeyColumnSuffix;
 	protected static String foreignKeyColumnSuffixDatatype;
+	protected static String foreignKeyColumnSuffixCodelist;
 	protected static String foreignKeyColumnDataType;
 	protected static String primaryKeySpec;
 	protected static String primaryKeySpecCodelist;
@@ -391,7 +392,13 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
 					SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX, true,
 					false);
-
+			
+			foreignKeyColumnSuffixCodelist = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST,
+					foreignKeyColumnSuffix, true,
+					false);
+			
 			foreignKeyColumnSuffixDatatype = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
@@ -909,6 +916,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		oneToManyReferenceColumnName = null;
 		foreignKeyColumnSuffix = null;
 		foreignKeyColumnSuffixDatatype = null;
+		foreignKeyColumnSuffixCodelist = null;
 		foreignKeyColumnDataType = null;
 		primaryKeySpec = null;
 		primaryKeySpecCodelist = null;
