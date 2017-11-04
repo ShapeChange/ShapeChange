@@ -299,6 +299,19 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE = "rule-sql-cls-data-types-oneToMany-oneTable";
 
 	/**
+	 * Extends {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE} to
+	 * prevent creation of a field for an attribute with a data type - for which
+	 * a table is created - as type, when the attribute has max cardinality 1.
+	 * The 'dataTypeOwner' field on the data type table can be used to establish
+	 * the relationship. That field will be encoded as NOT NULL. Note that the
+	 * 'dataTypeOwner' could be misused in such a case, when more than one entry
+	 * references the table that represents the class with the attribute. That
+	 * would result in multiple values for the attribute, which is not allowed
+	 * by the conceptual model.
+	 */
+	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE = "rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase";
+
+	/**
 	 * Specific implementation of a one to many relationship between a type A
 	 * and a data type B: for each such relationship, a new table is created for
 	 * the data type (as defined by {@value #RULE_TGT_SQL_CLS_DATATYPES}. The
@@ -311,6 +324,17 @@ public class SqlConstants {
 	 * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}.
 	 */
 	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES = "rule-sql-cls-data-types-oneToMany-severalTables";
+
+	/**
+	 * Extends {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES} to
+	 * avoid the creation of the general table for a data type, if that table is
+	 * not used. More specifically, check if no attribute in the schemas
+	 * selected for processing with the data type as type has max cardinality =
+	 * 1. In that case, the table that represents the data type, and that
+	 * supports such a case, would not be used - and is thus not needed in the
+	 * resulting DDL schema.
+	 */
+	public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED = "rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused";
 
 	/**
 	 * Tables are generated for code lists. Insert statements are created for
@@ -560,8 +584,8 @@ public class SqlConstants {
 	 */
 	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT = "representedCategory";
 	/**
-	 * Regular expression to check that a given string is one of a
-	 * list of allowed values (NOTE: check is case-insensitive).
+	 * Regular expression to check that a given string is one of a list of
+	 * allowed values (NOTE: check is case-insensitive).
 	 */
 	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
 	public static final String ME_PARAM_TEXTORCHARACTERVARYING = "textOrCharacterVarying";

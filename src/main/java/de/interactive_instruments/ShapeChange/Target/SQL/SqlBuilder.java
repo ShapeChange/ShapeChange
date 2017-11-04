@@ -324,7 +324,25 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi.cardinality().maxOccurs == 1) {
 
-					propertyInfosForColumns.add(pi);
+					if (SqlDdl.createAssociativeTables && typeCi != null
+							&& typeCi.category() == Options.DATATYPE
+							&& typeCi.matches(
+									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+							&& typeCi.matches(
+									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
+							&& typeCi.matches(
+									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
+						/*
+						 * Ignore the attribute. The table that will be created
+						 * for the (data) type of the attribute will contain a
+						 * data type owner field, which can be used to reference
+						 * an entry of the table that represents the inClass()
+						 * of the attribute.
+						 */
+
+					} else {
+						propertyInfosForColumns.add(pi);
+					}
 
 				} else if (SqlDdl.createAssociativeTables) {
 
@@ -1773,7 +1791,58 @@ public class SqlBuilder implements MessageSource {
 
 			} else {
 
-				createTables(ci);
+				/*
+				 * Check special cases first, to see if a table for the class
+				 * should really be created.
+				 */
+
+				/*
+				 * Check if we have a data type that matches both
+				 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES and
+				 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED.
+				 * Do not create a table for it, unless an attribute in the
+				 * classes selected for processing exists that has the data type
+				 * as type, and max cardinality 1.
+				 */
+				if (ci.category() == Options.DATATYPE
+						&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+						&& ci.matches(
+								SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)
+						&& ci.matches(
+								SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED)) {
+
+					boolean singleValuedCaseExists = false;
+
+					/*
+					 * Screen all cisToProcess to identify properties that have
+					 * ci as value type (in a one-to-one relationship).
+					 */
+					outer: for (ClassInfo ci_other : cisToProcess) {
+
+						if (ci_other != ci) {
+
+							for (PropertyInfo pi_other : ci_other.properties()
+									.values()) {
+
+								if (pi_other.isAttribute()
+										&& pi_other.cardinality().maxOccurs == 1
+										&& ci.id().equals(
+												pi_other.typeInfo().id)) {
+									singleValuedCaseExists = true;
+									break outer;
+								}
+							}
+						}
+					}
+
+					if (singleValuedCaseExists) {
+						createTables(ci);
+					}
+
+				} else {
+
+					createTables(ci);
+				}
 			}
 		}
 
@@ -1867,9 +1936,15 @@ public class SqlBuilder implements MessageSource {
 						columnName = tv_oneToManyReferenceColumnName.trim();
 					}
 
+					String dtOwnerRef_columnSpec = null;
+					if (ci.matches(
+							SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
+						dtOwnerRef_columnSpec = SqlConstants.NOT_NULL_COLUMN_SPEC;
+					}
+					
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType, null, false, true);
+							SqlDdl.foreignKeyColumnDataType, dtOwnerRef_columnSpec, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}

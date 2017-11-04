@@ -3550,7 +3550,9 @@ public class Options {
 		addRule("rule-sql-cls-code-lists-pods");
 		addRule("rule-sql-cls-data-types");
 		addRule("rule-sql-cls-data-types-oneToMany-oneTable");
+		addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
 		addRule("rule-sql-cls-data-types-oneToMany-severalTables");
+		addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
 		addRule("rule-sql-cls-feature-types");
 		addRule("rule-sql-cls-identifierStereotype");
 		addRule("rule-sql-cls-object-types");

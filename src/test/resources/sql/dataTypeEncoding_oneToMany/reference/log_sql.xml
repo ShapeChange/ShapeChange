@@ -1,18 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml" end="Tue May 16 11:19:04 CEST 2017" resultCode="0" start="Tue May 16 11:18:56 CEST 2017" version="2.3.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml" end="Sat Nov 04 10:11:12 CET 2017" resultCode="0" start="Sat Nov 04 10:11:06 CET 2017" version="2.3.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\dataTypeEncoding_oneToMany\test_sql_dataTypeEncoding_oneToMany.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\dataTypeEncoding_oneToMany\test_sql_dataTypeEncoding_oneToMany.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\dataTypeEncoding_oneToMany\test_sql_dataTypeEncoding_oneToMany.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\dataTypeEncoding_oneToMany\test_sql_dataTypeEncoding_oneToMany.EAP"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
-    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
-    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
-    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
-    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/oneTable/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/oneTable_ignoreSingleValuedCase/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/severalTables/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/dataTypeEncoding_oneToMany/severalTables_avoidTableForDatatypeIfUnused/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
   </Results>
 </ShapeChangeResult>
