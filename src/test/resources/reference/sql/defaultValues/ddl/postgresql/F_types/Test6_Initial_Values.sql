@@ -5,7 +5,8 @@ CREATE TABLE t6_class1 (
    propbooleantrue boolean DEFAULT TRUE,
    propinteger integer DEFAULT 3,
    propnumber numeric DEFAULT 2.1,
-   propstring text DEFAULT 'mydefault'
+   propstring text DEFAULT 'mydefault',
+   propstring2 character varying(20) DEFAULT 'anotherDefault'
 );
 
 CREATE TABLE t6_class1_propstrings (
