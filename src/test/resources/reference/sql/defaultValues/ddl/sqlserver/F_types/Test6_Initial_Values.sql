@@ -5,7 +5,8 @@ CREATE TABLE T6_Class1 (
    propBooleanTrue bit DEFAULT 1,
    propInteger int DEFAULT 3,
    propNumber numeric DEFAULT 2.1,
-   propString nvarchar(max) DEFAULT 'mydefault'
+   propString nvarchar(max) DEFAULT 'mydefault',
+   propString2 nvarchar(20) DEFAULT 'anotherDefault'
 );
 
 CREATE TABLE T6_Class1_propStrings (
