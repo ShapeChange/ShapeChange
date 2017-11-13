@@ -317,6 +317,7 @@ public class SqlBuilder implements MessageSource {
 
 			if (typeCi != null && typeCi.isAbstract() && typeCi
 					.matches(SqlConstants.RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT)) {
+				// TBD: exclude if map entry is defined for the abstract type?
 				continue;
 			}
 
@@ -324,7 +325,10 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi.cardinality().maxOccurs == 1) {
 
-					if (SqlDdl.createAssociativeTables && typeCi != null
+					if (SqlDdl.createAssociativeTables
+							&& options.targetMapEntry(pi.typeInfo().name,
+									pi.encodingRule("sql")) == null
+							&& typeCi != null
 							&& typeCi.category() == Options.DATATYPE
 							&& typeCi.matches(
 									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
@@ -333,11 +337,12 @@ public class SqlBuilder implements MessageSource {
 							&& typeCi.matches(
 									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
 						/*
-						 * Ignore the attribute. The table that will be created
-						 * for the (data) type of the attribute will contain a
-						 * data type owner field, which can be used to reference
-						 * an entry of the table that represents the inClass()
-						 * of the attribute.
+						 * Ignore the attribute. Either the property type is
+						 * mapped to a database specific type, or the table that
+						 * will be created for the (data) type of the attribute
+						 * will contain a data type owner field, which can be
+						 * used to reference an entry of the table that
+						 * represents the inClass() of the attribute.
 						 */
 
 					} else {
@@ -346,7 +351,9 @@ public class SqlBuilder implements MessageSource {
 
 				} else if (SqlDdl.createAssociativeTables) {
 
-					if (typeCi != null && typeCi.category() == Options.DATATYPE
+					if (options.targetMapEntry(pi.typeInfo().name,
+							pi.encodingRule("sql")) == null && typeCi != null
+							&& typeCi.category() == Options.DATATYPE
 							&& typeCi.matches(
 									SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
 							&& (typeCi.matches(
@@ -357,7 +364,7 @@ public class SqlBuilder implements MessageSource {
 						 * ignore the property; it will be represented by a
 						 * foreign key column in the according table (depends on
 						 * the conversion rule, i.e. if one or several tables
-						 * represent the datatype and the one-to-many
+						 * represent the data type and the one-to-many
 						 * relationships to it).
 						 */
 
@@ -1941,10 +1948,11 @@ public class SqlBuilder implements MessageSource {
 							SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
 						dtOwnerRef_columnSpec = SqlConstants.NOT_NULL_COLUMN_SPEC;
 					}
-					
+
 					Column dtOwnerRef_cd = createColumn(table, null,
 							columnName + SqlDdl.idColumnName,
-							SqlDdl.foreignKeyColumnDataType, dtOwnerRef_columnSpec, false, true);
+							SqlDdl.foreignKeyColumnDataType,
+							dtOwnerRef_columnSpec, false, true);
 
 					table.addColumn(dtOwnerRef_cd);
 				}

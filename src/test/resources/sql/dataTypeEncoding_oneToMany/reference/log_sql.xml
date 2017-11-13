@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml" end="Sat Nov 04 10:11:12 CET 2017" resultCode="0" start="Sat Nov 04 10:11:06 CET 2017" version="2.3.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/dataTypeEncoding_oneToMany/testEA_sql_dataTypeEncoding_oneToMany.xml" end="Mon Nov 13 09:09:55 CET 2017" resultCode="0" start="Mon Nov 13 09:09:49 CET 2017" version="2.3.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
@@ -13,18 +13,22 @@
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Creating associative table to represent attribute 'attribute9' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attribute9'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Creating associative table to represent attribute 'attribute9' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attribute9'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Creating associative table to represent attribute 'attribute9' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attribute9'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/dataType/oneToMany'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Creating associative table to represent attribute 'attribute2' in class 'FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType1_attribute2'."/>
+    <Info message="Creating associative table to represent attribute 'attribute9' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attribute9'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
   </Messages>
   <Results>
