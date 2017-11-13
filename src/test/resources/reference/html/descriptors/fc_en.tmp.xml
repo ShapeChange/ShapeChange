@@ -34,7 +34,7 @@
     <example>n/a</example>
     <example>some example</example>
     <cardinality>1..*</cardinality>
-    <initialValue>"test"</initialValue>
+    <initialValue>test</initialValue>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
