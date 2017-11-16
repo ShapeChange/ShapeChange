@@ -325,12 +325,9 @@ public class ReplicationSchemaVisitor
 				}
 
 				// Handle nillable
-				String columnSpec = column.getSpecifications() == null ? ""
-						: StringUtils.join(column.getSpecifications(), " ");
-
 				if (propForColumn.matches(
 						ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
-						&& !columnSpec.contains("NOT NULL")) {
+						&& !column.isNotNull()) {
 
 					addAttribute(columnDefinitionElement, "nillable", "true");
 				}

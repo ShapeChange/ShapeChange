@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
@@ -197,6 +199,16 @@ public class Column {
 	public boolean isPrimaryKeyColumn() {
 
 		return hasSpecificationIgnoringCase("primary key");
+	}
+
+	/**
+	 * @return <code>true</code> if the column has a specification containing
+	 *         "NOT NULL" (ignoring case), else <code>false</code>.
+	 */
+	public boolean isNotNull() {
+		String columnSpec = getSpecifications() == null ? ""
+				: StringUtils.join(getSpecifications(), " ");
+		return columnSpec.toLowerCase(Locale.ENGLISH).contains("not null");
 	}
 
 	public void setForeignKeyColumn(boolean isForeignKeyColumn) {

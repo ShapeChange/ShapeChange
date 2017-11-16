@@ -54,7 +54,9 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpre
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.InExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.IsNullExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.NullValueExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.OrExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.StringValueExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.UnquotedStringExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
@@ -910,10 +912,9 @@ public class SqlBuilder implements MessageSource {
 			cae.setConstraint(cc);
 
 			cc.setName(constraintName);
-
+									
 			InExpression iexp = new InExpression();
-			cc.setExpression(iexp);
-
+						
 			ColumnExpression col = new ColumnExpression(column);
 			iexp.setLeftExpression(col);
 
@@ -948,6 +949,17 @@ public class SqlBuilder implements MessageSource {
 			}
 
 			iexp.setRightExpressionsList(el);
+			
+			if(column.isNotNull()) {
+				cc.setExpression(iexp);
+			} else {
+				// add null check
+				IsNullExpression nullexp = new IsNullExpression();
+				nullexp.setExpression(col);
+				
+				OrExpression orexp = new OrExpression(nullexp,iexp);
+				cc.setExpression(orexp);
+			}
 
 			this.checkConstraints.add(alter);
 		}

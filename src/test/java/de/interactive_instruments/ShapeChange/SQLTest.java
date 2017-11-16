@@ -202,4 +202,13 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/foreignKeyColumnSuffixCodelist",
 				"src/test/resources/sql/foreignKeyColumnSuffixCodelist/reference");
 	}
+	
+	@Test
+	public void testCheckConstraintForEnumeration() {
+
+		multiTest(
+				"src/test/resources/sql/checkConstraintForEnumeration/testEA_sql_checkConstraintForEnumeration.xml",
+				new String[] { "sql" }, "testResults/sql/checkConstraintForEnumeration",
+				"src/test/resources/sql/checkConstraintForEnumeration/reference");
+	}
 }
