@@ -1928,8 +1928,6 @@ public class XsdDocument implements MessageSource {
 		} else if (ci != null && ci.category() == Options.CODELIST
 				&& ci.matches("rule-xsd-cls-codelist-gmlsf")) {
 
-			// FIXME TB13TBD
-
 			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 			addStandardAnnotation(e1, pi);
 			addAttribute(e1, "name", pi.name());
@@ -1965,7 +1963,7 @@ public class XsdDocument implements MessageSource {
 
 		} else if (pi.categoryOfValue() == Options.FEATURE
 				&& pi.matches("rule-xsd-prop-featureType-gmlsf-byReference")) {
-			// FIXME TB13TBD
+
 			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 			addStandardAnnotation(e1, pi);
 			addAttribute(e1, "name", pi.name());
@@ -2744,7 +2742,6 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 
-		// FIXME TB13TBD
 		if (ci.category() == Options.UNION
 				&& ci.matches(
 						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
@@ -3361,7 +3358,6 @@ public class XsdDocument implements MessageSource {
 		// First address cases where no property type is necessary or only a
 		// very simple one
 
-		// FIXME TB13TBD
 		if ((propi.isMetadata() || valueIsMetadata)
 				&& propi.matches("rule-xsd-prop-metadata-gmlsf-byReference")) {
 			addAttribute(e, "type", "gml:ReferenceType");

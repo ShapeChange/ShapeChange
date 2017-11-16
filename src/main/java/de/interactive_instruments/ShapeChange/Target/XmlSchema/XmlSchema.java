@@ -183,7 +183,6 @@ public class XmlSchema implements Target {
 				break;
 			if (ci.isUnionDirect())
 				break;
-			// FIXME TB13TBD
 			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
@@ -220,7 +219,6 @@ public class XmlSchema implements Target {
 				xsd.pGlobalCodeList(ci);
 			break;
 		case Options.UNION:
-			// FIXME TB13TBD
 			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
@@ -279,7 +277,6 @@ public class XmlSchema implements Target {
 			}
 			if (ci.isUnionDirect())
 				break;
-			// FIXME TB13TBD
 			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
@@ -309,7 +306,6 @@ public class XmlSchema implements Target {
 		// Separate content model
 		switch (cat) {
 		case Options.UNION:
-			// FIXME TB13TBD
 			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))

@@ -3455,7 +3455,6 @@ public class Options {
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
 		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
-		// FIXME TB13TBD
 		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
 		addRule("rule-xsd-cls-enum-supertypes");
@@ -3473,16 +3472,12 @@ public class Options {
 		addRule("rule-xsd-cls-union-asGroup");
 		addRule("rule-xsd-cls-union-direct");
 		addRule("rule-xsd-cls-union-direct-optionality");
-		// FIXME TB13TBD
 		addRule("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets");
 		addRule("rule-xsd-prop-att-map-entry");
-		// FIXME TB13TBD
 		addRule("rule-xsd-prop-constrainingFacets");
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
-		// FIXME TB13TBD
 		addRule("rule-xsd-prop-featureType-gmlsf-byReference");
-		// FIXME TB13TBD
 		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 		addRule("rule-xsd-prop-nillable");
 		addRule("rule-xsd-prop-nilReasonAllowed");

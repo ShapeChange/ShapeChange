@@ -272,7 +272,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS = "rule-trf-prop-flatten-ONINAs-onlyRemoveReasons";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
-	// FIXME TB13TBD
+
 	/**
 	 * Identify types in the schemas selected for processing that have one of
 	 * the simple base types specified via parameter
@@ -282,7 +282,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * all types with simple base type that have been identified before.
 	 */
 	public static final String RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-type-mapToSimpleBaseType";
-	// FIXME TB13TBD
+
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS = "rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES = "rule-trf-prop-flatten-types-removeMappedTypes";
@@ -1914,7 +1914,6 @@ public class Flattener implements Transformer, MessageSource {
 			((GenericPackageInfo) copiedClassUnion.pkg())
 					.addClass(copiedClassUnion);
 
-			// FIXME TB13TBD better TV name, and document
 			copiedClassUnion.setTaggedValue("representsFeatureTypeSet", "true",
 					false);
 
@@ -3981,7 +3980,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 		}
 
-		// FIXME TB13TBD rule name, document
 		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
 				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
 
@@ -3999,7 +3997,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 		}
 
-		// FIXME TB13TBD
 		if (trfConfig
 				.hasRule(RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES)) {
 			/*
@@ -4059,7 +4056,6 @@ public class Flattener implements Transformer, MessageSource {
 
 		TreeMap<String, GenericClassInfo> typesToProcessById = new TreeMap<String, GenericClassInfo>();
 
-		// FIXME TB13TBD review and document
 		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
 				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
 
@@ -5197,7 +5193,6 @@ public class Flattener implements Transformer, MessageSource {
 
 			}
 
-			// FIXME TB13TBD better TV name, and document
 			if (genSuperclass.category() == Options.FEATURE) {
 				genSuperclassUnion.setTaggedValue("representsFeatureTypeSet",
 						"true", false);
@@ -6387,7 +6382,6 @@ public class Flattener implements Transformer, MessageSource {
 
 		Options options = model.options();
 
-		// FIXME TB13TBD
 		boolean onlyRemoveReasons = trfConfig
 				.hasRule(RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS);
 
@@ -6726,9 +6720,6 @@ public class Flattener implements Transformer, MessageSource {
 								.get(propTypeId);
 
 						genPi.copyTypeInfo(valueTypeToUse);
-
-						// FIXME TB13TBD: also update multiplicity based on
-						// multiplicity of value(s) property
 
 						Multiplicity reasonTypeValuesPropMult = reasonTypeIdToValuePropMultiplicity
 								.get(propTypeId);
