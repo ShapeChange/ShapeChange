@@ -18,6 +18,18 @@
       <enumeration value="2"/>
     </restriction>
   </simpleType>
+  <simpleType name="EnumerationExcludedViaParameterType">
+    <restriction base="string">
+      <enumeration value="enumEx1"/>
+      <enumeration value="enumEx2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationExcludedViaTaggedValueType">
+    <restriction base="string">
+      <enumeration value="enumExA"/>
+      <enumeration value="enumExB"/>
+    </restriction>
+  </simpleType>
   <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="etc:FeatureTypeType"/>
   <complexType name="FeatureTypeType">
     <complexContent>
@@ -43,6 +55,8 @@
             </annotation>
           </element>
           <element name="propEnumeration" type="etc:EnumerationType"/>
+          <element name="propEnumerationExcludedViaParam" type="etc:EnumerationExcludedViaParameterType"/>
+          <element name="propEnumerationExcludedViaTV" type="etc:EnumerationExcludedViaTaggedValueType"/>
         </sequence>
       </extension>
     </complexContent>

@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/test_typeConversion.EAP" />
+		<parameter name="inputFile" value="src/test/resources/typeConverter/enumerationToCodelist/test_typeConversion.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test_EnumerationConversion.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
@@ -19,7 +19,10 @@
 	<transformers>
 		<Transformer
 			class="de.interactive_instruments.ShapeChange.Transformation.TypeConversion.TypeConverter"
-			input="INPUT" id="trf" mode="enabled">			
+			input="INPUT" id="trf" mode="enabled">
+			<parameters>
+				<ProcessParameter name="toCodelistExclusionRegex" value="EnumerationExcludedViaPar.*" />
+			</parameters>		
 			<rules>
 				<ProcessRuleSet name="convert">
 					<rule name="rule-trf-enumeration-to-codelist" />

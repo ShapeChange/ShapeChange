@@ -78,7 +78,7 @@ public class CodelistDictionariesML implements Target {
 
 	protected final String dlma = "["; 
 	protected final String dlme = "]"; 
-	protected final String defaultLang = "de"; 
+	protected String defaultLang = "de"; 
 	
 	protected final String GML_NSABBR = "gml";
 	protected final String GMX_NSABBR = "gmx";
@@ -122,8 +122,11 @@ public class CodelistDictionariesML implements Target {
 			newlineOmit = true;
 
 		sLangs = options.parameter(this.getClass().getName(),"languages");
+		// TBD: ensure that sLangs is not null
 		if(sLangs!=null)
 			langs = sLangs.split(" ");
+		
+		defaultLang = options.parameterAsString(this.getClass().getName(), "defaultLang", "de", false, true);
 
 		// change the default documentation template?
 		documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");

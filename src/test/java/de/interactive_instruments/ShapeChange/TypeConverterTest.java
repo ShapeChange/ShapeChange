@@ -41,10 +41,10 @@ public class TypeConverterTest extends WindowsBasicTest {
 		 * Test rule-trf-enumeration-to-codelist of TypeConverter transformation
 		 */
 		multiTest(
-				"src/test/resources/config/testEA_typeConverter_enumerationToCodelist.xml",
+				"src/test/resources/typeConverter/enumerationToCodelist/testEA_typeConverter_enumerationToCodelist.xml",
 				new String[] { "xsd" },
 				"testResults/typeConversion/enumerationToCodelist",
-				"src/test/resources/reference/typeConversion/enumerationToCodelist");
+				"src/test/resources/typeConverter/enumerationToCodelist/reference");
 	}
 	
 	@Test

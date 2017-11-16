@@ -63,6 +63,7 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 public class TypeConverter implements Transformer, MessageSource {
 
 	public static final String TV_DISSOLVE_ASSOCIATION = "dissolveAssociation";
+	public static final String TV_TO_CODELIST = "toCodelist";
 
 	/**
 	 * Define a suffix to be added to the names of attributes that have been
@@ -88,15 +89,40 @@ public class TypeConverter implements Transformer, MessageSource {
 	public static final String PARAM_TO_FEATURE_TYPE_NAME_REGEX = "toFeatureTypeNameRegex";
 
 	/**
+	 * Regular expression to identify enumerations (in the whole model) to NOT
+	 * convert to code lists under {@value #RULE_ENUMERATION_TO_CODELIST} .
+	 * Identification is based on a match on the name of the type. There is no
+	 * default value.
+	 */
+	public static final String PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX = "toCodelistExclusionRegex";
+
+	/**
 	 * Identify the name of the tagged value that is used to tag types that
 	 * shall be converted to feature types under {@value #RULE_TO_FEATURETYPE}.
 	 * Default is 'toFeatureType'.
 	 */
 	public static final String PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME = "toFeatureTypeTaggedValueName";
 
+	/**
+	 * Converts enumerations to code lists. For each converted enumeration,
+	 * tagged value 'asDictionary' is set to 'false'.
+	 * <p>
+	 * Enumerations can be excluded from this conversion if their name matches
+	 * the regular expression given via parameter
+	 * {@value #PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX} or if they have
+	 * tagged value {@value #TV_TO_CODELIST}='false'.
+	 * <p>
+	 * NOTE: This rule converts all enumerations within the model to code lists.
+	 * If a restriction is desired, for example to enumerations that belong to
+	 * the schemas selected for processing, or to specifically identified
+	 * application schemas (e.g. identified by name or target namespace regex),
+	 * the implementation would need to be enhanced (for example through new
+	 * parameters).
+	 * <p>
+	 * Constraints are not updated.
+	 */
 	public static final String RULE_ENUMERATION_TO_CODELIST = "rule-trf-enumeration-to-codelist";
 
-	// TB13TBD
 	/**
 	 * Convert types either identified via parameter
 	 * {@value #PARAM_TO_FEATURE_TYPE_NAME_REGEX} or with tagged value
@@ -106,6 +132,12 @@ public class TypeConverter implements Transformer, MessageSource {
 	 * types are also converted to feature types.
 	 */
 	public static final String RULE_TO_FEATURETYPE = "rule-trf-toFeatureType";
+
+	/**
+	 * Convert all object types from schemas selected for processing to feature
+	 * types. All subtypes of these types are also converted to feature types.
+	 */
+	public static final String RULE_OBJECTTYPES_TO_FEATURETYPES = "rule-trf-objectTypesToFeatureTypes";
 
 	/**
 	 * Dissolves associations that are navigable from types in the schemas
@@ -146,8 +178,8 @@ public class TypeConverter implements Transformer, MessageSource {
 	public static final String RULE_DISSOLVE_ASSOCIATIONS_REMOVE_TRANSFORMED_ROLE_IF_MULTIPLE = "rule-trf-dissolveAssociations-removeTransformedAttributeIfMultiple";
 
 	/**
-	 * TB13TBD If this rule is included, then the type of resulting attributes
-	 * is kept as-is, i.e. parameter
+	 * If this rule is included, then the type of resulting attributes is kept
+	 * as-is, i.e. parameter
 	 * {@value #PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE} will have no effect.
 	 */
 	public static final String RULE_DISSOLVE_ASSOCIATIONS_KEEP_TYPE = "rule-trf-dissolveAssociations-keepType";
@@ -204,7 +236,53 @@ public class TypeConverter implements Transformer, MessageSource {
 			applyRuleToFeatureType(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_OBJECTTYPES_TO_FEATURETYPES)) {
+			applyRuleObjectTypesToFeatureTypes();
+		}
+
 		// apply post-processing (nothing to do right now)
+	}
+
+	private void applyRuleObjectTypesToFeatureTypes() {
+
+		SortedSet<GenericClassInfo> relevantTypes = new TreeSet<GenericClassInfo>();
+
+		SortedSet<GenericClassInfo> selCis = genModel.selectedSchemaClasses();
+
+		for (GenericClassInfo genCi : selCis) {
+
+			if (genCi.category() == Options.OBJECT) {
+
+				relevantTypes.add(genCi);
+
+				SortedSet<ClassInfo> allSubtypes = genCi
+						.subtypesInCompleteHierarchy();
+
+				/*
+				 * add all subtypes that belong to schemas selected for
+				 * processing
+				 */
+				for (ClassInfo subtype : allSubtypes) {
+
+					if (selCis.contains(subtype)) {
+						relevantTypes.add((GenericClassInfo) subtype);
+					}
+				}
+			}
+		}
+
+		for (GenericClassInfo type : relevantTypes) {
+
+			/*
+			 * overwrite stereotypes cache
+			 */
+			Stereotypes stereo = options.stereotypesFactory();
+			stereo.add("featuretype");
+			type.setStereotypes(stereo);
+
+			type.setCategory(Options.FEATURE);
+		}
+
 	}
 
 	private void applyRuleToFeatureType(GenericModel genModel,
@@ -397,27 +475,25 @@ public class TypeConverter implements Transformer, MessageSource {
 	private void applyRuleEnumerationToCodelist(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
 
-		/*
-		 * NOTE: This rule converts all enumerations found in the model to code
-		 * lists. If a restriction is desired, for example to enumerations that
-		 * belong to the schemas selected for processing, or to specifically
-		 * identified application schemas (identified by name or target
-		 * namespace regex), then that would need to be added (for example
-		 * through new parameters).
-		 * 
-		 * Likewise, no specific tagged values are set. Rules and parameters to
-		 * control the tagged values of relevant classes can be added in the
-		 * future.
-		 * 
-		 * Constraints are not updated either.
-		 */
+		String exclusionRegexParamValue = trfConfig.parameterAsString(
+				PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX, null, false,
+				true);
+
+		Pattern exclusionRegex = null;
+		if (exclusionRegexParamValue != null) {
+			exclusionRegex = Pattern.compile(exclusionRegexParamValue);
+		}
 
 		/*
 		 * --- update class category ---
 		 */
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
-			if (genCi.category() == Options.ENUMERATION) {
+			if (genCi.category() == Options.ENUMERATION
+					&& (exclusionRegex == null
+							|| !exclusionRegex.matcher(genCi.name()).matches())
+					&& !"false".equalsIgnoreCase(
+							genCi.taggedValue(TV_TO_CODELIST))) {
 
 				genCi.setCategory(Options.CODELIST);
 
