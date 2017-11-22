@@ -94,11 +94,17 @@ public class EAModelUtil {
 	public static Element createEAClass(Repository rep, String className,
 			int eaPkgId) throws EAException {
 
+		return createEAClass(rep,className,eaPkgId,"Class");
+	}
+	
+	public static Element createEAClass(Repository rep, String className,
+			int eaPkgId, String type) throws EAException {
+
 		Package eaPkg = rep.GetPackageByID(eaPkgId);
 
 		Collection<Element> elements = eaPkg.GetElements();
 
-		Element e = elements.AddNew(className, "Class");
+		Element e = elements.AddNew(className, type);
 
 		if (!e.Update()) {
 			throw new EAException(

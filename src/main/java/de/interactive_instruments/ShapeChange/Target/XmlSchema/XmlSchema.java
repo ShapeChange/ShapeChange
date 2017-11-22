@@ -51,7 +51,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -73,99 +72,99 @@ public class XmlSchema implements Target {
 	private String outputDirectory;
 
 	public void initialise(PackageInfo p, Model m, Options o,
-			ShapeChangeResult r, boolean diagOnly) throws ShapeChangeAbortException {
+			ShapeChangeResult r, boolean diagOnly)
+			throws ShapeChangeAbortException {
 
 		pi = p;
 		model = m;
 		options = o;
 		result = r;
 		diagnosticsOnly = diagOnly;
-		
-		if (pi.matches("rule-xsd-all-notEncoded")&&pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
+
+		if (pi.matches("rule-xsd-all-notEncoded")
+				&& pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 			return;
 
-		result.addDebug(null,10012, pi.name());
+		result.addDebug(null, 10012, pi.name());
 
-		outputDirectory = options.parameter(this.getClass().getName(),"outputDirectory");
-		if (outputDirectory==null)
+		outputDirectory = options.parameter(this.getClass().getName(),
+				"outputDirectory");
+		if (outputDirectory == null)
 			outputDirectory = options.parameter("outputDirectory");
-		if (outputDirectory==null)
+		if (outputDirectory == null)
 			outputDirectory = options.parameter(".");
 
 		if (pi.matches("rule-xsd-pkg-schematron"))
 			schDoc = new SchematronSchema(model, options, result, pi);
-		
+
 		/** Create XML Schema documents */
 		createXSDs(pi, null);
-		
+
 		if (pi.matches("rule-xsd-pkg-dependencies")) {
 			processDependecies(pi);
 		}
-		
+
 		// create output directory, if necessary
-		if(!this.diagnosticsOnly){
+		if (!this.diagnosticsOnly) {
 			File trgdir = new File(outputDirectory);
-	        if(!trgdir.exists()){
-	        	trgdir.mkdirs();
-	        }
-		}		
-		
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(pi).iterator(); k.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
-		}		
+			if (!trgdir.exists()) {
+				trgdir.mkdirs();
+			}
+		}
 	}
 
 	public void process(ClassInfo ci) {
-		if (ci==null || ci.pkg()==null)
-			return;
-
-		if (ci.processed(getTargetID()))
+		if (ci == null || ci.pkg() == null)
 			return;
 
 		int cat = ci.category();
-		result.addDebug(null,10016, ci.name(), ci.encodingRule("xsd"));
+		result.addDebug(null, 10016, ci.name(), ci.encodingRule("xsd"));
 
-		if (ci.matches("rule-xsd-all-notEncoded")&&ci.encodingRule("xsd").equalsIgnoreCase("notencoded"))
+		if (ci.matches("rule-xsd-all-notEncoded")
+				&& ci.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 			return;
 
 		PackageInfo pi = ci.pkg();
 		XsdDocument xsd = xsdMap.get(pi.id());
-		while (xsd==null) {
+		while (xsd == null) {
 			pi = pi.owner();
-			if (pi==null) {
-				MessageContext mc = result.addError(null, 10, ci.name(), ci.pkg().name()); if (mc!=null) mc.addDetail(null,400,"Class",ci.fullName());
+			if (pi == null) {
+				MessageContext mc = result.addError(null, 10, ci.name(),
+						ci.pkg().name());
+				if (mc != null)
+					mc.addDetail(null, 400, "Class", ci.fullName());
 				return;
 			}
 			xsd = xsdMap.get(pi.id());
 		}
 
-		ClassInfo cibase = ci.baseClass();		
+		ClassInfo cibase = ci.baseClass();
 
 		if (ci.matches("rule-xsd-cls-no-base-class")) {
 			cibase = null;
 		}
-		
-		if (schDoc!=null) {
+
+		if (schDoc != null) {
 			List<Constraint> cs = ci.constraints();
-	
+
 			Collections.sort(cs, new Comparator<Constraint>() {
 				public int compare(Constraint ci1, Constraint ci2) {
 					return ci1.name().compareTo(ci2.name());
 				}
 			});
-			
+
 			if (cs != null) {
 				for (Iterator<Constraint> i = cs.iterator(); i.hasNext();) {
 					Constraint c = i.next();
-					if (c != null && c instanceof OclConstraint && schDoc != null && ((OclConstraint)c).syntaxTree() != null) {
-						schDoc.addAssertion(ci, (OclConstraint)c);
+					if (c != null && c instanceof OclConstraint
+							&& schDoc != null
+							&& ((OclConstraint) c).syntaxTree() != null) {
+						schDoc.addAssertion(ci, (OclConstraint) c);
 					}
 				}
 			}
 		}
-					
+
 		// Object element
 		switch (cat) {
 		case Options.ENUMERATION:
@@ -175,19 +174,25 @@ public class XmlSchema implements Target {
 			}
 			break;
 		case Options.UNION:
-			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup()) ||
-				(ci.matches("rule-xsd-cls-union-asCharacterString") && ci.asCharacterString())) {
+			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup())
+					|| (ci.matches("rule-xsd-cls-union-asCharacterString")
+							&& ci.asCharacterString())) {
 				break;
 			}
-			if (ci.matches("rule-xsd-cls-union-as-group-property-type")) 
-				break;			
+			if (ci.matches("rule-xsd-cls-union-as-group-property-type"))
+				break;
 			if (ci.isUnionDirect())
+				break;
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+					&& "true".equalsIgnoreCase(
+							ci.taggedValue("representsFeatureTypeSet")))
 				break;
 		case Options.OKSTRAFID:
 		case Options.FEATURE:
 		case Options.OBJECT:
 		case Options.DATATYPE:
-			if (ci.matches("rule-xsd-cls-no-abstract-classes") && ci.isAbstract())
+			if (ci.matches("rule-xsd-cls-no-abstract-classes")
+					&& ci.isAbstract())
 				break;
 			if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed())
 				break;
@@ -197,7 +202,8 @@ public class XmlSchema implements Target {
 		case Options.MIXIN:
 			if (ci.matches("rule-xsd-cls-mixin-classes"))
 				break;
-		};
+		}
+		;
 
 		// Content model
 		switch (cat) {
@@ -206,13 +212,20 @@ public class XmlSchema implements Target {
 				xsd.pGlobalEnumeration(ci);
 			break;
 		case Options.CODELIST:
-			if ((ci.matches("rule-xsd-cls-codelist-asDictionary") && !ci.asDictionary()) ||
-				(ci.matches("rule-xsd-cls-codelist-asDictionaryGml33") && !ci.asDictionaryGml33()))
+			if ((ci.matches("rule-xsd-cls-codelist-asDictionary")
+					&& !ci.asDictionary())
+					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+							&& !ci.asDictionaryGml33()))
 				xsd.pGlobalCodeList(ci);
 			break;
 		case Options.UNION:
-			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup()) ||
-				(ci.matches("rule-xsd-cls-union-asCharacterString") && ci.asCharacterString()))
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+					&& "true".equalsIgnoreCase(
+							ci.taggedValue("representsFeatureTypeSet")))
+				break;
+			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup())
+					|| (ci.matches("rule-xsd-cls-union-asCharacterString")
+							&& ci.asCharacterString()))
 				break;
 			if (ci.matches("rule-xsd-cls-union-as-group-property-type")) {
 				xsd.pValueTypeGroup(ci);
@@ -224,13 +237,15 @@ public class XmlSchema implements Target {
 		case Options.FEATURE:
 		case Options.OBJECT:
 		case Options.DATATYPE:
-			if (ci.matches("rule-xsd-cls-adeelement") && ci.stereotype("adeelement")) {
+			if (ci.matches("rule-xsd-cls-adeelement")
+					&& ci.stereotype("adeelement")) {
 				xsd.processLocalProperties(ci, xsd.root, schDoc);
 				break;
 			}
 			if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed())
 				break;
-			if (ci.matches("rule-xsd-cls-no-abstract-classes") && ci.isAbstract())
+			if (ci.matches("rule-xsd-cls-no-abstract-classes")
+					&& ci.isAbstract())
 				break;
 			if (ci.matches("rule-xsd-cls-type")) {
 				Element propertyHook = xsd.pComplexType(ci, cibase, schDoc);
@@ -252,8 +267,9 @@ public class XmlSchema implements Target {
 				xsd.pPropertyTypes(ci);
 			break;
 		case Options.UNION:
-			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup()) ||
-				(ci.matches("rule-xsd-cls-union-asCharacterString") && ci.asCharacterString()))
+			if ((ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup())
+					|| (ci.matches("rule-xsd-cls-union-asCharacterString")
+							&& ci.asCharacterString()))
 				break;
 			if (ci.matches("rule-xsd-cls-union-as-group-property-type")) {
 				xsd.pPropertyTypeWithGroup(ci);
@@ -261,12 +277,17 @@ public class XmlSchema implements Target {
 			}
 			if (ci.isUnionDirect())
 				break;
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+					&& "true".equalsIgnoreCase(
+							ci.taggedValue("representsFeatureTypeSet")))
+				break;
 		case Options.FEATURE:
 		case Options.OBJECT:
 		case Options.DATATYPE:
 			if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed())
 				break;
-			if (ci.matches("rule-xsd-cls-no-abstract-classes") && ci.isAbstract())
+			if (ci.matches("rule-xsd-cls-no-abstract-classes")
+					&& ci.isAbstract())
 				xsd.pPropertyTypeWithSubtypes(ci);
 			else if (ci.matches("rule-xsd-cls-type"))
 				xsd.pPropertyTypes(ci);
@@ -285,27 +306,30 @@ public class XmlSchema implements Target {
 		// Separate content model
 		switch (cat) {
 		case Options.UNION:
+			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+					&& "true".equalsIgnoreCase(
+							ci.taggedValue("representsFeatureTypeSet")))
+				break;
 			if (ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup()) {
 				Element propertyHook = xsd.pGroup(ci, cibase);
 				xsd.processLocalProperties(ci, propertyHook, schDoc);
 			}
 			break;
 		case Options.MIXIN:
-			if (ci.matches("rule-xsd-cls-mixin-classes") && ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
+			if (ci.matches("rule-xsd-cls-mixin-classes")
+					&& ci.matches("rule-xsd-cls-mixin-classes-as-group")) {
 				Element propertyHook = xsd.pGroup(ci, cibase);
 				xsd.processLocalProperties(ci, propertyHook, schDoc);
 			}
 			break;
 		case Options.BASICTYPE:
-			if (ci.matches("rule-xsd-cls-basictype") && !ci.matches("rule-xsd-cls-local-basictype")) {
+			if (ci.matches("rule-xsd-cls-basictype")
+					&& !ci.matches("rule-xsd-cls-local-basictype")) {
 				xsd.pGlobalBasicType(ci);
 			}
 			break;
 		}
-		;
-
-		ci.processed(getTargetID(), true);
-	};
+	}
 
 	public void write() {
 		if (printed) {
@@ -314,7 +338,7 @@ public class XmlSchema implements Target {
 		if (diagnosticsOnly) {
 			return;
 		}
-				
+
 		Properties outputFormat = OutputPropertiesFactory
 				.getDefaultMethodProperties("xml");
 		outputFormat.setProperty("indent", "yes");
@@ -322,12 +346,14 @@ public class XmlSchema implements Target {
 				"2");
 		outputFormat.setProperty("encoding", "UTF-8");
 
-		for (Iterator<XsdDocument> i = xsdMap.values().iterator(); i.hasNext();) {
+		for (Iterator<XsdDocument> i = xsdMap.values().iterator(); i
+				.hasNext();) {
 			XsdDocument xsd = i.next();
 			if (!xsd.printed()) {
 				try {
 					xsd.printFile(outputFormat);
-					result.addResult(getTargetID(), outputDirectory, xsd.name, pi.targetNamespace());
+					result.addResult(getTargetName(), outputDirectory, xsd.name,
+							pi.targetNamespace());
 				} catch (Exception e) {
 					String m = e.getMessage();
 					if (m != null) {
@@ -338,7 +364,7 @@ public class XmlSchema implements Target {
 			}
 		}
 
-		if (schDoc!=null)
+		if (schDoc != null)
 			schDoc.write(outputDirectory);
 
 		printed = true;
@@ -355,9 +381,9 @@ public class XmlSchema implements Target {
 		 */
 		XsdDocument xsd;
 		String xsdDocument = pi.xsdDocument();
-		if (xsdDocument!=null && xsdDocument.length()>0) {
+		if (xsdDocument != null && xsdDocument.length() > 0) {
 			try {
-				result.addDebug(null,10017,xsdDocument, pi.name());
+				result.addDebug(null, 10017, xsdDocument, pi.name());
 				xsd = new XsdDocument(pi, model, options, result, xsdDocument);
 				res = true;
 			} catch (ParserConfigurationException e) {
@@ -367,12 +393,12 @@ public class XmlSchema implements Target {
 		} else {
 			xsd = xsdcurr;
 			if (xsd == null) {
-				result.addFatalError(null,15, pi.name());
-				// throw new ShapeChangeAbortException();
-				xsdDocument = pi.name()+".xsd";
+				xsdDocument = pi.name() + ".xsd";
+				result.addWarning(null, 15, pi.name(),xsdDocument);				
 				try {
-					result.addDebug(null,10017,xsdDocument, pi.name());
-					xsd = new XsdDocument(pi, model, options, result, xsdDocument);
+					result.addDebug(null, 10017, xsdDocument, pi.name());
+					xsd = new XsdDocument(pi, model, options, result,
+							xsdDocument);
 					res = true;
 				} catch (ParserConfigurationException e) {
 					result.addFatalError(null, 2);
@@ -418,7 +444,7 @@ public class XmlSchema implements Target {
 				throw new ShapeChangeAbortException();
 			}
 		}
-		
+
 		return res;
 	}
 
@@ -427,25 +453,25 @@ public class XmlSchema implements Target {
 			throws ShapeChangeAbortException {
 		XsdDocument xsd1 = xsdMap.get(pi.id());
 		SortedSet<String> suppliers = pi.supplierIds();
-		if (suppliers!=null) {
+		if (suppliers != null) {
 			for (Iterator<String> i = suppliers.iterator(); i.hasNext();) {
-			String pid = i.next();
-			XsdDocument xsd2 = xsdMap.get(pid);
-			if (xsd2 != null) {
-				xsd1.addInclude(xsd2);
-			} else {
-				PackageInfo pi2 = model.packageById(pid);
-				if (pi2 != null 
-						&& pi2.xmlns()!=null && pi2.xmlns().length()>0
-						&& pi2.targetNamespace()!=null && pi2.targetNamespace().length()>0)
-					xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
+				String pid = i.next();
+				XsdDocument xsd2 = xsdMap.get(pid);
+				if (xsd2 != null) {
+					xsd1.addInclude(xsd2);
+				} else {
+					PackageInfo pi2 = model.packageById(pid);
+					if (pi2 != null && pi2.xmlns() != null
+							&& pi2.xmlns().length() > 0
+							&& pi2.targetNamespace() != null
+							&& pi2.targetNamespace().length() > 0)
+						xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
+				}
 			}
-		}
 		}
 
 		/**
-		 * Navigate through sub packages and import/include XML Schema
-		 * documents
+		 * Navigate through sub packages and import/include XML Schema documents
 		 */
 		try {
 			SortedSet<PackageInfo> sub = pi.containedPackages();
@@ -465,97 +491,119 @@ public class XmlSchema implements Target {
 		}
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.XML_SCHEMA.getId();
+	@Override
+	public String getTargetName() {
+		return "XML Schema";
 	}
 
 	/**
-	 * Find out whether the given class is represented by means of an XML element
-	 * construct.
-	 * @param ci ClassInfo of class to be inquired
+	 * Find out whether the given class is represented by means of an XML
+	 * element construct.
+	 * 
+	 * @param ci
+	 *            ClassInfo of class to be inquired
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classHasObjectElement(ClassInfo ci) {
 		// test, if we have a map entry to an element for this encoding rule
-		MapEntry me = ci.options().elementMapEntry(ci.name(),ci.encodingRule("xsd"));
-		if (me!=null) {
-			return me.p1!=null && me.p1.length()>0;
+		MapEntry me = ci.options().elementMapEntry(ci.name(),
+				ci.encodingRule("xsd"));
+		if (me != null) {
+			return me.p1 != null && me.p1.length() > 0;
 		}
-		
-		// We don't. Before checking the stereotype we first have to look for a map entry
+
+		// We don't. Before checking the stereotype we first have to look for a
+		// map entry
 		// that maps the class to a simple type or attribute
-		me = ci.options().typeMapEntry(ci.name(),ci.encodingRule("xsd"));
-		if (me!=null) {
-			// Yes. As we had no element map entry the type content must be simple
-			if (me.rule==null || !me.rule.equalsIgnoreCase("direct")) {
+		me = ci.options().typeMapEntry(ci.name(), ci.encodingRule("xsd"));
+		if (me != null) {
+			// Yes. As we had no element map entry the type content must be
+			// simple
+			if (me.rule == null || !me.rule.equalsIgnoreCase("direct")) {
 				// as a static function we cannot write an error message
-			} else if (me.p2==null || !(me.p2.equalsIgnoreCase("complex/simple")||me.p2.equalsIgnoreCase("simple/simple"))) {
+			} else if (me.p2 == null
+					|| !(me.p2.equalsIgnoreCase("complex/simple")
+							|| me.p2.equalsIgnoreCase("simple/simple"))) {
 				// as a static function we cannot write an error message
 			} else {
 				// We know this is a type with simple content
 				return false;
 			}
 		}
-			
-		me = ci.options().attributeMapEntry(ci.name(),ci.encodingRule("xsd"));
-		if (me!=null) {
+
+		me = ci.options().attributeMapEntry(ci.name(), ci.encodingRule("xsd"));
+		if (me != null) {
 			// We know this is just an attribute in XML
 			return false;
-		}			
-			
-		me = ci.options().attributeGroupMapEntry(ci.name(),ci.encodingRule("xsd"));
-		if (me!=null) {
+		}
+
+		me = ci.options().attributeGroupMapEntry(ci.name(),
+				ci.encodingRule("xsd"));
+		if (me != null) {
 			// We know this is just an attribute group in XML
 			return false;
-		}			
-			
+		}
+
 		int cat = ci.category();
 		if (ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
 			return cat == Options.DATATYPE || cat == Options.UNION
-			|| cat == Options.FEATURE || cat == Options.OBJECT
-			|| cat == Options.ENUMERATION || cat == Options.CODELIST  
-			|| cat == Options.UNKNOWN;
+					|| cat == Options.FEATURE || cat == Options.OBJECT
+					|| cat == Options.ENUMERATION || cat == Options.CODELIST
+					|| cat == Options.UNKNOWN;
 		} else {
-			return cat == Options.DATATYPE && !ci.matches("rule-all-cls-aixmDatatype") || cat == Options.UNION && !(ci.matches("rule-xsd-cls-union-asGroup") && ci.asGroup())
-			|| cat == Options.FEATURE || cat == Options.OBJECT 
-			|| cat == Options.UNKNOWN || (cat == Options.OKSTRAFID && ci.matches("rule-xsd-cls-okstra-fid"));			
+			return cat == Options.DATATYPE
+					&& !ci.matches("rule-all-cls-aixmDatatype")
+					|| cat == Options.UNION
+							&& !(ci.matches("rule-xsd-cls-union-asGroup")
+									&& ci.asGroup())
+					|| cat == Options.FEATURE || cat == Options.OBJECT
+					|| cat == Options.UNKNOWN || (cat == Options.OKSTRAFID
+							&& ci.matches("rule-xsd-cls-okstra-fid"));
 		}
 	}
-	
+
 	public static boolean implementedAsXmlAttribute(PropertyInfo pi) {
-		
-		// TBD: requires specific mapping info if the inClass of pi is given by a MapEntry
-		
+
+		// TBD: requires specific mapping info if the inClass of pi is given by
+		// a MapEntry
+
 		boolean result = false;
-		
-		if(pi.name().equals("uom")
+
+		if (pi.name().equals("uom")
 				&& pi.matches("rule-all-prop-uomAsAttribute")) {
-			
+
 			result = true;
-			
-		} else if(pi.matches("rule-xsd-prop-xsdAsAttribute")) {
-			
+
+		} else if (pi.matches("rule-xsd-prop-xsdAsAttribute")) {
+
 			result = true;
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Find out whether the given class is can carry an id and can hence be
 	 * referenced by means of xlink:href.
-	 * @param ci ClassInfo of class to be inquired
+	 * 
+	 * @param ci
+	 *            ClassInfo of class to be inquired
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classCanBeReferenced(ClassInfo ci) {
 		if (classHasObjectElement(ci)) {
 			int cat = ci.category();
-			if(cat==Options.FEATURE) return true;
-			if(cat==Options.OKSTRAFID) return true;
-			if(cat==Options.OBJECT) return true;
-			if(ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
-				if(cat==Options.DATATYPE) return true;
-				if(cat==Options.UNION) return true;
+			if (cat == Options.FEATURE)
+				return true;
+			if (cat == Options.OKSTRAFID)
+				return true;
+			if (cat == Options.OBJECT)
+				return true;
+			if (ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
+				if (cat == Options.DATATYPE)
+					return true;
+				if (cat == Options.UNION)
+					return true;
 			}
 		}
 		return false;

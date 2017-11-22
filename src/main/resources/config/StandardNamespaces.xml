@@ -14,6 +14,7 @@
   <XmlNamespace nsabr="gmlexr" ns="http://www.opengis.net/gml/3.3/exr" location="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd" />
   <!-- schema for gmldgiwgsp not available at: location="http://schemas.dgiwg.org/gml/3.2/profiles/spatial/1.0/gmldgiwgspLevels.xsd" -->
   <XmlNamespace nsabr="gmldgiwgsp" ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/"/>
+  <XmlNamespace nsabr="gmlsf" ns="http://www.opengis.net/gmlsf/2.0" location="http://schemas.opengis.net/gmlsfProfile/2.0/gmlsfLevels.xsd" />
   <XmlNamespace nsabr="gmd" ns="http://www.isotc211.org/2005/gmd" location="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd" />
   <XmlNamespace nsabr="gco" ns="http://www.isotc211.org/2005/gco" location="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd" />
   <XmlNamespace nsabr="gmlcov" ns="http://www.opengis.net/gmlcov/1.0" location="http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd" />

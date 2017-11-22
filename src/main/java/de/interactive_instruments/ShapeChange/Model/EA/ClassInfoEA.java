@@ -118,7 +118,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** The EA element addressed by this ClassInfo */
 	protected org.sparx.Element eaClassElement = null;
-	
+
 	/** The EA object id of the class element object */
 	protected int eaClassId = 0;
 
@@ -146,9 +146,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** Cache set of constraints */
 	protected Vector<Constraint> constraintsCache = null;
-
-	/** Does this class possess nilReason properties? */
-	protected boolean hasNilReason = false;
 
 	private Boolean realization = null;
 
@@ -213,16 +210,14 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		// check that this class has connectors
 		if (conns != null) {
 
-			// Enumerate connectors selecting those where this class is the
-			// client,
-			// from these select "Generalization" and "Realisation". Retrieve
-			// the
-			// supplier class wrappers. For "Realisation" type suppliers also
-			// make
-			// sure the class is an interface. The classes found are registered
-			// as
-			// base classes. In the base classes register this class as
-			// subclass.
+			/*
+			 * Enumerate connectors selecting those where this class is the
+			 * client, from these select "Generalization" and "Realisation".
+			 * Retrieve the supplier class wrappers. For "Realisation" type
+			 * suppliers also make sure the class is an interface. The classes
+			 * found are registered as base classes. In the base classes
+			 * register this class as subclass.
+			 */
 			int nbcl = 0;
 			int clientid, bclid, cat;
 			String conntype;
@@ -261,11 +256,11 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (cat != Options.MIXIN)
 							continue;
 					}
-					// Establish as base class. Since most classes indeed
-					// possess
-					// at most one base class, this case will be treated
-					// somewhat
-					// storage-optimized.
+					/*
+					 * Establish as base class. Since most classes indeed
+					 * possess at most one base class, this case will be treated
+					 * somewhat storage-optimized.
+					 */
 					if (++nbcl == 1) {
 						baseclassInfo = baseCI;
 					} else {
@@ -367,7 +362,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public org.sparx.Element getEaClassElement() {
 		return eaClassElement;
 	}
-	
+
 	public int getEaElementId() {
 		return eaClassId;
 	}
@@ -424,7 +419,21 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						// and we are a mixin
 						if (cat == Options.MIXIN && matches(
 								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+
 							// do nothing and ignore
+
+							/*
+							 * FIXME 2017-09-12 JE: Method baseClass() should be
+							 * in ClassInfoImpl(). However, that we are matching
+							 * on a specific target rule here is an issue.
+							 * Everything in the XxxImpl classes should not
+							 * depend on specific target rules, since
+							 * transformations can produce models for multiple
+							 * targets. Rules such as the one above should be
+							 * general rules that apply for the whole processing
+							 * chain.
+							 */
+
 						} else if (this.model().isInSelectedSchemas(this)) {
 							// Not compatible and not mixin: An error
 							MessageContext mc = document.result.addError(null,
@@ -522,10 +531,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return res;
 	} // checkSupertypes()
 
-	/** Return the parent package of the class. */
+	@Override
 	public PackageInfo pkg() {
 		return packageInfo;
-	} // pkg()
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#properties()
@@ -843,36 +852,36 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return eaName;
 	} // name()
 
-//	@Override
-//	public Descriptors aliasNameAll() {
-//
-//		// Only retrieve/compute the alias once
-//		// Cache the result for subsequent use
-//		if (!aliasAccessed) {
-//
-//			aliasAccessed = true;
-//
-//			// Obtain alias name from default implementation
-//			Descriptors ls = super.aliasNameAll();
-//
-//			// If not present, obtain from EA model directly, if ea:alias is
-//			// identified as the source
-//			if (ls.isEmpty()
-//					&& descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
-//
-//				String a = eaClassElement.GetAlias();
-//
-//				if (a != null && !a.isEmpty()) {
-//
-//					super.aliasName = new Descriptors(
-//							new LangString(options().internalize(a)));
-//				} else {
-//					super.aliasName = new Descriptors();
-//				}
-//			}
-//		}
-//		return super.aliasName;
-//	}
+	// @Override
+	// public Descriptors aliasNameAll() {
+	//
+	// // Only retrieve/compute the alias once
+	// // Cache the result for subsequent use
+	// if (!aliasAccessed) {
+	//
+	// aliasAccessed = true;
+	//
+	// // Obtain alias name from default implementation
+	// Descriptors ls = super.aliasNameAll();
+	//
+	// // If not present, obtain from EA model directly, if ea:alias is
+	// // identified as the source
+	// if (ls.isEmpty()
+	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+	//
+	// String a = eaClassElement.GetAlias();
+	//
+	// if (a != null && !a.isEmpty()) {
+	//
+	// super.aliasName = new Descriptors(
+	// new LangString(options().internalize(a)));
+	// } else {
+	// super.aliasName = new Descriptors();
+	// }
+	// }
+	// }
+	// return super.aliasName;
+	// }
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -932,18 +941,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public boolean isLeaf() {
 		return isLeaf;
 	} // isLeaf()
-
-	/**
-	 * This an indication that the class has a property that has the tagged
-	 * value "implementedByNilReason" is set to "true". This is a specific
-	 * encoding rule to support a modelling pattern that NGA uses (they do not
-	 * like the <<voidable>> stereotype and think it hides concepts). These
-	 * extensions need to be separated better from the core rules.
-	 */
-	public boolean hasNilReason() {
-		validatePropertiesCache();
-		return hasNilReason;
-	} // hasNilReason()
 
 	// Validate constraints cache. This makes sure the constraints cache
 	// contains all constraints ordered by their appearance in the class.
@@ -1149,17 +1146,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				}
 				// Add to properties cache
 				propertiesCache.put(pi.sequenceNumber(), pi);
-			}
-
-			// Are there any nilReason implementation uses in the class ?
-			// This is called at the end of loading all properties,
-			// as there could be cases in which the order of the property
-			// loading
-			// matters, for example the detection of the union direct case
-			// in the implementedByNilReason() method.
-			for (PropertyInfo pi : propertiesCache.values()) {
-				if (pi.implementedByNilReason())
-					hasNilReason = true;
 			}
 		}
 	} // validatePropertiesCache()

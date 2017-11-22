@@ -66,9 +66,9 @@ public class GenericPropertyContentHandler
 			Arrays.asList(new String[] { "cardinality", "isDerived",
 					"isReadOnly", "isAttribute", "isNavigable", "isOrdered",
 					"isUnique", "isComposition", "isAggregation",
-					"initialValue", "inlineOrByReference", "defaultCodeSpace",
-					"isMetadata", "sequenceNumber", "implementedByNilReason",
-					"voidable", "reversePropertyId", "associationId", "typeId",
+					"initialValue", "inlineOrByReference",
+					"sequenceNumber",
+					"reversePropertyId", "associationId", "typeId",
 					"typeName", "inClassId" }));
 
 	private GenericPropertyInfo genPi = new GenericPropertyInfo();
@@ -247,26 +247,10 @@ public class GenericPropertyContentHandler
 
 			this.genPi.setInlineOrByReference(sb.toString());
 
-		} else if (localName.equals("defaultCodeSpace")) {
-
-			this.genPi.setDefaultCodeSpace(sb.toString());
-
-		} else if (localName.equals("isMetadata")) {
-
-			this.genPi.setMetadata(toBooleanValue(sb));
-
 		} else if (localName.equals("sequenceNumber")) {
 
 			StructuredNumber sn = new StructuredNumber(sb.toString());
 			this.genPi.setSequenceNumber(sn, false);
-
-		} else if (localName.equals("implementedByNilReason")) {
-
-			this.genPi.setImplementedByNilReason(toBooleanValue(sb));
-
-		} else if (localName.equals("voidable")) {
-
-			this.genPi.setVoidable(toBooleanValue(sb));
 
 		} else if (localName.equals("inClassId")) {
 

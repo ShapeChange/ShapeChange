@@ -8,7 +8,7 @@
 		<parameter name="addTaggedValues" value="code" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile" value="src/test/resources/test_sql.EAP" />
-		<parameter name="appSchemaNameRegex" value="Test(2)?" />
+		<parameter name="appSchemaNameRegex" value="Test$" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
 	</input>
@@ -89,7 +89,6 @@
 			inputs="step2" mode="enabled">
 			<targetParameter name="defaultEncodingRule" value="sql" />
 			<targetParameter name="outputDirectory" value="testResults/sql/basic/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true"/>

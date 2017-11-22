@@ -15,7 +15,7 @@
   </ApplicationSchema>
   <FeatureType id="_C4">
     <name>FeatureType1</name>
-    <title>another alias</title>
+    <title>an alias</title>
     <definition>eine Definition in Deutsch</definition>
     <description>a description</description>
     <example>an example</example>
@@ -34,7 +34,7 @@
     <example>n/a</example>
     <example>some example</example>
     <cardinality>1..*</cardinality>
-    <initialValue>"test"</initialValue>
+    <initialValue>test</initialValue>
     <taggedValues></taggedValues>
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
@@ -43,6 +43,7 @@
   </FeatureAttribute>
   <FeatureAttribute id="_A4_19">
     <name>enum</name>
+    <title>some alias</title>
     <cardinality>1</cardinality>
     <isDerived>true</isDerived>
     <taggedValues></taggedValues>
@@ -85,7 +86,7 @@
   </RelationshipRole>
   <FeatureType id="_C26">
     <name>FeatureType2</name>
-    <title>another alias</title>
+    <title>an alias</title>
     <definition>a definition</definition>
     <description>a description</description>
     <example>an example</example>

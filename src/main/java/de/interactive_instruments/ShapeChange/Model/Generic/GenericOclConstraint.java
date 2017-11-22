@@ -132,7 +132,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 
 			ShapeChangeResult.MessageContext messctx = contextModelElement
 					.result()
-					.addWarning(null, 133, ctx, constraintName, ctxType);
+					.addInfo(null, 133, ctx, constraintName, ctxType);
 
 			if (messctx != null) {
 				MessageCollection messages = parse.getMessageCollection();

@@ -37,6 +37,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionL
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToStringExpressionVisitor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
@@ -44,6 +45,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -154,8 +156,20 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Insert ins1 = (Insert) o1;
 			Insert ins2 = (Insert) o2;
 
-			String tableName_o1 = ins1.getTable().getName();
-			String tableName_o2 = ins2.getTable().getName();
+			Table tins1 = ins1.getTable();
+			Table tins2 = ins2.getTable();
+
+			/*
+			 * Ensure that inserts for the CodeStatusCL type come first, then inserts for other types.
+			 */
+			if (tins1.representsCodeStatusCLType()) {
+				return -1;
+			} else if(tins2.representsCodeStatusCLType()) {
+				return 1;
+			}
+
+			String tableName_o1 = tins1.getName();
+			String tableName_o2 = tins2.getName();
 
 			int compareTableName = tableName_o1.compareTo(tableName_o2);
 
@@ -177,6 +191,14 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 				return ilv1.getResult().compareTo(ilv2.getResult());
 			}
+
+		} else if (o1 instanceof Comment) {
+
+			Comment comment1 = (Comment) o1;
+			Comment comment2 = (Comment) o2;
+
+			return comment1.computeTargetName()
+					.compareTo(comment2.computeTargetName());
 		}
 
 		return 0;
@@ -188,10 +210,12 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			return 10;
 		} else if (o1 instanceof Alter) {
 			return 20;
-		} else if (o1 instanceof CreateIndex) {
-			return 30;
 		} else if (o1 instanceof Insert) {
+			return 30;
+		} else if (o1 instanceof CreateIndex) {
 			return 40;
+		} else if (o1 instanceof Comment) {
+			return 50;
 		} else {
 			return 1000;
 		}

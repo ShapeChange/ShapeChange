@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -107,6 +108,8 @@ public class Options {
 	public static final String SCHEMATRON_NS = "http://purl.oclc.org/dsdl/schematron";
 	public static final String DGIWGSP_NSABR = "gmldgiwgsp";
 	public static final String DGIWGSP_NS = "http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/";
+	public static final String GMLSF_NSABR = "gmlsf";
+	public static final String GMLSF_NS = "http://www.opengis.net/gmlsf/2.0";
 
 	// TODO move these to each target
 	public static final String DEF_NS = "http://www.interactive-instruments.de/ShapeChange/Definitions/0.5";
@@ -129,6 +132,7 @@ public class Options {
 	public static final String TargetApplicationSchemaMetadata = "de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata";
 	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
 	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
+	public static final String TargetCDB = "de.interactive_instruments.ShapeChange.Target.CDB.CDB";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -152,9 +156,7 @@ public class Options {
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
 			"aixmextension" };
 	public static final String[] assocStereotypes = { "disjoint" };
-	/**
-	 * NOTE: stereotype "identifier" is deprecated
-	 */
+
 	public static final String[] propertyStereotypes = { "voidable",
 			"identifier", "version", "property", "estimated" };
 	public static final String[] packageStereotypes = { "application schema",
@@ -163,12 +165,6 @@ public class Options {
 
 	/** Carriage Return and Line Feed characters. */
 	public static final String CRLF = "\r\n";
-
-	/** Model types. */
-	public static final int XMI10 = 1;
-	public static final int EA7 = 2;
-	public static final int GSIP = 3;
-	public static final int GENERIC = 4;
 
 	/** SQL targets. TODO move the relevant targets */
 	public static final int NONE = 0;
@@ -336,10 +332,11 @@ public class Options {
 	/**
 	 * Map of targets to generate from the input model. Keys are the names of
 	 * the Java classes which must implement the Target interface and values are
-	 * the requested processing modes, one of "enabled", "disabled",
-	 * "diagnostics-only".
+	 * the requested processing modes.
+	 * 
+	 * @see ProcessMode
 	 */
-	protected HashMap<String, String> fTargets = new HashMap<String, String>();
+	protected HashMap<String, ProcessMode> fTargets = new HashMap<String, ProcessMode>();
 
 	/** Hash table for additional parameters */
 	protected HashMap<String, String> fParameters = new HashMap<String, String>();
@@ -405,7 +402,22 @@ public class Options {
 	 */
 	protected HashMap<String, MapEntry> fNamespaces = new HashMap<String, MapEntry>();
 
-	/** Hash table for packages */
+	/**
+	 * Hash table for packages
+	 * <p>
+	 * key: package name <br/>
+	 * value: MapEntry with:
+	 * <ul>
+	 * <li>rule: namespace URL of the schema (value of XML attribute 'ns' of
+	 * PackageInfo configuration element)</li>
+	 * <li>p1: namespace abbreviation (value of XML attribute 'nsabr' of
+	 * PackageInfo configuration element)</li>
+	 * <li>p2: desired filename of the output XML Schema document (value of XML
+	 * attribute 'xsdDocument' of PackageInfo configuration element)</li>
+	 * <li>p3: version of the schema (value of XML attribute 'version' of
+	 * PackageInfo configuration element)</li>
+	 * </ul>
+	 */
 	protected HashMap<String, MapEntry> fPackages = new HashMap<String, MapEntry>();
 
 	/**
@@ -780,7 +792,7 @@ public class Options {
 		return me;
 	}
 
-	protected void addTarget(String k1, String k2) {
+	protected void addTarget(String k1, ProcessMode k2) {
 		fTargets.put(k1, k2);
 	}
 
@@ -792,18 +804,19 @@ public class Options {
 		return res;
 	}
 
-	public String targetMode(String tn) {
-		if (tn == null)
-			return "disabled";
-
-		String s = fTargets.get(tn);
-		if (s == null)
-			return "disabled";
-
-		return s;
+	public ProcessMode targetMode(String targetClassName) {
+		ProcessMode processMode;
+		if (targetClassName == null) {
+			processMode = ProcessMode.disabled;
+		} else if (fTargets.get(targetClassName) == null) {
+			processMode = ProcessMode.disabled;
+		} else {
+			processMode = fTargets.get(targetClassName);
+		}
+		return processMode;
 	}
 
-	public String setTargetMode(String tn, String mode) {
+	public ProcessMode setTargetMode(String tn, ProcessMode mode) {
 		return fTargets.put(tn, mode);
 	}
 
@@ -1069,19 +1082,18 @@ public class Options {
 	 * Adds a tag alias mapping.
 	 * 
 	 * @param alias
-	 *            - the tag alias (in lower case)
+	 *            - the tag alias (will be converted to lower case)
 	 * @param wellknown
-	 *            - the wellknown tag (in lower case) to which the alias maps
+	 *            - the tag to which the alias maps
 	 */
 	protected void addTagAlias(String alias, String wellknown) {
-		fTagAliases.put(alias, wellknown);
+		fTagAliases.put(alias.toLowerCase(Locale.ENGLISH), wellknown);
 	}
 
 	/**
 	 * Retrieves the wellknown tag to which the given alias maps, or
 	 * <code>null</code> if no such mapping exists. The alias will automatically
-	 * be converte to lower case to look up the mapping (the according key
-	 * values in the tag map have also been converted to lower case).
+	 * be converted to lower case to look up the mapping.
 	 * 
 	 * @param alias
 	 *            tag for which a mapping to a wellknown tag is being looked up
@@ -1089,7 +1101,7 @@ public class Options {
 	 *         if no such mapping exists
 	 */
 	public String tagAlias(String alias) {
-		return fTagAliases.get(alias.toLowerCase());
+		return fTagAliases.get(alias.toLowerCase(Locale.ENGLISH));
 	}
 
 	/**
@@ -1170,6 +1182,14 @@ public class Options {
 		return fExtendsEncRule.get(rule1.toLowerCase());
 	}
 
+	public boolean encRuleExists(String encRule) {
+		if ("*".equals(encRule)) {
+			return true;
+		} else {
+			return fExtendsEncRule.containsKey(encRule);
+		}
+	}
+
 	protected void addPackage(String k1, String s1, String s2, String s3,
 			String s4) {
 		fPackages.put(k1, new MapEntry(s1, s2, s3, s4));
@@ -1238,8 +1258,15 @@ public class Options {
 		return null;
 	}
 
-	public String nsabrOfPackage(String k1) {
-		MapEntry me = fPackages.get(k1);
+	/**
+	 * @param packageName
+	 *            name of a package
+	 * @return namespace abbreviation (nsabr) defined by a package configuration
+	 *         entry for a package with given name; can be <code>null</code> if
+	 *         no such entry exists
+	 */
+	public String nsabrOfPackage(String packageName) {
+		MapEntry me = fPackages.get(packageName);
 		if (me != null) {
 			return me.p1;
 		}
@@ -1274,18 +1301,6 @@ public class Options {
 		 * profile is not available online
 		 */
 		return loc;
-	}
-
-	public String nameOfTarget(int targetId) {
-
-		for (TargetIdentification ti : TargetIdentification.values()) {
-
-			if (ti.getId() == targetId) {
-				return ti.getName();
-			}
-		}
-
-		return "Unknown (" + targetId + ")";
 	}
 
 	public void loadConfiguration() throws ShapeChangeAbortException {
@@ -1514,7 +1529,7 @@ public class Options {
 
 				// System.out.println(tgtConfig);
 				String className = tgtConfig.getClassName();
-				String mode = tgtConfig.getProcessMode().name();
+				ProcessMode mode = tgtConfig.getProcessMode();
 
 				// set targets and their mode; if a target occurs multiple
 				// times, keep the enabled one(s)
@@ -3114,49 +3129,9 @@ public class Options {
 
 						taggedValueE = (Element) taggedValueN;
 
-						String value = null;
-
-						if (taggedValueE.hasAttribute("value")) {
-							value = taggedValueE.getAttribute("value");
-						}
-
-						Pattern modelElementNamePattern = null;
-
-						if (taggedValueE.hasAttribute("modelElementName")) {
-							String modelElementName = taggedValueE
-									.getAttribute("modelElementName");
-							modelElementNamePattern = Pattern
-									.compile(modelElementName);
-						}
-
-						Pattern modelElementStereotypePattern = null;
-
-						if (taggedValueE
-								.hasAttribute("modelElementStereotype")) {
-
-							String modelElementStereotype = taggedValueE
-									.getAttribute("modelElementStereotype");
-							modelElementStereotypePattern = Pattern
-									.compile(modelElementStereotype);
-						}
-
-						Pattern applicationSchemaNamePattern = null;
-
-						if (taggedValueE
-								.hasAttribute("applicationSchemaName")) {
-
-							String applicationSchemaName = taggedValueE
-									.getAttribute("applicationSchemaName");
-							applicationSchemaNamePattern = Pattern
-									.compile(applicationSchemaName);
-						}
-
-						result.add(new TaggedValueConfigurationEntry(
-								taggedValueE.getAttribute("name"), value,
-								modelElementStereotypePattern,
-								modelElementNamePattern,
-								applicationSchemaNamePattern));
-
+						TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry
+								.parse(taggedValueE);
+						result.add(tvce);
 					}
 				}
 			}
@@ -3268,6 +3243,14 @@ public class Options {
 	}
 
 	private void addStandardRules() {
+
+		/*
+		 * FIXME: Targets should be able to register rules with options. By
+		 * requiring that Options knows all rules up front, one cannot add a new
+		 * target dynamically (e.g. via an additional library on the classpath)
+		 * and make use of the Info.matches(String) function.
+		 */
+
 		/*
 		 * mandatory rules
 		 */
@@ -3472,6 +3455,7 @@ public class Options {
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
 		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
+		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
 		addRule("rule-xsd-cls-enum-supertypes");
 		addRule("rule-xsd-cls-mixin-classes-as-group");
@@ -3488,18 +3472,24 @@ public class Options {
 		addRule("rule-xsd-cls-union-asGroup");
 		addRule("rule-xsd-cls-union-direct");
 		addRule("rule-xsd-cls-union-direct-optionality");
+		addRule("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets");
 		addRule("rule-xsd-prop-att-map-entry");
+		addRule("rule-xsd-prop-constrainingFacets");
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
+		addRule("rule-xsd-prop-featureType-gmlsf-byReference");
+		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 		addRule("rule-xsd-prop-nillable");
 		addRule("rule-xsd-prop-nilReasonAllowed");
 		addRule("rule-xsd-prop-gmlArrayProperty");
 		addRule("rule-xsd-prop-gmlListProperty");
 		addRule("rule-xsd-prop-qualified-associations");
+		addRule("rule-xsd-prop-targetCodeListURI");
 		addRule("rule-xsd-all-no-documentation");
 		addRule("rule-xsd-cls-local-enumeration");
 		addRule("rule-xsd-cls-local-basictype");
 		addRule("rule-xsd-pkg-dgiwgsp");
+		addRule("rule-xsd-pkg-gmlsf");
 		addRule("rule-xsd-pkg-schematron");
 		addRule("rule-xsd-all-tagged-values");
 		addRule("rule-xsd-cls-adehook");
@@ -3531,7 +3521,7 @@ public class Options {
 		addRule("rule-sql-all-notEncoded");
 
 		addRule("rule-sql-all-foreign-key-oracle-naming-style");
-		addRule("rule-sql-all-foreign-key-personhash-naming");
+		addRule("rule-sql-all-foreign-key-pearsonhash-naming");
 		addRule("rule-sql-all-foreign-key-default-naming");
 		addRule("rule-sql-all-check-constraint-naming-oracle-default");
 		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
@@ -3544,12 +3534,22 @@ public class Options {
 		addRule("rule-sql-all-normalizing-sqlserver");
 		addRule("rule-sql-all-normalizing-oracle");
 
+		addRule("rule-sql-all-precisionAndScale");
+
 		addRule("rule-sql-all-unique-naming-count-suffix");
+
+		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
+		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
 
 		addRule("rule-sql-cls-code-lists");
 		addRule("rule-sql-cls-code-lists-pods");
 		addRule("rule-sql-cls-data-types");
+		addRule("rule-sql-cls-data-types-oneToMany-oneTable");
+		addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
+		addRule("rule-sql-cls-data-types-oneToMany-severalTables");
+		addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
 		addRule("rule-sql-cls-feature-types");
+		addRule("rule-sql-cls-identifierStereotype");
 		addRule("rule-sql-cls-object-types");
 		addRule("rule-sql-cls-references-to-external-types");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
@@ -3629,6 +3629,7 @@ public class Options {
 		 * ArcGIS workspace encoding rules
 		 */
 		addRule("rule-arcgis-prop-initialValueByAlias");
+		addRule("rule-arcgis-cls-identifierStereotype");
 		addRule("rule-arcgis-cls-hasZ");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
@@ -3636,9 +3637,12 @@ public class Options {
 		addRule("rule-arcgis-prop-lengthFromTaggedValue");
 		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
 		addRule("rule-arcgis-prop-initialValue");
-		addRule("rule-arcgis-prop-precision");
-		addRule("rule-arcgis-prop-scale");
+		addRule("rule-arcgis-all-precision");
+		addRule("rule-arcgis-prop-precision"); // deprecated
+		addRule("rule-arcgis-all-scale");
+		addRule("rule-arcgis-prop-scale"); // deprecated
 		addRule("rule-arcgis-prop-isNullable");
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 
 		/*
 		 * Replication schema encoding rules
@@ -3659,6 +3663,12 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
+
+		/*
+		 * CDB conversion rules
+		 */
+		addRule("rule-cdb-all-notEncoded");
+		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3670,7 +3680,12 @@ public class Options {
 		return stereotype;
 	};
 
-	/** Normalize a tag fetched from the model. */
+	/**
+	 * Normalize a tag fetched from the model.
+	 * 
+	 * @return the mapping for the tag, or the given tag itself if no mapping is
+	 *         configured
+	 */
 	public String normalizeTag(String tag) {
 		// Map tag alias to well-known tag
 		String s = tagAlias(tag.trim());
@@ -3751,6 +3766,8 @@ public class Options {
 			return Options.TargetApplicationSchemaMetadata;
 		else if (ra[1].equals("exp"))
 			return Options.TargetModelExport;
+		else if (ra[1].equals("cdb"))
+			return Options.TargetCDB;
 
 		return null;
 	}
@@ -4056,5 +4073,9 @@ public class Options {
 		}
 
 		return prohibitedStatusValuesWhenLoadingClasses;
+	}
+
+	public InputConfiguration getInputConfig() {
+		return this.inputConfig;
 	}
 }

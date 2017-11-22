@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.io.File;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -88,7 +89,7 @@ public class SqlDdlConfigurationValidator
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new PostgreSQLStrategy();
 		} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
-			databaseStrategy = new OracleStrategy(result,null);
+			databaseStrategy = new OracleStrategy(result);
 		} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new SQLServerStrategy(result);
 		} else {
@@ -110,6 +111,31 @@ public class SqlDdlConfigurationValidator
 		isValid = isValid && checkIntegerParameter(SqlConstants.PARAM_SIZE);
 		isValid = isValid
 				&& checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
+
+		// --------------------------
+		String fileDdlTop = options.parameterAsString(this.getClass().getName(),
+				SqlConstants.PARAM_FILE_DDL_TOP, null, false, true);
+		if (fileDdlTop != null) {
+			File ddlTop = new File(fileDdlTop);
+			if (!ddlTop.exists() || ddlTop.isDirectory() || !ddlTop.canRead()) {
+				isValid = false;
+				result.addError(this, 5, SqlConstants.PARAM_FILE_DDL_TOP,
+						fileDdlTop);
+			}
+		}
+
+		String fileDdlBottom = options.parameterAsString(
+				this.getClass().getName(), SqlConstants.PARAM_FILE_DDL_BOTTOM,
+				null, false, true);
+		if (fileDdlBottom != null) {
+			File ddlBottom = new File(fileDdlBottom);
+			if (!ddlBottom.exists() || ddlBottom.isDirectory()
+					|| !ddlBottom.canRead()) {
+				isValid = false;
+				result.addError(this, 5, SqlConstants.PARAM_FILE_DDL_BOTTOM,
+						fileDdlBottom);
+			}
+		}
 
 		return isValid;
 	}
@@ -244,6 +270,8 @@ public class SqlDdlConfigurationValidator
 					+ "' did not contain a well-known identifier. Use well-known identifiers or omit the parameter.";
 		case 4:
 			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
+		case 5:
+			return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 
 		case 100:
 			return "Parameter '$1$' is set to '$2$'. This is not a valid value.";

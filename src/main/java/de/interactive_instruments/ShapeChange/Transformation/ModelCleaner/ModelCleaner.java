@@ -214,12 +214,8 @@ public class ModelCleaner implements Transformer, MessageSource {
 				 * false.
 				 */
 				
-				boolean unionIsUnionDirect = false;
-
 				// check the first property
 				if (matchesRegex(p1.name(), reasonPropNamePattern)) {
-
-					unionIsUnionDirect = true;
 
 					// check that tagged value and field for
 					// implementedByNilReason are set correctly
@@ -236,18 +232,11 @@ public class ModelCleaner implements Transformer, MessageSource {
 						p1.setTaggedValue(TV_IMPLEMENTED_BY_NILREASON, "true",
 								true);
 						result.addDebug(this, 4, genCi.name(), p1.name());
-					}
-					
-					if (!p1.implementedByNilReason()) {
-						p1.setImplementedByNilReason(true);
-						result.addDebug(this, 6, genCi.name(), p1.name());
-					}
+					}					
 				}
 				
 				// now also check the second property
 				if (matchesRegex(p2.name(), reasonPropNamePattern)) {
-
-					unionIsUnionDirect = true;
 
 					// check that tagged value and field for
 					// implementedByNilReason are set correctly
@@ -266,20 +255,6 @@ public class ModelCleaner implements Transformer, MessageSource {
 
 						result.addDebug(this, 4, genCi.name(), p2.name());
 					}
-
-					if (!p2.implementedByNilReason()) {
-						p2.setImplementedByNilReason(true);
-						result.addDebug(this, 6, genCi.name(), p2.name());
-					}
-				}
-
-				/*
-				 * ensure that the 'hasNilReason' field of the union class is
-				 * set to true if we have the union-direct pattern
-				 */
-				if (unionIsUnionDirect && !genCi.hasNilReason()) {
-					genCi.setHasNilReason(true);
-					result.addDebug(this, 5, genCi.name());
 				}
 			}
 		}

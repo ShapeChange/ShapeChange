@@ -81,7 +81,6 @@
 			<targetParameter name="defaultEncodingRule" value="mysql" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/restrictTimeOfDate/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="4326" />
 			<targetParameter name="sortedOutput" value="true" />

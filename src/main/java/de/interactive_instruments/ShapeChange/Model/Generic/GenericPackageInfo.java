@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -52,7 +53,8 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
  * @author echterhoff
  * 
  */
-public class GenericPackageInfo extends PackageInfoImpl {
+public class GenericPackageInfo extends PackageInfoImpl
+		implements MessageSource {
 
 	protected Options options = null;
 	protected ShapeChangeResult result = null;
@@ -63,10 +65,8 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	protected String targetNamespace = null;
 	protected String xmlns = null;
 	protected String xsdDocument = null;
-	protected String gmlProfileSchema = null;
 	protected String version = null;
 	protected GenericPackageInfo owner = null;
-	protected boolean isAppSchema = false;
 	protected boolean isSchema = false;
 	protected SortedSet<GenericPackageInfo> childPi = null;
 	protected SortedSet<String> supplierIds = null;
@@ -126,26 +126,10 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#gmlProfileSchema()
-	 */
-	@Override
-	public String gmlProfileSchema() {
-		return gmlProfileSchema;
-	}
-
-	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
 	 */
 	public String id() {
 		return id;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#isAppSchema()
-	 */
-	@Override
-	public boolean isAppSchema() {
-		return isAppSchema;
 	}
 
 	/**
@@ -204,26 +188,10 @@ public class GenericPackageInfo extends PackageInfoImpl {
 	}
 
 	/**
-	 * @param gmlProfileSchema
-	 */
-	public void setGmlProfileSchema(String gmlProfileSchema) {
-		this.gmlProfileSchema = gmlProfileSchema;
-
-	}
-
-	/**
 	 * @param id
 	 */
 	public void setId(String id) {
 		this.id = id;
-
-	}
-
-	/**
-	 * @param isAppSchema
-	 */
-	public void setIsAppSchema(boolean isAppSchema) {
-		this.isAppSchema = isAppSchema;
 
 	}
 
@@ -378,40 +346,39 @@ public class GenericPackageInfo extends PackageInfoImpl {
 
 					this.setXsdDocument(taggedValuesCache.getFirstValue(key));
 
-				} else if (key.equalsIgnoreCase("gmlProfileSchema")) {
-
-					this.setGmlProfileSchema(
-							taggedValuesCache.getFirstValue(key)); // FIXME
-																	// multiple
-																	// values
-
-				} else if (key.equalsIgnoreCase("alias")) {
-
-					String[] tvs = taggedValuesCache.get(key);
-
-					List<LangString> val;
-
-					if (tvs.length == 0) {
-						val = new ArrayList<LangString>();
-					} else {
-						val = LangString.parse(tvs);
-					}
-					this.descriptors.put(Descriptor.ALIAS, val);
-
-				} else if (key.equalsIgnoreCase("documentation")) {
-
-					// we map this to the descriptor 'definition'
-					String[] tvs = taggedValuesCache.get(key);
-
-					List<LangString> val;
-
-					if (tvs.length == 0) {
-						val = new ArrayList<LangString>();
-					} else {
-						val = LangString.parse(tvs);
-					}
-					this.descriptors.put(Descriptor.DOCUMENTATION, val);
 				}
+
+				/*
+				 * TBD: Descriptors should not be modified right away, since the
+				 * descriptor source might not be the tagged value
+				 */
+				// else if (key.equalsIgnoreCase("alias")) {
+				//
+				// String[] tvs = taggedValuesCache.get(key);
+				//
+				// List<LangString> val;
+				//
+				// if (tvs.length == 0) {
+				// val = new ArrayList<LangString>();
+				// } else {
+				// val = LangString.parse(tvs);
+				// }
+				// this.descriptors.put(Descriptor.ALIAS, val);
+				//
+				// } else if (key.equalsIgnoreCase("documentation")) {
+				//
+				// // we map this to the descriptor 'definition'
+				// String[] tvs = taggedValuesCache.get(key);
+				//
+				// List<LangString> val;
+				//
+				// if (tvs.length == 0) {
+				// val = new ArrayList<LangString>();
+				// } else {
+				// val = LangString.parse(tvs);
+				// }
+				// this.descriptors.put(Descriptor.DOCUMENTATION, val);
+				// }
 			}
 		}
 	}
@@ -657,6 +624,24 @@ public class GenericPackageInfo extends PackageInfoImpl {
 				tmp_supplierIds.add(prefix + id);
 			}
 			this.supplierIds = tmp_supplierIds;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 30500:
+			return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

@@ -2,9 +2,11 @@
   <title>Schematron constraints for schema 'AppSchema'</title>
   <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
   <ns prefix="acvv" uri="http://test/absentCodelistValueValidation"/>
+  <ns prefix="ext" uri="http://example.org/absentCodelistValueValidation/extSchema"/>
   <pattern>
     <rule context="acvv:FeatureType">
       <assert test="not(acvv:propCL) or acvv:propCL = 'code1' or acvv:propCL = 'code2'">propCL_AllowedValues</assert>
+      <assert test="concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute) = 'http://example.org/codelist/ExternalCodeList/codeA' or concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute) = 'http://example.org/codelist/ExternalCodeList/codeB'">propExt_AllowedValues</assert>
     </rule>
   </pattern>
 </schema>

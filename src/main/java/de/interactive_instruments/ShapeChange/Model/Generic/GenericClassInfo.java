@@ -52,8 +52,6 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -76,17 +74,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected String name = null;
 
 	protected boolean isAbstract = false;
-	protected boolean includePropertyType = true;
-	protected boolean includeByValuePropertyType = false;
-	protected boolean isCollection = false;
-	protected boolean asDictionary = false;
-	protected boolean asDictionaryGml33 = false;
-	protected boolean asGroup = false;
-	protected boolean asCharacterString = false;
-	protected boolean hasNilReason = false;
 	protected boolean isLeaf = false;
-	protected boolean suppressed = false;
-	protected String xmlSchemaType = null;
 
 	protected PackageInfo pkg = null;
 
@@ -99,9 +87,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	protected ClassInfo baseClass = null;
 	protected SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
 	/**
-	 * Not null
+	 * May be null
 	 */
-	protected Vector<Constraint> constraints = new Vector<Constraint>();
+	protected Vector<Constraint> constraints = null;
 
 	public GenericClassInfo() {
 
@@ -116,71 +104,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.id = id;
 		this.name = name;
 		this.category = category;
-	}
-
-	/**
-	 * @param xmlSchemaType
-	 *            the xmlSchemaType to set
-	 */
-	public void setXmlSchemaType(String xmlSchemaType) {
-		this.xmlSchemaType = xmlSchemaType;
-	}
-
-	/**
-	 * @param includePropertyType
-	 *            the includePropertyType to set
-	 */
-	public void setIncludePropertyType(boolean includePropertyType) {
-		this.includePropertyType = includePropertyType;
-	}
-
-	/**
-	 * @param includeByValuePropertyType
-	 *            the includeByValuePropertyType to set
-	 */
-	public void setIncludeByValuePropertyType(
-			boolean includeByValuePropertyType) {
-		this.includeByValuePropertyType = includeByValuePropertyType;
-	}
-
-	/**
-	 * @param isCollection
-	 *            the isCollection to set
-	 */
-	public void setIsCollection(boolean isCollection) {
-		this.isCollection = isCollection;
-	}
-
-	/**
-	 * @param asDictionary
-	 *            the asDictionary to set
-	 */
-	public void setAsDictionary(boolean asDictionary) {
-		this.asDictionary = asDictionary;
-	}
-
-	/**
-	 * @param asGroup
-	 *            the asGroup to set
-	 */
-	public void setAsGroup(boolean asGroup) {
-		this.asGroup = asGroup;
-	}
-
-	/**
-	 * @param asCharacterString
-	 *            the asCharacterString to set
-	 */
-	public void setAsCharacterString(boolean asCharacterString) {
-		this.asCharacterString = asCharacterString;
-	}
-
-	/**
-	 * @param hasNilReason
-	 *            the hasNilReason to set
-	 */
-	public void setHasNilReason(boolean hasNilReason) {
-		this.hasNilReason = hasNilReason;
 	}
 
 	/**
@@ -217,7 +140,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param supertypes
-	 *            the supertypes to set
+	 *            the supertypes to set, can be <code>null</code>
 	 */
 	public void setSupertypes(TreeSet<String> supertypes) {
 		this.supertypes = supertypes;
@@ -225,7 +148,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param subtypes
-	 *            the subtypes to set
+	 *            the subtypes to set, can be <code>null</code>
 	 */
 	public void setSubtypes(TreeSet<String> subtypes) {
 		this.subtypes = subtypes;
@@ -233,7 +156,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param baseClass
-	 *            the baseClass to set
+	 *            the baseClass to set, can be <code>null</code>
 	 */
 	public void setBaseClass(ClassInfo baseClass) {
 		this.baseClass = baseClass;
@@ -250,26 +173,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * @param list
-	 *            the constraints to set
+	 *            the constraints to set, may be <code>null</code>
 	 */
 	public void setConstraints(Vector<Constraint> list) {
 		this.constraints = list;
-	}
-
-	/**
-	 * @param suppressed
-	 *            the suppressed to set
-	 */
-	public void setSuppressed(boolean suppressed) {
-		this.suppressed = suppressed;
-	}
-
-	/**
-	 * @param asDictionaryGml33
-	 *            the asDictionaryGml33 to set
-	 */
-	public void setAsDictionaryGml33(boolean asDictionaryGml33) {
-		this.asDictionaryGml33 = asDictionaryGml33;
 	}
 
 	/**
@@ -437,97 +344,25 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("gmlAsCharacterString")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsCharacterString(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsCharacterString(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("asDictionary")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsDictionary(true);
-				this.setAsDictionaryGml33(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsDictionary(false);
-				this.setAsDictionaryGml33(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("gmlAsGroup")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setAsGroup(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setAsGroup(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("byValuePropertyType")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIncludeByValuePropertyType(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIncludeByValuePropertyType(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("noPropertyType")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIncludePropertyType(false);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIncludePropertyType(true);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("isCollection")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setIsCollection(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setIsCollection(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("xmlSchemaType")) {
-
-			this.setXmlSchemaType(tvValue);
-
-		} else if (tvName.equalsIgnoreCase("alias")) {
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.ALIAS, ls);
-			// this.setAliasNameAll(new Descriptors(tvValue));
-
-		} else if (tvName.equalsIgnoreCase("documentation")) {
-
-			// we map this to the descriptor 'definition'
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.DEFINITION, ls);
-			// this.setDefinitionAll(new Descriptors(tvValue));
-
-		} else if (tvName.equalsIgnoreCase("suppress")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setSuppressed(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setSuppressed(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		}
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#hasNilReason()
-	 */
-	public boolean hasNilReason() {
-		return hasNilReason;
+		/*
+		 * TBD: Descriptors should not be modified right away, since the
+		 * descriptor source might not be the tagged value
+		 */
+		// if (tvName.equalsIgnoreCase("alias")) {
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.ALIAS, ls);
+		// // this.setAliasNameAll(new Descriptors(tvValue));
+		//
+		// } else if (tvName.equalsIgnoreCase("documentation")) {
+		//
+		// // we map this to the descriptor 'definition'
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.DEFINITION, ls);
+		// // this.setDefinitionAll(new Descriptors(tvValue));
+		//
+		// }
 	}
 
 	/**
@@ -558,9 +393,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return assocClass;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#supertypes()
-	 */
+	@Override
 	public TreeSet<String> supertypes() {
 
 		if (supertypes == null) {
@@ -595,6 +428,13 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			return false;
 	}
 
+	public boolean hasSubtypes() {
+		if (subtypes != null && subtypes.size() > 0)
+			return true;
+		else
+			return false;
+	}
+
 	public boolean hasConstraints() {
 		if (this.constraints == null || this.constraints.isEmpty()) {
 			return false;
@@ -603,9 +443,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#baseClass()
-	 */
+	@Override
 	public ClassInfo baseClass() {
 		return baseClass;
 	}
@@ -623,10 +461,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#constraints()
-	 */
+	@Override
 	public List<Constraint> constraints() {
 		if (constraints == null) {
 			return new Vector<Constraint>(1);
@@ -635,13 +470,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * Find the property given by its name in this class or (if not present
-	 * there) recursively in its base classes / supertypes.
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#property(java.
-	 *      lang.String)
-	 */
+	@Override
 	public PropertyInfo property(String name) {
 		// Search in own properties
 		for (PropertyInfo pi : properties.values()) {
@@ -680,87 +509,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return null;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#xmlSchemaType()
-	 */
-	@Override
-	public String xmlSchemaType() {
-
-		return xmlSchemaType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#includeByValuePropertyType()
-	 */
-	@Override
-	public boolean includeByValuePropertyType() {
-
-		return includeByValuePropertyType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#includePropertyType()
-	 */
-	@Override
-	public boolean includePropertyType() {
-
-		return includePropertyType;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#isCollection()
-	 */
-	@Override
-	public boolean isCollection() {
-
-		return isCollection;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asDictionary()
-	 */
-	@Override
-	public boolean asDictionary() {
-
-		return asDictionary;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asDictionaryGml33()
-	 */
-	@Override
-	public boolean asDictionaryGml33() {
-
-		return asDictionaryGml33;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asGroup()
-	 */
-	@Override
-	public boolean asGroup() {
-
-		return asGroup;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#asCharacterString()
-	 */
-	@Override
-	public boolean asCharacterString() {
-
-		return asCharacterString;
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfoImpl#suppressed()
-	 */
-	@Override
-	public boolean suppressed() {
-
-		return suppressed;
-	}
-
 	public String printAsString(String indent) {
 
 		StringBuffer sb = new StringBuffer();
@@ -792,7 +540,21 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	public void removeSubtype(String subtypeId) {
-		this.subtypes.remove(subtypeId);
+		if (this.subtypes != null) {
+			this.subtypes.remove(subtypeId);
+		}
+	}
+
+	/**
+	 * @param subtypeId
+	 * @return <code>true</code> if the specified subtype was not already
+	 *         contained in the set of subtypes
+	 */
+	public boolean addSubtype(String subtypeId) {
+		if (this.subtypes == null) {
+			this.subtypes = new TreeSet<String>();
+		}
+		return this.subtypes.add(subtypeId);
 	}
 
 	/**
@@ -806,6 +568,20 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			return;
 		else
 			this.supertypes.remove(supertypeId);
+	}
+
+	/**
+	 * @param supertypeId
+	 * @return <code>true</code> if the specified supertypeId was not already
+	 *         contained in the set of supertypes
+	 */
+	public boolean addSupertype(String supertypeId) {
+
+		if (this.supertypes == null) {
+			this.supertypes = new TreeSet<String>();
+		}
+
+		return this.supertypes().add(supertypeId);
 	}
 
 	/**
@@ -843,7 +619,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
 
 			// add but log a warning
-			result.addWarning(null, 30200, newProperty.name(), this.name());
+			result.addWarning(this, 30200, newProperty.name(), this.name());
 			properties.put(newProperty.sequenceNumber(), newProperty);
 
 			this.model.genPropertiesById.put(newProperty.id(), newProperty);
@@ -855,7 +631,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			 * class, but log a warning
 			 */
 
-			result.addWarning(null, 30201, newProperty.name(), this.name());
+			result.addWarning(this, 30201, newProperty.name(), this.name());
 
 		} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
 
@@ -865,7 +641,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			 * warning
 			 */
 
-			result.addWarning(null, 30202, newProperty.name(), this.name());
+			result.addWarning(this, 30202, newProperty.name(), this.name());
 
 			existingPropWithSameName.setRestriction(false);
 
@@ -876,7 +652,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			 * warning
 			 */
 
-			result.addWarning(null, 30203, newProperty.name(), this.name());
+			result.addWarning(this, 30203, newProperty.name(), this.name());
 
 			properties.remove(existingPropWithSameName.sequenceNumber());
 
@@ -885,118 +661,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			properties.put(newProperty.sequenceNumber(), newProperty);
 
 			this.model.genPropertiesById.put(newProperty.id(), newProperty);
-		}
-	}
-
-	/**
-	 * Adds the new properties to the set of properties of this class. The
-	 * behavior for adding a property that has the same name as an existing one
-	 * is determined by a parameter.
-	 * 
-	 * WARNING: if a new property does not have the same name as an existing one
-	 * but the same sequence number, this will overwrite the existing property
-	 * with that sequence number!
-	 * 
-	 * @param newProperty
-	 * @param duplicateHandling
-	 */
-	public void addProperties(List<GenericPropertyInfo> newProperties,
-			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
-
-		if (this.properties == null) {
-			properties = new TreeMap<StructuredNumber, PropertyInfo>();
-		}
-
-		if (this.properties.isEmpty()) {
-
-			// simply add all new properties
-			for (GenericPropertyInfo newProperty : newProperties) {
-
-				properties.put(newProperty.sequenceNumber(), newProperty);
-
-				this.model.genPropertiesById.put(newProperty.id(), newProperty);
-			}
-
-		} else {
-
-			// compute map with all existing props by name first
-			Map<String, GenericPropertyInfo> existingPropsByName = new HashMap<String, GenericPropertyInfo>();
-
-			for (PropertyInfo existingProp : this.properties.values()) {
-
-				existingPropsByName.put(existingProp.name(),
-						(GenericPropertyInfo) existingProp);
-			}
-
-			for (GenericPropertyInfo newProperty : newProperties) {
-
-				GenericPropertyInfo existingPropWithSameName = existingPropsByName
-						.get(newProperty.name());
-
-				if (existingPropWithSameName == null) {
-
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
-
-					// add but log a warning
-					result.addWarning(null, 30200, newProperty.name(),
-							this.name());
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE) {
-
-					/*
-					 * alright, we do not add the new property to the properties
-					 * of this class, but log a warning
-					 */
-
-					result.addWarning(null, 30201, newProperty.name(),
-							this.name());
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
-
-					/*
-					 * alright, we do not add the new property to the properties
-					 * of this class, but we need to "unrestrict" the existing
-					 * one - and log a warning
-					 */
-
-					result.addWarning(null, 30202, newProperty.name(),
-							this.name());
-
-					existingPropWithSameName.setRestriction(false);
-
-				} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.OVERWRITE) {
-
-					/*
-					 * Remove the existing property and add the new one - and
-					 * log a warning
-					 */
-
-					result.addWarning(null, 30203, newProperty.name(),
-							this.name());
-
-					properties
-							.remove(existingPropWithSameName.sequenceNumber());
-					this.model.genPropertiesById
-							.remove(existingPropWithSameName.id());
-
-					properties.put(newProperty.sequenceNumber(), newProperty);
-					existingPropsByName.put(newProperty.name(), newProperty);
-
-					this.model.genPropertiesById.put(newProperty.id(),
-							newProperty);
-				}
-			}
 		}
 	}
 
@@ -1021,6 +685,13 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		return new StructuredNumber(result);
 	}
 
+	/**
+	 * Adds the given constraints to the constraints of this class, preventing
+	 * duplicates (references to same constraint object).
+	 * 
+	 * @param list
+	 *            constraints to add; can be empty or <code>null</code>
+	 */
 	public void addConstraints(List<Constraint> list) {
 		if (list == null || list.isEmpty())
 			return;
@@ -1028,7 +699,11 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			if (this.constraints == null) {
 				this.constraints = new Vector<Constraint>();
 			}
-			this.constraints.addAll(list);
+			for (Constraint con : list) {
+				if (!this.constraints.contains(con)) {
+					this.constraints.addElement(con);
+				}
+			}
 		}
 	}
 
@@ -1103,19 +778,14 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		copy.setStereotypes(stereotypesCache);
 		copy.setTaggedValues(taggedValuesCache, false);
-		copy.setIncludePropertyType(includePropertyType);
-		copy.setIncludeByValuePropertyType(includeByValuePropertyType);
-		copy.setIsCollection(isCollection);
-		copy.setAsDictionary(asDictionary);
-		copy.setAsGroup(asGroup);
-		copy.setAsCharacterString(asCharacterString);
-		copy.setHasNilReason(hasNilReason);
 		copy.setPkg(pkg);
 		copy.setIsAbstract(isAbstract);
 		copy.setIsLeaf(isLeaf);
 		copy.setAssocInfo(assocClass);
-		copy.setSupertypes((TreeSet<String>) supertypes.clone());
-		copy.setSubtypes((TreeSet<String>) subtypes.clone());
+		copy.setSupertypes(supertypes == null ? null
+				: (TreeSet<String>) supertypes.clone());
+		copy.setSubtypes(
+				subtypes == null ? null : (TreeSet<String>) subtypes.clone());
 		copy.setBaseClass(baseClass);
 
 		copy.setDiagrams(diagrams);
@@ -1149,10 +819,11 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 		copy.setProperties(copyProperties);
 
-		copy.setConstraints((Vector<Constraint>) constraints.clone());
-		copy.setSuppressed(suppressed);
-		copy.setAsDictionaryGml33(asDictionaryGml33);
-		copy.setXmlSchemaType(xmlSchemaType);
+		if (this.constraints == null) {
+			copy.setConstraints(null);
+		} else {
+			copy.setConstraints((Vector<Constraint>) constraints.clone());
+		}
 
 		return copy;
 	}
@@ -1302,9 +973,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * Adds the given list of new properties to this class. Their sequence
-	 * numbers are used as-is. The sequence/list of new properties will thus be
-	 * merged with the existing properties. Sequence numbers may be duplicate
-	 * (though still be different objects).
+	 * numbers are used as-is - unless a property with different name but same
+	 * sequence number already exists; in that case a suffix is added to the
+	 * sequence number of the new property. The sequence/list of new properties
+	 * will thus be merged with the existing properties.
 	 * 
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
@@ -1321,17 +993,118 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 		} else {
 
-			// if (properties == null) {
-			// properties = new TreeMap<StructuredNumber, PropertyInfo>();
-			// }
+			if (this.properties == null) {
+				properties = new TreeMap<StructuredNumber, PropertyInfo>();
+			}
 
-			// add the new properties
-			this.addProperties(newProps, duplicateHandling);
+			if (this.properties.isEmpty()) {
 
-			// // add the new properties
-			// for (GenericPropertyInfo newProp : newProps) {
-			// this.addProperty(newProp, duplicateHandling);
-			// }
+				// simply add all new properties
+				for (GenericPropertyInfo newProperty : newProps) {
+
+					properties.put(newProperty.sequenceNumber(), newProperty);
+
+					this.model.genPropertiesById.put(newProperty.id(),
+							newProperty);
+				}
+
+			} else {
+
+				// compute map with all existing props by name first
+				Map<String, GenericPropertyInfo> existingPropsByName = new HashMap<String, GenericPropertyInfo>();
+
+				for (PropertyInfo existingProp : this.properties.values()) {
+
+					existingPropsByName.put(existingProp.name(),
+							(GenericPropertyInfo) existingProp);
+				}
+
+				for (GenericPropertyInfo newProperty : newProps) {
+
+					/*
+					 * ensure that sequence number of the new property is unique
+					 * within the set of existing properties
+					 */
+					StructuredNumber newpropsn = newProperty.sequenceNumber();
+					if (this.properties.containsKey(newpropsn)) {
+						newProperty.setSequenceNumber(
+								newpropsn.createCopyWithSuffix(1), true);
+					}
+
+					GenericPropertyInfo existingPropWithSameName = existingPropsByName
+							.get(newProperty.name());
+
+					if (existingPropWithSameName == null) {
+
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.ADD) {
+
+						// add but log a warning
+						result.addWarning(this, 30200, newProperty.name(),
+								this.name());
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE) {
+
+						/*
+						 * alright, we do not add the new property to the
+						 * properties of this class, but log a warning
+						 */
+
+						result.addWarning(this, 30201, newProperty.name(),
+								this.name());
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT) {
+
+						/*
+						 * alright, we do not add the new property to the
+						 * properties of this class, but we need to "unrestrict"
+						 * the existing one - and log a warning
+						 */
+
+						result.addWarning(this, 30202, newProperty.name(),
+								this.name());
+
+						existingPropWithSameName.setRestriction(false);
+
+					} else if (duplicateHandling == PropertyCopyDuplicatBehaviorIndicator.OVERWRITE) {
+
+						/*
+						 * Remove the existing property and add the new one -
+						 * and log a warning
+						 */
+
+						result.addWarning(this, 30203, newProperty.name(),
+								this.name());
+
+						properties.remove(
+								existingPropWithSameName.sequenceNumber());
+						this.model.genPropertiesById
+								.remove(existingPropWithSameName.id());
+
+						properties.put(newProperty.sequenceNumber(),
+								newProperty);
+						existingPropsByName.put(newProperty.name(),
+								newProperty);
+
+						this.model.genPropertiesById.put(newProperty.id(),
+								newProperty);
+					}
+				}
+			}
 		}
 	}
 
@@ -1435,19 +1208,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 1:
-			return "(GenericClassInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set class field(s) for this tagged value.";
-
-		default:
-			return "(" + GenericClassInfo.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
 	/**
+	 * Puts the given tagged value into the existing tagged values cache,
+	 * updating fields if requested via parameter.
+	 * 
 	 * @param tvName
 	 * @param tvValue
 	 * @param updateFields
@@ -1507,6 +1271,28 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			this.profiles = new Profiles();
 		} else {
 			this.profiles = profiles;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 1:
+			return "(GenericClassInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set class field(s) for this tagged value.";
+
+		case 30200:
+			return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'ADD' the duplicate will nevertheless be added, resulting in two properties with the same name in the class.";
+		case 30201:
+			return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE' the duplicate will be ignored and the existing property kept. The isRestriction setting of the existing property will not be changed.";
+		case 30202:
+			return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE_UNRESTRICT' the duplicate will be ignored and the existing property kept. In case that the existing property is a restriction, it is set to not being a restriction.";
+		case 30203:
+			return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'OVERWRITE' the duplicate/new property will overwrite the existing one.";
+
+		default:
+			return "(" + GenericClassInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

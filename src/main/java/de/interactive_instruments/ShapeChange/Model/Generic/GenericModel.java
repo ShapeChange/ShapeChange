@@ -65,6 +65,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -97,7 +98,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
  * @author echterhoff
  * 
  */
-public class GenericModel extends ModelImpl {
+public class GenericModel extends ModelImpl implements MessageSource {
 
 	protected static class ConstraintComparators {
 
@@ -262,16 +263,6 @@ public class GenericModel extends ModelImpl {
 				genCi.setProfiles(ci.profiles().createCopy());
 
 				// set properties required by ClassInfo interface
-
-				genCi.setXmlSchemaType(ci.xmlSchemaType());
-				genCi.setIncludePropertyType(ci.includePropertyType());
-				genCi.setIncludeByValuePropertyType(
-						ci.includeByValuePropertyType());
-				genCi.setIsCollection(ci.isCollection());
-				genCi.setAsDictionary(ci.asDictionary());
-				genCi.setAsGroup(ci.asGroup());
-				genCi.setAsCharacterString(ci.asCharacterString());
-				genCi.setHasNilReason(ci.hasNilReason());
 				genCi.setPkg(ci.pkg());
 				genCi.setIsAbstract(ci.isAbstract());
 				genCi.setIsLeaf(ci.isLeaf());
@@ -281,8 +272,6 @@ public class GenericModel extends ModelImpl {
 				genCi.setBaseClass(ci.baseClass());
 				genCi.setProperties(ci.properties());
 				genCi.setConstraints(copy(ci.constraints()));
-				genCi.setSuppressed(ci.suppressed());
-				genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
 
 				genCi.setDiagrams(ci.getDiagrams());
 
@@ -312,7 +301,7 @@ public class GenericModel extends ModelImpl {
 					GenericPropertyInfo existingGenPi = genPropertiesById
 							.get(pi.id());
 
-					result.addWarning(null, 30318, pi.id(), pi.name(),
+					result.addWarning(this, 30318, pi.id(), pi.name(),
 							genCi.name(), existingGenPi.name() + " / "
 									+ existingGenPi.inClass().name());
 
@@ -347,8 +336,6 @@ public class GenericModel extends ModelImpl {
 				genPi.setCardinality(multC);
 				genPi.setInitialValue(pi.initialValue());
 				genPi.setInlineOrByReference(pi.inlineOrByReference());
-				genPi.setDefaultCodeSpace(pi.defaultCodeSpace());
-				genPi.setMetadata(pi.isMetadata());
 				genPi.setReverseProperty(pi.reverseProperty());
 				genPi.setInClass(pi.inClass());
 				StructuredNumber strucNum = pi.sequenceNumber();
@@ -362,8 +349,6 @@ public class GenericModel extends ModelImpl {
 				 * updating the sequence number).
 				 */
 				genPi.setSequenceNumber(copy(strucNum), true);
-				genPi.setImplementedByNilReason(pi.implementedByNilReason());
-				genPi.setVoidable(pi.voidable());
 				genPi.setConstraints(copy(pi.constraints()));
 				genPi.setAssociation(pi.association());
 				genPi.setRestriction(pi.isRestriction());
@@ -480,28 +465,15 @@ public class GenericModel extends ModelImpl {
 
 				PropertyInfo pValue = updatePropertyInfo(origPi);
 
-				StructuredNumber sn = origPi.sequenceNumber();
-
 				// TBD: pValue.sequenceNumber() has been updated for
 				// GenericPropertyInfos; if other classes relied on the identity
 				// of the key (a StructuredNumber) in the properties TreeMap
 				// then there could be side-effects when using the new
 				// StructuredNumber object as key for GenericPropertyInfos
 
-				/*
-				 * The following checks were introduced to ensure that the
-				 * GenericPropertyInfo copies as well as sequence numbers have
-				 * been created correctly. At some point NullPointerException
-				 * have been thrown here; the log messages should help to
-				 * identify the issue.
-				 */
-				if (origPi == null) {
+				if (pValue == null) {
 
-					result.addError(null, 30320, sn.getString(), gci.name());
-
-				} else if (pValue == null) {
-
-					result.addError(null, 30321, origPi.name(), gci.name());
+					result.addError(this, 30321, origPi.name(), gci.name());
 
 				} else if (pValue instanceof GenericPropertyInfo
 						&& !pValue.inClass().id().equals(gci.id())) {
@@ -515,7 +487,7 @@ public class GenericModel extends ModelImpl {
 						propertiesC.put(pValue.sequenceNumber(), pValue);
 
 					} else {
-						result.addError(null, 30319, origPi.name(),
+						result.addError(this, 30319, origPi.name(),
 								origPi.inClass().name(),
 								pValue.inClass().name());
 					}
@@ -606,7 +578,7 @@ public class GenericModel extends ModelImpl {
 						&& !(con instanceof GenericTextConstraint)
 						&& !(con instanceof GenericOclConstraint)) {
 
-					result.addError(null, 30300, con.name(),
+					result.addError(this, 30300, con.name(),
 							con.contextModelElmt().name());
 					continue;
 				}
@@ -642,7 +614,7 @@ public class GenericModel extends ModelImpl {
 								+ owner.name() + "'.");
 					}
 
-					result.addError(null, 30301, sb.toString());
+					result.addError(this, 30301, sb.toString());
 					continue;
 				}
 
@@ -657,7 +629,7 @@ public class GenericModel extends ModelImpl {
 								.get(contextModelElement.id());
 
 						if (genPi == null) {
-							result.addError(null, 30325, con.name(),
+							result.addError(this, 30325, con.name(),
 									contextModelElement.name());
 							continue;
 						}
@@ -673,7 +645,7 @@ public class GenericModel extends ModelImpl {
 								.get(contextModelElement.id());
 
 						if (genCi == null) {
-							result.addError(null, 30326, con.name(),
+							result.addError(this, 30326, con.name(),
 									contextModelElement.name());
 							continue;
 						}
@@ -682,7 +654,7 @@ public class GenericModel extends ModelImpl {
 						results.add(genCon);
 
 					} else {
-						result.addWarning(null, 30304,
+						result.addWarning(this, 30304,
 								genCon.contextModelElmtType().name());
 					}
 
@@ -697,7 +669,7 @@ public class GenericModel extends ModelImpl {
 								.get(contextModelElement.id());
 
 						if (genPi == null) {
-							result.addError(null, 30302, con.name(),
+							result.addError(this, 30302, con.name(),
 									contextModelElement.name());
 							continue;
 						}
@@ -713,7 +685,7 @@ public class GenericModel extends ModelImpl {
 								.get(contextModelElement.id());
 
 						if (genCi == null) {
-							result.addError(null, 30303, con.name(),
+							result.addError(this, 30303, con.name(),
 									contextModelElement.name());
 							continue;
 						}
@@ -722,7 +694,7 @@ public class GenericModel extends ModelImpl {
 						results.add(genCon);
 
 					} else {
-						result.addWarning(null, 30304,
+						result.addWarning(this, 30304,
 								genCon.contextModelElmtType().name());
 					}
 
@@ -739,10 +711,10 @@ public class GenericModel extends ModelImpl {
 						if (context == null) {
 
 							if (genCon.contextClass() == null) {
-								result.addError(null, 30305, con.name(),
+								result.addError(this, 30305, con.name(),
 										contextModelElement.name());
 							} else {
-								result.addError(null, 30306, con.name(),
+								result.addError(this, 30306, con.name(),
 										contextModelElement.name(),
 										genCon.contextClass().name());
 							}
@@ -764,10 +736,10 @@ public class GenericModel extends ModelImpl {
 						if (context == null) {
 
 							if (genCon.contextClass() == null) {
-								result.addError(null, 30307, con.name(),
+								result.addError(this, 30307, con.name(),
 										contextModelElement.name());
 							} else {
-								result.addError(null, 30308, con.name(),
+								result.addError(this, 30308, con.name(),
 										contextModelElement.name(),
 										genCon.contextClass().name());
 							}
@@ -779,12 +751,12 @@ public class GenericModel extends ModelImpl {
 						results.add(genCon);
 
 					} else {
-						result.addWarning(null, 30304,
+						result.addWarning(this, 30304,
 								genCon.contextModelElmtType().name());
 					}
 
 				} else {
-					result.addWarning(null, 30309, con.getClass().getName());
+					result.addWarning(this, 30309, con.getClass().getName());
 				}
 			}
 		}
@@ -819,7 +791,7 @@ public class GenericModel extends ModelImpl {
 					conCopies.add(genCon);
 
 				} else {
-					result.addWarning(null, 30309, con.getClass().getName());
+					result.addWarning(this, 30309, con.getClass().getName());
 				}
 
 			}
@@ -921,7 +893,7 @@ public class GenericModel extends ModelImpl {
 		this.genClassInfosByName.put(genCi.name(), genCi);
 
 		if (!(genCi.pkg() instanceof GenericPackageInfo)) {
-			result.addError(null, 30310, genCi.pkg().name(), genCi.name());
+			result.addError(this, 30310, genCi.pkg().name(), genCi.name());
 			return;
 		}
 
@@ -1014,13 +986,11 @@ public class GenericModel extends ModelImpl {
 			genPi.setTargetNamespace(pi.targetNamespace());
 			genPi.setXmlns(pi.xmlns());
 			genPi.setXsdDocument(pi.xsdDocument());
-			genPi.setGmlProfileSchema(pi.gmlProfileSchema());
 			genPi.setVersion(pi.version());
 			// genPi.setOwner(pi.owner());
 			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
-			genPi.setIsAppSchema(pi.isAppSchema());
 			genPi.setIsSchema(pi.isSchema());
 
 			genPi.setDiagrams(pi.getDiagrams());
@@ -1138,7 +1108,7 @@ public class GenericModel extends ModelImpl {
 			}
 		}
 		if (!ex) {
-			r.addFatalError(null, 25, repositoryFileName);
+			r.addFatalError(this, 25, repositoryFileName);
 			throw new ShapeChangeAbortException();
 		}
 
@@ -1163,12 +1133,12 @@ public class GenericModel extends ModelImpl {
 					ZipEntry zentry = entries.nextElement();
 					inputStream = zip.getInputStream(zentry);
 					if (entries.hasMoreElements()) {
-						result.addWarning(null, 30327, repositoryFileName,
+						result.addWarning(this, 30327, repositoryFileName,
 								zentry.getName());
 					}
 				} else {
 					inputStream = null;
-					result.addError(null, 30328, repositoryFileName);
+					result.addError(this, 30328, repositoryFileName);
 				}
 
 			} else {
@@ -1423,19 +1393,19 @@ public class GenericModel extends ModelImpl {
 				}
 			}
 		} catch (SAXException e) {
-			result.addFatalError(null, 30803, e.getMessage());
+			result.addFatalError(this, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (FileNotFoundException e) {
-			result.addFatalError(null, 30803, e.getMessage());
+			result.addFatalError(this, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (UnsupportedEncodingException e) {
-			result.addFatalError(null, 30803, e.getMessage());
+			result.addFatalError(this, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (ParserConfigurationException e) {
-			result.addFatalError(null, 30803, e.getMessage());
+			result.addFatalError(this, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (IOException e) {
-			result.addFatalError(null, 30803, e.getMessage());
+			result.addFatalError(this, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		}
 	}
@@ -1464,15 +1434,6 @@ public class GenericModel extends ModelImpl {
 			((GenericTextConstraint) con)
 					.setContextModelElmt(contextModelElement);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#type()
-	 */
-	public int type() {
-		return Options.GENERIC;
 	}
 
 	/**
@@ -1867,12 +1828,12 @@ public class GenericModel extends ModelImpl {
 							.removePropertyById(propToRemove.id());
 				} else {
 
-					result.addError(null, 30313, propToRemove.inClass().name(),
+					result.addError(this, 30313, propToRemove.inClass().name(),
 							propToRemove.name);
 				}
 
 			} else {
-				result.addWarning(null, 30312, piToRemove.inClass().name(),
+				result.addWarning(this, 30312, piToRemove.inClass().name(),
 						piToRemove.name());
 			}
 		}
@@ -1908,7 +1869,7 @@ public class GenericModel extends ModelImpl {
 					// if the association that the association class belongs to
 					// is navigable into both directions, or navigable from the
 					// selected schema, this is problematic
-					result.addError(null, 30322, assocClass.name(),
+					result.addError(this, 30322, assocClass.name(),
 							assocClass.id());
 				}
 			}
@@ -1926,12 +1887,12 @@ public class GenericModel extends ModelImpl {
 
 				if (ciToRemoveSubtype == null) {
 
-					result.addWarning(null, 30324, ciToRemove.name(),
+					result.addDebug(this, 30324, ciToRemove.name(),
 							ciToRemoveSubtypeId);
 
 				} else if (!(ciToRemoveSubtype instanceof GenericClassInfo)) {
 
-					result.addWarning(null, 30323, ciToRemove.name(),
+					result.addWarning(this, 30323, ciToRemove.name(),
 							ciToRemoveSubtype.name());
 
 				} else {
@@ -1964,7 +1925,7 @@ public class GenericModel extends ModelImpl {
 				if (ciBase != null)
 					ciBase.removeSubtype(ciToRemove.id());
 				else {
-					result.addError(null, 30314, ciToRemoveSupertypeId,
+					result.addError(this, 30314, ciToRemoveSupertypeId,
 							ciToRemove.name);
 				}
 			}
@@ -2087,7 +2048,7 @@ public class GenericModel extends ModelImpl {
 							.removePropertyById(genPi.id());
 					this.genPropertiesById.remove(genPi.id());
 				} else {
-					result.addError(null, 30313, genPi.inClass().name(),
+					result.addError(this, 30313, genPi.inClass().name(),
 							genPi.name);
 				}
 			} else {
@@ -2120,7 +2081,7 @@ public class GenericModel extends ModelImpl {
 							((GenericClassInfo) genPi.inClass())
 									.removePropertyById(genPi.id());
 						} else {
-							result.addError(null, 30313, genPi.inClass().name(),
+							result.addError(this, 30313, genPi.inClass().name(),
 									genPi.name);
 						}
 					}
@@ -2359,14 +2320,6 @@ public class GenericModel extends ModelImpl {
 		genCi.setProfiles(ci.profiles().createCopy());
 
 		// set properties required by ClassInfo interface
-		genCi.setXmlSchemaType(ci.xmlSchemaType());
-		genCi.setIncludePropertyType(ci.includePropertyType());
-		genCi.setIncludeByValuePropertyType(ci.includeByValuePropertyType());
-		genCi.setIsCollection(ci.isCollection());
-		genCi.setAsDictionary(ci.asDictionary());
-		genCi.setAsGroup(ci.asGroup());
-		genCi.setAsCharacterString(ci.asCharacterString());
-		genCi.setHasNilReason(ci.hasNilReason());
 
 		genCi.setPkg(ci.pkg());
 		genCi.setIsAbstract(ci.isAbstract());
@@ -2381,8 +2334,6 @@ public class GenericModel extends ModelImpl {
 		genCi.setProperties(ci.properties());
 
 		genCi.setConstraints(copy(ci.constraints()));
-		genCi.setSuppressed(ci.suppressed());
-		genCi.setAsDictionaryGml33(ci.asDictionaryGml33());
 
 		genCi.setDiagrams(ci.getDiagrams());
 
@@ -2422,8 +2373,6 @@ public class GenericModel extends ModelImpl {
 		copy.setCardinality(new Multiplicity(pi.cardinality().toString()));
 		copy.setInitialValue(pi.initialValue());
 		copy.setInlineOrByReference(pi.inlineOrByReference());
-		copy.setDefaultCodeSpace(pi.defaultCodeSpace());
-		copy.setMetadata(pi.isMetadata());
 		copy.setReverseProperty(pi.reverseProperty());
 		copy.setInClass(pi.inClass());
 
@@ -2440,8 +2389,6 @@ public class GenericModel extends ModelImpl {
 		 * we didn't change it here.
 		 */
 		copy.setSequenceNumber(res, false);
-		copy.setImplementedByNilReason(pi.implementedByNilReason());
-		copy.setVoidable(pi.voidable());
 		copy.setConstraints(pi.constraints());
 		copy.setAssociation(pi.association());
 		copy.setRestriction(pi.isRestriction());
@@ -2525,46 +2472,29 @@ public class GenericModel extends ModelImpl {
 	 */
 	public void dissolveAssociation(GenericAssociationInfo genAI) {
 
-		ArrayList<PropertyInfo> associationends = new ArrayList<PropertyInfo>();
-		associationends.add(genAI.end1());
-		associationends.add(genAI.end2());
+		ArrayList<GenericPropertyInfo> associationends = new ArrayList<GenericPropertyInfo>();
+		associationends.add((GenericPropertyInfo) genAI.end1());
+		associationends.add((GenericPropertyInfo) genAI.end2());
 
 		for (int i = 0; i < associationends.size(); i++) {
 
-			PropertyInfo pi = associationends.get(i);
+			GenericPropertyInfo genPi = associationends.get(i);
 
-			if (pi != null) {
+			if (!genPi.isNavigable()) {
 
-				if (pi instanceof GenericPropertyInfo) {
+				this.genPropertiesById.remove(genPi.id());
+				((GenericClassInfo) genPi.inClass())
+						.removePropertyById(genPi.id());
 
-					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+			} else {
 
-					if (!genPi.isNavigable()) {
+				// turn this property into an attribute one
+				genPi.setReverseProperty(null);
+				genPi.setAssociation(null);
 
-						// fine, then the property does not belong to any class
-						// and
-						// can simply be removed
-						this.genPropertiesById.remove(genPi.id());
-
-					} else {
-
-						// turn this property into an attribute one
-						genPi.setReverseProperty(null);
-						genPi.setAssociation(null);
-
-						genPi.setAttribute(true);
-						genPi.setAggregation(false);
-						genPi.setComposition(true);
-					}
-
-				} else {
-
-					/*
-					 * actually, pi should then belong to a class that is not
-					 * contained in one of the selected schema, and thus is
-					 * irrelevant for target processing
-					 */
-				}
+				genPi.setAttribute(true);
+				genPi.setAggregation(false);
+				genPi.setComposition(true);
 			}
 		}
 
@@ -2577,13 +2507,12 @@ public class GenericModel extends ModelImpl {
 
 			} else {
 
-				result.addError(null, 30315, genAI.assocClass().name());
+				result.addError(this, 30315, genAI.assocClass().name());
 			}
 		}
 
 		// now remove the association
 		this.genAssociationInfosById.remove(genAI.id());
-
 	}
 
 	/**
@@ -2645,14 +2574,7 @@ public class GenericModel extends ModelImpl {
 		this.genAssociationInfosById.put(ai.id(), ai);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * WARNING: The set of selected schemas may be changed through
-	 * transformations.
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ModelImpl#selectedSchemas()
-	 */
+	@Override
 	public SortedSet<GenericPackageInfo> selectedSchemas() {
 
 		SortedSet<GenericPackageInfo> selectedSchemas = new TreeSet<GenericPackageInfo>();
@@ -2690,8 +2612,8 @@ public class GenericModel extends ModelImpl {
 	}
 
 	/**
-	 * @return a set with all properties that belong to the classes from
-	 *         selected schemas; can be empty but not <code>null</code>.
+	 * @return a set with all navigable properties that belong to the classes
+	 *         from selected schemas; can be empty but not <code>null</code>.
 	 */
 	public SortedSet<GenericPropertyInfo> selectedSchemaProperties() {
 
@@ -2900,6 +2822,8 @@ public class GenericModel extends ModelImpl {
 
 	public void validateConstraints() {
 
+		boolean invalidConstraintsEncountered = false;
+
 		Sbvr2FolParser sbvrParser = new Sbvr2FolParser(this, true);
 
 		/*
@@ -2937,28 +2861,42 @@ public class GenericModel extends ModelImpl {
 
 							OclConstraint oclCon = (OclConstraint) con;
 
-							newConstraints.add(parse(oclCon, genCi));
+							Constraint parsedConstraint = parse(oclCon, genCi);
+
+							if (parsedConstraint instanceof TextConstraint) {
+								invalidConstraintsEncountered = true;
+							}
+
+							newConstraints.add(parsedConstraint);
 
 						} else if (con instanceof FolConstraint) {
 
 							FolConstraint folCon = (FolConstraint) con;
 
-							newConstraints
-									.add(parse(folCon, sbvrParser, genCi));
+							Constraint parsedConstraint = parse(folCon,
+									sbvrParser, genCi);
+
+							if (parsedConstraint instanceof TextConstraint) {
+								invalidConstraintsEncountered = true;
+							}
+
+							newConstraints.add(parsedConstraint);
 
 						} else if (con instanceof TextConstraint) {
+
 							/*
 							 * this can be ignored, because TextConstraint is
 							 * not validated
 							 */
 							newConstraints.add(con);
+
 						} else {
 
 							/*
 							 * for all other cases, simply add the constraint
 							 */
 
-							result.addInfo(null, 20111, con.name(),
+							result.addInfo(this, 20111, con.name(),
 									genCi.fullNameInSchema());
 
 							newConstraints.add(con);
@@ -2996,14 +2934,23 @@ public class GenericModel extends ModelImpl {
 
 									OclConstraint oclCon = (OclConstraint) con;
 
-									newConstraints.add(parse(oclCon, genPi));
+									Constraint parsedConstraint = parse(oclCon,
+											genPi);
+
+									if (parsedConstraint instanceof TextConstraint) {
+										invalidConstraintsEncountered = true;
+									}
+
+									newConstraints.add(parsedConstraint);
 
 								} else if (con instanceof TextConstraint) {
+
 									/*
 									 * this can be ignored, because
 									 * TextConstraint is not validated
 									 */
 									newConstraints.add(con);
+
 								} else {
 
 									/*
@@ -3017,7 +2964,7 @@ public class GenericModel extends ModelImpl {
 									 * here.
 									 */
 
-									result.addInfo(null, 20111, con.name(),
+									result.addInfo(this, 20111, con.name(),
 											genPi.fullNameInSchema());
 
 									newConstraints.add(con);
@@ -3029,6 +2976,10 @@ public class GenericModel extends ModelImpl {
 					}
 				}
 			}
+		}
+
+		if (invalidConstraintsEncountered) {
+			result.addWarning(this, 30329);
 		}
 	}
 
@@ -3052,7 +3003,7 @@ public class GenericModel extends ModelImpl {
 				 * use a text constraint as fallback.
 				 */
 
-				result.addWarning(null, 20110, con.name(),
+				result.addInfo(this, 20110, con.name(),
 						genCi.fullNameInSchema());
 
 				return new GenericTextConstraint(genCi, con);
@@ -3098,8 +3049,7 @@ public class GenericModel extends ModelImpl {
 			 * logged; use a text constraint as fallback.
 			 */
 
-			result.addWarning(null, 20110, con.name(),
-					genCi.fullNameInSchema());
+			result.addInfo(this, 20110, con.name(), genCi.fullNameInSchema());
 
 			GenericTextConstraint fallback = new GenericTextConstraint(genCi,
 					con);
@@ -3124,12 +3074,91 @@ public class GenericModel extends ModelImpl {
 			 * logged; use a text constraint as fallback.
 			 */
 
-			result.addWarning(null, 20110, con.name(),
-					genPi.fullNameInSchema());
+			result.addInfo(this, 20110, con.name(), genPi.fullNameInSchema());
 
 			GenericTextConstraint fallback = new GenericTextConstraint(genPi,
 					con);
 			return fallback;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 25:
+			return "Model repository file named '$1$' not found";
+			
+		case 20110:
+			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
+		case 20111:
+			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+			
+		case 30300:
+			return "(GenericModel.java) Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
+		case 30301:
+			return "(GenericModel.java) $1$";
+		case 30302:
+			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30303:
+			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30304:
+			return "(GenericModel.java) Unrecognized constraint context model element type: '$1$'";
+		case 30305:
+			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30306:
+			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
+		case 30307:
+			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30308:
+			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
+		case 30309:
+			return "(GenericModel.java) Unrecognized constraint type: '$1$'.";
+		case 30310:
+			return "(GenericModel.java) Package '$1$' is not of type 'GenericPackageInfo'. Cannot add class '$2$'";
+		case 30311:
+			return "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to add new property '$2$').";
+		case 30312:
+			return "(GenericModel.java) Property $1$.$2$ is not of type 'GenericPropertyInfo' (most likely because the property belongs to a class that is not part of the selected schema). Cannot remove the property.";
+		case 30313:
+			return "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to remove property '$2$')";
+		case 30314:
+			return "(GenericModel.java) Class with id '$1$' not found. Cannot remove subtype '$2$'";
+		case 30315:
+			return "(GenericModel.java) Association class '$1$' not of type GenericClassInfo. Cannot remove it.";
+		case 30316:
+			return "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'.";
+		case 30317:
+			return "(GenericModel.java) Property with name '$1$' and id '$2$' is not of type 'GenericPropertyInfo'.";
+		case 30318:
+			return "(GenericModel.java) Property with id '$1$' (name: '$2$', in class: '$3$') already exists in the generic model (details about that property [property name / in class name]: $4$). The property will be ignored (not added to its class).";
+		case 30319:
+			return "(GenericModel.java) GenericPropertyInfo that should be used to represent the property '$1$' is not in the same class (property in class is '$2$', generic property in class is '$3$'). The property will not be added to class '$2$'.";
+		case 30320:
+			return "(GenericModel.java) PropertyInfo with sequenceNumber '$1$' in class '$2$' is null. The property will be ignored.";
+		case 30321:
+			return "(GenericModel.java) No GenericPropertyInfo found that represents property '$1$' in class '$2$'. The property will be ignored.";
+		case 30322:
+			return "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'. Cannot remove it from the model.";
+		case 30323:
+			return "(GenericModel.java) Subtype of '$1$' with name '$2$' found in the model but it is not a GenericClassInfo (likely because it does not belong to a schema selected for processing). Cannot remove the supertype relationship to '$1$' in the subtype '$2$'.";
+		case 30324:
+			return "(GenericModel.java) Subtype of '$1$' with id '$2$' not found in the model. Cannot remove the supertype relationship to '$1$' in the subtype.";
+		case 30325:
+			return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30326:
+			return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
+		case 30327:
+			return "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
+		case 30328:
+			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
+		case 30329:
+			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
+		
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

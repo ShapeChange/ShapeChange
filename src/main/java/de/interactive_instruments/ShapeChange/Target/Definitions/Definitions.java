@@ -55,7 +55,6 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -621,7 +620,7 @@ public class Definitions implements Target {
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
-			result.addResult(getTargetID(), outputDirectory, "index." + pi.xmlns() + ".definitions.xml", pi.targetNamespace());
+			result.addResult(getTargetName(), outputDirectory, "index." + pi.xmlns() + ".definitions.xml", pi.targetNamespace());
 
 			if (!schema) {
 				for (Iterator<ClassInfo> i = model.classes(pi).iterator(); i.hasNext();) {
@@ -632,7 +631,7 @@ public class Definitions implements Target {
 						serializer.setWriter(outputXML);
 						serializer.asDOMSerializer().serialize(cDocument);
 						outputXML.close();
-						result.addResult(getTargetID(), outputDirectory, ci.name() + ".definitions.xml", ci.qname());
+						result.addResult(getTargetName(), outputDirectory, ci.name() + ".definitions.xml", ci.qname());
 					}
 				}
 			}
@@ -647,7 +646,8 @@ public class Definitions implements Target {
 		printed = true;
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.DEFINITIONS.getId();
+	@Override
+	public String getTargetName(){
+		return "Definitions";
 	}
 }

@@ -40,6 +40,8 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
@@ -62,10 +64,10 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  */
 public class DdlVisitor implements StatementVisitor {
 
-	private StringBuffer sb = new StringBuffer();
-	private String crlf;
-	private String indent;
-	private SqlDdl sqlddl;
+	protected StringBuffer sb = new StringBuffer();
+	protected String crlf;
+	protected String indent;
+	protected SqlDdl sqlddl;
 
 	public DdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
 		this.crlf = crlf;
@@ -149,51 +151,63 @@ public class DdlVisitor implements StatementVisitor {
 
 				sb.append(col.getName());
 				sb.append(" ");
-				sb.append(col.getDataType().getName());
+				ColumnDataType colDataType = col.getDataType();
+				sb.append(colDataType.getName());
+
+				if (colDataType.hasPrecision()) {
+					sb.append("(");
+					sb.append(colDataType.getPrecision().toString());
+					if (colDataType.hasScale()) {
+						sb.append(",");
+						sb.append(colDataType.getScale().toString());
+					}
+					sb.append(")");
+				}
+
+				if (col.getDefaultValue() != null) {
+					sb.append(" DEFAULT " + col.getDefaultValue());
+				}
+
 				if (col.getSpecifications() != null
 						&& !col.getSpecifications().isEmpty()) {
 					sb.append(" ");
 					sb.append(StringUtils.join(col.getSpecifications(), " "));
-				}
-				
-				if(col.getDefaultValue() != null) {
-					sb.append(" DEFAULT "+col.getDefaultValue());
 				}
 
 				if (iter.hasNext() || table.hasConstraints()) {
 					sb.append(",");
 				}
 
-				if (sqlddl.isCreateDocumentation()) {
+				if (SqlDdl.createDocumentation) {
 					PropertyInfo pi = col.getRepresentedProperty();
 					if (pi != null) {
 						String s = pi.derivedDocumentation(
-								sqlddl.getDocumentationTemplate(),
-								sqlddl.getDocumentationNoValue());
+								SqlDdl.documentationTemplate,
+								SqlDdl.documentationNoValue);
 						if (s != null && !s.trim().isEmpty()) {
 							sb.append(
 									" -- " + s.replaceAll("\\s+", " ").trim());
 						}
 					}
 				}
-				
+
 				sb.append(crlf);
 			}
 		}
 
 		if (table.hasConstraints()) {
 
-			for (Iterator<SqlConstraint> iter = table.getConstraints().iterator(); iter
-					.hasNext();) {
-				
+			for (Iterator<SqlConstraint> iter = table.getConstraints()
+					.iterator(); iter.hasNext();) {
+
 				SqlConstraint constr = iter.next();
-				
+
 				sb.append(indent).append(constr);
-				
-				if(iter.hasNext()) {
+
+				if (iter.hasNext()) {
 					sb.append(",");
 				}
-				
+
 				sb.append(crlf);
 			}
 		}
@@ -256,5 +270,13 @@ public class DdlVisitor implements StatementVisitor {
 
 	public String getDdl() {
 		return sb.toString();
+	}
+
+	@Override
+	public void visit(Comment comment) {
+
+		sb.append(comment.toString());
+		sb.append(";");
+		sb.append(crlf);
 	}
 }

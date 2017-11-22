@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<!-- ISO/TS 19108 -->  
+  <RdfTypeMapEntry type="TM_Position" target="time:TemporalPosition" targetType="class"/>
+  <!-- ... more to be added as required -->
+</rdfMapEntries>

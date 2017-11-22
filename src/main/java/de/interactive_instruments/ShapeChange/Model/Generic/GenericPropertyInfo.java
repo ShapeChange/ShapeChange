@@ -39,6 +39,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -80,10 +81,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected boolean isAggregation = false;
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
-	protected String defaultCodeSpace = null;
-	protected boolean isMetadata = false;
-	protected boolean implementedByNilReason = false;
-	protected boolean voidable = false;
 
 	protected PropertyInfo reverseProperty = null;
 	protected AssociationInfo association = null;
@@ -107,25 +104,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		this.cardinality = new Multiplicity("1");
 	}
 
-	@Override
-	public boolean isMetadata() {
-		return isMetadata;
-	}
-
 	/**
 	 * @param isAttribute
 	 *            the isAttribute to set
 	 */
 	public void setAttribute(boolean isAttribute) {
 		this.isAttribute = isAttribute;
-	}
-
-	/**
-	 * @param isMetadata
-	 *            the isMetadata to set
-	 */
-	public void setMetadata(boolean isMetadata) {
-		this.isMetadata = isMetadata;
 	}
 
 	/**
@@ -142,14 +126,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setInClass(ClassInfo inClass) {
 		this.inClass = inClass;
-	}
-
-	/**
-	 * @param implementedByNilReason
-	 *            the implementedByNilReason to set
-	 */
-	public void setImplementedByNilReason(boolean implementedByNilReason) {
-		this.implementedByNilReason = implementedByNilReason;
 	}
 
 	/**
@@ -234,16 +210,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	@Override
-	public String defaultCodeSpace() {
-
-		if (defaultCodeSpace != null) {
-			return defaultCodeSpace;
-		} else {
-			return "";
-		}
-	}
-
-	@Override
 	public PropertyInfo reverseProperty() {
 		return reverseProperty;
 	}
@@ -267,11 +233,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	@Override
 	public StructuredNumber sequenceNumber() {
 		return sequenceNumber;
-	}
-
-	@Override
-	public boolean voidable() {
-		return voidable;
 	}
 
 	@Override
@@ -299,7 +260,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param list
-	 *            the constraints to set
+	 *            the constraints to set; can be empty or <code>null</code>
 	 */
 	public void setConstraints(List<Constraint> list) {
 
@@ -307,19 +268,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			this.constraints = list;
 		} else {
 			this.constraints = null;
-		}
-	}
-
-	/**
-	 * @param defaultCodeSpace
-	 *            the defaultCodeSpace to set
-	 */
-	public void setDefaultCodeSpace(String defaultCodeSpace) {
-
-		if (defaultCodeSpace != null && defaultCodeSpace.length() > 0) {
-			this.defaultCodeSpace = options.internalize(defaultCodeSpace);
-		} else {
-			this.defaultCodeSpace = null;
 		}
 	}
 
@@ -342,8 +290,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setInlineOrByReference(String inlineOrByReference) {
 
-		if (inlineOrByReference != null
-				&& !inlineOrByReference.equals("inlineOrByReference")) {
+		if (inlineOrByReference != null && !inlineOrByReference
+				.equalsIgnoreCase("inlineOrByReference")) {
 			this.inlineOrByReference = options.internalize(inlineOrByReference);
 		} else {
 			this.inlineOrByReference = null;
@@ -470,14 +418,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 		this.typeInfo.id = typeInfo.id;
 		this.typeInfo.name = typeInfo.name;
-	}
-
-	/**
-	 * @param voidable
-	 *            the voidable to set
-	 */
-	public void setVoidable(boolean voidable) {
-		this.voidable = voidable;
 	}
 
 	public void setNilReasonAllowed(boolean nilReasonAllowed) {
@@ -621,11 +561,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 	}
 
-	@Override
-	public boolean implementedByNilReason() {
-		return implementedByNilReason;
-	}
-
 	public GenericPropertyInfo createCopy(String copyId) {
 
 		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
@@ -637,6 +572,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
 			copy.setTaggedValues(taggedValuesCache, false);
 		}
+
+		copy.setStereotypes(this.stereotypesCache);
 
 		copy.setDerived(isDerived);
 		copy.setReadOnly(isReadOnly);
@@ -650,8 +587,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setCardinality(new Multiplicity(cardinality.toString()));
 		copy.setInitialValue(initialValue);
 		copy.setInlineOrByReference(inlineOrByReference);
-		copy.setDefaultCodeSpace(defaultCodeSpace);
-		copy.setMetadata(isMetadata);
 		copy.setReverseProperty(reverseProperty);
 		copy.setInClass(inClass);
 
@@ -668,8 +603,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		 * we didn't change it here.
 		 */
 		copy.setSequenceNumber(res, false);
-		copy.setImplementedByNilReason(implementedByNilReason);
-		copy.setVoidable(voidable);
 		copy.setConstraints(constraints);
 		copy.setAssociation(association);
 		copy.setRestriction(restriction);
@@ -693,20 +626,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		sb.append(System.getProperty("line.separator"));
 
 		return sb.toString();
-	}
-
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 1:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
-		case 2:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
-
-		default:
-			return "(" + GenericPropertyInfo.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
 	}
 
 	@Override
@@ -743,7 +662,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * Encapsulates the logic to update property fields based upon the value of
-	 * a named tagged value.
+	 * a named tagged value. Updates 'nilReasonAllowed', 'inlineOrByReference',
+	 * and 'sequenceNumber'.
 	 * 
 	 * @param taggedValueName
 	 * @param taggedValueValue
@@ -752,60 +672,33 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 		// TODO add more updates for relevant tagged values
 
-		if (tvName.equalsIgnoreCase("isMetadata")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setMetadata(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setMetadata(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("gmlImplementedByNilReason")
-				|| tvName.equalsIgnoreCase("implementedByNilReason")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setImplementedByNilReason(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setImplementedByNilReason(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
-		} else if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
+		if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
 
 			if (tvValue.equalsIgnoreCase("true")) {
 				this.setNilReasonAllowed(true);
 			} else if (tvValue.equalsIgnoreCase("false")) {
 				this.setNilReasonAllowed(false);
 			} else {
-				result.addWarning(this, 1, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
+				if (mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
+
 		} else if (tvName.equalsIgnoreCase("inlineOrByReference")) {
 
 			if (tvValue.equalsIgnoreCase("inline")) {
 				this.setInlineOrByReference("inline");
 			} else if (tvValue.equalsIgnoreCase("byReference")) {
-				this.setInlineOrByReference("byReference");
+				this.setInlineOrByReference("byreference");
 			} else if (tvValue.equalsIgnoreCase("inlineOrByReference")) {
 				this.setInlineOrByReference("inlineOrByReference");
 			} else {
-				result.addWarning(this, 2, tvName, tvValue);
+				MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
+				if (mc != null) {
+					mc.addDetail(this, 0, this.fullName());
+				}
 			}
-		} else if (tvName.equalsIgnoreCase("alias")) {
-
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.ALIAS, ls);
-
-			// this.setAliasNameAll(
-			// new Descriptors(options().internalize(tvValue)));
-
-		} else if (tvName.equalsIgnoreCase("documentation")) {
-
-			// we map this to the descriptor 'definition'
-			LangString ls = LangString.parse(tvValue);
-			this.descriptors.put(Descriptor.DEFINITION, ls);
-			// this.setDefinitionAll(
-			// new Descriptors(options().internalize(tvValue)));
 
 		} else if (tvName.equalsIgnoreCase("sequenceNumber")) {
 
@@ -814,21 +707,29 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			 * because this method is only called after setting a tagged value.
 			 */
 			this.setSequenceNumber(new StructuredNumber(tvValue), false);
-
-		} else if (tvName.equalsIgnoreCase("defaultCodeSpace")) {
-
-			this.setDefaultCodeSpace(tvValue);
-
-		} else if (tvName.equalsIgnoreCase("nillable")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setVoidable(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setVoidable(false);
-			} else {
-				result.addWarning(this, 1, tvName, tvValue);
-			}
 		}
+
+		/*
+		 * TBD: Descriptors should not be modified right away, since the
+		 * descriptor source might not be the tagged value
+		 */
+		// else if (tvName.equalsIgnoreCase("alias")) {
+		//
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.ALIAS, ls);
+		//
+		// // this.setAliasNameAll(
+		// // new Descriptors(options().internalize(tvValue)));
+		//
+		// } else if (tvName.equalsIgnoreCase("documentation")) {
+		//
+		// // we map this to the descriptor 'definition'
+		// LangString ls = LangString.parse(tvValue);
+		// this.descriptors.put(Descriptor.DEFINITION, ls);
+		// // this.setDefinitionAll(
+		// // new Descriptors(options().internalize(tvValue)));
+		//
+		// }
 	}
 
 	/**
@@ -861,6 +762,23 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			this.profiles = new Profiles();
 		} else {
 			this.profiles = profiles;
+		}
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: property '$1$'.";
+		case 1:
+			return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
+		case 2:
+			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
+
+		default:
+			return "(" + GenericPropertyInfo.class.getName()
+					+ ") Unknown message with number: " + mnr;
 		}
 	}
 }

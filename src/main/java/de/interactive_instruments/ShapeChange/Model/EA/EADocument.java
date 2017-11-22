@@ -126,18 +126,26 @@ public class EADocument extends ModelImpl implements Model {
 
 		StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_INITSTART);
 
-		/** Connect to EA repository */
+		/*
+		 * Determine if we are dealing with a file or server based repository
+		 */
+		String connectionString = determineConnectionString(
+				repositoryFileNameOrConnectionString);
+		
+		/* Connect to EA repository */
 		repository = new Repository();
+		r.addInfo(null, 43, connectionString);
 
-		if (!repository.OpenFile2(repositoryFileNameOrConnectionString,
+		if (!repository.OpenFile2(connectionString,
 				username, password)) {
 			String errormsg = repository.GetLastError();
 			r.addFatalError(null, 35, errormsg,
 					repositoryFileNameOrConnectionString, username, password);
 			throw new ShapeChangeAbortException();
 		}
+		r.addInfo(null, 44, connectionString);
 
-		executeCommonInitializationProcedure();
+		executeCommonInitializationProcedure(r);
 	}
 
 	/** Connect to EA Repository without security information */
@@ -150,11 +158,38 @@ public class EADocument extends ModelImpl implements Model {
 
 		StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_INITSTART);
 
-		String connectionString;
-
-		/**
+		/*
 		 * Determine if we are dealing with a file or server based repository
 		 */
+		String connectionString = determineConnectionString(
+				repositoryFileNameOrConnectionString);
+
+		/** Connect to EA Repository */
+		repository = new Repository();
+		r.addInfo(null, 43, connectionString);
+
+		if (!repository.OpenFile(connectionString)) {
+			String errormsg = repository.GetLastError();
+			r.addFatalError(null, 30, errormsg, connectionString);
+			throw new ShapeChangeAbortException();
+		}
+		r.addInfo(null, 44, connectionString);
+
+		executeCommonInitializationProcedure(r);
+	}
+
+	/**
+	 * Checks if the given connection string is for a server or file based
+	 * repository. In case of the latter, the method checks if the file exists
+	 * and attempts to get the absolute path to the file.
+	 * 
+	 * @param repositoryFileNameOrConnectionString
+	 * @return
+	 * @throws ShapeChangeAbortException
+	 */
+	private String determineConnectionString(
+			String repositoryFileNameOrConnectionString)
+			throws ShapeChangeAbortException {
 
 		if (repositoryFileNameOrConnectionString.contains("DBType=")
 				|| repositoryFileNameOrConnectionString
@@ -162,7 +197,7 @@ public class EADocument extends ModelImpl implements Model {
 
 			/* We are dealing with a server based repository. */
 
-			connectionString = repositoryFileNameOrConnectionString;
+			return repositoryFileNameOrConnectionString;
 
 		} else {
 
@@ -182,28 +217,18 @@ public class EADocument extends ModelImpl implements Model {
 				}
 			}
 			if (!ex) {
-				r.addFatalError(null, 31, repositoryFileNameOrConnectionString);
+				result.addFatalError(null, 31,
+						repositoryFileNameOrConnectionString);
 				throw new ShapeChangeAbortException();
 			}
 
-			connectionString = repfile.getAbsolutePath();
+			return repfile.getAbsolutePath();
 		}
-
-		/** Connect to EA Repository */
-		repository = new Repository();
-
-		if (!repository.OpenFile(connectionString)) {
-			String errormsg = repository.GetLastError();
-			r.addFatalError(null, 30, errormsg, connectionString);
-			throw new ShapeChangeAbortException();
-		}
-
-		executeCommonInitializationProcedure();
 	}
 
-	public void executeCommonInitializationProcedure()
+	private void executeCommonInitializationProcedure(ShapeChangeResult r)
 			throws ShapeChangeAbortException {
-
+		r.addInfo(null, 45, repository.GetConnectionString());
 		// determine if specific packages should not be loaded
 		this.excludedPackageNames = options.getExcludedPackages();
 
@@ -277,13 +302,14 @@ public class EADocument extends ModelImpl implements Model {
 				 * prevent loading of classes that have tagged value 'status'
 				 * with prohibited value
 				 */
-				String statusTaggedValue = EAModelUtil.taggedValue(elmt, "status");
+				String statusTaggedValue = EAModelUtil.taggedValue(elmt,
+						"status");
 				if (statusTaggedValue != null
 						&& options.prohibitedStatusValuesWhenLoadingClasses()
 								.contains(statusTaggedValue)) {
 					continue;
 				}
-				
+
 				ClassInfoEA ci = new ClassInfoEA(this, pi, elmt);
 
 				fClassById.put(ci.id(), ci);
@@ -394,7 +420,7 @@ public class EADocument extends ModelImpl implements Model {
 						escapeFileName(tmpDir.getName()), pi);
 			}
 		}
-
+		r.addInfo(null, 46, repository.GetConnectionString());
 	} // EA Document Ctor
 
 	/**
@@ -678,17 +704,17 @@ public class EADocument extends ModelImpl implements Model {
 		return characterEncoding;
 	} // charEncoding()
 
-	/** Return ClassInfo object given the id of a class */
+	@Override
 	public ClassInfo classById(String id) {
 		return fClassById.get(id);
-	} // classById()
+	}
 
-	/** Return ClassInfo object given the name of the class */
 	// TODO To be clarified: How are classes treated, which have identical names
 	// but reside in different packages? See above.
+	@Override
 	public ClassInfo classByName(String nam) {
 		return fClassByName.get(nam);
-	} // classByName()
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Model#classes(de.interactive_instruments.ShapeChange.Model.PackageInfo)
@@ -724,15 +750,10 @@ public class EADocument extends ModelImpl implements Model {
 		return res;
 	} // addClasses()
 
-	/** Return PackageInfo object given the id of a package */
+	@Override
 	public PackageInfo packageById(String id) {
 		return fPackageById.get(id);
-	} // packageById()
-
-	/** Return the model input type */
-	public int type() {
-		return Options.EA7;
-	} // type()
+	}
 
 	/** Shutdown EA model and quit EA */
 	public void shutdown() {

@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>org.sparx</groupId>
 			<artifactId>eaapi</artifactId>
-			<version>12.0.1214</version>
+			<version>13.5.1351</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -156,12 +156,32 @@
 			</resource>
 		</resources>
 		<plugins>
+            <plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+				    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>validate</phase>
+				  </execution>
+                </executions>
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <dateFormatTimeZone>${user.timezone}</dateFormatTimeZone>
+                    <skipPoms>false</skipPoms>
+                    <verbose>false</verbose>
+                </configuration>
+            </plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -210,6 +230,12 @@
 									<addClasspath>true</addClasspath>
 									<classpathPrefix>lib</classpathPrefix>
 								</manifest>
+								<manifestEntries>
+									<Project-Version>${project.version}</Project-Version>
+									<Git-Revision>${git.commit.id}</Git-Revision>
+									<Build-Timestamp>${build.timestamp}</Build-Timestamp>
+									<Build-Branch>${git.branch}</Build-Branch>
+								</manifestEntries>
 							</archive>
 						</configuration>
 					</execution>

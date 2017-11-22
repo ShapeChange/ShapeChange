@@ -24,6 +24,19 @@ CREATE TABLE t3_codelist2 (
    myprimarycode text
 );
 
+CREATE TABLE t3_codestatuscl (
+
+   myname character varying(50) NOT NULL PRIMARY KEY,
+   myalias character varying(255),
+   mydatacapturestatement text,
+   mydefinition text,
+   mydescription text,
+   mydocumentation text,
+   myexample text,
+   mylegalbasis text,
+   myprimarycode text
+);
+
 CREATE TABLE t3_featuretype1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
@@ -44,11 +57,15 @@ ALTER TABLE t3_featuretype1_propalpcode ADD CONSTRAINT fk_t3_featuretype1_propal
 
 INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('1', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
 INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('2', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
-INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeA', 'codeA alias', 'codeA data capture statement codeA data capture statement 2', 'codeA definition', 'codeA description', 'DEF: codeA definition; DESC: codeA description; EX: codeA example 1
-codeA example 2; LB: codeA legal basis; DCS: codeA data capture statement
-
-codeA data capture statement 2; PC: codeA primary code', 'codeA example 1
-codeA example 2', 'codeA legal basis', 'codeA primary code');
-INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeB', 'codeB alias', NULL, 'codeB definition', 'codeB description', 'DEF: codeB definition; DESC: codeB description; EX: codeB example 1
+INSERT INTO t3_codelist1 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('quote''me', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('code''B', 'codeB alias', NULL, 'codeB definition', 'codeB description', 'DEF: codeB definition; DESC: codeB description; EX: codeB example 1
 codeB example 2; LB: codeB legal basis; DCS: ; PC: codeB primary code', 'codeB example 1
 codeB example 2', 'codeB legal basis', 'codeB primary code');
+INSERT INTO t3_codelist2 (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('codeA', 'codeA''s alias', 'codeA data capture statement codeA data capture statement 2', 'codeA''s definition', 'codeA''s description', 'DEF: codeA''s definition; DESC: codeA''s description; EX: codeA''s example 1
+codeA''s example 2; LB: codeA''s legal basis; DCS: codeA data capture statement
+
+codeA data capture statement 2; PC: codeA''s primary code', 'codeA''s example 1
+codeA''s example 2', 'codeA''s legal basis', 'codeA''s primary code');
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('invalid', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('unknown', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);
+INSERT INTO t3_codestatuscl (myname, myalias, mydatacapturestatement, mydefinition, mydescription, mydocumentation, myexample, mylegalbasis, myprimarycode) VALUES ('valid', NULL, NULL, '', NULL, 'DEF: ; DESC: ; EX: ; LB: ; DCS: ; PC: ', NULL, NULL, NULL);

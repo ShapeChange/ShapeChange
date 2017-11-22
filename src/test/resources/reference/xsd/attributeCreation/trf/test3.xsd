@@ -8,12 +8,15 @@
         <sequence>
           <element name="pSeq1" type="string"/>
           <element maxOccurs="unbounded" minOccurs="0" name="XYZ" nillable="true">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:Class2</targetElement>
+              </appinfo>
+            </annotation>
             <complexType>
               <complexContent>
                 <extension base="gml:AbstractMemberType">
-                  <sequence minOccurs="0">
-                    <element ref="t:Class2"/>
-                  </sequence>
+                  <sequence/>
                   <attributeGroup ref="gml:AssociationAttributeGroup"/>
                 </extension>
               </complexContent>

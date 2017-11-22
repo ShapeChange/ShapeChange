@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:bldg="http://www.opengis.net/citygml/building/2.0" xmlns:core="http://www.opengis.net/citygml/2.0" xmlns:gml="http://www.opengis.net/gml" xmlns:t="http://example.org/shapechange/CityGML/createADE" xmlns:tran="http://www.opengis.net/citygml/transportation/2.0" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/CityGML/createADE" version="1.0">
+  <import namespace="http://www.opengis.net/citygml/2.0" schemaLocation="http://schemas.opengis.net/citygml/2.0/cityGMLBase.xsd"/>
+  <import namespace="http://www.opengis.net/citygml/building/2.0" schemaLocation="http://schemas.opengis.net/citygml/building/2.0/building.xsd"/>
+  <import namespace="http://www.opengis.net/citygml/transportation/2.0" schemaLocation="http://schemas.opengis.net/citygml/transportation/2.0/transportation.xsd"/>
+  <import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AircraftHangar" substitutionGroup="bldg:Building" type="t:AircraftHangarType"/>
+  <complexType name="AircraftHangarType">
+    <complexContent>
+      <extension base="bldg:BuildingType">
+        <sequence>
+          <element name="datatype" type="t:DataTypePropertyType"/>
+          <element name="role" type="t:ApronPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AircraftHangarPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:AircraftHangar"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+  </complexType>
+  <element name="Apron" substitutionGroup="tran:TrafficArea" type="t:ApronType"/>
+  <complexType name="ApronType">
+    <complexContent>
+      <extension base="tran:TrafficAreaType">
+        <sequence>
+          <element name="enumeration" type="t:EnumerationType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ApronPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Apron"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+  </complexType>
+  <element name="DataType" substitutionGroup="gml:_Object" type="t:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="characterstring" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="t:DataType"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="UnmappedFeatureType" substitutionGroup="core:_CityObject" type="t:UnmappedFeatureTypeType"/>
+  <complexType name="UnmappedFeatureTypeType">
+    <complexContent>
+      <extension base="core:AbstractCityObjectType">
+        <sequence>
+          <element name="integer" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="UnmappedFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:UnmappedFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+  </complexType>
+</schema>

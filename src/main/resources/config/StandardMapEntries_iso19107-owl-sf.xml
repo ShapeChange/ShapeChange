@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+ <!-- ISO 19107 Geometry - mapped to Simple Feature geometry -->
+ <RdfTypeMapEntry type="DirectPosition" target="sfowl:Point"/>
+ <RdfTypeMapEntry type="GM_Aggregate" target="sfowl:GeometryCollection"/>
+ <RdfTypeMapEntry type="GM_Curve" target="sfowl:LineString"/>
+ <RdfTypeMapEntry type="GM_MultiCurve" target="sfowl:MultiLineString"/>
+ <RdfTypeMapEntry type="GM_MultiPoint" target="sfowl:MultiPoint"/>
+ <RdfTypeMapEntry type="GM_MultiPrimitive" target="sfowl:GeometryCollection"/>
+ <RdfTypeMapEntry type="GM_MultiSurface" target="sfowl:MultiPolygon"/>
+ <RdfTypeMapEntry type="GM_Object" target="sfowl:Geometry"/>
+ <RdfTypeMapEntry type="GM_Point" target="sfowl:Point"/>
+ <RdfTypeMapEntry type="GM_PolyhedralSurface" target="sfowl:PolyhedralSurface"/>
+ <RdfTypeMapEntry type="GM_Primitive" target="sfowl:Geometry"/>
+ <RdfTypeMapEntry type="GM_Ring" target="sfowl:LinearRing"/>
+ <RdfTypeMapEntry type="GM_Surface" target="sfowl:Polygon"/>
+ <RdfTypeMapEntry type="GM_Tin" target="sfowl:TIN"/>
+ <RdfTypeMapEntry type="GM_Triangle" target="sfowl:Triangle"/>
+ 
+  <!-- ... more to be added as required -->
+</rdfMapEntries>

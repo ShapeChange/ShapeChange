@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -49,6 +48,9 @@ import org.sparx.ConnectorEnd;
 import org.sparx.CreateModelType;
 import org.sparx.Element;
 import org.sparx.Repository;
+
+import com.google.common.collect.HashMultimap;
+
 import org.sparx.Package;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -56,7 +58,6 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
@@ -95,7 +96,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 	 * Collection of all generalization relationships between classes contained
 	 * in the schemas selected for processing. key: subtype; value: supertype
 	 */
-	private static Map<ClassInfo, ClassInfo> generalisations = new HashMap<ClassInfo, ClassInfo>();
+	private static HashMultimap<ClassInfo, ClassInfo> generalisations = HashMultimap
+			.create();
 
 	private PackageInfo pi = null;
 	private Model model = null;
@@ -107,7 +109,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		pi = p;
 		model = m;
@@ -134,7 +136,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 					"documentationTemplate");
 			documentationNoValue = options.parameter(this.getClass().getName(),
 					"documentationNoValue");
-			
+
 			/** Make sure repository file exists */
 			java.io.File repfile = null;
 
@@ -272,7 +274,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			ClassInfo cix = model.classById(tid);
 			if (cix == null) {
 				result.addError(this, 101, tid, ci.name());
-			} else if(!model.isInSelectedSchemas(cix)){
+			} else if (!model.isInSelectedSchemas(cix)) {
 				result.addError(this, 102, cix.name(), ci.name());
 			} else {
 				generalisations.put(ci, cix);
@@ -281,10 +283,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 		for (String tid : ci.subtypes()) {
 			ClassInfo cix = model.classById(tid);
 			if (cix == null) {
-				result.addError(this,103,tid,ci.name());				
-			} else if(!model.isInSelectedSchemas(cix)){
-				result.addError(this,104,cix.name(),ci.name());
-			} else {				
+				result.addError(this, 103, tid, ci.name());
+			} else if (!model.isInSelectedSchemas(cix)) {
+				result.addError(this, 104, cix.name(), ci.name());
+			} else {
 				generalisations.put(cix, ci);
 			}
 		}
@@ -313,7 +315,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!att.Update()) {
 				result.addError("EA-Fehler: " + att.GetLastError());
 			}
-			att.SetNotes(propi.derivedDocumentation(documentationTemplate, documentationNoValue));
+			att.SetNotes(propi.derivedDocumentation(documentationTemplate,
+					documentationNoValue));
 			if (!att.Update()) {
 				result.addError("EA-Fehler: " + att.GetLastError());
 			}
@@ -380,7 +383,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
-			e.SetNotes(i.derivedDocumentation(documentationTemplate, documentationNoValue));
+			e.SetNotes(i.derivedDocumentation(documentationTemplate,
+					documentationNoValue));
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
@@ -407,7 +411,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
-			e.SetNotes(i.derivedDocumentation(documentationTemplate, documentationNoValue));
+			e.SetNotes(i.derivedDocumentation(documentationTemplate,
+					documentationNoValue));
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
@@ -451,7 +456,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
-			e.SetRoleNote(i.derivedDocumentation(documentationTemplate, documentationNoValue));
+			e.SetRoleNote(i.derivedDocumentation(documentationTemplate,
+					documentationNoValue));
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
@@ -467,14 +473,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (!e.Update()) {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
-			
-			if(i.reverseProperty() != null) {
-				if(i.reverseProperty().isAggregation()) {
+
+			if (i.reverseProperty() != null) {
+				if (i.reverseProperty().isAggregation()) {
 					e.SetAggregation(1);
 					if (!e.Update()) {
 						result.addError("EA-Fehler: " + e.GetLastError());
 					}
-				} else if(i.reverseProperty().isComposition()) {
+				} else if (i.reverseProperty().isComposition()) {
 					e.SetAggregation(2);
 					if (!e.Update()) {
 						result.addError("EA-Fehler: " + e.GetLastError());
@@ -498,8 +504,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 		// writeAll()
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.UML_MODEL.getId();
+	@Override
+	public String getTargetName() {
+		return "UML Model";
 	}
 
 	public void writeAll(ShapeChangeResult r) {
@@ -547,7 +554,6 @@ public class UmlModel implements SingleTarget, MessageSource {
 				cloneStandardItems(con, ai);
 				cloneStandardItems(con.GetClientEnd(), propi2);
 				cloneStandardItems(con.GetSupplierEnd(), propi1);
-								
 
 				// generate association class relationship
 				ClassInfo assocClassCi = ai.assocClass();
@@ -574,39 +580,42 @@ public class UmlModel implements SingleTarget, MessageSource {
 			}
 		}
 
-		for (Entry<ClassInfo, ClassInfo> entry : generalisations.entrySet()) {
-			
-			ClassInfo subtype = entry.getKey();
-			ClassInfo supertype = entry.getValue();
-			
-			Integer c1ElementId = elementIdByClassInfo.get(subtype);
-			Integer c2ElementId = elementIdByClassInfo.get(supertype);
-			
-			// check that element IDs were found
-			if(c1ElementId == null) {
-				result.addWarning(this,105,subtype.name(),supertype.name(),subtype.name());
-			} else if (c2ElementId == null) {
-				result.addWarning(this,105,subtype.name(),supertype.name(),supertype.name());
-			} else {
-			
-				Element c1 = rep.GetElementByID(c1ElementId);
-				Element c2 = rep.GetElementByID(c2ElementId);
-				
-				if (c1 == null) {
-					result.addWarning(this,105,subtype.name(),supertype.name(),subtype.name());
-				} else if (c2 == null) {
-					result.addWarning(this,105,subtype.name(),supertype.name(),supertype.name());
+		for (ClassInfo subtype : generalisations.keySet()) {
+			for (ClassInfo supertype : generalisations.get(subtype)) {
+
+				Integer c1ElementId = elementIdByClassInfo.get(subtype);
+				Integer c2ElementId = elementIdByClassInfo.get(supertype);
+
+				// check that element IDs were found
+				if (c1ElementId == null) {
+					result.addWarning(this, 105, subtype.name(),
+							supertype.name(), subtype.name());
+				} else if (c2ElementId == null) {
+					result.addWarning(this, 105, subtype.name(),
+							supertype.name(), supertype.name());
 				} else {
-					
-					c1.Refresh();
-					Collection<Connector> c1Conns = c1.GetConnectors();
-					c1Conns.Refresh();
-					Connector con = c1Conns.AddNew("", "Generalization");
-					con.SetSupplierID(c2.GetElementID());
-					if (!con.Update()) {
-						result.addError("EA-Fehler: " + con.GetLastError());
+
+					Element c1 = rep.GetElementByID(c1ElementId);
+					Element c2 = rep.GetElementByID(c2ElementId);
+
+					if (c1 == null) {
+						result.addWarning(this, 105, subtype.name(),
+								supertype.name(), subtype.name());
+					} else if (c2 == null) {
+						result.addWarning(this, 105, subtype.name(),
+								supertype.name(), supertype.name());
+					} else {
+
+						c1.Refresh();
+						Collection<Connector> c1Conns = c1.GetConnectors();
+						c1Conns.Refresh();
+						Connector con = c1Conns.AddNew("", "Generalization");
+						con.SetSupplierID(c2.GetElementID());
+						if (!con.Update()) {
+							result.addError("EA-Fehler: " + con.GetLastError());
+						}
+						c1.GetConnectors().Refresh();
 					}
-					c1.GetConnectors().Refresh();
 				}
 			}
 		}
@@ -629,7 +638,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		associations = new HashSet<AssociationInfo>();
 		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
-		generalisations = new HashMap<ClassInfo, ClassInfo>();
+		generalisations = HashMultimap.create();
 	}
 
 	/**
@@ -663,7 +672,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			return "Subtype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
 		case 105:
 			return "Generalisation relationship between subtype '$1$' and supertype '$2$' cannot be created because '$3$' is not part of the target model.";
-			
+
 		// 10001-10100: EA exceptions
 		case 10001:
 			return "EA exception encountered: $1$";

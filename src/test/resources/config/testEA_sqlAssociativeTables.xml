@@ -97,7 +97,6 @@
     <Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_name"
       mode="enabled">
       <targetParameter name="outputDirectory" value="testResults/sql/associativeTables/ddl"/>
-      <targetParameter name="outputFilename" value="ddl"/>
       <targetParameter name="size" value="-1"/>
       <targetParameter name="srid" value="31467"/>
       <targetParameter name="createReferences" value="true"/>

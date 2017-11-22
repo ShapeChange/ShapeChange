@@ -45,6 +45,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -55,6 +56,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
@@ -80,13 +82,17 @@ public class ReplicationSchemaVisitor
 	protected Options options;
 	protected ShapeChangeResult result;
 
-	protected PackageInfo schema;
 	protected Model model;
-	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>();
+	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>(new Comparator<ClassInfo>() {
+
+		@Override
+		public int compare(ClassInfo ci1, ClassInfo ci2) {
+			return ci1.name().compareTo(ci2.name());
+		}
+	});
 
 	protected Document document;
 	protected Element root;
-	protected Comment hook;
 	protected String targetNamespace;
 
 	private TreeSet<PackageInfo> repSchemaPackagesForImport = new TreeSet<PackageInfo>(
@@ -104,14 +110,13 @@ public class ReplicationSchemaVisitor
 		this.sqlddl = sqlddl;
 		this.sqlbuilder = sqlbuilder;
 
-		this.options = sqlddl.getOptions();
-		this.result = sqlddl.getResult();
+		this.options = sqlddl.options;
+		this.result = sqlddl.result;
 
-		this.schema = sqlddl.getSchema();
-		this.model = schema.model();
+		this.model = SqlDdl.model;
 
 		// Identify the enumerations contained in the schema
-		for (ClassInfo ci : model.classes(schema)) {
+		for (ClassInfo ci : model.selectedSchemaClasses()) {
 			if (ci.category() == Options.ENUMERATION) {
 				this.enumerationsInSchema.add(ci);
 			}
@@ -142,15 +147,20 @@ public class ReplicationSchemaVisitor
 		addAttribute(root, "xmlns", Options.W3C_XML_SCHEMA);
 		addAttribute(root, "elementFormDefault", "qualified");
 
-		addAttribute(root, "version", schema.version());
-		targetNamespace = schema.targetNamespace()
-				+ sqlddl.getRepSchemaTargetNamespaceSuffix();
+		addAttribute(root, "version", SqlDdl.repSchemaTargetVersion);
+		targetNamespace = SqlDdl.repSchemaTargetNamespace
+				+ SqlDdl.repSchemaTargetNamespaceSuffix;
 		addAttribute(root, "targetNamespace", targetNamespace);
-		addAttribute(root, "xmlns:" + schema.xmlns(), targetNamespace);
+		addAttribute(root, "xmlns:" + SqlDdl.repSchemaTargetXmlns,
+				targetNamespace);
 
-		hook = document.createComment(
-				"XML Schema document created by ShapeChange - http://shapechange.net/");
-		root.appendChild(hook);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			Comment generationComment = document.createComment(
+					"XML Schema document created by ShapeChange - http://shapechange.net/");
+			root.appendChild(generationComment);
+		}
 	}
 
 	@Override
@@ -184,7 +194,7 @@ public class ReplicationSchemaVisitor
 
 		addAttribute(globalElement, "name", table.getName());
 		addAttribute(globalElement, "type",
-				schema.xmlns() + ":" + table.getName() + "Type");
+				SqlDdl.repSchemaTargetXmlns + ":" + table.getName() + "Type");
 
 		// -------------------------------------------
 		// Add global identifier annotation for table
@@ -205,9 +215,6 @@ public class ReplicationSchemaVisitor
 				"sequence");
 		complexTypeElement.appendChild(sequence);
 
-		// BidiMap<Column, PropertyInfo> propertyByColumn = sqlbuilder
-		// .getPropertyByColumnMap();
-
 		for (Column column : table.getColumns()) {
 
 			/*
@@ -216,8 +223,17 @@ public class ReplicationSchemaVisitor
 			 */
 			PropertyInfo propForColumn = column.getRepresentedProperty();
 
-			Integer sizeForFieldWithCharacterDataType = sqlbuilder
-					.getSizeForCharacterValuedProperty(propForColumn);
+			Integer sizeForFieldWithCharacterDataType = null;
+			if (propForColumn != null) {
+				String taggedValueSize = propForColumn.taggedValuesAll().getFirstValue(SqlConstants.PARAM_SIZE);
+				if (StringUtils.isNotBlank(taggedValueSize)) {
+					try {
+						sizeForFieldWithCharacterDataType = Integer.parseInt(taggedValueSize);
+					} catch (NumberFormatException e) {
+						result.addError(this, 4, taggedValueSize, e.getMessage());
+					}
+				}
+			}
 
 			Element columnDefinitionElement = document
 					.createElementNS(Options.W3C_XML_SCHEMA, "element");
@@ -227,19 +243,12 @@ public class ReplicationSchemaVisitor
 
 			/*
 			 * Identify the type of the element
-			 * 
-			 * TODO Shouldn't we make a difference when assigning the value of
-			 * target parameter 'replicationSchemaObjectIdentifierFieldType' as
-			 * type, if target parameter 'foreignKeyColumnDatatype' is set as
-			 * well? In that case, foreign key fields have a different type in
-			 * the database schema - should they also have a different type in
-			 * the replication schema?
 			 */
 			String type;
 
 			if (column.isObjectIdentifierColumn()) {
 
-				type = sqlddl.getRepSchemaObjectIdentifierFieldType();
+				type = SqlDdl.repSchemaObjectIdentifierFieldType;
 
 			} else if (propForColumn != null) {
 
@@ -267,15 +276,15 @@ public class ReplicationSchemaVisitor
 						// get enumeration class
 						ClassInfo enumeration = getValueType(propForColumn);
 
-						// if (enumeration != null) {
-
-						type = enumeration.qname() + "Type";
 
 						/*
 						 * Enumerations may reside in another namespace, they
 						 * are usually not flattened
 						 */
-						if (!enumeration.inSchema(schema)) {
+						if (model.isInSelectedSchemas(enumeration)) {
+							type = SqlDdl.repSchemaTargetXmlns + ":" + enumeration.name() + "Type";
+						} else {
+							type = enumeration.qname() + "Type";
 							repSchemaPackagesForImport.add(enumeration.pkg());
 						}
 
@@ -286,9 +295,13 @@ public class ReplicationSchemaVisitor
 
 					} else {
 
-						type = sqlddl.getRepSchemaObjectIdentifierFieldType();
+						type = SqlDdl.repSchemaForeignKeyFieldType;
 					}
 				}
+
+			} else if (column.isForeignKeyColumn()) {
+
+				type = SqlDdl.repSchemaForeignKeyFieldType;
 
 			} else {
 
@@ -301,19 +314,20 @@ public class ReplicationSchemaVisitor
 			addAttribute(columnDefinitionElement, "type", type);
 
 			if (propForColumn != null) {
+
 				// Handle minOccurs
-				if (propForColumn.cardinality().minOccurs == 0 || (!table.isAssociativeTable()
-						&& propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL))) {
+				if (!table.isAssociativeTable() && (propForColumn
+						.cardinality().minOccurs == 0
+						|| propForColumn.matches(
+								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL))) {
 
 					addAttribute(columnDefinitionElement, "minOccurs", "0");
 				}
 
 				// Handle nillable
-				String columnSpec = column.getSpecifications() == null ? ""
-						: StringUtils.join(column.getSpecifications(), " ");
-
-				if (propForColumn.matches(ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
-						&& !columnSpec.contains("NOT NULL")) {
+				if (propForColumn.matches(
+						ReplicationSchemaConstants.RULE_TGT_PROP_REPSCHEMA_NILLABLE)
+						&& !column.isNotNull()) {
 
 					addAttribute(columnDefinitionElement, "nillable", "true");
 				}
@@ -338,8 +352,7 @@ public class ReplicationSchemaVisitor
 						&& sizeForFieldWithCharacterDataType < 1
 						&& propForColumn.matches(
 								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE)) {
-					documentationForColumnElement = sqlddl
-							.getRepSchemaDocumentationUnlimitedLengthCharacterDataType();
+					documentationForColumnElement = SqlDdl.repSchemaDocumentationUnlimitedLengthCharacterDataType;
 				}
 			}
 
@@ -560,21 +573,34 @@ public class ReplicationSchemaVisitor
 	 */
 	private void addImports() {
 
+		Node anchor = null;
+
 		for (PackageInfo packageInfo : repSchemaPackagesForImport) {
 
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
 					packageInfo.targetNamespace()
-							+ sqlddl.getRepSchemaTargetNamespaceSuffix());
+							+ SqlDdl.repSchemaTargetNamespaceSuffix);
 
 			Element importElement = document
 					.createElementNS(Options.W3C_XML_SCHEMA, "import");
 
 			addAttribute(importElement, "namespace",
 					packageInfo.targetNamespace()
-							+ sqlddl.getRepSchemaTargetNamespaceSuffix());
+							+ SqlDdl.repSchemaTargetNamespaceSuffix);
 
-			root.insertBefore(importElement, hook);
+			if (anchor == null) {
+				root.insertBefore(importElement, root.getFirstChild());
+			} else {
+				root.insertBefore(importElement, anchor.getNextSibling());
+			}
+			anchor = importElement;
 		}
+	}
+
+	@Override
+	public void visit(
+			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
+		// ignore
 	}
 
 	@Override
@@ -587,6 +613,8 @@ public class ReplicationSchemaVisitor
 			return "??No target type defined in map entry with type '$1$'. Using '$2$' instead.";
 		case 3:
 			return "Column '$1$' in table '$2$' neither represents a specific property nor an object identifier. Using '$3$' as type.";
+		case 4:
+			return "Could not parse tagged value size (value = $1$, error message = $2$)";
 		case 100:
 			return "Context: $1$";
 		default:

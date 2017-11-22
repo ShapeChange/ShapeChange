@@ -1,16 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/config/testEA_namingmodifier_camelcasetouppercase.xml" end="Wed Nov 09 15:25:32 CET 2016" resultCode="0" start="Wed Nov 09 15:25:19 CET 2016" version="2.1.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/config/testEA_namingmodifier_camelcasetouppercase.xml" end="Fri Nov 03 16:50:54 CET 2017" resultCode="0" start="Fri Nov 03 16:50:45 CET 2017" version="2.3.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="(Converter.java) Now processing transformation 'nm' for input ID: 'original'."/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_namingModifier_camelcasetouppercase.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_namingModifier_camelcasetouppercase.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_namingModifier_camelcasetouppercase.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_namingModifier_camelcasetouppercase.eap"/>
+    <Info message="Now processing transformation 'nm' for input ID: 'original'."/>
     <Warning message="Multiple suffixes (identified by configuration parameter 'suffixesToIgnore' match the end of the model element name. Suffix 'GHIID' was chosen.">
-      <Detail message="Model::AppSchema::STUv::propGHIID"/>
+      <Detail message="AppSchema::STUv::propGHIID"/>
     </Warning>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
-    <Info message="(Converter.java) Performed transformation for transformer ID 'nm' for input ID: 'original'.&#10;-------------------------------------------------"/>
+    <Info message="Performed transformation for transformer ID 'nm' for input ID: 'original'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/namingModifier/camelcasetouppercase'"/>
-    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'nm'."/>
-    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'nm'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing target 'XML Schema' for input 'nm'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'nm'.&#10;-------------------------------------------------"/>
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/namingModifier/camelcaseToUppercase/nm/ccuc.xsd" scope="http://test/namingModifier/camelcasetouppercase" target="XML Schema">ccuc.xsd</Result>

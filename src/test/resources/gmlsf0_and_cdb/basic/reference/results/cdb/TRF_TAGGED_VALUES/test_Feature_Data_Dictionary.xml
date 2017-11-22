@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><Feature_Data_Dictionary xmlns="http://www.opengis.net/cdb/1.0/Feature_Data_Dictionary" version="v1.2">
+  <Category code="AeronauticalFacility">
+    <Label>Aeronautical Facility</Label>
+    <Subcategory code="GeneralAeroGroundFeat">
+      <Label>General Aeronautical Ground Features</Label>
+      <Feature_Type code="Heliport_C">
+        <Label>Heliport : Curve</Label>
+        <Subcode code="000">
+          <Label>Heliport : Curve</Label>
+          <Concept_Definition>An aerodrome intended to be used for the arrival, landing, takeoff or departure of vertical takeoff and landing aircraft/helicopters.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="Heliport_P">
+        <Label>Heliport : Point</Label>
+        <Subcode code="000">
+          <Label>Heliport : Point</Label>
+          <Concept_Definition>An aerodrome intended to be used for the arrival, landing, takeoff or departure of vertical takeoff and landing aircraft/helicopters.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="Heliport_S">
+        <Label>Heliport : Surface</Label>
+        <Subcode code="000">
+          <Label>Heliport : Surface</Label>
+          <Concept_Definition>An aerodrome intended to be used for the arrival, landing, takeoff or departure of vertical takeoff and landing aircraft/helicopters.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="LandAerodrome_C">
+        <Label>Land Aerodrome : Curve</Label>
+        <Subcode code="000">
+          <Label>Land Aerodrome : Curve</Label>
+          <Concept_Definition>An aerodrome on land intended to be used either wholly or in part for the arrival, departure and surface movement of aircraft.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="LandAerodrome_P">
+        <Label>Land Aerodrome : Point</Label>
+        <Subcode code="000">
+          <Label>Land Aerodrome : Point</Label>
+          <Concept_Definition>An aerodrome on land intended to be used either wholly or in part for the arrival, departure and surface movement of aircraft.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="LandAerodrome_S">
+        <Label>Land Aerodrome : Surface</Label>
+        <Subcode code="000">
+          <Label>Land Aerodrome : Surface</Label>
+          <Concept_Definition>An aerodrome on land intended to be used either wholly or in part for the arrival, departure and surface movement of aircraft.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="TestFeature">
+        <Label>TestFeature</Label>
+        <Subcode code="000">
+          <Label>TestFeature</Label>
+          <Concept_Definition/>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+    </Subcategory>
+  </Category>
+  <Category code="Foundation">
+    <Label>Foundation</Label>
+    <Subcategory code="GeneralFeatureModel">
+      <Label>General Feature Model</Label>
+      <Feature_Type code="ActorEntity">
+        <Label>Actor Entity</Label>
+        <Subcode code="000">
+          <Label>Actor Entity</Label>
+          <Concept_Definition>An abstract modelling entity that is a superclass for actor types, which are representations of intentional (that is, purposeful) entities that act or have the capability of acting as a participant in an event. [descr] An actor may control resources or direct activity, and may do so by holding an organizational role. Actor entities include persons, social groups, organisations, and, in some contexts, automata. Collective actors (for example: organizations) may have a distributed rather than a point location.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="DeviceEntity_C">
+        <Label>Device Entity : Curve</Label>
+        <Subcode code="000">
+          <Label>Device Entity : Curve</Label>
+          <Concept_Definition>An abstract modelling entity that is a superclass for physical artefacts that are designed to serve instrumental roles in intentional activities. [descr] A device (alias: equipment) is a durable, reusable resource for use in an activity, in contrast to consumable or expendable inputs to an activity such as munitions (for example: ammunition, missiles, or grenades) or raw materials (for example: petroleum, coal, sand, or aggregate). (A device may require repair or refurbishment between uses.) Devices include simple tools (such as a hammer or a wrench), as well as complex equipment (such as an air conditioner or a nuclear reactor). A complex device may consist of component devices. A device may have a highly specialized purpose (for example: a part in an electron microscope) or a general purpose (for example: a lever or a screwdriver). Some types of devices include transportation devices (such as: a cart, an automobile, an armoured personnel carrier); communication devices (such as: antennas, signal flags, shortwave radios); electronic devices (such as: computers); healthcare devices (such as: diagnostic devices, handheld surgical tools). Devices may be assigned (with or without ownership) to a person, organization, or location. An inventory of the equipment of an organization is a list containing the types and counts of devices belonging to the organization, or a listing of each individual device (typically with an identifier). In many cases, different actors may hold ownership, assignment, or control of a device (for example: an automobile) over time.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="DeviceEntity_P">
+        <Label>Device Entity : Point</Label>
+        <Subcode code="000">
+          <Label>Device Entity : Point</Label>
+          <Concept_Definition>An abstract modelling entity that is a superclass for physical artefacts that are designed to serve instrumental roles in intentional activities. [descr] A device (alias: equipment) is a durable, reusable resource for use in an activity, in contrast to consumable or expendable inputs to an activity such as munitions (for example: ammunition, missiles, or grenades) or raw materials (for example: petroleum, coal, sand, or aggregate). (A device may require repair or refurbishment between uses.) Devices include simple tools (such as a hammer or a wrench), as well as complex equipment (such as an air conditioner or a nuclear reactor). A complex device may consist of component devices. A device may have a highly specialized purpose (for example: a part in an electron microscope) or a general purpose (for example: a lever or a screwdriver). Some types of devices include transportation devices (such as: a cart, an automobile, an armoured personnel carrier); communication devices (such as: antennas, signal flags, shortwave radios); electronic devices (such as: computers); healthcare devices (such as: diagnostic devices, handheld surgical tools). Devices may be assigned (with or without ownership) to a person, organization, or location. An inventory of the equipment of an organization is a list containing the types and counts of devices belonging to the organization, or a listing of each individual device (typically with an identifier). In many cases, different actors may hold ownership, assignment, or control of a device (for example: an automobile) over time.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="DeviceEntity_S">
+        <Label>Device Entity : Surface</Label>
+        <Subcode code="000">
+          <Label>Device Entity : Surface</Label>
+          <Concept_Definition>An abstract modelling entity that is a superclass for physical artefacts that are designed to serve instrumental roles in intentional activities. [descr] A device (alias: equipment) is a durable, reusable resource for use in an activity, in contrast to consumable or expendable inputs to an activity such as munitions (for example: ammunition, missiles, or grenades) or raw materials (for example: petroleum, coal, sand, or aggregate). (A device may require repair or refurbishment between uses.) Devices include simple tools (such as a hammer or a wrench), as well as complex equipment (such as an air conditioner or a nuclear reactor). A complex device may consist of component devices. A device may have a highly specialized purpose (for example: a part in an electron microscope) or a general purpose (for example: a lever or a screwdriver). Some types of devices include transportation devices (such as: a cart, an automobile, an armoured personnel carrier); communication devices (such as: antennas, signal flags, shortwave radios); electronic devices (such as: computers); healthcare devices (such as: diagnostic devices, handheld surgical tools). Devices may be assigned (with or without ownership) to a person, organization, or location. An inventory of the equipment of an organization is a list containing the types and counts of devices belonging to the organization, or a listing of each individual device (typically with an identifier). In many cases, different actors may hold ownership, assignment, or control of a device (for example: an automobile) over time.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="TemporalEntity">
+        <Label>Temporal Entity</Label>
+        <Subcode code="000">
+          <Label>Temporal Entity</Label>
+          <Concept_Definition>An abstract modelling entity that is a superclass for entities that have temporal properties (such as: date(s), duration) and (if it has parts) temporal parts. [descr] Temporal entities may have point or interval duration. Temporal entities may have temporal parts (which are also temporal entities). Temporal parts may be sequential (that is, 'slices' of an extended temporal entity; for example: the months of the year 2013) or concurrent (for example: sub-events of a complex event that may be occurring at the same time). For example: voting activities at many separate polling places are sub-events of a national election. Examples of temporal entities include: time intervals bounded by calendar dates; long-duration processes (for example: the construction of Hoover Dam), with continuous or discontinuous activity; discrete events, which have continuous activity bounded by definite date-times, known or unknown (for example: running the Boston Marathon).</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+    </Subcategory>
+    <Subcategory code="ResourceMetadata">
+      <Label>Resource Metadata</Label>
+      <Feature_Type code="LegalConstraints">
+        <Label>Legal Constraints</Label>
+        <Subcode code="000">
+          <Label>Legal Constraints</Label>
+          <Concept_Definition>A specification of restrictions and/or legal prerequisites for accessing and/or using either a resource or metadata about a resource.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+      <Feature_Type code="ResourceConstraints">
+        <Label>Resource Constraints</Label>
+        <Subcode code="000">
+          <Label>Resource Constraints</Label>
+          <Concept_Definition>Restrictions on the access to and/or use of a resource or a set of resource metadata information. [descr] Restrictions may take the form of handling restrictions imposed on a resource or metadata associated with a resource because of national security and/or other security concerns.</Concept_Definition>
+          <Recommended_Dataset_Component/>
+          <Origin>Test Schema v1.2</Origin>
+        </Subcode>
+      </Feature_Type>
+    </Subcategory>
+  </Category>
+</Feature_Data_Dictionary>

@@ -54,11 +54,26 @@ public interface PackageInfo extends Info {
 	 * generated. The item is used from the configuration or - if not present
 	 * there - from the tagged value either on this package or one of its
 	 * ancestors.
+	 * 
+	 * @return namespace abbreviation defined for the package (or one of its
+	 *         ancestors); can be <code>null</code> if no such abbreviation is
+	 *         defined
 	 */
 	public String xmlns();
 
+	/**
+	 * Determine the file name of the xsd document to be generated from the
+	 * package. This is either configured explicitly for the package or is
+	 * otherwise obtained from the tagged value 'xsdDocument' on the package. If
+	 * none of these are found and if the package is an application schema
+	 * package, the file name is derived from the package name.
+	 */
 	public String xsdDocument();
 
+	/**
+	 * @return the value of the tag "gmlProfileSchema", or <code>null</code> in
+	 *         case such a tag does not exist on the package.
+	 */
 	public String gmlProfileSchema();
 
 	/**

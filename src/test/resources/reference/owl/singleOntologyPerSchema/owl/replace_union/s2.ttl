@@ -1,21 +1,12 @@
-@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix gsp:   <http://www.opengis.net/ont/geosparql#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix gml:   <http://www.opengis.net/ont/gml#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
-@prefix sc:    <http://shapechange.net/resources/ont/base#> .
-@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
-@prefix sf:    <http://www.opengis.net/ont/sf#> .
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix locn:  <https://www.w3.org/ns/locn#> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
-@prefix s2:    <http://ontology.base.uri/s2#> .
 @prefix ex1:   <http://example.org/1#> .
-@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+@prefix s2:    <http://ontology.base.uri/s2#> .
 
 <http://ontology.base.uri/s2>
         a                 owl:Ontology ;
@@ -35,10 +26,10 @@ s2:TP6_Class3.tp6p1  a  owl:DatatypeProperty ;
         rdfs:range   xsd:boolean .
 
 s2:T4_Class1  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .
 
 s2:TP3_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s2:TP3_Class1.t3c1p1
@@ -57,7 +48,7 @@ s2:TP6_Class3.tp6p2  a  owl:DatatypeProperty ;
         rdfs:range   xsd:boolean .
 
 s2:TP6_Class3  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s2:TP6_Class3.tp6p3

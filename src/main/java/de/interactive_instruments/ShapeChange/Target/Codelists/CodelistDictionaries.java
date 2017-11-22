@@ -56,7 +56,6 @@ import org.w3c.dom.ProcessingInstruction;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -81,31 +80,41 @@ public class CodelistDictionaries implements Target {
 	private String documentationNoValue = null;
 
 	public void initialise(PackageInfo p, Model m, Options o,
-			ShapeChangeResult r, boolean diagOnly) throws ShapeChangeAbortException {
+			ShapeChangeResult r, boolean diagOnly)
+			throws ShapeChangeAbortException {
 		pi = p;
 		model = m;
 		options = o;
 		result = r;
 		diagnosticsOnly = diagOnly;
-		String s = options.parameter(this.getClass().getName(),"enumerations");
-		if (s!=null && s.equalsIgnoreCase("true"))
+		String s = options.parameter(this.getClass().getName(), "enumerations");
+		if (s != null && s.equalsIgnoreCase("true"))
 			enums = true;
-		
-		s = options.parameter(this.getClass().getName(),"identifier");
-		if (s!=null && !s.isEmpty())
+
+		s = options.parameter(this.getClass().getName(), "identifier");
+		if (s != null && !s.isEmpty())
 			identifier = s;
-		
-		s = options.parameter(this.getClass().getName(),"names");
-		if (s!=null && !s.isEmpty())
+
+		s = options.parameter(this.getClass().getName(), "names");
+		if (s != null && !s.isEmpty())
 			names = s;
-		
-		s = options.parameter(this.getClass().getName(),"gmlid"); // TODO unit test and document, req test uniqueness, req test gmlid value
-		if (s!=null && !s.isEmpty())
+
+		s = options.parameter(this.getClass().getName(), "gmlid"); // TODO unit
+																	// test and
+																	// document,
+																	// req test
+																	// uniqueness,
+																	// req test
+																	// gmlid
+																	// value
+		if (s != null && !s.isEmpty())
 			gmlid = s;
-		
+
 		// change the default documentation template?
-		documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
-		documentationNoValue = options.parameter(this.getClass().getName(), "documentationNoValue");
+		documentationTemplate = options.parameter(this.getClass().getName(),
+				"documentationTemplate");
+		documentationNoValue = options.parameter(this.getClass().getName(),
+				"documentationNoValue");
 	}
 
 	/** Add attribute to an element */
@@ -150,10 +159,12 @@ public class CodelistDictionaries implements Target {
 
 		ProcessingInstruction proci = null;
 		if (options.gmlVersion.equals("3.2"))
-			proci = cDocument.createProcessingInstruction("xml-stylesheet", "type='text/xsl' href='./CodelistDictionary-v32.xsl'");
+			proci = cDocument.createProcessingInstruction("xml-stylesheet",
+					"type='text/xsl' href='./CodelistDictionary-v32.xsl'");
 		else if (options.gmlVersion.equals("3.1"))
-			proci = cDocument.createProcessingInstruction("xml-stylesheet", "type='text/xsl' href='./CodelistDictionary-v31.xsl'");
-		if (proci!=null)	
+			proci = cDocument.createProcessingInstruction("xml-stylesheet",
+					"type='text/xsl' href='./CodelistDictionary-v31.xsl'");
+		if (proci != null)
 			cDocument.appendChild(proci);
 
 		Element ec = cDocument.createElementNS(options.GML_NS, "Dictionary");
@@ -161,31 +172,36 @@ public class CodelistDictionaries implements Target {
 
 		addAttribute(cDocument, ec, "xmlns:gml", options.GML_NS);
 		addAttribute(cDocument, ec, "xmlns:xsi",
-					"http://www.w3.org/2001/XMLSchema-instance");
-		addAttribute(cDocument, ec, "xsi:schemaLocation", options.GML_NS
-					+ " " + options.schemaLocationOfNamespace(options.GML_NS));		
+				"http://www.w3.org/2001/XMLSchema-instance");
+		addAttribute(cDocument, ec, "xsi:schemaLocation", options.GML_NS + " "
+				+ options.schemaLocationOfNamespace(options.GML_NS));
 		addAttribute(cDocument, ec, "gml:id", ci.name());
 
 		documentMap.put(ci.id(), cDocument);
-		
-		String s = ci.derivedDocumentation(documentationTemplate, documentationNoValue);
+
+		String s = ci.derivedDocumentation(documentationTemplate,
+				documentationNoValue);
 		if (s != null && !s.isEmpty()) {
-			Element e1 = cDocument.createElementNS(options.GML_NS, "description");
+			Element e1 = cDocument.createElementNS(options.GML_NS,
+					"description");
 			e1.appendChild(cDocument.createTextNode(s));
 			ec.appendChild(e1);
 		}
 
 		String[] sa = identifier.split(",");
 		for (String s0 : sa) {
-			s = getValue(ci,s0.trim());
-			if (s!=null && !s.isEmpty()) {
+			s = getValue(ci, s0.trim());
+			if (s != null && !s.isEmpty()) {
 				if (options.gmlVersion.equals("3.2")) {
-					Element e1 = cDocument.createElementNS(options.GML_NS,"identifier");
-					addAttribute(cDocument, e1, "codeSpace", ci.pkg().targetNamespace());
+					Element e1 = cDocument.createElementNS(options.GML_NS,
+							"identifier");
+					addAttribute(cDocument, e1, "codeSpace",
+							ci.pkg().targetNamespace());
 					e1.appendChild(cDocument.createTextNode(s));
 					ec.appendChild(e1);
 				} else if (options.gmlVersion.equals("3.1")) {
-					Element e1 = cDocument.createElementNS(options.GML_NS,"name");
+					Element e1 = cDocument.createElementNS(options.GML_NS,
+							"name");
 					e1.appendChild(cDocument.createTextNode(s));
 					ec.appendChild(e1);
 				}
@@ -195,53 +211,57 @@ public class CodelistDictionaries implements Target {
 
 		sa = names.split(",");
 		for (String s0 : sa) {
-			s = getValue(ci,s0);
-			if (s!=null && !s.isEmpty()) {
-				Element e1 = cDocument.createElementNS(options.GML_NS,"name");
+			s = getValue(ci, s0);
+			if (s != null && !s.isEmpty()) {
+				Element e1 = cDocument.createElementNS(options.GML_NS, "name");
 				e1.appendChild(cDocument.createTextNode(s));
 				ec.appendChild(e1);
 			}
 		}
 
-		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {			
+		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j
+				.hasNext();) {
 			PropertyInfo propi = j.next();
 			Element e1 = createEntry(cDocument, ci, propi, true);
-			if (e1!=null)
+			if (e1 != null)
 				ec.appendChild(e1);
-		}		
+		}
 
 		SortedSet<String> ts = ci.supertypes();
 		for (Iterator<String> i = ts.iterator(); i.hasNext();) {
 			ClassInfo cix = model.classById(i.next());
 			if (cix != null) {
-				for (Iterator<PropertyInfo> j = cix.properties().values().iterator(); j.hasNext();) {			
+				for (Iterator<PropertyInfo> j = cix.properties().values()
+						.iterator(); j.hasNext();) {
 					PropertyInfo propi = j.next();
 					Element e1 = createEntry(cDocument, ci, propi, true);
-					if (e1!=null)
+					if (e1 != null)
 						ec.appendChild(e1);
-				}		
+				}
 			}
 		}
-	
+
 	}
 
-	private Element createEntry(Document lDocument,
-			ClassInfo ci, PropertyInfo propi, boolean local) {
+	private Element createEntry(Document lDocument, ClassInfo ci,
+			PropertyInfo propi, boolean local) {
 
-		Element e = lDocument.createElementNS(options.GML_NS, "dictionaryEntry");
+		Element e = lDocument.createElementNS(options.GML_NS,
+				"dictionaryEntry");
 		Element e3 = lDocument.createElementNS(options.GML_NS, "Definition");
-		String s = getValue(propi,gmlid);
-		if (s!=null && !s.isEmpty()) {
+		String s = getValue(propi, gmlid);
+		if (s != null && !s.isEmpty()) {
 			if (!s.matches("^[a-zA-Z_]"))
 				s = "_" + s;
 		} else {
-			s = "_"+propi.id();
+			s = "_" + propi.id();
 		}
-		addAttribute(lDocument, e3, "gml:id", "_"+propi.id());
+		addAttribute(lDocument, e3, "gml:id", "_" + propi.id());
 		e.appendChild(e3);
 
 		Element e2;
-		s = propi.derivedDocumentation(documentationTemplate, documentationNoValue);
+		s = propi.derivedDocumentation(documentationTemplate,
+				documentationNoValue);
 		if (s != null && !s.isEmpty()) {
 			e2 = lDocument.createElementNS(options.GML_NS, "description");
 			e2.appendChild(lDocument.createTextNode(s));
@@ -249,22 +269,22 @@ public class CodelistDictionaries implements Target {
 		}
 
 		if (options.gmlVersion.equals("3.2")) {
-			e2 = lDocument.createElementNS(options.GML_NS,"identifier");
+			e2 = lDocument.createElementNS(options.GML_NS, "identifier");
 		} else {
-			e2 = lDocument.createElementNS(options.GML_NS,"name");
+			e2 = lDocument.createElementNS(options.GML_NS, "name");
 		}
-		
+
 		String codeSpace = ci.taggedValue("codeList");
-		if (codeSpace==null)
+		if (codeSpace == null)
 			codeSpace = ci.taggedValue("infoURL");
-		if (codeSpace==null)
-			codeSpace = ci.pkg().targetNamespace()+"/"+ci.name();
+		if (codeSpace == null)
+			codeSpace = ci.pkg().targetNamespace() + "/" + ci.name();
 		addAttribute(lDocument, e2, "codeSpace", codeSpace);
 
 		String[] sa = identifier.split(",");
 		for (String s0 : sa) {
-			s = getValue(propi,s0.trim());
-			if (s!=null && !s.isEmpty()) {
+			s = getValue(propi, s0.trim());
+			if (s != null && !s.isEmpty()) {
 				e2.appendChild(lDocument.createTextNode(s));
 				e3.appendChild(e2);
 				break;
@@ -273,14 +293,14 @@ public class CodelistDictionaries implements Target {
 
 		sa = names.split(",");
 		for (String s0 : sa) {
-			s = getValue(propi,s0);
-			if (s!=null && !s.isEmpty()) {
-				Element e1 = lDocument.createElementNS(options.GML_NS,"name");
+			s = getValue(propi, s0);
+			if (s != null && !s.isEmpty()) {
+				Element e1 = lDocument.createElementNS(options.GML_NS, "name");
 				e1.appendChild(lDocument.createTextNode(s));
 				e3.appendChild(e1);
 			}
 		}
-		
+
 		return e;
 	}
 
@@ -293,17 +313,18 @@ public class CodelistDictionaries implements Target {
 			s = i.aliasName();
 		else if (source.equalsIgnoreCase("id"))
 			s = i.id();
-		else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo)
-			s = ((PropertyInfo)i).initialValue();
+		else if (source.equalsIgnoreCase("initialValue")
+				&& i instanceof PropertyInfo)
+			s = ((PropertyInfo) i).initialValue();
 		else if (source.startsWith("@"))
 			s = i.taggedValue(source.substring(1));
-			
-		if (s!=null && s.isEmpty())
+
+		if (s != null && s.isEmpty())
 			s = null;
-		
+
 		return s;
 	}
-	
+
 	public void write() {
 		if (printed) {
 			return;
@@ -313,37 +334,45 @@ public class CodelistDictionaries implements Target {
 		}
 
 		try {
-			Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+			Properties outputFormat = OutputPropertiesFactory
+					.getDefaultMethodProperties("xml");
 			outputFormat.setProperty("indent", "yes");
-			outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
-					"2");
+			outputFormat.setProperty(
+					"{http://xml.apache.org/xalan}indent-amount", "2");
 			outputFormat.setProperty("encoding", "UTF-8");
 
-	        Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-			for (Iterator<ClassInfo> i = model.classes(pi).iterator(); i.hasNext();) {
+			Serializer serializer = SerializerFactory
+					.getSerializer(outputFormat);
+			for (Iterator<ClassInfo> i = model.classes(pi).iterator(); i
+					.hasNext();) {
 				ClassInfo ci = i.next();
 				Document cDocument = documentMap.get(ci.id());
 				if (cDocument != null) {
-					String dir = options.parameter(this.getClass().getName(),"outputDirectory");
-					if (dir==null)
+					String dir = options.parameter(this.getClass().getName(),
+							"outputDirectory");
+					if (dir == null)
 						dir = options.parameter("outputDirectory");
-					if (dir==null)
+					if (dir == null)
 						dir = options.parameter(".");
 
-		            File outDir = new File(dir);
-		            if(!outDir.exists())
-		            	outDir.mkdirs();
-		            
+					File outDir = new File(dir);
+					if (!outDir.exists())
+						outDir.mkdirs();
+
 					/*
-					 * SO: Used OutputStreamWriter instead of FileWriter to set character encoding
-					 * (see doc in Serializer.setWriter and FileWriter) 
+					 * SO: Used OutputStreamWriter instead of FileWriter to set
+					 * character encoding (see doc in Serializer.setWriter and
+					 * FileWriter)
 					 */
-					OutputStream fout= new FileOutputStream(dir + "/" + ci.name() + ".xml");
-			        OutputStreamWriter outputXML = new OutputStreamWriter(fout, outputFormat.getProperty("encoding"));
+					OutputStream fout = new FileOutputStream(
+							dir + "/" + ci.name() + ".xml");
+					OutputStreamWriter outputXML = new OutputStreamWriter(fout,
+							outputFormat.getProperty("encoding"));
 					serializer.setWriter(outputXML);
 					serializer.asDOMSerializer().serialize(cDocument);
 					outputXML.close();
-					result.addResult(getTargetID(), dir, ci.name()+".xml", ci.qname());
+					result.addResult(getTargetName(), dir, ci.name() + ".xml",
+							ci.qname());
 				}
 			}
 		} catch (Exception e) {
@@ -357,7 +386,8 @@ public class CodelistDictionaries implements Target {
 		printed = true;
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.CODELIST_DICTIONARY.getId();
+	@Override
+	public String getTargetName() {
+		return "Code List Dictionary";
 	}
 }

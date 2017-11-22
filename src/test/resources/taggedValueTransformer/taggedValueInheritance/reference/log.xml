@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/taggedValueTransformer/taggedValueInheritance/testEA_taggedValueInheritance.xml" end="Thu May 18 10:28:43 CEST 2017" resultCode="0" start="Thu May 18 10:28:36 CEST 2017" version="2.3.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="(Converter.java) Now processing transformation 'taggedValueInheritance' for input ID: 'INPUT'."/>
+    <Info message="Adding tagged value tv1=CFT1_TV1 to CoreFeatureType2.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType1'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureType2'"/>
+    </Info>
+    <Info message="Adding tagged value tv1=CFT1_TV1 to CoreFeatureTyp4.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType2'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureTyp4'"/>
+    </Info>
+    <Info message="Overwriting tagged value tv2=CFT2_TV2 in CoreFeatureTyp4. Previous value was: CFT4_TV2">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType2'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureTyp4'"/>
+    </Info>
+    <Info message="Adding tagged value tv1=CFT1_TV1 to CoreFeatureType5.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType2'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureType5'"/>
+    </Info>
+    <Info message="Adding tagged value tv2=CFT2_TV2 to CoreFeatureType5.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType2'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureType5'"/>
+    </Info>
+    <Info message="Retaining tagged value tv1=CFT3_TV1 in CoreFeatureType3.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType1'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Test Schema::CoreFeatureType3'"/>
+    </Info>
+    <Info message="Adding tagged value tv1=CFT3_TV1 to ExtFeatureType1.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType3'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Extension Schema::ExtFeatureType1'"/>
+    </Info>
+    <Info message="Appending 'CFT3_TV3' to tagged value tv3 in ExtFeatureType1. New value is: EFT1_TV3|CFT3_TV3.">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType3'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Extension Schema::ExtFeatureType1'"/>
+    </Info>
+    <Info message="Overwriting tagged value tvIgnoredInAppendList=CFT3_TVIGNOREDINAPPENDLIST in ExtFeatureType1. Previous value was: EFT1_INGOREDINAPPENDLIST">
+      <Detail message="Context: supertype 'Model::Test Model::Test Schema::CoreFeatureType3'"/>
+      <Detail message="Context: subtype 'Model::Test Model::Extension Schema::ExtFeatureType1'"/>
+    </Info>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'taggedValueInheritance' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Extension Schema', target namespace: 'http://example.org/shapechange/taggedValues/taggedValueInheritance/ext'"/>
+    <Info message="(Converter.java) Now processing target 'Model Export' for input 'taggedValueInheritance'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'taggedValueInheritance'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

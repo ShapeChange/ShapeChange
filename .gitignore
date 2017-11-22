@@ -12,7 +12,7 @@
 .DS_Store
 
 # Maven
-target/
+/target/
 
 # Tests
 testResults/

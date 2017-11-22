@@ -72,7 +72,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -1088,7 +1087,7 @@ public class CodelistRegister implements SingleTarget {
 					serializer.setWriter(outputXML);
 					serializer.asDOMSerializer().serialize(cDocument);
 					outputXML.close();
-					result.addResult(getTargetID(), dir, fname + ".atom", path);
+					result.addResult(getTargetName(), dir, fname + ".atom", path);
 					
 					if (html && xslhtmlfileName!=null)
 						xsltWrite(dir, fname+".atom", "/"+xslhtmlfileName, fname+".html", i);
@@ -1128,8 +1127,9 @@ public class CodelistRegister implements SingleTarget {
 		printed = true;
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.CODELIST_REGISTER.getId();
+	@Override
+	public String getTargetName(){
+		return "Codelist register";
 	}
 
 	public void reset() {
@@ -1204,7 +1204,7 @@ public class CodelistRegister implements SingleTarget {
 		    trans.setParameter("language", language);
 		    trans.transform(xmlSource, res);
 		    
-			result.addResult(getTargetID(), outputDirectory, outfileName, null);
+			result.addResult(getTargetName(), outputDirectory, outfileName, null);
 
 	   } catch (Exception e) {
 			String m = e.getMessage();

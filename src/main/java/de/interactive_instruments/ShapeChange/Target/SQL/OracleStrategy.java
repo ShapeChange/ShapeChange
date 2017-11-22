@@ -67,11 +67,11 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
 	private ShapeChangeResult result;
-	private SqlDdl sqlddl;
+	private Table userSdoGeomMetadataTable = new Table(
+			"USER_SDO_GEOM_METADATA");
 
-	public OracleStrategy(ShapeChangeResult result, SqlDdl sqlddl) {
+	public OracleStrategy(ShapeChangeResult result) {
 		this.result = result;
-		this.sqlddl = sqlddl;
 	}
 
 	@Override
@@ -133,17 +133,17 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			Column columnForGeometryTypedProperty, int srid) {
 
 		Insert ins = new Insert();
-		Table table = new Table("USER_SDO_GEOM_METADATA");
-		ins.setTable(table);
 
-		ins.setColumns(SqlUtil.toColumnList(table,"TABLE_NAME", "COLUMN_NAME",
-				"DIMINFO", "SRID"));
+		ins.setTable(userSdoGeomMetadataTable);
+
+		ins.setColumns(SqlUtil.toColumnList(userSdoGeomMetadataTable,
+				"TABLE_NAME", "COLUMN_NAME", "DIMINFO", "SRID"));
 
 		List<Expression> items = new ArrayList<Expression>();
 		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
 				columnForGeometryTypedProperty.getName()));
 
-		SdoDimArrayExpression dimArray = sqlddl.getSdoDimArrayExpression();
+		SdoDimArrayExpression dimArray = SqlDdl.sdoDimArrayExpression;
 
 		items.add(dimArray);
 		items.add(new LongValueExpression(srid));
@@ -213,6 +213,25 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
+	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
+			PropertyInfo pi, Column columnForPi) {
+
+		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
+
+			ColumnExpression colexp = new ColumnExpression(columnForPi);
+			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS");
+			StringValueExpression compareValue = new StringValueExpression(
+					"00:00:00");
+			EqualsExpression eexp = new EqualsExpression(tcexp, compareValue);
+
+			return eexp;
+
+		} else {
+			return null;
+		}
+	}
+
+	@Override
 	public String message(int mnr) {
 		switch (mnr) {
 		case 0:
@@ -224,24 +243,6 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		default:
 			return "(" + OracleStrategy.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
-	@Override
-	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi) {
-
-		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
-
-			ColumnExpression colexp = new ColumnExpression(columnForPi);
-			ToCharExpression tcexp = new ToCharExpression(colexp, "HH24:MI:SS");
-			StringValueExpression compareValue = new StringValueExpression("00:00:00");
-			EqualsExpression eexp = new EqualsExpression(tcexp, compareValue);
-
-			return eexp;
-
-		} else {
-			return null;
 		}
 	}
 }

@@ -56,7 +56,6 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
@@ -1077,7 +1076,7 @@ public class Excel implements Target {
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
-			result.addResult(getTargetID(), outputDirectory,
+			result.addResult(getTargetName(), outputDirectory,
 					pi.name() + " Mapping Table.xml", pi.targetNamespace());
 		} catch (Exception e) {
 			String m = e.getMessage();
@@ -1089,7 +1088,8 @@ public class Excel implements Target {
 		printed = true;
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.EXCEL_MAPPING.getId();
+	@Override
+	public String getTargetName() {
+		return "Excel Mapping";
 	}
 }

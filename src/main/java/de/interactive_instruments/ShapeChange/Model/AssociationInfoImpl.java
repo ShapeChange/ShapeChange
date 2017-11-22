@@ -32,58 +32,75 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
-public abstract class AssociationInfoImpl extends InfoImpl implements AssociationInfo {
+public abstract class AssociationInfoImpl extends InfoImpl
+		implements AssociationInfo {
 
-	/** Return the encoding rule relevant on the association, given the platform */
+	/**
+	 * Return the encoding rule relevant on the association, given the platform
+	 */
 	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty() || options().ignoreEncodingRuleTaggedValues()) {
+		if (s == null || s.isEmpty()
+				|| options().ignoreEncodingRuleTaggedValues()) {
 			ClassInfo aci = assocClass();
-			if (aci!=null)
+			if (aci != null)
 				s = aci.encodingRule(platform);
 			else {
 				s = super.encodingRule(platform);
 			}
 		}
-		if (s!=null)
+		if (s != null)
 			s = s.toLowerCase().trim();
 		return s;
 	};
-	
-	public final String language() {
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.InfoImpl#language()
+	 */
+	@Override
+	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang==null || lang.isEmpty()) {
+		if (lang == null || lang.isEmpty()) {
 			ClassInfo ci = this.assocClass();
-			if (ci!=null)
+			if (ci != null)
 				return ci.language();
 		} else
 			return lang;
-		
-		// associations without association classes are not part of a package, so we do 
+
+		// associations without association classes are not part of a package,
+		// so we do
 		// not have an application schema context
 		return null;
 	}
-	
-	
+
 	/*
 	 * Full qualified UML name
+	 * 
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
 	 */
 	public String fullName() {
 		return name();
 	}
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullNameInSchema()
 	 */
 	public String fullNameInSchema() {
 		return name();
 	}
-	
+
 	/*
-	 * Validate the association against all applicable requirements and recommendations
+	 * Validate the association against all applicable requirements and
+	 * recommendations
 	 */
 	public void postprocessAfterLoadingAndValidate() {
 		if (postprocessed)

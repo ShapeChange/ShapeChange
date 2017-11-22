@@ -42,9 +42,8 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -55,10 +54,8 @@ import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
@@ -72,7 +69,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  */
-public class TransformationManager {
+public class TransformationManager implements MessageSource {
 
 	public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
 	public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
@@ -235,7 +232,7 @@ public class TransformationManager {
 			if (schemaAssocsByKey.isEmpty()) {
 
 				// log that no relevant associations were found in this schema
-				result.addInfo(null, 20104, selSchema.name());
+				result.addInfo(this, 20104, selSchema.name());
 
 			} else {
 
@@ -244,7 +241,7 @@ public class TransformationManager {
 					countAssocs += aiSet.size();
 				}
 
-				result.addInfo(null, 20108, "" + countAssocs, selSchema.name());
+				result.addInfo(this, 20108, "" + countAssocs, selSchema.name());
 
 				for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
 					for (AssociationInfo ai : aiSet) {
@@ -303,9 +300,9 @@ public class TransformationManager {
 						MessageContext mc;
 
 						if (logLevelWarn) {
-							mc = result.addWarning(null, 20105, pi1Ci, pi2Ci);
+							mc = result.addWarning(this, 20105, pi1Ci, pi2Ci);
 						} else {
-							mc = result.addInfo(null, 20105, pi1Ci, pi2Ci);
+							mc = result.addInfo(this, 20105, pi1Ci, pi2Ci);
 						}
 
 						/*
@@ -315,11 +312,11 @@ public class TransformationManager {
 						 */
 
 						if (pi1.isNavigable()) {
-							mc.addDetail(null, 20107, pi1.name(),
+							mc.addDetail(this, 20107, pi1.name(),
 									pi1.inClass().name());
 						}
 						if (pi2.isNavigable()) {
-							mc.addDetail(null, 20107, pi2.name(),
+							mc.addDetail(this, 20107, pi2.name(),
 									pi2.inClass().name());
 						}
 					}
@@ -353,10 +350,10 @@ public class TransformationManager {
 		if (!trfConfig.getAllRules()
 				.contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
 
-			result.addInfo(null, 20109);
+			result.addInfo(this, 20109);
 
 			genModel.validateConstraints();
-			
+
 		}
 	}
 
@@ -370,13 +367,15 @@ public class TransformationManager {
 	private void setTaggedValues(GenericModel genModel,
 			List<TaggedValueConfigurationEntry> taggedValues) {
 
-		for (GenericPackageInfo genPackage : genModel.selectedSchemas()) {
+		for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
+
+			GenericPackageInfo genPackage = (GenericPackageInfo) pi;
 
 			TaggedValues genPaTVs = genPackage.taggedValuesAll();
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genPackage, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genPackage)) {
 
 					if (genPaTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -410,7 +409,7 @@ public class TransformationManager {
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genCi, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genCi)) {
 
 					if (genCiTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -444,7 +443,7 @@ public class TransformationManager {
 
 			for (TaggedValueConfigurationEntry tvce : taggedValues) {
 
-				if (matchesTaggedValuePatterns(genPi, tvce)) {
+				if (tvce.getModelElementSelectionInfo().matches(genPi)) {
 
 					if (genPiTVs.containsKey(tvce.getName())) {
 						// tagged value already exists on model element
@@ -472,139 +471,6 @@ public class TransformationManager {
 			genPi.setTaggedValues(genPiTVs, true);
 		}
 
-	}
-
-	/**
-	 * Determines if the given info type matches the patterns defined by the
-	 * given tagged value configuration entry.
-	 * 
-	 * @param infoType
-	 * @param tvce
-	 * @return true if the info type matches the pattern(s) defined in the given
-	 *         tagged value configuration entry.
-	 */
-	private boolean matchesTaggedValuePatterns(Info infoType,
-			TaggedValueConfigurationEntry tvce) {
-
-		boolean modelElementStereotypeMatch = true;
-		boolean modelElementNameMatch = true;
-		boolean applicationSchemaNameMatch = true;
-
-		if (tvce.hasModelElementStereotypePattern()) {
-
-			modelElementStereotypeMatch = false;
-
-			Stereotypes stereotypes = infoType.stereotypes();
-
-			// TBD: what if a model element has no stereotype?
-			// stereotypes in info types have been normalized
-			if (stereotypes.isEmpty()) {
-
-				String stereotype = null;
-
-				if (infoType instanceof PropertyInfo)
-					stereotype = "";
-				else if (infoType instanceof ClassInfo)
-					stereotype = "";
-				else if (infoType instanceof PackageInfo)
-					stereotype = "";
-
-				stereotypes = options.stereotypesFactory();
-				stereotypes.add(stereotype);
-			}
-
-			Pattern pattern = tvce.getModelElementStereotypePattern();
-
-			for (String stereotype : stereotypes.asArray()) {
-
-				Matcher matcher = pattern.matcher(stereotype);
-
-				if (matcher.matches()) {
-					modelElementStereotypeMatch = true;
-					break;
-				}
-			}
-		}
-
-		if (tvce.hasModelElementNamePattern()) {
-
-			modelElementNameMatch = false;
-
-			Matcher matcher = tvce.getModelElementNamePattern()
-					.matcher(infoType.name());
-			if (matcher.matches()) {
-				modelElementNameMatch = true;
-			}
-		}
-
-		if (tvce.hasApplicationSchemaNamePattern()) {
-
-			applicationSchemaNameMatch = false;
-
-			Matcher matcher = tvce.getApplicationSchemaNamePattern()
-					.matcher(determineApplicationSchemaName(infoType));
-
-			if (matcher.matches()) {
-				applicationSchemaNameMatch = true;
-			}
-		}
-
-		return modelElementStereotypeMatch && modelElementNameMatch
-				&& applicationSchemaNameMatch;
-	}
-
-	private String determineApplicationSchemaName(Info infoType) {
-
-		PackageInfo pi = null;
-
-		if (infoType instanceof PackageInfo) {
-
-			pi = (PackageInfo) infoType;
-
-		} else if (infoType instanceof ClassInfo) {
-
-			ClassInfo ci = (ClassInfo) infoType;
-			pi = ci.pkg();
-
-		} else if (infoType instanceof PropertyInfo) {
-
-			PropertyInfo propI = (PropertyInfo) infoType;
-			pi = propI.inClass().pkg();
-
-		} else {
-			result.addWarning(null, 20101, infoType.name());
-		}
-
-		if (pi != null) {
-			PackageInfo piAS = identifyApplicationSchema(pi);
-			if (piAS != null) {
-				return piAS.name();
-			}
-		}
-
-		/*
-		 * if we got here we could not find an application schema, log a warning
-		 * but continue
-		 */
-		result.addWarning(null, 20100, infoType.name());
-
-		return "";
-	}
-
-	private PackageInfo identifyApplicationSchema(PackageInfo pi) {
-
-		if (pi.isAppSchema()) {
-
-			return pi;
-
-		} else {
-
-			if (pi.owner() != null) {
-				return identifyApplicationSchema(pi.owner());
-			} else {
-				return null;
-			}
-		}
 	}
 
 	/**
@@ -636,5 +502,29 @@ public class TransformationManager {
 
 	}
 
+	@Override
+	public String message(int mnr) {
 
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 20104:
+			return "No associations between feature and feature / object types found in schema '$1$'.";
+		case 20105:
+			return "Association exists between '$1$' and '$2$'.";
+		case 20107:
+			return "Navigable via property '$1$' of class '$2$'.";
+		case 20108:
+			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
+		case 20109:
+			return "---------- TransformationManager postprocessing: validating constraints ----------";
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
 }

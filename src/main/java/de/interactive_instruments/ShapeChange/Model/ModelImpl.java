@@ -41,6 +41,7 @@ import java.util.TreeSet;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
@@ -83,8 +84,7 @@ public abstract class ModelImpl implements Model {
 	/*
 	 * the list of tagged values specified by the ArcGIS encoding rule
 	 */
-	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType",
-			"precision", "scale" };
+	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType" };
 
 	/*
 	 * the list of tagged values specified by other encoding rules
@@ -111,7 +111,9 @@ public abstract class ModelImpl implements Model {
 			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
 			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
 			"vocabulary", "associativeTable", "jsonEncodingRule",
-			"sqlEncodingRule", "status", "geometry" };
+			"sqlEncodingRule", "status", "geometry",
+			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
+			"scale", "numericType", "toFeatureType", "toCodelist" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -130,9 +132,7 @@ public abstract class ModelImpl implements Model {
 	 */
 	protected HashSet<String> allowedTags = null;
 
-	/**
-	 * Execute postprocessing and validation checks before the conversion
-	 */
+	@Override
 	public void postprocessAfterLoadingAndValidate() {
 
 		if (postprocessed)
@@ -225,9 +225,7 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#loadInformationFromExternalSources()
-	 */
+	@Override
 	public void loadInformationFromExternalSources() {
 
 		// do not execute this once the model has been postprocessed
@@ -260,10 +258,7 @@ public abstract class ModelImpl implements Model {
 		}
 	}
 
-	/**
-	 * Return all schemas that are selected using the relevant parameters:
-	 * appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex
-	 */
+	@Override
 	public SortedSet<? extends PackageInfo> selectedSchemas() {
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 
@@ -276,7 +271,33 @@ public abstract class ModelImpl implements Model {
 	}
 
 	@Override
-	public final SortedSet<PackageInfo> allPackagesFromSelectedSchemas() {
+	public SortedSet<? extends ClassInfo> selectedSchemaClasses() {
+
+		SortedSet<ClassInfo> res = new TreeSet<ClassInfo>();
+
+		for (PackageInfo selectedSchema : selectedSchemas()) {
+
+			SortedSet<ClassInfo> cisOfSelectedSchema = this
+					.classes(selectedSchema);
+
+			for (ClassInfo ci : cisOfSelectedSchema) {
+
+				res.add(ci);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public SortedSet<PackageInfo> allPackagesFromSelectedSchemas() {
 
 		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
 
@@ -336,7 +357,7 @@ public abstract class ModelImpl implements Model {
 			} else
 				classNames.add(className);
 		}
-		
+
 		for (PropertyInfo propi : ci.properties().values()) {
 			postprocessProperty(propi);
 		}
@@ -366,6 +387,7 @@ public abstract class ModelImpl implements Model {
 	// Tagged values normalization. This returns the tag given or a
 	// de-deprecated tag or null.
 	public String normalizeTaggedValue(String tag) {
+
 		// If not yet done, set up the tagged values, which we allow
 		if (allowedTags == null) {
 			allowedTags = new HashSet<String>(100);
@@ -401,6 +423,9 @@ public abstract class ModelImpl implements Model {
 			tag = tag.substring(tag.lastIndexOf("::") + 2);
 		}
 
+		// Now check tag aliases provided in the configuration
+		tag = options().normalizeTag(tag);
+
 		// So, if it's one of these just return the argument ...
 		if (allowedTags.contains(tag))
 			return tag;
@@ -415,11 +440,8 @@ public abstract class ModelImpl implements Model {
 			return "gmlAsGroup";
 		if (tag.equals("implementedByNilReason"))
 			return "gmlImplementedByNilReason";
-
-		// Now check tag aliases provided in the configuration
-		String s = options().normalizeTag(tag);
-		if (!s.equalsIgnoreCase(tag))
-			return s;
+		
+		// TBD: add input parameter to allow any tag
 
 		// None of these, return null
 		return null;
@@ -434,8 +456,13 @@ public abstract class ModelImpl implements Model {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#isInSelectedSchemas(de.interactive_instruments.ShapeChange.Model.ClassInfo)
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public boolean isInSelectedSchemas(ClassInfo ci) {
 
 		SortedSet<? extends PackageInfo> selectedSchemas = this
@@ -460,8 +487,13 @@ public abstract class ModelImpl implements Model {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#schemaPackage(de.interactive_instruments.ShapeChange.Model.ClassInfo)
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public PackageInfo schemaPackage(ClassInfo ci) {
 
 		PackageInfo p = ci.pkg();
@@ -478,8 +510,13 @@ public abstract class ModelImpl implements Model {
 	}
 
 	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Model#packages(de.interactive_instruments.ShapeChange.Model.PackageInfo)
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public SortedSet<PackageInfo> packages(PackageInfo pkg) {
 
 		SortedSet<PackageInfo> result = new TreeSet<PackageInfo>();
@@ -498,9 +535,16 @@ public abstract class ModelImpl implements Model {
 
 		return result;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final SortedSet<PackageInfo> schemas(String name) {
+	public SortedSet<PackageInfo> schemas(String name) {
 
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 
@@ -518,5 +562,18 @@ public abstract class ModelImpl implements Model {
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public ClassInfo classByIdOrName(Type typeInfo) {
+		if (typeInfo == null) {
+			return null;
+		} else {
+			ClassInfo result = this.classById(typeInfo.id);
+			if (result == null) {
+				result = this.classByName(typeInfo.name);
+			}
+			return result;
+		}
 	}
 }

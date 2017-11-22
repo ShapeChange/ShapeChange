@@ -49,7 +49,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -163,8 +162,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.APP_SCHEMA_STATISTICS.getId();
+	public String getTargetName(){
+		return "Application Schema Statistics";
 	}
 
 	@Override
@@ -243,7 +242,7 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 			
 			writer.close();
 
-			result.addResult(getTargetID(), outputDirectory, fileName, null);
+			result.addResult(getTargetName(), outputDirectory, fileName, null);
 
 			printed = true;
 

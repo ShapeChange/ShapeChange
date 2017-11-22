@@ -74,7 +74,6 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/foreignKeysOracleNamingStyle/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="4326" />
 			<targetParameter name="sortedOutput" value="true" />

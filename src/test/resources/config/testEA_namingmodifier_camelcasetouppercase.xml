@@ -5,6 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="original">
+		<parameter name="representTaggedValues" value="tvA,tvB" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
 			value="src/test/resources/test_namingModifier_camelcasetouppercase.eap" />
@@ -43,14 +44,16 @@
 		<Transformer id="nm" input="original"
 			class="de.interactive_instruments.ShapeChange.Transformation.Naming.NamingModifier">
 			<parameters>
-				<ProcessParameter name="suffixesToIgnore"
-					value="ID, LM, GHIID" />
+				<ProcessParameter name="suffixesToIgnore" value="ID, LM, GHIID" />
+				<ProcessParameter name="camelCaseToUpperCase_taggedValues"
+					value="tvA,tvB" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="nmrule">
 					<rule name="rule-trf-camelcase-to-uppercase" />
 					<rule name="rule-trf-camelcase-to-uppercase-include-enums" />
 					<rule name="rule-trf-camelcase-to-uppercase-include-codes" />
+					<rule name="rule-trf-camelcase-to-uppercase-include-taggedTalues" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
@@ -62,7 +65,12 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/namingModifier/camelcaseToUppercase" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
+			<targetParameter name="defaultEncodingRule" value="myrule" />
+			<rules>
+				<EncodingRule name="myrule" extends="iso19136_2007">
+					<rule name="rule-xsd-all-tagged-values" />
+				</EncodingRule>
+			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
 			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
 			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />

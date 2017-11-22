@@ -51,7 +51,6 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -349,7 +348,7 @@ public class JsonSchema implements Target, MessageSource {
 			
 			if (ctx.writer!=null) {
 				ctx.writer.close();
-				result.addResult(getTargetID(), subDirectoryFile.getPath(), ci.name()+".json", ci.qname());
+				result.addResult(getTargetName(), subDirectoryFile.getPath(), ci.name()+".json", ci.qname());
 			}
 			
 		} catch( IOException e ) {
@@ -806,7 +805,8 @@ public class JsonSchema implements Target, MessageSource {
 		return null;
 	}
 	
-	public int getTargetID(){
-		return TargetIdentification.JSON.getId();
+	@Override
+	public String getTargetName(){
+		return "JSON Schema";
 	}
 }

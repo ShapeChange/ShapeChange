@@ -71,7 +71,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return restriction;
 	} // restriction()
 
-	public final String language() {
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public String language() {
 		String lang = this.taggedValue("language");
 
 		if (lang == null || lang.isEmpty()) {
@@ -95,18 +103,35 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		else
 			s = s.toLowerCase();
 		return s;
-	} // encodingRule()
+	}
 
 	/**
-	 * This inquires whether the property represents metadata, i.e. if it
-	 * carries an appropriate tagged value.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public boolean isMetadata() {
 		String s = taggedValue("isMetadata");
 		if (s != null && s.toLowerCase().equals("true"))
 			return true;
 		return false;
-	} // isMetadata()
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
+	public String defaultCodeSpace() {
+		String s = taggedValue("defaultCodeSpace");
+		return s != null ? s : "";
+	}
 
 	/**
 	 * This returns the name of the property adorned with the namespace prefix
@@ -118,10 +143,13 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	} // qname()
 
 	/**
-	 * Check the tagged value "gmlImplementedByNilReason" to find out whether
-	 * the property shall allow for nil value treatment. Alternatively check the
-	 * characteristics of the property
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public boolean implementedByNilReason() {
 
 		if (implementedByNilReason == null) {
@@ -207,15 +235,16 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		return ci.fullNameInSchema() + "::" + name();
 	}
-
-	/*
-	 * Try to determine the category of the property value
-	 * 
-	 * @see
-	 * de.interactive_instruments.ShapeChange.Model.PropertyInfo#categoryOfValue
-	 * ()
+	
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
-	public final int categoryOfValue() {
+	@Override
+	public int categoryOfValue() {
 		ClassInfo ci = model().classById(typeInfo().id);
 		if (ci != null)
 			return ci.category();
@@ -400,7 +429,14 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return s;
 	}
 
-	/** Find out whether the property owns the stereotype voidable. */
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
+	@Override
 	public boolean voidable() {
 		// Validate cache
 		validateStereotypesCache();
@@ -415,8 +451,15 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return res;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
+	 */
 	@Override
-	public final Profiles profiles() {
+	public Profiles profiles() {
 
 		if (this.profiles == null) {
 

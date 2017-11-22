@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.AttributeConstraint;
 import org.sparx.AttributeTag;
@@ -378,14 +379,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return multiplicity;
 	} // cardinality()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#defaultCodeSpace()
-	 */
-	public String defaultCodeSpace() {
-		String s = taggedValue("defaultCodeSpace");
-		return s != null ? s : "";
-	} // defaultCodeSpace()
-
 	@Override
 	public ClassInfo inClass() {
 		return classInfo;
@@ -420,6 +413,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			// Normalize
 			if (initialValueCache != null) {
 				initialValueCache = initialValueCache.trim();
+				initialValueCache = StringUtils.removeStart(initialValueCache, "\"");
+				initialValueCache = StringUtils.removeEnd(initialValueCache, "\"");
 				String iv = initialValueCache.toLowerCase();
 				if (iv.equals("true"))
 					initialValueCache = "true";

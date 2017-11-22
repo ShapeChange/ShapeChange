@@ -42,6 +42,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.RDFWriter;
 import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -53,7 +54,6 @@ import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -77,7 +77,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RDF_NS_DC = "http://purl.org/dc/elements/1.1/";
 	public static final String RDF_NS_DCT = "http://purl.org/dc/terms/";
 	public static final String RDF_NS_W3C_SKOS = "http://www.w3.org/2004/02/skos/core#";
-	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150-2/2012/base#";
+	public static final String RDF_NS_ISO_19150_2 = "http://def.isotc211.org/iso19150/-2/2012/base#";
 	public static final String RDF_NS_OGC_GEOSPARQL = "http://www.opengis.net/ont/geosparql#";
 	public static final String RDF_NS_ISO_GFM = "http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#";
 
@@ -250,6 +250,17 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String PARAM_URIBASE = "URIbase";
 
 	/**
+	 * Define the value of the 'blockRules' property of the Apache Jena RDF
+	 * writer when using RDF/XML as output format. For further details on this
+	 * property, see the <a href=
+	 * "https://jena.apache.org/documentation/io/rdfxml_howto.html#advanced-rdfxml-output">
+	 * advanced RDF/XML output options of Apache Jena</a>. The parameter is
+	 * optional. It defaults to {@value #DEFAULT_RDFXMLWRITER_BLOCKRULES}.
+	 */
+	public static final String PARAM_RDFXMLWRITER_BLOCKRULES = "rdfXmlWriterBlockRules";
+	public static final String DEFAULT_RDFXMLWRITER_BLOCKRULES = "idAttr,daml:collection,propertyAttr";
+
+	/**
 	 * Per 19150-2package:rdfNamespace, the default separator that is appended
 	 * to the 'ontologyName' when creating the 'rdfNamespace' is '#'. If this
 	 * parameter is included in the configuration, a different separator can be
@@ -338,6 +349,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String source = null;
 	private static String sourceTaggedValue = null;
 	private static String uriBase = null;
+	private static String rdfXmlWriterBlockRules = null;
 	private static String rdfNamespaceSeparator = "#";
 	private static String language = "en";
 	private static String outputFormat = "TURTLE";
@@ -354,8 +366,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
 
-	public int getTargetID() {
-		return TargetIdentification.OWLISO19150.getId();
+	@Override
+	public String getTargetName() {
+		return "ISO 19150-2 OWL Ontology";
 	}
 
 	// TBD: New diagnostics-only flag is to be considered
@@ -452,6 +465,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		if (uriBaseFromConfig != null) {
 			uriBase = uriBaseFromConfig;
 		}
+
+		rdfXmlWriterBlockRules = options.parameterAsString(
+				this.getClass().getName(), PARAM_RDFXMLWRITER_BLOCKRULES,
+				DEFAULT_RDFXMLWRITER_BLOCKRULES, false, true);
 
 		String rdfNamespaceSeparatorFromConfig = config
 				.getParameterValue(PARAM_RDF_NAMESPACE_SEPARATOR);
@@ -1038,16 +1055,19 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		for (OntologyModel om : ontologyByRdfNs.values()) {
 
-			OntModel ont = om.getOntologyModel();
-			print(ont, om.getName(), outputDirectory, om.getPath(),
-					om.getFileName(), r);
+			print(om, outputDirectory, r);
 		}
 
 		printed = true;
 	}
 
-	public void print(OntModel ontmodel, String ontName, String outputDirectory,
-			String path, String filenameWithoutExtension, ShapeChangeResult r) {
+	public void print(OntologyModel om, String outputDirectory,
+			ShapeChangeResult r) {
+
+		OntModel ontmodel = om.getOntologyModel();
+		String ontName = om.getName();
+		String path = om.getPath();
+		String filenameWithoutExtension = om.getFileName();
 
 		ValidityReport report = ontmodel.validate();
 		if (report != null && !report.isValid())
@@ -1083,16 +1103,26 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		File outFile = new File(outputDirectoryFile, filename);
 
-		try {
+		try (OutputStream fout = new FileOutputStream(outFile);
+				OutputStream bout = new BufferedOutputStream(fout)) {
 
 			String canpath = new File(fname).getCanonicalPath();
 			r.addDebug(this, 20000, ontName, canpath);
 
-			OutputStream fout = new FileOutputStream(outFile);
-			OutputStream bout = new BufferedOutputStream(fout);
+			if (rdfFormat.equals(RDFFormat.RDFXML)) {
 
-			RDFDataMgr.write(bout, ontmodel, rdfFormat);
-			r.addResult(getTargetID(), outDirForOntology, filename, ontName);
+				RDFWriter writer = ontmodel.getWriter("RDF/XML");
+				writer.setProperty("xmlbase", om.getName());
+				writer.setProperty("blockRules", rdfXmlWriterBlockRules);
+				writer.setProperty("relativeURIs", "");
+				writer.write(ontmodel, bout, null);
+
+			} else {
+
+				RDFDataMgr.write(bout, ontmodel, rdfFormat);
+			}
+
+			r.addResult(getTargetName(), outDirForOntology, filename, ontName);
 
 		} catch (Exception e) {
 			r.addError(this, 5, fname);
@@ -1133,6 +1163,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.source = null;
 		OWLISO19150.sourceTaggedValue = null;
 		OWLISO19150.uriBase = null;
+		OWLISO19150.rdfXmlWriterBlockRules = null;
 		OWLISO19150.rdfNamespaceSeparator = "#";
 		OWLISO19150.language = "en";
 		OWLISO19150.outputFormat = "TURTLE";

@@ -37,7 +37,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -71,8 +70,8 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
@@ -119,8 +118,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	protected static Element root = null;
 	protected static Map<String, ProcessMapEntry> mapEntryByType = new HashMap<String, ProcessMapEntry>();
 
-	private static Comment hook;
-
 	private static File outputDirectoryFile;
 	private static String outputDirectory;
 	private static String outputFilename;
@@ -138,7 +135,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	@Override
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+			throws ShapeChangeAbortException {
 
 		schemaPi = p;
 		schemaTargetNamespace = p.targetNamespace();
@@ -211,13 +208,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 				}
 			}
 
-			// reset processed flags on all classes in the schema
-			for (Iterator<ClassInfo> k = model.classes(schemaPi).iterator(); k
-					.hasNext();) {
-				ClassInfo ci = k.next();
-				ci.processed(getTargetID(), false);
-			}
-
 			// ======================================
 			// Parse configuration parameters
 			// ======================================
@@ -247,9 +237,13 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 			addAttribute(root, "xmlns", NS);
 
-			hook = document.createComment(
-					"Created by ShapeChange - http://shapechange.net/");
-			root.appendChild(hook);
+			if (options.getCurrentProcessConfig().parameterAsString(
+					TargetOutputProcessor.PARAM_ADD_COMMENT, null,
+					false, true) == null) {
+				Comment generationComment = document.createComment(
+						"Created by ShapeChange - http://shapechange.net/");
+				root.appendChild(generationComment);
+			}
 		}
 
 		// create elements documenting the application schema
@@ -293,7 +287,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	protected void processProfilesMetadata(Element appSchemaElement) {
 
 		Set<Info> schemaElements = new TreeSet<Info>();
-		
+
 		// identify all classes and properties that belong to the schema
 		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
 
@@ -321,18 +315,17 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 					try {
 
-						Profiles piMap = Profiles.parse(
-								profilesTV, false);
+						Profiles piMap = Profiles.parse(profilesTV, false);
 
 						profileNames.addAll(
 								piMap.getProfileIdentifiersByName().keySet());
 
 					} catch (MalformedProfileIdentifierException e) {
 						MessageContext mc = result.addWarning(null, 20201);
-						if(mc != null) {
+						if (mc != null) {
 							mc.addDetail(null, 20216, i.fullNameInSchema());
-							mc.addDetail(null,20217,e.getMessage());
-							mc.addDetail(null,20218,profilesTV);
+							mc.addDetail(null, 20217, e.getMessage());
+							mc.addDetail(null, 20218, profilesTV);
 						}
 					}
 				}
@@ -383,8 +376,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.APP_SCHEMA_METADATA.getId();
+	public String getTargetName() {
+		return "Application Schema Metadata";
 	}
 
 	@Override
@@ -449,7 +442,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 			writer.close();
 
-			r.addResult(getTargetID(), outputDirectory, outputFilename,
+			r.addResult(getTargetName(), outputDirectory, outputFilename,
 					schemaTargetNamespace);
 
 		} catch (IOException ioe) {
@@ -476,7 +469,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 		document = null;
 		root = null;
-		hook = null;
 		mapEntryByType = new HashMap<String, ProcessMapEntry>();
 	}
 

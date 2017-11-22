@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:acvv="http://test/absentCodelistValueValidation" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/absentCodelistValueValidation" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:acvv="http://test/absentCodelistValueValidation" xmlns:ext="http://example.org/absentCodelistValueValidation/extSchema" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/absentCodelistValueValidation" version="1.0">
+  <import namespace="http://example.org/absentCodelistValueValidation/extSchema"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="acvv:FeatureTypeType"/>
@@ -7,6 +8,7 @@
       <extension base="gml:AbstractFeatureType">
         <sequence>
           <element name="propCL" type="gml:CodeType"/>
+          <element name="propExt" type="ext:ExternalTypePropertyType"/>
         </sequence>
       </extension>
     </complexContent>

@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,12 +55,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -77,13 +81,14 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathFragment;
 
 public class XsdDocument implements MessageSource {
 
 	protected Document document = null;
 	protected Element root = null;
-	protected Comment hook = null;
+	protected Element rootAnnotation = null;
 	protected Options options = null;
 	public ShapeChangeResult result = null;
 	protected Model model = null;
@@ -169,9 +174,13 @@ public class XsdDocument implements MessageSource {
 		addAttribute(root, "targetNamespace", targetNamespace);
 		addAttribute(root, "xmlns:" + pi.xmlns(), targetNamespace);
 
-		addStandardAnnotation(root, pi);
+		rootAnnotation = addStandardAnnotation(root, pi);
 
-		hook = addHook(root);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			addCreationComment(root);
+		}
 	};
 
 	/** Add attribute to an element */
@@ -182,15 +191,20 @@ public class XsdDocument implements MessageSource {
 	}
 
 	/** Add a comment */
-	protected Comment addHook(Element e) {
+	protected Comment addCreationComment(Element e) {
 		Comment e1 = document.createComment(
 				"XML Schema document created by ShapeChange - http://shapechange.net/");
 		e.appendChild(e1);
 		return e1;
 	}
 
-	/** Add documentation and tagged values to an element */
-	protected void addStandardAnnotation(Element e, Info info) {
+	/**
+	 * Add documentation and tagged values to an element
+	 * 
+	 * @return the annotation element, if one was created, else
+	 *         <code>null</code>
+	 */
+	protected Element addStandardAnnotation(Element e, Info info) {
 
 		// documentation
 		Element e1 = null;
@@ -287,6 +301,28 @@ public class XsdDocument implements MessageSource {
 					addImport(Options.DGIWGSP_NSABR, Options.DGIWGSP_NS);
 				}
 			}
+
+			if (info.matches("rule-xsd-pkg-gmlsf")) {
+
+				String gmlsfComplianceLevel = pi
+						.taggedValue("gmlsfComplianceLevel");
+
+				if (gmlsfComplianceLevel != null
+						&& !gmlsfComplianceLevel.trim().isEmpty()) {
+
+					e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+							"appinfo");
+					addAttribute(e2, "source", options
+							.schemaLocationOfNamespace(Options.GMLSF_NS));
+					Element e0 = document.createElementNS(Options.GMLSF_NS,
+							"ComplianceLevel");
+					e2.appendChild(e0);
+					e0.appendChild(
+							document.createTextNode(gmlsfComplianceLevel));
+
+					addImport(Options.GMLSF_NSABR, Options.GMLSF_NS);
+				}
+			}
 		}
 
 		if (info instanceof PropertyInfo) {
@@ -305,14 +341,16 @@ public class XsdDocument implements MessageSource {
 						if (e2 == null)
 							e2 = document.createElementNS(
 									Options.W3C_XML_SCHEMA, "appinfo");
+
+						String s = mapElement(ci);
+						if (s == null) {
+							s = ci.qname();
+						}
+
 						Element e3 = document.createElementNS(options.GML_NS,
 								"targetElement");
 						e2.appendChild(e3);
-						String s = mapElement(ci);
-						if (s != null)
-							e3.appendChild(document.createTextNode(s));
-						else
-							e3.appendChild(document.createTextNode(ci.qname()));
+						e3.appendChild(document.createTextNode(s));
 					}
 				}
 				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
@@ -325,6 +363,28 @@ public class XsdDocument implements MessageSource {
 					e2.appendChild(e3);
 					e3.appendChild(document.createTextNode(ci.name()));
 					addImport("gmlexr", Options.GMLEXR_NS);
+				}
+				if (ci.category() == Options.CODELIST
+						&& propi.matches("rule-xsd-prop-targetCodeListURI")) {
+
+					String codeListURI = StringUtils
+							.stripToNull(ci.taggedValue("codeList"));
+					if (codeListURI == null) {
+						codeListURI = StringUtils
+								.stripToNull(ci.taggedValue("vocabulary"));
+					}
+
+					if (codeListURI != null) {
+
+						if (e2 == null)
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "appinfo");
+						Element e3 = document.createElementNS(Options.SCAI_NS,
+								"targetCodeListURI");
+						e2.appendChild(e3);
+						e3.appendChild(document.createTextNode(codeListURI));
+						addImport("sc", Options.SCAI_NS);
+					}
 				}
 			}
 			if (info.matches("rule-xsd-prop-reverseProperty")
@@ -399,7 +459,10 @@ public class XsdDocument implements MessageSource {
 			if (e2 != null)
 				e0.appendChild(e2);
 			e.appendChild(e0);
+			return e0;
 		}
+
+		return null;
 	}
 
 	private boolean classHasObjectType(ClassInfo ci) {
@@ -1233,8 +1296,8 @@ public class XsdDocument implements MessageSource {
 					baseType = me.p1;
 				}
 			}
-			
-			if(baseType == null) {
+
+			if (baseType == null) {
 				baseType = base;
 			}
 
@@ -1739,7 +1802,18 @@ public class XsdDocument implements MessageSource {
 		}
 	};
 
-	/** Process a single property. */
+	/**
+	 * Process a single property.
+	 * 
+	 * @param cibase
+	 *            a class
+	 * @param pi
+	 *            property of cibase
+	 * @param m
+	 *            multiplicity of the property, can be <code>null</code>
+	 * @param schDoc
+	 * @return
+	 */
 	protected Element addProperty(ClassInfo cibase, PropertyInfo pi,
 			Multiplicity m, SchematronSchema schDoc) {
 
@@ -1850,7 +1924,55 @@ public class XsdDocument implements MessageSource {
 				if (mc != null)
 					mc.addDetail(null, 400, "Class", cibase.fullName());
 			}
+
+		} else if (ci != null && ci.category() == Options.CODELIST
+				&& ci.matches("rule-xsd-cls-codelist-gmlsf")) {
+
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+			addStandardAnnotation(e1, pi);
+			addAttribute(e1, "name", pi.name());
+
+			Element e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+					"complexType");
+			e1.appendChild(e2);
+
+			Element simpleContent = document
+					.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
+			e2.appendChild(simpleContent);
+
+			Element restriction = document
+					.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			addAttribute(restriction, "base", "gml:CodeType");
+			simpleContent.appendChild(restriction);
+
+			String codeListUri = ci.taggedValue("codeList");
+			if (codeListUri == null) {
+				codeListUri = ci.taggedValue("vocabulary");
+			}
+
+			if (codeListUri != null && codeListUri.trim().length() > 0) {
+				Element attribute = document
+						.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
+				addAttribute(attribute, "name", "codeSpace");
+				addAttribute(attribute, "type", "anyURI");
+				addAttribute(attribute, "fixed", codeListUri.trim());
+				restriction.appendChild(attribute);
+			}
+			addMinMaxOccurs(e1, m);
+			addImport("gml", options.fullNamespace("gml"));
+
+		} else if (pi.categoryOfValue() == Options.FEATURE
+				&& pi.matches("rule-xsd-prop-featureType-gmlsf-byReference")) {
+
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+			addStandardAnnotation(e1, pi);
+			addAttribute(e1, "name", pi.name());
+			addAttribute(e1, "type", "gml:ReferenceType");
+			addMinMaxOccurs(e1, m);
+			addImport("gml", options.fullNamespace("gml"));
+
 		} else {
+
 			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 			addStandardAnnotation(e1, pi);
 			addAttribute(e1, "name", pi.name());
@@ -1881,8 +2003,9 @@ public class XsdDocument implements MessageSource {
 
 			if (!multiplicityAlreadySet) {
 				if (ci != null && ci.isKindOf("historisches_Objekt")
-						&& ci.matches("rule-xsd-cls-okstra-lifecycle"))
+						&& ci.matches("rule-xsd-cls-okstra-lifecycle")) {
 					m.maxOccurs = Integer.MAX_VALUE;
+				}
 				addMinMaxOccurs(e1, m);
 			}
 
@@ -1897,6 +2020,7 @@ public class XsdDocument implements MessageSource {
 					&& (pi.taggedValue("length") != null
 							|| (pi.taggedValue("size") != null
 									&& pi.taggedValue("pattern") != null))) {
+
 				Element simpleType = document
 						.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
 				e1.appendChild(simpleType);
@@ -1926,6 +2050,161 @@ public class XsdDocument implements MessageSource {
 				if (concreteRestriction != null)
 					restriction.appendChild(concreteRestriction);
 
+			}
+
+			if (pi.matches("rule-xsd-prop-constrainingFacets")
+					&& pi.categoryOfValue() != Options.CODELIST
+					&& pi.categoryOfValue() != Options.ENUMERATION) {
+
+				String length = pi.taggedValue("length");
+				if (length == null) {
+					length = pi.taggedValue("maxLength");
+				}
+				if (length == null) {
+					length = pi.taggedValue("size");
+				}
+				String pattern = pi.taggedValue("pattern");
+				String min = pi.taggedValue("rangeMinimum");
+				String max = pi.taggedValue("rangeMaximum");
+				String typecontent = "simple/simple";
+
+				if (length != null || pattern != null || min != null
+						|| max != null) {
+
+					/*
+					 * baseType is the simple type that is the foundation of the
+					 * restriction. It is defined by a map entry for the value
+					 * type or a map entry in the supertypes (direct and
+					 * indirect) of the value type that maps to a simple type
+					 * with simple content.
+					 */
+					String baseType = null;
+					String base = null;
+
+					/*
+					 * Identify base and type content from the value type; this
+					 * is important for correct declaration
+					 */
+					MapEntry me = options.baseMapEntry(pi.typeInfo().name,
+							pi.encodingRule("xsd"));
+					if (me != null) {
+						base = me.p1;
+						baseType = me.p1;
+						typecontent = me.p2;
+					}
+					if (base == null && ci != null) {
+						base = ci.qname() + "Type";
+					}
+
+					if (ci != null) {
+
+						/*
+						 * Identify base type of value type that has
+						 * xmlTypeType="simple" (otherwise ="complex") and
+						 * xmlTypeContent="simple"
+						 */
+						MapEntry me2 = findBaseMapEntryInSupertypes(ci,
+								pi.encodingRule("xsd"), "simple", "simple");
+						if (me2 == null) {
+							me2 = findBaseMapEntryInSupertypes(ci,
+									pi.encodingRule("xsd"), "complex",
+									"simple");
+						}
+						if (me2 != null) {
+							baseType = me2.p1;
+						}
+					}
+
+					/*
+					 * We do NOT use the base as fallback if baseType is null,
+					 * since this would lead to always adding facets (since the
+					 * check if a facet is supported by the baseType returns
+					 * true if a qname is given as baseType).
+					 */
+
+					if (base != null && baseType != null) {
+
+						e1.removeAttribute("type");
+
+						Element e2; // complexType or simpleType
+						Element e3; // restriction or extension
+						Element e4; // complexContent or simpleContent
+						if (typecontent.equals("complex/simple")) {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexType");
+							// addStandardAnnotation(e2, ci);
+							e1.appendChild(e2);
+							e4 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "simpleContent");
+							e2.appendChild(e4);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "restriction");
+							e4.appendChild(e3);
+						} else if (typecontent.equals("simple/simple")) {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "simpleType");
+							e1.appendChild(e2);
+							// addStandardAnnotation(e2, ci);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "restriction");
+							e2.appendChild(e3);
+						} else {
+							e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexType");
+							e1.appendChild(e2);
+							// addStandardAnnotation(e2, ci);
+							e4 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "complexContent");
+							e2.appendChild(e4);
+							e3 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "extension");
+							e4.appendChild(e3);
+						}
+						addAttribute(e3, "base", base);
+						if (facetSupported("totalDigits", baseType)
+								&& length != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "totalDigits");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", length);
+						}
+						if (facetSupported("maxLength", baseType)
+								&& length != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "maxLength");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", length);
+						}
+						if (facetSupported("pattern", baseType)
+								&& pattern != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "pattern");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", pattern);
+						}
+						if (facetSupported("minInclusive", baseType)
+								&& min != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "minInclusive");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", min);
+						}
+						if (facetSupported("maxInclusive", baseType)
+								&& max != null) {
+							Element e5 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "maxInclusive");
+							e3.appendChild(e5);
+							addAttribute(e5, "value", max);
+						}
+
+					} else {
+
+						MessageContext mc = result.addError(null, 180,
+								ci.name(), pi.name());
+						if (mc != null)
+							mc.addDetail(null, 400, "Property", pi.fullName());
+					}
+				}
 			}
 		}
 
@@ -2369,7 +2648,6 @@ public class XsdDocument implements MessageSource {
 			} else if (me.rule.equals("metadataPropertyType")) {
 				multiplicityAlreadySet = addAnonymousPropertyType(e, propi,
 						me.p1, null, true);
-
 			}
 			return multiplicityAlreadySet;
 		}
@@ -2464,7 +2742,64 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 
-		if (ci.category() == Options.OKSTRAKEY
+		if (ci.category() == Options.UNION
+				&& ci.matches(
+						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+				&& "true".equalsIgnoreCase(
+						ci.taggedValue("representsFeatureTypeSet"))) {
+
+			addAttribute(e, "type", "gml:ReferenceType");
+			addImport("gml", options.fullNamespace("gml"));
+
+			if (propi.matches("rule-xsd-prop-targetElement") && options.GML_NS
+					.equals("http://www.opengis.net/gml/3.2")) {
+
+				Element annotationElement;
+				NodeList annotationElements = e
+						.getElementsByTagName("annotation");
+				if (annotationElements != null
+						&& annotationElements.getLength() != 0) {
+					annotationElement = (Element) annotationElements.item(0);
+				} else {
+					annotationElement = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "annotation");
+					e.appendChild(annotationElement);
+				}
+
+				Element appinfoElement = document
+						.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
+				annotationElement.appendChild(appinfoElement);
+
+				/*
+				 * get all properties from the union, recursively drill down to
+				 * get all options from unions that represent feature type sets
+				 */
+				List<ClassInfo> representedFeatures = new ArrayList<ClassInfo>(
+						findAllRepresentedFeatures(ci));
+				Collections.sort(representedFeatures,
+						new Comparator<ClassInfo>() {
+
+							@Override
+							public int compare(ClassInfo o1, ClassInfo o2) {
+								return o1.name().compareTo(o2.name());
+							}
+						});
+
+				for (ClassInfo representedFeatureType : representedFeatures) {
+
+					String s = mapElement(representedFeatureType);
+					if (s == null) {
+						s = representedFeatureType.qname();
+					}
+
+					Element targetElement = document.createElementNS(
+							options.GML_NS, "gml:targetElement");
+					appinfoElement.appendChild(targetElement);
+					targetElement.appendChild(document.createTextNode(s));
+				}
+			}
+
+		} else if (ci.category() == Options.OKSTRAKEY
 				&& ci.matches("rule-xsd-cls-okstra-schluesseltabelle")) {
 			addAttribute(e, "type", propertyTypeName(ci, true));
 			addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
@@ -2492,6 +2827,7 @@ public class XsdDocument implements MessageSource {
 			} else if (ci.matches("rule-xsd-cls-standard-gml-property-types")
 					|| ci.matches("rule-xsd-cls-standard-swe-property-types")) {
 				boolean embedPropertyType = false;
+				boolean addImport = true;
 
 				if (propi.matches("rule-xsd-prop-inlineOrByReference")
 						&& propi.inlineOrByReference().equals("byreference")) {
@@ -2499,6 +2835,9 @@ public class XsdDocument implements MessageSource {
 					 * For by-reference we never use the standard property type
 					 */
 					embedPropertyType = true;
+					if (!propi.matches("rule-xsd-prop-targetElement")) {
+						addImport = false;
+					}
 				} else if (propi.matches("rule-xsd-prop-inlineOrByReference")
 						&& propi.inlineOrByReference().equals("inline")) {
 					/*
@@ -2629,7 +2968,9 @@ public class XsdDocument implements MessageSource {
 						addAttribute(e, "minOccurs", "0");
 				}
 
-				addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
+				if (addImport) {
+					addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
+				}
 			}
 
 		} else if ((ci.matches("rule-xsd-cls-mixin-classes")
@@ -2664,6 +3005,7 @@ public class XsdDocument implements MessageSource {
 					"rule-xsd-cls-codelist-asDictionary") && ci.asDictionary())
 					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 							&& ci.asDictionaryGml33()))) {
+
 				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 						&& ci.asDictionaryGml33()) {
 					addAttribute(e, "type", "gml:ReferenceType");
@@ -2791,6 +3133,49 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		return multiplicityAlreadySet;
+	}
+
+	/**
+	 * *
+	 * 
+	 * @param ci
+	 * @return The set of feature types represented by the given union (with
+	 *         tagged value "representsFeatureTypeSet=true"), as well as
+	 *         indirect unions that may be implied by this union; can be empty
+	 *         but not <code>null</code>
+	 */
+	private SortedSet<ClassInfo> findAllRepresentedFeatures(ClassInfo ci) {
+
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+		if (ci != null && ci.category() == Options.UNION && "true"
+				.equalsIgnoreCase(ci.taggedValue("representsFeatureTypeSet"))) {
+
+			for (PropertyInfo option : ci.propertiesAll()) {
+
+				ClassInfo type = model.classById(option.typeInfo().id);
+
+				if (type == null) {
+					type = model.classByName(option.typeInfo().name);
+				}
+
+				if (type != null) {
+
+					if (type.category() == Options.UNION
+							&& "true".equalsIgnoreCase(ci
+									.taggedValue("representsFeatureTypeSet"))) {
+
+						result.addAll(findAllRepresentedFeatures(type));
+
+					} else if (type.category() == Options.FEATURE) {
+
+						result.add(type);
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private void addAssertionForCodelistUri(ClassInfo cibase,
@@ -2972,6 +3357,13 @@ public class XsdDocument implements MessageSource {
 
 		// First address cases where no property type is necessary or only a
 		// very simple one
+
+		if ((propi.isMetadata() || valueIsMetadata)
+				&& propi.matches("rule-xsd-prop-metadata-gmlsf-byReference")) {
+			addAttribute(e, "type", "gml:ReferenceType");
+			addImport("gml", options.fullNamespace("gml"));
+			return false;
+		}
 
 		if (propi.matches("rule-xsd-prop-inlineOrByReference")
 				&& propi.inlineOrByReference().equals("byreference")) {
@@ -3309,13 +3701,22 @@ public class XsdDocument implements MessageSource {
 			return;
 		}
 
+		Node anchor = rootAnnotation;
+
 		Element e;
 		Collections.sort(includes);
 		for (Iterator<String> i = includes.iterator(); i.hasNext();) {
 			e = document.createElementNS(Options.W3C_XML_SCHEMA, "include");
 			addAttribute(e, "schemaLocation", i.next());
-			root.insertBefore(e, hook);
+
+			if (anchor == null) {
+				root.insertBefore(e, root.getFirstChild());
+			} else {
+				root.insertBefore(e, anchor.getNextSibling());
+			}
+			anchor = e;
 		}
+
 		String s;
 		String loc;
 		Collections.sort(imports);
@@ -3327,7 +3728,13 @@ public class XsdDocument implements MessageSource {
 			if (loc != null) {
 				addAttribute(e, "schemaLocation", loc);
 			}
-			root.insertBefore(e, hook);
+
+			if (anchor == null) {
+				root.insertBefore(e, root.getFirstChild());
+			} else {
+				root.insertBefore(e, anchor.getNextSibling());
+			}
+			anchor = e;
 		}
 
 		// Check whether we can use the given output directory

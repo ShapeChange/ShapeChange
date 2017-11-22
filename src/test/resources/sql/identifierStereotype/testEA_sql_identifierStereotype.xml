@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/sql/identifierStereotype/test_sql_identifierStereotype.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/sql/identifierStereotype/log_sql.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="F_inheritance" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_inheritance" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sqlrule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/identifierStereotype/ddl" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="createReferences" value="true" />
+			<rules>
+				<EncodingRule name="sqlrule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-cls-data-types" />
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
+					<rule name="rule-sql-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

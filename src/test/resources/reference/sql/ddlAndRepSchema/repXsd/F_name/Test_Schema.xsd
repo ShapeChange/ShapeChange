@@ -13,15 +13,10 @@
           <appinfo>EAID_1526E150_C7D0_462c_8B7F_8BE85FC07B56</appinfo>
         </annotation>
       </element>
-      <element minOccurs="0" name="pMixin">
+      <element minOccurs="0" name="pMixin" type="string">
         <annotation>
           <appinfo>EAID_2ADB9DBE_68DF_4729_88F5_A8D29E5013CD</appinfo>
         </annotation>
-        <simpleType>
-          <restriction base="string">
-            <maxLength value="4000"/>
-          </restriction>
-        </simpleType>
       </element>
     </sequence>
   </complexType>
@@ -32,12 +27,12 @@
   </element>
   <complexType name="T1_Class2_p1Type">
     <sequence>
-      <element name="T1_Class2testobjectidentifier" type="integer">
+      <element name="T1_Class2testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_src8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
       </element>
-      <element name="T1_Class4testobjectidentifier" type="integer">
+      <element name="T1_Class4testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_dst8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
@@ -52,15 +47,10 @@
   <complexType name="T1_Class3Type">
     <sequence>
       <element name="testobjectidentifier" type="integer"/>
-      <element minOccurs="0" name="pMixin">
+      <element minOccurs="0" name="pMixin" type="string">
         <annotation>
           <appinfo>EAID_2ADB9DBE_68DF_4729_88F5_A8D29E5013CD</appinfo>
         </annotation>
-        <simpleType>
-          <restriction base="string">
-            <maxLength value="4000"/>
-          </restriction>
-        </simpleType>
       </element>
       <element minOccurs="0" name="p" type="string">
         <annotation>
@@ -76,12 +66,12 @@
   </element>
   <complexType name="T1_Class3_p1Type">
     <sequence>
-      <element name="T1_Class3testobjectidentifier" type="integer">
+      <element name="T1_Class3testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_src8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
       </element>
-      <element name="T1_Class4testobjectidentifier" type="integer">
+      <element name="T1_Class4testobjectidentifier" type="string">
         <annotation>
           <appinfo>EAID_dst8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
         </annotation>
@@ -126,15 +116,10 @@
           </restriction>
         </simpleType>
       </element>
-      <element minOccurs="0" name="p3_noSizeTV">
+      <element minOccurs="0" name="p3_noSizeTV" type="string">
         <annotation>
           <appinfo>EAID_A1CB64AA_1B68_4d0a_B569_6EA011EA1E6A</appinfo>
         </annotation>
-        <simpleType>
-          <restriction base="string">
-            <maxLength value="4000"/>
-          </restriction>
-        </simpleType>
       </element>
       <element minOccurs="0" name="p4_size0" type="string">
         <annotation>
@@ -217,9 +202,43 @@
   <complexType name="T6_Class1Type">
     <sequence>
       <element name="testobjectidentifier" type="integer"/>
-      <element minOccurs="0" name="p1_FK" type="integer">
+      <element minOccurs="0" name="p1_FK" type="string">
         <annotation>
           <appinfo>EAID_dst5120FA_9D5B_4bbc_BCA7_AC2CCDC2FC74</appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <element name="T6_Class1_p2" type="rep:T6_Class1_p2Type">
+    <annotation>
+      <appinfo>EAID_647F2E72_CA64_424f_99B9_199499DA320A.EAID_4AFD4869_09D2_4330_90C0_D438EE9FEE57</appinfo>
+    </annotation>
+  </element>
+  <complexType name="T6_Class1_p2Type">
+    <sequence>
+      <element name="T6_Class1testobjectidentifier" type="string"/>
+      <element name="p2" type="string">
+        <annotation>
+          <appinfo>EAID_4AFD4869_09D2_4330_90C0_D438EE9FEE57</appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <element name="T6_Class1_p3" type="rep:T6_Class1_p3Type">
+    <annotation>
+      <appinfo>EAID_27534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
+    </annotation>
+  </element>
+  <complexType name="T6_Class1_p3Type">
+    <sequence>
+      <element name="T6_Class1testobjectidentifier" type="string">
+        <annotation>
+          <appinfo>EAID_src534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
+        </annotation>
+      </element>
+      <element name="T6_Class2testobjectidentifier" type="string">
+        <annotation>
+          <appinfo>EAID_dst534DD0_7A2B_4807_8CDD_9D9041A3210F</appinfo>
         </annotation>
       </element>
     </sequence>

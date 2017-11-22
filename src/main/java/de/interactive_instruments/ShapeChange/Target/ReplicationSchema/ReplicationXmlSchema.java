@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -56,6 +55,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -70,8 +70,8 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
 
 /**
@@ -188,7 +188,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	protected Document document = null;
 	protected Element root = null;
 	protected Map<String, ProcessMapEntry> mapEntryByType = new HashMap<String, ProcessMapEntry>();
-	private Comment hook;
 
 	protected String targetNamespace = null;
 	protected String objectIdentifierFieldName;
@@ -284,13 +283,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 			}
 		}
 
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(schemaPi).iterator(); k
-				.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
-		}
-
 		// ======================================
 		// Parse configuration parameters
 		// ======================================
@@ -365,9 +357,13 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		addAttribute(root, "targetNamespace", targetNamespace);
 		addAttribute(root, "xmlns:" + schemaPi.xmlns(), targetNamespace);
 
-		hook = document.createComment(
-				"XML Schema document created by ShapeChange - http://shapechange.net/");
-		root.appendChild(hook);
+		if (options.getCurrentProcessConfig().parameterAsString(
+				TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+				true) == null) {
+			Comment generationComment = document.createComment(
+					"XML Schema document created by ShapeChange - http://shapechange.net/");
+			root.appendChild(generationComment);
+		}
 	}
 
 	/** Add attribute to an element */
@@ -381,9 +377,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	public void process(ClassInfo ci) {
 
 		if (ci == null || ci.pkg() == null)
-			return;
-
-		if (ci.processed(getTargetID()))
 			return;
 
 		result.addDebug(this, 6, ci.name());
@@ -426,8 +419,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 			processLocalProperties(ci, propertyHook);
 			break;
 		}
-
-		ci.processed(getTargetID(), true);
 	}
 
 	/**
@@ -969,7 +960,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 			writer.close();
 
-			result.addResult(getTargetID(), outputDirectory, outputFilename,
+			result.addResult(getTargetName(), outputDirectory, outputFilename,
 					schemaPi.targetNamespace());
 
 		} catch (IOException ioe) {
@@ -984,6 +975,9 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 * Add &lt;import&gt; tags as the first content in the &lt;schema&gt; tag.
 	 */
 	private void addImports() {
+
+		Node anchor = null;
+
 		Element importElement;
 		for (PackageInfo packageInfo : packagesForImport) {
 			addAttribute(root, "xmlns:" + packageInfo.xmlns(),
@@ -992,13 +986,19 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 					"import");
 			addAttribute(importElement, "namespace",
 					packageInfo.targetNamespace() + targetNamespaceSuffix);
-			root.insertBefore(importElement, hook);
+
+			if (anchor == null) {
+				root.insertBefore(importElement, root.getFirstChild());
+			} else {
+				root.insertBefore(importElement, anchor.getNextSibling());
+			}
+			anchor = importElement;
 		}
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.REPLICATION_SCHEMA.getId();
+	public String getTargetName() {
+		return "Replication XML Schema";
 	}
 
 	@Override

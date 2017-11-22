@@ -51,7 +51,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -491,8 +490,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public int getTargetID() {
-		return TargetIdentification.PROFILE_TRANSFER_EA.getId();
+	public String getTargetName(){
+		return "Profile Transfer EA";
 	}
 
 	@Override
@@ -593,7 +592,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 								.contains(statusTaggedValue)) {
 					continue;
 				}
-
+								
 				/*
 				 * Delete the profiles tagged value of the class and its
 				 * properties if so configured. NOTE: This is independent of
@@ -639,8 +638,9 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 					Map<String, ClassInfo> inputModelSchemaCisByCiName = inputModelClassesByClassNameBySchemaName
 							.get(schemaName);
 
-					// transfer class profiles
-					String className = classElmt.GetName();
+					// transfer class profiles					
+					String className = classElmt.GetName().trim();
+					result.addInfo(this, 3, className);
 
 					// ensure that input model contains this class as well
 					if (!inputModelSchemaCisByCiName.containsKey(className)) {
@@ -654,9 +654,9 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 						if (!deleteExistingProfiles) {
 							String profilesTV = EAModelUtil
 									.taggedValue(classElmt, "profiles");
-							if (profilesTV != null) {
+							if (profilesTV != null && profilesTV.trim().length() > 0) {
 								try {
-									newProfilesCi = Profiles.parse(profilesTV,
+									newProfilesCi = Profiles.parse(profilesTV.trim(),
 											false);
 								} catch (MalformedProfileIdentifierException e) {
 									result.addError(this, 22, className,
@@ -698,10 +698,10 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 								if (!deleteExistingProfiles) {
 									String profilesTV = EAModelUtil
 											.taggedValue(att, "profiles");
-									if (profilesTV != null) {
+									if (profilesTV != null  && profilesTV.trim().length() > 0) {
 										try {
 											newProfilesPi = Profiles
-													.parse(profilesTV, false);
+													.parse(profilesTV.trim(), false);
 										} catch (MalformedProfileIdentifierException e) {
 											result.addError(this, 25, className,
 													attName, schemaName,
@@ -783,9 +783,9 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			Profiles newProfilesPi = new Profiles();
 			if (!deleteExistingProfiles) {
 				String profilesTV = EAModelUtil.taggedValue(end, "profiles");
-				if (profilesTV != null) {
+				if (profilesTV != null && profilesTV.trim().length() > 0) {
 					try {
-						newProfilesPi = Profiles.parse(profilesTV, false);
+						newProfilesPi = Profiles.parse(profilesTV.trim(), false);
 					} catch (MalformedProfileIdentifierException e) {
 						result.addError(this, 27, inputModelCi.name(), roleName,
 								schemaName, e.getMessage());
@@ -983,6 +983,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			return "Context: $1$";
 		case 2:
 			return "Directory named '$1$' does not exist or is not accessible.";
+		case 3: 
+			return "Transferring profiles for class '$1$'.";
 		case 10:
 			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to transfer profiles to is an EA repository.";
 		case 11:

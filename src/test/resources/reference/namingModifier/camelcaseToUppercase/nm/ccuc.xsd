@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ccuc="http://test/namingModifier/camelcasetouppercase" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/namingModifier/camelcasetouppercase" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ccuc="http://test/namingModifier/camelcasetouppercase" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" elementFormDefault="qualified" targetNamespace="http://test/namingModifier/camelcasetouppercase" version="1.0">
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <simpleType name="AB_CDType">
@@ -6,7 +7,13 @@
   </simpleType>
   <simpleType name="AB_CDEnumerationType">
     <restriction base="string">
-      <enumeration value="MYENUM"/>
+      <enumeration value="MYENUM">
+        <annotation>
+          <appinfo>
+            <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">SOME_THING</taggedValue>
+          </appinfo>
+        </annotation>
+      </enumeration>
     </restriction>
   </simpleType>
   <simpleType name="AB_CDOtherType">
@@ -28,16 +35,30 @@
       <enumeration value="ENUM_B"/>
     </restriction>
   </simpleType>
-  <element name="O_P_Q_R" substitutionGroup="gml:AbstractFeature" type="ccuc:O_P_Q_RType"/>
+  <element name="O_P_Q_R" substitutionGroup="gml:AbstractFeature" type="ccuc:O_P_Q_RType">
+    <annotation>
+      <appinfo>
+        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">FOO_BAR_ID</taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
   <complexType name="O_P_Q_RType">
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="ABCD_ID" type="boolean"/>
+          <element name="ABCD_ID" type="boolean">
+            <annotation>
+              <appinfo>
+                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">A_L_OHA</taggedValue>
+                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">FOO_BAR_LM</taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="PROP_X2" type="ccuc:S_T_UVPropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ccuc:PROP_X1</reversePropertyName>
+                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">SOME_WHERE_OVER_HERE</taggedValue>
               </appinfo>
             </annotation>
           </element>

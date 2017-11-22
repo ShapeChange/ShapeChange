@@ -1,0 +1,1028 @@
+<?xml version="1.0" encoding="UTF-8"?><Vector_Attributes xmlns="http://www.opengis.net/cdb/1.0/Vector_Attributes" version="v1.2">
+  <Attributes>
+    <Attribute code="1" symbol="aerodromeElevation">
+      <Name>Aerodrome Elevation</Name>
+      <Description>The vertical distance above Mean Sea Level (MSL) of the highest point of the landing area.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="2" symbol="aerodromeOfficialName">
+      <Name>Aerodrome Official Name</Name>
+      <Description>The primary official name of an aerodrome as designated by an appropriate authority.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>80</length>
+      </Value>
+    </Attribute>
+    <Attribute code="3" symbol="airfieldSymbolType">
+      <Name>Airfield Symbol Type</Name>
+      <Description>The type of airfield symbol designation.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="4" symbol="airfieldType">
+      <Name>Airfield Type</Name>
+      <Description>The type of an airfield based on the size and/or paving of its runways.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="5" symbol="airfieldUse_1">
+      <Name>Airfield Use : 1</Name>
+      <Description>A primary use of an airfield.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="6" symbol="airfieldUse_2">
+      <Name>Airfield Use : 2</Name>
+      <Description>A primary use of an airfield.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="7" symbol="area">
+      <Name>Feature Area</Name>
+      <Description>The area within the delineation of the feature.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="8" symbol="externalEntityIdentifier_1">
+      <Name>External Entity Identifier - 1</Name>
+      <Description>An identifier that specifies the representation of this individual entity (for example: an individual actor, feature, or event) in an external information system. [descr] The identifier consists of a code value that is unique within the scope of the external information system, accompanied by a namespace designator for that information system. The combination of code value and namespace designator results in a globally unique identifier.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="9" symbol="externalEntityIdentifier_2">
+      <Name>External Entity Identifier - 2</Name>
+      <Description>An identifier that specifies the representation of this individual entity (for example: an individual actor, feature, or event) in an external information system. [descr] The identifier consists of a code value that is unique within the scope of the external information system, accompanied by a namespace designator for that information system. The combination of code value and namespace designator results in a globally unique identifier.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="10" symbol="facilityOperationalStatus">
+      <Name>Facility Operational Status</Name>
+      <Description>The status of operation of a man-made structure, as a whole. [descr] Includes actual operations, operational capability, and planned or proposed man-made structures.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="11" symbol="highestElevation_1.absoluteVertAccuracy90">
+      <Name>Highest Elevation : 1 : Absolute Vertical Accuracy (90%)</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : The difference between the recorded elevation of a feature and its true elevation referenced to the same vertical datum expressed as a linear error at 90 percent probability. [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : It may also be applied to a data set. If the data contains multiple accuracies, usually the worst accuracy which applies to 10% or more of the data is recorded.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+        <Unit>1</Unit>
+      </Value>
+    </Attribute>
+    <Attribute code="12" symbol="highestElevation_1.value">
+      <Name>Highest Elevation : 1 : Real Value</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : The value of a real number; any number that is either rational (fractions) or irrational (numbers with non-recurring decimal representation). [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : In computing, any number with a fractional (or decimal) part; for example, the value 3.14159265358979 . Real numbers are also called floating point numbers. The phrase 'real number' is often shortened to simply 'real'.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+        <Unit>1</Unit>
+      </Value>
+    </Attribute>
+    <Attribute code="13" symbol="highestElevation_1.verticalDatum">
+      <Name>Highest Elevation : 1 : Vertical Datum</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : A reference surface with respect to which elevations and/or depths are specified. [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : The values of elevation (or sometimes equivalently, height) and depth are determined along the direction of the reference surface normal.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="14" symbol="highestElevation_2.absoluteVertAccuracy90">
+      <Name>Highest Elevation : 2 : Absolute Vertical Accuracy (90%)</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : The difference between the recorded elevation of a feature and its true elevation referenced to the same vertical datum expressed as a linear error at 90 percent probability. [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : It may also be applied to a data set. If the data contains multiple accuracies, usually the worst accuracy which applies to 10% or more of the data is recorded.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+        <Unit>1</Unit>
+      </Value>
+    </Attribute>
+    <Attribute code="15" symbol="highestElevation_2.value">
+      <Name>Highest Elevation : 2 : Real Value</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : The value of a real number; any number that is either rational (fractions) or irrational (numbers with non-recurring decimal representation). [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : In computing, any number with a fractional (or decimal) part; for example, the value 3.14159265358979 . Real numbers are also called floating point numbers. The phrase 'real number' is often shortened to simply 'real'.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+        <Unit>1</Unit>
+      </Value>
+    </Attribute>
+    <Attribute code="16" symbol="highestElevation_2.verticalDatum">
+      <Name>Highest Elevation : 2 : Vertical Datum</Name>
+      <Description>The elevation from a specified vertical datum to the highest point on a feature. : A reference surface with respect to which elevations and/or depths are specified. [descr] In the case of multiple features that may be stacked on each other (for example: a railway on a bridge, a superstructure on a building, or an aerial on a tower) the highest elevation is that of the entire feature stack. For example, the highest elevation of a church is that of its steeple and not that of the roof of the church itself. The church itself may have a height above surface level that excludes the additional height of the steeple superstructure located on the church roof. : The values of elevation (or sometimes equivalently, height) and depth are determined along the direction of the reference surface normal.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="17" symbol="icaoLocationIndicator">
+      <Name>ICAO Location Indicator</Name>
+      <Description>The identifier that is assigned to a location in accordance with rules prescribed by the International Civil Aviation Organization (ICAO) in Document 7910. [descr] If available this indicator shall be used as primary for identification.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>4</length>
+      </Value>
+    </Attribute>
+    <Attribute code="18" symbol="installationOperator">
+      <Name>Installation Operator</Name>
+      <Description>The name of the company or authority operating an installation.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="19" symbol="legalConstraints">
+      <Name>Entity-associated Legal Constraints</Name>
+      <Description>The legal constraints regarding this entity.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="20" symbol="length.intervalClosureType">
+      <Name>Feature Length : Interval Closure Type</Name>
+      <Description>The dimension of a feature taken along its primary alignment of use and generally in the horizontal plane. : The closure conditions of the two endpoints of a numeric interval. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line, a river, a rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the length is the distance between the bridge abutments along the bridge centreline. In the case of a dam, the length is the distance along the dam crest. If no established direction of flow or use exists then (1) if the feature is irregular in shape its length is its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the longer axis; for a round feature, the diameter.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="21" symbol="length.lowerValue">
+      <Name>Feature Length : Real Non-negative Interval Lower-value</Name>
+      <Description>The dimension of a feature taken along its primary alignment of use and generally in the horizontal plane. : The lower-value of a non-negative real-interval, the first member of a pair of real numbers that represent all of the numbers between the two and possibly including one and/or the other depending on the interval closure. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line, a river, a rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the length is the distance between the bridge abutments along the bridge centreline. In the case of a dam, the length is the distance along the dam crest. If no established direction of flow or use exists then (1) if the feature is irregular in shape its length is its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the longer axis; for a round feature, the diameter. : For example, the value 27.5 as the included lower end of the interval: [27.5 ... 150.0].</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="22" symbol="length.upperValue">
+      <Name>Feature Length : Real Non-negative Interval Upper-value</Name>
+      <Description>The dimension of a feature taken along its primary alignment of use and generally in the horizontal plane. : The upper-value of a non-negative real-interval, the second member of a pair of real numbers that represent all of the numbers between the two and possibly including one and/or the other depending on the interval closure. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line, a river, a rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the length is the distance between the bridge abutments along the bridge centreline. In the case of a dam, the length is the distance along the dam crest. If no established direction of flow or use exists then (1) if the feature is irregular in shape its length is its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the longer axis; for a round feature, the diameter. : For example, the value 15.71 as the excluded upper end of the interval: [3.9 ... 15.71).</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="23" symbol="magneticVariation">
+      <Name>Magnetic Variation</Name>
+      <Description>The angular difference between True North and Magnetic North measured at a given position and date. [descr] The value given indicates whether the angular difference is in the clockwise direction (positive) or counter-clockwise direction (negative) from True North, as viewed from above the surface of the Earth (being from the direction of the zenith). At locations relatively distant from the poles the clockwise direction is eastward and the counter-clockwise direction is westward. True North is the direction of the northern point at which the geographic meridian lines meet.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="24" symbol="note_1.memorandum">
+      <Name>Entity-associated Note - 1 : Memorandum</Name>
+      <Description>A note regarding this entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="25" symbol="note_2.memorandum">
+      <Name>Entity-associated Note - 2 : Memorandum</Name>
+      <Description>A note regarding this entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="26" symbol="place">
+      <Name>Device Entity-associated Place : Device Entity-associated Place : curve Position Information</Name>
+      <Description>The place where this device (for example: a battle tank) exists during a specified period of time. : The place where this device (for example: a battle tank) exists during a specified period of time. [descr] A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="27" symbol="place.legalConstraints">
+      <Name>Device Entity-associated Place : Device Entity-associated Place : curve Position Information : Information Entity-associated Legal Constraints</Name>
+      <Description>The place where this device (for example: a battle tank) exists during a specified period of time. : The place where this device (for example: a battle tank) exists during a specified period of time. : The legal constraints regarding this information entity. [descr] A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="28" symbol="place.note_1.memorandum">
+      <Name>Device Entity-associated Place : Device Entity-associated Place : curve Position Information : Information Entity-associated Note - 1 : Memorandum</Name>
+      <Description>The place where this device (for example: a battle tank) exists during a specified period of time. : The place where this device (for example: a battle tank) exists during a specified period of time. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="29" symbol="place.note_2.memorandum">
+      <Name>Device Entity-associated Place : Device Entity-associated Place : curve Position Information : Information Entity-associated Note - 2 : Memorandum</Name>
+      <Description>The place where this device (for example: a battle tank) exists during a specified period of time. : The place where this device (for example: a battle tank) exists during a specified period of time. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="30" symbol="place.resourceConstraints">
+      <Name>Device Entity-associated Place : Device Entity-associated Place : curve Position Information : Information Entity-associated Resource Constraints</Name>
+      <Description>The place where this device (for example: a battle tank) exists during a specified period of time. : The place where this device (for example: a battle tank) exists during a specified period of time. : The resource constraints regarding this information entity. [descr] A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy. : A place may be spatially localized as a zero-dimensional point or spatially extensive in one or more dimensions (for example: a curve, a surface, or a volume). Place information includes geospatial coordinates, geospatial identifiers for locations, and structured addresses. A place may be specified with multiple representations, each varying in quality and accuracy.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="31" symbol="portOfEntry">
+      <Name>Port of Entry</Name>
+      <Description>An indication that a facility is a port of entry for customs and immigration purposes.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Boolean</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="32" symbol="resourceConstraints">
+      <Name>Entity-associated Resource Constraints</Name>
+      <Description>The resource constraints regarding this entity.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="33" symbol="role">
+      <Name>role</Name>
+      <Description/>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="34" symbol="securityMarkings.resACCM">
+      <Name>Security Markings : Alternate Compensatory Control Measure</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The name of the Alternate Compensatory Control Measure. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="35" symbol="securityMarkings.resAtomicEnergyMarkings">
+      <Name>Security Markings : Resource Atomic Energy Markings</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : One or more indicators identifying information controlled under the U.S. Atomic Energy Act. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="36" symbol="securityMarkings.resClassification">
+      <Name>Security Markings : Resource Classification</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The highest level of classification applicable to the resource, or a portion of the resource, within the domain of classified national security information. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>2</length>
+      </Value>
+    </Attribute>
+    <Attribute code="37" symbol="securityMarkings.resClassificationReason">
+      <Name>Security Markings : Resource Classification Reason</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The basis for the original classification decision regarding the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="38" symbol="securityMarkings.resClassifiedBy">
+      <Name>Security Markings : Resource Classified By</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The identity, by name or personal identifier, and position title of the original classification authority for the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="39" symbol="securityMarkings.resCompilationReason">
+      <Name>Security Markings : Resource Compilation Reason</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The reason that a portion or resource is marked with a higher and/or more restrictive mark than its components would indicate. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls. : For example, this would document why 3 Unclassified bullet items form a Secret List. Without this reason being noted, such a document would be considered to be mismarked and over-classified.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="40" symbol="securityMarkings.resDeclassDate">
+      <Name>Security Markings : Resource Declassification Date</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The specific year, month and day for declassification of the resource, based on the duration of the national security sensitivity of the resource, upon the occurrence of which the resource shall be automatically declassified. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>10</length>
+      </Value>
+    </Attribute>
+    <Attribute code="41" symbol="securityMarkings.resDeclassEvent">
+      <Name>Security Markings : Resource Declassification Event</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : A description of an event for declassification of the resource, based upon the duration of the national security sensitivity of the resource, upon the occurrence of which the resource shall be automatically declassified. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="42" symbol="securityMarkings.resDeclassExemption">
+      <Name>Security Markings : Resource Declassification Exemption</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : An exemption to the nominal 25-year point for automatic declassification of the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>10</length>
+      </Value>
+    </Attribute>
+    <Attribute code="43" symbol="securityMarkings.resDerivClassifiedBy">
+      <Name>Security Markings : Resource Derivatively Classified By</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The identity, by name or personal identifier, of the derivative classification authority of the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="44" symbol="securityMarkings.resDerivedFrom">
+      <Name>Security Markings : Resource Derived From</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : Citation of the authoritative source, or reference to multiple sources, of the classification markings used in a resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="45" symbol="securityMarkings.resDisplayOnlyTo">
+      <Name>Security Markings : Resource Display Only To</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : One or more indicators identifying the country or countries and/or international organization(s) to which classified information may be displayed based on the determination of an originator in accordance with established foreign disclosure procedures. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls. : This element is used in conjunction with the Dissemination Controls element.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="46" symbol="securityMarkings.resDissemControls">
+      <Name>Security Markings : Resource Dissemination Controls</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : Controls which identify the expansion or limitation on the distribution of the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="47" symbol="securityMarkings.resFgnGovInfoOpenSource">
+      <Name>Security Markings : Resource Foreign Government Information (Open Source)</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : Indication(s) that the resource qualifies as foreign government information according to CAPCO guidelines for which the source(s) of the information is not concealed. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="48" symbol="securityMarkings.resFgnGovInfoProtSource">
+      <Name>Security Markings : Resource Foreign Government Information (Protected Source)</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : Indication(s) that the resource qualifies as foreign government information according to CAPCO guidelines for which the source(s) of the resource must be concealed when the information is disseminated in ICSIS shared spaces. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="49" symbol="securityMarkings.resJoint">
+      <Name>Security Markings : Resource Joint Owner-Producer</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : An indication that the list of owner-producers of a resource are co-owner-producers of that resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls. : An owner and/or producer is a national government or international organisation that has purview over the classification marking of an information resource (for example: a dataset) or portion therein. If there is more than one owner and/or producer of a resource, then each owner and/or producer is a co-owner-producer. All co-owner-producers equally share the responsibility for the markings of a resource.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Boolean</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="50" symbol="securityMarkings.resNATOopen">
+      <Name>Security Markings : NATO FGI Open Source</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The North Atlantic Treaty Organization (NATO) Special Words used for Foreign Government Information (Open Source) purposes. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="51" symbol="securityMarkings.resNATOownerProd">
+      <Name>Security Markings : NATO Owner Producer</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The North Atlantic Treaty Organization (NATO) Special Words used for owner / producer purposes. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="52" symbol="securityMarkings.resNATOprot">
+      <Name>Security Markings : NATO FGI Protected Source</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The North Atlantic Treaty Organization (NATO) Special Words used for Foreign Government Information (Protected Source) purposes. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="53" symbol="securityMarkings.resNATOrelTo">
+      <Name>Security Markings : NATO Releaseable To</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The North Atlantic Treaty Organization (NATO) Special Words used for releaseability purposes. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="54" symbol="securityMarkings.resNonIntelComMarkings">
+      <Name>Security Markings : Resource Non-Intelligence Community Markings</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : Information security classification markings for a classified resource originating from non-intelligence components of the US Department of Defense or the US Department of Energy. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="55" symbol="securityMarkings.resNonUSControls">
+      <Name>Security Markings : Resource Non-US Controls</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : One or more indicators of the expansion or limitation on the distribution of an information resource or portion within the domain of information originating from non-US components. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="56" symbol="securityMarkings.resOwnerProducer">
+      <Name>Security Markings : Resource Owner-Producer</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The national government or international organization owner(s) and/or producer(s) of the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="57" symbol="securityMarkings.resReleasableTo">
+      <Name>Security Markings : Resource Releasable To</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The country or countries and/or international organization(s) to which the classified resource may be released based on the determination of an originator in accordance with established foreign disclosure procedures. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="58" symbol="securityMarkings.resSciControls">
+      <Name>Security Markings : Resource SCI Controls</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The Controlled Access Program Coordination Office (CAPCO) authorized abbreviations for sensitive compartmented information control system(s) applicable to the resource. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="59" symbol="securityMarkings.resSpAccReqProgIdent">
+      <Name>Security Markings : Resource Special-Access-Required Program Identifier</Name>
+      <Description>Control markings that indicate the classification level, and other security-based access restrictions, of the resource in accordance with Office of the Director of National Intelligence (ODNI)/Controlled Access Program Coordination Office (CAPCO) guidance. : The registered trigraphic or digraphic code(s) for defence or intelligence programs for which resource special access is required. [descr] The control markings included are (for example) classification level, dissemination information, and Sensitive Compartmented Information (SCI) controls.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="60" symbol="specifiedDomainValues">
+      <Name>Specified Domain Value(s)</Name>
+      <Description>One or more intended attribute domain values for one or more enumeration or codelist attributes that are not currently valid members of their respective attribute ranges. [descr] The actual attribute domain values may have been previously, or may become in the future, valid members of the attribute domain range.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="61" symbol="time_1.legalConstraints">
+      <Name>Feature Entity Time - 1 : Information Entity-associated Legal Constraints</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : The legal constraints regarding this information entity. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="62" symbol="time_1.note_1.memorandum">
+      <Name>Feature Entity Time - 1 : Information Entity-associated Note - 1 : Memorandum</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="63" symbol="time_1.note_2.memorandum">
+      <Name>Feature Entity Time - 1 : Information Entity-associated Note - 2 : Memorandum</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="64" symbol="time_1.resourceConstraints">
+      <Name>Feature Entity Time - 1 : Information Entity-associated Resource Constraints</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : The resource constraints regarding this information entity. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="65" symbol="time_1.timeDescription">
+      <Name>Feature Entity Time - 1 : Time Description</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : An informal description of a temporal position (for example: a time point or time interval) in the case that a precise specification cannot be determined. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, a time interval described as being "from the mid-14th century through the mid-15th century".</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="66" symbol="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier">
+      <Name>Feature Entity Time - 1 : Time Evaluation Quality : 1 : Quality Measure Identifier</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : An identifier that references a quality measure defined in an external information system. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, the registered quality measures included in the NSG Information Resources Registry.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="67" symbol="time_1.timeEvaluationQuality_1.qualityMeasureValue">
+      <Name>Feature Entity Time - 1 : Time Evaluation Quality : 1 : Quality Measure Value</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : The value of a quality measure applied to assess the quality of an evaluated property. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="68" symbol="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier">
+      <Name>Feature Entity Time - 1 : Time Evaluation Quality : 2 : Quality Measure Identifier</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : An identifier that references a quality measure defined in an external information system. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, the registered quality measures included in the NSG Information Resources Registry.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="69" symbol="time_1.timeEvaluationQuality_2.qualityMeasureValue">
+      <Name>Feature Entity Time - 1 : Time Evaluation Quality : 2 : Quality Measure Value</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : The value of a quality measure applied to assess the quality of an evaluated property. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="70" symbol="time_2.legalConstraints">
+      <Name>Feature Entity Time - 2 : Information Entity-associated Legal Constraints</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : The legal constraints regarding this information entity. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="71" symbol="time_2.note_1.memorandum">
+      <Name>Feature Entity Time - 2 : Information Entity-associated Note - 1 : Memorandum</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="72" symbol="time_2.note_2.memorandum">
+      <Name>Feature Entity Time - 2 : Information Entity-associated Note - 2 : Memorandum</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A note regarding this information entity. : A narrative or other textual description that records observation(s) and/or event(s) associated with a particular subject (for example: a data instance, a data set or a data processing activity). [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : No restriction is placed on its length.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="73" symbol="time_2.resourceConstraints">
+      <Name>Feature Entity Time - 2 : Information Entity-associated Resource Constraints</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : The resource constraints regarding this information entity. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="74" symbol="time_2.timeDescription">
+      <Name>Feature Entity Time - 2 : Time Description</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : An informal description of a temporal position (for example: a time point or time interval) in the case that a precise specification cannot be determined. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, a time interval described as being "from the mid-14th century through the mid-15th century".</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="75" symbol="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier">
+      <Name>Feature Entity Time - 2 : Time Evaluation Quality : 1 : Quality Measure Identifier</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : An identifier that references a quality measure defined in an external information system. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, the registered quality measures included in the NSG Information Resources Registry.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="76" symbol="time_2.timeEvaluationQuality_1.qualityMeasureValue">
+      <Name>Feature Entity Time - 2 : Time Evaluation Quality : 1 : Quality Measure Value</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : The value of a quality measure applied to assess the quality of an evaluated property. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="77" symbol="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier">
+      <Name>Feature Entity Time - 2 : Time Evaluation Quality : 2 : Quality Measure Identifier</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : An identifier that references a quality measure defined in an external information system. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point. : For example, the registered quality measures included in the NSG Information Resources Registry.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="78" symbol="time_2.timeEvaluationQuality_2.qualityMeasureValue">
+      <Name>Feature Entity Time - 2 : Time Evaluation Quality : 2 : Quality Measure Value</Name>
+      <Description>Specification(s) of the whole temporal interval during which a feature entity (for example: a building or pier) exists. : A quality measure used to characterize the accuracy of the specification of a time. : The value of a quality measure applied to assess the quality of an evaluated property. [descr] Time specifications for a feature entity represent the entire time of its existence (for example: the time from the completion to the destruction of a dam). Time specifications for an entity may vary in accuracy but are expected to be an approximation of the time interval that is coextensive with the existence of the entity. The limiting case of an entity time is a time point.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="79" symbol="uniqueEntityIdentifier">
+      <Name>Unique Entity Identifier</Name>
+      <Description>The globally unique and persistent identifier of an entity (for example: feature or event) instance as specified by a Uniform Resource Name (URN) in accordance with the Internet Engineering Task Force (IETF) RFC2396 and RFC2141. [descr] It is based on the Uniform Resource Identifier (URI), a compact string of characters for identifying an abstract or physical resource. The term 'Uniform Resource Name' (URN) refers to the subset of URI that are required to remain globally unique and persistent even when the resource ceases to exist or becomes unavailable. The URN is drawn from one of a set of defined namespaces, each of which has its own set name structure and assignment procedures.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+        <length>254</length>
+      </Value>
+    </Attribute>
+    <Attribute code="80" symbol="width.intervalClosureType">
+      <Name>Feature Width : Interval Closure Type</Name>
+      <Description>The dimension of a feature taken perpendicular to its primary alignment of use and generally in the horizontal plane. : The closure conditions of the two endpoints of a numeric interval. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line right-of-way, a river, rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the width is the distance perpendicular to the bridge centre-line and generally in the horizontal plane. In the case of a dam, the width is the distance perpendicular to (across the) the dam crest. If no such direction of flow or use exists then (1) if the feature is irregular in shape its width is taken perpendicular to the direction of its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the shorter axis; for a round feature, the diameter.</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Text</Type>
+      </Value>
+    </Attribute>
+    <Attribute code="81" symbol="width.lowerValue">
+      <Name>Feature Width : Real Non-negative Interval Lower-value</Name>
+      <Description>The dimension of a feature taken perpendicular to its primary alignment of use and generally in the horizontal plane. : The lower-value of a non-negative real-interval, the first member of a pair of real numbers that represent all of the numbers between the two and possibly including one and/or the other depending on the interval closure. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line right-of-way, a river, rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the width is the distance perpendicular to the bridge centre-line and generally in the horizontal plane. In the case of a dam, the width is the distance perpendicular to (across the) the dam crest. If no such direction of flow or use exists then (1) if the feature is irregular in shape its width is taken perpendicular to the direction of its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the shorter axis; for a round feature, the diameter. : For example, the value 27.5 as the included lower end of the interval: [27.5 ... 150.0].</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+    <Attribute code="82" symbol="width.upperValue">
+      <Name>Feature Width : Real Non-negative Interval Upper-value</Name>
+      <Description>The dimension of a feature taken perpendicular to its primary alignment of use and generally in the horizontal plane. : The upper-value of a non-negative real-interval, the second member of a pair of real numbers that represent all of the numbers between the two and possibly including one and/or the other depending on the interval closure. [descr] The primary alignment of a feature is its established direction of flow or use (for example: a road, a power line right-of-way, a river, rapid, and/or a bridge). A feature-specific rule may apply. In the case of a bridge, the width is the distance perpendicular to the bridge centre-line and generally in the horizontal plane. In the case of a dam, the width is the distance perpendicular to (across the) the dam crest. If no such direction of flow or use exists then (1) if the feature is irregular in shape its width is taken perpendicular to the direction of its greatest horizontal dimension (see Attribute: 'Greatest Horizontal Extent'), else (2) if the feature is regular in shape then a shape-specific rule may apply: for a rectangular feature, the length of the shorter axis; for a round feature, the diameter. : For example, the value 15.71 as the excluded upper end of the interval: [3.9 ... 15.71).</Description>
+      <Level>
+        <Instance>Preferred</Instance>
+        <Class>Not Supported</Class>
+        <Extended>Not Supported</Extended>
+      </Level>
+      <Value>
+        <Type>Numeric</Type>
+        <Format>Floating-Point</Format>
+      </Value>
+    </Attribute>
+  </Attributes>
+  <Units>
+    <Unit code="1" symbol="m">
+      <Name>meter</Name>
+      <Description>To measure a length.</Description>
+    </Unit>
+  </Units>
+</Vector_Attributes>

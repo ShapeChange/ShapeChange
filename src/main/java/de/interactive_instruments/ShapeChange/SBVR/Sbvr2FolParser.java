@@ -73,7 +73,8 @@ public class Sbvr2FolParser implements MessageSource {
 	private Model model;
 
 	private SbvrParserHelper helper;
-	private boolean logParsingErrorsAsWarnings = false;
+	private boolean logParsingErrorsAsInfos = false;
+	private boolean hasErrors = false;
 
 	public Sbvr2FolParser(Model m) {
 
@@ -98,10 +99,10 @@ public class Sbvr2FolParser implements MessageSource {
 
 	}
 
-	public Sbvr2FolParser(Model m, boolean logParsingErrorsAsWarnings) {
+	public Sbvr2FolParser(Model m, boolean logParsingErrorsAsInfos) {
 
 		this(m);
-		this.logParsingErrorsAsWarnings = logParsingErrorsAsWarnings;
+		this.logParsingErrorsAsInfos = logParsingErrorsAsInfos;
 	}
 
 	/**
@@ -149,6 +150,7 @@ public class Sbvr2FolParser implements MessageSource {
 		if (parsingErrorListener.hasErrors()) {
 
 			parsingResult.addErrors(parsingErrorListener.getErrors());
+			this.hasErrors = true;
 
 		} else {
 
@@ -163,6 +165,7 @@ public class Sbvr2FolParser implements MessageSource {
 			if (validationErrorListener.hasErrors()) {
 
 				parsingResult.addErrors(validationErrorListener.getErrors());
+				this.hasErrors = true;
 
 			} else {
 
@@ -179,11 +182,12 @@ public class Sbvr2FolParser implements MessageSource {
 					if (folVisitor.hasErrors()) {
 
 						parsingResult.addErrors(folVisitor.getErrors());
+						this.hasErrors = true;
 
 					} else {
 
-						if (logParsingErrorsAsWarnings) {
-							result.addWarning(this, 1);
+						if (logParsingErrorsAsInfos) {
+							result.addInfo(this, 1);
 						} else {
 							result.addError(this, 1);
 						}
@@ -245,15 +249,15 @@ public class Sbvr2FolParser implements MessageSource {
 											+ ")"
 									: "");
 
-					if (logParsingErrorsAsWarnings) {
-						result.addWarning(message);
+					if (logParsingErrorsAsInfos) {
+						result.addInfo(message);
 					} else {
 						result.addError(message);
 					}
 
 					for (List<SbvrErrorInfo> ei : errors.values()) {
 						SbvrUtil.printErrors(ei, con.text(), result,
-								logParsingErrorsAsWarnings);
+								logParsingErrorsAsInfos);
 						// printErrors(ei, con.text());
 					}
 				}
@@ -266,6 +270,14 @@ public class Sbvr2FolParser implements MessageSource {
 						+ parsingResult.getRuleInvocationStack());
 			}
 		}
+	}
+
+	/**
+	 * @return <code>true</code> if an error was encountered while parsing the
+	 *         constraints, else <code>false</code>
+	 */
+	public boolean hasErrors() {
+		return this.hasErrors;
 	}
 
 	@Override

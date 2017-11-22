@@ -59,7 +59,6 @@ import org.w3c.dom.NodeList;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -1605,7 +1604,7 @@ public class XSLT implements Target {
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(document);
 			outputXML.close();
-			result.addResult(getTargetID(), outputDirectory,  pi.name()+"_gml2kml.xsl", pi.targetNamespace());
+			result.addResult(getTargetName(), outputDirectory,  pi.name()+"_gml2kml.xsl", pi.targetNamespace());
 			
 			file = new File(outputDirectory + "/" + pi.name()
 					+ "_root.kml");
@@ -1614,7 +1613,7 @@ public class XSLT implements Target {
 			serializer.setWriter(outputXML);
 			serializer.asDOMSerializer().serialize(kmlDocument);
 			outputXML.close();			
-			result.addResult(getTargetID(), outputDirectory,  pi.name()+"_root.kml", pi.targetNamespace());
+			result.addResult(getTargetName(), outputDirectory,  pi.name()+"_root.kml", pi.targetNamespace());
 		} catch (Exception e) {
 			String m = e.getMessage();
 			if (m != null) {
@@ -1625,7 +1624,8 @@ public class XSLT implements Target {
 		printed = true;
 	}
 
-	public int getTargetID(){
-		return TargetIdentification.KML_XSLT.getId();
+	@Override
+	public String getTargetName(){
+		return "KML XSLT";
 	}
 }

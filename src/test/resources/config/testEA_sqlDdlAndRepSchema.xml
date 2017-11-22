@@ -124,10 +124,11 @@
 			<targetParameter name="documentationNoValue" value="" />			
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
 <!-- 			<targetParameter name="foreignKeyColumnDataType" value="VARCHAR2(100)" /> -->
-			<targetParameter name="primaryKeyColumnSpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE)"/>
+			<targetParameter name="primaryKeySpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE) PRIMARY KEY"/>
 			
 			<targetParameter name="replicationSchemaTargetNamespaceSuffix" value="/rep" />
 			<targetParameter name="replicationSchemaObjectIdentifierFieldType" value="integer"/>
+			<targetParameter name="replicationSchemaForeignKeyFieldType" value="string"/>
 			<targetParameter name="replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType" value="Test documentation for fields with unlimited length character data type."/>
 			<rules>
 				<EncodingRule name="sql2" extends="sql">				
@@ -173,8 +174,10 @@
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />			
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
+			<targetParameter name="codeNameSize" value="255"/>
+			<targetParameter name="sdoDimElements" value="(dim1,-1,1,0.1)(dim2,-2,2.2,0.2)(dim3,-3,3,0.05)"/>
 <!-- 			<targetParameter name="foreignKeyColumnDataType" value="VARCHAR2(100)" /> -->
-			<targetParameter name="primaryKeyColumnSpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE)"/>
+			<targetParameter name="primaryKeySpecification" value="GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 ORDER NOCACHE) PRIMARY KEY"/>
 			<rules>
 				<EncodingRule name="sql2" extends="sql">				
 					<rule name="rule-sql-cls-object-types" />

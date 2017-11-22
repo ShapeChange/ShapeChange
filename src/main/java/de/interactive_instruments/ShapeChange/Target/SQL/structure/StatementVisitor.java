@@ -47,6 +47,8 @@ public interface StatementVisitor {
 	public void visit(CreateIndex createIndex);
 
 	public void visit(Alter alter);
+	
+	public void visit(Comment comment);
 
 	public void visit(List<Statement> stmts);
 }

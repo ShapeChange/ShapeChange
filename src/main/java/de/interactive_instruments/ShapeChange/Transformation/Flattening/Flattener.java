@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -51,8 +53,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
@@ -65,6 +67,7 @@ import org.jgrapht.graph.DirectedMultigraph;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -79,7 +82,9 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -102,7 +107,7 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  *         <dot> de)
  *
  */
-public class Flattener implements Transformer {
+public class Flattener implements Transformer, MessageSource {
 
 	private static final Splitter commaSplitter = Splitter.on(',')
 			.omitEmptyStrings().trimResults();
@@ -140,7 +145,6 @@ public class Flattener implements Transformer {
 
 	public static final String TRANSFORMER_CODEBY_TAGGEDVALUE = "codeByTaggedValue";
 
-	// Parameters for RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY
 	/**
 	 * Regular expression; if the name of an object type matches this
 	 * expression, then each navigable property whose value type is a feature
@@ -160,15 +164,12 @@ public class Flattener implements Transformer {
 	 */
 	public static final String PARAM_INCLUDE_OBJECT_NAV = "includeObjectToObjectNavigability";
 
-	// Parameters for RULE_TRF_CLS_FLATTEN_INHERITANCE
 	public static final String PARAM_INHERITANCE_INCLUDE_REGEX = "flattenInheritanceIncludeRegex";
 
-	// Parameters for RULE_TRF_PROP_FLATTEN_TYPES
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
 	public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
 
-	// Parameters for RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES
 	/**
 	 * Alias: none
 	 * <p>
@@ -197,6 +198,16 @@ public class Flattener implements Transformer {
 	 * property can have values from more than one union option).
 	 */
 	public static final String PARAM_INCLUDE_UNION_IDENTIFIER_TV = "includeUnionIdentifierTaggedValue";
+
+	/**
+	 * List of names of types that represent simple base types, as required by
+	 * {@value #RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE}. Default is
+	 * the list of CharacterString, Integer, Measure, and Real.
+	 */
+	public static final String PARAM_SIMPLE_BASE_TYPES = "simpleBaseTypes";
+	public static final String[] DEFAULT_SIMPLE_BASE_TYPES = new String[] {
+			"CharacterString", "Integer", "Measure", "Real" };
+
 	/**
 	 * If, during execution of {@value #RULE_TRF_PROP_FLATTEN_TYPES}, a union is
 	 * flattened, then by default the minimum multiplicity of the flattened
@@ -209,11 +220,6 @@ public class Flattener implements Transformer {
 	 * <code>true</code>).
 	 */
 	public static final String PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION = "setMinCardinalityToZeroWhenMergingUnion";
-	/**
-	 * If set to <code>true</code>, then descriptors of properties will be
-	 * merged during type flattening.
-	 */
-	public static final String PARAM_MERGE_DESCRIPTORS = "mergeDescriptors";
 
 	/**
 	 * If this parameter is set to true, then type flattening is not performed
@@ -222,7 +228,6 @@ public class Flattener implements Transformer {
 	 */
 	public static final String PARAM_IGNORE_REFLEXIVE_RELATIONSHIP_IN_TYPE_FLATTENING = "ignoreReflexiveRelationshipInTypeFlattening";
 
-	// Parameters for RULE_TRF_PROP_FLATTEN_MULTIPLICITY
 	public static final String PARAM_MAXOCCURS = "maxOccurs";
 	public static final String PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES = "maxOccursForSpecificProperties";
 	public static final String PARAM_IGNORE_FEATURE_OR_OBJECT_TYPED_PROPERTIES = "ignoreFeatureOrObjectTypedProperties";
@@ -232,18 +237,23 @@ public class Flattener implements Transformer {
 	 */
 	public static final String PARAM_MAX_MULTIPLICITY_THRESHOLD = "maxMultiplicityThreshold";
 
-	// Parameters for RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
 	public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
 
-	// Parameters for RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP
 	public static final String PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX = "removeInheritanceIncludeRegex";
+
+	public static final String PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR = "descriptorModification_nonUnionSeparator";
+	public static final String PARAM_DESCRIPTOR_MOD_UNION_SEPARATOR = "descriptorModification_unionSeparator";
+	public static final String PARAM_DESCRIPTOR_MOD_PROPERTY_INDEX_NUMBER = "descriptorModification_propertyIndexNumberSeparator";
+	public static final String PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR = "descriptorModification_geometryTypeSuffixSeparator";
+	public static final String PARAM_DESCRIPTOR_MOD_GEOM_TYPE_ALIAS = "descriptorModification_geometryTypeAlias";
 
 	// =============================
 	/* Flattener rule identifiers */
 	// =============================
 	public static final String RULE_TRF_ALL_FLATTEN_CODELISTS = "rule-trf-prop-flatten-codelists";
 	public static final String RULE_TRF_ALL_FLATTEN_CONSTRAINTS = "rule-trf-all-flatten-constraints";
+	public static final String RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS = "rule-trf-all-flatten-removeConstraints";
 	public static final String RULE_TRF_ALL_FLATTEN_NAME = "rule-trf-all-flatten-name";
 	public static final String RULE_TRF_ALL_REMOVETYPE = "rule-trf-all-removeType";
 
@@ -254,12 +264,29 @@ public class Flattener implements Transformer {
 	public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
 	public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
+	public static final String RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS = "rule-trf-prop-flatten-ONINAs-onlyRemoveReasons";
 	public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
+
+	/**
+	 * Identify types in the schemas selected for processing that have one of
+	 * the simple base types specified via parameter
+	 * {@value #PARAM_SIMPLE_BASE_TYPES} as supertype. For each property of
+	 * classes in the schemas selected for processing with such a basic type as
+	 * type, change the type to the according simple base type. Finally, remove
+	 * all types with simple base type that have been identified before.
+	 */
+	public static final String RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE = "rule-trf-all-flatten-type-mapToSimpleBaseType";
+
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN = "rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin";
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS = "rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets";
+	public static final String RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES = "rule-trf-prop-flatten-types-removeMappedTypes";
+
 	public static final String RULE_TRF_PROP_OPTIONALITY = "rule-trf-prop-optionality";
 
 	/**
@@ -330,6 +357,15 @@ public class Flattener implements Transformer {
 	 * model.
 	 */
 	public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
+
+	/**
+	 * Behavior: For each type that has a supertype whose name starts with
+	 * "GM_", remove that inheritance relationship and add a new property
+	 * "geometry" with the supertype as value type.
+	 * <p>
+	 * Parameters: none
+	 */
+	public static final String RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE = "rule-trf-cls-flatten-geometryTypeInheritance";
 
 	// =============================
 	/* Flattener requirements */
@@ -428,6 +464,11 @@ public class Flattener implements Transformer {
 	private String excludeDataTypeRegex = null;
 	private Pattern excludeDataTypePattern = null;
 
+	public static final Pattern descriptorModBasicPattern = Pattern
+			.compile("(\\w+)\\{([^}]+)}");
+	public static final Pattern descriptorModValKvpPattern = Pattern
+			.compile("(\\w+)=([^,]+)");
+
 	public Flattener() {
 		// nothing special to do here
 	}
@@ -458,7 +499,7 @@ public class Flattener implements Transformer {
 		if (rules.isEmpty())
 			return;
 
-		result.addInfo(null, 20317, "processing");
+		result.addInfo(this, 20317, "processing");
 
 		// apply overall processing defined for transformer
 
@@ -522,7 +563,7 @@ public class Flattener implements Transformer {
 
 			if (tvNameForCodeValue == null
 					|| tvNameForCodeValue.trim().length() == 0) {
-				result.addError(null, 20309, TRANSFORMER_CODEBY_TAGGEDVALUE);
+				result.addError(this, 20309, TRANSFORMER_CODEBY_TAGGEDVALUE);
 				return;
 			}
 		}
@@ -640,6 +681,12 @@ public class Flattener implements Transformer {
 			applyRuleClsFlattenConstraints(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS);
+			applyRuleClsFlattenRemoveConstraints(genModel, trfConfig);
+		}
+
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CODELISTS)) {
 			result.addInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CODELISTS);
 			applyRuleFlattenCodeLists(genModel, trfConfig);
@@ -653,6 +700,12 @@ public class Flattener implements Transformer {
 		if (rules.contains(RULE_TRF_PROP_OPTIONALITY)) {
 			result.addInfo(null, 20103, RULE_TRF_PROP_OPTIONALITY);
 			applyRuleOptionality(genModel, trfConfig);
+		}
+
+		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE);
+			applyRuleBasicTypeToSimpleBaseType(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_FLATTEN_INHERITANCE)) {
@@ -722,8 +775,14 @@ public class Flattener implements Transformer {
 			applyRuleRemoveInheritanceRelationship(genModel, trfConfig);
 		}
 
+		if (rules.contains(RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE)) {
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE);
+			applyRuleFlattenGeometryTypeInheritance(genModel, trfConfig);
+		}
+
 		// postprocessing
-		result.addInfo(null, 20317, "postprocessing");
+		result.addInfo(this, 20317, "postprocessing");
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CONSTRAINTS)) {
 
@@ -776,6 +835,115 @@ public class Flattener implements Transformer {
 		}
 	}
 
+	private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		SortedSet<String> simpleBaseTypes = new TreeSet<String>(
+				trfConfig.parameterAsStringList(PARAM_SIMPLE_BASE_TYPES,
+						DEFAULT_SIMPLE_BASE_TYPES, true, true));
+
+		List<GenericClassInfo> typesToRemove = new ArrayList<GenericClassInfo>();
+		Map<String, Type> typeNameToSimpleBaseType = new HashMap<String, Type>();
+
+		/*
+		 * first identify all types from schemas selected for processing that
+		 * have a simple base type
+		 */
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			String simpleBaseTypeName = identifySimpleBaseType(genCi,
+					simpleBaseTypes);
+
+			if (simpleBaseTypeName != null) {
+
+				ClassInfo simpleBaseType = genModel
+						.classByName(simpleBaseTypeName);
+
+				Type typeInfo = new Type();
+
+				if (simpleBaseType == null) {
+					typeInfo.id = UNKNOWN;
+					typeInfo.name = simpleBaseTypeName;
+				} else {
+					typeInfo.id = simpleBaseType.id();
+					typeInfo.name = simpleBaseType.name();
+				}
+
+				typesToRemove.add(genCi);
+
+				// add Type template to map
+				typeNameToSimpleBaseType.put(genCi.name(), typeInfo);
+			}
+		}
+
+		/*
+		 * map type of all properties to the applicable simple base type (if one
+		 * exists)
+		 */
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+			if (typeNameToSimpleBaseType.containsKey(genPi.typeInfo().name)) {
+
+				// set copy of applicable Type template as type of the property
+				genPi.setTypeInfo(typeNameToSimpleBaseType
+						.get(genPi.typeInfo().name).createCopy());
+			}
+		}
+
+		/*
+		 * finally, remove the types that have a simple base type
+		 */
+		genModel.remove(typesToRemove);
+	}
+
+	private void applyRuleFlattenGeometryTypeInheritance(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			Set<String> supertypeIdsToRemove = new HashSet<String>();
+
+			for (String supertypeId : genCi.supertypes()) {
+
+				GenericClassInfo supertype = (GenericClassInfo) genModel
+						.classById(supertypeId);
+
+				if (supertype.name().startsWith("GM_")) {
+
+					supertypeIdsToRemove.add(supertypeId);
+					supertype.removeSubtype(genCi.id());
+
+					GenericPropertyInfo genPi = new GenericPropertyInfo(
+							genModel, genCi.id() + "_propForGeomSupertype_"
+									+ supertype.name(),
+							"geometry");
+
+					genPi.setInClass(genCi);
+
+					genPi.setComposition(true);
+					genPi.setSequenceNumber(new StructuredNumber(1), false);
+
+					Type typeInfo = new Type();
+					typeInfo.id = supertype.id();
+					typeInfo.name = supertype.name();
+					genPi.setTypeInfo(typeInfo);
+
+					genCi.addPropertyAtBottom(genPi,
+							PropertyCopyDuplicatBehaviorIndicator.ADD);
+				}
+			}
+
+			for (String supertypeIdToRemove : supertypeIdsToRemove) {
+
+				if (genCi.baseClass() != null
+						&& genCi.baseClass().id().equals(supertypeIdToRemove)) {
+					genCi.setBaseClass(null);
+				}
+				genCi.removeSupertype(supertypeIdToRemove);
+			}
+		}
+	}
+
 	/**
 	 * @see #RULE_TRF_CLS_DISSOLVE_MIXINS
 	 * @param genModel
@@ -814,7 +982,7 @@ public class Flattener implements Transformer {
 						.getParameterValue(
 								PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX)
 						.trim().isEmpty()) {
-			result.addWarning(null, 20343,
+			result.addWarning(this, 20343,
 					PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX,
 					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
 			return;
@@ -841,10 +1009,10 @@ public class Flattener implements Transformer {
 
 				genCi.setSubtypes(null);
 
-				result.addDebug(null, 20344, genCi.name(), includeRegex,
+				result.addDebug(this, 20344, genCi.name(), includeRegex,
 						PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
 			} else {
-				result.addDebug(null, 20345, genCi.name(), includeRegex,
+				result.addDebug(this, 20345, genCi.name(), includeRegex,
 						PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX);
 			}
 		}
@@ -966,6 +1134,61 @@ public class Flattener implements Transformer {
 				}
 			}
 		}
+
+		/*
+		 * Postprocessing: check if classes in schemas selected for processing
+		 * contain multiple properties with same name
+		 */
+		boolean resultContainsDuplicatePropertyNames = false;
+		Joiner joiner = Joiner.on(", ");
+
+		for (GenericClassInfo ci : genModel.selectedSchemaClasses()) {
+
+			SortedSet<String> duplicatePropertyNames = new TreeSet<String>();
+
+			for (PropertyInfo pi : ci.properties().values()) {
+
+				PropertyInfo otherPropertyWithSameName = null;
+
+				// Search in own properties
+				for (PropertyInfo otherPi : ci.properties().values()) {
+					if (otherPi != pi && otherPi.name().equals(pi.name())) {
+						otherPropertyWithSameName = otherPi;
+						break;
+					}
+				}
+
+				if (otherPropertyWithSameName == null) {
+
+					// search supertypes
+					supertypesearch: for (ClassInfo supertype : ci
+							.supertypesInCompleteHierarchy()) {
+
+						for (PropertyInfo supertypePi : supertype.properties()
+								.values()) {
+							if (supertypePi.name().equals(pi.name())) {
+								otherPropertyWithSameName = supertypePi;
+								break supertypesearch;
+							}
+						}
+					}
+				}
+
+				if (otherPropertyWithSameName != null) {
+					resultContainsDuplicatePropertyNames = true;
+					duplicatePropertyNames.add(pi.name());
+				}
+			}
+
+			if (!duplicatePropertyNames.isEmpty()) {
+				result.addInfo(this, 20346, ci.name(),
+						joiner.join(duplicatePropertyNames));
+			}
+		}
+
+		if (resultContainsDuplicatePropertyNames) {
+			result.addError(this, 20347);
+		}
 	}
 
 	private void applyRuleRemoveType(GenericModel genModel,
@@ -977,7 +1200,7 @@ public class Flattener implements Transformer {
 				.getListParameterValue(PARAM_REMOVE_TYPE);
 
 		if (typesToRemove == null || typesToRemove.length == 0) {
-			result.addWarning(null, 20324);
+			result.addWarning(this, 20324);
 			return;
 		}
 
@@ -1005,7 +1228,7 @@ public class Flattener implements Transformer {
 
 				} else {
 
-					result.addWarning(null, 20321, ciToRemove.name());
+					result.addWarning(this, 20321, ciToRemove.name());
 				}
 			}
 		}
@@ -1024,7 +1247,7 @@ public class Flattener implements Transformer {
 					PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES);
 			Boolean b = new Boolean(paramValue);
 
-			result.addDebug(null, 20102,
+			result.addDebug(this, 20102,
 					PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES,
 					b.toString());
 			applyOnSubtypes = b;
@@ -1037,18 +1260,35 @@ public class Flattener implements Transformer {
 					PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP);
 			Boolean b = new Boolean(paramValue);
 
-			result.addDebug(null, 20102,
+			result.addDebug(this, 20102,
 					PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP,
 					b.toString());
 			omitHomogeneousGeometriesForTypesWithSingleGeometryProperty = b;
 		}
 
-		String separatorForGeometryTypeSuffix = "";
-		String separatorForGeometryTypeSuffixParam = trfConfig
-				.getParameterValue(
-						TRANSFORMER_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX);
-		if (separatorForGeometryTypeSuffixParam != null) {
-			separatorForGeometryTypeSuffix = separatorForGeometryTypeSuffixParam;
+		String separatorForGeometryTypeSuffix = trfConfig.parameterAsString(
+				TRANSFORMER_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX, "", true,
+				false);
+
+		EnumMap<Descriptor, String> geometryTypeSuffixSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR, trfConfig);
+
+		EnumMap<Descriptor, String> unionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_UNION_SEPARATOR, trfConfig);
+
+		EnumMap<Descriptor, String> geomTypeAliasesByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_GEOM_TYPE_ALIAS, trfConfig);
+
+		EnumMap<Descriptor, Map<String, String>> suffixByGeometryTypeByDescriptor = new EnumMap<Descriptor, Map<String, String>>(
+				Descriptor.class);
+		for (Entry<Descriptor, String> entry : geomTypeAliasesByDescriptor
+				.entrySet()) {
+			Map<String, String> suffixByGeometryType = parseDescriptorModificationValueUsingKvpPattern(
+					entry.getValue());
+			if (!suffixByGeometryType.isEmpty()) {
+				suffixByGeometryTypeByDescriptor.put(entry.getKey(),
+						suffixByGeometryType);
+			}
 		}
 
 		/*
@@ -1284,7 +1524,7 @@ public class Flattener implements Transformer {
 						names.add(supertype.name());
 					}
 
-					result.addWarning(null, 20316, genCi.name(),
+					result.addWarning(this, 20316, genCi.name(),
 							commaJoiner.join(names));
 				}
 
@@ -1299,7 +1539,7 @@ public class Flattener implements Transformer {
 						names.add(subtype.name());
 					}
 
-					result.addWarning(null, 20313, genCi.name(),
+					result.addWarning(this, 20313, genCi.name(),
 							commaJoiner.join(names));
 					continue;
 				}
@@ -1406,6 +1646,7 @@ public class Flattener implements Transformer {
 								genCi.name() + separatorForGeometryTypeSuffix
 										+ mapEntry.getParam(),
 								Options.FEATURE);
+
 						/*
 						 * NOTE: we have not added the properties of the copy to
 						 * the model yet
@@ -1419,12 +1660,43 @@ public class Flattener implements Transformer {
 						classCopiesByGeometryTypeByOriginalClass.put(genCi,
 								ftCopiesByGeometryTypeSuffix);
 
-						if (hasCode(genCi)) {
+						if (!geometryTypeSuffixSeparatorByDescriptor
+								.isEmpty()) {
+
+							/*
+							 * Update descriptors (including alias) and other
+							 * descriptors using descriptor modification
+							 * separator, if so configured
+							 */
+
+							EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+
+									geometryTypeSuffixSeparatorByDescriptor,
+									mapEntry.getParam(),
+									suffixByGeometryTypeByDescriptor);
+
+							featureCopy.descriptors().appendSuffix(
+									separatorAndSuffixByDescriptor, false);
+
+						} else if (hasCode(genCi)) {
+
+							/*
+							 * Kept for backwards compatibility. If the alias is
+							 * the code, use configuration parameter
+							 * 'descriptorModification_separator' to control
+							 * appending the suffix, with specific separator per
+							 * descriptor.
+							 */
 							setCode(featureCopy,
 									getCode(genCi)
 											+ separatorForGeometryTypeSuffix
 											+ mapEntry.getParam());
 						} else {
+
+							/*
+							 * Kept for backwards compatibility. See previous
+							 * condition.
+							 */
 							setCode(featureCopy,
 									genCi.name()
 											+ separatorForGeometryTypeSuffix
@@ -1500,7 +1772,7 @@ public class Flattener implements Transformer {
 												mapEntry.getTargetType(),
 												typeOfPi.name);
 										if (mc != null)
-											mc.addDetail(null, 20308,
+											mc.addDetail(this, 20308,
 													"Property",
 													piFromFeatureCopy
 															.fullName());
@@ -1576,7 +1848,7 @@ public class Flattener implements Transformer {
 
 					} else {
 
-						result.addWarning(null, 20312, supertype.name(),
+						result.addWarning(this, 20312, supertype.name(),
 								genCi.name());
 					}
 				}
@@ -1599,9 +1871,11 @@ public class Flattener implements Transformer {
 							.get(suffix);
 
 					createSubtypeHierarchyCopyForClassCopy(genCi, genCiCopy,
-							separatorForGeometryTypeSuffix + suffix,
+							separatorForGeometryTypeSuffix, suffix,
 							classesToAdd, classesToRemove,
-							classCopiesByGeometryTypeByOriginalClass);
+							classCopiesByGeometryTypeByOriginalClass,
+							geometryTypeSuffixSeparatorByDescriptor,
+							suffixByGeometryTypeByDescriptor);
 				}
 			}
 		}
@@ -1640,6 +1914,9 @@ public class Flattener implements Transformer {
 			((GenericPackageInfo) copiedClassUnion.pkg())
 					.addClass(copiedClassUnion);
 
+			copiedClassUnion.setTaggedValue("representsFeatureTypeSet", "true",
+					false);
+
 			// add property for each geometry specific copy of the class
 
 			int seqNumIndex = 1;
@@ -1677,6 +1954,7 @@ public class Flattener implements Transformer {
 				taggedValues.add("securityClassification", "");
 				taggedValues.add("sequenceNumber", "" + seqNumIndex);
 				taggedValues.add("xsdEncodingRule", "");
+
 				copiedClassUnionProp.setTaggedValues(taggedValues, false);
 
 				/*
@@ -1687,21 +1965,6 @@ public class Flattener implements Transformer {
 						new StructuredNumber("" + seqNumIndex), false);
 
 				copiedClassUnionProp.setInClass(copiedClassUnion);
-
-				/*
-				 * Careful: we created a new set of tagged values for the new
-				 * property. Thus all modifications to the new property that
-				 * might impact the tagged values, such as setting the code
-				 * value, need to be performed after the new set of tagged
-				 * values has been set
-				 */
-				// if (hasCode(genCiSub)) {
-				// setCode(genSuperClassUnionProp,
-				// toLowerCase(getCode(genCiSub)));
-				// } else {
-				// setCode(genSuperClassUnionProp,
-				// toLowerCase(genCiSub.name()));
-				// }
 
 				copiedClassUnion.addProperty(copiedClassUnionProp,
 						PropertyCopyDuplicatBehaviorIndicator.ADD);
@@ -1805,7 +2068,7 @@ public class Flattener implements Transformer {
 				 */
 				if (!(pi1 instanceof GenericPropertyInfo)) {
 
-					result.addWarning(null, 20333,
+					result.addWarning(this, 20333,
 							(name1.compareTo(name2) <= 0) ? name1 : name2,
 							(name1.compareTo(name2) <= 0) ? name2 : name1,
 							name1);
@@ -1813,7 +2076,7 @@ public class Flattener implements Transformer {
 				} else {
 
 					// pi2 is not an instance of GenericPropertyInfo
-					result.addWarning(null, 20333,
+					result.addWarning(this, 20333,
 							(name1.compareTo(name2) <= 0) ? name1 : name2,
 							(name1.compareTo(name2) <= 0) ? name2 : name1,
 							name2);
@@ -1837,8 +2100,6 @@ public class Flattener implements Transformer {
 
 			// now create the new associations
 
-			String separator = separatorForPropertyFromUnion;
-
 			if (classCopiesByGeometryTypeByOriginalClass
 					.containsKey(pi1.inClass())
 					&& classCopiesByGeometryTypeByOriginalClass
@@ -1846,22 +2107,22 @@ public class Flattener implements Transformer {
 
 				// both ends have been split
 
-				Map<String, GenericClassInfo> classCopiesPi1InClass = classCopiesByGeometryTypeByOriginalClass
+				Map<String, GenericClassInfo> classCopiesByGeometryTypeForPi1InClass = classCopiesByGeometryTypeByOriginalClass
 						.get(pi1.inClass());
-				Map<String, GenericClassInfo> classCopiesPi2InClass = classCopiesByGeometryTypeByOriginalClass
+				Map<String, GenericClassInfo> classCopiesByGeometryTypeForPi2InClass = classCopiesByGeometryTypeByOriginalClass
 						.get(pi2.inClass());
 
 				// check that the maps are not empty
 				boolean checkFailed = false;
-				if (classCopiesPi1InClass == null
-						|| classCopiesPi1InClass.isEmpty()) {
+				if (classCopiesByGeometryTypeForPi1InClass == null
+						|| classCopiesByGeometryTypeForPi1InClass.isEmpty()) {
 					checkFailed = true;
-					result.addError(null, 20335, pi1.inClass().name());
+					result.addError(this, 20335, pi1.inClass().name());
 				}
-				if (classCopiesPi2InClass == null
-						|| classCopiesPi2InClass.isEmpty()) {
+				if (classCopiesByGeometryTypeForPi2InClass == null
+						|| classCopiesByGeometryTypeForPi2InClass.isEmpty()) {
 					checkFailed = true;
-					result.addError(null, 20335, pi2.inClass().name());
+					result.addError(this, 20335, pi2.inClass().name());
 				}
 				if (checkFailed) {
 					continue;
@@ -1878,15 +2139,17 @@ public class Flattener implements Transformer {
 				 */
 				int sequencNumberIndex = 1;
 
-				for (String s1 : classCopiesPi1InClass.keySet()) {
+				for (String geometryTypeSuffix1 : classCopiesByGeometryTypeForPi1InClass
+						.keySet()) {
 
-					GenericClassInfo copyPi1InClass = classCopiesPi1InClass
-							.get(s1);
+					GenericClassInfo copyPi1InClass = classCopiesByGeometryTypeForPi1InClass
+							.get(geometryTypeSuffix1);
 
-					for (String s2 : classCopiesPi2InClass.keySet()) {
+					for (String geometryTypeSuffix2 : classCopiesByGeometryTypeForPi2InClass
+							.keySet()) {
 
-						GenericClassInfo copyPi2InClass = classCopiesPi2InClass
-								.get(s2);
+						GenericClassInfo copyPi2InClass = classCopiesByGeometryTypeForPi2InClass
+								.get(geometryTypeSuffix2);
 
 						Multiplicity mPi1 = new Multiplicity(
 								pi1.cardinality().toString());
@@ -1897,13 +2160,51 @@ public class Flattener implements Transformer {
 						mPi2.minOccurs = 0;
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator + s2;
-						String newNamePi2 = pi2.name() + separator + s1;
+						String newNamePi1 = pi1.name()
+								+ separatorForPropertyFromUnion
+								+ geometryTypeSuffix2;
+						String newNamePi2 = pi2.name()
+								+ separatorForPropertyFromUnion
+								+ geometryTypeSuffix1;
 
 						String newAliasPi1 = (hasCode(pi1))
-								? getCode(pi1) + separator + s2 : null;
+								? getCode(pi1) + separatorForPropertyFromUnion
+										+ geometryTypeSuffix2
+								: null;
 						String newAliasPi2 = (hasCode(pi2))
-								? getCode(pi2) + separator + s1 : null;
+								? getCode(pi2) + separatorForPropertyFromUnion
+										+ geometryTypeSuffix1
+								: null;
+
+						Descriptors newDescriptorsPi1 = null;
+						if (!geometryTypeSuffixSeparatorByDescriptor
+								.isEmpty()) {
+
+							EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+
+									unionSeparatorByDescriptor,
+									geometryTypeSuffix2,
+									suffixByGeometryTypeByDescriptor);
+
+							newDescriptorsPi1 = pi1.descriptors().createCopy();
+							newDescriptorsPi1.appendSuffix(
+									separatorAndSuffixByDescriptor, false);
+						}
+
+						Descriptors newDescriptorsPi2 = null;
+						if (!geometryTypeSuffixSeparatorByDescriptor
+								.isEmpty()) {
+
+							EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+
+									unionSeparatorByDescriptor,
+									geometryTypeSuffix1,
+									suffixByGeometryTypeByDescriptor);
+
+							newDescriptorsPi2 = pi2.descriptors().createCopy();
+							newDescriptorsPi2.appendSuffix(
+									separatorAndSuffixByDescriptor, false);
+						}
 
 						StructuredNumber newSnPi1 = pi1.sequenceNumber()
 								.createCopyWithSuffix(sequencNumberIndex);
@@ -1914,9 +2215,10 @@ public class Flattener implements Transformer {
 						// create association copy
 						GenericAssociationInfo aiCopy = createCopyAndSetEnds(
 								genModel, genAi, newNamePi1, newAliasPi1,
-								copyPi1InClass, mPi1, newSnPi1, newNamePi2,
-								newAliasPi2, copyPi2InClass, mPi2, newSnPi2,
-								false);
+								newDescriptorsPi1, copyPi1InClass, mPi1,
+								newSnPi1, newNamePi2, newAliasPi2,
+								newDescriptorsPi2, copyPi2InClass, mPi2,
+								newSnPi2, false);
 
 						genAisToAdd.add(aiCopy);
 					}
@@ -1929,13 +2231,14 @@ public class Flattener implements Transformer {
 				if (classCopiesByGeometryTypeByOriginalClass
 						.containsKey(pi1.inClass())) {
 
-					Map<String, GenericClassInfo> classCopiesPi1InClass = classCopiesByGeometryTypeByOriginalClass
+					Map<String, GenericClassInfo> classCopiesByGeometryTypeForPi1InClass = classCopiesByGeometryTypeByOriginalClass
 							.get(pi1.inClass());
 
-					if (classCopiesPi1InClass == null
-							|| classCopiesPi1InClass.isEmpty()) {
+					if (classCopiesByGeometryTypeForPi1InClass == null
+							|| classCopiesByGeometryTypeForPi1InClass
+									.isEmpty()) {
 
-						result.addError(null, 20335, pi1.inClass().name());
+						result.addError(this, 20335, pi1.inClass().name());
 
 					} else {
 
@@ -1945,10 +2248,11 @@ public class Flattener implements Transformer {
 						 * that is created
 						 */
 						int sequencNumberIndex = 1;
-						for (String s1 : classCopiesPi1InClass.keySet()) {
+						for (String geometryTypeSuffix1 : classCopiesByGeometryTypeForPi1InClass
+								.keySet()) {
 
-							GenericClassInfo copyPi1InClass = classCopiesPi1InClass
-									.get(s1);
+							GenericClassInfo copyPi1InClass = classCopiesByGeometryTypeForPi1InClass
+									.get(geometryTypeSuffix1);
 
 							Multiplicity mPi2 = new Multiplicity(
 									pi2.cardinality().toString());
@@ -1964,9 +2268,29 @@ public class Flattener implements Transformer {
 									.inClass();
 
 							// compute new name and code/alias
-							String newNamePi2 = pi2.name() + separator + s1;
-							String newAliasPi2 = (hasCode(pi2))
-									? getCode(pi2) + separator + s1 : null;
+							String newNamePi2 = pi2.name()
+									+ separatorForPropertyFromUnion
+									+ geometryTypeSuffix1;
+
+							String newAliasPi2 = (hasCode(pi2)) ? getCode(pi2)
+									+ separatorForPropertyFromUnion
+									+ geometryTypeSuffix1 : null;
+
+							Descriptors newDescriptorsPi2 = null;
+							if (!geometryTypeSuffixSeparatorByDescriptor
+									.isEmpty()) {
+
+								EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+
+										unionSeparatorByDescriptor,
+										geometryTypeSuffix1,
+										suffixByGeometryTypeByDescriptor);
+
+								newDescriptorsPi2 = pi2.descriptors()
+										.createCopy();
+								newDescriptorsPi2.appendSuffix(
+										separatorAndSuffixByDescriptor, false);
+							}
 
 							StructuredNumber newSnPi1 = pi1.sequenceNumber()
 									.createCopyWithSuffix(sequencNumberIndex);
@@ -1976,9 +2300,10 @@ public class Flattener implements Transformer {
 
 							// create association copy
 							GenericAssociationInfo aiCopy = createCopyAndSetEnds(
-									genModel, genAi, null, null, copyPi1InClass,
-									null, newSnPi1, newNamePi2, newAliasPi2,
-									pi2InClass, mPi2, newSnPi2, false);
+									genModel, genAi, null, null, null,
+									copyPi1InClass, null, newSnPi1, newNamePi2,
+									newAliasPi2, newDescriptorsPi2, pi2InClass,
+									mPi2, newSnPi2, false);
 
 							genAisToAdd.add(aiCopy);
 						}
@@ -1986,13 +2311,14 @@ public class Flattener implements Transformer {
 
 				} else {
 
-					Map<String, GenericClassInfo> classCopiesPi2InClass = classCopiesByGeometryTypeByOriginalClass
+					Map<String, GenericClassInfo> classCopiesByGeometryTypeForPi2InClass = classCopiesByGeometryTypeByOriginalClass
 							.get(pi2.inClass());
 
-					if (classCopiesPi2InClass == null
-							|| classCopiesPi2InClass.isEmpty()) {
+					if (classCopiesByGeometryTypeForPi2InClass == null
+							|| classCopiesByGeometryTypeForPi2InClass
+									.isEmpty()) {
 
-						result.addError(null, 20335, pi2.inClass().name());
+						result.addError(this, 20335, pi2.inClass().name());
 
 					} else {
 
@@ -2002,10 +2328,11 @@ public class Flattener implements Transformer {
 						 * that is created
 						 */
 						int sequencNumberIndex = 1;
-						for (String s2 : classCopiesPi2InClass.keySet()) {
+						for (String geometryTypeSuffix2 : classCopiesByGeometryTypeForPi2InClass
+								.keySet()) {
 
-							GenericClassInfo copyPi2InClass = classCopiesPi2InClass
-									.get(s2);
+							GenericClassInfo copyPi2InClass = classCopiesByGeometryTypeForPi2InClass
+									.get(geometryTypeSuffix2);
 
 							Multiplicity mPi1 = new Multiplicity(
 									pi1.cardinality().toString());
@@ -2021,10 +2348,29 @@ public class Flattener implements Transformer {
 									.inClass();
 
 							// compute new name and code/alias
-							String newNamePi1 = pi1.name() + separator + s2;
+							String newNamePi1 = pi1.name()
+									+ separatorForPropertyFromUnion
+									+ geometryTypeSuffix2;
 
-							String newAliasPi1 = (hasCode(pi1))
-									? getCode(pi1) + separator + s2 : null;
+							String newAliasPi1 = (hasCode(pi1)) ? getCode(pi1)
+									+ separatorForPropertyFromUnion
+									+ geometryTypeSuffix2 : null;
+
+							Descriptors newDescriptorsPi1 = null;
+							if (!geometryTypeSuffixSeparatorByDescriptor
+									.isEmpty()) {
+
+								EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+
+										unionSeparatorByDescriptor,
+										geometryTypeSuffix2,
+										suffixByGeometryTypeByDescriptor);
+
+								newDescriptorsPi1 = pi1.descriptors()
+										.createCopy();
+								newDescriptorsPi1.appendSuffix(
+										separatorAndSuffixByDescriptor, false);
+							}
 
 							StructuredNumber newSnPi1 = pi1.sequenceNumber()
 									.createCopyWithSuffix(sequencNumberIndex);
@@ -2035,8 +2381,9 @@ public class Flattener implements Transformer {
 							// create association copy
 							GenericAssociationInfo aiCopy = createCopyAndSetEnds(
 									genModel, genAi, newNamePi1, newAliasPi1,
-									pi1InClass, mPi1, newSnPi1, null, null,
-									copyPi2InClass, null, newSnPi2, false);
+									newDescriptorsPi1, pi1InClass, mPi1,
+									newSnPi1, null, null, null, copyPi2InClass,
+									null, newSnPi2, false);
 
 							genAisToAdd.add(aiCopy);
 						}
@@ -2075,46 +2422,58 @@ public class Flattener implements Transformer {
 
 	}
 
-	// /**
-	// * @param genCi
-	// * @return true if any of the supertypes of genCi (to the highest level)
-	// has
-	// * a property where the name of the type starts with "GM_", else
-	// * false
-	// */
-	// private boolean anySupertypeHasGeometryProperty(ClassInfo genCi) {
-	//
-	// Set<String> supertypesOfGenCi = new HashSet<String>();
-	// if (genCi.supertypes() != null) {
-	// supertypesOfGenCi.addAll(genCi.supertypes());
-	// }
-	// if (genCi.baseClass() != null) {
-	// supertypesOfGenCi.add(genCi.baseClass().id());
-	// }
-	//
-	// Model model = genCi.model();
-	//
-	// for (String supertypeId : supertypesOfGenCi) {
-	//
-	// ClassInfo supertypeCi = model.classById(supertypeId);
-	//
-	// for (PropertyInfo pi : supertypeCi.properties().values()) {
-	//
-	// if (pi.typeInfo().name.startsWith("GM_")) {
-	// return true;
-	// }
-	// }
-	//
-	// boolean supertypeOfSupertypeHasGeomProp =
-	// anySupertypeHasGeometryProperty(
-	// supertypeCi);
-	// if (supertypeOfSupertypeHasGeomProp) {
-	// return true;
-	// }
-	// }
-	//
-	// return false;
-	// }
+	private EnumMap<Descriptor, Pair<String, String>> determineSeparatorAndSuffixForDescriptors(
+			EnumMap<Descriptor, String> geometryTypeSuffixSeparatorByDescriptor,
+			String geometryTypeIdentifier,
+			EnumMap<Descriptor, Map<String, String>> suffixByGeometryTypeByDescriptor) {
+
+		EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = new EnumMap<Descriptor, Pair<String, String>>(
+				Descriptor.class);
+
+		for (Descriptor descriptor : geometryTypeSuffixSeparatorByDescriptor
+				.keySet()) {
+
+			String separator = geometryTypeSuffixSeparatorByDescriptor
+					.get(descriptor);
+
+			String suffix = geometryTypeIdentifier;
+
+			if (suffixByGeometryTypeByDescriptor.containsKey(descriptor)) {
+
+				Map<String, String> suffixByGeometryType = suffixByGeometryTypeByDescriptor
+						.get(descriptor);
+				if (suffixByGeometryType.containsKey(geometryTypeIdentifier)) {
+					suffix = suffixByGeometryType.get(geometryTypeIdentifier);
+				}
+			}
+
+			separatorAndSuffixByDescriptor.put(descriptor,
+					new ImmutablePair<String, String>(separator, suffix));
+		}
+
+		return separatorAndSuffixByDescriptor;
+	}
+
+	/**
+	 * @param value
+	 * @return can be empty but not <code>null</code>
+	 */
+	private Map<String, String> parseDescriptorModificationValueUsingKvpPattern(
+			String value) {
+
+		Map<String, String> res = new HashMap<String, String>();
+
+		if (value != null) {
+
+			Matcher matcher = descriptorModValKvpPattern.matcher(value);
+
+			while (matcher.find()) {
+				res.put(matcher.group(1), matcher.group(2));
+			}
+		}
+
+		return res;
+	}
 
 	/**
 	 * Removes all non-word characters and the underscores in the given suffix,
@@ -2138,9 +2497,14 @@ public class Flattener implements Transformer {
 	 * @param genCiCopy
 	 *            the copy of the class, for which a copy of the subtype
 	 *            hierarchy of the original class shall be create
-	 * @param suffix
-	 *            to be added to the names and IDs of all classes in the subtype
-	 *            hierarchy copy
+	 * @param separatorForGeometryTypeSuffix
+	 *            default separator for appending the geometryTypeSuffix
+	 * @param geometryTypeSuffix
+	 *            default suffix to be added to the names and IDs of all classes
+	 *            in the subtype hierarchy copy; it is the value of the 'param'
+	 *            attribute from process map entries; it is also used as key by
+	 *            the maps contained in the
+	 *            classCopiesByGeometryTypeByOriginalClass
 	 * @param classesToAdd
 	 *            set to keep track of subtype copies that have been created and
 	 *            thus shall be added to the model at the end of processing
@@ -2150,12 +2514,22 @@ public class Flattener implements Transformer {
 	 *            processing
 	 * @param classCopiesByOriginalClass
 	 *            used to keep track of the copies created for a specific class
+	 * @param geometryTypeSuffixSeparatorByDescriptor
+	 *            map with separators to append the geometry type suffix, that
+	 *            have specifically been configured via the configuration
+	 *            parameter
+	 *            {@value #PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR}
+	 * @param suffixByGeometryTypeByDescriptor
+	 *            map with specific suffixes to use when appending the suffix to
+	 *            descriptors of a class with a particular geometry type
 	 */
 	private void createSubtypeHierarchyCopyForClassCopy(GenericClassInfo genCi,
-			GenericClassInfo genCiCopy, String suffix,
-			Set<GenericClassInfo> classesToAdd,
+			GenericClassInfo genCiCopy, String separatorForGeometryTypeSuffix,
+			String geometryTypeSuffix, Set<GenericClassInfo> classesToAdd,
 			Set<GenericClassInfo> classesToRemove,
-			Map<GenericClassInfo, Map<String, GenericClassInfo>> classCopiesByGeometryTypeByOriginalClass) {
+			Map<GenericClassInfo, Map<String, GenericClassInfo>> classCopiesByGeometryTypeByOriginalClass,
+			EnumMap<Descriptor, String> geometryTypeSuffixSeparatorByDescriptor,
+			EnumMap<Descriptor, Map<String, String>> suffixByGeometryTypeByDescriptor) {
 
 		GenericModel genModel = genCiCopy.model();
 
@@ -2170,7 +2544,7 @@ public class Flattener implements Transformer {
 			if (subCi == null || !(subCi instanceof GenericClassInfo)) {
 
 				// we can't copy this part of the subtype hierarchy
-				result.addError(null, 20311, genCi.name(), subtypeId);
+				result.addError(this, 20311, genCi.name(), subtypeId);
 
 			} else {
 
@@ -2180,13 +2554,18 @@ public class Flattener implements Transformer {
 				 * Create a copy of the subtype.
 				 */
 				GenericClassInfo subtypeCopy = subGenCi.createCopy(
-						subGenCi.id() + suffix, subGenCi.name() + suffix,
+						subGenCi.id() + separatorForGeometryTypeSuffix
+								+ geometryTypeSuffix,
+						subGenCi.name() + separatorForGeometryTypeSuffix
+								+ geometryTypeSuffix,
 						subGenCi.category());
 
-				// NOTE: we have not added the properties of the copy to
-				// the model yet; they should be added when the classes
-				// contained in the classesToAdd set are added to the model
-				// (external to this method)
+				/*
+				 * NOTE: we have not added the properties of the copy to the
+				 * model yet; they should be added when the classes contained in
+				 * the classesToAdd set are added to the model (external to this
+				 * method)
+				 */
 
 				// keep track of the new copy
 				classesToAdd.add(subtypeCopy);
@@ -2205,13 +2584,47 @@ public class Flattener implements Transformer {
 					classCopiesByGeometryTypeByOriginalClass.put(subGenCi,
 							classCopiesByGeometryType);
 				}
-				classCopiesByGeometryType.put(suffix, subtypeCopy);
+				classCopiesByGeometryType.put(geometryTypeSuffix, subtypeCopy);
 
-				// append the suffix to the name and alias/code of the copy
-				if (hasCode(subGenCi)) {
-					setCode(subtypeCopy, getCode(subGenCi) + suffix);
+				/*
+				 * append the suffix to the descriptors or just the alias/code
+				 * of the copy
+				 */
+				if (!geometryTypeSuffixSeparatorByDescriptor.isEmpty()) {
+
+					/*
+					 * Update descriptors (including alias) and other
+					 * descriptors using descriptor modification separator, if
+					 * so configured
+					 */
+					EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = determineSeparatorAndSuffixForDescriptors(
+							geometryTypeSuffixSeparatorByDescriptor,
+							geometryTypeSuffix,
+							suffixByGeometryTypeByDescriptor);
+
+					subtypeCopy.descriptors().appendSuffix(
+							separatorAndSuffixByDescriptor, false);
+
+				} else if (hasCode(subGenCi)) {
+
+					/*
+					 * Kept for backwards compatibility. If the alias is the
+					 * code, use configuration parameter
+					 * 'descriptorModification_separator' to control appending
+					 * the suffix, with specific separator per descriptor.
+					 */
+					setCode(subtypeCopy,
+							getCode(subGenCi) + separatorForGeometryTypeSuffix
+									+ geometryTypeSuffix);
+
 				} else {
-					setCode(subtypeCopy, subGenCi.name() + suffix);
+
+					/*
+					 * Kept for backwards compatibility. See previous condition.
+					 */
+					setCode(subtypeCopy,
+							subGenCi.name() + separatorForGeometryTypeSuffix
+									+ geometryTypeSuffix);
 				}
 
 				/*
@@ -2258,12 +2671,12 @@ public class Flattener implements Transformer {
 					if (supertypeOfSubtypeCopy == null) {
 
 						// now this is unexpected
-						result.addError(null, 20314, idOfSubtypeCopySupertype,
+						result.addError(this, 20314, idOfSubtypeCopySupertype,
 								subtypeCopy.name());
 
 					} else if (!(supertypeOfSubtypeCopy instanceof GenericClassInfo)) {
 
-						result.addError(null, 20322,
+						result.addError(this, 20322,
 								supertypeOfSubtypeCopy.name(),
 								subtypeCopy.name(), subGenCi.id(),
 								subtypeCopy.id());
@@ -2282,8 +2695,11 @@ public class Flattener implements Transformer {
 				 * create a copy of the subtypes of the subtype
 				 */
 				createSubtypeHierarchyCopyForClassCopy(subGenCi, subtypeCopy,
-						suffix, classesToAdd, classesToRemove,
-						classCopiesByGeometryTypeByOriginalClass);
+						separatorForGeometryTypeSuffix, geometryTypeSuffix,
+						classesToAdd, classesToRemove,
+						classCopiesByGeometryTypeByOriginalClass,
+						geometryTypeSuffixSeparatorByDescriptor,
+						suffixByGeometryTypeByDescriptor);
 			}
 		}
 	}
@@ -2362,6 +2778,27 @@ public class Flattener implements Transformer {
 
 				genPi.setConstraints(newConstraints);
 			}
+		}
+	}
+
+	/**
+	 * Removes all class and property constraints.
+	 *
+	 * Note: at the moment this only processes constraints belonging to classes
+	 * and properties of the application schema.
+	 *
+	 * @param genModel
+	 * @param trfConfig
+	 */
+	private void applyRuleClsFlattenRemoveConstraints(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+			genCi.setConstraints(null);
+		}
+
+		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+			genPi.setConstraints(null);
 		}
 	}
 
@@ -2651,11 +3088,11 @@ public class Flattener implements Transformer {
 						 * alright, then the type shall be excluded from
 						 * processing
 						 */
-						result.addDebug(null, 20344, genCi.name(),
+						result.addDebug(this, 20344, genCi.name(),
 								replaceUnionExcludePattern.pattern(),
 								PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 					} else {
-						result.addDebug(null, 20345, genCi.name(),
+						result.addDebug(this, 20345, genCi.name(),
 								replaceUnionExcludePattern.pattern(),
 								PARAM_REPLACE_UNION_EXCLUDE_REGEX);
 						unionsToProcess.add(genCi);
@@ -2848,7 +3285,7 @@ public class Flattener implements Transformer {
 		 * exists, apply it - otherwise, if the type of the property is a data
 		 * type, object type or union in the app schema, log that type (unless
 		 * configuration parameters tell otherwise - which is covered by the
-		 * method computTypesToProcessForFlattenTypes).
+		 * method computeTypesToProcessForFlattenTypes).
 		 */
 
 		// key: id of GenericClassInfo, value: GenericClassInfo
@@ -2887,31 +3324,37 @@ public class Flattener implements Transformer {
 		}
 
 		// compute some general parameter values
-		boolean includeUnionIdentifierTV = false;
-		if (trfConfig.hasParameter(PARAM_INCLUDE_UNION_IDENTIFIER_TV)) {
-			String tmp = trfConfig
-					.getParameterValue(PARAM_INCLUDE_UNION_IDENTIFIER_TV);
-			if (tmp.trim().equalsIgnoreCase("true")) {
-				includeUnionIdentifierTV = true;
-			}
+		boolean includeUnionIdentifierTV = trfConfig
+				.parameterAsBoolean(PARAM_INCLUDE_UNION_IDENTIFIER_TV, false);
+
+		boolean setMinCardinalityToZeroWhenMergingUnion = trfConfig
+				.parameterAsBoolean(
+						PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION,
+						true);
+
+		EnumMap<Descriptor, String> nonUnionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, trfConfig);
+
+		EnumMap<Descriptor, String> unionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_UNION_SEPARATOR, trfConfig);
+
+		boolean nonUnionSeparatorMapEmpty = nonUnionSeparatorByDescriptor
+				.isEmpty();
+		boolean unionSeparatorMapEmpty = unionSeparatorByDescriptor.isEmpty();
+
+		// ensure that a separator is defined for merging global identifiers
+		if (!nonUnionSeparatorByDescriptor
+				.containsKey(Descriptor.GLOBALIDENTIFIER)) {
+			nonUnionSeparatorByDescriptor.put(Descriptor.GLOBALIDENTIFIER, ".");
+		}
+		if (!unionSeparatorByDescriptor
+				.containsKey(Descriptor.GLOBALIDENTIFIER)) {
+			unionSeparatorByDescriptor.put(Descriptor.GLOBALIDENTIFIER, ".");
 		}
 
-		boolean setMinCardinalityToZeroWhenMergingUnion = true;
-		if (trfConfig.hasParameter(
-				PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION)) {
-			String tmp = trfConfig.getParameterValue(
-					PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION);
-			if (tmp.trim().equalsIgnoreCase("false")) {
-				setMinCardinalityToZeroWhenMergingUnion = false;
-			}
-		}
-		boolean mergeDescriptors = false;
-		if (trfConfig.hasParameter(PARAM_MERGE_DESCRIPTORS)) {
-			String tmp = trfConfig.getParameterValue(PARAM_MERGE_DESCRIPTORS);
-			if (tmp.trim().equalsIgnoreCase("true")) {
-				mergeDescriptors = true;
-			}
-		}
+		boolean ignoreSelfReferenceByPropertyWithAssociationClassOrigin = trfConfig
+				.hasRule(
+						RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_SELF_REF_BY_PROP_WITH_ASSO_CLASS_ORIGIN);
 
 		/*
 		 * Now process all app schema class properties with types that were
@@ -2946,11 +3389,22 @@ public class Flattener implements Transformer {
 			 * current class is a union, the separator to put between the name
 			 * of the class property and the copied property shall be the value
 			 * of separatorForPropertyFromUnion; otherwise it shall be the value
-			 * of separatorForPropertyFromNonUnion
+			 * of separatorForPropertyFromNonUnion. Apply same reasoning for the
+			 * separators of descriptors.
 			 */
+
 			String separator = separatorForPropertyFromNonUnion;
+			EnumMap<Descriptor, String> separatorByDescriptor = nonUnionSeparatorByDescriptor;
+			/*
+			 * Note if the separator map is empty, so that backwards compatible
+			 * behavior can be invoked later on, if necessary.
+			 */
+			boolean separatorMapEmpty = nonUnionSeparatorMapEmpty;
+
 			if (typeToProcess.category() == Options.UNION) {
 				separator = separatorForPropertyFromUnion;
+				separatorByDescriptor = unionSeparatorByDescriptor;
+				separatorMapEmpty = unionSeparatorMapEmpty;
 			}
 
 			/*
@@ -2991,10 +3445,6 @@ public class Flattener implements Transformer {
 						continue;
 					}
 
-					/*
-					 * NOTE for cast: the cast should be safe, because pi
-					 * belongs to a GenericClassInfo (genCi)
-					 */
 					GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 					Type type = genPi.typeInfo();
@@ -3022,7 +3472,7 @@ public class Flattener implements Transformer {
 							 */
 							propsToRemove.add(genPi);
 
-							result.addInfo(null, 20338, genPi.name(),
+							result.addInfo(this, 20338, genPi.name(),
 									genPi.inClass().name());
 
 							continue;
@@ -3044,45 +3494,24 @@ public class Flattener implements Transformer {
 						for (PropertyInfo typePi : typeToProcess.properties()
 								.values()) {
 
-							/*
-							 * NOTE for cast: the cast should be safe, because
-							 * pi belongs to a GenericClassInfo (typeToProcess)
-							 */
 							GenericPropertyInfo typeGPi = (GenericPropertyInfo) typePi;
+
+							if (ignoreSelfReferenceByPropertyWithAssociationClassOrigin
+									&& genPi.taggedValue(
+											"toAssociationClassFrom") != null
+									&& typeGPi.taggedValue(
+											"fromAssociationClassTo") != null
+									&& genPi.taggedValue(
+											"toAssociationClassFrom")
+											.equals(typeGPi.taggedValue(
+													"fromAssociationClassTo"))) {
+								continue;
+							}
 
 							String id = genPi.id() + "_replacedBy_"
 									+ typeGPi.name();
 
 							GenericPropertyInfo copy = typeGPi.createCopy(id);
-
-							// merge global identifier information
-							if (genCi.globalIdentifier() == null) {
-								/*
-								 * globalId from typeGPi can be used as-is,
-								 * which is the default for the copy
-								 */
-							} else if (typeGPi.globalIdentifier() == null) {
-
-								// use the global id from genPi
-								// copy.setGlobalIdentifierAll(new Descriptors(
-								// genPi.globalIdentifier()));
-
-								copy.descriptors().put(
-										Descriptor.GLOBALIDENTIFIER,
-										genPi.globalIdentifier());
-
-							} else {
-
-								// merge global ids
-								// copy.setGlobalIdentifierAll(new Descriptors(
-								// genPi.globalIdentifier() + "."
-								// + typeGPi.globalIdentifier()));
-
-								copy.descriptors()
-										.put(Descriptor.GLOBALIDENTIFIER, genPi
-												.globalIdentifier() + "."
-												+ typeGPi.globalIdentifier());
-							}
 
 							/* handle derived properties */
 							if (genPi.isDerived()) {
@@ -3096,51 +3525,65 @@ public class Flattener implements Transformer {
 							copy.setAttribute(true);
 							copy.setAssociation(null);
 
-							/*
-							 * handle descriptors (except name, alias, and
-							 * globalIdentifier)
-							 */
-							if (mergeDescriptors) {
-								copy.descriptors().put(Descriptor.DEFINITION,
-										StringUtils.join(
-												new String[] {
-														genPi.definition(),
-														copy.definition() },
-												" "));
-								copy.descriptors().put(Descriptor.DESCRIPTION,
-										StringUtils.join(
-												new String[] {
-														genPi.description(),
-														copy.description() },
-												" "));
-								copy.descriptors().put(Descriptor.PRIMARYCODE,
-										StringUtils.join(
-												new String[] {
-														genPi.primaryCode(),
-														copy.primaryCode() },
-												" "));
-								// TBD: would it make sense to merge the
-								// language()?
-								copy.descriptors().put(Descriptor.LEGALBASIS,
-										StringUtils.join(
-												new String[] {
-														genPi.legalBasis(),
-														copy.legalBasis() },
-												" "));
-								copy.descriptors().put(
-										Descriptor.DATACAPTURESTATEMENT,
-										ArrayUtils.addAll(
-												genPi.dataCaptureStatements(),
-												copy.dataCaptureStatements()));
-								copy.descriptors().put(Descriptor.EXAMPLE,
-										ArrayUtils.addAll(genPi.examples(),
-												copy.examples()));
+							if (separatorByDescriptor
+									.containsKey(Descriptor.GLOBALIDENTIFIER)) {
+
+								mergeDescriptorsAndAssignToCopy(
+										Descriptor.GLOBALIDENTIFIER, genPi,
+										copy, separatorByDescriptor, separator);
+							}
+
+							if (!separatorMapEmpty) {
+
+								/*
+								 * NOTE: only merges the main descriptor value,
+								 * not all values in all languages.
+								 */
+
+								/*
+								 * If omitWhenFlattened, simply keep the
+								 * descriptor of the copy. Otherwise, merge the
+								 * descriptor values from genPi and the copy.
+								 */
+								if (!omitWhenFlattened) {
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DEFINITION, genPi, copy,
+											separatorByDescriptor, separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DESCRIPTION, genPi, copy,
+											separatorByDescriptor, separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.PRIMARYCODE, genPi, copy,
+											separatorByDescriptor, separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.LEGALBASIS, genPi, copy,
+											separatorByDescriptor, separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.DATACAPTURESTATEMENT,
+											genPi, copy, separatorByDescriptor,
+											separator);
+
+									mergeDescriptorsAndAssignToCopy(
+											Descriptor.EXAMPLE, genPi, copy,
+											separatorByDescriptor, separator);
+
+									// TBD: would it make sense to merge the
+									// language()?
+								}
 
 							} else {
-								// (NOTE: for backwards compatibility after
-								// mergeDescriptors has been introduced) Reset
-								// the documentation for the copy if it is
-								// empty.
+
+								/*
+								 * (NOTE: for backwards compatibility after
+								 * merging of descriptors has been introduced)
+								 * Reset the documentation for the copy if it is
+								 * empty.
+								 */
 								String s = copy.derivedDocumentation(
 										"[[definition]][[description]]", "");
 
@@ -3192,93 +3635,123 @@ public class Flattener implements Transformer {
 							}
 							copy.setName(newName);
 
-							if (hasCode(pi)) {
+							if (!separatorMapEmpty) {
 
-								if (hasCode(typeGPi)) {
-
-									if (omitWhenFlattened) {
-										if (piCode.contains(
-												separatorForPropertyFromNonUnion)) {
-											newCode = piCode.substring(0,
-													piCode.lastIndexOf(
-															separatorForPropertyFromNonUnion))
-													+ separator + typeGPiCode;
-										} else {
-											newCode = typeGPiCode;
-										}
-									} else {
-										newCode = piCode + separator
-												+ typeGPiCode;
-									}
-								} else {
+								if (separatorByDescriptor
+										.containsKey(Descriptor.ALIAS)) {
 
 									/*
-									 * We only have code for pi and need to use
-									 * typeGPi name to construct the code of the
+									 * If omitWhenFlattened, simply keep the
+									 * descriptor of the copy. Otherwise, merge
+									 * the descriptor values from genPi and the
 									 * copy.
 									 */
-									if (omitWhenFlattened) {
-										if (piCode.contains(
-												separatorForPropertyFromNonUnion)) {
-											newCode = piCode.substring(0,
-													piCode.lastIndexOf(
-															separatorForPropertyFromNonUnion))
-													+ separator + typeGPiName;
-										} else {
-											newCode = typeGPiName;
-										}
-									} else {
-										newCode = piCode + separator
-												+ typeGPiName;
+									if (!omitWhenFlattened) {
+										mergeDescriptorsAndAssignToCopy(
+												Descriptor.ALIAS, genPi, copy,
+												separatorByDescriptor,
+												separator);
 									}
 								}
 							} else {
 
-								if (hasCode(typeGPi)) {
+								/*
+								 * Execute merging of codes as defined before
+								 * merging of descriptors with configurable
+								 * separator has been introduced.
+								 */
+								if (hasCode(pi)) {
 
-									/*
-									 * We do not have a code for pi but for
-									 * typeGPi.
-									 */
-									if (omitWhenFlattened) {
-										if (piName.contains(
-												separatorForPropertyFromNonUnion)) {
-											newCode = piName.substring(0,
-													piName.lastIndexOf(
-															separatorForPropertyFromNonUnion))
-													+ separator + typeGPiCode;
+									if (hasCode(typeGPi)) {
+
+										if (omitWhenFlattened) {
+											if (piCode.contains(
+													separatorForPropertyFromNonUnion)) {
+												newCode = piCode.substring(0,
+														piCode.lastIndexOf(
+																separatorForPropertyFromNonUnion))
+														+ separator
+														+ typeGPiCode;
+											} else {
+												newCode = typeGPiCode;
+											}
 										} else {
-											newCode = typeGPiCode;
+											newCode = piCode + separator
+													+ typeGPiCode;
 										}
 									} else {
-										newCode = piName + separator
-												+ typeGPiCode;
+
+										/*
+										 * We only have code for pi and need to
+										 * use typeGPi name to construct the
+										 * code of the copy.
+										 */
+										if (omitWhenFlattened) {
+											if (piCode.contains(
+													separatorForPropertyFromNonUnion)) {
+												newCode = piCode.substring(0,
+														piCode.lastIndexOf(
+																separatorForPropertyFromNonUnion))
+														+ separator
+														+ typeGPiName;
+											} else {
+												newCode = typeGPiName;
+											}
+										} else {
+											newCode = piCode + separator
+													+ typeGPiName;
+										}
 									}
 								} else {
 
-									/*
-									 * We neither have a code for pi nor for
-									 * typeGPi and thus need to use their names
-									 * to construct the code value.
-									 */
-									if (omitWhenFlattened) {
-										if (piName.contains(
-												separatorForPropertyFromNonUnion)) {
-											newCode = piName.substring(0,
-													piName.lastIndexOf(
-															separatorForPropertyFromNonUnion))
-													+ separator + typeGPiName;
+									if (hasCode(typeGPi)) {
+
+										/*
+										 * We do not have a code for pi but for
+										 * typeGPi.
+										 */
+										if (omitWhenFlattened) {
+											if (piName.contains(
+													separatorForPropertyFromNonUnion)) {
+												newCode = piName.substring(0,
+														piName.lastIndexOf(
+																separatorForPropertyFromNonUnion))
+														+ separator
+														+ typeGPiCode;
+											} else {
+												newCode = typeGPiCode;
+											}
 										} else {
-											newCode = typeGPiName;
+											newCode = piName + separator
+													+ typeGPiCode;
 										}
 									} else {
-										newCode = piName + separator
-												+ typeGPiName;
+
+										/*
+										 * We neither have a code for pi nor for
+										 * typeGPi and thus need to use their
+										 * names to construct the code value.
+										 */
+										if (omitWhenFlattened) {
+											if (piName.contains(
+													separatorForPropertyFromNonUnion)) {
+												newCode = piName.substring(0,
+														piName.lastIndexOf(
+																separatorForPropertyFromNonUnion))
+														+ separator
+														+ typeGPiName;
+											} else {
+												newCode = typeGPiName;
+											}
+										} else {
+											newCode = piName + separator
+													+ typeGPiName;
+										}
 									}
 								}
-							}
 
-							setCode(copy, newCode);
+								setCode(copy, newCode);
+							}
 
 							// merge the "name" tagged values if they exist
 							String piNameTV = pi.taggedValue("name");
@@ -3507,7 +3980,49 @@ public class Flattener implements Transformer {
 			}
 		}
 
-		genModel.removeByClassCategory(Options.UNION);
+		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
+				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()
+				.toArray(new GenericClassInfo[genModel.selectedSchemaClasses()
+						.size()])) {
+
+			if (genCi.category() == Options.UNION) {
+
+				if (!ignoreUnionsRepresentingFeatureTypeSets
+						|| !Boolean.parseBoolean(genCi
+								.taggedValue("representsFeatureTypeSet"))) {
+					genModel.remove(genCi);
+				}
+			}
+		}
+
+		if (trfConfig
+				.hasRule(RULE_TRF_PROP_FLATTEN_TYPES_REMOVE_MAPPED_TYPES)) {
+			/*
+			 * identify all types for which map entries have been declared and
+			 * remove them from the model
+			 */
+			List<ProcessMapEntry> mapEntries = trfConfig.getMapEntries();
+			for (ProcessMapEntry pme : mapEntries) {
+				if (pme.getRule()
+						.equalsIgnoreCase(RULE_TRF_PROP_FLATTEN_TYPES)) {
+					String mappedTypeName = pme.getType();
+					ClassInfo mappedType = genModel.classByName(mappedTypeName);
+					genModel.remove((GenericClassInfo) mappedType);
+				}
+			}
+		}
+	}
+
+	private void mergeDescriptorsAndAssignToCopy(Descriptor descriptor,
+			GenericPropertyInfo genPi, GenericPropertyInfo copy,
+			EnumMap<Descriptor, String> separatorByDescriptor,
+			String separator) {
+
+		List<LangString> mergedDescriptorValues = Descriptors.merge(descriptor,
+				genPi, copy, separatorByDescriptor, separator);
+		copy.descriptors().put(descriptor, mergedDescriptorValues);
 	}
 
 	/**
@@ -3540,6 +4055,9 @@ public class Flattener implements Transformer {
 			GenericModel genModel, TransformerConfiguration trfConfig) {
 
 		TreeMap<String, GenericClassInfo> typesToProcessById = new TreeMap<String, GenericClassInfo>();
+
+		boolean ignoreUnionsRepresentingFeatureTypeSets = trfConfig.hasRule(
+				RULE_TRF_PROP_FLATTEN_TYPES_IGNORE_UNIONS_REPRESENTING_FEATURE_TYPE_SETS);
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -3583,7 +4101,7 @@ public class Flattener implements Transformer {
 									type.name)
 							.getTargetType();
 
-					result.addDebug(null, 20318, targetTypeName, genPi.name(),
+					result.addDebug(this, 20318, targetTypeName, genPi.name(),
 							genPi.inClass().name());
 
 					type.id = UNKNOWN;
@@ -3593,143 +4111,113 @@ public class Flattener implements Transformer {
 					type.name = targetCi.name();
 				}
 
+			} else if (type.id.equals(UNKNOWN)) {
+
+				/*
+				 * Then we cannot flatten the type. For a type.id to be
+				 * 'unknown' the reason why should have already been reported.
+				 */
+
 			} else {
 
-				if (type.id.equals(UNKNOWN)) {
+				ClassInfo typeCi = genModel.classById(type.id);
 
-					/*
-					 * Then we cannot flatten the type. For a type.id to be
-					 * 'unknown' the reason why should have already been
-					 * reported.
-					 */
+				if (typeCi == null) {
+
+					MessageContext mc = result.addDebug(this, 20301,
+							genPi.inClass().name() + "." + genPi.name(),
+							type.name);
+					if (mc != null)
+						mc.addDetail(this, 20308, "Property", genPi.fullName());
+
+					type.id = UNKNOWN;
 
 				} else {
 
-					ClassInfo typeCi = genModel.classById(type.id);
+					/*
+					 * Check category of the type of the property based upon the
+					 * desired processing (unions, datatypes [unless excluded]
+					 * and types [depending upon the value of the
+					 * flattenObjectTypes parameter]). If the type category does
+					 * not belong to one targeted for processing, directly
+					 * continue with the next property.
+					 */
+					boolean processType = false;
 
-					if (typeCi == null) {
+					if (typeCi.category() == Options.UNION
+							&& !(ignoreUnionsRepresentingFeatureTypeSets
+									&& Boolean.parseBoolean(typeCi.taggedValue(
+											"representsFeatureTypeSet")))) {
 
-						// We cannot flatten the type if it is not available.
-						//
-						// /*
-						// * We can replace the type, however, if a type mapping
-						// exists
-						// * for it in the configuration.
-						// */
-						// if
-						// (trfConfig.hasMappingForType(RULE_TRF_PROP_FLATTEN_TYPES,
-						// type.name)) {
-						//
-						// // update the type of the property to the target type
-						// String targetTypeName = trfConfig
-						// .getMappingForType(RULE_TRF_PROP_FLATTEN_TYPES,
-						// type.name)
-						// .getTargetType();
-						//
-						// MessageContext mc = result.addWarning(null, 20302,
-						// targetTypeName, type.name);
-						// if (mc != null)
-						// mc.addDetail(null, 20308, "Property",
-						// genPi.fullName());
-						//
-						// type.id = UNKNOWN;
-						// type.name = targetTypeName;
-						//
-						// } else {
-						MessageContext mc = result.addDebug(null, 20301,
-								genPi.inClass().name() + "." + genPi.name(),
-								type.name);
-						if (mc != null)
-							mc.addDetail(null, 20308, "Property",
-									genPi.fullName());
+						processType = true;
 
-						type.id = UNKNOWN;
-						// }
-						// continue;
-					} else {
+					} else if (typeCi.category() == Options.DATATYPE) {
 
-						/*
-						 * Check category of the type of the property based upon
-						 * the desired processing (unions, datatypes [unless
-						 * excluded] and types [depending upon the value of the
-						 * flattenObjectTypes parameter]). If the type category
-						 * does not belong to one targeted for processing,
-						 * directly continue with the next property.
-						 */
-						boolean processType = false;
+						if (excludeDataTypeRegex != null) {
 
-						if (typeCi.category() == Options.UNION) {
+							Matcher m = excludeDataTypePattern
+									.matcher(typeCi.name());
+
+							if (m.matches()) {
+								processType = false;
+								result.addDebug(this, 20344, typeCi.name(),
+										excludeDataTypeRegex,
+										PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+							} else {
+								processType = true;
+								result.addDebug(this, 20345, typeCi.name(),
+										excludeDataTypeRegex,
+										PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
+							}
+
+						} else {
+							processType = true;
+						}
+
+					} else if (typeCi.category() == Options.OBJECT) {
+
+						if (flattenObjectTypes) {
 
 							processType = true;
 
-						} else if (typeCi.category() == Options.DATATYPE) {
+						} else if (includeObjectTypeRegex != null) {
 
-							if (excludeDataTypeRegex != null) {
+							Matcher m = includeObjectTypePattern
+									.matcher(typeCi.name());
 
-								Matcher m = excludeDataTypePattern
-										.matcher(typeCi.name());
-
-								if (m.matches()) {
-									processType = false;
-									result.addDebug(null, 20344, typeCi.name(),
-											excludeDataTypeRegex,
-											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
-								} else {
-									processType = true;
-									result.addDebug(null, 20345, typeCi.name(),
-											excludeDataTypeRegex,
-											PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
-								}
-
-							} else {
+							if (m.matches()) {
 								processType = true;
-							}
-
-						} else if (typeCi.category() == Options.OBJECT) {
-
-							if (flattenObjectTypes) {
-
-								processType = true;
-
-							} else if (includeObjectTypeRegex != null) {
-
-								Matcher m = includeObjectTypePattern
-										.matcher(typeCi.name());
-
-								if (m.matches()) {
-									processType = true;
-									result.addDebug(null, 20344, typeCi.name(),
-											includeObjectTypeRegex,
-											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
-								} else {
-									processType = false;
-									result.addDebug(null, 20345, typeCi.name(),
-											includeObjectTypeRegex,
-											PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
-								}
-
+								result.addDebug(this, 20344, typeCi.name(),
+										includeObjectTypeRegex,
+										PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 							} else {
 								processType = false;
+								result.addDebug(this, 20345, typeCi.name(),
+										includeObjectTypeRegex,
+										PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX);
 							}
-						}
 
-						if (processType) {
+						} else {
+							processType = false;
+						}
+					}
+
+					if (processType) {
+
+						/*
+						 * TBD: only if the type of the property is in the app
+						 * schema, note it for further processing
+						 */
+						if (genModel.isInAppSchema(typeCi)) {
 
 							/*
-							 * TBD: only if the type of the property is in the
-							 * app schema, note it for further processing
+							 * NOTE for cast: the cast should be safe, because
+							 * typeCi belongs to an application schema selected
+							 * for processing (the contents of which are parsed
+							 * to the generic types)
 							 */
-							if (genModel.isInAppSchema(typeCi)) {
-
-								/*
-								 * NOTE for cast: the cast should be safe,
-								 * because typeCi belongs to an application
-								 * schema selected for processing (the contents
-								 * of which are parsed to the generic types)
-								 */
-								typesToProcessById.put(typeCi.id(),
-										(GenericClassInfo) typeCi);
-							}
+							typesToProcessById.put(typeCi.id(),
+									(GenericClassInfo) typeCi);
 						}
 					}
 				}
@@ -3737,6 +4225,39 @@ public class Flattener implements Transformer {
 		}
 
 		return typesToProcessById;
+	}
+
+	/**
+	 * Identify which of the class names in the given set is the name of one of
+	 * the (direct and indirect) supertypes of the given type, or of the type
+	 * itself.
+	 * 
+	 * @param ci
+	 * @param simpleBaseTypes
+	 *            Set with names of types that can be simple base types of basic
+	 *            types; may be empty but not <code>null</code>
+	 * @return the name of the simple base type that applies to the given type,
+	 *         or <code>null</code> if none was found
+	 */
+	private String identifySimpleBaseType(ClassInfo ci,
+			SortedSet<String> simpleBaseTypes) {
+
+		if (simpleBaseTypes.contains(ci.name())) {
+			return ci.name();
+		} else {
+			for (String supertypeId : ci.supertypes()) {
+				ClassInfo supertype = ci.model().classById(supertypeId);
+				if (supertype != null) {
+					String res = identifySimpleBaseType(supertype,
+							simpleBaseTypes);
+					if (res != null) {
+						return res;
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -3749,7 +4270,7 @@ public class Flattener implements Transformer {
 	private void identifyCircularDependencies(
 			Map<String, GenericClassInfo> typesToProcessById) {
 
-		result.addInfo(null, 20329);
+		result.addInfo(this, 20329);
 
 		DirectedGraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
 				new ClassBasedEdgeFactory<String, PropertySetEdge>(
@@ -3841,10 +4362,10 @@ public class Flattener implements Transformer {
 		 * Log occurrence of reflexive relationships.
 		 */
 		if (refTypeInfo.isEmpty()) {
-			result.addInfo(null, 20331);
+			result.addInfo(this, 20331);
 		} else {
 			for (String key : refTypeInfo.keySet()) {
-				result.addInfo(null, 20330, key,
+				result.addInfo(this, 20330, key,
 						join(refTypeInfo.get(key), ","));
 			}
 		}
@@ -3874,7 +4395,7 @@ public class Flattener implements Transformer {
 
 			for (List<String> cycle : cycles) {
 
-				result.addInfo(null, 20326);
+				result.addInfo(this, 20326);
 
 				for (int i = 0; i < cycle.size(); i++) {
 
@@ -3925,12 +4446,12 @@ public class Flattener implements Transformer {
 
 					PropertySetEdge edge = graph.getEdge(source, target);
 
-					result.addInfo(null, 20327, source, target,
+					result.addInfo(this, 20327, source, target,
 							edge.toString());
 				}
 			}
 		} else {
-			result.addInfo(null, 20328);
+			result.addInfo(this, 20328);
 		}
 
 		alg = null;
@@ -3950,6 +4471,7 @@ public class Flattener implements Transformer {
 
 		boolean applyMaxMultThreshold = false;
 		int maxMultiplicityThreshold = -1;
+
 		if (rules.contains(
 				RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD)) {
 
@@ -3979,7 +4501,7 @@ public class Flattener implements Transformer {
 			}
 
 			if (isInvalidThresholdValue) {
-				result.addError(null, 20341,
+				result.addError(this, 20341,
 						RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD,
 						PARAM_MAX_MULTIPLICITY_THRESHOLD);
 			}
@@ -3999,7 +4521,7 @@ public class Flattener implements Transformer {
 		if (maxOccParam != null && maxOccParam.trim().length() > 0) {
 			maxOccursGlobal = Integer.parseInt(maxOccParam);
 			if (maxOccursGlobal < 1) {
-				result.addWarning(null, 20304, "" + maxOccursGlobal);
+				result.addWarning(this, 20304, "" + maxOccursGlobal);
 				maxOccursGlobal = 3;
 			}
 		}
@@ -4013,7 +4535,7 @@ public class Flattener implements Transformer {
 				String[] smoParts = smo.split("::");
 				if (smoParts.length != 3 || smoParts[0].length() == 0
 						|| smoParts[1].length() == 0) {
-					result.addError(null, 20310,
+					result.addError(this, 20310,
 							PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES, smo);
 				} else {
 					try {
@@ -4021,7 +4543,7 @@ public class Flattener implements Transformer {
 						specificMaxOccursByIdPattern
 								.put(smoParts[0] + "::" + smoParts[1], i);
 					} catch (NumberFormatException e) {
-						result.addError(null, 20310,
+						result.addError(this, 20310,
 								PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES, smo);
 					}
 				}
@@ -4036,6 +4558,9 @@ public class Flattener implements Transformer {
 			// Note that a length of 0 IS allowed
 			separatorForPropertyIndexNumber = separatorForPropertyIndexNumberParam;
 		}
+
+		EnumMap<Descriptor, String> separatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
+				PARAM_DESCRIPTOR_MOD_PROPERTY_INDEX_NUMBER, trfConfig);
 
 		boolean ignoreFeatureOrObjectTypedProperties = false;
 
@@ -4127,7 +4652,7 @@ public class Flattener implements Transformer {
 					 * associations shall be kept we issue a warning and don't
 					 * dissolve the association.
 					 */
-					result.addWarning(null, 20342, end1.inClass().name(),
+					result.addWarning(this, 20342, end1.inClass().name(),
 							end1.name(), end2.inClass().name(), end2.name());
 
 				} else {
@@ -4227,7 +4752,7 @@ public class Flattener implements Transformer {
 
 					int piMaxOcc = Integer.parseInt(piMaxOccTaggedValue);
 					if (piMaxOcc < 1) {
-						result.addWarning(null, 20305, pi.name(), genCi.name(),
+						result.addWarning(this, 20305, pi.name(), genCi.name(),
 								"" + piMaxOcc, "" + maxOccursGlobal);
 
 					} else {
@@ -4270,7 +4795,35 @@ public class Flattener implements Transformer {
 						GenericPropertyInfo copy = genPi.createCopy(newId);
 						copy.setName(newName);
 
-						if (hasCode(genPi)) {
+						if (!separatorByDescriptor.isEmpty()) {
+
+							/*
+							 * Update descriptors (including alias) and other
+							 * descriptors using descriptor modification
+							 * separator, if so configured
+							 */
+							EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor = new EnumMap<Descriptor, Pair<String, String>>(
+									Descriptor.class);
+							for (Entry<Descriptor, String> entry : separatorByDescriptor
+									.entrySet()) {
+								separatorAndSuffixByDescriptor
+										.put(entry.getKey(),
+												new ImmutablePair<String, String>(
+														entry.getValue(),
+														"" + i));
+							}
+							copy.descriptors().appendSuffix(
+									separatorAndSuffixByDescriptor, true);
+
+						} else if (hasCode(genPi)) {
+
+							/*
+							 * Kept for backwards compatibility. If the alias is
+							 * the code, use configuration parameter
+							 * 'descriptorModification_separator' to control
+							 * appending of the index as suffix, with specific
+							 * separator per descriptor.
+							 */
 							setCode(copy, getCode(genPi)
 									+ separatorForPropertyIndexNumber + i);
 						}
@@ -4326,6 +4879,43 @@ public class Flattener implements Transformer {
 	}
 
 	/**
+	 * Parse the configuration parameter with given name.
+	 * 
+	 * @param parameter
+	 * 
+	 * @param trfConfig
+	 * @return Map with descriptor as key and separator as value; can be empty
+	 *         but not <code>null</code>
+	 */
+	private EnumMap<Descriptor, String> parseDescriptorModificationParameterUsingBasicPattern(
+			String parameter, TransformerConfiguration trfConfig) {
+
+		EnumMap<Descriptor, String> res = new EnumMap<Descriptor, String>(
+				Descriptor.class);
+
+		String paramValue = trfConfig.parameterAsString(parameter, null, false,
+				true);
+
+		if (paramValue != null) {
+
+			Matcher matcher = descriptorModBasicPattern.matcher(paramValue);
+
+			while (matcher.find()) {
+
+				String descriptorAsString = matcher.group(1);
+				try {
+					Descriptor descriptor = Descriptor.valueOf(
+							descriptorAsString.toUpperCase(Locale.ENGLISH));
+					res.put(descriptor, matcher.group(2));
+				} catch (IllegalArgumentException e) {
+					result.addError(this, 20348, parameter, descriptorAsString);
+				}
+			}
+		}
+		return res;
+	}
+
+	/**
 	 *
 	 * TODO: realize flattening of inheritance structures from external packages
 	 *
@@ -4339,7 +4929,13 @@ public class Flattener implements Transformer {
 		Map<String, GenericClassInfo> genSuperclassesById = new HashMap<String, GenericClassInfo>();
 		Map<String, GenericClassInfo> genLeafclassesById = new HashMap<String, GenericClassInfo>();
 
-		Map<String, GenericClassInfo> genSuperclassUnionsByName = new TreeMap<String, GenericClassInfo>();
+		/*
+		 * Key: superclass name
+		 * 
+		 * value: union created to represent the inheritance tree with that
+		 * supertype at the top
+		 */
+		Map<String, GenericClassInfo> genSuperclassUnionsBySuperclassName = new TreeMap<String, GenericClassInfo>();
 
 		Pattern inclusionPattern = null;
 
@@ -4522,21 +5118,26 @@ public class Flattener implements Transformer {
 				setCode(genSuperclassUnion, genSuperclass.name() + "Union");
 			}
 
+			/*
+			 * Check if the superclass has tagged value omitWhenFlattened. If
+			 * so, set it on the union as well.
+			 */
+			String tvOmitWhenFlattened = genSuperclass
+					.taggedValue("omitWhenFlattened");
+			if ("true".equalsIgnoreCase(tvOmitWhenFlattened)) {
+				genSuperclassUnion.setTaggedValue("omitWhenFlattened", "true",
+						false);
+			}
+
 			// TBD it would be good to use java enums for stereotypes
 			genSuperclassUnion.setStereotype("union");
 			genSuperclassUnion.setPkg(genSuperclass.pkg());
-			/*
-			 * NOTE for cast: the cast should be safe, because the package of
-			 * genSuperclassUnion is that of genSuperclass, which is a
-			 * GenericClassInfo (that always belongs to a GenericPackageInfo
-			 */
+
 			((GenericPackageInfo) genSuperclassUnion.pkg())
 					.addClass(genSuperclassUnion);
 
-			// add property for each non-abstract subclass
-			HashSet<GenericClassInfo> subclasses = getAllSubclasses(
-					genSuperclass,
-					"The union created for all subtypes within the inheritance tree will thus be incomplete.");
+			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
+					genSuperclass);
 			int seqNumIndex = 1;
 
 			// sort the subclasses by name so that the resulting order of
@@ -4592,7 +5193,12 @@ public class Flattener implements Transformer {
 
 			}
 
-			genSuperclassUnionsByName.put(genSuperclass.name(),
+			if (genSuperclass.category() == Options.FEATURE) {
+				genSuperclassUnion.setTaggedValue("representsFeatureTypeSet",
+						"true", false);
+			}
+
+			genSuperclassUnionsBySuperclassName.put(genSuperclass.name(),
 					genSuperclassUnion);
 			genModel.addClass(genSuperclassUnion);
 		}
@@ -4601,8 +5207,13 @@ public class Flattener implements Transformer {
 		 * change the type of all attributes in the model that use one of the
 		 * superclasses to the corresponding union, with the exception of the
 		 * property being contained in the union itself (for the case that the
-		 * superclass is neither abstract nor a mixin)
+		 * superclass is neither abstract nor a mixin) or being contained in one
+		 * of the generated unions
 		 */
+
+		Collection<GenericClassInfo> superclassUnions = genSuperclassUnionsBySuperclassName
+				.values();
+
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
 			// ignore association roles - they will be handled later on
@@ -4613,14 +5224,17 @@ public class Flattener implements Transformer {
 
 			if (genSuperclassesById.containsKey(type.id)) {
 
-				GenericClassInfo superclassUnion = genSuperclassUnionsByName
+				GenericClassInfo superclassUnion = genSuperclassUnionsBySuperclassName
 						.get(type.name);
 
 				/*
-				 * don't switch the type if the property is part of the union
-				 * itself
+				 * Don't switch the type if the property is part of the union
+				 * itself, or if the property belongs to a union that was
+				 * generated before (and represent the choice between a
+				 * supertype and its non-abstract subtypes).
 				 */
-				if (!genPi.inClass().id().equals(superclassUnion.id())) {
+				if (!genPi.inClass().id().equals(superclassUnion.id())
+						&& !superclassUnions.contains(genPi.inClass())) {
 					type.name = superclassUnion.name();
 					type.id = superclassUnion.id();
 				}
@@ -4676,7 +5290,7 @@ public class Flattener implements Transformer {
 				if (!(pi1 instanceof GenericPropertyInfo
 						&& pi1.inClass() instanceof GenericClassInfo)) {
 
-					result.addWarning(null, 20336,
+					result.addWarning(this, 20336,
 							(namePi1InClass.compareTo(namePi2InClass) <= 0)
 									? namePi1InClass : namePi2InClass,
 							(namePi1InClass.compareTo(namePi2InClass) <= 0)
@@ -4686,7 +5300,7 @@ public class Flattener implements Transformer {
 				} else {
 
 					// pi2 is not an instance of GenericPropertyInfo
-					result.addWarning(null, 20336,
+					result.addWarning(this, 20336,
 							(namePi1InClass.compareTo(namePi2InClass) <= 0)
 									? namePi1InClass : namePi2InClass,
 							(namePi1InClass.compareTo(namePi2InClass) <= 0)
@@ -4721,10 +5335,11 @@ public class Flattener implements Transformer {
 			 * (WARNING: NOT for the subtype specific property copies) which
 			 * will be set later on, depending on the actual case
 			 */
-			String newGenPi1OrigName = pi1.name() + separator
-					+ pi2.inClass().name();
-			String newGenPi2OrigName = pi2.name() + separator
-					+ pi1.inClass().name();
+
+			String newGenPi1OrigName = computeAssociationRoleNameForFlattenInheritance(
+					pi1, pi2.inClass(), separator);
+			String newGenPi2OrigName = computeAssociationRoleNameForFlattenInheritance(
+					pi2, pi1.inClass(), separator);
 
 			String codePi1 = hasCode(pi1) ? getCode(pi1) : pi1.name();
 			String codePi2 = hasCode(pi2) ? getCode(pi2) : pi2.name();
@@ -4759,12 +5374,12 @@ public class Flattener implements Transformer {
 				if (subclassesPi1InClass == null
 						|| subclassesPi1InClass.isEmpty()) {
 					checkFailed = true;
-					result.addError(null, 20337, pi1.inClass().name());
+					result.addError(this, 20337, pi1.inClass().name());
 				}
 				if (subclassesPi2InClass == null
 						|| subclassesPi2InClass.isEmpty()) {
 					checkFailed = true;
-					result.addError(null, 20337, pi2.inClass().name());
+					result.addError(this, 20337, pi2.inClass().name());
 				}
 				if (checkFailed) {
 					continue;
@@ -4793,10 +5408,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ subclassPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ subclassPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, subclassPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, subclassPi1InClass, separator);
 
 						String codesubclassPi1InClass = hasCode(
 								subclassPi1InClass)
@@ -4826,10 +5441,10 @@ public class Flattener implements Transformer {
 
 						// create association copy
 						GenericAssociationInfo aiCopy = createCopyAndSetEnds(
-								genModel, genAi, newNamePi1, newAliasPi1,
+								genModel, genAi, newNamePi1, newAliasPi1, null,
 								subclassPi1InClass, mPi1, newSnPi1, newNamePi2,
-								newAliasPi2, subclassPi2InClass, mPi2, newSnPi2,
-								false);
+								newAliasPi2, null, subclassPi2InClass, mPi2,
+								newSnPi2, false);
 
 						genAisToAdd.add(aiCopy);
 					}
@@ -4852,10 +5467,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ subclassPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ genPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, subclassPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, genPi1InClass, separator);
 
 						String codesubclassPi2InClass = hasCode(
 								subclassPi2InClass)
@@ -4888,10 +5503,10 @@ public class Flattener implements Transformer {
 
 						// create association copy
 						GenericAssociationInfo aiCopy = createCopyAndSetEnds(
-								genModel, genAi, newNamePi1, newAliasPi1,
+								genModel, genAi, newNamePi1, newAliasPi1, null,
 								genPi1InClass, mPi1, newSnPi1, newNamePi2,
-								newAliasPi2, subclassPi2InClass, mPi2, newSnPi2,
-								false);
+								newAliasPi2, null, subclassPi2InClass, mPi2,
+								newSnPi2, false);
 
 						genAisToAdd.add(aiCopy);
 					}
@@ -4909,10 +5524,10 @@ public class Flattener implements Transformer {
 					for (GenericClassInfo subclassPi1InClass : subclassesPi1InClass) {
 
 						// compute new name and code/alias
-						String newNamePi1 = pi1.name() + separator
-								+ genPi2InClass.name();
-						String newNamePi2 = pi2.name() + separator
-								+ subclassPi1InClass.name();
+						String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+								pi1, genPi2InClass, separator);
+						String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+								pi2, subclassPi1InClass, separator);
 
 						String codesubclassPi1InClass = hasCode(
 								subclassPi1InClass)
@@ -4945,10 +5560,10 @@ public class Flattener implements Transformer {
 
 						// create association copy
 						GenericAssociationInfo aiCopy = createCopyAndSetEnds(
-								genModel, genAi, newNamePi1, newAliasPi1,
+								genModel, genAi, newNamePi1, newAliasPi1, null,
 								subclassPi1InClass, mPi1, newSnPi1, newNamePi2,
-								newAliasPi2, genPi2InClass, mPi2, newSnPi2,
-								false);
+								newAliasPi2, null, genPi2InClass, mPi2,
+								newSnPi2, false);
 
 						genAisToAdd.add(aiCopy);
 					}
@@ -4976,7 +5591,7 @@ public class Flattener implements Transformer {
 					if (subclassesPi1InClass == null
 							|| subclassesPi1InClass.isEmpty()) {
 
-						result.addError(null, 20337, pi1.inClass().name());
+						result.addError(this, 20337, pi1.inClass().name());
 
 					} else {
 
@@ -4993,8 +5608,8 @@ public class Flattener implements Transformer {
 							mPi2.minOccurs = 0;
 
 							// compute new name and code/alias
-							String newNamePi2 = pi2.name() + separator
-									+ subclassPi1InClass.name();
+							String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(
+									pi2, subclassPi1InClass, separator);
 
 							String codesubclassPi1InClass = hasCode(
 									subclassPi1InClass)
@@ -5024,10 +5639,10 @@ public class Flattener implements Transformer {
 
 							// create association copy
 							GenericAssociationInfo aiCopy = createCopyAndSetEnds(
-									genModel, genAi, null, null,
+									genModel, genAi, null, null, null,
 									subclassPi1InClass, null, newSnPi1,
-									newNamePi2, newAliasPi2, genPi2InClass,
-									mPi2, newSnPi2, false);
+									newNamePi2, newAliasPi2, null,
+									genPi2InClass, mPi2, newSnPi2, false);
 
 							genAisToAdd.add(aiCopy);
 						}
@@ -5052,7 +5667,7 @@ public class Flattener implements Transformer {
 					if (subclassesPi2InClass == null
 							|| subclassesPi2InClass.isEmpty()) {
 
-						result.addError(null, 20337, pi2.inClass().name());
+						result.addError(this, 20337, pi2.inClass().name());
 
 					} else {
 
@@ -5069,8 +5684,8 @@ public class Flattener implements Transformer {
 							mPi1.minOccurs = 0;
 
 							// compute new name and code/alias
-							String newNamePi1 = pi1.name() + separator
-									+ subclassPi2InClass.name();
+							String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(
+									pi1, subclassPi2InClass, separator);
 
 							String codesubclassPi2InClass = hasCode(
 									subclassPi2InClass)
@@ -5101,8 +5716,9 @@ public class Flattener implements Transformer {
 							// create association copy
 							GenericAssociationInfo aiCopy = createCopyAndSetEnds(
 									genModel, genAi, newNamePi1, newAliasPi1,
-									genPi1InClass, mPi1, newSnPi1, null, null,
-									subclassPi2InClass, null, newSnPi2, false);
+									null, genPi1InClass, mPi1, newSnPi1, null,
+									null, null, subclassPi2InClass, null,
+									newSnPi2, false);
 
 							genAisToAdd.add(aiCopy);
 						}
@@ -5141,7 +5757,7 @@ public class Flattener implements Transformer {
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 			leafCi.setBaseClass(null);
-			leafCi.setSupertypes(new TreeSet<String>()); // TODO use null
+			leafCi.setSupertypes(null);
 		}
 
 		/*
@@ -5155,11 +5771,25 @@ public class Flattener implements Transformer {
 				genModel.remove(superclass);
 			} else {
 				superclass.setBaseClass(null);
-				superclass.setSupertypes(new TreeSet<String>()); // TODO use
-																	// null
-				superclass.setSubtypes(new TreeSet<String>()); // TODO use null
+				superclass.setSupertypes(null);
+				superclass.setSubtypes(null);
 			}
 		}
+	}
+
+	private String computeAssociationRoleNameForFlattenInheritance(
+			PropertyInfo pi, ClassInfo valueType, String separator) {
+
+		String piName = pi.name();
+		String valueTypeName = valueType.name();
+
+		if (rules.contains(
+				RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE)
+				&& hasCode(valueType)) {
+			valueTypeName = getCode(valueType);
+		}
+
+		return piName + separator + valueTypeName;
 	}
 
 	/**
@@ -5252,12 +5882,12 @@ public class Flattener implements Transformer {
 		Matcher m = regex.matcher(genCi.name());
 
 		if (m.matches()) {
-			result.addDebug(null, 20344, genCi.name(), regex.pattern(),
+			result.addDebug(this, 20344, genCi.name(), regex.pattern(),
 					PARAM_INHERITANCE_INCLUDE_REGEX);
 			return true;
 
 		} else {
-			result.addDebug(null, 20345, genCi.name(), regex.pattern(),
+			result.addDebug(this, 20345, genCi.name(), regex.pattern(),
 					PARAM_INHERITANCE_INCLUDE_REGEX);
 
 			GenericModel model = genCi.model();
@@ -5407,11 +6037,11 @@ public class Flattener implements Transformer {
 	 */
 	private GenericAssociationInfo createCopyAndSetEnds(GenericModel genModel,
 			GenericAssociationInfo genAi, String newEnd1Rolename,
-			String newEnd1Alias, GenericClassInfo newEnd1InClass,
-			Multiplicity newCardinalityEnd1,
+			String newEnd1Alias, Descriptors newEnd1Descriptors,
+			GenericClassInfo newEnd1InClass, Multiplicity newCardinalityEnd1,
 			StructuredNumber newSequenceNumberEnd1, String newEnd2Rolename,
-			String newEnd2Alias, GenericClassInfo newEnd2InClass,
-			Multiplicity newCardinalityEnd2,
+			String newEnd2Alias, Descriptors newEnd2Descriptors,
+			GenericClassInfo newEnd2InClass, Multiplicity newCardinalityEnd2,
 			StructuredNumber newSequenceNumberEnd2,
 			boolean registerAssociationCopyInModel) {
 
@@ -5433,7 +6063,7 @@ public class Flattener implements Transformer {
 		 */
 		if (genAi.assocClass() != null) {
 
-			result.addWarning(null, 20334,
+			result.addWarning(this, 20334,
 					(name1.compareTo(name2) <= 0) ? name1 : name2,
 					(name1.compareTo(name2) <= 0) ? name2 : name1);
 		}
@@ -5460,6 +6090,9 @@ public class Flattener implements Transformer {
 		if (newEnd1Rolename != null) {
 			genPi1.setName(newEnd1Rolename);
 		}
+		if (newEnd1Descriptors != null) {
+			genPi1.setDescriptors(newEnd1Descriptors);
+		}
 		if (newEnd1Alias != null) {
 			setCode(genPi1, newEnd1Alias);
 		}
@@ -5482,6 +6115,9 @@ public class Flattener implements Transformer {
 		tiOfPi2.name = newEnd1InClass.name();
 		if (newEnd2Rolename != null) {
 			genPi2.setName(newEnd2Rolename);
+		}
+		if (newEnd2Descriptors != null) {
+			genPi2.setDescriptors(newEnd1Descriptors);
 		}
 		if (newEnd2Alias != null) {
 			setCode(genPi2, newEnd2Alias);
@@ -5520,43 +6156,34 @@ public class Flattener implements Transformer {
 
 	/**
 	 * @param genCi
-	 * @param message
-	 *            If a subtype that is not an instance of GenericClassInfo
-	 *            (likely because the subtype is not part of the schema selected
-	 *            for processing - is encountered, this message details the
-	 *            potential issue this could cause. Can be <code>null</code>.
-	 * @return The set of all direct or indirect subclasses of the given class,
-	 *         or <code>null</code> if the class has no subclasses.
+	 * @return The set of all direct or indirect subclasses of the given class
+	 *         that belong to schemas selected for processing, can be empty (if
+	 *         the class has no subclasses that belong to the schemas selected
+	 *         for processing) but not null.
 	 */
-	private HashSet<GenericClassInfo> getAllSubclasses(GenericClassInfo genCi,
-			String message) {
+	private Set<GenericClassInfo> getAllSubclassesFromSchemasSelectedForProcessing(
+			GenericClassInfo genCi) {
 
-		String issueMessage = message == null ? "" : message;
+		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()) {
 
-		if (genCi.subtypes() == null || genCi.subtypes().isEmpty())
-			return null;
-		else {
-			HashSet<GenericClassInfo> subtypes = new HashSet<GenericClassInfo>();
+			return new HashSet<GenericClassInfo>();
+
+		} else {
+
+			Set<GenericClassInfo> subtypes = new HashSet<GenericClassInfo>();
 
 			for (String subtypeId : genCi.subtypes()) {
 
 				ClassInfo subtype = genCi.model().classById(subtypeId);
 
-				if (subtype instanceof GenericClassInfo) {
+				if (genCi.model().isInSelectedSchemas(subtype)) {
 
 					GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
 					subtypes.add(genSubtype);
-					HashSet<GenericClassInfo> subsubtypes = getAllSubclasses(
-							genSubtype, message);
-					if (subsubtypes != null) {
-						subtypes.addAll(subsubtypes);
-					}
-
-				} else {
-
-					result.addWarning(null, 20320, subtype.name(), genCi.name(),
-							issueMessage);
+					Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
+							genSubtype);
+					subtypes.addAll(subsubtypes);
 				}
 			}
 
@@ -5595,7 +6222,7 @@ public class Flattener implements Transformer {
 						PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT);
 			} else {
 
-				result.addInfo(null, 20319, subtype.name(), genCi.name());
+				result.addInfo(this, 20319, subtype.name(), genCi.name());
 			}
 
 		}
@@ -5626,7 +6253,7 @@ public class Flattener implements Transformer {
 		// if no type names are given via the enforceOptionality parameter,
 		// return
 		if (typesToEnforceOptionality == null) {
-			result.addWarning(null, 20306);
+			result.addWarning(this, 20306);
 			return;
 		} else {
 
@@ -5735,7 +6362,7 @@ public class Flattener implements Transformer {
 					genPi.typeInfo().id = valuePi.typeInfo().id;
 					genPi.typeInfo().name = valuePi.typeInfo().name;
 				} else {
-					result.addWarning(null, 20307, typeCi.name());
+					result.addWarning(this, 20307, typeCi.name());
 				}
 			}
 		}
@@ -5755,6 +6382,9 @@ public class Flattener implements Transformer {
 
 		Options options = model.options();
 
+		boolean onlyRemoveReasons = trfConfig
+				.hasRule(RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS);
+
 		SortedSet<GenericPackageInfo> appSchemas = model.selectedSchemas();
 		if (appSchemas == null || appSchemas.size() == 0)
 			return;
@@ -5773,6 +6403,7 @@ public class Flattener implements Transformer {
 				continue;
 
 			Map<String, Type> reasonTypeIdToValueType = new HashMap<String, Type>();
+			Map<String, Multiplicity> reasonTypeIdToValuePropMultiplicity = new HashMap<String, Multiplicity>();
 			Map<String, GenericClassInfo> reasonUnionsByName = new HashMap<String, GenericClassInfo>();
 			Set<String> reasonTypeValueTypeNames = new HashSet<String>();
 			Set<String> reasonPropertyValueTypeIds = new HashSet<String>();
@@ -5786,16 +6417,11 @@ public class Flattener implements Transformer {
 				if (ci.category() == Options.UNION
 						&& ci.name().endsWith("Reason")) {
 
-					/*
-					 * NOTE for cast: the cast should be safe, because ci is
-					 * part of a schema that has been selected for processing
-					 * (the contents of which should have been parsed to generic
-					 * types)
-					 */
 					reasonUnionsByName.put(ci.name(), (GenericClassInfo) ci);
 
 					if (ci.name().equals("BooleanReason")
-							&& booleanWithOninaCi == null) {
+							&& booleanWithOninaCi == null
+							&& !onlyRemoveReasons) {
 
 						// create new enumeration BooleanWithONINA
 						booleanWithOninaCi = new GenericClassInfo(model,
@@ -5805,13 +6431,9 @@ public class Flattener implements Transformer {
 						// set remaining properties required by Info interface
 						booleanWithOninaCi.descriptors().put(Descriptor.ALIAS,
 								"");
-						// booleanWithOninaCi.setAliasNameAll(new
-						// Descriptors(""));
 						setCode(booleanWithOninaCi, "");
 						booleanWithOninaCi.descriptors()
 								.put(Descriptor.DEFINITION, "");
-						// booleanWithOninaCi
-						// .setDefinitionAll(new Descriptors(""));
 
 						// TBD: is there an easy way to get all the relevant
 						// tagged values for an enumeration?
@@ -5825,25 +6447,8 @@ public class Flattener implements Transformer {
 						booleanWithOninaCi.setTaggedValues(taggedValues, false);
 
 						// set properties required by ClassInfo interface
-						booleanWithOninaCi.setXmlSchemaType(null);
-						booleanWithOninaCi.setIncludePropertyType(
-								ci.includePropertyType());
-						booleanWithOninaCi.setIncludeByValuePropertyType(
-								ci.includeByValuePropertyType());
-						booleanWithOninaCi.setIsCollection(false);
-						booleanWithOninaCi.setAsDictionary(false);
-						booleanWithOninaCi.setAsGroup(false);
-						booleanWithOninaCi.setAsCharacterString(false);
-						booleanWithOninaCi.setHasNilReason(false);
 						booleanWithOninaCi.setPkg(ci.pkg());
-						/*
-						 * NOTE for cast: the cast should be safe, because ci is
-						 * part of a schema that has been selected for
-						 * processing (the contents of which should have been
-						 * parsed to generic types) - and thus is a
-						 * GenericClassInfo, which always belongs to a
-						 * GenericPackageInfo
-						 */
+
 						((GenericPackageInfo) ci.pkg())
 								.addClass(booleanWithOninaCi);
 						booleanWithOninaCi.setIsAbstract(false);
@@ -5917,8 +6522,6 @@ public class Flattener implements Transformer {
 
 						booleanWithOninaCi
 								.setConstraints(new Vector<Constraint>());
-						booleanWithOninaCi.setSuppressed(false);
-						booleanWithOninaCi.setAsDictionaryGml33(false);
 
 						model.addClass(booleanWithOninaCi);
 
@@ -5941,16 +6544,22 @@ public class Flattener implements Transformer {
 
 				PropertyInfo valueP = reasonUnionCi.property("value");
 				if (valueP == null) {
+					valueP = reasonUnionCi.property("values");
+				}
+				if (valueP == null) {
 
-					result.addWarning(null, 20339, reasonUnionCi.name());
+					result.addWarning(this, 20339, reasonUnionCi.name());
 					continue;
 				}
 
-				// get the type info for value property: internal id within the
-				// model and the local, unqualified name
+				/*
+				 * get the type info for value(s) property: internal id within
+				 * the model and the local, unqualified name
+				 */
 				Type valuePType = valueP.typeInfo();
 
-				if (valuePType.name.equalsIgnoreCase("Boolean")) {
+				if (valuePType.name.equalsIgnoreCase("Boolean")
+						&& !onlyRemoveReasons) {
 					reasonTypeIdToValueType.put(reasonUnionCi.id(),
 							booleanWithOninaType);
 				} else {
@@ -5966,6 +6575,12 @@ public class Flattener implements Transformer {
 					// use the id?
 					reasonTypeValueTypeNames.add(valuePType.name);
 				}
+
+				/*
+				 * Also keep track of the multiplicity of the value(s) property
+				 */
+				reasonTypeIdToValuePropMultiplicity.put(reasonUnionCi.id(),
+						valueP.cardinality());
 			}
 
 			/*
@@ -5996,86 +6611,89 @@ public class Flattener implements Transformer {
 				}
 			}
 
-			/*
-			 * Add ONINA enum properties to all enumerations (except
-			 * BooleanWithONINA enumeration which is already complete [if used
-			 * at all]).
-			 *
-			 * Do not add ONINA enums if they already exist in an enumeration
-			 * (ignore duplicates).
-			 */
-			for (String typeName : reasonTypeValueTypeNames) {
+			if (!onlyRemoveReasons) {
+				/*
+				 * Add ONINA enum properties to all enumerations (except
+				 * BooleanWithONINA enumeration which is already complete [if
+				 * used at all]).
+				 *
+				 * Do not add ONINA enums if they already exist in an
+				 * enumeration (ignore duplicates).
+				 */
+				for (String typeName : reasonTypeValueTypeNames) {
 
-				ClassInfo ci = model.classByName(typeName);
+					ClassInfo ci = model.classByName(typeName);
 
-				if (ci == null) {
+					if (ci == null) {
 
-					this.result.addWarning(null, 20303, typeName);
+						this.result.addWarning(this, 20303, typeName);
 
-				} else if (ci.category() == Options.ENUMERATION) {
+					} else if (ci.category() == Options.ENUMERATION) {
 
-					if (ci instanceof GenericClassInfo) {
+						if (ci instanceof GenericClassInfo) {
 
-						GenericClassInfo genCi = (GenericClassInfo) ci;
+							GenericClassInfo genCi = (GenericClassInfo) ci;
 
-						int maxSequenceNumber = Integer.MIN_VALUE;
-						Set<StructuredNumber> enumSeqNumbers = genCi
-								.properties().keySet();
-						// look up highest sequence number in list of existing
-						// properties (via first component of the structured
-						// number)
-						for (StructuredNumber strucNum : enumSeqNumbers) {
-							if (strucNum.components[0] > maxSequenceNumber) {
-								maxSequenceNumber = strucNum.components[0];
+							int maxSequenceNumber = Integer.MIN_VALUE;
+							Set<StructuredNumber> enumSeqNumbers = genCi
+									.properties().keySet();
+							// look up highest sequence number in list of
+							// existing
+							// properties (via first component of the structured
+							// number)
+							for (StructuredNumber strucNum : enumSeqNumbers) {
+								if (strucNum.components[0] > maxSequenceNumber) {
+									maxSequenceNumber = strucNum.components[0];
+								}
 							}
+
+							maxSequenceNumber++;
+							StructuredNumber snNoInformation = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo noInfoProp = createEnumerationProperty(
+									model, "noInformation", "-999999", genCi,
+									snNoInformation);
+							setCode(noInfoProp, "-999999");
+							noInfoProp.descriptors().put(Descriptor.DEFINITION,
+									"No Information");
+							model.add(noInfoProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+							maxSequenceNumber++;
+							StructuredNumber snNotApplicable = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo notApplicProp = createEnumerationProperty(
+									model, "notApplicable", "998", genCi,
+									snNotApplicable);
+							setCode(notApplicProp, "998");
+							notApplicProp.descriptors().put(
+									Descriptor.DEFINITION, "Not Applicable");
+							model.add(notApplicProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+							maxSequenceNumber++;
+							StructuredNumber snOther = new StructuredNumber(
+									maxSequenceNumber);
+							GenericPropertyInfo otherProp = createEnumerationProperty(
+									model, "other", "999", genCi, snOther);
+							setCode(otherProp, "999");
+							otherProp.descriptors().put(Descriptor.DEFINITION,
+									"Other");
+							model.add(otherProp, genCi,
+									PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+						} else {
+
+							result.addWarning(this, 20323, ci.name());
 						}
 
-						maxSequenceNumber++;
-						StructuredNumber snNoInformation = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo noInfoProp = createEnumerationProperty(
-								model, "noInformation", "-999999", genCi,
-								snNoInformation);
-						setCode(noInfoProp, "-999999");
-						noInfoProp.descriptors().put(Descriptor.DEFINITION,
-								"No Information");
-						model.add(noInfoProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
-						maxSequenceNumber++;
-						StructuredNumber snNotApplicable = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo notApplicProp = createEnumerationProperty(
-								model, "notApplicable", "998", genCi,
-								snNotApplicable);
-						setCode(notApplicProp, "998");
-						notApplicProp.descriptors().put(Descriptor.DEFINITION,
-								"Not Applicable");
-						model.add(notApplicProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
-						maxSequenceNumber++;
-						StructuredNumber snOther = new StructuredNumber(
-								maxSequenceNumber);
-						GenericPropertyInfo otherProp = createEnumerationProperty(
-								model, "other", "999", genCi, snOther);
-						setCode(otherProp, "999");
-						otherProp.descriptors().put(Descriptor.DEFINITION,
-								"Other");
-						model.add(otherProp, genCi,
-								PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
 					} else {
-
-						result.addWarning(null, 20323, ci.name());
+						/*
+						 * fine - can be another simple type like
+						 * CharacterString, Integer, Measure - for which ONINAs
+						 * are encoded as special values
+						 */
 					}
-
-				} else {
-					/*
-					 * fine - can be another simple type like CharacterString,
-					 * Integer, Measure - for which ONINAs are encoded as
-					 * special values
-					 */
 				}
 			}
 
@@ -6096,18 +6714,31 @@ public class Flattener implements Transformer {
 
 					if (reasonTypeIdToValueType.containsKey(propTypeId)) {
 
-						/*
-						 * NOTE for cast: the cast should be safe, because pi
-						 * belongs to a ClassInfo (ci) that is part of an
-						 * application schema which has been selected for
-						 * processing (and thus should be a GenericClassInfo).
-						 */
 						GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
 						Type valueTypeToUse = reasonTypeIdToValueType
 								.get(propTypeId);
 
 						genPi.copyTypeInfo(valueTypeToUse);
+
+						Multiplicity reasonTypeValuesPropMult = reasonTypeIdToValuePropMultiplicity
+								.get(propTypeId);
+
+						int newMinOccurs = genPi.cardinality().minOccurs
+								* reasonTypeValuesPropMult.minOccurs;
+
+						int genPiMaxOccurs = genPi.cardinality().maxOccurs;
+						int reasonTypeValuesPropMaxOccurs = reasonTypeValuesPropMult.maxOccurs;
+						int newMaxOccurs;
+						if (genPiMaxOccurs == Integer.MAX_VALUE
+								|| reasonTypeValuesPropMaxOccurs == Integer.MAX_VALUE) {
+							newMaxOccurs = Integer.MAX_VALUE;
+						} else {
+							newMaxOccurs = genPiMaxOccurs
+									* reasonTypeValuesPropMaxOccurs;
+						}
+						genPi.setCardinality(
+								new Multiplicity(newMinOccurs, newMaxOccurs));
 					}
 				}
 			}
@@ -6146,7 +6777,7 @@ public class Flattener implements Transformer {
 			if (regex.length() == 0) {
 				// the regular expression is required but was not
 				// provided
-				result.addError(null, 20001,
+				result.addError(this, 20001,
 						PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX,
 						RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY);
 				return;
@@ -6155,7 +6786,7 @@ public class Flattener implements Transformer {
 		} else {
 
 			// the suffix regular expression is required but was not provided
-			result.addError(null, 20002, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX,
+			result.addError(this, 20002, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX,
 					RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY);
 			return;
 		}
@@ -6176,7 +6807,7 @@ public class Flattener implements Transformer {
 
 		} catch (PatternSyntaxException e) {
 
-			result.addError(null, 20003, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX,
+			result.addError(this, 20003, PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX,
 					RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY,
 					regex, e.getMessage());
 			return;
@@ -6187,20 +6818,28 @@ public class Flattener implements Transformer {
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-			if (genPi.inClass().category() == Options.OBJECT && (genPi
-					.categoryOfValue() == Options.FEATURE
-					|| (includeObjectTypes
-							&& genPi.categoryOfValue() == Options.OBJECT))) {
+			ClassInfo genPiValueType = genModel.classById(genPi.typeInfo().id);
+			if (genPiValueType == null) {
+				genPiValueType = genModel.classByName(genPi.typeInfo().name);
+			}
+
+			if (genPi.inClass().category() == Options.OBJECT
+					&& (genPi.categoryOfValue() == Options.FEATURE
+							|| (includeObjectTypes
+									&& genPi.categoryOfValue() == Options.OBJECT))
+					|| (genPiValueType != null
+							&& genPiValueType.category() == Options.MIXIN
+							&& genPiValueType.stereotype("featuretype"))) {
 
 				Matcher matcher = pattern.matcher(genPi.inClass().name());
 
 				if (matcher.matches()) {
 
 					genPisToRemove.add(genPi);
-					result.addDebug(null, 20344, genPi.inClass().name(), regex,
+					result.addDebug(this, 20344, genPi.inClass().name(), regex,
 							PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
 				} else {
-					result.addDebug(null, 20345, genPi.inClass().name(), regex,
+					result.addDebug(this, 20345, genPi.inClass().name(), regex,
 							PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX);
 				}
 			}
@@ -6279,7 +6918,7 @@ public class Flattener implements Transformer {
 					/*
 					 * whole association will be removed; log a warning
 					 */
-					result.addWarning(null, 20325, pi1.name(),
+					result.addWarning(this, 20325, pi1.name(),
 							pi1.inClass().name(), pi2.name(),
 							pi2.inClass().name());
 				}
@@ -6348,16 +6987,12 @@ public class Flattener implements Transformer {
 		enumPi.setCardinality(mult);
 		enumPi.setInitialValue(null);
 		enumPi.setInlineOrByReference("inlineOrByReference");
-		enumPi.setDefaultCodeSpace("");
-		enumPi.setMetadata(false);
 		enumPi.setReverseProperty(null);
 		enumPi.setInClass(ci);
 		/*
 		 * ensure that "sequenceNumber" tagged value is also set
 		 */
 		enumPi.setSequenceNumber(strucNum, true);
-		enumPi.setImplementedByNilReason(false);
-		enumPi.setVoidable(false);
 		enumPi.setConstraints(null);
 		enumPi.setAssociation(null);
 		enumPi.setRestriction(false);
@@ -6395,5 +7030,127 @@ public class Flattener implements Transformer {
 		}
 
 		return sb.substring(0, sb.length() - delim.length());
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		/*
+		 * NOTE: A leading ?? in a message text suppresses multiple appearance
+		 * of a message in the output.
+		 */
+		switch (mnr) {
+
+		case 20001:
+			return "No non-empty string value provided for configuration parameter '$1$'. Execution of '$2$' aborted.";
+		case 20002:
+			return "Configuration parameter '$1$' required for execution of '$2$' was not provided. Execution of '$2$' aborted.";
+		case 20003:
+			return "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of '$2$' aborted.";
+
+		case 20102:
+			return "Value of configuration parameter '$1$' after parsing is '$2$'.";
+
+		case 20301:
+			return "The type '$2$' of property '$1$' was not found.";
+		case 20302:
+			return "The type '$1$' to replace type '$2$' was not found. Replacing type without changing the id.";
+		case 20303:
+			return "The ClassInfo for type '$1$' was not found in the model.";
+		case 20304:
+			return "maxOccurs parameter configured to be '$1$' - using default value 3";
+		case 20305:
+			return "maxOccurs tagged value for property '$1$' in class '$2$' was set to '$3$' - using global value: '$4$'";
+		case 20306:
+			return "No type information given via configuration parameter 'enforceOptionality'. Rule will not be executed.";
+		case 20307:
+			return "applyRulePropUnionDirectOptionality encountered unknown content model of Union-Direct type for type '$1$'.";
+		case 20308:
+			return "Context: $1$ '$2$'";
+		case 20309:
+			return "Cannot apply rule for flattening name if no value is provided via the configuration parameter '$1$'.";
+		case 20310:
+			return "Invalid pattern encountered for configuration parameter '$1$': $2$";
+		case 20311:
+			return "When creating copy of the subtype hierarchy for '$1$', subtype with id '$2$' either was not found in the model or is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). A copy won't be created for this subtype.";
+		case 20312:
+			return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
+		case 20313:
+			return "Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
+		case 20314:
+			return "Could not find supertype with id '$1$' for class with name '$2$' in the model.";
+		case 20315:
+			return "Cannot properly update type of property named '$1$' to the union type named '$2$'.";
+		case 20316:
+			return "Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
+		case 20317:
+			return "========== $1$ phase ==========";
+		case 20318:
+			return "Model does not contain class '$1$' which is the target type to which the type of property '$2$' (from class '$3$') shall be mapped. Setting type.id of property to UNKNOWN.";
+		case 20319:
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). The contents of '$2$' won't be copied to '$1$', which should be fine because '$1$' is not part of a schema selected for processing.";
+		case 20320:
+			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be added to the list of subtypes for class '$2$'. $3$";
+		case 20321:
+			return "??Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Thus it cannot be removed from the model.";
+		case 20322:
+			return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (updating the id for subtype '$2$' in $1$'s subtype list from '$3$' to that of its copy, which has id '$4$').";
+		case 20323:
+			return "Class '$1$' - which is an enumeration - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot add ONINA enums to the enumeration.";
+		case 20324:
+			return "No type information given via configuration parameter 'removeType'. Rule will not be executed.";
+		case 20325:
+			return "??isFlatTarget tagged value setting(s) will lead to removal of whole association (with one end being property '$1$' in class '$2$' - the other end being property '$3$' in class '$4$').";
+		case 20326:
+			return "--- Found cycle:";
+		case 20327:
+			return "   Class '$1$' -> class '$2$' (via properties: $3$)";
+		case 20328:
+			return "--- No cycles found.";
+		case 20329:
+			return "---------- Checking for reflexive relationships and cyles in types to process (for type flattening) ----------";
+		case 20330:
+			return "--- Reflexive relationship detected for class '$1$' (via properties: $2$).";
+		case 20331:
+			return "--- No reflexive relationships detected.";
+		case 20332:
+			return "The Flattener configuration lists type '$1$' for removal but could not find it in the model.";
+		case 20333:
+			return "??Homogeneous geometry rule would update the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. The association won't be updated and will thus eventually be removed.";
+		case 20334:
+			return "??Creating a copy of an association to connect classes '$1$' and '$2$'. The original association has an association class. Copying the association class is currently not supported. The association copy will therefore not have an association class.";
+		case 20335:
+			return "??The map for geometry type specific copies of '$1$' is empty.";
+		case 20336:
+			return "??Inheritance rule would create subtype specific copies of the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. Copies of the association won't be created.";
+		case 20337:
+			return "??The list of subtypes of superclass '$1$' is empty.";
+		case 20338:
+			return "??Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
+		case 20339:
+			return "??No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
+		case 20340:
+			return "??The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
+		case 20341:
+			return "Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
+		case 20342:
+			return "Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
+		case 20343:
+			return "Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
+		case 20344:
+			return "'$1$' matches regex '$2$', provided in parameter '$3$'";
+		case 20345:
+			return "'$1$' does not match regex '$2$', provided in parameter '$3$'";
+		case 20346:
+			return "After the transformation, class '$1$' has multiple properties with the same name (either in the class itself, or through inheritance from supertypes). The names of duplicate properties are: '$2$'.";
+		case 20347:
+			return "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
+		case 20348:
+			return "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

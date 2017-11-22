@@ -73,7 +73,6 @@
 			<targetParameter name="defaultEncodingRule" value="sql" />
 			<targetParameter name="databaseSystem" value="SQLServer"/>
 			<targetParameter name="outputDirectory" value="testResults/sql_SQLServer/basic/ddl" />
-			<targetParameter name="outputFilename" value="ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true"/>

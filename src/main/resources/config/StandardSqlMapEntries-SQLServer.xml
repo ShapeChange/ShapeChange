@@ -10,6 +10,7 @@
 	<MapEntry type="Date" rule="*" targetType="date" param="defaultValue{quoted=true}"/>
 	<MapEntry type="Integer" rule="*" targetType="int" param=""/>
 	<MapEntry type="Real" rule="*" targetType="numeric" param=""/>
+	<MapEntry type="Number" rule="*" targetType="numeric" param=""/>
 	
 	<!-- ISO/TS 19107 -->
 	<MapEntry type="GM_Curve" rule="*" targetType="geometry" param="geometry"/>
@@ -24,6 +25,8 @@
 	<MapEntry type="CI_Citation" rule="*" targetType="nvarchar(max)" param=""/>
 	
 	<!-- ... more to be added as required -->
+	<MapEntry type="Short" rule="*" targetType="smallint" param=""/>
+	<MapEntry type="Long" rule="*" targetType="bigint" param=""/>
 	
 	<!-- other ISO -->
 	<MapEntry type="Date" rule="*" targetType="date" param=""/>

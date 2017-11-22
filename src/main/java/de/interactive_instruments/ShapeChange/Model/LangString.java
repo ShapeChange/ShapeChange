@@ -94,7 +94,9 @@ public class LangString {
 
 	/**
 	 * @param value
+	 *            can be <code>null</code>
 	 * @param lang
+	 *            can be <code>null</code>
 	 */
 	public LangString(String value, String lang) {
 		super();
@@ -108,7 +110,7 @@ public class LangString {
 
 	/**
 	 * @param value
-	 * @param lang
+	 *            can be <code>null</code>
 	 */
 	public LangString(String value) {
 		super();
@@ -118,7 +120,7 @@ public class LangString {
 	}
 
 	/**
-	 * @return the value
+	 * @return the value, can be <code>null</code>
 	 */
 	public String getValue() {
 		return value;
@@ -174,5 +176,9 @@ public class LangString {
 			result.append(this.lang);
 		}
 		return result.toString();
+	}
+
+	public void appendSuffix(String s) {
+		this.value += s;
 	}
 }

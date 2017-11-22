@@ -175,6 +175,8 @@
       <extension base="gml:AbstractFeatureType">
         <sequence>
           <element name="p1" type="rep:T6_Class2PropertyType"/>
+          <element maxOccurs="unbounded" name="p2" type="string"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="p3" type="rep:T6_Class2PropertyType"/>
         </sequence>
       </extension>
     </complexContent>

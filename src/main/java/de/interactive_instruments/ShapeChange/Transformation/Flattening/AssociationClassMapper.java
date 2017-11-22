@@ -105,7 +105,9 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				/*
 				 * Delete the association class relationship, i.e. the
 				 * relationships between the ClassInfo and AssociationInfo. We
-				 * keep the ClassInfo as-is.
+				 * keep the ClassInfo as-is (we just add a tag to mark the class
+				 * as having been an association class - for later processing
+				 * steps, like flattening of complex types).
 				 */
 				assocCi.setAssocInfo(null);
 				association.setAssocClass(null);
@@ -132,6 +134,8 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				m.register(nav_a);
 				((GenericClassInfo) navigableRole.inClass()).addProperty(nav_a,
 						PropertyCopyDuplicatBehaviorIndicator.OVERWRITE);
+				nav_a.setTaggedValue("toAssociationClassFrom",
+						navigableRole.inClass().name(), false);
 
 				Type ti_nav_a = new Type();
 				ti_nav_a.id = assocCi.id();
@@ -142,7 +146,9 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				GenericPropertyInfo other_a = m.createCopy(other,
 						other.id() + idSuffix + "_a");
 				other_a.setInClass(assocCi);
-				
+				other_a.setTaggedValue("fromAssociationClassTo",
+						navigableRole.inClass().name(), false);
+
 				if (other_a.isNavigable()) {
 					other_a.setCardinality(new Multiplicity());
 					/*
@@ -161,7 +167,7 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 
 				nav_a.setAssociation(ai_a);
 				other_a.setAssociation(ai_a);
-				
+
 				nav_a.setReverseProperty(other_a);
 				other_a.setReverseProperty(nav_a);
 
@@ -180,6 +186,8 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				newPropsForAssociationClass.add(nav_b);
 				nav_b.setInClass(assocCi);
 				nav_b.setCardinality(new Multiplicity());
+				nav_b.setTaggedValue("fromAssociationClassTo",
+						other.inClass().name(), false);
 
 				// <unnamed> | role3_4[c..d]
 				GenericPropertyInfo other_b = m.createCopy(other,
@@ -198,6 +206,8 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				ti_other_b.id = assocCi.id();
 				ti_other_b.name = assocCi.name();
 				other_b.setTypeInfo(ti_other_b);
+				other_b.setTaggedValue("toAssociationClassFrom",
+						other.inClass().name(), false);
 
 				// F12->Feature2 | F34-Feature4
 				GenericAssociationInfo ai_b = m.createCopy(association,
@@ -207,7 +217,7 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 
 				nav_b.setAssociation(ai_b);
 				other_b.setAssociation(ai_b);
-				
+
 				nav_b.setReverseProperty(other_b);
 				other_b.setReverseProperty(nav_b);
 

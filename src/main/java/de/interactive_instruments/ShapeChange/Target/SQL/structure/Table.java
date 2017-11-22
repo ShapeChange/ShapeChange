@@ -46,12 +46,14 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 public class Table {
 
 	private String name = null;
-	private List<Column> columns = null;
+	private List<Column> columns = new ArrayList<Column>();
 	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
+	
 	private boolean isAssociativeTable = false;
 	private ClassInfo representedClass = null;
 	private AssociationInfo representedAssociation = null;
 	private PropertyInfo representedProperty = null;
+	private boolean representsCodeStatusCLType = false;
 
 	public Table(String tableName) {
 		this.name = tableName;
@@ -73,7 +75,7 @@ public class Table {
 	}
 
 	/**
-	 * @return the columns
+	 * @return the columns of this table; can be empty but not <code>null</code>
 	 */
 	public List<Column> getColumns() {
 		return columns;
@@ -84,7 +86,11 @@ public class Table {
 	 *            the columns to set
 	 */
 	public void setColumns(List<Column> columns) {
-		this.columns = columns;
+		if (columns != null) {
+			this.columns = columns;
+		} else {
+			this.columns = new ArrayList<Column>();
+		}
 	}
 
 	/**
@@ -188,31 +194,36 @@ public class Table {
 
 		String globalId = null;
 
-		/*
-		 * If the table represents an associative table, construct the global ID
-		 * from the according Info object; otherwise (the table represents a
-		 * 'normal' table) use global ID from its class
-		 */
-		if (isAssociativeTable) {
-
-			if (representedProperty != null) {
-
-				if (representedProperty.inClass().globalIdentifier() != null
-						&& representedProperty.globalIdentifier() != null) {
-					globalId = representedProperty.inClass().globalIdentifier()
-							+ "." + representedProperty.globalIdentifier();
-				}
-
-			} else if (representedAssociation != null) {
-
-				globalId = representedAssociation.globalIdentifier();
-			}
-
-		} else {
+		if (representedClass != null) {
 
 			globalId = representedClass.globalIdentifier();
+
+		} else if (representedProperty != null
+				&& representedProperty.inClass().globalIdentifier() != null
+				&& representedProperty.globalIdentifier() != null) {
+
+			globalId = representedProperty.inClass().globalIdentifier() + "."
+					+ representedProperty.globalIdentifier();
+
+		} else if (representedAssociation != null) {
+
+			globalId = representedAssociation.globalIdentifier();
 		}
 
 		return globalId;
+	}
+
+	public void addColumn(Column column) {
+
+		this.columns.add(column);
+	}
+	
+	public boolean representsCodeStatusCLType() {
+		return representsCodeStatusCLType;
+	}
+
+	public void setRepresentsCodeStatusCLType(
+			boolean representsCodeStatusCLType) {
+		this.representsCodeStatusCLType = representsCodeStatusCLType;
 	}
 }

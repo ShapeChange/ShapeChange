@@ -37,6 +37,7 @@ import java.util.SortedSet;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Type;
 
 public interface Model {
 
@@ -51,8 +52,6 @@ public interface Model {
 	public void initialise(ShapeChangeResult r, Options o,
 			String repositoryFileNameOrConnectionString, String username,
 			String password) throws ShapeChangeAbortException;
-
-	public int type();
 
 	/**
 	 * Collect and return all PackageInfo objects tagged as being a schema. If a
@@ -69,11 +68,19 @@ public interface Model {
 	/**
 	 * Return all schemas that are selected using the relevant parameters:
 	 * appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex
+	 * <p>
+	 * NOTE: Transformations may change the set of selected schemas
 	 * 
 	 * @see PackageInfo#isSchema()
 	 */
 	public SortedSet<? extends PackageInfo> selectedSchemas();
 
+	/**
+	 * @return a set with all classes that belong to selected schemas; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<? extends ClassInfo> selectedSchemaClasses();
+	
 	/**
 	 * Return all ClassInfo objects contained in the given package and in sub-
 	 * packages, which belong to the same targetNamespace as the given package.
@@ -93,13 +100,36 @@ public interface Model {
 	 */
 	public String normalizeTaggedValue(String tag);
 
+	/**
+	 * Execute postprocessing and validation checks after the model has been
+	 * loaded.
+	 */
 	public void postprocessAfterLoadingAndValidate();
 
+	/**
+	 * @return the PackageInfo object with the given id, or <code>null</code> if
+	 *         such a class was not found
+	 */
 	public PackageInfo packageById(String id);
 
+	/**
+	 * @return the ClassInfo object with the given id, or <code>null</code> if
+	 *         such a class was not found
+	 */
 	public ClassInfo classById(String id);
 
+	/**
+	 * @return the ClassInfo object with the given name, or <code>null</code> if
+	 *         such a class was not found
+	 */
 	public ClassInfo classByName(String nam);
+
+	/**
+	 * @return the ClassInfo object with the id from the given type info, or
+	 *         name (if lookup by id was not successful), or <code>null</code>
+	 *         if such a class was not found
+	 */
+	public ClassInfo classByIdOrName(Type typeInfo);
 
 	public String characterEncoding();
 

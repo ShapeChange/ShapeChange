@@ -63,7 +63,7 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public String primaryKeyDataType() {
-		return "int";
+		return "bigint";
 	}
 
 	@Override
@@ -109,12 +109,11 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 					"USING " + geometryCharacteristics.get(IDX_PARAM_USING));
 		}
 
-		String boundingBox = "BOUNDING_BOX = (-180,-90,180,90)";
 		if (geometryCharacteristics.containsKey(IDX_PARAM_BOUNDING_BOX)) {
-			boundingBox = "BOUNDING_BOX = "
-					+ geometryCharacteristics.get(IDX_PARAM_BOUNDING_BOX);
+			index.addSpec("WITH (BOUNDING_BOX = "
+					+ geometryCharacteristics.get(IDX_PARAM_BOUNDING_BOX)
+					+ ")");
 		}
-		index.addSpec("WITH (" + boundingBox + ")");
 
 		CreateIndex cIndex = new CreateIndex();
 		cIndex.setIndex(index);
@@ -142,17 +141,6 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 		return true;
 	}
 
-	@Override
-	public String message(int mnr) {
-		switch (mnr) {
-		case 0:
-			return "Context: class SQLServerStrategy";
-		default:
-			return "(" + SQLServerStrategy.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
 	/**
 	 * TBD - not implemented yet
 	 * 
@@ -163,5 +151,16 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
 			PropertyInfo pi, Column columnForPi) {
 		return null;
+	}
+	
+	@Override
+	public String message(int mnr) {
+		switch (mnr) {
+		case 0:
+			return "Context: class SQLServerStrategy";
+		default:
+			return "(" + SQLServerStrategy.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

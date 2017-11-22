@@ -25,6 +25,6 @@ CREATE TABLE featuretype4 (
 );
 
 
-ALTER TABLE associationclass ADD CONSTRAINT fk_associationclass_roleft4toft3 FOREIGN KEY (roleft4toft3_fk) REFERENCES featuretype3;
-ALTER TABLE featuretype1 ADD CONSTRAINT fk_featuretype1_roleft1toft3 FOREIGN KEY (roleft1toft3_fk) REFERENCES featuretype3;
-ALTER TABLE featuretype4 ADD CONSTRAINT fk_featuretype4_roleft4toft3 FOREIGN KEY (roleft4toft3_fk) REFERENCES associationclass;
+ALTER TABLE associationclass ADD CONSTRAINT fk_associationclass_roleft4toft3_fk FOREIGN KEY (roleft4toft3_fk) REFERENCES featuretype3;
+ALTER TABLE featuretype1 ADD CONSTRAINT fk_featuretype1_roleft1toft3_fk FOREIGN KEY (roleft1toft3_fk) REFERENCES featuretype3;
+ALTER TABLE featuretype4 ADD CONSTRAINT fk_featuretype4_roleft4toft3_fk FOREIGN KEY (roleft4toft3_fk) REFERENCES associationclass;

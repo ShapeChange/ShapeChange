@@ -33,8 +33,12 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 
 /**
@@ -48,16 +52,21 @@ public class Column {
 	private List<String> specifications = new ArrayList<String>();
 	private ColumnDataType dataType = null;
 	private Expression defaultValue = null;
-	private PropertyInfo representedProperty = null;
 	private Table inTable = null;
+
+	private PropertyInfo representedProperty = null;
+
+	private Table referencedTable = null;
 	private boolean isObjectIdentifierColumn = false;
+	private boolean isForeignKeyColumn = false;
 
 	public Column(String name, Table inTable) {
 		this.name = name;
 		this.inTable = inTable;
 	}
-	
-	public Column(String name, PropertyInfo representedProperty, Table inTable) {
+
+	public Column(String name, PropertyInfo representedProperty,
+			Table inTable) {
 		this.name = name;
 		this.representedProperty = representedProperty;
 		this.inTable = inTable;
@@ -75,7 +84,8 @@ public class Column {
 	}
 
 	/**
-	 * @return the constraints
+	 * @return the specification of this column; can be empty but not
+	 *         <code>null</code>
 	 */
 	public List<String> getSpecifications() {
 		return specifications;
@@ -86,7 +96,11 @@ public class Column {
 	 *            the specifications to set
 	 */
 	public void setSpecifications(List<String> specifications) {
-		this.specifications = specifications;
+		if (specifications != null) {
+			this.specifications = specifications;
+		} else {
+			this.specifications = new ArrayList<String>();
+		}
 	}
 
 	public void addSpecification(String spec) {
@@ -120,7 +134,8 @@ public class Column {
 	}
 
 	/**
-	 * @param defaultValue the defaultValue to set
+	 * @param defaultValue
+	 *            the defaultValue to set
 	 */
 	public void setDefaultValue(Expression defaultValue) {
 		this.defaultValue = defaultValue;
@@ -134,7 +149,8 @@ public class Column {
 	}
 
 	/**
-	 * @param representedProperty the representedProperty to set
+	 * @param representedProperty
+	 *            the representedProperty to set
 	 */
 	public void setRepresentedProperty(PropertyInfo representedProperty) {
 		this.representedProperty = representedProperty;
@@ -148,22 +164,92 @@ public class Column {
 	}
 
 	/**
-	 * @param inTable the inTable to set
+	 * @param inTable
+	 *            the inTable to set
 	 */
 	public void setInTable(Table inTable) {
 		this.inTable = inTable;
-	}
-	
-	public boolean belongsToAssociativeTable(Column c) {
-		
-		return c.getInTable().isAssociativeTable();
 	}
 
 	public void setObjectIdentifierColumn(boolean isObjectIdentifierColumn) {
 		this.isObjectIdentifierColumn = isObjectIdentifierColumn;
 	}
-	
+
 	public boolean isObjectIdentifierColumn() {
 		return isObjectIdentifierColumn;
+	}
+
+	/**
+	 * @return <code>true</code> if this column is intended to store a foreign
+	 *         key, otherwise <code>false</code> NOTE: Even if this object does
+	 *         not reference a specific table, it may still be intended to be
+	 *         used as foreign key (to one or more tables, see
+	 *         {@link SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}
+	 *         . That a column is a foreign key is of interest when creating a
+	 *         replication schema.
+	 */
+	public boolean isForeignKeyColumn() {
+		return isForeignKeyColumn;
+	}
+
+	/**
+	 * @return <code>true</code> if this column contains a 'PRIMARY KEY'
+	 *         specification (case is ignored), else <code>false</code>
+	 */
+	public boolean isPrimaryKeyColumn() {
+
+		return hasSpecificationIgnoringCase("primary key");
+	}
+
+	/**
+	 * @return <code>true</code> if the column has a specification containing
+	 *         "NOT NULL" (ignoring case), else <code>false</code>.
+	 */
+	public boolean isNotNull() {
+		String columnSpec = getSpecifications() == null ? ""
+				: StringUtils.join(getSpecifications(), " ");
+		return columnSpec.toLowerCase(Locale.ENGLISH).contains("not null");
+	}
+
+	public void setForeignKeyColumn(boolean isForeignKeyColumn) {
+		this.isForeignKeyColumn = isForeignKeyColumn;
+	}
+
+	/**
+	 * @return The table that is referenced by this column (which can be
+	 *         represented by a foreign key constraint); can be
+	 *         <code>null</code>
+	 */
+	public Table getReferencedTable() {
+		return this.referencedTable;
+	}
+
+	public void setReferencedTable(Table refTable) {
+		this.referencedTable = refTable;
+	}
+
+	public void removeSpecification(String specIn) {
+		List<String> result = new ArrayList<String>();
+		for (String s : this.specifications) {
+			if (!s.equalsIgnoreCase(specIn)) {
+				result.add(s);
+			}
+		}
+		this.specifications = result;
+	}
+
+	public boolean hasSpecificationIgnoringCase(String specIn) {
+
+		String specInLower = specIn.toLowerCase(Locale.ENGLISH);
+
+		for (String specification : this.specifications) {
+			String specificationLower = specification
+					.toLowerCase(Locale.ENGLISH);
+			if (specificationLower.contains(specInLower)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

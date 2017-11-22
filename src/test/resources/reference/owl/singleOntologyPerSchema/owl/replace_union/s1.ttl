@@ -1,22 +1,14 @@
 @prefix ce:    <http://my.org/enumerations#> .
-@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150/-2/2012/base#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix gsp:   <http://www.opengis.net/ont/geosparql#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix gml:   <http://www.opengis.net/ont/gml#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix gfm:   <http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#> .
-@prefix sc:    <http://shapechange.net/resources/ont/base#> .
-@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
-@prefix sf:    <http://www.opengis.net/ont/sf#> .
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix locn:  <https://www.w3.org/ns/locn#> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
 @prefix s1:    <http://ontology.base.uri/s1#> .
 @prefix ex1:   <http://example.org/1#> .
-@prefix dc:    <http://purl.org/dc/elements/1.1/> .
 
 s1:TP6_Class1.tp6p1  a      owl:DatatypeProperty ;
         rdfs:domain         s1:TP6_Class1 ;
@@ -24,7 +16,7 @@ s1:TP6_Class1.tp6p1  a      owl:DatatypeProperty ;
         rdfs:subPropertyOf  ex1:propB , ex1:propA .
 
 s1:T6_Class2  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                   owl:Restriction ;
                            owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty      s1:T6_Class2.t6c2p2
@@ -35,21 +27,21 @@ s1:T6_Class2  a          owl:Class ;
                          ] .
 
 s1:T4_Class1  a          owl:Class ;
-        rdfs:subClassOf  ex1:D , ex1:C , geo:Feature .
+        rdfs:subClassOf  ex1:D , ex1:C , gsp:Feature .
 
 s1:TP1_Class1.t1c1p2  a  owl:ObjectProperty ;
         rdfs:domain  s1:TP1_Class1 ;
         rdfs:range   s1:TP1_Class5 .
 
 s1:TP4_Class4  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:p2
                          ] .
 
 s1:T3_Animal  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .
 
 s1:T6_Union2  a          owl:Class ;
         rdfs:subClassOf  [ a            owl:Class ;
@@ -117,7 +109,7 @@ s1:T2_Subtype_2  a       owl:Class ;
         rdfs:subClassOf  s1:T2_Supertype_B .
 
 s1:TP5_Class2  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP5_Class2.tp5c2p1
@@ -140,7 +132,7 @@ s1:TP5_Class2  a         owl:Class ;
                          ] .
 
 s1:TP3_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   ex1:prop2
@@ -159,14 +151,14 @@ s1:TP5_Class2.tp5c2p4
         rdfs:domain  s1:TP5_Class2 ;
         rdfs:range   s1:TP5_Class1 .
 
-s1:TP1_Class4.t1c4p1  a  owl:ObjectProperty ;
-        rdfs:domain  s1:TP1_Class4 ;
-        rdfs:range   s1:TP1_Class3 .
-
 s1:TP6_Class2.tp6p2  a      owl:DatatypeProperty ;
         rdfs:domain         s1:TP6_Class2 ;
         rdfs:range          xsd:boolean ;
         rdfs:subPropertyOf  ex1:propC .
+
+s1:TP1_Class4.t1c4p1  a  owl:ObjectProperty ;
+        rdfs:domain  s1:TP1_Class4 ;
+        rdfs:range   s1:TP1_Class3 .
 
 s1:TP7_Class1.tp7c1p2
         a                           owl:ObjectProperty ;
@@ -178,15 +170,15 @@ s1:T6_Class1.t6u1p1  a  owl:DatatypeProperty ;
         rdfs:domain  s1:T6_Class1 ;
         rdfs:range   xsd:integer .
 
+s1:T6_Class1.t6u3p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:double .
+
 s1:TP1_Class3  a         owl:Class ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP1_Class3.t1c3p1
                          ] .
-
-s1:T6_Class1.t6u3p1  a  owl:DatatypeProperty ;
-        rdfs:domain  s1:T6_Class1 ;
-        rdfs:range   xsd:double .
 
 s1:T2_Supertype_B  a  owl:Class .
 
@@ -199,7 +191,7 @@ s1:T6_Class2.t6c2p1  a  owl:DatatypeProperty ;
         rdfs:range   xsd:integer .
 
 s1:T3_Mosquito  a        owl:Class ;
-        rdfs:subClassOf  s1:T3_Animal , geo:Feature .
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
 
 s1:TP4_Class2  a         owl:Class ;
         rdfs:subClassOf  [ a                owl:Restriction ;
@@ -208,7 +200,7 @@ s1:TP4_Class2  a         owl:Class ;
                          ] .
 
 s1:TP2_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP2_Class1.t2c1p2
@@ -235,10 +227,10 @@ s1:TP5_Class1.tp5c1p3
 
 s1:TP1_Class3.t1c3p1  a  owl:ObjectProperty ;
         rdfs:domain  s1:TP1_Class3 ;
-        rdfs:range   geo:Geometry .
+        rdfs:range   gsp:Geometry .
 
 s1:TP7_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP7_Class1.tp7c1p2
@@ -257,7 +249,7 @@ s1:T8_Class1.t8c1p2  a  owl:ObjectProperty ;
         rdfs:range   owl:Class .
 
 s1:T3_IndianElephant  a  owl:Class ;
-        rdfs:subClassOf  s1:T3_Elephant , geo:Feature .
+        rdfs:subClassOf  s1:T3_Elephant , gsp:Feature .
 
 s1:T6_Class1.t6c1p2  a  owl:DatatypeProperty ;
         rdfs:domain  s1:T6_Class1 ;
@@ -270,7 +262,7 @@ s1:TP5_Class2.tp5c2p2
 
 s1:T3_AfricanElephant
         a                 owl:Class ;
-        rdfs:subClassOf   s1:T3_Elephant , geo:Feature ;
+        rdfs:subClassOf   s1:T3_Elephant , gsp:Feature ;
         owl:disjointWith  s1:T3_IndianElephant .
 
 s1:TP6_Class1.tp6p2  a      owl:DatatypeProperty ;
@@ -287,10 +279,10 @@ s1:T6_Class3  a  owl:Class .
 
 s1:T1_NonAbstract_Class
         a                owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .
 
 s1:T7_Class1  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:T7_Class1.t7c1p1
@@ -303,7 +295,7 @@ s1:TP3_Class2  a         owl:Class ;
                          ] .
 
 s1:TP1_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP1_Class1.t1c1p2
@@ -313,8 +305,12 @@ s1:TP1_Class1  a         owl:Class ;
                            owl:onProperty   s1:TP1_Class1.t1c1p1
                          ] .
 
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( s1:T3_Elephant s1:T3_Fish s1:T3_Mosquito )
+] .
+
 s1:T1_Abstract_Class  a        owl:Class ;
-        rdfs:subClassOf        geo:Feature ;
+        rdfs:subClassOf        gsp:Feature ;
         iso19150-2:isAbstract  true .
 
 s1:TP1_Class2.t1c2p1  a  owl:DatatypeProperty ;
@@ -327,7 +323,7 @@ s1:TP5_Class2.tp5c2p5
         rdfs:range   s1:TP5_Class1 .
 
 s1:TP6_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP6_Class1.tp6p3
@@ -389,7 +385,7 @@ s1:T6_Class2.t6c2p2  a  owl:ObjectProperty ;
         rdfs:range   s1:T6_Union2 .
 
 s1:T6_Class1  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a            owl:Class ;
                            owl:unionOf  ( [ a                   owl:Class ;
                                             owl:intersectionOf  ( [ a                   owl:Class ;
@@ -470,9 +466,9 @@ s1:TP7_Class2.tp7c2p1
         owl:inverseOf               s1:TP7_Class1.tp7c1p1 .
 
 s1:TP2_Class2  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .
 
-s1:T7_Class1.t7c1p1  a  owl:DatatypeProperty ;
+s1:T7_Class1.t7c1p1  a  owl:ObjectProperty ;
         rdfs:domain  s1:T7_Class1 ;
         rdfs:range   ce:T7_Enumeration1 .
 
@@ -482,18 +478,18 @@ s1:TP5_Class1.tp5c1p4
         rdfs:range   xsd:boolean .
 
 s1:T2_Subtype_1  a        owl:Class ;
-        rdfs:subClassOf   s1:T2_Supertype_B , s1:T2_Supertype_A , geo:Feature ;
+        rdfs:subClassOf   s1:T2_Supertype_B , s1:T2_Supertype_A , gsp:Feature ;
         owl:disjointWith  s1:T2_Subtype_2 .
 
 s1:TP7_Class2  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP7_Class2.tp7c2p1
                          ] .
 
 s1:TP5_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                   owl:Restriction ;
                            owl:maxCardinality  "4"^^xsd:nonNegativeInteger ;
                            owl:onProperty      s1:TP5_Class1.tp5c1p5
@@ -516,7 +512,7 @@ s1:TP5_Class1  a         owl:Class ;
                          ] .
 
 s1:T8_Class1  a          owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:T8_Class1.t8c1p2
@@ -537,10 +533,6 @@ s1:TP5_Class2.tp5c2p3
         rdfs:domain  s1:TP5_Class2 ;
         rdfs:range   s1:TP5_Class1 .
 
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( s1:T3_Elephant s1:T3_Fish s1:T3_Mosquito )
-] .
-
 s1:TP6_Class2.tp6p1  a  owl:DatatypeProperty ;
         rdfs:domain  s1:TP6_Class2 ;
         rdfs:range   xsd:boolean .
@@ -553,10 +545,10 @@ s1:TP7_Class1.tp7c1p1
         owl:inverseOf               s1:TP7_Class2.tp7c2p1 .
 
 s1:T3_Fish  a            owl:Class ;
-        rdfs:subClassOf  s1:T3_Animal , geo:Feature .
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
 
 s1:T3_Elephant  a        owl:Class ;
-        rdfs:subClassOf  s1:T3_Animal , geo:Feature .
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
 
 s1:TP6_Class1.tp6p3  a      owl:DatatypeProperty ;
         rdfs:domain         s1:TP6_Class1 ;
@@ -565,7 +557,7 @@ s1:TP6_Class1.tp6p3  a      owl:DatatypeProperty ;
 
 s1:T5_Class1  a                owl:Class ;
         rdfs:comment           "class_constraint_text (Approved): Text of class_constraint_text" ;
-        rdfs:subClassOf        geo:Feature ;
+        rdfs:subClassOf        gsp:Feature ;
         rdfs:subClassOf        [ a                owl:Restriction ;
                                  owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                                  owl:onProperty   s1:T5_Class1.t5c1p1
@@ -579,10 +571,10 @@ s1:TP1_Class2  a         owl:Class ;
                          ] .
 
 s1:T2_Supertype_A  a     owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .
 
 s1:TP6_Class2  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:TP6_Class2.tp6p3
@@ -597,7 +589,7 @@ s1:TP6_Class2  a         owl:Class ;
                          ] .
 
 s1:TP4_Class1  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature ;
+        rdfs:subClassOf  gsp:Feature ;
         rdfs:subClassOf  [ a                owl:Restriction ;
                            owl:cardinality  "1"^^xsd:nonNegativeInteger ;
                            owl:onProperty   s1:p2
@@ -637,4 +629,4 @@ s1:TP5_Class2.tp5c2p1
         rdfs:range   s1:TP5_Class1 .
 
 s1:TP1_Class5  a         owl:Class ;
-        rdfs:subClassOf  geo:Feature .
+        rdfs:subClassOf  gsp:Feature .

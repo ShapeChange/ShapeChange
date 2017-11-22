@@ -33,13 +33,23 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * Helper class to store type information (the internal id within the 
- * model and the local, unqualified name)
+ * Helper class to store type information (the internal id within the model and
+ * the local, unqualified name)
  * 
- * @author portele
+ * @author portele, Johannes Echterhoff
  *
  */
 public class Type {
+
 	public String id = null;
 	public String name = null;
+
+	public Type createCopy() {
+
+		Type copy = new Type();
+		copy.name = this.name;
+		copy.id = this.id;
+
+		return copy;
+	}
 }

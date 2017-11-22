@@ -34,7 +34,6 @@ package de.interactive_instruments.ShapeChange.Target.AppConfiguration;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -58,14 +57,13 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.TargetIdentification;
 import de.interactive_instruments.ShapeChange.Target.Target;
 
 /**
  * Creates an application configuration file.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  * 
  */
 public class AppConfiguration implements Target, MessageSource {
@@ -159,8 +157,8 @@ public class AppConfiguration implements Target, MessageSource {
 			idColumnName = DEFAULT_ID_COLUMN_NAME;
 		}
 
-		String defaultSizeByConfig = options.parameter(this.getClass()
-				.getName(), PARAM_SIZE);
+		String defaultSizeByConfig = options
+				.parameter(this.getClass().getName(), PARAM_SIZE);
 		if (defaultSizeByConfig == null) {
 			defaultSize = DEFAULT_SIZE;
 		} else {
@@ -172,12 +170,6 @@ public class AppConfiguration implements Target, MessageSource {
 				mc.addDetail(this, 0);
 				defaultSize = DEFAULT_SIZE;
 			}
-		}
-
-		// reset processed flags on all classes in the schema
-		for (Iterator<ClassInfo> k = model.classes(pi).iterator(); k.hasNext();) {
-			ClassInfo ci = k.next();
-			ci.processed(getTargetID(), false);
 		}
 	}
 
@@ -250,7 +242,8 @@ public class AppConfiguration implements Target, MessageSource {
 				addAttribute(doc, pE, "type", type);
 
 				if (type.equals(REFERENCE_NAME)) {
-					addAttribute(doc, pE, "ref", normalizeName(pi.typeInfo().name));
+					addAttribute(doc, pE, "ref",
+							normalizeName(pi.typeInfo().name));
 				}
 
 				if (type.equals("text")) {
@@ -271,7 +264,8 @@ public class AppConfiguration implements Target, MessageSource {
 
 					String form = "text";
 
-					if (type.equals("text") && pi.taggedValue("formrows") != null) {
+					if (type.equals("text")
+							&& pi.taggedValue("formrows") != null) {
 
 						form = "textarea";
 
@@ -295,7 +289,8 @@ public class AppConfiguration implements Target, MessageSource {
 								Element enumE = doc.createElementNS(NS, "Wert");
 								pE.appendChild(enumE);
 
-								addAttribute(doc, enumE, "name", normalizeName(piEnum.name()));
+								addAttribute(doc, enumE, "name",
+										normalizeName(piEnum.name()));
 
 								alias = piEnum.aliasName();
 								if (alias == null) {
@@ -323,13 +318,13 @@ public class AppConfiguration implements Target, MessageSource {
 				}
 
 				if (pi.taggedValue("validate") != null) {
-					addAttribute(doc, pE, "validate", pi
-							.taggedValue("validate").trim());
+					addAttribute(doc, pE, "validate",
+							pi.taggedValue("validate").trim());
 				}
 
 				if (pi.taggedValue("Reiter") != null) {
-					addAttribute(doc, pE, "tab", pi.taggedValue("Reiter")
-							.trim());
+					addAttribute(doc, pE, "tab",
+							pi.taggedValue("Reiter").trim());
 				}
 			}
 		}
@@ -389,7 +384,8 @@ public class AppConfiguration implements Target, MessageSource {
 		// try to get type from map entries
 		// TBD: we use 'sql' as platform code because it is one of the platforms
 		// registered in the implementation of encodingRule()
-		ProcessMapEntry me = options.targetMapEntry(piTypeName, pi.encodingRule("sql"));
+		ProcessMapEntry me = options.targetMapEntry(piTypeName,
+				pi.encodingRule("sql"));
 
 		if (me != null && me.hasTargetType()) {
 			return me.getTargetType();
@@ -497,13 +493,13 @@ public class AppConfiguration implements Target, MessageSource {
 				Document doc = documentMap.get(className);
 
 				if (doc != null) {
-					outputXML = new FileWriter(outputDirectory + "/"
-							+ className + ".xml");
+					outputXML = new FileWriter(
+							outputDirectory + "/" + className + ".xml");
 					serializer.setWriter(outputXML);
 					serializer.asDOMSerializer().serialize(doc);
 					outputXML.close();
-					result.addResult(getTargetID(), outputDirectory, className
-							+ ".xml", null);
+					result.addResult(getTargetName(), outputDirectory,
+							className + ".xml", null);
 				}
 			}
 		} catch (Exception e) {
@@ -518,8 +514,9 @@ public class AppConfiguration implements Target, MessageSource {
 		printed = true;
 	}
 
-	public int getTargetID() {
-		return TargetIdentification.APP_CONFIG.getId();
+	@Override
+	public String getTargetName() {
+		return "App Configuration";
 	}
 
 	/**
