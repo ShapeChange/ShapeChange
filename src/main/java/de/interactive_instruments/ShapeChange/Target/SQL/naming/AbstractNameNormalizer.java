@@ -122,9 +122,14 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 			stmt.accept(this);
 		}
 	}
-	
+
 	@Override
 	public void visit(Comment comment) {
+		// ignore
+	}
+
+	@Override
+	public void postprocess() {
 		// ignore
 	}
 

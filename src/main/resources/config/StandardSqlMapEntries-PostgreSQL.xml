@@ -24,4 +24,7 @@
 	<!-- ... more to be added as required -->
 	<MapEntry type="Short" rule="*" targetType="smallint" param=""/>
 	<MapEntry type="Long" rule="*" targetType="bigint" param=""/>
+	
+	<!-- Database Modeling -->
+	<MapEntry type="character varying" rule="*" targetType="varchar" param=""/>
 </mapEntries>

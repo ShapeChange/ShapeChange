@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -45,6 +46,7 @@ public class Index {
 	private String type = null;
 	private List<String> specs = new ArrayList<String>();
 	private List<Column> columns = new ArrayList<Column>();
+	private Properties properties = new Properties();
 
 	public Index() {
 
@@ -129,4 +131,13 @@ public class Index {
 	public boolean hasSpecs() {
 		return specs != null && !specs.isEmpty();
 	}
+
+	/**
+	 * @return the properties
+	 */
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	
 }

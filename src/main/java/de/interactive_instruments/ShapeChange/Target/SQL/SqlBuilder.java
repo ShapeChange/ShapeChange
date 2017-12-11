@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -73,7 +75,6 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
  * Builds SQL statements for model elements.
@@ -198,7 +199,7 @@ public class SqlBuilder implements MessageSource {
 
 				if (cdPi == null) {
 
-					String fieldType = null;
+					ColumnDataType fieldType = null;
 
 					if (SqlDdl.codeNameSize < 1) {
 						fieldType = SqlDdl.databaseStrategy
@@ -755,7 +756,7 @@ public class SqlBuilder implements MessageSource {
 
 			// store codes as text
 
-			String fieldType;
+			ColumnDataType fieldType;
 
 			if (SqlDdl.codeNameSize < 1) {
 
@@ -780,7 +781,7 @@ public class SqlBuilder implements MessageSource {
 		 */
 		for (DescriptorForCodeList descriptor : SqlDdl.descriptorsForCodelist) {
 
-			String descriptor_fieldType;
+			ColumnDataType descriptor_fieldType;
 			if (descriptor.getSize() == null) {
 				descriptor_fieldType = SqlDdl.databaseStrategy
 						.unlimitedLengthCharacterDataType();
@@ -806,26 +807,60 @@ public class SqlBuilder implements MessageSource {
 				Column cd_codeStatusCl = new Column(
 						SqlDdl.nameCodeStatusCLColumn, table);
 
+				cd_codeStatusCl.setDataType(SqlDdl.foreignKeyColumnDataType);
+				cd_codeStatusCl.setForeignKeyColumn(false);
+
 				if (codeStatusCLType != null) {
-					cd_codeStatusCl.setReferencedTable(map(codeStatusCLType));
+
+					if (codeStatusCLType.category() == Options.ENUMERATION) {
+
+						cd_codeStatusCl
+								.setEnumerationValueType(codeStatusCLType);
+
+						// assume textual type
+						ColumnDataType codeStatusCLDataType = determineCharacterVaryingOrText(
+								SqlDdl.codeStatusCLLength);
+						cd_codeStatusCl.setDataType(codeStatusCLDataType);
+
+						// now check if the code status type is numerically
+						// valued
+						if (isNumericallyValued(codeStatusCLType)) {
+
+							ColumnDataType mappedType = identifyNumericType(
+									codeStatusCLType);
+							if (mappedType != null) {
+								cd_codeStatusCl.setDataType(mappedType);
+							} else {
+								result.addError(this, 31,
+										codeStatusCLType.name(),
+										SqlDdl.nameCodeStatusCLColumn,
+										table.getName());
+							}
+						}
+
+					} else if (isRepresentedByTable(codeStatusCLType)) {
+
+						cd_codeStatusCl.setForeignKeyColumn(true);
+						cd_codeStatusCl
+								.setReferencedTable(map(codeStatusCLType));
+
+					} else {
+						result.addError(this, 30, SqlDdl.codeStatusCLType,
+								SqlDdl.nameCodeStatusCLColumn, table.getName());
+					}
+
 				} else {
 					result.addError(this, 26, SqlDdl.codeStatusCLType,
 							SqlDdl.nameCodeStatusCLColumn, table.getName());
 				}
-
-				ColumnDataType cd_codeStatusClDataType = new ColumnDataType(
-						SqlDdl.foreignKeyColumnDataType);
-				cd_codeStatusCl.setDataType(cd_codeStatusClDataType);
 
 				columns.add(cd_codeStatusCl);
 
 				// add codeStatusNotes column
 				Column cd_codeStatusNotes = new Column(
 						SqlDdl.nameCodeStatusNotesColumn, table);
-				ColumnDataType cd_codeStatusNotesDataType = new ColumnDataType(
-						SqlDdl.databaseStrategy
-								.limitedLengthCharacterDataType(255));
-				cd_codeStatusNotes.setDataType(cd_codeStatusNotesDataType);
+				cd_codeStatusNotes.setDataType(SqlDdl.databaseStrategy
+						.limitedLengthCharacterDataType(255));
 				columns.add(cd_codeStatusNotes);
 
 			} else if (ci == codeStatusCLType) {
@@ -886,8 +921,6 @@ public class SqlBuilder implements MessageSource {
 			return;
 		}
 
-		Table tableWithColumn = column.getInTable();
-
 		// look up the enumeration type
 		ClassInfo enumCi = model.classById(pi.typeInfo().id);
 
@@ -897,8 +930,44 @@ public class SqlBuilder implements MessageSource {
 					pi.fullNameInSchema());
 		} else {
 
-			String constraintName = namingScheme.nameForCheckConstraint(
-					tableWithColumn.getName(), pi.name());
+			alterTableAddCheckConstraintForEnumerationValueType(column,
+					pi.name(), enumCi);
+		}
+	}
+
+	/**
+	 * @param column
+	 * @param propertyNameForConstraintName
+	 *            name of the property for which the check constraint is
+	 *            created; relevant for constructing the constraint name
+	 * @param enumCi
+	 */
+	private void alterTableAddCheckConstraintForEnumerationValueType(
+			Column column, String propertyNameForConstraintName,
+			ClassInfo enumCi) {
+
+		/*
+		 * ignore the constraint if a type mapping exists for the value type
+		 */
+		ProcessMapEntry pme = options.targetMapEntry(enumCi.name(),
+				enumCi.encodingRule("sql"));
+
+		if (pme != null) {
+			return;
+		}
+
+		Table tableWithColumn = column.getInTable();
+
+		if (enumCi.properties().size() == 0) {
+
+			result.addError(this, 32, enumCi.name(), column.getName());
+		} else {
+
+			String constraintName = namingScheme
+					.nameForCheckConstraint(tableWithColumn.getName(),
+							propertyNameForConstraintName == null
+									? column.getName()
+									: propertyNameForConstraintName);
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -912,9 +981,9 @@ public class SqlBuilder implements MessageSource {
 			cae.setConstraint(cc);
 
 			cc.setName(constraintName);
-									
+
 			InExpression iexp = new InExpression();
-						
+
 			ColumnExpression col = new ColumnExpression(column);
 			iexp.setLeftExpression(col);
 
@@ -924,7 +993,7 @@ public class SqlBuilder implements MessageSource {
 
 			for (PropertyInfo enumPi : enumCi.properties().values()) {
 
-				if (!SqlDdl.isEncoded(pi)) {
+				if (!SqlDdl.isEncoded(enumPi)) {
 					continue;
 				}
 
@@ -949,15 +1018,15 @@ public class SqlBuilder implements MessageSource {
 			}
 
 			iexp.setRightExpressionsList(el);
-			
-			if(column.isNotNull()) {
+
+			if (column.isNotNull()) {
 				cc.setExpression(iexp);
 			} else {
 				// add null check
 				IsNullExpression nullexp = new IsNullExpression();
 				nullexp.setExpression(col);
-				
-				OrExpression orexp = new OrExpression(nullexp,iexp);
+
+				OrExpression orexp = new OrExpression(nullexp, iexp);
 				cc.setExpression(orexp);
 			}
 
@@ -1100,70 +1169,80 @@ public class SqlBuilder implements MessageSource {
 	 */
 	private boolean refersToTypeRepresentedByTable(PropertyInfo pi) {
 
-		String valueTypeName = pi.typeInfo().name;
-		String piEncodingRule = pi.encodingRule("sql");
+		String name = pi.typeInfo().name;
+		String encodingRule = pi.encodingRule("sql");
 
-		ProcessMapEntry pme = options.targetMapEntry(valueTypeName,
-				piEncodingRule);
+		ProcessMapEntry pme = options.targetMapEntry(name, encodingRule);
 
 		if (pme != null) {
 
-			if (SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName,
-					piEncodingRule, SqlConstants.ME_PARAM_TABLE)) {
+			if (SqlDdl.mapEntryParamInfos.hasParameter(name, encodingRule,
+					SqlConstants.ME_PARAM_TABLE)) {
 				return true;
 			} else {
 				return false;
 			}
 
-		} else if (pi.categoryOfValue() == Options.FEATURE
-				|| pi.categoryOfValue() == Options.OBJECT
-				|| pi.categoryOfValue() == Options.DATATYPE
-				|| pi.categoryOfValue() == Options.CODELIST) {
+		} else {
 
 			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
 
-			if (typeCi != null) {
+			return isRepresentedByTable(typeCi);
+		}
+	}
 
-				if ((pi.categoryOfValue() == Options.OBJECT && !typeCi
-						.matches(SqlConstants.RULE_TGT_SQL_CLS_OBJECT_TYPES))
-						|| (pi.categoryOfValue() == Options.FEATURE
-								&& !typeCi.matches(
-										SqlConstants.RULE_TGT_SQL_CLS_FEATURE_TYPES))
-						|| (pi.categoryOfValue() == Options.DATATYPE
-								&& !typeCi.matches(
-										SqlConstants.RULE_TGT_SQL_CLS_DATATYPES))
-						|| (pi.categoryOfValue() == Options.CODELIST
-								&& !typeCi.matches(
-										SqlConstants.RULE_TGT_SQL_CLS_CODELISTS))) {
+	private boolean isRepresentedByTable(ClassInfo ci) {
 
-					return false;
+		String name = ci.name();
+		String encodingRule = ci.encodingRule("sql");
 
-				} else {
+		ProcessMapEntry pme = options.targetMapEntry(name, encodingRule);
 
-					if (model.isInSelectedSchemas(typeCi) || typeCi.matches(
-							SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
+		if (pme != null) {
 
-						return true;
+			if (SqlDdl.mapEntryParamInfos.hasParameter(name, encodingRule,
+					SqlConstants.ME_PARAM_TABLE)) {
+				return true;
+			} else {
+				return false;
+			}
 
-						/*
-						 * NOTE: if the schema uses external types, map entries
-						 * should be defined. This helps avoiding confusion of
-						 * types that are not processed but used in the model
-						 * (e.g. from ISO packages, or application schemas that
-						 * were not selected for processing). The rule to allow
-						 * references to external types is a convenience
-						 * mechanism.
-						 */
+		} else if (ci.category() == Options.FEATURE
+				|| ci.category() == Options.OBJECT
+				|| ci.category() == Options.DATATYPE
+				|| ci.category() == Options.CODELIST) {
 
-					} else {
+			if ((ci.category() == Options.OBJECT
+					&& !ci.matches(SqlConstants.RULE_TGT_SQL_CLS_OBJECT_TYPES))
+					|| (ci.category() == Options.FEATURE && !ci.matches(
+							SqlConstants.RULE_TGT_SQL_CLS_FEATURE_TYPES))
+					|| (ci.category() == Options.DATATYPE && !ci
+							.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES))
+					|| (ci.category() == Options.CODELIST && !ci.matches(
+							SqlConstants.RULE_TGT_SQL_CLS_CODELISTS))) {
 
-						return false;
-					}
-				}
+				return false;
 
 			} else {
 
-				return false;
+				if (model.isInSelectedSchemas(ci) || ci.matches(
+						SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES)) {
+
+					return true;
+
+					/*
+					 * NOTE: if the schema uses external types, map entries
+					 * should be defined. This helps avoiding confusion of types
+					 * that are not processed but used in the model (e.g. from
+					 * ISO packages, or application schemas that were not
+					 * selected for processing). The rule to allow references to
+					 * external types is a convenience mechanism.
+					 */
+
+				} else {
+
+					return false;
+				}
 			}
 
 		} else {
@@ -1174,7 +1253,7 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	private Column createColumn(Table inTable, PropertyInfo representedProperty,
-			String name, String type, String columnSpecification,
+			String name, ColumnDataType type, String columnSpecification,
 			boolean isPrimaryKey, boolean isForeignKey) {
 
 		Column column = new Column(name, representedProperty, inTable);
@@ -1185,8 +1264,7 @@ public class SqlBuilder implements MessageSource {
 					representedProperty);
 		}
 
-		ColumnDataType colDataType = new ColumnDataType(type);
-		column.setDataType(colDataType);
+		column.setDataType(type);
 
 		if (columnSpecification != null
 				&& !columnSpecification.trim().isEmpty()) {
@@ -1198,17 +1276,18 @@ public class SqlBuilder implements MessageSource {
 		return column;
 	}
 
-	private Column createColumn(Table inTable, PropertyInfo representedProperty,
-			String name, ColumnDataType dataType, String columnSpecification,
-			boolean isPrimaryKey, boolean isForeignKey) {
-
-		Column res = createColumn(inTable, representedProperty, name,
-				dataType.getName(), columnSpecification, isPrimaryKey,
-				isForeignKey);
-		res.setDataType(dataType);
-
-		return res;
-	}
+	// private Column createColumn(Table inTable, PropertyInfo
+	// representedProperty,
+	// String name, ColumnDataType dataType, String columnSpecification,
+	// boolean isPrimaryKey, boolean isForeignKey) {
+	//
+	// Column res = createColumn(inTable, representedProperty, name,
+	// dataType.getName(), columnSpecification, isPrimaryKey,
+	// isForeignKey);
+	// res.setDataType(dataType);
+	//
+	// return res;
+	// }
 
 	/**
 	 * Creates the column definition based upon the property name, its type, and
@@ -1423,7 +1502,7 @@ public class SqlBuilder implements MessageSource {
 			} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 					SqlConstants.ME_PARAM_TABLE)) {
 
-				return new ColumnDataType(SqlDdl.foreignKeyColumnDataType);
+				return SqlDdl.foreignKeyColumnDataType;
 
 			} else {
 
@@ -1435,40 +1514,22 @@ public class SqlBuilder implements MessageSource {
 
 					if (conditionalCriterium.equalsIgnoreCase(
 							SqlConstants.MAP_TARGETTYPE_COND_TEXTORCHARACTERVARYING)) {
-						return new ColumnDataType(
-								determineCharacterVaryingOrText(pi));
+						return determineCharacterVaryingOrText(pi);
 					}
 
 				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 						SqlConstants.ME_PARAM_TEXTORCHARACTERVARYING)) {
 
-					return new ColumnDataType(
-							determineCharacterVaryingOrText(pi));
+					return determineCharacterVaryingOrText(pi);
 
 				} else {
 
-					Integer precision = null;
-					Integer scale = null;
+					ColumnDataType type = determineTypeFromMapEntry(me);
 
-					if (pi.matches(
-							SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
+					// local override of precision and scale is allowed
+					updatePrecisionAndScaleWithLocalInfo(type, pi);
 
-						precision = parseTaggedValue("precision", pi);
-						scale = parseTaggedValue("scale", pi);
-
-						if (scale != null && precision == null) {
-
-							MessageContext mc = result.addWarning(this, 27);
-							if (mc != null) {
-								mc.addDetail(this, 2, pi.fullNameInSchema());
-							}
-
-							scale = null;
-						}
-					}
-
-					return new ColumnDataType(me.getTargetType(), precision,
-							scale);
+					return type;
 				}
 			}
 		}
@@ -1493,7 +1554,7 @@ public class SqlBuilder implements MessageSource {
 				}
 			}
 
-			return new ColumnDataType(determineCharacterVaryingOrText(pi));
+			return determineCharacterVaryingOrText(pi);
 
 		} else if (catOfValue == Options.OBJECT || catOfValue == Options.FEATURE
 				|| catOfValue == Options.DATATYPE
@@ -1533,8 +1594,7 @@ public class SqlBuilder implements MessageSource {
 					 * table creation for this category is not enabled -> assign
 					 * textual type
 					 */
-					return new ColumnDataType(
-							determineCharacterVaryingOrText(pi));
+					return determineCharacterVaryingOrText(pi);
 
 				} else {
 
@@ -1559,34 +1619,30 @@ public class SqlBuilder implements MessageSource {
 							}
 
 							if (SqlDdl.codeNameSize < 1) {
-								return new ColumnDataType(
-										SqlDdl.databaseStrategy
-												.unlimitedLengthCharacterDataType());
+								return SqlDdl.databaseStrategy
+										.unlimitedLengthCharacterDataType();
 							} else {
-								return new ColumnDataType(
-										SqlDdl.databaseStrategy
-												.limitedLengthCharacterDataType(
-														SqlDdl.codeNameSize));
+								return SqlDdl.databaseStrategy
+										.limitedLengthCharacterDataType(
+												SqlDdl.codeNameSize);
 							}
 
 						} else {
 
-							return new ColumnDataType(
-									SqlDdl.foreignKeyColumnDataType);
+							return SqlDdl.foreignKeyColumnDataType;
 						}
 
 					} else {
 						result.addWarning(this, 9, typeCi.name(), pi.name(),
 								pi.inClass().name());
-						return new ColumnDataType(
-								determineCharacterVaryingOrText(pi));
+						return determineCharacterVaryingOrText(pi);
 					}
 				}
 
 			} else {
 				result.addWarning(this, 10, pi.typeInfo().name, pi.name(),
 						pi.inClass().name());
-				return new ColumnDataType(determineCharacterVaryingOrText(pi));
+				return determineCharacterVaryingOrText(pi);
 			}
 
 		}
@@ -1594,6 +1650,108 @@ public class SqlBuilder implements MessageSource {
 		result.addWarning(this, 21, pi.typeInfo().name);
 
 		return new ColumnDataType("unknown");
+	}
+
+	private void updatePrecisionAndScaleWithLocalInfo(ColumnDataType type,
+			Info info) {
+
+		if (info.matches(SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
+
+			Integer precisionFromTV = parseTaggedValue("precision", info);
+			Integer scaleFromTV = parseTaggedValue("scale", info);
+
+			if (scaleFromTV != null && precisionFromTV == null) {
+
+				MessageContext mc = result.addWarning(this, 27);
+				if (mc != null) {
+					mc.addDetail(this, 3, info.fullNameInSchema());
+				}
+
+				scaleFromTV = null;
+			}
+
+			if (precisionFromTV != null) {
+				type.setPrecision(precisionFromTV);
+				type.setScale(scaleFromTV);
+			}
+		}
+	}
+
+	private ColumnDataType determineTypeFromMapEntry(ProcessMapEntry me) {
+
+		String dtName = me.getTargetType();
+
+		Integer length = null;
+		Integer precision = null;
+		Integer scale = null;
+
+		if (SqlDdl.mapEntryParamInfos.hasParameter(me,
+				SqlConstants.ME_PARAM_LENGTH)
+				|| SqlDdl.mapEntryParamInfos.hasParameter(me,
+						SqlConstants.ME_PARAM_PRECISION)) {
+
+			Matcher lengthPrecisionScale = SqlConstants.PATTERN_ME_TARGETTYPE_LENGTH_PRECISION_SCALE
+					.matcher(me.getTargetType().trim());
+
+			if (lengthPrecisionScale.matches()) {
+
+				dtName = lengthPrecisionScale.group(1);
+				String group2 = lengthPrecisionScale.group(2);
+				String group3 = lengthPrecisionScale.group(3);
+
+				if (SqlDdl.mapEntryParamInfos.hasParameter(me,
+						SqlConstants.ME_PARAM_LENGTH)) {
+
+					/*
+					 * check for single non-negative number is covered by the
+					 * configuration validator
+					 */
+
+					// try {
+					length = Integer.parseInt(group2);
+					// } catch (NumberFormatException e) {
+					// result.addError(this, 30, me.getType(),
+					// me.getTargetType(), e.getMessage());
+					// }
+
+				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
+						SqlConstants.ME_PARAM_PRECISION)) {
+
+					/*
+					 * check for non-negative number is covered by the
+					 * configuration validator
+					 */
+
+					// try {
+					precision = Integer.parseInt(group2);
+					// } catch (NumberFormatException e) {
+					// result.addError(this, 31, me.getType(),
+					// me.getTargetType(), e.getMessage());
+					// }
+
+					if (group3 != null) {
+
+						/*
+						 * check for non-negative number is covered by the
+						 * configuration validator
+						 */
+
+						// try {
+						scale = Integer.parseInt(group3);
+
+						if (scale == 0) {
+							scale = null;
+						}
+						// } catch (NumberFormatException e) {
+						// result.addError(this, 32, me.getType(),
+						// me.getTargetType(), e.getMessage());
+						// }
+					}
+				}
+			}
+		}
+
+		return new ColumnDataType(dtName, precision, scale, length);
 	}
 
 	/**
@@ -1632,28 +1790,12 @@ public class SqlBuilder implements MessageSource {
 
 				if (pme != null && pme.hasTargetType()) {
 
-					Integer precision = null;
-					Integer scale = null;
+					ColumnDataType colDt = determineTypeFromMapEntry(pme);
 
-					if (type.matches(
-							SqlConstants.RULE_TGT_SQL_ALL_PRECISION_AND_SCALE)) {
+					// local override of precision and scale is allowed
+					updatePrecisionAndScaleWithLocalInfo(colDt, type);
 
-						precision = parseTaggedValue("precision", type);
-						scale = parseTaggedValue("scale", type);
-
-						if (scale != null && precision == null) {
-
-							MessageContext mc = result.addWarning(this, 27);
-							if (mc != null) {
-								mc.addDetail(this, 1, type.fullNameInSchema());
-							}
-
-							scale = null;
-						}
-					}
-
-					return new ColumnDataType(pme.getTargetType(), precision,
-							scale);
+					return colDt;
 
 				} else {
 					/*
@@ -1713,23 +1855,17 @@ public class SqlBuilder implements MessageSource {
 	 * @return the data type for unlimited or limited text size, depending upon
 	 *         the (local and global) settings of 'size' for the property
 	 */
-	private String determineCharacterVaryingOrText(PropertyInfo pi) {
+	private ColumnDataType determineCharacterVaryingOrText(PropertyInfo pi) {
 
 		int size = getSizeForProperty(pi);
 
 		// keep track of the result for use by the replication schema
 		this.sizeByCharacterValuedProperty.put(pi, size);
 
-		/*
-		 * TODO let database strategies create actual data type with field for
-		 * length? if we want to use a common textual data type (rather than
-		 * replicating the database system specific types) we would need
-		 * database system specific DDL writers (which would be a good thing to
-		 * have); then the replication schema target could read the length
-		 * limitiation of a textual data type directly from that data type, and
-		 * the SqlBuilder would no longer need to keep track of size for
-		 * character valued properties
-		 */
+		return determineCharacterVaryingOrText(size);
+	}
+
+	private ColumnDataType determineCharacterVaryingOrText(int size) {
 
 		if (size < 1) {
 			return SqlDdl.databaseStrategy.unlimitedLengthCharacterDataType();
@@ -1991,16 +2127,15 @@ public class SqlBuilder implements MessageSource {
 
 						if (refCol.isPrimaryKeyColumn()) {
 
-							ColumnDataType coldt = col.getDataType();
 							ColumnDataType refColdt = refCol.getDataType();
 
-							coldt.setName(refColdt.getName());
 							/*
 							 * e.g. for reference to numerically valued code
 							 * list
 							 */
-							coldt.setPrecision(refColdt.getPrecision());
-							coldt.setScale(refColdt.getScale());
+							col.setDataType(new ColumnDataType(
+									refColdt.getName(), refColdt.getPrecision(),
+									refColdt.getScale(), refColdt.getLength()));
 						}
 					}
 				}
@@ -2044,6 +2179,13 @@ public class SqlBuilder implements MessageSource {
 						alterTableAddCheckConstraintToRestrictTimeOfDate(col,
 								pi);
 					}
+				}
+
+				ClassInfo enumerationValueType = col.getEnumerationValueType();
+				if (enumerationValueType != null) {
+					alterTableAddCheckConstraintForEnumerationValueType(col,
+							SqlDdl.nameCodeStatusCLColumn,
+							enumerationValueType);
 				}
 			}
 		}
@@ -2410,6 +2552,8 @@ public class SqlBuilder implements MessageSource {
 			return "Context: class '$1$'";
 		case 2:
 			return "Context: property '$1$'";
+		case 3:
+			return "Context: '$1$'";
 
 		case 5:
 			return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
@@ -2463,7 +2607,7 @@ public class SqlBuilder implements MessageSource {
 		case 25:
 			return "Identifier attribute '$1$' has max multiplicity > 1.";
 		case 26:
-			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model and thus no reference table could be identified. No foreign key constraint will be created for the $2$ column.";
+			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
 		case 27:
 			return "??Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
 		case 28:
@@ -2474,6 +2618,14 @@ public class SqlBuilder implements MessageSource {
 			return "Type '$1$' of property '$2$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
 					+ SqlConstants.TV_NUMERIC_TYPE
 					+ "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
+		case 30:
+			return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type is neither an enumeration nor represented by a table. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
+		case 31:
+			return "Type '$1$' - which is the conceptual type of '$2$' column in table '$3$' (which represents a code list) - is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+					+ SqlConstants.TV_NUMERIC_TYPE
+					+ "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
+		case 32:
+			return "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
 
 		case 100:
 			return "Context: property '$1$'.";

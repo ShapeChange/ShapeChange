@@ -36,55 +36,15 @@
   </sequence>
   <attribute name="encoding" type="string" use="required"/>
  </complexType>
- <complexType name="InfoType">
+ <!-- <complexType name="InfoType">
   <all>
    <element minOccurs="0" name="name" type="string"/>
    <element name="id" type="string"/>
-   <element minOccurs="0" name="stereotypes">
-    <complexType>
-     <sequence>
-      <element maxOccurs="unbounded" name="Stereotype" type="string"/>
-     </sequence>
-    </complexType>
-   </element>
-   <element name="descriptors">
-    <complexType>
-     <all>
-      <element minOccurs="0" name="alias" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="primaryCode" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="globalIdentifier" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="documentation" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="definition" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="description" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="legalBasis" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="language" type="sc:DescriptorType"/>
-      <element minOccurs="0" name="example" type="sc:DescriptorType"> </element>
-      <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType"> </element>
-     </all>
-    </complexType>
-   </element>
-   <element minOccurs="0" name="taggedValues">
-    <complexType>
-     <sequence>
-      <element maxOccurs="unbounded" name="TaggedValue">
-       <complexType>
-        <sequence>
-         <element name="name" type="string"/>
-         <element minOccurs="0" name="values">
-          <complexType>
-           <sequence>
-            <element maxOccurs="unbounded" name="Value" type="string"/>
-           </sequence>
-          </complexType>
-         </element>
-        </sequence>
-       </complexType>
-      </element>
-     </sequence>
-    </complexType>
-   </element>
+   <element minOccurs="0" ref="sc:stereotypes"/>
+   <element ref="sc:descriptors"/>
+   <element minOccurs="0" ref="sc:taggedValues"/>
   </all>
- </complexType>
+ </complexType>-->
  <complexType name="DescriptorType">
   <sequence>
    <element minOccurs="1" name="descriptorValues">
@@ -144,166 +104,171 @@
   </complexType>
  </element>
  <complexType name="PackageType">
-  <complexContent>
-   <extension base="sc:InfoType">
-    <all maxOccurs="1">
-     <element default="false" minOccurs="0" name="isSchema" type="boolean"/>
-     <element minOccurs="0" name="version" type="string"/>
-     <element minOccurs="0" name="targetNamespace" type="string"/>
-     <element minOccurs="0" name="xmlns" type="string"/>
-     <element minOccurs="0" name="xsdDocument" type="string"/>
-     <element minOccurs="0" name="supplierIds">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" name="SupplierId" type="string"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="diagrams">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element maxOccurs="1" minOccurs="0" name="classes">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Class"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="packages">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Package"/>
-       </sequence>
-      </complexType>
-     </element>
-    </all>
-   </extension>
-  </complexContent>
+  <all maxOccurs="1">
+   <element minOccurs="0" name="name" type="string"/>
+   <element name="id" type="string"/>
+   <element minOccurs="0" ref="sc:stereotypes"/>
+   <element ref="sc:descriptors"/>
+   <element minOccurs="0" ref="sc:taggedValues"/>
+   <element default="false" minOccurs="0" name="isSchema" type="boolean"/>
+   <element minOccurs="0" name="version" type="string"/>
+   <element minOccurs="0" name="targetNamespace" type="string"/>
+   <element minOccurs="0" name="xmlns" type="string"/>
+   <element minOccurs="0" name="xsdDocument" type="string"/>
+   <element minOccurs="0" name="supplierIds">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="SupplierId" type="string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="diagrams">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element maxOccurs="1" minOccurs="0" name="classes">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Class"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="packages">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Package"/>
+     </sequence>
+    </complexType>
+   </element>
+  </all>
  </complexType>
  <element name="Class" type="sc:ClassType"/>
  <complexType name="ClassType">
-  <complexContent>
-   <extension base="sc:InfoType">
-    <all>
-     <element minOccurs="0" name="profiles">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element default="false" minOccurs="0" name="isAbstract" type="boolean"/>
-     <element default="false" minOccurs="0" name="isLeaf" type="boolean"/>
-     <element minOccurs="0" name="associationId" type="string"/>
-     <element minOccurs="0" name="baseClassId" type="string"/>
-     <element minOccurs="0" name="supertypes">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" name="SupertypeId" type="string"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="subtypes">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" name="SubtypeId" type="string"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="constraints">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Constraint"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="diagrams">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="properties">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Property"/>
-       </sequence>
-      </complexType>
-     </element>
-    </all>
-   </extension>
-  </complexContent>
+  <all>
+   <element minOccurs="0" name="name" type="string"/>
+   <element name="id" type="string"/>
+   <element minOccurs="0" ref="sc:stereotypes"/>
+   <element ref="sc:descriptors"/>
+   <element minOccurs="0" ref="sc:taggedValues"/>
+   <element minOccurs="0" name="profiles">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element default="false" minOccurs="0" name="isAbstract" type="boolean"/>
+   <element default="false" minOccurs="0" name="isLeaf" type="boolean"/>
+   <element minOccurs="0" name="associationId" type="string"/>
+   <element minOccurs="0" name="baseClassId" type="string"/>
+   <element minOccurs="0" name="supertypes">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="SupertypeId" type="string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="subtypes">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="SubtypeId" type="string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="constraints">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Constraint"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="diagrams">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="properties">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Property"/>
+     </sequence>
+    </complexType>
+   </element>
+  </all>
+
  </complexType>
  <element name="Property" type="sc:PropertyType"/>
  <complexType name="PropertyType">
-  <complexContent>
-   <extension base="sc:InfoType">
-    <all>
-     <element minOccurs="0" name="profiles">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
-       </sequence>
-      </complexType>
-     </element>
-     <element name="cardinality" type="string" default="1" minOccurs="0"/>
-     <element default="true" minOccurs="0" name="isNavigable" type="boolean"/>
-     <element name="sequenceNumber" type="string"/>
-     <element minOccurs="0" name="typeId" type="string"/>
-     <element minOccurs="0" name="typeName" type="string"/>
-     <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
-     <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
-     <element default="true" minOccurs="0" name="isAttribute" type="boolean"/>
-     <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
-     <element default="true" minOccurs="0" name="isUnique" type="boolean"/>
-     <element default="false" minOccurs="0" name="isComposition" type="boolean"/>
-     <element default="false" minOccurs="0" name="isAggregation" type="boolean"/>
-     <element minOccurs="0" name="initialValue" type="string"/>
-     <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
-     <element minOccurs="0" name="qualifiers">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" name="Qualifier">
-         <complexType>
-          <sequence>
-           <element name="name" type="string"/>
-           <element name="type" type="string"/>
-          </sequence>
-         </complexType>
-        </element>
-       </sequence>
-      </complexType>
-     </element>
-     <element minOccurs="0" name="inClassId" type="string"/>
-     <element minOccurs="0" name="reversePropertyId" type="string"/>
-     <element minOccurs="0" name="associationId" type="string"/>
-     <element minOccurs="0" name="constraints">
-      <complexType>
-       <sequence>
-        <element maxOccurs="unbounded" ref="sc:Constraint"/>
-       </sequence>
-      </complexType>
-     </element>
-    </all>
-   </extension>
-  </complexContent>
+  <all>
+   <element minOccurs="0" name="name" type="string"/>
+   <element name="id" type="string"/>
+   <element minOccurs="0" ref="sc:stereotypes"/>
+   <element ref="sc:descriptors"/>
+   <element minOccurs="0" ref="sc:taggedValues"/>
+   <element minOccurs="0" name="profiles">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="cardinality" type="string" default="1" minOccurs="0"/>
+   <element default="true" minOccurs="0" name="isNavigable" type="boolean"/>
+   <element name="sequenceNumber" type="string"/>
+   <element minOccurs="0" name="typeId" type="string"/>
+   <element minOccurs="0" name="typeName" type="string"/>
+   <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
+   <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
+   <element default="true" minOccurs="0" name="isAttribute" type="boolean"/>
+   <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
+   <element default="true" minOccurs="0" name="isUnique" type="boolean"/>
+   <element default="false" minOccurs="0" name="isComposition" type="boolean"/>
+   <element default="false" minOccurs="0" name="isAggregation" type="boolean"/>
+   <element minOccurs="0" name="initialValue" type="string"/>
+   <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
+   <element minOccurs="0" name="qualifiers">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="Qualifier">
+       <complexType>
+        <sequence>
+         <element name="name" type="string"/>
+         <element name="type" type="string"/>
+        </sequence>
+       </complexType>
+      </element>
+     </sequence>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="inClassId" type="string"/>
+   <element minOccurs="0" name="reversePropertyId" type="string"/>
+   <element minOccurs="0" name="associationId" type="string"/>
+   <element minOccurs="0" name="constraints">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" ref="sc:Constraint"/>
+     </sequence>
+    </complexType>
+   </element>
+  </all>
  </complexType>
  <element name="Association" type="sc:AssociationType"/>
  <complexType name="AssociationType">
-  <complexContent>
-   <extension base="sc:InfoType">
-    <all>
-     <element minOccurs="0" name="assocClassId" type="string"/>
-     <element name="end1" type="sc:AssociationRoleType"/>
-     <element name="end2" type="sc:AssociationRoleType"/>
-    </all>
-   </extension>
-  </complexContent>
+  <all>
+   <element minOccurs="0" name="name" type="string"/>
+   <element name="id" type="string"/>
+   <element minOccurs="0" ref="sc:stereotypes"/>
+   <element ref="sc:descriptors"/>
+   <element minOccurs="0" ref="sc:taggedValues"/>
+   <element minOccurs="0" name="assocClassId" type="string"/>
+   <element name="end1" type="sc:AssociationRoleType"/>
+   <element name="end2" type="sc:AssociationRoleType"/>
+  </all>
  </complexType>
  <complexType name="AssociationRoleType">
   <sequence>
@@ -358,4 +323,47 @@
    </extension>
   </complexContent>
  </complexType>
+ <element name="descriptors">
+  <complexType>
+   <all>
+    <element minOccurs="0" name="alias" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="primaryCode" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="globalIdentifier" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="documentation" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="definition" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="description" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="legalBasis" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="language" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="example" type="sc:DescriptorType"> </element>
+    <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType"> </element>
+   </all>
+  </complexType>
+ </element>
+ <element name="stereotypes">
+  <complexType>
+   <sequence>
+    <element maxOccurs="unbounded" name="Stereotype" type="string"/>
+   </sequence>
+  </complexType>
+ </element>
+ <element name="taggedValues">
+  <complexType>
+   <sequence>
+    <element maxOccurs="unbounded" name="TaggedValue">
+     <complexType>
+      <sequence>
+       <element name="name" type="string"/>
+       <element minOccurs="0" name="values">
+        <complexType>
+         <sequence>
+          <element maxOccurs="unbounded" name="Value" type="string"/>
+         </sequence>
+        </complexType>
+       </element>
+      </sequence>
+     </complexType>
+    </element>
+   </sequence>
+  </complexType>
+ </element>
 </schema>

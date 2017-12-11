@@ -58,8 +58,10 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Util.EAException;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -267,8 +269,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			}
 
 			/*
-			 * Retrieve EA repo connection info either directly from the
-			 * target, if PARAM_REPO_CONNECTION_STRING is set, or from the input
+			 * Retrieve EA repo connection info either directly from the target,
+			 * if PARAM_REPO_CONNECTION_STRING is set, or from the input
 			 * configuration.
 			 */
 			String repoConnectionInfo = null;
@@ -331,7 +333,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 					}
 				}
 			}
-			
+
 			if (!invalidConfiguration) {
 
 				username = username == null ? "" : username;
@@ -490,7 +492,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public String getTargetName(){
+	public String getTargetName() {
 		return "Profile Transfer EA";
 	}
 
@@ -580,7 +582,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 					continue;
 				}
 
-				String statusTaggedValue = EAModelUtil.taggedValue(classElmt,
+				String statusTaggedValue = EAElementUtil.taggedValue(classElmt,
 						"status");
 
 				/*
@@ -592,7 +594,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 								.contains(statusTaggedValue)) {
 					continue;
 				}
-								
+
 				/*
 				 * Delete the profiles tagged value of the class and its
 				 * properties if so configured. NOTE: This is independent of
@@ -601,10 +603,10 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 				 */
 				if (deleteExistingProfiles) {
 
-					EAModelUtil.deleteTaggedValue(classElmt, "profiles");
+					EAElementUtil.deleteTaggedValue(classElmt, "profiles");
 
 					for (Attribute att : classElmt.GetAttributes()) {
-						EAModelUtil.deleteTaggedValue(att, "profiles");
+						EAAttributeUtil.deleteTaggedValue(att, "profiles");
 					}
 
 					for (Connector con : classElmt.GetConnectors()) {
@@ -621,14 +623,14 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 						 */
 						if (con.GetClientID() == classElementId
 								&& isNavigableEnd(con, con.GetSupplierEnd())) {
-							EAModelUtil.deleteTaggedValue(con.GetSupplierEnd(),
-									"profiles");
+							EAConnectorEndUtil.deleteTaggedValue(
+									con.GetSupplierEnd(), "profiles");
 						}
 
 						if (con.GetSupplierID() == classElementId
 								&& isNavigableEnd(con, con.GetClientEnd())) {
-							EAModelUtil.deleteTaggedValue(con.GetClientEnd(),
-									"profiles");
+							EAConnectorEndUtil.deleteTaggedValue(
+									con.GetClientEnd(), "profiles");
 						}
 					}
 				}
@@ -638,7 +640,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 					Map<String, ClassInfo> inputModelSchemaCisByCiName = inputModelClassesByClassNameBySchemaName
 							.get(schemaName);
 
-					// transfer class profiles					
+					// transfer class profiles
 					String className = classElmt.GetName().trim();
 					result.addInfo(this, 3, className);
 
@@ -652,12 +654,13 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 						Profiles newProfilesCi = new Profiles();
 						if (!deleteExistingProfiles) {
-							String profilesTV = EAModelUtil
+							String profilesTV = EAElementUtil
 									.taggedValue(classElmt, "profiles");
-							if (profilesTV != null && profilesTV.trim().length() > 0) {
+							if (profilesTV != null
+									&& profilesTV.trim().length() > 0) {
 								try {
-									newProfilesCi = Profiles.parse(profilesTV.trim(),
-											false);
+									newProfilesCi = Profiles
+											.parse(profilesTV.trim(), false);
 								} catch (MalformedProfileIdentifierException e) {
 									result.addError(this, 22, className,
 											schemaName, e.getMessage());
@@ -673,7 +676,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 								inputModelCi.profiles()));
 
 						try {
-							EAModelUtil.setTaggedValue(classElmt, "profiles",
+							EAElementUtil.setTaggedValue(classElmt, "profiles",
 									newProfilesCi.toString());
 						} catch (EAException e) {
 							result.addError(this, 23, className, schemaName,
@@ -696,12 +699,13 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 								Profiles newProfilesPi = new Profiles();
 								if (!deleteExistingProfiles) {
-									String profilesTV = EAModelUtil
+									String profilesTV = EAAttributeUtil
 											.taggedValue(att, "profiles");
-									if (profilesTV != null  && profilesTV.trim().length() > 0) {
+									if (profilesTV != null
+											&& profilesTV.trim().length() > 0) {
 										try {
-											newProfilesPi = Profiles
-													.parse(profilesTV.trim(), false);
+											newProfilesPi = Profiles.parse(
+													profilesTV.trim(), false);
 										} catch (MalformedProfileIdentifierException e) {
 											result.addError(this, 25, className,
 													attName, schemaName,
@@ -715,7 +719,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 										inputModelPi.profiles()));
 
 								try {
-									EAModelUtil.setTaggedValue(att, "profiles",
+									EAAttributeUtil.setTaggedValue(att,
+											"profiles",
 											newProfilesPi.toString());
 								} catch (EAException e) {
 									result.addError(this, 26, className,
@@ -782,10 +787,12 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 			Profiles newProfilesPi = new Profiles();
 			if (!deleteExistingProfiles) {
-				String profilesTV = EAModelUtil.taggedValue(end, "profiles");
+				String profilesTV = EAConnectorEndUtil.taggedValue(end,
+						"profiles");
 				if (profilesTV != null && profilesTV.trim().length() > 0) {
 					try {
-						newProfilesPi = Profiles.parse(profilesTV.trim(), false);
+						newProfilesPi = Profiles.parse(profilesTV.trim(),
+								false);
 					} catch (MalformedProfileIdentifierException e) {
 						result.addError(this, 27, inputModelCi.name(), roleName,
 								schemaName, e.getMessage());
@@ -798,7 +805,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 					.put(computeProfilesToTransfer(inputModelPi.profiles()));
 
 			try {
-				EAModelUtil.setTaggedValue(end, "profiles",
+				EAConnectorEndUtil.setTaggedValue(end, "profiles",
 						newProfilesPi.toString());
 			} catch (EAException e) {
 				result.addError(this, 28, inputModelCi.name(), roleName,
@@ -983,7 +990,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			return "Context: $1$";
 		case 2:
 			return "Directory named '$1$' does not exist or is not accessible.";
-		case 3: 
+		case 3:
 			return "Transferring profiles for class '$1$'.";
 		case 10:
 			return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to transfer profiles to is an EA repository.";

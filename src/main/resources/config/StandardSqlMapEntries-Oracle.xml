@@ -27,9 +27,9 @@
 	<MapEntry type="Long" rule="*" targetType="LONGINTEGER" param=""/>
 	
 	<!-- other ISO -->
-	<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param=""/>
+	<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param="length"/>
 	<MapEntry type="Area" rule="*" targetType="NUMBER" param=""/>
 	<MapEntry type="Length" rule="*" targetType="NUMBER" param=""/>
-	<MapEntry type="TM_PeriodDuration" rule="*" targetType="VARCHAR2(20)" param=""/>
+	<MapEntry type="TM_PeriodDuration" rule="*" targetType="VARCHAR2(20)" param="length"/>
 	<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying"/>
 </mapEntries>

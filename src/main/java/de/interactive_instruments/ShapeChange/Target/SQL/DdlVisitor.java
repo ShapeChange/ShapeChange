@@ -55,7 +55,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 /**
  * Creates the DDL representation for the set of visited SQL statements.
  * <p>
- * NOTE: In the future, database system specific visitors may be needed, to take
+ * NOTE: Database system specific visitors should be added as needed, to take
  * into account any database system specific syntax.
  * 
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -161,6 +161,10 @@ public class DdlVisitor implements StatementVisitor {
 						sb.append(",");
 						sb.append(colDataType.getScale().toString());
 					}
+					sb.append(")");
+				} else if (colDataType.hasLength()) {
+					sb.append("(");
+					sb.append(colDataType.getLength());
 					sb.append(")");
 				}
 
@@ -278,5 +282,10 @@ public class DdlVisitor implements StatementVisitor {
 		sb.append(comment.toString());
 		sb.append(";");
 		sb.append(crlf);
+	}
+
+	@Override
+	public void postprocess() {
+		// ignore
 	}
 }

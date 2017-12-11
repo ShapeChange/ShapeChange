@@ -67,8 +67,12 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Util.EAException;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
 /**
  * @author Clemens Portele
@@ -185,6 +189,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 				return;
 			}
 
+			EARepositoryUtil.setEABatchAppend(rep, true);
+			EARepositoryUtil.setEAEnableUIUpdates(rep, false);
+			
 			rep.RefreshModelView(0);
 
 			Collection<Package> c = rep.GetModels();
@@ -325,7 +332,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + att.GetLastError());
 			}
 
-			EAModelUtil.setTaggedValues(att, propi.taggedValuesAll());
+			EAAttributeUtil.setTaggedValues(att, propi.taggedValuesAll());
 
 			att.SetIsDerived(propi.isDerived());
 			if (!att.Update()) {
@@ -393,7 +400,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAElementUtil.setTaggedValues(e, i.taggedValuesAll());
 
 			e.Refresh();
 
@@ -421,7 +428,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + e.GetLastError());
 			}
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAConnectorUtil.setTaggedValues(e, i.taggedValuesAll());
 
 		} catch (EAException exc) {
 
@@ -488,7 +495,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				}
 			}
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAConnectorEndUtil.setTaggedValues(e, i.taggedValuesAll());
 
 		} catch (EAException exc) {
 
@@ -569,7 +576,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 								ci1.name(), ci2.name());
 					} else {
 						try {
-							EAModelUtil.setEAAssociationClass(con, assocClass);
+							EAConnectorUtil.setEAAssociationClass(con,
+									assocClass);
 						} catch (EAException e) {
 
 							result.addError(this, 10005, assocClassCi.name(),
@@ -620,6 +628,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 			}
 		}
 
+		EARepositoryUtil.setEABatchAppend(rep, false);
+		EARepositoryUtil.setEAEnableUIUpdates(rep, true);
+		
 		// 2015-06-25 JE: compact() no longer supported in EA v12 API
 		// rep.Compact();
 		rep.CloseFile();

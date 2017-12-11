@@ -40,6 +40,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
@@ -62,8 +63,8 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String primaryKeyDataType() {
-		return "bigint";
+	public ColumnDataType primaryKeyDataType() {
+		return new ColumnDataType("bigint");
 	}
 
 	@Override
@@ -73,12 +74,12 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String unlimitedLengthCharacterDataType() {
-		return "nvarchar(max)";
+	public ColumnDataType unlimitedLengthCharacterDataType() {
+		return new ColumnDataType("nvarchar(max)", null, null, null);
 	}
 
 	@Override
-	public String limitedLengthCharacterDataType(int size) {
+	public ColumnDataType limitedLengthCharacterDataType(int size) {
 
 		/*
 		 * Apparently there is a restriction how long a limited nvarchar can be
@@ -88,9 +89,9 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 		if (size > 4000) {
 			// TODO: log warning?
-			return "nvarchar(max)";
+			return new ColumnDataType("nvarchar(max)", null, null, null);
 		} else {
-			return "nvarchar(" + size + ")";
+			return new ColumnDataType("nvarchar", null, null, size);
 		}
 	}
 
@@ -152,7 +153,7 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 			PropertyInfo pi, Column columnForPi) {
 		return null;
 	}
-	
+
 	@Override
 	public String message(int mnr) {
 		switch (mnr) {

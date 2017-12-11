@@ -48,7 +48,7 @@ public class Table {
 	private String name = null;
 	private List<Column> columns = new ArrayList<Column>();
 	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
-	
+
 	private boolean isAssociativeTable = false;
 	private ClassInfo representedClass = null;
 	private AssociationInfo representedAssociation = null;
@@ -94,7 +94,8 @@ public class Table {
 	}
 
 	/**
-	 * @return the constraints
+	 * @return the constraints defined for this table; can be empty but not
+	 *         <code>null</code>
 	 */
 	public List<SqlConstraint> getConstraints() {
 		return constraints;
@@ -105,7 +106,11 @@ public class Table {
 	 *            the constraints to set
 	 */
 	public void setConstraints(List<SqlConstraint> constraints) {
-		this.constraints = constraints;
+		if (constraints == null) {
+			this.constraints = new ArrayList<SqlConstraint>();
+		} else {
+			this.constraints = constraints;
+		}
 	}
 
 	public void addConstraint(SqlConstraint constraint) {
@@ -117,7 +122,7 @@ public class Table {
 	}
 
 	public boolean hasConstraints() {
-		return constraints != null && !constraints.isEmpty();
+		return !constraints.isEmpty();
 	}
 
 	/**
@@ -217,7 +222,7 @@ public class Table {
 
 		this.columns.add(column);
 	}
-	
+
 	public boolean representsCodeStatusCLType() {
 		return representsCodeStatusCLType;
 	}

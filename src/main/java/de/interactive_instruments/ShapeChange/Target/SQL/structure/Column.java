@@ -37,6 +37,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
@@ -55,6 +56,7 @@ public class Column {
 	private Table inTable = null;
 
 	private PropertyInfo representedProperty = null;
+	private ClassInfo enumerationValueType = null;
 
 	private Table referencedTable = null;
 	private boolean isObjectIdentifierColumn = false;
@@ -127,10 +129,14 @@ public class Column {
 	}
 
 	/**
-	 * @return the defaultValue
+	 * @return the defaultValue, can be <code>null</code>
 	 */
 	public Expression getDefaultValue() {
 		return defaultValue;
+	}
+
+	public boolean hasDefaultValue() {
+		return defaultValue != null;
 	}
 
 	/**
@@ -251,5 +257,17 @@ public class Column {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return the enumeration that is the value type of the property
+	 *         represented by this column; can be <code>null</code>
+	 */
+	public ClassInfo getEnumerationValueType() {
+		return enumerationValueType;
+	}
+
+	public void setEnumerationValueType(ClassInfo enumerationValueType) {
+		this.enumerationValueType = enumerationValueType;
 	}
 }

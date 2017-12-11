@@ -46,10 +46,6 @@ public class ForeignKeyConstraint extends SqlConstraint {
 	private Table referenceTable = null;
 	private List<Column> referenceColumns = new ArrayList<Column>();
 
-	public ForeignKeyConstraint() {
-
-	}
-
 	public ForeignKeyConstraint(String name, Table referenceTable) {
 		super(name);
 		this.referenceTable = referenceTable;

@@ -3527,6 +3527,8 @@ public class Options {
 		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
 		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
 		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
+		
+		addRule("rule-sql-all-databaseModel");
 
 		addRule("rule-sql-all-normalizing-ignore-case");
 		addRule("rule-sql-all-normalizing-lower-case");

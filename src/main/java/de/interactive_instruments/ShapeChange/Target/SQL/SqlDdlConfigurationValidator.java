@@ -32,12 +32,14 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -105,6 +107,10 @@ public class SqlDdlConfigurationValidator
 		// validation of database strategy specific sql map entry parameters
 		isValid = isValid && databaseStrategy.validate(mapEntryByType, mepis);
 
+		// validation of length precision scale pattern
+		isValid = isValid && checkLengthPrecisionScalePattern(
+				config.getMapEntries(), mepis);
+
 		isValid = isValid
 				&& checkDescriptorsForCodeList(config, options, result);
 
@@ -138,6 +144,104 @@ public class SqlDdlConfigurationValidator
 		}
 
 		return isValid;
+	}
+
+	private boolean checkLengthPrecisionScalePattern(
+			List<ProcessMapEntry> mapEntries,
+			MapEntryParamInfos mapEntryParamInfos) {
+
+		boolean isValid = true;
+
+		for (ProcessMapEntry me : mapEntries) {
+
+			String typeRuleKey = me.getType() + "#" + me.getRule();
+
+			if (mapEntryParamInfos.hasParameter(me,
+					SqlConstants.ME_PARAM_LENGTH)
+					&& mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+				/*
+				 * length and precision must not occur as parameters in the same
+				 * map entry
+				 */
+
+				isValid = false;
+				result.addError(this, 105, typeRuleKey,
+						SqlConstants.ME_PARAM_LENGTH,
+						SqlConstants.ME_PARAM_PRECISION);
+
+			} else if (mapEntryParamInfos.hasParameter(me,
+					SqlConstants.ME_PARAM_LENGTH)
+					|| mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+				/*
+				 * Only if length or precision are present as parameters do we
+				 * parse and validate the target type. This supports direct
+				 * parameterization for other kinds of target types.
+				 */
+
+				Matcher lengthPrecisionScale = SqlConstants.PATTERN_ME_TARGETTYPE_LENGTH_PRECISION_SCALE
+						.matcher(me.getTargetType().trim());
+
+				if (lengthPrecisionScale.matches()) {
+
+					String group2 = lengthPrecisionScale.group(2);
+					String group3 = lengthPrecisionScale.group(3);
+
+					if (mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_LENGTH)) {
+
+						// we only expect a single non-negative integer
+						isValid = isValid
+								&& checkNonNegativeInteger(group2, typeRuleKey);
+
+						if (group3 != null) {
+							isValid = false;
+							result.addError(this, 104, typeRuleKey,
+									SqlConstants.ME_PARAM_LENGTH);
+						}
+
+					} else if (mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+						/*
+						 * we expect a non-negative integer for the first number
+						 * (group2)
+						 */
+						isValid = isValid
+								&& checkNonNegativeInteger(group2, typeRuleKey);
+
+						if (group3 != null) {
+
+							/*
+							 * we expect a non-negative integer for the second
+							 * number (group3)
+							 */
+							isValid = isValid && checkNonNegativeInteger(group3,
+									typeRuleKey);
+						}
+					}
+				}
+			}
+		}
+
+		return isValid;
+	}
+
+	private boolean checkNonNegativeInteger(String number, String typeRuleKey) {
+		try {
+			Integer i = Integer.parseInt(number);
+			if (i < 0) {
+				result.addError(this, 103, typeRuleKey);
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			result.addError(this, 103, typeRuleKey);
+			return false;
+		}
+		return true;
 	}
 
 	private boolean checkCommonMapEntryParameters(MapEntryParamInfos mepp) {
@@ -279,6 +383,12 @@ public class SqlDdlConfigurationValidator
 			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 102:
 			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+		case 103:
+			return "Invalid map entry for type#rule '$1$': the targetType contains a parameterization that is not a non-negative integer.";
+		case 104:
+			return "Invalid map entry for type#rule '$1$': the map entry has paramter '$2$' but the targetType has a parameterization with two numbers. With parameter '$2$', the targetType of the map entry may only have a single number.";
+		case 105:
+			return "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
 
 		default:
 			return "(" + SqlDdlConfigurationValidator.class.getName()

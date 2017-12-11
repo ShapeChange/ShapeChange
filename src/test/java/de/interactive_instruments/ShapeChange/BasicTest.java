@@ -76,6 +76,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
+import de.interactive_instruments.ShapeChange.Util.ea.EAModelDiff;
 
 /**
  * Basic unit test for ShapeChange
@@ -88,6 +89,7 @@ public abstract class BasicTest {
 	boolean testTime = false;
 	boolean exportModel = false;
 	boolean runWithExportedModel = false;
+	boolean justCompareResults = false;
 
 	protected void multiTest(String config, String[] fileFormatsToCheck,
 			String basedirResults, String basedirReference) {
@@ -106,14 +108,16 @@ public abstract class BasicTest {
 			}
 		}
 
-		long start = (new Date()).getTime();
-		TestInstance test = new TestInstance(actualConfig);
-		long end = (new Date()).getTime();
-		System.out.println(
-				"Execution time " + actualConfig + ": " + (end - start) + "ms");
-		assertTrue("Test model execution failed", test.noError());
-		if (testTime)
-			assertTrue("Execution time too long", end - start < 90000);
+		if (!justCompareResults) {
+			long start = (new Date()).getTime();
+			TestInstance test = new TestInstance(actualConfig);
+			long end = (new Date()).getTime();
+			System.out.println("Execution time " + actualConfig + ": "
+					+ (end - start) + "ms");
+			assertTrue("Test model execution failed", test.noError());
+			if (testTime)
+				assertTrue("Execution time too long", end - start < 90000);
+		}
 
 		if (!exportModel) {
 			multiTestInDirs(fileFormatsToCheckLC, basedirResults,
@@ -131,7 +135,8 @@ public abstract class BasicTest {
 	 * input).
 	 * 
 	 * @param config
-	 * @return result of ShapeChange, can be used to inspect e.g. the options object in it
+	 * @return result of ShapeChange, can be used to inspect e.g. the options
+	 *         object in it
 	 */
 	protected ShapeChangeResult execute(String config) {
 
@@ -163,7 +168,8 @@ public abstract class BasicTest {
 		long end = (new Date()).getTime();
 		System.out.println(
 				"Execution time " + config + ": " + (end - start) + "ms");
-		assertTrue("Test model execution did not fail with an error. " + details,
+		assertTrue(
+				"Test model execution did not fail with an error. " + details,
 				!test.noError());
 	}
 
@@ -279,6 +285,12 @@ public abstract class BasicTest {
 											+ fres.getName(),
 									dirReference + File.separator
 											+ fres.getName());
+						} else if (fresExtension.equals("eap")) {
+							similarEap(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
 						} else {
 							// TBD add more similarity tests for further file
 							// formats, or add them to one of the above
@@ -327,6 +339,13 @@ public abstract class BasicTest {
 						} else if (fresExtension.equals("json")
 								&& fileFormatsToCheck.contains("json")) {
 							similarJson(
+									dirResults + File.separator
+											+ fres.getName(),
+									dirReference + File.separator
+											+ fres.getName());
+						} else if (fresExtension.equals("eap")
+								&& fileFormatsToCheck.contains("eap")) {
+							similarEap(
 									dirResults + File.separator
 											+ fres.getName(),
 									dirReference + File.separator
@@ -590,6 +609,29 @@ public abstract class BasicTest {
 		} catch (IOException e) {
 			fail("IO Exception: " + e.getMessage());
 		}
+	}
+
+	private void similarEap(String fileName, String referenceFileName) {
+
+		try {
+
+			File file = new File(fileName);
+			File referenceFile = new File(referenceFileName);
+
+			EAModelDiff differ = new EAModelDiff();
+
+			boolean similar = differ.similar(file, referenceFile);
+
+			assertTrue("EAP output differs from reference result. Result file: "
+					+ fileName + " - Reference file: " + referenceFileName
+					+ ". Details:\n" + differ.getDiffDetails(), similar);
+
+		} catch (Exception e) {
+			fail("Exception while comparing EAP '" + fileName
+					+ "' to reference file '" + referenceFileName
+					+ "'. Exception message is: " + e.getMessage());
+		}
+
 	}
 
 	protected void rdfTest(String config, String[] rdfs, String basedirResults,

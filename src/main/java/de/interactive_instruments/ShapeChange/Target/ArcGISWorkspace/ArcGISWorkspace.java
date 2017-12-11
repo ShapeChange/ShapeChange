@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2016 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,12 +76,16 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Util.EAException;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
-import de.interactive_instruments.ShapeChange.Util.EATaggedValue;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
- * @author Johannes Echterhoff
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  *
  */
 public class ArcGISWorkspace implements SingleTarget, MessageSource {
@@ -732,6 +736,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				throw new ShapeChangeAbortException();
 			}
 
+			EARepositoryUtil.setEABatchAppend(rep, true);
+			EARepositoryUtil.setEAEnableUIUpdates(rep, false);
+			
 			// get template packages
 			rep.RefreshModelView(0);
 
@@ -750,7 +757,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				// eaPkgByModelPkg.put(appSchemaPkg, workspacePkg);
 			}
 
-			Integer features = EAModelUtil.getEAChildPackageByName(rep,
+			Integer features = EARepositoryUtil.getEAChildPackageByName(rep,
 					workspacePkgId, TEMPLATE_PKG_FEATURES_NAME);
 			if (features == null) {
 				result.addError(this, 102, TEMPLATE_PKG_FEATURES_NAME);
@@ -761,7 +768,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						new HashMap<PackageInfo, Integer>());
 			}
 
-			Integer domains = EAModelUtil.getEAChildPackageByName(rep,
+			Integer domains = EARepositoryUtil.getEAChildPackageByName(rep,
 					workspacePkgId, TEMPLATE_PKG_DOMAINS_NAME);
 			if (domains == null) {
 				result.addError(this, 102, TEMPLATE_PKG_DOMAINS_NAME);
@@ -772,7 +779,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						new HashMap<PackageInfo, Integer>());
 			}
 
-			Integer tables = EAModelUtil.getEAChildPackageByName(rep,
+			Integer tables = EARepositoryUtil.getEAChildPackageByName(rep,
 					workspacePkgId, TEMPLATE_PKG_TABLES_NAME);
 			if (tables == null) {
 				result.addError(this, 102, TEMPLATE_PKG_TABLES_NAME);
@@ -783,7 +790,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						new HashMap<PackageInfo, Integer>());
 			}
 
-			Integer assocClasses = EAModelUtil.getEAChildPackageByName(rep,
+			Integer assocClasses = EARepositoryUtil.getEAChildPackageByName(rep,
 					workspacePkgId, TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
 			if (assocClasses == null) {
 				result.addError(this, 102,
@@ -1210,7 +1217,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, e.GetElementID());
@@ -1219,12 +1226,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
-		EAModelUtil.setEAStereotype(e, "CodedValueDomain");
+		EAElementUtil.setEAStereotypeEx(e, "CodedValueDomain");
 
 		String documentation = ci.derivedDocumentation(documentationTemplate,
 				"<no description available>");
 
-		EAModelUtil.setTaggedValue(e,
+		EAElementUtil.setTaggedValue(e,
 				new EATaggedValue("Description", documentation, true));
 
 		// identify field type for the coded value domain
@@ -1252,16 +1259,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
-		EAModelUtil.createEAAttribute(e, "FieldType", null, null, null, null,
+		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
 				false, false, fieldType, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
-		EAModelUtil.createEAAttribute(e, "MergePolicy", null, null, null, null,
-				false, false, "esriMPTDefaultValue", new Multiplicity(1, 1),
-				"esriMergePolicyType", null);
+		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
+				null, false, false, "esriMPTDefaultValue",
+				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
-		EAModelUtil.createEAAttribute(e, "SplitPolicy", null, null, null, null,
-				false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
+		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
+				null, false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
 				"esriSplitPolicyType", null);
 
 		// for each enum/code of the class, create an according property
@@ -1284,7 +1291,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					initialValue = pi.name();
 				}
 
-				EAModelUtil.createEAAttribute(e, pi.name(), null,
+				EAElementUtil.createEAAttribute(e, pi.name(), null,
 						pi.derivedDocumentation(documentationTemplate,
 								documentationNoValue),
 						enumStereotype, null, false, false, initialValue,
@@ -1313,7 +1320,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// name = clipToMaxLength(name);
 		// }
 
-		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between class name and EA Element
 		numericRangeElementIdsByClassName.put(rangeDomainName,
@@ -1321,9 +1328,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// TBD: set alias or notes?
 
-		EAModelUtil.setEAStereotype(e, "RangeDomain");
+		EAElementUtil.setEAStereotypeEx(e, "RangeDomain");
 
-		EAModelUtil.setTaggedValue(e,
+		EAElementUtil.setTaggedValue(e,
 				new EATaggedValue("Description",
 						rangeDomainDocumentation == null
 								? "<no description available>"
@@ -1331,16 +1338,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						true));
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
-		EAModelUtil.createEAAttribute(e, "FieldType", null, null, null, null,
+		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
 				false, false, esriFieldType, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
-		EAModelUtil.createEAAttribute(e, "MergePolicy", null, null, null, null,
-				false, false, "esriMPTDefaultValue", new Multiplicity(1, 1),
-				"esriMergePolicyType", null);
+		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
+				null, false, false, "esriMPTDefaultValue",
+				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
-		EAModelUtil.createEAAttribute(e, "SplitPolicy", null, null, null, null,
-				false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
+		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
+				null, false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
 				"esriSplitPolicyType", null);
 
 		return e;
@@ -1361,7 +1368,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId);
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, e.GetElementID());
@@ -1374,7 +1381,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			// identify stereotype to use
 			ArcGISGeometryType geomType = determineArcGISGeometryType(ci);
-			EAModelUtil.setEAStereotype(e, geomType.stereotypeValue());
+			EAElementUtil.setEAStereotypeEx(e, geomType.stereotypeValue());
 
 			// create ArcGIS System Fields
 
@@ -1461,7 +1468,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			tvs.add(new EATaggedValue("SpatialReference", ""));
 			tvs.add(new EATaggedValue("Versioned", "false"));
 
-			EAModelUtil.setTaggedValues(e, tvs);
+			EAElementUtil.setTaggedValues(e, tvs);
 		}
 
 		// properties cannot be processed now, because we do not necessarily
@@ -1484,7 +1491,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("SpatialIndex");
 
-		return EAModelUtil.createEAAttribute(e, "Shape_IDX", null, null,
+		return EAElementUtil.createEAAttribute(e, "Shape_IDX", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"", null);
 	}
@@ -1501,7 +1508,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("AttributeIndex");
 
-		return EAModelUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
+		return EAElementUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"", null);
 	}
@@ -1524,7 +1531,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("RequiredField");
 
-		return EAModelUtil.createEAAttribute(e, "Shape_Area", null, null,
+		return EAElementUtil.createEAAttribute(e, "Shape_Area", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"esriFieldTypeDouble", null);
 	}
@@ -1548,7 +1555,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("RequiredField");
 
-		return EAModelUtil.createEAAttribute(e, "Shape_Length", null, null,
+		return EAElementUtil.createEAAttribute(e, "Shape_Length", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"esriFieldTypeDouble", null);
 	}
@@ -1574,7 +1581,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("RequiredField");
 
-		return EAModelUtil.createEAAttribute(e, "Shape", null, null,
+		return EAElementUtil.createEAAttribute(e, "Shape", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"esriFieldTypeGeometry", null);
 	}
@@ -1597,7 +1604,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("RequiredField");
 
-		return EAModelUtil.createEAAttribute(e, "OBJECTID", null, null,
+		return EAElementUtil.createEAAttribute(e, "OBJECTID", null, null,
 				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
 				"esriFieldTypeOID", null);
 	}
@@ -1617,7 +1624,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EAModelUtil.createEAClass(rep, name, eaPkgId,
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId,
 				"ArcGIS::ObjectClass");
 
 		// store mapping between ClassInfo and EA Element
@@ -1627,7 +1634,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
-		EAModelUtil.setEAStereotype(e, "ObjectClass");
+		EAElementUtil.setEAStereotypeEx(e, "ObjectClass");
 
 		Attribute objectIdField = createSystemFieldOBJECTID(e);
 		objectIdAttributeGUIDByClass.put(ci, objectIdField.GetAttributeGUID());
@@ -1647,7 +1654,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("RasterFieldName", ""));
 		tvs.add(new EATaggedValue("Versioned", "false"));
 
-		EAModelUtil.setTaggedValues(e, tvs);
+		EAElementUtil.setTaggedValues(e, tvs);
 
 		// properties cannot be processed now, because we do not necessarily
 		// have EA Elements for all classes in the model yet; thus the type of a
@@ -1812,7 +1819,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		if (ci.isAbstract()) {
 			try {
-				EAModelUtil.setEAAbstract(true, e);
+				EAElementUtil.setEAAbstract(e, true);
 			} catch (EAException exc) {
 				result.addError(this, 204, ci.name(), exc.getMessage());
 			}
@@ -1822,7 +1829,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			try {
 
 				String aliasName = normalizeAlias(ci.aliasName(), ci);
-				EAModelUtil.setEAAlias(aliasName, e);
+				EAElementUtil.setEAAlias(e, aliasName);
 			} catch (EAException exc) {
 				result.addError(this, 204, ci.name(), exc.getMessage());
 			}
@@ -1832,7 +1839,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				documentationNoValue);
 		if (s != null) {
 			try {
-				EAModelUtil.setEANotes(s, e);
+				EAElementUtil.setEANotes(e, s);
 			} catch (EAException exc) {
 				result.addError(this, 204, ci.name(), exc.getMessage());
 			}
@@ -1906,7 +1913,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				} else {
 
 					// create the EA package
-					eaPkgId = EAModelUtil.createEAPackage(rep, pi,
+					eaPkgId = EARepositoryUtil.createEAPackage(rep, pi,
 							eaParentPkgId);
 					eaPkgIdByModelPkg.put(pi, eaPkgId);
 				}
@@ -2222,7 +2229,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						assocClassName = clipToMaxLength(assocClassName);
 					}
 
-					Element assocClass = EAModelUtil.createEAClass(rep,
+					Element assocClass = EARepositoryUtil.createEAClass(rep,
 							assocClassName, assocClassesPkgId);
 
 					Attribute foreignKeyFieldSrc = null;
@@ -2293,7 +2300,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					// set stereotype and tagged values on association class
 
-					EAModelUtil.setEAStereotype(assocClass,
+					EAElementUtil.setEAStereotypeEx(assocClass,
 							STEREOTYPE_RELATIONSHIP_CLASS);
 
 					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
@@ -2334,16 +2341,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					 * create <<RelationshipClass>> association
 					 */
 
-					Connector con = EAModelUtil.createEAAssociation(sourceElmt,
-							targetElmt);
+					Connector con = EAElementUtil
+							.createEAAssociation(sourceElmt, targetElmt);
 
 					/*
 					 * NOTE: the connector has the same name as the association
 					 * class - and that has already been created, so we can
 					 * reuse the name here
 					 */
-					EAModelUtil.setEAName(con, assocClassName);
-					EAModelUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAName(con, assocClassName);
+					EAConnectorUtil.setEAStereotype(con,
 							STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2363,10 +2370,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					targetPropName = this.checkPropertyName(source_,
 							targetPropName);
 
-					EAModelUtil.setEARole(clientEnd,
+					EAConnectorEndUtil.setEARole(clientEnd,
 							toLowerCamelCase(sourcePropName));
 
-					EAModelUtil.setEARole(supplierEnd,
+					EAConnectorEndUtil.setEARole(supplierEnd,
 							toLowerCamelCase(targetPropName));
 
 					// EAModelUtil.setEARole(clientEnd,
@@ -2374,17 +2381,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					// EAModelUtil.setEARole(supplierEnd,
 					// toLowerCamelCase(roleNameTarget));
 
-					EAModelUtil.setEACardinality(clientEnd, "0..*");
-					EAModelUtil.setEACardinality(supplierEnd, "0..*");
+					EAConnectorEndUtil.setEACardinality(clientEnd, "0..*");
+					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
 					/*
 					 * set tagged values on association - they are the same as
 					 * for the association class
 					 */
 
-					EAModelUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.setTaggedValues(con, tvs);
 
-					EAModelUtil.setEAAssociationClass(con, assocClass);
+					EAConnectorUtil.setEAAssociationClass(con, assocClass);
 
 				} catch (EAException e) {
 
@@ -2610,8 +2617,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				try {
 
-					Connector con = EAModelUtil.createEAAssociation(sourceElmt,
-							targetElmt);
+					Connector con = EAElementUtil
+							.createEAAssociation(sourceElmt, targetElmt);
 
 					String relClassName = computeRelationshipClassName(source_,
 							target_);
@@ -2622,8 +2629,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						relClassName = clipToMaxLength(relClassName);
 					}
 
-					EAModelUtil.setEAName(con, relClassName);
-					EAModelUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAName(con, relClassName);
+					EAConnectorUtil.setEAStereotype(con,
 							STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2642,10 +2649,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					targetPropName = this.checkPropertyName(source_,
 							targetPropName);
 
-					EAModelUtil.setEARole(clientEnd,
+					EAConnectorEndUtil.setEARole(clientEnd,
 							toLowerCamelCase(sourcePropName));
 
-					EAModelUtil.setEARole(supplierEnd,
+					EAConnectorEndUtil.setEARole(supplierEnd,
 							toLowerCamelCase(targetPropName));
 
 					// EAModelUtil.setEARole(clientEnd,
@@ -2655,8 +2662,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					// EAModelUtil.setEARole(clientEnd, roleNameSource);
 					// EAModelUtil.setEARole(supplierEnd, roleNameTarget);
 
-					EAModelUtil.setEACardinality(clientEnd, "1");
-					EAModelUtil.setEACardinality(supplierEnd, "0..*");
+					EAConnectorEndUtil.setEACardinality(clientEnd, "1");
+					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
 					// set tagged values on association
 					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
@@ -2690,7 +2697,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					tvs.add(new EATaggedValue("IsAttachmentRelationship",
 							"false"));
 
-					EAModelUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.setTaggedValues(con, tvs);
 
 				} catch (EAException e) {
 
@@ -3028,7 +3035,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Set<String> stereotypes = new HashSet<String>();
 		stereotypes.add("Field");
 
-		return EAModelUtil.createEAAttribute(e, name, alias, documentation,
+		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
 				stereotypes, tvs, false, false, initialValue,
 				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
@@ -3108,7 +3115,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				String c2Name = elementNameByClassInfo.get(ci2);
 
 				try {
-					EAModelUtil.createEAGeneralization(rep,
+					EARepositoryUtil.createEAGeneralization(rep,
 							elementIdByClassInfo.get(ci1), c1Name,
 							elementIdByClassInfo.get(ci2), c2Name);
 				} catch (EAException e) {
@@ -3290,13 +3297,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 												pme.getTargetType(), ci);
 
 										// create min and max fields
-										EAModelUtil.createEAAttribute(rd,
+										EAElementUtil.createEAAttribute(rd,
 												"MinValue", null, null, null,
 												null, false, false,
 												doubleToString(minValue),
 												new Multiplicity(1, 1), null,
 												null);
-										EAModelUtil.createEAAttribute(rd,
+										EAElementUtil.createEAAttribute(rd,
 												"MaxValue", null, null, null,
 												null, false, false,
 												doubleToString(maxValue),
@@ -3604,6 +3611,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
+		EARepositoryUtil.setEABatchAppend(rep, false);
+		EARepositoryUtil.setEAEnableUIUpdates(rep, true);
+		
 		// 2015-06-25 JE: compact() no longer supported in EA v12 API
 		// rep.Compact();
 		rep.CloseFile();

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2014 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ import de.interactive_instruments.ShapeChange.Model.ModelImpl;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharUtils;
@@ -302,7 +302,7 @@ public class EADocument extends ModelImpl implements Model {
 				 * prevent loading of classes that have tagged value 'status'
 				 * with prohibited value
 				 */
-				String statusTaggedValue = EAModelUtil.taggedValue(elmt,
+				String statusTaggedValue = EAElementUtil.taggedValue(elmt,
 						"status");
 				if (statusTaggedValue != null
 						&& options.prohibitedStatusValuesWhenLoadingClasses()

@@ -55,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
+import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -89,7 +90,10 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.SQLServerNameNor
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
 /**
  * Creates SQL DDL for an application schema.
@@ -101,7 +105,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 public class SqlDdl implements SingleTarget, MessageSource {
 
 	public static final String PLATFORM = "sql";
-	
+
 	protected static Model model = null;
 
 	private static String[] descriptorsForCodelistFromConfig = new String[] {
@@ -129,12 +133,13 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	private static String outputFilename = null;
 
 	protected static String codeStatusCLType;
+	protected static int codeStatusCLLength;
 	protected static String idColumnName;
 	protected static String oneToManyReferenceColumnName;
 	protected static String foreignKeyColumnSuffix;
 	protected static String foreignKeyColumnSuffixDatatype;
 	protected static String foreignKeyColumnSuffixCodelist;
-	protected static String foreignKeyColumnDataType;
+	protected static ColumnDataType foreignKeyColumnDataType;
 	protected static String primaryKeySpec;
 	protected static String primaryKeySpecCodelist;
 	protected static String nameCodeStatusCLColumn;
@@ -163,7 +168,6 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	/* ------- */
 	/* Replication schema specific fields */
 	protected static boolean createRepSchema = false;
-	protected static Map<String, ProcessMapEntry> repSchemaMapEntryByType = new HashMap<String, ProcessMapEntry>();
 
 	protected static String repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
 	protected static String repSchemaTargetNamespace = null;
@@ -174,19 +178,23 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String repSchemaForeignKeyFieldType;
 	protected static Multiplicity repSchemaMultiplicity1 = new Multiplicity(1,
 			1);
-	
+
+	/* ------- */
+	/* Database model specific fields */
+	protected static boolean createDatabaseModel = false;
+
 	/* ------ */
 	/*
 	 * Non-static fields
 	 */
 	protected ShapeChangeResult result = null;
 	protected Options options = null;
-	
+
 	private PackageInfo schema = null;
 	private boolean schemaNotEncoded = false;
 
 	private PackageInfo mainAppSchema;
-	
+
 	@Override
 	public void initialise(PackageInfo pi, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
@@ -196,7 +204,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		model = m;
 		options = o;
 		result = r;
-		mainAppSchema = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
+		mainAppSchema = TargetUtil
+				.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
 
 		diagnosticsOnly = diagOnly;
 
@@ -246,9 +255,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						outputFilename = mainAppSchema.name();
 					}
 				}
-				outputFilename = outputFilename.replace("/", "_")
-						.replace(" ", "_");
-				
+				outputFilename = outputFilename.replace("/", "_").replace(" ",
+						"_");
+
 				String repSchemaOutputFilename = outputFilename + ".xsd";
 
 				File repSchemaOutputFile = new File(outputDirectoryFile,
@@ -370,12 +379,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				normalizer.setIgnoreCaseWhenNormalizing(true);
 			}
 
-			namingScheme = new DefaultNamingScheme(result, normalizer,
-					fkNaming, ckNaming, uniqueConstraintNaming);
+			namingScheme = new DefaultNamingScheme(result, normalizer, fkNaming,
+					ckNaming, uniqueConstraintNaming);
 
-			codeStatusCLType = options.parameterAsString(this.getClass().getName(),
+			codeStatusCLType = options.parameterAsString(
+					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUSCL_TYPE,
 					SqlConstants.DEFAULT_CODESTATUSCL_TYPE, false, true);
+
+			codeStatusCLLength = options.parameterAsInteger(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CODESTATUSCL_LENGTH,
+					SqlConstants.DEFAULT_CODESTATUSCL_LENGTH);
 
 			idColumnName = options.parameterAsString(this.getClass().getName(),
 					SqlConstants.PARAM_ID_COLUMN_NAME,
@@ -392,23 +407,30 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
 					SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX, true,
 					false);
-			
+
 			foreignKeyColumnSuffixCodelist = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST,
-					foreignKeyColumnSuffix, true,
-					false);
-			
+					foreignKeyColumnSuffix, true, false);
+
 			foreignKeyColumnSuffixDatatype = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
 					SqlConstants.DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE,
 					true, false);
 
-			foreignKeyColumnDataType = options.parameterAsString(
-					this.getClass().getName(),
-					SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
-					databaseStrategy.primaryKeyDataType(), false, true);
+			String foreignKeyColumnDataTypeFromConfig = options
+					.parameterAsString(this.getClass().getName(),
+							SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
+							null, false, true);
+
+			if (foreignKeyColumnDataTypeFromConfig == null) {
+				foreignKeyColumnDataType = databaseStrategy
+						.primaryKeyDataType();
+			} else {
+				foreignKeyColumnDataType = new ColumnDataType(
+						foreignKeyColumnDataTypeFromConfig);
+			}
 
 			primaryKeySpec = options.parameterAsString(
 					this.getClass().getName(),
@@ -423,12 +445,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			nameCodeStatusCLColumn = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_NAME_CODESTATUS_CL_COLUMN,
-					SqlConstants.DEFAULT_NAME_CODESTATUS_CL_COLUMN, false, true);
-			
+					SqlConstants.DEFAULT_NAME_CODESTATUS_CL_COLUMN, false,
+					true);
+
 			nameCodeStatusNotesColumn = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
-					SqlConstants.DEFAULT_NAME_CODESTATUSNOTES_COLUMN, false, true);
+					SqlConstants.DEFAULT_NAME_CODESTATUSNOTES_COLUMN, false,
+					true);
 
 			String sdoDimElement_value = options.parameterAsString(
 					this.getClass().getName(),
@@ -570,7 +594,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 			if (schema.matches(
 					ReplicationSchemaConstants.RULE_TGT_SQL_ALL_REPSCHEMA)) {
-				
+
 				createRepSchema = true;
 
 				repSchemaObjectIdentifierFieldType = options.parameterAsString(
@@ -589,29 +613,43 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE_SUFFIX,
 						ReplicationSchemaConstants.DEFAULT_TARGET_NAMESPACE_SUFFIX,
 						false, true);
-				
+
 				if (mainAppSchema != null) {
 					repSchemaTargetNamespace = mainAppSchema.targetNamespace();
 					repSchemaTargetVersion = mainAppSchema.version();
 					repSchemaTargetXmlns = mainAppSchema.xmlns();
 				} else {
-					repSchemaTargetNamespace = options.parameterAsString(this.getClass().getName(),
-							ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE, schema.targetNamespace(), true, true);
-					repSchemaTargetVersion = options.parameterAsString(this.getClass().getName(),
-							ReplicationSchemaConstants.PARAM_TARGET_VERSION, schema.version(), true, true);
-					repSchemaTargetXmlns = options.parameterAsString(this.getClass().getName(),
-							ReplicationSchemaConstants.PARAM_TARGET_XMLNS, schema.xmlns(), true, true);
+					repSchemaTargetNamespace = options.parameterAsString(
+							this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE,
+							schema.targetNamespace(), true, true);
+					repSchemaTargetVersion = options.parameterAsString(
+							this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_VERSION,
+							schema.version(), true, true);
+					repSchemaTargetXmlns = options.parameterAsString(
+							this.getClass().getName(),
+							ReplicationSchemaConstants.PARAM_TARGET_XMLNS,
+							schema.xmlns(), true, true);
 				}
 				// make sure parameters are never null
-				repSchemaTargetNamespace = StringUtils.defaultString(repSchemaTargetNamespace);
-				repSchemaTargetVersion = StringUtils.defaultString(repSchemaTargetVersion);
-				repSchemaTargetXmlns = StringUtils.defaultString(repSchemaTargetXmlns);
-				
+				repSchemaTargetNamespace = StringUtils
+						.defaultString(repSchemaTargetNamespace);
+				repSchemaTargetVersion = StringUtils
+						.defaultString(repSchemaTargetVersion);
+				repSchemaTargetXmlns = StringUtils
+						.defaultString(repSchemaTargetXmlns);
+
 				repSchemaDocumentationUnlimitedLengthCharacterDataType = options
 						.parameterAsString(this.getClass().getName(),
 								ReplicationSchemaConstants.PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
 								ReplicationSchemaConstants.DEFAULT_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
 								false, true);
+
+			} else if (schema
+					.matches(DatabaseModelConstants.RULE_TGT_SQL_ALL_DBMODEL)) {
+
+				createDatabaseModel = true;
 			}
 		}
 	}
@@ -659,7 +697,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		}
 
 		result.addDebug(this, 2, ci.name());
-		
+
 		ProcessMapEntry pme = options.targetMapEntry(ci.name(),
 				ci.encodingRule("sql"));
 
@@ -667,9 +705,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			result.addInfo(this, 22, ci.name(), pme.getTargetType());
 			return;
 		}
-		
-		if(schemaNotEncoded) {
-			result.addInfo(this,18,schema.name(),ci.name());
+
+		if (schemaNotEncoded) {
+			result.addInfo(this, 18, schema.name(), ci.name());
 			return;
 		}
 
@@ -709,7 +747,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	@Override
 	public void write() {
-		
+
 		// nothing to do here (this is a SingleTarget)
 	}
 
@@ -757,7 +795,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	@Override
 	public void writeAll(ShapeChangeResult r) {
-		
+
 		this.result = r;
 		this.options = r.options();
 
@@ -775,13 +813,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		 * results
 		 */
 		try {
-						
+
 			if (createRepSchema) {
 
 				// Create replication schema
 				ReplicationSchemaVisitor visitor = new ReplicationSchemaVisitor(
 						this, builder);
 				visitor.visit(stmts);
+				visitor.postprocess();
 
 				Properties outputFormat = OutputPropertiesFactory
 						.getDefaultMethodProperties("xml");
@@ -818,9 +857,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 				// --- Create DDL
 				StringBuffer sb = new StringBuffer();
-				DdlVisitor visitor = new DdlVisitor(SqlConstants.CRLF,
-						SqlConstants.INDENT, this);
+				DdlVisitor visitor;
+
+				if (databaseStrategy instanceof PostgreSQLStrategy) {
+					visitor = new PostgreSQLDdlVisitor(SqlConstants.CRLF,
+							SqlConstants.INDENT, this);
+				} else {
+					visitor = new DdlVisitor(SqlConstants.CRLF,
+							SqlConstants.INDENT, this);
+				}
+
 				visitor.visit(stmts);
+				visitor.postprocess();
 				sb.append(visitor.getDdl());
 
 				// --- Write DDL to file
@@ -877,6 +925,40 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 				result.addResult(getTargetName(), outputDirectory, fileName,
 						null);
+
+				if (createDatabaseModel) {
+
+					String fileNameDM = outputFilename + ".eap";
+					File eap = new File(outputDirectory, fileNameDM);
+
+					Repository repository = EARepositoryUtil.openRepository(eap,
+							true);
+
+					EARepositoryUtil.setEABatchAppend(repository, true);
+					EARepositoryUtil.setEAEnableUIUpdates(repository, false);
+
+					try {
+						DatabaseModelVisitor dmVisitor = new DatabaseModelVisitor(
+								this, repository);
+						dmVisitor.initialize();
+
+						dmVisitor.visit(stmts);
+
+						dmVisitor.postprocess();
+
+						result.addResult(getTargetName(), outputDirectory,
+								fileNameDM, null);
+
+					} catch (EAException e) {
+						result.addError(this, 27, e.getMessage());
+					} catch (NullPointerException npe) {
+						result.addError(this, 27, npe.getMessage());
+						npe.printStackTrace(System.err);
+					} finally {
+						EARepositoryUtil.closeRepository(repository);
+						repository = null;
+					}
+				}
 			}
 
 		} catch (Exception e) {
@@ -892,9 +974,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	@Override
 	public void reset() {
-		
+
 		model = null;
-		
+
 		descriptorsForCodelistFromConfig = new String[] { "documentation" };
 		descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
@@ -904,7 +986,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		initialised = false;
 		diagnosticsOnly = false;
 		atLeastOneSchemaIsEncoded = false;
-		
+
 		documentationTemplate = null;
 		documentationNoValue = null;
 
@@ -912,6 +994,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		outputFilename = null;
 
 		codeStatusCLType = null;
+		codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
 		idColumnName = null;
 		oneToManyReferenceColumnName = null;
 		foreignKeyColumnSuffix = null;
@@ -936,7 +1019,6 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		sdoDimArrayExpression = new SdoDimArrayExpression();
 
 		createRepSchema = false;
-		repSchemaMapEntryByType = new HashMap<String, ProcessMapEntry>();
 		repSchemaDocumentationUnlimitedLengthCharacterDataType = null;
 		repSchemaTargetNamespace = null;
 		repSchemaTargetNamespaceSuffix = null;
@@ -945,6 +1027,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		repSchemaObjectIdentifierFieldType = null;
 		repSchemaForeignKeyFieldType = null;
 		repSchemaMultiplicity1 = new Multiplicity(1, 1);
+
+		createDatabaseModel = false;
 	}
 
 	/**
@@ -955,8 +1039,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class SqlDdl";
-//		case 1:
-//			return "";
+		// case 1:
+		// return "";
 		case 2:
 			return "Processing class '$1$'.";
 		case 3:
@@ -981,7 +1065,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			return "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
 		case 18:
 			return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
-			
+
 		case 22:
 			return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 		case 23:
@@ -996,6 +1080,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 		case 26:
 			return "Exception occurred while transferring contents of file '$1$': $2$";
+		case 27:
+			return "Exception occurred while creating database model. Exception message is: $1$";
 
 		case 503:
 			return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

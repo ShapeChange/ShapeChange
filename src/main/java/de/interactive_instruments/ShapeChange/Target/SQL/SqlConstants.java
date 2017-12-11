@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.util.regex.Pattern;
+
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
@@ -203,6 +205,14 @@ public class SqlConstants {
 	 * {@value #DEFAULT_CODESTATUSCL_TYPE}.
 	 */
 	public static final String PARAM_CODESTATUSCL_TYPE = "codeStatusCLType";
+
+	/**
+	 * Specify the length of an codeStatusCL column added by
+	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}, in case that the code status
+	 * type is an enumeration. Default value is
+	 * {@value #DEFAULT_CODESTATUSCL_LENGTH}.
+	 */
+	public static final String PARAM_CODESTATUSCL_LENGTH = "codeStatusCLLength";
 
 	/**
 	 * This parameter controls the name of the column that contains the name or
@@ -523,6 +533,7 @@ public class SqlConstants {
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
 
 	public static final String DEFAULT_CODESTATUSCL_TYPE = "CodeStatusCL";
+	public static final int DEFAULT_CODESTATUSCL_LENGTH = 50;
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";
@@ -590,6 +601,20 @@ public class SqlConstants {
 	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
 	public static final String ME_PARAM_TEXTORCHARACTERVARYING = "textOrCharacterVarying";
 
+	/**
+	 * The target type can have a length. This is important for correctly
+	 * parsing the length from the targetType (more specifically, its
+	 * parameterization). The parameter is mutually exclusive with 'precision'.
+	 */
+	public static final String ME_PARAM_LENGTH = "length";
+	/**
+	 * The target type can have precision. This is important for correctly
+	 * parsing the precision (and optional scale) from the targetType (more
+	 * specifically, its parameterization). The parameter is mutually exclusive
+	 * with 'length'.
+	 */
+	public static final String ME_PARAM_PRECISION = "precision";
+
 	/*
 	 * MAP_TARGETTYPE_COND_PART and MAP_TARGETTYPE_COND_TEXTORCHARACTERVARYING
 	 * are kept for backwards compatibility
@@ -601,4 +626,15 @@ public class SqlConstants {
 	public static final String INDENT = "   ";
 
 	public static final String NOT_NULL_COLUMN_SPEC = "NOT NULL";
+
+	/**
+	 * Regular expression to extract the data type name as well as length,
+	 * precision and scale from the target type defined by a map entry. Group 0
+	 * contains the whole string, group 1 the data type name, group 2 the first
+	 * number, and group 3 the optional second number (which can be
+	 * <code>null</code>).
+	 */
+	public static final Pattern PATTERN_ME_TARGETTYPE_LENGTH_PRECISION_SCALE = Pattern
+			.compile(
+					"(.+)\\(([+-]?\\d+(?:\\.\\d)*)(?:,([+-]?\\d+(?:\\.\\d)*))?\\)");
 }
