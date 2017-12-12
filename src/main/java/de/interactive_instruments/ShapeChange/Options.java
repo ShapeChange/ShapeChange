@@ -154,14 +154,14 @@ public class Options {
 			"datatype", "featuretype", "type", "basictype", "interface",
 			"union", "abstract", "fachid", "schluesseltabelle", "adeelement",
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
-			"aixmextension" };
-	public static final String[] assocStereotypes = { "disjoint" };
+			"aixmextension", "retired" };
+	public static final String[] assocStereotypes = { "disjoint", "retired" };
 
 	public static final String[] propertyStereotypes = { "voidable",
-			"identifier", "version", "property", "estimated" };
+			"identifier", "version", "property", "estimated", "retired" };
 	public static final String[] packageStereotypes = { "application schema",
-			"bundle", "leaf" };
-	public static final String[] depStereotypes = { "import", "include" };
+			"bundle", "leaf", "retired" };
+	public static final String[] depStereotypes = { "import", "include", "retired" };
 
 	/** Carriage Return and Line Feed characters. */
 	public static final String CRLF = "\r\n";
