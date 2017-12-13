@@ -94,7 +94,13 @@ public abstract class BasicTest {
 	boolean testTime = false;
 	boolean exportModel = false;
 	boolean runWithExportedModel = false;
+
+	/*
+	 * The following two fields are primarily used during test development. They
+	 * should be set to false for actual tests.
+	 */
 	boolean justCompareResults = false;
+	boolean skipActualTest = false;
 
 	protected void multiTest(String config, String[] fileFormatsToCheck,
 			String basedirResults, String basedirReference) {
@@ -124,7 +130,7 @@ public abstract class BasicTest {
 				assertTrue("Execution time too long", end - start < 90000);
 		}
 
-		if (!exportModel) {
+		if (!exportModel && !skipActualTest) {
 			multiTestInDirs(fileFormatsToCheckLC, basedirResults,
 					basedirReference);
 		}

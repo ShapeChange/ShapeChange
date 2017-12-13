@@ -1062,6 +1062,9 @@ public class EAModelDiff {
 
 		result &= similar(elmtInfo.getModelPath(), "IsSpec", elmt.GetIsSpec(),
 				refElmt.GetIsSpec());
+		
+		result &= similar(elmtInfo.getModelPath(), "LinkedDocument", elmt.GetLinkedDocument(),
+				refElmt.GetLinkedDocument());
 
 		// Ignore Issues, Locked, MetaType
 

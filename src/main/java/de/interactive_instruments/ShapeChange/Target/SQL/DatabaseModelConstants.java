@@ -58,18 +58,31 @@ public class DatabaseModelConstants {
 	 * default value.
 	 */
 	public static final String PARAM_DB_OWNER = "dbOwner";
-	
+
 	/**
 	 * This optional parameter can be used to specify the database version. For
 	 * example, for Oracle, one could set this to "12.01.0020". There is no
 	 * default value.
 	 */
 	public static final String PARAM_DB_VERSION = "dbVersion";
-	
+
 	/**
 	 * This optional parameter can be used to specify the tablespace. For
-	 * example, for Oracle, one could set this to "USERS". There is no
-	 * default value.
+	 * example, for Oracle, one could set this to "USERS". There is no default
+	 * value.
 	 */
 	public static final String PARAM_TABLESPACE = "tablespace";
+
+	/**
+	 * When creating a database model, ShapeChange loads DBMS specific templates
+	 * into an EA repository (which is either created on the fly, or taken from
+	 * a configured location). These templates add &lt;&lt;DataModel&gt;&gt;
+	 * packages with specific names to the repository. If such a package already
+	 * exists, ShapeChange will create another package with the same name (but
+	 * different GUIDs for its contents). This could cause confusion. To avoid
+	 * any confusion, ShapeChange can delete a pre-existing data model package
+	 * that has the same name as the one that would be added via the template.
+	 * To do so, set this parameter to true. Default is false.
+	 */
+	public static final String PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE = "deletePreExistingDataModelPackage";
 }

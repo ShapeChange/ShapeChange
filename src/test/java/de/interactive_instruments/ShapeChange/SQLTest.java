@@ -224,4 +224,14 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql", "eap" }, "testResults/sql/databaseModel",
 				"src/test/resources/sql/databaseModel/reference");
 	}
+
+	@Test
+	public void testDatabaseModel_mergeLinkedDocuments() {
+
+		multiTest(
+				"src/test/resources/sql/databaseModel_mergeLinkedDocuments/testEA_sql_databaseModel_mergeLinkedDocuments.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/databaseModel_mergeLinkedDocuments",
+				"src/test/resources/sql/databaseModel_mergeLinkedDocuments/reference");
+	}
 }

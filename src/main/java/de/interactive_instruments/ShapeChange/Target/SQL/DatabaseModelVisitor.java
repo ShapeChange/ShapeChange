@@ -61,6 +61,7 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
@@ -141,10 +142,10 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		dbOwner = options.parameterAsString(sqlddl.getClass().getName(),
 				DatabaseModelConstants.PARAM_DB_OWNER, null, false, true);
-		
+
 		dbVersion = options.parameterAsString(sqlddl.getClass().getName(),
 				DatabaseModelConstants.PARAM_DB_VERSION, null, false, true);
-		
+
 		tablespace = options.parameterAsString(sqlddl.getClass().getName(),
 				DatabaseModelConstants.PARAM_TABLESPACE, null, false, true);
 
@@ -165,16 +166,24 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 		Collection<Package> c = repository.GetModels();
 		Package root = c.GetAt((short) 0);
 
-		/*
-		 * Check if <<DataModel>> package with name from pattern already exists
-		 * - if so, delete it.
-		 */
-		Integer dmPkgID = EARepositoryUtil.getEAChildPackageByName(repository,
-				root.GetPackageID(), eadbms.getDmPatternPackageName());
+		boolean deletePreexistingPackage = options.parameterAsBoolean(
+				SqlDdl.class.getName(),
+				DatabaseModelConstants.PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE,
+				false);
 
-		if (dmPkgID != null) {
-			result.addInfo(this, 100, eadbms.getDmPatternPackageName());
-			EARepositoryUtil.deletePackage(repository, dmPkgID);
+		if (deletePreexistingPackage) {
+			/*
+			 * Check if <<DataModel>> package with name from pattern already
+			 * exists - if so, delete it.
+			 */
+			Integer dmPkgID = EARepositoryUtil.getEAChildPackageByName(
+					repository, root.GetPackageID(),
+					eadbms.getDmPatternPackageName());
+
+			if (dmPkgID != null) {
+				result.addInfo(this, 100, eadbms.getDmPatternPackageName());
+				EARepositoryUtil.deletePackage(repository, dmPkgID);
+			}
 		}
 
 		/*
@@ -264,13 +273,21 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	public void visit(CreateTable createTable) {
 
 		Table table = createTable.getTable();
-		
+
 		try {
 
 			Element tableElmt = EARepositoryUtil.createEAClass(repository,
 					table.getName(), tablesPkg);
 
 			this.eaElementIDByTable.put(table, tableElmt.GetElementID());
+
+			// Load linked document, if it exists
+			ClassInfo representedClass = table.getRepresentedClass();
+			if (representedClass != null
+					&& representedClass.getLinkedDocument() != null) {
+				tableElmt.LoadLinkedDocument(
+						representedClass.getLinkedDocument().getAbsolutePath());
+			}
 
 			/*
 			 * NOTE: The stereotype must be set before any tagged values
@@ -400,19 +417,18 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 	@Override
 	public void visit(CreateIndex createIndex) {
-		
+
 		Table table = createIndex.getTable();
-		
+
 		Element tableElmt = repository
 				.GetElementByID(this.eaElementIDByTable.get(table));
-		
+
 		Index index = createIndex.getIndex();
 
 		try {
 
 			/* Create index 'operation' */
-			Method m = EAElementUtil.createEAMethod(tableElmt,
-					index.getName());
+			Method m = EAElementUtil.createEAMethod(tableElmt, index.getName());
 			EAMethodUtil.setEAStereotypeEx(m, "EAUML::index");
 
 			List<Column> indexColumns = index.getColumns();
@@ -425,13 +441,14 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 				EAParameterUtil.setEAType(param, mapDataType(indexCol));
 			}
 
-			// TBD Is there a way to set index specs, for example via tagged values?
+			// TBD Is there a way to set index specs, for example via tagged
+			// values?
 
 		} catch (EAException e) {
-			result.addError(this, 109, index.getName(),
-					table.getName(), e.getMessage());
+			result.addError(this, 109, index.getName(), table.getName(),
+					e.getMessage());
 		}
-		
+
 	}
 
 	@Override
@@ -717,7 +734,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			return "Could not create foreign key constraint '$1$' on table '$2$' because no primary key method was found on reference table '$3$'.";
 		case 109:
 			return "Exception encountered while creating index '$1$' on table '$2$'. Exception message: '$3$'";
-		
+
 		default:
 			return "(" + DatabaseModelVisitor.class.getName()
 					+ ") Unknown message with number: " + mnr;

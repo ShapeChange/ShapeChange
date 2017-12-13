@@ -686,7 +686,6 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 			ClassInfoEA eaCi = (ClassInfoEA) ci;
 
-			// try {
 			java.io.File ldFile = new java.io.File(targetFolder,
 					"linkedDoc_" + eaCi.name() + ".docx");
 			boolean fileSaved = eaCi.eaClassElement
@@ -702,14 +701,6 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 			} else {
 				eaCi.setLinkedDocument(null);
 			}
-
-			// } catch (IOException e) {
-			// MessageContext mc = result.addError(this, 100, ci.name(),
-			// e.getMessage());
-			// if (mc != null) {
-			// mc.addDetail(this, 1, ci.fullNameInSchema());
-			// }
-			// }
 		}
 	}
 
@@ -895,9 +886,6 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 			return "Context: supertype '$1$'";
 		case 5:
 			return "Context: subtype '$1$'";
-
-		case 100:
-			return "Exception occurred when saving linked document of class '$1$'. Exception message is: $2$";
 
 		default:
 			return "(" + EADocument.class.getName()

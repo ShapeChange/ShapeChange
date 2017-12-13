@@ -78,6 +78,7 @@
 			<!-- <targetParameter name="dataModelPatternPath" -->
 			<!-- value="C:/Program Files (x86)/Sparx Systems/EA/ModelPatterns" /> -->
 			<targetParameter name="dbOwner" value="public" />
+			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -117,6 +118,7 @@
 				value="_fk" />
 			<targetParameter name="codeNameColumnName" value="code" />
 			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -158,6 +160,7 @@
 				value="_fk" />
 			<targetParameter name="codeNameColumnName" value="code" />
 			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
