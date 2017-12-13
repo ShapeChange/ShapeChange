@@ -152,6 +152,7 @@ public class SqlBuilder implements MessageSource {
 
 		table.setAssociativeTable(true);
 		table.setRepresentedProperty(pi);
+		// TBD: set table documentation?
 
 		List<Column> columns = new ArrayList<Column>();
 		table.setColumns(columns);
@@ -163,7 +164,7 @@ public class SqlBuilder implements MessageSource {
 		 */
 		String classReferenceFieldName = pi.inClass().name()
 				+ SqlDdl.idColumnName;
-		Column cdInClassReference = createColumn(table, null,
+		Column cdInClassReference = createColumn(table, null, null,
 				classReferenceFieldName, SqlDdl.foreignKeyColumnDataType,
 				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cdInClassReference.setReferencedTable(map(pi.inClass()));
@@ -175,6 +176,8 @@ public class SqlBuilder implements MessageSource {
 
 			String piFieldName = determineTableNameForValueType(pi)
 					+ SqlDdl.idColumnName;
+			String piDocumentation = pi.derivedDocumentation(
+					SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 
 			if (pi.categoryOfValue() == Options.CODELIST && pi.inClass()
 					.matches(SqlConstants.RULE_TGT_SQL_CLS_CODELISTS)) {
@@ -184,7 +187,8 @@ public class SqlBuilder implements MessageSource {
 					ColumnDataType mappedType = identifyNumericType(pi);
 
 					if (mappedType != null) {
-						cdPi = createColumn(table, pi, piFieldName, mappedType,
+						cdPi = createColumn(table, pi, piDocumentation,
+								piFieldName, mappedType,
 								SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 
 					} else {
@@ -210,13 +214,14 @@ public class SqlBuilder implements MessageSource {
 										SqlDdl.codeNameSize);
 					}
 
-					cdPi = createColumn(table, pi, piFieldName, fieldType,
-							SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+					cdPi = createColumn(table, pi, piDocumentation, piFieldName,
+							fieldType, SqlConstants.NOT_NULL_COLUMN_SPEC, false,
+							true);
 				}
 
 			} else {
 
-				cdPi = createColumn(table, pi, piFieldName,
+				cdPi = createColumn(table, pi, piDocumentation, piFieldName,
 						SqlDdl.foreignKeyColumnDataType,
 						SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 			}
@@ -496,10 +501,11 @@ public class SqlBuilder implements MessageSource {
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
+		table.setDocumentation(ci.derivedDocumentation(
+				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue));
 
-		if (ci.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
-			createExplicitCommentUnlessNoDocumentation(table, null, ci);
+		if (SqlDdl.createExplicitComments) {
+			createExplicitCommentUnlessNoDocumentation(table, null);
 		}
 
 		List<Column> columns = new ArrayList<Column>();
@@ -515,7 +521,7 @@ public class SqlBuilder implements MessageSource {
 
 		if (countIdentifierAttributes == 0) {
 
-			Column id_cd = createColumn(table, null, SqlDdl.idColumnName,
+			Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName,
 					SqlDdl.databaseStrategy.primaryKeyDataType(),
 					SqlDdl.primaryKeySpec, true, false);
 			columns.add(id_cd);
@@ -556,29 +562,24 @@ public class SqlBuilder implements MessageSource {
 
 	/**
 	 * Creates a comment statement for the given table or column, with the
-	 * documentation derived from the given Info object. If the derived
-	 * documentation is empty or if both table and column are <code>null</code>
-	 * then no comment statement will be created.
+	 * documentation of the table/column. If the documentation is empty or if
+	 * both table and column are <code>null</code> then no comment statement
+	 * will be created.
 	 * 
 	 * @param table
 	 * @param column
-	 * @param i
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Table table,
-			Column column, Info i) {
+			Column column) {
 
-		String s = i.derivedDocumentation(SqlDdl.documentationTemplate,
-				SqlDdl.documentationNoValue);
+		if (column == null
+				&& StringUtils.isNotBlank(table.getDocumentation())) {
+			commentStatements.add(new Comment(table,
+					table.getDocumentation().replaceAll("\\s+", " ").trim()));
 
-		if (s != null && !s.trim().isEmpty()) {
-
-			Comment comment;
-			if (column == null) {
-				comment = new Comment(table, s.trim());
-			} else {
-				comment = new Comment(column, s.trim());
-			}
-			commentStatements.add(comment);
+		} else if (StringUtils.isNotBlank(column.getDocumentation())) {
+			commentStatements.add(new Comment(column,
+					column.getDocumentation().replaceAll("\\s+", " ").trim()));
 		}
 	}
 
@@ -650,6 +651,7 @@ public class SqlBuilder implements MessageSource {
 
 		table.setAssociativeTable(true);
 		table.setRepresentedAssociation(ai);
+		// TBD: set table documentation?
 
 		List<Column> columns = new ArrayList<Column>();
 		table.setColumns(columns);
@@ -679,7 +681,9 @@ public class SqlBuilder implements MessageSource {
 		// add field for first reference
 		String name_1 = determineTableNameForType(pi1.inClass())
 				+ (reflexive ? "_" + pi1.name() : "") + SqlDdl.idColumnName;
-		Column cd1 = createColumn(table, pi2, name_1,
+		String documentation_1 = pi2.derivedDocumentation(
+				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
+		Column cd1 = createColumn(table, pi2, documentation_1, name_1,
 				SqlDdl.foreignKeyColumnDataType,
 				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd1.setReferencedTable(map(pi1.inClass()));
@@ -688,7 +692,9 @@ public class SqlBuilder implements MessageSource {
 		// add field for second reference
 		String name_2 = determineTableNameForType(pi2.inClass())
 				+ (reflexive ? "_" + pi2.name() : "") + SqlDdl.idColumnName;
-		Column cd2 = createColumn(table, pi1, name_2,
+		String documentation_2 = pi1.derivedDocumentation(
+				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
+		Column cd2 = createColumn(table, pi1, documentation_2, name_2,
 				SqlDdl.foreignKeyColumnDataType,
 				SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 		cd2.setReferencedTable(map(pi2.inClass()));
@@ -720,9 +726,11 @@ public class SqlBuilder implements MessageSource {
 		createTable.setTable(table);
 
 		table.setRepresentedClass(ci);
-		if (ci.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
-			createExplicitCommentUnlessNoDocumentation(table, null, ci);
+		table.setDocumentation(ci.derivedDocumentation(
+				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue));
+
+		if (SqlDdl.createExplicitComments) {
+			createExplicitCommentUnlessNoDocumentation(table, null);
 		}
 
 		// --- create the columns for codes
@@ -731,6 +739,7 @@ public class SqlBuilder implements MessageSource {
 
 		// create required column to store the code name
 		String name = SqlDdl.codeNameColumnName;
+		String codeNameColumnDocumentation = SqlDdl.codeNameColumnDocumentation;
 
 		Column cd_codename = null;
 
@@ -747,7 +756,8 @@ public class SqlBuilder implements MessageSource {
 
 			} else {
 
-				cd_codename = createColumn(table, null, name, numericType,
+				cd_codename = createColumn(table, null,
+						codeNameColumnDocumentation, name, numericType,
 						SqlDdl.primaryKeySpecCodelist, true, false);
 			}
 		}
@@ -769,8 +779,9 @@ public class SqlBuilder implements MessageSource {
 						.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
 			}
 
-			cd_codename = createColumn(table, null, name, fieldType,
-					SqlDdl.primaryKeySpecCodelist, true, false);
+			cd_codename = createColumn(table, null, codeNameColumnDocumentation,
+					name, fieldType, SqlDdl.primaryKeySpecCodelist, true,
+					false);
 		}
 
 		columns.add(cd_codename);
@@ -790,9 +801,11 @@ public class SqlBuilder implements MessageSource {
 						.limitedLengthCharacterDataType(descriptor.getSize());
 			}
 
+			String descriptorDocumentation = descriptor.getDocumentation();
+
 			Column cd_descriptor = createColumn(table, null,
-					descriptor.getColumnName(), descriptor_fieldType, "", false,
-					false);
+					descriptorDocumentation, descriptor.getColumnName(),
+					descriptor_fieldType, "", false, false);
 			columns.add(cd_descriptor);
 		}
 
@@ -804,11 +817,10 @@ public class SqlBuilder implements MessageSource {
 			if (ci != codeStatusCLType) {
 
 				// add codeStatusCL column
-				Column cd_codeStatusCl = new Column(
-						SqlDdl.nameCodeStatusCLColumn, table);
-
-				cd_codeStatusCl.setDataType(SqlDdl.foreignKeyColumnDataType);
-				cd_codeStatusCl.setForeignKeyColumn(false);
+				Column cd_codeStatusCl = createColumn(table, null,
+						SqlDdl.codeStatusCLColumnDocumentation,
+						SqlDdl.nameCodeStatusCLColumn,
+						SqlDdl.foreignKeyColumnDataType, "", false, false);
 
 				if (codeStatusCLType != null) {
 
@@ -857,10 +869,12 @@ public class SqlBuilder implements MessageSource {
 				columns.add(cd_codeStatusCl);
 
 				// add codeStatusNotes column
-				Column cd_codeStatusNotes = new Column(
-						SqlDdl.nameCodeStatusNotesColumn, table);
-				cd_codeStatusNotes.setDataType(SqlDdl.databaseStrategy
-						.limitedLengthCharacterDataType(255));
+				Column cd_codeStatusNotes = createColumn(table, null,
+						SqlDdl.codeStatusNotesColumnDocumentation,
+						SqlDdl.nameCodeStatusNotesColumn,
+						SqlDdl.databaseStrategy.limitedLengthCharacterDataType(
+								255),
+						"", false, false);
 				columns.add(cd_codeStatusNotes);
 
 			} else if (ci == codeStatusCLType) {
@@ -1187,7 +1201,11 @@ public class SqlBuilder implements MessageSource {
 
 			ClassInfo typeCi = this.model.classById(pi.typeInfo().id);
 
-			return isRepresentedByTable(typeCi);
+			if (typeCi != null) {
+				return isRepresentedByTable(typeCi);
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -1253,15 +1271,15 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	private Column createColumn(Table inTable, PropertyInfo representedProperty,
-			String name, ColumnDataType type, String columnSpecification,
-			boolean isPrimaryKey, boolean isForeignKey) {
+			String documentation, String name, ColumnDataType type,
+			String columnSpecification, boolean isPrimaryKey,
+			boolean isForeignKey) {
 
-		Column column = new Column(name, representedProperty, inTable);
+		Column column = new Column(name, representedProperty, documentation,
+				inTable);
 
-		if (representedProperty != null && representedProperty.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
-			createExplicitCommentUnlessNoDocumentation(inTable, column,
-					representedProperty);
+		if (SqlDdl.createExplicitComments) {
+			createExplicitCommentUnlessNoDocumentation(inTable, column);
 		}
 
 		column.setDataType(type);
@@ -1275,19 +1293,6 @@ public class SqlBuilder implements MessageSource {
 
 		return column;
 	}
-
-	// private Column createColumn(Table inTable, PropertyInfo
-	// representedProperty,
-	// String name, ColumnDataType dataType, String columnSpecification,
-	// boolean isPrimaryKey, boolean isForeignKey) {
-	//
-	// Column res = createColumn(inTable, representedProperty, name,
-	// dataType.getName(), columnSpecification, isPrimaryKey,
-	// isForeignKey);
-	// res.setDataType(dataType);
-	//
-	// return res;
-	// }
 
 	/**
 	 * Creates the column definition based upon the property name, its type, and
@@ -1314,11 +1319,14 @@ public class SqlBuilder implements MessageSource {
 		} else {
 			name = pi.name();
 		}
-		Column cd = new Column(name, pi, inTable);
 
-		if (pi.matches(
-				SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS)) {
-			createExplicitCommentUnlessNoDocumentation(inTable, cd, pi);
+		String documentation = pi.derivedDocumentation(
+				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
+
+		Column cd = new Column(name, pi, documentation, inTable);
+
+		if (SqlDdl.createExplicitComments) {
+			createExplicitCommentUnlessNoDocumentation(inTable, cd);
 		}
 
 		ColumnDataType colDataType = identifyType(pi);
@@ -2054,7 +2062,7 @@ public class SqlBuilder implements MessageSource {
 											+ SqlDdl.idColumnName;
 
 									Column dtOwner_cd = createColumn(table,
-											null, columnName,
+											null, null, columnName,
 											SqlDdl.foreignKeyColumnDataType,
 											SqlConstants.NOT_NULL_COLUMN_SPEC,
 											false, true);
@@ -2097,7 +2105,7 @@ public class SqlBuilder implements MessageSource {
 						dtOwnerRef_columnSpec = SqlConstants.NOT_NULL_COLUMN_SPEC;
 					}
 
-					Column dtOwnerRef_cd = createColumn(table, null,
+					Column dtOwnerRef_cd = createColumn(table, null, null,
 							columnName + SqlDdl.idColumnName,
 							SqlDdl.foreignKeyColumnDataType,
 							dtOwnerRef_columnSpec, false, true);
@@ -2519,8 +2527,8 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	/**
-	 * Looks up the table with the given name. If no such table exists, a new
-	 * one is created (this is logged on debug level) and returned.
+	 * Look up the table with the given name. If no such table exists, a new one
+	 * is created (this is logged on debug level) and returned.
 	 * 
 	 * @param tableName
 	 *            name of the table to look up, must not be <code>null</code>

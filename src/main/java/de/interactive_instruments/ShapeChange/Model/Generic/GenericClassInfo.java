@@ -789,6 +789,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		copy.setBaseClass(baseClass);
 
 		copy.setDiagrams(diagrams);
+		copy.setLinkedDocument(linkedDocument);
 
 		TreeMap<StructuredNumber, PropertyInfo> copyProperties = new TreeMap<StructuredNumber, PropertyInfo>();
 

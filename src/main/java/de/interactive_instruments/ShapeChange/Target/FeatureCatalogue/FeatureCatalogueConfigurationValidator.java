@@ -53,10 +53,12 @@ import de.interactive_instruments.ShapeChange.TargetConfiguration;
  *         <dot> de)
  *
  */
-public class FeatureCatalogueConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class FeatureCatalogueConfigurationValidator
+		implements ConfigurationValidator, MessageSource {
 
 	@Override
-	public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+	public boolean isValid(ProcessConfiguration pConfig, Options options,
+			ShapeChangeResult result) {
 
 		boolean isValid = true;
 
@@ -71,21 +73,25 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 		/*
 		 * Check that the configured XSL transformer factory is available
 		 */
-		String xslTransformerFactory = tgtConfig.getParameterValue(FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+		String xslTransformerFactory = tgtConfig.getParameterValue(
+				FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 
 		if (xslTransformerFactory != null) {
 
 			try {
-				System.setProperty("javax.xml.transform.TransformerFactory", xslTransformerFactory);
+				System.setProperty("javax.xml.transform.TransformerFactory",
+						xslTransformerFactory);
 				@SuppressWarnings("unused")
 				TransformerFactory factory = TransformerFactory.newInstance();
 
 			} catch (TransformerFactoryConfigurationError e) {
 				isValid = false;
-				MessageContext mc = result.addError(this, 100, xslTransformerFactory);
+				MessageContext mc = result.addError(this, 100,
+						xslTransformerFactory);
 				if (mc != null) {
 					mc.addDetail(this, 0, inputs);
-					mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+					mc.addDetail(this, 1,
+							FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 				}
 
 			}
@@ -94,7 +100,8 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 		/*
 		 * Check that parameter 'outputFormat' is set.
 		 */
-		String outputFormat = tgtConfig.getParameterValue(FeatureCatalogue.PARAM_OUTPUT_FORMAT);
+		String outputFormat = tgtConfig
+				.getParameterValue(FeatureCatalogue.PARAM_OUTPUT_FORMAT);
 
 		if (outputFormat == null) {
 
@@ -113,13 +120,16 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 			 * 'xslTransformerFactory' is set or Saxon is used as
 			 * TransformerFactory implementation
 			 */
-			if ((outputFormat.toLowerCase().contains("docx") || outputFormat.toLowerCase().contains("framehtml"))
+			if ((outputFormat.toLowerCase().contains("docx")
+					|| outputFormat.toLowerCase().contains("framehtml"))
 					&& xslTransformerFactory == null) {
 
 				try {
-					TransformerFactory factory = TransformerFactory.newInstance();
+					TransformerFactory factory = TransformerFactory
+							.newInstance();
 
-					if (factory.getClass().getName().equalsIgnoreCase("net.sf.saxon.TransformerFactoryImpl")) {
+					if (factory.getClass().getName().equalsIgnoreCase(
+							"net.sf.saxon.TransformerFactoryImpl")) {
 						// fine - this is an XSLT 2.0 processor
 					} else {
 						isValid = false;
@@ -127,22 +137,26 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 						MessageContext mc = result.addError(this, 102);
 						if (mc != null) {
 							mc.addDetail(this, 0, inputs);
-							mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+							mc.addDetail(this, 1,
+									FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 						}
 					}
 
 				} catch (TransformerFactoryConfigurationError e) {
 					isValid = false;
-					MessageContext mc = result.addError(this, 100, xslTransformerFactory);
+					MessageContext mc = result.addError(this, 100,
+							xslTransformerFactory);
 					if (mc != null) {
 						mc.addDetail(this, 0, inputs);
-						mc.addDetail(this, 1, FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
+						mc.addDetail(this, 1,
+								FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY);
 					}
 				}
 			}
 		}
 
-		String pathToJavaExe_ = options.parameter(this.getClass().getName(), FeatureCatalogue.PARAM_JAVA_EXE_PATH);
+		String pathToJavaExe_ = pConfig
+				.getParameterValue(FeatureCatalogue.PARAM_JAVA_EXE_PATH);
 		if (pathToJavaExe_ != null && pathToJavaExe_.trim().length() > 0) {
 			String pathToJavaExe = pathToJavaExe_.trim();
 			String javaOptions = null;
@@ -153,7 +167,8 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 				pathToJavaExe = pathToJavaExe + "\"";
 			}
 
-			String jo_tmp = options.parameter(this.getClass().getName(), FeatureCatalogue.PARAM_JAVA_OPTIONS);
+			String jo_tmp = pConfig
+					.getParameterValue(FeatureCatalogue.PARAM_JAVA_OPTIONS);
 			if (jo_tmp != null && jo_tmp.trim().length() > 0) {
 				javaOptions = jo_tmp.trim();
 			}
@@ -173,8 +188,10 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 			try {
 				Process proc = pb.start();
 
-				StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream());
-				StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream());
+				StreamGobbler outputGobbler = new StreamGobbler(
+						proc.getInputStream());
+				StreamGobbler errorGobbler = new StreamGobbler(
+						proc.getErrorStream());
 
 				errorGobbler.start();
 				outputGobbler.start();
@@ -186,10 +203,12 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 
 				if (exitVal != 0) {
 					if (errorGobbler.hasResult()) {
-						MessageContext mc = result.addFatalError(this, 102, StringUtils.join(cmds, " "), "" + exitVal);
+						MessageContext mc = result.addFatalError(this, 102,
+								StringUtils.join(cmds, " "), "" + exitVal);
 						mc.addDetail(this, 4, errorGobbler.getResult());
 					} else {
-						result.addFatalError(this, 102, StringUtils.join(cmds, " "), "" + exitVal);
+						result.addFatalError(this, 102,
+								StringUtils.join(cmds, " "), "" + exitVal);
 					}
 					isValid = false;
 				}
@@ -198,14 +217,16 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 				MessageContext mc = result.addFatalError(this, 104);
 				if (mc != null) {
 					mc.addDetail(this, 2, pathToJavaExe);
-					mc.addDetail(this, 3, javaOptions != null ? javaOptions : "<none>");
+					mc.addDetail(this, 3,
+							javaOptions != null ? javaOptions : "<none>");
 				}
 				isValid = false;
 			} catch (IOException e) {
 				MessageContext mc = result.addFatalError(this, 105);
 				if (mc != null) {
 					mc.addDetail(this, 2, pathToJavaExe);
-					mc.addDetail(this, 3, javaOptions != null ? javaOptions : "<none>");
+					mc.addDetail(this, 3,
+							javaOptions != null ? javaOptions : "<none>");
 				}
 				isValid = false;
 			}
@@ -229,10 +250,12 @@ public class FeatureCatalogueConfigurationValidator implements ConfigurationVali
 		case 4:
 			return "Message from external java executable: $1$";
 		case 100:
-			return "Parameter '" + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
+			return "Parameter '"
+					+ FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
 					+ "' is set to '$1$'. A Transformer with this factory could not be instantiated. Make the implementation of the transformer factory available on the classpath.";
 		case 101:
-			return "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
+			return "The required parameter '"
+					+ FeatureCatalogue.PARAM_OUTPUT_FORMAT
 					+ "' was not found in the configuration.";
 		case 102:
 			return "Parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT

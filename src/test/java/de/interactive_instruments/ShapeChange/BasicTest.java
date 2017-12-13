@@ -47,12 +47,15 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -74,6 +77,8 @@ import org.custommonkey.xmlunit.jaxp13.Validator;
 import org.junit.Before;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
+
+import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 import de.interactive_instruments.ShapeChange.Util.ea.EAModelDiff;
@@ -219,13 +224,37 @@ public abstract class BasicTest {
 	private void multiTestInDirs(Set<String> fileFormatsToCheck,
 			String dirResults, String dirReference) {
 
+		String[] extensions = fileFormatsToCheck
+				.toArray(new String[fileFormatsToCheck.size()]);
+
+		File refDir = new File(dirReference);
+		File resultDir = new File(dirResults);
+
+		Collection<File> refFiles = null;
+		Collection<File> resultFiles = FileUtils.listFiles(resultDir,
+				extensions, false);
+
+		if (refDir.exists()) {
+			refFiles = FileUtils.listFiles(refDir, extensions, false);
+		} else if (!resultFiles.isEmpty()) {
+			fail("Result directory " + resultDir.getAbsolutePath()
+					+ " contains relevant files to check. However, the reference directory "
+					+ dirResults + " does not exist.");
+		}
+
+		SortedSet<String> refFileNames = new TreeSet<String>();
+		if (refFiles != null) {
+			for (File refFile : refFiles) {
+				refFileNames.add(refFile.getName());
+			}
+		}
+
 		File resDir = new File(dirResults);
 
 		// we check that the ref files are similar to the result files
 		// we determine the files to check by inspecting the result files, then
 		// doing the similarity test
-		// TBD: this does not check that all reference files are contained by
-		// the result
+
 		File[] filesInResDir = resDir.listFiles();
 
 		if (filesInResDir == null) {
@@ -241,121 +270,63 @@ public abstract class BasicTest {
 							dirReference + pathAdd);
 				} else {
 
+					refFileNames.remove(fres.getName());
+
 					String fresExtension = FilenameUtils
 							.getExtension(fres.getName()).trim()
 							.toLowerCase(Locale.ENGLISH);
 
-					if (fileFormatsToCheck == null) {
-
-						if (fresExtension.equals("xsd")
-								|| fresExtension.equals("xml")
-								|| fresExtension.equals("rdf")) {
-							similar(dirResults + File.separator
-									+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("html")) {
-							similarHtml(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("docx")) {
-							similarDocx(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("sql")) {
-							similarTxt(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName(),
-									true, true, true);
-						} else if (fresExtension.equals("ttl")) {
-							similarJenaModel(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("json")) {
-							similarJson(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("eap")) {
-							similarEap(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else {
-							// TBD add more similarity tests for further file
-							// formats, or add them to one of the above
-						}
+					if ((fresExtension.equals("xsd")
+							&& fileFormatsToCheck.contains("xsd"))
+							|| (fresExtension.equals("xml")
+									&& fileFormatsToCheck.contains("xml"))
+							|| (fresExtension.equals("rdf")
+									&& fileFormatsToCheck.contains("rdf"))) {
+						similar(dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
+					} else if (fresExtension.equals("html")
+							&& fileFormatsToCheck.contains("html")) {
+						similarHtml(
+								dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
+					} else if (fresExtension.equals("docx")
+							&& fileFormatsToCheck.contains("docx")) {
+						similarDocx(
+								dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
+					} else if (fresExtension.equals("sql")
+							&& fileFormatsToCheck.contains("sql")) {
+						similarTxt(dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName(),
+								true, true, true);
+					} else if (fresExtension.equals("ttl")
+							&& fileFormatsToCheck.contains("ttl")) {
+						similarJenaModel(
+								dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
+					} else if (fresExtension.equals("json")
+							&& fileFormatsToCheck.contains("json")) {
+						similarJson(
+								dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
+					} else if (fresExtension.equals("eap")
+							&& fileFormatsToCheck.contains("eap")) {
+						similarEap(dirResults + File.separator + fres.getName(),
+								dirReference + File.separator + fres.getName());
 					} else {
-						if ((fresExtension.equals("xsd")
-								&& fileFormatsToCheck.contains("xsd"))
-								|| (fresExtension.equals("xml")
-										&& fileFormatsToCheck.contains("xml"))
-								|| (fresExtension.equals("rdf")
-										&& fileFormatsToCheck
-												.contains("rdf"))) {
-							similar(dirResults + File.separator
-									+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("html")
-								&& fileFormatsToCheck.contains("html")) {
-							similarHtml(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("docx")
-								&& fileFormatsToCheck.contains("docx")) {
-							similarDocx(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("sql")
-								&& fileFormatsToCheck.contains("sql")) {
-							similarTxt(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName(),
-									true, true, true);
-						} else if (fresExtension.equals("ttl")
-								&& fileFormatsToCheck.contains("ttl")) {
-							similarJenaModel(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("json")
-								&& fileFormatsToCheck.contains("json")) {
-							similarJson(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else if (fresExtension.equals("eap")
-								&& fileFormatsToCheck.contains("eap")) {
-							similarEap(
-									dirResults + File.separator
-											+ fres.getName(),
-									dirReference + File.separator
-											+ fres.getName());
-						} else {
-							// TBD add more similarity tests for further file
-							// formats, or add them to one of the above
-						}
+						// TBD add more similarity tests for further file
+						// formats, or add them to one of the above
 					}
 				}
+			}
+
+			if (!refFileNames.isEmpty()) {
+
+				String unmatchedReferenceFiles = Joiner.on(", ").skipNulls()
+						.join(refFileNames);
+				fail("No corresponding result files found for the following reference files (in directory "
+						+ refDir.getAbsolutePath() + "): "
+						+ unmatchedReferenceFiles);
 			}
 		}
 	}

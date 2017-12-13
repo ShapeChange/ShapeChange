@@ -34,12 +34,14 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
+
+import org.apache.commons.lang.StringUtils;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -85,8 +87,8 @@ public class SqlDdlConfigurationValidator
 		isValid = isValid && mepis.isValid();
 
 		DatabaseStrategy databaseStrategy;
-		String databaseSystem = options.parameter(SqlConstants.class.getName(),
-				SqlConstants.PARAM_DATABASE_SYSTEM);
+		String databaseSystem = config
+				.getParameterValue(SqlConstants.PARAM_DATABASE_SYSTEM);
 		if (databaseSystem == null
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new PostgreSQLStrategy();
@@ -119,7 +121,7 @@ public class SqlDdlConfigurationValidator
 				&& checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
 
 		// --------------------------
-		String fileDdlTop = options.parameterAsString(this.getClass().getName(),
+		String fileDdlTop = config.parameterAsString(
 				SqlConstants.PARAM_FILE_DDL_TOP, null, false, true);
 		if (fileDdlTop != null) {
 			File ddlTop = new File(fileDdlTop);
@@ -130,9 +132,8 @@ public class SqlDdlConfigurationValidator
 			}
 		}
 
-		String fileDdlBottom = options.parameterAsString(
-				this.getClass().getName(), SqlConstants.PARAM_FILE_DDL_BOTTOM,
-				null, false, true);
+		String fileDdlBottom = config.parameterAsString(
+				SqlConstants.PARAM_FILE_DDL_BOTTOM, null, false, true);
 		if (fileDdlBottom != null) {
 			File ddlBottom = new File(fileDdlBottom);
 			if (!ddlBottom.exists() || ddlBottom.isDirectory()
@@ -294,8 +295,7 @@ public class SqlDdlConfigurationValidator
 
 		boolean isValid = true;
 
-		String valueByConfig = options.parameter(this.getClass().getName(),
-				paramName);
+		String valueByConfig = config.getParameterValue(paramName);
 
 		if (valueByConfig != null) {
 
@@ -317,40 +317,47 @@ public class SqlDdlConfigurationValidator
 
 		boolean isValid = true;
 
-		String descriptorsForCodelistByConfig = options.parameter(
-				SqlConstants.class.getName(),
-				SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
-		String[] descriptorsForCodelistFromConfig = new String[] {
-				"documentation" };
-		SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
+		String descriptorsForCodelistByConfig = config
+				.getParameterValue(SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
+				
+		if (StringUtils.isNotBlank(descriptorsForCodelistByConfig)) {
 
-		if (descriptorsForCodelistByConfig != null) {
+			String fullRegex = SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX
+					+ "(," + SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX + ")*";
 
-			if (descriptorsForCodelistByConfig.trim().isEmpty()) {
-				descriptorsForCodelistFromConfig = new String[0];
+			if (descriptorsForCodelistByConfig.matches(fullRegex)) {
+
+				SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
+
+				String[]  descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
+						.trim().split("(?<!\\\\),");
+
+				boolean unknownDescriptorFound = false;
+				for (String tmp : descriptorsForCodelistFromConfig) {
+
+					if (tmp.matches(
+							SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
+						descriptorsForCodelist.add(tmp);
+					} else {
+						unknownDescriptorFound = true;
+					}
+				}
+				if (unknownDescriptorFound) {
+					result.addError(this, 2, descriptorsForCodelistByConfig,
+							SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
+					isValid = false;
+				}
+				if (descriptorsForCodelist.isEmpty()) {
+					result.addError(this, 3);
+					isValid = false;
+					// irrelevant here:
+					// descriptorsForCodelist.add("documentation");
+				}
 			} else {
-				descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
-						.trim().split(",");
-			}
-		}
-		boolean unknownDescriptorFound = false;
-		for (String tmp : descriptorsForCodelistFromConfig) {
 
-			if (tmp.matches(SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
-				descriptorsForCodelist.add(tmp);
-			} else {
-				unknownDescriptorFound = true;
+				result.addError(this, 6, fullRegex);
+				isValid = false;
 			}
-		}
-		if (unknownDescriptorFound) {
-			result.addError(this, 2, descriptorsForCodelistByConfig,
-					SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
-			isValid = false;
-		}
-		if (descriptorsForCodelist.isEmpty()) {
-			result.addError(this, 3);
-			isValid = false;
-			// irrelevant here: descriptorsForCodelist.add("documentation");
 		}
 
 		return isValid;
@@ -367,7 +374,7 @@ public class SqlDdlConfigurationValidator
 		case 2:
 			return "At least one of the descriptor identifiers in configuration parameter '"
 					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
-					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Correct the parameter value.";
+					+ "' - the parameter value is '$1$' - does not match the regular expression '$2$'. Correct the parameter value.";
 		case 3:
 			return "Configuration parameter '"
 					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
@@ -376,6 +383,10 @@ public class SqlDdlConfigurationValidator
 			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
 		case 5:
 			return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+		case 6:
+			return "Configuration parameter '"
+					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+					+ "' does not match the following regular expression: $1$";
 
 		case 100:
 			return "Parameter '$1$' is set to '$2$'. This is not a valid value.";

@@ -46,6 +46,8 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 public class Table {
 
 	private String name = null;
+	private String documentation = null;
+
 	private List<Column> columns = new ArrayList<Column>();
 	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
 
@@ -230,5 +232,13 @@ public class Table {
 	public void setRepresentsCodeStatusCLType(
 			boolean representsCodeStatusCLType) {
 		this.representsCodeStatusCLType = representsCodeStatusCLType;
+	}
+
+	public String getDocumentation() {
+		return this.documentation;
+	}
+
+	public void setDocumentation(String documentation) {
+		this.documentation = documentation;
 	}
 }

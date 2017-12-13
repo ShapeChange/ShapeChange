@@ -227,6 +227,8 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_CODE_NAME_COLUMN_NAME = "codeNameColumnName";
 
+	public static final String PARAM_CODE_NAME_COLUMN_DOCUMENTATION = "codeNameColumnDocumentation";
+
 	public static final String PARAM_CODE_NAME_SIZE = "codeNameSize";
 
 	/**
@@ -249,6 +251,8 @@ public class SqlConstants {
 	public static final String PARAM_NAME_CODESTATUS_CL_COLUMN = "nameForCodeStatusCLColumn";
 	public static final String DEFAULT_NAME_CODESTATUS_CL_COLUMN = "CODE_STATUS_CL";
 
+	public static final String PARAM_CODESTATUS_CL_COLUMN_DOCUMENTATION = "codeStatusCLColumnDocumentation";
+
 	/**
 	 * Define the name for the column that stores a note on the code status.
 	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
@@ -256,6 +260,8 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_NAME_CODESTATUSNOTES_COLUMN = "nameForCodeStatusNotesColumn";
 	public static final String DEFAULT_NAME_CODESTATUSNOTES_COLUMN = "CODE_STATUS_NOTES";
+
+	public static final String PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION = "codeStatusNotesColumnDocumentation";
 
 	/* ------------------------ */
 	/* --- Conversion rules --- */
@@ -527,10 +533,10 @@ public class SqlConstants {
 
 	/**
 	 * <pre>
-	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size)=\w+)(,(columnName|size)=\w+)*\))?
+	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)*\))?
 	 * </pre>
 	 */
-	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
+	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)(;(columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)*\\))?";
 
 	public static final String DEFAULT_CODESTATUSCL_TYPE = "CodeStatusCL";
 	public static final int DEFAULT_CODESTATUSCL_LENGTH = 50;

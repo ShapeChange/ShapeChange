@@ -1,31 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/config/testEA_sql_codelists_pods.xml" end="Fri Jun 09 09:45:41 CEST 2017" resultCode="0" start="Fri Jun 09 09:45:32 CEST 2017" version="2.3.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/config/testEA_sql_codelists_pods.xml" end="Tue Dec 12 14:38:48 CET 2017" resultCode="0" start="Tue Dec 12 14:38:36 CET 2017" version="2.4.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating transformer with @id 'step1' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'step1' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'step1' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_sql.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_sql.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_sql.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_sql.EAP"/>
     <Warning message="XML Schema document name 'FIXME' does not contain the .xsd file extension.">
       <Detail message="Context: Package 'Model::Schema::Test3'"/>
     </Warning>
-    <Info message="(Converter.java) Now processing transformation 'step1' for input ID: 'INPUT'."/>
-    <Info message="(Flattener.java) ========== processing phase =========="/>
+    <Info message="Now processing transformation 'step1' for input ID: 'INPUT'."/>
+    <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
     <Info message="---------- now processing: rule-trf-prop-flatten-types ----------"/>
     <Info message="---------- now processing: rule-trf-all-flatten-name ----------"/>
-    <Info message="(Flattener.java) ========== postprocessing phase =========="/>
+    <Info message="========== postprocessing phase =========="/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
-    <Info message="(Converter.java) Performed transformation for transformer ID 'step1' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Performed transformation for transformer ID 'step1' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test3', target namespace: 'FIXME/flat'"/>
-    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'step1'."/>
+    <Info message="Now processing target 'SQL DDL' for input 'step1'."/>
     <Info message="Creating associative table to represent attribute 'propAlpCode' in class 'T3_FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'T3_FeatureType1_propAlpCode'."/>
+    <Warning message="Name 'customNameCodeStatusNotesColumn' is truncated to 'CUSTOMNAMECODESTATUSNOTESCOLUM'"/>
+    <Warning message="Name 'customNameCodeStatusNotesColumn' is truncated to 'CUSTOMNAMECODESTATUSNOTESCOLUM'"/>
     <Warning message="Name 'T3_FeatureType1testobjectidentifier' is truncated to 'T3_FEATURETYPE1TESTOBJECTIDENT'"/>
     <Warning message="Name 'T3_CodeList2testobjectidentifier' is truncated to 'T3_CODELIST2TESTOBJECTIDENTIFI'"/>
-    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'step1'.&#10;-------------------------------------------------"/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'step1'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Test3', target namespace: 'FIXME/flat'"/>
-    <Info message="(Converter.java) Now processing target 'SQL DDL' for input 'step1'."/>
+    <Info message="Now processing target 'SQL DDL' for input 'step1'."/>
     <Info message="Creating associative table to represent attribute 'propAlpCode' in class 'T3_FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'T3_FeatureType1_propAlpCode'."/>
-    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'step1'.&#10;-------------------------------------------------"/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'step1'.&#10;-------------------------------------------------"/>
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/codelists_pods/ddl_oracle/step1/Test3.sql" target="SQL DDL">Test3.sql</Result>

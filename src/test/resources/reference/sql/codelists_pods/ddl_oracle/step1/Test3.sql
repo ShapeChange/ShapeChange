@@ -1,23 +1,23 @@
 CREATE TABLE T3_CODELIST1 (
 
-   CODE VARCHAR2(50) NOT NULL PRIMARY KEY,
-   DESCRIPTION VARCHAR2(255),
-   CUSTOMCODESTATUSCLCOLUMN VARCHAR2(50),
-   CUSTOMNAMECODESTATUSNOTESCOLUM VARCHAR2(255)
+   CODE VARCHAR2(50) NOT NULL PRIMARY KEY, -- Configured documentation of the 'CODE' column.
+   DESCRIPTION VARCHAR2(255), -- Configured documentation for the 'DESCRIPTION' column, with special characters ,; = () and special keywords: size columnName columnDocumentation definition description ...
+   CUSTOMCODESTATUSCLCOLUMN VARCHAR2(50), -- Configured documentation of the 'customCodeStatusCLColumn' column.
+   CUSTOMNAMECODESTATUSNOTESCOLUM VARCHAR2(255) -- Configured documentation of the 'customNameCodeStatusNotesColumn' column.
 );
 
 CREATE TABLE T3_CODELIST2 (
 
-   CODE VARCHAR2(50) NOT NULL PRIMARY KEY,
-   DESCRIPTION VARCHAR2(255),
-   CUSTOMCODESTATUSCLCOLUMN VARCHAR2(50),
-   CUSTOMNAMECODESTATUSNOTESCOLUM VARCHAR2(255)
+   CODE VARCHAR2(50) NOT NULL PRIMARY KEY, -- Configured documentation of the 'CODE' column.
+   DESCRIPTION VARCHAR2(255), -- Configured documentation for the 'DESCRIPTION' column, with special characters ,; = () and special keywords: size columnName columnDocumentation definition description ...
+   CUSTOMCODESTATUSCLCOLUMN VARCHAR2(50), -- Configured documentation of the 'customCodeStatusCLColumn' column.
+   CUSTOMNAMECODESTATUSNOTESCOLUM VARCHAR2(255) -- Configured documentation of the 'customNameCodeStatusNotesColumn' column.
 );
 
 CREATE TABLE T3_CODESTATUSCL (
 
-   CODE VARCHAR2(50) NOT NULL PRIMARY KEY,
-   DESCRIPTION VARCHAR2(255)
+   CODE VARCHAR2(50) NOT NULL PRIMARY KEY, -- Configured documentation of the 'CODE' column.
+   DESCRIPTION VARCHAR2(255) -- Configured documentation for the 'DESCRIPTION' column, with special characters ,; = () and special keywords: size columnName columnDocumentation definition description ...
 );
 
 CREATE TABLE T3_FEATURETYPE1 (

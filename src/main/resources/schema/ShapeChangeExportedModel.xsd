@@ -164,6 +164,7 @@
    <element default="false" minOccurs="0" name="isLeaf" type="boolean"/>
    <element minOccurs="0" name="associationId" type="string"/>
    <element minOccurs="0" name="baseClassId" type="string"/>
+   <element minOccurs="0" name="linkedDocument" type="string"/>
    <element minOccurs="0" name="supertypes">
     <complexType>
      <sequence>

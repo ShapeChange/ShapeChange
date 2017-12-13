@@ -43,9 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,6 +111,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static List<DescriptorForCodeList> descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
 	protected static String codeNameColumnName = "name";
+	protected static String codeNameColumnDocumentation = null;
 	protected static int codeNameSize = 0;
 
 	private static boolean initialised = false;
@@ -143,11 +142,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String primaryKeySpec;
 	protected static String primaryKeySpecCodelist;
 	protected static String nameCodeStatusCLColumn;
+	protected static String codeStatusCLColumnDocumentation;
 	protected static String nameCodeStatusNotesColumn;
+	protected static String codeStatusNotesColumnDocumentation;
 	protected static int defaultSize;
 	protected static int srid;
 	protected static boolean createReferences = false;
 	protected static boolean createDocumentation = true;
+	protected static boolean createExplicitComments = false;
 	protected static boolean createAssociativeTables = false;
 	protected static boolean removeEmptyLinesInDdlOutput = false;
 
@@ -448,11 +450,21 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.DEFAULT_NAME_CODESTATUS_CL_COLUMN, false,
 					true);
 
+			codeStatusCLColumnDocumentation = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CODESTATUS_CL_COLUMN_DOCUMENTATION, null,
+					false, true);
+
 			nameCodeStatusNotesColumn = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
 					SqlConstants.DEFAULT_NAME_CODESTATUSNOTES_COLUMN, false,
 					true);
+
+			codeStatusNotesColumnDocumentation = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION,
+					null, false, true);
 
 			String sdoDimElement_value = options.parameterAsString(
 					this.getClass().getName(),
@@ -474,6 +486,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_CREATE_DOCUMENTATION,
 					SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
+
+			createExplicitComments = pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS);
 
 			removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
 					this.getClass().getName(),
@@ -500,7 +515,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			if (descriptorsForCodelistByConfig != null
 					&& !descriptorsForCodelistByConfig.trim().isEmpty()) {
 				descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
-						.trim().split(",");
+						.trim().split("(?<!\\\\),");
 			}
 			boolean unknownDescriptorFound = false;
 
@@ -511,6 +526,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					// parse descriptor string
 					String name = null;
 					String columnName = null;
+					String documentation = null;
 					Integer size = null;
 
 					if (tmp.contains("(")) {
@@ -518,13 +534,25 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						name = tmp.substring(0, tmp.indexOf("("));
 						String tmp2 = tmp.substring(tmp.indexOf("(") + 1,
 								tmp.length() - 1);
-						String[] metadata = tmp2.split(";");
+						String[] metadata = tmp2.split("(?<!\\\\);");
+
 						for (String meta : metadata) {
-							String[] meta_parts = meta.split("=");
-							if (meta_parts[0].equalsIgnoreCase("columnName")) {
-								columnName = meta_parts[1];
-							} else if (meta_parts[0].equalsIgnoreCase("size")) {
-								size = new Integer(meta_parts[1]);
+
+							String[] meta_parts = meta.split("=", 2);
+
+							String metaKey = meta_parts[0];
+							String metaValue = meta_parts[1];
+							metaValue = metaValue.replaceAll("\\\\,", ",");
+							metaValue = metaValue.replaceAll("\\\\;", ";");
+							metaValue = metaValue.replaceAll("\\\\\\)", ")");
+
+							if (metaKey.equalsIgnoreCase("columnName")) {
+								columnName = metaValue;
+							} else if (metaKey.equalsIgnoreCase("size")) {
+								size = new Integer(metaValue);
+							} else if (metaKey
+									.equalsIgnoreCase("columnDocumentation")) {
+								documentation = metaValue;
 							}
 						}
 
@@ -533,12 +561,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						name = tmp;
 					}
 
-					if (columnName == null) {
-						columnName = name;
-					}
-
-					descriptorsForCodelist.add(
-							new DescriptorForCodeList(name, columnName, size));
+					descriptorsForCodelist.add(new DescriptorForCodeList(name,
+							columnName, documentation, size));
 
 				} else {
 					unknownDescriptorFound = true;
@@ -550,8 +574,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			}
 			if (descriptorsForCodelist.isEmpty()) {
 				result.addWarning(this, 24);
-				descriptorsForCodelist.add(
-						new DescriptorForCodeList("documentation", null, null));
+				descriptorsForCodelist.add(new DescriptorForCodeList(
+						"documentation", null, null, null));
 			}
 
 			/*
@@ -562,6 +586,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODE_NAME_COLUMN_NAME,
 					SqlConstants.DEFAULT_CODE_NAME_COLUMN_NAME, false, true);
+
+			codeNameColumnDocumentation = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CODE_NAME_COLUMN_DOCUMENTATION, null,
+					false, true);
 
 			codeNameSize = options.parameterAsInteger(this.getClass().getName(),
 					SqlConstants.PARAM_CODE_NAME_SIZE,
@@ -981,6 +1010,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		descriptorsForCodelist = new ArrayList<DescriptorForCodeList>();
 
 		codeNameColumnName = "name";
+		codeNameColumnDocumentation = null;
 		codeNameSize = 0;
 
 		initialised = false;
@@ -1004,11 +1034,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		primaryKeySpec = null;
 		primaryKeySpecCodelist = null;
 		nameCodeStatusCLColumn = null;
+		codeStatusCLColumnDocumentation = null;
 		nameCodeStatusNotesColumn = null;
+		codeStatusNotesColumnDocumentation = null;
 		defaultSize = 0;
 		srid = 0;
 		createReferences = false;
 		createDocumentation = true;
+		createExplicitComments = false;
 		createAssociativeTables = false;
 		removeEmptyLinesInDdlOutput = false;
 

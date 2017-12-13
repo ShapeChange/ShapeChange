@@ -58,19 +58,23 @@ public class Column {
 	private PropertyInfo representedProperty = null;
 	private ClassInfo enumerationValueType = null;
 
+	private String documentation = null;
+
 	private Table referencedTable = null;
 	private boolean isObjectIdentifierColumn = false;
 	private boolean isForeignKeyColumn = false;
 
-	public Column(String name, Table inTable) {
+	public Column(String name, String documentation, Table inTable) {
 		this.name = name;
+		this.documentation = documentation;
 		this.inTable = inTable;
 	}
 
-	public Column(String name, PropertyInfo representedProperty,
+	public Column(String name, PropertyInfo representedProperty, String documentation,
 			Table inTable) {
 		this.name = name;
-		this.representedProperty = representedProperty;
+		this.representedProperty = representedProperty;	
+		this.documentation = documentation;
 		this.inTable = inTable;
 	}
 
@@ -269,5 +273,20 @@ public class Column {
 
 	public void setEnumerationValueType(ClassInfo enumerationValueType) {
 		this.enumerationValueType = enumerationValueType;
+	}
+
+	/**
+	 * @return Documentation of this column. Can be <code>null</code>.
+	 */
+	public String getDocumentation() {
+		return documentation;
+	}
+
+	/**
+	 * @param documentation
+	 *            Documentation of this column. Can be <code>null</code>.
+	 */
+	public void setDocumentation(String documentation) {
+		this.documentation = documentation;
 	}
 }

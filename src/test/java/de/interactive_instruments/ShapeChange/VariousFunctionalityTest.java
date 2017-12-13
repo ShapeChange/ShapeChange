@@ -42,28 +42,28 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_fc_en.xml",
 				new String[] { "xml", "html" },
-				"testResults/html/descriptors/INPUT",
-				"src/test/resources/reference/html/descriptors");
+				"testResults/html/descriptors/fc_en/INPUT",
+				"src/test/resources/reference/html/descriptors/fc_en");
 
 		multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
 				new String[] { "xml", "html" },
-				"testResults/html/descriptors/INPUT",
-				"src/test/resources/reference/html/descriptors");
+				"testResults/html/descriptors/fc_de/INPUT",
+				"src/test/resources/reference/html/descriptors/fc_de");
 
 		multiTest("src/test/resources/config/testEA_descriptors_inspire.xml",
 				new String[] { "xml", "html" },
-				"testResults/html/descriptors/INPUT",
-				"src/test/resources/reference/html/descriptors");
+				"testResults/html/descriptors/inspire/INPUT",
+				"src/test/resources/reference/html/descriptors/inspire");
 
 		multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
 				new String[] { "xml", "html" },
-				"testResults/html/descriptors/INPUT",
-				"src/test/resources/reference/html/descriptors");
+				"testResults/html/descriptors/aaa/INPUT",
+				"src/test/resources/reference/html/descriptors/aaa");
 
 		multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
 				new String[] { "xml", "html" },
-				"testResults/html/descriptors/INPUT",
-				"src/test/resources/reference/html/descriptors");
+				"testResults/html/descriptors/bbr/INPUT",
+				"src/test/resources/reference/html/descriptors/bbr");
 	}
 
 	@Test
