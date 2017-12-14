@@ -39,6 +39,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -960,6 +962,41 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					String fileNameDM = outputFilename + ".eap";
 					File eap = new File(outputDirectory, fileNameDM);
 
+					String eapFilePathByConfig = options.parameter(
+							SqlDdl.class.getName(),
+							DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH);
+
+					if (eapFilePathByConfig != null) {
+
+						if (eapFilePathByConfig.toLowerCase()
+								.startsWith("http")) {
+
+							// copy eap file from remote URI
+							try {
+								URL eapUrl = new URL(eapFilePathByConfig);
+								FileUtils.copyURLToFile(eapUrl, eap);
+								result.addInfo(this, 30, eapFilePathByConfig,
+										eap.getAbsolutePath());
+							} catch (MalformedURLException e1) {
+								result.addError(this, 28, eapFilePathByConfig);
+							} catch (IOException e2) {
+								result.addFatalError(this, 29, e2.getMessage());
+							}
+
+						} else {
+
+							result.addInfo(this, 31, eapFilePathByConfig);
+							eap = new File(eapFilePathByConfig);
+
+							/*
+							 * In case that the .eap file does not exist yet,
+							 * EARepositoryUtil.openRepository() also takes care
+							 * of creating the necessary directory structure, so
+							 * no need to do this here.
+							 */
+						}
+					}
+
 					Repository repository = EARepositoryUtil.openRepository(eap,
 							true);
 
@@ -1115,6 +1152,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			return "Exception occurred while transferring contents of file '$1$': $2$";
 		case 27:
 			return "Exception occurred while creating database model. Exception message is: $1$";
+		case 28:
+			return "URL '$1$' provided for configuration parameter "
+					+ DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH
+					+ " is malformed. The data model will be created in a new EAP within the output directory.";
+		case 29:
+			return "Exception encountered while copying the data model EAP file defined by configuration parameter "
+					+ DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH
+					+ " to the output directory. The data model will be created in a new EAP within the output directory.";
+		case 30:
+			return "Copied EAP file for creation of the data model from URL '$1$' to '$2$'.";
+		case 31:
+			return "Using local EAP file '$1$' for creation of the data model.";
 
 		case 503:
 			return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

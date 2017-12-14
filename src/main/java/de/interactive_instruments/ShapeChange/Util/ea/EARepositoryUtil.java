@@ -32,7 +32,9 @@
 package de.interactive_instruments.ShapeChange.Util.ea;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.CreateModelType;
@@ -226,6 +228,14 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		rep.Exit();
 	}
 
+	/**
+	 * @param repfileIn
+	 * @param createIfNotExisting
+	 *            If <code>true</code>, create the EAP file if it does not exist
+	 *            yet, including the required directory structure.
+	 * @return
+	 * @throws EAException
+	 */
 	public static Repository openRepository(File repfileIn,
 			boolean createIfNotExisting) throws EAException {
 
@@ -243,6 +253,20 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		Repository rep = new Repository();
 
 		if (!repfile.exists() && createIfNotExisting) {
+
+			try {
+				/*
+				 * prepare creation of the file by the EA API
+				 */
+				FileUtils.forceMkdirParent(repfile);
+				
+			} catch (IOException e) {
+				throw new EAException(
+						"Could not create directory structure for EA repository at "
+								+ absname + ". Exception message is: "
+								+ e.getMessage());
+			}
+
 			if (!rep.CreateModel(CreateModelType.cmEAPFromBase, absname, 0)) {
 				String errormsg = rep.GetLastError();
 				rep = null;
