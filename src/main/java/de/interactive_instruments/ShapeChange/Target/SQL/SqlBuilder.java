@@ -75,6 +75,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
 
 /**
  * Builds SQL statements for model elements.
@@ -105,6 +106,7 @@ public class SqlBuilder implements MessageSource {
 	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
 	private List<Alter> foreignKeyConstraints = new ArrayList<Alter>();
 	private List<Alter> checkConstraints = new ArrayList<Alter>();
+	private List<Alter> uniqueConstraints = new ArrayList<Alter>();
 	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<Statement>();
 	private List<Statement> geometryIndexStatements = new ArrayList<Statement>();
 	private List<Insert> insertStatements = new ArrayList<Insert>();
@@ -505,7 +507,7 @@ public class SqlBuilder implements MessageSource {
 				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue));
 
 		if (SqlDdl.createExplicitComments) {
-			createExplicitCommentUnlessNoDocumentation(table, null);
+			createExplicitCommentUnlessNoDocumentation(table);
 		}
 
 		List<Column> columns = new ArrayList<Column>();
@@ -561,25 +563,32 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	/**
-	 * Creates a comment statement for the given table or column, with the
-	 * documentation of the table/column. If the documentation is empty or if
-	 * both table and column are <code>null</code> then no comment statement
+	 * Creates a comment statement for the given table, with the documentation
+	 * of the table. If the documentation is empty then no comment statement
 	 * will be created.
 	 * 
 	 * @param table
-	 * @param column
 	 */
-	private void createExplicitCommentUnlessNoDocumentation(Table table,
-			Column column) {
+	private void createExplicitCommentUnlessNoDocumentation(Table table) {
 
-		if (column != null
-				&& StringUtils.isNotBlank(column.getDocumentation())) {
-			commentStatements.add(new Comment(column,
-					column.getDocumentation().replaceAll("\\s+", " ").trim()));
-		} else if (table != null
-				&& StringUtils.isNotBlank(table.getDocumentation())) {
+		if (StringUtils.isNotBlank(table.getDocumentation())) {
 			commentStatements.add(new Comment(table,
 					table.getDocumentation().replaceAll("\\s+", " ").trim()));
+		}
+	}
+
+	/**
+	 * Creates a comment statement for the given column, with the documentation
+	 * of the column. If the documentation is empty then no comment statement
+	 * will be created.
+	 * 
+	 * @param column
+	 */
+	private void createExplicitCommentUnlessNoDocumentation(Column column) {
+
+		if (StringUtils.isNotBlank(column.getDocumentation())) {
+			commentStatements.add(new Comment(column,
+					column.getDocumentation().replaceAll("\\s+", " ").trim()));
 		}
 	}
 
@@ -730,7 +739,7 @@ public class SqlBuilder implements MessageSource {
 				SqlDdl.documentationTemplate, SqlDdl.documentationNoValue));
 
 		if (SqlDdl.createExplicitComments) {
-			createExplicitCommentUnlessNoDocumentation(table, null);
+			createExplicitCommentUnlessNoDocumentation(table);
 		}
 
 		// --- create the columns for codes
@@ -1279,7 +1288,7 @@ public class SqlBuilder implements MessageSource {
 				inTable);
 
 		if (SqlDdl.createExplicitComments) {
-			createExplicitCommentUnlessNoDocumentation(inTable, column);
+			createExplicitCommentUnlessNoDocumentation(column);
 		}
 
 		column.setDataType(type);
@@ -1326,7 +1335,7 @@ public class SqlBuilder implements MessageSource {
 		Column cd = new Column(name, pi, documentation, inTable);
 
 		if (SqlDdl.createExplicitComments) {
-			createExplicitCommentUnlessNoDocumentation(inTable, cd);
+			createExplicitCommentUnlessNoDocumentation(cd);
 		}
 
 		ColumnDataType colDataType = identifyType(pi);
@@ -2198,6 +2207,42 @@ public class SqlBuilder implements MessageSource {
 			}
 		}
 
+		// -------------------------------------------------
+		// Create alter statements to add unique constraints
+		// -------------------------------------------------
+		for (CreateTable ct : this.createTableStatements) {
+
+			Table table = ct.getTable();
+
+			for (Column col : table.getColumns()) {
+
+				PropertyInfo pi = col.getRepresentedProperty();
+
+				if (pi != null) {
+
+					if (pi.matches(
+							SqlConstants.RULE_TGT_SQL_PROP_UNIQUE_CONSTRAINTS)
+							&& "true".equalsIgnoreCase(
+									pi.taggedValue("sqlUnique"))) {
+
+						if (pi.cardinality().maxOccurs > 1) {
+							result.addWarning(this, 33, col.getName(),
+									table.getName());
+						} else {
+
+							String constraintName = namingScheme
+									.nameForUniqueConstraint(table.getName(),
+											col.getName());
+
+							Alter alter = alterTableAddUniqueConstraint(table,
+									constraintName, col);
+							uniqueConstraints.add(alter);
+						}
+					}
+				}
+			}
+		}
+
 		// -------------------------------------------------------
 		// Create alter statements to add foreign key constraints
 		// -------------------------------------------------------
@@ -2430,6 +2475,27 @@ public class SqlBuilder implements MessageSource {
 		return result;
 	}
 
+	private Alter alterTableAddUniqueConstraint(Table tableWithColumn,
+			String uniqueConstraintIdentifier, Column column) {
+
+		Alter alter = new Alter();
+		alter.setTable(tableWithColumn);
+
+		ConstraintAlterExpression cae = new ConstraintAlterExpression();
+		alter.setExpression(cae);
+
+		cae.setOperation(AlterOperation.ADD);
+
+		UniqueConstraint uc = new UniqueConstraint();
+		cae.setConstraint(uc);
+
+		uc.setName(uniqueConstraintIdentifier);
+
+		uc.addColumn(column);
+
+		return alter;
+	}
+
 	private void checkRequirements(List<ClassInfo> cisToProcess) {
 
 		/*
@@ -2483,6 +2549,7 @@ public class SqlBuilder implements MessageSource {
 		stmts.addAll(this.createTableStatements);
 		stmts.addAll(this.checkConstraints);
 		stmts.addAll(this.foreignKeyConstraints);
+		stmts.addAll(this.uniqueConstraints);
 		stmts.addAll(this.geometryMetadataUpdateStatements);
 		stmts.addAll(this.geometryIndexStatements);
 		stmts.addAll(this.insertStatements);
@@ -2634,6 +2701,8 @@ public class SqlBuilder implements MessageSource {
 					+ "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
 		case 32:
 			return "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
+		case 33:
+			return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
 
 		case 100:
 			return "Context: property '$1$'.";

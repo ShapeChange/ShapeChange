@@ -1329,9 +1329,9 @@ public class Options {
 	public void loadConfiguration() throws ShapeChangeAbortException {
 
 		InputStream configStream = null;
-		
+
 		if (configFile == null) {
-			
+
 			// load minimal configuration, if no configuration file has been
 			// provided
 			String minConfigFile = "/config/minimal.xml";
@@ -1686,7 +1686,8 @@ public class Options {
 					if (inputIdref.equals(getInputId())) {
 						this.inputTargetConfigs.add(tgtConfig);
 					} else {
-						this.transformerConfigs.get(inputIdref).addTarget(tgtConfig);
+						this.transformerConfigs.get(inputIdref)
+								.addTarget(tgtConfig);
 					}
 				}
 			}
@@ -3581,6 +3582,7 @@ public class Options {
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
+		addRule("rule-sql-prop-uniqueConstraints");
 
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
@@ -3654,21 +3656,23 @@ public class Options {
 		/*
 		 * ArcGIS workspace encoding rules
 		 */
-		addRule("rule-arcgis-prop-initialValueByAlias");
-		addRule("rule-arcgis-cls-identifierStereotype");
-		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-all-precision");
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-cls-hasM");
+		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-cls-identifierStereotype");
 		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		addRule("rule-arcgis-prop-attIndex");
+		addRule("rule-arcgis-prop-initialValue");
+		addRule("rule-arcgis-prop-initialValueByAlias");
+		addRule("rule-arcgis-prop-isNullable");
 		addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
 		addRule("rule-arcgis-prop-lengthFromTaggedValue");
 		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
-		addRule("rule-arcgis-prop-initialValue");
-		addRule("rule-arcgis-all-precision");
 		addRule("rule-arcgis-prop-precision"); // deprecated
-		addRule("rule-arcgis-all-scale");
+		addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
 		addRule("rule-arcgis-prop-scale"); // deprecated
-		addRule("rule-arcgis-prop-isNullable");
-		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 
 		/*
 		 * Replication schema encoding rules

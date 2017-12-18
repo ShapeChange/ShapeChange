@@ -80,6 +80,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.StatementVisitor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
 import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
@@ -265,7 +266,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 	@Override
 	public void visit(Insert insert) {
-		// TODO Auto-generated method stub
+		// ignore
 
 	}
 
@@ -597,9 +598,37 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 							table.getName(), e.getMessage());
 				}
 
+			} else if (constr instanceof UniqueConstraint) {
+
+				UniqueConstraint ukCon = (UniqueConstraint) constr;
+
+				try {
+					Element tableElmt = repository
+							.GetElementByID(this.eaElementIDByTable.get(table));
+
+					/* Create unique constraint 'operation' */
+					Method m = EAElementUtil.createEAMethod(tableElmt,
+							constr.getName());
+					EAMethodUtil.setEAStereotypeEx(m, "EAUML::unique");
+
+					List<Column> uniqueColumns = ukCon.getColumns();
+
+					Collections.reverse(uniqueColumns);
+
+					for (Column ukCol : uniqueColumns) {
+
+						Parameter param = EAMethodUtil.createEAParameter(m,
+								ukCol.getName());
+
+						EAParameterUtil.setEAType(param, mapDataType(ukCol));
+					}
+
+				} catch (EAException e) {
+					result.addError(this, 110, constr.getName(),
+							table.getName(), e.getMessage());
+				}
 			}
 		}
-
 	}
 
 	private String mapDataType(Column col) {
@@ -613,7 +642,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 	@Override
 	public void visit(Comment comment) {
-		// TODO Auto-generated method stub
+		// ignore
 
 	}
 
@@ -734,6 +763,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			return "Could not create foreign key constraint '$1$' on table '$2$' because no primary key method was found on reference table '$3$'.";
 		case 109:
 			return "Exception encountered while creating index '$1$' on table '$2$'. Exception message: '$3$'";
+		case 110:
+			return "Exception encountered while creating unique constraint '$1$' on table '$2$'. Exception message: '$3$'";
 
 		default:
 			return "(" + DatabaseModelVisitor.class.getName()

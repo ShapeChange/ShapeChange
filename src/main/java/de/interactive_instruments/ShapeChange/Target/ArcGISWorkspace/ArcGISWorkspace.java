@@ -195,6 +195,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	public static final String RULE_PROP_ISNULLABLE = "rule-arcgis-prop-isNullable";
 
+	public static final String RULE_PROP_ATTINDEX = "rule-arcgis-prop-attIndex";
+
+	public static final String RULE_PROP_REFLEXIVE_AS_FIELD = "rule-arcgis-prop-reflexiveRelationshipAsField";
+
 	/**
 	 * If this rule is enabled, then the base name of a relationship class will
 	 * be constructed from the short names of the source and target class,
@@ -263,6 +267,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * Suffix to append to the name of foreign keys. Default is 'ID'.
 	 */
 	public static final String PARAM_FOREIGN_KEY_SUFFIX = "foreignKeySuffix";
+
+	public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
 
 	/**
 	 * If set to 'true', do not switch the first character of a target or source
@@ -544,6 +550,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static boolean keepCaseOfRolename = false;
 
 	private static String foreignKeySuffix;
+	private static String reflexiveRelationshipAttributeSuffix;
 
 	/**
 	 * key: name of the class element; value: the range domain element
@@ -738,7 +745,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			EARepositoryUtil.setEABatchAppend(rep, true);
 			EARepositoryUtil.setEAEnableUIUpdates(rep, false);
-			
+
 			// get template packages
 			rep.RefreshModelView(0);
 
@@ -862,6 +869,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			foreignKeySuffix = options.parameterAsString(
 					this.getClass().getName(), PARAM_FOREIGN_KEY_SUFFIX, "ID",
+					false, true);
+
+			reflexiveRelationshipAttributeSuffix = options.parameterAsString(
+					this.getClass().getName(), PARAM_REFLEXIVE_REL_FIELD_SUFFIX, "",
 					false, true);
 		}
 	}
@@ -3087,6 +3098,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		shortNameByTaggedValue = null;
 		keepCaseOfRolename = false;
 		foreignKeySuffix = "ID";
+		reflexiveRelationshipAttributeSuffix = "";
 		numericRangeElementIdsByClassName = new HashMap<String, Integer>();
 	}
 
@@ -3147,6 +3159,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			for (PropertyInfo pi : ci.properties().values()) {
 
+				Attribute eaAtt = null;
+
 				if (!pi.isAttribute()) {
 					// keep track of the association for later
 					associations.add(pi.association());
@@ -3161,12 +3175,32 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				Type typeInfo = pi.typeInfo();
 				String mappedTypeName = typeInfo.name;
 
-				// omit reflexive relationships
+				// handle reflexive relationships
 				if (typeInfo.id.equals(ci.id())) {
-					result.addWarning(this, 236, ci.name(), pi.name());
+
+					if (pi.matches(RULE_PROP_REFLEXIVE_AS_FIELD)) {
+
+						try {
+							createFieldForReflexiveRelationshipProperty(eaClass,
+									pi);
+						} catch (EAException e) {
+							result.addError(this, 10005, pi.name(), ci.name(),
+									e.getMessage());
+						}
+
+					} else {
+						result.addWarning(this, 236, ci.name(), pi.name());
+					}
+
 					continue;
 				}
 
+				/*
+				 * NOTE: This check is performed after the one for reflexive
+				 * relationships, since RULE_PROP_REFLEXIVE_AS_FIELD supports
+				 * creation of a field for a reflexive relationship property,
+				 * even if that property has max cardinality > 1.
+				 */
 				if (pi.cardinality().maxOccurs > 1
 						&& !(pi.categoryOfValue() == Options.FEATURE
 								|| pi.categoryOfValue() == Options.OBJECT
@@ -3183,7 +3217,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					continue;
 				}
 
-				String normalizedPiName = normalizeName(pi.name());
+				ClassInfo typeCi = model.classById(typeInfo.id);
+
+				String normalizedPiName = normalizeName(
+						pi.name() + reflexiveRelationshipAttributeSuffix);
 
 				if (exceedsMaxLength(normalizedPiName)) {
 					this.result.addWarning(this, 205, normalizedPiName,
@@ -3193,8 +3230,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				String normalizedPiAlias = pi.aliasName() == null ? null
 						: normalizeAlias(pi.aliasName(), ci);
-
-				ClassInfo typeCi = model.classById(typeInfo.id);
 
 				/*
 				 * first, determine if a type mapping is available - if so,
@@ -3332,7 +3367,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 						try {
 							String valueType = numericRange.GetName();
-							createField(eaClass, normalizedPiName,
+							eaAtt = createField(eaClass, normalizedPiName,
 									normalizedPiAlias,
 									pi.derivedDocumentation(
 											documentationTemplate,
@@ -3388,8 +3423,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 						try {
 
-							Attribute eaAtt = createField(eaClass,
-									normalizedPiName, normalizedPiAlias,
+							eaAtt = createField(eaClass, normalizedPiName,
+									normalizedPiAlias,
 									pi.derivedDocumentation(
 											documentationTemplate,
 											documentationNoValue),
@@ -3495,7 +3530,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 							length = 0;
 						}
 
-						createField(eaClass, normalizedPiName,
+						eaAtt = createField(eaClass, normalizedPiName,
 								normalizedPiAlias,
 								pi.derivedDocumentation(documentationTemplate,
 										documentationNoValue),
@@ -3524,6 +3559,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					result.addError(this, 217, pi.name(),
 							"" + pi.categoryOfValue(), ci.name());
 
+				}
+
+				// determine if an attribute index shall be created
+				if (eaAtt != null && pi.matches(RULE_PROP_ATTINDEX) && "true"
+						.equalsIgnoreCase(pi.taggedValue("sqlUnique"))) {
+
+					createAttributeIndex(eaClass, ci, eaAtt, pi);
 				}
 			}
 		}
@@ -3558,12 +3600,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			PropertyInfo end2 = ai.end2();
 			int end2CiCat = end2.inClass().category();
 
-			// omit reflexive relationships
-			if (end1.inClass().id().equals(end2.inClass().id())) {
-				result.addWarning(this, 235, end1.inClass().name());
-				continue;
-			}
-
 			/*
 			 * only process associations between feature and object types,
 			 * ignore those where one end is a union, datatype, enumeration,
@@ -3578,6 +3614,43 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				// we only process associations between feature and object types
 				result.addDebug(this, 223, end1.inClass().name(),
 						end2.inClass().name());
+				continue;
+			}
+
+			// handle reflexive relationships
+			if (end1.inClass().id().equals(end2.inClass().id())) {
+
+				if (end1.matches(RULE_PROP_REFLEXIVE_AS_FIELD)) {
+
+					ClassInfo ci = end1.inClass();
+
+					int eaElementId = elementIdByClassInfo.get(ci);
+					Element eaClass = rep.GetElementByID(eaElementId);
+
+					if (end1.isNavigable()) {
+						try {
+							createFieldForReflexiveRelationshipProperty(eaClass,
+									end1);
+						} catch (EAException e) {
+							result.addError(this, 10005, end1.name(), ci.name(),
+									e.getMessage());
+						}
+					}
+
+					if (end2.isNavigable()) {
+						try {
+							createFieldForReflexiveRelationshipProperty(eaClass,
+									end2);
+						} catch (EAException e) {
+							result.addError(this, 10005, end2.name(), ci.name(),
+									e.getMessage());
+						}
+					}
+
+				} else {
+					result.addWarning(this, 235, end1.inClass().name());
+				}
+
 				continue;
 			}
 
@@ -3611,13 +3684,61 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
-		EARepositoryUtil.setEABatchAppend(rep, false);
-		EARepositoryUtil.setEAEnableUIUpdates(rep, true);
-		
-		// 2015-06-25 JE: compact() no longer supported in EA v12 API
-		// rep.Compact();
-		rep.CloseFile();
-		rep.Exit();
+		EARepositoryUtil.closeRepository(rep);
+	}
+
+	private void createFieldForReflexiveRelationshipProperty(Element eaClass,
+			PropertyInfo pi) throws EAException {
+
+		ClassInfo ci = pi.inClass();
+
+		if (pi.cardinality().maxOccurs > 1) {
+			result.addWarning(this, 249, pi.name(), ci.name());
+		}
+
+		String normalizedPiName = normalizeName(
+				pi.name() + reflexiveRelationshipAttributeSuffix);
+
+		if (exceedsMaxLength(normalizedPiName)) {
+			this.result.addWarning(this, 205, normalizedPiName, pi.name(),
+					ci.name(), "" + maxNameLength);
+			normalizedPiName = clipToMaxLength(normalizedPiName);
+		}
+
+		String normalizedPiAlias = pi.aliasName() == null ? null
+				: normalizeAlias(pi.aliasName(), ci);
+
+		createField(eaClass, normalizedPiName, normalizedPiAlias,
+				pi.derivedDocumentation(documentationTemplate,
+						documentationNoValue),
+				"esriFieldTypeInteger", "0", "9", "0", null, null, true);
+	}
+
+	private void createAttributeIndex(Element eaClass, ClassInfo ci,
+			Attribute eaAtt, PropertyInfo pi) {
+
+		try {
+			List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+
+			tvs.add(new EATaggedValue("IsUnique",
+					"ArcGIS::AttributeIndex::IsUnique", "true"));
+			tvs.add(new EATaggedValue("IsAscending",
+					"ArcGIS::AttributeIndex::IsAscending", "true"));
+			tvs.add(new EATaggedValue("Fields",
+					"ArcGIS::AttributeIndex::Fields",
+					eaAtt.GetAttributeGUID()));
+
+			Set<String> stereotypes = new HashSet<String>();
+			stereotypes.add("ArcGIS::AttributeIndex");
+
+			EAElementUtil.createEAAttribute(eaClass,
+					eaClass.GetName() + "_" + eaAtt.GetName() + "_IDX", null,
+					null, stereotypes, tvs, false, false, null,
+					new Multiplicity(1, 1), "", null);
+
+		} catch (EAException e) {
+			result.addError(this, 10004, pi.name(), ci.name(), e.getMessage());
+		}
 	}
 
 	@Override
@@ -3783,6 +3904,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Identifier attribute '$1$' has max multiplicity > 1.";
 		case 248:
 			return "Class '$1$' does not have an <<identifier>> attribute.";
+		case 249:
+			return "Reflexive relationship property '$1$' of class '$2$' has max cardinality > 1. The <<Field>> that is created for the property will only support representation of a single relationship.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
@@ -3791,6 +3914,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
 		case 10003:
 			return "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+		case 10004:
+			return "EA exception encountered while creating <<AttributeIndex>> attribute for property '$1$' in class '$2$'. Error message: $3$";
+		case 10005:
+			return "EA exception encountered while creating <<Field>> attribute for reflexive relationship property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
 
 		// 20001 - 20100: message context
 		case 20001:

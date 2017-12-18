@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringJoiner;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.AttributeConstraint;
 import org.sparx.Collection;
@@ -247,14 +248,14 @@ public class EAModelDiff {
 			rep = EARepositoryUtil.openRepository(file, true);
 			rep.SetEnableCache(true);
 			rep.SetEnableUIUpdates(false);
-			
+
 		} catch (EAException e) {
-			
+
 			sj.add("Could not open .eap file " + file.getAbsolutePath());
-			
+
 			EARepositoryUtil.closeRepository(rep);
 			rep = null;
-			
+
 			return false;
 		}
 
@@ -262,18 +263,18 @@ public class EAModelDiff {
 			refRep = EARepositoryUtil.openRepository(refFile, true);
 			refRep.SetEnableCache(true);
 			refRep.SetEnableUIUpdates(false);
-			
+
 		} catch (EAException e) {
-			
+
 			sj.add("Could not open reference .eap file "
 					+ refFile.getAbsolutePath());
-			
+
 			EARepositoryUtil.closeRepository(rep);
 			rep = null;
 
 			EARepositoryUtil.closeRepository(refRep);
 			refRep = null;
-			
+
 			return false;
 		}
 
@@ -1062,9 +1063,9 @@ public class EAModelDiff {
 
 		result &= similar(elmtInfo.getModelPath(), "IsSpec", elmt.GetIsSpec(),
 				refElmt.GetIsSpec());
-		
-		result &= similar(elmtInfo.getModelPath(), "LinkedDocument", elmt.GetLinkedDocument(),
-				refElmt.GetLinkedDocument());
+
+		result &= similar(elmtInfo.getModelPath(), "LinkedDocument",
+				elmt.GetLinkedDocument(), refElmt.GetLinkedDocument());
 
 		// Ignore Issues, Locked, MetaType
 
@@ -1378,18 +1379,43 @@ public class EAModelDiff {
 					List<String> refTvValues = refTv.getValues();
 					Collections.sort(refTvValues);
 
-					String tvValuesString = Joiner.on(", ").skipNulls()
-							.join(tvValues);
-					String refTvValuesString = Joiner.on(", ").skipNulls()
-							.join(refTvValues);
+					/*
+					 * Apply specific comparison for tags that reference model
+					 * elements
+					 */
+					if (tv.getName().equalsIgnoreCase("OIDFieldName")
+							|| tv.getName().equalsIgnoreCase("LengthFieldName")
+							|| tv.getName().equalsIgnoreCase("ShapeFieldName")
+							|| tv.getName()
+									.equalsIgnoreCase("DestinationForeignKey")
+							|| tv.getName()
+									.equalsIgnoreCase("DestinationPrimaryKey")
+							|| tv.getName().equalsIgnoreCase("OriginForeignKey")
+							|| tv.getName().equalsIgnoreCase("OriginPrimaryKey")
+							|| tv.getName().equalsIgnoreCase("AreaFieldName")
+							|| (StringUtils.isNotBlank(tv.getFQName())
+									&& tv.getFQName().equalsIgnoreCase(
+											"ArcGIS::AttributeIndex::Fields"))) {
 
-					if (!tvValuesString.equals(refTvValuesString)) {
+						result &= similarAttributesReferencedByTaggedValue(
+								tv.getName(), refTVModelPath, tvValues,
+								refTvValues);
 
-						sj.add(refTVModelPath + " - "
-								+ "Different values. EXPECTED '"
-								+ refTvValuesString + "' FOUND '"
-								+ tvValuesString + "'.");
-						result = false;
+					} else {
+
+						String tvValuesString = Joiner.on(", ").skipNulls()
+								.join(tvValues);
+						String refTvValuesString = Joiner.on(", ").skipNulls()
+								.join(refTvValues);
+
+						if (!tvValuesString.equals(refTvValuesString)) {
+
+							sj.add(refTVModelPath + " - "
+									+ "Different values. EXPECTED '"
+									+ refTvValuesString + "' FOUND '"
+									+ tvValuesString + "'.");
+							result = false;
+						}
 					}
 				}
 			}
@@ -1405,6 +1431,59 @@ public class EAModelDiff {
 
 			return result;
 		}
+	}
+
+	private boolean similarAttributesReferencedByTaggedValue(String tvName,
+			String tvModelPath, List<String> tvValues,
+			List<String> refTvValues) {
+
+		boolean result = true;
+
+		// compare attribute and element name
+		for (int i = 0; i < tvValues.size(); i++) {
+
+			String val = tvValues.get(i);
+			String refVal = refTvValues.get(i);
+
+			if (StringUtils.isBlank(val) && StringUtils.isBlank(refVal)) {
+
+				// fine - no actual reference set for the tag
+				continue;
+
+			} else if (StringUtils.isBlank(val)
+					|| StringUtils.isBlank(refVal)) {
+
+				sj.add(tvModelPath + " - " + "Different value for tag '"
+						+ tvName + "' at index '" + i + "'. EXPECTED '"
+						+ StringUtils.stripToEmpty(refVal) + "' FOUND '"
+						+ StringUtils.stripToEmpty(val) + "'.");
+				result = false;
+
+			} else {
+
+				Attribute att = rep.GetAttributeByGuid(val);
+				Attribute refAtt = refRep.GetAttributeByGuid(refVal);
+
+				Element elmt = rep.GetElementByID(att.GetParentID());
+				Element refElmt = refRep.GetElementByID(refAtt.GetParentID());
+
+				String refTvValueString = "attribute '" + refAtt.GetName()
+						+ "' of element '" + refElmt.GetName();
+				String tvValueString = "attribute '" + att.GetName()
+						+ "' of element '" + elmt.GetName();
+
+				if (!tvValueString.equals(refTvValueString)) {
+					sj.add(tvModelPath + " - "
+							+ "Different referenced attribute for tag '"
+							+ tvName + "' (value at index '" + i
+							+ "'). EXPECTED '" + refTvValueString + "' FOUND '"
+							+ tvValueString + "'.");
+					result = false;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private boolean similarReferencedElementName(String modelPath,

@@ -1,8 +1,8 @@
 /**
  * ShapeChange - processing application schemas for geographic information
  *
- * This file is part of ShapeChange. ShapeChange takes a ISO 19109
- * Application Schema from a UML model and translates it into a
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
  * GML Application Schema or other implementation representations.
  *
  * Additional information about the software can be found at
@@ -14,12 +14,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -29,35 +29,25 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.SQL.naming;
+package de.interactive_instruments.ShapeChange;
+
+import org.junit.Test;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  *
  */
-public interface SqlNamingScheme {
+public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
-	/**
-	 *
-	 * @param tableName
-	 * @param propertyName
-	 * @return name for a check constraint
-	 */
-	public String nameForCheckConstraint(String tableName, String propertyName);
+	@Test
+	public void testReflexiveRelationship() {
 
-	/**
-	 * @return name for a foreign key
-	 */
-	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName);
+		multiTest(
+				"src/test/resources/arcgis/reflexiveRelationship/testEA_arcgis_reflexiveRelationship.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/reflexiveRelationship",
+				"src/test/resources/arcgis/reflexiveRelationship/reference");
+	}
 
-	public NameNormalizer getNameNormalizer();
-
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a unique constraint
-	 */
-	public String nameForUniqueConstraint(String tableName, String columnName);
 }

@@ -36,28 +36,13 @@ package de.interactive_instruments.ShapeChange.Target.SQL.naming;
  *         <dot> de)
  *
  */
-public interface SqlNamingScheme {
+public class DefaultPostgreSQLUniqueConstraintNamingStrategy
+		implements UniqueConstraintNamingStrategy {
 
-	/**
-	 *
-	 * @param tableName
-	 * @param propertyName
-	 * @return name for a check constraint
-	 */
-	public String nameForCheckConstraint(String tableName, String propertyName);
+	@Override
+	public String nameForUniqueConstraint(String tableName, String columnName) {
 
-	/**
-	 * @return name for a foreign key
-	 */
-	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName);
+		return "uk_" + tableName + "_" + columnName;
+	}
 
-	public NameNormalizer getNameNormalizer();
-
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a unique constraint
-	 */
-	public String nameForUniqueConstraint(String tableName, String columnName);
 }

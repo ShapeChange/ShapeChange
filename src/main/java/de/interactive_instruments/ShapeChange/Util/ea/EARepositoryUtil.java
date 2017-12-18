@@ -218,6 +218,12 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		c1Cons.Refresh();
 	}
 
+	/**
+	 * SetEnableUIUpdates=true, RefreshModelView(0), SetEnableCache=false,
+	 * SetBatchAppend=false, CloseFile(), Exit();
+	 * 
+	 * @param rep
+	 */
 	public static void closeRepository(Repository rep) {
 
 		rep.SetEnableUIUpdates(true);
@@ -259,7 +265,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 				 * prepare creation of the file by the EA API
 				 */
 				FileUtils.forceMkdirParent(repfile);
-				
+
 			} catch (IOException e) {
 				throw new EAException(
 						"Could not create directory structure for EA repository at "

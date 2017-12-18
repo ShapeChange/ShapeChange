@@ -31,33 +31,23 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL.naming;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  *
  */
-public interface SqlNamingScheme {
+public class DefaultOracleUniqueConstraintNamingStrategy
+		implements UniqueConstraintNamingStrategy {
 
-	/**
-	 *
-	 * @param tableName
-	 * @param propertyName
-	 * @return name for a check constraint
-	 */
-	public String nameForCheckConstraint(String tableName, String propertyName);
+	@Override
+	public String nameForUniqueConstraint(String tableName, String columnName) {
 
-	/**
-	 * @return name for a foreign key
-	 */
-	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName);
+		String constraintName = "uk_" + StringUtils.substring(tableName, 0, 13) + "_"
+				+ StringUtils.substring(columnName, 0, 13);
 
-	public NameNormalizer getNameNormalizer();
+		return constraintName;
+	}
 
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a unique constraint
-	 */
-	public String nameForUniqueConstraint(String tableName, String columnName);
 }

@@ -31,33 +31,23 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL.naming;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  *
  */
-public interface SqlNamingScheme {
+public class DefaultSQLServerUniqueConstraintNamingStrategy
+		implements UniqueConstraintNamingStrategy {
 
-	/**
-	 *
-	 * @param tableName
-	 * @param propertyName
-	 * @return name for a check constraint
-	 */
-	public String nameForCheckConstraint(String tableName, String propertyName);
+	@Override
+	public String nameForUniqueConstraint(String tableName, String columnName) {
 
-	/**
-	 * @return name for a foreign key
-	 */
-	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName);
+		String constraintName = "UK_" + StringUtils
+				.substring(tableName + "_" + columnName, 0, 125);
 
-	public NameNormalizer getNameNormalizer();
+		return constraintName;
+	}
 
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a unique constraint
-	 */
-	public String nameForUniqueConstraint(String tableName, String columnName);
 }

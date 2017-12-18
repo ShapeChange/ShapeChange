@@ -245,7 +245,7 @@ public abstract class BasicTest {
 		} else if (!resultFiles.isEmpty()) {
 			fail("Result directory " + resultDir.getAbsolutePath()
 					+ " contains relevant files to check. However, the reference directory "
-					+ dirResults + " does not exist.");
+					+ dirReference + " does not exist.");
 		}
 
 		SortedSet<String> refFileNames = new TreeSet<String>();

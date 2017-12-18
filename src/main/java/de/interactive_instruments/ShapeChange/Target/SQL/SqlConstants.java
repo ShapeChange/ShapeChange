@@ -284,6 +284,12 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINTS_FOR_ENUMERATIONS = "rule-sql-prop-check-constraints-for-enumerations";
 
 	/**
+	 * Unique constraints are created for fields representing a property with
+	 * tagged value 'sqlUnique' = true.
+	 */
+	public static final String RULE_TGT_SQL_PROP_UNIQUE_CONSTRAINTS = "rule-sql-prop-uniqueConstraints";
+
+	/**
 	 * NOTE: currently only applicable when deriving DDL for the Oracle database
 	 * system.
 	 */

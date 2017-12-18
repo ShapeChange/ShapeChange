@@ -77,8 +77,11 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.CountSuffixUniqu
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultForeignKeyNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultNamingScheme;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultOracleCheckConstraintNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultOracleUniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultPostgreSQLCheckConstraintNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultPostgreSQLUniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultSQLServerCheckConstraintNamingStrategy;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultSQLServerUniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.ForeignKeyNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.LowerCaseNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.NameNormalizer;
@@ -88,6 +91,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.PearsonHashCheck
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.PearsonHashForeignKeyNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SQLServerNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
@@ -297,7 +301,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			NameNormalizer normalizer = null;
 			ForeignKeyNamingStrategy fkNaming = null;
 			CheckConstraintNamingStrategy ckNaming = null;
-			UniqueNamingStrategy uniqueConstraintNaming = new CountSuffixUniqueNamingStrategy(
+			UniqueConstraintNamingStrategy ukNaming = null;
+			UniqueNamingStrategy uniqueNaming = new CountSuffixUniqueNamingStrategy(
 					result);
 
 			// identify normalizer strategy
@@ -351,6 +356,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				if (ckNaming == null) {
 					ckNaming = new DefaultOracleCheckConstraintNamingStrategy();
 				}
+				if (ukNaming == null) {
+					ukNaming = new DefaultOracleUniqueConstraintNamingStrategy();
+				}
 
 			} else if (databaseSystem != null
 					&& "sqlserver".equalsIgnoreCase(databaseSystem)) {
@@ -361,6 +369,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				}
 				if (ckNaming == null) {
 					ckNaming = new DefaultSQLServerCheckConstraintNamingStrategy();
+				}
+				if (ukNaming == null) {
+					ukNaming = new DefaultSQLServerUniqueConstraintNamingStrategy();
 				}
 
 			} else {
@@ -376,6 +387,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				if (ckNaming == null) {
 					ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
 				}
+				if (ukNaming == null) {
+					ukNaming = new DefaultPostgreSQLUniqueConstraintNamingStrategy();
+				}
 			}
 
 			if (schema.matches(
@@ -384,7 +398,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			}
 
 			namingScheme = new DefaultNamingScheme(result, normalizer, fkNaming,
-					ckNaming, uniqueConstraintNaming);
+					ckNaming, ukNaming, uniqueNaming);
 
 			codeStatusCLType = options.parameterAsString(
 					this.getClass().getName(),

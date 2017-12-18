@@ -113,7 +113,8 @@ public abstract class ModelImpl implements Model {
 			"vocabulary", "associativeTable", "jsonEncodingRule",
 			"sqlEncodingRule", "status", "geometry",
 			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
-			"scale", "numericType", "toFeatureType", "toCodelist" };
+			"scale", "numericType", "toFeatureType", "toCodelist",
+			"sqlUnique" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
