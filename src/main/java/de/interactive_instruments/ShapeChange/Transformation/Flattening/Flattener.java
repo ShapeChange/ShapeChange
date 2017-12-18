@@ -174,8 +174,6 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String PARAM_INHERITANCE_INCLUDE_REGEX = "flattenInheritanceIncludeRegex";
 
 	public static final String PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK = "linkedDocumentPageBreak";
-	public static final String PARAM_INHERITANCE_LINKED_DOC_TEXT = "linkedDocumentText";
-	public static final String PARAM_INHERITANCE_LINKED_DOC_HORIZONTALLINE = "linkedDocumentHorizontalLine";
 
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
@@ -5070,6 +5068,11 @@ public class Flattener implements Transformer, MessageSource {
 								PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 					}
 
+					if (trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
+						mergeLinkedDocumentsInSubtypes(superclass, trfConfig);
+					}
+
 					idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
 
 				} else {
@@ -5103,112 +5106,13 @@ public class Flattener implements Transformer, MessageSource {
 									PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 						}
 
+						if (trfConfig.hasRule(
+								RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
+							mergeLinkedDocumentsInSubtypes(superclass,
+									trfConfig);
+						}
+
 						idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
-					}
-				}
-			}
-		}
-
-		/*
-		 * Merge linked documents
-		 */
-		if (trfConfig.hasRule(
-				RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
-
-			boolean pageBreak = trfConfig.parameterAsBoolean(
-					PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK, false);
-			String text = trfConfig.parameterAsString(
-					PARAM_INHERITANCE_LINKED_DOC_TEXT, null, false, true);
-			boolean horizontalLine = trfConfig.parameterAsBoolean(
-					PARAM_INHERITANCE_LINKED_DOC_HORIZONTALLINE, false);
-
-			for (GenericClassInfo genSuperclass : genSuperclassesById
-					.values()) {
-
-				if (genSuperclass.getLinkedDocument() != null
-						&& !genSuperclass.subtypes().isEmpty()) {
-
-					// we load the linked document of the superclass once
-					WordprocessingMLPackage topPackage = null;
-
-					try {
-						File linkedDocSupertype = genSuperclass
-								.getLinkedDocument();
-						FileInputStream linkedDocSupertypeIS = new FileInputStream(
-								linkedDocSupertype);
-						topPackage = WordprocessingMLPackage
-								.load(linkedDocSupertypeIS);
-					} catch (FileNotFoundException | Docx4JException e) {
-
-						MessageContext mc = result.addError(this, 20400,
-								genSuperclass.name(), e.getMessage());
-						if (mc != null) {
-							mc.addDetail(this, 2,
-									genSuperclass.fullNameInSchema());
-						}
-					}
-
-					if (topPackage != null) {
-
-						for (String subtypeId : genSuperclass.subtypes()) {
-
-							ClassInfo subtype = genSuperclass.model()
-									.classById(subtypeId);
-
-							if (genModel.isInSelectedSchemas(subtype)) {
-
-								if (subtype.getLinkedDocument() == null) {
-
-									// simply use the linked document of the
-									// supertype
-									subtype.setLinkedDocument(
-											genSuperclass.getLinkedDocument());
-
-								} else {
-
-									GenericClassInfo genSubtype = (GenericClassInfo) subtype;
-
-									WordprocessingMLPackage topPackageClone = (WordprocessingMLPackage) topPackage
-											.clone();
-									MainDocumentPart topCloneMainDoc = topPackageClone
-											.getMainDocumentPart();
-
-									String specificText = text == null ? null
-											: text.replaceAll("\\$SUPERTYPE\\$",
-													genSuperclass.name())
-													.replaceAll("\\$SUBTYPE\\$",
-															genSubtype.name());
-
-									if (pageBreak) {
-										DocxUtil.addPageBreak(topCloneMainDoc);
-									}
-									if (specificText != null) {
-										topCloneMainDoc.addParagraphOfText(
-												specificText);
-									}
-									if (horizontalLine) {
-										DocxUtil.addHorizontalLine(
-												topCloneMainDoc);
-									}
-
-									try {
-
-										File mergedLinkedDoc = DocxUtil.merge(
-												topPackageClone,
-												genSubtype.getLinkedDocument(),
-												options.linkedDocumentsTmpDir());
-										genSubtype.setLinkedDocument(
-												mergedLinkedDoc);
-
-									} catch (Exception e) {
-										result.addError(this, 20401,
-												genSuperclass.name(),
-												genSubtype.name(),
-												e.getMessage());
-									}
-								}
-							}
-						}
 					}
 				}
 			}
@@ -5890,6 +5794,86 @@ public class Flattener implements Transformer, MessageSource {
 				superclass.setBaseClass(null);
 				superclass.setSupertypes(null);
 				superclass.setSubtypes(null);
+			}
+		}
+	}
+
+	private void mergeLinkedDocumentsInSubtypes(GenericClassInfo superclass,
+			TransformerConfiguration trfConfig) {
+
+		boolean pageBreak = trfConfig.parameterAsBoolean(
+				PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK, false);
+
+		if (superclass.getLinkedDocument() != null
+				&& !superclass.subtypes().isEmpty()) {
+
+			// we load the linked document of the superclass once
+			WordprocessingMLPackage topPackage = null;
+
+			try {
+				File linkedDocSupertype = superclass.getLinkedDocument();
+				FileInputStream linkedDocSupertypeIS = new FileInputStream(
+						linkedDocSupertype);
+				topPackage = WordprocessingMLPackage.load(linkedDocSupertypeIS);
+			} catch (FileNotFoundException | Docx4JException e) {
+
+				MessageContext mc = result.addError(this, 20400,
+						superclass.name(), e.getMessage());
+				if (mc != null) {
+					mc.addDetail(this, 2, superclass.fullNameInSchema());
+				}
+			}
+
+			if (topPackage != null) {
+
+				for (String subtypeId : superclass.subtypes()) {
+
+					ClassInfo subtype = superclass.model().classById(subtypeId);
+
+					if (superclass.model().isInSelectedSchemas(subtype)) {
+
+						if (subtype.getLinkedDocument() == null) {
+
+							// simply use the linked document of the
+							// supertype
+							subtype.setLinkedDocument(
+									superclass.getLinkedDocument());
+
+						} else {
+
+							GenericClassInfo genSubtype = (GenericClassInfo) subtype;
+
+							// use a copy/clone of the supertype linked doc
+							WordprocessingMLPackage topPackageClone = (WordprocessingMLPackage) topPackage
+									.clone();
+							MainDocumentPart topCloneMainDoc = topPackageClone
+									.getMainDocumentPart();
+
+							if (pageBreak) {
+								topCloneMainDoc.getContent()
+										.add(DocxUtil.createPageBreak());
+							}
+
+							try {
+
+								File mergedLinkedDoc = File.createTempFile(
+										"transformedLinkedDoc", ".docx",
+										options.linkedDocumentsTmpDir());
+								mergedLinkedDoc.deleteOnExit();
+
+								DocxUtil.merge(topPackageClone,
+										genSubtype.getLinkedDocument(),
+										mergedLinkedDoc);
+
+								genSubtype.setLinkedDocument(mergedLinkedDoc);
+
+							} catch (Exception e) {
+								result.addError(this, 20401, superclass.name(),
+										genSubtype.name(), e.getMessage());
+							}
+						}
+					}
+				}
 			}
 		}
 	}

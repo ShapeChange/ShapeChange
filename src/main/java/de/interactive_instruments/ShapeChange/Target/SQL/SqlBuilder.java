@@ -572,14 +572,14 @@ public class SqlBuilder implements MessageSource {
 	private void createExplicitCommentUnlessNoDocumentation(Table table,
 			Column column) {
 
-		if (column == null
+		if (column != null
+				&& StringUtils.isNotBlank(column.getDocumentation())) {
+			commentStatements.add(new Comment(column,
+					column.getDocumentation().replaceAll("\\s+", " ").trim()));
+		} else if (table != null
 				&& StringUtils.isNotBlank(table.getDocumentation())) {
 			commentStatements.add(new Comment(table,
 					table.getDocumentation().replaceAll("\\s+", " ").trim()));
-
-		} else if (StringUtils.isNotBlank(column.getDocumentation())) {
-			commentStatements.add(new Comment(column,
-					column.getDocumentation().replaceAll("\\s+", " ").trim()));
 		}
 	}
 

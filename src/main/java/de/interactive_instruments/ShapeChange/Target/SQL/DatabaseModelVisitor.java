@@ -392,7 +392,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 			// Create primary key 'operation'
 			Method m = EAElementUtil.createEAMethod(tableElmt,
-					table.getName() + "_pkey");
+					"PK_" + table.getName());
 			EAMethodUtil.setEAStereotypeEx(m, "EAUML::PK");
 
 			Collections.reverse(primaryKeyColumns);

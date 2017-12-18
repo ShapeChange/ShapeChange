@@ -53,6 +53,7 @@ import org.docx4j.wml.P;
 import org.docx4j.wml.PPr;
 import org.docx4j.wml.PPrBase;
 import org.docx4j.wml.R;
+import org.docx4j.wml.Text;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -68,12 +69,12 @@ public class DocxUtil {
 	 * 
 	 * @param topPackage
 	 * @param bottomFile
-	 * @param linkedDocumentsTmpDir
+	 * @param outputFile
 	 * @return
 	 * @throws Exception
 	 */
 	public static File merge(WordprocessingMLPackage topPackage,
-			File bottomFile, File linkedDocumentsTmpDir) throws Exception {
+			File bottomFile, File outputFile) throws Exception {
 
 		/*
 		 * For the time being, we use an approach that does not perfectly merge
@@ -84,8 +85,7 @@ public class DocxUtil {
 		 * the classpath, the current approach could be used as fallback.
 		 */
 
-		return mergeUsingCTAltChunk(topPackage, bottomFile,
-				linkedDocumentsTmpDir);
+		return mergeUsingCTAltChunk(topPackage, bottomFile, outputFile);
 	}
 
 	/**
@@ -98,8 +98,9 @@ public class DocxUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File mergeUsingCTAltChunk(WordprocessingMLPackage topPackage,
-			File bottomFile, File linkedDocumentsTmpDir) throws Exception {
+	protected static File mergeUsingCTAltChunk(
+			WordprocessingMLPackage topPackage, File bottomFile,
+			File outputFile) throws Exception {
 
 		/*
 		 * Based on
@@ -156,22 +157,17 @@ public class DocxUtil {
 		 * Finally, save the modified top package to the output file and return
 		 * that file.
 		 */
-		File tmpFile = File.createTempFile("mergedLinkedDoc", ".docx",
-				linkedDocumentsTmpDir);
-		tmpFile.deleteOnExit();
+		topPackage.save(outputFile);
 
-		topPackage.save(tmpFile);
-
-		return tmpFile;
+		return outputFile;
 	}
 
-	public static void addPageBreak(MainDocumentPart mdp) {
+	public static P createPageBreak() {
 
 		org.docx4j.wml.ObjectFactory wmlObjectFactory = new org.docx4j.wml.ObjectFactory();
 
 		// Create object for p
 		P p = wmlObjectFactory.createP();
-		mdp.addObject(p);
 		// Create object for r
 		R r = wmlObjectFactory.createR();
 		p.getContent().add(r);
@@ -179,15 +175,16 @@ public class DocxUtil {
 		Br br = wmlObjectFactory.createBr();
 		r.getContent().add(br);
 		br.setType(org.docx4j.wml.STBrType.PAGE);
+
+		return p;
 	}
 
-	public static void addHorizontalLine(MainDocumentPart mdp) {
+	public static P createHorizontalLine() {
 
 		org.docx4j.wml.ObjectFactory wmlObjectFactory = new org.docx4j.wml.ObjectFactory();
 
 		// Create object for p
 		P p = wmlObjectFactory.createP();
-		mdp.addObject(p);
 		// Create object for pPr
 		PPr ppr = wmlObjectFactory.createPPr();
 		p.setPPr(ppr);
@@ -201,6 +198,27 @@ public class DocxUtil {
 		border.setSz(BigInteger.valueOf(6));
 		border.setColor("auto");
 		border.setSpace(BigInteger.valueOf(1));
+
+		return p;
+	}
+
+	public static P createText(String text) {
+
+		org.docx4j.wml.ObjectFactory factory = Context.getWmlObjectFactory();
+
+		P p = factory.createP();
+
+		if (text != null) {
+			Text t = factory.createText();
+			t.setValue(text);
+
+			R run = factory.createR();
+			run.getContent().add(t);
+
+			p.getContent().add(run);
+		}
+
+		return p;
 	}
 
 }
