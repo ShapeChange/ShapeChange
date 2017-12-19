@@ -1,0 +1,2 @@
+CREATE SPATIAL INDEX idx_FeatureType_pGeom1 ON FeatureType (pGeom1) USING GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX = (-1000,-1000,1000,1000));
+CREATE SPATIAL INDEX idx_FeatureType_pGeom2 ON FeatureType (pGeom2);

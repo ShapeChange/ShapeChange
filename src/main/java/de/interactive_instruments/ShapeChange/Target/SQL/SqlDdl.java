@@ -45,8 +45,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,7 +97,9 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
@@ -137,6 +142,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	private static String outputDirectory = null;
 	private static String outputFilename = null;
 
+	protected static SortedSet<String> categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
 	protected static String codeStatusCLType;
 	protected static int codeStatusCLLength;
 	protected static String idColumnName;
@@ -147,6 +153,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static ColumnDataType foreignKeyColumnDataType;
 	protected static String primaryKeySpec;
 	protected static String primaryKeySpecCodelist;
+	protected static boolean separateSpatialIndexStatements;
 	protected static String nameCodeStatusCLColumn;
 	protected static String codeStatusCLColumnDocumentation;
 	protected static String nameCodeStatusNotesColumn;
@@ -400,6 +407,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			namingScheme = new DefaultNamingScheme(result, normalizer, fkNaming,
 					ckNaming, ukNaming, uniqueNaming);
 
+			categoriesForSeparatingCodeInsertStatements.addAll(
+					options.parameterAsStringList(this.getClass().getName(),
+							SqlConstants.PARAM_SEPARATE_CODE_INSERT_STATEMENTS_BY_CODELIST_TYPE,
+							null, true, true));
+
 			codeStatusCLType = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUSCL_TYPE,
@@ -459,6 +471,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST,
 					SqlConstants.DEFAULT_PRIMARYKEY_SPEC_CODELIST, true, true);
+
+			separateSpatialIndexStatements = options.parameterAsBoolean(
+					this.getClass().getName(),
+					SqlConstants.PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS,
+					false);
 
 			nameCodeStatusCLColumn = options.parameterAsString(
 					this.getClass().getName(),
@@ -852,6 +869,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		SqlBuilder builder = new SqlBuilder(this, result, options, model,
 				namingScheme);
 		List<Statement> stmts = builder.process(cisToProcess);
+		stmts = Collections.unmodifiableList(stmts);
 
 		/*
 		 * Create representation (DDL or replication schema) and write the
@@ -900,76 +918,51 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 			} else {
 
-				// --- Create DDL
-				StringBuffer sb = new StringBuffer();
-				DdlVisitor visitor;
+				// --- Create DDL(s)
 
-				if (databaseStrategy instanceof PostgreSQLStrategy) {
-					visitor = new PostgreSQLDdlVisitor(SqlConstants.CRLF,
-							SqlConstants.INDENT, this);
-				} else {
-					visitor = new DdlVisitor(SqlConstants.CRLF,
-							SqlConstants.INDENT, this);
-				}
+				// create a copy of the stmt list that we can modify
+				List<Statement> stmtsForDdlCreation = new ArrayList<Statement>(
+						stmts);
 
-				visitor.visit(stmts);
-				visitor.postprocess();
-				sb.append(visitor.getDdl());
+				if (separateSpatialIndexStatements) {
 
-				// --- Write DDL to file
-				String fileName = outputFilename + ".sql";
+					String fileName = outputFilename + "_spatial.sql";
 
-				File outputFile = new File(outputDirectory, fileName);
+					SpatialIndexStatementFilter stmtFilter = new SpatialIndexStatementFilter();
 
-				try (BufferedWriter writer = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream(outputFile),
-								"UTF-8"))) {
+					List<Statement> filteredStatements = stmtFilter
+							.filter(stmtsForDdlCreation);
 
-					String ddlTop = readDdl(SqlConstants.PARAM_FILE_DDL_TOP);
-					if (ddlTop != null) {
-						writer.write(ddlTop);
-					}
-
-					writer.write(sb.toString());
-
-					String ddlBottom = readDdl(
-							SqlConstants.PARAM_FILE_DDL_BOTTOM);
-					if (ddlBottom != null) {
-						writer.write(ddlBottom);
+					if (!filteredStatements.isEmpty()) {
+						writeDdl(filteredStatements, fileName);
+						stmtsForDdlCreation.removeAll(filteredStatements);
 					}
 				}
 
-				if (removeEmptyLinesInDdlOutput) {
+				if (!categoriesForSeparatingCodeInsertStatements.isEmpty()) {
 
-					File outputWithoutEmptyLines = new File(outputDirectory,
-							fileName + ".tmp");
+					for (String category : categoriesForSeparatingCodeInsertStatements) {
 
-					try (BufferedReader originalDdlReader = new BufferedReader(
-							new InputStreamReader(
-									new FileInputStream(outputFile)));
-							BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(
-									new OutputStreamWriter(
-											new FileOutputStream(
-													outputWithoutEmptyLines),
-											"UTF-8"));) {
+						String fileName = outputFilename
+								+ "_inserts_codelistType_" + category + ".sql";
 
-						String aLine = null;
-						while ((aLine = originalDdlReader.readLine()) != null) {
-							if (!aLine.trim().isEmpty()) {
-								ddlWithoutEmptyLinesWriter.write(aLine);
-								ddlWithoutEmptyLinesWriter.newLine();
-							}
+						CodeByCategoryInsertStatementFilter stmtFilter = new CodeByCategoryInsertStatementFilter(
+								category);
+
+						List<Statement> filteredStatements = stmtFilter
+								.filter(stmtsForDdlCreation);
+
+						if (!filteredStatements.isEmpty()) {
+							writeDdl(filteredStatements, fileName);
+							stmtsForDdlCreation.removeAll(filteredStatements);
 						}
-
 					}
-
-					Files.move(outputWithoutEmptyLines.toPath(),
-							outputFile.toPath(),
-							StandardCopyOption.REPLACE_EXISTING);
 				}
 
-				result.addResult(getTargetName(), outputDirectory, fileName,
-						null);
+				String fileName = outputFilename + ".sql";
+				writeDdl(stmtsForDdlCreation, fileName);
+
+				// --- Create database model
 
 				if (createDatabaseModel) {
 
@@ -1052,6 +1045,81 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		}
 	}
 
+	/**
+	 * @param stmts
+	 *            the list of statements to write as SQL DDL in the output file
+	 * @param fileName
+	 *            the name of the output file (to be created in the output
+	 *            directory), including the file extension
+	 * @throws Exception
+	 */
+	private void writeDdl(List<Statement> stmts, String fileName)
+			throws Exception {
+
+		StringBuffer sb = new StringBuffer();
+		DdlVisitor visitor;
+
+		if (databaseStrategy instanceof PostgreSQLStrategy) {
+			visitor = new PostgreSQLDdlVisitor(SqlConstants.CRLF,
+					SqlConstants.INDENT, this);
+		} else {
+			visitor = new DdlVisitor(SqlConstants.CRLF, SqlConstants.INDENT,
+					this);
+		}
+
+		visitor.visit(stmts);
+		visitor.postprocess();
+		sb.append(visitor.getDdl());
+
+		// --- Write DDL to file
+		File outputFile = new File(outputDirectory, fileName);
+
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(outputFile), "UTF-8"))) {
+
+			String ddlTop = readDdl(SqlConstants.PARAM_FILE_DDL_TOP);
+			if (ddlTop != null) {
+				writer.write(ddlTop);
+			}
+
+			writer.write(sb.toString());
+
+			String ddlBottom = readDdl(SqlConstants.PARAM_FILE_DDL_BOTTOM);
+			if (ddlBottom != null) {
+				writer.write(ddlBottom);
+			}
+		}
+
+		if (removeEmptyLinesInDdlOutput) {
+
+			File outputWithoutEmptyLines = new File(outputDirectory,
+					fileName + ".tmp");
+
+			try (BufferedReader originalDdlReader = new BufferedReader(
+					new InputStreamReader(new FileInputStream(outputFile)));
+					BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(
+							new OutputStreamWriter(
+									new FileOutputStream(
+											outputWithoutEmptyLines),
+									"UTF-8"));) {
+
+				String aLine = null;
+				while ((aLine = originalDdlReader.readLine()) != null) {
+					if (!aLine.trim().isEmpty()) {
+						ddlWithoutEmptyLinesWriter.write(aLine);
+						ddlWithoutEmptyLinesWriter.newLine();
+					}
+				}
+
+			}
+
+			Files.move(outputWithoutEmptyLines.toPath(), outputFile.toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		result.addResult(getTargetName(), outputDirectory, fileName, null);
+	}
+
 	@Override
 	public void reset() {
 
@@ -1074,6 +1142,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		outputDirectory = null;
 		outputFilename = null;
 
+		categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
 		codeStatusCLType = null;
 		codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
 		idColumnName = null;
@@ -1084,6 +1153,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		foreignKeyColumnDataType = null;
 		primaryKeySpec = null;
 		primaryKeySpecCodelist = null;
+		separateSpatialIndexStatements = false;
 		nameCodeStatusCLColumn = null;
 		codeStatusCLColumnDocumentation = null;
 		nameCodeStatusNotesColumn = null;

@@ -234,14 +234,21 @@ public class SQLTest extends WindowsBasicTest {
 				"testResults/sql/databaseModel_mergeLinkedDocuments",
 				"src/test/resources/sql/databaseModel_mergeLinkedDocuments/reference");
 	}
-	
+
 	@Test
 	public void testUniqueConstraint() {
 
-		multiTest(
-				"src/test/resources/sql/sqlUnique/testEA_sql_unique.xml",
-				new String[] { "sql", "eap" },
-				"testResults/sql/sqlUnique",
+		multiTest("src/test/resources/sql/sqlUnique/testEA_sql_unique.xml",
+				new String[] { "sql", "eap" }, "testResults/sql/sqlUnique",
 				"src/test/resources/sql/sqlUnique/reference");
+	}
+
+	@Test
+	public void testStatementFilters() {
+
+		multiTest(
+				"src/test/resources/sql/statementFilters/testEA_sql_statementFilters.xml",
+				new String[] { "sql" }, "testResults/sql/statementFilters",
+				"src/test/resources/sql/statementFilters/reference");
 	}
 }

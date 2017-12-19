@@ -135,6 +135,26 @@ public class SqlConstants {
 	public static final String PARAM_SDO_DIM_ELEMENTS = "sdoDimElements";
 
 	/**
+	 * If the value of this parameter is 'true' (ignoring case), then SQL
+	 * statements related to spatial indexes (creation, but also insertion of
+	 * geometry metadata) are written to a separate output file. The name of
+	 * that file will be that of the main DDL file, plus suffix '_spatial'.
+	 */
+	public static final String PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS = "separateSpatialIndexStatements";
+
+	/**
+	 * If this parameter is included in the configuration, then SQL statements
+	 * for insertion of codes into codelist tables are written to separate
+	 * output files. The value of the parameter is a (comma-separated) list of
+	 * categories. For each of these categories, the insert statements where the
+	 * code list has tagged value 'codelistType' with a value equal to the
+	 * category are written to a new output file. The name of that file will be
+	 * that of the main DDL file, plus suffix
+	 * '_inserts_codelistType_{category}'.
+	 */
+	public static final String PARAM_SEPARATE_CODE_INSERT_STATEMENTS_BY_CODELIST_TYPE = "separateCodeInsertStatementsByCodelistType";
+
+	/**
 	 * Regular expression to validate the value of parameter
 	 * {@value #PARAM_SDO_DIM_ELEMENTS}:
 	 * (\([^,]+(,[-]?([0-9]+\.[0-9]+|[0-9]+)){3}\))+

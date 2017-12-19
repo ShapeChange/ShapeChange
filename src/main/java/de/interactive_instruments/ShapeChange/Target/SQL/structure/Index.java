@@ -72,7 +72,7 @@ public class Index {
 	}
 
 	/**
-	 * @return the type
+	 * @return the type, can be <code>null</code>
 	 */
 	public String getType() {
 		return type;
@@ -133,11 +133,10 @@ public class Index {
 	}
 
 	/**
-	 * @return the properties
+	 * @return the properties; can be empty but not <code>null</code>
 	 */
 	public Properties getProperties() {
 		return properties;
 	}
-	
-	
+
 }
