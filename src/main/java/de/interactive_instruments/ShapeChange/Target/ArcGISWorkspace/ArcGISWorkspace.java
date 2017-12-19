@@ -3220,7 +3220,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				ClassInfo typeCi = model.classById(typeInfo.id);
 
 				String normalizedPiName = normalizeName(
-						pi.name() + reflexiveRelationshipAttributeSuffix);
+						pi.name());
 
 				if (exceedsMaxLength(normalizedPiName)) {
 					this.result.addWarning(this, 205, normalizedPiName,
