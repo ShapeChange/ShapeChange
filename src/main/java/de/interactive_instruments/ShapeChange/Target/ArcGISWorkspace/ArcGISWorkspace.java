@@ -39,8 +39,6 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +46,10 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +81,7 @@ import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
@@ -428,7 +431,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private static double numRangeDelta = NUM_RANGE_DELTA;
 
-	private static Set<String> esriTypesSuitedForRangeConstraint = new HashSet<String>();
+	private static Set<String> esriTypesSuitedForRangeConstraint = new TreeSet<String>();
 
 	private static String outputDirectory = null;
 	private static File outputDirectoryFile = null;
@@ -437,25 +440,25 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private static Repository rep = null;
 
-	private static Set<ClassInfo> ignoredCis = new HashSet<ClassInfo>();
+	private static SortedSet<ClassInfo> ignoredCis = new TreeSet<ClassInfo>();
 
-	private static Map<ClassInfo, ArcGISGeometryType> geometryTypeCache = new HashMap<ClassInfo, ArcGISGeometryType>();
+	private static SortedMap<ClassInfo, ArcGISGeometryType> geometryTypeCache = new TreeMap<ClassInfo, ArcGISGeometryType>();
 
-	private static Map<ClassInfo, Integer> elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
-	private static Map<ClassInfo, String> elementNameByClassInfo = new HashMap<ClassInfo, String>();
+	private static SortedMap<ClassInfo, Integer> elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
+	private static SortedMap<ClassInfo, String> elementNameByClassInfo = new TreeMap<ClassInfo, String>();
 
-	private static Map<ClassInfo, String> objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
-	private static Map<ClassInfo, String> identifierAttributeGUIDByClass = new HashMap<ClassInfo, String>();
+	private static SortedMap<ClassInfo, String> objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
+	private static SortedMap<ClassInfo, String> identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 
-	private static Map<ClassInfo, ClassInfo> generalisations = new HashMap<ClassInfo, ClassInfo>();
-	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
+	private static SortedMap<ClassInfo, ClassInfo> generalisations = new TreeMap<ClassInfo, ClassInfo>();
+	private static SortedSet<AssociationInfo> associations = new TreeSet<AssociationInfo>();
 
 	/**
 	 * key: name that would usually be assigned to a relationship class; value:
 	 * counter for the number of occurrences of this particular name (assume 0
 	 * if a name is not contained as key yet)
 	 */
-	private static Map<String, Integer> counterByRelationshipClassName = new HashMap<String, Integer>();
+	private static SortedMap<String, Integer> counterByRelationshipClassName = new TreeMap<String, Integer>();
 
 	/**
 	 * key: class info object; value: map that keeps track of property names
@@ -463,7 +466,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * counter for the number of occurrences of this particular name (assume 0
 	 * if a name is not contained as key yet)]
 	 */
-	private static Map<ClassInfo, Map<String, Integer>> counterByPropertyNameByClass = new HashMap<ClassInfo, Map<String, Integer>>();
+	private static SortedMap<ClassInfo, SortedMap<String, Integer>> counterByPropertyNameByClass = new TreeMap<ClassInfo, SortedMap<String, Integer>>();
 
 	private static Model model = null;
 
@@ -509,7 +512,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * key: workspace sub package; value: {key: application schema package;
 	 * value: corresponding EA package within the workspace sub package}
 	 */
-	protected static Map<Integer, Map<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
+	protected static SortedMap<Integer, SortedMap<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new TreeMap<Integer, SortedMap<PackageInfo, Integer>>();
 
 	/**
 	 * TODO: value of 'rule' attribute is currently ignored
@@ -517,11 +520,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * key: 'type' attribute value of map entry defined for the target; value:
 	 * according map entry
 	 */
-	protected static Map<String, ProcessMapEntry> processMapEntries = null;
+	protected static SortedMap<String, ProcessMapEntry> processMapEntries = null;
 
-	protected static Map<String, Integer> lengthMappingByTypeName = new HashMap<String, Integer>();
-	protected static Map<String, Integer> precisionMappingByTypeName = new HashMap<String, Integer>();
-	protected static Map<String, Integer> scaleMappingByTypeName = new HashMap<String, Integer>();
+	protected static SortedMap<String, Integer> lengthMappingByTypeName = new TreeMap<String, Integer>();
+	protected static SortedMap<String, Integer> precisionMappingByTypeName = new TreeMap<String, Integer>();
+	protected static SortedMap<String, Integer> scaleMappingByTypeName = new TreeMap<String, Integer>();
 
 	/**
 	 * Contains information about the maximum length of a property value
@@ -530,7 +533,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * key: {class name}_{property name}; value: the max length of the property
 	 * value
 	 */
-	protected static Map<String, Integer> lengthByClassPropName = new HashMap<String, Integer>();
+	protected static SortedMap<String, Integer> lengthByClassPropName = new TreeMap<String, Integer>();
 
 	/**
 	 * Contains information about the numeric ranges defined for specific class
@@ -539,7 +542,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * key: class; value: map with [key: property name; value: the numeric range
 	 * for the property]
 	 */
-	protected static Map<ClassInfo, Map<String, NumericRangeConstraintMetadata>> numericRangeConstraintByPropNameByClassName = new HashMap<ClassInfo, Map<String, NumericRangeConstraintMetadata>>();
+	protected static SortedMap<ClassInfo, SortedMap<String, NumericRangeConstraintMetadata>> numericRangeConstraintByPropNameByClassName = new TreeMap<ClassInfo, SortedMap<String, NumericRangeConstraintMetadata>>();
 
 	protected static String nameOfTVToDetermineFieldLength = "size";
 
@@ -555,7 +558,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	/**
 	 * key: name of the class element; value: the range domain element
 	 */
-	private static Map<String, Integer> numericRangeElementIdsByClassName = new HashMap<String, Integer>();
+	private static SortedMap<String, Integer> numericRangeElementIdsByClassName = new TreeMap<String, Integer>();
 
 	// TODO Unit Test
 
@@ -772,7 +775,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			} else {
 				featuresPkgId = features;
 				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(featuresPkgId,
-						new HashMap<PackageInfo, Integer>());
+						new TreeMap<PackageInfo, Integer>());
 			}
 
 			Integer domains = EARepositoryUtil.getEAChildPackageByName(rep,
@@ -783,7 +786,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			} else {
 				domainsPkgId = domains;
 				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(domainsPkgId,
-						new HashMap<PackageInfo, Integer>());
+						new TreeMap<PackageInfo, Integer>());
 			}
 
 			Integer tables = EARepositoryUtil.getEAChildPackageByName(rep,
@@ -794,7 +797,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			} else {
 				tablesPkgId = tables;
 				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(tablesPkgId,
-						new HashMap<PackageInfo, Integer>());
+						new TreeMap<PackageInfo, Integer>());
 			}
 
 			Integer assocClasses = EARepositoryUtil.getEAChildPackageByName(rep,
@@ -806,7 +809,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			} else {
 				assocClassesPkgId = assocClasses;
 				eaPkgIdByModelPkg_byWorkspaceSubPkgId.put(assocClassesPkgId,
-						new HashMap<PackageInfo, Integer>());
+						new TreeMap<PackageInfo, Integer>());
 			}
 
 			ProcessConfiguration pc = o.getCurrentProcessConfig();
@@ -814,7 +817,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// parse map entries
 			List<ProcessMapEntry> mapEntries = pc.getMapEntries();
 
-			Map<String, ProcessMapEntry> mes = new HashMap<String, ProcessMapEntry>();
+			SortedMap<String, ProcessMapEntry> mes = new TreeMap<String, ProcessMapEntry>();
 
 			for (ProcessMapEntry pme : mapEntries) {
 				/*
@@ -872,8 +875,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					false, true);
 
 			reflexiveRelationshipAttributeSuffix = options.parameterAsString(
-					this.getClass().getName(), PARAM_REFLEXIVE_REL_FIELD_SUFFIX, "",
-					false, true);
+					this.getClass().getName(), PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
+					"", false, true);
 		}
 	}
 
@@ -1080,7 +1083,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 								lowerBoundaryValue, upperBoundaryValue,
 								lowerBoundaryInclusive, upperBoundaryInclusive);
 
-						Map<String, NumericRangeConstraintMetadata> map;
+						SortedMap<String, NumericRangeConstraintMetadata> map;
 
 						if (numericRangeConstraintByPropNameByClassName
 								.containsKey(ci)) {
@@ -1090,7 +1093,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 									.get(ci);
 						} else {
 
-							map = new HashMap<String, NumericRangeConstraintMetadata>();
+							map = new TreeMap<String, NumericRangeConstraintMetadata>();
 
 							numericRangeConstraintByPropNameByClassName.put(ci,
 									map);
@@ -1161,7 +1164,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					NumericRangeConstraintMetadata nrcm = new NumericRangeConstraintMetadata(
 							lowerBoundaryValue, upperBoundaryValue, true, true);
 
-					Map<String, NumericRangeConstraintMetadata> map;
+					SortedMap<String, NumericRangeConstraintMetadata> map;
 
 					if (numericRangeConstraintByPropNameByClassName
 							.containsKey(ci)) {
@@ -1171,7 +1174,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 								.get(ci);
 					} else {
 
-						map = new HashMap<String, NumericRangeConstraintMetadata>();
+						map = new TreeMap<String, NumericRangeConstraintMetadata>();
 
 						numericRangeConstraintByPropNameByClassName.put(ci,
 								map);
@@ -1285,7 +1288,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// for each enum/code of the class, create an according property
 		if (ci.properties() != null) {
 
-			Set<String> enumStereotype = new HashSet<String>();
+			SortedSet<String> enumStereotype = new TreeSet<String>();
 			enumStereotype.add(STEREOTYPE_DOMAIN_CODED_VALUE);
 
 			for (PropertyInfo pi : ci.properties().values()) {
@@ -1499,7 +1502,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("IsUnique", "true"));
 		tvs.add(new EATaggedValue("IsAscending", "true"));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("SpatialIndex");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_IDX", null, null,
@@ -1516,7 +1519,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("IsAscending", "true"));
 		tvs.add(new EATaggedValue("Fields", ""));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("AttributeIndex");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
@@ -1539,7 +1542,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Required", "true"));
 		tvs.add(new EATaggedValue("Scale", "0"));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Area", null, null,
@@ -1563,7 +1566,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Required", "true"));
 		tvs.add(new EATaggedValue("Scale", "0"));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Length", null, null,
@@ -1589,7 +1592,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Required", "true"));
 		tvs.add(new EATaggedValue("Scale", "0"));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape", null, null,
@@ -1612,7 +1615,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Required", "true"));
 		tvs.add(new EATaggedValue("Scale", "0"));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID", null, null,
@@ -1773,21 +1776,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		return result;
 	}
 
-	// private String applyLengthRestriction(String name, String propertyName,
-	// ClassInfo ci) {
-	//
-	// String result = name;
-	//
-	// if (exceedsMaxLength(name)) {
-	//
-	// this.result.addWarning(this, 205, name, propertyName, ci.name(), ""
-	// + MAX_NAME_LENGTH);
-	// result = clipToMaxLength(name);
-	// }
-	//
-	// return result;
-	// }
-
 	private boolean exceedsMaxLength(String s) {
 
 		if (s == null) {
@@ -1821,7 +1809,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	/**
-	 * Sets abstractness, alias and documentation.
+	 * Sets abstractness, alias, documentation, and linked documentation.
 	 * 
 	 * @param ci
 	 * @param e
@@ -1854,6 +1842,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			} catch (EAException exc) {
 				result.addError(this, 204, ci.name(), exc.getMessage());
 			}
+		}
+
+		if (ci.getLinkedDocument() != null) {
+			e.LoadLinkedDocument(ci.getLinkedDocument().getAbsolutePath());
 		}
 	}
 
@@ -2037,7 +2029,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// set to keep track of supertypes that have already been visited, in
 		// case that there is a shared supertype in the supertype hierarchy
-		Set<String> idsOfVisitedSupertypes = new HashSet<String>();
+		SortedSet<String> idsOfVisitedSupertypes = new TreeSet<String>();
 
 		Map<String, PropertyInfo> pis = computeAllPis(ci,
 				idsOfVisitedSupertypes);
@@ -2048,7 +2040,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private Map<String, PropertyInfo> computeAllPis(ClassInfo ci,
 			Set<String> idsOfVisitedSupertypes) {
 
-		Map<String, PropertyInfo> result = new HashMap<String, PropertyInfo>();
+		SortedMap<String, PropertyInfo> result = new TreeMap<String, PropertyInfo>();
 
 		// first look up properties in all supertypes
 		if (ci.supertypes() != null) {
@@ -2180,19 +2172,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		/*
 		 * execute behavior based upon abstractness of the types
 		 */
-		Set<ClassInfo> sources, targets;
+		SortedSet<ClassInfo> sources, targets;
 
 		if (source.isAbstract()) {
 			sources = computeListOfAllNonAbstractSubtypes(source);
 		} else {
-			sources = new HashSet<ClassInfo>();
+			sources = new TreeSet<ClassInfo>();
 			sources.add(source);
 		}
 
 		if (target.isAbstract()) {
 			targets = computeListOfAllNonAbstractSubtypes(target);
 		} else {
-			targets = new HashSet<ClassInfo>();
+			targets = new TreeSet<ClassInfo>();
 			targets.add(target);
 		}
 
@@ -2261,25 +2253,27 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					}
 
 					/*
-					 * create foreign key fields in assocClass for source and
-					 * target
+					 * create foreign key fields in assocClass to reference
+					 * source and target
 					 */
 
 					String fkSrcName = roleNameSource + foreignKeySuffix;
+					fkSrcName = normalizeName(fkSrcName);
+
+					if (exceedsMaxLength(fkSrcName)) {
+						this.result.addWarning(this, 227, fkSrcName,
+								"" + maxNameLength);
+						fkSrcName = clipToMaxLength(fkSrcName);
+					}
 
 					try {
 
-						fkSrcName = normalizeName(fkSrcName);
-
-						if (exceedsMaxLength(fkSrcName)) {
-							this.result.addWarning(this, 227, fkSrcName,
-									"" + maxNameLength);
-							fkSrcName = clipToMaxLength(fkSrcName);
-						}
-
-						foreignKeyFieldSrc = createField(assocClass, fkSrcName,
-								"", "", "esriFieldTypeInteger", "0", "9", "0",
-								null, null, true);
+						/*
+						 * in an association class, this field references a
+						 * source object
+						 */
+						foreignKeyFieldSrc = createForeignKeyField(assocClass,
+								fkSrcName, "", "", source_);
 
 					} catch (EAException e) {
 						result.addError(this, 10003, fkSrcName, assocClassName,
@@ -2288,20 +2282,22 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					}
 
 					String fkTgtName = roleNameTarget + foreignKeySuffix;
+					fkTgtName = normalizeName(fkTgtName);
+
+					if (exceedsMaxLength(fkTgtName)) {
+						this.result.addWarning(this, 227, fkTgtName,
+								"" + maxNameLength);
+						fkTgtName = clipToMaxLength(fkTgtName);
+					}
 
 					try {
 
-						fkTgtName = normalizeName(fkTgtName);
-
-						if (exceedsMaxLength(fkTgtName)) {
-							this.result.addWarning(this, 227, fkTgtName,
-									"" + maxNameLength);
-							fkTgtName = clipToMaxLength(fkTgtName);
-						}
-
-						foreignKeyFieldTgt = createField(assocClass, fkTgtName,
-								"", "", "esriFieldTypeInteger", "0", "9", "0",
-								null, null, true);
+						/*
+						 * in an association class, this field references a
+						 * target object
+						 */
+						foreignKeyFieldTgt = createForeignKeyField(assocClass,
+								fkTgtName, "", "", target_);
 
 					} catch (EAException e) {
 						result.addError(this, 10003, fkTgtName, assocClassName,
@@ -2386,11 +2382,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					EAConnectorEndUtil.setEARole(supplierEnd,
 							toLowerCamelCase(targetPropName));
-
-					// EAModelUtil.setEARole(clientEnd,
-					// toLowerCamelCase(roleNameSource));
-					// EAModelUtil.setEARole(supplierEnd,
-					// toLowerCamelCase(roleNameTarget));
 
 					EAConnectorEndUtil.setEACardinality(clientEnd, "0..*");
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
@@ -2547,27 +2538,26 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// create foreign key field in target class
 		int eaElementId = elementIdByClassInfo.get(target);
 		Element eaClassTarget = rep.GetElementByID(eaElementId);
-		// Element eaClassTarget = this.classes.get(target);
 		if (eaClassTarget == null) {
 			result.addError(this, 237, source.name(), target.name(),
 					target.name());
 			return;
 		}
 
-		Attribute foreignKeyField = null;
+		String name = normalizeName(roleNameSource + foreignKeySuffix);
 
+		if (exceedsMaxLength(name)) {
+			this.result.addWarning(this, 205, name, roleNameSource,
+					target.name(), "" + maxNameLength);
+			name = clipToMaxLength(name);
+
+		}
+
+		Attribute foreignKeyField;
 		try {
-			String name = normalizeName(roleNameSource + foreignKeySuffix);
-
-			if (exceedsMaxLength(name)) {
-				this.result.addWarning(this, 205, name, roleNameSource,
-						target.name(), "" + maxNameLength);
-				name = clipToMaxLength(name);
-
-			}
-
-			foreignKeyField = createField(eaClassTarget, name, "", "",
-					"esriFieldTypeInteger", "0", "9", "0", null, null, true);
+			// the foreign key field is used to reference a source object
+			foreignKeyField = createForeignKeyField(eaClassTarget, name, "", "",
+					source);
 
 		} catch (EAException e) {
 			result.addError(this, 10003, roleNameTarget, target.name(),
@@ -2578,19 +2568,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		/*
 		 * execute behavior based upon abstractness of the types
 		 */
-		Set<ClassInfo> sources, targets;
+		SortedSet<ClassInfo> sources, targets;
 
 		if (source.isAbstract()) {
 			sources = computeListOfAllNonAbstractSubtypes(source);
 		} else {
-			sources = new HashSet<ClassInfo>();
+			sources = new TreeSet<ClassInfo>();
 			sources.add(source);
 		}
 
 		if (target.isAbstract()) {
 			targets = computeListOfAllNonAbstractSubtypes(target);
 		} else {
-			targets = new HashSet<ClassInfo>();
+			targets = new TreeSet<ClassInfo>();
 			targets.add(target);
 		}
 
@@ -2665,13 +2655,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					EAConnectorEndUtil.setEARole(supplierEnd,
 							toLowerCamelCase(targetPropName));
-
-					// EAModelUtil.setEARole(clientEnd,
-					// toLowerCamelCase(roleNameSource));
-					// EAModelUtil.setEARole(supplierEnd,
-					// toLowerCamelCase(roleNameTarget));
-					// EAModelUtil.setEARole(clientEnd, roleNameSource);
-					// EAModelUtil.setEARole(supplierEnd, roleNameTarget);
 
 					EAConnectorEndUtil.setEACardinality(clientEnd, "1");
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
@@ -2777,7 +2760,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		} else {
 
 			// log that we now have a property with the given name
-			Map<String, Integer> tmp = new HashMap<String, Integer>();
+			SortedMap<String, Integer> tmp = new TreeMap<String, Integer>();
 
 			tmp.put(propertyName, 1);
 
@@ -2787,9 +2770,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
-	private Set<ClassInfo> computeListOfAllNonAbstractSubtypes(ClassInfo ci) {
+	private SortedSet<ClassInfo> computeListOfAllNonAbstractSubtypes(
+			ClassInfo ci) {
 
-		Set<ClassInfo> allNonAbstractSubtypes = new HashSet<ClassInfo>();
+		SortedSet<ClassInfo> allNonAbstractSubtypes = new TreeSet<ClassInfo>();
 
 		if (ci.subtypes() != null) {
 
@@ -3043,7 +3027,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Required", "false"));
 		tvs.add(new EATaggedValue("Scale", tvScale));
 
-		Set<String> stereotypes = new HashSet<String>();
+		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add("Field");
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
@@ -3065,41 +3049,41 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		maxNameLength = DEFAULT_MAX_NAME_LENGTH;
 		lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
 		numRangeDelta = NUM_RANGE_DELTA;
-		esriTypesSuitedForRangeConstraint = new HashSet<String>();
+		esriTypesSuitedForRangeConstraint = new TreeSet<String>();
 		outputDirectory = null;
 		outputDirectoryFile = null;
 		documentationTemplate = null;
 		documentationNoValue = null;
 		rep = null;
-		ignoredCis = new HashSet<ClassInfo>();
-		geometryTypeCache = new HashMap<ClassInfo, ArcGISGeometryType>();
-		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
-		elementNameByClassInfo = new HashMap<ClassInfo, String>();
-		objectIdAttributeGUIDByClass = new HashMap<ClassInfo, String>();
-		identifierAttributeGUIDByClass = new HashMap<ClassInfo, String>();
-		generalisations = new HashMap<ClassInfo, ClassInfo>();
-		associations = new HashSet<AssociationInfo>();
-		counterByRelationshipClassName = new HashMap<String, Integer>();
-		counterByPropertyNameByClass = new HashMap<ClassInfo, Map<String, Integer>>();
+		ignoredCis = new TreeSet<ClassInfo>();
+		geometryTypeCache = new TreeMap<ClassInfo, ArcGISGeometryType>();
+		elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
+		elementNameByClassInfo = new TreeMap<ClassInfo, String>();
+		objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
+		identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
+		generalisations = new TreeMap<ClassInfo, ClassInfo>();
+		associations = new TreeSet<AssociationInfo>();
+		counterByRelationshipClassName = new TreeMap<String, Integer>();
+		counterByPropertyNameByClass = new TreeMap<ClassInfo, SortedMap<String, Integer>>();
 		workspacePkgId = null;
 		featuresPkgId = null;
 		tablesPkgId = null;
 		assocClassesPkgId = null;
 		domainsPkgId = null;
-		eaPkgIdByModelPkg_byWorkspaceSubPkgId = new HashMap<Integer, Map<PackageInfo, Integer>>();
+		eaPkgIdByModelPkg_byWorkspaceSubPkgId = new TreeMap<Integer, SortedMap<PackageInfo, Integer>>();
 		processMapEntries = null;
-		lengthMappingByTypeName = new HashMap<String, Integer>();
-		precisionMappingByTypeName = new HashMap<String, Integer>();
-		scaleMappingByTypeName = new HashMap<String, Integer>();
-		lengthByClassPropName = new HashMap<String, Integer>();
-		numericRangeConstraintByPropNameByClassName = new HashMap<ClassInfo, Map<String, NumericRangeConstraintMetadata>>();
+		lengthMappingByTypeName = new TreeMap<String, Integer>();
+		precisionMappingByTypeName = new TreeMap<String, Integer>();
+		scaleMappingByTypeName = new TreeMap<String, Integer>();
+		lengthByClassPropName = new TreeMap<String, Integer>();
+		numericRangeConstraintByPropNameByClassName = new TreeMap<ClassInfo, SortedMap<String, NumericRangeConstraintMetadata>>();
 		nameOfTVToDetermineFieldLength = "size";
 		absolutePathOfOutputEAPFile = null;
 		shortNameByTaggedValue = null;
 		keepCaseOfRolename = false;
 		foreignKeySuffix = "ID";
 		reflexiveRelationshipAttributeSuffix = "";
-		numericRangeElementIdsByClassName = new HashMap<String, Integer>();
+		numericRangeElementIdsByClassName = new TreeMap<String, Integer>();
 	}
 
 	@Override
@@ -3219,8 +3203,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				ClassInfo typeCi = model.classById(typeInfo.id);
 
-				String normalizedPiName = normalizeName(
-						pi.name());
+				String normalizedPiName = normalizeName(pi.name());
 
 				if (exceedsMaxLength(normalizedPiName)) {
 					this.result.addWarning(this, 205, normalizedPiName,
@@ -3687,8 +3670,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		EARepositoryUtil.closeRepository(rep);
 	}
 
-	private void createFieldForReflexiveRelationshipProperty(Element eaClass,
-			PropertyInfo pi) throws EAException {
+	private Attribute createFieldForReflexiveRelationshipProperty(
+			Element eaClass, PropertyInfo pi) throws EAException {
 
 		ClassInfo ci = pi.inClass();
 
@@ -3696,22 +3679,72 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			result.addWarning(this, 249, pi.name(), ci.name());
 		}
 
-		String normalizedPiName = normalizeName(
+		String normalizedName = normalizeName(
 				pi.name() + reflexiveRelationshipAttributeSuffix);
 
-		if (exceedsMaxLength(normalizedPiName)) {
-			this.result.addWarning(this, 205, normalizedPiName, pi.name(),
+		if (exceedsMaxLength(normalizedName)) {
+			this.result.addWarning(this, 205, normalizedName, pi.name(),
 					ci.name(), "" + maxNameLength);
-			normalizedPiName = clipToMaxLength(normalizedPiName);
+			normalizedName = clipToMaxLength(normalizedName);
 		}
 
-		String normalizedPiAlias = pi.aliasName() == null ? null
+		String normalizedAlias = pi.aliasName() == null ? null
 				: normalizeAlias(pi.aliasName(), ci);
 
-		createField(eaClass, normalizedPiName, normalizedPiAlias,
-				pi.derivedDocumentation(documentationTemplate,
-						documentationNoValue),
-				"esriFieldTypeInteger", "0", "9", "0", null, null, true);
+		String documentation = pi.derivedDocumentation(documentationTemplate,
+				documentationNoValue);
+
+		return createForeignKeyField(eaClass, normalizedName, normalizedAlias,
+				documentation, ci);
+	}
+
+	private Attribute createForeignKeyField(Element eaClass,
+			String normalizedName, String normalizedAlias, String documentation,
+			ClassInfo targetType) throws EAException {
+
+		String primaryKeyAttGUID = determinePrimaryKeyGUID(targetType);
+		Attribute primaryKeyAtt = rep.GetAttributeByGuid(primaryKeyAttGUID);
+
+		String primaryKeyType = primaryKeyAtt.GetType();
+
+		String length = StringUtils.stripToEmpty(
+				EAAttributeUtil.taggedValue(primaryKeyAtt, "Length"));
+		String precision = StringUtils.stripToEmpty(
+				EAAttributeUtil.taggedValue(primaryKeyAtt, "Precision"));
+		String scale = StringUtils.stripToEmpty(
+				EAAttributeUtil.taggedValue(primaryKeyAtt, "Scale"));
+
+		String refType;
+		if (primaryKeyType.equalsIgnoreCase("esriFieldTypeOID")) {
+
+			/*
+			 * We do not want to create a new field with type ObjectID. We want
+			 * to refer to a row that has a specific ObjectID. Since an ObjectID
+			 * is an integer, we use esriFieldTypeInteger, with according
+			 * length, precision, and scale.
+			 */
+			refType = "esriFieldTypeInteger";
+			length = "0";
+			precision = "9";
+			scale = "0";
+
+		} else if (primaryKeyType.equalsIgnoreCase("esriFieldTypeGlobalID")) {
+
+			/*
+			 * We do not want to create a new field with type GlobalID. We want
+			 * to refer to a row that has a specific GlobalID. Since a GlobalID
+			 * is a GUID, we use esriFieldTypeGUID.
+			 */
+			refType = "esriFieldTypeGUID";
+
+		} else {
+
+			refType = primaryKeyType;
+		}
+
+		return createField(eaClass, normalizedName, normalizedAlias,
+				documentation, refType, length, precision, scale, null, null,
+				true);
 	}
 
 	private void createAttributeIndex(Element eaClass, ClassInfo ci,
@@ -3728,7 +3761,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					"ArcGIS::AttributeIndex::Fields",
 					eaAtt.GetAttributeGUID()));
 
-			Set<String> stereotypes = new HashSet<String>();
+			SortedSet<String> stereotypes = new TreeSet<String>();
 			stereotypes.add("ArcGIS::AttributeIndex");
 
 			EAElementUtil.createEAAttribute(eaClass,

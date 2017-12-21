@@ -50,4 +50,22 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 				"src/test/resources/arcgis/reflexiveRelationship/reference");
 	}
 
+	@Test
+	public void testRelationshipClasses() {
+
+		multiTest(
+				"src/test/resources/arcgis/relationshipClasses/testEA_arcgis_relationshipClasses.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/relationshipClasses",
+				"src/test/resources/arcgis/relationshipClasses/reference");
+	}
+
+	@Test
+	public void testLinkedDocuments() {
+
+		multiTest(
+				"src/test/resources/arcgis/linkedDocuments/testEA_arcgis_linkedDocuments.xml",
+				new String[] { "eap" }, "testResults/arcgis/linkedDocuments",
+				"src/test/resources/arcgis/linkedDocuments/reference");
+	}
 }

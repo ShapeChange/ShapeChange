@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/arcgis/reflexiveRelationship/test_arcgis_reflexiveRelationship.EAP" />
+			value="src/test/resources/arcgis/relationshipClasses/test_arcgis_relationshipClasses.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
@@ -15,7 +15,7 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/arcgis/reflexiveRelationship/log.xml" />
+			value="testResults/arcgis/relationshipClasses/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -37,22 +37,21 @@
 			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"
-				value="testResults/arcgis/reflexiveRelationship/arcgis" />
+				value="testResults/arcgis/relationshipClasses/arcgis" />
 			<targetParameter name="outputFilename" value="test" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
-			<targetParameter name="reflexiveRelationshipFieldSuffix"
-				value="_SUFFIX" />
+			<targetParameter name="foreignKeySuffix" value="_FK" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 					<rule name="rule-arcgis-cls-identifierStereotype" />
-					<rule name="rule-arcgis-prop-reflexiveRelationshipAsField" />
 				</EncodingRule>
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_ArcGISWorkspace.xml" />
 			<mapEntries>
+				<MapEntry type="GlobalID" rule="*" targetType="esriFieldTypeGlobalID" />
 				<MapEntry type="GUID" rule="*" targetType="esriFieldTypeGUID" />
 			</mapEntries>
 		</Target>

@@ -7,23 +7,30 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/arcgis/reflexiveRelationship/test_arcgis_reflexiveRelationship.EAP" />
+			value="src/test/resources/arcgis/linkedDocuments/test_arcgis_linkedDocuments.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="tmpDirectory" value="testResults/arcgis/linkedDocuments/tmp" />
+		<parameter name="loadLinkedDocuments" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile"
-			value="testResults/arcgis/reflexiveRelationship/log.xml" />
+		<parameter name="logFile" value="testResults/arcgis/linkedDocuments/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
-			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
-			input="INPUT" id="F_inheritance" mode="enabled">
+			class="de.interactive_instruments.ShapeChange.Transformation.LinkedDocument.LinkedDocumentTransformer"
+			input="INPUT" id="LINKEDDOCS" mode="enabled">
+			<parameters>
+				<ProcessParameter name="prependTextValue"
+					value="Content below from the Logical Model documentation - $TYPE$" />
+				<ProcessParameter name="prependHorizontalLine"
+					value="true" />
+			</parameters>
 			<rules>
-				<ProcessRuleSet name="flattener">
-					<rule name="rule-trf-cls-flatten-inheritance" />
+				<ProcessRuleSet name="transformer">
+					<rule name="rule-trf-all-prependText" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
@@ -31,30 +38,27 @@
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
-			mode="enabled" inputs="F_inheritance">
+			mode="enabled" inputs="LINKEDDOCS">
 			<targetParameter name="workspaceTemplate"
 				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
 			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"
-				value="testResults/arcgis/reflexiveRelationship/arcgis" />
+				value="testResults/arcgis/linkedDocuments/arcgis" />
 			<targetParameter name="outputFilename" value="test" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
-			<targetParameter name="reflexiveRelationshipFieldSuffix"
-				value="_SUFFIX" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
-					<rule name="rule-arcgis-cls-identifierStereotype" />
-					<rule name="rule-arcgis-prop-reflexiveRelationshipAsField" />
+					<!-- <rule name="rule-arcgis-cls-identifierStereotype" /> -->
 				</EncodingRule>
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_ArcGISWorkspace.xml" />
-			<mapEntries>
-				<MapEntry type="GUID" rule="*" targetType="esriFieldTypeGUID" />
-			</mapEntries>
+			<!-- <mapEntries> -->
+			<!-- <MapEntry type="GUID" rule="*" targetType="esriFieldTypeGUID" /> -->
+			<!-- </mapEntries> -->
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>
