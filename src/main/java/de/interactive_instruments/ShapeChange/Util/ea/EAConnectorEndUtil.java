@@ -220,6 +220,72 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 		}
 	}
 
+	public static void setEAAlias(ConnectorEnd conEnd, String alias)
+			throws EAException {
+
+		conEnd.SetAlias(alias);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(106), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
+	public static void setEARoleNote(ConnectorEnd conEnd, String note)
+			throws EAException {
+
+		conEnd.SetRoleNote(note);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(107), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
+	public static void setEAStereotypeEx(ConnectorEnd conEnd,
+			String stereotypeEx) throws EAException {
+
+		conEnd.SetStereotypeEx(stereotypeEx);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(108), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
+	public static void setEAOrdering(ConnectorEnd conEnd, boolean isOrdered)
+			throws EAException {
+
+		conEnd.SetOrdering(isOrdered ? 1 : 0);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(109), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
+	public static void setEAAllowDuplicates(ConnectorEnd conEnd,
+			boolean allowDuplicates) throws EAException {
+
+		conEnd.SetAllowDuplicates(allowDuplicates);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(111), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
+	public static void setEAAggregation(ConnectorEnd conEnd, EAAggregation aggregation)
+			throws EAException {
+
+		conEnd.SetAggregation(aggregation.getEAValue());
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(110), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+
 	public static void setEAContainment(ConnectorEnd conEnd, String containment)
 			throws EAException {
 
@@ -240,10 +306,10 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 *            'Navigable', 'Non-Navigable' or 'Unspecified'
 	 * @throws EAException
 	 */
-	public static void setEANavigable(ConnectorEnd conEnd, String navigable)
-			throws EAException {
+	public static void setEANavigable(ConnectorEnd conEnd,
+			EANavigable navigable) throws EAException {
 
-		conEnd.SetNavigable(navigable);
+		conEnd.SetNavigable(navigable.getEAValue());
 
 		if (!conEnd.Update()) {
 			throw new EAException(createMessage(message(104), conEnd.GetRole(),
@@ -471,6 +537,18 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'Navigable' of EA connector end '$1$'. Error message is: $2$";
 		case 105:
 			return "EA error encountered while updating 'Containment' of EA connector end '$1$' with value '$2$'. Error message is: $3$";
+		case 106:
+			return "EA error encountered while updating 'Alias' of EA connector end '$1$'. Error message is: $2$";
+		case 107:
+			return "EA error encountered while updating 'Notes' of EA connector end '$1$'. Error message is: $2$";
+		case 108:
+			return "EA error encountered while updating 'StereotypeEx' of EA connector end '$1$'. Error message is: $2$";
+		case 109:
+			return "EA error encountered while updating 'Ordering' of EA connector end '$1$'. Error message is: $2$";
+		case 110:
+			return "EA error encountered while updating 'AllowDuplicates' of EA connector end '$1$'. Error message is: $2$";
+		case 111:
+			return "EA error encountered while updating 'Aggregation' of EA connector end '$1$'. Error message is: $2$";
 
 		default:
 			return "(" + EAConnectorUtil.class.getName()

@@ -322,11 +322,13 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	 * and tagged values are not set by this method and thus need to be added
 	 * later on.
 	 * 
+	 * @param rep
 	 * @param pi
 	 *            package to create in EA
-	 * @param eaParentPkg
-	 *            EA Package element that is the parent of the EA Package to
-	 *            create for pi
+	 * @param eaParentPkgId
+	 *            The PackageID of the EA Package element that is the parent of
+	 *            the EA Package to create for pi
+	 * @return The PackageID of the new package
 	 * @throws EAException
 	 *             If an EA error was encountered while updating the package
 	 */

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2018 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,42 +38,13 @@ import org.junit.Test;
  *         <dot> de)
  *
  */
-public class ArcGISWorkspaceTest extends WindowsBasicTest {
+public class UmlModelTest extends WindowsBasicTest {
 
 	@Test
 	public void testBasicFunctionality() {
 
-		multiTest("src/test/resources/arcgis/base/testEA_arcgis_base.xml",
-				new String[] { "eap" }, "testResults/arcgis/base",
-				"src/test/resources/arcgis/base/reference");
-	}
-
-	@Test
-	public void testReflexiveRelationship() {
-
-		multiTest(
-				"src/test/resources/arcgis/reflexiveRelationship/testEA_arcgis_reflexiveRelationship.xml",
-				new String[] { "eap" },
-				"testResults/arcgis/reflexiveRelationship",
-				"src/test/resources/arcgis/reflexiveRelationship/reference");
-	}
-
-	@Test
-	public void testRelationshipClasses() {
-
-		multiTest(
-				"src/test/resources/arcgis/relationshipClasses/testEA_arcgis_relationshipClasses.xml",
-				new String[] { "eap" },
-				"testResults/arcgis/relationshipClasses",
-				"src/test/resources/arcgis/relationshipClasses/reference");
-	}
-
-	@Test
-	public void testLinkedDocuments() {
-
-		multiTest(
-				"src/test/resources/arcgis/linkedDocuments/testEA_arcgis_linkedDocuments.xml",
-				new String[] { "eap" }, "testResults/arcgis/linkedDocuments",
-				"src/test/resources/arcgis/linkedDocuments/reference");
+		multiTest("src/test/resources/uml/basic/testEA_uml_basic.xml",
+				new String[] { "eap" }, "testResults/uml/basic",
+				"src/test/resources/uml/basic/reference");
 	}
 }

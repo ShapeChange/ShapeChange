@@ -206,6 +206,28 @@ public class EAConnectorUtil extends AbstractEAUtil {
 		classElement.CreateAssociationClass(connectorID);
 	}
 
+	public static void setEAAlias(Connector con, String aliasName)
+			throws EAException {
+
+		con.SetAlias(aliasName);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(107), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEANotes(Connector con, String notes)
+			throws EAException {
+
+		con.SetNotes(notes);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(108), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
 	public static void setEAName(Connector con, String name)
 			throws EAException {
 
@@ -250,13 +272,24 @@ public class EAConnectorUtil extends AbstractEAUtil {
 		}
 	}
 
-	public static void setEADirection(Connector con, String direction)
+	public static void setEADirection(Connector con, EADirection direction)
 			throws EAException {
 
-		con.SetDirection(direction);
+		con.SetDirection(direction.getEAValue());
 
 		if (!con.Update()) {
 			throw new EAException(createMessage(message(104), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+	
+	public static void setEASupplierID(Connector con, int supplierID)
+			throws EAException {
+
+		con.SetSupplierID(supplierID);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(109), con.GetName(),
 					con.GetLastError()));
 		}
 	}
@@ -359,6 +392,12 @@ public class EAConnectorUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'StereotypeEx' on connector '$1$'. Error message is: $2$";
 		case 106:
 			return "EA error encountered while updating 'StyleEx' on connector '$1$'. Error message is: $2$";
+		case 107:
+			return "EA error encountered while updating 'Alias' of EA connector '$1$'. Error message is: $2$";
+		case 108:
+			return "EA error encountered while updating 'Notes' of EA connector '$1$'. Error message is: $2$";
+		case 109:
+			return "EA error encountered while updating 'SupplierID' of EA connector '$1$'. Error message is: $2$";
 
 		default:
 			return "(" + EAConnectorUtil.class.getName()

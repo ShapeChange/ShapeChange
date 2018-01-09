@@ -234,8 +234,6 @@ public class EAElementUtil extends AbstractEAUtil {
 			throw new EAException(
 					createMessage(message(101), e.GetName(), e.GetLastError()));
 		}
-
-		e.Refresh();
 	}
 
 	public static void setEAAlias(Element e, String aliasName)
@@ -247,7 +245,6 @@ public class EAElementUtil extends AbstractEAUtil {
 			throw new EAException(
 					createMessage(message(102), e.GetName(), e.GetLastError()));
 		}
-		e.Refresh();
 	}
 
 	/**
@@ -268,7 +265,6 @@ public class EAElementUtil extends AbstractEAUtil {
 			throw new EAException(
 					createMessage(message(103), e.GetName(), e.GetLastError()));
 		}
-		e.Refresh();
 	}
 
 	public static void setEANotes(Element e, String documentation)
@@ -280,7 +276,6 @@ public class EAElementUtil extends AbstractEAUtil {
 			throw new EAException(
 					createMessage(message(104), e.GetName(), e.GetLastError()));
 		}
-		e.Refresh();
 	}
 
 	/**
@@ -301,7 +296,6 @@ public class EAElementUtil extends AbstractEAUtil {
 			throw new EAException(
 					createMessage(message(105), e.GetName(), e.GetLastError()));
 		}
-		e.Refresh();
 	}
 
 	/**
@@ -511,6 +505,8 @@ public class EAElementUtil extends AbstractEAUtil {
 	 *            EA isDerived.
 	 * @param isOrdered
 	 *            EA isOrdered.
+	 * @param allowDuplicates
+	 *            EA allowDuplicates (the opposite of ShapeChange isUnique)
 	 * @param initialValue
 	 *            EA default/initialValue, can be <code>null</code>.
 	 * @param m
@@ -527,8 +523,9 @@ public class EAElementUtil extends AbstractEAUtil {
 	public static Attribute createEAAttribute(Element e, String name,
 			String alias, String documentation, Set<String> stereotypes,
 			List<EATaggedValue> taggedValues, boolean isDerived,
-			boolean isOrdered, String initialValue, Multiplicity m, String type,
-			Integer classifierID) throws EAException {
+			boolean isOrdered, boolean allowDuplicates, String initialValue,
+			Multiplicity m, String type, Integer classifierID)
+			throws EAException {
 
 		Collection<Attribute> atts = e.GetAttributes();
 
@@ -558,6 +555,8 @@ public class EAElementUtil extends AbstractEAUtil {
 		att.SetIsDerived(isDerived);
 
 		att.SetIsOrdered(isOrdered);
+
+		att.SetAllowDuplicates(allowDuplicates);
 
 		if (initialValue != null) {
 			att.SetDefault(initialValue);
@@ -631,7 +630,7 @@ public class EAElementUtil extends AbstractEAUtil {
 
 		return null;
 	}
-	
+
 	/**
 	 * @param elmt
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
@@ -676,6 +675,37 @@ public class EAElementUtil extends AbstractEAUtil {
 		return result;
 	}
 
+	/**
+	 * @param e
+	 *            Element to which the new constraint shall be added.
+	 * @param name
+	 *            Name of the new constraint
+	 * @param type
+	 *            Type of the new constraint
+	 * @param text
+	 *            Text of the new constraint
+	 * @return The new constraint
+	 * @throws EAException
+	 */
+	public static org.sparx.Constraint addConstraint(Element e, String name,
+			String type, String text) throws EAException {
+		
+		Collection<org.sparx.Constraint> cons = e.GetConstraints();
+
+		org.sparx.Constraint con = cons.AddNew(name, type);
+		
+		cons.Refresh();
+		
+		con.SetNotes(text);
+		
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(1006), name,
+					e.GetName(), con.GetLastError()));
+		} else {
+			return con;
+		}
+	}
+
 	public static String message(int mnr) {
 
 		switch (mnr) {
@@ -698,6 +728,8 @@ public class EAElementUtil extends AbstractEAUtil {
 			return "EA error encountered while updating new EA attribute '$1$' on element '$2$'. Error message is: $3$";
 		case 1005:
 			return "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
+		case 1006:
+			return "EA error encountered while updating new EA constraint '$1$' for element '$2$'. Error message is: $3$";
 		default:
 			return "(" + EAElementUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;

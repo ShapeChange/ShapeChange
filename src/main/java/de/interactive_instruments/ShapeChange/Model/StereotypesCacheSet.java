@@ -131,6 +131,20 @@ public class StereotypesCacheSet extends StereotypesImpl {
 
 		return result;
 	}
+	
+	@Override
+	public SortedSet<String> asSet() {
+		
+		SortedSet<String> result = new TreeSet<String>();
+		
+		if (st != null) {
+			result.add(st);
+		} else if (stSet != null) {
+			result.addAll(stSet);
+		} 
+
+		return result;
+	}
 
 	@Override
 	public void add(String stereotype) {

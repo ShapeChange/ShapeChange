@@ -443,6 +443,36 @@ public class EAAttributeUtil extends AbstractEAUtil {
 		return result;
 	}
 
+	/**
+	 * @param att
+	 *            Attribute to which the new constraint shall be added.
+	 * @param name
+	 *            Name of the new constraint
+	 * @param type
+	 *            Type of the new constraint
+	 * @param text
+	 *            Text of the new constraint
+	 * @return The new constraint
+	 * @throws EAException
+	 */
+	public static org.sparx.AttributeConstraint addConstraint(Attribute att,
+			String name, String type, String text) throws EAException {
+
+		Collection<org.sparx.AttributeConstraint> cons = att.GetConstraints();
+
+		org.sparx.AttributeConstraint con = cons.AddNew(name, type);
+
+		cons.Refresh();
+
+		con.SetNotes(text);
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(108), name,
+					att.GetName(), con.GetLastError()));
+		} else {
+			return con;
+		}
+	}
+
 	public static String message(int mnr) {
 
 		switch (mnr) {
@@ -461,6 +491,8 @@ public class EAAttributeUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'Precision' on EA attribute '$1$'. Error message is: $2$";
 		case 107:
 			return "EA error encountered while updating 'Scale' on EA attribute '$1$'. Error message is: $2$";
+		case 108:
+			return "EA error encountered while updating new EA constraint '$1$' for attribute '$2$'. Error message is: $3$";
 		default:
 			return "(" + EAAttributeUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;

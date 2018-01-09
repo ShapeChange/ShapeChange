@@ -484,9 +484,9 @@ public class EAModelDiff {
 			Collection<Connector> eaConns, Collection<Connector> refEaConns) {
 
 		ListMultimap<String, EAConnectorInfo> connsByKey = parseEAConnectors(
-				elmt.getModelPath(), eaConns);
+				elmt.getModelPath(), eaConns, rep);
 		ListMultimap<String, EAConnectorInfo> refConnsByKey = parseEAConnectors(
-				elmt.getModelPath(), refEaConns);
+				elmt.getModelPath(), refEaConns, refRep);
 
 		if (connsByKey.size() > refConnsByKey.size()) {
 
@@ -876,12 +876,15 @@ public class EAModelDiff {
 	/**
 	 * @param elmtModelPath
 	 * @param conns
+	 * @param repOfConns
+	 *            the repository to which the connectors belong
 	 * @return multimap of connectors infos, with connector keys as defined by
 	 *         {@link #getKey(Connector, ConnectorEnd, ConnectorEnd)} as sorted
 	 *         keys, and connectors stored in an array list
 	 */
 	private ListMultimap<String, EAConnectorInfo> parseEAConnectors(
-			String elmtModelPath, Collection<Connector> conns) {
+			String elmtModelPath, Collection<Connector> conns,
+			Repository repOfConns) {
 
 		ListMultimap<String, EAConnectorInfo> result = MultimapBuilder
 				.treeKeys().arrayListValues().build();
@@ -900,7 +903,7 @@ public class EAModelDiff {
 			String name = conn.GetName();
 
 			String key = getKey(conn, conn.GetClientEnd(),
-					conn.GetSupplierEnd());
+					conn.GetSupplierEnd(), repOfConns);
 			String path = elmtModelPath + ", connector" + key;
 
 			if (result.containsKey(name)) {
@@ -1700,7 +1703,7 @@ public class EAModelDiff {
 		ConnectorEnd client = conn.GetClientEnd();
 		ConnectorEnd supplier = conn.GetSupplierEnd();
 
-		String connKey = getKey(conn, client, supplier);
+		String connKey = getKey(conn, client, supplier, rep);
 
 		String connModelPath = modelPath + ", connector " + connKey;
 
@@ -1894,11 +1897,15 @@ public class EAModelDiff {
 	}
 
 	private String getKey(Connector conn, ConnectorEnd client,
-			ConnectorEnd supplier) {
+			ConnectorEnd supplier, Repository repOfConn) {
 
-		String connKey = "Source/Client '" + client.GetRole() + "' > '"
+		Element clientElmt = repOfConn.GetElementByID(conn.GetClientID());
+		Element supplierElmt = repOfConn.GetElementByID(conn.GetSupplierID());
+
+		String connKey = conn.GetType() + " Source/Client '" + client.GetRole()
+				+ "' (at element '" + clientElmt.GetName() + "') > '"
 				+ conn.GetName() + "' > Target/Supplier '" + supplier.GetRole()
-				+ "'";
+				+ "' (at element '" + supplierElmt.GetName() + "')";
 
 		return connKey;
 	}

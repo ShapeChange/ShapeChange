@@ -84,6 +84,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstra
 import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EADirection;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EAMethodUtil;
@@ -92,6 +93,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EAParameterUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EASupportedDBMS;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
+import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -343,7 +345,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 				Attribute att = EAElementUtil.createEAAttribute(tableElmt,
 						col.getName(), null, columnDocumentation,
-						columnStereotypes, null, false, false,
+						columnStereotypes, null, false, false, false,
 						col.hasDefaultValue() ? col.getDefaultValue().toString()
 								: null,
 						new Multiplicity(1, 1), mapDataType(col), null);
@@ -573,14 +575,15 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 					EAConnectorEndUtil.setEARole(clientEnd, fkCon.getName());
 					EAConnectorEndUtil.setEACardinality(clientEnd, "0..*");
 					EAConnectorEndUtil.setEANavigable(clientEnd,
-							"Non-Navigable");
+							EANavigable.NONNAVIGABLE);
 					EAConnectorEndUtil.setEAContainment(clientEnd,
 							"Unspecified");
 
 					ConnectorEnd supplierEnd = con.GetSupplierEnd();
 					EAConnectorEndUtil.setEARole(supplierEnd, pkMethodName);
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "1");
-					EAConnectorEndUtil.setEANavigable(supplierEnd, "Navigable");
+					EAConnectorEndUtil.setEANavigable(supplierEnd,
+							EANavigable.NAVIGABLE);
 					EAConnectorEndUtil.setEAContainment(supplierEnd,
 							"Unspecified");
 
@@ -591,7 +594,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 							+ fkCon.getName() + ":DST=" + pkMethodName + ":;");
 
 					EAConnectorUtil.setEADirection(con,
-							"Source -> Destination");
+							EADirection.SOURCE_DESTINATION);
 
 				} catch (EAException e) {
 					result.addError(this, 106, constr.getName(),

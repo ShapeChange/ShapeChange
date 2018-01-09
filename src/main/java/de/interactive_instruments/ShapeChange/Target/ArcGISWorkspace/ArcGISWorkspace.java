@@ -600,7 +600,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				outputDirectory = options.parameter(".");
 
 			String outputFilename = options.parameter(this.getClass().getName(),
-					"outputFilename");
+					PARAM_OUTPUT_FILENAME);
 			if (outputFilename == null) {
 				outputFilename = p.name();
 			}
@@ -1274,16 +1274,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, fieldType, new Multiplicity(1, 1),
+				false, false, false, fieldType, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
-				null, false, false, "esriMPTDefaultValue",
+				null, false, false, false, "esriMPTDefaultValue",
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
-				null, false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
-				"esriSplitPolicyType", null);
+				null, false, false, false, "esriSPTDuplicate",
+				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 
 		// for each enum/code of the class, create an according property
 		if (ci.properties() != null) {
@@ -1308,7 +1308,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				EAElementUtil.createEAAttribute(e, pi.name(), null,
 						pi.derivedDocumentation(documentationTemplate,
 								documentationNoValue),
-						enumStereotype, null, false, false, initialValue,
+						enumStereotype, null, false, false, false, initialValue,
 						new Multiplicity(1, 1), null, null);
 			}
 		}
@@ -1353,16 +1353,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, esriFieldType, new Multiplicity(1, 1),
+				false, false, false, esriFieldType, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
-				null, false, false, "esriMPTDefaultValue",
+				null, false, false, false, "esriMPTDefaultValue",
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
-				null, false, false, "esriSPTDuplicate", new Multiplicity(1, 1),
-				"esriSplitPolicyType", null);
+				null, false, false, false, "esriSPTDuplicate",
+				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 
 		return e;
 	}
@@ -1506,8 +1506,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("SpatialIndex");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_IDX", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "", null);
 	}
 
 	private Attribute createSystemFieldOBJECTIDIDX(Element e)
@@ -1523,8 +1523,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("AttributeIndex");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "", null);
 	}
 
 	private Attribute createSystemFieldShapeArea(Element e) throws EAException {
@@ -1546,8 +1546,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Area", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"esriFieldTypeDouble", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
 	private Attribute createSystemFieldShapeLength(Element e)
@@ -1570,8 +1570,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Length", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"esriFieldTypeDouble", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
 	private Attribute createSystemFieldShape(Element e) throws EAException {
@@ -1596,8 +1596,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"esriFieldTypeGeometry", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "esriFieldTypeGeometry", null);
 	}
 
 	private Attribute createSystemFieldOBJECTID(Element e) throws EAException {
@@ -1619,8 +1619,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID", null, null,
-				stereotypes, tvs, false, false, null, new Multiplicity(1, 1),
-				"esriFieldTypeOID", null);
+				stereotypes, tvs, false, false, false, null,
+				new Multiplicity(1, 1), "esriFieldTypeOID", null);
 	}
 
 	private void createObjectClass(ClassInfo ci) throws EAException {
@@ -3031,7 +3031,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("Field");
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
-				stereotypes, tvs, false, false, initialValue,
+				stereotypes, tvs, false, false, false, initialValue,
 				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
 
@@ -3317,13 +3317,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 										// create min and max fields
 										EAElementUtil.createEAAttribute(rd,
 												"MinValue", null, null, null,
-												null, false, false,
+												null, false, false, false,
 												doubleToString(minValue),
 												new Multiplicity(1, 1), null,
 												null);
 										EAElementUtil.createEAAttribute(rd,
 												"MaxValue", null, null, null,
-												null, false, false,
+												null, false, false, false,
 												doubleToString(maxValue),
 												new Multiplicity(1, 1), null,
 												null);
@@ -3766,7 +3766,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			EAElementUtil.createEAAttribute(eaClass,
 					eaClass.GetName() + "_" + eaAtt.GetName() + "_IDX", null,
-					null, stereotypes, tvs, false, false, null,
+					null, stereotypes, tvs, false, false, false, null,
 					new Multiplicity(1, 1), "", null);
 
 		} catch (EAException e) {
@@ -3909,9 +3909,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		case 234:
 			return "Length of normalized name '$1$' for new relationship class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
 		case 235:
-			return "Encoding for reflexive association (found on class '$1$') is not defined. The association will be ignored.";
+			return "No conversion rule is configured to handle the reflexive association found on class '$1$'. The association will be ignored.";
 		case 236:
-			return "Encoding for reflexive relationship (found on class '$1$', for property '$2$') is not defined. The property will be ignored.";
+			return "No conversion rule is configured to handle the reflexive relationship found on class '$1$', property '$2$'. The property will be ignored.";
 		case 237:
 			return "Cannot create one to many relationship between classes '$1$' and '$2$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
 		case 238:

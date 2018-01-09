@@ -64,12 +64,26 @@ public class EAPackageUtil extends AbstractEAUtil {
 		EAElementUtil.addTaggedValue(e, tv);
 	}
 
+	public static Package addPackage(Package owner, String newPackageName,
+			String newPackageType) throws EAException {
+
+		Package pkg = owner.GetPackages().AddNew(newPackageName,
+				newPackageType);
+
+		if (!pkg.Update()) {
+			throw new EAException(createMessage(message(101), newPackageName,
+					owner.GetName(), pkg.GetLastError()));
+		} else {
+			return pkg;
+		}
+	}
+
 	public static String message(int mnr) {
 
 		switch (mnr) {
 
 		case 101:
-			return "";
+			return "EA error encountered while adding child package '$1$' to EA package '$2$'. Error message is: $3$";
 		default:
 			return "(" + EAPackageUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;
