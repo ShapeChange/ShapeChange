@@ -259,14 +259,14 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 
 		}
 
-		return new String[]{};
+		return new String[] {};
 	}
 
 	@Override
 	public SortedSet<String> keySet() {
 
 		SortedSet<String> result = new TreeSet<String>();
-		
+
 		if (!isEmpty()) {
 
 			if (complexTags != null) {
@@ -279,7 +279,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -320,7 +320,8 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 				// ensure that values are internalized
 				List<String> tmp = new ArrayList<String>(values.size());
 				for (String value : values) {
-					tmp.add(options.internalize(value));
+					String val = value == null ? "" : value;
+					tmp.add(options.internalize(val));
 				}
 
 				// add multi-valued tagged value
@@ -330,11 +331,13 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 	}
 
 	@Override
-	public void add(String tag, String value) {
+	public void add(String tag, String valueIn) {
 
 		if (tag == null) {
 			// nothing to do
 		} else {
+
+			String value = valueIn == null ? "" : valueIn;
 
 			if (complexTags != null && complexTags.containsKey(tag)) {
 
@@ -557,11 +560,13 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 	}
 
 	@Override
-	public void put(String tag, String value) {
+	public void put(String tag, String valueIn) {
 
 		if (tag == null) {
 			// nothing to do
 		} else {
+
+			String value = valueIn == null ? "" : valueIn;
 
 			if (complexTags != null && complexTags.containsKey(tag)) {
 
