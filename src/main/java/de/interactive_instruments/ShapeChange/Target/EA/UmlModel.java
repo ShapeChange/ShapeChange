@@ -129,7 +129,6 @@ public class UmlModel implements SingleTarget, MessageSource {
 		result = r;
 
 		if (!initialised) {
-			initialised = true;
 
 			String outputDirectory = options
 					.parameter(this.getClass().getName(), PARAM_OUTPUT_DIR);
@@ -223,9 +222,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + pOut.GetLastError());
 			}
 			pOut_EaPkgId = pOut.GetPackageID();
+
+			initialised = true;
 		}
 
-		if (rep == null || pOut_EaPkgId == null)
+		if (rep == null || pOut_EaPkgId == null || !initialised)
 			return; // repository not initialised
 
 		// export app schema package
@@ -507,8 +508,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 		result = r;
 		options = r.options();
 
-		if (rep == null)
-			return; // repository not initialised
+		if (rep == null || !initialised) {
+			result.addError(this, 50);
+			return;
+		}
 
 		for (ClassInfo ci : classesToProcess) {
 
@@ -682,7 +685,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 		case 1:
 			return "Context: class $1$";
 
-		// 1-100: Initialization related messages
+		// 50-100: Initialization related messages
+		case 50:
+			return "Could not write the model, because the target has not been initialized properly.";
 
 		// 101-200: issues with the model
 		case 101:
