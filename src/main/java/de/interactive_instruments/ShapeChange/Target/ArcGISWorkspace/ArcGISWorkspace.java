@@ -36,20 +36,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,8 +56,8 @@ import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;
 import org.sparx.Element;
-import org.sparx.Repository;
 import org.sparx.Package;
+import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -78,12 +76,12 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Util.ea.EAException;
-import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
-import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
@@ -1220,7 +1218,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private void createCodedValueDomain(ClassInfo ci) throws EAException {
 
-		int eaPkgId = establishEAPackageHierarchy(ci, domainsPkgId);
+		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(ci,
+				domainsPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+				numberOfSchemasSelectedForProcessing);
 
 		// create class element
 		String name = normalizeName(ci.name());
@@ -1318,8 +1318,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			String rangeDomainDocumentation, String esriFieldType,
 			ClassInfo rangeDomainSource) throws EAException {
 
-		int eaPkgId = establishEAPackageHierarchy(rangeDomainSource,
-				domainsPkgId);
+		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(
+				rangeDomainSource, domainsPkgId,
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+				numberOfSchemasSelectedForProcessing);
 
 		// create class element
 		String name = rangeDomainName;
@@ -1371,7 +1373,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		checkRequirements(ci);
 
-		int eaPkgId = establishEAPackageHierarchy(ci, featuresPkgId);
+		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(ci,
+				featuresPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+				numberOfSchemasSelectedForProcessing);
 
 		// create class element
 		String name = normalizeName(ci.name());
@@ -1627,7 +1631,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		checkRequirements(ci);
 
-		int eaPkgId = establishEAPackageHierarchy(ci, tablesPkgId);
+		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(ci,
+				tablesPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+				numberOfSchemasSelectedForProcessing);
 
 		// create class element
 		String name = normalizeName(ci.name());
@@ -1846,85 +1852,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		if (ci.getLinkedDocument() != null) {
 			e.LoadLinkedDocument(ci.getLinkedDocument().getAbsolutePath());
-		}
-	}
-
-	private int establishEAPackageHierarchy(ClassInfo ci,
-			int mainWorkspaceSubPkgId) throws EAException {
-
-		/*
-		 * Get path up to the application schema package. Include the
-		 * application schema if the number of schemas selected for processing
-		 * is greater than 1, since then we want/need to include the separation
-		 * by application schema.
-		 */
-		Deque<PackageInfo> pathToAppSchemaAsStack = new ArrayDeque<PackageInfo>();
-
-		if (numberOfSchemasSelectedForProcessing > 1) {
-
-			PackageInfo pkg = ci.pkg();
-			PackageInfo lastPkg = null;
-
-			while (pkg != null && (lastPkg == null
-					|| pkg.targetNamespace() == lastPkg.targetNamespace())) {
-
-				pathToAppSchemaAsStack.addFirst(pkg);
-				lastPkg = pkg;
-				pkg = pkg.owner();
-			}
-
-		} else if (!ci.pkg().isSchema()) {
-
-			PackageInfo pkg = ci.pkg();
-
-			while (pkg != null && !pkg.isSchema()) {
-
-				pathToAppSchemaAsStack.addFirst(pkg);
-
-				pkg = pkg.owner();
-			}
-		}
-
-		if (pathToAppSchemaAsStack.isEmpty()) {
-
-			/*
-			 * Class shall be created in main workspace sub-package; typically
-			 * the case for a single application schema being selected for
-			 * processing and the class being situated in the app schema
-			 * package.
-			 */
-			return mainWorkspaceSubPkgId;
-
-		} else {
-
-			// walk down the path, create packages as needed
-
-			Map<PackageInfo, Integer> eaPkgIdByModelPkg = eaPkgIdByModelPkg_byWorkspaceSubPkgId
-					.get(mainWorkspaceSubPkgId);
-
-			Integer eaParentPkgId = mainWorkspaceSubPkgId;
-			Integer eaPkgId = null;
-
-			while (!pathToAppSchemaAsStack.isEmpty()) {
-
-				PackageInfo pi = pathToAppSchemaAsStack.removeFirst();
-
-				if (eaPkgIdByModelPkg.containsKey(pi)) {
-
-					eaPkgId = eaPkgIdByModelPkg.get(pi);
-
-				} else {
-
-					// create the EA package
-					eaPkgId = EARepositoryUtil.createEAPackage(rep, pi,
-							eaParentPkgId);
-					eaPkgIdByModelPkg.put(pi, eaPkgId);
-				}
-
-				eaParentPkgId = eaPkgId;
-			}
-
-			return eaPkgId;
 		}
 	}
 

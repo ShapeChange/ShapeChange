@@ -247,6 +247,17 @@ public class EAElementUtil extends AbstractEAUtil {
 		}
 	}
 
+	public static void loadLinkedDocument(Element e,
+			String linkedDocumentAbsolutePath) throws EAException {
+
+		e.LoadLinkedDocument(linkedDocumentAbsolutePath);
+
+		if (!e.Update()) {
+			throw new EAException(createMessage(message(109), e.GetName(),
+					linkedDocumentAbsolutePath, e.GetLastError()));
+		}
+	}
+
 	/**
 	 * Sets attribute GenType on the given EA element.
 	 * 
@@ -689,15 +700,15 @@ public class EAElementUtil extends AbstractEAUtil {
 	 */
 	public static org.sparx.Constraint addConstraint(Element e, String name,
 			String type, String text) throws EAException {
-		
+
 		Collection<org.sparx.Constraint> cons = e.GetConstraints();
 
 		org.sparx.Constraint con = cons.AddNew(name, type);
-		
+
 		cons.Refresh();
-		
+
 		con.SetNotes(text);
-		
+
 		if (!con.Update()) {
 			throw new EAException(createMessage(message(1006), name,
 					e.GetName(), con.GetLastError()));
@@ -726,6 +737,8 @@ public class EAElementUtil extends AbstractEAUtil {
 			return "EA error encountered while updating new EA method '$1$' on element '$2$'. Error message is: $3$";
 		case 108:
 			return "EA error encountered while updating new EA attribute '$1$' on element '$2$'. Error message is: $3$";
+		case 109:
+			return "EA error encountered while loading linked document for EA element '$1$' from path '$2$'. Error message is: $3$";
 		case 1005:
 			return "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
 		case 1006:

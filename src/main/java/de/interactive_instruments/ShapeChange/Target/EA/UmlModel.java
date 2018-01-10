@@ -279,6 +279,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		cloneStandarddItems(e, ci);
 
+		if (ci.getLinkedDocument() != null) {
+			EAElementUtil.loadLinkedDocument(e,
+					ci.getLinkedDocument().getAbsolutePath());
+		}
+
 		if (ci.isAbstract()) {
 			EAElementUtil.setEAAbstract(e, true);
 		}

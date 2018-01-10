@@ -33,6 +33,10 @@ package de.interactive_instruments.ShapeChange.Util.ea;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.SortedMap;
 
 import org.apache.commons.io.FileUtils;
 import org.sparx.Collection;
@@ -42,6 +46,7 @@ import org.sparx.Element;
 import org.sparx.Package;
 import org.sparx.Repository;
 
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 
 /**
@@ -350,6 +355,114 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		eaParentPkgs.Refresh();
 
 		return eaPkg.GetPackageID();
+	}
+
+	/**
+	 * Creates a package hierarchy inside a given container package. The
+	 * hierarchy corresponds to the hierarchy of packages that the given class
+	 * is in within its application schema. If the number of schemas selected
+	 * for processing is greater than 1, then the application schema packages
+	 * are included in the hierarchy.
+	 * 
+	 * @param ci
+	 *            The class for which to establish its package hierarchy.
+	 * @param containerPkgId
+	 *            PackageID of the EA package in the EA repository (see
+	 *            parameter 'rep') in which the package hierarchy shall be
+	 *            established.
+	 * @param eaPkgIdByModelPkg_byContainerPkgId
+	 *            Map of maps to store and look up the PackageIDs of EA packages
+	 *            that are established. key: PackageID of the container package;
+	 *            value: {map with key: a package; value: corresponding EA
+	 *            package within the container package}
+	 * @param rep
+	 *            The EA repository that contains the container package.
+	 * @param numberOfSchemasSelectedForProcessing
+	 * @return The PackageID of the EA package that corresponds to the package
+	 *         which owns the given class (see parameter ci).
+	 * @throws EAException
+	 *             If an exception occurred while interacting with the EA
+	 *             repository.
+	 */
+	public static int establishEAPackageHierarchy(ClassInfo ci,
+			int containerPkgId,
+			SortedMap<Integer, SortedMap<PackageInfo, Integer>> eaPkgIdByModelPkg_byContainerPkgId,
+			Repository rep, int numberOfSchemasSelectedForProcessing)
+			throws EAException {
+
+		/*
+		 * Get path up to the application schema package. Include the
+		 * application schema if the number of schemas selected for processing
+		 * is greater than 1, since then we want/need to include the separation
+		 * by application schema.
+		 */
+		Deque<PackageInfo> pathToAppSchemaAsStack = new ArrayDeque<PackageInfo>();
+
+		if (numberOfSchemasSelectedForProcessing > 1) {
+
+			PackageInfo pkg = ci.pkg();
+			PackageInfo lastPkg = null;
+
+			while (pkg != null && (lastPkg == null
+					|| pkg.targetNamespace() == lastPkg.targetNamespace())) {
+
+				pathToAppSchemaAsStack.addFirst(pkg);
+				lastPkg = pkg;
+				pkg = pkg.owner();
+			}
+
+		} else if (!ci.pkg().isSchema()) {
+
+			PackageInfo pkg = ci.pkg();
+
+			while (pkg != null && !pkg.isSchema()) {
+
+				pathToAppSchemaAsStack.addFirst(pkg);
+
+				pkg = pkg.owner();
+			}
+		}
+
+		if (pathToAppSchemaAsStack.isEmpty()) {
+
+			/*
+			 * Class shall be created in container package; typically the case
+			 * for a single application schema being selected for processing and
+			 * the class being situated in the app schema package.
+			 */
+			return containerPkgId;
+
+		} else {
+
+			// walk down the path, create packages as needed
+
+			Map<PackageInfo, Integer> eaPkgIdByModelPkg = eaPkgIdByModelPkg_byContainerPkgId
+					.get(containerPkgId);
+
+			Integer eaParentPkgId = containerPkgId;
+			Integer eaPkgId = null;
+
+			while (!pathToAppSchemaAsStack.isEmpty()) {
+
+				PackageInfo pi = pathToAppSchemaAsStack.removeFirst();
+
+				if (eaPkgIdByModelPkg.containsKey(pi)) {
+
+					eaPkgId = eaPkgIdByModelPkg.get(pi);
+
+				} else {
+
+					// create the EA package
+					eaPkgId = EARepositoryUtil.createEAPackage(rep, pi,
+							eaParentPkgId);
+					eaPkgIdByModelPkg.put(pi, eaPkgId);
+				}
+
+				eaParentPkgId = eaPkgId;
+			}
+
+			return eaPkgId;
+		}
 	}
 
 	public static String message(int mnr) {

@@ -47,4 +47,12 @@ public class UmlModelTest extends WindowsBasicTest {
 				new String[] { "eap" }, "testResults/uml/basic",
 				"src/test/resources/uml/basic/reference");
 	}
+	
+	@Test
+	public void testLinkedDocuments() {
+
+		multiTest("src/test/resources/uml/linkedDocument/testEA_uml_linkedDocument.xml",
+				new String[] { "eap" }, "testResults/uml/linkedDocument",
+				"src/test/resources/uml/linkedDocument/reference");
+	}
 }

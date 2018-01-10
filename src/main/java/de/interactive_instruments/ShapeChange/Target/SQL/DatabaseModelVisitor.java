@@ -42,6 +42,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +65,7 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CheckConstraint;
@@ -128,7 +131,15 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 	protected EASupportedDBMS eadbms;
 
-	protected Integer tablesPkg = null;
+	protected boolean establishPackageHierarchy = false;
+
+	protected Integer tablesPkgID = null;
+
+	/**
+	 * key: database model sub package; value: {key: application schema package;
+	 * value: corresponding EA package within the database model sub package}
+	 */
+	protected SortedMap<Integer, SortedMap<PackageInfo, Integer>> eaPkgIdByModelPkg_byDatabaseModelSubPkgId = new TreeMap<Integer, SortedMap<PackageInfo, Integer>>();
 
 	protected Map<Column, Integer> eaAttributeIDByColumn = new HashMap<Column, Integer>();
 	protected Map<Table, Integer> eaElementIDByTable = new HashMap<Table, Integer>();
@@ -159,6 +170,11 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 		} else {
 			eadbms = EASupportedDBMS.POSTGRESQL;
 		}
+
+		establishPackageHierarchy = options.parameterAsBoolean(
+				sqlddl.getClass().getName(),
+				DatabaseModelConstants.PARAM_ESTABLISH_PACKAGE_HIERARCHY,
+				false);
 	}
 
 	public void initialize() throws Exception {
@@ -261,8 +277,10 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			 * No null check because the XMI template contains a <<Database>>
 			 * package
 			 */
-			tablesPkg = EARepositoryUtil.getEAChildPackageByName(repository,
+			tablesPkgID = EARepositoryUtil.getEAChildPackageByName(repository,
 					dbPkg, "Tables");
+			eaPkgIdByModelPkg_byDatabaseModelSubPkgId.put(tablesPkgID,
+					new TreeMap<PackageInfo, Integer>());
 		}
 	}
 
@@ -279,8 +297,16 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		try {
 
+			int eaPkgID = tablesPkgID;
+			if (establishPackageHierarchy
+					&& table.getRepresentedClass() != null) {
+				eaPkgID = EARepositoryUtil.establishEAPackageHierarchy(
+						table.getRepresentedClass(), tablesPkgID,
+						eaPkgIdByModelPkg_byDatabaseModelSubPkgId, repository,
+						SqlDdl.numberOfEncodedSchemas);
+			}
 			Element tableElmt = EARepositoryUtil.createEAClass(repository,
-					table.getName(), tablesPkg);
+					table.getName(), eaPkgID);
 
 			this.eaElementIDByTable.put(table, tableElmt.GetElementID());
 
@@ -288,7 +314,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			ClassInfo representedClass = table.getRepresentedClass();
 			if (representedClass != null
 					&& representedClass.getLinkedDocument() != null) {
-				tableElmt.LoadLinkedDocument(
+				EAElementUtil.loadLinkedDocument(tableElmt,
 						representedClass.getLinkedDocument().getAbsolutePath());
 			}
 
@@ -544,9 +570,16 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 					/*
 					 * Create directed association for foreign key
 					 */
+					Integer refTableEaElmtID = this.eaElementIDByTable
+							.get(fkCon.getReferenceTable());
+					if (refTableEaElmtID == null) {
+						result.addError(this, 111, constr.getName(),
+								table.getName(),
+								fkCon.getReferenceTable().getName());
+						return;
+					}
 					Element referenceTableElmt = repository
-							.GetElementByID(this.eaElementIDByTable
-									.get(fkCon.getReferenceTable()));
+							.GetElementByID(refTableEaElmtID);
 					Method pkMethodOfReferenceTableElmt = EAElementUtil
 							.getEAMethodWithStereotypeEx(referenceTableElmt,
 									"PK");
@@ -768,6 +801,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			return "Exception encountered while creating index '$1$' on table '$2$'. Exception message: '$3$'";
 		case 110:
 			return "Exception encountered while creating unique constraint '$1$' on table '$2$'. Exception message: '$3$'";
+		case 111:
+			return "Could not create foreign key constraint '$1$' on table '$2$' because no ElementID was found for referenced table '$3$'. Does that table belong to a schema that was not selected for processing?";
 
 		default:
 			return "(" + DatabaseModelVisitor.class.getName()

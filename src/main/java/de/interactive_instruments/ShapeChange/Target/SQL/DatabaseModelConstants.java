@@ -100,4 +100,17 @@ public class DatabaseModelConstants {
 	 * 
 	 */
 	public static final String PARAM_DATAMODEL_EAP_PATH = "dataModelEapPath";
+
+	/**
+	 * By default, all table elements of the database model will be created as
+	 * direct children of the table package defined by the database model
+	 * pattern. If this parameter is set to true, then a package hierarchy will
+	 * be created inside that table package, corresponding to the hierarchy of
+	 * packages that the class represented by a table is in within its
+	 * application schema. If the number of encoded schemas is greater than 1,
+	 * then the application schema packages are included in the hierarchy.
+	 * Tables that do not represent a specific class (example: associative
+	 * tables) will still be created inside the tables package.
+	 */
+	public static final String PARAM_ESTABLISH_PACKAGE_HIERARCHY = "dataModelEstablishPackageHierarchy";
 }

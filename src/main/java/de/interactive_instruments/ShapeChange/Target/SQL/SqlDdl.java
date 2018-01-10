@@ -127,7 +127,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	private static boolean initialised = false;
 	protected static boolean diagnosticsOnly = false;
-	protected static boolean atLeastOneSchemaIsEncoded = false;
+	protected static int numberOfEncodedSchemas = 0;
 	/**
 	 * NOTE: If not set via the configuration, the default applies which is
 	 * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
@@ -230,7 +230,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			result.addInfo(this, 7, schema.name());
 			return;
 		} else {
-			atLeastOneSchemaIsEncoded = true;
+			numberOfEncodedSchemas++;
 		}
 
 		if (!initialised) {
@@ -861,7 +861,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		this.result = r;
 		this.options = r.options();
 
-		if (diagnosticsOnly || !atLeastOneSchemaIsEncoded) {
+		if (diagnosticsOnly || numberOfEncodedSchemas == 0) {
 			return;
 		}
 
@@ -1025,7 +1025,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					} catch (EAException e) {
 						result.addError(this, 27, e.getMessage());
 					} catch (NullPointerException npe) {
-						result.addError(this, 27, npe.getMessage());
+						if (npe.getMessage() != null) {
+							result.addError(this, 27, npe.getMessage());
+						}
 						npe.printStackTrace(System.err);
 					} finally {
 						EARepositoryUtil.closeRepository(repository);
@@ -1134,7 +1136,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 		initialised = false;
 		diagnosticsOnly = false;
-		atLeastOneSchemaIsEncoded = false;
+		numberOfEncodedSchemas = 0;
 
 		documentationTemplate = null;
 		documentationNoValue = null;
