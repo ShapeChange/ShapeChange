@@ -18,4 +18,5 @@
 	<StereotypeAlias wellknown="valueConcept" alias="attributeValueConcept" />
 	<!-- Mappings for stereotypes of properties -->
 	<StereotypeAlias wellknown="" alias="property" />
+	<StereotypeAlias wellknown="" alias="enum" />
 </stereotypeAliases>
