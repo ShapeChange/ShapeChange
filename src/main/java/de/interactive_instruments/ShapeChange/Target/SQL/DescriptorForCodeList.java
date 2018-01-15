@@ -40,18 +40,26 @@ public class DescriptorForCodeList {
 
 	private String descriptorName;
 	private String columnName;
+	private String documentation;
 	private Integer size;
 
 	/**
 	 * @param descriptorName
 	 * @param columnName
+	 * @param documentation
 	 * @param size
 	 */
-	public DescriptorForCodeList(String descriptorName,
-			String columnName, Integer size) {
+	public DescriptorForCodeList(String descriptorName, String columnName,
+			String documentation, Integer size) {
 		super();
 		this.descriptorName = descriptorName;
-		this.columnName = columnName;
+
+		if (columnName == null) {
+			this.columnName = descriptorName;
+		} else {
+			this.columnName = columnName;
+		}
+		this.documentation = documentation;
 		this.size = size;
 	}
 
@@ -67,6 +75,13 @@ public class DescriptorForCodeList {
 	 */
 	public String getColumnName() {
 		return columnName;
+	}
+
+	/**
+	 * @return the documentation
+	 */
+	public String getDocumentation() {
+		return documentation;
 	}
 
 	/**

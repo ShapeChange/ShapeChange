@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="input">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="repositoryFileNameOrConnectionString"
+			value="src/test/resources/uml/linkedDocument/test_uml_linkedDocument.eap" />
+		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="loadLinkedDocuments" value="true" />
+		<parameter name="tmpDirectory" value="testResults/uml/linkedDocument/tmp" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/uml/linkedDocument/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform"
+			id="model" input="input" mode="enabled" />
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel"
+			mode="enabled" inputs="model">
+			<targetParameter name="outputDirectory"
+				value="testResults/uml/linkedDocument/eap" />
+			<targetParameter name="omitOutputPackageDateTime"
+				value="true" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

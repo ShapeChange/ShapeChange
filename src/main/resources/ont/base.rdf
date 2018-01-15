@@ -1,0 +1,32 @@
+<rdf:RDF xmlns="http://shapechange.net/resources/ont/base#"
+	 xml:base="http://shapechange.net/resources/ont/base"
+	 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:iso19150-2="http://def.isotc211.org/iso19150-2/2012/base#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+  <owl:Ontology rdf:about="http://shapechange.net/resources/ont/base">
+    <rdfs:comment xml:lang="en">Types and properties used in application schemas.</rdfs:comment>
+    <rdfs:label xml:lang="en">ShapeChange base</rdfs:label>
+    <owl:versionInfo>0.2</owl:versionInfo>
+  </owl:Ontology>
+
+  <rdfs:Datatype rdf:about="http://shapechange.net/resources/ont/base#Measure">
+    <skos:notation rdf:datatype="http://www.w3.org/2001/XMLSchema#NCName">Measure</skos:notation>
+    <skos:prefLabel xml:lang="en">measure</skos:prefLabel>
+    <skos:defnition>A text representation of a measure value. The decimal value is followed by a space and the unit of the measure.</skos:defnition>
+  </rdfs:Datatype>
+
+  <rdfs:Datatype rdf:about="http://shapechange.net/resources/ont/base#Sign">
+    <iso19150-2:isEnumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</iso19150-2:isEnumeration>
+    <owl:oneOf rdf:parseType="Collection">
+      <owl:Thing rdf:about="#+"/>
+      <owl:Thing rdf:about="#-"/>
+    </owl:oneOf>
+    <skos:notation rdf:datatype="http://www.w3.org/2001/XMLSchema#NCName">Sign</skos:notation>
+    <skos:prefLabel xml:lang="en">sign</skos:prefLabel>
+  </rdfs:Datatype>
+
+</rdf:RDF>

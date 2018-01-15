@@ -53,4 +53,11 @@ public interface SqlNamingScheme {
 			String fieldName, String targetTableName);
 
 	public NameNormalizer getNameNormalizer();
+
+	/**
+	 * @param tableName
+	 * @param columnName
+	 * @return name for a unique constraint
+	 */
+	public String nameForUniqueConstraint(String tableName, String columnName);
 }

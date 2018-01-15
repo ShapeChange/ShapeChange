@@ -28,7 +28,7 @@
 	<targets>		
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/html/descriptors"/>
+			<targetParameter name="outputDirectory" value="testResults/html/descriptors/inspire"/>
 			<targetParameter name="outputFilename" value="inspire"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>

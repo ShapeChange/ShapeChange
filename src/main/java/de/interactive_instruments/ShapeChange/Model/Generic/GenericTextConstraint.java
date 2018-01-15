@@ -1,5 +1,7 @@
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.TextConstraint;
@@ -60,6 +62,7 @@ public class GenericTextConstraint extends TextConstraintImpl {
 		constraintName = constraint.name();
 		constraintStatus = constraint.status();
 		constraintText = constraint.text();
+		constraintType = constraint.type();
 	}
 
 	/**
@@ -73,6 +76,7 @@ public class GenericTextConstraint extends TextConstraintImpl {
 		constraintName = origCon.name();
 		constraintStatus = origCon.status();
 		constraintText = origCon.text();
+		constraintType = determineConstraintType(origCon);
 	}
 	
 	/**
@@ -86,6 +90,24 @@ public class GenericTextConstraint extends TextConstraintImpl {
 		constraintName = origCon.name();
 		constraintStatus = origCon.status();
 		constraintText = origCon.text();
+		constraintType = determineConstraintType(origCon);
+	}
+	
+	/**
+	 * @param constr
+	 * @return the type of the constraint; can be empty but not
+	 *         <code>null</code>
+	 */
+	private String determineConstraintType(Constraint constr) {
+
+		String type = "OCL";
+		if (constr instanceof TextConstraint) {
+			type = ((TextConstraint) constr).type();
+			if(StringUtils.isBlank(type)) {
+				type = "Text";
+			}
+		}
+		return type;
 	}
 
 	public void setContextModelElmt(Info contextModelElmt) {

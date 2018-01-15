@@ -55,8 +55,7 @@ public class ModelExportConfigurationValidator
 		boolean isValid = true;
 
 		// ensure that output directory exists
-		String outputDirectory = options.parameter(ModelExport.class.getName(),
-				"outputDirectory");
+		String outputDirectory = pConfig.getParameterValue("outputDirectory");
 		if (outputDirectory == null)
 			outputDirectory = options.parameter("outputDirectory");
 		if (outputDirectory == null)
@@ -77,7 +76,7 @@ public class ModelExportConfigurationValidator
 		}
 
 		// validate PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES
-		if (options.hasParameter(ModelExport.class.getName(),
+		if (pConfig.hasParameter(
 				ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
 
 			List<String> profilesForClassesWithoutExplicitProfiles = options

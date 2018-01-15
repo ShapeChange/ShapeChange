@@ -39,5 +39,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 public interface Expression {
 
 	public void accept(ExpressionVisitor expressionVisitor);
+	
+	public String toString();
 
 }

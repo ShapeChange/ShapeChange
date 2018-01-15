@@ -106,11 +106,14 @@
 				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="descriptorsForCodelist"
-				value="definition(columnName=DESCRIPTION;size=255)" />
-			<targetParameter name="codeNameColumnName" value="CODE" />
+				value="definition(columnName=DESCRIPTION;size=255;columnDocumentation=Configured documentation for the 'DESCRIPTION' column\, with special characters \,\; = (\) and special keywords: size columnName columnDocumentation definition description ...)" />		 		 	 		 	 
+			<targetParameter name="codeNameColumnName" value="CODE" />		 
 			<targetParameter name="codeNameSize" value="50"/>
+		 <targetParameter name="codeNameColumnDocumentation" value="Configured documentation of the 'CODE' column." />
 			<targetParameter name="nameForCodeStatusCLColumn" value="customCodeStatusCLColumn"/>
-			<targetParameter name="nameForCodeStatusNotesColumn" value="customnameCodeStatusNotesColumn"/>
+			<targetParameter name="nameForCodeStatusNotesColumn" value="customNameCodeStatusNotesColumn"/>
+		 <targetParameter name="codeStatusCLColumnDocumentation" value="Configured documentation of the 'customCodeStatusCLColumn' column." />
+		 <targetParameter name="codeStatusNotesColumnDocumentation" value="Configured documentation of the 'customNameCodeStatusNotesColumn' column." />		 	
 			<targetParameter name="codeStatusCLType" value="T3_CodeStatusCl"/>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />
@@ -135,8 +138,8 @@
 			<targetParameter name="documentationTemplate"
 				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
 			<targetParameter name="documentationNoValue" value="" />
-			<targetParameter name="descriptorsForCodelist"
-				value="definition(columnName=DESCRIPTION;size=255)" />
+		 <targetParameter name="descriptorsForCodelist"
+		  value="definition(columnName=DESCRIPTION;size=255)" />		 		 
 			<targetParameter name="codeNameColumnName" value="CODE" />
 			<targetParameter name="codeNameSize" value="50"/>
 			<targetParameter name="codeStatusCLType" value="T3_CodeStatusCl"/>

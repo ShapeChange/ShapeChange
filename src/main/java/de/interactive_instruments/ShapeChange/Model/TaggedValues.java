@@ -120,6 +120,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param value
+	 *            The value for the tag. NOTE: A <code>null</code> value is
+	 *            automatically converted to the empty string
 	 */
 	public void put(String tag, String value);
 
@@ -129,6 +131,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param values
+	 *            The values for the tag. NOTE: A <code>null</code> value is
+	 *            automatically converted to the empty string
 	 */
 	public void put(String tag, String[] values);
 
@@ -138,6 +142,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param values
+	 *            The values for the tag. NOTE: A <code>null</code> value is
+	 *            automatically converted to the empty string
 	 */
 	public void put(String tag, List<String> values);
 
@@ -157,6 +163,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param value
+	 *            The value for the tag. NOTE: A <code>null</code> value is
+	 *            automatically converted to the empty string
 	 */
 	public void add(String tag, String value);
 

@@ -72,7 +72,7 @@ public class Converter implements MessageSource {
 	public static final int STATUS_TARGET_WRITEALL = 204;
 	public static final int STATUS_TARGET_DEFERRED_WRITE = 205;
 	public static final int STATUS_TRANSFORMER_PROCESS = 206;
-	
+
 	/** Result object. */
 	protected ShapeChangeResult result = null;
 	protected Options options = null;
@@ -80,7 +80,7 @@ public class Converter implements MessageSource {
 	protected Set<String> processIdsToIgnore = new HashSet<String>();
 	protected TargetOutputProcessor outputProcessor = null;
 	private PackageInfo mainSchemaForSingleTargets;
-	
+
 	public Converter(Options o, ShapeChangeResult r) {
 		options = o;
 		result = r;
@@ -142,7 +142,27 @@ public class Converter implements MessageSource {
 		}
 	}
 
-	private boolean validateConfiguration() {
+	private boolean validateConfiguration() throws ShapeChangeAbortException {
+
+		/*
+		 * 2017-12-13 JE: In order to ensure that configuration validators can
+		 * grab target parameters from options, like the actual target code
+		 * would, options needs to be configured with the appropriate target
+		 * configuration and reset. However, we also want to ensure that the
+		 * state of options after the validation is as it would be without
+		 * validation. To do so, I tried resetting options and simply loading
+		 * the configuration again. However, some of the unit tests failed then,
+		 * and I could not figure out why (in a reasonable amount of time). If
+		 * the configuration validators get parameters directly from the process
+		 * configuration that is given to them, that shouldn't be a problem. So,
+		 * for the time being, we do not reset options or reload the
+		 * configuration.
+		 */
+
+		// // ensure initial state of options for validation
+		// options.setCurrentProcessConfig(null);
+		// options.resetFields();
+		// options.loadConfiguration();
 
 		// perform basic validation, especially input parameters and
 		// configuration elements
@@ -163,6 +183,13 @@ public class Converter implements MessageSource {
 
 			} else {
 
+				// /*
+				// * Reset options for this process, so that parameters for
+				// * targets are available.
+				// */
+				// options.setCurrentProcessConfig(pConfig);
+				// options.resetFields();
+
 				try {
 
 					@SuppressWarnings("rawtypes")
@@ -178,6 +205,17 @@ public class Converter implements MessageSource {
 						result.addInfo(this, 514, tconfig.getId());
 
 					} else {
+
+						// /*
+						// * NOTE 1: We do not need to reset single targets,
+						// since
+						// * targets have not been executed yet.
+						// *
+						// * NOTE 2: We cannot update the outputDirectory
+						// * parameter with the id of the model provider, since
+						// * validation is general, not in the context of a
+						// * specific transformation
+						// */
 
 						TargetConfiguration tconfig = (TargetConfiguration) pConfig;
 						result.addInfo(this, 515, tconfig.getClassName(),
@@ -199,6 +237,11 @@ public class Converter implements MessageSource {
 				}
 			}
 		}
+
+		// // ensure initial state of options for execution
+		// options.setCurrentProcessConfig(null);
+		// options.resetFields();
+		// options.loadConfiguration();
 
 		return isValid;
 	}
@@ -659,8 +702,10 @@ public class Converter implements MessageSource {
 
 			SortedSet<? extends PackageInfo> selectedSchemas = model
 					.selectedSchemas();
-			
-			mainSchemaForSingleTargets = TargetUtil.findMainSchemaForSingleTargets(selectedSchemas, options, result);
+
+			mainSchemaForSingleTargets = TargetUtil
+					.findMainSchemaForSingleTargets(selectedSchemas, options,
+							result);
 
 			String classname = tgt.getClassName();
 			ProcessMode tmode = options.targetMode(classname);
@@ -810,8 +855,9 @@ public class Converter implements MessageSource {
 								List<File> newOutputFiles = faListener
 										.getNewOutputFiles();
 
-								outputProcessor.process(newOutputFiles, tgt, mainSchemaForSingleTargets);
-								
+								outputProcessor.process(newOutputFiles, tgt,
+										mainSchemaForSingleTargets);
+
 								/*
 								 * re-initialize the observer, i.e. let the
 								 * observer get all files that now exist in the
@@ -832,7 +878,7 @@ public class Converter implements MessageSource {
 					target = null;
 				}
 			}
-			
+
 			if (outputObserver != null) {
 
 				try {
@@ -975,8 +1021,6 @@ public class Converter implements MessageSource {
 		}
 		return false;
 	}
-	
-	
 
 	@SuppressWarnings("rawtypes")
 	private boolean isDeferrableOutputWriter(Class theClass) {

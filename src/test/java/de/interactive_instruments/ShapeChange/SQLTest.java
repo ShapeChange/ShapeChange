@@ -44,13 +44,14 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/basic",
 				"src/test/resources/reference/sql/basic");
 	}
-	
+
 	@Test
 	public void testExtensionSchema() {
 
-		multiTest("src/test/resources/config/testEA_sql_extensionSchema.xml",
+		multiTest(
+				"src/test/resources/sql/extensionSchema/testEA_sql_extensionSchema.xml",
 				new String[] { "sql" }, "testResults/sql/extensionSchema",
-				"src/test/resources/sql/extensionSchema");
+				"src/test/resources/sql/extensionSchema/reference");
 	}
 
 	@Test
@@ -94,9 +95,9 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/codelists",
 				"src/test/resources/reference/sql/codelists");
 	}
-	
+
 	@Test
-	public void testRuleSqlClsCodelistsPods() {		
+	public void testRuleSqlClsCodelistsPods() {
 		/*
 		 * SQL - codelist conversion with PODS specific rule
 		 */
@@ -175,7 +176,7 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/outputDdlModification",
 				"src/test/resources/sql/outputDdlModification/reference");
 	}
-	
+
 	@Test
 	public void testPrecisionAndScale() {
 
@@ -184,31 +185,43 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/precisionAndScale",
 				"src/test/resources/sql/precisionAndScale/reference");
 	}
-	
+
 	@Test
 	public void testNumericallyValuedCodeLists() {
 
 		multiTest(
 				"src/test/resources/sql/numericallyValuedCodeLists/testEA_sql_numericallyValuedCodeList.xml",
-				new String[] { "sql" }, "testResults/sql/numericallyValuedCodeLists",
+				new String[] { "sql" },
+				"testResults/sql/numericallyValuedCodeLists",
 				"src/test/resources/sql/numericallyValuedCodeLists/reference");
 	}
-	
+
 	@Test
 	public void testForeignKeyColumnSuffixCodelist() {
 
 		multiTest(
 				"src/test/resources/sql/foreignKeyColumnSuffixCodelist/testEA_sql_foreignKeyColumnSuffixCodelist.xml",
-				new String[] { "sql" }, "testResults/sql/foreignKeyColumnSuffixCodelist",
+				new String[] { "sql" },
+				"testResults/sql/foreignKeyColumnSuffixCodelist",
 				"src/test/resources/sql/foreignKeyColumnSuffixCodelist/reference");
 	}
-	
+
 	@Test
 	public void testCheckConstraintForEnumeration() {
 
 		multiTest(
 				"src/test/resources/sql/checkConstraintForEnumeration/testEA_sql_checkConstraintForEnumeration.xml",
-				new String[] { "sql" }, "testResults/sql/checkConstraintForEnumeration",
+				new String[] { "sql" },
+				"testResults/sql/checkConstraintForEnumeration",
 				"src/test/resources/sql/checkConstraintForEnumeration/reference");
+	}
+
+	@Test
+	public void testStatementFilters() {
+
+		multiTest(
+				"src/test/resources/sql/statementFilters/testEA_sql_statementFilters.xml",
+				new String[] { "sql" }, "testResults/sql/statementFilters",
+				"src/test/resources/sql/statementFilters/reference");
 	}
 }

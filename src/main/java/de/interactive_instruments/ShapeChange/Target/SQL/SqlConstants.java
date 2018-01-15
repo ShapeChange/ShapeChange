@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.util.regex.Pattern;
+
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
@@ -133,6 +135,26 @@ public class SqlConstants {
 	public static final String PARAM_SDO_DIM_ELEMENTS = "sdoDimElements";
 
 	/**
+	 * If the value of this parameter is 'true' (ignoring case), then SQL
+	 * statements related to spatial indexes (creation, but also insertion of
+	 * geometry metadata) are written to a separate output file. The name of
+	 * that file will be that of the main DDL file, plus suffix '_spatial'.
+	 */
+	public static final String PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS = "separateSpatialIndexStatements";
+
+	/**
+	 * If this parameter is included in the configuration, then SQL statements
+	 * for insertion of codes into codelist tables are written to separate
+	 * output files. The value of the parameter is a (comma-separated) list of
+	 * categories. For each of these categories, the insert statements where the
+	 * code list has tagged value 'codelistType' with a value equal to the
+	 * category are written to a new output file. The name of that file will be
+	 * that of the main DDL file, plus suffix
+	 * '_inserts_codelistType_{category}'.
+	 */
+	public static final String PARAM_SEPARATE_CODE_INSERT_STATEMENTS_BY_CODELIST_TYPE = "separateCodeInsertStatementsByCodelistType";
+
+	/**
 	 * Regular expression to validate the value of parameter
 	 * {@value #PARAM_SDO_DIM_ELEMENTS}:
 	 * (\([^,]+(,[-]?([0-9]+\.[0-9]+|[0-9]+)){3}\))+
@@ -205,6 +227,14 @@ public class SqlConstants {
 	public static final String PARAM_CODESTATUSCL_TYPE = "codeStatusCLType";
 
 	/**
+	 * Specify the length of an codeStatusCL column added by
+	 * {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}, in case that the code status
+	 * type is an enumeration. Default value is
+	 * {@value #DEFAULT_CODESTATUSCL_LENGTH}.
+	 */
+	public static final String PARAM_CODESTATUSCL_LENGTH = "codeStatusCLLength";
+
+	/**
 	 * This parameter controls the name of the column that contains the name or
 	 * - if available - the initial value of a code. Default is 'name'. NOTE:
 	 * The column name will be normalized according to the rules of the chosen
@@ -216,6 +246,8 @@ public class SqlConstants {
 	 * Applies to {@value #RULE_TGT_SQL_CLS_CODELISTS}
 	 */
 	public static final String PARAM_CODE_NAME_COLUMN_NAME = "codeNameColumnName";
+
+	public static final String PARAM_CODE_NAME_COLUMN_DOCUMENTATION = "codeNameColumnDocumentation";
 
 	public static final String PARAM_CODE_NAME_SIZE = "codeNameSize";
 
@@ -239,6 +271,8 @@ public class SqlConstants {
 	public static final String PARAM_NAME_CODESTATUS_CL_COLUMN = "nameForCodeStatusCLColumn";
 	public static final String DEFAULT_NAME_CODESTATUS_CL_COLUMN = "CODE_STATUS_CL";
 
+	public static final String PARAM_CODESTATUS_CL_COLUMN_DOCUMENTATION = "codeStatusCLColumnDocumentation";
+
 	/**
 	 * Define the name for the column that stores a note on the code status.
 	 * Applies to rule {@value #RULE_TGT_SQL_CLS_CODELISTS_PODS}. Default value
@@ -246,6 +280,8 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_NAME_CODESTATUSNOTES_COLUMN = "nameForCodeStatusNotesColumn";
 	public static final String DEFAULT_NAME_CODESTATUSNOTES_COLUMN = "CODE_STATUS_NOTES";
+
+	public static final String PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION = "codeStatusNotesColumnDocumentation";
 
 	/* ------------------------ */
 	/* --- Conversion rules --- */
@@ -266,6 +302,12 @@ public class SqlConstants {
 	 * enumeration values.
 	 */
 	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINTS_FOR_ENUMERATIONS = "rule-sql-prop-check-constraints-for-enumerations";
+
+	/**
+	 * Unique constraints are created for fields representing a property with
+	 * tagged value 'sqlUnique' = true.
+	 */
+	public static final String RULE_TGT_SQL_PROP_UNIQUE_CONSTRAINTS = "rule-sql-prop-uniqueConstraints";
 
 	/**
 	 * NOTE: currently only applicable when deriving DDL for the Oracle database
@@ -517,12 +559,13 @@ public class SqlConstants {
 
 	/**
 	 * <pre>
-	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size)=\w+)(,(columnName|size)=\w+)*\))?
+	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)*\))?
 	 * </pre>
 	 */
-	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size)=\\w+)(;(columnName|size)=\\w+)*\\))?";
+	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)(;(columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)*\\))?";
 
 	public static final String DEFAULT_CODESTATUSCL_TYPE = "CodeStatusCL";
+	public static final int DEFAULT_CODESTATUSCL_LENGTH = 50;
 	public static final String DEFAULT_CODE_NAME_COLUMN_NAME = "name";
 	public static final String DEFAULT_ID_COLUMN_NAME = "_id";
 	public static final String DEFAULT_FOREIGN_KEY_COLUMN_SUFFIX = "";
@@ -590,6 +633,20 @@ public class SqlConstants {
 	public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
 	public static final String ME_PARAM_TEXTORCHARACTERVARYING = "textOrCharacterVarying";
 
+	/**
+	 * The target type can have a length. This is important for correctly
+	 * parsing the length from the targetType (more specifically, its
+	 * parameterization). The parameter is mutually exclusive with 'precision'.
+	 */
+	public static final String ME_PARAM_LENGTH = "length";
+	/**
+	 * The target type can have precision. This is important for correctly
+	 * parsing the precision (and optional scale) from the targetType (more
+	 * specifically, its parameterization). The parameter is mutually exclusive
+	 * with 'length'.
+	 */
+	public static final String ME_PARAM_PRECISION = "precision";
+
 	/*
 	 * MAP_TARGETTYPE_COND_PART and MAP_TARGETTYPE_COND_TEXTORCHARACTERVARYING
 	 * are kept for backwards compatibility
@@ -601,4 +658,15 @@ public class SqlConstants {
 	public static final String INDENT = "   ";
 
 	public static final String NOT_NULL_COLUMN_SPEC = "NOT NULL";
+
+	/**
+	 * Regular expression to extract the data type name as well as length,
+	 * precision and scale from the target type defined by a map entry. Group 0
+	 * contains the whole string, group 1 the data type name, group 2 the first
+	 * number, and group 3 the optional second number (which can be
+	 * <code>null</code>).
+	 */
+	public static final Pattern PATTERN_ME_TARGETTYPE_LENGTH_PRECISION_SCALE = Pattern
+			.compile(
+					"(.+)\\(([+-]?\\d+(?:\\.\\d)*)(?:,([+-]?\\d+(?:\\.\\d)*))?\\)");
 }

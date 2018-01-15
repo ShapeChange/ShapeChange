@@ -1,0 +1,407 @@
+/**
+ * ShapeChange - processing application schemas for geographic information
+ *
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
+ * GML Application Schema or other implementation representations.
+ *
+ * Additional information about the software can be found at
+ * http://shapechange.net/
+ *
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:
+ * interactive instruments GmbH
+ * Trierer Strasse 70-72
+ * 53115 Bonn
+ * Germany
+ */
+package de.interactive_instruments.ShapeChange.Util.ea;
+
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.sparx.Collection;
+import org.sparx.Connector;
+import org.sparx.ConnectorTag;
+import org.sparx.Element;
+
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+
+/**
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
+public class EAConnectorUtil extends AbstractEAUtil {
+
+	/**
+	 * Adds the given collection of tagged values to the given connector, NOT
+	 * checking for duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
+	 * 
+	 * @param con
+	 *            the connector to which the tagged values shall be added
+	 * @param tvs
+	 *            collection of tagged values to add
+	 */
+	public static void addTaggedValues(Connector con, List<EATaggedValue> tvs)
+			throws EAException {
+
+		if (tvs == null || tvs.isEmpty()) {
+
+			// nothing to do
+
+		} else {
+
+			Collection<ConnectorTag> cTV = con.GetTaggedValues();
+
+			for (EATaggedValue tv : tvs) {
+
+				String name = tv.getName();
+				List<String> values = tv.getValues();
+
+				if (values != null) {
+
+					for (String v : values) {
+
+						ConnectorTag eaTv = cTV.AddNew(name, "");
+						cTV.Refresh();
+
+						if (tv.createAsMemoField() || v.length() > 255) {
+							eaTv.SetValue("<memo>");
+							eaTv.SetNotes(v);
+						} else {
+							eaTv.SetValue(v);
+							eaTv.SetNotes("");
+						}
+
+						if (!eaTv.Update()) {
+							throw new EAException(createMessage(message(101),
+									name, con.GetName(), v,
+									eaTv.GetLastError()));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given collection of tagged values to the given connector, NOT
+	 * checking for duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
+	 * 
+	 * @param con
+	 *            the connector to which the tagged values shall be added
+	 * @param tvs
+	 *            collection of tagged values to add
+	 */
+	public static void addTaggedValues(Connector con, TaggedValues tvs)
+			throws EAException {
+
+		if (tvs == null || tvs.isEmpty()) {
+
+			// nothing to do
+
+		} else {
+
+			Collection<ConnectorTag> cTV = con.GetTaggedValues();
+
+			for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
+
+				String name = e.getKey();
+				List<String> values = e.getValue();
+
+				if (values != null) {
+
+					for (String v : values) {
+
+						ConnectorTag eaTv = cTV.AddNew(name, "");
+						cTV.Refresh();
+
+						if (v.length() > 255) {
+							eaTv.SetValue("<memo>");
+							eaTv.SetNotes(v);
+						} else {
+							eaTv.SetValue(v);
+							eaTv.SetNotes("");
+						}
+
+						if (!eaTv.Update()) {
+							throw new EAException(createMessage(message(101),
+									name, con.GetName(), v,
+									eaTv.GetLastError()));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static void deleteTaggedValue(Connector con,
+			String nameOfTVToDelete) {
+
+		Collection<ConnectorTag> cTV = con.GetTaggedValues();
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+			ConnectorTag tv = cTV.GetAt(i);
+			if (tv.GetName().equalsIgnoreCase(nameOfTVToDelete)) {
+				cTV.Delete(i);
+			}
+		}
+
+		cTV.Refresh();
+	}
+
+	/**
+	 * NOTE: only works with EA 12 Java API, not the previous API.
+	 * 
+	 * @param con
+	 * @param classElement
+	 * @throws EAException
+	 */
+	public static void setEAAssociationClass(Connector con,
+			Element classElement) throws EAException {
+
+		/*
+		 * 2015-06-25 JE: direct manipulation of MS Access DB to establish
+		 * relationship between an AssociationClass and its connector no longer
+		 * necessary with EA v12 (beta had issues, but full version works). We
+		 * decided to rely on the EA 12 API. That means that the ArcGIS
+		 * Workspace target won't work with deployments that use a previous
+		 * version of EA. In any case, the direct manipulation of the DB no
+		 * longer works with Java 8 and later, because the sun jdbc odbc bridge
+		 * that was used to connect to the DB has been removed in Java 8. At
+		 * this point in time there is no feasible alternative (tested
+		 * ucanaccess and jackcess - both didn't work).
+		 */
+
+		int connectorID = con.GetConnectorID();
+
+		classElement.CreateAssociationClass(connectorID);
+	}
+
+	public static void setEAAlias(Connector con, String aliasName)
+			throws EAException {
+
+		con.SetAlias(aliasName);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(107), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEANotes(Connector con, String notes)
+			throws EAException {
+
+		con.SetNotes(notes);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(108), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEAName(Connector con, String name)
+			throws EAException {
+
+		con.SetName(name);
+
+		if (!con.Update()) {
+			throw new EAException(
+					createMessage(message(102), name, con.GetLastError()));
+		}
+	}
+
+	public static void setEAStereotype(Connector con, String stereotype)
+			throws EAException {
+
+		con.SetStereotype(stereotype);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(103), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEAStereotypeEx(Connector con, String stereotypeEx)
+			throws EAException {
+
+		con.SetStereotypeEx(stereotypeEx);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(105), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEAStyleEx(Connector con, String styleEx)
+			throws EAException {
+
+		con.SetStyleEx(styleEx);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(106), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	public static void setEADirection(Connector con, EADirection direction)
+			throws EAException {
+
+		con.SetDirection(direction.getEAValue());
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(104), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+	
+	public static void setEASupplierID(Connector con, int supplierID)
+			throws EAException {
+
+		con.SetSupplierID(supplierID);
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(109), con.GetName(),
+					con.GetLastError()));
+		}
+	}
+
+	/**
+	 * Sets the given tagged values in the given connector. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
+	 * 
+	 * @param con
+	 *            the connector in which the tagged values shall be set
+	 * @param tvs
+	 *            tagged values to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValues(Connector con, List<EATaggedValue> tvs)
+			throws EAException {
+
+		for (EATaggedValue tv : tvs) {
+			deleteTaggedValue(con, tv.getName());
+		}
+		addTaggedValues(con, tvs);
+	}
+
+	/**
+	 * Sets the given tagged values in the given connector. If tagged values
+	 * with the same name as the given ones already exist, they will be deleted.
+	 * Then the tagged values will be added.
+	 * 
+	 * @param con
+	 *            the connector in which the tagged values shall be set
+	 * @param tvs
+	 *            tagged values to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValues(Connector con, TaggedValues tvs)
+			throws EAException {
+
+		for (String tvName : tvs.asMap().keySet()) {
+			deleteTaggedValue(con, tvName);
+		}
+		addTaggedValues(con, tvs);
+	}
+
+	/**
+	 * @param elmt
+	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
+	 *         according EATaggedValue); can be empty but not <code>null</code>
+	 */
+	public static SortedMap<String, EATaggedValue> getEATaggedValues(
+			Connector conn) {
+
+		/*
+		 * key: {name '#' fqName}; value: according EATaggedValue
+		 */
+		SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
+
+		Collection<ConnectorTag> tvs = conn.GetTaggedValues();
+
+		for (short i = 0; i < tvs.GetCount(); i++) {
+
+			ConnectorTag tv = tvs.GetAt(i);
+
+			String name = tv.GetName();
+			String fqName = tv.GetFQName();
+			String value;
+
+			String tvValue = tv.GetValue();
+
+			if (tvValue.equals("<memo>")) {
+				value = tv.GetNotes();
+			} else {
+				value = tvValue;
+			}
+
+			String key = name + "#" + fqName;
+
+			if (result.containsKey(key)) {
+				EATaggedValue eatv = result.get(name);
+				eatv.addValue(value);
+			} else {
+				result.put(key, new EATaggedValue(name, fqName, value));
+			}
+		}
+
+		return result;
+	}
+
+	public static String message(int mnr) {
+
+		switch (mnr) {
+
+		case 101:
+			return "EA error encountered while updating EA tagged value '$1$' on connector '$2$' with value '$3$'. Error message is: $4$";
+		case 102:
+			return "EA error encountered while updating 'Name' on connector '$1$'. Error message is: $2$";
+		case 103:
+			return "EA error encountered while updating 'Stereotype' on connector '$1$'. Error message is: $2$";
+		case 104:
+			return "EA error encountered while updating 'Direction' on connector '$1$'. Error message is: $2$";
+		case 105:
+			return "EA error encountered while updating 'StereotypeEx' on connector '$1$'. Error message is: $2$";
+		case 106:
+			return "EA error encountered while updating 'StyleEx' on connector '$1$'. Error message is: $2$";
+		case 107:
+			return "EA error encountered while updating 'Alias' of EA connector '$1$'. Error message is: $2$";
+		case 108:
+			return "EA error encountered while updating 'Notes' of EA connector '$1$'. Error message is: $2$";
+		case 109:
+			return "EA error encountered while updating 'SupplierID' of EA connector '$1$'. Error message is: $2$";
+
+		default:
+			return "(" + EAConnectorUtil.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
+}

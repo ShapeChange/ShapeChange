@@ -83,13 +83,14 @@ public class ReplicationSchemaVisitor
 	protected ShapeChangeResult result;
 
 	protected Model model;
-	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>(new Comparator<ClassInfo>() {
+	protected SortedSet<ClassInfo> enumerationsInSchema = new TreeSet<ClassInfo>(
+			new Comparator<ClassInfo>() {
 
-		@Override
-		public int compare(ClassInfo ci1, ClassInfo ci2) {
-			return ci1.name().compareTo(ci2.name());
-		}
-	});
+				@Override
+				public int compare(ClassInfo ci1, ClassInfo ci2) {
+					return ci1.name().compareTo(ci2.name());
+				}
+			});
 
 	protected Document document;
 	protected Element root;
@@ -225,12 +226,15 @@ public class ReplicationSchemaVisitor
 
 			Integer sizeForFieldWithCharacterDataType = null;
 			if (propForColumn != null) {
-				String taggedValueSize = propForColumn.taggedValuesAll().getFirstValue(SqlConstants.PARAM_SIZE);
+				String taggedValueSize = propForColumn.taggedValuesAll()
+						.getFirstValue(SqlConstants.PARAM_SIZE);
 				if (StringUtils.isNotBlank(taggedValueSize)) {
 					try {
-						sizeForFieldWithCharacterDataType = Integer.parseInt(taggedValueSize);
+						sizeForFieldWithCharacterDataType = Integer
+								.parseInt(taggedValueSize);
 					} catch (NumberFormatException e) {
-						result.addError(this, 4, taggedValueSize, e.getMessage());
+						result.addError(this, 4, taggedValueSize,
+								e.getMessage());
 					}
 				}
 			}
@@ -276,13 +280,13 @@ public class ReplicationSchemaVisitor
 						// get enumeration class
 						ClassInfo enumeration = getValueType(propForColumn);
 
-
 						/*
 						 * Enumerations may reside in another namespace, they
 						 * are usually not flattened
 						 */
 						if (model.isInSelectedSchemas(enumeration)) {
-							type = SqlDdl.repSchemaTargetXmlns + ":" + enumeration.name() + "Type";
+							type = SqlDdl.repSchemaTargetXmlns + ":"
+									+ enumeration.name() + "Type";
 						} else {
 							type = enumeration.qname() + "Type";
 							repSchemaPackagesForImport.add(enumeration.pkg());
@@ -600,6 +604,11 @@ public class ReplicationSchemaVisitor
 	@Override
 	public void visit(
 			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
+		// ignore
+	}
+
+	@Override
+	public void postprocess() {
 		// ignore
 	}
 

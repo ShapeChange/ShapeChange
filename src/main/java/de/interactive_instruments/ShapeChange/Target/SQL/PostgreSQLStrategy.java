@@ -38,16 +38,17 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 public class PostgreSQLStrategy implements DatabaseStrategy {
-
+		
 	@Override
-	public String primaryKeyDataType() {
-		return "bigserial";
+	public ColumnDataType primaryKeyDataType() {
+		return new ColumnDataType("bigserial");
 	}
 
 	@Override
@@ -56,13 +57,13 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public String unlimitedLengthCharacterDataType() {
-		return "text";
+	public ColumnDataType unlimitedLengthCharacterDataType() {
+		return new ColumnDataType("text");
 	}
 
 	@Override
-	public String limitedLengthCharacterDataType(int size) {
-		return "character varying(" + size + ")";
+	public ColumnDataType limitedLengthCharacterDataType(int size) {
+		return new ColumnDataType("character varying", null, null, size);
 	}
 
 	@Override
@@ -70,8 +71,10 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 			Column column, Map<String, String> geometryCharacteristics) {
 
 		Index index = new Index(indexName);
-		index.addSpec("USING GIST (" + column.getName() + ")");
-
+		index.addColumn(column);
+		
+		index.getProperties().setProperty(PostgreSQLConstants.PROPERTY_METHOD, "GIST");
+		
 		CreateIndex cIndex = new CreateIndex();
 		cIndex.setIndex(index);
 		cIndex.setTable(table);

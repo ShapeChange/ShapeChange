@@ -32,12 +32,16 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
+import java.util.regex.Matcher;
+
+import org.apache.commons.lang.StringUtils;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -83,8 +87,8 @@ public class SqlDdlConfigurationValidator
 		isValid = isValid && mepis.isValid();
 
 		DatabaseStrategy databaseStrategy;
-		String databaseSystem = options.parameter(SqlConstants.class.getName(),
-				SqlConstants.PARAM_DATABASE_SYSTEM);
+		String databaseSystem = config
+				.getParameterValue(SqlConstants.PARAM_DATABASE_SYSTEM);
 		if (databaseSystem == null
 				|| "postgresql".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new PostgreSQLStrategy();
@@ -105,6 +109,10 @@ public class SqlDdlConfigurationValidator
 		// validation of database strategy specific sql map entry parameters
 		isValid = isValid && databaseStrategy.validate(mapEntryByType, mepis);
 
+		// validation of length precision scale pattern
+		isValid = isValid && checkLengthPrecisionScalePattern(
+				config.getMapEntries(), mepis);
+
 		isValid = isValid
 				&& checkDescriptorsForCodeList(config, options, result);
 
@@ -113,7 +121,7 @@ public class SqlDdlConfigurationValidator
 				&& checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
 
 		// --------------------------
-		String fileDdlTop = options.parameterAsString(this.getClass().getName(),
+		String fileDdlTop = config.parameterAsString(
 				SqlConstants.PARAM_FILE_DDL_TOP, null, false, true);
 		if (fileDdlTop != null) {
 			File ddlTop = new File(fileDdlTop);
@@ -124,9 +132,8 @@ public class SqlDdlConfigurationValidator
 			}
 		}
 
-		String fileDdlBottom = options.parameterAsString(
-				this.getClass().getName(), SqlConstants.PARAM_FILE_DDL_BOTTOM,
-				null, false, true);
+		String fileDdlBottom = config.parameterAsString(
+				SqlConstants.PARAM_FILE_DDL_BOTTOM, null, false, true);
 		if (fileDdlBottom != null) {
 			File ddlBottom = new File(fileDdlBottom);
 			if (!ddlBottom.exists() || ddlBottom.isDirectory()
@@ -138,6 +145,104 @@ public class SqlDdlConfigurationValidator
 		}
 
 		return isValid;
+	}
+
+	private boolean checkLengthPrecisionScalePattern(
+			List<ProcessMapEntry> mapEntries,
+			MapEntryParamInfos mapEntryParamInfos) {
+
+		boolean isValid = true;
+
+		for (ProcessMapEntry me : mapEntries) {
+
+			String typeRuleKey = me.getType() + "#" + me.getRule();
+
+			if (mapEntryParamInfos.hasParameter(me,
+					SqlConstants.ME_PARAM_LENGTH)
+					&& mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+				/*
+				 * length and precision must not occur as parameters in the same
+				 * map entry
+				 */
+
+				isValid = false;
+				result.addError(this, 105, typeRuleKey,
+						SqlConstants.ME_PARAM_LENGTH,
+						SqlConstants.ME_PARAM_PRECISION);
+
+			} else if (mapEntryParamInfos.hasParameter(me,
+					SqlConstants.ME_PARAM_LENGTH)
+					|| mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+				/*
+				 * Only if length or precision are present as parameters do we
+				 * parse and validate the target type. This supports direct
+				 * parameterization for other kinds of target types.
+				 */
+
+				Matcher lengthPrecisionScale = SqlConstants.PATTERN_ME_TARGETTYPE_LENGTH_PRECISION_SCALE
+						.matcher(me.getTargetType().trim());
+
+				if (lengthPrecisionScale.matches()) {
+
+					String group2 = lengthPrecisionScale.group(2);
+					String group3 = lengthPrecisionScale.group(3);
+
+					if (mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_LENGTH)) {
+
+						// we only expect a single non-negative integer
+						isValid = isValid
+								&& checkNonNegativeInteger(group2, typeRuleKey);
+
+						if (group3 != null) {
+							isValid = false;
+							result.addError(this, 104, typeRuleKey,
+									SqlConstants.ME_PARAM_LENGTH);
+						}
+
+					} else if (mapEntryParamInfos.hasParameter(me,
+							SqlConstants.ME_PARAM_PRECISION)) {
+
+						/*
+						 * we expect a non-negative integer for the first number
+						 * (group2)
+						 */
+						isValid = isValid
+								&& checkNonNegativeInteger(group2, typeRuleKey);
+
+						if (group3 != null) {
+
+							/*
+							 * we expect a non-negative integer for the second
+							 * number (group3)
+							 */
+							isValid = isValid && checkNonNegativeInteger(group3,
+									typeRuleKey);
+						}
+					}
+				}
+			}
+		}
+
+		return isValid;
+	}
+
+	private boolean checkNonNegativeInteger(String number, String typeRuleKey) {
+		try {
+			Integer i = Integer.parseInt(number);
+			if (i < 0) {
+				result.addError(this, 103, typeRuleKey);
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			result.addError(this, 103, typeRuleKey);
+			return false;
+		}
+		return true;
 	}
 
 	private boolean checkCommonMapEntryParameters(MapEntryParamInfos mepp) {
@@ -190,8 +295,7 @@ public class SqlDdlConfigurationValidator
 
 		boolean isValid = true;
 
-		String valueByConfig = options.parameter(this.getClass().getName(),
-				paramName);
+		String valueByConfig = config.getParameterValue(paramName);
 
 		if (valueByConfig != null) {
 
@@ -213,40 +317,47 @@ public class SqlDdlConfigurationValidator
 
 		boolean isValid = true;
 
-		String descriptorsForCodelistByConfig = options.parameter(
-				SqlConstants.class.getName(),
-				SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
-		String[] descriptorsForCodelistFromConfig = new String[] {
-				"documentation" };
-		SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
+		String descriptorsForCodelistByConfig = config
+				.getParameterValue(SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
+				
+		if (StringUtils.isNotBlank(descriptorsForCodelistByConfig)) {
 
-		if (descriptorsForCodelistByConfig != null) {
+			String fullRegex = SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX
+					+ "(," + SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX + ")*";
 
-			if (descriptorsForCodelistByConfig.trim().isEmpty()) {
-				descriptorsForCodelistFromConfig = new String[0];
+			if (descriptorsForCodelistByConfig.matches(fullRegex)) {
+
+				SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
+
+				String[]  descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
+						.trim().split("(?<!\\\\),");
+
+				boolean unknownDescriptorFound = false;
+				for (String tmp : descriptorsForCodelistFromConfig) {
+
+					if (tmp.matches(
+							SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
+						descriptorsForCodelist.add(tmp);
+					} else {
+						unknownDescriptorFound = true;
+					}
+				}
+				if (unknownDescriptorFound) {
+					result.addError(this, 2, descriptorsForCodelistByConfig,
+							SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
+					isValid = false;
+				}
+				if (descriptorsForCodelist.isEmpty()) {
+					result.addError(this, 3);
+					isValid = false;
+					// irrelevant here:
+					// descriptorsForCodelist.add("documentation");
+				}
 			} else {
-				descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
-						.trim().split(",");
-			}
-		}
-		boolean unknownDescriptorFound = false;
-		for (String tmp : descriptorsForCodelistFromConfig) {
 
-			if (tmp.matches(SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX)) {
-				descriptorsForCodelist.add(tmp);
-			} else {
-				unknownDescriptorFound = true;
+				result.addError(this, 6, fullRegex);
+				isValid = false;
 			}
-		}
-		if (unknownDescriptorFound) {
-			result.addError(this, 2, descriptorsForCodelistByConfig,
-					SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX);
-			isValid = false;
-		}
-		if (descriptorsForCodelist.isEmpty()) {
-			result.addError(this, 3);
-			isValid = false;
-			// irrelevant here: descriptorsForCodelist.add("documentation");
 		}
 
 		return isValid;
@@ -263,7 +374,7 @@ public class SqlDdlConfigurationValidator
 		case 2:
 			return "At least one of the descriptor identifiers in configuration parameter '"
 					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
-					+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Correct the parameter value.";
+					+ "' - the parameter value is '$1$' - does not match the regular expression '$2$'. Correct the parameter value.";
 		case 3:
 			return "Configuration parameter '"
 					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
@@ -272,6 +383,10 @@ public class SqlDdlConfigurationValidator
 			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
 		case 5:
 			return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+		case 6:
+			return "Configuration parameter '"
+					+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+					+ "' does not match the following regular expression: $1$";
 
 		case 100:
 			return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
@@ -279,6 +394,12 @@ public class SqlDdlConfigurationValidator
 			return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 		case 102:
 			return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+		case 103:
+			return "Invalid map entry for type#rule '$1$': the targetType contains a parameterization that is not a non-negative integer.";
+		case 104:
+			return "Invalid map entry for type#rule '$1$': the map entry has paramter '$2$' but the targetType has a parameterization with two numbers. With parameter '$2$', the targetType of the map entry may only have a single number.";
+		case 105:
+			return "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
 
 		default:
 			return "(" + SqlDdlConfigurationValidator.class.getName()
