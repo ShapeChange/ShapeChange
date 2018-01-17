@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2014 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.CharUtils;
+import org.sparx.Collection;
+import org.sparx.Diagram;
+import org.sparx.Element;
+import org.sparx.Project;
+import org.sparx.Repository;
+
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -60,13 +69,9 @@ import de.interactive_instruments.ShapeChange.Model.ModelImpl;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.CharUtils;
-import org.sparx.*;
-
-public class EADocument extends ModelImpl implements Model {
+public class EADocument extends ModelImpl implements Model, MessageSource {
 
 	public static final int STATUS_EADOCUMENT_INITSTART = 101;
 	public static final int STATUS_EADOCUMENT_READMODEL = 102;
@@ -131,13 +136,12 @@ public class EADocument extends ModelImpl implements Model {
 		 */
 		String connectionString = determineConnectionString(
 				repositoryFileNameOrConnectionString);
-		
+
 		/* Connect to EA repository */
 		repository = new Repository();
 		r.addInfo(null, 43, connectionString);
 
-		if (!repository.OpenFile2(connectionString,
-				username, password)) {
+		if (!repository.OpenFile2(connectionString, username, password)) {
 			String errormsg = repository.GetLastError();
 			r.addFatalError(null, 35, errormsg,
 					repositoryFileNameOrConnectionString, username, password);
@@ -302,7 +306,7 @@ public class EADocument extends ModelImpl implements Model {
 				 * prevent loading of classes that have tagged value 'status'
 				 * with prohibited value
 				 */
-				String statusTaggedValue = EAModelUtil.taggedValue(elmt,
+				String statusTaggedValue = EAElementUtil.taggedValue(elmt,
 						"status");
 				if (statusTaggedValue != null
 						&& options.prohibitedStatusValuesWhenLoadingClasses()
@@ -420,6 +424,38 @@ public class EADocument extends ModelImpl implements Model {
 						escapeFileName(tmpDir.getName()), pi);
 			}
 		}
+
+		// ==============================
+		// load linked documentation if so requested
+		boolean loadLinkedDocuments = options.parameterAsBoolean(null,
+				"loadLinkedDocuments", false);
+
+		if (loadLinkedDocuments) {
+
+			java.io.File tmpDir = options.linkedDocumentsTmpDir();
+
+			if (tmpDir.exists()) {
+
+				// probably content from previous run, delete the content of the
+				// directory
+				try {
+					FileUtils.deleteDirectory(tmpDir);
+				} catch (IOException e) {
+					result.addWarning(null, 34, tmpDir.getAbsolutePath());
+				}
+
+				if (!tmpDir.exists()) {
+					try {
+						FileUtils.forceMkdir(tmpDir);
+					} catch (IOException e) {
+						result.addWarning(null, 32, tmpDir.getAbsolutePath());
+					}
+				}
+			}
+
+			saveLinkedDocuments(tmpDir);
+		}
+
 		r.addInfo(null, 46, repository.GetConnectionString());
 	} // EA Document Ctor
 
@@ -638,6 +674,36 @@ public class EADocument extends ModelImpl implements Model {
 		}
 	}
 
+	private void saveLinkedDocuments(java.io.File targetFolder) {
+
+		if (!targetFolder.exists()) {
+			targetFolder.mkdir();
+		}
+
+		Set<? extends ClassInfo> selClasses = this.selectedSchemaClasses();
+
+		for (ClassInfo ci : selClasses) {
+
+			ClassInfoEA eaCi = (ClassInfoEA) ci;
+
+			java.io.File ldFile = new java.io.File(targetFolder,
+					"linkedDoc_" + eaCi.name() + ".docx");
+			boolean fileSaved = eaCi.eaClassElement
+					.SaveLinkedDocument(ldFile.getAbsolutePath());
+
+			/*
+			 * NOTE: fileSaved = false means that either the element does not
+			 * have a linked document, or that the linked document could not be
+			 * saved by EA.
+			 */
+			if (fileSaved) {
+				eaCi.setLinkedDocument(ldFile);
+			} else {
+				eaCi.setLinkedDocument(null);
+			}
+		}
+	}
+
 	/**
 	 * @return list of diagrams of the given package. The list is sorted by name
 	 *         if parameter sortDiagramsByName is set to true (default), or by
@@ -802,4 +868,28 @@ public class EADocument extends ModelImpl implements Model {
 		return allPackages;
 	}
 
+	/**
+	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
+	 */
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: property '$1$'.";
+		case 1:
+			return "Context: class '$1$'.";
+		case 2:
+			return "Context: association class '$1$'.";
+		case 3:
+			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+		case 4:
+			return "Context: supertype '$1$'";
+		case 5:
+			return "Context: subtype '$1$'";
+
+		default:
+			return "(" + EADocument.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
 }

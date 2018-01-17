@@ -32,6 +32,10 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
+ * A configuration validator is used to check that the configuration of a
+ * transformation or target is valid. The validator can check parameters, rules,
+ * map entries, etc.
+ * 
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  *
@@ -41,6 +45,14 @@ public interface ConfigurationValidator {
 	/**
 	 * Validates the given configuration. Any invalidity is directly logged in
 	 * the ShapeChangeResult.
+	 * <p>
+	 * WARNING: The validator should use the given ProcessConfiguration for
+	 * retrieving parameters, map entries etc. Currently it is not safe to get
+	 * this information from options, since options is not configured with that
+	 * ProcessConfiguration. If the configuration contains multiple targets of
+	 * the same type, this can lead to parameter values being returned from the
+	 * wrong target configuration. Simply rely on the given
+	 * ProcessConfiguration. That also leads to more readable code.
 	 * 
 	 * @param pConfig
 	 * @param o

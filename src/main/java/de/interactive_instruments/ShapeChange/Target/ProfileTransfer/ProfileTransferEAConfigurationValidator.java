@@ -63,13 +63,12 @@ public class ProfileTransferEAConfigurationValidator
 		String username = null;
 		String password = null;
 
-		if (options.hasParameter(ProfileTransferEA.class.getName(),
-				ProfileTransferEA.PARAM_REPO_CONNECTION_STRING)) {
+		if (config
+				.hasParameter(ProfileTransferEA.PARAM_REPO_CONNECTION_STRING)) {
 
 			result.addInfo(this, 29);
 
-			repoConnectionInfo = options.parameterAsString(
-					ProfileTransferEA.class.getName(),
+			repoConnectionInfo = config.parameterAsString(
 					ProfileTransferEA.PARAM_REPO_CONNECTION_STRING, null, false,
 					true);
 
@@ -80,10 +79,10 @@ public class ProfileTransferEAConfigurationValidator
 
 			} else {
 
-				username = options.parameter(ProfileTransferEA.class.getName(),
-						ProfileTransferEA.PARAM_USER);
-				password = options.parameter(ProfileTransferEA.class.getName(),
-						ProfileTransferEA.PARAM_PWD);
+				username = config
+						.getParameterValue(ProfileTransferEA.PARAM_USER);
+				password = config
+						.getParameterValue(ProfileTransferEA.PARAM_PWD);
 			}
 
 		} else {
@@ -123,8 +122,7 @@ public class ProfileTransferEAConfigurationValidator
 
 		if (isValid) {
 
-			boolean transferToCopyOfEAP = options.parameterAsBoolean(
-					ProfileTransferEA.class.getName(),
+			boolean transferToCopyOfEAP = config.parameterAsBoolean(
 					ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, false);
 
 			/*
@@ -175,9 +173,8 @@ public class ProfileTransferEAConfigurationValidator
 					 * EAP file shall be copied. Check that the output directory
 					 * exists and can be written to.
 					 */
-					String outputDirectory = options.parameter(
-							ProfileTransferEA.class.getName(),
-							"outputDirectory");
+					String outputDirectory = config
+							.getParameterValue("outputDirectory");
 
 					if (outputDirectory == null)
 						outputDirectory = options.parameter("outputDirectory");

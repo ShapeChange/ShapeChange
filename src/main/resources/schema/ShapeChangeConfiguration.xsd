@@ -80,6 +80,10 @@
      <enumeration value="valueConcept"/>
      <enumeration value="version"/>
      <enumeration value="voidable"/>
+     <enumeration value="enum"/>
+     <enumeration value="property"/>
+     <enumeration value="identifier"/>
+     <enumeration value="estimated"/>
     </restriction>
    </simpleType>
   </attribute>

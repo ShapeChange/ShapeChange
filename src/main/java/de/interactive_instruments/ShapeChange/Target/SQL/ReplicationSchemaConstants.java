@@ -89,7 +89,7 @@ public class ReplicationSchemaConstants {
 	public static final String PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE = "replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType";
 
 	/**
-	 * (available since after v2.3.0) If this rule is included, the target
+	 * (available since v2.4.0) If this rule is included, the target
 	 * creates an internal SQL structure. However, instead of deriving DDL from
 	 * this structure, a replication schema is derived.
 	 * 

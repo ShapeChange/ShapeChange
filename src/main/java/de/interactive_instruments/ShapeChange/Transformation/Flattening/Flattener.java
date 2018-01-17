@@ -31,6 +31,9 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Flattening;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +58,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
@@ -98,6 +104,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.Propert
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
 
 /**
  * Encapsulates the logic for flattening/simplifying complex constructs within
@@ -165,6 +172,8 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String PARAM_INCLUDE_OBJECT_NAV = "includeObjectToObjectNavigability";
 
 	public static final String PARAM_INHERITANCE_INCLUDE_REGEX = "flattenInheritanceIncludeRegex";
+
+	public static final String PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK = "linkedDocumentPageBreak";
 
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
@@ -265,6 +274,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
 	public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
@@ -5058,6 +5068,11 @@ public class Flattener implements Transformer, MessageSource {
 								PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 					}
 
+					if (trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
+						mergeLinkedDocumentsInSubtypes(superclass, trfConfig);
+					}
+
 					idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
 
 				} else {
@@ -5089,6 +5104,12 @@ public class Flattener implements Transformer, MessageSource {
 						} else {
 							copyContentToSubtypes(genModel, superclass,
 									PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
+						}
+
+						if (trfConfig.hasRule(
+								RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
+							mergeLinkedDocumentsInSubtypes(superclass,
+									trfConfig);
 						}
 
 						idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
@@ -5773,6 +5794,86 @@ public class Flattener implements Transformer, MessageSource {
 				superclass.setBaseClass(null);
 				superclass.setSupertypes(null);
 				superclass.setSubtypes(null);
+			}
+		}
+	}
+
+	private void mergeLinkedDocumentsInSubtypes(GenericClassInfo superclass,
+			TransformerConfiguration trfConfig) {
+
+		boolean pageBreak = trfConfig.parameterAsBoolean(
+				PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK, false);
+
+		if (superclass.getLinkedDocument() != null
+				&& !superclass.subtypes().isEmpty()) {
+
+			// we load the linked document of the superclass once
+			WordprocessingMLPackage topPackage = null;
+
+			try {
+				File linkedDocSupertype = superclass.getLinkedDocument();
+				FileInputStream linkedDocSupertypeIS = new FileInputStream(
+						linkedDocSupertype);
+				topPackage = WordprocessingMLPackage.load(linkedDocSupertypeIS);
+			} catch (FileNotFoundException | Docx4JException e) {
+
+				MessageContext mc = result.addError(this, 20400,
+						superclass.name(), e.getMessage());
+				if (mc != null) {
+					mc.addDetail(this, 2, superclass.fullNameInSchema());
+				}
+			}
+
+			if (topPackage != null) {
+
+				for (String subtypeId : superclass.subtypes()) {
+
+					ClassInfo subtype = superclass.model().classById(subtypeId);
+
+					if (superclass.model().isInSelectedSchemas(subtype)) {
+
+						if (subtype.getLinkedDocument() == null) {
+
+							// simply use the linked document of the
+							// supertype
+							subtype.setLinkedDocument(
+									superclass.getLinkedDocument());
+
+						} else {
+
+							GenericClassInfo genSubtype = (GenericClassInfo) subtype;
+
+							// use a copy/clone of the supertype linked doc
+							WordprocessingMLPackage topPackageClone = (WordprocessingMLPackage) topPackage
+									.clone();
+							MainDocumentPart topCloneMainDoc = topPackageClone
+									.getMainDocumentPart();
+
+							if (pageBreak) {
+								topCloneMainDoc.getContent()
+										.add(DocxUtil.createPageBreak());
+							}
+
+							try {
+
+								File mergedLinkedDoc = File.createTempFile(
+										"transformedLinkedDoc", ".docx",
+										options.linkedDocumentsTmpDir());
+								mergedLinkedDoc.deleteOnExit();
+
+								DocxUtil.merge(topPackageClone,
+										genSubtype.getLinkedDocument(),
+										mergedLinkedDoc);
+
+								genSubtype.setLinkedDocument(mergedLinkedDoc);
+
+							} catch (Exception e) {
+								result.addError(this, 20401, superclass.name(),
+										genSubtype.name(), e.getMessage());
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -7041,6 +7142,11 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		switch (mnr) {
 
+		case 1:
+			return "Context: property '$1$'";
+		case 2:
+			return "Context: class '$1$'";
+
 		case 20001:
 			return "No non-empty string value provided for configuration parameter '$1$'. Execution of '$2$' aborted.";
 		case 20002:
@@ -7147,6 +7253,11 @@ public class Flattener implements Transformer, MessageSource {
 			return "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
 		case 20348:
 			return "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
+
+		case 20400:
+			return "Exception occurred while loading linked document of type '$1$'. Exception message is: $2$";
+		case 20401:
+			return "Exception occurred while merging linked documents of supertype '$1$' and its subtype '$2$'. Exception message is: $3$";
 
 		default:
 			return "(" + this.getClass().getName()

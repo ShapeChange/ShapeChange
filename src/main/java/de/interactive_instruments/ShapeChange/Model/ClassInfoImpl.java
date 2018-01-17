@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -52,6 +53,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	protected int category = Options.UNKNOWN;
 
 	protected List<ImageMetadata> diagrams = null;
+	protected File linkedDocument = null;
 	protected Profiles profiles = null;
 
 	/**
@@ -965,12 +967,24 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 				&& properties().size() == 2;
 	}
 
+	@Override
 	public List<ImageMetadata> getDiagrams() {
 		return diagrams;
 	}
 
+	@Override
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		this.diagrams = diagrams;
+	}
+
+	@Override
+	public File getLinkedDocument() {
+		return linkedDocument;
+	}
+
+	@Override
+	public void setLinkedDocument(File linkedDocument) {
+		this.linkedDocument = linkedDocument;
 	}
 
 	/**

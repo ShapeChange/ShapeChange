@@ -3,7 +3,7 @@
 	<groupId>net.shapechange</groupId>
 	<artifactId>ShapeChange</artifactId>
 	<name>ShapeChange</name>
-	<version>2.4.1-SNAPSHOT</version>
+	<version>2.5.1-SNAPSHOT</version>
 	<scm>
 		<url>https://github.com/ShapeChange/ShapeChange</url>
 		<connection>scm:git:https://github.com/ShapeChange/ShapeChange.git</connection>
@@ -45,9 +45,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.5</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
@@ -115,6 +115,12 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.docx4j/docx4j -->
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j</artifactId>
+			<version>3.3.6</version>
+		</dependency>
 		<dependency>
 			<groupId>de.interactive_instruments.ShapeChange</groupId>
 			<artifactId>ShapeChangeAntlr</artifactId>
@@ -131,9 +137,9 @@
 			<version>4.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>20.0</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>20.0</version>
 		</dependency>
 	</dependencies>
 	<url>http://shapechange.net/</url>
@@ -155,26 +161,26 @@
 			</resource>
 		</resources>
 		<plugins>
-            <plugin>
+			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<version>2.2.1</version>
 				<executions>
-				    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                        <phase>validate</phase>
-				  </execution>
-                </executions>
-                <configuration>
-                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-                    <dateFormatTimeZone>${user.timezone}</dateFormatTimeZone>
-                    <skipPoms>false</skipPoms>
-                    <verbose>false</verbose>
-                </configuration>
-            </plugin>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<dateFormatTimeZone>${user.timezone}</dateFormatTimeZone>
+					<skipPoms>false</skipPoms>
+					<verbose>false</verbose>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -348,16 +354,34 @@
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-resources6</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>config/**</include>
+										<include>dataModelPatterns/**</include>
+										<include>ont/**</include>
+										<include>schema/**</include>
+										<include>templates/**</include>
+										<include>xslt/**</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2</version>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
 				<executions>
 					<execution>
 						<id>create-zip</id>
@@ -366,7 +390,26 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
+							<descriptors>
+								<descriptor>assembly.xml</descriptor>
+							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- create resources.zip which can be uploaded manually to shapechange.net/resources -->
+						<id>create-resources-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly-resources.xml</descriptor>
+							</descriptors>
+							<finalName>resources</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<attach>false</attach>
 						</configuration>
 					</execution>
 				</executions>
@@ -380,6 +423,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5.1</version>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>

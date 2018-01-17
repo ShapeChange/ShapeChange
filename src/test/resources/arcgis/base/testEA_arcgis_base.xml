@@ -7,18 +7,31 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/test_ArcGISWorkspace.eap" />
-<!-- 		<parameter name="appSchemaNameRegex" value="AppSchema.*" /> -->
-		<parameter name="appSchemaNameRegex" value="AppSchema3" />
+			value="src/test/resources/arcgis/base/test_arcgis_base.eap" />
+		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
-		<parameter name="loadConstraintsForSelectedSchemasOnly" value="true"/>
+		<parameter name="loadConstraintsForSelectedSchemasOnly"
+			value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+		</descriptorSources>
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile"
-			value="testResults/ArcGISWorkspace/log_ArcGISWorkspace.xml" />
+		<parameter name="logFile" value="testResults/arcgis/base/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -44,16 +57,13 @@
 					value="(?i)\.valueOrReason" />
 				<ProcessParameter name="flattenInheritanceIncludeRegex"
 					value=".*GeometryInfo" />
-				<ProcessParameter
-					name="omitHomogeneousGeometriesForTypesWithSingleGeometryProperty"
-					value="true" />
 				<ProcessParameter name="applyHomogeneousGeometriesOnSubtypes"
 					value="true" />
-				<ProcessParameter name="codeForEnumerationValues" value="false"/>
+				<ProcessParameter name="codeForEnumerationValues"
+					value="false" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">
-
 					<rule name="rule-trf-all-removeType" />
 					<rule name="rule-trf-prop-flatten-ONINAs" />
 					<rule name="rule-trf-cls-flatten-inheritance" />
@@ -62,6 +72,7 @@
 					<rule name="rule-trf-all-flatten-name" />
 					<rule name="rule-trf-prop-remove-name-and-code-component" />
 					<rule name="rule-trf-prop-flatten-homogeneousgeometries" />
+					<rule name="rule-trf-all-postprocess-skip-constraint-validation" />
 				</ProcessRuleSet>
 			</rules>
 			<mapEntries>
@@ -97,26 +108,12 @@
 					type="GM_MultiSolid" />
 			</mapEntries>
 		</Transformer>
-		  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Naming.NamingModifier"
-   id="camelcase_to_uppercase" input="flattenedModel" mode="enabled">
-   <parameters>
-    <ProcessParameter name="suffixesToIgnore" value="ID, LF, CL"/>
-   </parameters>
-   <rules>
-    <ProcessRuleSet name="nmrule">
-     <rule name="rule-trf-camelcase-to-uppercase"/>
-     <!--       <rule name="rule-trf-camelcase-to-uppercase-include-enums" />-->
-     <!--       <rule name="rule-trf-camelcase-to-uppercase-include-codes" />-->
-    </ProcessRuleSet>
-   </rules>
-  </Transformer>
 	</transformers>
 	<targets>
 		<TargetXmlSchema
 			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
-			inputs="flattenedModel input" mode="enabled">
-			<targetParameter name="outputDirectory"
-				value="testResults/ArcGISWorkspace/xsd" />
+			inputs="input" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/arcgis/base/xsd" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
@@ -130,7 +127,7 @@
 		</TargetXmlSchema>
 		<!-- <Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
 		<!-- inputs="flattenedModel" mode="enabled"> -->
-		<!-- <targetParameter name="outputDirectory" value="testResults/ArcGISWorkspace/html"/> -->
+		<!-- <targetParameter name="outputDirectory" value="testResults/arcgis/base/html"/> -->
 		<!-- <targetParameter name="outputFilename" value="test"/> -->
 		<!-- <targetParameter name="sortedOutput" value="true"/> -->
 		<!-- <targetParameter name="inheritedProperties" value="false"/> -->
@@ -145,36 +142,34 @@
 		<!-- </Target> -->
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
-			mode="enabled" inputs="camelcase_to_uppercase">
+			mode="enabled" inputs="flattenedModel">
 
 			<targetParameter name="workspaceTemplate"
 				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
 			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"
-				value="testResults/ArcGISWorkspace/eap" />
-			<targetParameter name="outputFilename" value="test" />
+				value="testResults/arcgis/base/arcgis" />
 			<targetParameter name="valueRangeExcludedBoundaryDelta"
 				value="0.001" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
-			<targetParameter name="maxNameLength" value="64"/>
+			<targetParameter name="maxNameLength" value="64" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
-				    <rule name="rule-arcgis-cls-hasZ"/>
-     				<rule name="rule-arcgis-cls-hasM"/>
+					<rule name="rule-arcgis-cls-hasZ" />
+					<rule name="rule-arcgis-cls-hasM" />
 					<rule name="rule-arcgis-prop-initialValueByAlias" />
 					<rule name="rule-arcgis-cls-rangeDomainFromTaggedValues" />
 					<rule name="rule-arcgis-prop-lengthFromTaggedValue" />
-					<rule name="rule-arcgis-prop-initialValue"/>
-					<rule name="rule-arcgis-prop-isNullable"/>
-				    <rule name="rule-arcgis-prop-precision"/>
-				    <rule name="rule-arcgis-prop-scale"/>
+					<rule name="rule-arcgis-prop-initialValue" />
+					<rule name="rule-arcgis-prop-isNullable" />
+					<rule name="rule-arcgis-prop-precision" />
+					<rule name="rule-arcgis-prop-scale" />
 				</EncodingRule>
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_ArcGISWorkspace.xml" />
-
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

@@ -38,6 +38,7 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
@@ -48,7 +49,7 @@ public interface DatabaseStrategy {
 	 * @return the database data type to be used as data type for primary key
 	 *         columns
 	 */
-	public String primaryKeyDataType();
+	public ColumnDataType primaryKeyDataType();
 
 	/**
 	 *
@@ -61,9 +62,9 @@ public interface DatabaseStrategy {
 	 */
 	public String geometryDataType(ProcessMapEntry me, int srid);
 
-	public String unlimitedLengthCharacterDataType();
+	public ColumnDataType unlimitedLengthCharacterDataType();
 
-	public String limitedLengthCharacterDataType(int size);
+	public ColumnDataType limitedLengthCharacterDataType(int size);
 
 	/**
 	 * @param indexName

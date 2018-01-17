@@ -29,10 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Util;
+package de.interactive_instruments.ShapeChange.Util.ea;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
  * @author Johannes Echterhoff
@@ -41,7 +44,9 @@ import java.util.List;
 public class EATaggedValue {
 
 	protected String name;
+	protected String fqName = "";
 	protected List<String> values;
+
 	/**
 	 * If set to <code>true</code>, the values shall be encoded using
 	 * &lt;memo&gt; fields, regardless of the actual length of each value.
@@ -56,14 +61,19 @@ public class EATaggedValue {
 	 */
 	public EATaggedValue(String name, String value) {
 
-		super();
+		this(name, value, false);
+	}
 
-		this.name = name;
+	/**
+	 * @param name
+	 * @param fqName
+	 * @param value
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
+	 */
+	public EATaggedValue(String name, String fqName, String value) {
 
-		this.values = new ArrayList<String>();
-		if (value != null) {
-			this.values.add(value);
-		}
+		this(name, fqName, value, false);
 	}
 
 	/**
@@ -77,9 +87,26 @@ public class EATaggedValue {
 	 */
 	public EATaggedValue(String name, String value, boolean createAsMemoField) {
 
+		this(name, null, value, createAsMemoField);
+	}
+
+	/**
+	 * @param name
+	 * @param fqName
+	 * @param value
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
+	 * @param createAsMemoField
+	 *            set to <code>true</code> if the value shall be encoded using a
+	 *            &lt;memo&gt; field, regardless of the value length
+	 */
+	public EATaggedValue(String name, String fqName, String value,
+			boolean createAsMemoField) {
+
 		super();
 
 		this.name = name;
+		this.fqName = fqName == null ? "" : fqName;
 
 		this.values = new ArrayList<String>();
 		if (value != null) {
@@ -97,9 +124,23 @@ public class EATaggedValue {
 	 */
 	public EATaggedValue(String name, List<String> values) {
 
+		this(name, null, values);
+	}
+
+	/**
+	 * @param name
+	 * @param fqName
+	 * @param values
+	 *            can be <code>null</code> (then the list of values would be
+	 *            empty)
+	 */
+	public EATaggedValue(String name, String fqName, List<String> values) {
+
 		super();
 
 		this.name = name;
+		this.fqName = fqName == null ? "" : fqName;
+
 		if (values != null) {
 			this.values = values;
 		} else {
@@ -115,6 +156,13 @@ public class EATaggedValue {
 	}
 
 	/**
+	 * @return the FQName, can be empty but not <code>null</code>
+	 */
+	public String getFQName() {
+		return fqName;
+	}
+
+	/**
 	 * @return the values; can be empty but not <code>null</code>
 	 */
 	public List<String> getValues() {
@@ -123,6 +171,23 @@ public class EATaggedValue {
 
 	public boolean createAsMemoField() {
 		return createAsMemoField;
+	}
+
+	public void addValue(String value) {
+		this.values.add(value);
+	}
+
+	public static List<EATaggedValue> fromTaggedValues(
+			TaggedValues taggedValues) {
+
+		List<EATaggedValue> result = new ArrayList<EATaggedValue>();
+
+		for (Entry<String, List<String>> e : taggedValues.asMap().entrySet()) {
+
+			result.add(new EATaggedValue(e.getKey(), e.getValue()));
+		}
+
+		return result;
 	}
 
 }

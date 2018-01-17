@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.SortedSet;
+
 import de.interactive_instruments.ShapeChange.Options;
 
 public interface Stereotypes {
@@ -58,6 +60,12 @@ public interface Stereotypes {
 	 *         collection is empty but not <code>null</code>
 	 */
 	public String[] asArray();
+
+	/**
+	 * @return the content of this stereotype collection as a set; can be empty
+	 *         if this collection is empty but not <code>null</code>
+	 */
+	public SortedSet<String> asSet();
 
 	/**
 	 * Adds the given stereotype to this collection of stereotypes

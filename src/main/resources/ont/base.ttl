@@ -1,0 +1,30 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150-2/2012/base#> .
+
+<http://shapechange.net/resources/ont/base>
+  a owl:Ontology ;
+  rdfs:comment "Types and properties used in application schemas."@en ;
+  rdfs:label "ShapeChange base"@en ;
+  owl:versionInfo "0.2" .
+
+<http://shapechange.net/resources/ont/base#Measure>
+  a rdfs:Datatype ;
+  skos:notation "Measure"^^xsd:NCName ;
+  skos:prefLabel "measure"@en ;
+  skos:defnition "A text representation of a measure value. The decimal value is followed by a space and the unit of the measure." .
+
+<http://shapechange.net/resources/ont/base#Sign>
+  a rdfs:Datatype ;
+  iso19150-2:isEnumeration true ;
+  owl:oneOf (
+   <http://shapechange.net/resources/ont/base#+>
+   <http://shapechange.net/resources/ont/base#->
+ ) ;
+  skos:notation "Sign"^^xsd:NCName ;
+  skos:prefLabel "sign"@en .
+
+<http://shapechange.net/resources/ont/base#+> a owl:Thing .
+<http://shapechange.net/resources/ont/base#-> a owl:Thing .

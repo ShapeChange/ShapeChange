@@ -541,12 +541,6 @@ public class Options {
 	protected List<TransformerConfiguration> inputTransformerConfigs = new ArrayList<TransformerConfiguration>();
 	private String inputId = null;
 
-	/**
-	 * Flag used to determine if a reset is invoked during loading (in which
-	 * case input as well as dialog and log parameters should be populated) or
-	 * before executing a transformation / target process.
-	 */
-	private boolean resetUponLoadFlag = true;
 	private List<TargetConfiguration> targetConfigs = null;
 	/**
 	 * key: 'id' assigned to the transformer; value: the transformer
@@ -555,6 +549,7 @@ public class Options {
 	private Map<String, TransformerConfiguration> transformerConfigs = null;
 
 	protected File imageTmpDir = null;
+	protected File linkedDocTmpDir = null;
 
 	private Map<String, AIXMSchemaInfo> schemaInfos;
 
@@ -965,6 +960,19 @@ public class Options {
 		}
 	}
 
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the value
+	 *            of the parameter with given name shall be searched; can be
+	 *            <code>null</code> to search for an input parameter
+	 * @param parameterName
+	 *            name of the parameter to retrieve the value from
+	 * @param defaultValue
+	 *            value that will be returned if no valid value was found (i.e.,
+	 *            if the parameter value could not be parsed to an int)
+	 * @return Value retrieved from this parameter, or the default value if the
+	 *         parameter was not set or did not contain a valid value.
+	 */
 	public int parameterAsInteger(String className, String parameterName,
 			int defaultValue) {
 
@@ -995,6 +1003,21 @@ public class Options {
 		return res;
 	}
 
+	/**
+	 * @param className
+	 *            Fully qualified name of the target class for which the boolean
+	 *            value of the parameter with given name shall be searched; can
+	 *            be <code>null</code> to search for an input parameter
+	 * @param parameterName
+	 *            name of the parameter to retrieve the boolean value from
+	 * @param defaultValue
+	 *            value that will be returned if no valid value was found (i.e.,
+	 *            if the parameter value could not be parsed to a boolean)
+	 * @return Value retrieved from this parameter (<code>true</code> if the
+	 *         parameter was set and is equal, ignoring case, to the string
+	 *         "true"), or the default value if the parameter was not set or did
+	 *         not contain a valid value.
+	 */
 	public boolean parameterAsBoolean(String className, String parameterName,
 			boolean defaultValue) {
 
@@ -1306,21 +1329,23 @@ public class Options {
 	public void loadConfiguration() throws ShapeChangeAbortException {
 
 		InputStream configStream = null;
+
 		if (configFile == null) {
+
 			// load minimal configuration, if no configuration file has been
 			// provided
-			configFile = "/config/minimal.xml";
-			configStream = getClass().getResourceAsStream(configFile);
+			String minConfigFile = "/config/minimal.xml";
+			configStream = getClass().getResourceAsStream(minConfigFile);
 			if (configStream == null) {
-				configFile = "src/main/resources" + configFile;
-				File file = new File(configFile);
+				minConfigFile = "src/main/resources" + minConfigFile;
+				File file = new File(minConfigFile);
 				if (file.exists())
 					try {
 						configStream = new FileInputStream(file);
 					} catch (FileNotFoundException e1) {
 						throw new ShapeChangeAbortException(
 								"Minimal configuration file not found: "
-										+ configFile);
+										+ minConfigFile);
 					}
 				else {
 					URL url;
@@ -1519,7 +1544,6 @@ public class Options {
 			this.targetConfigs = parseTargetConfigurations(document);
 
 			this.resetFields();
-			// this.resetUponLoadFlag = false;
 
 			// TBD discuss if there's a better way to support rule and
 			// requirements matching for the input model
@@ -1545,10 +1569,12 @@ public class Options {
 					}
 				}
 
-				// ensure that we have all the rules from all non-disabled
-				// targets
-				// we repeat this for the same target (if it is not disabled) to
-				// ensure that we get the union of all encoding rules
+				/*
+				 * ensure that we have all the rules from all non-disabled
+				 * targets we repeat this for the same target (if it is not
+				 * disabled) to ensure that we get the union of all encoding
+				 * rules
+				 */
 				if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)) {
 					for (ProcessRuleSet prs : tgtConfig.getRuleSets()
 							.values()) {
@@ -1660,18 +1686,19 @@ public class Options {
 					if (inputIdref.equals(getInputId())) {
 						this.inputTargetConfigs.add(tgtConfig);
 					} else {
-						transformerConfigs.get(inputIdref).addTarget(tgtConfig);
+						this.transformerConfigs.get(inputIdref)
+								.addTarget(tgtConfig);
 					}
 				}
 			}
 
-			for (TransformerConfiguration trfConfig : transformerConfigs
+			for (TransformerConfiguration trfConfig : this.transformerConfigs
 					.values()) {
 				String inputIdref = trfConfig.getInputId();
 				if (inputIdref.equals(getInputId())) {
 					this.inputTransformerConfigs.add(trfConfig);
 				} else {
-					transformerConfigs.get(inputIdref)
+					this.transformerConfigs.get(inputIdref)
 							.addTransformer(trfConfig);
 				}
 			}
@@ -1849,51 +1876,49 @@ public class Options {
 
 		addStandardRules();
 
-		if (resetUponLoadFlag) {
-			// add all parameters from input
-			for (String key : inputConfig.getParameters().keySet()) {
-				setParameter(key, inputConfig.getParameters().get(key));
-			}
+		// add all parameters from input
+		for (String key : inputConfig.getParameters().keySet()) {
+			setParameter(key, inputConfig.getParameters().get(key));
+		}
 
-			// add all stereotype aliases
-			for (String key : inputConfig.getStereotypeAliases().keySet()) {
-				addStereotypeAlias(key,
-						inputConfig.getStereotypeAliases().get(key));
-			}
+		// add all stereotype aliases
+		for (String key : inputConfig.getStereotypeAliases().keySet()) {
+			addStereotypeAlias(key,
+					inputConfig.getStereotypeAliases().get(key));
+		}
 
-			// add all tag aliases
-			for (String key : inputConfig.getTagAliases().keySet()) {
-				addTagAlias(key, inputConfig.getTagAliases().get(key));
-			}
+		// add all tag aliases
+		for (String key : inputConfig.getTagAliases().keySet()) {
+			addTagAlias(key, inputConfig.getTagAliases().get(key));
+		}
 
-			// add all descriptor sources
-			for (String key : inputConfig.getDescriptorSources().keySet()) {
-				addDescriptorSource(key,
-						inputConfig.getDescriptorSources().get(key));
-			}
+		// add all descriptor sources
+		for (String key : inputConfig.getDescriptorSources().keySet()) {
+			addDescriptorSource(key,
+					inputConfig.getDescriptorSources().get(key));
+		}
 
-			// add all package infos
-			for (PackageInfoConfiguration pic : inputConfig.getPackageInfos()
-					.values()) {
-				addPackage(pic.getPackageName(), pic.getNs(), pic.getNsabr(),
-						pic.getXsdDocument(), pic.getVersion());
-				// ensure that the package information is also added to the
-				// schema location map
-				addSchemaLocation(pic.getNs(), pic.getXsdDocument());
-			}
+		// add all package infos
+		for (PackageInfoConfiguration pic : inputConfig.getPackageInfos()
+				.values()) {
+			addPackage(pic.getPackageName(), pic.getNs(), pic.getNsabr(),
+					pic.getXsdDocument(), pic.getVersion());
+			// ensure that the package information is also added to the
+			// schema location map
+			addSchemaLocation(pic.getNs(), pic.getXsdDocument());
+		}
 
-			// add all dialog parameters
-			if (dialogParameters != null) {
-				for (String key : dialogParameters.keySet()) {
-					setParameter(key, dialogParameters.get(key));
-				}
+		// add all dialog parameters
+		if (dialogParameters != null) {
+			for (String key : dialogParameters.keySet()) {
+				setParameter(key, dialogParameters.get(key));
 			}
+		}
 
-			// add all log parameters
-			if (logParameters != null) {
-				for (String key : logParameters.keySet()) {
-					setParameter(key, logParameters.get(key));
-				}
+		// add all log parameters
+		if (logParameters != null) {
+			for (String key : logParameters.keySet()) {
+				setParameter(key, logParameters.get(key));
 			}
 		}
 
@@ -3528,6 +3553,8 @@ public class Options {
 		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
 		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
 
+		addRule("rule-sql-all-databaseModel");
+
 		addRule("rule-sql-all-normalizing-ignore-case");
 		addRule("rule-sql-all-normalizing-lower-case");
 		addRule("rule-sql-all-normalizing-upper-case");
@@ -3555,6 +3582,7 @@ public class Options {
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
+		addRule("rule-sql-prop-uniqueConstraints");
 
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
@@ -3628,21 +3656,23 @@ public class Options {
 		/*
 		 * ArcGIS workspace encoding rules
 		 */
-		addRule("rule-arcgis-prop-initialValueByAlias");
-		addRule("rule-arcgis-cls-identifierStereotype");
-		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-all-precision");
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-cls-hasM");
+		addRule("rule-arcgis-cls-hasZ");
+		addRule("rule-arcgis-cls-identifierStereotype");
 		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		addRule("rule-arcgis-prop-attIndex");
+		addRule("rule-arcgis-prop-initialValue");
+		addRule("rule-arcgis-prop-initialValueByAlias");
+		addRule("rule-arcgis-prop-isNullable");
 		addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
 		addRule("rule-arcgis-prop-lengthFromTaggedValue");
 		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
-		addRule("rule-arcgis-prop-initialValue");
-		addRule("rule-arcgis-all-precision");
 		addRule("rule-arcgis-prop-precision"); // deprecated
-		addRule("rule-arcgis-all-scale");
+		addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
 		addRule("rule-arcgis-prop-scale"); // deprecated
-		addRule("rule-arcgis-prop-isNullable");
-		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 
 		/*
 		 * Replication schema encoding rules
@@ -3871,6 +3901,28 @@ public class Options {
 		}
 
 		return imageTmpDir;
+	}
+
+	/**
+	 * @return the directory in which linked documents from the input model can
+	 *         be stored; if it did not exist yet, it will be created
+	 */
+	public File linkedDocumentsTmpDir() {
+
+		if (linkedDocTmpDir == null) {
+
+			linkedDocTmpDir = new File(getTmpDir(), "linkedDocuments");
+		}
+
+		if (!linkedDocTmpDir.exists()) {
+			try {
+				FileUtils.forceMkdir(linkedDocTmpDir);
+			} catch (IOException e) {
+				e.printStackTrace(System.err);
+			}
+		}
+
+		return linkedDocTmpDir;
 	}
 
 	/**

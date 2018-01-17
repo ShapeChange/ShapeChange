@@ -97,15 +97,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 				AlterExpression ae1 = a1.getExpression();
 				AlterExpression ae2 = a2.getExpression();
-
-				// String constraintName_ae1 = ae1.getConstraintName();
-				// String constraintName_ae2 = ae2.getConstraintName();
-				//
-				// int compareConstraintNames =
-				// constraintName_ae1.compareTo(constraintName_ae2);
-				// if(compareConstraintNames != 0) {
-				// return compareConstraintNames;
-				// }
+				
 				if (ae1 instanceof ConstraintAlterExpression
 						&& ae2 instanceof ConstraintAlterExpression) {
 

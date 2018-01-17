@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/databaseModel_mergeLinkedDocuments/testEA_sql_databaseModel_mergeLinkedDocuments.xml" end="Fri Dec 15 13:36:41 CET 2017" resultCode="0" start="Fri Dec 15 13:36:16 CET 2017" version="2.4.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'F_inheritance' ..."/>
+    <Info message="--- Validating transformer with @id 'F_multiplicity' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_multiplicity' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_mergeLinkedDocuments\test_sql_databaseModel_mergeLinkedDocuments.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_mergeLinkedDocuments\test_sql_databaseModel_mergeLinkedDocuments.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_mergeLinkedDocuments\test_sql_databaseModel_mergeLinkedDocuments.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_mergeLinkedDocuments\test_sql_databaseModel_mergeLinkedDocuments.EAP"/>
+    <Info message="Now processing transformation 'trf_linkedDocs' for input ID: 'INPUT'."/>
+    <Info message="---------- now processing: rule-trf-all-prependText ----------"/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'trf_linkedDocs' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'F_inheritance' for input ID: 'trf_linkedDocs'."/>
+    <Info message="========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+    <Info message="========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'F_inheritance' for input ID: 'trf_linkedDocs'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'F_multiplicity' for input ID: 'F_inheritance'."/>
+    <Info message="========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-multiplicity ----------"/>
+    <Info message="========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'F_multiplicity' for input ID: 'F_inheritance'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/databaseModel/mergeLinkedDocuments'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'F_multiplicity'."/>
+    <Info message="Type 'FeatureType10Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'FeatureType12Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'FeatureType3Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'FeatureType5Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'FeatureType7Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Type 'FeatureType9Union' is of a category not enabled for conversion, meaning that no table will be created to represent it."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'F_multiplicity'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel_mergeLinkedDocuments/postgresql/F_multiplicity/database_model_postgresql.sql" target="SQL DDL">database_model_postgresql.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel_mergeLinkedDocuments/postgresql/F_multiplicity/database_model_postgresql.eap" target="SQL DDL">database_model_postgresql.eap</Result>
+  </Results>
+</ShapeChangeResult>

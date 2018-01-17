@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.io.File;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -301,6 +302,20 @@ public interface ClassInfo extends Info {
 	 *            metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
+
+	/**
+	 * @return a .docx file that is linked to this class, typically providing an
+	 *         extensive amount of formatted documentation; can be
+	 *         <code>null</code>
+	 */
+	public File getLinkedDocument();
+
+	/**
+	 * @param linkedDocument
+	 *            a .docx file that is linked to this class; can be
+	 *            <code>null</code>
+	 */
+	public void setLinkedDocument(File linkedDocument);
 
 	/**
 	 * @return the profiles defined for this class; can be empty but not

@@ -143,7 +143,9 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 	}
 
 	@Override
-	public void put(String tag, String value) {
+	public void put(String tag, String valueIn) {
+
+		String value = valueIn == null ? "" : valueIn;
 
 		List<String> tmp = new ArrayList<String>(1);
 		tmp.add(options.internalize(value));
@@ -164,14 +166,17 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 		List<String> tmp = new ArrayList<String>(values.size());
 
 		for (String v : values) {
-			tmp.add(options.internalize(v));
+			String value = v == null ? "" : v;
+			tmp.add(options.internalize(value));
 		}
 
 		tagMap.put(options.internalize(tag), tmp);
 	}
 
 	@Override
-	public void add(String tag, String value) {
+	public void add(String tag, String valueIn) {
+
+		String value = valueIn == null ? "" : valueIn;
 
 		if (containsKey(tag)) {
 

@@ -49,7 +49,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  */
 public class SqlUtil {
 
-	public static List<StringValueExpression> toStringValueList(String... strings) {
+	public static List<StringValueExpression> toStringValueList(
+			String... strings) {
 
 		List<StringValueExpression> result = new ArrayList<StringValueExpression>();
 
@@ -60,12 +61,13 @@ public class SqlUtil {
 		return result;
 	}
 
-	public static List<Column> toColumnList(Table inTable, String... columnNames) {
+	public static List<Column> toColumnList(Table inTable,
+			String... columnNames) {
 
 		List<Column> result = new ArrayList<Column>();
 
 		for (String name : columnNames) {
-			result.add(new Column(name,inTable));
+			result.add(new Column(name, null, inTable));
 		}
 
 		return result;

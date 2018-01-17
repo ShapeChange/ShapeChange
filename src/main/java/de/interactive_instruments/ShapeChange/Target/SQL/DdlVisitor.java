@@ -36,7 +36,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
@@ -55,7 +54,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 /**
  * Creates the DDL representation for the set of visited SQL statements.
  * <p>
- * NOTE: In the future, database system specific visitors may be needed, to take
+ * NOTE: Database system specific visitors should be added as needed, to take
  * into account any database system specific syntax.
  * 
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -162,6 +161,10 @@ public class DdlVisitor implements StatementVisitor {
 						sb.append(colDataType.getScale().toString());
 					}
 					sb.append(")");
+				} else if (colDataType.hasLength()) {
+					sb.append("(");
+					sb.append(colDataType.getLength());
+					sb.append(")");
 				}
 
 				if (col.getDefaultValue() != null) {
@@ -179,15 +182,11 @@ public class DdlVisitor implements StatementVisitor {
 				}
 
 				if (SqlDdl.createDocumentation) {
-					PropertyInfo pi = col.getRepresentedProperty();
-					if (pi != null) {
-						String s = pi.derivedDocumentation(
-								SqlDdl.documentationTemplate,
-								SqlDdl.documentationNoValue);
-						if (s != null && !s.trim().isEmpty()) {
-							sb.append(
-									" -- " + s.replaceAll("\\s+", " ").trim());
-						}
+
+					if (StringUtils.isNotBlank(col.getDocumentation())) {
+
+						sb.append(" -- " + col.getDocumentation()
+								.replaceAll("\\s+", " ").trim());
 					}
 				}
 
@@ -278,5 +277,10 @@ public class DdlVisitor implements StatementVisitor {
 		sb.append(comment.toString());
 		sb.append(";");
 		sb.append(crlf);
+	}
+
+	@Override
+	public void postprocess() {
+		// ignore
 	}
 }

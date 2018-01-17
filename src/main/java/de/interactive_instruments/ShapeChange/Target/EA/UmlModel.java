@@ -34,30 +34,33 @@ package de.interactive_instruments.ShapeChange.Target.EA;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;
 import org.sparx.CreateModelType;
 import org.sparx.Element;
+import org.sparx.Package;
 import org.sparx.Repository;
 
 import com.google.common.collect.HashMultimap;
-
-import org.sparx.Package;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
@@ -66,9 +69,18 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
+import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
-import de.interactive_instruments.ShapeChange.Util.EAException;
-import de.interactive_instruments.ShapeChange.Util.EAModelUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAAggregation;
+import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EADirection;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
+import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
  * @author Clemens Portele
@@ -83,6 +95,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 	 * in which the resulting UML model will be created.
 	 */
 	public static final String PARAM_OUTPUT_DIR = "outputDirectory";
+	public static final String PARAM_MODEL_FILENAME = "modelFilename";
+	public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
 
 	private static boolean initialised = false;
 	private static String outputFilename = null;
@@ -98,26 +112,23 @@ public class UmlModel implements SingleTarget, MessageSource {
 	 */
 	private static HashMultimap<ClassInfo, ClassInfo> generalisations = HashMultimap
 			.create();
+	private static List<ClassInfo> classesToProcess = new ArrayList<ClassInfo>();
+	private static Map<PackageInfo, Integer> eaPkgIdByPackageInfo = new HashMap<PackageInfo, Integer>();
 
-	private PackageInfo pi = null;
 	private Model model = null;
 	private Options options = null;
 	private ShapeChangeResult result = null;
-	private Map<String, Integer> eaPkgIdByPackageName = new HashMap<String, Integer>();
-
-	// TODO Unit Test
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
 			throws ShapeChangeAbortException {
 
-		pi = p;
+		PackageInfo pi = p;
 		model = m;
 		options = o;
 		result = r;
 
 		if (!initialised) {
-			initialised = true;
 
 			String outputDirectory = options
 					.parameter(this.getClass().getName(), PARAM_OUTPUT_DIR);
@@ -126,10 +137,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (outputDirectory == null)
 				outputDirectory = ".";
 
-			outputFilename = options.parameter(this.getClass().getName(),
-					"modelFilename");
-			if (outputFilename == null)
-				outputFilename = "ShapeChangeExport.eap";
+			outputFilename = options.parameterAsString(
+					this.getClass().getName(), PARAM_MODEL_FILENAME,
+					"ShapeChangeExport.eap", false, true);
 
 			// change the default documentation template?
 			documentationTemplate = options.parameter(this.getClass().getName(),
@@ -185,85 +195,104 @@ public class UmlModel implements SingleTarget, MessageSource {
 				return;
 			}
 
+			EARepositoryUtil.setEABatchAppend(rep, true);
+			EARepositoryUtil.setEAEnableUIUpdates(rep, false);
+
 			rep.RefreshModelView(0);
 
 			Collection<Package> c = rep.GetModels();
 			Package root = c.GetAt((short) 0);
 
-			TimeZone tz = TimeZone.getTimeZone("UTC");
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-			df.setTimeZone(tz);
+			String outputPackageName = "ShapeChangeOutput";
 
-			Package pOut = root.GetPackages().AddNew(
-					"ShapeChangeOutput-" + df.format(new Date()), "Class View");
+			boolean omitOutputPackageDateTime = options.parameterAsBoolean(
+					this.getClass().getName(),
+					PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
+
+			if (!omitOutputPackageDateTime) {
+				TimeZone tz = TimeZone.getTimeZone("UTC");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+				df.setTimeZone(tz);
+				outputPackageName += "-" + df.format(new Date());
+			}
+
+			Package pOut = root.GetPackages().AddNew(outputPackageName,
+					"Class View");
 			if (!pOut.Update()) {
 				result.addError("EA-Fehler: " + pOut.GetLastError());
 			}
 			pOut_EaPkgId = pOut.GetPackageID();
+
+			initialised = true;
 		}
 
-		if (rep == null || pOut_EaPkgId == null)
+		if (rep == null || pOut_EaPkgId == null || !initialised)
 			return; // repository not initialised
 
 		// export app schema package
-		clonePackage(pi, pOut_EaPkgId);
-	}
-
-	private void clonePackage(PackageInfo pSource, Integer containerEaPkgId) {
-
-		Package container = rep.GetPackageByID(containerEaPkgId);
-
-		clonePackage(pSource, container);
-	}
-
-	private void clonePackage(PackageInfo pSource, Package container) {
-
-		Package pkg = container.GetPackages().AddNew(pSource.name(), "Nothing");
-		if (!pkg.Update()) {
-			result.addError("EA-Fehler: " + pkg.GetLastError());
+		try {
+			clonePackage(pi, pOut_EaPkgId);
+		} catch (EAException e) {
+			result.addError(this, 100007, pi.name(), e.getMessage());
 		}
+	}
+
+	private void clonePackage(PackageInfo pSource, Integer containerEaPkgId)
+			throws EAException {
+
+		int newPkgId = EARepositoryUtil.createEAPackage(rep, pSource,
+				containerEaPkgId);
+
+		Package pkg = rep.GetPackageByID(newPkgId);
+
 		cloneStandarddItems(pkg.GetElement(), pSource);
 
-		eaPkgIdByPackageName.put(pSource.name(), pkg.GetPackageID());
+		eaPkgIdByPackageInfo.put(pSource, newPkgId);
 
 		for (PackageInfo cpi : pSource.containedPackages()) {
-			clonePackage(cpi, pkg);
+			clonePackage(cpi, pkg.GetPackageID());
 		}
 	}
 
 	public void process(ClassInfo ci) {
-		cloneClass(ci);
+		classesToProcess.add(ci);
 	}
 
-	private void cloneClass(ClassInfo ci) {
-		Package pkg = rep
-				.GetPackageByID(eaPkgIdByPackageName.get(ci.pkg().name()));
+	private void cloneClass(ClassInfo ci) throws EAException {
+
+		Integer pkgID = eaPkgIdByPackageInfo.get(ci.pkg());
+		if (pkgID == null) {
+			result.addError(
+					"Missing package information for class " + ci.fullName());
+			return;
+		}
+
+		Package pkg = rep.GetPackageByID(pkgID);
 		if (pkg == null) {
 			result.addError(
 					"Missing package information for class " + ci.fullName());
 			return;
 		}
-		Element e = pkg.GetElements().AddNew(ci.name(), "Class");
-		if (!e.Update()) {
-			result.addError("EA-Fehler: " + e.GetLastError());
-		}
+
+		Element e = EARepositoryUtil.createEAClass(rep, ci.name(), pkgID);
+
 		elementIdByClassInfo.put(ci, e.GetElementID());
+
 		cloneStandarddItems(e, ci);
+
+		if (ci.getLinkedDocument() != null) {
+			EAElementUtil.loadLinkedDocument(e,
+					ci.getLinkedDocument().getAbsolutePath());
+		}
+
 		if (ci.isAbstract()) {
-			e.SetAbstract("true");
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
+			EAElementUtil.setEAAbstract(e, true);
 		}
 		for (Constraint constr : ci.constraints()) {
-			org.sparx.Constraint ct = e.GetConstraints().AddNew(constr.name(),
-					"OCL");
-			if (!ct.Update()) {
-				result.addError("EA-Fehler: " + ct.GetLastError());
-			}
-			ct.SetNotes(constr.text());
-			ct.Update();
+			String type = determineConstraintType(constr);
+			EAElementUtil.addConstraint(e, constr.name(), type, constr.text());
 		}
+
 		for (PropertyInfo propi : ci.properties().values()) {
 			if (propi.isAttribute())
 				cloneAttribute(e, propi);
@@ -299,6 +328,23 @@ public class UmlModel implements SingleTarget, MessageSource {
 		}
 	}
 
+	/**
+	 * @param constr
+	 * @return the type of the constraint; can be empty but not
+	 *         <code>null</code>
+	 */
+	private String determineConstraintType(Constraint constr) {
+
+		String type = "OCL";
+		if (constr instanceof TextConstraint) {
+			type = ((TextConstraint) constr).type();
+			if (StringUtils.isBlank(type)) {
+				type = "Text";
+			}
+		}
+		return type;
+	}
+
 	private String stereotypesCSV(Stereotypes stereotypes) {
 		return stereotypes == null ? "" : stereotypes.toString();
 	}
@@ -306,59 +352,30 @@ public class UmlModel implements SingleTarget, MessageSource {
 	private void cloneAttribute(Element e, PropertyInfo propi) {
 
 		try {
-			org.sparx.Attribute att = e.GetAttributes().AddNew(propi.name(),
-					"");
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetStyle(propi.aliasName());
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetNotes(propi.derivedDocumentation(documentationTemplate,
-					documentationNoValue));
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetStereotype(stereotypesCSV(propi.stereotypes()));
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
 
-			EAModelUtil.setTaggedValues(att, propi.taggedValuesAll());
+			/*
+			 * Create tagged value info suitable for method. Note that this kind
+			 * of generic conversion currently does not take into account a
+			 * potentially relevant fully qualified name for a tag, and if the
+			 * values of the tag are stored in memo fields.
+			 */
+			List<EATaggedValue> taggedValues = EATaggedValue
+					.fromTaggedValues(propi.taggedValuesAll());
 
-			att.SetIsDerived(propi.isDerived());
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetIsOrdered(propi.isOrdered());
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetAllowDuplicates(!propi.isUnique());
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetDefault(propi.initialValue());
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetVisibility("public");
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			Multiplicity m = propi.cardinality();
-			att.SetLowerBound("" + m.minOccurs);
-			if (m.maxOccurs == Integer.MAX_VALUE)
-				att.SetUpperBound("*");
-			else
-				att.SetUpperBound("" + m.maxOccurs);
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
-			}
-			att.SetType(propi.typeInfo().name);
-			if (!att.Update()) {
-				result.addError("EA-Fehler: " + att.GetLastError());
+			org.sparx.Attribute att = EAElementUtil.createEAAttribute(e,
+					propi.name(), propi.aliasName(),
+					propi.derivedDocumentation(documentationTemplate,
+							documentationNoValue),
+					propi.stereotypes().asSet(), taggedValues,
+					propi.isDerived(), propi.isOrdered(), !propi.isUnique(),
+					propi.initialValue(), propi.cardinality(),
+					propi.typeInfo().name, null);
+
+			for (Constraint constr : propi.constraints()) {
+
+				String type = determineConstraintType(constr);
+				EAAttributeUtil.addConstraint(att, constr.name(), type,
+						constr.text());
 			}
 
 		} catch (EAException exc) {
@@ -379,21 +396,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		try {
 
-			e.SetAlias(i.aliasName());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetNotes(i.derivedDocumentation(documentationTemplate,
-					documentationNoValue));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetStereotype(stereotypesCSV(i.stereotypes()).replace(" ", ""));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
+			EAElementUtil.setEAAlias(e, i.aliasName());
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAElementUtil.setEANotes(e, i.derivedDocumentation(
+					documentationTemplate, documentationNoValue));
+			EAElementUtil.setEAStereotypeEx(e,
+					stereotypesCSV(i.stereotypes()).replace(" ", ""));
+
+			EAElementUtil.setTaggedValues(e, i.taggedValuesAll());
 
 			e.Refresh();
 
@@ -403,25 +413,19 @@ public class UmlModel implements SingleTarget, MessageSource {
 		}
 	}
 
-	private void cloneStandardItems(Connector e, Info i) {
+	private void cloneStandardItems(Connector con, Info i) {
 
 		try {
 
-			e.SetAlias(i.aliasName());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetNotes(i.derivedDocumentation(documentationTemplate,
-					documentationNoValue));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetStereotype(stereotypesCSV(i.stereotypes()));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
+			EAConnectorUtil.setEAAlias(con, i.aliasName());
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAConnectorUtil.setEANotes(con, i.derivedDocumentation(
+					documentationTemplate, documentationNoValue));
+
+			EAConnectorUtil.setEAStereotypeEx(con,
+					stereotypesCSV(i.stereotypes()));
+
+			EAConnectorUtil.setTaggedValues(con, i.taggedValuesAll());
 
 		} catch (EAException exc) {
 
@@ -432,63 +436,53 @@ public class UmlModel implements SingleTarget, MessageSource {
 		}
 	}
 
-	private void cloneStandardItems(ConnectorEnd e, PropertyInfo i) {
+	private void cloneStandardItems(ConnectorEnd ce, PropertyInfo i) {
 
 		try {
 
-			e.SetRole(i.name());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetAlias(i.aliasName());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
+			EAConnectorEndUtil.setEARole(ce, i.name());
+			EAConnectorEndUtil.setEAAlias(ce, i.aliasName());
+
 			Multiplicity m = i.cardinality();
-			if (m.maxOccurs == Integer.MAX_VALUE)
-				e.SetCardinality(m.minOccurs + "..*");
-			else
-				e.SetCardinality(m.minOccurs + ".." + m.maxOccurs);
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
+			if (m.minOccurs == 1 && m.maxOccurs == 1) {
+				EAConnectorEndUtil.setEACardinality(ce, "");
+			} else if (m.maxOccurs == Integer.MAX_VALUE) {
+				EAConnectorEndUtil.setEACardinality(ce, m.minOccurs + "..*");
+			} else {
+				EAConnectorEndUtil.setEACardinality(ce,
+						m.minOccurs + ".." + m.maxOccurs);
 			}
-			e.SetIsNavigable(i.isNavigable());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
+
+			EAConnectorEndUtil.setEARole(ce, i.name());
+
+			if (i.isNavigable()) {
+				EAConnectorEndUtil.setEANavigable(ce, EANavigable.NAVIGABLE);
+			} else {
+				EAConnectorEndUtil.setEANavigable(ce, EANavigable.NONNAVIGABLE);
 			}
-			e.SetRoleNote(i.derivedDocumentation(documentationTemplate,
-					documentationNoValue));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetStereotype(stereotypesCSV(i.stereotypes()));
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetOrdering(i.isOrdered() ? 1 : 0);
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
-			e.SetAllowDuplicates(!i.isUnique());
-			if (!e.Update()) {
-				result.addError("EA-Fehler: " + e.GetLastError());
-			}
+
+			EAConnectorEndUtil.setEARoleNote(ce, i.derivedDocumentation(
+					documentationTemplate, documentationNoValue));
+
+			EAConnectorEndUtil.setEAStereotypeEx(ce,
+					stereotypesCSV(i.stereotypes()));
+
+			EAConnectorEndUtil.setEAOrdering(ce, i.isOrdered());
+
+			EAConnectorEndUtil.setEAAllowDuplicates(ce, !i.isUnique());
 
 			if (i.reverseProperty() != null) {
 				if (i.reverseProperty().isAggregation()) {
-					e.SetAggregation(1);
-					if (!e.Update()) {
-						result.addError("EA-Fehler: " + e.GetLastError());
-					}
+					EAConnectorEndUtil.setEAAggregation(ce,
+							EAAggregation.SHARED);
+
 				} else if (i.reverseProperty().isComposition()) {
-					e.SetAggregation(2);
-					if (!e.Update()) {
-						result.addError("EA-Fehler: " + e.GetLastError());
-					}
+					EAConnectorEndUtil.setEAAggregation(ce,
+							EAAggregation.COMPOSITE);
 				}
 			}
 
-			EAModelUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAConnectorEndUtil.setTaggedValues(ce, i.taggedValuesAll());
 
 		} catch (EAException exc) {
 
@@ -512,9 +506,27 @@ public class UmlModel implements SingleTarget, MessageSource {
 	public void writeAll(ShapeChangeResult r) {
 
 		result = r;
+		options = r.options();
 
-		if (rep == null)
-			return; // repository not initialised
+		if (rep == null || !initialised) {
+			result.addError(this, 50);
+			return;
+		}
+
+		for (ClassInfo ci : classesToProcess) {
+
+			model = ci.model();
+
+			try {
+				cloneClass(ci);
+			} catch (EAException e) {
+				MessageContext mc = result.addError(this, 10008, ci.name(),
+						e.getMessage());
+				if (mc != null) {
+					mc.addDetail(this, 1, ci.fullNameInSchema());
+				}
+			}
+		}
 
 		for (AssociationInfo ai : associations) {
 			PropertyInfo propi1 = ai.end1();
@@ -543,11 +555,19 @@ public class UmlModel implements SingleTarget, MessageSource {
 				Collection<Connector> c1Conns = c1.GetConnectors();
 				c1Conns.Refresh();
 
-				Connector con = c1Conns.AddNew("", "Association");
-				con.SetSupplierID(c2.GetElementID());
-				con.SetDirection("Bi-Directional");
-				if (!con.Update()) {
-					result.addError("EA-Fehler: " + con.GetLastError());
+				Connector con = c1Conns.AddNew(
+						StringUtils.isBlank(ai.name()) ? "" : ai.name(),
+						"Association");
+
+				try {
+					EAConnectorUtil.setEASupplierID(con, c2.GetElementID());
+					EAConnectorUtil.setEADirection(con,
+							EADirection.BIDIRECTIONAL);
+				} catch (EAException e1) {
+					result.addError(this, 10009,
+							StringUtils.isBlank(ai.name()) ? "<unnamed>"
+									: ai.name(),
+							ci1.name(), ci2.name(), e1.getMessage());
 				}
 				c1.GetConnectors().Refresh();
 
@@ -569,7 +589,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 								ci1.name(), ci2.name());
 					} else {
 						try {
-							EAModelUtil.setEAAssociationClass(con, assocClass);
+							EAConnectorUtil.setEAAssociationClass(con,
+									assocClass);
 						} catch (EAException e) {
 
 							result.addError(this, 10005, assocClassCi.name(),
@@ -610,9 +631,13 @@ public class UmlModel implements SingleTarget, MessageSource {
 						Collection<Connector> c1Conns = c1.GetConnectors();
 						c1Conns.Refresh();
 						Connector con = c1Conns.AddNew("", "Generalization");
-						con.SetSupplierID(c2.GetElementID());
-						if (!con.Update()) {
-							result.addError("EA-Fehler: " + con.GetLastError());
+
+						try {
+							EAConnectorUtil.setEASupplierID(con,
+									c2.GetElementID());
+						} catch (EAException e) {
+							result.addError(this, 10010, subtype.name(),
+									supertype.name(), e.getMessage());
 						}
 						c1.GetConnectors().Refresh();
 					}
@@ -620,13 +645,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 			}
 		}
 
-		// 2015-06-25 JE: compact() no longer supported in EA v12 API
-		// rep.Compact();
-		rep.CloseFile();
-		rep.Exit();
+		EARepositoryUtil.closeRepository(rep);
 
-		// TBD: release any of the static fields so that the resources don't
-		// linger?
+		// release resources from static fields
+		rep = null;
 	}
 
 	public void reset() {
@@ -638,6 +660,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		associations = new HashSet<AssociationInfo>();
 		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
+		eaPkgIdByPackageInfo = new HashMap<PackageInfo, Integer>();
+		classesToProcess = new ArrayList<ClassInfo>();
 		generalisations = HashMultimap.create();
 	}
 
@@ -658,8 +682,12 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		case 0:
 			return "Context: class UmlModel";
+		case 1:
+			return "Context: class $1$";
 
-		// 1-100: Initialization related messages
+		// 50-100: Initialization related messages
+		case 50:
+			return "Could not write the model, because the target has not been initialized properly.";
 
 		// 101-200: issues with the model
 		case 101:
@@ -686,6 +714,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 			return "EA exception encountered while establishing the association class relationship between class '$1$' and the association between classes '$2$' and '$3$'. Error message: $4$";
 		case 10006:
 			return "Relationship between association class '$1$' and the association between classes '$2$' and '$3$' could not be established because the association class '$1$' is not part of the target model.";
+		case 10007:
+			return "EA exception encountered while cloning package '$1$'. Error message: $2$";
+		case 10008:
+			return "EA exception encountered while cloning class '$1$'. Error message: $2$";
+		case 10009:
+			return "EA exception encountered while updating association '$1$' between classes '$2$' and '$3$'. Exception message is: $4$";
+		case 10010:
+			return "EA exception encountered while updating generalisation relationship between classes '$1$' (subtype) and '$2$' (supertype). Exception message is: $4$";
 
 		default:
 			return "(" + UmlModel.class.getName()

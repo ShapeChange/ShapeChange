@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/arcgis/base/testEA_arcgis_base.xml" end="Mon Jan 08 17:11:47 CET 2018" resultCode="0" start="Mon Jan 08 17:10:25 CET 2018" version="2.4.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'flattenedModel' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Info message="Restriction of property 'prop21' in class 'FeatureType2' from supertype 'FeatureType1'."/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://example.org/shapechange/arcgis/base'"/>
+    <Info message="Now processing target 'XML Schema' for input 'input'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'flattenedModel' for input ID: 'input'."/>
+    <Info message="========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-all-removeType ----------"/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-ONINAs ----------"/>
+    <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-multiplicity ----------"/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-types ----------"/>
+    <Info message="---------- now processing: rule-trf-all-flatten-name ----------"/>
+    <Info message="---------- now processing: rule-trf-prop-remove-name-and-code-component/rule-trf-prop-remove-name-and-alias-component ----------"/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-homogeneousgeometries ----------"/>
+    <Info message="========== postprocessing phase =========="/>
+    <Info message="Performed transformation for transformer ID 'flattenedModel' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://example.org/shapechange/arcgis/base'"/>
+    <Info message="Now processing target 'ArcGIS Workspace' for input 'flattenedModel'."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Alias_AS3_FT1Union' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class1_PointUnion' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class2_MultiPointUnion' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class3_CurveUnion' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class5_SurfaceUnion' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class7_SolidUnion' will be ignored."/>
+    <Warning message="Class 'Class7_Solid_So' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class8_MultiSolidUnion' will be ignored."/>
+    <Warning message="Class 'Class8_MultiSolid_MSo' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Class9_MultipleGeometriesUnion' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'FT1Union' will be ignored."/>
+    <Warning message="Class 'FT1_MSo' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Class 'FT1_So' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'FT2Union' will be ignored."/>
+    <Warning message="Class 'FT2_MSo' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Class 'FT2_So' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'FTUnion' will be ignored."/>
+    <Warning message="Class 'FT_MSo' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Class 'FT_So' has geometry property of unknown type. The class will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'T7_Class1Union' will be ignored."/>
+    <Warning message="Processing class with category 8 (union) is not supported. Class 'Test12_FeatureType2Union' will be ignored."/>
+    <Warning message="Type 'ExternalCodeList' of property 'propExternalCodeList' in class 'T3_Class1' does not belong to the application schema. The property will be ignored."/>
+    <Warning message="No conversion rule is configured to handle the reflexive relationship found on class 'Test10_Class1', property 'propReflexive'. The property will be ignored."/>
+    <Warning message="Type 'ExternalCodeList' of property 'prop33' in class 'FT2_C' does not belong to the application schema. The property will be ignored."/>
+    <Warning message="Type 'ExternalCodeList' of property 'prop33' in class 'FT2_MP' does not belong to the application schema. The property will be ignored."/>
+    <Warning message="Type 'ExternalCodeList' of property 'prop33' in class 'FT2_P' does not belong to the application schema. The property will be ignored."/>
+    <Warning message="Type 'ExternalCodeList' of property 'prop33' in class 'FT2_S' does not belong to the application schema. The property will be ignored."/>
+    <Warning message="No conversion rule is configured to handle the reflexive association found on class 'Test10_Class1'. The association will be ignored."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace' for input ID: 'flattenedModel'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/arcgis/base/xsd/input/arcgis.xsd" scope="http://example.org/shapechange/arcgis/base" target="XML Schema">arcgis.xsd</Result>
+  </Results>
+</ShapeChangeResult>

@@ -35,10 +35,10 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * Handles the creation of names for check and foreign key constraints.
- * Different kinds of strategies are applied to 1) create the constraint name,
- * 2) normalize the name, and 3) ensure that the name is unique within this
- * naming scheme.
+ * Handles the creation of names for various constraints (check, foreign key,
+ * unique). Different kinds of strategies are applied to 1) create the
+ * constraint name, 2) normalize the name, and 3) ensure that the name is unique
+ * within this naming scheme.
  * 
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
@@ -49,19 +49,22 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 	private NameNormalizer normalizer;
 	private ForeignKeyNamingStrategy fkNaming;
 	private CheckConstraintNamingStrategy ckNaming;
+	private UniqueConstraintNamingStrategy ukNaming;
 	private ShapeChangeResult result;
-	private UniqueNamingStrategy uniqueConstraintNaming;
+	private UniqueNamingStrategy uniqueNaming;
 
 	public DefaultNamingScheme(ShapeChangeResult result,
 			NameNormalizer normalizer, ForeignKeyNamingStrategy fkNaming,
 			CheckConstraintNamingStrategy ckNaming,
-			UniqueNamingStrategy uniqueConstraintNaming) {
+			UniqueConstraintNamingStrategy ukNaming,
+			UniqueNamingStrategy uniqueNaming) {
 
 		this.result = result;
 		this.normalizer = normalizer;
 		this.fkNaming = fkNaming;
 		this.ckNaming = ckNaming;
-		this.uniqueConstraintNaming = uniqueConstraintNaming;
+		this.ukNaming = ukNaming;
+		this.uniqueNaming = uniqueNaming;
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 		String normalizedConstraintName = this.normalizer
 				.normalize(nonNormalizedConstraintName);
 
-		String constraintName = this.uniqueConstraintNaming
+		String constraintName = this.uniqueNaming
 				.makeUnique(normalizedConstraintName);
 
 		if (constraintName.length() != nonNormalizedConstraintName.length()) {
@@ -96,11 +99,31 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 		String normalizedConstraintName = this.normalizer
 				.normalize(nonNormalizedConstraintName);
 
-		String constraintName = this.uniqueConstraintNaming
+		String constraintName = this.uniqueNaming
 				.makeUnique(normalizedConstraintName);
 
 		if (constraintName.length() != nonNormalizedConstraintName.length()) {
 			result.addWarning(this, 2, constraintName,
+					nonNormalizedConstraintName);
+		}
+
+		return constraintName;
+	}
+
+	@Override
+	public String nameForUniqueConstraint(String tableName, String columnName) {
+
+		String nonNormalizedConstraintName = this.ukNaming
+				.nameForUniqueConstraint(tableName, columnName);
+
+		String normalizedConstraintName = this.normalizer
+				.normalize(nonNormalizedConstraintName);
+
+		String constraintName = this.uniqueNaming
+				.makeUnique(normalizedConstraintName);
+
+		if (constraintName.length() != nonNormalizedConstraintName.length()) {
+			result.addWarning(this, 3, constraintName,
 					nonNormalizedConstraintName);
 		}
 
@@ -118,10 +141,11 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 			return "Name '$1$' for check constraint is truncated to '$2$'";
 		case 2:
 			return "Name '$1$' for foreign key constraint is truncated to '$2$'";
+		case 3:
+			return "Name '$1$' for unique constraint is truncated to '$2$'";
 		default:
 			return "(" + DefaultNamingScheme.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
 }

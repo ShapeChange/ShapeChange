@@ -41,6 +41,7 @@ public class ColumnDataType {
 	private String name = null;
 	private Integer precision = null;
 	private Integer scale = null;
+	private Integer length = null;
 
 	public ColumnDataType(String name) {
 		this.name = name;
@@ -53,11 +54,15 @@ public class ColumnDataType {
 	 *            can be <code>null</code>
 	 * @param scale
 	 *            can be <code>null</code>
+	 * @param length
+	 *            can be <code>null</code>
 	 */
-	public ColumnDataType(String name, Integer precision, Integer scale) {
+	public ColumnDataType(String name, Integer precision, Integer scale,
+			Integer length) {
 		this.name = name;
 		this.precision = precision;
 		this.scale = scale;
+		this.length = length;
 	}
 
 	/**
@@ -68,24 +73,12 @@ public class ColumnDataType {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
 	 * @return the precision, can be <code>null</code>
 	 */
 	public Integer getPrecision() {
 		return precision;
 	}
 
-	/**
-	 * @param precision
-	 *            the precision to set, can be <code>null</code>
-	 */
 	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
@@ -101,15 +94,22 @@ public class ColumnDataType {
 		return scale;
 	}
 
-	/**
-	 * @param scale
-	 *            the scale to set, can be <code>null</code>
-	 */
 	public void setScale(Integer scale) {
 		this.scale = scale;
 	}
 
 	public boolean hasScale() {
 		return this.scale != null;
+	}
+
+	/**
+	 * @return the length
+	 */
+	public Integer getLength() {
+		return length;
+	}
+
+	public boolean hasLength() {
+		return this.length != null;
 	}
 }

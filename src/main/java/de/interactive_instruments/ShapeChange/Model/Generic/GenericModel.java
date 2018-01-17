@@ -52,6 +52,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -274,6 +275,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				genCi.setConstraints(copy(ci.constraints()));
 
 				genCi.setDiagrams(ci.getDiagrams());
+				genCi.setLinkedDocument(ci.getLinkedDocument());
 
 				genericClassInfos.add(genCi);
 
@@ -1294,6 +1296,23 @@ public class GenericModel extends ModelImpl implements MessageSource {
 								.get(clsHandler.getBaseClassId()));
 					}
 
+					if (StringUtils
+							.isNotBlank(clsHandler.getLinkedDocument())) {
+
+						File ldFile = new File(clsHandler.getLinkedDocument());
+
+						if (!ldFile.exists()) {
+
+							result.addWarning(this, 30400, genCi.id(),
+									StringUtils.stripToEmpty(genCi.name()),
+									clsHandler.getLinkedDocument());
+
+						} else {
+
+							genCi.setLinkedDocument(ldFile);
+						}
+					}
+
 					/*
 					 * Set inClass for navigable properties (does not cover
 					 * non-navigable association roles).
@@ -1393,19 +1412,19 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				}
 			}
 		} catch (SAXException e) {
-			result.addFatalError(this, 30803, e.getMessage());
+			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (FileNotFoundException e) {
-			result.addFatalError(this, 30803, e.getMessage());
+			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (UnsupportedEncodingException e) {
-			result.addFatalError(this, 30803, e.getMessage());
+			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (ParserConfigurationException e) {
-			result.addFatalError(this, 30803, e.getMessage());
+			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		} catch (IOException e) {
-			result.addFatalError(this, 30803, e.getMessage());
+			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
 		}
 	}
@@ -2336,6 +2355,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		genCi.setConstraints(copy(ci.constraints()));
 
 		genCi.setDiagrams(ci.getDiagrams());
+		genCi.setLinkedDocument(ci.getLinkedDocument());
 
 		return genCi;
 	}
@@ -3089,12 +3109,12 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		case 25:
 			return "Model repository file named '$1$' not found";
-			
+
 		case 20110:
 			return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
 		case 20111:
 			return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
-			
+
 		case 30300:
 			return "(GenericModel.java) Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
 		case 30301:
@@ -3155,7 +3175,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
 		case 30329:
 			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
-		
+
+		case 30400:
+			return "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
+
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

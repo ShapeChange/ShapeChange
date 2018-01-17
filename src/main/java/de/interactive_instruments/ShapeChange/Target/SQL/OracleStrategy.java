@@ -49,6 +49,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArray
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.StringValueExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToCharExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
@@ -75,8 +76,8 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String primaryKeyDataType() {
-		return "INTEGER";
+	public ColumnDataType primaryKeyDataType() {
+		return new ColumnDataType("INTEGER");
 	}
 
 	@Override
@@ -85,13 +86,13 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public String unlimitedLengthCharacterDataType() {
-		return "CLOB";
+	public ColumnDataType unlimitedLengthCharacterDataType() {
+		return new ColumnDataType("CLOB");
 	}
 
 	@Override
-	public String limitedLengthCharacterDataType(int size) {
-		return "VARCHAR2(" + size + ")";
+	public ColumnDataType limitedLengthCharacterDataType(int size) {
+		return new ColumnDataType("VARCHAR2", null, null, size);
 	}
 
 	@Override

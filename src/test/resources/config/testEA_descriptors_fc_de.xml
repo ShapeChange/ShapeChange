@@ -35,7 +35,7 @@
 	<targets>		
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/html/descriptors"/>
+			<targetParameter name="outputDirectory" value="testResults/html/descriptors/fc_de"/>
 			<targetParameter name="outputFilename" value="fc_de"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>

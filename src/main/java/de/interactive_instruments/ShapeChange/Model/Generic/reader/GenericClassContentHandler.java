@@ -65,13 +65,13 @@ public class GenericClassContentHandler
 
 	private static final Set<String> SIMPLE_CLASS_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "isAbstract", "isLeaf",
-					"associationId",
-					"baseClassId" }));
+					"associationId", "baseClassId", "linkedDocument" }));
 
 	private GenericClassInfo genCi = new GenericClassInfo();
 
 	private String associationId = null;
 	private String baseClassId = null;
+	private String linkedDocument = null;
 
 	private List<GenericPropertyContentHandler> propertyContentHandlers = new ArrayList<GenericPropertyContentHandler>();
 	private List<ConstraintContentHandler> constraintContentHandlers = new ArrayList<ConstraintContentHandler>();
@@ -240,6 +240,10 @@ public class GenericClassContentHandler
 
 			this.baseClassId = sb.toString();
 
+		} else if (localName.equals("linkedDocument")) {
+
+			this.linkedDocument = sb.toString();
+
 		} else if (localName.equals("supertypes")) {
 
 			this.genCi.setSupertypes(new TreeSet<String>(this.stringList));
@@ -363,6 +367,13 @@ public class GenericClassContentHandler
 	 */
 	public String getBaseClassId() {
 		return baseClassId;
+	}
+	
+	/**
+	 * @return the linkedDocument
+	 */
+	public String getLinkedDocument() {
+		return linkedDocument;
 	}
 
 	/**

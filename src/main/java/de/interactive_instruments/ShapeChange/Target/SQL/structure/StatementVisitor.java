@@ -47,8 +47,14 @@ public interface StatementVisitor {
 	public void visit(CreateIndex createIndex);
 
 	public void visit(Alter alter);
-	
+
 	public void visit(Comment comment);
 
 	public void visit(List<Statement> stmts);
+
+	/**
+	 * Signals the visitor that all statements have been visited, so that any
+	 * necessary postprocessing can be performed.
+	 */
+	public void postprocess();
 }
