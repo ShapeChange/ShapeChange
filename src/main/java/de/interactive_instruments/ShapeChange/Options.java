@@ -158,7 +158,7 @@ public class Options {
 	public static final String[] assocStereotypes = { "disjoint", "retired" };
 
 	public static final String[] propertyStereotypes = { "voidable",
-			"identifier", "version", "property", "estimated", "retired" };
+			"identifier", "version", "property", "estimated", "enum", "retired" };
 	public static final String[] packageStereotypes = { "application schema",
 			"bundle", "leaf", "retired" };
 	public static final String[] depStereotypes = { "import", "include", "retired" };
