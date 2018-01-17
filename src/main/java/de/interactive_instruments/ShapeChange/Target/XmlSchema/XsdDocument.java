@@ -83,6 +83,7 @@ import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathFragment;
+import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathType;
 
 public class XsdDocument implements MessageSource {
 
@@ -3180,8 +3181,10 @@ public class XsdDocument implements MessageSource {
 
 	private void addAssertionForCodelistUri(ClassInfo cibase,
 			PropertyInfo propi, ClassInfo ci, SchematronSchema schDoc) {
+
 		if (schDoc != null
 				&& cibase.matches("rule-xsd-cls-codelist-constraints")) {
+
 			// add assertion for code list URI
 			SchematronConstraintNode.XpathFragment xpath;
 
@@ -3190,12 +3193,14 @@ public class XsdDocument implements MessageSource {
 				s = ci.taggedValue("vocabulary");
 
 			if (ci.matches("rule-xsd-cls-standard-19139-property-types")) {
+
 				if (s != null && !s.isEmpty()) {
 					xpath = new XpathFragment(0,
 							propi.qname() + "/*/@codeList='" + s + "'");
 					schDoc.addAssertion(cibase, xpath,
 							"Code list is '" + s + "'");
 				}
+
 				// assert the existence of the code list
 				String s2 = ci.taggedValue("codeListValuePattern");
 				if (s2 == null || s2.isEmpty())
@@ -3207,11 +3212,14 @@ public class XsdDocument implements MessageSource {
 						+ s2 + "', '#') and document(substring-before('" + s2
 						+ "','#'))/id(substring-after('" + s2 + "','#')))");
 				schDoc.addAssertion(cibase, xpath, "Code list value exists");
+
 				// assert that the remote resource has the correct element based
 				// on its representation
 				s = ci.taggedValue("codeListRepresentation");
+
 				if (s == null || s.isEmpty() || s
 						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+
 					xpath = new XpathFragment(0, "(not contains('" + s2
 							+ "', '#') and document('" + s2
 							+ "')/gml:Definition) or (contains('" + s2
@@ -3220,7 +3228,9 @@ public class XsdDocument implements MessageSource {
 							+ "','#'))[local-name()='Definiton' and namespace-uri()='http://www.opengis.net/gml/3.2'])");
 					schDoc.addAssertion(cibase, xpath,
 							"Code list dictionary is represented using GML 3.2");
+
 				} else if (s.equalsIgnoreCase("application/rdf+xml")) {
+
 					xpath = new XpathFragment(0, "(not contains('" + s2
 							+ "', '#') and document('" + s2
 							+ "')/skos:Concept) or (contains('" + s2
@@ -3230,14 +3240,17 @@ public class XsdDocument implements MessageSource {
 					schDoc.addAssertion(cibase, xpath,
 							"Code list dictionary is represented using SKOS");
 				}
+
 			} else if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 					&& ci.asDictionaryGml33()) {
+
 				if (s != null && !s.isEmpty()) {
 					xpath = new XpathFragment(0, "starts-with(" + propi.qname()
 							+ "/@xlink:href,'" + s + "')");
 					schDoc.addAssertion(cibase, xpath,
 							"Code list value URI starts with '" + s + "'");
 				}
+
 				// assert the existence of the code list
 				xpath = new XpathFragment(0, "(not contains(" + propi.qname()
 						+ "/@xlink:href, '#') and document(" + propi.qname()
@@ -3247,9 +3260,11 @@ public class XsdDocument implements MessageSource {
 						+ "/@xlink:href,'#'))/id(substring-after("
 						+ propi.qname() + "/@xlink:href,'#')))");
 				schDoc.addAssertion(cibase, xpath, "Code list value exists");
+
 				// assert that the remote resource has the correct element based
 				// on its representation
 				s = ci.taggedValue("codeListRepresentation");
+
 				if (s == null || s.isEmpty() || s
 						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 					xpath = new XpathFragment(0, "(not contains("
@@ -3264,7 +3279,23 @@ public class XsdDocument implements MessageSource {
 							+ "/@xlink:href,'#'))[local-name()='Definiton' and namespace-uri()='http://www.opengis.net/gml/3.2'])");
 					schDoc.addAssertion(cibase, xpath,
 							"Code list dictionary is represented using GML 3.2");
+
 				} else if (s.equalsIgnoreCase("application/rdf+xml")) {
+
+					/*
+					 * FIXME 2018-01-15 JE: This XPath expression will probably
+					 * be insufficient, due to the different ways RDFdata can be
+					 * encoded in RDF/XML. The RDF encoding may not provide a
+					 * target for the id() function. But what's more important,
+					 * the RDF encoding may not have 'Concept' elements.
+					 * Instead, it could have rdf:Description elements
+					 * (with @about being the identifier of the code list value)
+					 * with nested rdf:type
+					 * having @rdf:resource=http://www.w3.org/2004/02/skos/
+					 * core# Concept. The development of a better XPath
+					 * expression requires further analysis and testing.
+					 */
+
 					xpath = new XpathFragment(0, "(not contains("
 							+ propi.qname() + "/@xlink:href, '#') and document("
 							+ propi.qname()
@@ -3278,13 +3309,17 @@ public class XsdDocument implements MessageSource {
 					schDoc.addAssertion(cibase, xpath,
 							"Code list dictionary is represented using SKOS");
 				}
+
 			} else if (ci.matches("rule-xsd-cls-codelist-asDictionary")
 					&& ci.asDictionary()) {
+
 				if (s != null && !s.isEmpty()) {
+
 					xpath = new XpathFragment(0,
 							propi.qname() + "/@codeSpace='" + s + "'");
 					schDoc.addAssertion(cibase, xpath,
 							"Code space is '" + s + "'");
+
 					// assert the existence of the code list
 					String s2 = ci.taggedValue("codeListValuePattern");
 					if (s2 == null || s2.isEmpty())
@@ -3299,6 +3334,7 @@ public class XsdDocument implements MessageSource {
 									+ "','#')))");
 					schDoc.addAssertion(cibase, xpath,
 							"Code list value exists");
+
 					// assert that the remote resource has the correct element
 					// based on its representation
 					s = ci.taggedValue("codeListRepresentation");
@@ -3322,6 +3358,513 @@ public class XsdDocument implements MessageSource {
 						schDoc.addAssertion(cibase, xpath,
 								"Code list dictionary is represented using SKOS");
 					}
+				}
+			}
+
+		} else if (schDoc != null
+				&& cibase.matches("rule-xsd-cls-codelist-constraints2")) {
+
+			/*
+			 * 2018-01-17 JE: rule-xsd-cls-codelist-constraints2 represents a
+			 * revision of rule-xsd-cls-codelist-constraints to make use of
+			 * XPath 2.0 in the xslt2 query binding for Schematron (which has
+			 * been standardized with ISO 19757-3:2016.
+			 */
+
+			/*
+			 * TODO The context of the assertion should be propi, rather than
+			 * cibase! Then we could avoid the every ... satisfies ...
+			 * quantification, and it would also be better for identifying
+			 * invalid property elements in case of a multi-valued property.
+			 * That would require a new method in SchematronSchema:
+			 * addAssertion(PropertyInfo pi,
+			 * SchematronConstraintNode.XpathFragment xpath, String text)
+			 */
+
+			/*
+			 * 2018-01-15 JE: Note that using a function call (for example
+			 * 'id(...)' - as used in rule-xsd-cls-codelist-constraints) within
+			 * a location step is not supported by (the syntax of) XPath 1.0.
+			 * Also see comments from Dimitre Novatchev and Michael Kay on
+			 * https://stackoverflow.com/questions/333249/how-to-apply-the-
+			 * xpath-function-substring-after and
+			 * https://www.oxygenxml.com/archives/xsl-list/200603/msg00610.
+			 * html. However, XPath 2.0 supports this.
+			 * 
+			 * Furthermore, we would like to make use of XPath 2.0 features such
+			 * as for-loops and quantifications with variable declarations (to
+			 * avoid repeated computations, and to support predicates on
+			 * elements of external codelist document that are based on values
+			 * (e.g. code list values) of the original document.
+			 * 
+			 * Thus, the queryBinding of the schematron schema must be set to
+			 * (at least) xslt2.
+			 */
+			schDoc.setQueryBinding("xslt2");
+
+			String clTV = ci.taggedValue("codeList");
+			if (clTV == null || clTV.isEmpty())
+				clTV = ci.taggedValue("vocabulary");
+
+			String clRepTV = ci.taggedValue("codeListRepresentation");
+
+			/*
+			 * NOTE: ISO19139_CodeListDictionary_TBD is a preliminary identifier
+			 * for an XML document that contains a gmx:CodeListDictionary.
+			 */
+			if (StringUtils.isNotBlank(clRepTV) && !(clRepTV
+					.equalsIgnoreCase("application/gml+xml;version=3.2")
+					|| clRepTV.equalsIgnoreCase(
+							"ISO19139_CodeListDictionary_TBD"))) {
+				result.addWarning(this, 1000, clRepTV, ci.name());
+			}
+
+			if (ci.matches("rule-xsd-cls-standard-19139-property-types")) {
+
+				/*
+				 * ISO 19139:2007 defines the meaning of @codeList as: "The
+				 * codeList attribute contains a URL that references a codeList
+				 * definition within a registry or a codeList catalogue.
+				 * " The meaning of @codeListValue is: "The codeListValue
+				 * attribute carries the identifier of the codeList value
+				 * definition."
+				 * 
+				 * So there's essentially no reason to combine @codeList
+				 * and @codeListValue based upon some codeListValuePattern.
+				 * 
+				 * Since @codeList references a dictionary, it already includes
+				 * the fragment identifier to identify the dictionary, if
+				 * necessary - for example if the dictionary is part of a
+				 * catalogue (like a gmx:CT_CodelistCatalogue). That is
+				 * sufficient to retrieve the dictionary element.
+				 * 
+				 * The value of @codeListValue can then be used to search the
+				 * Definition element that has @codeListValue as identifier
+				 * element.
+				 * 
+				 * @codeSpace should be irrelevant, since @codeListValue is
+				 * independent of the code space.
+				 */
+				String codeListExpr = propi.qname() + "/*/@codeList";
+				// String codeListValueExpr = propi.qname() +
+				// "/*/@codeListValue";
+
+				// Assert that the code list is used.
+				if (StringUtils.isNotBlank(clTV)) {
+
+					XpathFragment xpathCodeListUse = new XpathFragment(0,
+							propi.qname() + "/*/@codeList='" + clTV + "'");
+					schDoc.addAssertion(cibase, xpathCodeListUse,
+							"Code list is '" + clTV + "'");
+				}
+
+				/*
+				 * Assert the existence of the code list.
+				 */
+				if (StringUtils.isBlank(clRepTV)
+						|| clRepTV.equalsIgnoreCase(
+								"application/gml+xml;version=3.2")
+						|| clRepTV.equalsIgnoreCase(
+								"ISO19139_CodeListDictionary_TBD")) {
+
+					/*
+					 * NOTE: Using the quantified expression (every ...
+					 * satisfies ...) should work well for property elements
+					 * with single value. For multi-valued properties, where one
+					 * value is invalid, the test will not identify the property
+					 * element that is invalid.
+					 */
+					schDoc.registerNamespace("gml");
+					XpathFragment xpathCodeListExists = new XpathFragment(0,
+							"every $codelistUrl in " + codeListExpr
+									+ " satisfies "
+									+ "(not(contains($codelistUrl, '#')) and doc-available($codelistUrl)) "
+									+ "or (contains($codelistUrl, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+									+ "return exists($codelistDoc//*[@gml:id = substring-after($codelistUrl,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase, xpathCodeListExists,
+							"Code list used by " + propi.qname() + " exists");
+				}
+
+				/*
+				 * Assert that the remote resource has the correct element based
+				 * on its representation.
+				 */
+				if (StringUtils.isBlank(clRepTV) || clRepTV
+						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+
+					/*
+					 * NOTE: Using the quantified expression (every ...
+					 * satisfies ...) should work well for property elements
+					 * with single value. For multi-valued properties, where one
+					 * value is invalid, the test will not identify the property
+					 * element that is invalid.
+					 */
+					schDoc.registerNamespace("gml");
+					XpathFragment xpathCodeListCorrectRepresentation = new XpathFragment(
+							0,
+							"every $codelistUrl in " + codeListExpr
+									+ " satisfies "
+									+ "(not(contains($codelistUrl, '#')) and doc($codelistUrl)/gml:Dictionary) "
+									+ "or (contains($codelistUrl, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+									+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codelistUrl,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase,
+							xpathCodeListCorrectRepresentation,
+							"Code list dictionary used by " + propi.qname()
+									+ " is represented using a GML 3.2 Dictionary");
+
+				} else if (clRepTV
+						.equalsIgnoreCase("ISO19139_CodeListDictionary_TBD")) {
+
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("gmx");
+
+					XpathFragment xpathCodeListCorrectRepresentation = new XpathFragment(
+							0,
+							"every $codelistUrl in " + codeListExpr
+									+ " satisfies "
+									+ "(not(contains($codelistUrl, '#')) and doc($codelistUrl)/gmx:CodeListDictionary) "
+									+ "or (contains($codelistUrl, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+									+ "return exists($codelistDoc//gmx:CodeListDictionary[@gml:id = substring-after($codelistUrl,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase,
+							xpathCodeListCorrectRepresentation,
+							"Code list dictionary used by " + propi.qname()
+									+ " is represented using an ISO 19139 CodeListDictionary");
+				}
+
+				/*
+				 * Assert the existence of the code list value.
+				 */
+				XpathFragment xpathCodeListValueExists = null;
+
+				if (StringUtils.isBlank(clRepTV) || clRepTV
+						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+
+					/*
+					 * NOTE: Using the quantified expression (every ...
+					 * satisfies ...) should work well for property elements
+					 * with single value. For multi-valued properties, where one
+					 * value is invalid, the test will not identify the property
+					 * element that is invalid.
+					 */
+					schDoc.registerNamespace("gml");
+					xpathCodeListValueExists = new XpathFragment(0,
+							"every $propertyElement in " + propi.qname()
+									+ " satisfies boolean(for "
+									+ "$codeListUrl in $propertyElement/*/@codeList, "
+									+ "$codeListValue in $propertyElement/*/@codeListValue "
+									+ "return "
+									+ "(not(contains($codeListUrl, '#')) and "
+									+ "doc($codeListUrl)/*/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]) "
+									+ "or (contains($codeListUrl, '#') and "
+									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+									+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]))",
+							XpathType.BOOLEAN, false);
+
+				} else if (clRepTV
+						.equalsIgnoreCase("ISO19139_CodeListDictionary_TBD")) {
+
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("gmx");
+
+					xpathCodeListValueExists = new XpathFragment(0,
+							"every $propertyElement in " + propi.qname()
+									+ " satisfies boolean(for "
+									+ "$codeListUrl in $propertyElement/*/@codeList, "
+									+ "$codeListValue in $propertyElement/*/@codeListValue "
+									+ "return "
+									+ "(not(contains($codeListUrl, '#')) and "
+									+ "doc($codeListUrl)/*/gmx:codeEntry/gmx:CodeDefinition[gml:identifier = $codeListValue]) "
+									+ "or (contains($codeListUrl, '#') and "
+									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+									+ "/gmx:codeEntry/gmx:CodeDefinition[gml:identifier = $codeListValue]))",
+							XpathType.BOOLEAN, false);
+				}
+
+				if (xpathCodeListValueExists != null) {
+					schDoc.addAssertion(cibase, xpathCodeListValueExists,
+							"Code list value used by " + propi.qname()
+									+ " exists");
+				}
+
+			} else if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+					&& ci.asDictionaryGml33()) {
+
+				/*
+				 * NOTE: The dictionary is encoded according to the GML 3.3
+				 * rules, therefore propi is encoded with type
+				 * gml:ReferenceType. The xlink:href contains the URI for the
+				 * dictionary item. If the URI does not contain a '#', the
+				 * referenced resource only represents the dictionary item.
+				 * Otherwise, the referenced resource contains the dictionary
+				 * item but the item must be looked up by its id (that lookup
+				 * depends on the representation; it can but does not need to be
+				 * gml:id).
+				 */
+
+				if (StringUtils.isNotBlank(clTV)) {
+
+					schDoc.registerNamespace("xlink");
+					XpathFragment xpathCLValUriStartsWith = new XpathFragment(0,
+							"every $propertyElement in " + propi.qname()
+									+ "/@xlink:href satisfies starts-with($propertyElement,'"
+									+ clTV + "')",
+							XpathType.BOOLEAN, false);
+					schDoc.addAssertion(cibase, xpathCLValUriStartsWith,
+							"Code list value URI starts with '" + clTV + "'");
+				}
+
+				String clRefExp = propi.qname() + "/@xlink:href";
+
+				/*
+				 * Assert the existence of the code list value.
+				 */
+				if (StringUtils.isBlank(clRepTV)
+						|| clRepTV.equalsIgnoreCase(
+								"application/gml+xml;version=3.2")
+						|| clRepTV.equalsIgnoreCase(
+								"ISO19139_CodeListDictionary_TBD")) {
+
+					/*
+					 * NOTE: Using the quantified expression (every ...
+					 * satisfies ...) should work well for property elements
+					 * with single value. For multi-valued properties, where one
+					 * value is invalid, the test will not identify the property
+					 * element that is invalid.
+					 */
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("xlink");
+					XpathFragment xpathCLValueExists = new XpathFragment(0,
+							"every $clValueUri in " + clRefExp + " satisfies "
+									+ "(not(contains($clValueUri, '#')) and doc-available($clValueUri)) "
+									+ "or (contains($clValueUri, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
+									+ "return exists($codelistDoc//*[@gml:id = substring-after($clValueUri,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase, xpathCLValueExists,
+							"Code list value used by " + propi.qname()
+									+ " exists");
+				}
+
+				/*
+				 * Assert that the remote resource has the correct element based
+				 * on its representation.
+				 */
+				if (StringUtils.isBlank(clRepTV) || clRepTV
+						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("xlink");
+					XpathFragment xpathCLValueCorrectRepresentation = new XpathFragment(
+							0,
+							"every $clValueUri in " + clRefExp + " satisfies "
+									+ "(not(contains($clValueUri, '#')) and doc($clValueUri)/gml:Definition) "
+									+ "or (contains($clValueUri, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
+									+ "return exists($codelistDoc//gml:Definition[@gml:id = substring-after($clValueUri,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase,
+							xpathCLValueCorrectRepresentation,
+							"Code list value used by " + propi.qname()
+									+ " is represented using GML 3.2 (gml:Definition)");
+
+				} else if (clRepTV
+						.equalsIgnoreCase("ISO19139_CodeListDictionary_TBD")) {
+
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("gmx");
+					schDoc.registerNamespace("xlink");
+
+					XpathFragment xpathCLValueCorrectRepresentation = new XpathFragment(
+							0,
+							"every $clValueUri in " + clRefExp + " satisfies "
+									+ "(not(contains($clValueUri, '#')) and doc($clValueUri)/gmx:CodeDefinition) "
+									+ "or (contains($clValueUri, '#') and boolean("
+									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
+									+ "return exists($codelistDoc//gmx:CodeDefinition[@gml:id = substring-after($clValueUri,'#')])))",
+							XpathType.BOOLEAN, false);
+
+					schDoc.addAssertion(cibase,
+							xpathCLValueCorrectRepresentation,
+							"Code list dictionary item used by " + propi.qname()
+									+ " is represented using an ISO 19139 CodeDefinition");
+				}
+
+			} else if (ci.matches("rule-xsd-cls-codelist-asDictionary")
+					&& ci.asDictionary()) {
+
+				/*
+				 * NOTE: The dictionary is encoded according to the GML 3.2
+				 * rules, therefore propi is encoded with type gml:CodeType.
+				 * 
+				 * The element value contains the code value, while the
+				 * optional @codeSpace contains the URI to the dictionary. This
+				 * is quite similar to the ISO 19139 based encoding of ci
+				 * (however, the optional @codeSpace requires specific checks).
+				 */
+				// String codeListExpr = propi.qname() + "/@codeSpace";
+				// String codeListValueExpr = propi.qname();
+
+				if (StringUtils.isNotBlank(clTV)) {
+
+					// Assert that @codeSpace, if set, is the code list
+					XpathFragment xpathCodeListUse = new XpathFragment(0,
+							"if (not(" + propi.qname()
+									+ "/@codeSpace)) then true() else "
+									+ propi.qname() + "/@codeSpace='" + clTV
+									+ "'");
+					schDoc.addAssertion(cibase, xpathCodeListUse,
+							"Code space, if set, is '" + clTV + "'");
+
+					/*
+					 * Assert the existence of the code list.
+					 */
+					if (StringUtils.isBlank(clRepTV)
+							|| clRepTV.equalsIgnoreCase(
+									"application/gml+xml;version=3.2")
+							|| clRepTV.equalsIgnoreCase(
+									"ISO19139_CodeListDictionary_TBD")) {
+
+						/*
+						 * NOTE: Using the quantified expression (every ...
+						 * satisfies ...) should work well for property elements
+						 * with single value. For multi-valued properties, where
+						 * one value is invalid, the test will not identify the
+						 * property element that is invalid.
+						 */
+						schDoc.registerNamespace("gml");
+						XpathFragment xpathCodeListExists = new XpathFragment(0,
+								"every $codelistUrl in '" + clTV
+										+ "' satisfies "
+										+ "(not(contains($codelistUrl, '#')) and doc-available($codelistUrl)) "
+										+ "or (contains($codelistUrl, '#') and boolean("
+										+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+										+ "return exists($codelistDoc//*[@gml:id = substring-after($codelistUrl,'#')])))",
+								XpathType.BOOLEAN, false);
+
+						schDoc.addAssertion(cibase, xpathCodeListExists,
+								"Code list used by " + propi.qname()
+										+ " exists");
+					}
+
+					/*
+					 * Assert that the remote resource has the correct element
+					 * based on its representation.
+					 */
+					if (StringUtils.isBlank(clRepTV)
+							|| clRepTV.equalsIgnoreCase(
+									"application/gml+xml;version=3.2")) {
+
+						/*
+						 * NOTE: Using the quantified expression (every ...
+						 * satisfies ...) should work well for property elements
+						 * with single value. For multi-valued properties, where
+						 * one value is invalid, the test will not identify the
+						 * property element that is invalid.
+						 */
+						schDoc.registerNamespace("gml");
+						XpathFragment xpathCodeListCorrectRepresentation = new XpathFragment(
+								0,
+								"every $codelistUrl in '" + clTV
+										+ "' satisfies "
+										+ "(not(contains($codelistUrl, '#')) and doc($codelistUrl)/gml:Dictionary) "
+										+ "or (contains($codelistUrl, '#') and boolean("
+										+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+										+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codelistUrl,'#')])))",
+								XpathType.BOOLEAN, false);
+
+						schDoc.addAssertion(cibase,
+								xpathCodeListCorrectRepresentation,
+								"Code list dictionary used by " + propi.qname()
+										+ " is represented using a GML 3.2 Dictionary");
+
+					} else if (clRepTV.equalsIgnoreCase(
+							"ISO19139_CodeListDictionary_TBD")) {
+
+						schDoc.registerNamespace("gml");
+						schDoc.registerNamespace("gmx");
+
+						XpathFragment xpathCodeListCorrectRepresentation = new XpathFragment(
+								0,
+								"every $codelistUrl in '" + clTV
+										+ "' satisfies "
+										+ "(not(contains($codelistUrl, '#')) and doc($codelistUrl)/gmx:CodeListDictionary) "
+										+ "or (contains($codelistUrl, '#') and boolean("
+										+ "for $codelistDoc in doc(substring-before($codelistUrl,'#')) "
+										+ "return exists($codelistDoc//gmx:CodeListDictionary[@gml:id = substring-after($codelistUrl,'#')])))",
+								XpathType.BOOLEAN, false);
+
+						schDoc.addAssertion(cibase,
+								xpathCodeListCorrectRepresentation,
+								"Code list dictionary used by " + propi.qname()
+										+ " is represented using an ISO 19139 CodeListDictionary");
+					}
+
+				}
+
+				/*
+				 * Assert the existence of the code list value.
+				 */
+				XpathFragment xpathCodeListValueExists = null;
+
+				if (StringUtils.isBlank(clRepTV) || clRepTV
+						.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+
+					/*
+					 * NOTE: Using the quantified expression (every ...
+					 * satisfies ...) should work well for property elements
+					 * with single value. For multi-valued properties, where one
+					 * value is invalid, the test will not identify the property
+					 * element that is invalid.
+					 */
+					schDoc.registerNamespace("gml");
+					xpathCodeListValueExists = new XpathFragment(0,
+							"every $propertyElement in " + propi.qname()
+									+ " satisfies boolean(for "
+									+ "$codeListUrl in '" + clTV + "', "
+									+ "$codeListValue in $propertyElement/text()"
+									+ " return"
+									+ "(not(contains($codeListUrl, '#')) and "
+									+ "doc($codeListUrl)/*/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]) "
+									+ "or (contains($codeListUrl, '#') and "
+									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+									+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]))",
+							XpathType.BOOLEAN, false);
+
+				} else if (clRepTV
+						.equalsIgnoreCase("ISO19139_CodeListDictionary_TBD")) {
+
+					schDoc.registerNamespace("gml");
+					schDoc.registerNamespace("gmx");
+
+					xpathCodeListValueExists = new XpathFragment(0,
+							"every $propertyElement in " + propi.qname()
+									+ " satisfies boolean(for "
+									+ "$codeListUrl in '" + clTV + "', "
+									+ "$codeListValue in $propertyElement/text()"
+									+ " return"
+									+ "(not(contains($codeListUrl, '#')) and "
+									+ "doc($codeListUrl)/*/gmx:codeEntry/gmx:CodeDefinition[gml:identifier = $codeListValue]) "
+									+ "or (contains($codeListUrl, '#') and "
+									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+									+ "/gmx:codeEntry/gmx:CodeDefinition[gml:identifier = $codeListValue]))",
+							XpathType.BOOLEAN, false);
+				}
+
+				if (xpathCodeListValueExists != null) {
+					schDoc.addAssertion(cibase, xpathCodeListValueExists,
+							"Code list value used by " + propi.qname()
+									+ " exists");
 				}
 			}
 		}
@@ -3817,6 +4360,12 @@ public class XsdDocument implements MessageSource {
 		switch (mnr) {
 		case 12:
 			return "Directory named '$1$' does not exist or is not accessible.";
+
+		/*
+		 * 1000 - 1999: Schematron assertions for code lists
+		 */
+		case 1000:
+			return "??Representation '$1$' of code list '$2$' is not recognized. No representation specific schematron assertions will be created for this code list.";
 
 		}
 		return null;

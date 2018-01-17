@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmx:CodeDefinition xmlns:gmx="http://www.isotc211.org/2005/gmx"
+ xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="_88_144"
+ xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd">
+ <gml:identifier codeSpace="http://example.org/testschema/info/CodeListIso19139">code1</gml:identifier>
+ <name xmlns="http://www.opengis.net/gml/3.2">code1</name>
+</gmx:CodeDefinition>

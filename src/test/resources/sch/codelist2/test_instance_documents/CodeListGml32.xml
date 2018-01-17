@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='./CodelistDictionary-v32.xsl'?><Dictionary xmlns="http://www.opengis.net/gml/3.2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodeListGml32" xsi:schemaLocation="http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+  <identifier codeSpace="http://example.org/shapechange/sch/codelist2/gml32">CodeListGml32</identifier>
+  <dictionaryEntry>
+    <Definition gml:id="_92_146">
+      <identifier codeSpace="file:/C:/TMP/CodeListGml32.xml">codeA</identifier>
+    </Definition>
+  </dictionaryEntry>
+  <dictionaryEntry>
+    <Definition gml:id="_92_147">
+      <identifier codeSpace="file:/C:/TMP/CodeListGml32.xml">codeB</identifier>
+    </Definition>
+  </dictionaryEntry>
+</Dictionary>

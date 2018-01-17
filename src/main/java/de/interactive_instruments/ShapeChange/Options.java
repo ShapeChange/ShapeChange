@@ -3479,6 +3479,7 @@ public class Options {
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
+		addRule("rule-xsd-cls-codelist-constraints2");
 		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
