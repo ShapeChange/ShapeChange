@@ -647,7 +647,7 @@ public class EAModelDiff {
 		result &= similar(method.getModelPath(), "Concurrency",
 				meth.GetConcurrency(), refMeth.GetConcurrency());
 
-		result &= similar(method.getModelPath(), "FQStereotype",
+		result &= similarIgnoreCase(method.getModelPath(), "FQStereotype",
 				meth.GetFQStereotype(), refMeth.GetFQStereotype());
 
 		result &= similar(method.getModelPath(), "IsConst", meth.GetIsConst(),
@@ -699,7 +699,7 @@ public class EAModelDiff {
 
 		// Ignore StateFlags, Stereotype (contained in StereotypeEx)
 
-		result &= similar(method.getModelPath(), "StereotypeEx",
+		result &= similarIgnoreCase(method.getModelPath(), "StereotypeEx",
 				meth.GetStereotypeEx(), refMeth.GetStereotypeEx());
 
 		result &= similar(method.getModelPath(), "Style", meth.GetStyle(),
@@ -1039,7 +1039,7 @@ public class EAModelDiff {
 		result &= similar(elmtInfo.getModelPath(), "FQName", elmt.GetFQName(),
 				refElmt.GetFQName());
 
-		result &= similar(elmtInfo.getModelPath(), "FQStereotype",
+		result &= similarIgnoreCase(elmtInfo.getModelPath(), "FQStereotype",
 				elmt.GetFQStereotype(), refElmt.GetFQStereotype());
 
 		// Ignore GenFile, Genlinks
@@ -1102,7 +1102,7 @@ public class EAModelDiff {
 
 		// Ignore Stereotype (contained in StereotypeEx)
 
-		result &= similar(elmtInfo.getModelPath(), "StereotypeEx",
+		result &= similarIgnoreCase(elmtInfo.getModelPath(), "StereotypeEx",
 				elmt.GetStereotypeEx(), refElmt.GetStereotypeEx());
 
 		result &= similar(elmtInfo.getModelPath(), "StyleEx", elmt.GetStyleEx(),
@@ -1177,7 +1177,7 @@ public class EAModelDiff {
 		result &= similar(attInfo.getModelPath(), "Default", att.GetDefault(),
 				refAtt.GetDefault());
 
-		result &= similar(attInfo.getModelPath(), "FQStereotype",
+		result &= similarIgnoreCase(attInfo.getModelPath(), "FQStereotype",
 				att.GetFQStereotype(), refAtt.GetFQStereotype());
 
 		result &= similar(attInfo.getModelPath(),
@@ -1235,7 +1235,7 @@ public class EAModelDiff {
 
 		// Ignore Stereotype (StereotypeEx contains it)
 
-		result &= similar(attInfo.getModelPath(), "StereotypeEx",
+		result &= similarIgnoreCase(attInfo.getModelPath(), "StereotypeEx",
 				att.GetStereotypeEx(), refAtt.GetStereotypeEx());
 
 		result &= similar(attInfo.getModelPath(), "Style", att.GetStyle(),
@@ -1299,8 +1299,8 @@ public class EAModelDiff {
 
 		// Ignore Stereotype (contained in StereotypeEx)
 
-		result &= similar(modelPath, "StereotypeEx", param.GetStereotypeEx(),
-				refParam.GetStereotypeEx());
+		result &= similarIgnoreCase(modelPath, "StereotypeEx",
+				param.GetStereotypeEx(), refParam.GetStereotypeEx());
 
 		result &= similar(modelPath, "Style", param.GetStyle(),
 				refParam.GetStyle());
@@ -1734,8 +1734,8 @@ public class EAModelDiff {
 
 		// Ignore EndPointX, EndPointY, EventFlags
 
-		result &= similar(connModelPath, "FQStereotype", conn.GetFQStereotype(),
-				refConn.GetFQStereotype());
+		result &= similarIgnoreCase(connModelPath, "FQStereotype",
+				conn.GetFQStereotype(), refConn.GetFQStereotype());
 
 		result &= similar(connModelPath, "ForeignKeyInformation",
 				conn.GetForeignKeyInformation(),
@@ -1770,8 +1770,8 @@ public class EAModelDiff {
 		// StartPointX, StartPointY, StateFlags, Stereotype (since StereotypeEx
 		// contains all applied stereotypes)
 
-		result &= similar(connModelPath, "StereotypeEx", conn.GetStereotypeEx(),
-				refConn.GetStereotypeEx());
+		result &= similarIgnoreCase(connModelPath, "StereotypeEx",
+				conn.GetStereotypeEx(), refConn.GetStereotypeEx());
 
 		result &= similar(connModelPath, "StyleEx", conn.GetStyleEx(),
 				refConn.GetStyleEx());
@@ -1882,8 +1882,8 @@ public class EAModelDiff {
 
 		// Ignore Stereotype
 
-		result &= similar(modelPath, "StereotypeEx", connEnd.GetStereotypeEx(),
-				refConnEnd.GetStereotypeEx());
+		result &= similarIgnoreCase(modelPath, "StereotypeEx",
+				connEnd.GetStereotypeEx(), refConnEnd.GetStereotypeEx());
 
 		result &= similar(modelPath, "Visibility", connEnd.GetVisibility(),
 				refConnEnd.GetVisibility());
@@ -1946,6 +1946,20 @@ public class EAModelDiff {
 			sj.add(modelPath + " - " + "Different " + attributeToCompare
 					+ ". EXPECTED '" + refAttValue + "' FOUND '" + attValue
 					+ "'.");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private boolean similarIgnoreCase(String modelPath,
+			String attributeToCompare, String attValue, String refAttValue) {
+
+		if (!attValue.equalsIgnoreCase(refAttValue)) {
+
+			sj.add(modelPath + " - " + "Different " + attributeToCompare
+					+ ". EXPECTED '" + refAttValue + "' FOUND '" + attValue
+					+ "'. Case is ignored.");
 			return false;
 		} else {
 			return true;

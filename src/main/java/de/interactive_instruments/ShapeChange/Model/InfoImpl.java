@@ -79,6 +79,7 @@ public abstract class InfoImpl implements Info {
 		// return my.hashCode() - other.hashCode();
 	}
 
+	@Override
 	public Stereotypes stereotypes() {
 
 		validateStereotypesCache();

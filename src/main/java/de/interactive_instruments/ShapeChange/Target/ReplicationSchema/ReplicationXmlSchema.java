@@ -271,7 +271,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
 				.getMapEntries();
 
-		if (mapEntries == null || mapEntries.isEmpty()) {
+		if (mapEntries.isEmpty()) {
 
 			result.addFatalError(this, 9);
 			throw new ShapeChangeAbortException();

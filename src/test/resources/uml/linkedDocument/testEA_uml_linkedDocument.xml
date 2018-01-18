@@ -44,6 +44,28 @@
 				value="testResults/uml/linkedDocument/eap" />
 			<targetParameter name="omitOutputPackageDateTime"
 				value="true" />
+			<targetParameter name="eapTemplate"
+				value="src/main/resources/templates/UmlModel_template.eap" />
+			<mapEntries>
+				<MapEntry type="application schema" rule="*"
+					targetType="ShapeChange::applicationSchema" param="stereotype" />
+				<MapEntry type="featuretype" rule="*"
+					targetType="ShapeChange::featureType" param="stereotype" />
+				<MapEntry type="type" rule="*" targetType="ShapeChange::type"
+					param="stereotype" />
+				<MapEntry type="datatype" rule="*" targetType="ShapeChange::dataType"
+					param="stereotype" />
+				<MapEntry type="union" rule="*" targetType="ShapeChange::union"
+					param="stereotype" />
+				<MapEntry type="codelist" rule="*" targetType="ShapeChange::codeList"
+					param="stereotype" />
+				<MapEntry type="enumeration" rule="*"
+					targetType="ShapeChange::enumeration" param="stereotype" />
+				<MapEntry type="property" rule="*" targetType="ShapeChange::property"
+					param="stereotype" />
+				<MapEntry type="enum" rule="*" targetType="ShapeChange::enum"
+					param="stereotype" />
+			</mapEntries>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

@@ -91,4 +91,10 @@ public interface Stereotypes {
 	 *         otherwise (any) one of the members in the collection
 	 */
 	public String getOne();
+
+	/**
+	 * @return the empty string if the list of stereotypes is empty, otherwise a
+	 *         comma-separated list of the stereotypes
+	 */
+	public String toString();
 }
