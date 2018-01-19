@@ -259,7 +259,7 @@ public abstract class SchematronConstraintNode {
 			NONE, ATCURRENT, OTHER
 		}
 
-		public CtxState state;
+		public CtxState state;		
 
 		public class CtxElmt {
 			public Declaration vardecl;
@@ -295,7 +295,7 @@ public abstract class SchematronConstraintNode {
 			this.vars = null;
 		}
 
-		// Push a new variable declaration
+		/** Push a new variable declaration */
 		public void pushDeclaration(Declaration vd) {
 			if (vars == null)
 				vars = new ArrayList<CtxElmt>();
@@ -303,21 +303,21 @@ public abstract class SchematronConstraintNode {
 			this.state = CtxState.OTHER;
 		}
 
-		// Increment the child step counter from the last declaration
+		/** Increment the child step counter from the last declaration */
 		public void addStep() {
 			if (vars == null || vars.size() == 0)
 				return;
 			++(vars.get(vars.size() - 1).noOfSteps);
 		}
 
-		// Do away with the last variable declaration
+		/** Do away with the last variable declaration */
 		public void popDeclaration() {
 			if (vars == null || vars.size() == 0)
 				return;
 			vars.remove(vars.size() - 1);
 		}
 
-		// Merge another context
+		/** Merge another context */
 		public void merge(BindingContext ctx) {
 			if (ctx == null)
 				return;
@@ -414,9 +414,13 @@ public abstract class SchematronConstraintNode {
 			priority = 11;
 		}
 
-		// Add another fragment performing let variable merging. The argument
-		// fragment is destroyed. Returned value is the merged fragment string.
-		// If binding contexts are given they are also merged.
+		/**
+		 * Add another fragment performing let variable merging. The argument
+		 * fragment is destroyed. If binding contexts are given they are also
+		 * merged.
+		 * 
+		 * @return the merged fragment string
+		 */
 		public String merge(XpathFragment xf) {
 			if (variableMerging && xf.variableMerging) {
 				xf.replace("\\$(\\w*)", "%$1");
@@ -654,8 +658,11 @@ public abstract class SchematronConstraintNode {
 
 			// Check and compile children
 			XpathFragment[] child_xpt = new XpathFragment[2];
+			
 			for (int i = 0; i < 2; i++) {
+				
 				SchematronConstraintNode child = children.get(i);
+
 				if (!child.hasSimpleType() && !child.hasIdentity()) {
 					return new XpathFragment(11, "***ERROR[126]***");
 				}
@@ -935,9 +942,14 @@ public abstract class SchematronConstraintNode {
 				if (obat != null) {
 					ClassInfo ci = obat.attributes[obat.attributes.length
 							- 1].main.dataType.umlClass;
-					if (ci != null)
-						simple = !XmlSchema.classHasObjectElement(ci);
-					else {
+					if (ci != null) {
+						Boolean indicatorSimpleType = XmlSchema
+								.indicatorForObjectElementWithSimpleContent(
+										ci);
+						simple = !XmlSchema.classHasObjectElement(ci)
+								|| (indicatorSimpleType != null
+										&& indicatorSimpleType);
+					} else {
 						String tname = obat.attributes[obat.attributes.length
 								- 1].main.dataType.name;
 						String er = schemaObject.currentOclConstraintClass
@@ -950,11 +962,12 @@ public abstract class SchematronConstraintNode {
 					}
 				}
 				if (simple) {
-					// The object is expressed by means of a type with simple
-					// content. The
-					// nodeset will need to undergo a pairwise value comparison.
-					// Note that 19139 treatment has already been done on the
-					// object compiled to xpt.fragment.
+					/*
+					 * The object is expressed by means of a type with simple
+					 * content. The nodeset will need to undergo a pairwise
+					 * value comparison. Note that 19139 treatment has already
+					 * been done on the object compiled to xpt.fragment.
+					 */
 					String var = null;
 					if (xpt.fragment.matches("^\\$[A-Z]+$"))
 						var = xpt.fragment;
@@ -2547,18 +2560,33 @@ public abstract class SchematronConstraintNode {
 		 *         type
 		 */
 		public boolean hasSimpleType(int idx) {
+
 			ClassInfo ci;
 			boolean result = true;
+
 			switch (attributes[idx].absType) {
+
 			case 0: // Normal attribute
 				ci = attributes[idx].main.dataType.umlClass;
-				if (ci != null)
-					result = !XmlSchema.classHasObjectElement(ci);
+				if (ci != null) {
+					Boolean indicatorSimpleType = XmlSchema
+							.indicatorForObjectElementWithSimpleContent(
+									ci);
+					result = !XmlSchema.classHasObjectElement(ci)
+							|| (indicatorSimpleType != null
+									&& indicatorSimpleType);
+				}
 				break;
 			case 1: // Normal absorption
 				ci = attributes[idx].absAttr.dataType.umlClass;
-				if (ci != null)
-					result = !XmlSchema.classHasObjectElement(ci);
+				if (ci != null) {
+					Boolean indicatorSimpleType = XmlSchema
+							.indicatorForObjectElementWithSimpleContent(
+									ci);
+					result = !XmlSchema.classHasObjectElement(ci)
+							|| (indicatorSimpleType != null
+									&& indicatorSimpleType);
+				}
 				break;
 			case 2: // Nil-implementation attribute with a "reason" selector
 			}
@@ -2678,6 +2706,14 @@ public abstract class SchematronConstraintNode {
 				// Namespace and namespace adorned property
 				String proper = schemaObject.getAndRegisterXmlName(pi);
 
+				/*
+				 * We will have to know whether we are subject to the 19139,
+				 * regime, so go and find out
+				 */
+				boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
+						|| (ci != null && ci.matches(
+								"rule-xsd-cls-standard-19139-property-types"));
+
 				// Dispatch on containment cases
 				if (conCode == 0) {
 
@@ -2691,17 +2727,11 @@ public abstract class SchematronConstraintNode {
 					}
 					obj.fragment += proper;
 
-					// We will have to know, whether we are subject to the
-					// 19139,
-					// regime, so go and find out
-					boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
-							|| (ci != null && ci.matches(
-									"rule-xsd-cls-standard-19139-property-types"));
-
-					// We also need to know, whether the property has a codelist
-					// type and whether it is going to be treated according to
-					// the
-					// GML 3.3 way
+					/*
+					 * We also need to know whether the property has a codelist
+					 * type and whether it is going to be treated according to
+					 * the GML 3.3 way
+					 */
 					boolean iscodelist = ci != null
 							&& ci.category() == Options.CODELIST
 							&& ((ci.matches(
@@ -2711,8 +2741,10 @@ public abstract class SchematronConstraintNode {
 											"rule-xsd-cls-codelist-asDictionary")
 											&& ci.asDictionary()));
 
-					// If its a codelist and not GML 3.3 we need to prepare the
-					// CodeListValuePattern.
+					/*
+					 * If it's a codelist and not GML 3.3 we need to prepare the
+					 * CodeListValuePattern.
+					 */
 					String clvpat = "{value}";
 					int nsubst = 1;
 					if (ci != null && iscodelist
@@ -2771,11 +2803,11 @@ public abstract class SchematronConstraintNode {
 					boolean atcurr = ctx.state == BindingContext.CtxState.ATCURRENT;
 					if (attributes[idx].absType == 0) {
 						if (is19139) {
-							// Under 19139 encoding, we will have to match
-							// another
-							// element level, which is for carrying the type,
-							// but
-							// does not concern us a lot ...
+							/*
+							 * Under 19139 encoding, we will have to match
+							 * another element level, which is for carrying the
+							 * type, but does not concern us a lot ...
+							 */
 							obj.fragment += "/*";
 							if (obj.atEnd != null)
 								obj.atEnd.addStep();
@@ -2800,9 +2832,10 @@ public abstract class SchematronConstraintNode {
 								obj.fragment = clvp.replace("{value}",
 										obj.fragment);
 							} else {
-								// If using GML 3.3 type codelist treatment, we
-								// have
-								// to refer to the xlink:href attribute
+								/*
+								 * If using GML 3.3 type codelist treatment, we
+								 * have to refer to the xlink:href attribute
+								 */
 								if (nsubst == 2 && atcurr) {
 									String v = obj.findOrAdd(obj.fragment);
 									obj.fragment = "$" + v;
@@ -2811,7 +2844,6 @@ public abstract class SchematronConstraintNode {
 								schemaObject.registerNamespace("xlink");
 							}
 						}
-
 					}
 
 					// No need to process attributes any further, because we
@@ -2867,9 +2899,19 @@ public abstract class SchematronConstraintNode {
 							String frag = obj.merge(obj1);
 							obj.fragment = frag;
 						}
+
 						// --> //*[@gml:id]=.../attr/@xlink:href]
 						// --> if @gml:id is surrounded with additional text,
 						// --> a concat() construct is used.
+
+						String idAttributeFrag;
+						if (is19139) {
+							idAttributeFrag = "@id";
+						} else {
+							idAttributeFrag = "@gml:id";
+							schemaObject.registerNamespace("gml");
+						}
+
 						String attxlink = obj.fragment;
 						if (attxlink.length() > 0)
 							attxlink += "/";
@@ -2880,16 +2922,15 @@ public abstract class SchematronConstraintNode {
 							frag_ref += "concat(";
 							if (alphaEx)
 								frag_ref += "'" + alpha + "',";
-							frag_ref += "@gml:id";
+							frag_ref += idAttributeFrag;
 							if (betaEx)
 								frag_ref += ",'" + beta + "'";
 							frag_ref += ")";
 						} else {
-							frag_ref += "@gml:id";
+							frag_ref += idAttributeFrag;
 						}
 						frag_ref += "=" + attxlink + "]";
 						schemaObject.registerNamespace("xlink");
-						schemaObject.registerNamespace("gml");
 
 						// Whatever binding context we had before, it is lost
 						if (obj.atEnd != null)
@@ -3333,7 +3374,6 @@ public abstract class SchematronConstraintNode {
 
 		@Override
 		public XpathFragment translate(BindingContext ctx) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}

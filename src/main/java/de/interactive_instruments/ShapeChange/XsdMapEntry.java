@@ -33,9 +33,11 @@ package de.interactive_instruments.ShapeChange;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  */
 public class XsdMapEntry {
 
@@ -49,12 +51,15 @@ public class XsdMapEntry {
 	private String xmlPropertyType;
 	private String xmlAttribute;
 	private String xmlAttributeGroup;
+	private Boolean xmlReferenceable = null;
+	private Boolean xmlElementHasSimpleContent = null;
 	private String nsabr;
 
 	public XsdMapEntry(String type, List<String> encodingRules, String xmlType,
 			String xmlTypeContent, String xmlTypeType, String xmlTypeNilReason,
 			String xmlElement, String xmlPropertyType, String xmlAttribute,
-			String xmlAttributeGroup, String nsabr) {
+			String xmlAttributeGroup, String xmlReferenceable,
+			String xmlElementHasSimpleContent, String nsabr) {
 		super();
 		this.type = type;
 		this.encodingRules = encodingRules;
@@ -66,7 +71,25 @@ public class XsdMapEntry {
 		this.xmlPropertyType = xmlPropertyType;
 		this.xmlAttribute = xmlAttribute;
 		this.xmlAttributeGroup = xmlAttributeGroup;
+
+		if (xmlReferenceable != null) {
+			this.xmlReferenceable = parseBoolean(xmlReferenceable);
+		}
+
+		if (xmlElementHasSimpleContent != null) {
+			this.xmlElementHasSimpleContent = parseBoolean(
+					xmlElementHasSimpleContent);
+		}
+
 		this.nsabr = nsabr;
+	}
+
+	private boolean parseBoolean(String s) {
+		if (s.equals("0") || s.equalsIgnoreCase("false")) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public String getType() {
@@ -97,6 +120,10 @@ public class XsdMapEntry {
 		return xmlElement;
 	}
 
+	public boolean hasXmlElement() {
+		return StringUtils.isNotBlank(xmlElement);
+	}
+
 	public String getXmlPropertyType() {
 		return xmlPropertyType;
 	}
@@ -107,6 +134,22 @@ public class XsdMapEntry {
 
 	public String getXmlAttributeGroup() {
 		return xmlAttributeGroup;
+	}
+
+	/**
+	 * @return the value of XsdMapEntry/@xmlReferenceable; can be
+	 *         <code>null</code> if that attribute was not set in the map entry
+	 */
+	public Boolean getXmlReferenceable() {
+		return xmlReferenceable;
+	}
+
+	/**
+	 * @return the value of XsdMapEntry/@xmlElementHasSimpleContent; can be
+	 *         <code>null</code> if that attribute was not set in the map entry
+	 */
+	public Boolean getXmlElementHasSimpleContent() {
+		return xmlElementHasSimpleContent;
 	}
 
 	public String getNsabr() {

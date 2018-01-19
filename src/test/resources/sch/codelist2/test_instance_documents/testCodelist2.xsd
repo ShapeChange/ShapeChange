@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cliso="http://example.org/shapechange/sch/codelist2/iso19139" xmlns:ex="http://example.org/shapechange/sch/codelist2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmlexr="http://www.opengis.net/gml/3.3/exr" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/codelist2" version="1">
+  <import namespace="http://example.org/shapechange/sch/codelist2/iso19139" schemaLocation="./codeListIso19139.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.3/exr" schemaLocation="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="ex:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attribute1iso" type="cliso:CodeListIso19139_PropertyType"/>
+          <element maxOccurs="unbounded" name="attribute2iso" type="cliso:CodeListIso19139_PropertyType"/>
+          <element name="attribute3Gml32" type="gml:CodeType"/>
+          <element maxOccurs="unbounded" name="attribute4Gml32" type="gml:CodeType"/>
+          <element name="attribute5Gml33" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListGml33</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" name="attribute6Gml33" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListGml33</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

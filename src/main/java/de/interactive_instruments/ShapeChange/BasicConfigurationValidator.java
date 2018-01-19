@@ -36,7 +36,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
@@ -179,6 +178,29 @@ public class BasicConfigurationValidator implements MessageSource {
 			}
 		}
 
+		/*
+		 * ====== Check XmlSchema target configuration ======
+		 */
+		for (TargetConfiguration conf : targetConfigs) {
+
+			if (conf instanceof TargetXmlSchemaConfiguration) {
+
+				TargetXmlSchemaConfiguration xsdConf = (TargetXmlSchemaConfiguration) conf;
+
+				List<XsdMapEntry> xsdMapEntries = xsdConf.getXsdMapEntries();
+
+				for (XsdMapEntry xsdme : xsdMapEntries) {
+
+					if (xsdme.getXmlElementHasSimpleContent() != null
+							&& !xsdme.hasXmlElement()) {
+						result.addError(this, 300, xsdme.getType(),
+								String.join(" ", xsdme.getEncodingRules()));
+						isValid = false;
+					}
+				}
+			}
+		}
+
 		return isValid;
 	}
 
@@ -214,6 +236,10 @@ public class BasicConfigurationValidator implements MessageSource {
 			return "Source for descriptor '$1$' is 'sc:extract', but required token is not provided.";
 		case 201:
 			return "Source for descriptor '$1$' is 'tag', but required tag is not provided.";
+
+		// 300-399: Validation of XsdMapEntries
+		case 300:
+			return "XsdMapEntry with @type '$1$' and @xsdEncodingRule '$2$' is invalid because @xmlElementHasSimpleContent is set but @xmlElement has no value.";
 
 		default:
 			return "(" + BasicConfigurationValidator.class.getName()

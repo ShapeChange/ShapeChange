@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sch/metadataProfile/testEA_sch_metadataProfile.xml" end="Fri Jan 19 17:32:50 CET 2018" resultCode="0" start="Fri Jan 19 17:32:09 CET 2018" version="2.5.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\metadataProfile\test_sch_metadataProfile.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\metadataProfile\test_sch_metadataProfile.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\metadataProfile\test_sch_metadataProfile.eap"/>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC211::ISO 19103 Conceptual schema language::ISO TS19103 Edition 1::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC211::ISO 19103 Conceptual schema language::ISO TS19103 Edition 1::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC211::ISO 19103 Conceptual schema language::ISO TS19103 Edition 1::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC211::ISO 19103 Conceptual schema language::ISO TS19103 Edition 1::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\metadataProfile\test_sch_metadataProfile.eap"/>
+    <Info message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'MetadataProfile', target namespace: 'http://example.org/shapechange/metadataprofile'"/>
+    <Info message="Now processing target 'XML Schema' for input 'IDENTITY'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'IDENTITY'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/metadataProfile/xsd/IDENTITY/mdProfile.xsd" scope="http://example.org/shapechange/metadataprofile" target="XML Schema">mdProfile.xsd</Result>
+  </Results>
+</ShapeChangeResult>

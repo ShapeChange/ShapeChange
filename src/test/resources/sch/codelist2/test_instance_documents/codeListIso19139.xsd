@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cliso="http://example.org/shapechange/sch/codelist2/iso19139" xmlns:gco="http://www.isotc211.org/2005/gco" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/codelist2/iso19139" version="1">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="CodeListIso19139" substitutionGroup="gco:CharacterString" type="gco:CodeListValue_Type"/>
+  <complexType name="CodeListIso19139_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="cliso:CodeListIso19139"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

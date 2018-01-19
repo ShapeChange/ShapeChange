@@ -6,7 +6,7 @@
  xmlns:cliso="http://example.org/shapechange/sch/codelist2/iso19139" xmlns:gmx="http://www.isotc211.org/2005/gmx"
  xmlns:ex="http://example.org/shapechange/sch/codelist2"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://example.org/shapechange/sch/codelist2 file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/INPUT/testCodelist2.xsd"
+ xsi:schemaLocation="http://example.org/shapechange/sch/codelist2 ./testCodelist2.xsd"
  gml:id="ID000">
  <ex:attribute1iso>
   <cliso:CodeListIso19139 codeList="file:/C:/TMP/CodeListIso19139.xml" codeListValue="code1"/>

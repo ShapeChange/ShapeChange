@@ -202,7 +202,8 @@ public abstract class FolSchematronNode {
 					String frag_inl = null;
 					String frag_ref = null;
 
-					if (conCode == INLINE || conCode == INLINE_OR_BY_REFERENCE) {
+					if (conCode == INLINE
+							|| conCode == INLINE_OR_BY_REFERENCE) {
 
 						// In-line containment must be treated
 						// --> $var/*
@@ -323,8 +324,12 @@ public abstract class FolSchematronNode {
 
 		ClassInfo ci = getTypeClassInfo(pi);
 
-		if (ci != null)
-			result = !XmlSchema.classHasObjectElement(ci);
+		if (ci != null) {
+			Boolean indicatorSimpleType = XmlSchema
+					.indicatorForObjectElementWithSimpleContent(ci);
+			result = !XmlSchema.classHasObjectElement(ci)
+					|| (indicatorSimpleType != null && indicatorSimpleType);
+		}
 
 		return result;
 	}
@@ -345,8 +350,8 @@ public abstract class FolSchematronNode {
 
 		if (schemaObject.options.getAIXMSchemaInfos() != null) {
 
-			AIXMSchemaInfo si = schemaObject.options.getAIXMSchemaInfos().get(
-					i.id());
+			AIXMSchemaInfo si = schemaObject.options.getAIXMSchemaInfos()
+					.get(i.id());
 
 			if (si != null)
 				return si.isExtension();
@@ -908,17 +913,18 @@ public abstract class FolSchematronNode {
 			// Obtain the necessary classes from the model
 			TreeSet<String> classnames = new TreeSet<String>();
 
-			SortedSet<ClassInfo> subtypes = argumentClass.subtypesInCompleteHierarchy();
+			SortedSet<ClassInfo> subtypes = argumentClass
+					.subtypesInCompleteHierarchy();
 
 			for (ClassInfo subtype : subtypes) {
 				if (subtype.isAbstract())
 					continue;
 				classnames.add(schemaObject.getAndRegisterXmlName(subtype));
-			}			
+			}
 
 			if (!argumentClass.isAbstract())
-				classnames.add(schemaObject
-						.getAndRegisterXmlName(argumentClass));
+				classnames
+						.add(schemaObject.getAndRegisterXmlName(argumentClass));
 
 			// Construct the result expression
 			if (classnames.size() == 0) {
@@ -1183,8 +1189,8 @@ public abstract class FolSchematronNode {
 
 				if (vardecl.getNextOuterScope() != null) {
 
-					return this.schemaObject.varNodesByVarName.get(
-							vardecl.getNextOuterScope().getName())
+					return this.schemaObject.varNodesByVarName
+							.get(vardecl.getNextOuterScope().getName())
 							.generatingAttribute();
 
 				} else {
@@ -1214,9 +1220,9 @@ public abstract class FolSchematronNode {
 
 				} else {
 
-					// TODO
 					// System.out
-					// .println("ERROR - no AttributeNode in child of VariableNode");
+					// .println("ERROR - no AttributeNode in child of
+					// VariableNode");
 					return super.hasSimpleType();
 				}
 
@@ -1224,8 +1230,8 @@ public abstract class FolSchematronNode {
 
 				if (vardecl.getNextOuterScope() != null) {
 
-					return this.schemaObject.varNodesByVarName.get(
-							vardecl.getNextOuterScope().getName())
+					return this.schemaObject.varNodesByVarName
+							.get(vardecl.getNextOuterScope().getName())
 							.hasSimpleType();
 				} else {
 
@@ -1255,9 +1261,9 @@ public abstract class FolSchematronNode {
 					return an.hasIdentity();
 
 				} else {
-					// TODO
 					// System.out
-					// .println("ERROR - no AttributeNode in child of VariableNode");
+					// .println("ERROR - no AttributeNode in child of
+					// VariableNode");
 					return super.hasIdentity();
 				}
 
@@ -1265,8 +1271,8 @@ public abstract class FolSchematronNode {
 
 				if (vardecl.getNextOuterScope() != null) {
 
-					return this.schemaObject.varNodesByVarName.get(
-							vardecl.getNextOuterScope().getName())
+					return this.schemaObject.varNodesByVarName
+							.get(vardecl.getNextOuterScope().getName())
 							.hasIdentity();
 				} else {
 
@@ -1453,7 +1459,8 @@ public abstract class FolSchematronNode {
 		 * @param pc
 		 *            The PropertyCall representing the absorbed property.
 		 */
-		public void appendAbsorbedAttribute(int absorptionType, PropertyCall pc) {
+		public void appendAbsorbedAttribute(int absorptionType,
+				PropertyCall pc) {
 			int last = attributes.length - 1;
 			attributes[last].absAttr = pc;
 			attributes[last].absType = absorptionType;
@@ -1574,8 +1581,8 @@ public abstract class FolSchematronNode {
 			for (AttrComp at : attributes) {
 
 				if (at.main.getSchemaElement().cardinality().maxOccurs > 1
-						|| at.absType == 1
-						&& at.absAttr.getSchemaElement().cardinality().maxOccurs > 1)
+						|| at.absType == 1 && at.absAttr.getSchemaElement()
+								.cardinality().maxOccurs > 1)
 					return true;
 			}
 
@@ -1608,12 +1615,12 @@ public abstract class FolSchematronNode {
 			switch (attributes[idx].absType) {
 
 			case 0: // Normal attribute
-				result = implementedAsXmlAttribute(attributes[idx].main
-						.getSchemaElement());
+				result = implementedAsXmlAttribute(
+						attributes[idx].main.getSchemaElement());
 				break;
 			case 1: // Normal absorption
-				result = implementedAsXmlAttribute(attributes[idx].absAttr
-						.getSchemaElement());
+				result = implementedAsXmlAttribute(
+						attributes[idx].absAttr.getSchemaElement());
 				break;
 			case 2: // Nil-implementation attribute with a "reason" selector
 			}
@@ -1650,8 +1657,8 @@ public abstract class FolSchematronNode {
 				result = hasSimpleType(attributes[idx].main.getSchemaElement());
 				break;
 			case 1: // Normal absorption
-				result = hasSimpleType(attributes[idx].absAttr
-						.getSchemaElement());
+				result = hasSimpleType(
+						attributes[idx].absAttr.getSchemaElement());
 				break;
 			case 2: // Nil-implementation attribute with a "reason" selector
 			}
@@ -1697,8 +1704,8 @@ public abstract class FolSchematronNode {
 					result = XmlSchema.classCanBeReferenced(ci);
 				break;
 			case 1: // Normal absorption
-				ci = getTypeClassInfo(attributes[idx].absAttr
-						.getSchemaElement());
+				ci = getTypeClassInfo(
+						attributes[idx].absAttr.getSchemaElement());
 				if (ci != null)
 					result = XmlSchema.classCanBeReferenced(ci);
 				break;
@@ -1816,8 +1823,8 @@ public abstract class FolSchematronNode {
 
 				// If absorbing assume the type of the absorbed entity
 				if (attributes[idx].absType == 1)
-					ci = getTypeClassInfo(attributes[idx].absAttr
-							.getSchemaElement());
+					ci = getTypeClassInfo(
+							attributes[idx].absAttr.getSchemaElement());
 
 				if (!hasSimpleType(idx)) {
 					// Not a simple type, assume in-line
@@ -1842,8 +1849,8 @@ public abstract class FolSchematronNode {
 						obj.priority = 9;
 					}
 
-					obj.fragment += schemaObject.getAndRegisterXmlns(pi
-							.inClass()) + ":extension/*";
+					obj.fragment += schemaObject
+							.getAndRegisterXmlns(pi.inClass()) + ":extension/*";
 
 				}
 
@@ -1868,8 +1875,8 @@ public abstract class FolSchematronNode {
 					 * 19139, regime, so go and find out
 					 */
 					boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
-							|| (ci != null && ci
-									.matches("rule-xsd-cls-standard-19139-property-types"));
+							|| (ci != null && ci.matches(
+									"rule-xsd-cls-standard-19139-property-types"));
 
 					/*
 					 * We also need to know, whether the property has a codelist
@@ -1878,19 +1885,21 @@ public abstract class FolSchematronNode {
 					 */
 					boolean iscodelist = ci != null
 							&& ci.category() == Options.CODELIST
-							&& ((ci.matches("rule-xsd-cls-codelist-asDictionaryGml33") && ci
-									.asDictionaryGml33()) || (ci
-									.matches("rule-xsd-cls-codelist-asDictionary") && ci
-									.asDictionary()));
+							&& ((ci.matches(
+									"rule-xsd-cls-codelist-asDictionaryGml33")
+									&& ci.asDictionaryGml33())
+									|| (ci.matches(
+											"rule-xsd-cls-codelist-asDictionary")
+											&& ci.asDictionary()));
 
 					// If its a codelist and not GML 3.3 we need to prepare the
 					// CodeListValuePattern.
 					String clvpat = "{value}";
 					// int nsubst = 1;
-					if (ci != null
-							&& iscodelist
+					if (ci != null && iscodelist
 							&& !(schemaObject.options.matchesEncRule(
-									pi.encodingRule("xsd"), "gml33") || is19139)) {
+									pi.encodingRule("xsd"), "gml33")
+									|| is19139)) {
 						String uri = ci.taggedValue("codeList");
 						if (uri != null && uri.length() > 0) {
 							clvpat = "{codeList}/{value}";
@@ -1956,7 +1965,8 @@ public abstract class FolSchematronNode {
 
 						} else if (iscodelist) {
 
-							if (!ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")) {
+							if (!ci.matches(
+									"rule-xsd-cls-codelist-asDictionaryGml33")) {
 								// In elder GMLs we might find the codespace in
 								// the codespace attribute
 								String clvp = clvpat.replace("{codeList}",
@@ -2045,8 +2055,8 @@ public abstract class FolSchematronNode {
 							// Whatever binding context we had before, it is
 							// lost
 							if (obj.atEnd != null)
-								obj.atEnd
-										.setState(BindingContext.CtxState.OTHER);
+								obj.atEnd.setState(
+										BindingContext.CtxState.OTHER);
 						}
 
 						// Set the fragment value, possibly combining both
@@ -2167,7 +2177,8 @@ public abstract class FolSchematronNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public QuantificationNode(FOL2Schematron schemaObject, Quantification q) {
+		public QuantificationNode(FOL2Schematron schemaObject,
+				Quantification q) {
 			this.schemaObject = schemaObject;
 			this.q = q;
 		}
@@ -2218,8 +2229,8 @@ public abstract class FolSchematronNode {
 
 					if (quan.getLowerBoundary().intValue() == quan
 							.getUpperBoundary().intValue()) {
-						xpt.fragment += COUNTING_VARIABLE_NAME + cvIndex
-								+ " = " + quan.getLowerBoundary();
+						xpt.fragment += COUNTING_VARIABLE_NAME + cvIndex + " = "
+								+ quan.getLowerBoundary();
 					} else {
 						xpt.fragment += COUNTING_VARIABLE_NAME + cvIndex
 								+ " >= " + quan.getLowerBoundary() + " and "
@@ -2329,7 +2340,6 @@ public abstract class FolSchematronNode {
 
 		@Override
 		public XpathFragment translate(BindingContext ctx) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}

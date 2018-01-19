@@ -361,9 +361,37 @@ public class Options {
 	 * </ul>
 	 */
 	protected HashMap<String, MapEntry> fBaseMap = new HashMap<String, MapEntry>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: MapEntry with:
+	 * <ul>
+	 * <li>rule: ("direct")</li>
+	 * <li>p1: xmlElement</li>
+	 * </ul>
+	 */
 	protected HashMap<String, MapEntry> fElementMap = new HashMap<String, MapEntry>();
 	protected HashMap<String, MapEntry> fAttributeMap = new HashMap<String, MapEntry>();
 	protected HashMap<String, MapEntry> fAttributeGroupMap = new HashMap<String, MapEntry>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: boolean value of XsdMapEntry/@xmlReferenceable, or
+	 * <code>null</code> if that XML attribute was not set
+	 * </ul>
+	 */
+	protected Map<String, Boolean> fXmlReferenceableMap = new HashMap<>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: boolean value of XsdMapEntry/@xmlElementHasSimpleContent, or
+	 * <code>null</code> if that XML attribute was not set
+	 * </ul>
+	 */
+	protected Map<String, Boolean> fXmlElementHasSimpleContentMap = new HashMap<>();
 
 	/**
 	 * Map entries for a non-XML Schema target
@@ -1616,58 +1644,8 @@ public class Options {
 					}
 
 					// add xsd map entries
-					for (XsdMapEntry xsdme : config.getXsdMapEntries()) {
+					addXsdMapEntries(config.getXsdMapEntries());
 
-						for (String xsdEncodingRule : xsdme
-								.getEncodingRules()) {
-
-							String type = xsdme.getType();
-							String xmlPropertyType = xsdme.getXmlPropertyType();
-							String xmlElement = xsdme.getXmlElement();
-							String xmlTypeContent = xsdme.getXmlTypeContent();
-							String xmlTypeNilReason = xsdme
-									.getXmlTypeNilReason();
-							String xmlType = xsdme.getXmlType();
-							String xmlTypeType = xsdme.getXmlTypeType();
-							String xmlAttribute = xsdme.getXmlAttribute();
-							String xmlAttributeGroup = xsdme
-									.getXmlAttributeGroup();
-
-							if (xmlPropertyType != null) {
-								if (xmlPropertyType.equals("_P_")
-										&& xmlElement != null) {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"propertyType", xmlElement);
-								} else if (xmlPropertyType.equals("_MP_")
-										&& xmlElement != null) {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"metadataPropertyType", xmlElement);
-								} else {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"direct", xmlPropertyType,
-											xmlTypeType + "/" + xmlTypeContent,
-											xmlTypeNilReason);
-								}
-							}
-							if (xmlElement != null) {
-								addElementMapEntry(type, xsdEncodingRule,
-										"direct", xmlElement);
-							}
-							if (xmlType != null) {
-								addBaseMapEntry(type, xsdEncodingRule, "direct",
-										xmlType,
-										xmlTypeType + "/" + xmlTypeContent);
-							}
-							if (xmlAttribute != null) {
-								addAttributeMapEntry(type, xsdEncodingRule,
-										xmlAttribute);
-							}
-							if (xmlAttributeGroup != null) {
-								addAttributeGroupMapEntry(type, xsdEncodingRule,
-										xmlAttributeGroup);
-							}
-						}
-					}
 				} else {
 
 					// add map entries for Target (no need to do this for
@@ -1845,6 +1823,60 @@ public class Options {
 		}
 	}
 
+	private void addXmlElementHasSimpleContent(String type,
+			String xsdEncodingRule, Boolean xmlElementHasSimpleContent) {
+
+		fXmlElementHasSimpleContentMap.put(type + "#" + xsdEncodingRule,
+				xmlElementHasSimpleContent);
+
+	}
+
+	/**
+	 * @param type
+	 * @param xsdEncodingRule
+	 * @return the boolean value of XsdMapEntry/@xmlElementHasSimpleContent, for
+	 *         the map entry with the given type and encoding rule (or one of
+	 *         the rules it extends); can be <code>null</code> if that attribute
+	 *         was not set in the map entry or no map entry exists for the type
+	 *         in the given encoding rule (or one of the rules it extends)
+	 */
+	public Boolean xmlElementHasSimpleContent(String type,
+			String xsdEncodingRule) {
+		String rule = xsdEncodingRule;
+		Boolean val = null;
+		while (val == null && rule != null) {
+			val = fXmlElementHasSimpleContentMap.get(type + "#" + rule);
+			rule = extendsEncRule(rule);
+		}
+		return val;
+	}
+
+	/**
+	 * @param type
+	 * @param xsdEncodingRule
+	 * @return the boolean value of XsdMapEntry/@xmlReferenceable, for the map
+	 *         entry with the given type and encoding rule (or one of the rules
+	 *         it extends); can be <code>null</code> if that attribute was not
+	 *         set in the map entry or no map entry exists for the type in the
+	 *         given encoding rule (or one of the rules it extends)
+	 */
+	private void addXmlReferenceableMapEntry(String type,
+			String xsdEncodingRule, Boolean xmlReferenceable) {
+
+		fXmlReferenceableMap.put(type + "#" + xsdEncodingRule,
+				xmlReferenceable);
+	}
+
+	public Boolean xmlReferenceable(String type, String xsdEncodingRule) {
+		String rule = xsdEncodingRule;
+		Boolean val = null;
+		while (val == null && rule != null) {
+			val = fXmlReferenceableMap.get(type + "#" + rule);
+			rule = extendsEncRule(rule);
+		}
+		return val;
+	}
+
 	/**
 	 *
 	 */
@@ -1991,55 +2023,8 @@ public class Options {
 				}
 
 				// add xsd map entries
-				for (XsdMapEntry xsdme : config.getXsdMapEntries()) {
+				addXsdMapEntries(config.getXsdMapEntries());
 
-					for (String xsdEncodingRule : xsdme.getEncodingRules()) {
-
-						String type = xsdme.getType();
-						String xmlPropertyType = xsdme.getXmlPropertyType();
-						String xmlElement = xsdme.getXmlElement();
-						String xmlTypeContent = xsdme.getXmlTypeContent();
-						String xmlTypeNilReason = xsdme.getXmlTypeNilReason();
-						String xmlType = xsdme.getXmlType();
-						String xmlTypeType = xsdme.getXmlTypeType();
-						String xmlAttribute = xsdme.getXmlAttribute();
-						String xmlAttributeGroup = xsdme.getXmlAttributeGroup();
-
-						if (xmlPropertyType != null) {
-							if (xmlPropertyType.equals("_P_")
-									&& xmlElement != null) {
-								addTypeMapEntry(type, xsdEncodingRule,
-										"propertyType", xmlElement);
-							} else if (xmlPropertyType.equals("_MP_")
-									&& xmlElement != null) {
-								addTypeMapEntry(type, xsdEncodingRule,
-										"metadataPropertyType", xmlElement);
-							} else {
-								addTypeMapEntry(type, xsdEncodingRule, "direct",
-										xmlPropertyType,
-										xmlTypeType + "/" + xmlTypeContent,
-										xmlTypeNilReason);
-							}
-						}
-						if (xmlElement != null) {
-							addElementMapEntry(type, xsdEncodingRule, "direct",
-									xmlElement);
-						}
-						if (xmlType != null) {
-							addBaseMapEntry(type, xsdEncodingRule, "direct",
-									xmlType,
-									xmlTypeType + "/" + xmlTypeContent);
-						}
-						if (xmlAttribute != null) {
-							addAttributeMapEntry(type, xsdEncodingRule,
-									xmlAttribute);
-						}
-						if (xmlAttributeGroup != null) {
-							addAttributeGroupMapEntry(type, xsdEncodingRule,
-									xmlAttributeGroup);
-						}
-					}
-				}
 			} else {
 
 				// add map entries for Target (no need to do this for
@@ -2060,6 +2045,67 @@ public class Options {
 			GML_NS = nsme.rule;
 		}
 
+	}
+
+	private void addXsdMapEntries(List<XsdMapEntry> xsdMapEntries) {
+
+		for (XsdMapEntry xsdme : xsdMapEntries) {
+
+			for (String xsdEncodingRule : xsdme.getEncodingRules()) {
+
+				String type = xsdme.getType();
+				String xmlPropertyType = xsdme.getXmlPropertyType();
+				String xmlElement = xsdme.getXmlElement();
+				String xmlTypeContent = xsdme.getXmlTypeContent();
+				String xmlTypeNilReason = xsdme.getXmlTypeNilReason();
+				String xmlType = xsdme.getXmlType();
+				String xmlTypeType = xsdme.getXmlTypeType();
+				String xmlAttribute = xsdme.getXmlAttribute();
+				String xmlAttributeGroup = xsdme.getXmlAttributeGroup();
+				Boolean xmlReferenceable = xsdme.getXmlReferenceable();
+				Boolean xmlElementHasSimpleContent = xsdme
+						.getXmlElementHasSimpleContent();
+
+				if (xmlPropertyType != null) {
+					if (xmlPropertyType.equals("_P_") && xmlElement != null) {
+						addTypeMapEntry(type, xsdEncodingRule, "propertyType",
+								xmlElement);
+					} else if (xmlPropertyType.equals("_MP_")
+							&& xmlElement != null) {
+						addTypeMapEntry(type, xsdEncodingRule,
+								"metadataPropertyType", xmlElement);
+					} else {
+						addTypeMapEntry(type, xsdEncodingRule, "direct",
+								xmlPropertyType,
+								xmlTypeType + "/" + xmlTypeContent,
+								xmlTypeNilReason);
+					}
+				}
+				if (xmlElement != null) {
+					addElementMapEntry(type, xsdEncodingRule, "direct",
+							xmlElement);
+				}
+				if (xmlType != null) {
+					addBaseMapEntry(type, xsdEncodingRule, "direct", xmlType,
+							xmlTypeType + "/" + xmlTypeContent);
+				}
+				if (xmlAttribute != null) {
+					addAttributeMapEntry(type, xsdEncodingRule, xmlAttribute);
+				}
+				if (xmlAttributeGroup != null) {
+					addAttributeGroupMapEntry(type, xsdEncodingRule,
+							xmlAttributeGroup);
+				}
+				if (xmlReferenceable != null) {
+					addXmlReferenceableMapEntry(type, xsdEncodingRule,
+							xmlReferenceable);
+				}
+				if (xmlElementHasSimpleContent != null) {
+					addXmlElementHasSimpleContent(type, xsdEncodingRule,
+							xmlElementHasSimpleContent);
+				}
+			}
+		}
 	}
 
 	private void setStandardParameters() {
@@ -2954,13 +3000,26 @@ public class Options {
 											"xmlAttributeGroup")
 									: null;
 
+					String xmlReferenceable = xsdMapEntryE
+							.hasAttribute("xmlReferenceable")
+									? xsdMapEntryE.getAttribute(
+											"xmlReferenceable")
+									: null;
+
+					String xmlElementHasSimpleContent = xsdMapEntryE
+							.hasAttribute("xmlElementHasSimpleContent")
+									? xsdMapEntryE.getAttribute(
+											"xmlElementHasSimpleContent")
+									: null;
+
 					String nsabr = xsdMapEntryE.hasAttribute("nsabr")
 							? xsdMapEntryE.getAttribute("nsabr") : null;
 
 					result.add(new XsdMapEntry(type, encodingRules, xmlType,
 							xmlTypeContent, xmlTypeType, xmlTypeNilReason,
 							xmlElement, xmlPropertyType, xmlAttribute,
-							xmlAttributeGroup, nsabr));
+							xmlAttributeGroup, xmlReferenceable,
+							xmlElementHasSimpleContent, nsabr));
 				}
 			}
 		}
