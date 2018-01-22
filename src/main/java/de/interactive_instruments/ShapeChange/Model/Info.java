@@ -333,7 +333,8 @@ public interface Info extends Comparable<Info> {
 	 * NOTE: The returned object is a copy; modifications to that copy do NOT
 	 * change the stereotypes of this Info object.
 	 * 
-	 * @return all (normalized) stereotypes of the model element
+	 * @return all (normalized) stereotypes of the model element; can be empty
+	 *         but not <code>null</code>
 	 */
 	public Stereotypes stereotypes();
 
@@ -453,7 +454,7 @@ public interface Info extends Comparable<Info> {
 	public TaggedValues taggedValuesAll();
 
 	public void removeTaggedValue(String tag);
-	
+
 	/**
 	 * Retrieves all tagged values of the model element.
 	 * 

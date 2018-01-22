@@ -72,10 +72,10 @@ public class ProcessConfiguration {
 	private Map<String, ProcessRuleSet> ruleSets = null;
 
 	/**
-	 * A list of the type map entries for the process. <code>null</code> if no
-	 * map entries were declared in the configuration.
+	 * A list of the type map entries for the process. Can be empty but not
+	 * <code>null</code>.
 	 */
-	private List<ProcessMapEntry> mapEntries = null;
+	private List<ProcessMapEntry> mapEntries;
 	/**
 	 * key; type; value: MapEntry object with that type
 	 */
@@ -112,8 +112,8 @@ public class ProcessConfiguration {
 	 *            The rule sets declared for the process. <code>null</code> if
 	 *            no rule sets were declared in the configuration.
 	 * @param mapEntries
-	 *            The map entries for the process. <code>null</code> if no map
-	 *            entries were declared in the configuration.
+	 *            The map entries for the process. Can be <code>null</code> if
+	 *            no map entries were declared in the configuration.
 	 */
 	public ProcessConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
@@ -127,8 +127,10 @@ public class ProcessConfiguration {
 		this.ruleSets = ruleSets;
 		this.advancedProcessConfigurations = advancedProcessConfigurations;
 
-		this.mapEntries = mapEntries;
-		if (mapEntries != null) {
+		if (mapEntries == null) {
+			this.mapEntries = new ArrayList<>();
+		} else {
+			this.mapEntries = mapEntries;
 			for (ProcessMapEntry pme : mapEntries) {
 				this.mapEntryByType.put(pme.type, pme);
 			}
@@ -352,11 +354,11 @@ public class ProcessConfiguration {
 	}
 
 	/**
-	 * @return The map entries for the process. <code>null</code> if no map
-	 *         entries were declared in the configuration.
+	 * @return The map entries for the process. Can be empty but not
+	 *         <code>null</code>.
 	 */
 	public List<ProcessMapEntry> getMapEntries() {
-		return mapEntries;
+		return this.mapEntries;
 	}
 
 	public boolean hasParameter(String paramName) {
@@ -428,7 +430,7 @@ public class ProcessConfiguration {
 		}
 
 		sb.append("\tmap entries: ");
-		if (this.mapEntries == null || mapEntries.isEmpty()) {
+		if (this.mapEntries.isEmpty()) {
 			sb.append("none\r\n");
 		} else {
 			sb.append("\r\n");

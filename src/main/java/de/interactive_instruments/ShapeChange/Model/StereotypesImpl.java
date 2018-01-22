@@ -47,12 +47,16 @@ public abstract class StereotypesImpl implements Stereotypes {
 		return size()==0;
 	}
 	
+	@Override
 	public String toString() {
+		
 		String res = "";
+		
 		for (String s : asArray()) {
 			res += (res.isEmpty() ? "" : ",");
 			res += s;
 		}
+				
 		return res;
 	}	
 }

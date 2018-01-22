@@ -242,6 +242,17 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 		}
 	}
 
+	public static void setEAStereotype(ConnectorEnd conEnd,
+			String stereotype) throws EAException {
+
+		conEnd.SetStereotype(stereotype);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(112), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+	
 	public static void setEAStereotypeEx(ConnectorEnd conEnd,
 			String stereotypeEx) throws EAException {
 
@@ -549,7 +560,9 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'AllowDuplicates' of EA connector end '$1$'. Error message is: $2$";
 		case 111:
 			return "EA error encountered while updating 'Aggregation' of EA connector end '$1$'. Error message is: $2$";
-
+		case 112:
+			return "EA error encountered while updating 'Stereotype' of EA connector end '$1$'. Error message is: $2$";
+		
 		default:
 			return "(" + EAConnectorUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;

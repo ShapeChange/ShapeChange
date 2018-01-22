@@ -201,11 +201,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
 					.getMapEntries();
 
-			if (mapEntries != null) {
-
-				for (ProcessMapEntry pme : mapEntries) {
-					mapEntryByType.put(pme.getType(), pme);
-				}
+			for (ProcessMapEntry pme : mapEntries) {
+				mapEntryByType.put(pme.getType(), pme);
 			}
 
 			// ======================================
@@ -238,8 +235,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			addAttribute(root, "xmlns", NS);
 
 			if (options.getCurrentProcessConfig().parameterAsString(
-					TargetOutputProcessor.PARAM_ADD_COMMENT, null,
-					false, true) == null) {
+					TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+					true) == null) {
 				Comment generationComment = document.createComment(
 						"Created by ShapeChange - http://shapechange.net/");
 				root.appendChild(generationComment);

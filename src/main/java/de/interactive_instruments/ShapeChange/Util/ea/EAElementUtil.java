@@ -290,7 +290,7 @@ public class EAElementUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * Sets attribute StereotypeEx on the given EA element.
+	 * Sets attribute Stereotype on the given EA element.
 	 * 
 	 * @param e
 	 * @param stereotype
@@ -298,10 +298,30 @@ public class EAElementUtil extends AbstractEAUtil {
 	 *             If updating the element did not succeed, this exception
 	 *             contains the error message.
 	 */
-	public static void setEAStereotypeEx(Element e, String stereotype)
+	public static void setEAStereotype(Element e, String stereotype)
 			throws EAException {
 
-		e.SetStereotypeEx(stereotype);
+		e.SetStereotype(stereotype);
+
+		if (!e.Update()) {
+			throw new EAException(
+					createMessage(message(110), e.GetName(), e.GetLastError()));
+		}
+	}
+	
+	/**
+	 * Sets attribute StereotypeEx on the given EA element.
+	 * 
+	 * @param e
+	 * @param stereotypeEx
+	 * @throws EAException
+	 *             If updating the element did not succeed, this exception
+	 *             contains the error message.
+	 */
+	public static void setEAStereotypeEx(Element e, String stereotypeEx)
+			throws EAException {
+
+		e.SetStereotypeEx(stereotypeEx);
 
 		if (!e.Update()) {
 			throw new EAException(
@@ -739,6 +759,9 @@ public class EAElementUtil extends AbstractEAUtil {
 			return "EA error encountered while updating new EA attribute '$1$' on element '$2$'. Error message is: $3$";
 		case 109:
 			return "EA error encountered while loading linked document for EA element '$1$' from path '$2$'. Error message is: $3$";
+		case 110:
+			return "EA error encountered while updating 'Stereotype' of EA element '$1$'. Error message is: $2$";
+		
 		case 1005:
 			return "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
 		case 1006:

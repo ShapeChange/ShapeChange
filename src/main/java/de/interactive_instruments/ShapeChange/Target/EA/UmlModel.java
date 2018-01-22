@@ -31,7 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.EA;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -58,6 +62,7 @@ import com.google.common.collect.HashMultimap;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -97,6 +102,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	public static final String PARAM_OUTPUT_DIR = "outputDirectory";
 	public static final String PARAM_MODEL_FILENAME = "modelFilename";
 	public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
+	public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
 
 	private static boolean initialised = false;
 	private static String outputFilename = null;
@@ -114,6 +120,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			.create();
 	private static List<ClassInfo> classesToProcess = new ArrayList<ClassInfo>();
 	private static Map<PackageInfo, Integer> eaPkgIdByPackageInfo = new HashMap<PackageInfo, Integer>();
+	private static Map<String, String> stereotypeMappings = new HashMap<>();
 
 	private Model model = null;
 	private Options options = null;
@@ -147,7 +154,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 			documentationNoValue = options.parameter(this.getClass().getName(),
 					"documentationNoValue");
 
-			/** Make sure repository file exists */
+			/*
+			 * Make sure repository file exists
+			 */
 			java.io.File repfile = null;
 
 			java.io.File outDir = new java.io.File(outputDirectory);
@@ -179,11 +188,53 @@ public class UmlModel implements SingleTarget, MessageSource {
 			String absname = repfile.getAbsolutePath();
 
 			if (!ex) {
-				if (!rep.CreateModel(CreateModelType.cmEAPFromBase, absname,
-						0)) {
-					r.addError(null, 31, absname);
-					rep = null;
-					return;
+
+				/*
+				 * Either copy EAP template, or create new repository.
+				 */
+
+				String eapTemplateFilePath = options.parameter(
+						this.getClass().getName(), PARAM_EAP_TEMPLATE);
+
+				if (eapTemplateFilePath != null) {
+
+					// copy template file either from remote or local URI
+					if (eapTemplateFilePath.toLowerCase().startsWith("http")) {
+						try {
+							URL templateUrl = new URL(eapTemplateFilePath);
+							FileUtils.copyURLToFile(templateUrl, repfile);
+						} catch (MalformedURLException e1) {
+							result.addFatalError(this, 51, eapTemplateFilePath,
+									e1.getMessage());
+							throw new ShapeChangeAbortException();
+						} catch (IOException e2) {
+							result.addFatalError(this, 53, e2.getMessage());
+							throw new ShapeChangeAbortException();
+						}
+					} else {
+						File eaptemplate = new File(eapTemplateFilePath);
+						if (eaptemplate.exists()) {
+							try {
+								FileUtils.copyFile(eaptemplate, repfile);
+							} catch (IOException e) {
+								result.addFatalError(this, 53, e.getMessage());
+								throw new ShapeChangeAbortException();
+							}
+						} else {
+							result.addFatalError(this, 52,
+									eaptemplate.getAbsolutePath());
+							throw new ShapeChangeAbortException();
+						}
+					}
+
+				} else {
+
+					if (!rep.CreateModel(CreateModelType.cmEAPFromBase, absname,
+							0)) {
+						r.addError(null, 31, absname);
+						rep = null;
+						return;
+					}
 				}
 			}
 
@@ -222,6 +273,23 @@ public class UmlModel implements SingleTarget, MessageSource {
 				result.addError("EA-Fehler: " + pOut.GetLastError());
 			}
 			pOut_EaPkgId = pOut.GetPackageID();
+
+			// load stereotype mappings
+			List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
+					.getMapEntries();
+			for (ProcessMapEntry me : mapEntries) {
+				if ("stereotype".equalsIgnoreCase(me.getParam())) {
+					/*
+					 * NOTE: We map the value of @type, i.e. the well-known
+					 * stereotype, to lower case, since all well-known
+					 * stereotypes are in lower case. This avoids potential
+					 * configuration issues.
+					 */
+					stereotypeMappings.put(
+							me.getType().toLowerCase(Locale.ENGLISH),
+							me.getTargetType());
+				}
+			}
 
 			initialised = true;
 		}
@@ -345,10 +413,6 @@ public class UmlModel implements SingleTarget, MessageSource {
 		return type;
 	}
 
-	private String stereotypesCSV(Stereotypes stereotypes) {
-		return stereotypes == null ? "" : stereotypes.toString();
-	}
-
 	private void cloneAttribute(Element e, PropertyInfo propi) {
 
 		try {
@@ -366,7 +430,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 					propi.name(), propi.aliasName(),
 					propi.derivedDocumentation(documentationTemplate,
 							documentationNoValue),
-					propi.stereotypes().asSet(), taggedValues,
+					mapStereotypes(propi.stereotypes()).asSet(), taggedValues,
 					propi.isDerived(), propi.isOrdered(), !propi.isUnique(),
 					propi.initialValue(), propi.cardinality(),
 					propi.typeInfo().name, null);
@@ -386,6 +450,32 @@ public class UmlModel implements SingleTarget, MessageSource {
 	}
 
 	/**
+	 * Maps the given stereotypes according to map entries (with param attribute
+	 * 'stereotype') defined in the target configuration.
+	 * 
+	 * @param stereotypes
+	 * @return the given Stereotypes, if no stereotype mappings are defined by
+	 *         the configuration, or a new Stereotypes object with mapped
+	 *         stereotypes
+	 */
+	private Stereotypes mapStereotypes(Stereotypes stereotypes) {
+
+		if (stereotypeMappings.isEmpty()) {
+			return stereotypes;
+		} else {
+			Stereotypes result = options.stereotypesFactory();
+			for (String stereotype : stereotypes.asSet()) {
+				if (stereotypeMappings.containsKey(stereotype)) {
+					result.add(stereotypeMappings.get(stereotype));
+				} else {
+					result.add(stereotype);
+				}
+			}
+			return result;
+		}
+	}
+
+	/**
 	 * Clones standard items to add them to the given element (usually a class
 	 * or a package).
 	 * 
@@ -400,8 +490,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			EAElementUtil.setEANotes(e, i.derivedDocumentation(
 					documentationTemplate, documentationNoValue));
-			EAElementUtil.setEAStereotypeEx(e,
-					stereotypesCSV(i.stereotypes()).replace(" ", ""));
+
+			EAElementUtil.setEAStereotype(e,
+					mapStereotypes(i.stereotypes()).toString());
 
 			EAElementUtil.setTaggedValues(e, i.taggedValuesAll());
 
@@ -422,8 +513,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			EAConnectorUtil.setEANotes(con, i.derivedDocumentation(
 					documentationTemplate, documentationNoValue));
 
-			EAConnectorUtil.setEAStereotypeEx(con,
-					stereotypesCSV(i.stereotypes()));
+			EAConnectorUtil.setEAStereotype(con,
+					mapStereotypes(i.stereotypes()).toString());
 
 			EAConnectorUtil.setTaggedValues(con, i.taggedValuesAll());
 
@@ -464,8 +555,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			EAConnectorEndUtil.setEARoleNote(ce, i.derivedDocumentation(
 					documentationTemplate, documentationNoValue));
 
-			EAConnectorEndUtil.setEAStereotypeEx(ce,
-					stereotypesCSV(i.stereotypes()));
+			EAConnectorEndUtil.setEAStereotype(ce,
+					mapStereotypes(i.stereotypes()).toString());
 
 			EAConnectorEndUtil.setEAOrdering(ce, i.isOrdered());
 
@@ -658,11 +749,12 @@ public class UmlModel implements SingleTarget, MessageSource {
 		rep = null;
 		pOut_EaPkgId = null;
 
-		associations = new HashSet<AssociationInfo>();
-		elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
-		eaPkgIdByPackageInfo = new HashMap<PackageInfo, Integer>();
-		classesToProcess = new ArrayList<ClassInfo>();
+		associations = new HashSet<>();
+		elementIdByClassInfo = new HashMap<>();
+		eaPkgIdByPackageInfo = new HashMap<>();
+		classesToProcess = new ArrayList<>();
 		generalisations = HashMultimap.create();
+		stereotypeMappings = new HashMap<>();
 	}
 
 	/**
@@ -688,6 +780,16 @@ public class UmlModel implements SingleTarget, MessageSource {
 		// 50-100: Initialization related messages
 		case 50:
 			return "Could not write the model, because the target has not been initialized properly.";
+		case 51:
+			return "URL '$1$' provided for configuration parameter "
+					+ PARAM_EAP_TEMPLATE
+					+ " is malformed. Execution will be aborted. Exception message is: '$2$'.";
+		case 52:
+			return "EAP template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+					+ PARAM_EAP_TEMPLATE
+					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
+		case 53:
+			return "Exception encountered when copying EAP template file to output destination. Message is: $1$.";
 
 		// 101-200: issues with the model
 		case 101:

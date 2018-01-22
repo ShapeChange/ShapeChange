@@ -211,7 +211,7 @@ public class CDB implements SingleTarget, MessageSource {
 			List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
 					.getMapEntries();
 
-			if (mapEntries == null || mapEntries.isEmpty()) {
+			if (mapEntries.isEmpty()) {
 
 				/*
 				 * It is unlikely but not impossible that an application schema
