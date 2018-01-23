@@ -2461,6 +2461,14 @@ public abstract class XpathConstraintNode {
 				// Namespace and namespace adorned property
 				String proper = xpathHelper.getAndRegisterXmlName(pi);
 
+				/*
+				 * We will have to know whether we are subject to the 19139,
+				 * regime, so go and find out
+				 */
+				boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
+						|| (ci != null && ci.matches(
+								"rule-xsd-cls-standard-19139-property-types"));
+				
 				// Dispatch on containment cases
 				if (conCode == 0) {
 
@@ -2537,6 +2545,14 @@ public abstract class XpathConstraintNode {
 						// --> //*[@gml:id]=.../attr/@xlink:href]
 						// --> if @gml:id is surrounded with additional text,
 						// --> a concat() construct is used.
+						String idAttributeFrag;
+						if (is19139) {
+							idAttributeFrag = "@id";
+						} else {
+							idAttributeFrag = "@gml:id";
+							xpathHelper.registerNamespace("gml");
+						}
+						
 						String attxlink = obj.fragment;
 						if (attxlink.length() > 0)
 							attxlink += "/";
@@ -2547,16 +2563,15 @@ public abstract class XpathConstraintNode {
 							frag_ref += "concat(";
 							if (alphaEx)
 								frag_ref += "'" + alpha + "',";
-							frag_ref += "@gml:id";
+							frag_ref += idAttributeFrag;
 							if (betaEx)
 								frag_ref += ",'" + beta + "'";
 							frag_ref += ")";
 						} else {
-							frag_ref += "@gml:id";
+							frag_ref += idAttributeFrag;
 						}
 						frag_ref += "=" + attxlink + "]";
 						xpathHelper.registerNamespace("xlink");
-						xpathHelper.registerNamespace("gml");
 
 						// Whatever binding context we had before, it is lost
 						if (obj.atEnd != null)

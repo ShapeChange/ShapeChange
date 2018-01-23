@@ -45,7 +45,7 @@ public class SchematronTest extends WindowsBasicTest {
 	@Test
 	public void schematronTestMetadataProfile() {
 		multiTest("src/test/resources/sch/metadataProfile/testEA_sch_metadataProfile.xml",
-				new String[] { "sch" }, "testResults/sch/metadataProfile",
+				new String[] { "sch", "xsd" }, "testResults/sch/metadataProfile",
 				"src/test/resources/sch/metadataProfile/reference");
 	}
 }

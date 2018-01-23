@@ -779,6 +779,17 @@ public class Options {
 		fElementMap.put(k1 + "#" + k2, new MapEntry(s1, s2, s3));
 	}
 
+	/**
+	 * Tries to find a MapEntry that defines the mapping of a type to its
+	 * xmlElement, based upon the given encoding rule or any rules it extends.
+	 *
+	 * @param k1
+	 *            type name
+	 * @param k2
+	 *            encoding rule name
+	 * @return MapEntry with rule=("direct"), p1=xmlElement - or
+	 *         <code>null</code> if no such map entry was found
+	 */
 	public MapEntry elementMapEntry(String k1, String k2) {
 		String rule = k2;
 		MapEntry me = null;
@@ -3426,9 +3437,11 @@ public class Options {
 		 * ISO/TS 19139:2007 rules
 		 */
 		addRule("rule-xsd-all-naming-19139");
+		addRule("rule-xsd-cls-standard-19139-isoType");
 		addRule("rule-xsd-cls-standard-19139-property-types");
 		addRule("rule-xsd-cls-enum-object-element");
 		addRule("rule-xsd-cls-enum-property-type");
+		
 		/*
 		 * add the iso19139_2007 encoding rule and extend the core encoding rule
 		 */

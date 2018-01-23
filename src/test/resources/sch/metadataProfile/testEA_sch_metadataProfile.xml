@@ -22,7 +22,7 @@
 		<parameter name="publicOnly" value="true" />
 		<parameter name="sortedOutput" value="true" />
 		<parameter name="sortedSchemaOutput" value="true" />
-		<parameter name="appSchemaName" value="MetadataProfile" />
+		<parameter name="appSchemaNameRegex" value=".*Profile" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes" />
@@ -66,12 +66,16 @@
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
-			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />			
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xmlNamespaces>
+				<XmlNamespace nsabr="mdp"
+					ns="http://example.org/shapechange/metadataprofile" location="./mdProfile.xsd" />
+			</xmlNamespaces>
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_iso19139_2007.xml" />
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_iso19115.xml" />
-			
+
 		</TargetXmlSchema>
 	</targets>
 </ShapeChangeConfiguration>

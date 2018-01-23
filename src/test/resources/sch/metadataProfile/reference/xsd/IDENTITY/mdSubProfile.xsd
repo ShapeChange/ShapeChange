@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:mdp="http://example.org/shapechange/metadataprofile" xmlns:mdsp="http://example.org/shapechange/metadataprofile/subprofile" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/metadataprofile/subprofile" version="1">
+  <import namespace="http://example.org/shapechange/metadataprofile" schemaLocation="./mdProfile.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MDSP_DataType" substitutionGroup="mdp:MDP_Contact" type="mdsp:MDSP_DataType_Type"/>
+  <complexType name="MDSP_DataType_Type">
+    <complexContent>
+      <extension base="mdp:MDP_Contact_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MDSP_DataType_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="mdsp:MDSP_DataType"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="MDSP_Type" substitutionGroup="gmd:MD_DataIdentification" type="mdsp:MDSP_Type_Type"/>
+  <complexType name="MDSP_Type_Type">
+    <complexContent>
+      <extension base="gmd:MD_DataIdentification_Type">
+        <sequence/>
+        <attribute fixed="MD_DataIdentification" ref="gco:isoType" use="required"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MDSP_Type_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="mdsp:MDSP_Type"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="MDSP_UnrelatedToIsoTypes" substitutionGroup="gco:AbstractObject" type="mdsp:MDSP_UnrelatedToIsoTypes_Type"/>
+  <complexType name="MDSP_UnrelatedToIsoTypes_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MDSP_UnrelatedToIsoTypes_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="mdsp:MDSP_UnrelatedToIsoTypes"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

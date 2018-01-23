@@ -77,18 +77,7 @@
           <element minOccurs="0" name="length" type="gml:LengthType"/>
           <element name="geometry" type="gml:PointPropertyType"/>
           <element name="secondgeometry" type="gml:SurfacePropertyType"/>
-          <element name="metadata">
-            <complexType>
-              <complexContent>
-                <extension base="gml:AbstractMetadataPropertyType">
-                  <sequence minOccurs="0">
-                    <element ref="gmd:MD_Metadata"/>
-                  </sequence>
-                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
-                </extension>
-              </complexContent>
-            </complexType>
-          </element>
+          <element name="metadata" type="gmd:MD_Metadata_PropertyType"/>
           <element name="datatype" type="test:DataTypePropertyType">
             <annotation>
               <documentation>This is a data type.</documentation>

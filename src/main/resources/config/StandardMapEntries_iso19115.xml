@@ -1,36 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-  <XsdMapEntry type="CI_OnlineResource" xsdEncodingRules="*" xmlType="gmd:CI_OnlineResource_Type" xmlElement="gmd:CI_OnlineResource" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_Address" xsdEncodingRules="*" xmlType="gmd:CI_Address_Type" xmlElement="gmd:CI_Address" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_Citation" xsdEncodingRules="*" xmlType="gmd:CI_Citation_Type" xmlElement="gmd:CI_Citation" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_Contact" xsdEncodingRules="*" xmlType="gmd:CI_Contact_Type" xmlElement="gmd:CI_Contact" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_ResponsibleParty" xsdEncodingRules="*" xmlType="gmd:CI_ResponsibleParty_Type" xmlElement="gmd:CI_ResponsibleParty" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_Series" xsdEncodingRules="*" xmlElement="gmd:CI_Series" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="CI_Telephone" xsdEncodingRules="*" xmlType="gmd:CI_Telephone_Type" xmlElement="gmd:CI_Telephone" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="LI_Lineage" xsdEncodingRules="*" xmlElement="gmd:LI_Lineage" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="DQ_DataQuality" xsdEncodingRules="*" xmlElement="gmd:DQ_DataQuality" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="DQ_RelativeInternalPositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_RelativeInternalPositionalAccuracy" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="DQ_PositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_PositionalAccuracy" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="DQ_QuantitativeResult" xsdEncodingRules="*" xmlElement="gmd:DQ_QuantitativeResult" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="EX_Extent" xsdEncodingRules="*" xmlType="gmd:EX_Extent_Type" xmlElement="gmd:EX_Extent" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="EX_GeographicExtent" xsdEncodingRules="*" xmlType="gmd:AbstractEX_GeographicExtent_Type" xmlElement="gmd:AbstractEX_GeographicExtent" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="EX_BoundingPolygon" xsdEncodingRules="*" xmlType="gmd:EX_BoundingPolygon_Type" xmlElement="gmd:EX_BoundingPolygon" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_BrowseGraphic" xsdEncodingRules="*" xmlElement="gmd:MD_BrowseGraphic" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_ClassificationCode" xsdEncodingRules="*" xmlElement="gmd:MD_ClassificationCode" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_Format" xsdEncodingRules="*" xmlElement="gmd:MD_Format" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_Resolution" xsdEncodingRules="*" xmlElement="gmd:MD_Resolution" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_Identifier" xsdEncodingRules="*" xmlElement="gmd:MD_Identifier" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_ImagingConditionCode" xsdEncodingRules="*" xmlElement="gmd:MD_ImagingConditionCode" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_MediumNameCode" xsdEncodingRules="*" xmlElement="gmd:MD_MediumNameCode" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_Metadata" xsdEncodingRules="*" xmlType="gmd:MD_Metadata_Type" xmlElement="gmd:MD_Metadata" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="RS_Identifier" xsdEncodingRules="*" xmlType="gmd:RS_Identifier_Type" xmlElement="gmd:RS_Identifier" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="DQ_AbsoluteExternalPositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_AbsoluteExternalPositionalAccuracy" xmlPropertyType="_MP_" />
-  <XsdMapEntry type="MD_CharacterSetCode" xsdEncodingRules="*" xmlPropertyType="gmd:MD_CharacterSetCode_PropertyType" />
-  <XsdMapEntry type="LanguageCode" xsdEncodingRules="*" xmlPropertyType="gmd:LanguageCode_PropertyType" />
-  <XsdMapEntry type="CountryCode" xsdEncodingRules="*" xmlPropertyType="gmd:Country_PropertyType" />
-  <XsdMapEntry type="PT_FreeText" xsdEncodingRules="*" xmlPropertyType="gmd:PT_FreeText_PropertyType" />
-  <XsdMapEntry type="PT_Locale" xsdEncodingRules="*" xmlPropertyType="gmd:PT_Locale_PropertyType" />
-  <XsdMapEntry type="LocalisedCharacterString" xsdEncodingRules="iso19136_2007 iso19139_2007" xmlPropertyType="gmd:LocalisedCharacterString_PropertyType" />
-  <XsdMapEntry type="LocalisedCharacterString" xsdEncodingRules="gml33" xmlPropertyType="gmlxbt:LanguageStringType" />
-  <!-- ... more to be added as required -->
+ <XsdMapEntry type="CI_Address" xsdEncodingRules="*" xmlType="gmd:CI_Address_Type" xmlElement="gmd:CI_Address" xmlPropertyType="gmd:CI_Address_PropertyType"/>
+ <XsdMapEntry type="CI_Citation" xsdEncodingRules="*" xmlType="gmd:CI_Citation_Type" xmlElement="gmd:CI_Citation" xmlPropertyType="gmd:CI_Citation_PropertyType"/>
+ <XsdMapEntry type="CI_Contact" xsdEncodingRules="*" xmlType="gmd:CI_Contact_Type" xmlElement="gmd:CI_Contact" xmlPropertyType="gmd:CI_Contact_PropertyType"/>
+ <XsdMapEntry type="CI_Date" xsdEncodingRules="*" xmlType="gmd:CI_Date_Type" xmlElement="gmd:CI_Date" xmlPropertyType="gmd:CI_Date_PropertyType"/>
+ <XsdMapEntry type="CI_DateTypeCode" xsdEncodingRules="*" xmlElement="gmd:CI_DateTypeCode" xmlPropertyType="gmd:CI_DateTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="CI_OnlineFunctionCode" xsdEncodingRules="*" xmlElement="gmd:CI_OnlineFunctionCode" xmlPropertyType="gmd:CI_OnlineFunctionCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="CI_OnlineResource" xsdEncodingRules="*" xmlType="gmd:CI_OnlineResource_Type" xmlElement="gmd:CI_OnlineResource" xmlPropertyType="gmd:CI_OnlineResource_PropertyType"/>
+ <XsdMapEntry type="CI_PresentationFormCode" xsdEncodingRules="*" xmlElement="gmd:CI_PresentationFormCode" xmlPropertyType="gmd:CI_PresentationFormCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="CI_ResponsibleParty" xsdEncodingRules="*" xmlType="gmd:CI_ResponsibleParty_Type" xmlElement="gmd:CI_ResponsibleParty" xmlPropertyType="gmd:CI_ResponsibleParty_PropertyType"/>
+ <XsdMapEntry type="CI_RoleCode" xsdEncodingRules="*" xmlElement="gmd:CI_RoleCode" xmlPropertyType="gmd:CI_RoleCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="CI_Series" xsdEncodingRules="*" xmlElement="gmd:CI_Series" xmlType="gmd:CI_Series_Type" xmlPropertyType="gmd:CI_Series_PropertyType"/>
+ <XsdMapEntry type="CI_Telephone" xsdEncodingRules="*" xmlType="gmd:CI_Telephone_Type" xmlElement="gmd:CI_Telephone" xmlPropertyType="gmd:CI_Telephone_PropertyType"/>
+ <XsdMapEntry type="CountryCode" xsdEncodingRules="*" xmlElement="gmd:CountryCode" xmlPropertyType="gmd:CountryCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="DQ_AbsoluteExternalPositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_AbsoluteExternalPositionalAccuracy" xmlType="gmd:DQ_AbsoluteExternalPositionalAccuracy_Type" xmlPropertyType="gmd:DQ_AbsoluteExternalPositionalAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_AccuracyOfATimeMeasurement" xsdEncodingRules="*" xmlElement="gmd:DQ_AccuracyOfATimeMeasurement" xmlType="gmd:DQ_AccuracyOfATimeMeasurement_Type" xmlPropertyType="gmd:DQ_AccuracyOfATimeMeasurement_PropertyType"/>
+ <XsdMapEntry type="DQ_Completeness" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_Completeness" xmlType="gmd:AbstractDQ_Completeness_Type" xmlPropertyType="gmd:DQ_Completeness_PropertyType"/>
+ <XsdMapEntry type="DQ_CompletenessCommission" xsdEncodingRules="*" xmlElement="gmd:DQ_CompletenessCommission" xmlType="gmd:DQ_CompletenessCommission_Type" xmlPropertyType="gmd:DQ_CompletenessCommission_PropertyType"/>
+ <XsdMapEntry type="DQ_CompletenessOmission" xsdEncodingRules="*" xmlElement="gmd:DQ_CompletenessOmission" xmlType="gmd:DQ_CompletenessOmission_Type" xmlPropertyType="gmd:DQ_CompletenessOmission_PropertyType"/>
+ <XsdMapEntry type="DQ_ConceptualConsistency" xsdEncodingRules="*" xmlElement="gmd:DQ_ConceptualConsistency" xmlType="gmd:DQ_ConceptualConsistency_Type" xmlPropertyType="gmd:DQ_ConceptualConsistency_PropertyType"/>
+ <XsdMapEntry type="DQ_ConformanceResult" xsdEncodingRules="*" xmlElement="gmd:DQ_ConformanceResult" xmlType="gmd:DQ_ConformanceResult_Type" xmlPropertyType="gmd:DQ_ConformanceResult_PropertyType"/>
+ <XsdMapEntry type="DQ_DataQuality" xsdEncodingRules="*" xmlElement="gmd:DQ_DataQuality" xmlType="gmd:DQ_DataQuality_Type" xmlPropertyType="gmd:DQ_DataQuality_PropertyType"/>
+ <XsdMapEntry type="DQ_DomainConsistency" xsdEncodingRules="*" xmlElement="gmd:DQ_DomainConsistency" xmlType="gmd:DQ_DomainConsistency_Type" xmlPropertyType="gmd:DQ_DomainConsistency_PropertyType"/>
+ <XsdMapEntry type="DQ_Element" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_Element" xmlType="gmd:AbstractDQ_Element_Type" xmlPropertyType="gmd:DQ_Element_PropertyType"/>
+ <XsdMapEntry type="DQ_EvaluationMethodTypeCode" xsdEncodingRules="*" xmlElement="gmd:DQ_EvaluationMethodTypeCode" xmlPropertyType="gmd:DQ_EvaluationMethodTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="DQ_FormatConsistency" xsdEncodingRules="*" xmlElement="gmd:DQ_FormatConsistency" xmlType="gmd:DQ_FormatConsistency_Type" xmlPropertyType="gmd:DQ_FormatConsistency_PropertyType"/>
+ <XsdMapEntry type="DQ_GriddedDataPositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_GriddedDataPositionalAccuracy" xmlType="gmd:DQ_GriddedDataPositionalAccuracy_Type" xmlPropertyType="gmd:DQ_GriddedDataPositionalAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_LogicalConsistency" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_LogicalConsistency" xmlType="gmd:AbstractDQ_LogicalConsistency_Type" xmlPropertyType="gmd:DQ_LogicalConsistency_PropertyType"/>
+ <XsdMapEntry type="DQ_NonQuantitativeAttributeAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_NonQuantitativeAttributeAccuracy" xmlType="gmd:DQ_NonQuantitativeAttributeAccuracy_Type" xmlPropertyType="gmd:DQ_NonQuantitativeAttributeAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_PositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_PositionalAccuracy" xmlType="gmd:AbstractDQ_PositionalAccuracy_Type" xmlPropertyType="gmd:DQ_PositionalAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_QuantitativeAttributeAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_QuantitativeAttributeAccuracy" xmlType="gmd:DQ_QuantitativeAttributeAccuracy_Type" xmlPropertyType="gmd:DQ_QuantitativeAttributeAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_QuantitativeResult" xsdEncodingRules="*" xmlElement="gmd:DQ_QuantitativeResult" xmlType="gmd:DQ_QuantitativeResult_Type" xmlPropertyType="gmd:DQ_QuantitativeResult_PropertyType"/>
+ <XsdMapEntry type="DQ_RelativeInternalPositionalAccuracy" xsdEncodingRules="*" xmlElement="gmd:DQ_RelativeInternalPositionalAccuracy" xmlType="gmd:DQ_RelativeInternalPositionalAccuracy_Type" xmlPropertyType="gmd:DQ_RelativeInternalPositionalAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_Result" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_Result" xmlType="gmd:AbstractDQ_Result_Type" xmlPropertyType="gmd:DQ_Result_PropertyType"/>
+ <XsdMapEntry type="DQ_Scope" xsdEncodingRules="*" xmlElement="gmd:DQ_Scope" xmlType="gmd:DQ_Scope_Type" xmlPropertyType="gmd:DQ_Scope_PropertyType"/>
+ <XsdMapEntry type="DQ_TemporalAccuracy" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_TemporalAccuracy" xmlType="gmd:AbstractDQ_TemporalAccuracy_Type" xmlPropertyType="gmd:DQ_TemporalAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_TemporalConsistency" xsdEncodingRules="*" xmlElement="gmd:DQ_TemporalConsistency" xmlType="gmd:DQ_TemporalConsistency_Type" xmlPropertyType="gmd:DQ_TemporalConsistency_PropertyType"/>
+ <XsdMapEntry type="DQ_TemporalValidity" xsdEncodingRules="*" xmlElement="gmd:DQ_TemporalValidity" xmlType="gmd:DQ_TemporalValidity_Type" xmlPropertyType="gmd:DQ_TemporalValidity_PropertyType"/>
+ <XsdMapEntry type="DQ_ThematicAccuracy" xsdEncodingRules="*" xmlElement="gmd:AbstractDQ_ThematicAccuracy" xmlType="gmd:AbstractDQ_ThematicAccuracy_Type" xmlPropertyType="gmd:DQ_ThematicAccuracy_PropertyType"/>
+ <XsdMapEntry type="DQ_ThematicClassificationCorrectness" xsdEncodingRules="*" xmlElement="gmd:DQ_ThematicClassificationCorrectness" xmlType="gmd:DQ_ThematicClassificationCorrectness_Type" xmlPropertyType="gmd:DQ_ThematicClassificationCorrectness_PropertyType"/>
+ <XsdMapEntry type="DQ_TopologicalConsistency" xsdEncodingRules="*" xmlElement="gmd:DQ_TopologicalConsistency" xmlType="gmd:DQ_TopologicalConsistency_Type" xmlPropertyType="gmd:DQ_TopologicalConsistency_PropertyType"/>
+ <XsdMapEntry type="DS_Aggregate" xsdEncodingRules="*" xmlElement="gmd:AbstractDS_Aggregate" xmlType="gmd:AbstractDS_Aggregate_Type" xmlPropertyType="gmd:DS_Aggregate_PropertyType"/>
+ <XsdMapEntry type="DS_Association" xsdEncodingRules="*" xmlElement="gmd:DS_Association" xmlType="gmd:DS_Association_Type" xmlPropertyType="gmd:DS_Association_PropertyType"/>
+ <XsdMapEntry type="DS_AssociationTypeCode" xsdEncodingRules="*" xmlElement="gmd:DS_AssociationTypeCode" xmlPropertyType="gmd:DS_AssociationTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="DS_DataSet" xsdEncodingRules="*" xmlElement="gmd:DS_DataSet" xmlType="gmd:DS_DataSet_Type" xmlPropertyType="gmd:DS_DataSet_PropertyType"/>
+ <XsdMapEntry type="DS_Initiative" xsdEncodingRules="*" xmlElement="gmd:DS_Initiative" xmlType="gmd:DS_Initiative_Type" xmlPropertyType="gmd:DS_Initiative_PropertyType"/>
+ <XsdMapEntry type="DS_InitiativeTypeCode" xsdEncodingRules="*" xmlElement="gmd:DS_InitiativeTypeCode" xmlPropertyType="gmd:DS_InitiativeTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="DS_OtherAggregate" xsdEncodingRules="*" xmlElement="gmd:DS_OtherAggregate" xmlType="gmd:DS_OtherAggregate_Type" xmlPropertyType="gmd:DS_OtherAggregate_PropertyType"/>
+ <XsdMapEntry type="DS_Platform" xsdEncodingRules="*" xmlElement="gmd:DS_Platform" xmlType="gmd:DS_Platform_Type" xmlPropertyType="gmd:DS_Platform_PropertyType"/>
+ <XsdMapEntry type="DS_ProductionSeries" xsdEncodingRules="*" xmlElement="gmd:DS_ProductionSeries" xmlType="gmd:DS_ProductionSeries_Type" xmlPropertyType="gmd:DS_ProductionSeries_PropertyType"/>
+ <XsdMapEntry type="DS_Sensor" xsdEncodingRules="*" xmlElement="gmd:DS_Sensor" xmlType="gmd:DS_Sensor_Type" xmlPropertyType="gmd:DS_Sensor_PropertyType"/>
+ <XsdMapEntry type="DS_Series" xsdEncodingRules="*" xmlElement="gmd:DS_Series" xmlType="gmd:DS_Series_Type" xmlPropertyType="gmd:DS_Series_PropertyType"/>
+ <XsdMapEntry type="DS_StereoMate" xsdEncodingRules="*" xmlElement="gmd:DS_StereoMate" xmlType="gmd:DS_StereoMate_Type" xmlPropertyType="gmd:DS_StereoMate_PropertyType"/>
+ <XsdMapEntry type="EX_BoundingPolygon" xsdEncodingRules="*" xmlElement="gmd:EX_BoundingPolygon" xmlType="gmd:EX_BoundingPolygon_Type" xmlPropertyType="gmd:EX_BoundingPolygon_PropertyType"/>
+ <XsdMapEntry type="EX_Extent" xsdEncodingRules="*" xmlElement="gmd:EX_Extent" xmlType="gmd:EX_Extent_Type" xmlPropertyType="gmd:EX_Extent_PropertyType"/>
+ <XsdMapEntry type="EX_GeographicBoundingBox" xsdEncodingRules="*" xmlElement="gmd:EX_GeographicBoundingBox" xmlType="gmd:EX_GeographicBoundingBox_Type" xmlPropertyType="gmd:EX_GeographicBoundingBox_PropertyType"/>
+ <XsdMapEntry type="EX_GeographicDescription" xsdEncodingRules="*" xmlElement="gmd:EX_GeographicDescription" xmlType="gmd:EX_GeographicDescription_Type" xmlPropertyType="gmd:EX_GeographicDescription_PropertyType"/>
+ <XsdMapEntry type="EX_GeographicExtent" xsdEncodingRules="*" xmlElement="gmd:AbstractEX_GeographicExtent" xmlType="gmd:AbstractEX_GeographicExtent_Type" xmlPropertyType="gmd:EX_GeographicExtent_PropertyType"/>
+ <XsdMapEntry type="EX_SpatialTemporalExtent" xsdEncodingRules="*" xmlElement="gmd:EX_SpatialTemporalExtent" xmlType="gmd:EX_SpatialTemporalExtent_Type" xmlPropertyType="gmd:EX_SpatialTemporalExtent_PropertyType"/>
+ <XsdMapEntry type="EX_TemporalExtent" xsdEncodingRules="*" xmlElement="gmd:EX_TemporalExtent" xmlType="gmd:EX_TemporalExtent_Type" xmlPropertyType="gmd:EX_TemporalExtent_PropertyType"/>
+ <XsdMapEntry type="EX_VerticalExtent" xsdEncodingRules="*" xmlElement="gmd:EX_VerticalExtent" xmlType="gmd:EX_VerticalExtent_Type" xmlPropertyType="gmd:EX_VerticalExtent_PropertyType"/>
+ <XsdMapEntry type="LI_Lineage" xsdEncodingRules="*" xmlElement="gmd:LI_Lineage" xmlType="gmd:LI_Lineage_Type" xmlPropertyType="gmd:LI_Lineage_PropertyType"/>
+ <XsdMapEntry type="LI_ProcessStep" xsdEncodingRules="*" xmlElement="gmd:LI_ProcessStep" xmlType="gmd:LI_ProcessStep_Type" xmlPropertyType="gmd:LI_ProcessStep_PropertyType"/>
+ <XsdMapEntry type="LI_Source" xsdEncodingRules="*" xmlElement="gmd:LI_Source" xmlType="gmd:LI_Source_Type" xmlPropertyType="gmd:LI_Source_PropertyType"/>
+ <XsdMapEntry type="LanguageCode" xsdEncodingRules="*" xmlElement="gmd:LanguageCode" xmlPropertyType="gmd:LanguageCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="LocalisedCharacterString" xsdEncodingRules="iso19136_2007 iso19139_2007" xmlElement="gmd:LocalisedCharacterString" xmlType="gmd:LocalisedCharacterString_Type" xmlPropertyType="gmd:LocalisedCharacterString_PropertyType"/>
+ <XsdMapEntry type="LocalisedCharacterString" xsdEncodingRules="gml33" xmlPropertyType="gmlxbt:LanguageStringType"/>
+ <XsdMapEntry type="MD_AggregateInformation" xsdEncodingRules="*" xmlElement="gmd:MD_AggregateInformation" xmlType="gmd:MD_AggregateInformation_Type" xmlPropertyType="gmd:MD_AggregateInformation_PropertyType"/>
+ <XsdMapEntry type="MD_ApplicationSchemaInformation" xsdEncodingRules="*" xmlElement="gmd:MD_ApplicationSchemaInformation" xmlType="gmd:MD_ApplicationSchemaInformation_Type" xmlPropertyType="gmd:MD_ApplicationSchemaInformation_PropertyType"/>
+ <XsdMapEntry type="MD_Band" xsdEncodingRules="*" xmlElement="gmd:MD_Band" xmlType="gmd:MD_Band_Type" xmlPropertyType="gmd:MD_Band_PropertyType"/>
+ <XsdMapEntry type="MD_BrowseGraphic" xsdEncodingRules="*" xmlElement="gmd:MD_BrowseGraphic" xmlType="gmd:MD_BrowseGraphic_Type" xmlPropertyType="gmd:MD_BrowseGraphic_PropertyType"/>
+ <XsdMapEntry type="MD_CellGeometryCode" xsdEncodingRules="*" xmlElement="gmd:MD_CellGeometryCode" xmlPropertyType="gmd:MD_CellGeometryCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_CharacterSetCode" xsdEncodingRules="*" xmlElement="gmd:MD_CharacterSetCode" xmlPropertyType="gmd:MD_CharacterSetCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_ClassificationCode" xsdEncodingRules="*" xmlElement="gmd:MD_ClassificationCode" xmlPropertyType="gmd:MD_ClassificationCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Constraints" xsdEncodingRules="*" xmlElement="gmd:MD_Constraints" xmlType="gmd:MD_Constraints_Type" xmlPropertyType="gmd:MD_Constraints_PropertyType"/>
+ <XsdMapEntry type="MD_ContentInformation" xsdEncodingRules="*" xmlElement="gmd:AbstractMD_ContentInformation" xmlType="gmd:AbstractMD_ContentInformation_Type" xmlPropertyType="gmd:MD_ContentInformation_PropertyType"/>
+ <XsdMapEntry type="MD_CoverageContentTypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_CoverageContentTypeCode" xmlPropertyType="gmd:MD_CoverageContentTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_CoverageDescription" xsdEncodingRules="*" xmlElement="gmd:MD_CoverageDescription" xmlType="gmd:MD_CoverageDescription_Type" xmlPropertyType="gmd:MD_CoverageDescription_PropertyType"/>
+ <XsdMapEntry type="MD_DataIdentification" xsdEncodingRules="*" xmlElement="gmd:MD_DataIdentification" xmlType="gmd:MD_DataIdentification_Type" xmlPropertyType="gmd:MD_DataIdentification_PropertyType"/>
+ <XsdMapEntry type="MD_DatatypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_DatatypeCode" xmlPropertyType="gmd:MD_DatatypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_DigitalTransferOptions" xsdEncodingRules="*" xmlElement="gmd:MD_DigitalTransferOptions" xmlType="gmd:MD_DigitalTransferOptions_Type" xmlPropertyType="gmd:MD_DigitalTransferOptions_PropertyType"/>
+ <XsdMapEntry type="MD_Dimension" xsdEncodingRules="*" xmlElement="gmd:MD_Dimension" xmlType="gmd:MD_Dimension_Type" xmlPropertyType="gmd:MD_Dimension_PropertyType"/>
+ <XsdMapEntry type="MD_DimensionNameTypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_DimensionNameTypeCode" xmlPropertyType="gmd:MD_DimensionNameTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Distribution" xsdEncodingRules="*" xmlElement="gmd:MD_Distribution" xmlType="gmd:MD_Distribution_Type" xmlPropertyType="gmd:MD_Distribution_PropertyType"/>
+ <XsdMapEntry type="MD_DistributionUnits" xsdEncodingRules="*" xmlElement="gmd:MD_DistributionUnits" xmlPropertyType="gmd:MD_DistributionUnits_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Distributor" xsdEncodingRules="*" xmlElement="gmd:MD_Distributor" xmlType="gmd:MD_Distributor_Type" xmlPropertyType="gmd:MD_Distributor_PropertyType"/>
+ <XsdMapEntry type="MD_ExtendedElementInformation" xsdEncodingRules="*" xmlElement="gmd:MD_ExtendedElementInformation" xmlType="gmd:MD_ExtendedElementInformation_Type" xmlPropertyType="gmd:MD_ExtendedElementInformation_PropertyType"/>
+ <XsdMapEntry type="MD_FeatureCatalogueDescription" xsdEncodingRules="*" xmlElement="gmd:MD_FeatureCatalogueDescription" xmlType="gmd:MD_FeatureCatalogueDescription_Type" xmlPropertyType="gmd:MD_FeatureCatalogueDescription_PropertyType"/>
+ <XsdMapEntry type="MD_Format" xsdEncodingRules="*" xmlElement="gmd:MD_Format" xmlType="gmd:MD_Format_Type" xmlPropertyType="gmd:MD_Format_PropertyType"/>
+ <XsdMapEntry type="MD_GeometricObjectTypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_GeometricObjectTypeCode" xmlPropertyType="gmd:MD_GeometricObjectTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_GeometricObjects" xsdEncodingRules="*" xmlElement="gmd:MD_GeometricObjects" xmlType="gmd:MD_GeometricObjects_Type" xmlPropertyType="gmd:MD_GeometricObjects_PropertyType"/>
+ <XsdMapEntry type="MD_Georectified" xsdEncodingRules="*" xmlElement="gmd:MD_Georectified" xmlType="gmd:MD_Georectified_Type" xmlPropertyType="gmd:MD_Georectified_PropertyType"/>
+ <XsdMapEntry type="MD_Georeferenceable" xsdEncodingRules="*" xmlElement="gmd:MD_Georeferenceable" xmlType="gmd:MD_Georeferenceable_Type" xmlPropertyType="gmd:MD_Georeferenceable_PropertyType"/>
+ <XsdMapEntry type="MD_GridSpatialRepresentation" xsdEncodingRules="*" xmlElement="gmd:MD_GridSpatialRepresentation" xmlType="gmd:MD_GridSpatialRepresentation_Type" xmlPropertyType="gmd:MD_GridSpatialRepresentation_PropertyType"/>
+ <XsdMapEntry type="MD_Identification" xsdEncodingRules="*" xmlElement="gmd:AbstractMD_Identification" xmlType="gmd:AbstractMD_Identification_Type" xmlPropertyType="gmd:MD_Identification_PropertyType"/>
+ <XsdMapEntry type="MD_Identifier" xsdEncodingRules="*" xmlElement="gmd:MD_Identifier" xmlType="gmd:MD_Identifier_Type" xmlPropertyType="gmd:MD_Identifier_PropertyType"/>
+ <XsdMapEntry type="MD_ImageDescription" xsdEncodingRules="*" xmlElement="gmd:MD_ImageDescription" xmlType="gmd:MD_ImageDescription_Type" xmlPropertyType="gmd:MD_ImageDescription_PropertyType"/>
+ <XsdMapEntry type="MD_ImagingConditionCode" xsdEncodingRules="*" xmlElement="gmd:MD_ImagingConditionCode" xmlPropertyType="gmd:MD_ImagingConditionCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_KeywordTypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_KeywordTypeCode" xmlPropertyType="gmd:MD_KeywordTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Keywords" xsdEncodingRules="*" xmlElement="gmd:MD_Keywords" xmlType="gmd:MD_Keywords_Type" xmlPropertyType="gmd:MD_Keywords_PropertyType"/>
+ <XsdMapEntry type="MD_LegalConstraints" xsdEncodingRules="*" xmlElement="gmd:MD_LegalConstraints" xmlType="gmd:MD_LegalConstraints_Type" xmlPropertyType="gmd:MD_LegalConstraints_PropertyType"/>
+ <XsdMapEntry type="MD_MaintenanceFrequencyCode" xsdEncodingRules="*" xmlElement="gmd:MD_MaintenanceFrequencyCode" xmlPropertyType="gmd:MD_MaintenanceFrequencyCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_MaintenanceInformation" xsdEncodingRules="*" xmlElement="gmd:MD_MaintenanceInformation" xmlType="gmd:MD_MaintenanceInformation_Type" xmlPropertyType="gmd:MD_MaintenanceInformation_PropertyType"/>
+ <XsdMapEntry type="MD_Medium" xsdEncodingRules="*" xmlElement="gmd:MD_Medium" xmlType="gmd:MD_Medium_Type" xmlPropertyType="gmd:MD_Medium_PropertyType"/>
+ <XsdMapEntry type="MD_MediumFormatCode" xsdEncodingRules="*" xmlElement="gmd:MD_MediumFormatCode" xmlPropertyType="gmd:MD_MediumFormatCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_MediumNameCode" xsdEncodingRules="*" xmlElement="gmd:MD_MediumNameCode" xmlPropertyType="gmd:MD_MediumNameCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Metadata" xsdEncodingRules="*" xmlElement="gmd:MD_Metadata" xmlType="gmd:MD_Metadata_Type" xmlPropertyType="gmd:MD_Metadata_PropertyType"/>
+ <XsdMapEntry type="MD_MetadataExtensionInformation" xsdEncodingRules="*" xmlElement="gmd:MD_MetadataExtensionInformation" xmlType="gmd:MD_MetadataExtensionInformation_Type" xmlPropertyType="gmd:MD_MetadataExtensionInformation_PropertyType"/>
+ <XsdMapEntry type="MD_ObligationCode" xsdEncodingRules="*" xmlElement="gmd:MD_ObligationCode" xmlPropertyType="gmd:MD_ObligationCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_PixelOrientationCode" xsdEncodingRules="*" xmlElement="gmd:MD_PixelOrientationCode" xmlPropertyType="gmd:MD_PixelOrientationCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_PortrayalCatalogueReference" xsdEncodingRules="*" xmlElement="gmd:MD_PortrayalCatalogueReference" xmlType="gmd:MD_PortrayalCatalogueReference_Type" xmlPropertyType="gmd:MD_PortrayalCatalogueReference_PropertyType"/>
+ <XsdMapEntry type="MD_ProgressCode" xsdEncodingRules="*" xmlElement="gmd:MD_ProgressCode" xmlPropertyType="gmd:MD_ProgressCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_ReferenceSystem" xsdEncodingRules="*" xmlElement="gmd:MD_ReferenceSystem" xmlType="gmd:MD_ReferenceSystem_Type" xmlPropertyType="gmd:MD_ReferenceSystem_PropertyType"/>
+ <XsdMapEntry type="MD_RepresentativeFraction" xsdEncodingRules="*" xmlElement="gmd:MD_RepresentativeFraction" xmlType="gmd:MD_RepresentativeFraction_Type" xmlPropertyType="gmd:MD_RepresentativeFraction_PropertyType"/>
+ <XsdMapEntry type="MD_Resolution" xsdEncodingRules="*" xmlElement="gmd:MD_Resolution" xmlType="gmd:MD_Resolution_Type" xmlPropertyType="gmd:MD_Resolution_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_RestrictionCode" xsdEncodingRules="*" xmlElement="gmd:MD_RestrictionCode" xmlPropertyType="gmd:MD_RestrictionCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_ScopeCode" xsdEncodingRules="*" xmlElement="gmd:MD_ScopeCode" xmlPropertyType="gmd:MD_ScopeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_ScopeDescription" xsdEncodingRules="*" xmlElement="gmd:MD_ScopeDescription" xmlType="gmd:MD_ScopeDescription_Type" xmlPropertyType="gmd:MD_ScopeDescription_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_SecurityConstraints" xsdEncodingRules="*" xmlElement="gmd:MD_SecurityConstraints" xmlType="gmd:MD_SecurityConstraints_Type" xmlPropertyType="gmd:MD_SecurityConstraints_PropertyType"/>
+ <XsdMapEntry type="MD_SpatialRepresentation" xsdEncodingRules="*" xmlElement="gmd:AbstractMD_SpatialRepresentation" xmlType="gmd:AbstractMD_SpatialRepresentation_Type" xmlPropertyType="gmd:MD_SpatialRepresentation_PropertyType"/>
+ <XsdMapEntry type="MD_SpatialRepresentationTypeCode" xsdEncodingRules="*" xmlElement="gmd:MD_SpatialRepresentationTypeCode" xmlPropertyType="gmd:MD_SpatialRepresentationTypeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_StandardOrderProcess" xsdEncodingRules="*" xmlElement="gmd:MD_StandardOrderProcess" xmlType="gmd:MD_StandardOrderProcess_Type" xmlPropertyType="gmd:MD_StandardOrderProcess_PropertyType"/>
+ <XsdMapEntry type="MD_TopicCategoryCode" xsdEncodingRules="*" xmlElement="gmd:MD_TopicCategoryCode" xmlPropertyType="gmd:MD_TopicCategoryCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_TopologyLevelCode" xsdEncodingRules="*" xmlElement="gmd:MD_TopologyLevelCode" xmlPropertyType="gmd:MD_TopologyLevelCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MD_Usage" xsdEncodingRules="*" xmlElement="gmd:MD_Usage" xmlType="gmd:MD_Usage_Type" xmlPropertyType="gmd:MD_Usage_PropertyType"/> 
+  <XsdMapEntry type="MD_VectorSpatialRepresentation" xsdEncodingRules="*" xmlElement="gmd:MD_VectorSpatialRepresentation" xmlType="gmd:MD_VectorSpatialRepresentation_Type" xmlPropertyType="gmd:MD_VectorSpatialRepresentation_PropertyType"/>
+ <XsdMapEntry type="PT_FreeText" xsdEncodingRules="*" xmlElement="gmd:PT_FreeText" xmlType="gmd:PT_FreeText_Type" xmlPropertyType="gmd:PT_FreeText_PropertyType"/>
+ <XsdMapEntry type="PT_Locale" xsdEncodingRules="*" xmlElement="gmd:PT_Locale" xmlType="gmd:PT_Locale_Type" xmlPropertyType="gmd:PT_Locale_PropertyType"/>
+ <XsdMapEntry type="PT_LocaleContainer" xsdEncodingRules="*" xmlElement="gmd:PT_LocaleContainer" xmlType="gmd:PT_LocaleContainer_Type" xmlPropertyType="gmd:PT_LocaleContainer_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="RS_Identifier" xsdEncodingRules="*" xmlElement="gmd:RS_Identifier" xmlType="gmd:RS_Identifier_Type" xmlPropertyType="gmd:RS_Identifier_PropertyType"/>
+ <XsdMapEntry type="URL" xsdEncodingRules="*" xmlElement="gmd:URL" xmlPropertyType="gmd:URL_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
 </xsdMapEntries>

@@ -842,6 +842,86 @@ public class XsdDocument implements MessageSource {
 		}
 		e3.appendChild(ret);
 
+		if (ci.baseClass() != null
+				&& ci.matches("rule-xsd-cls-standard-19139-isoType")) {
+
+			ClassInfo baseType = ci.baseClass();
+
+			/*
+			 * Check if the base type is mapped to one of the ISO 19139
+			 * namespaces. If so, identify the element name to which the base
+			 * type is mapped, and add a @gco:isoType to the content.
+			 */
+			MapEntry me = options.elementMapEntry(baseType.name(),
+					baseType.encodingRule("xsd"));
+
+			if (me != null) {
+
+				String xmlElement = me.p1;
+
+				// determine the namespace
+				String s = xmlElement.trim();
+				if (!s.isEmpty()) {
+
+					int idx = s.indexOf(":");
+					if (idx > 0) {
+						String nsabr = s.substring(0, idx);
+						String ns = options.fullNamespace(nsabr);
+
+						/*
+						 * NOTE: ns == null can occur if the map entry is
+						 * defined for one of the types from the application
+						 * schemas in the model, and no namespace mapping is
+						 * defined in the XML Schema target for the
+						 * targetNamespace of the application schema of the
+						 * type.
+						 */
+						if (ns == null) {
+
+							/*
+							 * Get the target namespace of the schema to which
+							 * the base type belongs.
+							 */
+							PackageInfo pkg = ci.model()
+									.schemaPackage(baseType);
+
+							if (pkg != null
+									&& pkg.xmlns().equalsIgnoreCase(nsabr)) {
+								ns = pkg.targetNamespace();
+							}
+						}
+
+						if (ns != null && (ns
+								.equals("http://www.isotc211.org/2005/gco")
+								|| ns.equals("http://www.isotc211.org/2005/gmd")
+								|| ns.equals("http://www.isotc211.org/2005/gmx")
+								|| ns.equals("http://www.isotc211.org/2005/gsr")
+								|| ns.equals("http://www.isotc211.org/2005/gss")
+								|| ns.equals(
+										"http://www.isotc211.org/2005/gts"))) {
+
+							String metadataBaseTypeElementName = s
+									.substring(idx + 1);
+
+							if (metadataBaseTypeElementName != null) {
+
+								addImport("gco", options.fullNamespace("gco"));
+
+								Element e4 = document.createElementNS(
+										Options.W3C_XML_SCHEMA, "attribute");
+								e3.appendChild(e4);
+
+								addAttribute(e4, "ref", "gco:isoType");
+								addAttribute(e4, "use", "required");
+								addAttribute(e4, "fixed",
+										metadataBaseTypeElementName);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		return ret;
 	};
 

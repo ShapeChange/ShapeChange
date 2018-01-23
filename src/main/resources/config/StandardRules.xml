@@ -50,6 +50,7 @@
 		<rule name="rule-xsd-prop-initialValue"/>		
 	</EncodingRule>
 	<EncodingRule name="metadata-profile" extends="iso19139_2007">
+		<rule name="rule-xsd-cls-standard-19139-isoType"/>
 		<rule name="req-xsd-cls-suppress-supertype"/>
 		<rule name="req-xsd-cls-suppress-subtype"/>
 		<rule name="req-xsd-cls-suppress-no-properties"/>
