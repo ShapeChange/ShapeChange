@@ -1,0 +1,50 @@
+<gmx:ML_CodeListDictionary xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodesF" xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd">
+  <gml:identifier codeSpace="http://example.org/info/CodesF">CodesF</gml:identifier>
+  <gml:name>CodesF</gml:name>
+  <gmx:codeEntry>
+    <gmx:ML_CodeDefinition gml:id="_104_158">
+      <gml:identifier codeSpace="http://example.org/info/CodesF">codeM</gml:identifier>
+      <gml:name>codeM</gml:name>
+      <gmx:alternativeExpression>
+        <gmx:CodeAlternativeExpression codeSpace="http://example.org/info/CodesF" gml:id="_104_158_de">
+          <gml:identifier codeSpace="http://example.org/info/CodesF">codeM</gml:identifier>
+          <gml:name>codeM</gml:name>
+          <gmx:locale xlink:href="http://example.org/locale/ref/de"/>
+        </gmx:CodeAlternativeExpression>
+      </gmx:alternativeExpression>
+    </gmx:ML_CodeDefinition>
+  </gmx:codeEntry>
+  <gmx:codeEntry>
+    <gmx:ML_CodeDefinition gml:id="_104_159">
+      <gml:identifier codeSpace="http://example.org/info/CodesF">codeN</gml:identifier>
+      <gml:name>codeN</gml:name>
+      <gmx:alternativeExpression>
+        <gmx:CodeAlternativeExpression codeSpace="http://example.org/info/CodesF" gml:id="_104_159_de">
+          <gml:identifier codeSpace="http://example.org/info/CodesF">codeN</gml:identifier>
+          <gml:name>codeN</gml:name>
+          <gmx:locale xlink:href="http://example.org/locale/ref/de"/>
+        </gmx:CodeAlternativeExpression>
+      </gmx:alternativeExpression>
+    </gmx:ML_CodeDefinition>
+  </gmx:codeEntry>
+  <gmx:codeEntry>
+    <gmx:ML_CodeDefinition gml:id="_106_160">
+      <gml:identifier codeSpace="http://example.org/info/CodesF">codeO</gml:identifier>
+      <gml:name>codeO</gml:name>
+      <gmx:alternativeExpression>
+        <gmx:CodeAlternativeExpression codeSpace="http://example.org/info/CodesF" gml:id="_106_160_de">
+          <gml:identifier codeSpace="http://example.org/info/CodesF">codeO</gml:identifier>
+          <gml:name>codeO</gml:name>
+          <gmx:locale xlink:href="http://example.org/locale/ref/de"/>
+        </gmx:CodeAlternativeExpression>
+      </gmx:alternativeExpression>
+    </gmx:ML_CodeDefinition>
+  </gmx:codeEntry>
+  <gmx:alternativeExpression>
+    <gmx:ClAlternativeExpression codeSpace="http://example.org/info/CodesF" gml:id="CodesF_de">
+      <gml:identifier codeSpace="http://example.org/info/CodesF">CodesF</gml:identifier>
+      <gml:name>CodesF</gml:name>
+      <gmx:locale xlink:href="http://example.org/locale/ref/de"/>
+    </gmx:ClAlternativeExpression>
+  </gmx:alternativeExpression>
+</gmx:ML_CodeListDictionary>

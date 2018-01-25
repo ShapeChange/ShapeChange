@@ -133,6 +133,7 @@ public class Options {
 	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
 	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
 	public static final String TargetCDB = "de.interactive_instruments.ShapeChange.Target.CDB.CDB";
+	public static final String TargetCodeListDictionariesML = "de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -3770,6 +3771,11 @@ public class Options {
 		 */
 		addRule("rule-cdb-all-notEncoded");
 		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
+		
+		/*
+		 * CodeListDictionariesML conversion rules
+		 */
+		addRule("rule-cldml-prop-codeListAndCodeNameAsGmlId");
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3869,6 +3875,8 @@ public class Options {
 			return Options.TargetModelExport;
 		else if (ra[1].equals("cdb"))
 			return Options.TargetCDB;
+		else if (ra[1].equals("cldml"))
+			return Options.TargetCodeListDictionariesML;
 
 		return null;
 	}
