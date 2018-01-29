@@ -134,13 +134,17 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	}
 
 	/**
-	 * This returns the name of the property adorned with the namespace prefix
-	 * of its class's package.
+	 * {@inheritDoc}
+	 * <p>
+	 * WARNING: This method is intended to be "final", but not actually declared
+	 * as such. A depending project can thus extend the method, if absolutely
+	 * necessary.
 	 */
+	@Override
 	public String qname() {
 		String s = inClass().pkg().xmlns();
 		return s + ":" + name();
-	} // qname()
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -235,7 +239,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		return ci.fullNameInSchema() + "::" + name();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>

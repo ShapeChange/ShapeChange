@@ -259,7 +259,7 @@ public abstract class SchematronConstraintNode {
 			NONE, ATCURRENT, OTHER
 		}
 
-		public CtxState state;		
+		public CtxState state;
 
 		public class CtxElmt {
 			public Declaration vardecl;
@@ -391,6 +391,14 @@ public abstract class SchematronConstraintNode {
 			type = t;
 		}
 
+		/**
+		 * @param p
+		 * @param f
+		 * @param t
+		 * @param vm
+		 *            <code>true</code> to perform variable merging, else
+		 *            <code>false</code>
+		 */
 		public XpathFragment(int p, String f, XpathType t, boolean vm) {
 			this(p, f, t);
 			variableMerging = vm;
@@ -403,6 +411,13 @@ public abstract class SchematronConstraintNode {
 			type = XpathType.NODESET;
 		}
 
+		/**
+		 * @param p
+		 * @param f
+		 * @param vm
+		 *            <code>true</code> to perform variable merging, else
+		 *            <code>false</code>
+		 */
 		public XpathFragment(int p, String f, boolean vm) {
 			this(p, f, XpathType.NODESET);
 			variableMerging = vm;
@@ -658,9 +673,9 @@ public abstract class SchematronConstraintNode {
 
 			// Check and compile children
 			XpathFragment[] child_xpt = new XpathFragment[2];
-			
+
 			for (int i = 0; i < 2; i++) {
-				
+
 				SchematronConstraintNode child = children.get(i);
 
 				if (!child.hasSimpleType() && !child.hasIdentity()) {
@@ -944,8 +959,7 @@ public abstract class SchematronConstraintNode {
 							- 1].main.dataType.umlClass;
 					if (ci != null) {
 						Boolean indicatorSimpleType = XmlSchema
-								.indicatorForObjectElementWithSimpleContent(
-										ci);
+								.indicatorForObjectElementWithSimpleContent(ci);
 						simple = !XmlSchema.classHasObjectElement(ci)
 								|| (indicatorSimpleType != null
 										&& indicatorSimpleType);
@@ -2570,8 +2584,7 @@ public abstract class SchematronConstraintNode {
 				ci = attributes[idx].main.dataType.umlClass;
 				if (ci != null) {
 					Boolean indicatorSimpleType = XmlSchema
-							.indicatorForObjectElementWithSimpleContent(
-									ci);
+							.indicatorForObjectElementWithSimpleContent(ci);
 					result = !XmlSchema.classHasObjectElement(ci)
 							|| (indicatorSimpleType != null
 									&& indicatorSimpleType);
@@ -2581,8 +2594,7 @@ public abstract class SchematronConstraintNode {
 				ci = attributes[idx].absAttr.dataType.umlClass;
 				if (ci != null) {
 					Boolean indicatorSimpleType = XmlSchema
-							.indicatorForObjectElementWithSimpleContent(
-									ci);
+							.indicatorForObjectElementWithSimpleContent(ci);
 					result = !XmlSchema.classHasObjectElement(ci)
 							|| (indicatorSimpleType != null
 									&& indicatorSimpleType);

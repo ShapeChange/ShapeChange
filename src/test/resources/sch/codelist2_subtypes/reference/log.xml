@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sch/codelist2_subtypes/testEA_sch_codelist2_subtypes.xml" end="Mon Jan 29 17:00:30 CET 2018" resultCode="0" start="Mon Jan 29 17:00:15 CET 2018" version="2.5.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
+    <Info message="Application schema found, package name: 'ISO Stub1', target namespace: 'http://example.org/shapechange/sch/codelist2/isoStub1'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Warning message="XML Schema Target: Code list URI of code list '$2$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list."/>
+    <Info message="Application schema found, package name: 'ISO Stub2', target namespace: 'http://example.org/shapechange/sch/codelist2/isoStub2'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Test Schema1', target namespace: 'http://example.org/shapechange/sch/codelist2/subtypes/1'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Test Schema2', target namespace: 'http://example.org/shapechange/sch/codelist2/subtypes/2'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_subtypes/xsd/INPUT/isoStub1.xsd" scope="http://example.org/shapechange/sch/codelist2/isoStub1" target="XML Schema">isoStub1.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_subtypes/xsd/INPUT/isoStub2.xsd" scope="http://example.org/shapechange/sch/codelist2/isoStub2" target="XML Schema">isoStub2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_subtypes/xsd/INPUT/testCodelist2_subtypes1.xsd" scope="http://example.org/shapechange/sch/codelist2/subtypes/1" target="XML Schema">testCodelist2_subtypes1.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_subtypes/xsd/INPUT/testCodelist2_subtypes2.xsd" scope="http://example.org/shapechange/sch/codelist2/subtypes/2" target="XML Schema">testCodelist2_subtypes2.xsd</Result>
+  </Results>
+</ShapeChangeResult>

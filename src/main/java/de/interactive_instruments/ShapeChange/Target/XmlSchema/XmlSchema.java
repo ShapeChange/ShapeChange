@@ -36,10 +36,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.SortedSet;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xml.serializer.OutputPropertiesFactory;
@@ -51,13 +50,13 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Target;
 
 public class XmlSchema implements Target {
 
@@ -153,14 +152,10 @@ public class XmlSchema implements Target {
 				}
 			});
 
-			if (cs != null) {
-				for (Iterator<Constraint> i = cs.iterator(); i.hasNext();) {
-					Constraint c = i.next();
-					if (c != null && c instanceof OclConstraint
-							&& schDoc != null
-							&& ((OclConstraint) c).syntaxTree() != null) {
-						schDoc.addAssertion(ci, (OclConstraint) c);
-					}
+			for (Constraint c : cs) {
+				if (c != null && c instanceof OclConstraint && schDoc != null
+						&& ((OclConstraint) c).syntaxTree() != null) {
+					schDoc.addAssertion(ci, (OclConstraint) c);
 				}
 			}
 		}
@@ -197,8 +192,9 @@ public class XmlSchema implements Target {
 				break;
 			if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed())
 				break;
-			if (ci.matches("rule-xsd-cls-object-element"))
+			if (ci.matches("rule-xsd-cls-object-element")) {
 				xsd.pObjectElement(ci, cibase);
+			}
 			break;
 		case Options.MIXIN:
 			if (ci.matches("rule-xsd-cls-mixin-classes"))
@@ -350,9 +346,8 @@ public class XmlSchema implements Target {
 				"2");
 		outputFormat.setProperty("encoding", "UTF-8");
 
-		for (Iterator<XsdDocument> i = xsdMap.values().iterator(); i
-				.hasNext();) {
-			XsdDocument xsd = i.next();
+		for (XsdDocument xsd : xsdMap.values()) {
+
 			if (!xsd.printed()) {
 				try {
 					xsd.printFile(outputFormat);
@@ -418,9 +413,7 @@ public class XmlSchema implements Target {
 		 */
 		if (pi.matches("rule-xsd-pkg-contained-packages")) {
 			try {
-				SortedSet<PackageInfo> sub = pi.containedPackages();
-				for (Iterator<PackageInfo> i = sub.iterator(); i.hasNext();) {
-					PackageInfo pix = i.next();
+				for (PackageInfo pix : pi.containedPackages()) {
 					if (pix.isSchema()) {
 						xsd.addImport(pix.xmlns(), pix.targetNamespace());
 					} else {
@@ -456,21 +449,17 @@ public class XmlSchema implements Target {
 	protected void processDependecies(PackageInfo pi)
 			throws ShapeChangeAbortException {
 		XsdDocument xsd1 = xsdMap.get(pi.id());
-		SortedSet<String> suppliers = pi.supplierIds();
-		if (suppliers != null) {
-			for (Iterator<String> i = suppliers.iterator(); i.hasNext();) {
-				String pid = i.next();
-				XsdDocument xsd2 = xsdMap.get(pid);
-				if (xsd2 != null) {
-					xsd1.addInclude(xsd2);
-				} else {
-					PackageInfo pi2 = model.packageById(pid);
-					if (pi2 != null && pi2.xmlns() != null
-							&& pi2.xmlns().length() > 0
-							&& pi2.targetNamespace() != null
-							&& pi2.targetNamespace().length() > 0)
-						xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
-				}
+		for (String pid : pi.supplierIds()) {
+			XsdDocument xsd2 = xsdMap.get(pid);
+			if (xsd2 != null) {
+				xsd1.addInclude(xsd2);
+			} else {
+				PackageInfo pi2 = model.packageById(pid);
+				if (pi2 != null && pi2.xmlns() != null
+						&& pi2.xmlns().length() > 0
+						&& pi2.targetNamespace() != null
+						&& pi2.targetNamespace().length() > 0)
+					xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
 			}
 		}
 
@@ -478,9 +467,7 @@ public class XmlSchema implements Target {
 		 * Navigate through sub packages and import/include XML Schema documents
 		 */
 		try {
-			SortedSet<PackageInfo> sub = pi.containedPackages();
-			for (Iterator<PackageInfo> i = sub.iterator(); i.hasNext();) {
-				PackageInfo pix = i.next();
+			for (PackageInfo pix : pi.containedPackages()) {
 				if (!pix.isSchema()) {
 					processDependecies(pix);
 				}
@@ -625,10 +612,10 @@ public class XmlSchema implements Target {
 		 * ISO 19139. They are often (or always?) not referenceable, as is the
 		 * case for gco:CharacterString.
 		 * 
-		 * The XML attribute @xmReferenceable on an XsdMapEntry is used to
-		 * tell ShapeChange that the mapping target definitely cannot be
-		 * referenced. The attribute has a boolean value. If the attribute is
-		 * not present, the usual assumptions (outlined before) apply.
+		 * The XML attribute @xmReferenceable on an XsdMapEntry is used to tell
+		 * ShapeChange that the mapping target definitely cannot be referenced.
+		 * The attribute has a boolean value. If the attribute is not present,
+		 * the usual assumptions (outlined before) apply.
 		 */
 
 		Boolean xmlElementCanBeReferenced = ci.options()

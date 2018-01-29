@@ -55,6 +55,7 @@ import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -77,6 +78,9 @@ public class SchematronSchema implements MessageSource {
 	Document document;
 	Element pattern;
 	Element root;
+	Text schematronTitleHook;
+	boolean schematronTitleExtended = false;
+
 	boolean printed = false;
 	boolean assertion = false;
 
@@ -90,6 +94,9 @@ public class SchematronSchema implements MessageSource {
 		HashSet<String> letVarsAlreadyOutput = new HashSet<String>();
 	}
 
+	/**
+	 * key: rule context, value: rule creation status
+	 */
 	HashMap<String, RuleCreationStatus> ruleCreationStatusMap = new HashMap<String, RuleCreationStatus>();
 
 	HashSet<String> namespaces = new HashSet<String>();
@@ -216,8 +223,9 @@ public class SchematronSchema implements MessageSource {
 		// Add a title element to document the schema the rules belong to
 		Element e1 = document.createElementNS(Options.SCHEMATRON_NS, "title");
 		root.appendChild(e1);
-		e1.appendChild(document.createTextNode(
-				"Schematron constraints for schema '" + pi.name() + "'"));
+		schematronTitleHook = document.createTextNode(
+				"Schematron constraints for schema '" + pi.name() + "'");
+		e1.appendChild(schematronTitleHook);
 
 		// Add a namespace declaration for Schematron
 		e1 = document.createElementNS(Options.SCHEMATRON_NS, "ns");
@@ -371,18 +379,19 @@ public class SchematronSchema implements MessageSource {
 		if (ci.isAbstract())
 			return;
 
-		// We will have to create an assertion. Find out about the rule, where
-		// the new assertion will go. This info is kept in RuleCreationStatus
-		// object for each feature type name ...
-		String ftn = ci.qname();
-		RuleCreationStatus rulecs = ruleCreationStatusMap.get(ftn);
+		/*
+		 * Create an assertion. Find out if a rule for the required context
+		 * already exists.
+		 */
+		String ruleContext = ci.qname();
+		RuleCreationStatus rulecs = ruleCreationStatusMap.get(ruleContext);
 		String asserttext;
 		if (rulecs == null) {
 			// First time we encounter this feature type: Create a <rule>
 			Element rule = document.createElementNS(Options.SCHEMATRON_NS,
 					"rule");
 			pattern.appendChild(rule);
-			addAttribute(document, rule, "context", ci.qname());
+			addAttribute(document, rule, "context", ruleContext);
 			// Initialize the necessary DOM hooks and info
 			rulecs = new RuleCreationStatus();
 			rulecs.ruleElement = rule;
@@ -390,7 +399,7 @@ public class SchematronSchema implements MessageSource {
 			rulecs.lastPathStatus = xpath;
 			asserttext = xpath.fragment;
 			// Store away
-			ruleCreationStatusMap.put(ftn, rulecs);
+			ruleCreationStatusMap.put(ruleContext, rulecs);
 		} else {
 			// Second time: We need to merge the result fragment
 			asserttext = rulecs.lastPathStatus.merge(xpath);
@@ -420,6 +429,139 @@ public class SchematronSchema implements MessageSource {
 
 		// Memorize we have output at least one rule
 		assertion = true;
+	}
+
+	/**
+	 * Add an assertion statement embodied in an XpathFragment object and output
+	 * it as a Schematron &lt;assert> element. Does not add an assertion to
+	 * abstract or suppressed classes.
+	 * <p/>
+	 * The rule context is the property element, prefixed by the element that
+	 * represents ci. This supports cases in which the context class is a
+	 * subtype of the class that owns the property: b:subtype/a:property instead
+	 * of a:owner/a:property.
+	 * <p/>
+	 * &lt;let> elements are searched for identities and are merged including
+	 * the necessary name corrections in the text.
+	 * 
+	 * @param cib
+	 *            ClassInfo object, which is base of the rule context. Can be
+	 *            <code>null</code>, then the class that owns the property is
+	 *            the base of the rule context.
+	 * @param pi
+	 *            Property that completes the context
+	 * @param addToSubtypesInSelectedSchemas
+	 *            true to add the assertion to direct and indirect subtypes of
+	 *            cib (or the class that owns pi) that are in the schemas
+	 *            selected for processing
+	 * @param xpath
+	 *            Assertion embodied in an XpathFragment object.
+	 * @param text
+	 *            Explanatory text concerning the assertion
+	 * @param
+	 */
+	protected void addAssertion(ClassInfo cib, PropertyInfo pi,
+			boolean addToSubtypesInSelectedSchemas,
+			SchematronConstraintNode.XpathFragment xpath, String text) {
+
+		ClassInfo ci = cib != null ? cib : pi.inClass();
+
+		// Do not add assertion for abstract and suppressed classes
+		if (!ci.isAbstract() && !ci.suppressed()) {
+
+			registerNamespace(ci);
+			registerNamespace(pi.inClass());
+
+			/*
+			 * Create an assertion. Find out if a rule for the required context
+			 * already exists.
+			 * 
+			 * TBD: add nil check to context?
+			 */
+			String ruleContext = ci.qname() + "/" + pi.qname();
+			RuleCreationStatus rulecs = ruleCreationStatusMap.get(ruleContext);
+			String asserttext;
+
+			if (rulecs == null) {
+
+				// First time we encounter this context: Create a <rule>
+				Element rule = document.createElementNS(Options.SCHEMATRON_NS,
+						"rule");
+				pattern.appendChild(rule);
+				addAttribute(document, rule, "context", ruleContext);
+
+				// Initialize the necessary DOM hooks and info
+				rulecs = new RuleCreationStatus();
+				rulecs.ruleElement = rule;
+
+				// Initialize accumulation of the result fragments
+				rulecs.lastPathStatus = xpath;
+				asserttext = xpath.fragment;
+
+				// Store away
+				ruleCreationStatusMap.put(ruleContext, rulecs);
+
+			} else {
+
+				// Second time: We need to merge the result fragment
+				asserttext = rulecs.lastPathStatus.merge(xpath);
+			}
+
+			// Add the let-assignments, which are new for this assert
+			if (xpath.lets != null) {
+
+				for (Entry<String, String> l : rulecs.lastPathStatus.lets
+						.entrySet()) {
+
+					if (rulecs.letVarsAlreadyOutput.contains(l.getKey())) {
+						continue;
+					}
+
+					Element let = document
+							.createElementNS(Options.SCHEMATRON_NS, "let");
+					rulecs.ruleElement.insertBefore(let,
+							rulecs.firstAssertElement);
+					addAttribute(document, let, "name", l.getKey());
+					addAttribute(document, let, "value", l.getValue());
+					rulecs.letVarsAlreadyOutput.add(l.getKey());
+				}
+			}
+
+			// Add the assertion
+			Element ass = document.createElementNS(Options.SCHEMATRON_NS,
+					"assert");
+			rulecs.ruleElement.appendChild(ass);
+			if (rulecs.firstAssertElement == null) {
+				rulecs.firstAssertElement = ass;
+			}
+			addAttribute(document, ass, "test", asserttext);
+			ass.appendChild(document.createTextNode(text));
+
+			// Memorize we have output at least one rule
+			assertion = true;
+		}
+
+		if (addToSubtypesInSelectedSchemas) {
+
+			for (String subtypeId : ci.subtypes()) {
+
+				ClassInfo subtype = model.classById(subtypeId);
+
+				if (model.isInSelectedSchemas(subtype)) {
+
+					addAssertion(subtype, pi, true, xpath, text);
+
+					if (!schematronTitleExtended && !subtype.pkg()
+							.targetNamespace()
+							.equalsIgnoreCase(ci.pkg().targetNamespace())) {
+						schematronTitleHook.setTextContent(
+								schematronTitleHook.getTextContent()
+										+ " and dependent schema(s)");
+						schematronTitleExtended = true;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -538,6 +680,28 @@ public class SchematronSchema implements MessageSource {
 	 *            ClassInfo object to fetch the namespace uri from
 	 */
 	public void registerNamespace(String xmlns, ClassInfo ci) {
+		if (!namespaces.contains(xmlns)) {
+			String ns = ci.pkg().targetNamespace();
+			if (ns == null || ns.length() == 0)
+				registerNamespace(xmlns);
+			else {
+				registerNamespace(xmlns, ns);
+			}
+		}
+	}
+
+	/**
+	 * Determine the namespace abbreviation and target namespace uri for the
+	 * given class. If the configuration (via PackageInfo elements) or the
+	 * schema of the class do not define a target namespace, the namespace
+	 * mappings defined for the XmlSchema target in the configuration will be
+	 * consulted.
+	 * 
+	 * @param ci
+	 *            ClassInfo object to fetch the xmlns and namespace uri from
+	 */
+	public void registerNamespace(ClassInfo ci) {
+		String xmlns = ci.pkg().xmlns();
 		if (!namespaces.contains(xmlns)) {
 			String ns = ci.pkg().targetNamespace();
 			if (ns == null || ns.length() == 0)
@@ -1321,8 +1485,8 @@ public class SchematronSchema implements MessageSource {
 				true);
 		String schemaXsdDocument = pi.xsdDocument();
 		String schemaXsdBaseName = FilenameUtils.getBaseName(schemaXsdDocument);
-		schematronFilename = schematronFilename
-				.replaceAll("\\[\\[SCHEMA_XSD_BASENAME\\]\\]", schemaXsdBaseName);
+		schematronFilename = schematronFilename.replaceAll(
+				"\\[\\[SCHEMA_XSD_BASENAME\\]\\]", schemaXsdBaseName);
 
 		// Choose serialization parameters
 		Properties outputFormat = OutputPropertiesFactory

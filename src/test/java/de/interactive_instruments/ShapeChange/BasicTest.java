@@ -287,7 +287,9 @@ public abstract class BasicTest {
 							|| (fresExtension.equals("xml")
 									&& fileFormatsToCheck.contains("xml"))
 							|| (fresExtension.equals("rdf")
-									&& fileFormatsToCheck.contains("rdf"))) {
+									&& fileFormatsToCheck.contains("rdf"))
+							|| (fresExtension.equals("sch")
+									&& fileFormatsToCheck.contains("sch"))) {
 						similar(dirResults + File.separator + fres.getName(),
 								dirReference + File.separator + fres.getName());
 					} else if (fresExtension.equals("html")

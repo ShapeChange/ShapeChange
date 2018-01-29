@@ -43,6 +43,13 @@ public class SchematronTest extends WindowsBasicTest {
 	}
 	
 	@Test
+	public void schematronTestCodelist2_subtypes() {
+		multiTest("src/test/resources/sch/codelist2_subtypes/testEA_sch_codelist2_subtypes.xml",
+				new String[] { "sch" }, "testResults/sch/codelist2_subtypes",
+				"src/test/resources/sch/codelist2_subtypes/reference");
+	}
+	
+	@Test
 	public void schematronTestMetadataProfile() {
 		multiTest("src/test/resources/sch/metadataProfile/testEA_sch_metadataProfile.xml",
 				new String[] { "sch", "xsd" }, "testResults/sch/metadataProfile",
