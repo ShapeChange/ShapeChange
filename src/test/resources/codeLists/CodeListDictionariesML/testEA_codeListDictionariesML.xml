@@ -41,12 +41,9 @@
 			class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML"
 			mode="enabled" inputs="IDENTITY">
 			<targetParameter name="appSchemaName" value="Test Schema 2" />
-			<targetParameter name="languages" value="de" />
 			<targetParameter name="outputDirectory"
 				value="testResults/codeLists/CodeListDictionariesML/results/singleLanguage" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="localeRef_de"
-				value="http://example.org/locale/ref/de" />
 			<targetParameter name="infoURL" value="http://example.org/info" />
 			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
 		</TargetXmlSchema>
@@ -54,14 +51,11 @@
 		<TargetXmlSchema
 			class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML"
 			mode="enabled" inputs="IDENTITY">
-			<targetParameter name="languages" value="de" />
 			<targetParameter name="clPackageName" value="filterTest" />
 			<targetParameter name="noNewlineOmit" value="true" />
 			<targetParameter name="outputDirectory"
 				value="testResults/codeLists/CodeListDictionariesML/results/singleLanguage_filterTest" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="localeRef_de"
-				value="http://example.org/locale/ref/de" />
 			<!-- infoURL defined by tagged value on code list CodesD -->
 			<targetParameter name="defaultEncodingRule" value="myrule" />
 			<rules>

@@ -53,13 +53,37 @@ public class CodelistDictionariesMLConfigurationValidator
 
 		boolean isValid = true;
 
-		String slang = config.parameterAsString(
+		String defaultLang = config.parameterAsString(
+				CodelistDictionariesML.PARAM_DEFAULT_LANG, "de", false, true);
+
+		String sLangs = config.parameterAsString(
 				CodelistDictionariesML.PARAM_LANGUAGES, null, false, true);
-		if (StringUtils.isBlank(slang)) {
-			isValid = false;
-			result.addError(this, 100);
+
+		String[] langs;
+		if (sLangs != null) {
+			langs = sLangs.split(" ");
+		} else {
+			langs = new String[] { defaultLang };
 		}
-		
+
+		/*
+		 * For each language other than the default language, a corresponding
+		 * localeRef must be given.
+		 */
+		for (String lang : langs) {
+
+			if (!lang.equalsIgnoreCase(defaultLang)) {
+
+				String localeVal = config.parameterAsString("localeRef_" + lang,
+						null, false, true);
+
+				if (StringUtils.isBlank(localeVal)) {
+					isValid = false;
+					result.addError(this, 100, lang);
+				}
+			}
+		}
+
 		return isValid;
 	}
 
@@ -70,9 +94,7 @@ public class CodelistDictionariesMLConfigurationValidator
 
 		// 100 - 199: parameter validation
 		case 100:
-			return "Required parameter '"
-					+ CodelistDictionariesML.PARAM_LANGUAGES
-					+ "' was not found or does not have a non-empty value.";
+			return "Configuration parameter for locale reference is missing for language '$1$'. A locale reference must be provided for each language other than the default language.";
 
 		default:
 			return "(" + this.getClass().getName()

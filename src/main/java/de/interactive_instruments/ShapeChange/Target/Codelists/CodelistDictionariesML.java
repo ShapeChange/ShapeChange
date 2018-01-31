@@ -139,13 +139,17 @@ public class CodelistDictionariesML implements Target, MessageSource {
 		else
 			newlineOmit = true;
 
-		sLangs = options.parameter(this.getClass().getName(), PARAM_LANGUAGES);
-
-		if (sLangs != null)
-			langs = sLangs.split(" ");
-
 		defaultLang = options.parameterAsString(this.getClass().getName(),
 				PARAM_DEFAULT_LANG, "de", false, true);
+
+		sLangs = options.parameterAsString(this.getClass().getName(),
+				PARAM_LANGUAGES, null, false, true);
+
+		if (sLangs != null) {
+			langs = sLangs.split(" ");
+		} else {
+			langs = new String[] { defaultLang };
+		}
 	}
 
 	/**
@@ -711,7 +715,8 @@ public class CodelistDictionariesML implements Target, MessageSource {
 
 		String id;
 		if (propi.matches(RULE_PROP_CODELIST_AND_CODE_NAME_AS_GML_ID)) {
-			id = ci.name() + "_" + propi.name();
+			String propiName = propi.name().replaceAll("[^a-zA-Z0-9_]", "");
+			id = ci.name() + "_" + propiName;
 		} else {
 			id = "_" + propi.id();
 		}
