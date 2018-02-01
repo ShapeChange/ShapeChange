@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2">
   <title>Schematron constraints for schema 'Test Schema'</title>
   <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
-  <ns prefix="ex" uri="http://example.org/shapechange/sch/codelist2"/>
+  <ns prefix="ex" uri="http://example.org/shapechange/sch/codelistCheck"/>
   <ns prefix="gml" uri="http://www.opengis.net/gml/3.2"/>
   <ns prefix="gmx" uri="http://www.isotc211.org/2005/gmx"/>
   <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>

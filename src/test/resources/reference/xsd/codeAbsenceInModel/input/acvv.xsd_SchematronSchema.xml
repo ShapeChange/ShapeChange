@@ -5,8 +5,8 @@
   <ns prefix="ext" uri="http://example.org/absentCodelistValueValidation/extSchema"/>
   <pattern>
     <rule context="acvv:FeatureType">
-      <assert test="not(acvv:propCL) or acvv:propCL = 'code1' or acvv:propCL = 'code2'">propCL_AllowedValues</assert>
-      <assert test="concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute) = 'http://example.org/codelist/ExternalCodeList/codeA' or concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute) = 'http://example.org/codelist/ExternalCodeList/codeB'">propExt_AllowedValues</assert>
+      <assert test="not(acvv:propCL/text()) or acvv:propCL/text() = 'code1' or acvv:propCL/text() = 'code2'">propCL_AllowedValues</assert>
+      <assert test="concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute/text()) = 'http://example.org/codelist/ExternalCodeList/codeA' or concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute/text()) = 'http://example.org/codelist/ExternalCodeList/codeB'">propExt_AllowedValues</assert>
     </rule>
   </pattern>
 </schema>

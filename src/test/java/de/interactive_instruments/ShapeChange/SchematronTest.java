@@ -55,4 +55,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch", "xsd" }, "testResults/sch/metadataProfile",
 				"src/test/resources/sch/metadataProfile/reference");
 	}
+	
+	@Test
+	public void schematronTestOclOnCodelistTypedProperty() {
+		multiTest("src/test/resources/sch/oclOnCodelistTypedProperty/testEA_sch_oclOnCodelistTypedProperty.xml",
+				new String[] { "sch" }, "testResults/sch/oclOnCodelistTypedProperty",
+				"src/test/resources/sch/oclOnCodelistTypedProperty/reference");
+	}
 }

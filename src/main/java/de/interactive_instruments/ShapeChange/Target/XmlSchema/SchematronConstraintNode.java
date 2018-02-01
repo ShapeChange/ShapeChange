@@ -36,10 +36,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -681,16 +681,20 @@ public abstract class SchematronConstraintNode {
 				if (!child.hasSimpleType() && !child.hasIdentity()) {
 					return new XpathFragment(11, "***ERROR[126]***");
 				}
+
 				child_xpt[i] = child.translate(ctx);
 				if (child.hasIdentity()) {
 					child_xpt[i].fragment = "generate-id("
 							+ child_xpt[i].fragment + ")";
 					child_xpt[i].priority = 11;
 				}
-				if (child_xpt[i].fragment.length() == 0)
+
+				if (child_xpt[i].fragment.length() == 0) {
 					child_xpt[i].fragment = ".";
-				if (child_xpt[i].priority <= refprio)
+				}
+				if (child_xpt[i].priority <= refprio) {
 					child_xpt[i].bracket();
+				}
 				child_xpt[i].atEnd.setState(BindingContext.CtxState.NONE);
 			}
 
@@ -747,8 +751,9 @@ public abstract class SchematronConstraintNode {
 			// Fetch and compile the object
 			SchematronConstraintNode obj = children.get(0);
 			XpathFragment xpt = obj.translate(ctx);
-			if (xpt.fragment.length() == 0)
+			if (xpt.fragment.length() == 0) {
 				xpt.fragment = ".";
+			}
 
 			// isEmpty() requires an additional not(...)
 			if (!negated) {
@@ -1030,10 +1035,11 @@ public abstract class SchematronConstraintNode {
 							xpt.atEnd.setState(BindingContext.CtxState.NONE);
 							exat.children.set(0, sv);
 						} else {
-							// Class is expressed by means of a simple type.
-							// This
-							// also includes 'reason' access in GML's nilReason
-							// treatment.
+							/*
+							 * Class is expressed by means of a simple type.
+							 * This also includes 'reason' access in GML's
+							 * nilReason treatment.
+							 */
 							String var = null;
 							if (xpt.fragment.matches("^\\$[A-Z]+$"))
 								var = xpt.fragment;
@@ -1623,6 +1629,12 @@ public abstract class SchematronConstraintNode {
 				if (!first)
 					xptobj.fragment += " or ";
 				first = false;
+				/*
+				 * FIXME 2018-01-31 JE: comparison based on QName as literal
+				 * value (like 'ex:ClassX') is dangerous, because it depends on
+				 * a fixed namespace prefix. However, the prefix of a namespace
+				 * can vary.
+				 */
 				xptobj.fragment += "name()='" + name + "'";
 			}
 			if (first)
@@ -1653,30 +1665,38 @@ public abstract class SchematronConstraintNode {
 				boolean isgml33 = pip != null && schemaObject.options
 						.matchesEncRule(pip.encodingRule("xsd"), "gml33");
 
-				// If not translating according to GML 3.3 we need to prepare
-				// the
-				// CodeListValuePattern.
+				/*
+				 * If not translating according to GML 3.3 we need to prepare
+				 * the CodeListValuePattern.
+				 */
 				String clvpat = "{value}";
 				int nsubst = 1;
+
 				if (!isgml33) {
+
 					String uri = argumentClass.taggedValue("codeList");
 					if (uri != null && uri.length() > 0) {
 						clvpat = "{codeList}/{value}";
 					}
 					String vp = argumentClass
 							.taggedValue("codeListValuePattern");
-					if (vp != null && vp.length() > 0)
+					if (vp != null && vp.length() > 0) {
 						clvpat = vp;
+					}
 					clvpat = clvpat.replace("{codeList}", "',{codeList},'");
 					clvpat = clvpat.replace("{value}", "',{value},'");
-					if (clvpat.startsWith("',"))
+					if (clvpat.startsWith("',")) {
 						clvpat = clvpat.substring(2);
-					if (clvpat.endsWith(",'"))
+					}
+					if (clvpat.endsWith(",'")) {
 						clvpat = clvpat.substring(0, clvpat.length() - 2);
-					if (!clvpat.startsWith("{"))
+					}
+					if (!clvpat.startsWith("{")) {
 						clvpat = "'" + clvpat;
-					if (!clvpat.endsWith("}"))
+					}
+					if (!clvpat.endsWith("}")) {
 						clvpat += "'";
+					}
 					if (!clvpat.equals("{value}")) {
 						clvpat = "concat(" + clvpat + ")";
 						nsubst = 2;
@@ -2684,6 +2704,7 @@ public abstract class SchematronConstraintNode {
 			// Now step along the properties and generate the associated Xpath
 			// code for it.
 			boolean lastWasSimple = objnode.hasSimpleType();
+
 			for (int idx = 0; idx < props.length && !lastWasSimple; idx++) {
 
 				// The property
@@ -2696,27 +2717,33 @@ public abstract class SchematronConstraintNode {
 				String cid = pi.typeInfo().id;
 				ClassInfo ci = null;
 				ClassInfo cip = null;
-				if (cid != null)
+				if (cid != null) {
 					cip = ci = pi.model().classById(cid);
+				}
 				// If absorbing assume the type of the absorbed entity
-				if (attributes[idx].absType == 1)
+				if (attributes[idx].absType == 1) {
 					ci = attributes[idx].absAttr.dataType.umlClass;
+				}
 				if (!hasSimpleType(idx)) {
-					// Not a simple type, assume in-line
+
+					/*
+					 * Not a simple type, use in-line as default, then check if
+					 * byReference or inlineOrByReference
+					 */
 					conCode = 1;
+
 					if (ci != null && XmlSchema.classCanBeReferenced(ci)) {
+
 						String ref = pi.inlineOrByReference();
-						if (ref == null)
-							ref = "";
-						if (ref.equals("byreference"))
+						if ("byreference".equals(ref)) {
 							conCode = 2;
-						else if (!ref.equals("inline"))
+						} else if (!"inline".equals(ref)) {
 							conCode = 3;
+						}
 					}
 				}
 
-				// Namespace and namespace adorned property
-				String proper = schemaObject.getAndRegisterXmlName(pi);
+				String propertyQName = schemaObject.getAndRegisterXmlName(pi);
 
 				/*
 				 * We will have to know whether we are subject to the 19139,
@@ -2729,15 +2756,22 @@ public abstract class SchematronConstraintNode {
 				// Dispatch on containment cases
 				if (conCode == 0) {
 
-					// 0: Simple type is contained. This also comprises
-					// access to property 'reason' in GML's nilReason
-					// treatment.
+					/*
+					 * 0: Simple type is contained. This also comprises access
+					 * to property 'reason' in GML's nilReason treatment.
+					 */
 
 					if (obj.fragment.length() > 0) {
 						obj.fragment += "/";
 						obj.priority = 9;
 					}
-					obj.fragment += proper;
+					obj.fragment += propertyQName;
+
+					/*
+					 * TBD 2018-02-01 JE: The following code could be cleaned
+					 * up, if the codeListValuePattern only applied in case that
+					 * the code list is encoded as a GML 3.3 dictionary.
+					 */
 
 					/*
 					 * We also need to know whether the property has a codelist
@@ -2751,35 +2785,44 @@ public abstract class SchematronConstraintNode {
 									&& ci.asDictionaryGml33())
 									|| (ci.matches(
 											"rule-xsd-cls-codelist-asDictionary")
-											&& ci.asDictionary()));
+											&& ci.asDictionary())
+									|| ci.matches(
+											"rule-xsd-cls-standard-19139-property-types"));
 
 					/*
-					 * If it's a codelist and not GML 3.3 we need to prepare the
-					 * CodeListValuePattern.
+					 * If it's a codelist and neither GML 3.3 nor ISO 19139 we
+					 * need to prepare the CodeListValuePattern.
 					 */
 					String clvpat = "{value}";
 					int nsubst = 1;
+
 					if (ci != null && iscodelist
 							&& !(schemaObject.options.matchesEncRule(
 									pi.encodingRule("xsd"), "gml33")
 									|| is19139)) {
+
 						String uri = ci.taggedValue("codeList");
 						if (uri != null && uri.length() > 0) {
 							clvpat = "{codeList}/{value}";
 						}
 						String vp = ci.taggedValue("codeListValuePattern");
-						if (vp != null && vp.length() > 0)
+						if (vp != null && vp.length() > 0) {
 							clvpat = vp;
+						}
 						clvpat = clvpat.replace("{codeList}", "',{codeList},'");
 						clvpat = clvpat.replace("{value}", "',{value},'");
-						if (clvpat.startsWith("',"))
+						if (clvpat.startsWith("',")) {
 							clvpat = clvpat.substring(2);
-						if (clvpat.endsWith(",'"))
+						}
+						if (clvpat.endsWith(",'")) {
 							clvpat = clvpat.substring(0, clvpat.length() - 2);
-						if (!clvpat.startsWith("{"))
+						}
+						if (!clvpat.startsWith("{")) {
 							clvpat = "'" + clvpat;
-						if (!clvpat.endsWith("}"))
+						}
+						if (!clvpat.endsWith("}")) {
 							clvpat += "'";
+						}
 						if (!clvpat.equals("{value}")) {
 							clvpat = "concat(" + clvpat + ")";
 							nsubst = 2;
@@ -2807,43 +2850,65 @@ public abstract class SchematronConstraintNode {
 					}
 
 					// Adjust relative adressing of variables
-					if (obj.atEnd != null)
+					if (obj.atEnd != null) {
 						obj.atEnd.addStep();
+					}
 
 					// In a normal property access, we still have to treat some
 					// special cases ...
 					boolean atcurr = ctx.state == BindingContext.CtxState.ATCURRENT;
+
 					if (attributes[idx].absType == 0) {
+
 						if (is19139) {
+
 							/*
 							 * Under 19139 encoding, we will have to match
-							 * another element level, which is for carrying the
-							 * type, but does not concern us a lot ...
+							 * another element level, even for simple types
 							 */
 							obj.fragment += "/*";
-							if (obj.atEnd != null)
+							if (obj.atEnd != null) {
 								obj.atEnd.addStep();
+							}
+
 							// For codelists we have to add an attribute access
-							if (iscodelist) {
+							if (ci != null
+									&& ci.category() == Options.CODELIST) {
+
 								if (nsubst == 2 && atcurr) {
 									String v = obj.findOrAdd(obj.fragment);
 									obj.fragment = "$" + v;
 								}
+
 								String clvp = clvpat.replace("{codeList}",
 										obj.fragment + "/@codeList");
 								obj.fragment = clvp.replace("{value}",
 										obj.fragment + "/@codeListValue");
 							}
+
 						} else if (iscodelist) {
+
 							if (!ci.matches(
 									"rule-xsd-cls-codelist-asDictionaryGml33")) {
-								// In elder GMLs we might find the codespace in
-								// the codespace attribute
+								/*
+								 * In elder GMLs we might find the code list URI
+								 * in the @codeSpace attribute. The value is the
+								 * text of the property element (which has type
+								 * gml:CodeType).
+								 * 
+								 * NOTE: We need to actually access the text
+								 * node of the property element, not just the
+								 * element node. Otherwise '.' would not work,
+								 * for example when checking for
+								 * property->notEmpty().
+								 */
 								String clvp = clvpat.replace("{codeList}",
 										obj.fragment + "/@codeSpace");
 								obj.fragment = clvp.replace("{value}",
-										obj.fragment);
+										obj.fragment + "/text()");
+
 							} else {
+
 								/*
 								 * If using GML 3.3 type codelist treatment, we
 								 * have to refer to the xlink:href attribute
@@ -2890,7 +2955,7 @@ public abstract class SchematronConstraintNode {
 						frag_inl = obj.fragment;
 						if (frag_inl.length() > 0)
 							frag_inl += "/";
-						frag_inl += proper;
+						frag_inl += propertyQName;
 						if (obj.atEnd != null)
 							obj.atEnd.addStep();
 						frag_inl += "/*";
@@ -2927,7 +2992,7 @@ public abstract class SchematronConstraintNode {
 						String attxlink = obj.fragment;
 						if (attxlink.length() > 0)
 							attxlink += "/";
-						attxlink += proper;
+						attxlink += propertyQName;
 						attxlink += "/@xlink:href";
 						frag_ref = "//*[";
 						if (alphaEx || betaEx) {
@@ -3031,37 +3096,71 @@ public abstract class SchematronConstraintNode {
 				ClassInfo ci = litex.dataType.umlClass;
 
 				if (ci != null && ci.name().equals("Boolean")) {
+
 					// The Boolean case. Translate as if true or false had been
 					// written instead of Boolean::true and ::false.
 					boolean val = value.equalsIgnoreCase("TRUE");
-					if (negated)
+					if (negated) {
 						val = !val;
+					}
 					value = val ? "true()" : "false()";
 					type = XpathType.BOOLEAN;
+
 				} else {
-					// Enums and codelist constants will generally be translated
-					// to string constants representing their value.
-					// Codelists, additionally, can carry the 'codeList' tagged
-					// value the value of which will be combined according to a
-					// pattern given by the 'codeListValuePattern' tagged value
-					// to produce an indentifier containing both: codespace and
-					// value.
+
+					/*
+					 * Enums and codelist constants will generally be translated
+					 * to string constants representing their value.
+					 * 
+					 * Codelists, additionally, can carry the 'codeList' tagged
+					 * value the value of which will be combined according to a
+					 * pattern given by the 'codeListValuePattern' tagged value
+					 * to produce an identifier.
+					 */
+
+					/*
+					 * TBD 2018-02-01 JE: The value of a code/enum typically is
+					 * the literal as a String, i.e. in case of a code/enum its
+					 * name. However, some communities may prefer using the
+					 * initial value, if it exists. In that case, the initial
+					 * value would have to be used as value. However, it's
+					 * unclear how to configure this preference. Should it be a
+					 * global option? But what about code lists in external
+					 * schemas, which may not have been encoded according to
+					 * this preference? Does that mean that we can check based
+					 * upon the encoding rule of the code list? Or should the
+					 * tagging of a code list be extended, for example adding a
+					 * tagged value 'initialValueAsCode' of type boolean, which,
+					 * if set to true, would instruct ShapeChange to encode a
+					 * code/enum as literal using the initial value, if it
+					 * exists?
+					 */
+					// PropertyInfo pi = litex.umlProperty;
+					// if (pi != null && pi.initialValue() != null) {
+					//
+					// }
+
 					boolean iscodelist = ci != null
 							&& ci.category() == Options.CODELIST;
+
 					// Default for enums
 					String clUri = "";
 					String clVPat = "{value}";
+
 					// Treatment of codelists
 					if (iscodelist) {
+
 						String uri = ci.taggedValue("codeList");
 						if (uri != null && uri.length() > 0) {
 							clVPat = "{codeList}/{value}";
 							clUri = uri;
 						}
 						String vp = ci.taggedValue("codeListValuePattern");
-						if (vp != null && vp.length() > 0)
+						if (vp != null && vp.length() > 0) {
 							clVPat = vp;
+						}
 					}
+
 					// Everything is in place. We can now generate the
 					// codelist value from the pattern ...
 					clVPat = clVPat.replace("{value}", value);
@@ -3076,8 +3175,9 @@ public abstract class SchematronConstraintNode {
 
 				OclNode.BooleanLiteralExp lit = (OclNode.BooleanLiteralExp) literal;
 				boolean val = lit.value;
-				if (negated)
+				if (negated) {
 					val = !val;
+				}
 				value = val ? "true()" : "false()";
 				type = XpathType.BOOLEAN;
 
@@ -3090,11 +3190,11 @@ public abstract class SchematronConstraintNode {
 			} else if (literal instanceof OclNode.DateTimeLiteralExp) {
 
 				OclNode.DateTimeLiteralExp lt = (OclNode.DateTimeLiteralExp) literal;
-				if (lt.current)
+				if (lt.current) {
 					// This references the current date and cannot be
 					// represented in Xpath ...
 					value = "***ERROR[125]***";
-				else {
+				} else {
 					// A defined date is being used
 					GregorianCalendar dt = lt.dateTime;
 					int y = dt.get(Calendar.YEAR);

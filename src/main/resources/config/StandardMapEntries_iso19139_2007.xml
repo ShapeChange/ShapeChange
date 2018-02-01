@@ -35,7 +35,7 @@
  <XsdMapEntry type="MX_DataFile" xsdEncodingRules="*" xmlElement="gmx:MX_DataFile" xmlType="gmx:MX_DataFile_Type" xmlPropertyType="gmx:MX_DataFile_PropertyType"/>
  <XsdMapEntry type="MX_DataSet" xsdEncodingRules="*" xmlElement="gmx:MX_DataSet" xmlType="gmx:MX_DataSet_Type" xmlPropertyType="gmx:MX_DataSet_PropertyType"/>
  <XsdMapEntry type="MX_File" xsdEncodingRules="*" xmlElement="gmx:AbstractMX_File" xmlType="gmx:AbstractMX_File_Type" xmlPropertyType="gmx:MX_File_PropertyType"/>
- <XsdMapEntry type="MX_ScopeCode" xsdEncodingRules="*" xmlElement="gmx:MX_ScopeCode" xmlPropertyType="gmx:MX_ScopeCode_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="MX_ScopeCode" xsdEncodingRules="*" xmlElement="gmx:MX_ScopeCode" xmlPropertyType="gmx:MX_ScopeCode_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
  <XsdMapEntry type="MX_SupportFile" xsdEncodingRules="*" xmlElement="gmx:MX_SupportFile" xmlType="gmx:MX_SupportFile_Type" xmlPropertyType="gmx:MX_SupportFile_PropertyType"/>
  <XsdMapEntry type="Measure" xsdEncodingRules="iso19139_2007" xmlElement="gco:Measure" xmlPropertyType="gco:Measure_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
  <XsdMapEntry type="MemberName" xsdEncodingRules="iso19139_2007" xmlElement="gco:MemberName" xmlPropertyType="gco:MemberName_PropertyType" xmlType="gco:MemberName_Type"/>

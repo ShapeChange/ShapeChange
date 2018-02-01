@@ -1470,6 +1470,27 @@ public class Options {
 						"Invalid configuration file.");
 			}
 
+			/*
+			 * 2018-01-31 JE: uncomment the following to print the configuration
+			 * as loaded by ShapeChange, with xincludes resolved.
+			 */
+			// try {
+			// TransformerFactory tf = TransformerFactory.newInstance();
+			// Transformer transformer = tf.newTransformer();
+			// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+			// "no");
+			// transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			// transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+			// "4");
+			//
+			// transformer.transform(new DOMSource(document),
+			// new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+
 			// parse input element specific content
 			NodeList nl = document.getElementsByTagName("input");
 			Element inputElement = (Element) nl.item(0);
@@ -3442,7 +3463,7 @@ public class Options {
 		addRule("rule-xsd-cls-standard-19139-property-types");
 		addRule("rule-xsd-cls-enum-object-element");
 		addRule("rule-xsd-cls-enum-property-type");
-		
+
 		/*
 		 * add the iso19139_2007 encoding rule and extend the core encoding rule
 		 */
@@ -3771,7 +3792,7 @@ public class Options {
 		 */
 		addRule("rule-cdb-all-notEncoded");
 		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
-		
+
 		/*
 		 * CodeListDictionariesML conversion rules
 		 */

@@ -488,18 +488,33 @@ public class XmlSchema implements Target {
 	}
 
 	/**
+	 * Tries to identify if the object element that represents ci has simple
+	 * content. If ci is a code list encoded following ISO 19139:2007, the
+	 * result will be <code>true</code>. Otherwise, if an XsdMapEntry exists
+	 * with attribute xmlElementHasSimpleType=true the result will be
+	 * <code>true</code>. If xmlElementHasSimpleType=false, the result will be
+	 * <code>false</code>. If no map entry exists, or the map entry does not
+	 * contain the attribute, the result will be undetermined (i.e.,
+	 * <code>null</code>).
+	 * 
 	 * @param ci
 	 * @return A Boolean object that indicates if the object element that
-	 *         represents ci has simple content. If the object is
-	 *         <code>null</code>, that information is undetermined (i.e., not
-	 *         provided by the XsdMapEntry that applies for ci, if such a map
-	 *         entry exists at all).
+	 *         represents ci has simple content. If the result is
+	 *         <code>null</code>, that information is undetermined.
 	 */
 	public static Boolean indicatorForObjectElementWithSimpleContent(
 			ClassInfo ci) {
 
-		return ci.options().xmlElementHasSimpleContent(ci.name(),
-				ci.encodingRule("xsd"));
+		if (ci.category() == Options.CODELIST
+				&& ci.matches("rule-xsd-cls-standard-19139-property-types")) {
+
+			return true;
+
+		} else {
+
+			return ci.options().xmlElementHasSimpleContent(ci.name(),
+					ci.encodingRule("xsd"));
+		}
 	}
 
 	/**

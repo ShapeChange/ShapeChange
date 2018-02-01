@@ -572,7 +572,7 @@ public class SchematronSchema implements MessageSource {
 	 * 
 	 * @param pi
 	 *            PropertyInfo object
-	 * @return Element name of property
+	 * @return Element name of property (a QName: {ns prefix}:{property name})
 	 */
 	public String getAndRegisterXmlName(PropertyInfo pi) {
 		String nspref = pi.inClass().pkg().xmlns();
