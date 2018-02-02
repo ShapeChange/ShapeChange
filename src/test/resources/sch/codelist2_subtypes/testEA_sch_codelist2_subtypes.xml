@@ -42,7 +42,7 @@
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="myrule" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
-			<targetParameter name="codeListRepresentationTaggedValueDefault"
+			<targetParameter name="defaultCodeListRepresentation"
 				value="application/x.iso19139+xml" />
 			<targetParameter name="schematronFileNameTemplate"
 				value="[[SCHEMA_XSD_BASENAME]]_SchematronSchema.sch" />

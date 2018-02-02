@@ -1678,11 +1678,10 @@ public abstract class SchematronConstraintNode {
 					if (uri != null && uri.length() > 0) {
 						clvpat = "{codeList}/{value}";
 					}
-					String vp = argumentClass
-							.taggedValue("codeListValuePattern");
-					if (vp != null && vp.length() > 0) {
-						clvpat = vp;
-					}
+
+					clvpat = this.schemaObject.determineCodeListValuePattern(
+							argumentClass, clvpat);
+
 					clvpat = clvpat.replace("{codeList}", "',{codeList},'");
 					clvpat = clvpat.replace("{value}", "',{value},'");
 					if (clvpat.startsWith("',")) {
@@ -2805,10 +2804,10 @@ public abstract class SchematronConstraintNode {
 						if (uri != null && uri.length() > 0) {
 							clvpat = "{codeList}/{value}";
 						}
-						String vp = ci.taggedValue("codeListValuePattern");
-						if (vp != null && vp.length() > 0) {
-							clvpat = vp;
-						}
+
+						clvpat = this.schemaObject
+								.determineCodeListValuePattern(ci, clvpat);
+
 						clvpat = clvpat.replace("{codeList}", "',{codeList},'");
 						clvpat = clvpat.replace("{value}", "',{value},'");
 						if (clvpat.startsWith("',")) {
@@ -3155,10 +3154,8 @@ public abstract class SchematronConstraintNode {
 							clVPat = "{codeList}/{value}";
 							clUri = uri;
 						}
-						String vp = ci.taggedValue("codeListValuePattern");
-						if (vp != null && vp.length() > 0) {
-							clVPat = vp;
-						}
+						clVPat = this.schemaObject
+								.determineCodeListValuePattern(ci, clVPat);
 					}
 
 					// Everything is in place. We can now generate the

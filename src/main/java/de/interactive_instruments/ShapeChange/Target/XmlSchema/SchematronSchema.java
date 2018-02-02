@@ -49,6 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -1579,6 +1580,33 @@ public class SchematronSchema implements MessageSource {
 			mess = mess.substring(2);
 		}
 		return prefix + "Schematron Target: " + mess;
+	}
+
+	/**
+	 * Get the 'codeListValuePattern', first looking for an according tagged
+	 * value on the given code list. If that tagged value is blank (
+	 * <code>null</code> or whitespace only) then look for an (XmlSchema) target
+	 * parameter 'defaultCodeListValuePattern'. If that also does not result in
+	 * a non-empty value, us the given default pattern.
+	 * 
+	 * @param codelist
+	 * @param defaultPattern
+	 *            pattern to use if the lookup via tagged value and target
+	 *            parameter did not yield a non-empty result
+	 * @return
+	 */
+	public String determineCodeListValuePattern(ClassInfo codelist,
+			String defaultPattern) {
+
+		String vp = codelist.taggedValue("codeListValuePattern");
+
+		if (StringUtils.isBlank(vp)) {
+
+			vp = options.parameterAsString(XmlSchema.class.getName(),
+					"defaultCodeListValuePattern", defaultPattern, false, true);
+		}
+
+		return vp;
 	}
 
 	/**

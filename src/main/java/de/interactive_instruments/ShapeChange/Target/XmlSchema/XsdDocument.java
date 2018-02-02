@@ -129,8 +129,8 @@ public class XsdDocument implements MessageSource {
 				"documentationNoValue");
 
 		codeListRepresentationTVFallback = options.parameterAsString(
-				XmlSchema.class.getName(),
-				"codeListRepresentationTaggedValueDefault", null, false, true);
+				XmlSchema.class.getName(), "defaultCodeListRepresentation",
+				null, false, true);
 
 		String s = options.parameter(Options.TargetXmlSchemaClass,
 				"okstraKeyValuePropertyType");
@@ -3292,9 +3292,8 @@ public class XsdDocument implements MessageSource {
 				}
 
 				// assert the existence of the code list
-				String s2 = typeCi.taggedValue("codeListValuePattern");
-				if (s2 == null || s2.isEmpty())
-					s2 = "{codeList}/{value}";
+				String s2 = schDoc.determineCodeListValuePattern(typeCi,
+						"{codeList}/{value}");
 				s2 = "concat('" + s2.replace("{codeList}", s).replace("{value}",
 						"',*/@codeListValue)");
 				xpath = new XpathFragment(0, "(not contains('" + s2
@@ -3411,9 +3410,8 @@ public class XsdDocument implements MessageSource {
 							"Code space is '" + s + "'");
 
 					// assert the existence of the code list
-					String s2 = typeCi.taggedValue("codeListValuePattern");
-					if (s2 == null || s2.isEmpty())
-						s2 = "{codeList}/{value}";
+					String s2 = schDoc.determineCodeListValuePattern(typeCi,
+							"{codeList}/{value}");
 					s2 = "concat('" + s2.replace("{codeList}", s)
 							.replace("{value}", "',.)");
 					xpath = new XpathFragment(0,
@@ -4395,7 +4393,7 @@ public class XsdDocument implements MessageSource {
 		case 1000:
 			return "??Representation '$1$' of code list '$2$' is not recognized. No representation specific schematron assertions will be created for this code list.";
 		case 1001:
-			return "??Code list URI of code list '$2$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list.";
+			return "??Code list URI of code list '$1$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list.";
 
 		}
 		return null;
