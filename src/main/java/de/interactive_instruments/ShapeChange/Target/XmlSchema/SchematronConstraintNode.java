@@ -41,8 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
@@ -423,7 +426,9 @@ public abstract class SchematronConstraintNode {
 			variableMerging = vm;
 		}
 
-		// Bracket the current expression
+		/**
+		 * Bracket the current expression
+		 */
 		public void bracket() {
 			fragment = "(" + fragment + ")";
 			priority = 11;
@@ -454,14 +459,35 @@ public abstract class SchematronConstraintNode {
 			}
 		}
 
-		// Function to find or add a variable given the expression
+		/**
+		 * Function to find or add a variable given the expression
+		 */
 		public String findOrAdd(String ex) {
-			if (lets == null)
+
+			if (lets == null) {
 				lets = new TreeMap<String, String>();
+			}
+
+			/*
+			 * If ex is an existing let variable, just return it (and thus
+			 * prevent a let expression with a variable as value).
+			 */
+			if (ex.startsWith("$") && lets.containsKey(ex.substring(1))) {
+				return ex.substring(1);
+			}
+
+			/*
+			 * Determine if a let variable with the given expression already
+			 * exists.
+			 */
 			for (Map.Entry<String, String> ve : lets.entrySet()) {
 				if (ve.getValue().equals(ex))
 					return ve.getKey();
 			}
+
+			/*
+			 * Create a new let variable.
+			 */
 			String newkey = "A";
 			if (!lets.isEmpty()) {
 				String last = lets.lastKey();
@@ -483,7 +509,9 @@ public abstract class SchematronConstraintNode {
 			return newkey;
 		}
 
-		// Auxiliary function to replace variable names
+		/**
+		 * Auxiliary function to replace variable names
+		 */
 		private void replace(String from, String to) {
 			Pattern pat = Pattern.compile(from);
 			if (lets != null)
@@ -1608,37 +1636,89 @@ public abstract class SchematronConstraintNode {
 
 			// Obtain the necessary classes from the model
 			SortedSet<String> subtypes = argumentClass.subtypes();
-			Set<String> classnames = new HashSet<String>();
+
+			SortedSet<ClassInfo> relevantClasses = new TreeSet<>();
+
 			for (String stid : subtypes) {
+
 				ClassInfo ci = argumentClass.model().classById(stid);
-				if (ci.isAbstract())
-					continue;
-				classnames.add(schemaObject.getAndRegisterXmlName(ci));
+
+				if (!ci.isAbstract()) {
+					relevantClasses.add(ci);
+				}
 			}
-			if (!argumentClass.isAbstract())
-				classnames
-						.add(schemaObject.getAndRegisterXmlName(argumentClass));
+
+			if (!argumentClass.isAbstract()) {
+				relevantClasses.add(argumentClass);
+			}
 
 			// Append a predicate which compares against all possible
 			// names.
 			boolean first = true;
-			if (xptobj.priority < 9)
+			if (xptobj.priority < 9) {
 				xptobj.bracket();
-			xptobj.fragment += "[";
-			for (String name : classnames) {
-				if (!first)
-					xptobj.fragment += " or ";
-				first = false;
-				/*
-				 * FIXME 2018-01-31 JE: comparison based on QName as literal
-				 * value (like 'ex:ClassX') is dangerous, because it depends on
-				 * a fixed namespace prefix. However, the prefix of a namespace
-				 * can vary.
-				 */
-				xptobj.fragment += "name()='" + name + "'";
 			}
-			if (first)
+			xptobj.fragment += "[";
+
+			/*
+			 * If we have more than one component, surround each part we add
+			 * with parentheses.
+			 */
+			boolean surroundWithBrackets = relevantClasses.size() > 1;
+
+			for (ClassInfo ci : relevantClasses) {
+
+				if (!first) {
+					xptobj.fragment += " or ";
+				}
+
+				first = false;
+
+				String namespace = ci.pkg().targetNamespace();
+				String localName = ci.name();
+
+				MapEntry me = ci.options().elementMapEntry(ci.name(),
+						ci.encodingRule("xsd"));
+
+				if (me != null && StringUtils.isNotBlank(me.p1)) {
+
+					String xmlElement = me.p1;
+					String[] parts = xmlElement.split(":");
+
+					if (parts.length > 1) {
+						String nspref = parts[0];
+						String ns = schemaObject.options.fullNamespace(nspref);
+						if (ns != null) {
+							namespace = ns;
+							localName = parts[1];
+						}
+					}
+				}
+
+				if (surroundWithBrackets) {
+					xptobj.fragment += "(";
+				}
+
+				/*
+				 * 2018-02-06 JE: comparison based on QName as literal value
+				 * (like 'ex:ClassX') is dangerous, because it depends on a
+				 * fixed namespace prefix. However, the prefix of a namespace
+				 * can vary. Therefore, I changed the logic from name()=aQName
+				 * to use local-name() and namespace-uri().
+				 */
+				xptobj.fragment += "local-name()='" + localName
+						+ "' and namespace-uri()='" + namespace + "'";
+
+				if (surroundWithBrackets) {
+					xptobj.fragment += ")";
+				}
+			}
+
+			// for case in which no relevant class was found
+			if (first) {
 				xptobj.fragment += "false()";
+			}
+
 			xptobj.fragment += "]";
 			xptobj.priority = 10;
 
@@ -2684,8 +2764,9 @@ public abstract class SchematronConstraintNode {
 			// First, obtain the feature attribute expressed by PropertyInfo
 			// objects.
 			PropertyInfo[] props = new PropertyInfo[attributes.length];
-			for (int i = 0; i < props.length; i++)
+			for (int i = 0; i < props.length; i++) {
 				props[i] = (PropertyInfo) attributes[i].main.selector.modelProperty;
+			}
 
 			// Translate the object. This is a variable (self in most of the
 			// cases), or AllInstances() or any type of object producing
@@ -2761,6 +2842,11 @@ public abstract class SchematronConstraintNode {
 					 */
 
 					if (obj.fragment.length() > 0) {
+
+						if (obj.priority < 9) {
+							obj.bracket();
+						}
+
 						obj.fragment += "/";
 						obj.priority = 9;
 					}
@@ -2931,19 +3017,24 @@ public abstract class SchematronConstraintNode {
 					// Other: different modes of containment are possible
 					String frag_inl = null;
 					String frag_ref = null;
-					boolean isVar = false;
+					 boolean isVar = false;
 
-					if (conCode == 3) {
+					if (conCode == 2 || conCode == 3) {
 
-						// If both containments are to be realized, we will
-						// create a 'let' variable unless we are in the middle
-						// of some relative addressing scheme
+						/*
+						 * If not inline, we will create a 'let' variable unless
+						 * we are in the middle of some relative addressing
+						 * scheme
+						 */
 						if (obj.atEnd.state == BindingContext.CtxState.OTHER
 								&& obj.fragment.length() > 0
 								&& !obj.fragment.startsWith(".")) {
+
+							// store current obj.fragment as a variable
 							String var = obj.findOrAdd(obj.fragment);
 							obj.fragment = "$" + var;
-							isVar = true;
+							obj.priority = 11;
+							 isVar = true;
 						}
 					}
 
@@ -2952,19 +3043,36 @@ public abstract class SchematronConstraintNode {
 						// In-line containment must be treated
 						// --> .../attr/*
 						frag_inl = obj.fragment;
-						if (frag_inl.length() > 0)
+						if (frag_inl.length() > 0) {
+
+							if (obj.priority < 9) {
+								frag_inl = "(" + frag_inl + ")";
+								/*
+								 * NOTE: Setting the obj.priority here (to 11)
+								 * is not necessary. The priority of the whole
+								 * obj.fragment, once it has been created, is
+								 * important. It will be set later on.
+								 */
+							}
+
 							frag_inl += "/";
+						}
 						frag_inl += propertyQName;
 						if (obj.atEnd != null)
 							obj.atEnd.addStep();
 						frag_inl += "/*";
 						if (obj.atEnd != null)
 							obj.atEnd.addStep();
+
+						if (obj.atEnd != null) {
+							obj.atEnd.setState(BindingContext.CtxState.OTHER);
+						}
 					}
 
 					if (conCode == 2 || conCode == 3) {
 
 						// Reference containment must be treated
+						
 						if (!isVar) {
 							// If not stored in a variable, the object now
 							// has to be compiled in an undefined context.
@@ -2972,6 +3080,7 @@ public abstract class SchematronConstraintNode {
 							ctx1.setState(BindingContext.CtxState.OTHER);
 							XpathFragment obj1 = children.get(0)
 									.translate(ctx1);
+
 							String frag = obj.merge(obj1);
 							obj.fragment = frag;
 						}
@@ -2989,18 +3098,32 @@ public abstract class SchematronConstraintNode {
 						}
 
 						String attxlink = obj.fragment;
-						if (attxlink.length() > 0)
+						if (attxlink.length() > 0) {
+
+							if (obj.priority < 9) {
+								attxlink = "(" + attxlink + ")";
+								/*
+								 * NOTE: Setting the obj.priority here (to 11)
+								 * is not necessary. The priority of the whole
+								 * obj.fragment, once it has been created, is
+								 * important. It will be set later on.
+								 */
+							}
+
 							attxlink += "/";
+						}
 						attxlink += propertyQName;
 						attxlink += "/@xlink:href";
 						frag_ref = "//*[";
 						if (alphaEx || betaEx) {
 							frag_ref += "concat(";
-							if (alphaEx)
+							if (alphaEx) {
 								frag_ref += "'" + alpha + "',";
+							}
 							frag_ref += idAttributeFrag;
-							if (betaEx)
+							if (betaEx) {
 								frag_ref += ",'" + beta + "'";
+							}
 							frag_ref += ")";
 						} else {
 							frag_ref += idAttributeFrag;
@@ -3009,19 +3132,25 @@ public abstract class SchematronConstraintNode {
 						schemaObject.registerNamespace("xlink");
 
 						// Whatever binding context we had before, it is lost
-						if (obj.atEnd != null)
+						if (obj.atEnd != null) {
 							obj.atEnd.setState(BindingContext.CtxState.OTHER);
+						}
 					}
 
 					// Set the fragment value, possibly combining both
 					// containment representations
 					if (conCode == 3) {
+
 						obj.fragment = frag_inl + " | " + frag_ref;
 						obj.priority = 8;
+
 					} else if (conCode == 1) {
+
 						obj.fragment = frag_inl;
 						obj.priority = 9;
+
 					} else {
+
 						obj.fragment = frag_ref;
 						obj.priority = 10;
 					}

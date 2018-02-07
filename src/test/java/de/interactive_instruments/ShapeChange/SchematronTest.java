@@ -62,4 +62,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch" }, "testResults/sch/oclOnCodelistTypedProperty",
 				"src/test/resources/sch/oclOnCodelistTypedProperty/reference");
 	}
+	
+	@Test
+	public void schematronTestOclPathEncoding() {
+		multiTest("src/test/resources/sch/oclPathEncoding/testEA_sch_oclPathEncoding.xml",
+				new String[] { "sch" }, "testResults/sch/oclPathEncoding",
+				"src/test/resources/sch/oclPathEncoding/reference");
+	}
 }

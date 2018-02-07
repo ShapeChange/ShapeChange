@@ -1332,6 +1332,29 @@ public class SchematronSchema implements MessageSource {
 			if (enclosing != null)
 				enclosing.addChild(atn);
 			return atn;
+
+		} else if (objnode instanceof SchematronConstraintNode.Cast) {
+
+			/*
+			 * 2018-02-06 JE: Added cast as allowed part of a property
+			 * expression. This supports cases in which property A with type T
+			 * is followed by property B, but property B can only be found in a
+			 * specific subtype of T, let's call it S. Then the value of B can
+			 * be cast to S.
+			 */
+
+			SchematronConstraintNode.Attribute atn = new SchematronConstraintNode.Attribute(
+					this, attr, negate);
+
+			// Attach information source node
+			atn.addChild(objnode);
+
+			// Embed into enclosing context
+			if (enclosing != null) {
+				enclosing.addChild(atn);
+			}
+			
+			return atn;
 		}
 
 		// Not implemented attribute construct
