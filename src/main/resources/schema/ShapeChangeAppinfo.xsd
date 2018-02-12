@@ -16,4 +16,5 @@
   </complexType>
  </element>
  <element name="targetCodeListURI" type="string"/>
+ <element name="globalIdentifier" type="string"/>
 </schema>

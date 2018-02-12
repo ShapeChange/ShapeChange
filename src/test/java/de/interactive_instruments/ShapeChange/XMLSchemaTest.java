@@ -221,24 +221,34 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/ea/swe/INPUT",
 				"src/test/resources/reference/xsd/swe");
 	}
-	
+
 	@Test
 	public void test_targetCodeListURI() {
 
 		String[] xsd = { "test" };
-		xsdTest("src/test/resources/xsd/targetCodeListURI/testEA_xsd_targetCodeListURI.xml", xsd, null,
-				"testResults/xsd/targetCodeListURI/INPUT",
+		xsdTest("src/test/resources/xsd/targetCodeListURI/testEA_xsd_targetCodeListURI.xml",
+				xsd, null, "testResults/xsd/targetCodeListURI/INPUT",
 				"src/test/resources/xsd/targetCodeListURI/reference");
 	}
-	
+
 	@Test
 	public void test_propNoTargetElement() {
 		/*
 		 * Test XML Schema creation for TODO
 		 */
 		String[] xsd = { "test2_prop" };
-		xsdTest("src/test/resources/xsd/propNoTargetElement/testEA_propNoTargetElement.xml", xsd, null,
-				"testResults/xsd/propNoTargetElement/INPUT",
+		xsdTest("src/test/resources/xsd/propNoTargetElement/testEA_propNoTargetElement.xml",
+				xsd, null, "testResults/xsd/propNoTargetElement/INPUT",
 				"src/test/resources/xsd/propNoTargetElement/reference");
+	}
+
+	@Test
+	public void test_globalIdentifierAnnotation() {
+		
+		multiTest(
+				"src/test/resources/xsd/globalIdentifierAnnotation/testEA_xsd_globalIdentifierAnnotation.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/globalIdentifierAnnotation",
+				"src/test/resources/xsd/globalIdentifierAnnotation/reference");
 	}
 }
