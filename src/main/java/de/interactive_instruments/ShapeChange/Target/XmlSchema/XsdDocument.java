@@ -690,7 +690,8 @@ public class XsdDocument implements MessageSource {
 			if (cat == Options.OBJECT) {
 				return "swe:AbstractSWE";
 			}
-		} else if (ci.matches("rule-xsd-all-naming-19139")) {
+		} else if (ci.matches("rule-xsd-all-naming-19139")
+				&& cat != Options.UNION) {
 			addImport("gco", options.fullNamespace("gco"));
 			if (cat == Options.CODELIST || cat == Options.ENUMERATION) {
 				return "gco:CharacterString";
@@ -729,7 +730,8 @@ public class XsdDocument implements MessageSource {
 			if (cat == Options.OBJECT) {
 				return "swe:AbstractSWEType";
 			}
-		} else if (ci.matches("rule-xsd-all-naming-19139")) {
+		} else if (ci.matches("rule-xsd-all-naming-19139")
+				&& cat != Options.UNION) {
 			addImport("gco", options.fullNamespace("gco"));
 			return "gco:AbstractObject_Type";
 		}
@@ -1217,7 +1219,8 @@ public class XsdDocument implements MessageSource {
 		} else if (r19139) {
 			addAttribute(e4, "minOccurs", "0");
 			int cat = ci.category();
-			if (cat != Options.CODELIST && cat != Options.ENUMERATION) {
+			if (cat != Options.CODELIST && cat != Options.ENUMERATION
+					&& cat != Options.UNION) {
 				e3 = document.createElementNS(Options.W3C_XML_SCHEMA,
 						"attributeGroup");
 				addAttribute(e3, "ref", "gco:ObjectReference");

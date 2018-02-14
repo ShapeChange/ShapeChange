@@ -34,13 +34,18 @@ package de.interactive_instruments.ShapeChange.Util.ea;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.Collection;
 import org.sparx.Connector;
+import org.sparx.ConnectorEnd;
 import org.sparx.Element;
 import org.sparx.Method;
+import org.sparx.Repository;
 import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -308,7 +313,7 @@ public class EAElementUtil extends AbstractEAUtil {
 					createMessage(message(110), e.GetName(), e.GetLastError()));
 		}
 	}
-	
+
 	/**
 	 * Sets attribute StereotypeEx on the given EA element.
 	 * 
@@ -715,11 +720,13 @@ public class EAElementUtil extends AbstractEAUtil {
 	 *            Type of the new constraint
 	 * @param text
 	 *            Text of the new constraint
+	 * @param status
+	 *            Status of the new constraint
 	 * @return The new constraint
 	 * @throws EAException
 	 */
 	public static org.sparx.Constraint addConstraint(Element e, String name,
-			String type, String text) throws EAException {
+			String type, String text, String status) throws EAException {
 
 		Collection<org.sparx.Constraint> cons = e.GetConstraints();
 
@@ -729,12 +736,34 @@ public class EAElementUtil extends AbstractEAUtil {
 
 		con.SetNotes(text);
 
+		if (StringUtils.isNotBlank(status)) {
+			con.SetStatus(status);
+		}
+
 		if (!con.Update()) {
 			throw new EAException(createMessage(message(1006), name,
 					e.GetName(), con.GetLastError()));
 		} else {
 			return con;
 		}
+	}
+
+	/**
+	 * @param e
+	 *            Element to which the new constraint shall be added.
+	 * @param name
+	 *            Name of the new constraint
+	 * @param type
+	 *            Type of the new constraint
+	 * @param text
+	 *            Text of the new constraint
+	 * @return The new constraint
+	 * @throws EAException
+	 */
+	public static org.sparx.Constraint addConstraint(Element e, String name,
+			String type, String text) throws EAException {
+
+		return addConstraint(e, name, type, text, null);
 	}
 
 	public static String message(int mnr) {
@@ -761,7 +790,7 @@ public class EAElementUtil extends AbstractEAUtil {
 			return "EA error encountered while loading linked document for EA element '$1$' from path '$2$'. Error message is: $3$";
 		case 110:
 			return "EA error encountered while updating 'Stereotype' of EA element '$1$'. Error message is: $2$";
-		
+
 		case 1005:
 			return "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
 		case 1006:
