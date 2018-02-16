@@ -99,4 +99,11 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"src/test/resources/reference/html/diff/INPUT");
 	}
 
+	@Test
+	public void testTaggedValues() {
+		
+		multiTest("src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
+				new String[] { "xml", "html", "docx" }, "testResults/featureCatalogue/taggedValues/results",
+				"src/test/resources/featureCatalogue/taggedValues/reference/results");
+	}
 }
