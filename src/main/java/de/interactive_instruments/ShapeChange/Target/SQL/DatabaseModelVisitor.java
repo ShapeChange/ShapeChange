@@ -341,15 +341,19 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 						"EAUML::table::Tablespace", tablespace, false);
 			}
 
-			String tableDocumentation = null;
-			if (table.getRepresentedClass() != null) {
-				tableDocumentation = table.getRepresentedClass()
-						.derivedDocumentation(SqlDdl.documentationTemplate,
-								SqlDdl.documentationNoValue);
-			} else if (table.getRepresentedAssociation() != null) {
-				tableDocumentation = table.getRepresentedAssociation()
-						.derivedDocumentation(SqlDdl.documentationTemplate,
-								SqlDdl.documentationNoValue);
+			String tableDocumentation = table.getDocumentation();
+
+			if (StringUtils.isBlank(tableDocumentation)) {
+
+				if (table.getRepresentedClass() != null) {
+					tableDocumentation = table.getRepresentedClass()
+							.derivedDocumentation(SqlDdl.documentationTemplate,
+									SqlDdl.documentationNoValue);
+				} else if (table.getRepresentedAssociation() != null) {
+					tableDocumentation = table.getRepresentedAssociation()
+							.derivedDocumentation(SqlDdl.documentationTemplate,
+									SqlDdl.documentationNoValue);
+				}
 			}
 			if (tableDocumentation != null) {
 				EAElementUtil.setEANotes(tableElmt, tableDocumentation);
@@ -362,11 +366,16 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 			for (Column col : table.getColumns()) {
 
-				String columnDocumentation = null;
-				if (col.getRepresentedProperty() != null) {
-					columnDocumentation = col.getRepresentedProperty()
-							.derivedDocumentation(SqlDdl.documentationTemplate,
-									SqlDdl.documentationNoValue);
+				String columnDocumentation = col.getDocumentation();
+
+				if (StringUtils.isBlank(columnDocumentation)) {
+
+					if (col.getRepresentedProperty() != null) {
+						columnDocumentation = col.getRepresentedProperty()
+								.derivedDocumentation(
+										SqlDdl.documentationTemplate,
+										SqlDdl.documentationNoValue);
+					}
 				}
 
 				Attribute att = EAElementUtil.createEAAttribute(tableElmt,

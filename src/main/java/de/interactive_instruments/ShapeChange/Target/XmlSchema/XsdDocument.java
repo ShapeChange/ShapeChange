@@ -204,7 +204,7 @@ public class XsdDocument implements MessageSource {
 	}
 
 	/**
-	 * Add documentation and tagged values to an element
+	 * Add documentation and annotation to an element
 	 * 
 	 * @return the annotation element, if one was created, else
 	 *         <code>null</code>
@@ -328,6 +328,20 @@ public class XsdDocument implements MessageSource {
 					addImport(Options.GMLSF_NSABR, Options.GMLSF_NS);
 				}
 			}
+		}
+
+		if ((info instanceof PropertyInfo || info instanceof ClassInfo)
+				&& StringUtils.isNotBlank(info.globalIdentifier())
+				&& info.matches("rule-xsd-all-globalIdentifierAnnotation")) {
+
+			if (e2 == null)
+				e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
+						"appinfo");
+			Element e3 = document.createElementNS(Options.SCAI_NS,
+					"globalIdentifier");
+			e2.appendChild(e3);
+			e3.appendChild(document.createTextNode(info.globalIdentifier()));
+			addImport("sc", Options.SCAI_NS);
 		}
 
 		if (info instanceof PropertyInfo) {
@@ -456,6 +470,7 @@ public class XsdDocument implements MessageSource {
 				}
 			}
 		}
+
 		if (e1 != null || e2 != null) {
 			Element e0 = document.createElementNS(Options.W3C_XML_SCHEMA,
 					"annotation");

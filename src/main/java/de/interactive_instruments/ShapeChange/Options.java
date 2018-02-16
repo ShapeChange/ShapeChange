@@ -3567,6 +3567,7 @@ public class Options {
 		/*
 		 * non-standard extensions - conversion rules
 		 */
+		addRule("rule-xsd-all-globalIdentifierAnnotation");
 		addRule("rule-xsd-all-notEncoded");
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");

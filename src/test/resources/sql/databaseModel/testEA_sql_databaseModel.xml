@@ -159,6 +159,7 @@
 			<targetParameter name="foreignKeyColumnSuffixCodelist"
 				value="_fk" />
 			<targetParameter name="codeNameColumnName" value="code" />
+			<targetParameter name="codeNameColumnDocumentation" value="An alphanumeric value that is used to ..." />
 			<targetParameter name="dbOwner" value="dbo" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
