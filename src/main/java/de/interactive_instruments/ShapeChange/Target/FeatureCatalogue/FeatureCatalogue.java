@@ -109,6 +109,7 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
@@ -124,11 +125,12 @@ import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
  * 
  */
-public class FeatureCatalogue implements SingleTarget, MessageSource, DeferrableOutputWriter {
+public class FeatureCatalogue
+		implements SingleTarget, MessageSource, DeferrableOutputWriter {
 
 	public static final int STATUS_WRITE_PDF = 22;
 	public static final int STATUS_WRITE_HTML = 23;
@@ -245,6 +247,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	private static boolean includeTitle = true;
 	private static boolean includeCodelistURI = true;
 	private static boolean deleteXmlFile = false;
+	private static String representTaggedValues = null;
 
 	private static boolean includeDiagrams = false;
 	private static int imgIntegerIdCounter = 0;
@@ -331,6 +334,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		includeCodelistURI = true;
 		deleteXmlFile = false;
 		dontTransform = false;
+		representTaggedValues = null;
 
 		refModel = null;
 		refPackage = null;
@@ -340,7 +344,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
-	public void initialise(PackageInfo p, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
+	public void initialise(PackageInfo p, Model m, Options o,
+			ShapeChangeResult r, boolean diagOnly)
 			throws ShapeChangeAbortException {
 		pi = p;
 		model = m;
@@ -399,24 +404,31 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					throw new ShapeChangeAbortException();
 				}
 
-				String encoding_ = encoding == null ? "UTF-8" : model.characterEncoding();
+				String encoding_ = encoding == null ? "UTF-8"
+						: model.characterEncoding();
 
-				OutputStream fout = new FileOutputStream(outputDirectory + "/" + xmlName);
-				OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
-				OutputStreamWriter outputXML = new OutputStreamWriter(bout, encoding_);
+				OutputStream fout = new FileOutputStream(
+						outputDirectory + "/" + xmlName);
+				OutputStream bout = new BufferedOutputStream(fout,
+						streamBufferSize);
+				OutputStreamWriter outputXML = new OutputStreamWriter(bout,
+						encoding_);
 
 				writer = new XMLWriter(outputXML, encoding_);
 
-				writer.forceNSDecl("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+				writer.forceNSDecl("http://www.w3.org/2001/XMLSchema-instance",
+						"xsi");
 
 				writer.startDocument();
 
-				writer.processingInstruction("xml-stylesheet", "type='text/xsl' href='./html.xsl'");
+				writer.processingInstruction("xml-stylesheet",
+						"type='text/xsl' href='./html.xsl'");
 
 				writer.comment("Feature catalogue created using ShapeChange");
 
 				AttributesImpl atts = new AttributesImpl();
-				atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance", "noNamespaceSchemaLocation",
+				atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
+						"noNamespaceSchemaLocation",
 						"xsi:noNamespaceSchemaLocation", "CDATA", "FC.xsd");
 				writer.startElement("", "FeatureCatalogue", "", atts);
 
@@ -434,7 +446,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					writer.dataElement("scope", "unknown");
 				}
 
-				s = options.parameter(this.getClass().getName(), "versionNumber");
+				s = options.parameter(this.getClass().getName(),
+						"versionNumber");
 				if (s != null && s.length() > 0)
 					writer.dataElement("versionNumber", s);
 				else
@@ -467,23 +480,28 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					 */
 					inputSchemaClassesByFullNameInSchema = new HashMap<String, ClassInfo>();
 					for (ClassInfo ci : model.classes(pi)) {
-						inputSchemaClassesByFullNameInSchema.put(ci.fullNameInSchema().toLowerCase(Locale.ENGLISH), ci);
+						inputSchemaClassesByFullNameInSchema.put(ci
+								.fullNameInSchema().toLowerCase(Locale.ENGLISH),
+								ci);
 					}
 
 					// compute diffs
 					differ = new Differ();
 					refPackage = set.iterator().next();
-					SortedMap<Info, SortedSet<DiffElement>> pi_diffs = differ.diff(p, refPackage);
+					SortedMap<Info, SortedSet<DiffElement>> pi_diffs = differ
+							.diff(p, refPackage);
 
 					// merge diffs for pi with existing diffs (from other
 					// schemas)
 					differ.merge(diffs, pi_diffs);
 
 					// log the diffs found for pi
-					for (Entry<Info, SortedSet<DiffElement>> me : pi_diffs.entrySet()) {
+					for (Entry<Info, SortedSet<DiffElement>> me : pi_diffs
+							.entrySet()) {
 
 						MessageContext mc = result.addInfo(
-								"Model difference - " + me.getKey().fullName().replace(p.fullName(), p.name()));
+								"Model difference - " + me.getKey().fullName()
+										.replace(p.fullName(), p.name()));
 
 						for (DiffElement diff : me.getValue()) {
 							String s = diff.change + " " + diff.subElementType;
@@ -492,7 +510,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 							if (diff.subElement != null)
 								s += " " + diff.subElement.name();
 							else if (diff.diff != null)
-								s += " " + (new diff_match_patch()).diff_prettyHtml(diff.diff);
+								s += " " + (new diff_match_patch())
+										.diff_prettyHtml(diff.diff);
 							else
 								s += " ???";
 							mc.addDetail(s);
@@ -503,7 +522,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					 * switch to default xslt for html diff - unless the
 					 * configuration explicitly names an XSLT file to use
 					 */
-					if (options.parameter(this.getClass().getName(), "xslhtmlFile") == null) {
+					if (options.parameter(this.getClass().getName(),
+							"xslhtmlFile") == null) {
 						xslhtmlfileName = DEFAULT_XSL_HTML_DIFF_FILE_NAME;
 					}
 
@@ -523,7 +543,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			String nameForAppSchema = null;
 
 			if (encounteredAppSchemasByName.containsKey(pi.name())) {
-				int count = encounteredAppSchemasByName.get(pi.name()).intValue();
+				int count = encounteredAppSchemasByName.get(pi.name())
+						.intValue();
 				count++;
 				nameForAppSchema = pi.name() + " (" + count + ")";
 				encounteredAppSchemasByName.put(pi.name(), new Integer(count));
@@ -551,9 +572,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			writer.startElement("taggedValues");
 
-			s = pi.taggedValue(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME);
+			s = pi.taggedValue(
+					TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME);
 			if (s != null && s.trim().length() > 0) {
-				writer.dataElement(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, PrepareToPrint(s));
+				writer.dataElement(
+						TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME,
+						PrepareToPrint(s));
 			}
 
 			writer.endElement("taggedValues");
@@ -571,12 +595,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			if (hasDiff(pi, ElementType.SUBPACKAGE, Operation.DELETE)) {
 
-				Set<DiffElement> pkgdiffs = getDiffs(pi, ElementType.SUBPACKAGE, Operation.DELETE);
+				Set<DiffElement> pkgdiffs = getDiffs(pi, ElementType.SUBPACKAGE,
+						Operation.DELETE);
 
 				for (DiffElement diff : pkgdiffs) {
 
 					// child package was deleted
-					PrintPackage((PackageInfo) diff.subElement, Operation.DELETE);
+					PrintPackage((PackageInfo) diff.subElement,
+							Operation.DELETE);
 				}
 
 			}
@@ -603,7 +629,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		if (hasDiff(pix, ElementType.CLASS, Operation.DELETE)) {
 
-			Set<DiffElement> classdiffs = getDiffs(pix, ElementType.CLASS, Operation.DELETE);
+			Set<DiffElement> classdiffs = getDiffs(pix, ElementType.CLASS,
+					Operation.DELETE);
 
 			for (DiffElement diff : classdiffs) {
 
@@ -614,7 +641,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				 * Print the class if it is not a code list or enumeration
 				 * (because these categories are not printed).
 				 */
-				if (deletedCi.category() != Options.CODELIST && deletedCi.category() != Options.ENUMERATION) {
+				if (deletedCi.category() != Options.CODELIST
+						&& deletedCi.category() != Options.ENUMERATION) {
 
 					PrintClass(deletedCi, true, Operation.DELETE, pix);
 				}
@@ -629,7 +657,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	private void appendImageInfo(List<ImageMetadata> images) throws SAXException {
+	private void appendImageInfo(List<ImageMetadata> images)
+			throws SAXException {
 
 		if (!includeDiagrams) {
 			return;
@@ -651,12 +680,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			// the information could therefore be moved to a separate file
 			AttributesImpl atts = new AttributesImpl();
 			atts.addAttribute("", "id", "", "CDATA", img.getId());
-			atts.addAttribute("", "idAsInt", "", "CDATA", "" + imgIntegerIdCounter);
+			atts.addAttribute("", "idAsInt", "", "CDATA",
+					"" + imgIntegerIdCounter);
 			imgIntegerIdCounter = imgIntegerIdCounter + imgIntegerIdStepwidth;
 			atts.addAttribute("", "name", "", "CDATA", img.getName());
 			atts.addAttribute("", "height", "", "CDATA", "" + img.getHeight());
 			atts.addAttribute("", "width", "", "CDATA", "" + img.getWidth());
-			atts.addAttribute("", "relPath", "", "CDATA", img.getRelPathToFile());
+			atts.addAttribute("", "relPath", "", "CDATA",
+					img.getRelPathToFile());
 
 			writer.emptyElement("image", atts);
 
@@ -669,8 +700,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	private Model getReferenceModel() {
 
-		String imt = options.parameter(this.getClass().getName(), "referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(), "referenceModelFileNameOrConnectionString");
+		String imt = options.parameter(this.getClass().getName(),
+				"referenceModelType");
+		String mdl = options.parameter(this.getClass().getName(),
+				"referenceModelFileNameOrConnectionString");
 
 		if (imt == null || imt.isEmpty())
 			return null;
@@ -722,7 +755,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		return m;
 	}
 
-	private void PrintDescriptors(Info i, boolean isClass, Operation op) throws SAXException {
+	private void PrintDescriptors(Info i, boolean isClass, Operation op)
+			throws SAXException {
 		String s;
 		String[] sa;
 
@@ -746,7 +780,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		} else {
 
-			if (includeTitle && i.aliasName() != null && i.aliasName().length() > 0) {
+			if (includeTitle && i.aliasName() != null
+					&& i.aliasName().length() > 0) {
 				// calling the element that holds the 'alias' value
 				// TODO note that 'title' is legacy, it should be called 'alias'
 				writer.dataElement("title", s, op);
@@ -832,7 +867,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 *         Info object, if such diffs exist; can be empty but not
 	 *         <code>null</code>
 	 */
-	private SortedSet<DiffElement> getDiffs(Info i, ElementType type, Operation op) {
+	private SortedSet<DiffElement> getDiffs(Info i, ElementType type,
+			Operation op) {
 
 		SortedSet<DiffElement> result = new TreeSet<DiffElement>();
 
@@ -909,7 +945,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			 * if pix was deleted, use the id from the according diff as owner
 			 * id
 			 */
-			Info ownerOfInputModel = getInfoWithDiff(ElementType.SUBPACKAGE, Operation.DELETE, pix);
+			Info ownerOfInputModel = getInfoWithDiff(ElementType.SUBPACKAGE,
+					Operation.DELETE, pix);
 			if (ownerOfInputModel != null) {
 				pixOwnerId = ownerOfInputModel.id();
 			}
@@ -949,12 +986,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			// check if subpackages of pix have been deleted
 			if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.DELETE)) {
 
-				Set<DiffElement> pkgdiffs = getDiffs(pix, ElementType.SUBPACKAGE, Operation.DELETE);
+				Set<DiffElement> pkgdiffs = getDiffs(pix,
+						ElementType.SUBPACKAGE, Operation.DELETE);
 
 				for (DiffElement diff : pkgdiffs) {
 
 					// child package was deleted
-					PrintPackage((PackageInfo) diff.subElement, Operation.DELETE);
+					PrintPackage((PackageInfo) diff.subElement,
+							Operation.DELETE);
 				}
 
 			}
@@ -979,7 +1018,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				 * Check for diffs concerning the children of the given package
 				 * (pix).
 				 */
-				if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.INSERT, pix2)) {
+				if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.INSERT,
+						pix2)) {
 
 					// child package was inserted
 					PrintPackage(pix2, Operation.INSERT);
@@ -996,12 +1036,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	private void PrintLineByLine(String s, String ename, Operation op) throws SAXException {
+	private void PrintLineByLine(String s, String ename, Operation op)
+			throws SAXException {
 
 		boolean ins = false;
 		boolean del = false;
 
-		String[] lines = s.replace("[NEWLINE]", "\n").replace("\r\n", "\n").replace("\r", "\n").split("\n");
+		String[] lines = s.replace("[NEWLINE]", "\n").replace("\r\n", "\n")
+				.replace("\r", "\n").split("\n");
 
 		for (String line : lines) {
 
@@ -1015,10 +1057,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				del = false;
 			}
 
-			if (countSubstringInString(text, "[[ins]]") > countSubstringInString(text, "[[/ins]]")) {
+			if (countSubstringInString(text,
+					"[[ins]]") > countSubstringInString(text, "[[/ins]]")) {
 				ins = true;
 				text += "[[/ins]]";
-			} else if (countSubstringInString(text, "[[del]]") > countSubstringInString(text, "[[/del]]")) {
+			} else if (countSubstringInString(text,
+					"[[del]]") > countSubstringInString(text, "[[/del]]")) {
 				del = true;
 				text += "[[/del]]";
 			}
@@ -1047,7 +1091,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	}
 
 	/** Add attribute to an element */
-	protected void addAttribute(Document document, Element e, String name, String value) {
+	protected void addAttribute(Document document, Element e, String name,
+			String value) {
 		Attr att = document.createAttribute(name);
 		att.setValue(value);
 		e.setAttributeNode(att);
@@ -1097,7 +1142,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		Operation op = null;
 		if (diffs != null && diffs.get(ci.pkg()) != null)
 			for (DiffElement diff : diffs.get(ci.pkg())) {
-				if (diff.subElementType == ElementType.CLASS && ((ClassInfo) diff.subElement) == ci
+				if (diff.subElementType == ElementType.CLASS
+						&& ((ClassInfo) diff.subElement) == ci
 						&& diff.change == Operation.INSERT) {
 					op = Operation.INSERT;
 					break;
@@ -1106,9 +1152,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (op == null) {
 			PackageInfo pix = ci.pkg();
 			while (pix != null) {
-				if (diffs != null && pix.owner() != null && diffs.get(pix.owner()) != null)
+				if (diffs != null && pix.owner() != null
+						&& diffs.get(pix.owner()) != null)
 					for (DiffElement diff : diffs.get(pix.owner())) {
-						if (diff.subElementType == ElementType.SUBPACKAGE && ((PackageInfo) diff.subElement) == pix
+						if (diff.subElementType == ElementType.SUBPACKAGE
+								&& ((PackageInfo) diff.subElement) == pix
 								&& diff.change == Operation.INSERT) {
 							op = Operation.INSERT;
 							pix = null;
@@ -1150,7 +1198,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	private void PrintValue(PropertyInfo propi, Operation op) throws SAXException {
+	private void PrintValue(PropertyInfo propi, Operation op)
+			throws SAXException {
 
 		String propiid = "_A" + propi.id();
 		propiid = options.internalize(propiid);
@@ -1184,7 +1233,19 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			PrintLineByLine(s, "description", op);
 		}
 
-		// FIXME PrintStandardElements(propi);
+		/*
+		 * 2018-02-16 JE: since code lists and their codes are only partially
+		 * represented in the feature catalogues by ShapeChange (typically a
+		 * table of the codes), we do not add the tagged values of codes to the
+		 * temporary XML.
+		 */
+		// if (representTaggedValues != null) {
+		// writer.startElement("taggedValues");
+		// // TBD diff tagged values
+		// PrintTaggedValues(propi, representTaggedValues, null);
+		// writer.endElement("taggedValues");
+		// }
+
 		writer.endElement("Value");
 	}
 
@@ -1206,8 +1267,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		if (diffs != null && diffs.get(ci) != null) {
 			for (DiffElement diff : diffs.get(ci)) {
-				if (diff.subElementType == ElementType.ENUM && diff.change == Operation.DELETE) {
-					PrintValue((PropertyInfo) diff.subElement, Operation.DELETE);
+				if (diff.subElementType == ElementType.ENUM
+						&& diff.change == Operation.DELETE) {
+					PrintValue((PropertyInfo) diff.subElement,
+							Operation.DELETE);
 				}
 			}
 		}
@@ -1232,18 +1295,21 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		return ExportItem(propi);
 	}
 
-	private boolean ExportClass(ClassInfo ci, Boolean onlyProperties, Operation op) {
+	private boolean ExportClass(ClassInfo ci, Boolean onlyProperties,
+			Operation op) {
 
 		if (!ci.inSchema(pi) && !onlyProperties && op != Operation.DELETE)
 			return false;
 
-		if (!packageInPackage(ci.pkg()) && !onlyProperties && op != Operation.DELETE)
+		if (!packageInPackage(ci.pkg()) && !onlyProperties
+				&& op != Operation.DELETE)
 			return false;
 
 		return ExportItem(ci);
 	}
 
-	private void PrintClass(ClassInfo ci, boolean onlyProperties, Operation op, PackageInfo pix) {
+	private void PrintClass(ClassInfo ci, boolean onlyProperties, Operation op,
+			PackageInfo pix) {
 
 		if (!ExportClass(ci, onlyProperties, op))
 			return;
@@ -1278,26 +1344,31 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						// check for insertion
 						boolean inserted = false;
 						Operation opForGeneralization = op;
-						if (hasDiff(ci, ElementType.SUPERTYPE, Operation.INSERT, cix)) {
+						if (hasDiff(ci, ElementType.SUPERTYPE, Operation.INSERT,
+								cix)) {
 							name = "[[ins]]" + name + "[[/ins]]";
 							inserted = true;
 							opForGeneralization = Operation.INSERT;
 						}
 
-						if (inserted || !Inherit || cix.category() != Options.MIXIN) {
+						if (inserted || !Inherit
+								|| cix.category() != Options.MIXIN) {
 
 							name = options.internalize(name);
 
-							writer.dataElement("subtypeOf", cix.name(), "idref", cixid, opForGeneralization);
+							writer.dataElement("subtypeOf", cix.name(), "idref",
+									cixid, opForGeneralization);
 						}
 					}
 				}
 				// Diff: check for potential deletions of supertypes
 				if (hasDiff(ci, ElementType.SUPERTYPE, Operation.DELETE)) {
 
-					for (DiffElement diff : getDiffs(ci, ElementType.SUPERTYPE, Operation.DELETE)) {
+					for (DiffElement diff : getDiffs(ci, ElementType.SUPERTYPE,
+							Operation.DELETE)) {
 
-						String nameOfDeletedSupertype = "[[del]]" + diff.subElement.name() + "[[/del]]";
+						String nameOfDeletedSupertype = "[[del]]"
+								+ diff.subElement.name() + "[[/del]]";
 
 						String supertypeId = diff.subElement.id();
 
@@ -1311,7 +1382,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						String cixid = "_C" + supertype.id();
 						cixid = options.internalize(cixid);
 
-						writer.dataElement("subtypeOf", nameOfDeletedSupertype, "idref", cixid, Operation.DELETE);
+						writer.dataElement("subtypeOf", nameOfDeletedSupertype,
+								"idref", cixid, Operation.DELETE);
 					}
 				}
 
@@ -1376,28 +1448,38 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				s = ci.taggedValue("alwaysVoid");
 				if (s != null && s.length() > 0) {
 					writer.startElement("constraint");
-					writer.dataElement("description", "Properties that are always void: " + s);
+					writer.dataElement("description",
+							"Properties that are always void: " + s);
 					writer.endElement("constraint");
 				}
 				s = ci.taggedValue("neverVoid");
 				if (s != null && s.length() > 0) {
 					writer.startElement("constraint");
-					writer.dataElement("description", "Properties that are never void: " + s);
+					writer.dataElement("description",
+							"Properties that are never void: " + s);
 					writer.endElement("constraint");
 				}
 				s = ci.taggedValue("appliesTo");
 				if (s != null && s.length() > 0) {
 					writer.startElement("constraint");
-					writer.dataElement("description", "Applies to the following network elements: " + s);
+					writer.dataElement("description",
+							"Applies to the following network elements: " + s);
 					writer.endElement("constraint");
 				}
 
 				writer.startElement("taggedValues");
 
+				// backwards compatibility
 				s = ci.taggedValue("name");
 				if (s != null && s.trim().length() > 0) {
 					writer.dataElement("name", PrepareToPrint(s), op);
 				}
+
+				if (representTaggedValues != null) {
+					// TODO diff tagged values
+					PrintTaggedValues(ci, representTaggedValues, null);
+				}
+
 				writer.endElement("taggedValues");
 
 				if (ci.getDiagrams() != null) {
@@ -1422,13 +1504,40 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	private boolean hasDiff(Info i, ElementType subElementType, Operation diffChange, Info diffSubelement) {
+	private void PrintTaggedValues(Info i, String taglist, Operation op)
+			throws SAXException {
+
+		TaggedValues taggedValues = i.taggedValuesForTagList(taglist);
+
+		if (!taggedValues.isEmpty()) {
+
+			// sort results alphabetically by tag name for consistent output
+			TreeSet<String> tags = new TreeSet<String>(taggedValues.keySet());
+			for (String tag : tags) {
+				// sort values
+				String[] values = taggedValues.get(tag);
+				List<String> valueList = Arrays.asList(values);
+				Collections.sort(valueList);
+
+				for (String v : values) {
+					if (v.trim().length() > 0) {
+						writer.dataElement("taggedValue", v, "tag", tag, op);
+						// writer.dataElement(tag, PrepareToPrint(v));
+					}
+				}
+			}
+		}
+	}
+
+	private boolean hasDiff(Info i, ElementType subElementType,
+			Operation diffChange, Info diffSubelement) {
 
 		if (diffs != null && diffs.get(i) != null) {
 
 			for (DiffElement diff : diffs.get(i)) {
 
-				if (diff.subElementType == subElementType && diff.change == diffChange
+				if (diff.subElementType == subElementType
+						&& diff.change == diffChange
 						&& diff.subElement == diffSubelement) {
 					return true;
 				}
@@ -1438,7 +1547,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		return false;
 	}
 
-	private Info getInfoWithDiff(ElementType subElementType, Operation diffChange, Info diffSubelement) {
+	private Info getInfoWithDiff(ElementType subElementType,
+			Operation diffChange, Info diffSubelement) {
 
 		if (diffs != null) {
 
@@ -1446,7 +1556,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 				for (DiffElement diff : diffs.get(i)) {
 
-					if (diff.subElementType == subElementType && diff.change == diffChange
+					if (diff.subElementType == subElementType
+							&& diff.change == diffChange
 							&& diff.subElement == diffSubelement) {
 						return i;
 					}
@@ -1457,13 +1568,15 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		return null;
 	}
 
-	private boolean hasDiff(Info i, ElementType subElementType, Operation diffChange) {
+	private boolean hasDiff(Info i, ElementType subElementType,
+			Operation diffChange) {
 
 		if (diffs != null && diffs.get(i) != null) {
 
 			for (DiffElement diff : diffs.get(i)) {
 
-				if (diff.subElementType == subElementType && diff.change == diffChange) {
+				if (diff.subElementType == subElementType
+						&& diff.change == diffChange) {
 					return true;
 				}
 			}
@@ -1472,7 +1585,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		return false;
 	}
 
-	private void PrintProperties(ClassInfo ci, boolean listOnly, Operation op) throws SAXException {
+	private void PrintProperties(ClassInfo ci, boolean listOnly, Operation op)
+			throws SAXException {
 
 		/*
 		 * IMPORTANT: it is important that inherited properties are printed
@@ -1503,17 +1617,21 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		// also check deletions
 		if (diffs != null && diffs.get(ci) != null) {
 			for (DiffElement diff : diffs.get(ci)) {
-				if (diff.subElementType == ElementType.PROPERTY && diff.change == Operation.DELETE) {
+				if (diff.subElementType == ElementType.PROPERTY
+						&& diff.change == Operation.DELETE) {
 					if (listOnly)
-						PrintPropertyRef((PropertyInfo) diff.subElement, Operation.DELETE);
+						PrintPropertyRef((PropertyInfo) diff.subElement,
+								Operation.DELETE);
 					else
-						PrintProperty((PropertyInfo) diff.subElement, Operation.DELETE);
+						PrintProperty((PropertyInfo) diff.subElement,
+								Operation.DELETE);
 				}
 			}
 		}
 	}
 
-	private void PrintPropertyRef(PropertyInfo propi, Operation op) throws SAXException {
+	private void PrintPropertyRef(PropertyInfo propi, Operation op)
+			throws SAXException {
 
 		if (ExportProperty(propi)) {
 
@@ -1524,7 +1642,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	private void PrintProperty(PropertyInfo propi, Operation op) throws SAXException {
+	private void PrintProperty(PropertyInfo propi, Operation op)
+			throws SAXException {
 		if (!ExportProperty(propi))
 			return;
 
@@ -1549,7 +1668,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						String aciid = "_C" + aci.id();
 						aciid = options.internalize(aciid);
 
-						writer.dataElement("associationClass", PrepareToPrint(aci.name()), "idref", aciid, op);
+						writer.dataElement("associationClass",
+								PrepareToPrint(aci.name()), "idref", aciid, op);
 					}
 				}
 
@@ -1597,7 +1717,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		exportedProperties.add(propi);
 	}
 
-	private void PrintPropertyDetail(PropertyInfo propi, String assocId, Operation op) throws SAXException {
+	private void PrintPropertyDetail(PropertyInfo propi, String assocId,
+			Operation op) throws SAXException {
 
 		String propiid = "_A" + propi.id();
 		propiid = options.internalize(propiid);
@@ -1632,6 +1753,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		writer.startElement("taggedValues");
 
+		// backwards compatibility
 		s = propi.taggedValue("name");
 		if (s != null && s.trim().length() > 0) {
 			writer.dataElement("name", PrepareToPrint(s), op);
@@ -1641,6 +1763,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			for (String tag : tags) {
 				writer.dataElement("length", PrepareToPrint(tag), op);
 			}
+		}
+
+		if (representTaggedValues != null) {
+			PrintTaggedValues(propi, representTaggedValues, null);
 		}
 
 		writer.endElement("taggedValues");
@@ -1677,7 +1803,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 					atts.addAttribute("", "idref", "", "CDATA", tiid);
 				}
-				atts.addAttribute("", "category", "", "CDATA", featureTerm.toLowerCase() + " type");
+				atts.addAttribute("", "category", "", "CDATA",
+						featureTerm.toLowerCase() + " type");
 				addOperationToAttributes(op, atts);
 				writer.dataElement("", "FeatureTypeIncluded", "", atts,
 						checkDiff(ti.name, propi, ElementType.VALUETYPE));
@@ -1685,7 +1812,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			writer.emptyElement("relation", "idref", assocId);
 
 			PropertyInfo propi2 = propi.reverseProperty();
-			if (propi2 != null && ExportProperty(propi2) && propi2.isNavigable()) {
+			if (propi2 != null && ExportProperty(propi2)
+					&& propi2.isNavigable()) {
 
 				String propi2id = "_A" + propi2.id();
 				propi2id = options.internalize(propi2id);
@@ -1718,7 +1846,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						AttributesImpl atts = new AttributesImpl();
 
 						if (cat == Options.CODELIST) {
-							atts.addAttribute("", "category", "", "CDATA", "code list");
+							atts.addAttribute("", "category", "", "CDATA",
+									"code list");
 
 							if (includeCodelistURI) {
 								String cl = cix.taggedValue("codeList");
@@ -1726,15 +1855,19 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 									cl = cix.taggedValue("vocabulary");
 								}
 								if (cl != null && !cl.isEmpty()) {
-									atts.addAttribute("", "codeList", "", "CDATA", options.internalize(cl));
+									atts.addAttribute("", "codeList", "",
+											"CDATA", options.internalize(cl));
 								}
 							}
 
-						} else if (cat == Options.ENUMERATION && !cixname.equals("Boolean")) {
-							atts.addAttribute("", "category", "", "CDATA", "enumeration");
+						} else if (cat == Options.ENUMERATION
+								&& !cixname.equals("Boolean")) {
+							atts.addAttribute("", "category", "", "CDATA",
+									"enumeration");
 						}
 						addOperationToAttributes(op, atts);
-						writer.dataElement("", "ValueDataType", "", atts, PrepareToPrint(cixname));
+						writer.dataElement("", "ValueDataType", "", atts,
+								PrepareToPrint(cixname));
 
 						if (!cixname.equals("Boolean")) {
 							writer.dataElement("ValueDomainType", "1", op);
@@ -1744,16 +1877,20 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 									String eiid = "_A" + ei.id();
 									eiid = options.internalize(eiid);
 
-									writer.emptyElement("enumeratedBy", "idref", eiid);
+									writer.emptyElement("enumeratedBy", "idref",
+											eiid);
 								}
 							}
 
 							if (diffs != null && diffs.get(cix) != null) {
 								for (DiffElement diff : diffs.get(cix)) {
-									if (diff.subElementType == ElementType.ENUM && diff.change == Operation.DELETE) {
+									if (diff.subElementType == ElementType.ENUM
+											&& diff.change == Operation.DELETE) {
 
-										writer.emptyElement("enumeratedBy", "idref",
-												"_A" + ((PropertyInfo) diff.subElement).id());
+										writer.emptyElement("enumeratedBy",
+												"idref",
+												"_A" + ((PropertyInfo) diff.subElement)
+														.id());
 									}
 								}
 							}
@@ -1780,22 +1917,29 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						AttributesImpl atts2 = new AttributesImpl();
 						atts2.addAttribute("", "idref", "", "CDATA", cixid);
 
-						if (cat == Options.FEATURE || cat == Options.OKSTRAFID) {
+						if (cat == Options.FEATURE
+								|| cat == Options.OKSTRAFID) {
 
 							String fttext = featureTerm.toLowerCase() + " type";
 							fttext = options.internalize(fttext);
 
-							atts2.addAttribute("", "category", "", "CDATA", fttext);
+							atts2.addAttribute("", "category", "", "CDATA",
+									fttext);
 
-						} else if (cat == Options.DATATYPE || cat == Options.OKSTRAKEY) {
-							atts2.addAttribute("", "category", "", "CDATA", "data type");
+						} else if (cat == Options.DATATYPE
+								|| cat == Options.OKSTRAKEY) {
+							atts2.addAttribute("", "category", "", "CDATA",
+									"data type");
 						} else if (cat == Options.UNION) {
-							atts2.addAttribute("", "category", "", "CDATA", "union data type");
+							atts2.addAttribute("", "category", "", "CDATA",
+									"union data type");
 						} else if (cat == Options.BASICTYPE) {
-							atts2.addAttribute("", "category", "", "CDATA", "basic type");
+							atts2.addAttribute("", "category", "", "CDATA",
+									"basic type");
 						}
 						addOperationToAttributes(op, atts2);
-						writer.dataElement("", "ValueDataType", "", atts2, PrepareToPrint(cixname));
+						writer.dataElement("", "ValueDataType", "", atts2,
+								PrepareToPrint(cixname));
 
 						writer.dataElement("ValueDomainType", "0", op);
 						break;
@@ -1805,7 +1949,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					tiname = checkDiff(tiname, propi, ElementType.VALUETYPE);
 					tiname = options.internalize(tiname);
 
-					writer.dataElement("ValueDataType", PrepareToPrint(tiname), op);
+					writer.dataElement("ValueDataType", PrepareToPrint(tiname),
+							op);
 				}
 			} else {
 				writer.dataElement("ValueDataType", "(unknown)", op);
@@ -1853,20 +1998,24 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				if (refModel != null) {
 
 					ci = refModel.classById(id);
-					
+
 					if (ci != null) {
-						
+
 						/*
-						 * If we found it in the reference model, can we identify
-						 * the class in the input model by its full name?
+						 * If we found it in the reference model, can we
+						 * identify the class in the input model by its full
+						 * name?
 						 */
 						String fullNameInSchema = ci.fullNameInSchema();
-						String fullnamelowercase = fullNameInSchema.toLowerCase(Locale.ENGLISH);
+						String fullnamelowercase = fullNameInSchema
+								.toLowerCase(Locale.ENGLISH);
 
-						if (inputSchemaClassesByFullNameInSchema.containsKey(fullnamelowercase)) {
+						if (inputSchemaClassesByFullNameInSchema
+								.containsKey(fullnamelowercase)) {
 
 							// then we'll use the class from the input model
-							ci = (ClassInfo) inputSchemaClassesByFullNameInSchema.get(fullnamelowercase);
+							ci = (ClassInfo) inputSchemaClassesByFullNameInSchema
+									.get(fullnamelowercase);
 						}
 					}
 				}
@@ -1903,11 +2052,13 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			for (ClassInfo cix : additionalClasses) {
 
-				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS, cix);
+				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS,
+						cix);
 				PrintClass(cix, false, top, cix.pkg());
 			}
 			for (ClassInfo cix : enumerations) {
-				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS, cix);
+				Operation top = getDiffChange(cix.pkg(), ElementType.CLASS,
+						cix);
 				PrintValues(cix, top);
 			}
 
@@ -1959,11 +2110,13 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 *         diffSubElement, the according diff Operation (i.e., the kind of
 	 *         change) is returned - else <code>null</code>
 	 */
-	private Operation getDiffChange(Info i, ElementType diffSubElementType, Info diffSubElement) {
+	private Operation getDiffChange(Info i, ElementType diffSubElementType,
+			Info diffSubElement) {
 
 		if (diffs != null && diffs.get(i) != null) {
 			for (DiffElement diff : diffs.get(i)) {
-				if (diff.subElementType == diffSubElementType && diff.subElement == diffSubElement) {
+				if (diff.subElementType == diffSubElementType
+						&& diff.subElement == diffSubElement) {
 					return diff.change;
 				}
 			}
@@ -1981,8 +2134,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		String pdffileName = outfileBasename + ".pdf";
 		String mime = MimeConstants.MIME_PDF;
 
-		if (xmlName != null && xmlName.length() > 0 && xslfofileName != null && xslfofileName.length() > 0
-				&& pdffileName != null && pdffileName.length() > 0) {
+		if (xmlName != null && xmlName.length() > 0 && xslfofileName != null
+				&& xslfofileName.length() > 0 && pdffileName != null
+				&& pdffileName.length() > 0) {
 			fopWrite(xmlName, xslfofileName, pdffileName, mime);
 		}
 	}
@@ -2002,9 +2156,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			File outDir = new File(outputDirectory);
 			File xmlFile = new File(outDir, xmlName);
-			transformationParameters.put("catalogXmlPath", xmlFile.toURI().toString());
+			transformationParameters.put("catalogXmlPath",
+					xmlFile.toURI().toString());
 
-			if (xmlName != null && xmlName.length() > 0 && xslframeHtmlFileName != null
+			if (xmlName != null && xmlName.length() > 0
+					&& xslframeHtmlFileName != null
 					&& xslframeHtmlFileName.length() > 0) {
 				xsltWrite(xmlName, xslframeHtmlFileName, htmlfileName);
 			}
@@ -2028,7 +2184,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				}
 
 			} catch (Exception e) {
-				result.addWarning(this, 16, cssFileName, cssPath, outputDir.getAbsolutePath());
+				result.addWarning(this, 16, cssFileName, cssPath,
+						outputDir.getAbsolutePath());
 			}
 
 			if (includeDiagrams) {
@@ -2043,7 +2200,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					FileUtils.copyDirectoryToDirectory(tmpImgDir, outputDir);
 
 				} catch (IOException e) {
-					result.addError(this, 28, tmpImgDir.getAbsolutePath(), outputDir.getAbsolutePath(), e.getMessage());
+					result.addError(this, 28, tmpImgDir.getAbsolutePath(),
+							outputDir.getAbsolutePath(), e.getMessage());
 				}
 			}
 
@@ -2051,7 +2209,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_HTML);
 
-			if (xmlName != null && xmlName.length() > 0 && xslhtmlfileName != null && xslhtmlfileName.length() > 0
+			if (xmlName != null && xmlName.length() > 0
+					&& xslhtmlfileName != null && xslhtmlfileName.length() > 0
 					&& htmlfileName != null && htmlfileName.length() > 0) {
 				xsltWrite(xmlName, xslhtmlfileName, htmlfileName);
 			}
@@ -2124,7 +2283,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			 */
 			File styleXmlFile = new File(tmpinputDir, "word/styles.xml");
 			if (!styleXmlFile.canRead()) {
-				result.addError(null, 301, styleXmlFile.getName(), "styles.xml");
+				result.addError(null, 301, styleXmlFile.getName(),
+						"styles.xml");
 				return;
 			}
 
@@ -2145,7 +2305,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			 */
 			File indocumentxmlFile = new File(tmpinputDir, "word/document.xml");
 			if (!indocumentxmlFile.canRead()) {
-				result.addError(null, 301, indocumentxmlFile.getName(), "document.xml");
+				result.addError(null, 301, indocumentxmlFile.getName(),
+						"document.xml");
 				return;
 			}
 
@@ -2153,23 +2314,28 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			 * Get hold of the output document.xml file. It will be used as the
 			 * transformation target.
 			 */
-			File outdocumentxmlFile = new File(tmpoutputDir, "word/document.xml");
+			File outdocumentxmlFile = new File(tmpoutputDir,
+					"word/document.xml");
 			if (!outdocumentxmlFile.canWrite()) {
-				result.addError(null, 307, outdocumentxmlFile.getName(), "document.xml");
+				result.addError(null, 307, outdocumentxmlFile.getName(),
+						"document.xml");
 				return;
 			}
 
 			/*
 			 * Prepare the transformation.
 			 */
-			transformationParameters.put("styleXmlPath", styleXmlFile.toURI().toString());
-			transformationParameters.put("catalogXmlPath", xmlFile.toURI().toString());
+			transformationParameters.put("styleXmlPath",
+					styleXmlFile.toURI().toString());
+			transformationParameters.put("catalogXmlPath",
+					xmlFile.toURI().toString());
 			transformationParameters.put("DOCX_PLACEHOLDER", DOCX_PLACEHOLDER);
 
 			/*
 			 * Execute the transformation.
 			 */
-			this.xsltWrite(indocumentxmlFile, xsldocxfileName, outdocumentxmlFile);
+			this.xsltWrite(indocumentxmlFile, xsldocxfileName,
+					outdocumentxmlFile);
 
 			if (includeDiagrams) {
 				/*
@@ -2180,7 +2346,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				 * 1. Copy content of temporary images folder to output folder
 				 */
 				File mediaDir = new File(tmpoutputDir, "word/media");
-				FileUtils.copyDirectoryToDirectory(options.imageTmpDir(), mediaDir);
+				FileUtils.copyDirectoryToDirectory(options.imageTmpDir(),
+						mediaDir);
 
 				/*
 				 * 2. Create image information file. The path to this file will
@@ -2189,14 +2356,17 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 				Document imgInfoDoc = createDocument();
 
-				imgInfoDoc.appendChild(imgInfoDoc.createComment("Temporary file containing image metadata"));
+				imgInfoDoc.appendChild(imgInfoDoc.createComment(
+						"Temporary file containing image metadata"));
 
 				Element imgInfoRoot = imgInfoDoc.createElement("images");
 				imgInfoDoc.appendChild(imgInfoRoot);
 
-				addAttribute(imgInfoDoc, imgInfoRoot, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+				addAttribute(imgInfoDoc, imgInfoRoot, "xmlns:xsi",
+						"http://www.w3.org/2001/XMLSchema-instance");
 
-				List<ImageMetadata> imageList = new ArrayList<ImageMetadata>(imageSet);
+				List<ImageMetadata> imageList = new ArrayList<ImageMetadata>(
+						imageSet);
 				Collections.sort(imageList, new Comparator<ImageMetadata>() {
 
 					@Override
@@ -2210,14 +2380,17 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					Element e1 = imgInfoDoc.createElement("image");
 
 					addAttribute(imgInfoDoc, e1, "id", im.getId());
-					addAttribute(imgInfoDoc, e1, "relPath", im.getRelPathToFile());
+					addAttribute(imgInfoDoc, e1, "relPath",
+							im.getRelPathToFile());
 
 					imgInfoRoot.appendChild(e1);
 				}
 
-				Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+				Properties outputFormat = OutputPropertiesFactory
+						.getDefaultMethodProperties("xml");
 				outputFormat.setProperty("indent", "yes");
-				outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+				outputFormat.setProperty(
+						"{http://xml.apache.org/xalan}indent-amount", "2");
 				if (encoding != null)
 					outputFormat.setProperty("encoding", encoding);
 
@@ -2227,9 +2400,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 					OutputStream fout = new FileOutputStream(relsFile);
 					OutputStream bout = new BufferedOutputStream(fout);
-					OutputStreamWriter outputXML = new OutputStreamWriter(bout, outputFormat.getProperty("encoding"));
+					OutputStreamWriter outputXML = new OutputStreamWriter(bout,
+							outputFormat.getProperty("encoding"));
 
-					Serializer serializer = SerializerFactory.getSerializer(outputFormat);
+					Serializer serializer = SerializerFactory
+							.getSerializer(outputFormat);
 					serializer.setWriter(outputXML);
 					serializer.asDOMSerializer().serialize(imgInfoDoc);
 					outputXML.close();
@@ -2251,9 +2426,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				 * transformation.
 				 */
 
-				File inRelsXmlFile = new File(tmpinputDir, "word/_rels/document.xml.rels");
+				File inRelsXmlFile = new File(tmpinputDir,
+						"word/_rels/document.xml.rels");
 				if (!inRelsXmlFile.canRead()) {
-					result.addError(null, 301, inRelsXmlFile.getName(), "document.xml.rels");
+					result.addError(null, 301, inRelsXmlFile.getName(),
+							"document.xml.rels");
 					return;
 				}
 
@@ -2261,21 +2438,25 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				 * Get hold of the output relationships file. It will be used as
 				 * the transformation target.
 				 */
-				File outRelsXmlFile = new File(tmpoutputDir, "word/_rels/document.xml.rels");
+				File outRelsXmlFile = new File(tmpoutputDir,
+						"word/_rels/document.xml.rels");
 				if (!outRelsXmlFile.canWrite()) {
-					result.addError(null, 307, outRelsXmlFile.getName(), "document.xml.rels");
+					result.addError(null, 307, outRelsXmlFile.getName(),
+							"document.xml.rels");
 					return;
 				}
 
 				/*
 				 * Prepare the transformation.
 				 */
-				transformationParameters.put("imageInfoXmlPath", relsFile.toURI().toString());
+				transformationParameters.put("imageInfoXmlPath",
+						relsFile.toURI().toString());
 
 				/*
 				 * Execute the transformation.
 				 */
-				this.xsltWrite(inRelsXmlFile, xsldocxrelsfileName, outRelsXmlFile);
+				this.xsltWrite(inRelsXmlFile, xsldocxrelsfileName,
+						outRelsXmlFile);
 			}
 
 			/*
@@ -2302,7 +2483,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				result.addWarning(this, 20, e.getMessage());
 			}
 
-			result.addResult(getTargetName(), outputDirectory, docxfileName, null);
+			result.addResult(getTargetName(), outputDirectory, docxfileName,
+					null);
 
 		} catch (Exception e) {
 			String m = e.getMessage();
@@ -2322,8 +2504,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		String rtffileName = outfileBasename + ".rtf";
 
-		if (xmlName != null && xmlName.length() > 0 && xslrtffileName != null && xslrtffileName.length() > 0
-				&& rtffileName != null && rtffileName.length() > 0) {
+		if (xmlName != null && xmlName.length() > 0 && xslrtffileName != null
+				&& xslrtffileName.length() > 0 && rtffileName != null
+				&& rtffileName.length() > 0) {
 			xsltWrite(xmlName, xslrtffileName, rtffileName);
 		}
 	}
@@ -2337,16 +2520,20 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		String xmloutFileName = outfileBasename + ".xml";
 
-		if (xmlName != null && xmlName.length() > 0 && xslxmlfileName != null && xslxmlfileName.length() > 0
-				&& xmloutFileName != null && xmloutFileName.length() > 0) {
+		if (xmlName != null && xmlName.length() > 0 && xslxmlfileName != null
+				&& xslxmlfileName.length() > 0 && xmloutFileName != null
+				&& xmloutFileName.length() > 0) {
 			xsltWrite(xmlName, xslxmlfileName, xmloutFileName);
 		}
 	}
 
-	private void fopWrite(String xmlName, String xslfofileName, String outfileName, String outputMimetype) {
-		Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+	private void fopWrite(String xmlName, String xslfofileName,
+			String outfileName, String outputMimetype) {
+		Properties outputFormat = OutputPropertiesFactory
+				.getDefaultMethodProperties("xml");
 		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
+				"2");
 		outputFormat.setProperty("encoding", encoding);
 
 		// redirect FOP-logging to our system, Level 'Warning' by default
@@ -2388,25 +2575,32 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					out = new java.io.FileOutputStream(outFile);
 					out = new java.io.BufferedOutputStream(out);
 				} catch (Exception e) {
-					result.addError(null, 304, outFile.getName(), e.getMessage());
+					result.addError(null, 304, outFile.getName(),
+							e.getMessage());
 					skip = true;
 				}
 				if (skip == false) {
 					try {
 						// Construct fop with desired output format
-						Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+						Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,
+								foUserAgent, out);
 
 						// Setup XSLT
 						if (xslTransformerFactory != null) {
 							// use TransformerFactory specified in configuration
-							System.setProperty("javax.xml.transform.TransformerFactory", xslTransformerFactory);
+							System.setProperty(
+									"javax.xml.transform.TransformerFactory",
+									xslTransformerFactory);
 						} else {
 							// use TransformerFactory determined by system
 						}
-						TransformerFactory factory = TransformerFactory.newInstance();
-						Transformer transformer = factory.newTransformer(new StreamSource(xsltFile));
+						TransformerFactory factory = TransformerFactory
+								.newInstance();
+						Transformer transformer = factory
+								.newTransformer(new StreamSource(xsltFile));
 
-						FopErrorListener el = new FopErrorListener(xmlFile.getName(), result, this);
+						FopErrorListener el = new FopErrorListener(
+								xmlFile.getName(), result, this);
 						transformer.setErrorListener(el);
 
 						// Set the value of a <param> in the stylesheet
@@ -2427,7 +2621,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 						skip = true;
 					} finally {
 						out.close();
-						result.addResult(getTargetName(), outputDirectory, outfileName, null);
+						result.addResult(getTargetName(), outputDirectory,
+								outfileName, null);
 						if (deleteXmlFile)
 							xmlFile.delete();
 					}
@@ -2443,7 +2638,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 	}
 
-	public void xsltWrite(String xmlName, String xsltfileName, String outfileName) {
+	public void xsltWrite(String xmlName, String xsltfileName,
+			String outfileName) {
 
 		// =========================================
 		// ensure that the source file is available
@@ -2455,15 +2651,18 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		File transformationSourceFile = new File(outDir, xmlName);
 		if (!transformationSourceFile.canRead()) {
-			result.addError(null, 301, transformationSourceFile.getAbsolutePath(),
+			result.addError(null, 301,
+					transformationSourceFile.getAbsolutePath(),
 					transformationTargetFile.getAbsolutePath());
 			return;
 		}
 
-		xsltWrite(transformationSourceFile, xsltfileName, transformationTargetFile);
+		xsltWrite(transformationSourceFile, xsltfileName,
+				transformationTargetFile);
 	}
 
-	public void xsltWrite(File transformationSource, String xsltfileName, File transformationTarget) {
+	public void xsltWrite(File transformationSource, String xsltfileName,
+			File transformationTarget) {
 
 		try {
 
@@ -2493,10 +2692,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			if (pathToJavaExe == null) {
 
 				// continue using current runtime environment
-				XsltWriter writer = new XsltWriter(xslTransformerFactory, hrefMappings, transformationParameters,
-						result);
+				XsltWriter writer = new XsltWriter(xslTransformerFactory,
+						hrefMappings, transformationParameters, result);
 
-				writer.xsltWrite(transformationSource, xsltMainFileUri, transformationTarget);
+				writer.xsltWrite(transformationSource, xsltMainFileUri,
+						transformationTarget);
 
 			} else {
 
@@ -2514,7 +2714,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				List<String> cpEntries = new ArrayList<String>();
 
 				// determine if execution from jar or from class file
-				URL writerResource = XsltWriter.class.getResource("XsltWriter.class");
+				URL writerResource = XsltWriter.class
+						.getResource("XsltWriter.class");
 				String writerResourceAsString = writerResource.toString();
 
 				if (writerResourceAsString.startsWith("jar:")) {
@@ -2522,7 +2723,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					// execution from jar
 
 					// get path to main ShapeChange jar file
-					String jarPath = writerResourceAsString.substring(4, writerResourceAsString.indexOf("!"));
+					String jarPath = writerResourceAsString.substring(4,
+							writerResourceAsString.indexOf("!"));
 
 					URI jarUri = new URI(jarPath);
 
@@ -2539,7 +2741,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 					// get manifest and the classpath entries defined by it
 					Manifest mf = new JarFile(jarF).getManifest();
-					String classPath = mf.getMainAttributes().getValue("Class-Path");
+					String classPath = mf.getMainAttributes()
+							.getValue("Class-Path");
 
 					if (classPath != null) {
 
@@ -2565,7 +2768,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					}
 				}
 
-				String cpValue = StringUtils.join(cpEntries, System.getProperty("path.separator"));
+				String cpValue = StringUtils.join(cpEntries,
+						System.getProperty("path.separator"));
 				cmds.add("\"" + cpValue + "\"");
 
 				/* add fully qualified name of XsltWriter class to command */
@@ -2576,9 +2780,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 					List<NameValuePair> hrefMappingsList = new ArrayList<NameValuePair>();
 					for (Entry<String, URI> hrefM : hrefMappings.entrySet()) {
-						hrefMappingsList.add(new BasicNameValuePair(hrefM.getKey(), hrefM.getValue().toString()));
+						hrefMappingsList.add(new BasicNameValuePair(
+								hrefM.getKey(), hrefM.getValue().toString()));
 					}
-					String hrefMappingsString = URLEncodedUtils.format(hrefMappingsList, XsltWriter.ENCODING_CHARSET);
+					String hrefMappingsString = URLEncodedUtils.format(
+							hrefMappingsList, XsltWriter.ENCODING_CHARSET);
 
 					/*
 					 * NOTE: surrounding href mapping string with double quotes
@@ -2592,12 +2798,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				if (!transformationParameters.isEmpty()) {
 
 					List<NameValuePair> transformationParametersList = new ArrayList<NameValuePair>();
-					for (Entry<String, String> transParam : transformationParameters.entrySet()) {
-						transformationParametersList
-								.add(new BasicNameValuePair(transParam.getKey(), transParam.getValue()));
+					for (Entry<String, String> transParam : transformationParameters
+							.entrySet()) {
+						transformationParametersList.add(new BasicNameValuePair(
+								transParam.getKey(), transParam.getValue()));
 					}
-					String transformationParametersString = URLEncodedUtils.format(transformationParametersList,
-							XsltWriter.ENCODING_CHARSET);
+					String transformationParametersString = URLEncodedUtils
+							.format(transformationParametersList,
+									XsltWriter.ENCODING_CHARSET);
 
 					/*
 					 * NOTE: surrounding transformation parameter string with
@@ -2614,9 +2822,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 					cmds.add(xslTransformerFactory);
 				}
 
-				String transformationSourcePath = transformationSource.getPath();
+				String transformationSourcePath = transformationSource
+						.getPath();
 				String xsltMainFileUriString = xsltMainFileUri.toString();
-				String transformationTargetPath = transformationTarget.getPath();
+				String transformationTargetPath = transformationTarget
+						.getPath();
 
 				cmds.add(XsltWriter.PARAM_transformationSourcePath);
 				cmds.add("\"" + transformationSourcePath + "\"");
@@ -2634,8 +2844,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				try {
 					Process proc = pb.start();
 
-					StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream());
-					StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream());
+					StreamGobbler outputGobbler = new StreamGobbler(
+							proc.getInputStream());
+					StreamGobbler errorGobbler = new StreamGobbler(
+							proc.getErrorStream());
 
 					errorGobbler.start();
 					outputGobbler.start();
@@ -2653,7 +2865,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 						// log error
 						if (errorGobbler.hasResult()) {
-							result.addError(this, 23, errorGobbler.getResult(), "" + exitVal);
+							result.addError(this, 23, errorGobbler.getResult(),
+									"" + exitVal);
 						} else {
 							result.addError(this, 24, "" + exitVal);
 						}
@@ -2678,9 +2891,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 				String outputDir = outputDirectory + "/" + outputFilename;
 
-				result.addResult(getTargetName(), outputDir, "index.html", null);
+				result.addResult(getTargetName(), outputDir, "index.html",
+						null);
 			} else {
-				result.addResult(getTargetName(), outputDirectory, transformationTarget.getName(), null);
+				result.addResult(getTargetName(), outputDirectory,
+						transformationTarget.getName(), null);
 			}
 
 		} catch (Exception e) {
@@ -2751,33 +2966,40 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 */
 	private void initialiseTransformationParameters() {
 
-		this.transformationParameters.put("featureTypeSynonym", featureTerm + " Type");
+		this.transformationParameters.put("featureTypeSynonym",
+				featureTerm + " Type");
 		this.transformationParameters.put("lang", lang);
-		this.transformationParameters.put("noAlphabeticSortingForProperties", noAlphabeticSortingForProperties);
+		this.transformationParameters.put("noAlphabeticSortingForProperties",
+				noAlphabeticSortingForProperties);
 	}
 
 	private void initialiseFromOptions() {
 
-		outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
+		outputDirectory = options.parameter(this.getClass().getName(),
+				"outputDirectory");
 		if (outputDirectory == null)
 			outputDirectory = options.parameter("outputDirectory");
 		if (outputDirectory == null)
 			outputDirectory = ".";
 
-		outputFilename = options.parameter(this.getClass().getName(), "outputFilename");
+		outputFilename = options.parameter(this.getClass().getName(),
+				"outputFilename");
 		if (outputFilename == null)
 			outputFilename = "FeatureCatalogue";
 
-		docxTemplateFilePath = options.parameter(this.getClass().getName(), "docxTemplateFilePath");
+		docxTemplateFilePath = options.parameter(this.getClass().getName(),
+				"docxTemplateFilePath");
 		if (docxTemplateFilePath == null)
 			docxTemplateFilePath = options.parameter("docxTemplateFilePath");
 		// if no path is provided, use the directory of the default template
 		if (docxTemplateFilePath == null) {
 			docxTemplateFilePath = DOCX_TEMPLATE_URL;
-			result.addDebug(this, 17, "docxTemplateFilePath", DOCX_TEMPLATE_URL);
+			result.addDebug(this, 17, "docxTemplateFilePath",
+					DOCX_TEMPLATE_URL);
 		}
 
-		String s = options.parameter(this.getClass().getName(), "inheritedProperties");
+		String s = options.parameter(this.getClass().getName(),
+				"inheritedProperties");
 		if (s != null && s.equals("true"))
 			Inherit = true;
 
@@ -2809,9 +3031,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (s != null && s.equals("true"))
 			dontTransform = true;
 
-		s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_CODELIST_URI);
+		s = options.parameter(this.getClass().getName(),
+				PARAM_INCLUDE_CODELIST_URI);
 		if (s != null && s.equalsIgnoreCase("false"))
 			includeCodelistURI = false;
+
+		representTaggedValues = options.parameter("representTaggedValues");
 
 		// TBD: one could check that input has actually loaded the diagrams;
 		// however, in future a transformation could create images as well
@@ -2828,7 +3053,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			encoding = model.characterEncoding();
 		}
 
-		s = options.parameter(this.getClass().getName(), PARAM_XSL_TRANSFORMER_FACTORY);
+		s = options.parameter(this.getClass().getName(),
+				PARAM_XSL_TRANSFORMER_FACTORY);
 		if (s != null && s.length() > 0)
 			xslTransformerFactory = s;
 
@@ -2836,7 +3062,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (s != null && s.length() > 0)
 			xslhtmlfileName = s;
 
-		s = options.parameter(this.getClass().getName(), "xslframeHtmlFileName");
+		s = options.parameter(this.getClass().getName(),
+				"xslframeHtmlFileName");
 		if (s != null && s.length() > 0)
 			xslframeHtmlFileName = s;
 
@@ -2883,7 +3110,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (s != null && s.length() > 0)
 			lang = s;
 
-		s = options.parameter(this.getClass().getName(), "noAlphabeticSortingForProperties");
+		s = options.parameter(this.getClass().getName(),
+				"noAlphabeticSortingForProperties");
 		if (s != null && s.trim().length() > 0)
 			noAlphabeticSortingForProperties = s.trim();
 
@@ -2907,12 +3135,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				hrefMappings.put(localizationXslDefaultUri, locXslUri);
 
 			} catch (URISyntaxException e) {
-				result.addError(this, 15, "xslLocalizationUri", s, e.toString());
+				result.addError(this, 15, "xslLocalizationUri", s,
+						e.toString());
 			}
 
 		}
 
-		s = options.parameter(this.getClass().getName(), "localizationMessagesUri");
+		s = options.parameter(this.getClass().getName(),
+				"localizationMessagesUri");
 		if (s != null && s.length() > 0) {
 
 			try {
@@ -2932,11 +3162,13 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				hrefMappings.put(localizationMessagesDefaultUri, locMsgUri);
 
 			} catch (URISyntaxException e) {
-				result.addError(this, 15, "localizationMessagesUri", s, e.toString());
+				result.addError(this, 15, "localizationMessagesUri", s,
+						e.toString());
 			}
 		}
 
-		String pathToJavaExe_ = options.parameter(this.getClass().getName(), PARAM_JAVA_EXE_PATH);
+		String pathToJavaExe_ = options.parameter(this.getClass().getName(),
+				PARAM_JAVA_EXE_PATH);
 		if (pathToJavaExe_ != null && pathToJavaExe_.trim().length() > 0) {
 			pathToJavaExe = pathToJavaExe_.trim();
 			if (!pathToJavaExe.startsWith("\"")) {
@@ -2946,7 +3178,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 				pathToJavaExe = pathToJavaExe + "\"";
 			}
 
-			String jo_tmp = options.parameter(this.getClass().getName(), PARAM_JAVA_OPTIONS);
+			String jo_tmp = options.parameter(this.getClass().getName(),
+					PARAM_JAVA_OPTIONS);
 			if (jo_tmp != null && jo_tmp.trim().length() > 0) {
 				javaOptions = jo_tmp.trim();
 			}

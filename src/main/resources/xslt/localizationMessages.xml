@@ -277,6 +277,24 @@
     <text lang="nl">Supertype van</text>
     <text lang="fr">Classe mère de</text>
   </message>
+ <message id="fc.TaggedValues">
+  <text lang="de">Tagged Values</text>
+  <text lang="en">Tagged Values</text>
+  <text lang="nl">Tagged Values</text>
+  <text lang="fr">Tagged Values</text>
+ </message>
+ <message id="fc.TagName">
+  <text lang="de">Tag</text>
+  <text lang="en">Tag</text>
+  <text lang="nl">Tag</text>
+  <text lang="fr">Tag</text>
+ </message>
+ <message id="fc.TagValue">
+  <text lang="de">Value</text>
+  <text lang="en">Value</text>
+  <text lang="nl">Value</text>
+  <text lang="fr">Value</text>
+ </message>
   <message id="fc.Title">
     <text lang="de">Begriff</text>
     <text lang="en">Title</text>

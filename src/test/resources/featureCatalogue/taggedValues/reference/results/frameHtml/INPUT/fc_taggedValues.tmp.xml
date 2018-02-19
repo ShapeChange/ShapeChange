@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C30">
+    <name>FeatureType</name>
+    <code>C_FT</code>
+    <characterizedBy idref="_AT2"></characterizedBy>
+    <characterizedBy idref="_A30_33"></characterizedBy>
+    <characterizedBy idref="_A30_34"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues>
+      <taggedValue tag="code">C_FT</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
+  </FeatureType>
+  <FeatureRelationship id="__T2">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT2"></roles>
+    <roles idref="_AS2"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT2">
+    <name>role1</name>
+    <code>C_R1</code>
+    <cardinality>1</cardinality>
+    <taggedValues>
+      <taggedValue tag="code">C_R1</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C32" category="feature type">Type</FeatureTypeIncluded>
+    <relation idref="__T2"></relation>
+  </RelationshipRole>
+  <RelationshipRole id="_AS2">
+    <name>role_S2</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C30" category="feature type">FeatureType</FeatureTypeIncluded>
+    <relation idref="__T2"></relation>
+    <InverseRole idref="_AT2"></InverseRole>
+  </RelationshipRole>
+  <FeatureAttribute id="_A30_33">
+    <name>att1</name>
+    <code>C_A1</code>
+    <cardinality>1</cardinality>
+    <taggedValues>
+      <taggedValue tag="code">C_A1</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="code list">CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A31_31"></enumeratedBy>
+    <enumeratedBy idref="_A31_32"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A30_34">
+    <name>att2</name>
+    <code>C_A2</code>
+    <cardinality>1</cardinality>
+    <taggedValues>
+      <taggedValue tag="code">C_A2</taggedValue>
+    </taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C32">
+    <name>Type</name>
+    <code>C_T</code>
+    <package idref="_P4"></package>
+    <type>Object Type</type>
+    <taggedValues>
+      <taggedValue tag="code">C_T</taggedValue>
+    </taggedValues>
+  </FeatureType>
+  <Value id="_A31_31">
+    <label>code1</label>
+    <code>code1</code>
+  </Value>
+  <Value id="_A31_32">
+    <label>code2</label>
+    <code>code2</code>
+  </Value>
+</FeatureCatalogue>

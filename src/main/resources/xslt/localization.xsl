@@ -61,6 +61,9 @@
   <xsl:variable name="fc.SubPackage"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.SubPackage']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.SubtypeOf"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.SubtypeOf']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.SupertypeOf"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.SupertypeOf']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.TaggedValues"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.TaggedValues']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.TagName"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.TagName']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.TagValue"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.TagValue']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Title"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Title']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Toc"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Toc']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Type"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Type']/text[contains(@lang,$lang)]"/></xsl:variable>
