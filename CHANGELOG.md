@@ -1,5 +1,30 @@
 # Change Log
 
+## [2.5.1](https://github.com/ShapeChange/ShapeChange/tree/2.5.1) (2018-02-23)
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.5.0...2.5.1)
+
+**Implemented enhancements:**
+
+- XmlSchema target - add globalIdentifier annotation [\#131](https://github.com/ShapeChange/ShapeChange/issues/131)
+- FeatureCatalogue target - include tagged values [\#130](https://github.com/ShapeChange/ShapeChange/issues/130)
+- ArcGIS Workspace target - Add configuration validator to check that ArcGIS MDG Technology is enabled in EA [\#123](https://github.com/ShapeChange/ShapeChange/issues/123)
+- General - Recognise stereotype \<\<retired\>\> [\#108](https://github.com/ShapeChange/ShapeChange/issues/108)
+
+**Fixed bugs:**
+
+- SqlDdl target - Database UML model does not contain documentation for code list related columns [\#128](https://github.com/ShapeChange/ShapeChange/issues/128)
+- UmlModel target - Wrong UML Profile / MDG for stereotypes [\#122](https://github.com/ShapeChange/ShapeChange/issues/122)
+
+**Closed issues:**
+
+- Use of current\(\) [\#13](https://github.com/ShapeChange/ShapeChange/issues/13)
+- Context does not start with "//" [\#12](https://github.com/ShapeChange/ShapeChange/issues/12)
+
+**Merged pull requests:**
+
+- Extend feature catalogue target to include tagged values [\#135](https://github.com/ShapeChange/ShapeChange/pull/135) ([jechterhoff](https://github.com/jechterhoff))
+- add \<\<retired\>\> to known stereotypes [\#121](https://github.com/ShapeChange/ShapeChange/pull/121) ([cportele](https://github.com/cportele))
+
 ## [ShapeChange-2.5.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.5.0) (2018-01-16)
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.4.0...ShapeChange-2.5.0)
 
