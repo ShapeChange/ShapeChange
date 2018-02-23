@@ -577,6 +577,19 @@ public class Profiles {
 	}
 
 	/**
+	 * @param profileName
+	 * @return <code>true</code> if a profile identifier with given name is
+	 *         stored in this set of profiles, else <code>false</code>
+	 */
+	public boolean hasProfile(String profileName) {
+		if (this.profileIdentifiersByName == null) {
+			return false;
+		} else {
+			return this.profileIdentifiersByName.containsKey(profileName);
+		}
+	}
+
+	/**
 	 * @param profileNames
 	 * @return the set of profile identifiers whose names are contained in the
 	 *         given set; can be empty (especially if the given set is
