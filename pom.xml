@@ -3,12 +3,12 @@
 	<groupId>net.shapechange</groupId>
 	<artifactId>ShapeChange</artifactId>
 	<name>ShapeChange</name>
-	<version>2.5.1</version>
+	<version>2.5.1-SNAPSHOT</version>
 	<scm>
 		<url>https://github.com/ShapeChange/ShapeChange</url>
 		<connection>scm:git:https://github.com/ShapeChange/ShapeChange.git</connection>
 		<developerConnection>scm:git:https://github.com/ShapeChange/ShapeChange.git</developerConnection>
-		<tag>2.5.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<repositories>
 		<repository>
