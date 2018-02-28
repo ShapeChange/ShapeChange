@@ -117,8 +117,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	protected String characterEncoding = null;
 	// protected Model model = null;
 
-	protected Set<String> selectedSchemaPackageIds = new HashSet<String>();
-
 	protected Map<String, GenericPropertyInfo> genPropertiesById = new HashMap<String, GenericPropertyInfo>();
 
 	protected Map<String, GenericAssociationInfo> genAssociationInfosById = new HashMap<String, GenericAssociationInfo>();
@@ -197,17 +195,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		// this.model = model;
 
 		this.characterEncoding = model.characterEncoding();
-
-		// get PackageInfos representing the application schema (possibly
-		// specifically selected via configuration parameters)
-		SortedSet<? extends PackageInfo> schemaArr = model.selectedSchemas();
-
-		// collect the Ids of all selected schema packages, for later checks
-		// if a package or class belongs to one of the selected schema
-		for (PackageInfo selectedSchemaPackage : schemaArr) {
-
-			selectedSchemaPackageIds.add(selectedSchemaPackage.id());
-		}
 
 		for (PackageInfo piToCreate : model.packages()) {
 
@@ -1018,7 +1005,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
 
 	public boolean isInAppSchema(PackageInfo pi) {
-		if (this.selectedSchemaPackageIds.contains(pi.id())) {
+		if (selectedSchemas().contains(pi)) {
 			return true;
 		} else {
 			if (pi.owner() != null)
@@ -1395,11 +1382,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 						updateConstraintContext(conHandler);
 					}
-				}
-
-				// identify the schemas selected for processing
-				for (PackageInfo pkg : super.selectedSchemas()) {
-					this.selectedSchemaPackageIds.add(pkg.id());
 				}
 
 				/*
@@ -2594,18 +2576,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		this.genAssociationInfosById.put(ai.id(), ai);
 	}
 
-	@Override
-	public SortedSet<GenericPackageInfo> selectedSchemas() {
-
-		SortedSet<GenericPackageInfo> selectedSchemas = new TreeSet<GenericPackageInfo>();
-
-		for (String selectedSchemaId : this.selectedSchemaPackageIds) {
-			selectedSchemas.add(this.genPackageInfosById.get(selectedSchemaId));
-		}
-
-		return selectedSchemas;
-	}
-
 	/**
 	 * @return a set with all classes that belong to selected schemas; can be
 	 *         empty but not <code>null</code>.
@@ -2614,7 +2584,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		SortedSet<GenericClassInfo> res = new TreeSet<GenericClassInfo>();
 
-		for (GenericPackageInfo selectedSchema : selectedSchemas()) {
+		for (PackageInfo selectedSchema : selectedSchemas()) {
 
 			SortedSet<ClassInfo> cisOfSelectedSchema = this
 					.classes(selectedSchema);
@@ -2687,36 +2657,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Removes the specified id from the set of selected schema package IDs if
-	 * it is present. Returns true if this set contained the id (or
-	 * equivalently, if this set changed as a result of the call). (This set
-	 * will not contain the id once the call returns.)
-	 * 
-	 * @param id
-	 * @return true if this set contained the id (or equivalently, if this set
-	 *         changed as a result of the call).
-	 */
-	public boolean removeFromSelectedSchemaPackageIds(String id) {
-		return this.selectedSchemaPackageIds.remove(id);
-	}
-
-	/**
-	 * @return the selectedSchemaPackageIds
-	 */
-	public Set<String> getSelectedSchemaPackageIds() {
-		return selectedSchemaPackageIds;
-	}
-
-	/**
-	 * @param selectedSchemaPackageIds
-	 *            the selectedSchemaPackageIds to set
-	 */
-	public void setSelectedSchemaPackageIds(
-			Set<String> selectedSchemaPackageIds) {
-		this.selectedSchemaPackageIds = selectedSchemaPackageIds;
 	}
 
 	/**
@@ -2793,13 +2733,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			return;
 		}
 
-		// update selectedSchemaPackageIds
-		Set<String> tmp_selectedSchemaPackageIds = new HashSet<String>();
-		for (String id : selectedSchemaPackageIds) {
-			tmp_selectedSchemaPackageIds.add(prefix + id);
-		}
-		selectedSchemaPackageIds = tmp_selectedSchemaPackageIds;
-
 		// update genPropertiesById
 		Map<String, GenericPropertyInfo> tmp_genPropertiesById = new HashMap<String, GenericPropertyInfo>();
 		for (Entry<String, GenericPropertyInfo> e : genPropertiesById
@@ -2849,7 +2782,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		/*
 		 * Handle actual constraints
 		 */
-		for (GenericPackageInfo pkg : this.selectedSchemas()) {
+		for (PackageInfo pkg : selectedSchemas()) {
 
 			for (ClassInfo tmp : this.classes(pkg)) {
 

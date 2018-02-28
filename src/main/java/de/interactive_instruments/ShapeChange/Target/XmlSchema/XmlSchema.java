@@ -46,6 +46,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -58,7 +59,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
 
-public class XmlSchema implements Target {
+public class XmlSchema implements Target, MessageSource {
 
 	private ShapeChangeResult result = null;
 	private PackageInfo pi = null;
@@ -339,26 +340,36 @@ public class XmlSchema implements Target {
 			return;
 		}
 
-		Properties outputFormat = OutputPropertiesFactory
-				.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
-				"2");
-		outputFormat.setProperty("encoding", "UTF-8");
+		boolean skipXmlSchemaOutput = options.parameterAsBoolean(
+				this.getClass().getName(), "skipXmlSchemaOutput", false);
 
-		for (XsdDocument xsd : xsdMap.values()) {
+		if (skipXmlSchemaOutput) {
+			
+			result.addInfo(this,1000);
+			
+		} else {
 
-			if (!xsd.printed()) {
-				try {
-					xsd.printFile(outputFormat);
-					result.addResult(getTargetName(), outputDirectory, xsd.name,
-							pi.targetNamespace());
-				} catch (Exception e) {
-					String m = e.getMessage();
-					if (m != null) {
-						result.addError(m);
+			Properties outputFormat = OutputPropertiesFactory
+					.getDefaultMethodProperties("xml");
+			outputFormat.setProperty("indent", "yes");
+			outputFormat.setProperty(
+					"{http://xml.apache.org/xalan}indent-amount", "2");
+			outputFormat.setProperty("encoding", "UTF-8");
+
+			for (XsdDocument xsd : xsdMap.values()) {
+
+				if (!xsd.printed()) {
+					try {
+						xsd.printFile(outputFormat);
+						result.addResult(getTargetName(), outputDirectory,
+								xsd.name, pi.targetNamespace());
+					} catch (Exception e) {
+						String m = e.getMessage();
+						if (m != null) {
+							result.addError(m);
+						}
+						e.printStackTrace(System.err);
 					}
-					e.printStackTrace(System.err);
 				}
 			}
 		}
@@ -367,7 +378,7 @@ public class XmlSchema implements Target {
 			schDoc.write(outputDirectory);
 
 		printed = true;
-	};
+	}
 
 	/** Create XML Schema documents */
 	protected boolean createXSDs(PackageInfo pi, XsdDocument xsdcurr)
@@ -662,5 +673,28 @@ public class XmlSchema implements Target {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: property '$1$'.";
+		case 1:
+			return "Context: class '$1$'.";
+		case 2:
+			return "Context: association class '$1$'.";
+		case 3:
+			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
+		case 1000:
+			return "Skipping XML Schema output, as configured.";
+		
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

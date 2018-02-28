@@ -29,11 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Constraints;
+package de.interactive_instruments.ShapeChange.Transformation.Profiling;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -47,7 +49,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  *         <dot> de)
  *
  */
-public class ProfileSchemaConstraintTransformerConfigurationValidator
+public class ProfileConstraintTransformerConfigurationValidator
 		implements ConfigurationValidator, MessageSource {
 
 	@Override
@@ -69,43 +71,78 @@ public class ProfileSchemaConstraintTransformerConfigurationValidator
 		}
 
 		if (rules.contains(
-				ProfileSchemaConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS)) {
+				ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS)) {
 
-			String baseSchemaPackageName = config.parameterAsString(
-					ProfileSchemaConstraintTransformer.PARAM_BASE_SCHEMA_PACKAGE_NAME,
-					null, false, true);
+			isValid &= checkCombinationOfParameters(
+					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
+					config, result,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
 
-			if (baseSchemaPackageName == null) {
-				isValid = false;
-				result.addError(this, 100,
-						ProfileSchemaConstraintTransformer.PARAM_BASE_SCHEMA_PACKAGE_NAME,
-						ProfileSchemaConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
-			}
+			isValid &= checkRequiredParameter(
+					ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
+					config, result);
 
-			String profileSchemaPackageName = config.parameterAsString(
-					ProfileSchemaConstraintTransformer.PARAM_PROFILE_SCHEMA_PACKAGE_NAME,
-					null, false, true);
+			isValid &= checkRequiredParameter(
+					ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
+					config, result);
+		}
 
-			if (profileSchemaPackageName == null) {
-				isValid = false;
-				result.addError(this, 100,
-						ProfileSchemaConstraintTransformer.PARAM_PROFILE_SCHEMA_PACKAGE_NAME,
-						ProfileSchemaConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
-			}
+		if (rules.contains(
+				ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES)) {
 
-			String profileName = config.parameterAsString(
-					ProfileSchemaConstraintTransformer.PARAM_PROFILE_NAME, null,
-					false, true);
+			isValid &= checkCombinationOfParameters(
+					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+					config, result,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
+					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
+			
+			isValid &= checkRequiredParameter(
+					ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+					config, result);
 
-			if (profileName == null) {
-				isValid = false;
-				result.addError(this, 100,
-						ProfileSchemaConstraintTransformer.PARAM_PROFILE_NAME,
-						ProfileSchemaConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
-			}
+			isValid &= checkRequiredParameter(
+					ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+					config, result);
 		}
 
 		return isValid;
+	}
+
+	private boolean checkCombinationOfParameters(String ruleName,
+			ProcessConfiguration config, ShapeChangeResult result,
+			String... parameterNames) {
+
+		for (String pn : parameterNames) {
+			String paramValue = config.parameterAsString(pn, null, false, true);
+			if (paramValue != null) {
+				return true;
+			}
+		}
+
+		result.addError(this, 101, StringUtils.join(parameterNames, ", "));
+		return false;
+	}
+
+	private boolean checkRequiredParameter(String parameterName,
+			String ruleName, ProcessConfiguration config,
+			ShapeChangeResult result) {
+
+		String paramValue = config.parameterAsString(parameterName, null, false,
+				true);
+
+		if (paramValue == null) {
+			result.addError(this, 100, parameterName, ruleName);
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
@@ -126,7 +163,8 @@ public class ProfileSchemaConstraintTransformerConfigurationValidator
 		// Validation messages
 		case 100:
 			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-
+		case 101:
+			return "At least one of the parameters '$1$' must be provided.";
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

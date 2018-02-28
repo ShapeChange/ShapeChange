@@ -149,7 +149,7 @@ public abstract class ModelImpl implements Model {
 
 		Options options = options();
 		for (PackageInfo pi : schemas("")) {
-			if (options.skipSchema(null, pi))
+			if (options.skipSchema(pi))
 				continue;
 			classNames.clear();
 			postprocessPackage(pi, true);
@@ -168,7 +168,7 @@ public abstract class ModelImpl implements Model {
 
 		for (PackageInfo pi : schemas("")) {
 
-			if (options().skipSchema(null, pi))
+			if (options().skipSchema(pi))
 				continue;
 
 			for (ClassInfo ci : this.classes(pi)) {
@@ -260,12 +260,12 @@ public abstract class ModelImpl implements Model {
 	}
 
 	@Override
-	public SortedSet<? extends PackageInfo> selectedSchemas() {
+	public SortedSet<PackageInfo> selectedSchemas() {
 		SortedSet<PackageInfo> res = new TreeSet<PackageInfo>();
 
 		Options options = options();
 		for (PackageInfo pi : schemas("")) {
-			if (!options.skipSchema(null, pi))
+			if (!options.skipSchema(pi))
 				res.add(pi);
 		}
 		return res;

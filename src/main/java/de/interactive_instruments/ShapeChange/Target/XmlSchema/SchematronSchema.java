@@ -467,8 +467,21 @@ public class SchematronSchema implements MessageSource {
 
 		ClassInfo ci = cib != null ? cib : pi.inClass();
 
-		// Do not add assertion for abstract and suppressed classes
-		if (!ci.isAbstract() && !ci.suppressed()) {
+		/*
+		 * Do not add assertion for abstract and suppressed classes.
+		 * 
+		 * Also, if the class or the property is prohibited in the profile
+		 * schema, do not create any checks for the property and this class.
+		 */
+		if (!ci.isAbstract() && !ci.suppressed()
+				&& !(ci.matches(
+						"rule-xsd-all-propertyAssertion-ignoreProhibited")
+						&& "true".equalsIgnoreCase(
+								ci.taggedValue("prohibitedInProfileSchema")))
+				&& !(pi.matches(
+						"rule-xsd-all-propertyAssertion-ignoreProhibited")
+						&& "true".equalsIgnoreCase(
+								pi.taggedValue("prohibitedInProfileSchema")))) {
 
 			registerNamespace(ci);
 			registerNamespace(pi.inClass());
@@ -1353,7 +1366,7 @@ public class SchematronSchema implements MessageSource {
 			if (enclosing != null) {
 				enclosing.addChild(atn);
 			}
-			
+
 			return atn;
 		}
 

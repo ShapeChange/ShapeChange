@@ -718,9 +718,12 @@ public class Converter implements MessageSource {
 					continue;
 				}
 
-				// Only process schemas in a namespace and name that matches a
-				// user-selected pattern
-				if (options.skipSchema(null, pi))
+				/*
+				 * Only process schemas in a namespace and name that matches a
+				 * user-selected pattern. Selection parameters are defined
+				 * either by the target or the input configuration.
+				 */
+				if (options.skipSchema(pi))
 					continue;
 
 				String name = pi.name();
@@ -736,11 +739,7 @@ public class Converter implements MessageSource {
 				target = (Target) theClass.newInstance();
 
 				if (target != null) {
-					// filter additionally for target specific application
-					// schema names
-					if (options.skipSchema(target, pi))
-						continue;
-
+					
 					targetCalled = true;
 
 					result.addInfo(this, 503, target.getTargetName(),

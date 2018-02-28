@@ -54,6 +54,7 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
@@ -112,11 +113,11 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		/*
 		 * Identify core schema based upon core AIXM schema target namespace
 		 */
-		for (GenericPackageInfo selectedSchema : model.selectedSchemas()) {
+		for (PackageInfo selectedSchema : model.selectedSchemas()) {
 
 			if (selectedSchema.targetNamespace()
 					.equals(coreAIXMSchemaTargetNamespace)) {
-				coreSchema = selectedSchema;
+				coreSchema = (GenericPackageInfo) selectedSchema;
 				break;
 			}
 		}
@@ -135,7 +136,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		Set<GenericClassInfo> extCis = new HashSet<GenericClassInfo>();
 		Map<String, GenericClassInfo> nonExtCisById = new HashMap<String, GenericClassInfo>();
 
-		for (GenericPackageInfo selectedSchema : model.selectedSchemas()) {
+		for (PackageInfo selectedSchema : model.selectedSchemas()) {
 
 			SortedSet<ClassInfo> cisOfSelectedSchema = model
 					.classes(selectedSchema);
@@ -178,9 +179,10 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		pkgInfosById.put(coreSchema.id(), coreSchema);
 		model.setGenPackageInfosById(pkgInfosById);
 
-		Set<String> selectedSchemaIds = new HashSet<String>();
-		selectedSchemaIds.add(coreSchema.id());
-		model.setSelectedSchemaPackageIds(selectedSchemaIds);
+		// TODO-JE - does this require setting appSchema... parameters in the target of the AIXM schema processing?
+//		Set<String> selectedSchemaIds = new HashSet<String>();
+//		selectedSchemaIds.add(coreSchema.id());
+//		model.setSelectedSchemaPackageIds(selectedSchemaIds);
 
 		/*
 		 * Remove all class infos from the model
@@ -622,21 +624,21 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 
 				assocCopy.setDescriptors(assocCi.descriptors().createCopy());
 				assocCopy.setProfiles(assocCi.profiles().createCopy());
-//				assocCopy.setAliasNameAll(assocCi.aliasNameAll().createCopy());
-//				assocCopy
-//						.setDefinitionAll(assocCi.definitionAll().createCopy());
-//				assocCopy.setDescriptionAll(
-//						assocCi.descriptionAll().createCopy());
-//				assocCopy.setPrimaryCodeAll(
-//						assocCi.primaryCodeAll().createCopy());
-//				assocCopy.setGlobalIdentifierAll(
-//						assocCi.globalIdentifierAll().createCopy());
-//				assocCopy.setLanguageAll(assocCi.languageAll().createCopy());
-//				assocCopy
-//						.setLegalBasisAll(assocCi.legalBasisAll().createCopy());
-//				assocCopy.setDataCaptureStatementsAll(
-//						assocCi.dataCaptureStatementsAll().createCopy());
-//				assocCopy.setExamplesAll(assocCi.examplesAll().createCopy());
+				// assocCopy.setAliasNameAll(assocCi.aliasNameAll().createCopy());
+				// assocCopy
+				// .setDefinitionAll(assocCi.definitionAll().createCopy());
+				// assocCopy.setDescriptionAll(
+				// assocCi.descriptionAll().createCopy());
+				// assocCopy.setPrimaryCodeAll(
+				// assocCi.primaryCodeAll().createCopy());
+				// assocCopy.setGlobalIdentifierAll(
+				// assocCi.globalIdentifierAll().createCopy());
+				// assocCopy.setLanguageAll(assocCi.languageAll().createCopy());
+				// assocCopy
+				// .setLegalBasisAll(assocCi.legalBasisAll().createCopy());
+				// assocCopy.setDataCaptureStatementsAll(
+				// assocCi.dataCaptureStatementsAll().createCopy());
+				// assocCopy.setExamplesAll(assocCi.examplesAll().createCopy());
 
 				assocCopy.setStereotypes(assocCi.stereotypes());
 				assocCopy.setIsAbstract(assocCi.isAbstract());

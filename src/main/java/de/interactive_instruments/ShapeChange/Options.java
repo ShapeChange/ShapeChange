@@ -3541,7 +3541,7 @@ public class Options {
 
 		/*
 		 * non-standard extensions - requirements
-		 */
+		 */		
 		addRule("req-all-all-documentation");
 		addRule("req-all-prop-sequenceNumber");
 		addRule("req-xsd-pkg-targetNamespace");
@@ -3569,6 +3569,7 @@ public class Options {
 		 */
 		addRule("rule-xsd-all-globalIdentifierAnnotation");
 		addRule("rule-xsd-all-notEncoded");
+		addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
@@ -3823,47 +3824,78 @@ public class Options {
 		return tag;
 	};
 
-	/*
-	 * Only process schemas in a namespace and name that matches a user-selected
-	 * pattern
+	/**
+	 * Determines if the given package should not be processed (i.e., should be
+	 * skipped), based upon the configuration parameters 'appSchemaName',
+	 * 'appSchemaNameRegex', and 'appSchemaNamespaceRegex'. If the current
+	 * process configuration contains one of these parameters, they are used.
+	 * Otherwise, the parameters from the input configuration are used. If the
+	 * package does not match one of the defined parameters, the result will be
+	 * <code>true</code>.
+	 * 
+	 * @param pi
+	 *            package to check
+	 * @return <code>true</code> if the given package shall be skipped, else
+	 *         <code>false</code>
 	 */
-	public boolean skipSchema(Target target, PackageInfo pi) {
+	public boolean skipSchema(PackageInfo pi) {
+
 		String name = pi.name();
 		String ns = pi.targetNamespace();
 
-		// only process schemas with a given name
-		String schemaFilter;
-		if (target == null)
-			schemaFilter = parameter("appSchemaName");
-		else
-			schemaFilter = parameter(target.getClass().getName(),
-					"appSchemaName");
-		if (schemaFilter != null && schemaFilter.length() > 0
-				&& !schemaFilter.equals(name))
+		String appSchemaName = null;
+		String appSchemaNameRegex = null;
+		String appSchemaNamespaceRegex = null;
+
+		/*
+		 * If the current process configuration defines selection parameters,
+		 * use these criteria. Otherwise, use the selection parameters defined
+		 * by the input configuration.
+		 */
+		if (currentProcessConfig != null
+				&& (currentProcessConfig.hasParameter("appSchemaName")
+						|| currentProcessConfig
+								.hasParameter("appSchemaNameRegex")
+						|| currentProcessConfig
+								.hasParameter("appSchemaNamespaceRegex"))) {
+
+			appSchemaName = currentProcessConfig
+					.getParameterValue("appSchemaName");
+			appSchemaNameRegex = currentProcessConfig
+					.getParameterValue("appSchemaNameRegex");
+			appSchemaNamespaceRegex = currentProcessConfig
+					.getParameterValue("appSchemaNamespaceRegex");
+
+		} else {
+
+			/*
+			 * if the current process configuration does not provide selection
+			 * parameters, use the input parameters
+			 */
+			appSchemaName = parameter("appSchemaName");
+			appSchemaNameRegex = parameter("appSchemaNameRegex");
+			appSchemaNamespaceRegex = parameter("appSchemaNamespaceRegex");
+		}
+
+		/*
+		 * only process schemas with a given name
+		 */
+		if (StringUtils.isNotBlank(appSchemaName)
+				&& !appSchemaName.equals(name))
 			return true;
 
-		// only process schemas with a name that matches a user-selected pattern
-		String appSchemaNameRegex;
-		if (target == null)
-			appSchemaNameRegex = parameter("appSchemaNameRegex");
-		else
-			appSchemaNameRegex = parameter(target.getClass().getName(),
-					"appSchemaNameRegex");
-		if (appSchemaNameRegex != null && appSchemaNameRegex != null
-				&& appSchemaNameRegex.length() > 0
+		/*
+		 * only process schemas with a name that matches a user-selected pattern
+		 */
+		if (StringUtils.isNotBlank(appSchemaNameRegex)
 				&& !name.matches(appSchemaNameRegex))
 			return true;
 
-		// only process schemas in a namespace that matches a user-selected
-		// pattern
-		String appSchemaNamespaceRegex;
-		if (target == null)
-			appSchemaNamespaceRegex = parameter("appSchemaNamespaceRegex");
-		else
-			appSchemaNamespaceRegex = parameter(target.getClass().getName(),
-					"appSchemaNamespaceRegex");
-		if (appSchemaNamespaceRegex != null
-				&& appSchemaNamespaceRegex.length() > 0
+		/*
+		 * only process schemas in a namespace that matches a user-selected
+		 * pattern
+		 */
+		if (StringUtils.isNotBlank(appSchemaNamespaceRegex)
 				&& !ns.matches(appSchemaNamespaceRegex))
 			return true;
 

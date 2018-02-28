@@ -3470,6 +3470,17 @@ public class XsdDocument implements MessageSource {
 		} else if (schDoc != null
 				&& cibase.matches("rule-xsd-cls-codelist-constraints2")) {
 
+			if (propi.matches(
+					"rule-xsd-all-propertyAssertion-ignoreProhibited")
+					&& "true".equalsIgnoreCase(
+							propi.taggedValue("prohibitedInProfileSchema"))) {
+				/*
+				 * The property is prohibited in the profile schema. Do not
+				 * create code list checks for this property.
+				 */
+				return;
+			}
+
 			/*
 			 * 2018-01-17 JE: rule-xsd-cls-codelist-constraints2 represents a
 			 * revision of rule-xsd-cls-codelist-constraints to make use of
