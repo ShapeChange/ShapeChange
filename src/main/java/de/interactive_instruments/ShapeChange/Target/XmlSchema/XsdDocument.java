@@ -3473,7 +3473,7 @@ public class XsdDocument implements MessageSource {
 			if (propi.matches(
 					"rule-xsd-all-propertyAssertion-ignoreProhibited")
 					&& "true".equalsIgnoreCase(
-							propi.taggedValue("prohibitedInProfileSchema"))) {
+							propi.taggedValue("prohibitedInProfile"))) {
 				/*
 				 * The property is prohibited in the profile schema. Do not
 				 * create code list checks for this property.

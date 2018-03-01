@@ -90,7 +90,7 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 	public static final String RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS = "rule-trf-cls-createGeneralOutOfScopeConstraints";
 	public static final String RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES = "rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes";
 
-	public static final String TV_PROHIBITED_IN_PROFILE_SCHEMA = "prohibitedInProfileSchema";
+	public static final String TV_PROHIBITED_IN_PROFILE_SCHEMA = "prohibitedInProfile";
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -233,8 +233,6 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 					newCons.add(con);
 
 					suppressedSubtype.addConstraints(newCons);
-
-					result.addInfo(this, 104, constrName);
 
 					baseSchemaClass.setTaggedValue(
 							TV_PROHIBITED_IN_PROFILE_SCHEMA, "true", false);
@@ -407,17 +405,17 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 		for (GenericClassInfo baseSchemaClass : baseSchemaClasses) {
 
 			/*
-			 * Ignore enumerations and code lists.
-			 */
-			if (baseSchemaClass.category() == Options.ENUMERATION
-					|| baseSchemaClass.category() == Options.CODELIST) {
-				continue;
-			}
-
-			/*
 			 * Check if the class is irrelevant.
 			 */
 			if (!baseSchemaClass.profiles().hasProfile(profileName)) {
+				
+				/*
+				 * Ignore enumerations and code lists.
+				 */
+				if (baseSchemaClass.category() == Options.ENUMERATION
+						|| baseSchemaClass.category() == Options.CODELIST) {
+					continue;
+				}
 
 				/*
 				 * No need to create a constraint to prohibit the use of this
@@ -752,8 +750,6 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 			return "Base schema class '$1$' is tagged as irrelevant. However, the class has at least one subtype in the profile schema, which indicates that the class is in fact relevant. The (direct and indirect) subtypes in the profile schema are: $2$. No OCL constraint will be created to mark class '$1$' as prohibited.";
 		case 103:
 			return "Base schema class '$1$' is tagged as relevant and it contains irrelevant properties ($2$). However, the class is a code list or enumeration. This case is currently not supported. No specific OCL constraints will be created to prohibit these properties.";
-		case 104:
-			return "Created OCL constraint '$1$'.";
 
 		default:
 			return "(" + this.getClass().getName()

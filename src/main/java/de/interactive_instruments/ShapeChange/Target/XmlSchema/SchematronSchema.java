@@ -477,11 +477,11 @@ public class SchematronSchema implements MessageSource {
 				&& !(ci.matches(
 						"rule-xsd-all-propertyAssertion-ignoreProhibited")
 						&& "true".equalsIgnoreCase(
-								ci.taggedValue("prohibitedInProfileSchema")))
+								ci.taggedValue("prohibitedInProfile")))
 				&& !(pi.matches(
 						"rule-xsd-all-propertyAssertion-ignoreProhibited")
 						&& "true".equalsIgnoreCase(
-								pi.taggedValue("prohibitedInProfileSchema")))) {
+								pi.taggedValue("prohibitedInProfile")))) {
 
 			registerNamespace(ci);
 			registerNamespace(pi.inClass());
