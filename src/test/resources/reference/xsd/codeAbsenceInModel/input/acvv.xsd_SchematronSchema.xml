@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2">
   <title>Schematron constraints for schema 'AppSchema'</title>
   <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
   <ns prefix="acvv" uri="http://test/absentCodelistValueValidation"/>
@@ -6,7 +6,7 @@
   <pattern>
     <rule context="acvv:FeatureType">
       <assert test="not(acvv:propCL/text()) or acvv:propCL/text() = 'code1' or acvv:propCL/text() = 'code2'">propCL_AllowedValues</assert>
-      <assert test="concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute/text()) = 'http://example.org/codelist/ExternalCodeList/codeA' or concat(acvv:propExt/*/ext:attribute/@codeSpace,'/',acvv:propExt/*/ext:attribute/text()) = 'http://example.org/codelist/ExternalCodeList/codeB'">propExt_AllowedValues</assert>
+      <assert test="acvv:propExt/*/ext:attribute/concat(@codeSpace,'/',text()) = 'http://example.org/codelist/ExternalCodeList/codeA' or acvv:propExt/*/ext:attribute/concat(@codeSpace,'/',text()) = 'http://example.org/codelist/ExternalCodeList/codeB'">propExt_AllowedValues</assert>
     </rule>
   </pattern>
 </schema>

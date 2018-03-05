@@ -1897,8 +1897,8 @@ public abstract class FolSchematronNode {
 					String clvpat = "{value}";
 					// int nsubst = 1;
 					if (ci != null && iscodelist
-							&& !(schemaObject.options.matchesEncRule(
-									pi.encodingRule("xsd"), "gml33")
+							&& !(pi.inClass().matches(
+									"rule-xsd-cls-codelist-asDictionaryGml33")
 									|| is19139)) {
 						String uri = ci.taggedValue("codeList");
 						if (uri != null && uri.length() > 0) {

@@ -23,9 +23,9 @@
  <ex:attribute4Gml32>codeB</ex:attribute4Gml32>
  <ex:attribute4Gml32 codeSpace="file:/C:/TMP/CodeListGml32.xml">codeB</ex:attribute4Gml32>
  <ex:attribute4Gml32 xsi:nil="true" nilReason="inapplicable"/>
- <ex:attribute5Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeX"/>
- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
+ <ex:attribute5Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeX</ex:attribute5Gml33>
+ <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:attribute6Gml33>
+  <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:attribute6Gml33>
  <ex:attribute6Gml33 xsi:nil="true" nilReason="withheld"/>
  <ex:dt>
   <ex:DataType>
@@ -43,9 +43,9 @@
    <ex:att4Gml32>codeB</ex:att4Gml32>
    <ex:att4Gml32 codeSpace="file:/C:/TMP/CodeListGml32.xml">codeB</ex:att4Gml32>
    <ex:att4Gml32 xsi:nil="true" nilReason="inapplicable"/>
-   <ex:att5Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeX"/>
-   <ex:att6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
-   <ex:att6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
+   <ex:att5Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeX</ex:att5Gml33>
+   <ex:att6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:att6Gml33>
+   <ex:att6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:att6Gml33>
    <ex:att6Gml33 xsi:nil="true" nilReason="withheld"/>
   </ex:DataType>
  </ex:dt>

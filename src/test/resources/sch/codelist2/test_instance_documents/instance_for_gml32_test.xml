@@ -6,14 +6,14 @@
  xmlns:clisox="http://example.org/shapechange/sch/codelist2/iso19139" xmlns:gmx="http://www.isotc211.org/2005/gmx"
  xmlns:ex="http://example.org/shapechange/sch/codelistCheck"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://example.org/shapechange/sch/codelistCheck ./testCodelist2.xsd"
+ xsi:schemaLocation="http://example.org/shapechange/sch/codelistCheck ../reference/test_schema_gml32/INPUT/testCodelist2.xsd"
  gml:id="ID000">
  <ex:attribute1iso>
   <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListIso19139.xml" codeListValue="code1"/>
-  <!--  <clisox:CodeListIso19139 codeList="file:/C:/TMP/CatalogIso19139.xml#CodeListIso19139" codeListValue="code2"/>-->
-  <!--  <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListIso19139_code1.xml" codeListValue="code1"/>-->
-  <!--  <clisox:CodeListIso19139 codeList="http://schemas.opengis.net/iso/19139/20070417/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>-->
-  <!--  <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListGml32.xml" codeListValue="codeA"/>-->
+<!--    <clisox:CodeListIso19139 codeList="file:/C:/TMP/CatalogIso19139.xml#CodeListIso19139" codeListValue="code2"/>-->
+<!--    <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListIso19139_code1.xml" codeListValue="code1"/>-->
+<!--    <clisox:CodeListIso19139 codeList="http://schemas.opengis.net/iso/19139/20070417/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>-->
+<!--    <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListGml32.xml" codeListValue="codeA"/>-->
  </ex:attribute1iso>
  <ex:attribute2iso>
   <clisox:CodeListIso19139 codeList="file:/C:/TMP/CodeListIso19139.xml" codeListValue="code2"/>
@@ -28,10 +28,10 @@
 <!--  <ex:attribute4Gml32 codeSpace="file:/C:/TMP/CodeListIso19139.xml">codeB</ex:attribute4Gml32>-->
  <ex:attribute4Gml32 codeSpace="file:/C:/TMP/CodeListGml32.xml">codeB</ex:attribute4Gml32>
  <ex:attribute4Gml32 xsi:nil="true" nilReason="inapplicable"/>
- <ex:attribute5Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeX"/>
- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
- <!-- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/Foo.xml#codeA"/>-->
- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/CodeListGml33.xml#codeY"/>
+ <ex:attribute5Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeX</ex:attribute5Gml33>
+ <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:attribute6Gml33>
+<!--  <ex:attribute6Gml33 codeSpace="file:/C:/TMP/Foo.xml">codeA</ex:attribute6Gml33>-->
+ <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:attribute6Gml33>
  <ex:attribute6Gml33 xsi:nil="true" nilReason="withheld"/>
- <!-- <ex:attribute6Gml33 xlink:href="file:/C:/TMP/CodeListGml32.xml#_92_146"/>-->
+<!--  <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml32.xml">_92_146</ex:attribute6Gml33>-->
 </ex:FeatureType>

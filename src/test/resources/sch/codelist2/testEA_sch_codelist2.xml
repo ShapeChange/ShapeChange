@@ -36,14 +36,40 @@
 		<TargetXmlSchema
 			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
 			mode="enabled" inputs="INPUT">
-			<targetParameter name="outputDirectory" value="testResults/sch/codelist2/xsd" />
+			<targetParameter name="outputDirectory" value="testResults/sch/codelist2/xsd/test_schema_gml32" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="myrule" />
+			<targetParameter name="defaultEncodingRule" value="myrule_gml32" />
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="schematronFileNameTemplate"
 				value="[[SCHEMA_XSD_BASENAME]]_SchematronSchema.sch" />
 			<rules>
-				<EncodingRule name="myrule" extends="iso19136_2007">
+				<EncodingRule name="myrule_gml32" extends="iso19136_2007">
+					<rule name="rule-xsd-prop-nillable" />
+					<rule name="rule-xsd-pkg-schematron" />
+					<!-- checks on code list -->
+					<rule name="rule-xsd-cls-codelist-constraints2" />
+					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xmlNamespaces>
+				<XmlNamespace nsabr="cliso"
+					ns="http://example.org/shapechange/sch/codelist2/iso19139"
+					location="./codeListIso19139.xsd" />
+			</xmlNamespaces>
+		</TargetXmlSchema>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			mode="enabled" inputs="INPUT">
+			<targetParameter name="outputDirectory" value="testResults/sch/codelist2/xsd/test_schema_gml33" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="myrule_gml33" />
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="schematronFileNameTemplate"
+				value="[[SCHEMA_XSD_BASENAME]]_SchematronSchema.sch" />
+			<rules>
+				<EncodingRule name="myrule_gml33" extends="gml33">
 					<rule name="rule-xsd-prop-nillable" />
 					<rule name="rule-xsd-pkg-schematron" />
 					<!-- checks on code list -->

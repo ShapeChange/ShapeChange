@@ -372,8 +372,9 @@ public class XsdDocument implements MessageSource {
 						e3.appendChild(document.createTextNode(s));
 					}
 				}
-				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-						&& ci.asDictionaryGml33()) {
+				if (propi.inClass()
+						.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+						&& (ci.asDictionary() || ci.asDictionaryGml33())) {
 					if (e2 == null)
 						e2 = document.createElementNS(Options.W3C_XML_SCHEMA,
 								"appinfo");
@@ -3106,15 +3107,43 @@ public class XsdDocument implements MessageSource {
 					|| (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
 							&& ci.asDictionaryGml33()))) {
 
-				if (ci.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-						&& ci.asDictionaryGml33()) {
+				/*
+				 * So the code list is represented by a dictionary and not
+				 * actually encoded as an XML Schema type.
+				 * 
+				 * Encode the property with a reference type, depending on the
+				 * encoding rule that applies to the property (NOT the code
+				 * list).
+				 */
+
+				if (propi.inClass()
+						.matches("rule-xsd-cls-codelist-asDictionaryGml33")) {
+
+					/*
+					 * The GML 3.3 encoding rule applies to the property.
+					 */
+
 					addAttribute(e, "type", "gml:ReferenceType");
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
-				} else if (ci
+
+				} else if (propi.inClass()
 						.matches("rule-xsd-cls-standard-swe-property-types")) {
+
+					/*
+					 * SWE Common encoding applies to the property.
+					 */
+
 					addAttribute(e, "type", "swe:ReferenceType");
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
+
 				} else {
+
+					/*
+					 * The property is neither GML 3.3 nor SWE Common encoded.
+					 * Likely GML 3.2 (could also be a prior GML version). Use
+					 * gml:CodeType as type.
+					 */
+
 					if (!propi.nilReasonAllowed() && !(propi.voidable()
 							&& propi.matches("rule-xsd-prop-nillable"))) {
 						addAttribute(e, "type", "gml:CodeType");
@@ -3134,17 +3163,21 @@ public class XsdDocument implements MessageSource {
 						e3.appendChild(e2);
 						addNilReason(e2);
 					}
+
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
 				}
+
 				if (propi.isMetadata()) {
 					MessageContext mc = result.addWarning(null, 1009, pName);
 					if (mc != null)
 						mc.addDetail(null, 400, "Property", propi.fullName());
 				}
+
 				if (ci.matches("rule-xsd-cls-standard-swe-property-types"))
 					addImport("swe", options.fullNamespace("swe"));
 				else
 					addImport("gml", options.fullNamespace("gml"));
+
 			} else if (ci.category() == Options.CODELIST
 					|| (ci.category() == Options.ENUMERATION
 							&& !ci.matches("rule-xsd-cls-local-enumeration"))
@@ -3348,8 +3381,14 @@ public class XsdDocument implements MessageSource {
 							"Code list dictionary is represented using SKOS");
 				}
 
-			} else if (typeCi.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-					&& typeCi.asDictionaryGml33()) {
+			} else if (propi.inClass()
+					.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+					&& (typeCi.asDictionary() || typeCi.asDictionaryGml33())) {
+
+				/*
+				 * The property is encoded using the GML 3.3 encoding rule, and
+				 * the value is a code list that is encoded as dictionary.
+				 */
 
 				if (s != null && !s.isEmpty()) {
 					xpath = new XpathFragment(0, "starts-with(" + propi.qname()
@@ -3417,8 +3456,14 @@ public class XsdDocument implements MessageSource {
 							"Code list dictionary is represented using SKOS");
 				}
 
-			} else if (typeCi.matches("rule-xsd-cls-codelist-asDictionary")
-					&& typeCi.asDictionary()) {
+			} else if (propi.inClass()
+					.matches("rule-xsd-cls-codelist-asDictionary")
+					&& (typeCi.asDictionary() || typeCi.asDictionaryGml33())) {
+
+				/*
+				 * The property is encoded using the GML 3.2 encoding rule, and
+				 * the value type is a code list that is encoded as dictionary.
+				 */
 
 				if (s != null && !s.isEmpty()) {
 
@@ -3470,8 +3515,7 @@ public class XsdDocument implements MessageSource {
 		} else if (schDoc != null
 				&& cibase.matches("rule-xsd-cls-codelist-constraints2")) {
 
-			if (propi.matches(
-					"rule-xsd-all-propertyAssertion-ignoreProhibited")
+			if (propi.matches("rule-xsd-all-propertyAssertion-ignoreProhibited")
 					&& "true".equalsIgnoreCase(
 							propi.taggedValue("prohibitedInProfile"))) {
 				/*
@@ -3690,19 +3734,23 @@ public class XsdDocument implements MessageSource {
 							"Code list value shall exist");
 				}
 
-			} else if (typeCi.matches("rule-xsd-cls-codelist-asDictionaryGml33")
-					&& typeCi.asDictionaryGml33()) {
+			} else if (propi.inClass()
+					.matches("rule-xsd-cls-codelist-asDictionaryGml33")
+					&& (typeCi.asDictionary() || typeCi.asDictionaryGml33())) {
 
 				/*
-				 * NOTE: The dictionary is encoded according to the GML 3.3
-				 * rules, therefore propi is encoded with type
-				 * gml:ReferenceType. The xlink:href contains the URI for the
-				 * dictionary item, i.e. the XML element that represents the
-				 * code. If the URI does not contain a '#', the referenced
-				 * resource only represents the dictionary item. Otherwise, the
-				 * referenced resource contains the dictionary item but the item
-				 * must be looked up by its id (that lookup depends on the
-				 * representation; it can but does not need to be gml:id).
+				 * NOTE: The property is encoded according to the GML 3.3
+				 * encoding rule, and the value type is a code list that is
+				 * encoded as dictionary, therefore propi is encoded with type
+				 * gml:ReferenceType.
+				 * 
+				 * The xlink:href contains the URI for the dictionary item, i.e.
+				 * the XML element that represents the code. If the URI does not
+				 * contain a '#', the referenced resource only represents the
+				 * dictionary item. Otherwise, the referenced resource contains
+				 * the dictionary item but the item must be looked up by its id
+				 * (that lookup depends on the representation; it can but does
+				 * not need to be gml:id).
 				 */
 
 				String clRefExp = "@xlink:href";
@@ -3788,12 +3836,15 @@ public class XsdDocument implements MessageSource {
 							"Code list dictionary item shall be represented using an ISO 19139 CodeDefinition");
 				}
 
-			} else if (typeCi.matches("rule-xsd-cls-codelist-asDictionary")
-					&& typeCi.asDictionary()) {
+			} else if (propi.inClass()
+					.matches("rule-xsd-cls-codelist-asDictionary")
+					&& (typeCi.asDictionary() || typeCi.asDictionaryGml33())) {
 
 				/*
-				 * NOTE: The dictionary is encoded according to the GML 3.2
-				 * rules, therefore propi is encoded with type gml:CodeType.
+				 * NOTE: The property is encoded according to the GML 3.2
+				 * encoding rule, and the value type is a code list that is
+				 * encoded as dictionary, therefore propi is encoded with type
+				 * gml:CodeType.
 				 * 
 				 * The element value contains the code value, while the
 				 * optional @codeSpace contains the URI to the dictionary. This

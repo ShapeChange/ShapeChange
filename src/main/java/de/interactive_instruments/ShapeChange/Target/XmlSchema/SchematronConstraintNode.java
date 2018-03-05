@@ -876,8 +876,9 @@ public abstract class SchematronConstraintNode {
 
 			// Append the boolean expression as a predicate filter
 			String filter = xpt.merge(prd);
-			if (xpt.priority < 10)
+			if (xpt.priority < 10) {
 				xpt.bracket();
+			}
 			xpt.fragment += "[" + filter + "]";
 			xpt.priority = 10;
 
@@ -1093,8 +1094,10 @@ public abstract class SchematronConstraintNode {
 									if (iscodelist)
 										prop += "/@codeListValue";
 								} else if (iscodelist
-										&& ci.matches(
+										&& pi.inClass().matches(
 												"rule-xsd-cls-codelist-asDictionaryGml33")
+										&& (ci.asDictionary()
+												|| ci.asDictionaryGml33())
 										&& !is19139) {
 									prop += "/@xlink:href";
 									schemaObject.registerNamespace("xlink");
@@ -1742,8 +1745,8 @@ public abstract class SchematronConstraintNode {
 						- 1].main.selector.modelProperty));
 				boolean is19139 = argumentClass
 						.matches("rule-xsd-all-naming-19139");
-				boolean isgml33 = pip != null && schemaObject.options
-						.matchesEncRule(pip.encodingRule("xsd"), "gml33");
+				boolean isgml33 = pip != null && pip.inClass()
+						.matches("rule-xsd-cls-codelist-asDictionaryGml33");
 
 				/*
 				 * If not translating according to GML 3.3 we need to prepare
@@ -2824,14 +2827,12 @@ public abstract class SchematronConstraintNode {
 				}
 
 				String propertyQName = schemaObject.getAndRegisterXmlName(pi);
-
-				/*
-				 * We will have to know whether we are subject to the 19139,
-				 * regime, so go and find out
-				 */
+				
 				boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
 						|| (ci != null && ci.matches(
 								"rule-xsd-cls-standard-19139-property-types"));
+				boolean piIsGml33Encoded = pi.inClass()
+						.matches("rule-xsd-cls-codelist-asDictionaryGml33");
 
 				// Dispatch on containment cases
 				if (conCode == 0) {
@@ -2853,15 +2854,8 @@ public abstract class SchematronConstraintNode {
 					obj.fragment += propertyQName;
 
 					/*
-					 * TBD 2018-02-01 JE: The following code could be cleaned
-					 * up, if the codeListValuePattern only applied in case that
-					 * the code list is encoded as a GML 3.3 dictionary.
-					 */
-
-					/*
 					 * We also need to know whether the property has a codelist
-					 * type and whether it is going to be treated according to
-					 * the GML 3.3 way
+					 * type.
 					 */
 					boolean iscodelist = ci != null
 							&& ci.category() == Options.CODELIST
@@ -2875,16 +2869,18 @@ public abstract class SchematronConstraintNode {
 											"rule-xsd-cls-standard-19139-property-types"));
 
 					/*
-					 * If it's a codelist and neither GML 3.3 nor ISO 19139 we
-					 * need to prepare the CodeListValuePattern.
+					 * If it's a codelist and the property is not encoded
+					 * according to GML 3.3 we prepare the CodeListValuePattern,
+					 * to construct an XPath expression which can be used in
+					 * comparisons with enumeration literals (for example when
+					 * testing on allowed code values). an enumeration literal
+					 * is always constructed according to the code list value
+					 * pattern.
 					 */
 					String clvpat = "{value}";
 					int nsubst = 1;
 
-					if (ci != null && iscodelist
-							&& !(schemaObject.options.matchesEncRule(
-									pi.encodingRule("xsd"), "gml33")
-									|| is19139)) {
+					if (ci != null && iscodelist && !piIsGml33Encoded) {
 
 						String uri = ci.taggedValue("codeList");
 						if (uri != null && uri.length() > 0) {
@@ -2909,8 +2905,22 @@ public abstract class SchematronConstraintNode {
 							clvpat += "'";
 						}
 						if (!clvpat.equals("{value}")) {
+
 							clvpat = "concat(" + clvpat + ")";
 							nsubst = 2;
+
+							/*
+							 * We will be using a function as location step in
+							 * the path expression. This is not supported by
+							 * (the syntax of) XPath 1.0. Also see comments from
+							 * Dimitre Novatchev and Michael Kay on
+							 * https://stackoverflow.com/questions/333249/how-to
+							 * -apply-the- xpath-function-substring-after and
+							 * https://www.oxygenxml.com/archives/xsl-list/
+							 * 200603/msg00610. html. However, XPath 2.0 / the
+							 * xslt2 query binding supports this.
+							 */
+							schemaObject.setQueryBinding("xslt2");
 						}
 					}
 
@@ -2965,19 +2975,35 @@ public abstract class SchematronConstraintNode {
 									obj.fragment = "$" + v;
 								}
 
-								String clvp = clvpat.replace("{codeList}",
-										obj.fragment + "/@codeList");
-								obj.fragment = clvp.replace("{value}",
-										obj.fragment + "/@codeListValue");
+								/*
+								 * Only consider elements that have a value. In
+								 * 19139 encoding, that means that a child
+								 * element must be present. If we didn't add
+								 * this check, then the comparison with the
+								 * translated code/enumeration literal would
+								 * fail for an empty element. However, we do not
+								 * need the check if clvpat is just {value},
+								 * because then an empty element would
+								 * automatically be ignored.
+								 */
+								if (!clvpat.equals("{value}")) {
+									obj.fragment += "[*]";
+								}
+
+								obj.fragment = createCodeListValueExpression(
+										obj.fragment, clvpat, "@codeList",
+										"@codeListValue");
 							}
 
 						} else if (iscodelist) {
 
-							if (!ci.matches(
-									"rule-xsd-cls-codelist-asDictionaryGml33")) {
+							if (!piIsGml33Encoded) {
+
 								/*
-								 * In elder GMLs we might find the code list URI
-								 * in the @codeSpace attribute. The value is the
+								 * So the property is not encoded according to
+								 * the GML 3.3 encoding rule. In elder GMLs we
+								 * might find the code list URI in
+								 * the @codeSpace attribute. The value is the
 								 * text of the property element (which has type
 								 * gml:CodeType).
 								 * 
@@ -2987,10 +3013,27 @@ public abstract class SchematronConstraintNode {
 								 * for example when checking for
 								 * property->notEmpty().
 								 */
-								String clvp = clvpat.replace("{codeList}",
-										obj.fragment + "/@codeSpace");
-								obj.fragment = clvp.replace("{value}",
-										obj.fragment + "/text()");
+
+								/*
+								 * Only consider elements that are not nil. If
+								 * we didn't add this check, then the comparison
+								 * with the translated code/enumeration literal
+								 * would fail for an element that is nil.
+								 * However, we only need this check if the
+								 * property is nillable and clvpat is not equal
+								 * to {value} (if it is just {value} then a nil
+								 * element without text content would
+								 * automatically be ignored).
+								 */
+								if (pi.voidable()
+										&& !clvpat.equals("{value}")) {
+									obj.fragment += "[not(@xsi:nil='true')]";
+									schemaObject.registerNamespace("xsi");
+								}
+
+								obj.fragment = createCodeListValueExpression(
+										obj.fragment, clvpat, "@codeSpace",
+										"text()");
 
 							} else {
 
@@ -3017,7 +3060,7 @@ public abstract class SchematronConstraintNode {
 					// Other: different modes of containment are possible
 					String frag_inl = null;
 					String frag_ref = null;
-					 boolean isVar = false;
+					boolean isVar = false;
 
 					if (conCode == 2 || conCode == 3) {
 
@@ -3034,7 +3077,7 @@ public abstract class SchematronConstraintNode {
 							String var = obj.findOrAdd(obj.fragment);
 							obj.fragment = "$" + var;
 							obj.priority = 11;
-							 isVar = true;
+							isVar = true;
 						}
 					}
 
@@ -3043,9 +3086,11 @@ public abstract class SchematronConstraintNode {
 						// In-line containment must be treated
 						// --> .../attr/*
 						frag_inl = obj.fragment;
+						
 						if (frag_inl.length() > 0) {
 
 							if (obj.priority < 9) {
+								
 								frag_inl = "(" + frag_inl + ")";
 								/*
 								 * NOTE: Setting the obj.priority here (to 11)
@@ -3072,7 +3117,7 @@ public abstract class SchematronConstraintNode {
 					if (conCode == 2 || conCode == 3) {
 
 						// Reference containment must be treated
-						
+
 						if (!isVar) {
 							// If not stored in a variable, the object now
 							// has to be compiled in an undefined context.
@@ -3167,6 +3212,34 @@ public abstract class SchematronConstraintNode {
 
 			// Return fragment
 			return obj;
+		}
+
+		private String createCodeListValueExpression(String xpathFragment,
+				String codeListValuePattern,
+				String codeListReplacementExpression,
+				String valueReplacementExpression) {
+
+			/*
+			 * 2018-03-02 JE: The expression must support the case that multiple
+			 * values are encoded for the code list valued property. In that
+			 * situation, the {codeList} access as well as the {value} access
+			 * must result in single values, not node sets (because they are not
+			 * supported by fn:concat(...), which is used in the code list value
+			 * pattern unless that pattern is equal to {value}). For a
+			 * multi-valued property, the expression should create a sequence of
+			 * text values.
+			 * 
+			 * NOTE: The UnitTest
+			 * SchematronTest.schematronTestOclOnCodelistTypedProperty is used
+			 * to check this encoding.
+			 */
+			String clvp = codeListValuePattern
+					.replace("{codeList}", codeListReplacementExpression)
+					.replace("{value}", valueReplacementExpression);
+
+			String result = xpathFragment + "/" + clvp;
+
+			return result;
 		}
 	}
 
@@ -3432,10 +3505,11 @@ public abstract class SchematronConstraintNode {
 				String thnvar = xptthn.findOrAdd(xptthn.fragment);
 				String elsvar = xptthn.findOrAdd(elsepart);
 
-				// Construct the result expression. The trick is to concatenate
-				// substrings which either comprise the full argument or
-				// nothing,
-				// depending on the value of the predicate.
+				/*
+				 * Construct the result expression. The trick is to concatenate
+				 * substrings which either comprise the full argument or
+				 * nothing, depending on the value of the predicate.
+				 */
 				xptthn.fragment = "concat( " + "substring($" + thnvar + ","
 						+ "number(not($" + convar + "))*" + "string-length($"
 						+ thnvar + ")+1), " + "substring($" + elsvar + ","

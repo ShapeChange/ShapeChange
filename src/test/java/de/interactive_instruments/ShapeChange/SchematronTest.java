@@ -38,7 +38,7 @@ public class SchematronTest extends WindowsBasicTest {
 	@Test
 	public void schematronTestCodelist2() {
 		multiTest("src/test/resources/sch/codelist2/testEA_sch_codelist2.xml",
-				new String[] { "sch" }, "testResults/sch/codelist2",
+				new String[] { "xsd","sch" }, "testResults/sch/codelist2",
 				"src/test/resources/sch/codelist2/reference");
 	}
 	

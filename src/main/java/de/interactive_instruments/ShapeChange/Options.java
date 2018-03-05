@@ -1230,6 +1230,15 @@ public class Options {
 		return res;
 	}
 
+	/**
+	 * Identify if the given encRule is or extends (directly or indirectly) the
+	 * given baseRule. When comparing encoding rule names, case is ignored.
+	 * 
+	 * @param encRule
+	 * @param baseRule
+	 * @return <code>true</code> if encRule is or extends (directly or
+	 *         indirectly) baseRule, else <code>false</code>
+	 */
 	public boolean matchesEncRule(String encRule, String baseRule) {
 		while (encRule != null) {
 			if (encRule.equalsIgnoreCase(baseRule))
@@ -3541,7 +3550,7 @@ public class Options {
 
 		/*
 		 * non-standard extensions - requirements
-		 */		
+		 */
 		addRule("req-all-all-documentation");
 		addRule("req-all-prop-sequenceNumber");
 		addRule("req-xsd-pkg-targetNamespace");

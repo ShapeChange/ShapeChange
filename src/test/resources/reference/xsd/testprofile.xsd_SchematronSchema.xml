@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2">
   <title>Schematron constraints for schema 'Profile'</title>
   <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
   <ns prefix="p" uri="http://www.opengis.net/ows8/test/1"/>
@@ -6,15 +6,17 @@
   <pattern>
     <rule context="p:Type1">
       <let name="A" value="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']"/>
+      <let name="B" value="b:att3/*"/>
       <assert test="b:att1/*[name()='b:ClassificationCode']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
       <assert test="concat($A/@codeList,'/',$A/@codeListValue) != 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode/classified'">att1IsNotClassified:  att1 is not of value classified </assert>
-      <assert test="not(b:att3/*/@codeListValue)">att3IsEmpty:  att3 not part of the profile </assert>
+      <assert test="not($B[*]/concat(@codeList,'/',@codeListValue))">att3IsEmpty:  att3 not part of the profile </assert>
     </rule>
     <rule context="b:Type1">
       <let name="A" value="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']"/>
+      <let name="B" value="b:att3/*"/>
       <assert test="b:att1/*[name()='b:ClassificationCode']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
       <assert test="concat($A/@codeList,'/',$A/@codeListValue) != 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode/classified'">att1IsNotClassified:  att1 is not of value classified </assert>
-      <assert test="not(b:att3/*/@codeListValue)">att3IsEmpty:  att3 not part of the profile </assert>
+      <assert test="not($B[*]/concat(@codeList,'/',@codeListValue))">att3IsEmpty:  att3 not part of the profile </assert>
     </rule>
   </pattern>
 </schema>
