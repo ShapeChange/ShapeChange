@@ -61,22 +61,34 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				new String[] { "sql", "eap" }, "testResults/sql/sqlUnique",
 				"src/test/resources/sql/sqlUnique/reference");
 	}
-	
+
 	@Test
 	public void testDatabaseModel_packageHierarchy_singleSchema() {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_singleSchema.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/databaseModel_packageHierarchy/singleSchema",
+				new String[] { "sql", "eap" },
+				"testResults/sql/databaseModel_packageHierarchy/singleSchema",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/singleSchema");
 	}
-	
+
 	@Test
 	public void testDatabaseModel_packageHierarchy_multipleSchemas() {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_multipleSchemas.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/databaseModel_packageHierarchy/multipleSchemas",
+				new String[] { "sql", "eap" },
+				"testResults/sql/databaseModel_packageHierarchy/multipleSchemas",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/multipleSchemas");
+	}
+
+	@Test
+	public void testForeignKeyOptions() {
+
+		multiTest(
+				"src/test/resources/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/foreignKeyOptions",
+				"src/test/resources/sql/foreignKeyOptions/reference");
 	}
 }

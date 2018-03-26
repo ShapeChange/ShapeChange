@@ -2575,6 +2575,67 @@ public class SqlBuilder implements MessageSource {
 
 		fkc.addColumn(column);
 
+		// set options if relevant
+		PropertyInfo representedPi = column.getRepresentedProperty();
+		if (representedPi != null) {
+
+			String tvOnDelete = representedPi.taggedValue("sqlOnDelete");
+
+			if (StringUtils.isNotBlank(tvOnDelete)) {
+				try {
+					ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
+							.fromString(tvOnDelete);
+					if (SqlDdl.databaseStrategy
+							.isForeignKeyOnDeleteOptionSupported(o)) {
+						fkc.setOnDelete(o);
+					} else {
+						MessageContext mc = result.addInfo(this, 35,
+								o.toString(), "sqlOnDelete",
+								representedPi.name(), "ON DELETE");
+						if (mc != null) {
+							mc.addDetail(this, 100,
+									representedPi.fullNameInSchema());
+						}
+					}
+				} catch (IllegalArgumentException e) {
+					MessageContext mc = result.addError(this, 34, tvOnDelete,
+							"sqlOnDelete", representedPi.name());
+					if (mc != null) {
+						mc.addDetail(this, 100,
+								representedPi.fullNameInSchema());
+					}
+				}
+			}
+
+			String tvOnUpdate = representedPi.taggedValue("sqlOnUpdate");
+
+			if (StringUtils.isNotBlank(tvOnUpdate)) {
+				try {
+					ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
+							.fromString(tvOnUpdate);
+					if (SqlDdl.databaseStrategy
+							.isForeignKeyOnUpdateOptionSupported(o)) {
+						fkc.setOnUpdate(o);
+					} else {
+						MessageContext mc = result.addInfo(this, 35,
+								o.toString(), "sqlOnUpdate",
+								representedPi.name(), "ON UPDATE");
+						if (mc != null) {
+							mc.addDetail(this, 100,
+									representedPi.fullNameInSchema());
+						}
+					}
+				} catch (IllegalArgumentException e) {
+					MessageContext mc = result.addError(this, 34, tvOnUpdate,
+							"sqlOnUpdate", representedPi.name());
+					if (mc != null) {
+						mc.addDetail(this, 100,
+								representedPi.fullNameInSchema());
+					}
+				}
+			}
+		}
+
 		return alter;
 	}
 
@@ -2703,6 +2764,10 @@ public class SqlBuilder implements MessageSource {
 			return "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
 		case 33:
 			return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
+		case 34:
+			return "Foreign key constraint option '$1$' defined by tagged value '$2$' on property '$3$' is unknown. The option is ignored.";
+		case 35:
+			return "Foreign key constraint option '$1$' is defined by tagged value '$2$' on property '$3$'. The database system does not support this option for clause '$4$'. The option is ignored.";
 
 		case 100:
 			return "Context: property '$1$'.";

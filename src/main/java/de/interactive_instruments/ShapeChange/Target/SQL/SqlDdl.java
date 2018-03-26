@@ -398,6 +398,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					ukNaming = new DefaultPostgreSQLUniqueConstraintNamingStrategy();
 				}
 			}
+			
+			result.addInfo(this,9,databaseStrategy.name());
 
 			if (schema.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE)) {
@@ -1213,6 +1215,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			return "Schema '$1$' is not encoded.";
 		case 8:
 			return "Class '$1$' is not encoded.";
+		case 9:
+			return "Determined database system is '$1$'.";
 		case 15:
 			return "No map entries provided via the configuration.";
 		case 16:

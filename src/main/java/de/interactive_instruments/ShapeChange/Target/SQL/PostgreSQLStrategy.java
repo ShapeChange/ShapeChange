@@ -40,12 +40,13 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 public class PostgreSQLStrategy implements DatabaseStrategy {
-		
+
 	@Override
 	public ColumnDataType primaryKeyDataType() {
 		return new ColumnDataType("bigserial");
@@ -72,9 +73,10 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 
 		Index index = new Index(indexName);
 		index.addColumn(column);
-		
-		index.getProperties().setProperty(PostgreSQLConstants.PROPERTY_METHOD, "GIST");
-		
+
+		index.getProperties().setProperty(PostgreSQLConstants.PROPERTY_METHOD,
+				"GIST");
+
 		CreateIndex cIndex = new CreateIndex();
 		cIndex.setIndex(index);
 		cIndex.setTable(table);
@@ -106,6 +108,27 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
 			PropertyInfo pi, Column columnForPi) {
 		return null;
+	}
+
+	@Override
+	public boolean isForeignKeyOnDeleteOptionSupported(
+			ForeignKeyConstraint.Option o) {
+		// all options are supported
+		// https://www.postgresql.org/docs/10/static/sql-createtable.html
+		return true;
+	}
+
+	@Override
+	public boolean isForeignKeyOnUpdateOptionSupported(
+			ForeignKeyConstraint.Option o) {
+		// all options are supported
+		// https://www.postgresql.org/docs/10/static/sql-createtable.html
+		return true;
+	}
+
+	@Override
+	public String name() {
+		return "PostgreSQL";
 	}
 
 }

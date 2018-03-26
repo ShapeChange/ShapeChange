@@ -34,6 +34,8 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Target.SQL.SqlUtil;
 
 /**
@@ -43,8 +45,51 @@ import de.interactive_instruments.ShapeChange.Target.SQL.SqlUtil;
  */
 public class ForeignKeyConstraint extends SqlConstraint {
 
+	public enum Option {
+
+		NO_ACTION("NO ACTION"), CASCADE("CASCADE"), RESTRICT(
+				"RESTRICT"), SET_NULL("SET NULL"), SET_DEFAULT("SET DEFAULT");
+
+		private final String sqlExpr;
+
+		private Option(String sqlExpr) {
+			this.sqlExpr = sqlExpr;
+		}
+
+		public String toString() {
+			return sqlExpr;
+		}
+
+		public static Option fromString(String s) {
+
+			if (StringUtils.isNotBlank(s)) {
+				if (s.matches("(?i)\\s*no\\s*action\\s*")) {
+					return ForeignKeyConstraint.Option.NO_ACTION;
+				} else if (s.matches("(?i)\\s*restrict\\s*")) {
+					return ForeignKeyConstraint.Option.RESTRICT;
+				} else if (s.matches("(?i)\\s*set\\s*null\\s*")) {
+					return ForeignKeyConstraint.Option.SET_NULL;
+				} else if (s.matches("(?i)\\s*set\\s*default\\s*")) {
+					return ForeignKeyConstraint.Option.SET_DEFAULT;
+				} else if (s.matches("(?i)\\s*cascade\\s*")) {
+					return ForeignKeyConstraint.Option.CASCADE;
+				} else {
+					throw new IllegalArgumentException(
+							"Cannot determine enum from: " + s);
+				}
+			} else {
+				throw new IllegalArgumentException(
+						"Cannot determine enum from blank string (null, empty, or whitespace only).");
+			}
+
+		}
+	}
+
 	private Table referenceTable = null;
 	private List<Column> referenceColumns = new ArrayList<Column>();
+
+	private Option onDelete = null;
+	private Option onUpdate = null;
 
 	public ForeignKeyConstraint(String name, Table referenceTable) {
 		super(name);
@@ -85,6 +130,36 @@ public class ForeignKeyConstraint extends SqlConstraint {
 		this.referenceColumns.add(refColumn);
 	}
 
+	/**
+	 * @return the option for ON DELETE; can be <code>null</code>
+	 */
+	public Option getOnDelete() {
+		return onDelete;
+	}
+
+	public boolean hasOnDelete() {
+		return onDelete != null;
+	}
+
+	public void setOnDelete(Option o) {
+		this.onDelete = o;
+	}
+
+	public boolean hasOnUpdate() {
+		return onUpdate != null;
+	}
+
+	/**
+	 * @return the option for ON UPDATE; can be <code>null</code>
+	 */
+	public Option getOnUpdate() {
+		return onUpdate;
+	}
+
+	public void setOnUpdate(Option o) {
+		this.onUpdate = o;
+	}
+
 	@Override
 	public String toString() {
 
@@ -96,6 +171,8 @@ public class ForeignKeyConstraint extends SqlConstraint {
 						&& !this.referenceColumns.isEmpty())
 								? SqlUtil.getStringList(referenceColumns, true,
 										true)
-								: "");
+								: "")
+				+ (onDelete != null ? " ON DELETE " + onDelete.toString() : "")
+				+ (onUpdate != null ? " ON UPDATE " + onUpdate.toString() : "");
 	}
 }

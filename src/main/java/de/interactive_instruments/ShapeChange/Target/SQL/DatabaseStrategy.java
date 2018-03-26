@@ -39,6 +39,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
@@ -120,4 +121,32 @@ public interface DatabaseStrategy {
 	 */
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
 			PropertyInfo pi, Column columnForPi);
+
+	/**
+	 * Determine if the database system supports the given 'ON DELETE' option
+	 * for foreign keys.
+	 * 
+	 * @param o
+	 * @return <code>true</code> if the option is supported, else
+	 *         <code>false</code>
+	 */
+	public boolean isForeignKeyOnDeleteOptionSupported(
+			ForeignKeyConstraint.Option o);
+
+	/**
+	 * Determine if the database system supports the given 'ON UPDATE' option
+	 * for foreign keys.
+	 * 
+	 * @param o
+	 * @return <code>true</code> if the option is supported, else
+	 *         <code>false</code>
+	 */
+	public boolean isForeignKeyOnUpdateOptionSupported(
+			ForeignKeyConstraint.Option o);
+
+	/**
+	 * @return A human readable name for the database strategy (e.g. to use in
+	 *         log messages).
+	 */
+	public String name();
 }

@@ -114,7 +114,7 @@ public abstract class ModelImpl implements Model {
 			"sqlEncodingRule", "status", "geometry",
 			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
 			"scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique",
-			"codelistType" };
+			"codelistType", "sqlOnUpdate", "sqlOnDelete" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
