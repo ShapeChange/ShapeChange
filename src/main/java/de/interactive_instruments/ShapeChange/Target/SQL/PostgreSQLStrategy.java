@@ -101,12 +101,10 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	/**
 	 * TBD - not implemented yet
 	 * 
-	 * @see de.interactive_instruments.ShapeChange.Target.SQL.DatabaseStrategy#expressionForCheckConstraintToRestrictTimeOfDate(de.interactive_instruments.ShapeChange.Model.PropertyInfo,
-	 *      de.interactive_instruments.ShapeChange.Target.SQL.structure.Column)
 	 */
 	@Override
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi) {
+			Column columnForPi) {
 		return null;
 	}
 

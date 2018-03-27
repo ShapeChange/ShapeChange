@@ -162,6 +162,13 @@ public class SqlConstants {
 	public static final String PATTERN_SDO_DIM_ELEMENTS = "(\\([^,]+(,[-]?([0-9]+\\.[0-9]+|[0-9]+)){3}\\))+";
 
 	/**
+	 * Name of the tagged value that provides the short name for a model
+	 * element, when used in constructing specific names (e.g. of constraints).
+	 * Default is 'shortName'.
+	 */
+	public static final String PARAM_SHORT_NAME_BY_TAGGED_VALUE = "shortNameByTaggedValue";
+
+	/**
 	 * Size for fields representing textual properties with limited length, to
 	 * be used in case that the property represented by the field does not have
 	 * a 'size' tagged value; default is {@value #DEFAULT_SIZE}
@@ -506,6 +513,8 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_POSTGRESQL_DEFAULT = "rule-sql-all-check-constraint-naming-postgresql-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT = "rule-sql-all-check-constraint-naming-sqlserver-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH = "rule-sql-all-check-constraint-naming-pearsonhash";
+
+	public static final String RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME = "rule-sql-all-constraintNameUsingShortName";
 
 	/**
 	 * If this rule is included, case is not changed when normalizing names,

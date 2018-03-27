@@ -36,6 +36,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.StringValueExpression;
@@ -123,5 +125,69 @@ public class SqlUtil {
 		}
 
 		return sb.toString();
+	}
+
+	public static String determineNameForConstraint(Table table) {
+
+		String result = table.getName();
+
+		if (SqlDdl.constraintNameUsingShortName) {
+
+			Info representedInfo = table.getRepresentedClass();
+
+			if (representedInfo == null) {
+				representedInfo = table.getRepresentedAssociation();
+			}
+
+			if (representedInfo == null) {
+				representedInfo = table.getRepresentedProperty();
+			}
+
+			if (representedInfo != null
+					&& StringUtils.isNotBlank(representedInfo
+							.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = representedInfo
+						.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
+	}
+
+	public static String determineNameForConstraint(Column col) {
+
+		String result = col.getName();
+
+		if (SqlDdl.constraintNameUsingShortName) {
+
+			Info representedInfo = col.getRepresentedProperty();
+
+			if (representedInfo != null
+					&& StringUtils.isNotBlank(representedInfo
+							.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = representedInfo
+						.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
+	}
+
+	public static String determineNameForConstraint(PropertyInfo pi) {
+
+		String result = pi.name();
+
+		if (SqlDdl.constraintNameUsingShortName) {
+
+			if (StringUtils.isNotBlank(
+					pi.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = pi.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
 	}
 }

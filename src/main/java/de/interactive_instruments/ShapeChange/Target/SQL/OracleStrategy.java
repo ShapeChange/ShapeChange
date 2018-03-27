@@ -216,7 +216,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi) {
+			Column columnForPi) {
 
 		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
 
@@ -232,7 +232,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public boolean isForeignKeyOnDeleteOptionSupported(
 			ForeignKeyConstraint.Option o) {

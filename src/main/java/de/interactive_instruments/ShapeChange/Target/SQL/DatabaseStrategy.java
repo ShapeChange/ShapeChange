@@ -113,14 +113,13 @@ public interface DatabaseStrategy {
 	 * type of the database field is Oracle DATE (which stores both date and
 	 * time).
 	 * 
-	 * @param pi
-	 * @param columnForPi
+	 * @param column
 	 * @return the expression to restrict time of date, or <code>null</code> if
 	 *         this is not necessary (or not implemented; check the actual
 	 *         database strategies for details)
 	 */
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi);
+			Column column);
 
 	/**
 	 * Determine if the database system supports the given 'ON DELETE' option

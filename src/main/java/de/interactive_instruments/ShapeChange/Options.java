@@ -3566,6 +3566,8 @@ public class Options {
 
 		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
 		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
+		
+		addRule("rule-sql-all-constraintNameUsingShortName");
 
 		addRule("rule-sql-cls-code-lists");
 		addRule("rule-sql-cls-code-lists-pods");

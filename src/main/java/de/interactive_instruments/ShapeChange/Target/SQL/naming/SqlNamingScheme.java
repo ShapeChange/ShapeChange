@@ -41,16 +41,16 @@ public interface SqlNamingScheme {
 	/**
 	 *
 	 * @param tableName
-	 * @param propertyName
+	 * @param columnName
 	 * @return name for a check constraint
 	 */
-	public String nameForCheckConstraint(String tableName, String propertyName);
+	public String nameForCheckConstraint(String tableName, String columnName);
 
 	/**
 	 * @return name for a foreign key
 	 */
 	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName);
+			String columnName, String targetTableName);
 
 	public NameNormalizer getNameNormalizer();
 

@@ -91,4 +91,14 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				"testResults/sql/foreignKeyOptions",
 				"src/test/resources/sql/foreignKeyOptions/reference");
 	}
+
+	@Test
+	public void testConstraintNameUsingShortName() {
+
+		multiTest(
+				"src/test/resources/sql/constraintNameUsingShortName/testEA_sql_constraintNameUsingShortName.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/constraintNameUsingShortName",
+				"src/test/resources/sql/constraintNameUsingShortName/reference");
+	}
 }

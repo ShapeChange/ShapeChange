@@ -71,6 +71,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArrayExpression;
@@ -98,9 +99,11 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueConstraint
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
@@ -160,6 +163,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeStatusNotesColumnDocumentation;
 	protected static int defaultSize;
 	protected static int srid;
+	protected static String shortNameByTaggedValue = null;
+	protected static boolean constraintNameUsingShortName = false;
 	protected static boolean createReferences = false;
 	protected static boolean createDocumentation = true;
 	protected static boolean createExplicitComments = false;
@@ -302,6 +307,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				createAssociativeTables = true;
 			}
 
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
+				constraintNameUsingShortName = true;
+			}
+
 			String databaseSystem = options.parameter(this.getClass().getName(),
 					SqlConstants.PARAM_DATABASE_SYSTEM);
 
@@ -398,8 +408,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					ukNaming = new DefaultPostgreSQLUniqueConstraintNamingStrategy();
 				}
 			}
-			
-			result.addInfo(this,9,databaseStrategy.name());
+
+			result.addInfo(this, 9, databaseStrategy.name());
 
 			if (schema.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE)) {
@@ -511,6 +521,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 			srid = options.parameterAsInteger(this.getClass().getName(),
 					SqlConstants.PARAM_SRID, SqlConstants.DEFAULT_SRID);
+
+			shortNameByTaggedValue = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE, "shortName",
+					false, true);
 
 			createReferences = options.parameterAsBoolean(
 					this.getClass().getName(),
@@ -1164,6 +1179,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		codeStatusNotesColumnDocumentation = null;
 		defaultSize = 0;
 		srid = 0;
+		shortNameByTaggedValue = null;
+		constraintNameUsingShortName = false;
 		createReferences = false;
 		createDocumentation = true;
 		createExplicitComments = false;

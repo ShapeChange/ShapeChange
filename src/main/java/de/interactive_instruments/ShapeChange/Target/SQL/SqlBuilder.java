@@ -113,10 +113,12 @@ public class SqlBuilder implements MessageSource {
 	private List<Comment> commentStatements = new ArrayList<Comment>();
 
 	private SqlNamingScheme namingScheme;
+	private SqlDdl sqlddl;
 
 	public SqlBuilder(SqlDdl sqlddl, ShapeChangeResult result, Options options,
 			Model model, SqlNamingScheme namingScheme) {
 
+		this.sqlddl = sqlddl;
 		this.result = result;
 		this.options = options;
 
@@ -931,7 +933,9 @@ public class SqlBuilder implements MessageSource {
 	 * @param pi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
-			Column column, PropertyInfo pi) {
+			Column column) {
+
+		PropertyInfo pi = column.getRepresentedProperty();
 
 		/*
 		 * ignore the constraint if a type mapping exists for the value type of
@@ -953,8 +957,7 @@ public class SqlBuilder implements MessageSource {
 					pi.fullNameInSchema());
 		} else {
 
-			alterTableAddCheckConstraintForEnumerationValueType(column,
-					pi.name(), enumCi);
+			alterTableAddCheckConstraintForEnumerationValueType(column, enumCi);
 		}
 	}
 
@@ -966,8 +969,7 @@ public class SqlBuilder implements MessageSource {
 	 * @param enumCi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
-			Column column, String propertyNameForConstraintName,
-			ClassInfo enumCi) {
+			Column column, ClassInfo enumCi) {
 
 		/*
 		 * ignore the constraint if a type mapping exists for the value type
@@ -986,11 +988,9 @@ public class SqlBuilder implements MessageSource {
 			result.addError(this, 32, enumCi.name(), column.getName());
 		} else {
 
-			String constraintName = namingScheme
-					.nameForCheckConstraint(tableWithColumn.getName(),
-							propertyNameForConstraintName == null
-									? column.getName()
-									: propertyNameForConstraintName);
+			String constraintName = namingScheme.nameForCheckConstraint(
+					SqlUtil.determineNameForConstraint(tableWithColumn),
+					SqlUtil.determineNameForConstraint(column));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -1081,18 +1081,19 @@ public class SqlBuilder implements MessageSource {
 		return false;
 	}
 
-	private void alterTableAddCheckConstraintToRestrictTimeOfDate(Column column,
-			PropertyInfo pi) {
+	private void alterTableAddCheckConstraintToRestrictTimeOfDate(
+			Column column) {
 
 		Expression expr = SqlDdl.databaseStrategy
-				.expressionForCheckConstraintToRestrictTimeOfDate(pi, column);
+				.expressionForCheckConstraintToRestrictTimeOfDate(column);
 
 		if (expr != null) {
 
 			Table tableWithColumn = column.getInTable();
 
 			String constraintName = namingScheme.nameForCheckConstraint(
-					tableWithColumn.getName(), pi.name());
+					SqlUtil.determineNameForConstraint(tableWithColumn),
+					SqlUtil.determineNameForConstraint(column));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -2185,23 +2186,21 @@ public class SqlBuilder implements MessageSource {
 							&& pi.matches(
 									SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINTS_FOR_ENUMERATIONS)) {
 
-						alterTableAddCheckConstraintForEnumerationValueType(col,
-								pi);
+						alterTableAddCheckConstraintForEnumerationValueType(
+								col);
 					}
 
 					if (pi.typeInfo().name.equalsIgnoreCase("Date")
 							&& pi.matches(
 									SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_RESTRICT_TIME_OF_DATE)) {
 
-						alterTableAddCheckConstraintToRestrictTimeOfDate(col,
-								pi);
+						alterTableAddCheckConstraintToRestrictTimeOfDate(col);
 					}
 				}
 
 				ClassInfo enumerationValueType = col.getEnumerationValueType();
 				if (enumerationValueType != null) {
 					alterTableAddCheckConstraintForEnumerationValueType(col,
-							SqlDdl.nameCodeStatusCLColumn,
 							enumerationValueType);
 				}
 			}
@@ -2231,8 +2230,11 @@ public class SqlBuilder implements MessageSource {
 						} else {
 
 							String constraintName = namingScheme
-									.nameForUniqueConstraint(table.getName(),
-											col.getName());
+									.nameForUniqueConstraint(
+											SqlUtil.determineNameForConstraint(
+													table),
+											SqlUtil.determineNameForConstraint(
+													col));
 
 							Alter alter = alterTableAddUniqueConstraint(table,
 									constraintName, col);
@@ -2270,8 +2272,11 @@ public class SqlBuilder implements MessageSource {
 
 						Alter alter = alterTableAddForeignKeyConstraint(t_main,
 								namingScheme.nameForForeignKeyConstraint(
-										t_main.getName(), cd.getName(),
-										cd.getReferencedTable().getName()),
+										SqlUtil.determineNameForConstraint(
+												t_main),
+										SqlUtil.determineNameForConstraint(cd),
+										SqlUtil.determineNameForConstraint(
+												cd.getReferencedTable())),
 								cd, cd.getReferencedTable());
 
 						foreignKeyConstraints.add(alter);
