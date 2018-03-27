@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2018 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,38 +31,44 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 
+import java.math.BigDecimal;
+
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
  *         <dot> de)
  *
  */
-public interface ExpressionVisitor {
+public class DoubleValueExpression implements Expression {
 
-	public void visit(NullValueExpression nullValue);
+	private Double value;
 
-	public void visit(StringValueExpression stringValue);
+	public DoubleValueExpression(Double value) {
+		this.value = value;
+	}
 
-	public void visit(OrExpression orExpression);
+	/**
+	 * @return the value
+	 */
+	public Double getValue() {
+		return value;
+	}
 
-	public void visit(InExpression inExpression);
+	/**
+	 * @param value
+	 *            the value to set
+	 */
+	public void setValue(Double value) {
+		this.value = value;
+	}
 
-	public void visit(IsNullExpression isNullExpression);
+	@Override
+	public void accept(ExpressionVisitor expressionVisitor) {
+		expressionVisitor.visit(this);
+	}
 
-	public void visit(ColumnExpression columnExpression);
-
-	public void visit(SdoDimArrayExpression sdoDimArrayExpression);
-
-	public void visit(LongValueExpression longValue);
-
-	public void visit(ToCharExpression toCharExpression);
-
-	public void visit(EqualsExpression equalsExpression);
-	
-	public void visit(ExpressionList list);
-
-	public void visit(UnquotedStringExpression unquotedStringExpression);
-
-	public void visit(BetweenExpression betweenExpression);
-
-	public void visit(DoubleValueExpression doubleValueExpression);
+	@Override
+	public String toString() {
+		return new BigDecimal(this.value.toString()).stripTrailingZeros()
+				.toPlainString();
+	}
 }

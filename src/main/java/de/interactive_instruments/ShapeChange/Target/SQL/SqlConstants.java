@@ -322,6 +322,7 @@ public class SqlConstants {
 	 */
 	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_RESTRICT_TIME_OF_DATE = "rule-sql-prop-check-constraint-restrictTimeOfDate";
 
+	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE = "rule-sql-prop-check-constraint-for-range";
 	/**
 	 * Ensures that table creation statements are generated for complex data
 	 * types.

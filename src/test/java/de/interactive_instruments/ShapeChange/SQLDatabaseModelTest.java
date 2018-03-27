@@ -101,4 +101,14 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				"testResults/sql/constraintNameUsingShortName",
 				"src/test/resources/sql/constraintNameUsingShortName/reference");
 	}
+
+	@Test
+	public void testCheckConstraintForRange() {
+
+		multiTest(
+				"src/test/resources/sql/checkConstraintForRange/testEA_sql_checkConstraintForRange.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/checkConstraintForRange",
+				"src/test/resources/sql/checkConstraintForRange/reference");
+	}
 }

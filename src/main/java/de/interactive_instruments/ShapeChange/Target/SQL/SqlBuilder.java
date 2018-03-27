@@ -52,7 +52,9 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.BetweenExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.DoubleValueExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.InExpression;
@@ -2196,6 +2198,55 @@ public class SqlBuilder implements MessageSource {
 
 						alterTableAddCheckConstraintToRestrictTimeOfDate(col);
 					}
+
+					if (pi.matches(
+							SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE)) {
+
+						Double lowerBoundaryValue = new Double(-1000000000);
+						;
+						Double upperBoundaryValue = new Double(1000000000);
+
+						boolean foundLowerBoundary = false;
+						boolean foundUpperBoundary = false;
+
+						String TV_RANGE_MIN = "rangeMinimum";
+						String TV_RANGE_MAX = "rangeMaximum";
+
+						String rMin = pi.taggedValue(TV_RANGE_MIN);
+						String rMax = pi.taggedValue(TV_RANGE_MAX);
+
+						if (StringUtils.isNotBlank(rMin)) {
+
+							try {
+								lowerBoundaryValue = Double
+										.parseDouble(rMin.trim());
+								foundLowerBoundary = true;
+							} catch (NumberFormatException e) {
+								MessageContext mc = result.addWarning(this, 36,
+										rMin.trim(), TV_RANGE_MIN);
+								mc.addDetail(this, 100, pi.fullNameInSchema());
+							}
+						}
+
+						if (StringUtils.isNotBlank(rMax)) {
+
+							try {
+								upperBoundaryValue = Double
+										.parseDouble(rMax.trim());
+								foundUpperBoundary = true;
+							} catch (NumberFormatException e) {
+								MessageContext mc = result.addWarning(this, 36,
+										rMax.trim(), TV_RANGE_MAX);
+								mc.addDetail(this, 100, pi.fullNameInSchema());
+							}
+						}
+
+						if (foundLowerBoundary || foundUpperBoundary) {
+
+							alterTableAddCheckConstraintForRange(col,
+									lowerBoundaryValue, upperBoundaryValue);
+						}
+					}
 				}
 
 				ClassInfo enumerationValueType = col.getEnumerationValueType();
@@ -2478,6 +2529,53 @@ public class SqlBuilder implements MessageSource {
 		Collections.sort(result, STATEMENT_COMPARATOR);
 
 		return result;
+	}
+
+	private void alterTableAddCheckConstraintForRange(Column column,
+			Double lowerBound, Double upperBound) {
+
+		Table tableWithColumn = column.getInTable();
+
+		String constraintName = namingScheme.nameForCheckConstraint(
+				SqlUtil.determineNameForConstraint(tableWithColumn),
+				SqlUtil.determineNameForConstraint(column));
+
+		Alter alter = new Alter();
+		alter.setTable(tableWithColumn);
+
+		ConstraintAlterExpression cae = new ConstraintAlterExpression();
+		alter.setExpression(cae);
+
+		cae.setOperation(AlterOperation.ADD);
+
+		CheckConstraint cc = new CheckConstraint();
+		cae.setConstraint(cc);
+
+		cc.setName(constraintName);
+
+		BetweenExpression bexp = new BetweenExpression();
+
+		ColumnExpression col = new ColumnExpression(column);
+		bexp.setTestExpression(col);
+		
+		DoubleValueExpression lowerExp = new DoubleValueExpression(lowerBound);
+		bexp.setBeginExpression(lowerExp);
+		
+		DoubleValueExpression upperExp = new DoubleValueExpression(upperBound);
+		bexp.setEndExpression(upperExp);
+
+		if (column.isNotNull()) {
+			cc.setExpression(bexp);
+		} else {
+			// add null check
+			IsNullExpression nullexp = new IsNullExpression();
+			nullexp.setExpression(col);
+
+			OrExpression orexp = new OrExpression(nullexp, bexp);
+			cc.setExpression(orexp);
+		}
+
+		this.checkConstraints.add(alter);
 	}
 
 	private Alter alterTableAddUniqueConstraint(Table tableWithColumn,
@@ -2773,6 +2871,8 @@ public class SqlBuilder implements MessageSource {
 			return "Foreign key constraint option '$1$' defined by tagged value '$2$' on property '$3$' is unknown. The option is ignored.";
 		case 35:
 			return "Foreign key constraint option '$1$' is defined by tagged value '$2$' on property '$3$'. The database system does not support this option for clause '$4$'. The option is ignored.";
+		case 36:
+			return "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
 
 		case 100:
 			return "Context: property '$1$'.";
