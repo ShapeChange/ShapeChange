@@ -2557,10 +2557,10 @@ public class SqlBuilder implements MessageSource {
 
 		ColumnExpression col = new ColumnExpression(column);
 		bexp.setTestExpression(col);
-		
+
 		DoubleValueExpression lowerExp = new DoubleValueExpression(lowerBound);
 		bexp.setBeginExpression(lowerExp);
-		
+
 		DoubleValueExpression upperExp = new DoubleValueExpression(upperBound);
 		bexp.setEndExpression(upperExp);
 
@@ -2678,68 +2678,120 @@ public class SqlBuilder implements MessageSource {
 
 		fkc.addColumn(column);
 
-		// set options if relevant
+		// set foreign key options if relevant
 		PropertyInfo representedPi = column.getRepresentedProperty();
 		if (representedPi != null) {
 
-			String tvOnDelete = representedPi.taggedValue("sqlOnDelete");
+			Info relevantInfo = representedPi;
 
-			if (StringUtils.isNotBlank(tvOnDelete)) {
-				try {
-					ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
-							.fromString(tvOnDelete);
-					if (SqlDdl.databaseStrategy
-							.isForeignKeyOnDeleteOptionSupported(o)) {
-						fkc.setOnDelete(o);
-					} else {
-						MessageContext mc = result.addInfo(this, 35,
-								o.toString(), "sqlOnDelete",
-								representedPi.name(), "ON DELETE");
-						if (mc != null) {
-							mc.addDetail(this, 100,
-									representedPi.fullNameInSchema());
-						}
-					}
-				} catch (IllegalArgumentException e) {
-					MessageContext mc = result.addError(this, 34, tvOnDelete,
-							"sqlOnDelete", representedPi.name());
-					if (mc != null) {
-						mc.addDetail(this, 100,
-								representedPi.fullNameInSchema());
-					}
-				}
+			// first check tagged values on the property itself
+			String tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
+			String tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
+
+			/*
+			 * if the property is an association role and does not define any
+			 * option, check if the association defines an option
+			 */
+			if (!representedPi.isAttribute() && StringUtils.isBlank(tvOnDelete)
+					&& StringUtils.isBlank(tvOnUpdate)) {
+
+				relevantInfo = representedPi.association();
+				tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
+				tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
 			}
 
-			String tvOnUpdate = representedPi.taggedValue("sqlOnUpdate");
+			setForeignKeyOption(true, tvOnDelete, fkc, column, relevantInfo);
+			setForeignKeyOption(false, tvOnUpdate, fkc, column, relevantInfo);
+		}
 
-			if (StringUtils.isNotBlank(tvOnUpdate)) {
-				try {
-					ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
-							.fromString(tvOnUpdate);
-					if (SqlDdl.databaseStrategy
-							.isForeignKeyOnUpdateOptionSupported(o)) {
-						fkc.setOnUpdate(o);
-					} else {
-						MessageContext mc = result.addInfo(this, 35,
-								o.toString(), "sqlOnUpdate",
-								representedPi.name(), "ON UPDATE");
-						if (mc != null) {
-							mc.addDetail(this, 100,
-									representedPi.fullNameInSchema());
+		return alter;
+	}
+
+	/**
+	 * @param isOnDelete
+	 *            <code>true</code> if the option is for the 'ON DELETE' clause,
+	 *            <code>false</code> if it is for the 'ON UPDATE' clause.
+	 * @param optionValue
+	 *            String value for the option; can be <code>null</code> (then
+	 *            this method has no effect)
+	 * @param fkc
+	 *            the constraint on which the option would be set
+	 * @param column
+	 *            the column to which the constraint applies, relevant for
+	 *            validity checks on the option
+	 * @param relevantInfo
+	 *            the model element that defines the option via tagged value,
+	 *            relevant for log messages
+	 */
+	private void setForeignKeyOption(boolean isOnDelete, String optionValue,
+			ForeignKeyConstraint fkc, Column column, Info relevantInfo) {
+
+		if (StringUtils.isNotBlank(optionValue)) {
+
+			Table table = column.getInTable();
+
+			try {
+
+				ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
+						.fromString(optionValue);
+
+				if ((isOnDelete && SqlDdl.databaseStrategy
+						.isForeignKeyOnDeleteOptionSupported(o))
+						|| (!isOnDelete && SqlDdl.databaseStrategy
+								.isForeignKeyOnUpdateOptionSupported(o))) {
+
+					/*
+					 * Check that the foreign key option is applicable to the
+					 * given column. At the moment, this includes checking that
+					 * the option is not 'SET NULL' in case that the column is
+					 * 'NOT NULL'.
+					 */
+					boolean isValid = true;
+
+					if (o == ForeignKeyConstraint.Option.SET_NULL
+							&& column.isNotNull()) {
+
+						isValid = false;
+
+						MessageContext mc = result.addWarning(this, 37,
+								column.getName());
+						if (relevantInfo != null && mc != null) {
+							mc.addDetail(this, 102, table.getName(),
+									column.getName());
+							mc.addDetail(this, 38,
+									relevantInfo.fullNameInSchema());
 						}
 					}
-				} catch (IllegalArgumentException e) {
-					MessageContext mc = result.addError(this, 34, tvOnUpdate,
-							"sqlOnUpdate", representedPi.name());
-					if (mc != null) {
-						mc.addDetail(this, 100,
-								representedPi.fullNameInSchema());
+
+					if (isValid) {
+						if (isOnDelete) {
+							fkc.setOnDelete(o);
+						} else {
+							fkc.setOnUpdate(o);
+						}
 					}
+
+				} else {
+					MessageContext mc = result.addInfo(this, 35, o.toString(),
+							isOnDelete ? "sqlOnDelete" : "sqlOnUpdate",
+							isOnDelete ? "ON DELETE" : "ON UPDATE");
+					if (mc != null) {
+						mc.addDetail(this, 102, table.getName(),
+								column.getName());
+						mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+					}
+				}
+
+			} catch (IllegalArgumentException e) {
+				MessageContext mc = result.addError(this, 34, optionValue,
+						isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
+				if (mc != null) {
+					mc.addDetail(this, 102, table.getName(), column.getName());
+					mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 				}
 			}
 		}
 
-		return alter;
 	}
 
 	/**
@@ -2868,16 +2920,22 @@ public class SqlBuilder implements MessageSource {
 		case 33:
 			return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
 		case 34:
-			return "Foreign key constraint option '$1$' defined by tagged value '$2$' on property '$3$' is unknown. The option is ignored.";
+			return "Foreign key constraint option '$1$' defined by tagged value '$2$' is unknown. The option is ignored.";
 		case 35:
-			return "Foreign key constraint option '$1$' is defined by tagged value '$2$' on property '$3$'. The database system does not support this option for clause '$4$'. The option is ignored.";
+			return "Foreign key constraint option '$1$' is defined by tagged value '$2$'. The database system does not support this option for clause '$3$'. The option is ignored.";
 		case 36:
 			return "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
+		case 37:
+			return "Foreign key option is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key option is ignored.";
+		case 38:
+			return "Model element that defines the option: '$1$'";
 
 		case 100:
 			return "Context: property '$1$'.";
 		case 101:
 			return "Context: class '$1$'.";
+		case 102:
+			return "Context: table '$1$', column '$2$'.";
 		default:
 			return "(" + SqlBuilder.class.getName()
 					+ ") Unknown message with number: " + mnr;
