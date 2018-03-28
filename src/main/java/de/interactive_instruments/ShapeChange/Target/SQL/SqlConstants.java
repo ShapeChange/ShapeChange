@@ -181,6 +181,8 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_SRID = "srid";
 
+	public static final String PARAM_TVS_TO_KEEP = "taggedValuesToKeep";
+	
 	/**
 	 * Flag to indicate that foreign key creation is desired (true); default is
 	 * false.
@@ -527,6 +529,8 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
 
+	public static final String RULE_TGT_SQL_ALL_REPRESENT_TAGGED_VALUES = "rule-sql-all-representTaggedValues";
+	
 	/**
 	 * Prevents creation of documentation of schema elements via inline
 	 * comments. This rule overrides parameter

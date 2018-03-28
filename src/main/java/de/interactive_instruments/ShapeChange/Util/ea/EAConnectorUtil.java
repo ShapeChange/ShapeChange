@@ -40,6 +40,7 @@ import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorTag;
 import org.sparx.Element;
+import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
@@ -49,6 +50,53 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
  *
  */
 public class EAConnectorUtil extends AbstractEAUtil {
+
+	/**
+	 * Adds the given tagged value to the tagged values of the given connector,
+	 * NOT checking for duplicate tags.
+	 * <p>
+	 * <b>WARNING:</b> Enterprise Architect may initialize default tagged values
+	 * for a model element that adheres to a specific UML profile. In that case,
+	 * adding the same tagged values would lead to duplicates. If duplicates
+	 * shall be prevented, set the tagged value instead of adding it.
+	 * 
+	 * @param con
+	 *            the connector to which the tagged value shall be added
+	 * @param tv
+	 *            tagged value to add
+	 */
+	public static void addTaggedValue(Connector con, EATaggedValue tv)
+			throws EAException {
+
+		Collection<ConnectorTag> cTV = con.GetTaggedValues();
+
+		String name = tv.getName();
+		String type = "";
+
+		List<String> values = tv.getValues();
+
+		if (values != null) {
+
+			for (String v : values) {
+
+				ConnectorTag eaTv = cTV.AddNew(name, type);
+				cTV.Refresh();
+
+				if (tv.createAsMemoField() || v.length() > 255) {
+					eaTv.SetValue("<memo>");
+					eaTv.SetNotes(v);
+				} else {
+					eaTv.SetValue(v);
+					eaTv.SetNotes("");
+				}
+
+				if (!eaTv.Update()) {
+					throw new EAException(createMessage(message(101), name,
+							con.GetName(), v, eaTv.GetLastError()));
+				}
+			}
+		}
+	}
 
 	/**
 	 * Adds the given collection of tagged values to the given connector, NOT
@@ -282,7 +330,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 					con.GetLastError()));
 		}
 	}
-	
+
 	public static void setEASupplierID(Connector con, int supplierID)
 			throws EAException {
 
@@ -311,6 +359,23 @@ public class EAConnectorUtil extends AbstractEAUtil {
 			deleteTaggedValue(con, tv.getName());
 		}
 		addTaggedValues(con, tvs);
+	}
+
+	/**
+	 * Sets the given tagged value in the tagged values of the given connector.
+	 * If tagged values with the same tag name already exist, they will be
+	 * deleted. Then the tagged value will be added.
+	 * 
+	 * @param con
+	 *            the connector in which the tagged value shall be set
+	 * @param tv
+	 *            tagged value to set, must not be <code>null</code>
+	 */
+	public static void setTaggedValue(Connector con, EATaggedValue tv)
+			throws EAException {
+
+		deleteTaggedValue(con, tv.getName());
+		addTaggedValue(con, tv);
 	}
 
 	/**
@@ -366,7 +431,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 			String key = name + "#" + fqName;
 
 			if (result.containsKey(key)) {
-				EATaggedValue eatv = result.get(name);
+				EATaggedValue eatv = result.get(key);
 				eatv.addValue(value);
 			} else {
 				result.put(key, new EATaggedValue(name, fqName, value));

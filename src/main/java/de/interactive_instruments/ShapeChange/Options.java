@@ -3559,6 +3559,7 @@ public class Options {
 		addRule("rule-sql-all-normalizing-upper-case");
 		addRule("rule-sql-all-notEncoded");
 		addRule("rule-sql-all-precisionAndScale");
+		addRule("rule-sql-all-representTaggedValues");
 		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
 		addRule("rule-sql-all-unique-naming-count-suffix");
 
@@ -3573,8 +3574,8 @@ public class Options {
 		addRule("rule-sql-cls-identifierStereotype");
 		addRule("rule-sql-cls-object-types");
 		addRule("rule-sql-cls-references-to-external-types");
-		
-		addRule("rule-sql-prop-check-constraint-for-range");		
+
+		addRule("rule-sql-prop-check-constraint-for-range");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
@@ -3654,6 +3655,7 @@ public class Options {
 		 */
 		addRule("rule-arcgis-all-precision");
 		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		addRule("rule-arcgis-all-representTaggedValues");
 		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-hasZ");

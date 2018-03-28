@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
@@ -92,12 +94,12 @@ import de.interactive_instruments.ShapeChange.Util.ea.EADirection;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EAMethodUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
 import de.interactive_instruments.ShapeChange.Util.ea.EAPackageUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAParameterUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EASupportedDBMS;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
-import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -342,6 +344,31 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 						"EAUML::table::Tablespace", tablespace, false);
 			}
 
+			// Determine if any specific tagged values shall be represented
+			if (SqlDdl.representTaggedValues) {
+
+				Info representedInfo = null;
+				if (table.getRepresentedClass() != null) {
+					representedInfo = table.getRepresentedClass();
+				} else if (table.getRepresentedAssociation() != null) {
+					representedInfo = table.getRepresentedAssociation();
+				}
+
+				if (representedInfo != null) {
+					for (String tvToRepresent : SqlDdl.taggedValuesToRepresent) {
+						String normalizedTag = options
+								.normalizeTag(tvToRepresent);
+						String[] values = representedInfo
+								.taggedValuesForTag(normalizedTag);
+						if (values.length > 0) {
+							EAElementUtil.setTaggedValue(tableElmt,
+									new EATaggedValue(tvToRepresent,
+											Arrays.asList(values)));
+						}
+					}
+				}
+			}
+
 			String tableDocumentation = table.getDocumentation();
 
 			if (StringUtils.isBlank(tableDocumentation)) {
@@ -414,6 +441,23 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 					 * done later on, when we have all primary key columns (also
 					 * from primary key constraints)
 					 */
+				}
+
+				// Determine if any specific tagged values shall be represented
+				if (SqlDdl.representTaggedValues
+						&& col.getRepresentedProperty() != null) {
+
+					for (String tvToRepresent : SqlDdl.taggedValuesToRepresent) {
+						String normalizedTag = options
+								.normalizeTag(tvToRepresent);
+						String[] values = col.getRepresentedProperty()
+								.taggedValuesForTag(normalizedTag);
+						if (values.length > 0) {
+							EAAttributeUtil.setTaggedValue(att,
+									new EATaggedValue(tvToRepresent,
+											Arrays.asList(values)));
+						}
+					}
 				}
 			}
 

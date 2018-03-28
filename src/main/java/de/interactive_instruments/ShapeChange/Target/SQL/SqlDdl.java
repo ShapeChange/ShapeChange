@@ -71,7 +71,6 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SdoDimArrayExpression;
@@ -99,11 +98,9 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueConstraint
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
@@ -170,6 +167,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static boolean createExplicitComments = false;
 	protected static boolean createAssociativeTables = false;
 	protected static boolean removeEmptyLinesInDdlOutput = false;
+	protected static boolean representTaggedValues = false;
+	protected static SortedSet<String> taggedValuesToRepresent = null;
 
 	/**
 	 * Contains information parsed from the 'param' attributes of each map entry
@@ -543,6 +542,13 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
 					this.getClass().getName(),
 					SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
+
+			List<String> tvsToRepresent = options.parameterAsStringList(null,
+					"representTaggedValues", null, true, true);
+			taggedValuesToRepresent = new TreeSet<>(tvsToRepresent);
+
+			representTaggedValues = pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_REPRESENT_TAGGED_VALUES);
 
 			/*
 			 * override parameter 'createDocumentation' if configured via
@@ -1186,6 +1192,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		createExplicitComments = false;
 		createAssociativeTables = false;
 		removeEmptyLinesInDdlOutput = false;
+		taggedValuesToRepresent = null;
+		representTaggedValues = false;
 
 		mapEntryParamInfos = null;
 		databaseStrategy = null;
