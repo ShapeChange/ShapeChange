@@ -1,0 +1,47 @@
+@prefix test:  <http://example.org/ontology/test#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/ontology/test>
+        a       owl:Ontology .
+
+test:AssociationClass.roleToFt2
+        a            owl:ObjectProperty ;
+        rdfs:domain  test:AssociationClass ;
+        rdfs:label   "AssociationClass.roleToFt2"@en ;
+        rdfs:range   test:FT2 .
+
+test:FT2.roleToFt1  a  owl:ObjectProperty ;
+        rdfs:domain  test:FT2 ;
+        rdfs:label   "FT2.roleToFt1"@en ;
+        rdfs:range   test:AssociationClass .
+
+test:att  a         owl:DatatypeProperty ;
+        rdfs:label  "att"@en ;
+        rdfs:range  xsd:boolean .
+
+test:FT2  a     owl:Class .
+
+test:AssociationClass
+        a       owl:Class .
+
+test:FT1.roleToFt2  a  owl:ObjectProperty ;
+        rdfs:domain  test:FT1 ;
+        rdfs:label   "FT1.roleToFt2"@en ;
+        rdfs:range   test:AssociationClass .
+
+test:AssociationClass.acAtt
+        a            owl:DatatypeProperty ;
+        rdfs:domain  test:AssociationClass ;
+        rdfs:label   "AssociationClass.acAtt"@en ;
+        rdfs:range   xsd:string .
+
+test:AssociationClass.roleToFt1
+        a            owl:ObjectProperty ;
+        rdfs:domain  test:AssociationClass ;
+        rdfs:label   "AssociationClass.roleToFt1"@en ;
+        rdfs:range   test:FT1 .
+
+test:FT1  a     owl:Class .

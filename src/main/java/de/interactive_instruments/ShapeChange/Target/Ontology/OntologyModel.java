@@ -1996,8 +1996,7 @@ public class OntologyModel implements MessageSource {
 
 			if (cat == Options.ENUMERATION) {
 				ClassInfo enumeration = model.classById(pi.typeInfo().id);
-				if (enumeration == null
-						|| this.map(enumeration) != null) {
+				if (enumeration == null || this.map(enumeration) != null) {
 					return false;
 				} else {
 					return true;
@@ -2138,7 +2137,7 @@ public class OntologyModel implements MessageSource {
 			p = op.asProperty();
 		}
 
-		applyDescriptorTargets(p, pi, DescriptorTarget.AppliesTo.PROPERTY);
+		addCommonPropertyPredicates(p, pi);
 		addConstraintDeclarations(p, pi);
 		addCustomSubPropertyOf(p, pi);
 
@@ -2187,6 +2186,23 @@ public class OntologyModel implements MessageSource {
 		properties.put(propAbout, new OwlProperty(pi, p));
 
 		return p;
+	}
+
+	private void addCommonPropertyPredicates(OntResource p, PropertyInfo pi) {
+
+		applyDescriptorTargets(p, pi, DescriptorTarget.AppliesTo.PROPERTY);
+
+		if (pi.matches("rule-owl-prop-labelFromLocalName")) {
+
+			String rdfsLabelQname = "rdfs:label";
+			addNamespaceDeclaration(rdfsLabelQname);
+
+			String propertyIRI = computeReference(rdfsLabelQname);
+
+			Property prop = ontmodel.createProperty(propertyIRI);
+
+			p.addProperty(prop, p.getLocalName(), owliso19150.getLanguage());
+		}
 	}
 
 	private String computePropertyName(PropertyInfo pi) {
@@ -2363,7 +2379,7 @@ public class OntologyModel implements MessageSource {
 	 */
 	private Resource mapClass(String qname) {
 
-		String[] qnamePars = qname.split(":",2);
+		String[] qnamePars = qname.split(":", 2);
 		String prefix = qnamePars[0];
 		String resourceName = qnamePars[1];
 
@@ -2960,8 +2976,7 @@ public class OntologyModel implements MessageSource {
 							broaderListedValue);
 				}
 
-				applyDescriptorTargets(clv, pi,
-						DescriptorTarget.AppliesTo.PROPERTY);
+				addCommonPropertyPredicates(clv, pi);
 				clv.addProperty(SKOS.inScheme, cs);
 			}
 

@@ -3633,7 +3633,7 @@ public class Options {
 		addRule("rule-owl-cls-iso191502IsAbstract");
 		addRule("rule-owl-cls-union");
 		addRule("rule-owl-cls-unionSets");
-
+		
 		addRule("rule-owl-prop-code-broader-byBroaderListedValue");
 		addRule("rule-owl-prop-external-reference");
 		addRule("rule-owl-prop-general");
@@ -3644,6 +3644,7 @@ public class Options {
 		addRule("rule-owl-prop-iso191502Aggregation");
 		addRule("rule-owl-prop-iso191502AssociationName");
 		addRule("rule-owl-prop-iso191502-naming");
+		addRule("rule-owl-prop-labelFromLocalName");
 		addRule("rule-owl-prop-localScopeAll");
 		addRule("rule-owl-prop-mapping-compare-specifications");
 		addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
