@@ -258,7 +258,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * optional. It defaults to {@value #DEFAULT_RDFXMLWRITER_BLOCKRULES}.
 	 */
 	public static final String PARAM_RDFXMLWRITER_BLOCKRULES = "rdfXmlWriterBlockRules";
-	public static final String DEFAULT_RDFXMLWRITER_BLOCKRULES = "idAttr,daml:collection,propertyAttr";
+	public static final String DEFAULT_RDFXMLWRITER_BLOCKRULES = "idAttr,propertyAttr";
 
 	/**
 	 * Per 19150-2package:rdfNamespace, the default separator that is appended

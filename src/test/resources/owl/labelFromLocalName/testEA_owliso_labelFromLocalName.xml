@@ -51,7 +51,6 @@
 			<!-- Output format identifiers: turtle ntriples nquads rdfxml jsonld rdfjson 
 				trig trix rdfthrift -->
 			<targetParameter name="outputFormat" value="turtle" />
-			<!-- <targetParameter name="rdfXmlWriterBlockRules" value="daml:collection,propertyAttr"/> -->
 			<targetParameter name="defaultEncodingRule" value="MyRule" />
 			<targetParameter name="language" value="en" />
 			<targetParameter name="defaultTypeImplementation"
