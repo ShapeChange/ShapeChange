@@ -77,6 +77,8 @@
 					<rule name="rule-owl-pkg-singleOntologyPerSchema" />
 					<rule name="rule-owl-pkg-ontologyName-code" />
 					<rule name="rule-owl-cls-encode-featuretypes" />
+					<rule name="rule-owl-cls-enumerationAsCodelist"/>
+          			<rule name="rule-owl-cls-codelist-19150-2"/>
 					<rule name="rule-owl-prop-general" />
 					<rule name="rule-owl-prop-globalScopeByConversionParameter" />
 					<rule name="rule-owl-prop-labelFromLocalName" />

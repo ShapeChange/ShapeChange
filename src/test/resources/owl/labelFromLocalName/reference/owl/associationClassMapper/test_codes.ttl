@@ -1,0 +1,24 @@
+@prefix testcode: <http://example.org/ontology/test/code#> .
+@prefix test:  <http://example.org/ontology/test#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+testcode:Enumeration  a  skos:ConceptScheme ;
+        dct:isFormatOf  test:Enumeration .
+
+<http://example.org/ontology/test/code#Enumeration/enumA>
+        a              test:Enumeration ;
+        rdfs:label     "enumA"@en ;
+        skos:inScheme  testcode:Enumeration .
+
+<http://example.org/ontology/test/code#Enumeration/enumB>
+        a              test:Enumeration ;
+        rdfs:label     "enumB"@en ;
+        skos:inScheme  testcode:Enumeration .
+
+<http://example.org/ontology/test/code>
+        a       owl:Ontology .
