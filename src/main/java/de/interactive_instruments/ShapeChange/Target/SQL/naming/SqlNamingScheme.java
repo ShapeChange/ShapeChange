@@ -60,4 +60,11 @@ public interface SqlNamingScheme {
 	 * @return name for a unique constraint
 	 */
 	public String nameForUniqueConstraint(String tableName, String columnName);
+
+	/**
+	 * @param tableName
+	 * @param columnName
+	 * @return name for a geometry index
+	 */
+	public String nameForGeometryIndex(String tableName, String columnName);
 }

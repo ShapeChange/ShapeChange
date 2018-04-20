@@ -518,6 +518,7 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH = "rule-sql-all-check-constraint-naming-pearsonhash";
 
 	public static final String RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME = "rule-sql-all-constraintNameUsingShortName";
+	public static final String RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME = "rule-sql-all-indexNameUsingShortName";
 
 	/**
 	 * If this rule is included, case is not changed when normalizing names,

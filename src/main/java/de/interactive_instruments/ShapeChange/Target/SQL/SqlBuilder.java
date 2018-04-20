@@ -991,8 +991,10 @@ public class SqlBuilder implements MessageSource {
 		} else {
 
 			String constraintName = namingScheme.nameForCheckConstraint(
-					SqlUtil.determineNameForConstraint(tableWithColumn),
-					SqlUtil.determineNameForConstraint(column));
+					SqlUtil.determineName(tableWithColumn,
+							SqlDdl.constraintNameUsingShortName),
+					SqlUtil.determineName(column,
+							SqlDdl.constraintNameUsingShortName));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -1094,8 +1096,10 @@ public class SqlBuilder implements MessageSource {
 			Table tableWithColumn = column.getInTable();
 
 			String constraintName = namingScheme.nameForCheckConstraint(
-					SqlUtil.determineNameForConstraint(tableWithColumn),
-					SqlUtil.determineNameForConstraint(column));
+					SqlUtil.determineName(tableWithColumn,
+							SqlDdl.constraintNameUsingShortName),
+					SqlUtil.determineName(column,
+							SqlDdl.constraintNameUsingShortName));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -1928,9 +1932,14 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	/**
-	 * Generates index creation statements for all geometry properties/columns
-	 * contained in {@link #geometryPropsByTableName}. The statements are stored
-	 * in an internal list ({@link #geometryIndexCreationStatements}).
+	 * Generates an index creation statement for the given geometry
+	 * property/column.
+	 * 
+	 * @param tableWithColumn
+	 * @param columnForProperty
+	 * @param pi
+	 *            property represented by the column
+	 * @return
 	 */
 	private Statement generateGeometryIndex(Table tableWithColumn,
 			Column columnForProperty, PropertyInfo pi) {
@@ -1939,11 +1948,12 @@ public class SqlBuilder implements MessageSource {
 				.getCharacteristics(pi.typeInfo().name, pi.encodingRule("sql"),
 						SqlConstants.ME_PARAM_GEOMETRY);
 
-		// TBD: UPDATE NAMING PATTERN?
-
-		String indexName = "idx_" + tableWithColumn.getName() + "_"
-				+ columnForProperty.getName();
-
+		String indexName = namingScheme.nameForGeometryIndex(
+				SqlUtil.determineName(tableWithColumn,
+						SqlDdl.indexNameUsingShortName),
+				SqlUtil.determineName(columnForProperty,
+						SqlDdl.indexNameUsingShortName));
+		
 		Statement result = SqlDdl.databaseStrategy.geometryIndexColumnPart(
 				indexName, tableWithColumn, columnForProperty,
 				geometryCharacteristics);
@@ -2282,10 +2292,10 @@ public class SqlBuilder implements MessageSource {
 
 							String constraintName = namingScheme
 									.nameForUniqueConstraint(
-											SqlUtil.determineNameForConstraint(
-													table),
-											SqlUtil.determineNameForConstraint(
-													col));
+											SqlUtil.determineName(table,
+													SqlDdl.constraintNameUsingShortName),
+											SqlUtil.determineName(col,
+													SqlDdl.constraintNameUsingShortName));
 
 							Alter alter = alterTableAddUniqueConstraint(table,
 									constraintName, col);
@@ -2323,11 +2333,13 @@ public class SqlBuilder implements MessageSource {
 
 						Alter alter = alterTableAddForeignKeyConstraint(t_main,
 								namingScheme.nameForForeignKeyConstraint(
-										SqlUtil.determineNameForConstraint(
-												t_main),
-										SqlUtil.determineNameForConstraint(cd),
-										SqlUtil.determineNameForConstraint(
-												cd.getReferencedTable())),
+										SqlUtil.determineName(t_main,
+												SqlDdl.constraintNameUsingShortName),
+										SqlUtil.determineName(cd,
+												SqlDdl.constraintNameUsingShortName),
+										SqlUtil.determineName(
+												cd.getReferencedTable(),
+												SqlDdl.constraintNameUsingShortName)),
 								cd, cd.getReferencedTable());
 
 						foreignKeyConstraints.add(alter);
@@ -2537,8 +2549,10 @@ public class SqlBuilder implements MessageSource {
 		Table tableWithColumn = column.getInTable();
 
 		String constraintName = namingScheme.nameForCheckConstraint(
-				SqlUtil.determineNameForConstraint(tableWithColumn),
-				SqlUtil.determineNameForConstraint(column));
+				SqlUtil.determineName(tableWithColumn,
+						SqlDdl.constraintNameUsingShortName),
+				SqlUtil.determineName(column,
+						SqlDdl.constraintNameUsingShortName));
 
 		Alter alter = new Alter();
 		alter.setTable(tableWithColumn);

@@ -103,6 +103,16 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 	}
 
 	@Test
+	public void testIndexNameUsingShortName() {
+
+		multiTest(
+				"src/test/resources/sql/indexNameUsingShortName/testEA_sql_indexNameUsingShortName.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/indexNameUsingShortName",
+				"src/test/resources/sql/indexNameUsingShortName/reference");
+	}
+
+	@Test
 	public void testCheckConstraintForRange() {
 
 		multiTest(
@@ -111,14 +121,13 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				"testResults/sql/checkConstraintForRange",
 				"src/test/resources/sql/checkConstraintForRange/reference");
 	}
-	
+
 	@Test
 	public void testRepresentTaggedValues() {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_representTaggedValues/testEA_sql_representTaggedValues.xml",
-				new String[] { "eap" },
-				"testResults/sql/representTaggedValues",
+				new String[] { "eap" }, "testResults/sql/representTaggedValues",
 				"src/test/resources/sql/databaseModel_representTaggedValues/reference");
 	}
 }

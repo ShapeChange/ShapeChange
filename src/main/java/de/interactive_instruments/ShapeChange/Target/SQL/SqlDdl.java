@@ -162,6 +162,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static int srid;
 	protected static String shortNameByTaggedValue = null;
 	protected static boolean constraintNameUsingShortName = false;
+	protected static boolean indexNameUsingShortName = false;
 	protected static boolean createReferences = false;
 	protected static boolean createDocumentation = true;
 	protected static boolean createExplicitComments = false;
@@ -309,6 +310,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			if (pi.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
 				constraintNameUsingShortName = true;
+			}
+			
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME)) {
+				indexNameUsingShortName = true;
 			}
 
 			String databaseSystem = options.parameter(this.getClass().getName(),
@@ -1187,6 +1193,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		srid = 0;
 		shortNameByTaggedValue = null;
 		constraintNameUsingShortName = false;
+		indexNameUsingShortName = false;
 		createReferences = false;
 		createDocumentation = true;
 		createExplicitComments = false;

@@ -3552,6 +3552,7 @@ public class Options {
 		addRule("rule-sql-all-foreign-key-oracle-naming-style");
 		addRule("rule-sql-all-foreign-key-pearsonhash-naming");
 		addRule("rule-sql-all-foreign-key-default-naming");
+		addRule("rule-sql-all-indexNameUsingShortName");
 		addRule("rule-sql-all-normalizing-ignore-case");
 		addRule("rule-sql-all-normalizing-lower-case");
 		addRule("rule-sql-all-normalizing-oracle");
