@@ -74,7 +74,7 @@ public class ArcGISWorkspaceConfigurationValidator
 				".", false, true);
 
 		String outputFilename = config.parameterAsString(
-				ArcGISWorkspace.PARAM_OUTPUT_FILENAME,
+				ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME,
 				"ArcGISWorkspaceConfigurationValidator", false, true);
 
 		outputFilename = outputFilename.replace("/", "_").replace(" ", "_")
@@ -119,12 +119,12 @@ public class ArcGISWorkspaceConfigurationValidator
 			// read workspace template
 
 			String workspaceTemplateFilePath = config.parameterAsString(
-					ArcGISWorkspace.PARAM_WORKSPACE_TEMPLATE, null, false,
-					true);
+					ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE, null,
+					false, true);
 
 			// if no path is provided, use the directory of the default template
 			if (workspaceTemplateFilePath == null) {
-				workspaceTemplateFilePath = ArcGISWorkspace.WORKSPACE_TEMPLATE_URL;
+				workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
 			}
 
 			// copy template file either from remote or local URI
@@ -214,11 +214,11 @@ public class ArcGISWorkspaceConfigurationValidator
 			return "Could not create output directory. Exception message: '$1$'.";
 		case 6:
 			return "URL '$1$' provided for configuration parameter "
-					+ ArcGISWorkspace.PARAM_WORKSPACE_TEMPLATE
+					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 					+ " is malformed. Exception message is: '$2$'.";
 		case 7:
 			return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-					+ ArcGISWorkspace.PARAM_WORKSPACE_TEMPLATE
+					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 		case 8:
 			return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";

@@ -269,7 +269,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 			String key = name + "#" + fqName;
 
 			if (result.containsKey(key)) {
-				EATaggedValue eatv = result.get(name);
+				EATaggedValue eatv = result.get(key);
 				eatv.addValue(value);
 			} else {
 				result.put(key, new EATaggedValue(name, fqName, value));

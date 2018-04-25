@@ -595,7 +595,16 @@ public abstract class BasicTest {
 		try {
 
 			File file = new File(fileName);
+			if (!file.exists()) {
+				fail("Result file " + file.getAbsolutePath()
+						+ " does not exist.");
+			}
+
 			File referenceFile = new File(referenceFileName);
+			if (!referenceFile.exists()) {
+				fail("Reference file " + referenceFile.getAbsolutePath()
+						+ " does not exist.");
+			}
 
 			EAModelDiff differ = new EAModelDiff();
 

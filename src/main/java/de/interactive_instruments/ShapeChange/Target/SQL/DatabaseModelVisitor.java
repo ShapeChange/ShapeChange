@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
@@ -76,6 +78,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlt
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.Option;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
@@ -91,12 +94,12 @@ import de.interactive_instruments.ShapeChange.Util.ea.EADirection;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EAMethodUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
 import de.interactive_instruments.ShapeChange.Util.ea.EAPackageUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAParameterUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EASupportedDBMS;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
-import de.interactive_instruments.ShapeChange.Util.ea.EANavigable;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -341,6 +344,31 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 						"EAUML::table::Tablespace", tablespace, false);
 			}
 
+			// Determine if any specific tagged values shall be represented
+			if (SqlDdl.representTaggedValues) {
+
+				Info representedInfo = null;
+				if (table.getRepresentedClass() != null) {
+					representedInfo = table.getRepresentedClass();
+				} else if (table.getRepresentedAssociation() != null) {
+					representedInfo = table.getRepresentedAssociation();
+				}
+
+				if (representedInfo != null) {
+					for (String tvToRepresent : SqlDdl.taggedValuesToRepresent) {
+						String normalizedTag = options
+								.normalizeTag(tvToRepresent);
+						String[] values = representedInfo
+								.taggedValuesForTag(normalizedTag);
+						if (values.length > 0) {
+							EAElementUtil.setTaggedValue(tableElmt,
+									new EATaggedValue(tvToRepresent,
+											Arrays.asList(values)));
+						}
+					}
+				}
+			}
+
 			String tableDocumentation = table.getDocumentation();
 
 			if (StringUtils.isBlank(tableDocumentation)) {
@@ -414,6 +442,23 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 					 * from primary key constraints)
 					 */
 				}
+
+				// Determine if any specific tagged values shall be represented
+				if (SqlDdl.representTaggedValues
+						&& col.getRepresentedProperty() != null) {
+
+					for (String tvToRepresent : SqlDdl.taggedValuesToRepresent) {
+						String normalizedTag = options
+								.normalizeTag(tvToRepresent);
+						String[] values = col.getRepresentedProperty()
+								.taggedValuesForTag(normalizedTag);
+						if (values.length > 0) {
+							EAAttributeUtil.setTaggedValue(att,
+									new EATaggedValue(tvToRepresent,
+											Arrays.asList(values)));
+						}
+					}
+				}
 			}
 
 			/*
@@ -429,8 +474,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			}
 
 			// Create primary key 'operation'
-			Method m = EAElementUtil.createEAMethod(tableElmt,
-					"PK_" + table.getName());
+			Method m = EAElementUtil.createEAMethod(tableElmt, "PK_" + SqlUtil
+					.determineName(table, SqlDdl.constraintNameUsingShortName));
 			EAMethodUtil.setEAStereotypeEx(m, "EAUML::PK");
 
 			Collections.reverse(primaryKeyColumns);
@@ -553,25 +598,31 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 					// also set tagged values
 					List<EATaggedValue> methodTVs = new ArrayList<EATaggedValue>();
+					String onDeleteValue = translateForeignKeyOption(
+							fkCon.getOnDelete());
 					EATaggedValue tvDelete = new EATaggedValue("Delete",
-							"No Action");
+							onDeleteValue);
 					methodTVs.add(tvDelete);
+
 					if (eadbms == EASupportedDBMS.ORACLE) {
 
+						// Oracle only has on delete
 						EATaggedValue tvProperty = new EATaggedValue("property",
-								"Delete No Action=1;");
+								"Delete " + onDeleteValue + "=1;");
 						methodTVs.add(tvProperty);
 
 					} else {
 
+						String onUpdateValue = translateForeignKeyOption(
+								fkCon.getOnUpdate());
 						EATaggedValue tvUpdate = new EATaggedValue("Update",
-								"No Action");
+								onUpdateValue);
 						methodTVs.add(tvUpdate);
 
 						EATaggedValue tvProperty = new EATaggedValue("property",
-								"Delete No Action=1;Update No Action=1;");
+								"Delete " + onDeleteValue + "=1;Update "
+										+ onUpdateValue + "=1;");
 						methodTVs.add(tvProperty);
-
 					}
 
 					EAMethodUtil.setTaggedValues(m, methodTVs);
@@ -673,6 +724,28 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 							table.getName(), e.getMessage());
 				}
 			}
+		}
+	}
+
+	/**
+	 * @param o
+	 * @return The string used by EA to represent the given foreign key
+	 *         constraint option. If the option is <code>null</code>, 'No
+	 *         Action' is returned.
+	 */
+	private String translateForeignKeyOption(ForeignKeyConstraint.Option o) {
+
+		if (o == Option.CASCADE) {
+			return "Cascade";
+		} else if (o == Option.RESTRICT) {
+			return "Restrict";
+		} else if (o == Option.SET_DEFAULT) {
+			return "Set Default";
+		} else if (o == Option.SET_NULL) {
+			return "Set Null";
+		} else {
+			// also if o is null
+			return "No Action";
 		}
 	}
 

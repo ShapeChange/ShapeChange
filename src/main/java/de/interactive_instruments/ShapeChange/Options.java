@@ -3646,31 +3646,28 @@ public class Options {
 		 */
 
 		addRule("rule-sql-all-associativetables");
+		addRule("rule-sql-all-check-constraint-naming-oracle-default");
+		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
+		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
+		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
+		addRule("rule-sql-all-constraintNameUsingShortName");
+		addRule("rule-sql-all-databaseModel");
+		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
 		addRule("rule-sql-all-exclude-abstract");
-		addRule("rule-sql-all-notEncoded");
-
 		addRule("rule-sql-all-foreign-key-oracle-naming-style");
 		addRule("rule-sql-all-foreign-key-pearsonhash-naming");
 		addRule("rule-sql-all-foreign-key-default-naming");
-		addRule("rule-sql-all-check-constraint-naming-oracle-default");
-		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
-		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
-		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
-
-		addRule("rule-sql-all-databaseModel");
-
+		addRule("rule-sql-all-indexNameUsingShortName");
 		addRule("rule-sql-all-normalizing-ignore-case");
 		addRule("rule-sql-all-normalizing-lower-case");
-		addRule("rule-sql-all-normalizing-upper-case");
-		addRule("rule-sql-all-normalizing-sqlserver");
 		addRule("rule-sql-all-normalizing-oracle");
-
+		addRule("rule-sql-all-normalizing-sqlserver");
+		addRule("rule-sql-all-normalizing-upper-case");
+		addRule("rule-sql-all-notEncoded");
 		addRule("rule-sql-all-precisionAndScale");
-
-		addRule("rule-sql-all-unique-naming-count-suffix");
-
-		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
+		addRule("rule-sql-all-representTaggedValues");
 		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
+		addRule("rule-sql-all-unique-naming-count-suffix");
 
 		addRule("rule-sql-cls-code-lists");
 		addRule("rule-sql-cls-code-lists-pods");
@@ -3683,6 +3680,8 @@ public class Options {
 		addRule("rule-sql-cls-identifierStereotype");
 		addRule("rule-sql-cls-object-types");
 		addRule("rule-sql-cls-references-to-external-types");
+
+		addRule("rule-sql-prop-check-constraint-for-range");
 		addRule("rule-sql-prop-check-constraints-for-enumerations");
 		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 		addRule("rule-sql-prop-exclude-derived");
@@ -3762,6 +3761,7 @@ public class Options {
 		 */
 		addRule("rule-arcgis-all-precision");
 		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		addRule("rule-arcgis-all-representTaggedValues");
 		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-hasZ");

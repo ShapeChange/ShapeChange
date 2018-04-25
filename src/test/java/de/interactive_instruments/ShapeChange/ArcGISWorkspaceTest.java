@@ -76,4 +76,14 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 				new String[] { "eap" }, "testResults/arcgis/linkedDocuments",
 				"src/test/resources/arcgis/linkedDocuments/reference");
 	}
+	
+	@Test
+	public void testRepresentTaggedValues() {
+
+		multiTest(
+				"src/test/resources/arcgis/representTaggedValues/testEA_arcgis_representTaggedValues.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/representTaggedValues",
+				"src/test/resources/arcgis/representTaggedValues/reference");
+	}
 }
