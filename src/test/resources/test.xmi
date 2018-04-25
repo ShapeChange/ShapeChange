@@ -1381,13 +1381,6 @@
 			</Foundation.Extension_Mechanisms.TaggedValue.modelElement>
 		</Foundation.Extension_Mechanisms.TaggedValue>
 		<Foundation.Extension_Mechanisms.TaggedValue>
-			<Foundation.Extension_Mechanisms.TaggedValue.tag>version</Foundation.Extension_Mechanisms.TaggedValue.tag>
-			<Foundation.Extension_Mechanisms.TaggedValue.value>1.0</Foundation.Extension_Mechanisms.TaggedValue.value>
-			<Foundation.Extension_Mechanisms.TaggedValue.modelElement>
-				<Foundation.Core.ModelElement xmi.idref="EAPK_3C71400F_3784_4f7a_B884_573BFC270352"/>
-			</Foundation.Extension_Mechanisms.TaggedValue.modelElement>
-		</Foundation.Extension_Mechanisms.TaggedValue>
-		<Foundation.Extension_Mechanisms.TaggedValue>
 			<Foundation.Extension_Mechanisms.TaggedValue.tag>isprotected</Foundation.Extension_Mechanisms.TaggedValue.tag>
 			<Foundation.Extension_Mechanisms.TaggedValue.value>FALSE</Foundation.Extension_Mechanisms.TaggedValue.value>
 			<Foundation.Extension_Mechanisms.TaggedValue.modelElement>

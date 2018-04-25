@@ -51,6 +51,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToCharExpre
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
@@ -215,7 +216,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi) {
+			Column columnForPi) {
 
 		if (columnForPi.getDataType().getName().equalsIgnoreCase("DATE")) {
 
@@ -230,6 +231,33 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isForeignKeyOnDeleteOptionSupported(
+			ForeignKeyConstraint.Option o) {
+
+		// https://docs.oracle.com/cd/B28359_01/server.111/b28286/clauses002.htm
+
+		if (o == ForeignKeyConstraint.Option.CASCADE
+				|| o == ForeignKeyConstraint.Option.SET_NULL
+				|| o == ForeignKeyConstraint.Option.NO_ACTION) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isForeignKeyOnUpdateOptionSupported(
+			ForeignKeyConstraint.Option o) {
+		// https://docs.oracle.com/cd/B28359_01/server.111/b28286/clauses002.htm
+		return false;
+	}
+
+	@Override
+	public String name() {
+		return "Oracle";
 	}
 
 	@Override

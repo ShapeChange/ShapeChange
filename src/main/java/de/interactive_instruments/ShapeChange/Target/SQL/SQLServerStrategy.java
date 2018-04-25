@@ -42,6 +42,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
@@ -144,14 +145,46 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 	/**
 	 * TBD - not implemented yet
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Target.SQL.DatabaseStrategy#expressionForCheckConstraintToRestrictTimeOfDate(de.interactive_instruments.ShapeChange.Model.PropertyInfo,
-	 *      de.interactive_instruments.ShapeChange.Target.SQL.structure.Column)
 	 */
 	@Override
 	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			PropertyInfo pi, Column columnForPi) {
+			Column columnForPi) {
 		return null;
+	}
+
+	@Override
+	public boolean isForeignKeyOnDeleteOptionSupported(
+			ForeignKeyConstraint.Option o) {
+
+		// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
+		if (o == ForeignKeyConstraint.Option.CASCADE
+				|| o == ForeignKeyConstraint.Option.SET_NULL
+				|| o == ForeignKeyConstraint.Option.NO_ACTION
+				|| o == ForeignKeyConstraint.Option.SET_DEFAULT) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isForeignKeyOnUpdateOptionSupported(
+			ForeignKeyConstraint.Option o) {
+
+		// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
+		if (o == ForeignKeyConstraint.Option.CASCADE
+				|| o == ForeignKeyConstraint.Option.SET_NULL
+				|| o == ForeignKeyConstraint.Option.NO_ACTION
+				|| o == ForeignKeyConstraint.Option.SET_DEFAULT) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String name() {
+		return "SQLServer";
 	}
 
 	@Override

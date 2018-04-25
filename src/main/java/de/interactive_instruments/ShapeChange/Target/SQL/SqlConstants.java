@@ -162,6 +162,13 @@ public class SqlConstants {
 	public static final String PATTERN_SDO_DIM_ELEMENTS = "(\\([^,]+(,[-]?([0-9]+\\.[0-9]+|[0-9]+)){3}\\))+";
 
 	/**
+	 * Name of the tagged value that provides the short name for a model
+	 * element, when used in constructing specific names (e.g. of constraints).
+	 * Default is 'shortName'.
+	 */
+	public static final String PARAM_SHORT_NAME_BY_TAGGED_VALUE = "shortNameByTaggedValue";
+
+	/**
 	 * Size for fields representing textual properties with limited length, to
 	 * be used in case that the property represented by the field does not have
 	 * a 'size' tagged value; default is {@value #DEFAULT_SIZE}
@@ -174,6 +181,8 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_SRID = "srid";
 
+	public static final String PARAM_TVS_TO_KEEP = "taggedValuesToKeep";
+	
 	/**
 	 * Flag to indicate that foreign key creation is desired (true); default is
 	 * false.
@@ -315,6 +324,7 @@ public class SqlConstants {
 	 */
 	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_RESTRICT_TIME_OF_DATE = "rule-sql-prop-check-constraint-restrictTimeOfDate";
 
+	public static final String RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE = "rule-sql-prop-check-constraint-for-range";
 	/**
 	 * Ensures that table creation statements are generated for complex data
 	 * types.
@@ -507,6 +517,9 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_SQLSERVER_DEFAULT = "rule-sql-all-check-constraint-naming-sqlserver-default";
 	public static final String RULE_TGT_SQL_ALL_CHECK_CONSTRAINT_NAMING_PEARSONHASH = "rule-sql-all-check-constraint-naming-pearsonhash";
 
+	public static final String RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME = "rule-sql-all-constraintNameUsingShortName";
+	public static final String RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME = "rule-sql-all-indexNameUsingShortName";
+
 	/**
 	 * If this rule is included, case is not changed when normalizing names,
 	 * regardless of the rule for normalizing names.
@@ -517,6 +530,8 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER = "rule-sql-all-normalizing-sqlserver";
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
 
+	public static final String RULE_TGT_SQL_ALL_REPRESENT_TAGGED_VALUES = "rule-sql-all-representTaggedValues";
+	
 	/**
 	 * Prevents creation of documentation of schema elements via inline
 	 * comments. This rule overrides parameter

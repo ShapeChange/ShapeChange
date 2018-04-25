@@ -31,7 +31,7 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/sql/checkConstraintForEnumerations/log_sql.xml" />
+			value="testResults/sql/checkConstraintForEnumeration/log_sql.xml" />
 	</log>
 	<transformers>
 		<Transformer

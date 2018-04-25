@@ -143,7 +143,7 @@ public class Table {
 	}
 
 	/**
-	 * @return the representedClass
+	 * @return the representedClass; can be <code>null</code>
 	 */
 	public ClassInfo getRepresentedClass() {
 		return representedClass;
@@ -158,7 +158,7 @@ public class Table {
 	}
 
 	/**
-	 * @return the representedAssociation
+	 * @return the representedAssociation; can be <code>null</code>
 	 */
 	public AssociationInfo getRepresentedAssociation() {
 		return representedAssociation;
@@ -174,7 +174,7 @@ public class Table {
 	}
 
 	/**
-	 * @return the representedProperty
+	 * @return the representedProperty; can be <code>null</code>
 	 */
 	public PropertyInfo getRepresentedProperty() {
 		return representedProperty;

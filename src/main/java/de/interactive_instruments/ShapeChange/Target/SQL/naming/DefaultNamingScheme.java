@@ -135,6 +135,11 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 	}
 
 	@Override
+	public String nameForGeometryIndex(String tableName, String columnName) {
+		return "idx_" + tableName + "_" + columnName;
+	}
+
+	@Override
 	public String message(int mnr) {
 		switch (mnr) {
 		case 1:

@@ -61,4 +61,8 @@ public interface ExpressionVisitor {
 	public void visit(ExpressionList list);
 
 	public void visit(UnquotedStringExpression unquotedStringExpression);
+
+	public void visit(BetweenExpression betweenExpression);
+
+	public void visit(DoubleValueExpression doubleValueExpression);
 }

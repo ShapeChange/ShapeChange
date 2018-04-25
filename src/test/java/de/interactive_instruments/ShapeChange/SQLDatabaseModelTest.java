@@ -61,22 +61,73 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				new String[] { "sql", "eap" }, "testResults/sql/sqlUnique",
 				"src/test/resources/sql/sqlUnique/reference");
 	}
-	
+
 	@Test
 	public void testDatabaseModel_packageHierarchy_singleSchema() {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_singleSchema.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/databaseModel_packageHierarchy/singleSchema",
+				new String[] { "sql", "eap" },
+				"testResults/sql/databaseModel_packageHierarchy/singleSchema",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/singleSchema");
 	}
-	
+
 	@Test
 	public void testDatabaseModel_packageHierarchy_multipleSchemas() {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_multipleSchemas.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/databaseModel_packageHierarchy/multipleSchemas",
+				new String[] { "sql", "eap" },
+				"testResults/sql/databaseModel_packageHierarchy/multipleSchemas",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/multipleSchemas");
+	}
+
+	@Test
+	public void testForeignKeyOptions() {
+
+		multiTest(
+				"src/test/resources/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/foreignKeyOptions",
+				"src/test/resources/sql/foreignKeyOptions/reference");
+	}
+
+	@Test
+	public void testConstraintNameUsingShortName() {
+
+		multiTest(
+				"src/test/resources/sql/constraintNameUsingShortName/testEA_sql_constraintNameUsingShortName.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/constraintNameUsingShortName",
+				"src/test/resources/sql/constraintNameUsingShortName/reference");
+	}
+
+	@Test
+	public void testIndexNameUsingShortName() {
+
+		multiTest(
+				"src/test/resources/sql/indexNameUsingShortName/testEA_sql_indexNameUsingShortName.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/indexNameUsingShortName",
+				"src/test/resources/sql/indexNameUsingShortName/reference");
+	}
+
+	@Test
+	public void testCheckConstraintForRange() {
+
+		multiTest(
+				"src/test/resources/sql/checkConstraintForRange/testEA_sql_checkConstraintForRange.xml",
+				new String[] { "sql", "eap" },
+				"testResults/sql/checkConstraintForRange",
+				"src/test/resources/sql/checkConstraintForRange/reference");
+	}
+
+	@Test
+	public void testRepresentTaggedValues() {
+
+		multiTest(
+				"src/test/resources/sql/databaseModel_representTaggedValues/testEA_sql_representTaggedValues.xml",
+				new String[] { "eap" }, "testResults/sql/representTaggedValues",
+				"src/test/resources/sql/databaseModel_representTaggedValues/reference");
 	}
 }

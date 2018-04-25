@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2018 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -90,250 +91,6 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
  *
  */
 public class ArcGISWorkspace implements SingleTarget, MessageSource {
-
-	/* ------------------------------------------------------ */
-	/* --- Rules to modify or extend the default behavior --- */
-	/* ------------------------------------------------------ */
-
-	/**
-	 * If this rule is enabled, the initial value for a <<DomainCodedValue>>,
-	 * which is an attribute of a <<CodedValueDomain>> that results from
-	 * conversion of enumerations and code lists from the application schema, is
-	 * taken from the alias of the respective enums and codes, rather than from
-	 * the initial value defined in the application schema.
-	 */
-	public static final String RULE_ENUM_INITIAL_VALUE_BY_ALIAS = "rule-arcgis-prop-initialValueByAlias";
-
-	/**
-	 * Enables use of stereotype &lt;&lt;identifier>> on class attributes. If an
-	 * attribute with that stereotype belongs to a class, then it will be used
-	 * as primary key (the OBJECTID field will still be generated).
-	 * 
-	 * NOTE: Multiple <<identifier>> attributes per class are not supported. In
-	 * such a case, ShapeChange will log a warning and use only one of them as
-	 * primary key. If the maximum multiplicity of an <<identifier>> attribute
-	 * is greater than 1, ShapeChange will log an error.
-	 */
-	public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-arcgis-cls-identifierStereotype";
-
-	/**
-	 * If a feature type has the tagged value 'HasZ' set to 'true', and the
-	 * feature type is converted to an ArcGIS feature class (Point, Polyline,
-	 * etc.), then with this rule enabled the ArcGIS feature class will have the
-	 * tagged value 'HasZ' set to 'true' (default is 'false').
-	 */
-	public static final String RULE_CLS_HASZ = "rule-arcgis-cls-hasZ";
-
-	/**
-	 * If a feature type has the tagged value 'HasM' set to 'true', and the
-	 * feature type is converted to an ArcGIS feature class (Point, Polyline,
-	 * etc.), then with this rule enabled the ArcGIS feature class will have the
-	 * tagged value 'HasM' set to 'true' (default is 'false').
-	 */
-	public static final String RULE_CLS_HASM = "rule-arcgis-cls-hasM";
-
-	/**
-	 * Identifies range domains for class properties based upon the tagged
-	 * values 'rangeMinimum' and 'rangeMaximum'. Each boundary is inclusive. If
-	 * one of the tagged value is not provided, the default value for that
-	 * boundary is used. If both tagged values are empty, a range domain is not
-	 * created. This rule overrides the range domain parsed from an OCL
-	 * constraint, if the tagged values also specify a range domain for that
-	 * property.
-	 */
-	public static final String RULE_CLS_RANGE_DOMAIN_FROM_TAGGED_VALUES = "rule-arcgis-cls-rangeDomainFromTaggedValues";
-
-	/**
-	 * If this rule is enabled, ShapeChange will use the value of the tagged
-	 * value 'size' (must be an integer) to populate the ‘length’ tagged value
-	 * of the &lt;&lt;field&gt;&gt; that will represent the property in the
-	 * ArcGIS model. NOTE: Only applies to properties that are implemented as
-	 * fields with type esriFieldTypeString. If the value is 0 or empty,
-	 * unlimited length is assumed - unless an OCL constraint exists that
-	 * restricts the length for the property. That also means that this rule has
-	 * precedence over an OCL constraint: if the tagged value 'size' has an
-	 * integer value > 1, then this value will be used as the length in the
-	 * &lt;&lt;field&gt;&gt;.
-	 */
-	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
-
-	/**
-	 * If this rule is enabled, then - for properties with a code list or
-	 * enumeration as value type - ShapeChange will use the value of the tagged
-	 * value 'size' (must be an integer) to populate the ‘length’ tagged value
-	 * of the &lt;&lt;field&gt;&gt; that will represent the property in the
-	 * ArcGIS model. This rule has higher priority than
-	 * {@value #RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE}. If none of
-	 * these rules apply, the length will be set to 0.
-	 */
-	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE = "rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType";
-
-	/**
-	 * If this rule is enabled then the length of a property that has a code
-	 * list or enumeration as value type is computed as the maximum name length
-	 * from the codes/enums of the value type (if codes/enums are defined by
-	 * that type). This rule has lower priority than
-	 * {@value #RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE}
-	 * If none of these rules apply, the length will be set to 0.
-	 */
-	public static final String RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE = "rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType";
-
-	public static final String RULE_PROP_INITIAL_VALUE = "rule-arcgis-prop-initialValue";
-
-	public static final String RULE_ALL_PRECISION = "rule-arcgis-all-precision";
-	/**
-	 * NOTE: This rule identifier is deprecated. Use
-	 * {@value #RULE_ALL_PRECISION} instead.
-	 */
-	public static final String RULE_PROP_PRECISION = "rule-arcgis-prop-precision";
-
-	public static final String RULE_ALL_SCALE = "rule-arcgis-all-scale";
-	/**
-	 * NOTE: This rule identifier is deprecated. Use {@value #RULE_ALL_SCALE}
-	 * instead.
-	 */
-	public static final String RULE_PROP_SCALE = "rule-arcgis-prop-scale";
-
-	public static final String RULE_PROP_ISNULLABLE = "rule-arcgis-prop-isNullable";
-
-	public static final String RULE_PROP_ATTINDEX = "rule-arcgis-prop-attIndex";
-
-	public static final String RULE_PROP_REFLEXIVE_AS_FIELD = "rule-arcgis-prop-reflexiveRelationshipAsField";
-
-	/**
-	 * If this rule is enabled, then the base name of a relationship class will
-	 * be constructed from the short names of the source and target class,
-	 * combined by an underscore. The short name of a class is given via the
-	 * tagged value specified by parameter
-	 * {@value #PARAM_SHORT_NAME_BY_TAGGED_VALUE}. If no short name is
-	 * specified, the original class name will be used as fallback. Note that
-	 * the base name can be subject to additional modifications (such as
-	 * normalization, addition of suffix to make the name unique, and clipping
-	 * in case that the name exceeds the allowed length).
-	 */
-	public static final String RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES = "rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses";
-
-	/* ------------------------------------------- */
-	/* --- configuration parameter identifiers --- */
-	/* ------------------------------------------- */
-
-	/* --- parameters required for / available in default behavior --- */
-	/**
-	 * Optional (defaults to 255) - Default length to set in the 'length' tagged
-	 * value of <<field>>s that have a textual value, in case that there is no
-	 * OCL constraint that defines the length.
-	 */
-	public static final String PARAM_LENGTH_TAGGED_VALUE_DEFAULT = "defaultLength";
-
-	/**
-	 * Optional (defaults to 'size') - Name of the tagged value that is used to
-	 * determine the length of a &lt;&lt;field&gt;&gt; that represents a
-	 * property under {@value #RULE_PROP_LENGTH_FROM_TAGGED_VALUE}.
-	 */
-	public static final String PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH = "nameOfTaggedValueToDetermineFieldLength";
-
-	/**
-	 * Optional (defaults to 0.01) - Delta to add to / subtract from a range
-	 * limit in case that the lower and/or upper boundary comparison operator is
-	 * not inclusive.
-	 */
-	public static final String PARAM_VALUE_RANGE_DELTA = "valueRangeExcludedBoundaryDelta";
-	/**
-	 * Optional (default is the current run directory) - The path to the folder
-	 * in which the resulting ArcGIS workspace (UML) model will be created.
-	 */
-	public static final String PARAM_OUTPUT_DIR = "outputDirectory";
-	/**
-	 * Optional (defaults to "ArcGISWorkspace.eap") The name of the output file.
-	 * ShapeChange will append the file extension '.eap' as suffix if the file
-	 * name does not already contain it.
-	 */
-	public static final String PARAM_OUTPUT_FILENAME = "outputFilename";
-	/**
-	 * Optional (defaults to
-	 * "http://shapechange.net/resources/templates/ArcGISWorkspace_template.eap"
-	 * ) - Path to the ArcGIS workspace UML model template file (can be local or
-	 * an online resource).
-	 */
-	public static final String PARAM_WORKSPACE_TEMPLATE = "workspaceTemplate";
-	public static final String WORKSPACE_TEMPLATE_URL = "http://shapechange.net/resources/templates/ArcGISWorkspace_template.eap";
-	/**
-	 * Optional changes to the default documentation template and the default
-	 * strings for descriptors without value
-	 */
-	public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
-	public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
-
-	/**
-	 * Suffix to append to the name of foreign keys. Default is 'ID'.
-	 */
-	public static final String PARAM_FOREIGN_KEY_SUFFIX = "foreignKeySuffix";
-
-	public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
-
-	/**
-	 * If set to 'true', do not switch the first character of a target or source
-	 * role name in a relationship class to lower case. Default is 'false'.
-	 */
-	public static final String PARAM_KEEP_CASE_OF_ROLENAME = "keepCaseOfRoleName";
-
-	public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
-
-	/**
-	 * Name of the tagged value that provides the short name for a model
-	 * element, when used in constructing specific names of the ArcGIS
-	 * workspace. Default is 'shortName'.
-	 */
-	public static final String PARAM_SHORT_NAME_BY_TAGGED_VALUE = "shortNameByTaggedValue";
-
-	/* --------------------------------------------------------------- */
-	/* --- Constants for elements of the ArcGIS workspace template --- */
-	/* --------------------------------------------------------------- */
-
-	public static final String TEMPLATE_PKG_FEATURES_NAME = "Features";
-	public static final String TEMPLATE_PKG_DOMAINS_NAME = "Domains";
-	public static final String TEMPLATE_PKG_TABLES_NAME = "Tables";
-	public static final String TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME = "Association Classes";
-
-	/* ------------------------------------ */
-	/* --- ArcGIS Workspace Stereotypes --- */
-	/* ------------------------------------ */
-
-	public static final String STEREOTYPE_RELATIONSHIP_CLASS = "RelationshipClass";
-
-	public static final String STEREOTYPE_DOMAIN_CODED_VALUE = "DomainCodedValue";
-
-	/* ----------------------- */
-	/* --- Other constants --- */
-	/* ----------------------- */
-
-	public static final int DEFAULT_MAX_NAME_LENGTH = 30;
-
-	public static final double NUM_RANGE_DELTA = 0.01;
-
-	public static final Double DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY = new Double(
-			-1000000000);
-	public static final Double DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY = new Double(
-			1000000000);
-
-	public static final int LENGTH_TAGGED_VALUE_DEFAULT = 255;
-
-	public static final String ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX = "\\W";
-
-	/**
-	 * Setting this tagged value on a code list or enumeration indicates that
-	 * the codes are numeric. The tagged value contains the name of the
-	 * conceptual type that represents the code values best, for example
-	 * 'Number' or 'Integer'. The ArcGIS data type will be determined by mapping
-	 * that type using the map entries defined in the configuration.
-	 * <p>
-	 * NOTE: The field type determined by processing this tagged value will be
-	 * overridden if tagged value {@value #TV_FIELD_TYPE} is also set on the
-	 * code list / enumeration.
-	 */
-	public static final String TV_NUMERIC_TYPE = "numericType";
-
-	public static final String TV_FIELD_TYPE = "fieldType";
 
 	/* -------------------- */
 	/* --- enumerations --- */
@@ -422,12 +179,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			.compile("(?:self\\.|\\s)?(\\w+)\\.[\\w\\.]*?value(?:[,\\s])");
 
 	private static boolean initialised = false;
-	private static String workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
+	private static String workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
 
-	private static int maxNameLength = DEFAULT_MAX_NAME_LENGTH;
-	private static int lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
+	private static int maxNameLength = ArcGISWorkspaceConstants.DEFAULT_MAX_NAME_LENGTH;
+	private static int lengthTaggedValueDefault = ArcGISWorkspaceConstants.LENGTH_TAGGED_VALUE_DEFAULT;
 
-	private static double numRangeDelta = NUM_RANGE_DELTA;
+	private static double numRangeDelta = ArcGISWorkspaceConstants.NUM_RANGE_DELTA;
 
 	private static Set<String> esriTypesSuitedForRangeConstraint = new TreeSet<String>();
 
@@ -553,6 +310,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static String foreignKeySuffix;
 	private static String reflexiveRelationshipAttributeSuffix;
 
+	protected static boolean representTaggedValues = false;
+	protected static SortedSet<String> taggedValuesToRepresent = null;
+
 	/**
 	 * key: name of the class element; value: the range domain element
 	 */
@@ -591,14 +351,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			// get output location
 			outputDirectory = options.parameter(this.getClass().getName(),
-					PARAM_OUTPUT_DIR);
+					ArcGISWorkspaceConstants.PARAM_OUTPUT_DIR);
 			if (outputDirectory == null)
 				outputDirectory = options.parameter("outputDirectory");
 			if (outputDirectory == null)
 				outputDirectory = options.parameter(".");
 
 			String outputFilename = options.parameter(this.getClass().getName(),
-					PARAM_OUTPUT_FILENAME);
+					ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME);
 			if (outputFilename == null) {
 				outputFilename = p.name();
 			}
@@ -608,7 +368,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// parse default length parameter
 			String defaultLengthParamValue = options.parameter(
 					this.getClass().getName(),
-					PARAM_LENGTH_TAGGED_VALUE_DEFAULT);
+					ArcGISWorkspaceConstants.PARAM_LENGTH_TAGGED_VALUE_DEFAULT);
 			if (defaultLengthParamValue != null) {
 
 				try {
@@ -618,22 +378,25 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				} catch (NumberFormatException e) {
 
-					result.addError(this, 13, PARAM_LENGTH_TAGGED_VALUE_DEFAULT,
-							"" + LENGTH_TAGGED_VALUE_DEFAULT);
+					result.addError(this, 13,
+							ArcGISWorkspaceConstants.PARAM_LENGTH_TAGGED_VALUE_DEFAULT,
+							"" + ArcGISWorkspaceConstants.LENGTH_TAGGED_VALUE_DEFAULT);
 				}
 			}
 
 			// parse max name length parameter
 			String maxNameLengthParamValue = options.parameter(
-					this.getClass().getName(), PARAM_MAX_NAME_LENGTH);
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_MAX_NAME_LENGTH);
 			if (maxNameLengthParamValue != null) {
 				try {
 					int maxNameLengthTmp = Integer
 							.parseInt(maxNameLengthParamValue);
 					maxNameLength = maxNameLengthTmp;
 				} catch (NumberFormatException e) {
-					result.addError(this, 13, PARAM_MAX_NAME_LENGTH,
-							"" + DEFAULT_MAX_NAME_LENGTH);
+					result.addError(this, 13,
+							ArcGISWorkspaceConstants.PARAM_MAX_NAME_LENGTH,
+							"" + ArcGISWorkspaceConstants.DEFAULT_MAX_NAME_LENGTH);
 				}
 			}
 
@@ -641,7 +404,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// field length
 			String nameOfTVToDetermineFieldLengthParamValue = options.parameter(
 					this.getClass().getName(),
-					PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH);
+					ArcGISWorkspaceConstants.PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH);
 			if (nameOfTVToDetermineFieldLengthParamValue != null
 					&& nameOfTVToDetermineFieldLengthParamValue.trim()
 							.length() > 0) {
@@ -690,17 +453,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// read workspace template
 
 			workspaceTemplateFilePath = options.parameter(
-					this.getClass().getName(), PARAM_WORKSPACE_TEMPLATE);
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE);
 
 			if (workspaceTemplateFilePath == null) {
-				workspaceTemplateFilePath = options
-						.parameter(PARAM_WORKSPACE_TEMPLATE);
+				workspaceTemplateFilePath = options.parameter(
+						ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE);
 			}
 			// if no path is provided, use the directory of the default template
 			if (workspaceTemplateFilePath == null) {
-				workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
-				result.addInfo(this, 9, PARAM_WORKSPACE_TEMPLATE,
-						WORKSPACE_TEMPLATE_URL);
+				workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
+				result.addInfo(this, 9,
+						ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE,
+						ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL);
 			}
 
 			// copy template file either from remote or local URI
@@ -766,9 +531,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 
 			Integer features = EARepositoryUtil.getEAChildPackageByName(rep,
-					workspacePkgId, TEMPLATE_PKG_FEATURES_NAME);
+					workspacePkgId,
+					ArcGISWorkspaceConstants.TEMPLATE_PKG_FEATURES_NAME);
 			if (features == null) {
-				result.addError(this, 102, TEMPLATE_PKG_FEATURES_NAME);
+				result.addError(this, 102,
+						ArcGISWorkspaceConstants.TEMPLATE_PKG_FEATURES_NAME);
 				throw new ShapeChangeAbortException();
 			} else {
 				featuresPkgId = features;
@@ -777,9 +544,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 
 			Integer domains = EARepositoryUtil.getEAChildPackageByName(rep,
-					workspacePkgId, TEMPLATE_PKG_DOMAINS_NAME);
+					workspacePkgId,
+					ArcGISWorkspaceConstants.TEMPLATE_PKG_DOMAINS_NAME);
 			if (domains == null) {
-				result.addError(this, 102, TEMPLATE_PKG_DOMAINS_NAME);
+				result.addError(this, 102,
+						ArcGISWorkspaceConstants.TEMPLATE_PKG_DOMAINS_NAME);
 				throw new ShapeChangeAbortException();
 			} else {
 				domainsPkgId = domains;
@@ -788,9 +557,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 
 			Integer tables = EARepositoryUtil.getEAChildPackageByName(rep,
-					workspacePkgId, TEMPLATE_PKG_TABLES_NAME);
+					workspacePkgId,
+					ArcGISWorkspaceConstants.TEMPLATE_PKG_TABLES_NAME);
 			if (tables == null) {
-				result.addError(this, 102, TEMPLATE_PKG_TABLES_NAME);
+				result.addError(this, 102,
+						ArcGISWorkspaceConstants.TEMPLATE_PKG_TABLES_NAME);
 				throw new ShapeChangeAbortException();
 			} else {
 				tablesPkgId = tables;
@@ -799,10 +570,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 
 			Integer assocClasses = EARepositoryUtil.getEAChildPackageByName(rep,
-					workspacePkgId, TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
+					workspacePkgId,
+					ArcGISWorkspaceConstants.TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
 			if (assocClasses == null) {
 				result.addError(this, 102,
-						TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
+						ArcGISWorkspaceConstants.TEMPLATE_PKG_ASSOCIATION_CLASSES_NAME);
 				throw new ShapeChangeAbortException();
 			} else {
 				assocClassesPkgId = assocClasses;
@@ -839,7 +611,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			// parse numeric range delta parameter
 			String numRangeDeltaParamValue = options.parameter(
-					this.getClass().getName(), PARAM_VALUE_RANGE_DELTA);
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA);
 			if (numRangeDeltaParamValue != null) {
 
 				try {
@@ -855,26 +628,37 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			// change the default documentation template?
 			documentationTemplate = options.parameter(this.getClass().getName(),
-					PARAM_DOCUMENTATION_TEMPLATE);
+					ArcGISWorkspaceConstants.PARAM_DOCUMENTATION_TEMPLATE);
 			documentationNoValue = options.parameter(this.getClass().getName(),
-					PARAM_DOCUMENTATION_NOVALUE);
+					ArcGISWorkspaceConstants.PARAM_DOCUMENTATION_NOVALUE);
 
 			// parse
 			shortNameByTaggedValue = options.parameterAsString(
-					this.getClass().getName(), PARAM_SHORT_NAME_BY_TAGGED_VALUE,
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE,
 					"shortName", false, true);
 
 			keepCaseOfRolename = options.parameterAsBoolean(
-					this.getClass().getName(), PARAM_KEEP_CASE_OF_ROLENAME,
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_KEEP_CASE_OF_ROLENAME,
 					false);
 
 			foreignKeySuffix = options.parameterAsString(
-					this.getClass().getName(), PARAM_FOREIGN_KEY_SUFFIX, "ID",
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_FOREIGN_KEY_SUFFIX, "ID",
 					false, true);
 
 			reflexiveRelationshipAttributeSuffix = options.parameterAsString(
-					this.getClass().getName(), PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
+					this.getClass().getName(),
+					ArcGISWorkspaceConstants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
 					"", false, true);
+
+			List<String> tvsToRepresent = options.parameterAsStringList(null,
+					"representTaggedValues", null, true, true);
+			taggedValuesToRepresent = new TreeSet<>(tvsToRepresent);
+
+			representTaggedValues = p.matches(
+					ArcGISWorkspaceConstants.RULE_ALL_REPRESENT_TAGGED_VALUES);
 		}
 	}
 
@@ -987,8 +771,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				boolean lowerBoundaryInclusive = true;
 				boolean upperBoundaryInclusive = true;
-				Double lowerBoundaryValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-				Double upperBoundaryValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+				Double lowerBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+				Double upperBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
 
 				Matcher matcher = numRangeConstraintLowerBoundaryPattern
 						.matcher(ocl);
@@ -1115,12 +899,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
-		if (ci.matches(RULE_CLS_RANGE_DOMAIN_FROM_TAGGED_VALUES)) {
+		if (ci.matches(
+				ArcGISWorkspaceConstants.RULE_CLS_RANGE_DOMAIN_FROM_TAGGED_VALUES)) {
 
 			for (PropertyInfo pi : ci.properties().values()) {
 
-				Double lowerBoundaryValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-				Double upperBoundaryValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+				Double lowerBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+				Double upperBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
 
 				boolean foundLowerBoundary = false;
 				boolean foundUpperBoundary = false;
@@ -1252,7 +1037,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		String fieldType = "esriFieldTypeString";
 
 		if (isNumericallyValued(ci)) {
-			String numericFieldConceptualType = ci.taggedValue(TV_NUMERIC_TYPE)
+			String numericFieldConceptualType = ci
+					.taggedValue(ArcGISWorkspaceConstants.TV_NUMERIC_TYPE)
 					.trim();
 			if (processMapEntries.containsKey(numericFieldConceptualType)) {
 				// use target type defined by map entry for the conceptual type
@@ -1267,7 +1053,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				}
 			}
 		}
-		String fieldTypeTV = ci.taggedValue(TV_FIELD_TYPE);
+		String fieldTypeTV = ci
+				.taggedValue(ArcGISWorkspaceConstants.TV_FIELD_TYPE);
 		if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
 			fieldType = fieldTypeTV.trim();
 		}
@@ -1289,13 +1076,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		if (ci.properties() != null) {
 
 			SortedSet<String> enumStereotype = new TreeSet<String>();
-			enumStereotype.add(STEREOTYPE_DOMAIN_CODED_VALUE);
+			enumStereotype.add(
+					ArcGISWorkspaceConstants.STEREOTYPE_DOMAIN_CODED_VALUE);
 
 			for (PropertyInfo pi : ci.properties().values()) {
 
 				String initialValue;
 
-				if (pi.matches(RULE_ENUM_INITIAL_VALUE_BY_ALIAS)) {
+				if (pi.matches(
+						ArcGISWorkspaceConstants.RULE_ENUM_INITIAL_VALUE_BY_ALIAS)) {
 					initialValue = pi.aliasName();
 				} else {
 					initialValue = pi.initialValue();
@@ -1305,11 +1094,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					initialValue = pi.name();
 				}
 
-				EAElementUtil.createEAAttribute(e, pi.name(), null,
+				Attribute eaAtt = EAElementUtil.createEAAttribute(e, pi.name(),
+						null,
 						pi.derivedDocumentation(documentationTemplate,
 								documentationNoValue),
 						enumStereotype, null, false, false, false, initialValue,
 						new Multiplicity(1, 1), null, null);
+
+				addTaggedValuesToRepresent(eaAtt, pi);
 			}
 		}
 	}
@@ -1447,7 +1239,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
 
 			String hasM = "false";
-			if (ci.matches(RULE_CLS_HASM)) {
+			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASM)) {
 				String hasMFromTV = ci.taggedValue("HasM");
 				if (hasMFromTV != null
 						&& hasMFromTV.trim().equalsIgnoreCase("true")) {
@@ -1459,7 +1251,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			tvs.add(new EATaggedValue("HasSpatialIndex", "true"));
 
 			String hasZ = "false";
-			if (ci.matches(RULE_CLS_HASZ)) {
+			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASZ)) {
 				String hasZFromTV = ci.taggedValue("HasZ");
 				if (hasZFromTV != null
 						&& hasZFromTV.trim().equalsIgnoreCase("true")) {
@@ -1694,7 +1486,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		 * check that a type does not have more than one such attribute, and
 		 * that such an attribute has max cardinality 1.
 		 */
-		if (ci.matches(RULE_CLS_IDENTIFIER_STEREOTYPE)) {
+		if (ci.matches(
+				ArcGISWorkspaceConstants.RULE_CLS_IDENTIFIER_STEREOTYPE)) {
 
 			int countIdentifierAttributes = 0;
 
@@ -1758,7 +1551,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private String normalizeName(String name) {
 
-		String result = name.replaceAll(ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX,
+		String result = name.replaceAll(
+				ArcGISWorkspaceConstants.ILLEGAL_NAME_CHARACTERS_DETECTION_REGEX,
 				"_");
 
 		return result;
@@ -1852,6 +1646,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		if (ci.getLinkedDocument() != null) {
 			e.LoadLinkedDocument(ci.getLinkedDocument().getAbsolutePath());
+		}
+
+		try {
+			addTaggedValuesToRepresent(e, ci);
+		} catch (EAException exc) {
+			result.addError(this, 250, ci.name(), exc.getMessage());
 		}
 	}
 
@@ -2042,7 +1842,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		} else {
 
 			this.createManyToManyRelationshipClass(ciSource, ciTarget,
-					toLowerCamelCase(ciSource.name()), pi.name());
+					toLowerCamelCase(ciSource.name()), pi.name(), null, pi);
 		}
 	}
 
@@ -2078,12 +1878,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		ClassInfo ci1 = pi1.inClass();
 		ClassInfo ci2 = pi2.inClass();
 
-		this.createManyToManyRelationshipClass(ci1, ci2, pi2.name(),
-				pi1.name());
+		this.createManyToManyRelationshipClass(ci1, ci2, pi2.name(), pi1.name(),
+				pi2, pi1);
 	}
 
 	private void createManyToManyRelationshipClass(ClassInfo source,
-			ClassInfo target, String roleNameSource, String roleNameTarget) {
+			ClassInfo target, String roleNameSource, String roleNameTarget,
+			PropertyInfo sourceRole, PropertyInfo targetRole) {
 
 		int sourceElementId = elementIdByClassInfo.get(source);
 		Element eaClassSource = rep.GetElementByID(sourceElementId);
@@ -2202,6 +2003,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						foreignKeyFieldSrc = createForeignKeyField(assocClass,
 								fkSrcName, "", "", source_);
 
+						if (sourceRole != null) {
+							addTaggedValuesToRepresent(foreignKeyFieldSrc,
+									sourceRole);
+						}
+
 					} catch (EAException e) {
 						result.addError(this, 10003, fkSrcName, assocClassName,
 								e.getMessage());
@@ -2226,6 +2032,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						foreignKeyFieldTgt = createForeignKeyField(assocClass,
 								fkTgtName, "", "", target_);
 
+						if (targetRole != null) {
+							addTaggedValuesToRepresent(foreignKeyFieldTgt,
+									targetRole);
+						}
+
 					} catch (EAException e) {
 						result.addError(this, 10003, fkTgtName, assocClassName,
 								e.getMessage());
@@ -2235,7 +2046,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					// set stereotype and tagged values on association class
 
 					EAElementUtil.setEAStereotypeEx(assocClass,
-							STEREOTYPE_RELATIONSHIP_CLASS);
+							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
 
@@ -2285,10 +2096,31 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					 */
 					EAConnectorUtil.setEAName(con, assocClassName);
 					EAConnectorUtil.setEAStereotype(con,
-							STEREOTYPE_RELATIONSHIP_CLASS);
+							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
 					ConnectorEnd supplierEnd = con.GetSupplierEnd();
+
+					AssociationInfo assocForRepresentingTVs = null;
+
+					if (sourceRole != null) {
+						addTaggedValuesToRepresent(clientEnd, sourceRole);
+						if (!sourceRole.isAttribute()) {
+							assocForRepresentingTVs = sourceRole.association();
+						}
+					}
+					if (targetRole != null) {
+						addTaggedValuesToRepresent(supplierEnd, targetRole);
+						if (!targetRole.isAttribute()) {
+							assocForRepresentingTVs = targetRole.association();
+						}
+					}
+					if (assocForRepresentingTVs != null) {
+						addTaggedValuesToRepresent(con,
+								assocForRepresentingTVs);
+						addTaggedValuesToRepresent(assocClass,
+								assocForRepresentingTVs);
+					}
 
 					/*
 					 * set cardinality and name on connector ends
@@ -2358,7 +2190,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		String sourceName = source.name();
 		String targetName = target.name();
 
-		if (source.matches(RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES)) {
+		if (source.matches(
+				ArcGISWorkspaceConstants.RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES)) {
 
 			if (source.taggedValue(shortNameByTaggedValue) != null) {
 				sourceName = source.taggedValue(shortNameByTaggedValue);
@@ -2403,7 +2236,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			this.createOneToManyRelationshipClass(ci, typeCi,
 					toLowerCamelCase(ci.name()), pi.name(), Integer.MAX_VALUE,
-					false);
+					false, null, pi);
 		}
 	}
 
@@ -2418,7 +2251,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		int maxOccursOnCi1 = ai.end1().cardinality().maxOccurs;
 
 		this.createOneToManyRelationshipClass(ci1, ci2, roleNameOnCi1,
-				roleNameOnCi2, maxOccursOnCi1, ai.end1().isNavigable());
+				roleNameOnCi2, maxOccursOnCi1, ai.end1().isNavigable(),
+				ai.end1(), ai.end2());
 	}
 
 	/**
@@ -2443,10 +2277,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 */
 	private void createOneToManyRelationshipClass(ClassInfo ci1, ClassInfo ci2,
 			String roleNameOnCi1, String roleNameOnCi2, int maxOccursOnCi1,
-			boolean isNavigableOnCi1) {
+			boolean isNavigableOnCi1, PropertyInfo roleOnCi1,
+			PropertyInfo roleOnCi2) {
 
 		ClassInfo source, target;
 		String roleNameSource, roleNameTarget;
+		PropertyInfo roleSource, roleTarget;
 
 		if (maxOccursOnCi1 <= 1 && isNavigableOnCi1) {
 			// use ci1 as source
@@ -2454,12 +2290,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			target = ci2;
 			roleNameSource = roleNameOnCi1;
 			roleNameTarget = roleNameOnCi2;
+			roleSource = roleOnCi1;
+			roleTarget = roleOnCi2;
 		} else {
 			// use ci2 as source
 			source = ci2;
 			target = ci1;
 			roleNameSource = roleNameOnCi2;
 			roleNameTarget = roleNameOnCi1;
+			roleSource = roleOnCi2;
+			roleTarget = roleOnCi1;
 		}
 
 		// create foreign key field in target class
@@ -2485,6 +2325,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// the foreign key field is used to reference a source object
 			foreignKeyField = createForeignKeyField(eaClassTarget, name, "", "",
 					source);
+			if (roleSource != null) {
+				addTaggedValuesToRepresent(foreignKeyField, roleSource);
+			}
 
 		} catch (EAException e) {
 			result.addError(this, 10003, roleNameTarget, target.name(),
@@ -2559,10 +2402,29 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					EAConnectorUtil.setEAName(con, relClassName);
 					EAConnectorUtil.setEAStereotype(con,
-							STEREOTYPE_RELATIONSHIP_CLASS);
+							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
 					ConnectorEnd supplierEnd = con.GetSupplierEnd();
+
+					AssociationInfo assocForRepresentingTVs = null;
+
+					if (roleSource != null) {
+						addTaggedValuesToRepresent(clientEnd, roleSource);
+						if (!roleSource.isAttribute()) {
+							assocForRepresentingTVs = roleSource.association();
+						}
+					}
+					if (roleTarget != null) {
+						addTaggedValuesToRepresent(supplierEnd, roleTarget);
+						if (!roleTarget.isAttribute()) {
+							assocForRepresentingTVs = roleTarget.association();
+						}
+					}
+					if (assocForRepresentingTVs != null) {
+						addTaggedValuesToRepresent(con,
+								assocForRepresentingTVs);
+					}
 
 					// set cardinality and name on connector
 					// ends
@@ -2752,7 +2614,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	private boolean isNumericallyValued(ClassInfo ci) {
-		return StringUtils.isNotBlank(ci.taggedValue(TV_NUMERIC_TYPE));
+		return StringUtils.isNotBlank(
+				ci.taggedValue(ArcGISWorkspaceConstants.TV_NUMERIC_TYPE));
 	}
 
 	private Integer computeScale(Info pi, String valueTypeName) {
@@ -2760,7 +2623,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		String nameOfScaleTV = "scale";
 		String scaleTV = pi.taggedValue(nameOfScaleTV);
 
-		if ((pi.matches(RULE_ALL_SCALE) || pi.matches(RULE_PROP_SCALE))
+		if ((pi.matches(ArcGISWorkspaceConstants.RULE_ALL_SCALE)
+				|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_SCALE))
 				&& scaleTV != null && scaleTV.trim().length() > 0) {
 
 			try {
@@ -2790,7 +2654,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		String nameOfPrecisionTV = "precision";
 		String precisionTV = pi.taggedValue(nameOfPrecisionTV);
 
-		if ((pi.matches(RULE_ALL_PRECISION) || pi.matches(RULE_PROP_PRECISION))
+		if ((pi.matches(ArcGISWorkspaceConstants.RULE_ALL_PRECISION)
+				|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_PRECISION))
 				&& precisionTV != null && precisionTV.trim().length() > 0) {
 
 			try {
@@ -2817,7 +2682,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private boolean computeIsNullable(PropertyInfo pi) {
 
-		if (pi.matches(RULE_PROP_ISNULLABLE)) {
+		if (pi.matches(ArcGISWorkspaceConstants.RULE_PROP_ISNULLABLE)) {
 
 			if (pi.voidable() || pi.cardinality().minOccurs < 1) {
 				return true;
@@ -2839,7 +2704,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		} else {
 
-			if (pi.matches(RULE_PROP_LENGTH_FROM_TAGGED_VALUE)) {
+			if (pi.matches(
+					ArcGISWorkspaceConstants.RULE_PROP_LENGTH_FROM_TAGGED_VALUE)) {
 
 				String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
 
@@ -2885,7 +2751,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			PropertyInfo pi) {
 
 		if (pi.matches(
-				RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE)) {
+				ArcGISWorkspaceConstants.RULE_PROP_LENGTH_FROM_TAGGED_VALUE_FOR_CODELIST_OR_ENUMERATION_VALUE_TYPE)) {
 
 			String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
 
@@ -2904,7 +2770,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
-		if (pi.matches(RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE)) {
+		if (pi.matches(
+				ArcGISWorkspaceConstants.RULE_PROP_LENGTH_FROM_CODES_OR_ENUMS_OF_VALUE_TYPE)) {
 
 			ClassInfo typeCi = model.classById(pi.typeInfo().id);
 
@@ -2972,10 +2839,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		initialised = false;
 		model = null;
 		numberOfSchemasSelectedForProcessing = 0;
-		workspaceTemplateFilePath = WORKSPACE_TEMPLATE_URL;
-		maxNameLength = DEFAULT_MAX_NAME_LENGTH;
-		lengthTaggedValueDefault = LENGTH_TAGGED_VALUE_DEFAULT;
-		numRangeDelta = NUM_RANGE_DELTA;
+		workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
+		maxNameLength = ArcGISWorkspaceConstants.DEFAULT_MAX_NAME_LENGTH;
+		lengthTaggedValueDefault = ArcGISWorkspaceConstants.LENGTH_TAGGED_VALUE_DEFAULT;
+		numRangeDelta = ArcGISWorkspaceConstants.NUM_RANGE_DELTA;
 		esriTypesSuitedForRangeConstraint = new TreeSet<String>();
 		outputDirectory = null;
 		outputDirectoryFile = null;
@@ -3011,6 +2878,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		foreignKeySuffix = "ID";
 		reflexiveRelationshipAttributeSuffix = "";
 		numericRangeElementIdsByClassName = new TreeMap<String, Integer>();
+		taggedValuesToRepresent = null;
+		representTaggedValues = false;
 	}
 
 	@Override
@@ -3079,7 +2948,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				}
 
 				String initialValue = null;
-				if (pi.matches(RULE_PROP_INITIAL_VALUE)) {
+				if (pi.matches(
+						ArcGISWorkspaceConstants.RULE_PROP_INITIAL_VALUE)) {
 					initialValue = pi.initialValue();
 				}
 
@@ -3089,7 +2959,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				// handle reflexive relationships
 				if (typeInfo.id.equals(ci.id())) {
 
-					if (pi.matches(RULE_PROP_REFLEXIVE_AS_FIELD)) {
+					if (pi.matches(
+							ArcGISWorkspaceConstants.RULE_PROP_REFLEXIVE_AS_FIELD)) {
 
 						try {
 							createFieldForReflexiveRelationshipProperty(eaClass,
@@ -3208,8 +3079,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 									NumericRangeConstraintMetadata nrcm = numericRangeConstraintByPropNameByClassName
 											.get(ci).get(origPropName);
 
-									double minValue = DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-									double maxValue = DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+									double minValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+									double maxValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
 
 									if (nrcm.hasLowerBoundaryValue()) {
 										if (nrcm.isLowerBoundaryInclusive()) {
@@ -3345,7 +3216,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 									eaTargetClassifierId, initialValue,
 									computeIsNullable(pi));
 
-							if (ci.matches(RULE_CLS_IDENTIFIER_STEREOTYPE)
+							if (ci.matches(
+									ArcGISWorkspaceConstants.RULE_CLS_IDENTIFIER_STEREOTYPE)
 									&& pi.stereotype("identifier")
 									&& !identifierAttributeGUIDByClass
 											.containsKey(ci)) {
@@ -3471,11 +3343,21 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				}
 
-				// determine if an attribute index shall be created
-				if (eaAtt != null && pi.matches(RULE_PROP_ATTINDEX) && "true"
-						.equalsIgnoreCase(pi.taggedValue("sqlUnique"))) {
+				if (eaAtt != null) {
 
-					createAttributeIndex(eaClass, ci, eaAtt, pi);
+					try {
+						addTaggedValuesToRepresent(eaAtt, pi);
+					} catch (EAException e) {
+						result.addError(this, 251, pi.name(), e.getMessage());
+					}
+
+					// determine if an attribute index shall be created
+					if (pi.matches(ArcGISWorkspaceConstants.RULE_PROP_ATTINDEX)
+							&& "true".equalsIgnoreCase(
+									pi.taggedValue("sqlUnique"))) {
+
+						createAttributeIndex(eaClass, ci, eaAtt, pi);
+					}
 				}
 			}
 		}
@@ -3530,7 +3412,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			// handle reflexive relationships
 			if (end1.inClass().id().equals(end2.inClass().id())) {
 
-				if (end1.matches(RULE_PROP_REFLEXIVE_AS_FIELD)) {
+				if (end1.matches(
+						ArcGISWorkspaceConstants.RULE_PROP_REFLEXIVE_AS_FIELD)) {
 
 					ClassInfo ci = end1.inClass();
 
@@ -3595,6 +3478,102 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		EARepositoryUtil.closeRepository(rep);
+	}
+
+	/**
+	 * If any specific tagged values shall be represented, and the info object
+	 * has such tagged values, they will be added.
+	 *
+	 * @param eaAtt
+	 * @param i
+	 * @throws EAException
+	 */
+	private void addTaggedValuesToRepresent(Attribute eaAtt, Info i)
+			throws EAException {
+
+		if (ArcGISWorkspace.representTaggedValues) {
+
+			for (String tvToRepresent : ArcGISWorkspace.taggedValuesToRepresent) {
+				String normalizedTag = options.normalizeTag(tvToRepresent);
+				String[] values = i.taggedValuesForTag(normalizedTag);
+				if (values.length > 0) {
+					EAAttributeUtil.setTaggedValue(eaAtt, new EATaggedValue(
+							tvToRepresent, Arrays.asList(values)));
+				}
+			}
+		}
+	}
+
+	/**
+	 * If any specific tagged values shall be represented, and the info object
+	 * has such tagged values, they will be added.
+	 *
+	 * @param ce
+	 * @param i
+	 * @throws EAException
+	 */
+	private void addTaggedValuesToRepresent(ConnectorEnd ce, Info i)
+			throws EAException {
+
+		if (ArcGISWorkspace.representTaggedValues) {
+
+			for (String tvToRepresent : ArcGISWorkspace.taggedValuesToRepresent) {
+				String normalizedTag = options.normalizeTag(tvToRepresent);
+				String[] values = i.taggedValuesForTag(normalizedTag);
+				if (values.length > 0) {
+					EAConnectorEndUtil.setTaggedValue(ce, new EATaggedValue(
+							tvToRepresent, Arrays.asList(values)));
+				}
+			}
+		}
+	}
+
+	/**
+	 * If any specific tagged values shall be represented, and the info object
+	 * has such tagged values, they will be added.
+	 *
+	 * @param con
+	 * @param i
+	 * @throws EAException
+	 */
+	private void addTaggedValuesToRepresent(Connector con, Info i)
+			throws EAException {
+
+		if (ArcGISWorkspace.representTaggedValues) {
+
+			for (String tvToRepresent : ArcGISWorkspace.taggedValuesToRepresent) {
+				String normalizedTag = options.normalizeTag(tvToRepresent);
+				String[] values = i.taggedValuesForTag(normalizedTag);
+				if (values.length > 0) {
+					EAConnectorUtil.setTaggedValue(con, new EATaggedValue(
+							tvToRepresent, Arrays.asList(values)));
+				}
+			}
+		}
+	}
+
+	/**
+	 * If any specific tagged values shall be represented, and the info object
+	 * has such tagged values, they will be added.
+	 *
+	 * @param e
+	 * @param i
+	 * @throws EAException
+	 */
+	private void addTaggedValuesToRepresent(Element e, Info i)
+			throws EAException {
+
+		if (ArcGISWorkspace.representTaggedValues) {
+
+			for (String tvToRepresent : ArcGISWorkspace.taggedValuesToRepresent) {
+				String normalizedTag = options.normalizeTag(tvToRepresent);
+				String[] values = i.taggedValuesForTag(normalizedTag);
+				if (values.length > 0) {
+					EAElementUtil.setTaggedValue(e, new EATaggedValue(
+							tvToRepresent, Arrays.asList(values)));
+				}
+			}
+		}
 	}
 
 	private Attribute createFieldForReflexiveRelationshipProperty(
@@ -3736,11 +3715,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Could not create output directory. Exception message: '$1$'.";
 		case 6:
 			return "URL '$1$' provided for configuration parameter "
-					+ PARAM_WORKSPACE_TEMPLATE
+					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 					+ " is malformed. Execution will be aborted. Exception message is: '$2$'.";
 		case 7:
 			return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-					+ PARAM_WORKSPACE_TEMPLATE
+					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 		case 8:
 			return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
@@ -3752,9 +3731,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Target configuration map entry for type '$1$' does not have a target type. The map entry will be ignored.";
 		case 12:
 			return "Value of configuration parameter '"
-					+ PARAM_VALUE_RANGE_DELTA
+					+ ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA
 					+ "' could not be parsed as a double value. The default value of "
-					+ NUM_RANGE_DELTA + " will be used for processing.";
+					+ ArcGISWorkspaceConstants.NUM_RANGE_DELTA
+					+ " will be used for processing.";
 		case 13:
 			return "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
 
@@ -3856,7 +3836,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		case 244:
 			return "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
 		case 245:
-			return "Tagged value '" + TV_NUMERIC_TYPE
+			return "Tagged value '" + ArcGISWorkspaceConstants.TV_NUMERIC_TYPE
 					+ "' is not blank. It has value '$1$'. No map entry was found with this value as type. The tagged value will be ignored.";
 		case 246:
 			return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be used as primary key in relationship classes.";
@@ -3866,6 +3846,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Class '$1$' does not have an <<identifier>> attribute.";
 		case 249:
 			return "Reflexive relationship property '$1$' of class '$2$' has max cardinality > 1. The <<Field>> that is created for the property will only support representation of a single relationship.";
+		case 250:
+			return "Could not add tagged values to represent on class '$1$'. Exception message is: '$2$'.";
+		case 251:
+			return "Could not add tagged values to represent on property '$1$'. Exception message is: '$2$'.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
