@@ -160,11 +160,16 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeStatusNotesColumnDocumentation;
 	protected static int defaultSize;
 	protected static int srid;
+	protected static String shortNameByTaggedValue = null;
+	protected static boolean constraintNameUsingShortName = false;
+	protected static boolean indexNameUsingShortName = false;
 	protected static boolean createReferences = false;
 	protected static boolean createDocumentation = true;
 	protected static boolean createExplicitComments = false;
 	protected static boolean createAssociativeTables = false;
 	protected static boolean removeEmptyLinesInDdlOutput = false;
+	protected static boolean representTaggedValues = false;
+	protected static SortedSet<String> taggedValuesToRepresent = null;
 
 	/**
 	 * Contains information parsed from the 'param' attributes of each map entry
@@ -302,6 +307,16 @@ public class SqlDdl implements SingleTarget, MessageSource {
 				createAssociativeTables = true;
 			}
 
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
+				constraintNameUsingShortName = true;
+			}
+			
+			if (pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME)) {
+				indexNameUsingShortName = true;
+			}
+
 			String databaseSystem = options.parameter(this.getClass().getName(),
 					SqlConstants.PARAM_DATABASE_SYSTEM);
 
@@ -398,6 +413,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					ukNaming = new DefaultPostgreSQLUniqueConstraintNamingStrategy();
 				}
 			}
+
+			result.addInfo(this, 9, databaseStrategy.name());
 
 			if (schema.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_IGNORE_CASE)) {
@@ -510,6 +527,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			srid = options.parameterAsInteger(this.getClass().getName(),
 					SqlConstants.PARAM_SRID, SqlConstants.DEFAULT_SRID);
 
+			shortNameByTaggedValue = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE, "shortName",
+					false, true);
+
 			createReferences = options.parameterAsBoolean(
 					this.getClass().getName(),
 					SqlConstants.PARAM_CREATE_REFERENCES,
@@ -526,6 +548,13 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			removeEmptyLinesInDdlOutput = options.parameterAsBoolean(
 					this.getClass().getName(),
 					SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
+
+			List<String> tvsToRepresent = options.parameterAsStringList(null,
+					"representTaggedValues", null, true, true);
+			taggedValuesToRepresent = new TreeSet<>(tvsToRepresent);
+
+			representTaggedValues = pi.matches(
+					SqlConstants.RULE_TGT_SQL_ALL_REPRESENT_TAGGED_VALUES);
 
 			/*
 			 * override parameter 'createDocumentation' if configured via
@@ -1162,11 +1191,16 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		codeStatusNotesColumnDocumentation = null;
 		defaultSize = 0;
 		srid = 0;
+		shortNameByTaggedValue = null;
+		constraintNameUsingShortName = false;
+		indexNameUsingShortName = false;
 		createReferences = false;
 		createDocumentation = true;
 		createExplicitComments = false;
 		createAssociativeTables = false;
 		removeEmptyLinesInDdlOutput = false;
+		taggedValuesToRepresent = null;
+		representTaggedValues = false;
 
 		mapEntryParamInfos = null;
 		databaseStrategy = null;
@@ -1213,6 +1247,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			return "Schema '$1$' is not encoded.";
 		case 8:
 			return "Class '$1$' is not encoded.";
+		case 9:
+			return "Determined database system is '$1$'.";
 		case 15:
 			return "No map entries provided via the configuration.";
 		case 16:

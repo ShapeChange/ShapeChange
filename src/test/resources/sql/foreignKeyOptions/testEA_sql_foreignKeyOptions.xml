@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/sql/foreignKeyOptions/test_sql_foreignKeyOptions.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/sql/foreignKeyOptions/log_sql.xml" />
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="PostgreSQL" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/foreignKeyOptions/postgresql" />
+			<targetParameter name="outputFilename" value="database_model_postgresql" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="public" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLServer" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/foreignKeyOptions/ddl_sqlserver" />
+			<targetParameter name="outputFilename" value="database_model_sqlserver" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLServer.xml" />
+		</Target>
+
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="Oracle" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/foreignKeyOptions/ddl_oracle" />
+			<targetParameter name="outputFilename" value="database_model_oracle" />
+			<!-- Do not use unlimited text, i.e. clob, because the currently used 
+				syntax for check constraints won't work with that. https://stackoverflow.com/questions/18250014/querying-oracle-clob-column -->
+			<!-- <targetParameter name="size" value="-1" /> -->
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

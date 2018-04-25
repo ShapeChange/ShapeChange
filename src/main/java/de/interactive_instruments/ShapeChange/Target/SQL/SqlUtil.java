@@ -36,6 +36,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.StringValueExpression;
@@ -123,5 +125,95 @@ public class SqlUtil {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Determines the name of the given table, for subsequent use by the target.
+	 * By default, the table name is returned. However, if parameter
+	 * useShortName is true, the info object represented by the table (a class,
+	 * an association, or a property) has a tagged value with the short name,
+	 * and that tagged value is not blank, then the short name is returned.
+	 * 
+	 * @param col
+	 * @param useShortName
+	 *            <code>true</code> if the short name should be used, if
+	 *            available
+	 * @return
+	 */
+	public static String determineName(Table table, boolean useShortName) {
+
+		String result = table.getName();
+
+		if (useShortName) {
+
+			Info representedInfo = table.getRepresentedClass();
+
+			if (representedInfo == null) {
+				representedInfo = table.getRepresentedAssociation();
+			}
+
+			if (representedInfo == null) {
+				representedInfo = table.getRepresentedProperty();
+			}
+
+			if (representedInfo != null
+					&& StringUtils.isNotBlank(representedInfo
+							.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = representedInfo
+						.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Determines the name of the given column, for subsequent use by the
+	 * target. By default, the column name is returned. However, if parameter
+	 * useShortName is true, the property represented by the column has a tagged
+	 * value with the short name, and that tagged value is not blank, then the
+	 * short name is returned.
+	 * 
+	 * @param col
+	 * @param useShortName
+	 *            <code>true</code> if the short name should be used, if
+	 *            available
+	 * @return
+	 */
+	public static String determineName(Column col, boolean useShortName) {
+
+		String result = col.getName();
+
+		if (useShortName) {
+
+			Info representedInfo = col.getRepresentedProperty();
+
+			if (representedInfo != null
+					&& StringUtils.isNotBlank(representedInfo
+							.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = representedInfo
+						.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
+	}
+
+	public static String determineName(PropertyInfo pi, boolean useShortName) {
+
+		String result = pi.name();
+
+		if (useShortName) {
+
+			if (StringUtils.isNotBlank(
+					pi.taggedValue(SqlDdl.shortNameByTaggedValue))) {
+
+				result = pi.taggedValue(SqlDdl.shortNameByTaggedValue).trim();
+			}
+		}
+
+		return result;
 	}
 }

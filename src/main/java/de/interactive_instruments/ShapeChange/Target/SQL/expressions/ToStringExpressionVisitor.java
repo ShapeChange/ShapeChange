@@ -123,4 +123,14 @@ public class ToStringExpressionVisitor implements ExpressionVisitor {
 	public void visit(UnquotedStringExpression unquotedStringExpression) {
 		this.expressions.add(unquotedStringExpression.toString());
 	}
+
+	@Override
+	public void visit(BetweenExpression betweenExpression) {
+		this.expressions.add(betweenExpression.toString());
+	}
+
+	@Override
+	public void visit(DoubleValueExpression doubleValueExpression) {
+		this.expressions.add(doubleValueExpression.toString());
+	}
 }

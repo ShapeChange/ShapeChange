@@ -52,7 +52,9 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.BetweenExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.DoubleValueExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.InExpression;
@@ -113,10 +115,12 @@ public class SqlBuilder implements MessageSource {
 	private List<Comment> commentStatements = new ArrayList<Comment>();
 
 	private SqlNamingScheme namingScheme;
+	private SqlDdl sqlddl;
 
 	public SqlBuilder(SqlDdl sqlddl, ShapeChangeResult result, Options options,
 			Model model, SqlNamingScheme namingScheme) {
 
+		this.sqlddl = sqlddl;
 		this.result = result;
 		this.options = options;
 
@@ -931,7 +935,9 @@ public class SqlBuilder implements MessageSource {
 	 * @param pi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
-			Column column, PropertyInfo pi) {
+			Column column) {
+
+		PropertyInfo pi = column.getRepresentedProperty();
 
 		/*
 		 * ignore the constraint if a type mapping exists for the value type of
@@ -953,8 +959,7 @@ public class SqlBuilder implements MessageSource {
 					pi.fullNameInSchema());
 		} else {
 
-			alterTableAddCheckConstraintForEnumerationValueType(column,
-					pi.name(), enumCi);
+			alterTableAddCheckConstraintForEnumerationValueType(column, enumCi);
 		}
 	}
 
@@ -966,8 +971,7 @@ public class SqlBuilder implements MessageSource {
 	 * @param enumCi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
-			Column column, String propertyNameForConstraintName,
-			ClassInfo enumCi) {
+			Column column, ClassInfo enumCi) {
 
 		/*
 		 * ignore the constraint if a type mapping exists for the value type
@@ -986,11 +990,11 @@ public class SqlBuilder implements MessageSource {
 			result.addError(this, 32, enumCi.name(), column.getName());
 		} else {
 
-			String constraintName = namingScheme
-					.nameForCheckConstraint(tableWithColumn.getName(),
-							propertyNameForConstraintName == null
-									? column.getName()
-									: propertyNameForConstraintName);
+			String constraintName = namingScheme.nameForCheckConstraint(
+					SqlUtil.determineName(tableWithColumn,
+							SqlDdl.constraintNameUsingShortName),
+					SqlUtil.determineName(column,
+							SqlDdl.constraintNameUsingShortName));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -1081,18 +1085,21 @@ public class SqlBuilder implements MessageSource {
 		return false;
 	}
 
-	private void alterTableAddCheckConstraintToRestrictTimeOfDate(Column column,
-			PropertyInfo pi) {
+	private void alterTableAddCheckConstraintToRestrictTimeOfDate(
+			Column column) {
 
 		Expression expr = SqlDdl.databaseStrategy
-				.expressionForCheckConstraintToRestrictTimeOfDate(pi, column);
+				.expressionForCheckConstraintToRestrictTimeOfDate(column);
 
 		if (expr != null) {
 
 			Table tableWithColumn = column.getInTable();
 
 			String constraintName = namingScheme.nameForCheckConstraint(
-					tableWithColumn.getName(), pi.name());
+					SqlUtil.determineName(tableWithColumn,
+							SqlDdl.constraintNameUsingShortName),
+					SqlUtil.determineName(column,
+							SqlDdl.constraintNameUsingShortName));
 
 			Alter alter = new Alter();
 			alter.setTable(tableWithColumn);
@@ -1925,9 +1932,14 @@ public class SqlBuilder implements MessageSource {
 	}
 
 	/**
-	 * Generates index creation statements for all geometry properties/columns
-	 * contained in {@link #geometryPropsByTableName}. The statements are stored
-	 * in an internal list ({@link #geometryIndexCreationStatements}).
+	 * Generates an index creation statement for the given geometry
+	 * property/column.
+	 * 
+	 * @param tableWithColumn
+	 * @param columnForProperty
+	 * @param pi
+	 *            property represented by the column
+	 * @return
 	 */
 	private Statement generateGeometryIndex(Table tableWithColumn,
 			Column columnForProperty, PropertyInfo pi) {
@@ -1936,11 +1948,12 @@ public class SqlBuilder implements MessageSource {
 				.getCharacteristics(pi.typeInfo().name, pi.encodingRule("sql"),
 						SqlConstants.ME_PARAM_GEOMETRY);
 
-		// TBD: UPDATE NAMING PATTERN?
-
-		String indexName = "idx_" + tableWithColumn.getName() + "_"
-				+ columnForProperty.getName();
-
+		String indexName = namingScheme.nameForGeometryIndex(
+				SqlUtil.determineName(tableWithColumn,
+						SqlDdl.indexNameUsingShortName),
+				SqlUtil.determineName(columnForProperty,
+						SqlDdl.indexNameUsingShortName));
+		
 		Statement result = SqlDdl.databaseStrategy.geometryIndexColumnPart(
 				indexName, tableWithColumn, columnForProperty,
 				geometryCharacteristics);
@@ -2185,23 +2198,70 @@ public class SqlBuilder implements MessageSource {
 							&& pi.matches(
 									SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINTS_FOR_ENUMERATIONS)) {
 
-						alterTableAddCheckConstraintForEnumerationValueType(col,
-								pi);
+						alterTableAddCheckConstraintForEnumerationValueType(
+								col);
 					}
 
 					if (pi.typeInfo().name.equalsIgnoreCase("Date")
 							&& pi.matches(
 									SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_RESTRICT_TIME_OF_DATE)) {
 
-						alterTableAddCheckConstraintToRestrictTimeOfDate(col,
-								pi);
+						alterTableAddCheckConstraintToRestrictTimeOfDate(col);
+					}
+
+					if (pi.matches(
+							SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE)) {
+
+						Double lowerBoundaryValue = new Double(-1000000000);
+						;
+						Double upperBoundaryValue = new Double(1000000000);
+
+						boolean foundLowerBoundary = false;
+						boolean foundUpperBoundary = false;
+
+						String TV_RANGE_MIN = "rangeMinimum";
+						String TV_RANGE_MAX = "rangeMaximum";
+
+						String rMin = pi.taggedValue(TV_RANGE_MIN);
+						String rMax = pi.taggedValue(TV_RANGE_MAX);
+
+						if (StringUtils.isNotBlank(rMin)) {
+
+							try {
+								lowerBoundaryValue = Double
+										.parseDouble(rMin.trim());
+								foundLowerBoundary = true;
+							} catch (NumberFormatException e) {
+								MessageContext mc = result.addWarning(this, 36,
+										rMin.trim(), TV_RANGE_MIN);
+								mc.addDetail(this, 100, pi.fullNameInSchema());
+							}
+						}
+
+						if (StringUtils.isNotBlank(rMax)) {
+
+							try {
+								upperBoundaryValue = Double
+										.parseDouble(rMax.trim());
+								foundUpperBoundary = true;
+							} catch (NumberFormatException e) {
+								MessageContext mc = result.addWarning(this, 36,
+										rMax.trim(), TV_RANGE_MAX);
+								mc.addDetail(this, 100, pi.fullNameInSchema());
+							}
+						}
+
+						if (foundLowerBoundary || foundUpperBoundary) {
+
+							alterTableAddCheckConstraintForRange(col,
+									lowerBoundaryValue, upperBoundaryValue);
+						}
 					}
 				}
 
 				ClassInfo enumerationValueType = col.getEnumerationValueType();
 				if (enumerationValueType != null) {
 					alterTableAddCheckConstraintForEnumerationValueType(col,
-							SqlDdl.nameCodeStatusCLColumn,
 							enumerationValueType);
 				}
 			}
@@ -2231,8 +2291,11 @@ public class SqlBuilder implements MessageSource {
 						} else {
 
 							String constraintName = namingScheme
-									.nameForUniqueConstraint(table.getName(),
-											col.getName());
+									.nameForUniqueConstraint(
+											SqlUtil.determineName(table,
+													SqlDdl.constraintNameUsingShortName),
+											SqlUtil.determineName(col,
+													SqlDdl.constraintNameUsingShortName));
 
 							Alter alter = alterTableAddUniqueConstraint(table,
 									constraintName, col);
@@ -2270,8 +2333,13 @@ public class SqlBuilder implements MessageSource {
 
 						Alter alter = alterTableAddForeignKeyConstraint(t_main,
 								namingScheme.nameForForeignKeyConstraint(
-										t_main.getName(), cd.getName(),
-										cd.getReferencedTable().getName()),
+										SqlUtil.determineName(t_main,
+												SqlDdl.constraintNameUsingShortName),
+										SqlUtil.determineName(cd,
+												SqlDdl.constraintNameUsingShortName),
+										SqlUtil.determineName(
+												cd.getReferencedTable(),
+												SqlDdl.constraintNameUsingShortName)),
 								cd, cd.getReferencedTable());
 
 						foreignKeyConstraints.add(alter);
@@ -2475,6 +2543,55 @@ public class SqlBuilder implements MessageSource {
 		return result;
 	}
 
+	private void alterTableAddCheckConstraintForRange(Column column,
+			Double lowerBound, Double upperBound) {
+
+		Table tableWithColumn = column.getInTable();
+
+		String constraintName = namingScheme.nameForCheckConstraint(
+				SqlUtil.determineName(tableWithColumn,
+						SqlDdl.constraintNameUsingShortName),
+				SqlUtil.determineName(column,
+						SqlDdl.constraintNameUsingShortName));
+
+		Alter alter = new Alter();
+		alter.setTable(tableWithColumn);
+
+		ConstraintAlterExpression cae = new ConstraintAlterExpression();
+		alter.setExpression(cae);
+
+		cae.setOperation(AlterOperation.ADD);
+
+		CheckConstraint cc = new CheckConstraint();
+		cae.setConstraint(cc);
+
+		cc.setName(constraintName);
+
+		BetweenExpression bexp = new BetweenExpression();
+
+		ColumnExpression col = new ColumnExpression(column);
+		bexp.setTestExpression(col);
+
+		DoubleValueExpression lowerExp = new DoubleValueExpression(lowerBound);
+		bexp.setBeginExpression(lowerExp);
+
+		DoubleValueExpression upperExp = new DoubleValueExpression(upperBound);
+		bexp.setEndExpression(upperExp);
+
+		if (column.isNotNull()) {
+			cc.setExpression(bexp);
+		} else {
+			// add null check
+			IsNullExpression nullexp = new IsNullExpression();
+			nullexp.setExpression(col);
+
+			OrExpression orexp = new OrExpression(nullexp, bexp);
+			cc.setExpression(orexp);
+		}
+
+		this.checkConstraints.add(alter);
+	}
+
 	private Alter alterTableAddUniqueConstraint(Table tableWithColumn,
 			String uniqueConstraintIdentifier, Column column) {
 
@@ -2575,7 +2692,120 @@ public class SqlBuilder implements MessageSource {
 
 		fkc.addColumn(column);
 
+		// set foreign key options if relevant
+		PropertyInfo representedPi = column.getRepresentedProperty();
+		if (representedPi != null) {
+
+			Info relevantInfo = representedPi;
+
+			// first check tagged values on the property itself
+			String tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
+			String tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
+
+			/*
+			 * if the property is an association role and does not define any
+			 * option, check if the association defines an option
+			 */
+			if (!representedPi.isAttribute() && StringUtils.isBlank(tvOnDelete)
+					&& StringUtils.isBlank(tvOnUpdate)) {
+
+				relevantInfo = representedPi.association();
+				tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
+				tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
+			}
+
+			setForeignKeyOption(true, tvOnDelete, fkc, column, relevantInfo);
+			setForeignKeyOption(false, tvOnUpdate, fkc, column, relevantInfo);
+		}
+
 		return alter;
+	}
+
+	/**
+	 * @param isOnDelete
+	 *            <code>true</code> if the option is for the 'ON DELETE' clause,
+	 *            <code>false</code> if it is for the 'ON UPDATE' clause.
+	 * @param optionValue
+	 *            String value for the option; can be <code>null</code> (then
+	 *            this method has no effect)
+	 * @param fkc
+	 *            the constraint on which the option would be set
+	 * @param column
+	 *            the column to which the constraint applies, relevant for
+	 *            validity checks on the option
+	 * @param relevantInfo
+	 *            the model element that defines the option via tagged value,
+	 *            relevant for log messages
+	 */
+	private void setForeignKeyOption(boolean isOnDelete, String optionValue,
+			ForeignKeyConstraint fkc, Column column, Info relevantInfo) {
+
+		if (StringUtils.isNotBlank(optionValue)) {
+
+			Table table = column.getInTable();
+
+			try {
+
+				ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option
+						.fromString(optionValue);
+
+				if ((isOnDelete && SqlDdl.databaseStrategy
+						.isForeignKeyOnDeleteOptionSupported(o))
+						|| (!isOnDelete && SqlDdl.databaseStrategy
+								.isForeignKeyOnUpdateOptionSupported(o))) {
+
+					/*
+					 * Check that the foreign key option is applicable to the
+					 * given column. At the moment, this includes checking that
+					 * the option is not 'SET NULL' in case that the column is
+					 * 'NOT NULL'.
+					 */
+					boolean isValid = true;
+
+					if (o == ForeignKeyConstraint.Option.SET_NULL
+							&& column.isNotNull()) {
+
+						isValid = false;
+
+						MessageContext mc = result.addWarning(this, 37,
+								column.getName());
+						if (relevantInfo != null && mc != null) {
+							mc.addDetail(this, 102, table.getName(),
+									column.getName());
+							mc.addDetail(this, 38,
+									relevantInfo.fullNameInSchema());
+						}
+					}
+
+					if (isValid) {
+						if (isOnDelete) {
+							fkc.setOnDelete(o);
+						} else {
+							fkc.setOnUpdate(o);
+						}
+					}
+
+				} else {
+					MessageContext mc = result.addInfo(this, 35, o.toString(),
+							isOnDelete ? "sqlOnDelete" : "sqlOnUpdate",
+							isOnDelete ? "ON DELETE" : "ON UPDATE");
+					if (mc != null) {
+						mc.addDetail(this, 102, table.getName(),
+								column.getName());
+						mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+					}
+				}
+
+			} catch (IllegalArgumentException e) {
+				MessageContext mc = result.addError(this, 34, optionValue,
+						isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
+				if (mc != null) {
+					mc.addDetail(this, 102, table.getName(), column.getName());
+					mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -2703,11 +2933,23 @@ public class SqlBuilder implements MessageSource {
 			return "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
 		case 33:
 			return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
+		case 34:
+			return "Foreign key constraint option '$1$' defined by tagged value '$2$' is unknown. The option is ignored.";
+		case 35:
+			return "Foreign key constraint option '$1$' is defined by tagged value '$2$'. The database system does not support this option for clause '$3$'. The option is ignored.";
+		case 36:
+			return "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
+		case 37:
+			return "Foreign key option is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key option is ignored.";
+		case 38:
+			return "Model element that defines the option: '$1$'";
 
 		case 100:
 			return "Context: property '$1$'.";
 		case 101:
 			return "Context: class '$1$'.";
+		case 102:
+			return "Context: table '$1$', column '$2$'.";
 		default:
 			return "(" + SqlBuilder.class.getName()
 					+ ") Unknown message with number: " + mnr;
