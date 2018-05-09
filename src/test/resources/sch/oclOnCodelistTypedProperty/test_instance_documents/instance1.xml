@@ -22,6 +22,7 @@
  <ex:attribute3Gml32 codeSpace="file:/C:/TMP/CodeListGml32.xml">codeA</ex:attribute3Gml32>
  <ex:attribute4Gml32>codeB</ex:attribute4Gml32>
  <ex:attribute4Gml32 codeSpace="file:/C:/TMP/CodeListGml32.xml">codeB</ex:attribute4Gml32>
+ <ex:attribute4Gml32 codeSpace="file:/C:/TMP/SubCodeListGml32.xml">codeC</ex:attribute4Gml32>
  <ex:attribute4Gml32 xsi:nil="true" nilReason="inapplicable"/>
  <ex:attribute5Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeX</ex:attribute5Gml33>
  <ex:attribute6Gml33 codeSpace="file:/C:/TMP/CodeListGml33.xml">codeY</ex:attribute6Gml33>
