@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/codeLists/CodeListLoader/test_codeListLoader.EAP" />
+		<parameter name="appSchemaNameRegex" value=".*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="tag"
+				tag="documentation" />
+			<DescriptorSource descriptor="alias" source="none" />
+			<DescriptorSource descriptor="definition" source="none" />
+			<DescriptorSource descriptor="description" source="none" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/codeLists/CodeListLoader/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform"
+			id="IDENTITY" input="INPUT" mode="enabled" />
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Adding.CodeListLoader"
+			id="TRF_CL_LOADER" input="IDENTITY" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="cl_loader_rules">
+					<rule name="rule-trf-cls-loadCodes" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<!-- Create gmx:CodeListDictionary -->
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries"
+			mode="enabled" inputs="TRF_CL_LOADER">
+			<targetParameter name="outputDirectory"
+				value="testResults/codeLists/CodeListLoader/results/singleLanguage" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="infoURL" value="http://example.org/info" />
+			<targetParameter name="gmlid" value="name" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

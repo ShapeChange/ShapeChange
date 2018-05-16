@@ -55,4 +55,13 @@ public class CodelistsTest extends WindowsBasicTest {
 				"src/test/resources/codeLists/CodeListDictionaries_GML/reference/results");
 	}
 
+	@Test
+	public void testCodeListLoader() {
+		/*
+		 * 
+		 */
+		multiTest("src/test/resources/codeLists/CodeListLoader/testEA_codeListLoader.xml",
+				new String[] { "xml" }, "testResults/codeLists/CodeListLoader/results",
+				"src/test/resources/codeLists/CodeListLoader/reference/results");
+	}
 }

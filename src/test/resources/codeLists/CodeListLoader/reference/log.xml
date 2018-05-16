@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/codeLists/CodeListLoader/testEA_codeListLoader.xml" end="Wed May 16 13:32:46 CEST 2018" resultCode="0" start="Wed May 16 13:32:33 CEST 2018" version="2.5.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\codeLists\CodeListLoader\test_codeListLoader.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\codeLists\CodeListLoader\test_codeListLoader.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\codeLists\CodeListLoader\test_codeListLoader.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\codeLists\CodeListLoader\test_codeListLoader.EAP"/>
+    <Info message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'TRF_CL_LOADER' for input ID: 'IDENTITY'."/>
+    <Info message="---------- now processing: rule-trf-cls-loadCodes ----------"/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'TRF_CL_LOADER' for input ID: 'IDENTITY'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/codeListLoader'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'TRF_CL_LOADER'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries' for input ID: 'TRF_CL_LOADER'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/codeLists/CodeListLoader/results/singleLanguage/TRF_CL_LOADER/CodesISO639_2.xml" scope="cll:CodesISO639_2" target="Code List Dictionary">CodesISO639_2.xml</Result>
+  </Results>
+</ShapeChangeResult>
