@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex1="http://example.org/shapechange/sch/codelist2/codeListRestriction/1" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:iso="http://example.org/shapechange/sch/codelist2/isoBaseSchema" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/codelist2/codeListRestriction/1" version="1">
+  <import namespace="http://example.org/shapechange/sch/codelist2/isoBaseSchema" schemaLocation="./isoBase.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="CodeListS1" substitutionGroup="gco:CharacterString" type="gco:CodeListValue_Type"/>
+  <complexType name="CodeListS1_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:CodeListS1"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="CodeListS2" substitutionGroup="gco:CharacterString" type="gco:CodeListValue_Type"/>
+  <complexType name="CodeListS2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:CodeListS2"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element abstract="true" name="AbstractFeatureTypeS1_1" substitutionGroup="iso:FeatureTypeIso" type="ex1:AbstractFeatureTypeS1_1_Type"/>
+  <complexType abstract="true" name="AbstractFeatureTypeS1_1_Type">
+    <complexContent>
+      <extension base="iso:FeatureTypeIso_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractFeatureTypeS1_1_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:AbstractFeatureTypeS1_1"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeS1_2" substitutionGroup="ex1:AbstractFeatureTypeS1_1" type="ex1:FeatureTypeS1_2_Type"/>
+  <complexType name="FeatureTypeS1_2_Type">
+    <complexContent>
+      <extension base="ex1:AbstractFeatureTypeS1_1_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeS1_2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:FeatureTypeS1_2"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeS1_3" substitutionGroup="ex1:AbstractFeatureTypeS1_1" type="ex1:FeatureTypeS1_3_Type"/>
+  <complexType name="FeatureTypeS1_3_Type">
+    <complexContent>
+      <extension base="ex1:AbstractFeatureTypeS1_1_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeS1_3_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:FeatureTypeS1_3"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

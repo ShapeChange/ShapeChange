@@ -52,10 +52,12 @@ import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
@@ -101,6 +103,8 @@ public class ConstraintConverter implements Transformer, MessageSource {
 	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion";
 
 	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch";
+
+	public static final String RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV = "rule-trf-cls-constraints-codeListRestrictionToTV";
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -152,9 +156,101 @@ public class ConstraintConverter implements Transformer, MessageSource {
 					RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
 			applyRuleGeometryRestrictionToGeometryTaggedValue(genModel,
 					trfConfig, rules, false);
+
+		} else if (rules.contains(
+				RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV)) {
+
+			result.addInfo(null, 20103,
+					RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV);
+			applyRuleCodeListRestrictionToTaggedValue(genModel, trfConfig,
+					rules);
 		}
 
 		// apply post-processing (nothing to do right now)
+	}
+
+	private void applyRuleCodeListRestrictionToTaggedValue(
+			GenericModel genModel, TransformerConfiguration trfConfig,
+			Set<String> rules) {
+
+		/*
+		 * Regular expression: (?s).*inv:\s*(?:(?:self\.)?(?:\w+)->notEmpty\(\)
+		 * implies)?\s*(?:self\.)?(\w+)\.oclIsTypeOf\((\w+)\)\s*
+		 * 
+		 * The expression supports optional "self." in the expression, as well
+		 * as a check that the property is not empty.
+		 * 
+		 * group 1: property name
+		 * 
+		 * group 2: type name
+		 */
+		Pattern regex = Pattern.compile(
+				"(?s).*inv:\\s*(?:(?:self\\.)?(?:\\w+)->notEmpty\\(\\) implies)?\\s*(?:self\\.)?(\\w+)\\.oclIsTypeOf\\((\\w+)\\)\\s*");
+
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+			// ignore enumerations, code lists, and basic types
+			if (genCi.category() == Options.ENUMERATION
+					|| genCi.category() == Options.CODELIST
+					|| genCi.category() == Options.BASICTYPE) {
+				continue;
+			}
+
+			for (Constraint con : genCi.constraints()) {
+
+				// use regex to identify the property name and type restriction
+				Matcher matcher = regex.matcher(con.text());
+
+				if (matcher.matches()) {
+
+					String propName = matcher.group(1);
+					String typeName = matcher.group(2);
+
+					// check if type defined by restriction is a code list, and
+					// type of the property is CharacterString
+
+					PropertyInfo pi = genCi.property(propName);
+
+					if (pi == null) {
+						result.addError(this, 200, con.name(), genCi.name(),
+								propName);
+						continue;
+					}
+
+					ClassInfo ci = genModel.classByName(typeName);
+
+					if (ci == null) {
+						result.addError(this, 201, con.name(), genCi.name(),
+								typeName);
+						continue;
+					}
+
+					if (pi.typeInfo().name.equalsIgnoreCase("CharacterString")
+							&& ci.category() == Options.CODELIST) {
+
+						result.addInfo(this, 202, con.name(), genCi.name(),
+								propName, typeName);
+
+						/*
+						 * Add name of code list in TV 'codeListRestriction' on
+						 * the property.
+						 * 
+						 * NOTE: This will NOT result in a subtype specific
+						 * restriction. The TV is defined on the property
+						 * itself, which may belong to a supertype of genCi,
+						 * i.e. the class for which the constraint is defined.
+						 * That should be sufficient for the case of a metadata
+						 * profile, where a property from ISO 19115 (with type
+						 * CharacterString) is restricted (via OCL constraint,
+						 * typically in a subtype) to a code list.
+						 */
+
+						((GenericPropertyInfo) pi).setTaggedValue(
+								"codeListRestriction", typeName, false);
+					}
+				}
+			}
+		}
 	}
 
 	private void applyRuleGeometryRestrictionToGeometryTaggedValue(
@@ -224,8 +320,9 @@ public class ConstraintConverter implements Transformer, MessageSource {
 		} else {
 
 			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-				
-				if(genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST) {
+
+				if (genCi.category() == Options.ENUMERATION
+						|| genCi.category() == Options.CODELIST) {
 					continue;
 				}
 
@@ -297,8 +394,9 @@ public class ConstraintConverter implements Transformer, MessageSource {
 
 					String geometryTV = genCi.taggedValue("geometry");
 					if (geometryTV != null) {
-						MessageContext mc = result.addWarning(this, 102, genCi.name(), geometryTV, join);
-						if(mc != null) {
+						MessageContext mc = result.addWarning(this, 102,
+								genCi.name(), geometryTV, join);
+						if (mc != null) {
 							mc.addDetail(this, 1, genCi.fullName());
 						}
 					}
@@ -333,7 +431,15 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			return "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
 		case 102:
 			return "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
-			
+
+		// Messages for RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV
+		case 200:
+			return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Property '$3$' identified by the type restriction was not found for the class. The constraint will be ignored.";
+		case 201:
+			return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Type '$3$' identified by the type restriction was not found in the model. The constraint will be ignored.";
+		case 202:
+			return "Code list restriction identified for type restriction constraint '$1$' of class '$2$'. Property '$3$' is restricted to code list '$4$'.";
+
 		default:
 			return "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;

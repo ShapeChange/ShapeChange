@@ -2469,6 +2469,17 @@ public class XsdDocument implements MessageSource {
 
 		boolean multiplicityAlreadySet = false;
 
+		/*
+		 * Generate code list checks for properties where the property type is
+		 * restricted (e.g. via OCL constraint) to a code list. This kind of
+		 * restriction can be used in ISO metadata profiles.
+		 */
+		if (StringUtils.isNotBlank(propi.taggedValue("codeListRestriction"))) {
+			String typeName = propi.taggedValue("codeListRestriction");
+			ClassInfo codeList = propi.model().classByName(typeName);
+			addAssertionForCodelistUri(cibase, propi, codeList, schDoc);
+		}
+
 		if (me != null) {
 			/*
 			 * So we have a mapping to a pre-defined element or type
@@ -2922,8 +2933,9 @@ public class XsdDocument implements MessageSource {
 					.matches("rule-xsd-cls-standard-19139-property-types")) {
 				addAttribute(e, "type", propertyTypeName(ci, true));
 				addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
-				if (ci.category() == Options.CODELIST)
+				if (ci.category() == Options.CODELIST) {
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
+				}
 
 			} else if (ci.matches("rule-xsd-cls-standard-gml-property-types")
 					|| ci.matches("rule-xsd-cls-standard-swe-property-types")) {
@@ -3317,7 +3329,10 @@ public class XsdDocument implements MessageSource {
 	 * @param propi
 	 *            the property
 	 * @param typeCi
-	 *            class that is the (value) type of the property
+	 *            a code list type; typically the (value) type of the property,
+	 *            but could also be a code list type that was defined via an
+	 *            additional restriction (tagged value - potentially derived
+	 *            from an OCL constraint)
 	 * @param schDoc
 	 */
 	private void addAssertionForCodelistUri(ClassInfo cibase,

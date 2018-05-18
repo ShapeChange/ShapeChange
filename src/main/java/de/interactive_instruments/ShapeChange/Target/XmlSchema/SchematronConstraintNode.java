@@ -1498,24 +1498,28 @@ public abstract class SchematronConstraintNode {
 			boolean emptyobject = xptobj.fragment.length() == 0;
 
 			// Obtain the necessary classes from the model
-			HashSet<String> classnames = new HashSet<String>();
+
+			SortedSet<ClassInfo> relevantClasses = new TreeSet<>();
+
 			if (!exact) {
 				SortedSet<String> subtypes = argumentClass.subtypes();
-				if (subtypes != null) {
-					for (String stid : subtypes) {
-						ClassInfo ci = argumentClass.model().classById(stid);
-						if (ci.isAbstract())
-							continue;
-						classnames.add(schemaObject.getAndRegisterXmlName(ci));
+
+				for (String stid : subtypes) {
+
+					ClassInfo ci = argumentClass.model().classById(stid);
+
+					if (!ci.isAbstract()) {
+						relevantClasses.add(ci);
 					}
 				}
 			}
-			if (!argumentClass.isAbstract())
-				classnames
-						.add(schemaObject.getAndRegisterXmlName(argumentClass));
+
+			if (!argumentClass.isAbstract()) {
+				relevantClasses.add(argumentClass);
+			}
 
 			// Construct the result expression
-			if (classnames.size() == 0) {
+			if (relevantClasses.size() == 0) {
 
 				// There is no concrete class known. So, this must be false.
 				xptobj.fragment = negated ? "true()" : "false()";
@@ -1534,16 +1538,69 @@ public abstract class SchematronConstraintNode {
 				}
 				if (!emptyobject)
 					xptobj.fragment += "[";
-				for (String name : classnames) {
-					if (!first)
-						xptobj.fragment += negated ? "and" : " or ";
+
+				/*
+				 * If we have more than one component, surround each part we add
+				 * with parentheses (only relevant for non-negated case).
+				 */
+				boolean surroundWithBrackets = relevantClasses.size() > 1;
+
+				for (ClassInfo ci : relevantClasses) {
+
+					if (!first) {
+						xptobj.fragment += negated ? " and " : " or ";
+					}
+
 					first = false;
-					xptobj.fragment += "name()" + (negated ? "!=" : "=") + "'"
-							+ name + "'";
+
+					/*
+					 * 2018-05-16 JE: comparison based on QName as literal value
+					 * (like 'ex:ClassX') is dangerous, because it depends on a
+					 * fixed namespace prefix. However, the prefix of a
+					 * namespace can vary. Therefore, I changed the logic from
+					 * name()=aQName to use local-name() and namespace-uri().
+					 */
+
+					String namespace = ci.pkg().targetNamespace();
+					String localName = ci.name();
+
+					MapEntry me = ci.options().elementMapEntry(ci.name(),
+							ci.encodingRule("xsd"));
+
+					if (me != null && StringUtils.isNotBlank(me.p1)) {
+
+						String xmlElement = me.p1;
+						String[] parts = xmlElement.split(":");
+
+						if (parts.length > 1) {
+							String nspref = parts[0];
+							String ns = schemaObject.options
+									.fullNamespace(nspref);
+							if (ns != null) {
+								namespace = ns;
+								localName = parts[1];
+							}
+						}
+					}
+
+					if (negated) {
+						xptobj.fragment += "not(";
+					} else if (surroundWithBrackets) {
+						xptobj.fragment += "(";
+					}
+
+					xptobj.fragment += "local-name()='" + localName
+							+ "' and namespace-uri()='" + namespace + "'";
+
+					if (negated || surroundWithBrackets) {
+						xptobj.fragment += ")";
+					}
 				}
 				xptobj.priority = 3;
-				if (classnames.size() > 1)
+				if (relevantClasses.size() > 1) {
 					xptobj.priority = negated ? 2 : 1;
+				}
+
 				if (!emptyobject) {
 					xptobj.fragment += "]";
 					xptobj.priority = 10;
@@ -2827,7 +2884,7 @@ public abstract class SchematronConstraintNode {
 				}
 
 				String propertyQName = schemaObject.getAndRegisterXmlName(pi);
-				
+
 				boolean is19139 = pi.matches("rule-xsd-all-naming-19139")
 						|| (ci != null && ci.matches(
 								"rule-xsd-cls-standard-19139-property-types"));
@@ -3086,11 +3143,11 @@ public abstract class SchematronConstraintNode {
 						// In-line containment must be treated
 						// --> .../attr/*
 						frag_inl = obj.fragment;
-						
+
 						if (frag_inl.length() > 0) {
 
 							if (obj.priority < 9) {
-								
+
 								frag_inl = "(" + frag_inl + ")";
 								/*
 								 * NOTE: Setting the obj.priority here (to 11)

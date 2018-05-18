@@ -7,14 +7,14 @@
     <rule context="p:Type1">
       <let name="A" value="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']"/>
       <let name="B" value="b:att3/*"/>
-      <assert test="b:att1/*[name()='b:ClassificationCode']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
+      <assert test="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
       <assert test="concat($A/@codeList,'/',$A/@codeListValue) != 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode/classified'">att1IsNotClassified:  att1 is not of value classified </assert>
       <assert test="not($B[*]/concat(@codeList,'/',@codeListValue))">att3IsEmpty:  att3 not part of the profile </assert>
     </rule>
     <rule context="b:Type1">
       <let name="A" value="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']"/>
       <let name="B" value="b:att3/*"/>
-      <assert test="b:att1/*[name()='b:ClassificationCode']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
+      <assert test="b:att1/*[local-name()='ClassificationCode' and namespace-uri()='http://www.opengis.net/ows8/test/3']">att1IsClassificationCode:  att1 is restricted to ClassificationCode values </assert>
       <assert test="concat($A/@codeList,'/',$A/@codeListValue) != 'http://metadata.ces.mil/mdr/ns/GSIP/codelist/ClassificationCode/classified'">att1IsNotClassified:  att1 is not of value classified </assert>
       <assert test="not($B[*]/concat(@codeList,'/',@codeListValue))">att3IsEmpty:  att3 not part of the profile </assert>
     </rule>

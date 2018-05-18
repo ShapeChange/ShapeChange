@@ -76,4 +76,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch" }, "testResults/sch/oclIsTypeOf",
 				"src/test/resources/sch/oclIsTypeOf/reference");
 	}
+	
+	@Test
+	public void schematronTestCodeListRestrictionFromOCL() {
+		multiTest("src/test/resources/sch/codelist2_codeListRestrictionFromOCL/testEA_sch_codelist2_codeListRestrictionFromOCL.xml",
+				new String[] { "sch" }, "testResults/sch/codelist2_codeListRestrictionFromOCL",
+				"src/test/resources/sch/codelist2_codeListRestrictionFromOCL/reference");
+	}
 }

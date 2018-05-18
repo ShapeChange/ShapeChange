@@ -116,7 +116,7 @@ public abstract class ModelImpl implements Model {
 			"scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique",
 			"codelistType", "sqlOnUpdate", "sqlOnDelete", "shortName",
 			"codeListSource", "codeListSourceCharset",
-			"codeListSourceRepresentation" };
+			"codeListSourceRepresentation", "codeListRestriction" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
