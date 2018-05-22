@@ -174,7 +174,8 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			Set<String> rules) {
 
 		/*
-		 * Regular expression: (?s).*inv:\s*(?:(?:self\.)?(?:\w+)->notEmpty\(\)
+		 * Regular expression for property with max mult = 1:
+		 * (?s).*inv:\s*(?:(?:self\.)?(?:\w+)->notEmpty\(\)
 		 * implies)?\s*(?:self\.)?(\w+)\.oclIsTypeOf\((\w+)\)\s*
 		 * 
 		 * The expression supports optional "self." in the expression, as well
@@ -184,8 +185,22 @@ public class ConstraintConverter implements Transformer, MessageSource {
 		 * 
 		 * group 2: type name
 		 */
-		Pattern regex = Pattern.compile(
+		Pattern regex1 = Pattern.compile(
 				"(?s).*inv:\\s*(?:(?:self\\.)?(?:\\w+)->notEmpty\\(\\) implies)?\\s*(?:self\\.)?(\\w+)\\.oclIsTypeOf\\((\\w+)\\)\\s*");
+
+		/*
+		 * Regular expression that covers the case of a property with max mult >
+		 * 1:
+		 * 
+		 * (?s).*inv:\s*(?:self\.)?(\w+)->forAll\(\w+\|(?:\w+->notEmpty\(\)
+		 * implies )?\w+\.oclIsTypeOf\((\w+)\)\)\s*
+		 * 
+		 * group 1: property name
+		 * 
+		 * group 2: type name
+		 */
+		Pattern regex2 = Pattern.compile(
+				"(?s).*inv:\\s*(?:self\\.)?(\\w+)->forAll\\(\\w+\\|(?:\\w+->notEmpty\\(\\) implies )?\\w+\\.oclIsTypeOf\\((\\w+)\\)\\)\\s*");
 
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
@@ -199,9 +214,17 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			for (Constraint con : genCi.constraints()) {
 
 				// use regex to identify the property name and type restriction
-				Matcher matcher = regex.matcher(con.text());
+				Matcher matcher = null;
+				Matcher matcher1 = regex1.matcher(con.text());
+				Matcher matcher2 = regex2.matcher(con.text());
 
-				if (matcher.matches()) {
+				if (matcher1.matches()) {
+					matcher = matcher1;
+				} else if (matcher2.matches()) {
+					matcher = matcher2;
+				}
+
+				if (matcher != null) {
 
 					String propName = matcher.group(1);
 					String typeName = matcher.group(2);
