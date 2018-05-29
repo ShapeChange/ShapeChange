@@ -158,6 +158,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeStatusCLColumnDocumentation;
 	protected static String nameCodeStatusNotesColumn;
 	protected static String codeStatusNotesColumnDocumentation;
+	protected static String nameCodeSupercedesColumn;
+	protected static String codeSupercedesColumnDocumentation;
 	protected static int defaultSize;
 	protected static int srid;
 	protected static String shortNameByTaggedValue = null;
@@ -514,6 +516,17 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			codeStatusNotesColumnDocumentation = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION,
+					null, false, true);
+			
+			nameCodeSupercedesColumn = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_NAME_CODESUPERCEDES_COLUMN,
+					SqlConstants.DEFAULT_NAME_CODESUPERCEDES_COLUMN, false,
+					true);
+
+			codeSupercedesColumnDocumentation = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_CODE_SUPERSEDES_COLUMN_DOCUMENTATION,
 					null, false, true);
 
 			String sdoDimElement_value = options.parameterAsString(
@@ -1189,6 +1202,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		codeStatusCLColumnDocumentation = null;
 		nameCodeStatusNotesColumn = null;
 		codeStatusNotesColumnDocumentation = null;
+		nameCodeSupercedesColumn = null;
+		codeSupercedesColumnDocumentation = null;
 		defaultSize = 0;
 		srid = 0;
 		shortNameByTaggedValue = null;

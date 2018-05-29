@@ -756,11 +756,13 @@ public class SqlBuilder implements MessageSource {
 
 		Column cd_codename = null;
 
+		ColumnDataType codeColumnType = null;
+
 		if (isNumericallyValued(ci)) {
 
-			ColumnDataType numericType = identifyNumericType(ci);
+			codeColumnType = identifyNumericType(ci);
 
-			if (numericType == null) {
+			if (codeColumnType == null) {
 
 				MessageContext mc = result.addError(this, 28, ci.name());
 				if (mc != null) {
@@ -770,7 +772,7 @@ public class SqlBuilder implements MessageSource {
 			} else {
 
 				cd_codename = createColumn(table, null,
-						codeNameColumnDocumentation, name, numericType,
+						codeNameColumnDocumentation, name, codeColumnType,
 						SqlDdl.primaryKeySpecCodelist, true, false);
 			}
 		}
@@ -779,21 +781,19 @@ public class SqlBuilder implements MessageSource {
 
 			// store codes as text
 
-			ColumnDataType fieldType;
-
 			if (SqlDdl.codeNameSize < 1) {
 
-				fieldType = SqlDdl.databaseStrategy
+				codeColumnType = SqlDdl.databaseStrategy
 						.unlimitedLengthCharacterDataType();
 
 			} else {
 
-				fieldType = SqlDdl.databaseStrategy
+				codeColumnType = SqlDdl.databaseStrategy
 						.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
 			}
 
 			cd_codename = createColumn(table, null, codeNameColumnDocumentation,
-					name, fieldType, SqlDdl.primaryKeySpecCodelist, true,
+					name, codeColumnType, SqlDdl.primaryKeySpecCodelist, true,
 					false);
 		}
 
@@ -889,6 +889,13 @@ public class SqlBuilder implements MessageSource {
 								255),
 						"", false, false);
 				columns.add(cd_codeStatusNotes);
+
+				// add codeSupercedes column
+				Column cd_codeSupercedes = createColumn(table, null,
+						SqlDdl.codeSupercedesColumnDocumentation,
+						SqlDdl.nameCodeSupercedesColumn, codeColumnType, "",
+						false, false);
+				columns.add(cd_codeSupercedes);
 
 			} else if (ci == codeStatusCLType) {
 
@@ -1953,7 +1960,7 @@ public class SqlBuilder implements MessageSource {
 						SqlDdl.indexNameUsingShortName),
 				SqlUtil.determineName(columnForProperty,
 						SqlDdl.indexNameUsingShortName));
-		
+
 		Statement result = SqlDdl.databaseStrategy.geometryIndexColumnPart(
 				indexName, tableWithColumn, columnForProperty,
 				geometryCharacteristics);
@@ -2522,6 +2529,7 @@ public class SqlBuilder implements MessageSource {
 							SqlConstants.RULE_TGT_SQL_CLS_CODELISTS_PODS)
 							&& !(t.representsCodeStatusCLType())) {
 						values.add(new StringValueExpression("valid"));
+						values.add(new NullValueExpression());
 						values.add(new NullValueExpression());
 					}
 				}
