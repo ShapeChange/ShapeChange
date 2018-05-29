@@ -417,7 +417,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 				// Only process schemas in a namespace and name that matches a
 				// user-selected pattern
-				if (options.skipSchema(null, pi))
+				if (options.skipSchema(pi))
 					continue;
 
 				saveDiagrams(imgIdCounter, "img", tmpDir,

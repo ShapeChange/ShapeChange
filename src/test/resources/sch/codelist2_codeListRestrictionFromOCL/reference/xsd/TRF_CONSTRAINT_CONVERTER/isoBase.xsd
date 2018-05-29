@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:iso="http://example.org/shapechange/sch/codelist2/isoBaseSchema" xmlns:isx="http://example.org/shapechange/sch/codelist2/iso19103" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/codelist2/isoBaseSchema" version="1">
+  <import namespace="http://example.org/shapechange/sch/codelist2/iso19103"/>
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureTypeIso" substitutionGroup="gco:AbstractObject" type="iso:FeatureTypeIso_Type"/>
+  <complexType name="FeatureTypeIso_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="att1" type="gco:CharacterString_PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="gco:CharacterString_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeIso_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="iso:FeatureTypeIso"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

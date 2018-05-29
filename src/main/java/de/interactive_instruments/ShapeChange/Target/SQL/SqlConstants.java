@@ -289,8 +289,11 @@ public class SqlConstants {
 	 */
 	public static final String PARAM_NAME_CODESTATUSNOTES_COLUMN = "nameForCodeStatusNotesColumn";
 	public static final String DEFAULT_NAME_CODESTATUSNOTES_COLUMN = "CODE_STATUS_NOTES";
-
 	public static final String PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION = "codeStatusNotesColumnDocumentation";
+	
+	public static final String PARAM_NAME_CODESUPERCEDES_COLUMN = "nameForCodeSupercedesColumn";	
+	public static final String DEFAULT_NAME_CODESUPERCEDES_COLUMN = "CODE_SUPERCEDES";
+	public static final String PARAM_CODE_SUPERSEDES_COLUMN_DOCUMENTATION = "codeSupercedesColumnDocumentation";
 
 	/* ------------------------ */
 	/* --- Conversion rules --- */

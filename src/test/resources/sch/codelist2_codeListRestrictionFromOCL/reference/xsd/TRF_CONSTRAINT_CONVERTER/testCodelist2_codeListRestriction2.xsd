@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex1="http://example.org/shapechange/sch/codelist2/codeListRestriction/1" xmlns:ex2="http://example.org/shapechange/sch/codelist2/codeListRestriction/2" xmlns:gco="http://www.isotc211.org/2005/gco" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/codelist2/codeListRestriction/2" version="1">
+  <import namespace="http://example.org/shapechange/sch/codelist2/codeListRestriction/1" schemaLocation="./testCodelist2_codeListRestriction1.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureTypeS2_2" substitutionGroup="ex1:FeatureTypeS1_3" type="ex2:FeatureTypeS2_2_Type"/>
+  <complexType name="FeatureTypeS2_2_Type">
+    <complexContent>
+      <extension base="ex1:FeatureTypeS1_3_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeS2_2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:FeatureTypeS2_2"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

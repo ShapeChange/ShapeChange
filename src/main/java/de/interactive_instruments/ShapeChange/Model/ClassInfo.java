@@ -107,6 +107,9 @@ public interface ClassInfo extends Info {
 
 	public boolean isAbstract();
 
+	/**
+	 * Determine whether the class is tagged as being a leaf class
+	 */
 	public boolean isLeaf();
 
 	public AssociationInfo isAssocClass();

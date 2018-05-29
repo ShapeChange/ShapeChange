@@ -159,9 +159,9 @@ public class TransformationManager implements MessageSource {
 	private void identifyFeatureAndObjectAssociations(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
 
-		SortedSet<GenericPackageInfo> selSchemas = genModel.selectedSchemas();
+		SortedSet<PackageInfo> selSchemas = genModel.selectedSchemas();
 
-		for (GenericPackageInfo selSchema : selSchemas) {
+		for (PackageInfo selSchema : selSchemas) {
 
 			/*
 			 * key: names of association end classes, sorted alphabetically
@@ -481,9 +481,11 @@ public class TransformationManager implements MessageSource {
 	 */
 	private void setGenerationDateTimeTaggedValue(GenericModel genModel) {
 
-		SortedSet<GenericPackageInfo> appSchema = genModel.selectedSchemas();
+		SortedSet<PackageInfo> appSchema = genModel.selectedSchemas();
 
-		for (GenericPackageInfo genPi : appSchema) {
+		for (PackageInfo pi : appSchema) {
+			
+			GenericPackageInfo genPi = (GenericPackageInfo) pi;
 
 			TaggedValues genPiTVs = genPi.taggedValuesAll();
 

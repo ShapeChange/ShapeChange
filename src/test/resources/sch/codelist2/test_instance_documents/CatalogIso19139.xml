@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmx:CT_CodelistCatalogue xmlns:gmx="http://www.isotc211.org/2005/gmx"
+ xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd http://www.isotc211.org/2005/gco http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd http://www.w3.org/1999/xlink http://www.w3.org/1999/xlink.xsd">
+ <!--=====Catalogue description=====-->
+ <gmx:name>
+  <gco:CharacterString>gmxCodelists</gco:CharacterString>
+ </gmx:name>
+ <gmx:scope>
+  <gco:CharacterString>Codelists for description of metadata datasets compliant with ISO/TC 211 19115:2003 and 19139</gco:CharacterString>
+ </gmx:scope>
+ <gmx:fieldOfApplication>
+  <gco:CharacterString>GMX (and imported) namespace</gco:CharacterString>
+ </gmx:fieldOfApplication>
+ <gmx:versionNumber>
+  <gco:CharacterString>0.0</gco:CharacterString>
+ </gmx:versionNumber>
+ <gmx:versionDate>
+  <gco:Date>2018-01-17</gco:Date>
+ </gmx:versionDate>
+ <gmx:codelistItem>
+  <gmx:CodeListDictionary gml:id="CodeListIso19139">
+   <gml:identifier codeSpace="http://example.org/testschema/info/CodeListIso19139">CodeListIso19139</gml:identifier>
+   <gml:name>CodeListIso19139</gml:name>
+   <gmx:codeEntry>
+    <gmx:CodeDefinition gml:id="_88_144">
+     <gml:identifier codeSpace="http://example.org/testschema/info/CodeListIso19139">code1</gml:identifier>
+     <name xmlns="http://www.opengis.net/gml/3.2">code1</name>
+    </gmx:CodeDefinition>
+   </gmx:codeEntry>
+   <gmx:codeEntry>
+    <gmx:CodeDefinition gml:id="_88_145">
+     <gml:identifier codeSpace="http://example.org/testschema/info/CodeListIso19139">code2</gml:identifier>
+     <name xmlns="http://www.opengis.net/gml/3.2">code2</name>
+    </gmx:CodeDefinition>
+   </gmx:codeEntry>
+  </gmx:CodeListDictionary>
+
+ </gmx:codelistItem>
+</gmx:CT_CodelistCatalogue>

@@ -133,6 +133,7 @@ public class Options {
 	public static final String TargetModelExport = "de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport";
 	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
 	public static final String TargetCDB = "de.interactive_instruments.ShapeChange.Target.CDB.CDB";
+	public static final String TargetCodeListDictionariesML = "de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -363,9 +364,37 @@ public class Options {
 	 * </ul>
 	 */
 	protected HashMap<String, MapEntry> fBaseMap = new HashMap<String, MapEntry>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: MapEntry with:
+	 * <ul>
+	 * <li>rule: ("direct")</li>
+	 * <li>p1: xmlElement</li>
+	 * </ul>
+	 */
 	protected HashMap<String, MapEntry> fElementMap = new HashMap<String, MapEntry>();
 	protected HashMap<String, MapEntry> fAttributeMap = new HashMap<String, MapEntry>();
 	protected HashMap<String, MapEntry> fAttributeGroupMap = new HashMap<String, MapEntry>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: boolean value of XsdMapEntry/@xmlReferenceable, or
+	 * <code>null</code> if that XML attribute was not set
+	 * </ul>
+	 */
+	protected Map<String, Boolean> fXmlReferenceableMap = new HashMap<>();
+
+	/**
+	 * Key: type + "#" + xsdEncodingRule
+	 * <p>
+	 * Value: boolean value of XsdMapEntry/@xmlElementHasSimpleContent, or
+	 * <code>null</code> if that XML attribute was not set
+	 * </ul>
+	 */
+	protected Map<String, Boolean> fXmlElementHasSimpleContentMap = new HashMap<>();
 
 	/**
 	 * Map entries for a non-XML Schema target
@@ -751,6 +780,17 @@ public class Options {
 		fElementMap.put(k1 + "#" + k2, new MapEntry(s1, s2, s3));
 	}
 
+	/**
+	 * Tries to find a MapEntry that defines the mapping of a type to its
+	 * xmlElement, based upon the given encoding rule or any rules it extends.
+	 *
+	 * @param k1
+	 *            type name
+	 * @param k2
+	 *            encoding rule name
+	 * @return MapEntry with rule=("direct"), p1=xmlElement - or
+	 *         <code>null</code> if no such map entry was found
+	 */
 	public MapEntry elementMapEntry(String k1, String k2) {
 		String rule = k2;
 		MapEntry me = null;
@@ -1190,6 +1230,15 @@ public class Options {
 		return res;
 	}
 
+	/**
+	 * Identify if the given encRule is or extends (directly or indirectly) the
+	 * given baseRule. When comparing encoding rule names, case is ignored.
+	 * 
+	 * @param encRule
+	 * @param baseRule
+	 * @return <code>true</code> if encRule is or extends (directly or
+	 *         indirectly) baseRule, else <code>false</code>
+	 */
 	public boolean matchesEncRule(String encRule, String baseRule) {
 		while (encRule != null) {
 			if (encRule.equalsIgnoreCase(baseRule))
@@ -1430,6 +1479,27 @@ public class Options {
 						"Invalid configuration file.");
 			}
 
+			/*
+			 * 2018-01-31 JE: uncomment the following to print the configuration
+			 * as loaded by ShapeChange, with xincludes resolved.
+			 */
+			// try {
+			// TransformerFactory tf = TransformerFactory.newInstance();
+			// Transformer transformer = tf.newTransformer();
+			// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+			// "no");
+			// transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			// transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+			// "4");
+			//
+			// transformer.transform(new DOMSource(document),
+			// new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+
 			// parse input element specific content
 			NodeList nl = document.getElementsByTagName("input");
 			Element inputElement = (Element) nl.item(0);
@@ -1618,58 +1688,8 @@ public class Options {
 					}
 
 					// add xsd map entries
-					for (XsdMapEntry xsdme : config.getXsdMapEntries()) {
+					addXsdMapEntries(config.getXsdMapEntries());
 
-						for (String xsdEncodingRule : xsdme
-								.getEncodingRules()) {
-
-							String type = xsdme.getType();
-							String xmlPropertyType = xsdme.getXmlPropertyType();
-							String xmlElement = xsdme.getXmlElement();
-							String xmlTypeContent = xsdme.getXmlTypeContent();
-							String xmlTypeNilReason = xsdme
-									.getXmlTypeNilReason();
-							String xmlType = xsdme.getXmlType();
-							String xmlTypeType = xsdme.getXmlTypeType();
-							String xmlAttribute = xsdme.getXmlAttribute();
-							String xmlAttributeGroup = xsdme
-									.getXmlAttributeGroup();
-
-							if (xmlPropertyType != null) {
-								if (xmlPropertyType.equals("_P_")
-										&& xmlElement != null) {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"propertyType", xmlElement);
-								} else if (xmlPropertyType.equals("_MP_")
-										&& xmlElement != null) {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"metadataPropertyType", xmlElement);
-								} else {
-									addTypeMapEntry(type, xsdEncodingRule,
-											"direct", xmlPropertyType,
-											xmlTypeType + "/" + xmlTypeContent,
-											xmlTypeNilReason);
-								}
-							}
-							if (xmlElement != null) {
-								addElementMapEntry(type, xsdEncodingRule,
-										"direct", xmlElement);
-							}
-							if (xmlType != null) {
-								addBaseMapEntry(type, xsdEncodingRule, "direct",
-										xmlType,
-										xmlTypeType + "/" + xmlTypeContent);
-							}
-							if (xmlAttribute != null) {
-								addAttributeMapEntry(type, xsdEncodingRule,
-										xmlAttribute);
-							}
-							if (xmlAttributeGroup != null) {
-								addAttributeGroupMapEntry(type, xsdEncodingRule,
-										xmlAttributeGroup);
-							}
-						}
-					}
 				} else {
 
 					// add map entries for Target (no need to do this for
@@ -1845,6 +1865,60 @@ public class Options {
 		}
 	}
 
+	private void addXmlElementHasSimpleContent(String type,
+			String xsdEncodingRule, Boolean xmlElementHasSimpleContent) {
+
+		fXmlElementHasSimpleContentMap.put(type + "#" + xsdEncodingRule,
+				xmlElementHasSimpleContent);
+
+	}
+
+	/**
+	 * @param type
+	 * @param xsdEncodingRule
+	 * @return the boolean value of XsdMapEntry/@xmlElementHasSimpleContent, for
+	 *         the map entry with the given type and encoding rule (or one of
+	 *         the rules it extends); can be <code>null</code> if that attribute
+	 *         was not set in the map entry or no map entry exists for the type
+	 *         in the given encoding rule (or one of the rules it extends)
+	 */
+	public Boolean xmlElementHasSimpleContent(String type,
+			String xsdEncodingRule) {
+		String rule = xsdEncodingRule;
+		Boolean val = null;
+		while (val == null && rule != null) {
+			val = fXmlElementHasSimpleContentMap.get(type + "#" + rule);
+			rule = extendsEncRule(rule);
+		}
+		return val;
+	}
+
+	/**
+	 * @param type
+	 * @param xsdEncodingRule
+	 * @return the boolean value of XsdMapEntry/@xmlReferenceable, for the map
+	 *         entry with the given type and encoding rule (or one of the rules
+	 *         it extends); can be <code>null</code> if that attribute was not
+	 *         set in the map entry or no map entry exists for the type in the
+	 *         given encoding rule (or one of the rules it extends)
+	 */
+	private void addXmlReferenceableMapEntry(String type,
+			String xsdEncodingRule, Boolean xmlReferenceable) {
+
+		fXmlReferenceableMap.put(type + "#" + xsdEncodingRule,
+				xmlReferenceable);
+	}
+
+	public Boolean xmlReferenceable(String type, String xsdEncodingRule) {
+		String rule = xsdEncodingRule;
+		Boolean val = null;
+		while (val == null && rule != null) {
+			val = fXmlReferenceableMap.get(type + "#" + rule);
+			rule = extendsEncRule(rule);
+		}
+		return val;
+	}
+
 	/**
 	 *
 	 */
@@ -1991,55 +2065,8 @@ public class Options {
 				}
 
 				// add xsd map entries
-				for (XsdMapEntry xsdme : config.getXsdMapEntries()) {
+				addXsdMapEntries(config.getXsdMapEntries());
 
-					for (String xsdEncodingRule : xsdme.getEncodingRules()) {
-
-						String type = xsdme.getType();
-						String xmlPropertyType = xsdme.getXmlPropertyType();
-						String xmlElement = xsdme.getXmlElement();
-						String xmlTypeContent = xsdme.getXmlTypeContent();
-						String xmlTypeNilReason = xsdme.getXmlTypeNilReason();
-						String xmlType = xsdme.getXmlType();
-						String xmlTypeType = xsdme.getXmlTypeType();
-						String xmlAttribute = xsdme.getXmlAttribute();
-						String xmlAttributeGroup = xsdme.getXmlAttributeGroup();
-
-						if (xmlPropertyType != null) {
-							if (xmlPropertyType.equals("_P_")
-									&& xmlElement != null) {
-								addTypeMapEntry(type, xsdEncodingRule,
-										"propertyType", xmlElement);
-							} else if (xmlPropertyType.equals("_MP_")
-									&& xmlElement != null) {
-								addTypeMapEntry(type, xsdEncodingRule,
-										"metadataPropertyType", xmlElement);
-							} else {
-								addTypeMapEntry(type, xsdEncodingRule, "direct",
-										xmlPropertyType,
-										xmlTypeType + "/" + xmlTypeContent,
-										xmlTypeNilReason);
-							}
-						}
-						if (xmlElement != null) {
-							addElementMapEntry(type, xsdEncodingRule, "direct",
-									xmlElement);
-						}
-						if (xmlType != null) {
-							addBaseMapEntry(type, xsdEncodingRule, "direct",
-									xmlType,
-									xmlTypeType + "/" + xmlTypeContent);
-						}
-						if (xmlAttribute != null) {
-							addAttributeMapEntry(type, xsdEncodingRule,
-									xmlAttribute);
-						}
-						if (xmlAttributeGroup != null) {
-							addAttributeGroupMapEntry(type, xsdEncodingRule,
-									xmlAttributeGroup);
-						}
-					}
-				}
 			} else {
 
 				// add map entries for Target (no need to do this for
@@ -2058,6 +2085,67 @@ public class Options {
 			GML_NS = nsme.rule;
 		}
 
+	}
+
+	private void addXsdMapEntries(List<XsdMapEntry> xsdMapEntries) {
+
+		for (XsdMapEntry xsdme : xsdMapEntries) {
+
+			for (String xsdEncodingRule : xsdme.getEncodingRules()) {
+
+				String type = xsdme.getType();
+				String xmlPropertyType = xsdme.getXmlPropertyType();
+				String xmlElement = xsdme.getXmlElement();
+				String xmlTypeContent = xsdme.getXmlTypeContent();
+				String xmlTypeNilReason = xsdme.getXmlTypeNilReason();
+				String xmlType = xsdme.getXmlType();
+				String xmlTypeType = xsdme.getXmlTypeType();
+				String xmlAttribute = xsdme.getXmlAttribute();
+				String xmlAttributeGroup = xsdme.getXmlAttributeGroup();
+				Boolean xmlReferenceable = xsdme.getXmlReferenceable();
+				Boolean xmlElementHasSimpleContent = xsdme
+						.getXmlElementHasSimpleContent();
+
+				if (xmlPropertyType != null) {
+					if (xmlPropertyType.equals("_P_") && xmlElement != null) {
+						addTypeMapEntry(type, xsdEncodingRule, "propertyType",
+								xmlElement);
+					} else if (xmlPropertyType.equals("_MP_")
+							&& xmlElement != null) {
+						addTypeMapEntry(type, xsdEncodingRule,
+								"metadataPropertyType", xmlElement);
+					} else {
+						addTypeMapEntry(type, xsdEncodingRule, "direct",
+								xmlPropertyType,
+								xmlTypeType + "/" + xmlTypeContent,
+								xmlTypeNilReason);
+					}
+				}
+				if (xmlElement != null) {
+					addElementMapEntry(type, xsdEncodingRule, "direct",
+							xmlElement);
+				}
+				if (xmlType != null) {
+					addBaseMapEntry(type, xsdEncodingRule, "direct", xmlType,
+							xmlTypeType + "/" + xmlTypeContent);
+				}
+				if (xmlAttribute != null) {
+					addAttributeMapEntry(type, xsdEncodingRule, xmlAttribute);
+				}
+				if (xmlAttributeGroup != null) {
+					addAttributeGroupMapEntry(type, xsdEncodingRule,
+							xmlAttributeGroup);
+				}
+				if (xmlReferenceable != null) {
+					addXmlReferenceableMapEntry(type, xsdEncodingRule,
+							xmlReferenceable);
+				}
+				if (xmlElementHasSimpleContent != null) {
+					addXmlElementHasSimpleContent(type, xsdEncodingRule,
+							xmlElementHasSimpleContent);
+				}
+			}
+		}
 	}
 
 	private void setStandardParameters() {
@@ -2952,13 +3040,26 @@ public class Options {
 											"xmlAttributeGroup")
 									: null;
 
+					String xmlReferenceable = xsdMapEntryE
+							.hasAttribute("xmlReferenceable")
+									? xsdMapEntryE.getAttribute(
+											"xmlReferenceable")
+									: null;
+
+					String xmlElementHasSimpleContent = xsdMapEntryE
+							.hasAttribute("xmlElementHasSimpleContent")
+									? xsdMapEntryE.getAttribute(
+											"xmlElementHasSimpleContent")
+									: null;
+
 					String nsabr = xsdMapEntryE.hasAttribute("nsabr")
 							? xsdMapEntryE.getAttribute("nsabr") : null;
 
 					result.add(new XsdMapEntry(type, encodingRules, xmlType,
 							xmlTypeContent, xmlTypeType, xmlTypeNilReason,
 							xmlElement, xmlPropertyType, xmlAttribute,
-							xmlAttributeGroup, nsabr));
+							xmlAttributeGroup, xmlReferenceable,
+							xmlElementHasSimpleContent, nsabr));
 				}
 			}
 		}
@@ -3367,9 +3468,11 @@ public class Options {
 		 * ISO/TS 19139:2007 rules
 		 */
 		addRule("rule-xsd-all-naming-19139");
+		addRule("rule-xsd-cls-standard-19139-isoType");
 		addRule("rule-xsd-cls-standard-19139-property-types");
 		addRule("rule-xsd-cls-enum-object-element");
 		addRule("rule-xsd-cls-enum-property-type");
+
 		/*
 		 * add the iso19139_2007 encoding rule and extend the core encoding rule
 		 */
@@ -3475,9 +3578,11 @@ public class Options {
 		 */
 		addRule("rule-xsd-all-globalIdentifierAnnotation");
 		addRule("rule-xsd-all-notEncoded");
+		addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
 		addRule("rule-xsd-cls-adeelement");
 		addRule("rule-xsd-cls-basictype");
 		addRule("rule-xsd-cls-codelist-constraints");
+		addRule("rule-xsd-cls-codelist-constraints2");
 		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 		addRule("rule-xsd-cls-codelist-gmlsf");
 		addRule("rule-xsd-cls-enum-subtypes");
@@ -3698,6 +3803,11 @@ public class Options {
 		 */
 		addRule("rule-cdb-all-notEncoded");
 		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
+
+		/*
+		 * CodeListDictionariesML conversion rules
+		 */
+		addRule("rule-cldml-prop-codeListAndCodeNameAsGmlId");
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3723,47 +3833,78 @@ public class Options {
 		return tag;
 	};
 
-	/*
-	 * Only process schemas in a namespace and name that matches a user-selected
-	 * pattern
+	/**
+	 * Determines if the given package should not be processed (i.e., should be
+	 * skipped), based upon the configuration parameters 'appSchemaName',
+	 * 'appSchemaNameRegex', and 'appSchemaNamespaceRegex'. If the current
+	 * process configuration contains one of these parameters, they are used.
+	 * Otherwise, the parameters from the input configuration are used. If the
+	 * package does not match one of the defined parameters, the result will be
+	 * <code>true</code>.
+	 * 
+	 * @param pi
+	 *            package to check
+	 * @return <code>true</code> if the given package shall be skipped, else
+	 *         <code>false</code>
 	 */
-	public boolean skipSchema(Target target, PackageInfo pi) {
+	public boolean skipSchema(PackageInfo pi) {
+
 		String name = pi.name();
 		String ns = pi.targetNamespace();
 
-		// only process schemas with a given name
-		String schemaFilter;
-		if (target == null)
-			schemaFilter = parameter("appSchemaName");
-		else
-			schemaFilter = parameter(target.getClass().getName(),
-					"appSchemaName");
-		if (schemaFilter != null && schemaFilter.length() > 0
-				&& !schemaFilter.equals(name))
+		String appSchemaName = null;
+		String appSchemaNameRegex = null;
+		String appSchemaNamespaceRegex = null;
+
+		/*
+		 * If the current process configuration defines selection parameters,
+		 * use these criteria. Otherwise, use the selection parameters defined
+		 * by the input configuration.
+		 */
+		if (currentProcessConfig != null
+				&& (currentProcessConfig.hasParameter("appSchemaName")
+						|| currentProcessConfig
+								.hasParameter("appSchemaNameRegex")
+						|| currentProcessConfig
+								.hasParameter("appSchemaNamespaceRegex"))) {
+
+			appSchemaName = currentProcessConfig
+					.getParameterValue("appSchemaName");
+			appSchemaNameRegex = currentProcessConfig
+					.getParameterValue("appSchemaNameRegex");
+			appSchemaNamespaceRegex = currentProcessConfig
+					.getParameterValue("appSchemaNamespaceRegex");
+
+		} else {
+
+			/*
+			 * if the current process configuration does not provide selection
+			 * parameters, use the input parameters
+			 */
+			appSchemaName = parameter("appSchemaName");
+			appSchemaNameRegex = parameter("appSchemaNameRegex");
+			appSchemaNamespaceRegex = parameter("appSchemaNamespaceRegex");
+		}
+
+		/*
+		 * only process schemas with a given name
+		 */
+		if (StringUtils.isNotBlank(appSchemaName)
+				&& !appSchemaName.equals(name))
 			return true;
 
-		// only process schemas with a name that matches a user-selected pattern
-		String appSchemaNameRegex;
-		if (target == null)
-			appSchemaNameRegex = parameter("appSchemaNameRegex");
-		else
-			appSchemaNameRegex = parameter(target.getClass().getName(),
-					"appSchemaNameRegex");
-		if (appSchemaNameRegex != null && appSchemaNameRegex != null
-				&& appSchemaNameRegex.length() > 0
+		/*
+		 * only process schemas with a name that matches a user-selected pattern
+		 */
+		if (StringUtils.isNotBlank(appSchemaNameRegex)
 				&& !name.matches(appSchemaNameRegex))
 			return true;
 
-		// only process schemas in a namespace that matches a user-selected
-		// pattern
-		String appSchemaNamespaceRegex;
-		if (target == null)
-			appSchemaNamespaceRegex = parameter("appSchemaNamespaceRegex");
-		else
-			appSchemaNamespaceRegex = parameter(target.getClass().getName(),
-					"appSchemaNamespaceRegex");
-		if (appSchemaNamespaceRegex != null
-				&& appSchemaNamespaceRegex.length() > 0
+		/*
+		 * only process schemas in a namespace that matches a user-selected
+		 * pattern
+		 */
+		if (StringUtils.isNotBlank(appSchemaNamespaceRegex)
 				&& !ns.matches(appSchemaNamespaceRegex))
 			return true;
 
@@ -3797,6 +3938,8 @@ public class Options {
 			return Options.TargetModelExport;
 		else if (ra[1].equals("cdb"))
 			return Options.TargetCDB;
+		else if (ra[1].equals("cldml"))
+			return Options.TargetCodeListDictionariesML;
 
 		return null;
 	}

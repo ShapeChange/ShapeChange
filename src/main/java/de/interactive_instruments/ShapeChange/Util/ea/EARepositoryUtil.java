@@ -135,6 +135,30 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	}
 
 	/**
+	 * @param rep
+	 *            the repository to query
+	 * @param name
+	 *            Name of the package to look up
+	 * @return the EA package with given name, if it was found, else
+	 *         <code>null</code>
+	 */
+	public static Package findPackage(Repository rep, String name) {
+
+		Collection<org.sparx.Package> models = rep.GetModels();
+
+		for (short i = 0; i < models.GetCount(); i++) {
+
+			Package pkg = EAPackageUtil.findPackage(models.GetAt(i), name);
+
+			if (pkg != null) {
+				return pkg;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Identify the child package with given stereotype. NOTE: Additional such
 	 * packages are ignored.
 	 * 
@@ -204,6 +228,17 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		}
 	}
 
+	/**
+	 * Create a generalization relationship between class 1 (subtype) and class
+	 * 2 (supertype).
+	 * 
+	 * @param rep
+	 * @param c1ElementId
+	 * @param c1Name
+	 * @param c2ElementId
+	 * @param c2Name
+	 * @throws EAException
+	 */
 	public static void createEAGeneralization(Repository rep, int c1ElementId,
 			String c1Name, int c2ElementId, String c2Name) throws EAException {
 
@@ -218,6 +253,32 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		if (!con.Update()) {
 			throw new EAException(createMessage(message(102), c1Name, c2Name,
 					con.GetLastError()));
+		}
+
+		c1Cons.Refresh();
+	}
+
+	/**
+	 * Create a generalization relationship between class 1 (subtype) and class
+	 * 2 (supertype).
+	 * 
+	 * @param rep
+	 * @param c1
+	 * @param c2
+	 * @throws EAException
+	 */
+	public static void createEAGeneralization(Repository rep, Element c1,
+			Element c2) throws EAException {
+
+		Collection<Connector> c1Cons = c1.GetConnectors();
+
+		Connector con = c1Cons.AddNew("", "Generalization");
+
+		con.SetSupplierID(c2.GetElementID());
+
+		if (!con.Update()) {
+			throw new EAException(createMessage(message(102), c1.GetName(),
+					c2.GetName(), con.GetLastError()));
 		}
 
 		c1Cons.Refresh();

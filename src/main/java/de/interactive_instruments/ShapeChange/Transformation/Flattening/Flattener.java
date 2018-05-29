@@ -523,12 +523,13 @@ public class Flattener implements Transformer, MessageSource {
 				// nothing to do
 			} else {
 
-				SortedSet<GenericPackageInfo> appSchemas = genModel
-						.selectedSchemas();
+				SortedSet<PackageInfo> appSchemas = genModel.selectedSchemas();
 
 				if (appSchemas != null) {
 
-					for (GenericPackageInfo appSchema : appSchemas) {
+					for (PackageInfo as : appSchemas) {
+
+						GenericPackageInfo appSchema = (GenericPackageInfo) as;
 
 						String targetNamespace = appSchema.targetNamespace();
 
@@ -6486,7 +6487,7 @@ public class Flattener implements Transformer, MessageSource {
 		boolean onlyRemoveReasons = trfConfig
 				.hasRule(RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS);
 
-		SortedSet<GenericPackageInfo> appSchemas = model.selectedSchemas();
+		SortedSet<PackageInfo> appSchemas = model.selectedSchemas();
 		if (appSchemas == null || appSchemas.size() == 0)
 			return;
 

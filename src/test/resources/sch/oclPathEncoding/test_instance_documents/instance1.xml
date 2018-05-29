@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ex:FeatureType1 xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:ex="http://example.org/shapechange/sch/oclPathEncoding"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/oclPathEncoding ./testOclPathEncoding.xsd"
+ gml:id="ID000">
+ <ex:ft1Toft2Inline>
+  <ex:FeatureType2 gml:id="FT2_inline1">
+   <ex:ft2Toft3Inline>
+    <ex:FeatureType3 gml:id="FT3_inline1">
+     <ex:attribute>t1</ex:attribute>
+    </ex:FeatureType3>
+   </ex:ft2Toft3Inline>
+   <ex:ft2Toft3ByReference xlink:href="#FT3_inline1"/>
+   <!--<ex:ft2Toft3InlineOrByReference xlink:href="#FT3_inline1"/>-->
+   <ex:ft2Toft3InlineOrByReference>
+    <ex:FeatureType3 gml:id="FT3_inline2">
+     <ex:attribute>t2</ex:attribute>
+    </ex:FeatureType3>
+   </ex:ft2Toft3InlineOrByReference>
+  </ex:FeatureType2>
+ </ex:ft1Toft2Inline>
+ <ex:ft1Toft2ByReference xlink:href="#FT2_inline1"/>
+ <!--<ex:ft1Toft2InlineOrByReference xlink:href="#FT2_inline1"/>-->
+ <ex:ft1Toft2InlineOrByReference>
+  <ex:FeatureType2 gml:id="FT2_inline2">
+   <ex:ft2Toft3Inline>
+    <ex:FeatureType3 gml:id="FT3_inline3">
+     <ex:attribute>t1</ex:attribute>
+    </ex:FeatureType3>
+   </ex:ft2Toft3Inline>
+   <ex:ft2Toft3ByReference xlink:href="#FT3_inline3"/>
+   <ex:ft2Toft3InlineOrByReference xlink:href="#FT3_inline3"/>
+  </ex:FeatureType2>
+ </ex:ft1Toft2InlineOrByReference>
+</ex:FeatureType1>

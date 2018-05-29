@@ -26,8 +26,7 @@
 	<XsdMapEntry type="TM_OrdinalEra" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:TimeOrdinalEra" xmlType="gml:TimeOrdinalEraType" xmlPropertyType="gml:TimeOrdinalEraPropertyType" />
 	<XsdMapEntry type="TM_Duration" xsdEncodingRules="iso19136_2007 gml33" xmlType="duration" xmlPropertyType="duration"  xmlTypeType="simple" xmlTypeContent="simple"/>
 <!-- ISO/TS 19139 encoding rule -->	
-  <XsdMapEntry type="TM_Primitive" xsdEncodingRules="iso19139_2007" xmlElement="gts:TM_Primitive" xmlType="gts:TM_Primitive_Type" xmlPropertyType="gts:TM_Primitive_PropertyType"/>
-  <XsdMapEntry type="TM_Duration" xsdEncodingRules="iso19139_2007" xmlElement="gts:TM_Duration" xmlType="gts:TM_Duration_Type" xmlPropertyType="gts:TM_Duration_PropertyType"/>
-  <XsdMapEntry type="TM_PeriodDuration" xsdEncodingRules="iso19139_2007" xmlElement="gts:TM_PeriodDuration" xmlType="gts:TM_PeriodDuration_Type" xmlPropertyType="gts:TM_PeriodDuration_PropertyType"/>
+  <XsdMapEntry type="TM_Primitive" xsdEncodingRules="iso19139_2007" xmlPropertyType="gts:TM_Primitive_PropertyType"/>
+  <XsdMapEntry type="TM_PeriodDuration" xsdEncodingRules="iso19139_2007" xmlElement="gts:TM_PeriodDuration" xmlType="duration" xmlPropertyType="gts:TM_PeriodDuration_PropertyType"/>
 	<!-- ... more to be added as required -->
 </xsdMapEntries>

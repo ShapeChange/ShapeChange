@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:mdp="http://example.org/shapechange/metadataprofile" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/metadataprofile" version="1">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MDP_Contact" substitutionGroup="gmd:CI_Contact" type="mdp:MDP_Contact_Type"/>
+  <complexType name="MDP_Contact_Type">
+    <complexContent>
+      <extension base="gmd:CI_Contact_Type">
+        <sequence/>
+        <attribute fixed="CI_Contact" ref="gco:isoType" use="required"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MDP_Contact_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="mdp:MDP_Contact"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="MDP_Metadata" substitutionGroup="gmd:MD_Metadata" type="mdp:MDP_Metadata_Type"/>
+  <complexType name="MDP_Metadata_Type">
+    <complexContent>
+      <extension base="gmd:MD_Metadata_Type">
+        <sequence>
+          <element name="attA" type="gco:CharacterString_PropertyType"/>
+          <element maxOccurs="unbounded" name="attB" type="gco:Integer_PropertyType"/>
+          <element name="attC" type="gmd:CI_Contact_PropertyType"/>
+        </sequence>
+        <attribute fixed="MD_Metadata" ref="gco:isoType" use="required"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MDP_Metadata_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="mdp:MDP_Metadata"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

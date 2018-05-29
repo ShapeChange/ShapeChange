@@ -168,6 +168,10 @@ public interface PropertyInfo extends Info {
 
 	public void inClass(ClassInfo ci);
 
+	/**
+	 * @return the name of the property adorned with the namespace prefix of its
+	 *         class's package.
+	 */
 	public String qname();
 
 	public StructuredNumber sequenceNumber();

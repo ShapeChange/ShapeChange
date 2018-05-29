@@ -31,10 +31,12 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -43,8 +45,8 @@ import org.w3c.dom.Element;
  */
 public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 
-	private List<XsdMapEntry> xsdMapEntries;
-	private List<XmlNamespace> xmlNamespaces;
+	private List<XsdMapEntry> xsdMapEntries = new ArrayList<XsdMapEntry>();
+	private List<XmlNamespace> xmlNamespaces = new ArrayList<XmlNamespace>();
 
 	/**
 	 * Creates a TargetConfiguration.
@@ -63,9 +65,10 @@ public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 	 * @param mapEntries
 	 *            Will be ignored, so can be <code>null</code>.
 	 * @param xsdMapEntries
-	 *            The xsd map entries for the target
+	 *            The xsd map entries for the target, can be <code>null</code>
 	 * @param xmlNamespaces
-	 *            Xml namespaces defined for this target
+	 *            Xml namespaces defined for this target, can be
+	 *            <code>null</code>
 	 * @param inputIds
 	 *            Set of identifiers referencing either the input model or a
 	 *            transformer.
@@ -82,18 +85,27 @@ public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 			Element advancedProcessConfigurations) {
 		super(className, processMode, parameters, ruleSets, null, inputIds,
 				null, advancedProcessConfigurations);
-		this.xsdMapEntries = xsdMapEntries;
-		this.xmlNamespaces = xmlNamespaces;
+
+		if (CollectionUtils.isNotEmpty(xsdMapEntries)) {
+			this.xsdMapEntries = xsdMapEntries;
+		}
+		if (CollectionUtils.isNotEmpty(xmlNamespaces)) {
+			this.xmlNamespaces = xmlNamespaces;
+		}
 	}
 
 	/**
-	 * @return The xsd map entries for the target. <code>null</code> if no map
-	 *         entries were declared in the configuration.
+	 * @return The xsd map entries for the target. Can be empty but not
+	 *         <code>null</code>.
 	 */
 	public List<XsdMapEntry> getXsdMapEntries() {
 		return xsdMapEntries;
 	}
 
+	/**
+	 * @return The xsd namespaces for the target. Can be empty but not
+	 *         <code>null</code>.
+	 */
 	public List<XmlNamespace> getXmlNamespaces() {
 		return xmlNamespaces;
 	}

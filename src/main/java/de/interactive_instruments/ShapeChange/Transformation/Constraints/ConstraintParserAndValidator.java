@@ -43,6 +43,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
@@ -50,7 +51,6 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
@@ -85,11 +85,14 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  */
 public class ConstraintParserAndValidator implements Transformer {
 
-//	public static final String PARAM_OCL_TYPE_REGEX_NAME = "oclConstraintTypeRegex";
-//	public static final String PARAM_FOL_TYPE_REGEX_NAME = "folConstraintTypeRegex";
-//
-//	protected String ocl_type_regex = "OCL|Invariant";
-//	protected String fol_type_regex = "(" + SbvrConstants.FOL_SOURCE_TYPE + ")";
+	// public static final String PARAM_OCL_TYPE_REGEX_NAME =
+	// "oclConstraintTypeRegex";
+	// public static final String PARAM_FOL_TYPE_REGEX_NAME =
+	// "folConstraintTypeRegex";
+	//
+	// protected String ocl_type_regex = "OCL|Invariant";
+	// protected String fol_type_regex = "(" + SbvrConstants.FOL_SOURCE_TYPE +
+	// ")";
 
 	@Override
 	public void process(GenericModel m, Options o,
@@ -102,22 +105,22 @@ public class ConstraintParserAndValidator implements Transformer {
 		 * is clear, and all other constraint types (unless it were a profile
 		 * constraint) must be TextConstraints.
 		 */
-//		if (trfConfig.hasParameter(PARAM_OCL_TYPE_REGEX_NAME)) {
-//			this.ocl_type_regex = trfConfig
-//					.getParameterValue(PARAM_OCL_TYPE_REGEX_NAME);
-//		}
-//
-//		if (trfConfig.hasParameter(PARAM_FOL_TYPE_REGEX_NAME)) {
-//			this.fol_type_regex = trfConfig
-//					.getParameterValue(PARAM_FOL_TYPE_REGEX_NAME);
-//		}
+		// if (trfConfig.hasParameter(PARAM_OCL_TYPE_REGEX_NAME)) {
+		// this.ocl_type_regex = trfConfig
+		// .getParameterValue(PARAM_OCL_TYPE_REGEX_NAME);
+		// }
+		//
+		// if (trfConfig.hasParameter(PARAM_FOL_TYPE_REGEX_NAME)) {
+		// this.fol_type_regex = trfConfig
+		// .getParameterValue(PARAM_FOL_TYPE_REGEX_NAME);
+		// }
 
 		Sbvr2FolParser sbvrParser = new Sbvr2FolParser(m);
 
 		/*
 		 * Handle actual constraints
 		 */
-		for (GenericPackageInfo pkg : m.selectedSchemas()) {
+		for (PackageInfo pkg : m.selectedSchemas()) {
 
 			for (ClassInfo tmp : m.classes(pkg)) {
 
@@ -278,7 +281,8 @@ public class ConstraintParserAndValidator implements Transformer {
 		}
 	}
 
-	public static Constraint parse(OclConstraint con, GenericPropertyInfo genPi) {
+	public static Constraint parse(OclConstraint con,
+			GenericPropertyInfo genPi) {
 
 		GenericOclConstraint validated = new GenericOclConstraint(genPi, con);
 

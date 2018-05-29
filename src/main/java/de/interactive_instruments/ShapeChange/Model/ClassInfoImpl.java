@@ -426,9 +426,11 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 		for (String supertypeId : this.supertypes()) {
 			ClassInfo supertype = this.model().classById(supertypeId);
-			SortedSet<PropertyInfo> allSupertypeProps = supertype
-					.propertiesAll();
-			allProps.addAll(allSupertypeProps);
+			if (supertype != null) {
+				SortedSet<PropertyInfo> allSupertypeProps = supertype
+						.propertiesAll();
+				allProps.addAll(allSupertypeProps);
+			}
 		}
 
 		return allProps;

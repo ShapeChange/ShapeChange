@@ -1,0 +1,48 @@
+<?xml-stylesheet type='text/xsl' href='./CodelistDictionary-v32.xsl'?><gml:Dictionary xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodesE" xsi:schemaLocation="http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+  <gml:description>Documentation code list CodesE</gml:description>
+  <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML">CodesE</gml:identifier>
+  <gml:name>Alias CodesE</gml:name>
+  <gml:name>TV name of CodesE</gml:name>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code1">
+      <gml:description>Documentation code1</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code1</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code2">
+      <gml:description>Documentation code2</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code2</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code3">
+      <gml:description>Documentation code3</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code3</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code4">
+      <gml:description>Documentation code4</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code4</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code5">
+      <gml:description>Documentation code5</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code5</gml:identifier>
+      <gml:name>Alias code5</gml:name>
+      <gml:name>5</gml:name>
+      <gml:name>TV name of code5</gml:name>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code6">
+      <gml:description>Documentation code6</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesE">code6</gml:identifier>
+      <gml:name>Alias code6</gml:name>
+      <gml:name>6</gml:name>
+      <gml:name>TV name of code6</gml:name>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+</gml:Dictionary>

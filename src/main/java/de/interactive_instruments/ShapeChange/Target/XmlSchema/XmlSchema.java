@@ -36,10 +36,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.SortedSet;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xml.serializer.OutputPropertiesFactory;
@@ -47,19 +46,20 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Target;
 
-public class XmlSchema implements Target {
+public class XmlSchema implements Target, MessageSource {
 
 	private ShapeChangeResult result = null;
 	private PackageInfo pi = null;
@@ -153,14 +153,10 @@ public class XmlSchema implements Target {
 				}
 			});
 
-			if (cs != null) {
-				for (Iterator<Constraint> i = cs.iterator(); i.hasNext();) {
-					Constraint c = i.next();
-					if (c != null && c instanceof OclConstraint
-							&& schDoc != null
-							&& ((OclConstraint) c).syntaxTree() != null) {
-						schDoc.addAssertion(ci, (OclConstraint) c);
-					}
+			for (Constraint c : cs) {
+				if (c != null && c instanceof OclConstraint && schDoc != null
+						&& ((OclConstraint) c).syntaxTree() != null) {
+					schDoc.addAssertion(ci, (OclConstraint) c);
 				}
 			}
 		}
@@ -183,7 +179,8 @@ public class XmlSchema implements Target {
 				break;
 			if (ci.isUnionDirect())
 				break;
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+			if (ci.matches(
+					"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
 				break;
@@ -196,8 +193,9 @@ public class XmlSchema implements Target {
 				break;
 			if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed())
 				break;
-			if (ci.matches("rule-xsd-cls-object-element"))
+			if (ci.matches("rule-xsd-cls-object-element")) {
 				xsd.pObjectElement(ci, cibase);
+			}
 			break;
 		case Options.MIXIN:
 			if (ci.matches("rule-xsd-cls-mixin-classes"))
@@ -219,7 +217,8 @@ public class XmlSchema implements Target {
 				xsd.pGlobalCodeList(ci);
 			break;
 		case Options.UNION:
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+			if (ci.matches(
+					"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
 				break;
@@ -277,7 +276,8 @@ public class XmlSchema implements Target {
 			}
 			if (ci.isUnionDirect())
 				break;
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+			if (ci.matches(
+					"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
 				break;
@@ -306,7 +306,8 @@ public class XmlSchema implements Target {
 		// Separate content model
 		switch (cat) {
 		case Options.UNION:
-			if (ci.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+			if (ci.matches(
+					"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 					&& "true".equalsIgnoreCase(
 							ci.taggedValue("representsFeatureTypeSet")))
 				break;
@@ -339,27 +340,36 @@ public class XmlSchema implements Target {
 			return;
 		}
 
-		Properties outputFormat = OutputPropertiesFactory
-				.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
-				"2");
-		outputFormat.setProperty("encoding", "UTF-8");
+		boolean skipXmlSchemaOutput = options.parameterAsBoolean(
+				this.getClass().getName(), "skipXmlSchemaOutput", false);
 
-		for (Iterator<XsdDocument> i = xsdMap.values().iterator(); i
-				.hasNext();) {
-			XsdDocument xsd = i.next();
-			if (!xsd.printed()) {
-				try {
-					xsd.printFile(outputFormat);
-					result.addResult(getTargetName(), outputDirectory, xsd.name,
-							pi.targetNamespace());
-				} catch (Exception e) {
-					String m = e.getMessage();
-					if (m != null) {
-						result.addError(m);
+		if (skipXmlSchemaOutput) {
+			
+			result.addInfo(this,1000);
+			
+		} else {
+
+			Properties outputFormat = OutputPropertiesFactory
+					.getDefaultMethodProperties("xml");
+			outputFormat.setProperty("indent", "yes");
+			outputFormat.setProperty(
+					"{http://xml.apache.org/xalan}indent-amount", "2");
+			outputFormat.setProperty("encoding", "UTF-8");
+
+			for (XsdDocument xsd : xsdMap.values()) {
+
+				if (!xsd.printed()) {
+					try {
+						xsd.printFile(outputFormat);
+						result.addResult(getTargetName(), outputDirectory,
+								xsd.name, pi.targetNamespace());
+					} catch (Exception e) {
+						String m = e.getMessage();
+						if (m != null) {
+							result.addError(m);
+						}
+						e.printStackTrace(System.err);
 					}
-					e.printStackTrace(System.err);
 				}
 			}
 		}
@@ -368,7 +378,7 @@ public class XmlSchema implements Target {
 			schDoc.write(outputDirectory);
 
 		printed = true;
-	};
+	}
 
 	/** Create XML Schema documents */
 	protected boolean createXSDs(PackageInfo pi, XsdDocument xsdcurr)
@@ -394,7 +404,7 @@ public class XmlSchema implements Target {
 			xsd = xsdcurr;
 			if (xsd == null) {
 				xsdDocument = pi.name() + ".xsd";
-				result.addWarning(null, 15, pi.name(),xsdDocument);				
+				result.addWarning(null, 15, pi.name(), xsdDocument);
 				try {
 					result.addDebug(null, 10017, xsdDocument, pi.name());
 					xsd = new XsdDocument(pi, model, options, result,
@@ -414,9 +424,7 @@ public class XmlSchema implements Target {
 		 */
 		if (pi.matches("rule-xsd-pkg-contained-packages")) {
 			try {
-				SortedSet<PackageInfo> sub = pi.containedPackages();
-				for (Iterator<PackageInfo> i = sub.iterator(); i.hasNext();) {
-					PackageInfo pix = i.next();
+				for (PackageInfo pix : pi.containedPackages()) {
 					if (pix.isSchema()) {
 						xsd.addImport(pix.xmlns(), pix.targetNamespace());
 					} else {
@@ -452,21 +460,17 @@ public class XmlSchema implements Target {
 	protected void processDependecies(PackageInfo pi)
 			throws ShapeChangeAbortException {
 		XsdDocument xsd1 = xsdMap.get(pi.id());
-		SortedSet<String> suppliers = pi.supplierIds();
-		if (suppliers != null) {
-			for (Iterator<String> i = suppliers.iterator(); i.hasNext();) {
-				String pid = i.next();
-				XsdDocument xsd2 = xsdMap.get(pid);
-				if (xsd2 != null) {
-					xsd1.addInclude(xsd2);
-				} else {
-					PackageInfo pi2 = model.packageById(pid);
-					if (pi2 != null && pi2.xmlns() != null
-							&& pi2.xmlns().length() > 0
-							&& pi2.targetNamespace() != null
-							&& pi2.targetNamespace().length() > 0)
-						xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
-				}
+		for (String pid : pi.supplierIds()) {
+			XsdDocument xsd2 = xsdMap.get(pid);
+			if (xsd2 != null) {
+				xsd1.addInclude(xsd2);
+			} else {
+				PackageInfo pi2 = model.packageById(pid);
+				if (pi2 != null && pi2.xmlns() != null
+						&& pi2.xmlns().length() > 0
+						&& pi2.targetNamespace() != null
+						&& pi2.targetNamespace().length() > 0)
+					xsd1.addImport(pi2.xmlns(), pi2.targetNamespace());
 			}
 		}
 
@@ -474,9 +478,7 @@ public class XmlSchema implements Target {
 		 * Navigate through sub packages and import/include XML Schema documents
 		 */
 		try {
-			SortedSet<PackageInfo> sub = pi.containedPackages();
-			for (Iterator<PackageInfo> i = sub.iterator(); i.hasNext();) {
-				PackageInfo pix = i.next();
+			for (PackageInfo pix : pi.containedPackages()) {
 				if (!pix.isSchema()) {
 					processDependecies(pix);
 				}
@@ -497,6 +499,36 @@ public class XmlSchema implements Target {
 	}
 
 	/**
+	 * Tries to identify if the object element that represents ci has simple
+	 * content. If ci is a code list encoded following ISO 19139:2007, the
+	 * result will be <code>true</code>. Otherwise, if an XsdMapEntry exists
+	 * with attribute xmlElementHasSimpleType=true the result will be
+	 * <code>true</code>. If xmlElementHasSimpleType=false, the result will be
+	 * <code>false</code>. If no map entry exists, or the map entry does not
+	 * contain the attribute, the result will be undetermined (i.e.,
+	 * <code>null</code>).
+	 * 
+	 * @param ci
+	 * @return A Boolean object that indicates if the object element that
+	 *         represents ci has simple content. If the result is
+	 *         <code>null</code>, that information is undetermined.
+	 */
+	public static Boolean indicatorForObjectElementWithSimpleContent(
+			ClassInfo ci) {
+
+		if (ci.category() == Options.CODELIST
+				&& ci.matches("rule-xsd-cls-standard-19139-property-types")) {
+
+			return true;
+
+		} else {
+
+			return ci.options().xmlElementHasSimpleContent(ci.name(),
+					ci.encodingRule("xsd"));
+		}
+	}
+
+	/**
 	 * Find out whether the given class is represented by means of an XML
 	 * element construct.
 	 * 
@@ -505,6 +537,7 @@ public class XmlSchema implements Target {
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classHasObjectElement(ClassInfo ci) {
+
 		// test, if we have a map entry to an element for this encoding rule
 		MapEntry me = ci.options().elementMapEntry(ci.name(),
 				ci.encodingRule("xsd"));
@@ -512,9 +545,10 @@ public class XmlSchema implements Target {
 			return me.p1 != null && me.p1.length() > 0;
 		}
 
-		// We don't. Before checking the stereotype we first have to look for a
-		// map entry
-		// that maps the class to a simple type or attribute
+		/*
+		 * We don't. Before checking the stereotype we first have to look for a
+		 * map entry that maps the class to a simple type or attribute
+		 */
 		me = ci.options().typeMapEntry(ci.name(), ci.encodingRule("xsd"));
 		if (me != null) {
 			// Yes. As we had no element map entry the type content must be
@@ -545,7 +579,7 @@ public class XmlSchema implements Target {
 		}
 
 		int cat = ci.category();
-		if (ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
+		if (ci.matches("rule-xsd-all-naming-19139")) {
 			return cat == Options.DATATYPE || cat == Options.UNION
 					|| cat == Options.FEATURE || cat == Options.OBJECT
 					|| cat == Options.ENUMERATION || cat == Options.CODELIST
@@ -583,7 +617,7 @@ public class XmlSchema implements Target {
 	}
 
 	/**
-	 * Find out whether the given class is can carry an id and can hence be
+	 * Find out whether the given class can carry an id and can hence be
 	 * referenced by means of xlink:href.
 	 * 
 	 * @param ci
@@ -591,15 +625,47 @@ public class XmlSchema implements Target {
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classCanBeReferenced(ClassInfo ci) {
-		if (classHasObjectElement(ci)) {
+
+		/*
+		 * For the GML encoding, checking if the type has an object element and
+		 * is a feature, okstrafid, or object is fine. In these cases we expect
+		 * a gml:id on the element. For the default encoding of ISO 19139
+		 * encoding, this is also ok - also including union and datatype. For
+		 * ISO 19139 referenceable types we expect an 'id' attribute, provided
+		 * by extending gco:AbstractObject.
+		 * 
+		 * However, we need to take into account the special case encodings of
+		 * ISO 19139. They are often (or always?) not referenceable, as is the
+		 * case for gco:CharacterString.
+		 * 
+		 * The XML attribute @xmReferenceable on an XsdMapEntry is used to tell
+		 * ShapeChange that the mapping target definitely cannot be referenced.
+		 * The attribute has a boolean value. If the attribute is not present,
+		 * the usual assumptions (outlined before) apply.
+		 */
+
+		Boolean xmlElementCanBeReferenced = ci.options()
+				.xmlReferenceable(ci.name(), ci.encodingRule("xsd"));
+
+		if (classHasObjectElement(ci) && (xmlElementCanBeReferenced == null
+				|| xmlElementCanBeReferenced)) {
+
 			int cat = ci.category();
+
 			if (cat == Options.FEATURE)
 				return true;
 			if (cat == Options.OKSTRAFID)
 				return true;
 			if (cat == Options.OBJECT)
 				return true;
-			if (ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
+
+			if (ci.matches("rule-xsd-all-naming-19139")) {
+				/*
+				 * 2018-01-18 JE: If the encoding rule of ISO 19139:2007 was
+				 * extended, the following check would not work. That's why I
+				 * replaced it with ci.matches("rule-xsd-all-naming-19139").
+				 */
+				// if (ci.encodingRule("xsd").equals(Options.ISO19139_2007)) {
 				if (cat == Options.DATATYPE)
 					return true;
 				if (cat == Options.UNION)
@@ -607,5 +673,28 @@ public class XmlSchema implements Target {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: property '$1$'.";
+		case 1:
+			return "Context: class '$1$'.";
+		case 2:
+			return "Context: association class '$1$'.";
+		case 3:
+			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
+		case 1000:
+			return "Skipping XML Schema output, as configured.";
+		
+
+		default:
+			return "(" + this.getClass().getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

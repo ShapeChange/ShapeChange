@@ -1,23 +1,65 @@
 <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-  <XsdMapEntry type="Character" xsdEncodingRules="iso19139_2007" xmlElement="gco:CharacterString" xmlPropertyType="gco:CharacterString_PropertyType" xmlType="gco:CharacterString_Type"/>
-  <XsdMapEntry type="CharacterString" xsdEncodingRules="iso19139_2007" xmlElement="gco:CharacterString" xmlPropertyType="gco:CharacterString_PropertyType" xmlType="gco:CharacterString_Type"/>
-  <XsdMapEntry type="Integer" xsdEncodingRules="iso19139_2007" xmlElement="gco:Integer" xmlPropertyType="gco:Integer_PropertyType" xmlType="gco:Integer_Type"/>
-  <XsdMapEntry type="Boolean" xsdEncodingRules="iso19139_2007" xmlElement="gco:Boolean" xmlPropertyType="gco:Boolean_PropertyType" xmlType="gco:Boolean_Type"/>
-  <XsdMapEntry type="Real" xsdEncodingRules="iso19139_2007" xmlElement="gco:Real" xmlPropertyType="gco:Real_PropertyType" xmlType="gco:Real_Type"/>
-  <XsdMapEntry type="Decimal" xsdEncodingRules="iso19139_2007" xmlElement="gco:Decimal" xmlPropertyType="gco:Decimal_PropertyType" xmlType="gco:Decimal_Type"/>
-  <XsdMapEntry type="DateTime" xsdEncodingRules="iso19139_2007" xmlElement="gco:DateTime" xmlPropertyType="gco:DateTime_PropertyType" xmlType="gco:DateTime_Type"/>
-  <XsdMapEntry type="MemberName" xsdEncodingRules="iso19139_2007" xmlElement="gco:MemberName" xmlPropertyType="gco:MemberName_PropertyType" xmlType="gco:MemberName_Type"/>
-  <XsdMapEntry type="GenericName" xsdEncodingRules="iso19139_2007" xmlElement="gco:GenericName" xmlPropertyType="gco:GenericName_PropertyType" xmlType="gco:GenericName_Type"/>
-  <XsdMapEntry type="UnitOfMeasure" xsdEncodingRules="iso19139_2007" xmlElement="gco:UnitOfMeasure" xmlPropertyType="gco:UnitOfMeasure_PropertyType" xmlType="gco:UnitOfMeasure_Type"/>
-  <XsdMapEntry type="ScopedName" xsdEncodingRules="iso19139_2007" xmlElement="gco:ScopedName" xmlPropertyType="gco:ScopedName_PropertyType" xmlType="gco:ScopedName_Type"/>
-  <XsdMapEntry type="Distance" xsdEncodingRules="iso19139_2007" xmlElement="gco:Distance" xmlPropertyType="gco:Distance_PropertyType" xmlType="gco:Distance_Type"/>
-  <XsdMapEntry type="Angle" xsdEncodingRules="iso19139_2007" xmlElement="gco:Angle" xmlPropertyType="gco:Angle_PropertyType" xmlType="gco:Angle_Type"/>
-  <XsdMapEntry type="Measure" xsdEncodingRules="iso19139_2007" xmlElement="gco:Measure" xmlPropertyType="gco:Measure_PropertyType" xmlType="gco:Measure_Type"/>
-  <XsdMapEntry type="Record" xsdEncodingRules="iso19139_2007" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType" xmlType="gco:Record_Type"/>
-  <XsdMapEntry type="RecordType" xsdEncodingRules="iso19139_2007" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" xmlType="gco:RecordType_Type"/>
-  <XsdMapEntry type="BinaryData" xsdEncodingRules="iso19139_2007" xmlElement="gco:Binary" xmlPropertyType="gco:Binary_PropertyType" xmlType="gco:Binary_Type"/>
-  <XsdMapEntry type="GF_PropertyType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
-  <XsdMapEntry type="GF_AttributeType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
-  <XsdMapEntry type="GF_FeatureType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
-  <XsdMapEntry type="FC_FeatureCatalogue" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
+ <XsdMapEntry type="Anchor" xsdEncodingRules="*" xmlElement="gmx:Anchor" xmlType="gmx:Anchor_Type" xmlTypeType="complex" xmlTypeContent="simple" xmlPropertyType="gmx:Anchor_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="Angle" xsdEncodingRules="iso19139_2007" xmlElement="gco:Angle" xmlPropertyType="gco:Angle_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="BinaryData" xsdEncodingRules="iso19139_2007" xmlElement="gco:Binary" xmlPropertyType="gco:Binary_PropertyType" xmlType="gco:Binary_Type" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Boolean" xsdEncodingRules="iso19139_2007" xmlElement="gco:Boolean" xmlPropertyType="gco:Boolean_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="CT_CRS" xsdEncodingRules="*" xmlElement="gml:AbstractCRS" xmlType="gml:AbstractCRSType" xmlPropertyType="gmx:CT_CRS_PropertyType"/>
+ <XsdMapEntry type="CT_Catalogue" xsdEncodingRules="*" xmlElement="gmx:AbstractCT_Catalogue" xmlType="gmx:AbstractCT_Catalogue_Type" xmlPropertyType="gmx:CT_Catalogue_PropertyType"/>
+ <XsdMapEntry type="CT_Codelist" xsdEncodingRules="*" xmlElement="gmx:CodeListDictionary" xmlType="gmx:CodeListDictionary_Type" xmlPropertyType="gmx:CodeListDictionary_PropertyType"/>
+ <XsdMapEntry type="CT_CodelistCatalogue" xsdEncodingRules="*" xmlElement="gmx:CT_CodelistCatalogue" xmlType="gmx:CT_CodelistCatalogue_Type" xmlPropertyType="gmx:CT_CodelistCatalogue_PropertyType"/>
+ <XsdMapEntry type="CT_CodelistValue" xsdEncodingRules="*" xmlElement="gmx:CodeDefinition" xmlType="gmx:CodeDefinition_Type" xmlPropertyType="gmx:CodeDefinition_PropertyType"/>
+ <XsdMapEntry type="CT_CoordinateSystem" xsdEncodingRules="*" xmlElement="gml:AbstractCoordinateSystem" xmlType="gml:AbstractCoordinateSystemType" xmlPropertyType="gmx:CT_CoordinateSystem_PropertyType"/>
+ <XsdMapEntry type="CT_CoordinateSystemAxis" xsdEncodingRules="*" xmlElement="gml:CoordinateSystemAxis" xmlType="gml:CoordinateSystemAxisType" xmlPropertyType="gmx:CT_CoordinateSystemAxis_PropertyType"/>
+ <XsdMapEntry type="CT_CrsCatalogue" xsdEncodingRules="*" xmlElement="gmx:CT_CrsCatalogue" xmlType="gmx:CT_CrsCatalogue_Type" xmlPropertyType="gmx:CT_CrsCatalogue_PropertyType"/>
+ <XsdMapEntry type="CT_Datum" xsdEncodingRules="*" xmlElement="gml:AbstractDatum" xmlType="gml:AbstractDatumType" xmlPropertyType="gmx:CT_Datum_PropertyType"/>
+ <XsdMapEntry type="CT_Ellipsoid" xsdEncodingRules="*" xmlElement="gml:Ellipsoid" xmlType="gml:EllipsoidType" xmlPropertyType="gmx:CT_Ellipsoid_PropertyType"/>
+ <XsdMapEntry type="CT_Operation" xsdEncodingRules="*" xmlElement="gml:AbstractCoordinateOperation" xmlType="gml:AbstractCoordinateOperationType" xmlPropertyType="gmx:CT_Operation_PropertyType"/>
+ <XsdMapEntry type="CT_OperationMethod" xsdEncodingRules="*" xmlElement="gml:OperationMethod" xmlType="gml:OperationMethodType" xmlPropertyType="gmx:CT_OperationMethod_PropertyType"/>
+ <XsdMapEntry type="CT_OperationParameters" xsdEncodingRules="*" xmlElement="gml:AbstractGeneralOperationParameter" xmlType="gml:AbstractGeneralOperationParameterType" xmlPropertyType="gmx:CT_OperationParameters_PropertyType"/>
+ <XsdMapEntry type="CT_PrimerMeridian" xsdEncodingRules="*" xmlElement="gml:PrimeMeridian" xmlType="gml:PrimeMeridianType" xmlPropertyType="gmx:CT_PrimeMeridian_PropertyType"/>
+ <XsdMapEntry type="CT_UomCatalogue" xsdEncodingRules="*" xmlElement="gmx:CT_UomCatalogue" xmlType="gmx:CT_UomCatalogue_Type" xmlPropertyType="gmx:CT_UomCatalogue_PropertyType"/>
+ <XsdMapEntry type="Character" xsdEncodingRules="iso19139_2007" xmlElement="gco:CharacterString" xmlPropertyType="gco:CharacterString_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="CharacterString" xsdEncodingRules="iso19139_2007" xmlElement="gco:CharacterString" xmlPropertyType="gco:CharacterString_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Date" xsdEncodingRules="iso19139_2007" xmlElement="gco:Date" xmlPropertyType="gco:Date_PropertyType" xmlType="gco:Date_Type" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="DateTime" xsdEncodingRules="iso19139_2007" xmlElement="gco:DateTime" xmlPropertyType="gco:DateTime_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Decimal" xsdEncodingRules="iso19139_2007" xmlElement="gco:Decimal" xmlPropertyType="gco:Decimal_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Distance" xsdEncodingRules="iso19139_2007" xmlElement="gco:Distance" xmlPropertyType="gco:Distance_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="FC_FeatureCatalogue" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
+ <XsdMapEntry type="FileName" xsdEncodingRules="*" xmlElement="gmx:FileName" xmlType="gmx:FileName_Type" xmlTypeType="complex" xmlTypeContent="simple" xmlPropertyType="gmx:FileName_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="GF_AttributeType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
+ <XsdMapEntry type="GF_FeatureType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
+ <XsdMapEntry type="GF_PropertyType" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:ObjectReference_PropertyType"/>
+ <XsdMapEntry type="GenericName" xsdEncodingRules="iso19139_2007" xmlElement="gco:AbstractGenericName" xmlPropertyType="gco:GenericName_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Integer" xsdEncodingRules="iso19139_2007" xmlElement="gco:Integer" xmlPropertyType="gco:Integer_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Length" xsdEncodingRules="iso19139_2007" xmlElement="gco:Length" xmlPropertyType="gco:Length_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="LocalName" xsdEncodingRules="iso19139_2007" xmlElement="gco:LocalName" xmlPropertyType="gco:LocalName_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Measure" xsdEncodingRules="iso19139_2007" xmlElement="gco:Measure" xmlPropertyType="gco:Measure_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="MemberName" xsdEncodingRules="*" xmlElement="gco:MemberName" xmlType="gco:MemberName_Type" xmlPropertyType="gco:MemberName_PropertyType"/>
+ <XsdMapEntry type="Multiplicity" xsdEncodingRules="*" xmlElement="gco:Multiplicity" xmlType="gco:Multiplicity_Type" xmlPropertyType="gco:Multiplicity_PropertyType"/>
+ <XsdMapEntry type="MultiplicityRange" xsdEncodingRules="*" xmlElement="gco:MultiplicityRange" xmlType="gco:MultiplicityRange_Type" xmlPropertyType="gco:MultiplicityRange_PropertyType"/>
+ <XsdMapEntry type="MX_Aggregate" xsdEncodingRules="*" xmlElement="gmx:MX_Aggregate" xmlType="gmx:MX_Aggregate_Type" xmlPropertyType="gmx:MX_Aggregate_PropertyType"/>
+ <XsdMapEntry type="MX_DataFile" xsdEncodingRules="*" xmlElement="gmx:MX_DataFile" xmlType="gmx:MX_DataFile_Type" xmlPropertyType="gmx:MX_DataFile_PropertyType"/>
+ <XsdMapEntry type="MX_DataSet" xsdEncodingRules="*" xmlElement="gmx:MX_DataSet" xmlType="gmx:MX_DataSet_Type" xmlPropertyType="gmx:MX_DataSet_PropertyType"/>
+ <XsdMapEntry type="MX_File" xsdEncodingRules="*" xmlElement="gmx:AbstractMX_File" xmlType="gmx:AbstractMX_File_Type" xmlPropertyType="gmx:MX_File_PropertyType"/>
+ <XsdMapEntry type="MX_ScopeCode" xsdEncodingRules="*" xmlElement="gmx:MX_ScopeCode" xmlPropertyType="gmx:MX_ScopeCode_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="MX_SupportFile" xsdEncodingRules="*" xmlElement="gmx:MX_SupportFile" xmlType="gmx:MX_SupportFile_Type" xmlPropertyType="gmx:MX_SupportFile_PropertyType"/>
+ <XsdMapEntry type="Measure" xsdEncodingRules="iso19139_2007" xmlElement="gco:Measure" xmlPropertyType="gco:Measure_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="MemberName" xsdEncodingRules="iso19139_2007" xmlElement="gco:MemberName" xmlPropertyType="gco:MemberName_PropertyType" xmlType="gco:MemberName_Type"/>
+ <XsdMapEntry type="MimeFileType" xsdEncodingRules="*" xmlElement="gmx:MimeFileType" xmlType="gmx:MimeFileType_Type" xmlTypeType="complex" xmlTypeContent="simple" xmlPropertyType="gmx:MimeFileType_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="Number" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:Number_PropertyType" xmlReferenceable="false"/>
+ <XsdMapEntry type="Real" xsdEncodingRules="iso19139_2007" xmlElement="gco:Real" xmlPropertyType="gco:Real_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Record" xsdEncodingRules="iso19139_2007" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType"/>
+ <XsdMapEntry type="RecordType" xsdEncodingRules="iso19139_2007" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" xmlType="gco:RecordType_Type" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="Scale" xsdEncodingRules="iso19139_2007" xmlElement="gco:Scale" xmlPropertyType="gco:Scale_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="ScopedName" xsdEncodingRules="iso19139_2007" xmlElement="gco:ScopedName" xmlPropertyType="gco:ScopedName_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="TypeName" xsdEncodingRules="iso19139_2007" xmlElement="gco:TypeName" xmlPropertyType="gco:TypeName_PropertyType" xmlType="gco:TypeName_Type"/>
+ <XsdMapEntry type="UnitOfMeasure" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UnitOfMeasure_PropertyType"/>
+ <XsdMapEntry type="UnlimitedInteger" xsdEncodingRules="iso19139_2007" xmlElement="gco:UnlimitedInteger" xmlPropertyType="gco:UnlimitedInteger_PropertyType" xmlReferenceable="false" xmlElementHasSimpleContent="true"/>
+ <XsdMapEntry type="UomAngle" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomAngle_PropertyType"/>
+ <XsdMapEntry type="UomArea" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomArea_PropertyType"/>
+ <XsdMapEntry type="UomLength" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomLength_PropertyType"/>
+ <XsdMapEntry type="UomScale" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomScale_PropertyType"/>
+ <XsdMapEntry type="UomTime" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomTime_PropertyType"/>
+ <XsdMapEntry type="UomVelocity" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomVelocity_PropertyType"/>
+ <XsdMapEntry type="UomVolume" xsdEncodingRules="iso19139_2007" xmlPropertyType="gco:UomVolume_PropertyType"/>
 </xsdMapEntries>
