@@ -937,7 +937,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return isAbstract;
 	} // isAbstract()
 
-	/** Determine whether the class is tagged as being a leaf class */
+	@Override
 	public boolean isLeaf() {
 		return isLeaf;
 	} // isLeaf()

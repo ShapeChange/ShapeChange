@@ -54,10 +54,12 @@ public class MapEntryParamInfos implements MessageSource {
 	 * ((\w+)(\{(([^;=\}]+)=?((?<==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match
 	 * valid values of the 'param' attribute in a map entry.
 	 * 
+	 * Parameters are separated by comma, characteristics are separated by semicolon.
+	 * 
 	 * Examples of valid values are:
 	 * <ul>
 	 * <li>paramX</li>
-	 * <li>paramX{a=xyz;b=42,c}</li>
+	 * <li>paramX{a=xyz;b=42;c}</li>
 	 * <li>paramX{a=xyz},paramY</li>
 	 * <li>paramX{a=xyz},paramY{d=(80.2,20.4)}</li>
 	 * <li>paramX{a=xyz},paramY{d=(80.2,20.4)},paramZ{d}</li>

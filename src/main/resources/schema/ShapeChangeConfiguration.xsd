@@ -377,6 +377,8 @@
   <attribute name="xmlPropertyType" type="string"/>
   <attribute name="xmlAttribute" type="string"/>
   <attribute name="xmlAttributeGroup" type="string"/>
+  <attribute name="xmlReferenceable" type="boolean"/>
+  <attribute name="xmlElementHasSimpleContent" type="boolean"/>
   <attribute name="nsabr" type="string"/>
  </complexType>
  <element name="rules">

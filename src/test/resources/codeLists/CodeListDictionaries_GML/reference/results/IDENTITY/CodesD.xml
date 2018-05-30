@@ -1,0 +1,28 @@
+<?xml-stylesheet type='text/xsl' href='./CodelistDictionary-v32.xsl'?><gml:Dictionary xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodesD" xsi:schemaLocation="http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+  <gml:description>Documentation code list CodesD</gml:description>
+  <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML">CodesD</gml:identifier>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code1">
+      <gml:description>Documentation code1</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code1</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code2">
+      <gml:description>Documentation code2</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code2</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code3">
+      <gml:description>Documentation code3</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code3</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+  <gml:dictionaryEntry>
+    <gml:Definition gml:id="code4">
+      <gml:description>Documentation code4</gml:description>
+      <gml:identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code4</gml:identifier>
+    </gml:Definition>
+  </gml:dictionaryEntry>
+</gml:Dictionary>

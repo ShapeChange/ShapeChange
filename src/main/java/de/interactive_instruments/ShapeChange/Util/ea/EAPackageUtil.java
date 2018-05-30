@@ -31,6 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Util.ea;
 
+import java.util.Set;
+import java.util.SortedMap;
+
+import org.sparx.Collection;
 import org.sparx.Element;
 import org.sparx.Package;
 
@@ -75,6 +79,80 @@ public class EAPackageUtil extends AbstractEAUtil {
 					owner.GetName(), pkg.GetLastError()));
 		} else {
 			return pkg;
+		}
+	}
+
+	/**
+	 * Searches in the package hierarchy with the given package at the top.
+	 * First checks if the given package has the given name. Otherwise,
+	 * recursively searches in child packages.
+	 * 
+	 * @param pkgIn
+	 *            Package to search in
+	 * @param name
+	 *            Name of package to find
+	 * @return the package with equal to the given name; can be
+	 *         <code>null</code> if no such package was found
+	 */
+	public static Package findPackage(Package pkgIn, String name) {
+
+		if (pkgIn.GetName().equals(name)) {
+
+			return pkgIn;
+
+		} else {
+
+			Collection<org.sparx.Package> pkgs = pkgIn.GetPackages();
+
+			for (short i = 0; i < pkgs.GetCount(); i++) {
+
+				Package resPkg = EAPackageUtil.findPackage(pkgs.GetAt(i), name);
+
+				if (resPkg != null) {
+					return resPkg;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	/**
+	 * Looks up the elements contained in the given package as well as the
+	 * direct and indirect child packages whose type equals one of the given
+	 * types. Results are stored in the given map.
+	 * 
+	 * @param pkg
+	 *            EA package in which to search for elements; must not be
+	 *            <code>null</code>
+	 * @param elementTypes
+	 *            element types to look up, must not be <code>null</code>; see
+	 *            the EA API on Element.Type for the list of possible types
+	 * @param resultMap
+	 *            storage for found elements (key: element name, value: EA
+	 *            element ID); must not be <code>null</code>
+	 */
+	public static void lookUpElements(Package pkg, Set<String> elementTypes,
+			SortedMap<String, Integer> resultMap) {
+
+		Collection<Element> elmts = pkg.GetElements();
+
+		// process elements contained in the package
+		for (short i = 0; i < elmts.GetCount(); i++) {
+
+			Element elmt = elmts.GetAt(i);
+
+			if (elementTypes.contains(elmt.GetType())) {
+				resultMap.put(elmt.GetName(), elmt.GetElementID());
+			}
+		}
+
+		// process child packages
+		Collection<org.sparx.Package> pkgs = pkg.GetPackages();
+
+		for (short i = 0; i < pkgs.GetCount(); i++) {
+
+			lookUpElements(pkgs.GetAt(i), elementTypes, resultMap);
 		}
 	}
 

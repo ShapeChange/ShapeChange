@@ -459,6 +459,7 @@ public abstract class InfoImpl implements Info {
 		}
 	}
 
+	@Override
 	public String derivedDocumentation(String template, String novalue) {
 		String tmp = (template == null
 				? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE : template);
@@ -826,6 +827,11 @@ public abstract class InfoImpl implements Info {
 						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
+			} else if (platform.equalsIgnoreCase("cldml")) {
+				s = options().parameter(Options.TargetCodeListDictionariesML,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
 			}
 		}
 		if (s != null)
@@ -955,6 +961,10 @@ public abstract class InfoImpl implements Info {
 				res = res || options().hasRule(rule, encRule);
 			
 			encRule = encodingRule("cdb");
+			if (encRule != null)
+				res = res || options().hasRule(rule, encRule);
+			
+			encRule = encodingRule("cldml");
 			if (encRule != null)
 				res = res || options().hasRule(rule, encRule);
 

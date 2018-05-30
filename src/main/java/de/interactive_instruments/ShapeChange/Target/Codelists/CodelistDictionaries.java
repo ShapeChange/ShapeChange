@@ -38,13 +38,16 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.SortedSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -53,192 +56,216 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.ProcessingInstruction;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Target;
 
-public class CodelistDictionaries implements Target {
+/**
+ * @author Stefan Olk
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
+ *         <dot> de)
+ *
+ */
+public class CodelistDictionaries implements Target, MessageSource {
+
+	public static final String PARAM_IDENTIFIER = "identifier";
+	public static final String PARAM_NAMES = "names";
+	public static final String PARAM_GMLID = "gmlid";
+	public static final String PARAM_ENUMERATIONS = "enumerations";
 
 	private PackageInfo pi = null;
 	private Model model = null;
 	private Options options = null;
 	private ShapeChangeResult result = null;
+
 	private boolean diagnosticsOnly = false;
 	private boolean printed = false;
+
 	private boolean enums = false;
 	private String gmlid = "id";
-	private String identifier = "name";
-	private String names = "alias,initialValue";
+	private List<String> identifiers = null;
+	private List<String> names = null;
+
 	private final HashMap<String, Document> documentMap = new HashMap<String, Document>();
+
 	private String documentationTemplate = null;
 	private String documentationNoValue = null;
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
 			throws ShapeChangeAbortException {
+
 		pi = p;
 		model = m;
 		options = o;
 		result = r;
 		diagnosticsOnly = diagOnly;
-		String s = options.parameter(this.getClass().getName(), "enumerations");
-		if (s != null && s.equalsIgnoreCase("true"))
-			enums = true;
 
-		s = options.parameter(this.getClass().getName(), "identifier");
-		if (s != null && !s.isEmpty())
-			identifier = s;
+		enums = options.parameterAsBoolean(this.getClass().getName(),
+				PARAM_ENUMERATIONS, false);
+		identifiers = options.parameterAsStringList(this.getClass().getName(),
+				PARAM_IDENTIFIER, new String[] { "name" }, true, true);
+		names = options.parameterAsStringList(this.getClass().getName(),
+				PARAM_NAMES, new String[] { "alias", "initialValue" }, true,
+				true);
+		gmlid = options.parameterAsString(this.getClass().getName(),
+				PARAM_GMLID, "id", false, false);
 
-		s = options.parameter(this.getClass().getName(), "names");
-		if (s != null && !s.isEmpty())
-			names = s;
-
-		s = options.parameter(this.getClass().getName(), "gmlid"); // TODO unit
-																	// test and
-																	// document,
-																	// req test
-																	// uniqueness,
-																	// req test
-																	// gmlid
-																	// value
-		if (s != null && !s.isEmpty())
-			gmlid = s;
-
-		// change the default documentation template?
 		documentationTemplate = options.parameter(this.getClass().getName(),
 				"documentationTemplate");
 		documentationNoValue = options.parameter(this.getClass().getName(),
 				"documentationNoValue");
 	}
 
-	/** Add attribute to an element */
+	/**
+	 * Add attribute to an element
+	 */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
+
 		Attr att = document.createAttribute(name);
 		att.setValue(value);
 		e.setAttributeNode(att);
 	}
 
-	protected Document createDocument() {
-		Document document = null;
+	public void process(ClassInfo ci) {
+
+		int cat = ci.category();
+		if (cat != Options.CODELIST && (!enums || cat != Options.ENUMERATION)) {
+			return;
+		} else if (cat == Options.CODELIST && ci.asDictionary() == false) {
+			result.addInfo(this, 101, ci.name());
+			return;
+		}
+
 		try {
+
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			document = db.newDocument();
+			Document cDocument = db.newDocument();
+
+			ProcessingInstruction proci = null;
+			if (options.gmlVersion.equals("3.2")) {
+				proci = cDocument.createProcessingInstruction("xml-stylesheet",
+						"type='text/xsl' href='./CodelistDictionary-v32.xsl'");
+			} else if (options.gmlVersion.equals("3.1")) {
+				proci = cDocument.createProcessingInstruction("xml-stylesheet",
+						"type='text/xsl' href='./CodelistDictionary-v31.xsl'");
+			}
+			if (proci != null) {
+				cDocument.appendChild(proci);
+			}
+
+			Element ec = cDocument.createElementNS(options.GML_NS,
+					"gml:Dictionary");
+			cDocument.appendChild(ec);
+
+			addAttribute(cDocument, ec, "xmlns:gml", options.GML_NS);
+			addAttribute(cDocument, ec, "xmlns:xsi",
+					"http://www.w3.org/2001/XMLSchema-instance");
+			addAttribute(cDocument, ec, "xsi:schemaLocation", options.GML_NS
+					+ " " + options.schemaLocationOfNamespace(options.GML_NS));
+			addAttribute(cDocument, ec, "gml:id", ci.name());
+
+			documentMap.put(ci.id(), cDocument);
+
+			String documentation = ci.derivedDocumentation(
+					documentationTemplate, documentationNoValue);
+			if (StringUtils.isNotBlank(documentation)) {
+				Element e1 = cDocument.createElementNS(options.GML_NS,
+						"gml:description");
+				e1.appendChild(cDocument.createTextNode(documentation));
+				ec.appendChild(e1);
+			}
+
+			for (String identifierSource : identifiers) {
+
+				String identifierValue = getValue(ci, identifierSource);
+
+				if (StringUtils.isNotBlank(identifierValue)) {
+
+					if (options.gmlVersion.equals("3.2")) {
+
+						Element e1 = cDocument.createElementNS(options.GML_NS,
+								"gml:identifier");
+						addAttribute(cDocument, e1, "codeSpace",
+								ci.pkg().targetNamespace());
+						e1.appendChild(
+								cDocument.createTextNode(identifierValue));
+						ec.appendChild(e1);
+
+					} else if (options.gmlVersion.equals("3.1")) {
+
+						Element e1 = cDocument.createElementNS(options.GML_NS,
+								"gml:name");
+						e1.appendChild(
+								cDocument.createTextNode(identifierValue));
+						ec.appendChild(e1);
+					}
+
+					break;
+				}
+			}
+
+			for (String nameSource : names) {
+
+				String nameValue = getValue(ci, nameSource);
+
+				if (StringUtils.isNotBlank(nameValue)) {
+
+					Element e1 = cDocument.createElementNS(options.GML_NS,
+							"gml:name");
+					e1.appendChild(cDocument.createTextNode(nameValue));
+					ec.appendChild(e1);
+				}
+			}
+
+			/*
+			 * Add properties from ci as well as all its supertypes in the
+			 * complete supertype hierarchy.
+			 */
+
+			SortedMap<String, Element> entryElmtsByGmlId = new TreeMap<>();
+
+			for (PropertyInfo propi : ci.propertiesAll()) {
+
+				Element entryElmt = createEntry(cDocument, ci, propi, true);
+
+				if (entryElmt != null) {
+					String gmlid = ((Element) entryElmt
+							.getElementsByTagName("gml:Definition").item(0))
+									.getAttribute("gml:id");
+					entryElmtsByGmlId.put(gmlid, entryElmt);
+				}
+			}
+
+			for (Element defElmt : entryElmtsByGmlId.values()) {
+				ec.appendChild(defElmt);
+			}
+
 		} catch (ParserConfigurationException e) {
+
 			result.addFatalError(null, 2);
 			String m = e.getMessage();
 			if (m != null) {
 				result.addFatalError(m);
 			}
 			e.printStackTrace(System.err);
-			System.exit(1);
+
 		} catch (Exception e) {
-			result.addFatalError(e.getMessage());
+
+			String m = e.getMessage();
+			if (m != null) {
+				result.addFatalError(m);
+			}
 			e.printStackTrace(System.err);
-			System.exit(1);
-		}
-
-		return document;
-	}
-
-	public void process(ClassInfo ci) {
-		int cat = ci.category();
-		if (cat != Options.CODELIST || ci.asDictionary() == false) {
-			if (!enums || cat != Options.ENUMERATION)
-				return;
-		}
-
-		Document cDocument = createDocument();
-
-		ProcessingInstruction proci = null;
-		if (options.gmlVersion.equals("3.2"))
-			proci = cDocument.createProcessingInstruction("xml-stylesheet",
-					"type='text/xsl' href='./CodelistDictionary-v32.xsl'");
-		else if (options.gmlVersion.equals("3.1"))
-			proci = cDocument.createProcessingInstruction("xml-stylesheet",
-					"type='text/xsl' href='./CodelistDictionary-v31.xsl'");
-		if (proci != null)
-			cDocument.appendChild(proci);
-
-		Element ec = cDocument.createElementNS(options.GML_NS, "Dictionary");
-		cDocument.appendChild(ec);
-
-		addAttribute(cDocument, ec, "xmlns:gml", options.GML_NS);
-		addAttribute(cDocument, ec, "xmlns:xsi",
-				"http://www.w3.org/2001/XMLSchema-instance");
-		addAttribute(cDocument, ec, "xsi:schemaLocation", options.GML_NS + " "
-				+ options.schemaLocationOfNamespace(options.GML_NS));
-		addAttribute(cDocument, ec, "gml:id", ci.name());
-
-		documentMap.put(ci.id(), cDocument);
-
-		String s = ci.derivedDocumentation(documentationTemplate,
-				documentationNoValue);
-		if (s != null && !s.isEmpty()) {
-			Element e1 = cDocument.createElementNS(options.GML_NS,
-					"description");
-			e1.appendChild(cDocument.createTextNode(s));
-			ec.appendChild(e1);
-		}
-
-		String[] sa = identifier.split(",");
-		for (String s0 : sa) {
-			s = getValue(ci, s0.trim());
-			if (s != null && !s.isEmpty()) {
-				if (options.gmlVersion.equals("3.2")) {
-					Element e1 = cDocument.createElementNS(options.GML_NS,
-							"identifier");
-					addAttribute(cDocument, e1, "codeSpace",
-							ci.pkg().targetNamespace());
-					e1.appendChild(cDocument.createTextNode(s));
-					ec.appendChild(e1);
-				} else if (options.gmlVersion.equals("3.1")) {
-					Element e1 = cDocument.createElementNS(options.GML_NS,
-							"name");
-					e1.appendChild(cDocument.createTextNode(s));
-					ec.appendChild(e1);
-				}
-				break;
-			}
-		}
-
-		sa = names.split(",");
-		for (String s0 : sa) {
-			s = getValue(ci, s0);
-			if (s != null && !s.isEmpty()) {
-				Element e1 = cDocument.createElementNS(options.GML_NS, "name");
-				e1.appendChild(cDocument.createTextNode(s));
-				ec.appendChild(e1);
-			}
-		}
-
-		for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j
-				.hasNext();) {
-			PropertyInfo propi = j.next();
-			Element e1 = createEntry(cDocument, ci, propi, true);
-			if (e1 != null)
-				ec.appendChild(e1);
-		}
-
-		SortedSet<String> ts = ci.supertypes();
-		for (Iterator<String> i = ts.iterator(); i.hasNext();) {
-			ClassInfo cix = model.classById(i.next());
-			if (cix != null) {
-				for (Iterator<PropertyInfo> j = cix.properties().values()
-						.iterator(); j.hasNext();) {
-					PropertyInfo propi = j.next();
-					Element e1 = createEntry(cDocument, ci, propi, true);
-					if (e1 != null)
-						ec.appendChild(e1);
-				}
-			}
 		}
 
 	}
@@ -247,31 +274,36 @@ public class CodelistDictionaries implements Target {
 			PropertyInfo propi, boolean local) {
 
 		Element e = lDocument.createElementNS(options.GML_NS,
-				"dictionaryEntry");
-		Element e3 = lDocument.createElementNS(options.GML_NS, "Definition");
-		String s = getValue(propi, gmlid);
-		if (s != null && !s.isEmpty()) {
-			if (!s.matches("^[a-zA-Z_]"))
-				s = "_" + s;
+				"gml:dictionaryEntry");
+		Element e3 = lDocument.createElementNS(options.GML_NS,
+				"gml:Definition");
+
+		String gmlIdValue = getValue(propi, gmlid);
+
+		if (StringUtils.isNotBlank(gmlIdValue)) {
+			if (!gmlIdValue.matches("^[a-zA-Z_].*")) {
+				gmlIdValue = "_" + gmlIdValue;
+			}
 		} else {
-			s = "_" + propi.id();
+			gmlIdValue = "_" + propi.id();
 		}
-		addAttribute(lDocument, e3, "gml:id", "_" + propi.id());
+
+		addAttribute(lDocument, e3, "gml:id", gmlIdValue);
 		e.appendChild(e3);
 
 		Element e2;
-		s = propi.derivedDocumentation(documentationTemplate,
-				documentationNoValue);
-		if (s != null && !s.isEmpty()) {
-			e2 = lDocument.createElementNS(options.GML_NS, "description");
-			e2.appendChild(lDocument.createTextNode(s));
+		String defDescription = propi.derivedDocumentation(
+				documentationTemplate, documentationNoValue);
+		if (StringUtils.isNotBlank(defDescription)) {
+			e2 = lDocument.createElementNS(options.GML_NS, "gml:description");
+			e2.appendChild(lDocument.createTextNode(defDescription));
 			e3.appendChild(e2);
 		}
 
 		if (options.gmlVersion.equals("3.2")) {
-			e2 = lDocument.createElementNS(options.GML_NS, "identifier");
+			e2 = lDocument.createElementNS(options.GML_NS, "gml:identifier");
 		} else {
-			e2 = lDocument.createElementNS(options.GML_NS, "name");
+			e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 		}
 
 		String codeSpace = ci.taggedValue("codeList");
@@ -279,24 +311,28 @@ public class CodelistDictionaries implements Target {
 			codeSpace = ci.taggedValue("infoURL");
 		if (codeSpace == null)
 			codeSpace = ci.pkg().targetNamespace() + "/" + ci.name();
+
 		addAttribute(lDocument, e2, "codeSpace", codeSpace);
 
-		String[] sa = identifier.split(",");
-		for (String s0 : sa) {
-			s = getValue(propi, s0.trim());
-			if (s != null && !s.isEmpty()) {
-				e2.appendChild(lDocument.createTextNode(s));
+		for (String identifierSource : identifiers) {
+
+			String identifierValue = getValue(propi, identifierSource);
+
+			if (StringUtils.isNotBlank(identifierValue)) {
+				e2.appendChild(lDocument.createTextNode(identifierValue));
 				e3.appendChild(e2);
 				break;
 			}
 		}
 
-		sa = names.split(",");
-		for (String s0 : sa) {
-			s = getValue(propi, s0);
-			if (s != null && !s.isEmpty()) {
-				Element e1 = lDocument.createElementNS(options.GML_NS, "name");
-				e1.appendChild(lDocument.createTextNode(s));
+		for (String nameSource : names) {
+
+			String nameValue = getValue(propi, nameSource);
+
+			if (StringUtils.isNotBlank(nameValue)) {
+				Element e1 = lDocument.createElementNS(options.GML_NS,
+						"gml:name");
+				e1.appendChild(lDocument.createTextNode(nameValue));
 				e3.appendChild(e1);
 			}
 		}
@@ -304,23 +340,30 @@ public class CodelistDictionaries implements Target {
 		return e;
 	}
 
+	/**
+	 * @param i
+	 *            the model element from which to retrieve a specific value
+	 * @param source
+	 *            one of: name, alias, id, initialValue, @{tagged value name}
+	 * @return the value of the source; can be blank (<code>null</code> or
+	 *         empty)
+	 */
 	private String getValue(Info i, String source) {
+
 		String s = null;
 
-		if (source.equalsIgnoreCase("name"))
+		if (source.equalsIgnoreCase("name")) {
 			s = i.name();
-		else if (source.equalsIgnoreCase("alias"))
+		} else if (source.equalsIgnoreCase("alias")) {
 			s = i.aliasName();
-		else if (source.equalsIgnoreCase("id"))
+		} else if (source.equalsIgnoreCase("id")) {
 			s = i.id();
-		else if (source.equalsIgnoreCase("initialValue")
-				&& i instanceof PropertyInfo)
+		} else if (source.equalsIgnoreCase("initialValue")
+				&& i instanceof PropertyInfo) {
 			s = ((PropertyInfo) i).initialValue();
-		else if (source.startsWith("@"))
+		} else if (source.startsWith("@")) {
 			s = i.taggedValue(source.substring(1));
-
-		if (s != null && s.isEmpty())
-			s = null;
+		}
 
 		return s;
 	}
@@ -389,5 +432,19 @@ public class CodelistDictionaries implements Target {
 	@Override
 	public String getTargetName() {
 		return "Code List Dictionary";
+	}
+
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 101:
+			return "Code list '$1$' is not configured to be encoded as a dictionary. It will be ignored.";
+
+		default:
+			return "(" + CodelistDictionaries.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
 	}
 }

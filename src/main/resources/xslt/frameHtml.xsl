@@ -17,6 +17,7 @@
  <!-- ================= -->
  <!-- Output parameters -->
  <!-- ================= -->
+ <!-- NOTE: Use XML attribute 'encoding' to change the output encoding. Example: encoding="iso-8859-1" -->
  <xsl:output doctype-system="about:legacy-compat" indent="yes" method="html" name="html5"/>
 
  <!-- The name of the output directory is automatically set by ShapeChange (the value of the 'outputFilename' parameter from the configuration is actually used). -->
@@ -90,7 +91,6 @@
       <xsl:text> </xsl:text>
       <xsl:value-of select="$appSchemaName"/>
      </title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
     <body>
@@ -146,7 +146,6 @@
      <title>
       <xsl:value-of select="$appSchemaName"/>
      </title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
 
@@ -176,7 +175,6 @@
       <xsl:text> - </xsl:text>
       <xsl:value-of select="$fc.frame.Overview"/>
      </title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
     <body>
@@ -236,7 +234,6 @@
       <xsl:text> - </xsl:text>
       <xsl:value-of select="$fc.frame.Overview"/>
      </title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
     <body>
@@ -328,7 +325,6 @@
     <head>
      <title><xsl:value-of select="$fc.frame.AllTypes"/> (<xsl:value-of select="$appSchemaName"
       />)</title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
     <body>
@@ -433,7 +429,6 @@
     <head>
      <title><xsl:value-of select="$packages[id = ./@id]/path"/> (<xsl:value-of
        select="$appSchemaName"/>)</title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="{concat($backpath,'stylesheet.css')}" rel="stylesheet" title="Style"
       type="text/css"/>
     </head>
@@ -540,7 +535,6 @@
     <head>
      <title><xsl:value-of select="$packages[id = ./@id]/path"/> (<xsl:value-of
        select="$appSchemaName"/>)</title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="{concat($backpath,'stylesheet.css')}" rel="stylesheet" title="Style"
       type="text/css"/>
     </head>
@@ -787,7 +781,6 @@
     <head>
      <title><xsl:value-of select="$packages[id = ./@id]/path"/> (<xsl:value-of
        select="$appSchemaName"/>)</title>
-     <meta content="text/html; charset=UTF-8" http-equiv="Content-type"/>
      <link href="{concat($backpath,'stylesheet.css')}" rel="stylesheet" title="Style"
       type="text/css"/>
      <script language="javascript" type="text/javascript"> 

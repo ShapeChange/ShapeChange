@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result">
   <!-- (c) 2012 interactive instruments GmbH, Bonn -->
+ <!-- NOTE: Use XML attribute 'encoding' to change the output encoding. Example: encoding="iso-8859-1" -->
   <xsl:output method="html" indent="no"/>
   <xsl:template match="/">
     <html>

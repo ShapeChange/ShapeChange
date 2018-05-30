@@ -113,7 +113,9 @@
 			<targetParameter name="nameForCodeStatusCLColumn" value="customCodeStatusCLColumn"/>
 			<targetParameter name="nameForCodeStatusNotesColumn" value="customNameCodeStatusNotesColumn"/>
 		 <targetParameter name="codeStatusCLColumnDocumentation" value="Configured documentation of the 'customCodeStatusCLColumn' column." />
-		 <targetParameter name="codeStatusNotesColumnDocumentation" value="Configured documentation of the 'customNameCodeStatusNotesColumn' column." />		 	
+		 <targetParameter name="codeStatusNotesColumnDocumentation" value="Configured documentation of the 'customNameCodeStatusNotesColumn' column." />		 
+		 <targetParameter name="nameForCodeSupercedesColumn" value="customNameCodeSupercedesColumn"/>
+		 <targetParameter name="codeSupercedesColumnDocumentation" value="Configured documentation of the 'customNameCodeSupercedesColumn' column." />		 
 			<targetParameter name="codeStatusCLType" value="T3_CodeStatusCl"/>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />

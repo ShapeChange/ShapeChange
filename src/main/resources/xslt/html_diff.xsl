@@ -12,6 +12,7 @@
  <!-- =============== -->
  <!-- Output settings -->
  <!-- =============== -->
+ <!-- NOTE: Use XML attribute 'encoding' to change the output encoding. Example: encoding="iso-8859-1" -->
  <xsl:output indent="yes" method="html"/>
 
  <!-- ================= -->

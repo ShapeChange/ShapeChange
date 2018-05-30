@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdp:MDP_Metadata xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:cliso="http://example.org/shapechange/sch/codelist2/iso19139"
+ xmlns:gmx="http://www.isotc211.org/2005/gmx"
+ xmlns:mdp="http://example.org/shapechange/metadataprofile"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/metadataprofile ./mdProfile.xsd" id="ID000">
+ <gmd:fileIdentifier>
+  <gco:CharacterString>some.file</gco:CharacterString>
+ </gmd:fileIdentifier>
+ <gmd:contact gco:nilReason="missing"/>
+ <gmd:dateStamp gco:nilReason="missing"/>
+ <gmd:metadataStandardName>
+  <gco:CharacterString>ISO 19115</gco:CharacterString>
+ </gmd:metadataStandardName>
+ <gmd:locale>
+  <gmd:PT_Locale id="locale_en">
+   <gmd:languageCode>
+    <gmd:LanguageCode codeList="some_list.xml" codeListValue="en"/>
+   </gmd:languageCode>
+   <gmd:characterEncoding/>
+  </gmd:PT_Locale>
+ </gmd:locale>
+ <gmd:identificationInfo gco:nilReason="missing"/>
+ <mdp:attA>
+  <gco:CharacterString>TEST</gco:CharacterString>
+ </mdp:attA>
+ <mdp:attB>
+  <gco:Integer>1</gco:Integer>
+ </mdp:attB>
+ <mdp:attB>
+  <gco:Integer>2</gco:Integer>
+ </mdp:attB>
+ <mdp:attB>
+  <gco:Integer>3</gco:Integer>
+ </mdp:attB>
+ <mdp:attB>
+  <gco:Integer>4</gco:Integer>
+ </mdp:attB>
+ <mdp:attB>
+  <gco:Integer>5</gco:Integer>
+ </mdp:attB>
+</mdp:MDP_Metadata>

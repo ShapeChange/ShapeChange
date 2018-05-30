@@ -774,10 +774,11 @@ public class Profiler implements Transformer, MessageSource {
 			// If, after profiling, there is no class in a package (or its
 			// child-packages), remove it.
 
-			Set<GenericPackageInfo> appSchemaPackages = genModel
-					.selectedSchemas();
+			Set<PackageInfo> appSchemaPackages = genModel.selectedSchemas();
 
-			for (GenericPackageInfo appSchemaPackage : appSchemaPackages) {
+			for (PackageInfo aspkg : appSchemaPackages) {
+
+				GenericPackageInfo appSchemaPackage = (GenericPackageInfo) aspkg;
 
 				Set<PackageInfo> emptyPackages = new HashSet<PackageInfo>();
 				appSchemaPackage.getEmptyPackages(emptyPackages);

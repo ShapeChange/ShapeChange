@@ -159,6 +159,39 @@ public class Descriptors {
 		return result;
 	}
 
+	/**
+	 * @param descriptor
+	 * @param lang
+	 *            Identifier for the language to search values for. Can be
+	 *            <code>null</code>, to search for the values without language.
+	 * @return the list of values for the given language, or the values without
+	 *         language if parameter 'lang' is <code>null</code>; the list can
+	 *         be empty but not <code>null</code>
+	 */
+	public List<String> values(Descriptor descriptor, String lang) {
+
+		List<String> result = new ArrayList<String>();
+
+		DescriptorValue dv = this.descriptorValues.get(descriptor);
+
+		if (dv != null) {
+
+			List<LangString> lvs = dv.getValues();
+
+			for (LangString lv : lvs) {
+
+				if ((lang == null && !lv.hasLang())
+						|| (lang != null && lv.hasLang()
+								&& lv.getLang().equalsIgnoreCase(lang))) {
+
+					result.add(lv.getValue());
+				}
+			}
+		}
+
+		return result;
+	}
+
 	public DescriptorValue get(Descriptor descriptor) {
 
 		return this.descriptorValues.get(descriptor);

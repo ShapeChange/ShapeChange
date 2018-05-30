@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/oclIsTypeOf" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/oclIsTypeOf" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Att1Meta" substitutionGroup="gml:AbstractObject" type="ex:Att1MetaType"/>
+  <complexType name="Att1MetaType">
+    <sequence>
+      <element name="valueOrReason" nillable="true">
+        <complexType>
+          <simpleContent>
+            <extension base="gml:MeasureType">
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="Att1MetaPropertyType">
+    <sequence>
+      <element ref="ex:Att1Meta"/>
+    </sequence>
+  </complexType>
+  <element name="Att2Meta" substitutionGroup="gml:AbstractObject" type="ex:Att2MetaType"/>
+  <complexType name="Att2MetaType">
+    <sequence>
+      <element maxOccurs="unbounded" name="valuesOrReason" nillable="true">
+        <complexType>
+          <simpleContent>
+            <extension base="gml:MeasureType">
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="Att2MetaPropertyType">
+    <sequence>
+      <element ref="ex:Att2Meta"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="ex:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="att1" type="ex:Att1MetaPropertyType"/>
+          <element minOccurs="0" name="att2" type="ex:Att2MetaPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="SubMeasureType">
+    <simpleContent>
+      <restriction base="gml:MeasureType"/>
+    </simpleContent>
+  </complexType>
+  <simpleType name="VoidValueReasonType">
+    <restriction base="string"/>
+  </simpleType>
+</schema>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><gmx:CodeListDictionary xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodesD" xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd">
+  <gml:description>Documentation CodesD.&#13;
+&#13;
+Without language identifier.</gml:description>
+  <gml:identifier codeSpace="http://example.org/info/CodesD">CodesD</gml:identifier>
+  <gml:name>CodesD</gml:name>
+  <gmx:codeEntry>
+    <gmx:CodeDefinition gml:id="CodesD_codeX">
+      <gml:identifier codeSpace="http://example.org/info/CodesD">codeX</gml:identifier>
+      <gml:name>codeX</gml:name>
+    </gmx:CodeDefinition>
+  </gmx:codeEntry>
+  <gmx:codeEntry>
+    <gmx:CodeDefinition gml:id="CodesD_codeY">
+      <gml:identifier codeSpace="http://example.org/info/CodesD">codeY</gml:identifier>
+      <gml:name>codeY</gml:name>
+    </gmx:CodeDefinition>
+  </gmx:codeEntry>
+</gmx:CodeListDictionary>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://shapechange.net/test" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test" version="1.0">
   <import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
-  <!--XML Schema document created by ShapeChange-->
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="DataType" substitutionGroup="gml:AbstractObject" type="test:DataTypeType"/>
   <complexType name="DataTypeType">
     <sequence>
@@ -69,18 +69,7 @@
           <element minOccurs="0" name="length" type="gml:LengthType"/>
           <element name="geometry" type="gml:PointPropertyType"/>
           <element name="secondgeometry" type="gml:SurfacePropertyType"/>
-          <element name="metadata">
-            <complexType>
-              <complexContent>
-                <extension base="gml:AbstractMetadataPropertyType">
-                  <sequence minOccurs="0">
-                    <element ref="gmd:MD_Metadata"/>
-                  </sequence>
-                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
-                </extension>
-              </complexContent>
-            </complexType>
-          </element>
+          <element name="metadata" type="gmd:MD_Metadata_PropertyType"/>
           <element name="datatype" type="test:DataTypePropertyType">
             <annotation>
               <documentation>This is a data type.</documentation>
