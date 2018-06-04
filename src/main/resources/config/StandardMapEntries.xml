@@ -3,7 +3,6 @@
   <xi:include href="StandardMapEntries_iso19136_2007.xml"/>
   <xi:include href="StandardMapEntries_iso19139_2007.xml"/>
   <xi:include href="StandardMapEntries_sweCommon.xml"/>
-  <xi:include href="StandardMapEntries_gsip.xml"/>
   <xi:include href="StandardMapEntries_iso19107.xml"/>
   <xi:include href="StandardMapEntries_iso19108.xml"/>
   <xi:include href="StandardMapEntries_iso19111.xml"/>
