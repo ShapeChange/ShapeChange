@@ -64,6 +64,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -283,7 +284,8 @@ public class TargetOutputProcessor implements MessageSource {
 
 				String defaultComment = "Created by ShapeChange on ";
 				defaultComment += dateFormat.format(lastModified);
-				if (schema != null && schema.version() != null) {
+				if (schema != null
+						&& StringUtils.isNotBlank(schema.version())) {
 					defaultComment += " from application schema version ";
 					defaultComment += schema.version();
 				}
