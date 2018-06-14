@@ -228,6 +228,25 @@ public abstract class SchematronConstraintNode {
 	}
 
 	/**
+	 * Determine if the given class is instantiable, i.e. an XML element can be
+	 * used to encode an object of that class.
+	 * 
+	 * @param ci
+	 * @return <code>false</code> if the class is abstract or suppressed
+	 *         (includes checking that rule-xsd-cls-suppress applies to the
+	 *         class), otherwise <code>true</code>
+	 */
+	private static boolean isInstantiable(ClassInfo ci) {
+
+		if (ci.isAbstract()
+				|| (ci.suppressed() && ci.matches("rule-xsd-cls-suppress"))) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
 	 * <p>
 	 * Find out whether this construct contains a node of type
 	 * SchematronConstraintNode.Error. In this case the whole tree is in error.
@@ -1400,13 +1419,14 @@ public abstract class SchematronConstraintNode {
 			if (subtypes != null) {
 				for (String stid : subtypes) {
 					ClassInfo ci = objectClass.model().classById(stid);
-					if (ci.isAbstract())
-						continue;
-					classnames.add(schemaObject.getAndRegisterXmlName(ci));
+					if (isInstantiable(ci)) {
+						classnames.add(schemaObject.getAndRegisterXmlName(ci));
+					}
 				}
 			}
-			if (!objectClass.isAbstract())
+			if (isInstantiable(objectClass)) {
 				classnames.add(schemaObject.getAndRegisterXmlName(objectClass));
+			}
 
 			// 2nd create the Xpath expression combining all those classes
 			String fragment = "";
@@ -1508,13 +1528,13 @@ public abstract class SchematronConstraintNode {
 
 					ClassInfo ci = argumentClass.model().classById(stid);
 
-					if (!ci.isAbstract()) {
+					if (isInstantiable(ci)) {
 						relevantClasses.add(ci);
 					}
 				}
 			}
 
-			if (!argumentClass.isAbstract()) {
+			if (isInstantiable(argumentClass)) {
 				relevantClasses.add(argumentClass);
 			}
 
@@ -1703,12 +1723,12 @@ public abstract class SchematronConstraintNode {
 
 				ClassInfo ci = argumentClass.model().classById(stid);
 
-				if (!ci.isAbstract()) {
+				if (isInstantiable(ci)) {
 					relevantClasses.add(ci);
 				}
 			}
 
-			if (!argumentClass.isAbstract()) {
+			if (isInstantiable(argumentClass)) {
 				relevantClasses.add(argumentClass);
 			}
 
