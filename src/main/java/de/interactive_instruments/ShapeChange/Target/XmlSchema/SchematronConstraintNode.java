@@ -275,6 +275,15 @@ public abstract class SchematronConstraintNode {
 	 * They are tracked together with the information how far they are up the
 	 * stack.
 	 * </p>
+	 * <p>
+	 * Also has a flag to indicate if an expression is to be translated to an
+	 * XPath fragment that will be contained within a predicate
+	 * (...[...fragment...]). This information is relevant for preventing the
+	 * creation of a let variable to store an expression for a byReference
+	 * property that must be evaluated in the expression context, but which
+	 * would be evaluated in the overall context (current()) due to being a let
+	 * variable. Such a case could only be supported with XSLT/XPath 2.0.
+	 * </p>
 	 */
 	public static class BindingContext {
 		public enum CtxState {
@@ -282,6 +291,13 @@ public abstract class SchematronConstraintNode {
 		}
 
 		public CtxState state;
+
+		/**
+		 * <code>true</code> if an expression would be evaluated to an XPath
+		 * fragment that will be contained within an XPath predicate; else
+		 * <code>false</code>.
+		 */
+		public boolean inPredicateExpression = false;
 
 		public class CtxElmt {
 			public Declaration vardecl;
@@ -302,12 +318,14 @@ public abstract class SchematronConstraintNode {
 		// clone() override
 		public BindingContext clone() {
 			BindingContext copy = new BindingContext(state);
-			if (vars != null)
+			if (vars != null) {
 				for (CtxElmt ce : vars) {
 					copy.pushDeclaration(ce.vardecl);
 					copy.vars
 							.get(copy.vars.size() - 1).noOfSteps = ce.noOfSteps;
 				}
+			}
+			copy.inPredicateExpression = inPredicateExpression;
 			return copy;
 		}
 
@@ -315,6 +333,10 @@ public abstract class SchematronConstraintNode {
 		public void setState(CtxState state) {
 			this.state = state;
 			this.vars = null;
+		}
+
+		public void setStateKeepingVariables(CtxState state) {
+			this.state = state;
 		}
 
 		/** Push a new variable declaration */
@@ -887,6 +909,7 @@ public abstract class SchematronConstraintNode {
 			// plus the variable.
 			BindingContext bodyctx = xpt.atEnd.clone();
 			bodyctx.pushDeclaration(vardecl);
+			bodyctx.inPredicateExpression = true;
 
 			// Compile the boolean expression in the iterator body
 			SchematronConstraintNode pred = children.get(1);
@@ -1317,6 +1340,7 @@ public abstract class SchematronConstraintNode {
 			// plus the variable.
 			BindingContext bodyctx = xpt.atEnd.clone();
 			bodyctx.pushDeclaration(vardecl);
+			bodyctx.inPredicateExpression = true;
 
 			// Compile the boolean expression in the iterator body
 			SchematronConstraintNode pred = children.get(1);
@@ -3155,6 +3179,11 @@ public abstract class SchematronConstraintNode {
 							obj.fragment = "$" + var;
 							obj.priority = 11;
 							isVar = true;
+
+							if (ctx.inPredicateExpression) {
+								obj.fragment = "***ERROR[127," + pi.name()
+										+ "]***";
+							}
 						}
 					}
 
@@ -3196,13 +3225,45 @@ public abstract class SchematronConstraintNode {
 						// Reference containment must be treated
 
 						if (!isVar) {
+
 							// If not stored in a variable, the object now
 							// has to be compiled in an undefined context.
 							BindingContext ctx1 = ctx.clone();
-							ctx1.setState(BindingContext.CtxState.OTHER);
+
+							/*
+							 * 2018-06-19 JE: Setting a cloned context with
+							 * state OTHER is fine. However, setState() also
+							 * sets the variables to null. That is an issue in
+							 * case that the variable need to be looked up, for
+							 * example in a constraint like: inv:
+							 * prop1->forAll(x|x.prop2->size() = 1)
+							 * 
+							 * The way that let variables are created further
+							 * above can be an issue if a longer property path
+							 * was used in forAll(), like:
+							 * prop1->forAll(x|x.prop2.prop3->size() = 1)
+							 * 
+							 * If prop3 can be encoded byReference (conCode==2
+							 * or conCode==3), then at the moment a let variable
+							 * would be created to compute objects of prop2.
+							 * However, the context of prop2 in the let
+							 * statement would be the "current" object, not an
+							 * object of prop1. That is a limitation with
+							 * XSLT/XPath 1. With XSLT/XPath 2 we could use the
+							 * XPath expression
+							 * "every $var in expr satisfies expr".
+							 * 
+							 * To support the simple case of a single property
+							 * step within forAll(), we reset the state but keep
+							 * the variables.
+							 */
+
+							// ctx1.setState(BindingContext.CtxState.OTHER);
+							ctx1.setStateKeepingVariables(
+									BindingContext.CtxState.OTHER);
+
 							XpathFragment obj1 = children.get(0)
 									.translate(ctx1);
-
 							String frag = obj.merge(obj1);
 							obj.fragment = frag;
 						}

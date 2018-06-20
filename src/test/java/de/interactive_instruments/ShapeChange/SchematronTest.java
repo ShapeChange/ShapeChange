@@ -83,4 +83,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch" }, "testResults/sch/codelist2_codeListRestrictionFromOCL",
 				"src/test/resources/sch/codelist2_codeListRestrictionFromOCL/reference");
 	}
+	
+	@Test
+	public void schematronTest_iterator_with_byReference_property() {
+		multiTest("src/test/resources/sch/iterator_with_byReference_property/testEA_sch_iterator_with_byReference_property.xml",
+				new String[] { "sch" }, "testResults/sch/iterator_with_byReference_property",
+				"src/test/resources/sch/iterator_with_byReference_property/reference");
+	}	
 }
