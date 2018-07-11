@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/test_ldproxy.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ea/log_ldproxy.xml"/>
+	</log>
+	<targets>	
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy.Config" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ea/ldproxy"/>
+			<targetParameter name="outputBaseFilename" value="ldproxy_config"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="serviceId" value="sid"/>
+			<targetParameter name="serviceLabel" value="label"/>
+			<targetParameter name="serviceDescription" value="..."/>
+			<targetParameter name="primaryKeyField" value="id"/>
+			<targetParameter name="foreignKeySuffix" value="_id"/>
+			<targetParameter name="fieldNameMaxLength" value="60"/>
+			<targetParameter name="geometryTableName" value="geom"/>
+			<targetParameter name="geometryFieldName" value="geom"/>
+			<targetParameter name="templateNtoMTable" value="{{class}}_2_{{property}}"/>
+			<targetParameter name="template1toNTable" value="{{class}}_{{property}}"/>
+			<targetParameter name="rootFeatureTable" value="root"/>
+			<targetParameter name="rootCollectionField" value="collection"/>
+			<targetParameter name="filterableFields" value="featuretype1.datetime,featuretype1.codelist"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest"/>
+			<rules>
+				<EncodingRule name="ldptest">
+					<rule name="rule-ldp-cls-non-abstract-feature-types-as-collection"/>
+					<rule name="rule-ldp-cls-table-per-feature-type"/>
+					<rule name="rule-ldp-cls-id-field"/>
+					<rule name="rule-ldp-all-names-in-lowercase"/>
+					<rule name="rule-ldp-all-names-max-length"/>
+					<rule name="rule-ldp-prop-all-datatype-relations-as-n-to-m-relations"/>
+					<rule name="rule-ldp-prop-all-featuretype-relations-as-n-to-m-relations"/>
+					<rule name="rule-ldp-prop-multiple-single-values-as-1-to-n-relations"/>
+					<rule name="rule-ldp-prop-separate-geometry-table"/>
+					<rule name="rule-ldp-prop-all-codelist-values-as-strings"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries>
+				<MapEntry type="Character" rule="*" targetType="STRING" param=""/>
+				<MapEntry type="CharacterString" rule="*" targetType="STRING" param=""/>
+				<MapEntry type="Boolean" rule="*" targetType="BOOLEAN" param=""/>
+				<MapEntry type="Integer" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Decimal" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Number" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Date" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:d.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
+				<MapEntry type="DateTime" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:d.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
+				<MapEntry type="Time" rule="*" targetType="STRING" param=""/>
+				<MapEntry type="Year" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="URI" rule="*" targetType="STRING" param="format:uri"/>
+				<MapEntry type="Measure" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Distance" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Length" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Angle" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Speed" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Velocity" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Area" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Volume" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Weight" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Height" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Pressure" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Percentage" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Temperature" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Bearing" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="GM_Envelope" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POLYGON;jsongeometry:POLYGON"/>
+				<MapEntry type="DirectPosition" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POINT;jsongeometry:POINT"/>
+				<MapEntry type="GM_Point" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POINT;jsongeometry:POINT"/>
+				<MapEntry type="GM_MultiPoint" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:MULTI_POINT"/>
+				<MapEntry type="GM_Curve" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:LINE_STRING;jsongeometry:LINE_STRING"/>
+				<MapEntry type="GM_LineString" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:LINE_STRING;jsongeometry:LINE_STRING"/>
+				<MapEntry type="GM_CompositeCurve" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:LINE_STRING;jsongeometry:LINE_STRING"/>
+				<MapEntry type="GM_MultiCurve" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:MULTI_LINE_STRING"/>
+				<MapEntry type="GM_Surface" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POLYGON;jsongeometry:POLYGON"/>
+				<MapEntry type="GM_Polygon" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POLYGON;jsongeometry:POLYGON"/>
+				<MapEntry type="GM_CompositeSurface" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:POLYGON;jsongeometry:POLYGON"/>
+				<MapEntry type="GM_MultiSurface" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:MULTI_POLYGON"/>
+				<MapEntry type="GM_Primitive" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:GENERIC"/>
+				<MapEntry type="GM_Aggregate" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:GEOMETRY_COLLECTION"/>
+				<MapEntry type="GM_Object" rule="*" targetType="GEOMETRY" param="category:SPATIAL;htmlgeometry:GENERIC;jsongeometry:GENERIC"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

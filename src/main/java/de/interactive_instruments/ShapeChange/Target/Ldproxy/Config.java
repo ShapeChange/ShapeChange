@@ -58,6 +58,7 @@ import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 /**
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
  *
+ * TODO: document on shapechange.net
  */
 public class Config implements SingleTarget, MessageSource {
 
@@ -213,6 +214,9 @@ public class Config implements SingleTarget, MessageSource {
 
 				// Set timestamps to the current time
 				long now = System.currentTimeMillis();
+				// use a "secret" override to set this to a fixed value in order to support unit tests
+				if (options.parameter(Config.class.getName(), "_unitTestOverride")!=null)
+					now = 1531327916566L;
 				cfgobj.put("createdAt", now);
 				cfgobj.put("lastModified", now);
 
@@ -602,7 +606,7 @@ public class Config implements SingleTarget, MessageSource {
 							m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
 							return;
 						}
-					} else if (cix.category()==Options.CODELIST && pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_CL_AS_STRING)) {
+					} else if ((cix.category()==Options.CODELIST || cix.category()==Options.ENUMERATION) && pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_CL_AS_STRING)) {
 						// Nothing to do, the default works.
 					} else {
 						// Nothing to do, we assume the property is a string field. Generate a warning.
@@ -679,7 +683,7 @@ public class Config implements SingleTarget, MessageSource {
 		json.put("mappingType", "GEO_JSON_PROPERTY");
 		json.put("type", jsontype);
 		if (jsongeometrytype!=null)
-			html.put("geometryType", jsongeometrytype);		
+			json.put("geometryType", jsongeometrytype);		
 	}	
 		
 	@Override
