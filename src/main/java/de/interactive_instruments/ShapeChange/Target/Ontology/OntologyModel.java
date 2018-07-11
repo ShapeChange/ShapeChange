@@ -556,36 +556,36 @@ public class OntologyModel implements MessageSource {
 					if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ENCODE_FEATURETYPES)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.OBJECT:
 					if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ENCODE_OBJECTTYPES)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.MIXIN:
 					if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ENCODE_MIXINTYPES)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.BASICTYPE:
 					if (ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ENCODE_BASICTYPES)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.DATATYPE:
 					if (ci.matches(OWLISO19150.RULE_OWL_CLS_ENCODE_DATATYPES)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.UNION:
 					if (ci.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
 						addClassDefinition(ci);
+						break;
 					}
-					break;
 				case Options.ENUMERATION:
 					if (!ci.matches(
 							OWLISO19150.RULE_OWL_CLS_ENUMERATION_AS_CODELIST)
@@ -618,11 +618,12 @@ public class OntologyModel implements MessageSource {
 							|| ci.matches(
 									OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL)) {
 						addCodelist(ci);
+						break;
 					}
-					break;
 				default:
 					this.resourceByClassInfo.put(ci, defaultTypeImplementation);
-					MessageContext mc = result.addError(this, 5, "" + cat);
+					MessageContext mc = result.addWarning(this, 5,
+							options.categoryName(cat));
 					if (mc != null) {
 						mc.addDetail(this, 10000, ci.fullName());
 					}
@@ -3160,7 +3161,7 @@ public class OntologyModel implements MessageSource {
 		case 4:
 			return "Could not add namespace declaration info for (rdf) namespace '$1$' because no abbreviation/prefix was found for it.";
 		case 5:
-			return "Unsupported class category ($1$).";
+			return "Unsupported class category ($1$). Ensure that the encoding rule includes a rule that enables the conversion of this type of class.";
 		case 6:
 			return "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
 		case 7:

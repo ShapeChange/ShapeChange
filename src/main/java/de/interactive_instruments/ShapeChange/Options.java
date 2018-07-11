@@ -1377,6 +1377,47 @@ public class Options {
 		return loc;
 	}
 
+	public String categoryName(int category) {
+
+		switch (category) {
+
+		case Options.AIXMEXTENSION:
+			return "aixmextension";
+		case Options.UNKNOWN:
+			return "unknown";
+		case Options.FEATURE:
+			return "feature";
+		case Options.CODELIST:
+			return "codelist";
+		case Options.ENUMERATION:
+			return "enumeration";
+		case Options.MIXIN:
+			return "mixin";
+		case Options.DATATYPE:
+			return "datatype";
+		case Options.OBJECT:
+			return "object";
+		case Options.BASICTYPE:
+			return "basic type";
+		case Options.UNION:
+			return "union";
+		case Options.OKSTRAKEY:
+			return "okstra key";
+		case Options.OKSTRAFID:
+			return "okstra fid";
+		case Options.FEATURECONCEPT:
+			return "feature concept";
+		case Options.ATTRIBUTECONCEPT:
+			return "attribute concept";
+		case Options.VALUECONCEPT:
+			return "value concept";
+		case Options.ROLECONCEPT:
+			return "role concept";
+		default:
+			return "unknown category";
+		}
+	}
+
 	public void loadConfiguration() throws ShapeChangeAbortException {
 
 		InputStream configStream = null;
@@ -3737,7 +3778,7 @@ public class Options {
 		addRule("rule-owl-cls-iso191502IsAbstract");
 		addRule("rule-owl-cls-union");
 		addRule("rule-owl-cls-unionSets");
-		
+
 		addRule("rule-owl-prop-code-broader-byBroaderListedValue");
 		addRule("rule-owl-prop-external-reference");
 		addRule("rule-owl-prop-general");
