@@ -147,6 +147,11 @@
 			<artifactId>guava</artifactId>
 			<version>20.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1.1</version>
+		</dependency>		
 	</dependencies>
 	<url>http://shapechange.net/</url>
 	<description>ShapeChange - processing application schemas for geographic information</description>
@@ -154,9 +159,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<distributionManagement>
+		<!--
 		<repository>
 			<id>ftp-repository</id>
 			<url>ftp://shapechange.net/</url>
+		</repository>
+		-->
+		<repository>
+			<id>ssh-repository</id>
+			<url>scpexe://18.195.82.157/apps/wordpress/htdocs/</url>
 		</repository>
 	</distributionManagement>
 	<build>
