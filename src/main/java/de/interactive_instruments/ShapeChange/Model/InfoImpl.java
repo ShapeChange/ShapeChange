@@ -826,6 +826,11 @@ public abstract class InfoImpl implements Info {
 						"defaultEncodingRule");
 				if (s == null)
 					s = "*";
+			} else if (platform.equalsIgnoreCase("ldp")) {
+				s = options().parameter(Options.TargetLdproxy,
+						"defaultEncodingRule");
+				if (s == null)
+					s = "*";
 			}
 		}
 		if (s != null)
