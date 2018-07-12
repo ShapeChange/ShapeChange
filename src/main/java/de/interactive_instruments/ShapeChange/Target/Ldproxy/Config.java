@@ -79,15 +79,9 @@ public class Config implements SingleTarget, MessageSource {
 	private static boolean initialised = false;
 
 	/**
-	 * The directory where the configuration file(s) will be created.
+	 * @see ConfigConstants#PARAM_OUTPUT_DIRECTORY
 	 */
 	private static String outputDirectory = null;
-	
-	/**
-	 * The filename of the ldproxy configuration file, without the file extension.
-	 * ".json" will be added, when the file is written.
-	 */
-	private static String outputFilename = null;
 	
 	/**
 	 * @see ConfigConstants#PARAM_SERVICE_ID
@@ -103,6 +97,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_SERVICE_DESC
 	 */
 	private static String srvdesc = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_SECURED
+	 */
+	private static Boolean secured = false;
 
 	/**
 	 * @see ConfigConstants#PARAM_PRIMARY_KEY_FIELD
@@ -160,6 +159,16 @@ public class Config implements SingleTarget, MessageSource {
 	private static JSONObject cfgobj = null;
 	
 	/**
+	 * The JSON object representing the GeoJSON configuration file.
+	 */
+	private static JSONObject cfgobjGeojson = null;
+	
+	/**
+	 * The JSON object representing the GML configuration file.
+	 */
+	private static JSONObject cfgobjGml = null;
+	
+	/**
 	 * The "featureTypes" object in {@link #cfgobj}. We need this
 	 * as a variable as we add information for each feature type
 	 * that is processed.
@@ -177,6 +186,16 @@ public class Config implements SingleTarget, MessageSource {
 	 * The writer to export the main configuration file.
 	 */
 	private static FileWriter writer = null;
+
+	/**
+	 * The writer to export the main configuration file.
+	 */
+	private static FileWriter writerGeojson = null;
+
+	/**
+	 * The writer to export the main configuration file.
+	 */
+	private static FileWriter writerGml = null;
 
 	/**
 	 * The model that is processed.
@@ -210,19 +229,11 @@ public class Config implements SingleTarget, MessageSource {
 
 				model = m;
 
-				outputDirectory = options.parameter(Config.class.getName(),
-						"outputDirectory");
+				outputDirectory = options.parameter(Config.class.getName(), "outputDirectory");
 				if (outputDirectory == null)
 					outputDirectory = options.parameter("outputDirectory");
 				if (outputDirectory == null)
 					outputDirectory = ".";
-
-				outputFilename = options.parameter(Config.class.getName(),
-						"outputFilename");
-				if (outputFilename == null)
-					outputFilename = "ldproxy_config";
-
-				String jsonName = outputFilename + ".json";
 
 				// Check whether we can use the given output directory
 				File outputDirectoryFile = new File(outputDirectory);
@@ -238,13 +249,53 @@ public class Config implements SingleTarget, MessageSource {
 					result.addFatalError(this, 6, outputDirectory);
 					throw new ShapeChangeAbortException();
 				}
-
-				// If a dry run is requested, simply do not create the writer. Everything will be
-				// executed as normal, but nothing will be written.
-				if (!diagOnly) {
-					writer = new FileWriter(outputDirectory + "/" + jsonName);
+				
+				// Create sub-directories, if needed
+				String directoryMain = outputDirectory+"/config-store/entities/services";
+				File outputDirectoryFileMain = new File(directoryMain);
+				exi = outputDirectoryFileMain.exists();
+				if (!exi) {
+					outputDirectoryFileMain.mkdirs();
+					exi = outputDirectoryFileMain.exists();
+				}
+				dir = outputDirectoryFileMain.isDirectory();
+				wrt = outputDirectoryFileMain.canWrite();
+				rea = outputDirectoryFileMain.canRead();
+				if (!exi || !dir || !wrt || !rea) {
+					result.addFatalError(this, 6, directoryMain);
+					throw new ShapeChangeAbortException();
 				}
 				
+				String directoryGeojson = outputDirectory+"/config-store/settings/ldproxy-target-geojson/#overrides#";
+				File outputDirectoryFileGeojson = new File(directoryGeojson);
+				exi = outputDirectoryFileGeojson.exists();
+				if (!exi) {
+					outputDirectoryFileGeojson.mkdirs();
+					exi = outputDirectoryFileGeojson.exists();
+				}
+				dir = outputDirectoryFileGeojson.isDirectory();
+				wrt = outputDirectoryFileGeojson.canWrite();
+				rea = outputDirectoryFileGeojson.canRead();
+				if (!exi || !dir || !wrt || !rea) {
+					result.addFatalError(this, 6, directoryGeojson);
+					throw new ShapeChangeAbortException();
+				}
+				
+				String directoryGml = outputDirectory+"/config-store/settings/ldproxy-target-gml/#overrides#";
+				File outputDirectoryFileGml = new File(directoryGml);
+				exi = outputDirectoryFileGml.exists();
+				if (!exi) {
+					outputDirectoryFileGml.mkdirs();
+					exi = outputDirectoryFileGml.exists();
+				}
+				dir = outputDirectoryFileGml.isDirectory();
+				wrt = outputDirectoryFileGml.canWrite();
+				rea = outputDirectoryFileGml.canRead();
+				if (!exi || !dir || !wrt || !rea) {
+					result.addFatalError(this, 6, directoryGml);
+					throw new ShapeChangeAbortException();
+				}
+
 				// We select an arbitrary schema from the set of selected schemas to derive defaults
 				// for some target parameters.
 				PackageInfo first = (model.allPackagesFromSelectedSchemas().isEmpty() ? null : model.allPackagesFromSelectedSchemas().first());
@@ -264,6 +315,10 @@ public class Config implements SingleTarget, MessageSource {
 				srvdesc = options.parameter(Config.class.getName(), ConfigConstants.PARAM_SERVICE_DESC);
 				if (srvdesc == null)
 					srvdesc = ( first != null ? (first.documentation()!=null ? first.documentation() : first.definition()) : "" );
+				
+				String s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_SECURED);
+				if (s != null && s.equalsIgnoreCase("true"))
+					secured = true;
 				
 				primaryKeyField = options.parameter(Config.class.getName(), ConfigConstants.PARAM_PRIMARY_KEY_FIELD);
 				if (primaryKeyField == null)
@@ -298,7 +353,7 @@ public class Config implements SingleTarget, MessageSource {
 					rootCollectionField = "collection";
 
 				filterableFields = new TreeSet<String>();
-				String s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_FILTERS);
+				s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_FILTERS);
 				if (s != null) {
 					String[] sarr = s.split(",");
 					for (String s2 : sarr) {
@@ -311,8 +366,16 @@ public class Config implements SingleTarget, MessageSource {
 					maxLength = new Integer(s);
 				if (maxLength == null)
 					maxLength = 60;
+
+				// If a dry run is requested, simply do not create the writers. Everything will be
+				// executed as normal, but nothing will be written.
+				if (!diagOnly) {
+					writer = new FileWriter(directoryMain + "/" + srvid);
+					writerGeojson = new FileWriter(directoryGeojson + "/GeoJsonConfig");
+					writerGml = new FileWriter(directoryGml + "/GmlConfig");
+				}
 				
-				// Initialize the JSON object that will become the configuration
+				// Initialize the JSON object that will become the main configuration
 				cfgobj = new JSONObject();		
 				
 				// Populate with metadata from the configuration or the model
@@ -323,6 +386,7 @@ public class Config implements SingleTarget, MessageSource {
 				// This will be published as a WFS 3 service that should be started when ldproxy starts
 				cfgobj.put("serviceType", "WFS3");
 				cfgobj.put("shouldStart", true);
+				cfgobj.put("secured", secured);
 
 				// Set timestamps to the current time
 				long now = System.currentTimeMillis();
@@ -351,7 +415,18 @@ public class Config implements SingleTarget, MessageSource {
 
 				// Create a mappings object, which will be populated when the feature types are processed.
 				mappings = new JSONObject();
-				featureProvider.put("mappings", mappings);				
+				featureProvider.put("mappings", mappings);			
+				
+				// Generate the (fixed) JSON object that will become the GeoJSON configuration.
+				// We do not flatten nested data structures or multiplicity.
+				cfgobjGeojson = new JSONObject();		
+				cfgobjGeojson.put("nestedObjects", "NEST");
+				cfgobjGeojson.put("multiplicity", "ARRAY");
+
+				// Generate the (fixed) JSON object that will become the GML configuration.
+				// We disable GML support.
+				cfgobjGml = new JSONObject();
+				cfgobjGml.put("enabled", false);
 			}
 
 		} catch (Exception e) {
@@ -371,6 +446,10 @@ public class Config implements SingleTarget, MessageSource {
 
 		model = null;
 
+		srvid = null;
+		srvlabel = null;
+		srvdesc = null;
+		secured = false;
 		foreignKeySuffix = null;
 		primaryKeyField = null;
 		maxLength = null;
@@ -378,11 +457,12 @@ public class Config implements SingleTarget, MessageSource {
 		template1toN = null;
 		rootFeatureTable = null;
 		rootCollectionField = null;
-		filterableFields = null;
-		
+		filterableFields = null;		
 		outputDirectory = null;
-		outputFilename = null;
+		
 		writer = null;
+		writerGeojson = null;
+		writerGml = null;
 
 		cfgobj = null;
 		collections = null;
@@ -447,8 +527,7 @@ public class Config implements SingleTarget, MessageSource {
 		// Add non-abstract feature type tables to the mappings. Abstract
 		// feature types, object types or data types are not considered 
 		// here as the mappings are organised per published feature type.
-		if (ci.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT) &&
-			!ci.isAbstract()) {
+		if (!ci.isAbstract()) {
 			JSONObject featuretype = new JSONObject();
 			mappings.put(colname, featuretype);
 			JSONObject path = new JSONObject();
@@ -474,7 +553,7 @@ public class Config implements SingleTarget, MessageSource {
 			
 			// Typically, each table, including a feature type table, will have a primary key field
 			if (ci.matches(ConfigConstants.RULE_TGT_LDP_CLS_ID_FIELD)) {
-				createIdProperty(featuretype, basepath);
+				createIdProperty(ci, featuretype, basepath);
 			}
 			
 			// Add mappings for all supertype properties
@@ -511,11 +590,23 @@ public class Config implements SingleTarget, MessageSource {
 
 		try {
 
-			// If diagOnly was selected, writer will be 'null'
+			// If diagOnly was selected, the writers will be 'null'
 			if (writer!=null) {
 				writer.write(cfgobj.toJSONString());
 				writer.flush();
 				writer.close();
+			}
+
+			if (writerGeojson!=null) {
+				writerGeojson.write(cfgobjGeojson.toJSONString());
+				writerGeojson.flush();
+				writerGeojson.close();
+			}
+			
+			if (writerGml!=null) {
+				writerGml.write(cfgobjGml.toJSONString());
+				writerGml.flush();
+				writerGml.close();
 			}
 			
 		} catch (Exception e) {
@@ -528,10 +619,34 @@ public class Config implements SingleTarget, MessageSource {
 
 		} finally {
 
-			// Close the writer
+			// Close the writers
 			if (writer != null) {
 				try {
 					writer.close();
+				} catch (IOException e) {
+					String m = e.getMessage();
+					if (m != null) {
+						result.addError(m);
+					}
+					e.printStackTrace(System.err);
+				}
+			}
+
+			if (writerGeojson != null) {
+				try {
+					writerGeojson.close();
+				} catch (IOException e) {
+					String m = e.getMessage();
+					if (m != null) {
+						result.addError(m);
+					}
+					e.printStackTrace(System.err);
+				}
+			}
+
+			if (writerGml != null) {
+				try {
+					writerGml.close();
 				} catch (IOException e) {
 					String m = e.getMessage();
 					if (m != null) {
@@ -653,12 +768,18 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_PRIMARY_KEY_FIELD
 	 */
 	@SuppressWarnings("unchecked")
-	private void createIdProperty(JSONObject featuretype, String basepath) {
+	private void createIdProperty(ClassInfo ci, JSONObject featuretype, String basepath) {
 
 		String fieldname = primaryKeyField;
 		
 		JSONObject path = new JSONObject();
-		String proppath = basepath+"/"+fieldname;
+		String proppath;
+		if (ci.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT)) {
+			proppath = basepath + "/[" + primaryKeyField + "=" + primaryKeyField + "]" + rootFeatureTable + "/" + fieldname;
+		} else {
+			proppath = basepath + "/" + fieldname;			
+		}
+		
 		featuretype.put(proppath, path);
 		
 		JSONObject general = new JSONObject();
@@ -841,7 +962,8 @@ public class Config implements SingleTarget, MessageSource {
 			
 		JSONObject general = new JSONObject();
 		path.put("general", general);
-		general.put("mappingType", "GENERIC_PROPERTY");
+		String mappingType = "GENERIC_PROPERTY";
+		general.put("mappingType", mappingType);
 		general.put("name", fieldname);
 		general.put("enabled", true);
 		boolean filterable = false;
@@ -857,7 +979,10 @@ public class Config implements SingleTarget, MessageSource {
 		// Add default schema.org mapping in HTML
 		JSONObject html = new JSONObject();
 		path.put("text/html", html);
-		html.put("mappingType", "MICRODATA_PROPERTY");
+		mappingType = "MICRODATA_PROPERTY";
+		if (category.equalsIgnoreCase("SPATIAL"))
+			mappingType = "MICRODATA_GEOMETRY";
+		html.put("mappingType", mappingType);
 		html.put("name", label);
 		html.put("type", htmltype);
 		if (htmlformat!=null)
@@ -869,7 +994,10 @@ public class Config implements SingleTarget, MessageSource {
 		// Add default GeoJSON mapping for the id
 		JSONObject json = new JSONObject();
 		path.put("application/geo+json", json);
-		json.put("mappingType", "GEO_JSON_PROPERTY");
+		mappingType = "GEO_JSON_PROPERTY";
+		if (category.equalsIgnoreCase("SPATIAL"))
+			mappingType = "GEO_JSON_GEOMETRY";
+		json.put("mappingType", mappingType);
 		json.put("type", jsontype);
 		if (jsongeometrytype!=null)
 			json.put("geometryType", jsongeometrytype);		
@@ -896,7 +1024,7 @@ public class Config implements SingleTarget, MessageSource {
 			return "No rule is specified how to handle properties with a value that is a union data type. The property is ignored.";
 
 		case 6:
-			return "Directory named '$1$' does not exist or is not accessible.";
+			return "Directory named '$1$' is required, but does not exist or is not accessible.";
 
 		case 99:
 			return "Context: class InfoImpl (subtype: PropertyInfo). Name: '$1$'. In class: '$2$'. Value type: '$3$'.";

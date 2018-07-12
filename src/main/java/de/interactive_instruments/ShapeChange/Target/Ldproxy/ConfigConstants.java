@@ -42,6 +42,21 @@ public class ConfigConstants {
 	 * <p>
 	 * Required / Optional: optional
 	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: the current directory
+	 * <p>
+	 * Explanation: The directory where the configuration files will be created.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior 
+	 */
+	public static final String PARAM_OUTPUT_DIRECTORY = "outputDirectory";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
 	 * Type: String (no whitespace etc.)
 	 * <p>
 	 * Default Value: name of the XML namespace prefix of a selected schema; or "fixme", if none is specified
@@ -82,6 +97,21 @@ public class ConfigConstants {
 	 * Applies to Rule(s): none – default behavior 
 	 */
 	public static final String PARAM_SERVICE_DESC = "serviceDescription";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: Boolean ("true" or "false")
+	 * <p>
+	 * Default Value: not secured
+	 * <p>
+	 * Explanation: If "true", the service is marked as secured.  
+	 * <p>
+	 * Applies to Rule(s): none – default behavior 
+	 */
+	public static final String PARAM_SECURED = "secured";
 
 	/**
 	 * Alias: none
