@@ -56,37 +56,141 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 
 /**
+ * This target generates an ldproxy configuration for the feature types in
+ * the selected application schemas. ldproxy is a software for publishing 
+ * spatial data via a Web API according the WFS 3.0 approach, consistent
+ * with the W3C/OGC Spatial Data on the Web Best Practices and the OpenAPI
+ * specification.
+ * <p>
+ * Supported are datasets that are stored in PostgreSQL/PostGIS. A number
+ * of options are supported for the mapping from the application schema to
+ * the SQL DDL in the database.
+ * 
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- *
- * TODO: document on shapechange.net
+ * @see <a href="https://interactive-instruments.github.io/ldproxy/">ldproxy</a>
+ * @see <a href="https://cdn.rawgit.com/opengeospatial/WFS_FES/3.0.0-draft.1/docs/17-069.html">WFS 3.0, Core (Draft)</a>
+ * @see <a href="https://www.w3.org/TR/sdw-bp/">W3C/OGC Spatial Data on the Web Best Practices</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md">OpenAPI Specification</a>
  */
 public class Config implements SingleTarget, MessageSource {
 
+	// TODO: document on shapechange.net, based on Javadoc comments 
+
 	private static boolean initialised = false;
 
+	/**
+	 * The directory where the configuration file(s) will be created.
+	 */
 	private static String outputDirectory = null;
+	
+	/**
+	 * The filename of the ldproxy configuration file, without the file extension.
+	 * ".json" will be added, when the file is written.
+	 */
 	private static String outputFilename = null;
+	
+	/**
+	 * @see ConfigConstants#PARAM_SERVICE_ID
+	 */
 	private static String srvid = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_SERVICE_LABEL
+	 */
 	private static String srvlabel = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_SERVICE_DESC
+	 */
 	private static String srvdesc = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_PRIMARY_KEY_FIELD
+	 */
 	private static String primaryKeyField = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_FOREIGN_KEY_SUFFIX
+	 */
 	private static String foreignKeySuffix = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_MAX_LENGTH
+	 */
 	private static Integer maxLength = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_GEOMETRY_TABLE
+	 */
 	private static String geometryTable = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_GEOMETRY_FIELD
+	 */
 	private static String geometryField = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_NTOM_TABLE_TEMPLATE
+	 */
 	private static String templateNtoM = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_1TON_TABLE_TEMPLATE
+	 */
 	private static String template1toN = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_ROOT_FEATURE_TABLE
+	 */
 	private static String rootFeatureTable = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_ROOT_COLLECTION_FIELD
+	 */
 	private static String rootCollectionField = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_FILTERS
+	 */
 	private static Set<String> filterableFields = null;
+	
+	/**
+	 * The JSON object representing the main configuration file.
+	 */
 	private static JSONObject cfgobj = null;
+	
+	/**
+	 * The "featureTypes" object in {@link #cfgobj}. We need this
+	 * as a variable as we add information for each feature type
+	 * that is processed.
+	 */
 	private static JSONObject collections = null;
+	
+	/**
+	 * The "featureProvider.mappings" object in {@link #cfgobj}.
+	 * We need this as a variable as we add information for each 
+	 * feature type that is processed.
+	 */
 	private static JSONObject mappings = null;
+	
+	/**
+	 * The writer to export the main configuration file.
+	 */
 	private static FileWriter writer = null;
 
+	/**
+	 * The model that is processed.
+	 */
 	private static Model model = null;
 
+	/**
+	 * The ShapeChange configuration for this process.
+	 */
 	private Options options = null;
+	
+	/**
+	 * The log where messages will be written.
+	 */
 	private ShapeChangeResult result = null;
 
 	@SuppressWarnings("unchecked")
@@ -131,14 +235,22 @@ public class Config implements SingleTarget, MessageSource {
 				boolean wrt = outputDirectoryFile.canWrite();
 				boolean rea = outputDirectoryFile.canRead();
 				if (!exi || !dir || !wrt || !rea) {
-					result.addFatalError(this, 12, outputDirectory);
+					result.addFatalError(this, 6, outputDirectory);
 					throw new ShapeChangeAbortException();
 				}
 
-				writer = new FileWriter(outputDirectory + "/" + jsonName);
-
+				// If a dry run is requested, simply do not create the writer. Everything will be
+				// executed as normal, but nothing will be written.
+				if (!diagOnly) {
+					writer = new FileWriter(outputDirectory + "/" + jsonName);
+				}
+				
+				// We select an arbitrary schema from the set of selected schemas to derive defaults
+				// for some target parameters.
 				PackageInfo first = (model.allPackagesFromSelectedSchemas().isEmpty() ? null : model.allPackagesFromSelectedSchemas().first());
 				
+				// Establish the parameter values. Use defaults where no value is provided in the
+				// configuration.
 				srvid = options.parameter(Config.class.getName(), ConfigConstants.PARAM_SERVICE_ID);
 				if (srvid == null)
 					srvid = ( first != null ? first.xmlns() : null );
@@ -368,7 +480,7 @@ public class Config implements SingleTarget, MessageSource {
 			// Add mappings for all supertype properties
 			if (!ci.supertypes().isEmpty()) {
 				for (String sid : ci.supertypes()) {
-					processSupertypeProperties(ci, model.classById(sid), featuretype, null, basepath);
+					processSupertypeProperties(ci, model.classById(sid), featuretype, basepath);
 				}
 			}			
 
@@ -383,7 +495,7 @@ public class Config implements SingleTarget, MessageSource {
 
 	@Override
 	public void write() {
-		// nothing to do here, since this is a SingleTarget
+		// Nothing to do here, since this is a SingleTarget
 	}
 
 	@Override
@@ -399,10 +511,13 @@ public class Config implements SingleTarget, MessageSource {
 
 		try {
 
-			writer.write(cfgobj.toJSONString());
-			writer.flush();
-			writer.close();
-
+			// If diagOnly was selected, writer will be 'null'
+			if (writer!=null) {
+				writer.write(cfgobj.toJSONString());
+				writer.flush();
+				writer.close();
+			}
+			
 		} catch (Exception e) {
 
 			String m = e.getMessage();
@@ -413,7 +528,7 @@ public class Config implements SingleTarget, MessageSource {
 
 		} finally {
 
-			// close writer
+			// Close the writer
 			if (writer != null) {
 				try {
 					writer.close();
@@ -426,11 +541,19 @@ public class Config implements SingleTarget, MessageSource {
 				}
 			}
 
-			// release model - do NOT close it here
+			// Release the model - do NOT close it here
 			model = null;
 		}
 	}
 
+	/**
+	 * Derive a table or field name from the name of a model element 
+	 * @param i	the model element
+	 * @return	name of the table/field in the database for the model element
+	 * @see ConfigConstants#RULE_TGT_LDP_ALL_NAMES_LOWERCASE
+	 * @see ConfigConstants#RULE_TGT_LDP_ALL_NAMES_MAXLENGTH
+	 * @see ConfigConstants#PARAM_MAX_LENGTH
+	 */
 	private String deriveName(Info i) {
 		String result = i.name();
 		if (i.matches(ConfigConstants.RULE_TGT_LDP_ALL_NAMES_LOWERCASE)) {
@@ -442,17 +565,50 @@ public class Config implements SingleTarget, MessageSource {
 		return result;
 	}
 	
+	/**
+	 * Derive the name of an intermediate table capable of representing 
+	 * a property in the model with a many-to-many relation
+	 * @param tabname	name of the table representing the class that the property belongs to
+	 * @param fieldname	name of the field representing a single value of the property 
+	 * @return	name of the intermediate table in the database
+	 * @see ConfigConstants#RULE_TGT_LDP_PROP_DT_AS_NTOM
+	 * @see ConfigConstants#RULE_TGT_LDP_PROP_FT_AS_NTOM
+	 * @see ConfigConstants#PARAM_NTOM_TABLE_TEMPLATE
+	 * @see ConfigConstants 
+	 */
 	private String deriveNameNtoM(String tabname, String fieldname) {
 		String result = templateNtoM.replace("{{class}}", tabname).replace("{{property}}",fieldname);
 		return result;
 	}
 	
+	/**
+	 * Derive the name of a related table capable of representing 
+	 * a property in the model with a 1-to-many relation
+	 * @param tabname	name of the table representing the class that the property belongs to
+	 * @param fieldname	name of the field representing a single value of the property 
+	 * @return	name of the related table in the database
+	 * @see ConfigConstants#RULE_TGT_LDP_PROP_MV_AS_1TON
+	 * @see ConfigConstants#PARAM_1TON_TABLE_TEMPLATE 
+	 */
 	private String deriveName1toN(String tabname, String fieldname) {
 		String result = template1toN.replace("{{class}}", tabname).replace("{{property}}",fieldname);
 		return result;
 	}
 	
-	private void processSupertypeProperties(ClassInfo ci, ClassInfo superci, JSONObject featuretype, String basename, String basepath) {
+	/**
+	 * Different approaches are possible how to represent properties of supertypes. Two options
+	 * are currently supported. The default is that all properties are "copied down" to the
+	 * non-abstract feature types. The second approach is to have a separate table per feature
+	 * type, including abstract supertypes (see {@link ConfigConstants#RULE_TGT_LDP_CLS_TABLE_PER_FT}). 
+	 * @param ci	the non-abstract feature type 
+	 * @param superci	the supertype of {@link ci} that will be processed
+	 * @param featuretype	the JSON object in the mappings section for {@link ci}
+	 * @param basepath	the mapping for each property is described by a path in the database; 
+	 * the path starts at the table of {@link ci} and mainly includes joins; this parameter
+	 * includes the path to the current position and will be extended with additional path
+	 * elements for the properties 
+	 */
+	private void processSupertypeProperties(ClassInfo ci, ClassInfo superci, JSONObject featuretype, String basepath) {
 		if (superci==null)
 			return;
 
@@ -472,7 +628,7 @@ public class Config implements SingleTarget, MessageSource {
 		// Add mappings for all properties
 		if (!superci.properties().isEmpty()) {
 			for (PropertyInfo pi : superci.properties().values()) {
-				processProperty(pi, featuretype, path, basename, tabname);
+				processProperty(pi, featuretype, path, null, tabname);
 			}
 		}
 
@@ -480,11 +636,22 @@ public class Config implements SingleTarget, MessageSource {
 		if (superci.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT) &&
 			!superci.supertypes().isEmpty()) {
 			for (String sid : superci.supertypes()) {
-				processSupertypeProperties(ci, model.classById(sid), featuretype, basename, basepath);
+				processSupertypeProperties(ci, model.classById(sid), featuretype, basepath);
 			}
 		}		
 	} 
 	
+	/**
+	 * Each table in the database must have a primary key that is used in
+	 * joins. This operation creates this field, which is in addition to the
+	 * fields derived from the application schemas.
+	 * @param featuretype	the JSON object in the mappings section for current feature type	
+	 * @param basepath	the mapping for each property is described by a path in the database; 
+	 * the path starts at the table of current feature type and mainly includes joins; this 
+	 * parameter includes the path to the current position and will be extended with additional 
+	 * path elements for the primary key field
+	 * @see ConfigConstants#PARAM_PRIMARY_KEY_FIELD
+	 */
 	@SuppressWarnings("unchecked")
 	private void createIdProperty(JSONObject featuretype, String basepath) {
 
@@ -517,6 +684,24 @@ public class Config implements SingleTarget, MessageSource {
 		json.put("type", "ID");
 	}
 	
+	/**
+	 * 
+	 * @param pi	the property to process
+	 * @param featuretype	the JSON object in the mappings section for current feature type
+	 * @param basepath	the mapping for each property is described by a path in the database; 
+	 * the path starts at the table of current feature type and mainly includes joins; this 
+	 * parameter includes the path to the current position and will be extended with additional 
+	 * path elements for the property
+	 * @param basename	when complex data structures (data types, nested objects) or properties
+	 * with a maximum multiplicity greater than one are included in the application schema, we
+	 * need to deal with additional structures and these properties are in a JSON encoding either
+	 * flattened or represented as objects and/or arrays; the name of a property, therefore,
+	 * can be a JSON path expression; this parameter includes the JSON path to the current
+	 * position and will be extended to with additional path elements for the property   
+	 * @param tabname	name of the current table; if the property is a direct property of the
+	 * feature type, this is the table of the feature type; otherwise it is a table along the
+	 * joins in the basepath
+	 */
 	@SuppressWarnings("unchecked")
 	private void processProperty(PropertyInfo pi, JSONObject featuretype, String basepath, String basename, String tabname) {
 
@@ -608,6 +793,10 @@ public class Config implements SingleTarget, MessageSource {
 						}
 					} else if ((cix.category()==Options.CODELIST || cix.category()==Options.ENUMERATION) && pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_CL_AS_STRING)) {
 						// Nothing to do, the default works.
+					} else if (cix.category()==Options.UNION) {
+						MessageContext m = result.addError(this, 5);
+						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+						return;
 					} else {
 						// Nothing to do, we assume the property is a string field. Generate a warning.
 						MessageContext m = result.addWarning(this, 102, cix.name());
@@ -703,6 +892,12 @@ public class Config implements SingleTarget, MessageSource {
 		case 4:
 			return "No rule is specified how to handle feature associations that involve non-abstract features, i.e. the link targets are spread across multiple tables. The property is ignored.";
 			
+		case 5:
+			return "No rule is specified how to handle properties with a value that is a union data type. The property is ignored.";
+
+		case 6:
+			return "Directory named '$1$' does not exist or is not accessible.";
+
 		case 99:
 			return "Context: class InfoImpl (subtype: PropertyInfo). Name: '$1$'. In class: '$2$'. Value type: '$3$'.";
 

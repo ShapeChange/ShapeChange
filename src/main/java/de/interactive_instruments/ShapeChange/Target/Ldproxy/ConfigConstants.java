@@ -46,7 +46,8 @@ public class ConfigConstants {
 	 * <p>
 	 * Default Value: name of the XML namespace prefix of a selected schema; or "fixme", if none is specified
 	 * <p>
-	 * Explanation: Id of this service, used in the URI of the service
+	 * Explanation: The id of this service. The id is used as the last step in the base 
+	 * URI of the service.
 	 * <p>
 	 * Applies to Rule(s): none – default behavior 
 	 */
