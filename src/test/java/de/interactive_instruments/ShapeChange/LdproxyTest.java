@@ -40,9 +40,9 @@ public class LdproxyTest extends WindowsBasicTest {
 		/*
 		 * ldproxy configuration file 
 		 */
-		String[] cfgfiles = { "ldproxy_config" };
+		String[] cfgfiles = { "sid" };
 		ldproxyTest("src/test/resources/config/testEA_ldproxy.xml", cfgfiles,
-				"testResults/ea/ldproxy/INPUT",
+				"testResults/ea/ldproxy/INPUT/config-store/entities/services",
 				"src/test/resources/reference/ldproxy");
 	}
 }

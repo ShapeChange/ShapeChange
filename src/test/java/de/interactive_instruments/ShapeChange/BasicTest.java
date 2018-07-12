@@ -556,10 +556,8 @@ public abstract class BasicTest {
 		if (!exportModel) {
 			for (String file : files) {
 
-				String fileName = basedirResults + "/" + file
-						+ ".json";
-				String referenceFileName = basedirReference + "/"
-						+ file + ".json";
+				String fileName = basedirResults + "/" + file;
+				String referenceFileName = basedirReference + "/" + file;
 
 				similarJson(fileName, referenceFileName);
 			}
