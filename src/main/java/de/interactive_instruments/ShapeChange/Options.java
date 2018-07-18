@@ -3816,6 +3816,7 @@ public class Options {
 		addRule("rule-ldp-cls-non-abstract-feature-types-as-collection");
 		addRule("rule-ldp-cls-table-per-feature-type");
 		addRule("rule-ldp-cls-id-field");
+		addRule("rule-ldp-cls-generate-codelist");
 		addRule("rule-ldp-all-names-in-lowercase");
 		addRule("rule-ldp-all-names-max-length");
 		addRule("rule-ldp-prop-all-datatype-relations-as-n-to-m-relations");
@@ -3824,7 +3825,6 @@ public class Options {
 		addRule("rule-ldp-prop-separate-geometry-table");
 		addRule("rule-ldp-prop-all-codelist-values-as-strings");
 		/*
-		addRule("");
 		addRule("");
 		addRule("");
 		addRule("");

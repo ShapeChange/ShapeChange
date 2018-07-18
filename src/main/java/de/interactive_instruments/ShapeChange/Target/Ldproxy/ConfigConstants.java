@@ -351,5 +351,11 @@ public class ConfigConstants {
 	 * Create an id field for each feature or data type table
 	 */
 	public static final String RULE_TGT_LDP_CLS_ID_FIELD = "rule-ldp-cls-id-field";
+	
+	/**
+	 * Try to process also the codelist values and add a codelist file to the configuration
+	 */
+	public static final String RULE_TGT_LDP_CLS_CODELIST = "rule-ldp-cls-generate-codelist";
+	
 
 }

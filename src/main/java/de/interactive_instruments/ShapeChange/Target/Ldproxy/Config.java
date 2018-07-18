@@ -34,17 +34,30 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
@@ -82,6 +95,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_OUTPUT_DIRECTORY
 	 */
 	private static String outputDirectory = null;
+	
+	/**
+	 * directory for code list output
+	 */
+	private static String directoryCL = null;
 	
 	/**
 	 * @see ConfigConstants#PARAM_SERVICE_ID
@@ -198,6 +216,11 @@ public class Config implements SingleTarget, MessageSource {
 	private static FileWriter writerGml = null;
 
 	/**
+	 * The writers to export the codelist files.
+	 */
+	private static Map<String,JSONObject> mapCL = null;
+
+	/**
 	 * The model that is processed.
 	 */
 	private static Model model = null;
@@ -211,7 +234,7 @@ public class Config implements SingleTarget, MessageSource {
 	 * The log where messages will be written.
 	 */
 	private ShapeChangeResult result = null;
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialise(PackageInfo p, Model m, Options o,
@@ -265,7 +288,22 @@ public class Config implements SingleTarget, MessageSource {
 					result.addFatalError(this, 6, directoryMain);
 					throw new ShapeChangeAbortException();
 				}
-				
+
+				directoryCL = outputDirectory+"/config-store/entities/codelists";
+				File outputDirectoryFileCL = new File(directoryCL);
+				exi = outputDirectoryFileCL.exists();
+				if (!exi) {
+					outputDirectoryFileCL.mkdirs();
+					exi = outputDirectoryFileCL.exists();
+				}
+				dir = outputDirectoryFileCL.isDirectory();
+				wrt = outputDirectoryFileCL.canWrite();
+				rea = outputDirectoryFileCL.canRead();
+				if (!exi || !dir || !wrt || !rea) {
+					result.addFatalError(this, 6, directoryCL);
+					throw new ShapeChangeAbortException();
+				}
+
 				String directoryGeojson = outputDirectory+"/config-store/settings/ldproxy-target-geojson/#overrides#";
 				File outputDirectoryFileGeojson = new File(directoryGeojson);
 				exi = outputDirectoryFileGeojson.exists();
@@ -427,6 +465,9 @@ public class Config implements SingleTarget, MessageSource {
 				// We disable GML support.
 				cfgobjGml = new JSONObject();
 				cfgobjGml.put("enabled", false);
+				
+				// empty map for any code lists that are processed
+				mapCL = new HashMap<String,JSONObject>();
 			}
 
 		} catch (Exception e) {
@@ -463,6 +504,8 @@ public class Config implements SingleTarget, MessageSource {
 		writer = null;
 		writerGeojson = null;
 		writerGml = null;
+		
+		mapCL = null;
 
 		cfgobj = null;
 		collections = null;
@@ -587,6 +630,8 @@ public class Config implements SingleTarget, MessageSource {
 
 		result = r;
 		options = r.options();
+		
+		FileWriter writerCL = null;
 
 		try {
 
@@ -608,6 +653,17 @@ public class Config implements SingleTarget, MessageSource {
 				writerGml.flush();
 				writerGml.close();
 			}
+			
+			if (mapCL != null) {
+				for (Map.Entry<String,JSONObject> entry : mapCL.entrySet()) {
+					writerCL = new FileWriter(directoryCL + "/" + entry.getKey());
+					writerCL.write(entry.getValue().toJSONString());
+					writerCL.flush();
+					writerCL.close();
+					writerCL = null;
+				}
+			}
+			
 			
 		} catch (Exception e) {
 
@@ -656,6 +712,19 @@ public class Config implements SingleTarget, MessageSource {
 				}
 			}
 
+			if (writerCL != null) {
+				try {
+					writerCL.close();
+				} catch (IOException e) {
+					String m = e.getMessage();
+					if (m != null) {
+						result.addError(m);
+					}
+					e.printStackTrace(System.err);
+				}
+			}
+
+			
 			// Release the model - do NOT close it here
 			model = null;
 		}
@@ -845,6 +914,7 @@ public class Config implements SingleTarget, MessageSource {
 		String jsongeometrytype = null;
 		String targettabname = null;
 		String pattern = null;
+		String codelist = null;
 		Type ti = pi.typeInfo();
 		if (ti != null) {
 			ProcessMapEntry me = options.targetMapEntry(ti.name, pi.encodingRule("ldp"));
@@ -913,7 +983,126 @@ public class Config implements SingleTarget, MessageSource {
 							return;
 						}
 					} else if ((cix.category()==Options.CODELIST || cix.category()==Options.ENUMERATION) && pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_CL_AS_STRING)) {
-						// Nothing to do, the default works.
+						// Nothing to do, the default works 
+						// ... unless we have a machine readable mapping of code values to readable text
+						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST) && !mapCL.containsKey(cix.name())) {
+							// Look for the first "codeList" tagged value that has a http URI
+							String sa[] = cix.taggedValuesForTag("codeList");
+							if (sa!=null && sa.length>0) {
+								for (String surl : sa) {
+									if (surl.startsWith("http://") || surl.startsWith("https://")) {
+										// retrieve codelist
+										
+										// TODO, make this generic
+										surl = surl.replace("/okey/referenzlisten/", "/repository/services/");
+										
+										// get xml doc
+										InputStream configStream = null;
+
+										URL url;
+										try {
+											url = new URL(surl);
+											configStream = url.openStream();
+										} catch (MalformedURLException e) {
+											MessageContext m = result.addError(this, 7, surl);
+											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+											// try the next tagged value
+											continue;
+										} catch (IOException e) {
+											MessageContext m = result.addError(this, 8, surl);
+											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+											// try the next tagged value
+											continue;
+										}
+
+										// TODO make this more generic
+										DocumentBuilder builder = null;
+										ShapeChangeErrorHandler handler = null;
+										try {
+											System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+													"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+											DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+											factory.setNamespaceAware(false);
+											factory.setValidating(false);
+											factory.setFeature("http://apache.org/xml/features/validation/schema", false);
+											factory.setIgnoringElementContentWhitespace(true);
+											factory.setIgnoringComments(true);
+											factory.setXIncludeAware(true);
+											factory.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
+											builder = factory.newDocumentBuilder();
+											handler = new ShapeChangeErrorHandler();
+											builder.setErrorHandler(handler);
+										} catch (FactoryConfigurationError e) {
+											MessageContext m = result.addError(this, 9, surl);
+											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+											// try the next tagged value
+											continue;
+										} catch (ParserConfigurationException e) {
+											MessageContext m = result.addError(this, 10, surl);
+											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+											// try the next tagged value
+											continue;
+										}
+
+										// parse file
+										try {
+											Document document = builder.parse(configStream);
+											if (handler.errorsFound()) {
+												MessageContext m = result.addError(this, 11, surl);
+												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												// try the next tagged value
+												continue;
+											}
+
+											JSONObject cl = new JSONObject();
+											cl.put("id", cix.name());
+											cl.put("label", cix.definition());
+											cl.put("sourceUrl", surl);
+											cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
+											
+											JSONObject entries = new JSONObject();
+											cl.put("entries", entries);
+											
+											// parse input element specific content
+											NodeList nl = document.getElementsByTagName("item");
+											for (int j = 0; j < nl.getLength(); j++) {
+												Element e = (Element) nl.item(j);
+												Node n = e.getElementsByTagName("atomid").item(0);
+												String code = (n!=null ? ((Element)n).getTextContent().trim() : null);
+												n = e.getElementsByTagName("shortname").item(0);
+												String label1 = (n!=null ? ((Element)n).getTextContent().trim() : "");
+												n = e.getElementsByTagName("longname").item(0);
+												String label2 = (n!=null ? ((Element)n).getTextContent().trim() : "");
+												if (code!=null) {
+													// "(shortname) - longname"
+													// "longname", if shortname is missing
+													// "(shortname)", if longname is missing
+													// "(code)", if both are missing
+													entries.put(code, (label1.isEmpty() ? "" : "("+label1+")") + (label2.isEmpty() ? "" : " - "+label2) + (label1.isEmpty() && label2.isEmpty() ? "("+code+")" : ""));
+												} else {
+													MessageContext m = result.addError(this, 13, surl, "atomid");
+													m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												}
+											}
+
+											mapCL.put(cix.name(), cl);
+											codelist = cix.name();
+
+										} catch (Exception e) {
+											String msg = e.getMessage();
+											if (msg==null)
+												msg = "Unknown error.";
+											MessageContext m = result.addError(this, 12, surl, msg);
+											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+											// try the next tagged value
+											continue;
+										}
+								
+										break;
+									}
+								}
+							}
+						}
 					} else if (cix.category()==Options.UNION) {
 						MessageContext m = result.addError(this, 5);
 						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
@@ -975,6 +1164,8 @@ public class Config implements SingleTarget, MessageSource {
 		general.put("type", category);
 		if (pattern!=null)
 			general.put("pattern", pattern);
+		if (codelist!=null)
+			general.put("codelist", codelist);
 				
 		// Add default schema.org mapping in HTML
 		JSONObject html = new JSONObject();
@@ -1026,6 +1217,27 @@ public class Config implements SingleTarget, MessageSource {
 		case 6:
 			return "Directory named '$1$' is required, but does not exist or is not accessible.";
 
+		case 7:
+			return "The code list at URL '$1$' is a malformed URL.";
+
+		case 8:
+			return "The code list at URL '$1$' is not accessible.";
+
+		case 9:
+			return "The XML document of code list at URL '$1$' could not be processed. Unable to get a document builder factory.";
+			
+		case 10:
+			return "The XML document of code list at URL '$1$' could not be processed. The XML Parser was unable to be configured.";
+			
+		case 11:
+			return "The XML document of code list at URL '$1$' could not be processed. The file is not well-formed.";
+			
+		case 12:
+			return "The XML document of code list at URL '$1$' could not be processed. $2$";
+			
+		case 13:
+			return "An item in the XML document of code list at URL '$1$' could not be processed. The element '$2$' is missing.";
+			
 		case 99:
 			return "Context: class InfoImpl (subtype: PropertyInfo). Name: '$1$'. In class: '$2$'. Value type: '$3$'.";
 
