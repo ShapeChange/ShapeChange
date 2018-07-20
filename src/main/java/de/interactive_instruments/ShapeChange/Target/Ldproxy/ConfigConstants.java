@@ -293,6 +293,22 @@ public class ConfigConstants {
 	public static final String PARAM_FILTERS = "filterableFields";
 
 	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: all feature types
+	 * <p>
+	 * Explanation: By default, the configuration is generated for all feature types. To reduce the configuration to a subset of 
+	 * feature types, specify them in a comma-separated list. 
+	 * <p>
+	 * Applies to Rule(s): none - default behaviour
+	 */
+	public static final String PARAM_FEATURE_TYPES = "featureTypes";
+
+	/**
 	 * This rule states that all properties with a value that is a data type are represented in the database
 	 * using an intermediate table. The name of the table is determined by {@value #PARAM_NTOM_TABLE_TEMPLATE}.
 	 */

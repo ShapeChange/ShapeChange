@@ -7,8 +7,8 @@
 	<MapEntry type="Decimal" rule="*" targetType="NUMBER" param=""/>
 	<MapEntry type="Number" rule="*" targetType="NUMBER" param=""/>
 	<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
-	<MapEntry type="Date" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:d.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
-	<MapEntry type="DateTime" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:d.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
+	<MapEntry type="Date" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:dd.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
+	<MapEntry type="DateTime" rule="*" targetType="DATE" param="category:TEMPORAL;htmlformat:dd.MM.yyyy[', 'HH:mm:ss[' 'z]]"/>
 	<MapEntry type="Time" rule="*" targetType="STRING" param=""/>
 	<MapEntry type="Year" rule="*" targetType="NUMBER" param=""/>
 	<MapEntry type="URI" rule="*" targetType="STRING" param="format:uri"/>

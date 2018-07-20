@@ -172,6 +172,11 @@ public class Config implements SingleTarget, MessageSource {
 	private static Set<String> filterableFields = null;
 	
 	/**
+	 * @see ConfigConstants#PARAM_FEATURE_TYPES
+	 */
+	private static Set<String> featureTypes = null;
+	
+	/**
 	 * The JSON object representing the main configuration file.
 	 */
 	private static JSONObject cfgobj = null;
@@ -234,6 +239,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * The log where messages will be written.
 	 */
 	private ShapeChangeResult result = null;
+
+	/**
+	 * The relative sort priority of a property in a feature type mapping
+	 */
+	private int priority = 0;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -399,6 +409,15 @@ public class Config implements SingleTarget, MessageSource {
 					}
 				}
 								
+				featureTypes = new TreeSet<String>();
+				s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_FEATURE_TYPES);
+				if (s != null) {
+					String[] sarr = s.split(",");
+					for (String s2 : sarr) {
+						featureTypes.add(s2.trim().toLowerCase());
+					}
+				}
+								
 				s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_MAX_LENGTH);
 				if (s != null)
 					maxLength = new Integer(s);
@@ -499,6 +518,7 @@ public class Config implements SingleTarget, MessageSource {
 		rootFeatureTable = null;
 		rootCollectionField = null;
 		filterableFields = null;		
+		featureTypes = null;		
 		outputDirectory = null;
 		
 		writer = null;
@@ -523,12 +543,21 @@ public class Config implements SingleTarget, MessageSource {
 		if (ci.category()!=Options.FEATURE)
 			return;
 		
+		// check, if we ignore this feature type in this configuration
+		if (!featureTypes.isEmpty()) {
+			if (!featureTypes.contains(ci.name().toLowerCase()))
+				return;
+		}
+	 	
+		// Reset the sort priority for the properties
+		priority = 0;
+		
 		// The name of a table for the feature type must be based on the class name
 		String tabname = deriveName(ci);
 		
 		// The name for the collection is the same as the table name.
 		String colname = tabname;
-		
+
 		// The label for the class uses the alias, if available, otherwise the model name.
 		String alias = ci.aliasName();
 		String label = (alias!=null && alias.length()>0) ? alias : ci.name();
@@ -609,7 +638,7 @@ public class Config implements SingleTarget, MessageSource {
 			// Add mappings for all properties
 			if (!ci.properties().isEmpty()) {
 				for (PropertyInfo pi : ci.properties().values()) {
-					processProperty(pi, featuretype, basepath, null, tabname);
+					processProperty(pi, featuretype, basepath, null, null, tabname);
 				}
 			}			
 		}
@@ -808,14 +837,6 @@ public class Config implements SingleTarget, MessageSource {
 			path = basepath;
 		}
 
-		
-		// Add mappings for all properties
-		if (!superci.properties().isEmpty()) {
-			for (PropertyInfo pi : superci.properties().values()) {
-				processProperty(pi, featuretype, path, null, tabname);
-			}
-		}
-
 		// Recursively add mappings for all supertype properties
 		if (superci.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT) &&
 			!superci.supertypes().isEmpty()) {
@@ -823,6 +844,13 @@ public class Config implements SingleTarget, MessageSource {
 				processSupertypeProperties(ci, model.classById(sid), featuretype, basepath);
 			}
 		}		
+		
+		// Add mappings for all properties
+		if (!superci.properties().isEmpty()) {
+			for (PropertyInfo pi : superci.properties().values()) {
+				processProperty(pi, featuretype, path, null, null, tabname);
+			}
+		}
 	} 
 	
 	/**
@@ -856,6 +884,7 @@ public class Config implements SingleTarget, MessageSource {
 		general.put("mappingType", "GENERIC_PROPERTY");
 		general.put("name", fieldname);
 		general.put("enabled", true);
+		general.put("sortPriority", priority++);
 		general.put("filterable", false);
 		general.put("type", "ID");
 		
@@ -888,18 +917,22 @@ public class Config implements SingleTarget, MessageSource {
 	 * flattened or represented as objects and/or arrays; the name of a property, therefore,
 	 * can be a JSON path expression; this parameter includes the JSON path to the current
 	 * position and will be extended to with additional path elements for the property   
+	 * @param baselabel	when complex data structures (data types, nested objects) are included 
+	 * in the application schema, we need to deal with additional structures and represent this 
+	 * in the HTML using labels that reflect the nesting of properties; this parameter includes 
+	 * the sequence of labels of any higher level properties
 	 * @param tabname	name of the current table; if the property is a direct property of the
 	 * feature type, this is the table of the feature type; otherwise it is a table along the
 	 * joins in the basepath
 	 */
 	@SuppressWarnings("unchecked")
-	private void processProperty(PropertyInfo pi, JSONObject featuretype, String basepath, String basename, String tabname) {
+	private void processProperty(PropertyInfo pi, JSONObject featuretype, String basepath, String basename, String baselabel, String tabname) {
 
 		// The default name of a field for the property is the property name in 
 		// lower case characters.
 		String field = deriveName(pi);
 
-		// The default label for the class
+		// The default label for the class (without any prefix for higher level properties, see baselabel)
 		String alias = pi.aliasName();
 		String label = (alias!=null && alias.length()>0) ? alias : pi.name();
 		
@@ -954,7 +987,7 @@ public class Config implements SingleTarget, MessageSource {
 							// Add mappings for all properties
 							if (!cix.properties().isEmpty()) {
 								for (PropertyInfo pix : cix.properties().values()) {
-									processProperty(pix, featuretype, dtbasepath, (basename!=null ? basename+"." : "") + field+"["+field+"]", dttabname);
+									processProperty(pix, featuretype, dtbasepath, (basename!=null ? basename+"." : "") + field+"["+field+"]", (baselabel!=null ? baselabel+" - " : "") + label, dttabname);
 								}
 							}
 						} else {
@@ -1078,7 +1111,10 @@ public class Config implements SingleTarget, MessageSource {
 													// "longname", if shortname is missing
 													// "(shortname)", if longname is missing
 													// "(code)", if both are missing
-													entries.put(code, (label1.isEmpty() ? "" : "("+label1+")") + (label2.isEmpty() ? "" : " - "+label2) + (label1.isEmpty() && label2.isEmpty() ? "("+code+")" : ""));
+													if (label1.isEmpty() && label2.isEmpty())
+														entries.put(code, "("+code+")");
+													else
+														entries.put(code, (label1.isEmpty() ? "" : "("+label1+")" + (label2.isEmpty() ? "" : " - ")) + label2);
 												} else {
 													MessageContext m = result.addError(this, 13, surl, "atomid");
 													m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
@@ -1155,6 +1191,7 @@ public class Config implements SingleTarget, MessageSource {
 		general.put("mappingType", mappingType);
 		general.put("name", fieldname);
 		general.put("enabled", true);
+		general.put("sortPriority", priority++);
 		boolean filterable = false;
 		if (category.equalsIgnoreCase("SPATIAL"))
 			filterable = true;
@@ -1174,7 +1211,7 @@ public class Config implements SingleTarget, MessageSource {
 		if (category.equalsIgnoreCase("SPATIAL"))
 			mappingType = "MICRODATA_GEOMETRY";
 		html.put("mappingType", mappingType);
-		html.put("name", label);
+		html.put("name", (baselabel!=null ? baselabel + " - " : "") + label);
 		html.put("type", htmltype);
 		if (htmlformat!=null)
 			html.put("format", htmlformat);
