@@ -227,7 +227,7 @@ public abstract class BasicTest {
 		}
 	}
 
-	private void multiTestInDirs(Set<String> fileFormatsToCheck,
+	protected void multiTestInDirs(Set<String> fileFormatsToCheck,
 			String dirResults, String dirReference) {
 
 		String[] extensions = fileFormatsToCheck

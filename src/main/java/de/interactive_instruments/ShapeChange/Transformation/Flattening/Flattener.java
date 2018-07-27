@@ -1215,33 +1215,30 @@ public class Flattener implements Transformer, MessageSource {
 			return;
 		}
 
+		Set<String> typesToRemoveAsSet = new HashSet<>(
+				Arrays.asList(typesToRemove));
+
 		/*
-		 * Now identify if the types exist in the application schema; if so,
-		 * remove all properties and associations in the app schema that use
-		 * these types, remove the types themselves, and also remove any direct
-		 * inheritance relationships with these types.
+		 * Now identify all classes in the schemas selected for processing whose
+		 * name equals one of the types to remove.
 		 */
-		for (String typeToRemove : typesToRemove) {
+		List<GenericClassInfo> cisToRemove = new ArrayList<>();
 
-			ClassInfo ciToRemove = genModel.classByName(typeToRemove);
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-			if (ciToRemove == null) {
-
-				continue;
-
-			} else {
-
-				if (ciToRemove instanceof GenericClassInfo) {
-
-					GenericClassInfo genCiToRemove = (GenericClassInfo) ciToRemove;
-
-					genModel.remove(genCiToRemove);
-
-				} else {
-
-					result.addWarning(this, 20321, ciToRemove.name());
-				}
+			if (typesToRemoveAsSet.contains(genCi.name())) {
+				cisToRemove.add(genCi);
 			}
+		}
+
+		/*
+		 * Remove all properties and associations in the app schema that use the
+		 * identified types, remove the types themselves, and also remove any
+		 * direct inheritance relationships with these types.
+		 */
+		for (GenericClassInfo ciToRemove : cisToRemove) {
+
+			genModel.remove(ciToRemove);
 		}
 	}
 
