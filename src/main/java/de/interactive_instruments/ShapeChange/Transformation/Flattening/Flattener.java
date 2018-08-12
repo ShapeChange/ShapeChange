@@ -56,6 +56,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -104,6 +105,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.Propert
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
 
 /**
@@ -273,6 +275,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES = "rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
@@ -4964,8 +4967,26 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		for (GenericClassInfo genCls : genModel.selectedSchemaClasses()) {
 
-			if (genCls.subtypes() != null && genCls.subtypes().size() > 0
-					&& !allSubtypesOutsideSelectedSchemas(genCls)) {
+			/*
+			 * Ignore classes that represent ArcGIS subtypes. We are interested
+			 * in their parents, because we want flattening inheritance to reach
+			 * the parents (i.e., the properties of the supertypes are copied
+			 * down to the parents).
+			 */
+			if (trfConfig.hasRule(
+					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+					&& genCls.baseClass() != null
+					&& ArcGISUtil.hasArcGISDefaultSubtypeAttribute(
+							genCls.baseClass())) {
+				continue;
+			}
+
+			if (!genCls.subtypes().isEmpty()
+					&& !allSubtypesOutsideSelectedSchemas(genCls)
+					&& !(trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+							&& ArcGISUtil.hasArcGISDefaultSubtypeAttribute(
+									genCls))) {
 
 				boolean includeSupertype = true;
 
@@ -5156,7 +5177,8 @@ public class Flattener implements Transformer, MessageSource {
 					.addClass(genSuperclassUnion);
 
 			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
-					genSuperclass);
+					genSuperclass, trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES));
 			int seqNumIndex = 1;
 
 			// sort the subclasses by name so that the resulting order of
@@ -6255,15 +6277,25 @@ public class Flattener implements Transformer, MessageSource {
 
 	/**
 	 * @param genCi
+	 * @param ignoreArcGISSubtypes
+	 *            <code>true</code> if subtypes from classes where one of the
+	 *            properties has tagged value 'arcgisDefaultSubtype' with
+	 *            non-empty value shall be ignored, else <code>false</code>
 	 * @return The set of all direct or indirect subclasses of the given class
 	 *         that belong to schemas selected for processing, can be empty (if
 	 *         the class has no subclasses that belong to the schemas selected
-	 *         for processing) but not null.
+	 *         for processing) but not <code>null</code>. Note that subtypes of
+	 *         a class are not included if parameter
+	 *         {@code ignoreArcGISSubtypes} is <code>true</code> and one of the
+	 *         properties of the class has tagged 'arcgisDefaultSubtypes' with
+	 *         non-empty value.
 	 */
 	private Set<GenericClassInfo> getAllSubclassesFromSchemasSelectedForProcessing(
-			GenericClassInfo genCi) {
+			GenericClassInfo genCi, boolean ignoreArcGISSubtypes) {
 
-		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()) {
+		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()
+				|| (ignoreArcGISSubtypes && ArcGISUtil
+						.hasArcGISDefaultSubtypeAttribute(genCi))) {
 
 			return new HashSet<GenericClassInfo>();
 
@@ -6281,7 +6313,7 @@ public class Flattener implements Transformer, MessageSource {
 
 					subtypes.add(genSubtype);
 					Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
-							genSubtype);
+							genSubtype, ignoreArcGISSubtypes);
 					subtypes.addAll(subsubtypes);
 				}
 			}

@@ -3763,6 +3763,7 @@ public class Options {
 		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 		addRule("rule-arcgis-all-representTaggedValues");
 		addRule("rule-arcgis-all-scale");
+		addRule("rule-arcgis-all-subtypes");
 		addRule("rule-arcgis-cls-hasM");
 		addRule("rule-arcgis-cls-hasZ");
 		addRule("rule-arcgis-cls-identifierStereotype");
