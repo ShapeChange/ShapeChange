@@ -1933,7 +1933,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
-		
+
 		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::ObjectClass");
 
 		Attribute objectIdField = createSystemFieldOBJECTID(e);
@@ -2993,6 +2993,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
+	/**
+	 * Computes the list of the (direct and indirect) non abstract subtypes of
+	 * the given class. NOTE: Ignores explicitly modelled subtypes if
+	 * {@value ArcGISWorkspaceConstants#RULE_ALL_SUBTYPES} is enabled.
+	 * 
+	 * @param ci
+	 * @return
+	 */
 	private SortedSet<ClassInfo> computeListOfAllNonAbstractSubtypes(
 			ClassInfo ci) {
 
@@ -3008,6 +3016,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					result.addWarning(this, 219, subtypeId, ci.name());
 					continue;
+				}
+
+				if (isExplicitlyModeledArcGISSubtype(subtype)) {
+					// ignore explicitly modelled ArcGIS subtype
 				}
 
 				if (model.isInSelectedSchemas(subtype)) {
@@ -3397,6 +3409,39 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			for (PropertyInfo pi : ci.properties().values()) {
 
+				/*
+				 * Check properties on an explicitly modelled ArcGIS subtype.
+				 */
+				if (isExplicitlyModeledArcGISSubtype(ci)) {
+
+					ClassInfo supertype = ci.baseClass();
+					
+					/*
+					 * Ignore geometry properties.
+					 */
+					Type t = pi.typeInfo();
+					if (t.name.startsWith("GM_")) {
+						MessageContext mc = result.addWarning(this, 266,
+								ci.name(), supertype.name(), pi.name(), t.name);
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+						continue;
+					}
+					
+					/*
+					 * Ignore properties that the supertype does not define.
+					 */					
+					if (supertype.property(pi.name()) == null) {
+						MessageContext mc = result.addWarning(this, 265,
+								ci.name(), supertype.name(), pi.name());
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+						continue;
+					}
+				}
+
 				Attribute eaAtt = null;
 
 				if (!pi.isAttribute()) {
@@ -3560,6 +3605,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 									ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)
 									&& StringUtils.isNotBlank(pi.taggedValue(
 											"arcgisDefaultSubtype"))) {
+
+								if (!pi.typeInfo().name
+										.equalsIgnoreCase("Integer")) {
+									MessageContext mc = result.addWarning(this,
+											267, ci.name(), pi.name(),
+											pi.typeInfo().name);
+									if (mc != null) {
+										mc.addDetail(this, -2,
+												pi.fullNameInSchema());
+									}
+								}
 
 								eaAtt = createField(eaClass, normalizedPiName,
 										normalizedPiAlias,
@@ -4630,6 +4686,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "??Invalid format of tagged value 'arcgisSubtypeInitialValues' of property '$1$'. The tagged value will be ignored. Ensure that the tagged value contains a comma-separated list of key-value pairs (with subtype name as key, initial value as value, and colon as separator).";
 		case 264:
 			return "??Tagged value 'arcgisSubtypeInitialValues' of property '$1$' contains subtype '$2$', which was not found in the set of subtypes defined for class '$3$'. The subtype will be ignored.";
+		case 265:
+			return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', but '$2$' does not. This is not allowed. An ArcGIS subtype may only restrict the properties of its supertype. The property will be ignored.";
+		case 266:
+			return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', which has a geometry type ('$4$'). This is not allowed. An ArcGIS subtype may not redefine the geometry type of its supertype. The property will be ignored.";
+		case 267:
+			return "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
