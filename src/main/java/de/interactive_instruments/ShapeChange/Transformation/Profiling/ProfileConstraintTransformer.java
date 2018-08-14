@@ -69,7 +69,8 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  *         <dot> de)
  *
  */
-public class ProfileConstraintTransformer implements Transformer, MessageSource {
+public class ProfileConstraintTransformer
+		implements Transformer, MessageSource {
 
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
@@ -82,6 +83,8 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 	public static final String PARAM_PROFILE_SCHEMA_NAME = "profileSchemaName";
 	public static final String PARAM_PROFILE_NAME = "profileName";
 	public static final String PARAM_SUBTYPE_NAME_PREFIX = "subtypeNamePrefix";
+
+	public static final String PARAM_BASE_SCHEMA_CLASSES_NOT_TO_BE_PROHIBITED_REGEX = "baseSchemaClassesNotToBeProhibitedRegex";
 
 	/* ------------------------ */
 	/* --- rule identifiers --- */
@@ -157,6 +160,10 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 		 * NOTE: Parameter checks are performed by the configuration validator.
 		 */
 
+		String baseSchemaClassesNotToBeProhibitedRegex = config
+				.getParameterValue(
+						PARAM_BASE_SCHEMA_CLASSES_NOT_TO_BE_PROHIBITED_REGEX);
+
 		// Get base schemas
 		SortedSet<PackageInfo> baseSchemas = getBaseSchemas(genModel, config);
 
@@ -193,7 +200,11 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 			if (!baseSchemaClass.isAbstract()
 					&& baseSchemaClass.profiles().hasProfile(profileName)
 					&& baseSchemaClass.category() != Options.ENUMERATION
-					&& baseSchemaClass.category() != Options.CODELIST) {
+					&& baseSchemaClass.category() != Options.CODELIST
+					&& (StringUtils
+							.isBlank(baseSchemaClassesNotToBeProhibitedRegex)
+							|| !baseSchemaClass.name().matches(
+									baseSchemaClassesNotToBeProhibitedRegex))) {
 
 				SortedSet<GenericClassInfo> profileSchemaSubtypes = getDirectUnsuppressedSubtypesFromProfileSchema(
 						baseSchemaClass, profileSchema);
@@ -369,6 +380,10 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 		 * NOTE: Parameter checks are performed by the configuration validator.
 		 */
 
+		String baseSchemaClassesNotToBeProhibitedRegex = config
+				.getParameterValue(
+						PARAM_BASE_SCHEMA_CLASSES_NOT_TO_BE_PROHIBITED_REGEX);
+
 		// Get base schemas
 		SortedSet<PackageInfo> baseSchemas = getBaseSchemas(genModel, config);
 
@@ -408,7 +423,7 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 			 * Check if the class is irrelevant.
 			 */
 			if (!baseSchemaClass.profiles().hasProfile(profileName)) {
-				
+
 				/*
 				 * Ignore enumerations and code lists.
 				 */
@@ -569,12 +584,17 @@ public class ProfileConstraintTransformer implements Transformer, MessageSource 
 					 * direct unsuppressed profile schema subtypes applies, and
 					 * the relevantBaseClass fulfills these criteria, then we do
 					 * not want to create any OCL constraints for the
-					 * relevantBaseClass.
+					 * relevantBaseClass. Exceptions can be made via a
+					 * configuration parameter.
 					 */
 					if (rules.contains(
 							RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES)
 							&& hasDirectUnsuppressedSubtypeFromProfileSchema(
-									relevantBaseClass, profileSchema)) {
+									relevantBaseClass, profileSchema)
+							&& (StringUtils.isBlank(
+									baseSchemaClassesNotToBeProhibitedRegex)
+									|| !baseSchemaClass.name().matches(
+											baseSchemaClassesNotToBeProhibitedRegex))) {
 
 						/*
 						 * Do not create OCL constraints for the
