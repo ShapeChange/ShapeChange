@@ -3171,7 +3171,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					try {
 						Integer value = Integer.parseInt(tv.trim());
-						if (value > 0) {
+						if (value >= 0) {
 							return value;
 						}
 					} catch (NumberFormatException e) {
@@ -3217,7 +3217,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				try {
 					Integer value = Integer.parseInt(tv.trim());
-					if (value > 0) {
+					if (value >= 0) {
 						return value;
 					}
 				} catch (NumberFormatException e) {
