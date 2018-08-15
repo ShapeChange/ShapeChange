@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/flattener/inheritanceIgnoringArcGISSubtypes" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/flattener/inheritanceIgnoringArcGISSubtypes" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MixinUnion" substitutionGroup="gml:AbstractObject" type="test:MixinUnionType"/>
+  <complexType name="MixinUnionType">
+    <choice/>
+  </complexType>
+  <complexType name="MixinUnionPropertyType">
+    <sequence>
+      <element ref="test:MixinUnion"/>
+    </sequence>
+  </complexType>
+  <element name="Subtype" substitutionGroup="test:Supertype" type="test:SubtypeType"/>
+  <complexType name="SubtypeType">
+    <complexContent>
+      <extension base="test:SupertypeType">
+        <sequence>
+          <element name="mixinProperty" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubtypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Subtype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Supertype" substitutionGroup="gml:AbstractFeature" type="test:SupertypeType"/>
+  <complexType name="SupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="classification" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Supertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

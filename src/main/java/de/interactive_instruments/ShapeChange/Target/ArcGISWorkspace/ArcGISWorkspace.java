@@ -1517,8 +1517,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private boolean isExplicitlyModeledArcGISSubtype(ClassInfo ci) {
 
 		if (ci.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)
-				&& ci.baseClass() != null && ArcGISUtil
-						.hasArcGISDefaultSubtypeAttribute(ci.baseClass())) {
+				&& ArcGISUtil.isArcGISSubtype(ci)) {
 			return true;
 		} else {
 			return false;
@@ -2014,6 +2013,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	private void identifyGeneralisationRelationships(ClassInfo ci) {
+
+		/*
+		 * The target currently only supports one generalization relationship
+		 * per subtype (the key of the generalisations map is the subtype).
+		 * Thus, if we encounter a class that has more than one supertype, this
+		 * is an error (since the result would be unexpected).
+		 */
+		if (ci.supertypes().size() > 1) {
+			MessageContext mc = result.addError(this, 268, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, -1, ci.fullNameInSchema());
+			}
+		}
 
 		for (String tid : ci.supertypes()) {
 
@@ -3415,7 +3427,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				if (isExplicitlyModeledArcGISSubtype(ci)) {
 
 					ClassInfo supertype = ci.baseClass();
-					
+
 					/*
 					 * Ignore geometry properties.
 					 */
@@ -3428,10 +3440,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						}
 						continue;
 					}
-					
+
 					/*
 					 * Ignore properties that the supertype does not define.
-					 */					
+					 */
 					if (supertype.property(pi.name()) == null) {
 						MessageContext mc = result.addWarning(this, 265,
 								ci.name(), supertype.name(), pi.name());
@@ -4692,6 +4704,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', which has a geometry type ('$4$'). This is not allowed. An ArcGIS subtype may not redefine the geometry type of its supertype. The property will be ignored.";
 		case 267:
 			return "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
+		case 268:
+			return "Class '$1$' has more than one supertype. The target only supports one generalization relationship per subtype.";
 
 		// 10001-10100: EA exceptions
 		case 10001:

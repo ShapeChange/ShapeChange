@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Util;
 import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
@@ -54,6 +55,51 @@ public class ArcGISUtil {
 		for (PropertyInfo pi : ci.properties().values()) {
 			if (StringUtils
 					.isNotBlank(pi.taggedValue("arcgisDefaultSubtype"))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param ci
+	 * @return <code>true</code> if one of the supertypes of the given class has
+	 *         a property with non-empty tagged value 'arcgisDefaultSubtype';
+	 *         else <code>false</code>.
+	 */
+	public static boolean isArcGISSubtype(ClassInfo ci) {
+
+		Model model = ci.model();
+
+		for (String supertypeID : ci.supertypes()) {
+
+			ClassInfo supertype = model.classById(supertypeID);
+
+			if (supertype != null
+					&& hasArcGISDefaultSubtypeAttribute(supertype)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param ci
+	 * @return <code>true</code> if the class has a subtype that represents an
+	 *         ArcGIS subtype (i.e., one of its supertypes has a property with
+	 *         non-empty tagged value 'arcgisDefaultSubtype').
+	 */
+	public static boolean hasArcGISSubtype(ClassInfo ci) {
+
+		Model model = ci.model();
+
+		for (String subtypeID : ci.subtypes()) {
+
+			ClassInfo subtype = model.classById(subtypeID);
+
+			if (subtype != null && isArcGISSubtype(subtype)) {
 				return true;
 			}
 		}

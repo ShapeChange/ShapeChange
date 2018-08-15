@@ -129,4 +129,13 @@ public class FlattenerTest extends WindowsBasicTest {
 				"src/test/resources/flattener/duplicateProperties_removeNameAndCodeComponent/test_Flattener_duplicateProps_removeNameAndCodeComponent.xml",
 				"It is expected that the log contains an error, informing the user about classes with duplicate properties as result of the transformation.");
 	}
+	
+	@Test
+	public void test_flatten_inheritanceIgnoringArcGISSubtypes() {
+		multiTest(
+				"src/test/resources/flattener/inheritanceIgnoringArcGISSubtypes/testEA_Flattener_inheritanceIgnoringArcGISSubtypes.xml",
+				new String[] { "xsd" },
+				"testResults/flattening/inheritanceIgnoringArcGISSubtypes",
+				"src/test/resources/flattener/inheritanceIgnoringArcGISSubtypes/reference");
+	}
 }

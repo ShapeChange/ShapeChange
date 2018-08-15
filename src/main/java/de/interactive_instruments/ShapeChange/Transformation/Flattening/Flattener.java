@@ -56,7 +56,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -98,12 +97,12 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyPositionIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
@@ -4975,9 +4974,7 @@ public class Flattener implements Transformer, MessageSource {
 			 */
 			if (trfConfig.hasRule(
 					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-					&& genCls.baseClass() != null
-					&& ArcGISUtil.hasArcGISDefaultSubtypeAttribute(
-							genCls.baseClass())) {
+					&& ArcGISUtil.isArcGISSubtype(genCls)) {
 				continue;
 			}
 
@@ -5793,12 +5790,36 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 
 		/*
-		 * remove inheritance relationships from leaf classes (set baseClass and
-		 * supertypes to null)
+		 * remove inheritance relationships from leaf classes, but keep
+		 * relationships to ArcGIS parent if
+		 * RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES is enabled.
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
-			leafCi.setBaseClass(null);
-			leafCi.setSupertypes(null);
+
+			if (trfConfig.hasRule(
+					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+					&& ArcGISUtil.isArcGISSubtype(leafCi)) {
+				// do not remove relationship to baseClass
+			} else {
+				leafCi.setBaseClass(null);
+			}
+
+			TreeSet<String> newSupertypes = new TreeSet<>();
+
+			for (String supertypeID : leafCi.supertypes()) {
+
+				ClassInfo supertype = genModel.classById(supertypeID);
+
+				if (trfConfig.hasRule(
+						RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+						&& supertype != null && ArcGISUtil
+								.hasArcGISDefaultSubtypeAttribute(supertype)) {
+					// keep relationship to this supertype
+					newSupertypes.add(supertypeID);
+				}
+			}
+
+			leafCi.setSupertypes(newSupertypes);
 		}
 
 		/*
@@ -6278,24 +6299,23 @@ public class Flattener implements Transformer, MessageSource {
 	/**
 	 * @param genCi
 	 * @param ignoreArcGISSubtypes
-	 *            <code>true</code> if subtypes from classes where one of the
-	 *            properties has tagged value 'arcgisDefaultSubtype' with
-	 *            non-empty value shall be ignored, else <code>false</code>
+	 *            <code>true</code> if subtypes that represent ArcGIS subtypes
+	 *            (i.e. that have a supertype where one of the properties has
+	 *            tagged value 'arcgisDefaultSubtype' with non-empty value)
+	 *            shall be ignored, else <code>false</code>
 	 * @return The set of all direct or indirect subclasses of the given class
 	 *         that belong to schemas selected for processing, can be empty (if
 	 *         the class has no subclasses that belong to the schemas selected
-	 *         for processing) but not <code>null</code>. Note that subtypes of
-	 *         a class are not included if parameter
-	 *         {@code ignoreArcGISSubtypes} is <code>true</code> and one of the
-	 *         properties of the class has tagged 'arcgisDefaultSubtypes' with
-	 *         non-empty value.
+	 *         for processing) but not <code>null</code>. Note that subtypes
+	 *         that represent ArcGIS subtypes (i.e. that have a supertype where
+	 *         one of the properties has tagged value 'arcgisDefaultSubtype'
+	 *         with non-empty value) are not included if parameter
+	 *         {@code ignoreArcGISSubtypes} is <code>true</code>.
 	 */
 	private Set<GenericClassInfo> getAllSubclassesFromSchemasSelectedForProcessing(
 			GenericClassInfo genCi, boolean ignoreArcGISSubtypes) {
 
-		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()
-				|| (ignoreArcGISSubtypes && ArcGISUtil
-						.hasArcGISDefaultSubtypeAttribute(genCi))) {
+		if (genCi.subtypes().isEmpty()) {
 
 			return new HashSet<GenericClassInfo>();
 
@@ -6311,10 +6331,15 @@ public class Flattener implements Transformer, MessageSource {
 
 					GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
-					subtypes.add(genSubtype);
-					Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
-							genSubtype, ignoreArcGISSubtypes);
-					subtypes.addAll(subsubtypes);
+					if (ignoreArcGISSubtypes
+							&& ArcGISUtil.isArcGISSubtype(genSubtype)) {
+						// nothing to do
+					} else {
+						subtypes.add(genSubtype);
+						Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
+								genSubtype, ignoreArcGISSubtypes);
+						subtypes.addAll(subsubtypes);
+					}
 				}
 			}
 
