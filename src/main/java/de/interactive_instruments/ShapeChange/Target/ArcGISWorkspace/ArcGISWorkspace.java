@@ -835,19 +835,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		// create class element
-		String name = normalizeName(ci.name());
 
-		if (exceedsMaxLength(name)) {
-			this.result.addWarning(this, 205, name, ci.name(), ci.name(),
-					"" + maxNameLength);
-			name = clipToMaxLength(name);
-		}
+		/*
+		 * 2018-08-16: do NOT normalize or clip subtype name!
+		 */
 
-		Element eaElement = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
+		Element eaElement = EARepositoryUtil.createEAClass(rep, ci.name(), eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, eaElement.GetElementID());
-		elementNameByClassInfo.put(ci, name);
+		elementNameByClassInfo.put(ci, ci.name());
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, eaElement);
