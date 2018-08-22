@@ -100,6 +100,8 @@ public class ArcGISWorkspaceConstants {
 	 */
 	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
 
+	public static final String RULE_ALL_POSTPROCESS_REMOVE_UNUSED_CODED_VALUE_DOMAINS = "rule-arcgis-all-postprocess-removeUnusedCodedValueDomains";
+
 	/**
 	 * If this rule is enabled, then - for properties with a code list or
 	 * enumeration as value type - ShapeChange will use the value of the tagged

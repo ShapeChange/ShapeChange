@@ -3759,8 +3759,9 @@ public class Options {
 		/*
 		 * ArcGIS workspace encoding rules
 		 */
+		addRule("rule-arcgis-all-postprocess-removeUnusedCodedValueDomains");
 		addRule("rule-arcgis-all-precision");
-		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");		
 		addRule("rule-arcgis-all-representTaggedValues");
 		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-all-subtypes");

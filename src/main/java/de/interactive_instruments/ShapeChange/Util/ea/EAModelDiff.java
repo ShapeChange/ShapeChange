@@ -1248,8 +1248,8 @@ public class EAModelDiff {
 
 		// TaggedValues
 		result &= similar(attInfo.getModelPath(),
-				EAAttributeUtil.getEATaggedValues(att),
-				EAAttributeUtil.getEATaggedValues(refAtt));
+				EAAttributeUtil.getEATaggedValuesWithCombinedKeys(att),
+				EAAttributeUtil.getEATaggedValuesWithCombinedKeys(refAtt));
 
 		result &= similar(attInfo.getModelPath(), "Type", att.GetType(),
 				refAtt.GetType());

@@ -95,6 +95,7 @@
 					<rule name="rule-arcgis-prop-scale" />
 					<rule name="rule-arcgis-all-subtypes" />
 					<rule name="rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType" />
+					<rule name="rule-arcgis-all-postprocess-removeUnusedCodedValueDomains"/>
 				</EncodingRule>
 			</rules>
 			<xi:include

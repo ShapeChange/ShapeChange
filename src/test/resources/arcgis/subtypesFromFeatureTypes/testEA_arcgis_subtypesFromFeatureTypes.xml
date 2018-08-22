@@ -87,7 +87,9 @@
 					<rule name="rule-arcgis-cls-hasM" />
 					<rule name="rule-arcgis-prop-initialValueByAlias" />
 					<rule name="rule-arcgis-cls-rangeDomainFromTaggedValues" />
-					<rule name="rule-arcgis-prop-lengthFromTaggedValue" />
+					<!-- Don't include the following rule. Postprocessing shall automatically 
+						align the length of ArcGIS subtypes and their parents. -->
+					<!-- <rule name="rule-arcgis-prop-lengthFromTaggedValue" /> -->
 					<rule name="rule-arcgis-prop-initialValue" />
 					<rule name="rule-arcgis-prop-isNullable" />
 					<rule name="rule-arcgis-prop-precision" />

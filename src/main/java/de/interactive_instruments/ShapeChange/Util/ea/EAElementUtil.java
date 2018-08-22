@@ -669,6 +669,32 @@ public class EAElementUtil extends AbstractEAUtil {
 
 	/**
 	 * @param elmt
+	 *            EA element in which to look for the attribute
+	 * @param attName
+	 *            name of the attribute to look up
+	 * @return the EA attribute that belongs to the EA element and has the given
+	 *         attribute name; can be <code>null</code> if no such attribute was
+	 *         found
+	 */
+	public static Attribute getAttributeByName(Element elmt, String attName) {
+
+		Attribute result = null;
+
+		Collection<Attribute> atts = elmt.GetAttributes();
+
+		for (short i = 0; i < atts.GetCount(); i++) {
+			Attribute att = atts.GetAt(i);
+			if (att.GetName().equals(attName)) {
+				result = att;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param elmt
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */

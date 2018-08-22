@@ -85,6 +85,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EAPackageUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
@@ -208,16 +209,23 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static SortedMap<ClassInfo, Integer> elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 	private static SortedMap<ClassInfo, String> elementNameByClassInfo = new TreeMap<ClassInfo, String>();
 
+	private static SortedSet<Integer> elementIdOfCodedValueDomain = new TreeSet<>();
+
 	private static SortedMap<ClassInfo, String> objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 	private static SortedMap<ClassInfo, String> identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 
 	private static SortedMap<ClassInfo, ClassInfo> generalisations = new TreeMap<ClassInfo, ClassInfo>();
 	private static SortedSet<AssociationInfo> associations = new TreeSet<AssociationInfo>();
 
+	/**
+	 * Set of explicit ArcGIS subtypes, for establishing generalization
+	 * relationships with stereotype ArcGIS::Subtype during writeAll.
+	 */
 	private static Set<ClassInfo> arcgisSubtypes = new HashSet<>();
 	private static Map<ClassInfo, Map<String, Integer>> subtypeElementIdBySubtypeNameByParent = new TreeMap<>();
 	/**
-	 * Key: (ordered) list of 1) parent class, 2) property of parent class
+	 * Key: 1) parent class (ClassInfo), 2) property of parent class
+	 * (PropertyInfo)
 	 * <p>
 	 * Value: SortedMap with key being the subtype name and value being the EA
 	 * element ID of the subtype specific coded value domain to be used as type
@@ -840,7 +848,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		 * 2018-08-16: do NOT normalize or clip subtype name!
 		 */
 
-		Element eaElement = EARepositoryUtil.createEAClass(rep, ci.name(), eaPkgId);
+		Element eaElement = EARepositoryUtil.createEAClass(rep, ci.name(),
+				eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, eaElement.GetElementID());
@@ -1155,8 +1164,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
-		elementIdByClassInfo.put(ci, e.GetElementID());
+		int elementID = e.GetElementID();
+		elementIdByClassInfo.put(ci, elementID);
 		elementNameByClassInfo.put(ci, name);
+
+		/*
+		 * Keep track of element IDs of coded value domains, so that unused ones
+		 * can be removed during postprocessing.
+		 */
+		elementIdOfCodedValueDomain.add(elementID);
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
@@ -3290,6 +3306,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		SortedSet<String> stereotypes = new TreeSet<String>();
 		stereotypes.add(stereotype);
 
+		if (eaClassifierId != null) {
+			/*
+			 * Remove eaClassifierId in elementIdOfCodedValueDomain - so that at
+			 * the end of processing, the set elementIdOfCodedValueDomain only
+			 * contains IDs of the coded value domains that are not used in the
+			 * model.
+			 */
+			elementIdOfCodedValueDomain.remove(eaClassifierId);
+		}
+
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
 				stereotypes, tvs, false, false, false, initialValue,
 				new Multiplicity(1, 1), eaType, eaClassifierId);
@@ -3320,6 +3346,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		geometryTypeCache = new TreeMap<ClassInfo, ArcGISGeometryType>();
 		elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 		elementNameByClassInfo = new TreeMap<ClassInfo, String>();
+		elementIdOfCodedValueDomain = new TreeSet<>();
 		objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		generalisations = new TreeMap<ClassInfo, ClassInfo>();
@@ -4138,11 +4165,309 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
+		postprocess();
+
 		EARepositoryUtil.closeRepository(rep);
 	}
 
+	private void postprocess() {
+
+		result.addInfo(this, 30000);
+
+		if (!elementIdByClassInfo.isEmpty()
+				&& elementIdByClassInfo.keySet().iterator().next().matches(
+						ArcGISWorkspaceConstants.RULE_ALL_POSTPROCESS_REMOVE_UNUSED_CODED_VALUE_DOMAINS)) {
+			result.addInfo(this, 30001);
+
+			for (Integer elementIDOfUnusedCodedValueDomain : elementIdOfCodedValueDomain) {
+				Element elmtToRemove = rep
+						.GetElementByID(elementIDOfUnusedCodedValueDomain);
+				int pkgId = elmtToRemove.GetPackageID();
+				Package pkg = rep.GetPackageByID(pkgId);
+				result.addInfo(this, 272, elmtToRemove.GetName());
+				EAPackageUtil.deleteElement(pkg,
+						elementIDOfUnusedCodedValueDomain);
+			}
+		}
+
+		result.addInfo(this, 30002);
+
+		/*
+		 * For each class that has an ArcGIS subtype, check all its fields to
+		 * determine the maximum length, scale, precision, and whether it is
+		 * nullable from its subtypes.
+		 */
+		for (ClassInfo ci : elementIdByClassInfo.keySet()) {
+
+			if (ArcGISUtil.hasArcGISSubtype(ci)) {
+
+				Element parentElement = rep
+						.GetElementByID(elementIdByClassInfo.get(ci));
+
+				/*
+				 * Get map of all subtypes and their EA elements.
+				 */
+				SortedMap<String, Element> subtypeElementByName = new TreeMap<>();
+				for (String subtypeId : ci.subtypes()) {
+
+					ClassInfo subtype = ci.model().classById(subtypeId);
+					Element subtypeElement = rep
+							.GetElementByID(elementIdByClassInfo.get(subtype));
+					subtypeElementByName.put(subtype.name(), subtypeElement);
+				}
+
+				Collection<Attribute> parentAtts = parentElement
+						.GetAttributes();
+				for (short i = 0; i < parentAtts.GetCount(); i++) {
+
+					Attribute parentAtt = parentAtts.GetAt(i);
+					String parentAttName = parentAtt.GetName();
+
+					if (parentAtt.GetStereotype().equals("Field")) {
+
+						SortedMap<String, EATaggedValue> parentAttTVs = EAAttributeUtil
+								.getEATaggedValuesWithCombinedKeys(parentAtt);
+
+						String tvKey;
+
+						int parentLength = 0;
+						tvKey = "Length#ArcGIS::Field::Length";
+						if (parentAttTVs.containsKey(tvKey)) {
+							parentLength = Integer.parseInt(
+									parentAttTVs.get(tvKey).getValues().get(0));
+						}
+
+						int parentPrecision = 0;
+						tvKey = "Precision#ArcGIS::Field::Precision";
+						if (parentAttTVs.containsKey(tvKey)) {
+							parentPrecision = Integer.parseInt(
+									parentAttTVs.get(tvKey).getValues().get(0));
+						}
+
+						int parentScale = 0;
+						tvKey = "Scale#ArcGIS::Field::Scale";
+						if (parentAttTVs.containsKey(tvKey)) {
+							parentScale = Integer.parseInt(
+									parentAttTVs.get(tvKey).getValues().get(0));
+						}
+
+						boolean parentIsNullable = false;
+						tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+						if (parentAttTVs.containsKey(tvKey)) {
+							parentIsNullable = Boolean.parseBoolean(
+									parentAttTVs.get(tvKey).getValues().get(0));
+						}
+
+						boolean lengthChange = false;
+						boolean scaleChange = false;
+						boolean precisionChange = false;
+						boolean isNullableChange = false;
+
+						int maxLengthFromSubtypes = 0;
+						int maxPrecisionFromSubtypes = 0;
+						int maxScaleFromSubtypes = 0;
+						boolean isNullableFromSubtypes = false;
+
+						/*
+						 * Determine if the corresponding (same name) fields in
+						 * the subtypes - which may or may not exist - have
+						 * different length, scale, precision, or isNullable.
+						 * Also determine the maximum value and if isNullable
+						 * should be true.
+						 */
+						for (Entry<String, Element> e : subtypeElementByName
+								.entrySet()) {
+
+							// String subtypeName = e.getKey();
+							Element subtypeElement = e.getValue();
+
+							Attribute subtypeAtt = EAElementUtil
+									.getAttributeByName(subtypeElement,
+											parentAttName);
+
+							if (subtypeAtt != null) {
+
+								SortedMap<String, EATaggedValue> subtypeAttTVs = EAAttributeUtil
+										.getEATaggedValuesWithCombinedKeys(
+												subtypeAtt);
+
+								tvKey = "Length#ArcGIS::Field::Length";
+								if (subtypeAttTVs.containsKey(tvKey)) {
+									int subtypeLength = Integer
+											.parseInt(subtypeAttTVs.get(tvKey)
+													.getValues().get(0));
+									if (parentLength != subtypeLength) {
+										lengthChange = true;
+										if (subtypeLength > maxLengthFromSubtypes) {
+											maxLengthFromSubtypes = subtypeLength;
+										}
+									}
+								}
+
+								tvKey = "Precision#ArcGIS::Field::Precision";
+								if (subtypeAttTVs.containsKey(tvKey)) {
+									int subtypePrecision = Integer
+											.parseInt(subtypeAttTVs.get(tvKey)
+													.getValues().get(0));
+									if (parentPrecision != subtypePrecision) {
+										precisionChange = true;
+										if (subtypePrecision > maxPrecisionFromSubtypes) {
+											maxPrecisionFromSubtypes = subtypePrecision;
+										}
+									}
+								}
+
+								tvKey = "Scale#ArcGIS::Field::Scale";
+								if (subtypeAttTVs.containsKey(tvKey)) {
+									int subtypeScale = Integer
+											.parseInt(subtypeAttTVs.get(tvKey)
+													.getValues().get(0));
+									if (parentScale != subtypeScale) {
+										scaleChange = true;
+										if (subtypeScale > maxScaleFromSubtypes) {
+											maxScaleFromSubtypes = subtypeScale;
+										}
+									}
+								}
+
+								tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+								if (subtypeAttTVs.containsKey(tvKey)) {
+									boolean subtypeIsNullable = Boolean
+											.parseBoolean(subtypeAttTVs
+													.get(tvKey).getValues()
+													.get(0));
+									if (parentIsNullable != subtypeIsNullable) {
+										isNullableChange = true;
+										if (subtypeIsNullable) {
+											isNullableFromSubtypes = true;
+										}
+									}
+								}
+							}
+						}
+
+						String parentName = ci.name();
+						String fieldToUpdate = parentAttName;
+						String tagToUpdate = "";
+						String fqNameOfTag = "";
+						String newValue = "";
+
+						try {
+
+							if (lengthChange) {
+
+								tagToUpdate = "Length";
+								fqNameOfTag = "ArcGIS::Field::Length";
+								newValue = "" + maxLengthFromSubtypes;
+
+								updateFieldInArcGISParentAndSubtypes(
+										fieldToUpdate, tagToUpdate, fqNameOfTag,
+										newValue, parentName, parentAtt,
+										subtypeElementByName);
+							}
+
+							if (precisionChange) {
+
+								tagToUpdate = "Precision";
+								fqNameOfTag = "ArcGIS::Field::Precision";
+								newValue = "" + maxPrecisionFromSubtypes;
+
+								updateFieldInArcGISParentAndSubtypes(
+										fieldToUpdate, tagToUpdate, fqNameOfTag,
+										newValue, parentName, parentAtt,
+										subtypeElementByName);
+							}
+
+							if (scaleChange) {
+
+								tagToUpdate = "Scale";
+								fqNameOfTag = "ArcGIS::Field::Scale";
+								newValue = "" + maxScaleFromSubtypes;
+
+								updateFieldInArcGISParentAndSubtypes(
+										fieldToUpdate, tagToUpdate, fqNameOfTag,
+										newValue, parentName, parentAtt,
+										subtypeElementByName);
+							}
+
+							if (isNullableChange) {
+
+								tagToUpdate = "IsNullable";
+								fqNameOfTag = "ArcGIS::Field::IsNullable";
+								newValue = isNullableFromSubtypes ? "true"
+										: "false";
+
+								updateFieldInArcGISParentAndSubtypes(
+										fieldToUpdate, tagToUpdate, fqNameOfTag,
+										newValue, parentName, parentAtt,
+										subtypeElementByName);
+							}
+
+						} catch (EAException e1) {
+							result.addError(this, 10007, tagToUpdate,
+									fieldToUpdate, parentName, e1.getMessage());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void updateFieldInArcGISParentAndSubtypes(String fieldToUpdate,
+			String tagToUpdate, String fqNameOfTag, String newValue,
+			String parentName, Attribute parentAtt,
+			SortedMap<String, Element> subtypeElementByName)
+			throws EAException {
+
+		result.addInfo(this, 270, parentName, tagToUpdate, fieldToUpdate);
+
+		String parentAttTagValue = EAAttributeUtil.taggedValue(parentAtt,
+				tagToUpdate);
+		if (!newValue.equals(parentAttTagValue)) {
+			result.addInfo(this, 271, parentName, tagToUpdate, fieldToUpdate,
+					newValue);
+			EAAttributeUtil.updateTaggedValue(parentAtt, fqNameOfTag, newValue,
+					false);
+		}
+
+		updateFieldTaggedValueOfArcGISSubtypes(subtypeElementByName,
+				fieldToUpdate, tagToUpdate, fqNameOfTag, newValue);
+	}
+
+	private void updateFieldTaggedValueOfArcGISSubtypes(
+			SortedMap<String, Element> subtypeElementByName, String attName,
+			String tvName, String fqNameOfTag, String tvValue)
+			throws EAException {
+
+		for (Entry<String, Element> e : subtypeElementByName.entrySet()) {
+
+			Element subtypeElement = e.getValue();
+
+			Attribute subtypeAtt = EAElementUtil
+					.getAttributeByName(subtypeElement, attName);
+
+			if (subtypeAtt != null) {
+
+				String subtypeAttTagValue = EAAttributeUtil
+						.taggedValue(subtypeAtt, tvName);
+
+				if (!tvValue.equals(subtypeAttTagValue)) {
+
+					String subtypeName = e.getKey();
+
+					result.addInfo(this, 269, subtypeName, attName, tvName,
+							tvValue);
+
+					EAAttributeUtil.updateTaggedValue(subtypeAtt, fqNameOfTag,
+							tvValue, false);
+				}
+			}
+		}
+	}
+
 	/**
-	 * @param arcgisSubtypeInitialValues
+	 * @param arcgisSubtypeInitialValues,
+	 *            can be <code>null</code>
 	 * @return map with subtype name as key and initial value as value; can be
 	 *         empty but not null;
 	 */
@@ -4151,8 +4476,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		SortedMap<String, String> initialValuesBySubtypeName = new TreeMap<>();
 
-		String[] subtypeInitialValueDefinitions_escaped = arcgisSubtypeInitialValues
-				.split(REGEX_TO_SPLIT_BY_COMMA_WITH_ESCAPING);
+		String[] subtypeInitialValueDefinitions_escaped = arcgisSubtypeInitialValues == null
+				? new String[] {}
+				: arcgisSubtypeInitialValues
+						.split(REGEX_TO_SPLIT_BY_COMMA_WITH_ESCAPING);
 
 		for (String s : subtypeInitialValueDefinitions_escaped) {
 
@@ -4703,6 +5030,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
 		case 268:
 			return "Class '$1$' has more than one supertype. The target only supports one generalization relationship per subtype.";
+		case 269:
+			return "--- Subtype '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+		case 270:
+			return "Change of '$2$' required for field '$3$' of ArcGIS parent '$1$' and/or (one or more of) its subtypes.";
+		case 271:
+			return "--- Parent '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+		case 272:
+			return "Removing coded value domain '$1$'.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
@@ -4717,10 +5052,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "EA exception encountered while creating <<Field>> attribute for reflexive relationship property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
 		case 10006:
 			return "EA exception encountered while creating generalization relationship between class '$1$' and its subtype '$2$': $3$";
+		case 10007:
+			return "EA exception encountered while updating tag '$1$' in field '$2$' of ArcGIS parent '$3$' and its subtypes. Error message: $4$";
 
 		// 20001 - 20100: message context
 		case 20001:
 			return "Property: $1$";
+
+		case 30000:
+			return "=============== Postprocessing ===============";
+		case 30001:
+			return "---------- Removing unused coded value domains  ----------";
+		case 30002:
+			return "---------- Aligning field length, scale, precision, isNullable of ArcGIS parent and subtypes  ----------";
 
 		default:
 			return "(" + ArcGISWorkspace.class.getName()
