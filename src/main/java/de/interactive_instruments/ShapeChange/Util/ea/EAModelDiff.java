@@ -1356,8 +1356,9 @@ public class EAModelDiff {
 				if (tv == null) {
 
 					sj.add(modelPath + " - Missing tagged value with name '"
-							+ refTv.getName() + "' and FQName '"
-							+ refTv.getFQName() + "'.");
+							+ refTv.getName() + "', FQName '"
+							+ refTv.getFQName() + "' and values: "
+							+ StringUtils.join(refTv.getValues(), ", ") + ".");
 
 					result = false;
 
@@ -1427,7 +1428,9 @@ public class EAModelDiff {
 			for (EATaggedValue tv : tvs.values()) {
 
 				sj.add(modelPath + " - Found unexpected tagged value '"
-						+ tv.getName() + "' (FQName '" + tv.getFQName() + "')");
+						+ tv.getName() + "', FQName '" + tv.getFQName()
+						+ "' and values: "
+						+ StringUtils.join(tv.getValues(), ", ") + ".");
 
 				result = false;
 			}

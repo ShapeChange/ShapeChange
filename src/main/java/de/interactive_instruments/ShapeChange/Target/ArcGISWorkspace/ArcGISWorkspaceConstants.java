@@ -248,9 +248,9 @@ public class ArcGISWorkspaceConstants {
 	/* --- ArcGIS Workspace Stereotypes --- */
 	/* ------------------------------------ */
 
-	public static final String STEREOTYPE_RELATIONSHIP_CLASS = "RelationshipClass";
+	public static final String STEREOTYPE_RELATIONSHIP_CLASS = "ArcGIS::RelationshipClass";
 
-	public static final String STEREOTYPE_DOMAIN_CODED_VALUE = "DomainCodedValue";
+	public static final String STEREOTYPE_DOMAIN_CODED_VALUE = "ArcGIS::DomainCodedValue";
 
 	/* ----------------------- */
 	/* --- Other constants --- */

@@ -40,7 +40,6 @@ import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorTag;
 import org.sparx.Element;
-import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
@@ -439,6 +438,64 @@ public class EAConnectorUtil extends AbstractEAUtil {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Updates the tagged values with given name (which can be a fully qualified
+	 * name) in the tagged values of the given connector. Does NOT delete those
+	 * tagged values. NOTE: This method is especially useful when setting tagged
+	 * values that are defined by an MDG / UML Profile, since these tagged
+	 * values cannot be created programmatically (they are created by EA - for
+	 * further details, see
+	 * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+	 * 
+	 * @param con
+	 *            the connector in which the tagged values shall be updated
+	 * @param name
+	 *            (fully qualified or unqualified) name of the tagged value to
+	 *            update, must not be <code>null</code>
+	 * @param value
+	 *            value of the tagged value to update, can be <code>null</code>
+	 * @param createAsMemoField
+	 *            If set to <code>true</code>, the values shall be encoded using
+	 *            &lt;memo&gt; fields, regardless of the actual length of each
+	 *            value.
+	 * @throws EAException
+	 *             If updating the connector did not succeed, this exception
+	 *             contains the error message.
+	 */
+	public static void updateTaggedValue(Connector con, String name, String value,
+			boolean createAsMemoField) throws EAException {
+
+		boolean isQualifiedName = name.contains("::");
+
+		Collection<ConnectorTag> cTV = con.GetTaggedValues();
+
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+
+			ConnectorTag tv = cTV.GetAt(i);
+
+			if ((isQualifiedName && tv.GetFQName().equalsIgnoreCase(name))
+					|| tv.GetName().equalsIgnoreCase(name)) {
+
+				if (createAsMemoField || value.length() > 255) {
+					tv.SetValue("<memo>");
+					tv.SetNotes(value);
+				} else {
+					tv.SetValue(value);
+					tv.SetNotes("");
+				}
+
+				if (!tv.Update()) {
+					throw new EAException(createMessage(message(101), name,
+							con.GetName(), value, tv.GetLastError()));
+				}
+			}
+		}
+
+		cTV.Refresh();
 	}
 
 	public static String message(int mnr) {

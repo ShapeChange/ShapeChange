@@ -104,8 +104,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	/* -------------------- */
 
 	public enum ArcGISGeometryType {
-		POINT("Point"), MULTIPOINT("Multipoint"), POLYLINE("Polyline"), POLYGON(
-				"Polygon"), UNKNOWN("Unknown"), NONE("None");
+		POINT("ArcGIS::Point"), MULTIPOINT("ArcGIS::Multipoint"), POLYLINE(
+				"ArcGIS::Polyline"), POLYGON(
+						"ArcGIS::Polygon"), UNKNOWN("Unknown"), NONE("None");
 
 		private String stereotype;
 
@@ -886,8 +887,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				}
 			}
 		}
-		EAElementUtil.setTaggedValue(eaElement, "SubtypeCode",
-				"" + subtypeCode);
+		EAElementUtil.updateTaggedValue(eaElement, "SubtypeCode",
+				"" + subtypeCode, false);
 
 		/*
 		 * note the subtype for creation of generalization with correct
@@ -1177,7 +1178,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
-		EAElementUtil.setEAStereotypeEx(e, "CodedValueDomain");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::CodedValueDomain");
 
 		String documentation = ci.derivedDocumentation(documentationTemplate,
 				"<no description available>");
@@ -1240,7 +1241,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// set alias, notes, abstractness
 		// setCommonItems(codeListOrEnumeration, e);
 
-		EAElementUtil.setEAStereotypeEx(e, "CodedValueDomain");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::CodedValueDomain");
 
 		// String documentation =
 		// codeListOrEnumeration.derivedDocumentation(documentationTemplate,
@@ -1370,7 +1371,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// TBD: set alias or notes?
 
-		EAElementUtil.setEAStereotypeEx(e, "RangeDomain");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::RangeDomain");
 
 		EAElementUtil.setTaggedValue(e,
 				new EATaggedValue("Description",
@@ -1452,25 +1453,25 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			createSystemFieldOBJECTIDIDX(e);
 			createSystemFieldShapeIDX(e);
 
-			// now set tagged values for feature class
-
-			List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+			// now update tagged values for feature class
 
 			if (geomType.equals(ArcGISGeometryType.POINT)) {
-				tvs.add(new EATaggedValue("AncillaryRole", "esriNCARNone"));
+				EAElementUtil.updateTaggedValue(e, "AncillaryRole",
+						"esriNCARNone", false);
 			}
 
 			if (geomType.equals(ArcGISGeometryType.POLYGON)) {
-				tvs.add(new EATaggedValue("AreaFieldName",
-						shapeAreaField.GetAttributeGUID()));
+				EAElementUtil.updateTaggedValue(e, "AreaFieldName",
+						shapeAreaField.GetAttributeGUID(), false);
 			} else {
-				tvs.add(new EATaggedValue("AreaFieldName", ""));
+				EAElementUtil.updateTaggedValue(e, "AreaFieldName", "", false);
 			}
 
-			tvs.add(new EATaggedValue("CanVersion", "false"));
-			tvs.add(new EATaggedValue("DSID", ""));
-			tvs.add(new EATaggedValue("FeatureType", "esriFTSimple"));
-			tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
+			EAElementUtil.updateTaggedValue(e, "CanVersion", "false", false);
+			EAElementUtil.updateTaggedValue(e, "DSID", "", false);
+			EAElementUtil.updateTaggedValue(e, "FeatureType", "esriFTSimple",
+					false);
+			EAElementUtil.updateTaggedValue(e, "GlobalIDFieldName", "", false);
 
 			String hasM = "false";
 			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASM)) {
@@ -1480,9 +1481,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					hasM = "true";
 				}
 			}
-			tvs.add(new EATaggedValue("HasM", hasM));
+			EAElementUtil.updateTaggedValue(e, "HasM", hasM, false);
 
-			tvs.add(new EATaggedValue("HasSpatialIndex", "true"));
+			EAElementUtil.updateTaggedValue(e, "HasSpatialIndex", "true",
+					false);
 
 			String hasZ = "false";
 			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASZ)) {
@@ -1492,27 +1494,26 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					hasZ = "true";
 				}
 			}
-			tvs.add(new EATaggedValue("HasZ", hasZ));
+			EAElementUtil.updateTaggedValue(e, "HasZ", hasZ, false);
 
 			if (geomType.equals(ArcGISGeometryType.POLYGON)
 					|| geomType.equals(ArcGISGeometryType.POLYLINE)) {
-				tvs.add(new EATaggedValue("LengthFieldName",
-						shapeLengthField.GetAttributeGUID()));
+				EAElementUtil.updateTaggedValue(e, "LengthFieldName",
+						shapeLengthField.GetAttributeGUID(), false);
 			} else {
-				tvs.add(new EATaggedValue("LengthFieldName", ""));
+				EAElementUtil.updateTaggedValue(e, "LengthFieldName", "",
+						false);
 			}
 
-			tvs.add(new EATaggedValue("Metadata", "", true));
-			tvs.add(new EATaggedValue("ModelName", ""));
-			tvs.add(new EATaggedValue("OIDFieldName",
-					objectIdField.GetAttributeGUID()));
-			tvs.add(new EATaggedValue("RasterFieldName", ""));
-			tvs.add(new EATaggedValue("ShapeFieldName",
-					shapeField.GetAttributeGUID()));
-			tvs.add(new EATaggedValue("SpatialReference", ""));
-			tvs.add(new EATaggedValue("Versioned", "false"));
-
-			EAElementUtil.setTaggedValues(e, tvs);
+			EAElementUtil.updateTaggedValue(e, "Metadata", "", true);
+			EAElementUtil.updateTaggedValue(e, "ModelName", "", false);
+			EAElementUtil.updateTaggedValue(e, "OIDFieldName",
+					objectIdField.GetAttributeGUID(), false);
+			EAElementUtil.updateTaggedValue(e, "RasterFieldName", "", false);
+			EAElementUtil.updateTaggedValue(e, "ShapeFieldName",
+					shapeField.GetAttributeGUID(), false);
+			EAElementUtil.updateTaggedValue(e, "SpatialReference", "", false);
+			EAElementUtil.updateTaggedValue(e, "Versioned", "false", false);
 		}
 
 		// properties cannot be processed now, because we do not necessarily
@@ -1663,8 +1664,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			/*
 			 * create the SubtypeCode tagged value
 			 */
-			EAElementUtil.setTaggedValue(subtypeEAElement, "SubtypeCode",
-					"" + subtypeCode);
+			EAElementUtil.updateTaggedValue(subtypeEAElement, "SubtypeCode",
+					"" + subtypeCode, false);
 
 			/* Create the <<Subtype>> generalization relationship */
 			String c1Name = subtypeName;
@@ -1936,8 +1937,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId,
-				"ArcGIS::ObjectClass");
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, e.GetElementID());
@@ -1953,20 +1953,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		createSystemFieldOBJECTIDIDX(e);
 
-		// now set tagged values for feature class
-		List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+		// now update tagged values for feature class
 
-		tvs.add(new EATaggedValue("CanVersion", "false"));
-		tvs.add(new EATaggedValue("DSID", ""));
-		tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-		tvs.add(new EATaggedValue("Metadata", "", true));
-		tvs.add(new EATaggedValue("ModelName", ""));
-		tvs.add(new EATaggedValue("OIDFieldName",
-				objectIdField.GetAttributeGUID()));
-		tvs.add(new EATaggedValue("RasterFieldName", ""));
-		tvs.add(new EATaggedValue("Versioned", "false"));
-
-		EAElementUtil.setTaggedValues(e, tvs);
+		EAElementUtil.updateTaggedValue(e, "CanVersion", "false", false);
+		EAElementUtil.updateTaggedValue(e, "DSID", "", false);
+		EAElementUtil.updateTaggedValue(e, "GlobalIDFieldName", "", false);
+		EAElementUtil.updateTaggedValue(e, "Metadata", "", true);
+		EAElementUtil.updateTaggedValue(e, "ModelName", "", false);
+		EAElementUtil.updateTaggedValue(e, "OIDFieldName",
+				objectIdField.GetAttributeGUID(), false);
+		EAElementUtil.updateTaggedValue(e, "RasterFieldName", "", false);
+		EAElementUtil.updateTaggedValue(e, "Versioned", "false", false);
 
 		// properties cannot be processed now, because we do not necessarily
 		// have EA Elements for all classes in the model yet; thus the type of a
@@ -2507,39 +2504,52 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAElementUtil.setEAStereotypeEx(assocClass,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
-					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
-
-					tvs.add(new EATaggedValue("CanVersion", "false"));
-					tvs.add(new EATaggedValue("CatalogPath", ""));
-					tvs.add(new EATaggedValue("ClassKey",
-							"esriRelClassKeyUndefined"));
-					tvs.add(new EATaggedValue("DSID", "-1"));
-					tvs.add(new EATaggedValue("DatasetType",
-							"esriDTRelationshipClass"));
-					tvs.add(new EATaggedValue("DestinationForeignKey",
-							foreignKeyFieldTgt.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("DestinationPrimaryKey",
-							determinePrimaryKeyGUID(target_)));
-					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-					tvs.add(new EATaggedValue("IsAttachmentRelationship",
-							"false"));
-					tvs.add(new EATaggedValue("IsComposite", "false"));
-					tvs.add(new EATaggedValue("IsReflexive", "false"));
-					tvs.add(new EATaggedValue("KeyType",
-							"esriRelKeyTypeSingle"));
-					tvs.add(new EATaggedValue("Metadata", "", true));
-					tvs.add(new EATaggedValue("MetadataRetrieved", "false"));
-					tvs.add(new EATaggedValue("ModelName", ""));
-					tvs.add(new EATaggedValue("Notification",
-							"useUMLConnectorDirection"));
-					tvs.add(new EATaggedValue("OIDFieldName",
-							ridField.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("OriginForeignKey",
-							foreignKeyFieldSrc.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							determinePrimaryKeyGUID(source_)));
-					tvs.add(new EATaggedValue("RasterFieldName", ""));
-					tvs.add(new EATaggedValue("Versioned", "false"));
+					EAElementUtil.updateTaggedValue(assocClass, "CanVersion",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "CatalogPath",
+							"", false);
+					EAElementUtil.updateTaggedValue(assocClass, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAElementUtil.updateTaggedValue(assocClass, "DSID", "-1",
+							false);
+					EAElementUtil.updateTaggedValue(assocClass, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"DestinationForeignKey",
+							foreignKeyFieldTgt.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"DestinationPrimaryKey",
+							determinePrimaryKeyGUID(target_), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"GlobalIDFieldName", "", false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"IsAttachmentRelationship", "false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "IsComposite",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "IsReflexive",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAElementUtil.updateTaggedValue(assocClass, "Metadata", "",
+							true);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"MetadataRetrieved", "false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "ModelName", "",
+							false);
+					EAElementUtil.updateTaggedValue(assocClass, "Notification",
+							"useUMLConnectorDirection", false);
+					EAElementUtil.updateTaggedValue(assocClass, "OIDFieldName",
+							ridField.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"OriginForeignKey",
+							foreignKeyFieldSrc.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"RasterFieldName", "", false);
+					EAElementUtil.updateTaggedValue(assocClass, "Versioned",
+							"false", false);
 
 					/*
 					 * create <<RelationshipClass>> association
@@ -2554,7 +2564,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					 * reuse the name here
 					 */
 					EAConnectorUtil.setEAName(con, assocClassName);
-					EAConnectorUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAStereotypeEx(con,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2605,11 +2615,53 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
 					/*
-					 * set tagged values on association - they are the same as
-					 * for the association class
+					 * update tagged values on association - they are the same
+					 * as for the association class
 					 */
 
-					EAConnectorUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.updateTaggedValue(con, "CanVersion",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "CatalogPath", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAConnectorUtil.updateTaggedValue(con, "DSID", "-1", false);
+					EAConnectorUtil.updateTaggedValue(con, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationForeignKey",
+							foreignKeyFieldTgt.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationPrimaryKey",
+							determinePrimaryKeyGUID(target_), false);
+					EAConnectorUtil.updateTaggedValue(con, "GlobalIDFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"IsAttachmentRelationship", "false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsComposite",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsReflexive",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAConnectorUtil.updateTaggedValue(con, "Metadata", "",
+							true);
+					EAConnectorUtil.updateTaggedValue(con, "MetadataRetrieved",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "ModelName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "Notification",
+							"useUMLConnectorDirection", false);
+					EAConnectorUtil.updateTaggedValue(con, "OIDFieldName",
+							ridField.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginForeignKey",
+							foreignKeyFieldSrc.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAConnectorUtil.updateTaggedValue(con, "RasterFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "Versioned", "false",
+							false);
 
 					EAConnectorUtil.setEAAssociationClass(con, assocClass);
 
@@ -2860,7 +2912,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					}
 
 					EAConnectorUtil.setEAName(con, relClassName);
-					EAConnectorUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAStereotypeEx(con,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2907,39 +2959,49 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAConnectorEndUtil.setEACardinality(clientEnd, "1");
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
-					// set tagged values on association
-					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+					// update tagged values on association
 
-					tvs.add(new EATaggedValue("KeyType",
-							"esriRelKeyTypeSingle"));
-					tvs.add(new EATaggedValue("ClassKey",
-							"esriRelClassKeyUndefined"));
-					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							determinePrimaryKeyGUID(source_)));
-					tvs.add(new EATaggedValue("OriginForeignKey",
-							foreignKeyField.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("DestinationPrimaryKey", ""));
-					tvs.add(new EATaggedValue("DestinationForeignKey", ""));
-					tvs.add(new EATaggedValue("IsComposite", "false"));
-					tvs.add(new EATaggedValue("IsReflexive", "false"));
-					tvs.add(new EATaggedValue("DatasetType",
-							"esriDTRelationshipClass"));
-					tvs.add(new EATaggedValue("OIDFieldName", ""));
-					tvs.add(new EATaggedValue("DSID", "-1"));
-					tvs.add(new EATaggedValue("ModelName", ""));
-					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-					tvs.add(new EATaggedValue("CatalogPath", ""));
-					tvs.add(new EATaggedValue("RasterFieldName", ""));
-					tvs.add(new EATaggedValue("Versioned", "false"));
-					tvs.add(new EATaggedValue("CanVersion", "false"));
-					tvs.add(new EATaggedValue("MetadataRetrieved", "false"));
-					tvs.add(new EATaggedValue("Metadata", "", true));
-					tvs.add(new EATaggedValue("Notification",
-							"useUMLConnectorDirection"));
-					tvs.add(new EATaggedValue("IsAttachmentRelationship",
-							"false"));
-
-					EAConnectorUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.updateTaggedValue(con, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAConnectorUtil.updateTaggedValue(con, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginForeignKey",
+							foreignKeyField.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationPrimaryKey", "", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationForeignKey", "", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsComposite",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsReflexive",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAConnectorUtil.updateTaggedValue(con, "OIDFieldName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "DSID", "-1", false);
+					EAConnectorUtil.updateTaggedValue(con, "ModelName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "GlobalIDFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "CatalogPath", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "RasterFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "Versioned", "false",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "CanVersion",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "MetadataRetrieved",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "Metadata", "",
+							true);
+					EAConnectorUtil.updateTaggedValue(con, "Notification",
+							"useUMLConnectorDirection", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"IsAttachmentRelationship", "false", false);
 
 				} catch (EAException e) {
 
@@ -4190,222 +4252,231 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
-		result.addInfo(this, 30002);
+		if (!elementIdByClassInfo.isEmpty()
+				&& elementIdByClassInfo.keySet().iterator().next()
+						.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)) {
 
-		/*
-		 * For each class that has an ArcGIS subtype, check all its fields to
-		 * determine the maximum length, scale, precision, and whether it is
-		 * nullable from its subtypes.
-		 */
-		for (ClassInfo ci : elementIdByClassInfo.keySet()) {
+			result.addInfo(this, 30002);
 
-			if (ArcGISUtil.hasArcGISSubtype(ci)) {
+			/*
+			 * For each class that has an ArcGIS subtype, check all its fields
+			 * to determine the maximum length, scale, precision, and whether it
+			 * is nullable from its subtypes.
+			 */
+			for (ClassInfo ci : elementIdByClassInfo.keySet()) {
 
-				Element parentElement = rep
-						.GetElementByID(elementIdByClassInfo.get(ci));
+				if (ArcGISUtil.hasArcGISSubtype(ci)) {
 
-				/*
-				 * Get map of all subtypes and their EA elements.
-				 */
-				SortedMap<String, Element> subtypeElementByName = new TreeMap<>();
-				for (String subtypeId : ci.subtypes()) {
+					Element parentElement = rep
+							.GetElementByID(elementIdByClassInfo.get(ci));
 
-					ClassInfo subtype = ci.model().classById(subtypeId);
-					Element subtypeElement = rep
-							.GetElementByID(elementIdByClassInfo.get(subtype));
-					subtypeElementByName.put(subtype.name(), subtypeElement);
-				}
+					/*
+					 * Get map of all subtypes and their EA elements.
+					 */
+					SortedMap<String, Element> subtypeElementByName = new TreeMap<>();
+					for (String subtypeId : ci.subtypes()) {
 
-				Collection<Attribute> parentAtts = parentElement
-						.GetAttributes();
-				for (short i = 0; i < parentAtts.GetCount(); i++) {
+						ClassInfo subtype = ci.model().classById(subtypeId);
+						Element subtypeElement = rep.GetElementByID(
+								elementIdByClassInfo.get(subtype));
+						subtypeElementByName.put(subtype.name(),
+								subtypeElement);
+					}
 
-					Attribute parentAtt = parentAtts.GetAt(i);
-					String parentAttName = parentAtt.GetName();
+					Collection<Attribute> parentAtts = parentElement
+							.GetAttributes();
+					for (short i = 0; i < parentAtts.GetCount(); i++) {
 
-					if (parentAtt.GetStereotype().equals("Field")) {
+						Attribute parentAtt = parentAtts.GetAt(i);
+						String parentAttName = parentAtt.GetName();
 
-						SortedMap<String, EATaggedValue> parentAttTVs = EAAttributeUtil
-								.getEATaggedValuesWithCombinedKeys(parentAtt);
+						if (parentAtt.GetStereotype().equals("Field")) {
 
-						String tvKey;
+							SortedMap<String, EATaggedValue> parentAttTVs = EAAttributeUtil
+									.getEATaggedValuesWithCombinedKeys(
+											parentAtt);
 
-						int parentLength = 0;
-						tvKey = "Length#ArcGIS::Field::Length";
-						if (parentAttTVs.containsKey(tvKey)) {
-							parentLength = Integer.parseInt(
-									parentAttTVs.get(tvKey).getValues().get(0));
-						}
+							String tvKey;
 
-						int parentPrecision = 0;
-						tvKey = "Precision#ArcGIS::Field::Precision";
-						if (parentAttTVs.containsKey(tvKey)) {
-							parentPrecision = Integer.parseInt(
-									parentAttTVs.get(tvKey).getValues().get(0));
-						}
+							int parentLength = 0;
+							tvKey = "Length#ArcGIS::Field::Length";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentLength = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
 
-						int parentScale = 0;
-						tvKey = "Scale#ArcGIS::Field::Scale";
-						if (parentAttTVs.containsKey(tvKey)) {
-							parentScale = Integer.parseInt(
-									parentAttTVs.get(tvKey).getValues().get(0));
-						}
+							int parentPrecision = 0;
+							tvKey = "Precision#ArcGIS::Field::Precision";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentPrecision = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
 
-						boolean parentIsNullable = false;
-						tvKey = "IsNullable#ArcGIS::Field::IsNullable";
-						if (parentAttTVs.containsKey(tvKey)) {
-							parentIsNullable = Boolean.parseBoolean(
-									parentAttTVs.get(tvKey).getValues().get(0));
-						}
+							int parentScale = 0;
+							tvKey = "Scale#ArcGIS::Field::Scale";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentScale = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
 
-						boolean lengthChange = false;
-						boolean scaleChange = false;
-						boolean precisionChange = false;
-						boolean isNullableChange = false;
+							boolean parentIsNullable = false;
+							tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentIsNullable = Boolean
+										.parseBoolean(parentAttTVs.get(tvKey)
+												.getValues().get(0));
+							}
 
-						int maxLengthFromSubtypes = 0;
-						int maxPrecisionFromSubtypes = 0;
-						int maxScaleFromSubtypes = 0;
-						boolean isNullableFromSubtypes = false;
+							boolean lengthChange = false;
+							boolean scaleChange = false;
+							boolean precisionChange = false;
+							boolean isNullableChange = false;
 
-						/*
-						 * Determine if the corresponding (same name) fields in
-						 * the subtypes - which may or may not exist - have
-						 * different length, scale, precision, or isNullable.
-						 * Also determine the maximum value and if isNullable
-						 * should be true.
-						 */
-						for (Entry<String, Element> e : subtypeElementByName
-								.entrySet()) {
+							int maxLengthFromSubtypes = 0;
+							int maxPrecisionFromSubtypes = 0;
+							int maxScaleFromSubtypes = 0;
+							boolean isNullableFromSubtypes = false;
 
-							// String subtypeName = e.getKey();
-							Element subtypeElement = e.getValue();
+							/*
+							 * Determine if the corresponding (same name) fields
+							 * in the subtypes - which may or may not exist -
+							 * have different length, scale, precision, or
+							 * isNullable. Also determine the maximum value and
+							 * if isNullable should be true.
+							 */
+							for (Entry<String, Element> e : subtypeElementByName
+									.entrySet()) {
 
-							Attribute subtypeAtt = EAElementUtil
-									.getAttributeByName(subtypeElement,
-											parentAttName);
+								// String subtypeName = e.getKey();
+								Element subtypeElement = e.getValue();
 
-							if (subtypeAtt != null) {
+								Attribute subtypeAtt = EAElementUtil
+										.getAttributeByName(subtypeElement,
+												parentAttName);
 
-								SortedMap<String, EATaggedValue> subtypeAttTVs = EAAttributeUtil
-										.getEATaggedValuesWithCombinedKeys(
-												subtypeAtt);
+								if (subtypeAtt != null) {
 
-								tvKey = "Length#ArcGIS::Field::Length";
-								if (subtypeAttTVs.containsKey(tvKey)) {
-									int subtypeLength = Integer
-											.parseInt(subtypeAttTVs.get(tvKey)
-													.getValues().get(0));
-									if (parentLength != subtypeLength) {
-										lengthChange = true;
-										if (subtypeLength > maxLengthFromSubtypes) {
-											maxLengthFromSubtypes = subtypeLength;
+									SortedMap<String, EATaggedValue> subtypeAttTVs = EAAttributeUtil
+											.getEATaggedValuesWithCombinedKeys(
+													subtypeAtt);
+
+									tvKey = "Length#ArcGIS::Field::Length";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypeLength = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentLength != subtypeLength) {
+											lengthChange = true;
+											if (subtypeLength > maxLengthFromSubtypes) {
+												maxLengthFromSubtypes = subtypeLength;
+											}
+										}
+									}
+
+									tvKey = "Precision#ArcGIS::Field::Precision";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypePrecision = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentPrecision != subtypePrecision) {
+											precisionChange = true;
+											if (subtypePrecision > maxPrecisionFromSubtypes) {
+												maxPrecisionFromSubtypes = subtypePrecision;
+											}
+										}
+									}
+
+									tvKey = "Scale#ArcGIS::Field::Scale";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypeScale = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentScale != subtypeScale) {
+											scaleChange = true;
+											if (subtypeScale > maxScaleFromSubtypes) {
+												maxScaleFromSubtypes = subtypeScale;
+											}
+										}
+									}
+
+									tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										boolean subtypeIsNullable = Boolean
+												.parseBoolean(subtypeAttTVs
+														.get(tvKey).getValues()
+														.get(0));
+										if (parentIsNullable != subtypeIsNullable) {
+											isNullableChange = true;
+											if (subtypeIsNullable) {
+												isNullableFromSubtypes = true;
+											}
 										}
 									}
 								}
+							}
 
-								tvKey = "Precision#ArcGIS::Field::Precision";
-								if (subtypeAttTVs.containsKey(tvKey)) {
-									int subtypePrecision = Integer
-											.parseInt(subtypeAttTVs.get(tvKey)
-													.getValues().get(0));
-									if (parentPrecision != subtypePrecision) {
-										precisionChange = true;
-										if (subtypePrecision > maxPrecisionFromSubtypes) {
-											maxPrecisionFromSubtypes = subtypePrecision;
-										}
-									}
+							String parentName = ci.name();
+							String fieldToUpdate = parentAttName;
+							String tagToUpdate = "";
+							String fqNameOfTag = "";
+							String newValue = "";
+
+							try {
+
+								if (lengthChange) {
+
+									tagToUpdate = "Length";
+									fqNameOfTag = "ArcGIS::Field::Length";
+									newValue = "" + maxLengthFromSubtypes;
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
 								}
 
-								tvKey = "Scale#ArcGIS::Field::Scale";
-								if (subtypeAttTVs.containsKey(tvKey)) {
-									int subtypeScale = Integer
-											.parseInt(subtypeAttTVs.get(tvKey)
-													.getValues().get(0));
-									if (parentScale != subtypeScale) {
-										scaleChange = true;
-										if (subtypeScale > maxScaleFromSubtypes) {
-											maxScaleFromSubtypes = subtypeScale;
-										}
-									}
+								if (precisionChange) {
+
+									tagToUpdate = "Precision";
+									fqNameOfTag = "ArcGIS::Field::Precision";
+									newValue = "" + maxPrecisionFromSubtypes;
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
 								}
 
-								tvKey = "IsNullable#ArcGIS::Field::IsNullable";
-								if (subtypeAttTVs.containsKey(tvKey)) {
-									boolean subtypeIsNullable = Boolean
-											.parseBoolean(subtypeAttTVs
-													.get(tvKey).getValues()
-													.get(0));
-									if (parentIsNullable != subtypeIsNullable) {
-										isNullableChange = true;
-										if (subtypeIsNullable) {
-											isNullableFromSubtypes = true;
-										}
-									}
+								if (scaleChange) {
+
+									tagToUpdate = "Scale";
+									fqNameOfTag = "ArcGIS::Field::Scale";
+									newValue = "" + maxScaleFromSubtypes;
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
 								}
+
+								if (isNullableChange) {
+
+									tagToUpdate = "IsNullable";
+									fqNameOfTag = "ArcGIS::Field::IsNullable";
+									newValue = isNullableFromSubtypes ? "true"
+											: "false";
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
+								}
+
+							} catch (EAException e1) {
+								result.addError(this, 10007, tagToUpdate,
+										fieldToUpdate, parentName,
+										e1.getMessage());
 							}
-						}
-
-						String parentName = ci.name();
-						String fieldToUpdate = parentAttName;
-						String tagToUpdate = "";
-						String fqNameOfTag = "";
-						String newValue = "";
-
-						try {
-
-							if (lengthChange) {
-
-								tagToUpdate = "Length";
-								fqNameOfTag = "ArcGIS::Field::Length";
-								newValue = "" + maxLengthFromSubtypes;
-
-								updateFieldInArcGISParentAndSubtypes(
-										fieldToUpdate, tagToUpdate, fqNameOfTag,
-										newValue, parentName, parentAtt,
-										subtypeElementByName);
-							}
-
-							if (precisionChange) {
-
-								tagToUpdate = "Precision";
-								fqNameOfTag = "ArcGIS::Field::Precision";
-								newValue = "" + maxPrecisionFromSubtypes;
-
-								updateFieldInArcGISParentAndSubtypes(
-										fieldToUpdate, tagToUpdate, fqNameOfTag,
-										newValue, parentName, parentAtt,
-										subtypeElementByName);
-							}
-
-							if (scaleChange) {
-
-								tagToUpdate = "Scale";
-								fqNameOfTag = "ArcGIS::Field::Scale";
-								newValue = "" + maxScaleFromSubtypes;
-
-								updateFieldInArcGISParentAndSubtypes(
-										fieldToUpdate, tagToUpdate, fqNameOfTag,
-										newValue, parentName, parentAtt,
-										subtypeElementByName);
-							}
-
-							if (isNullableChange) {
-
-								tagToUpdate = "IsNullable";
-								fqNameOfTag = "ArcGIS::Field::IsNullable";
-								newValue = isNullableFromSubtypes ? "true"
-										: "false";
-
-								updateFieldInArcGISParentAndSubtypes(
-										fieldToUpdate, tagToUpdate, fqNameOfTag,
-										newValue, parentName, parentAtt,
-										subtypeElementByName);
-							}
-
-						} catch (EAException e1) {
-							result.addError(this, 10007, tagToUpdate,
-									fieldToUpdate, parentName, e1.getMessage());
 						}
 					}
 				}
