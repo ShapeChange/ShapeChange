@@ -80,14 +80,13 @@ import de.interactive_instruments.ShapeChange.Target.SingleTarget;
  * the SQL DDL in the database.
  * 
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
+ * @see <a href="https://shapechange.net/targets/ldproxy/">Documentation on shapechange.net</a>
  * @see <a href="https://interactive-instruments.github.io/ldproxy/">ldproxy</a>
  * @see <a href="https://cdn.rawgit.com/opengeospatial/WFS_FES/3.0.0-draft.1/docs/17-069.html">WFS 3.0, Core (Draft)</a>
  * @see <a href="https://www.w3.org/TR/sdw-bp/">W3C/OGC Spatial Data on the Web Best Practices</a>
  * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md">OpenAPI Specification</a>
  */
 public class Config implements SingleTarget, MessageSource {
-
-	// TODO: document on shapechange.net, based on Javadoc comments 
 
 	private static boolean initialised = false;
 
@@ -115,6 +114,13 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_SERVICE_DESC
 	 */
 	private static String srvdesc = null;
+
+	/**
+	 * @see ConfigConstants#PARAM_SERVICE_VERSION
+	 * 
+	 * TODO include version (and license and contact) in ldproxy configuration 
+	 */
+	private static String srvversion = null;
 
 	/**
 	 * @see ConfigConstants#PARAM_SECURED
@@ -170,6 +176,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_FILTERS
 	 */
 	private static Set<String> filterableFields = null;
+	
+	/**
+	 * @see ConfigConstants#PARAM_HTML_LABEL
+	 */
+	private static Set<String> htmlLabelFields = null;
 	
 	/**
 	 * @see ConfigConstants#PARAM_FEATURE_TYPES
@@ -364,6 +375,10 @@ public class Config implements SingleTarget, MessageSource {
 				if (srvdesc == null)
 					srvdesc = ( first != null ? (first.documentation()!=null ? first.documentation() : first.definition()) : "" );
 				
+				srvversion = options.parameter(Config.class.getName(), ConfigConstants.PARAM_SERVICE_VERSION);
+				if (srvversion == null)
+					srvversion = "1.0.0";
+				
 				String s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_SECURED);
 				if (s != null && s.equalsIgnoreCase("true"))
 					secured = true;
@@ -406,6 +421,15 @@ public class Config implements SingleTarget, MessageSource {
 					String[] sarr = s.split(",");
 					for (String s2 : sarr) {
 						filterableFields.add(s2.trim());
+					}
+				}
+								
+				htmlLabelFields = new TreeSet<String>();
+				s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_HTML_LABEL);
+				if (s != null) {
+					String[] sarr = s.split(",");
+					for (String s2 : sarr) {
+						htmlLabelFields.add(s2.trim());
 					}
 				}
 								
@@ -509,6 +533,7 @@ public class Config implements SingleTarget, MessageSource {
 		srvid = null;
 		srvlabel = null;
 		srvdesc = null;
+		srvversion = null;
 		secured = false;
 		foreignKeySuffix = null;
 		primaryKeyField = null;
@@ -517,7 +542,8 @@ public class Config implements SingleTarget, MessageSource {
 		template1toN = null;
 		rootFeatureTable = null;
 		rootCollectionField = null;
-		filterableFields = null;		
+		filterableFields = null;	
+		htmlLabelFields = null;
 		featureTypes = null;		
 		outputDirectory = null;
 		
@@ -616,8 +642,14 @@ public class Config implements SingleTarget, MessageSource {
 			// Add default schema.org mapping in HTML
 			JSONObject html = new JSONObject();
 			path.put("text/html", html);
-			// {{Full Name}} references the label
-			html.put("name", "{{Full Name}}");
+			String name = ConfigConstants.PARAM_PRIMARY_KEY_FIELD;
+			for (String f : htmlLabelFields) {
+				if (f.startsWith(tabname+".") || f.startsWith("*.")) {
+					name = f.substring(f.indexOf(".") + 1);
+					break;
+				}
+			}
+			html.put("name", "{{"+name+"}}");
 			html.put("mappingType", "MICRODATA_PROPERTY");
 			html.put("itemType", "http://schema.org/Place");
 			
@@ -641,9 +673,49 @@ public class Config implements SingleTarget, MessageSource {
 					processProperty(pi, featuretype, basepath, null, null, tabname);
 				}
 			}			
+			
+			// for oNeo databases create the four additional metadata fields
+			if (ci.matches(ConfigConstants.RULE_TGT_LDP_CLS_ONEO_METADATA)) {
+				featuretype.put(basepath+"/erstelltvon", additionalProperty("erstelltVon", "Erstellt von", "STRING", "STRING", "VALUE"));
+				featuretype.put(basepath+"/erstelltam", additionalProperty("erstelltAm", "Erstellt am", "STRING", "DATE", "TEMPORAL"));
+				featuretype.put(basepath+"/geaendertvon", additionalProperty("geaendertVon", "Geändert von", "STRING", "STRING", "VALUE"));
+				featuretype.put(basepath+"/geaendertam", additionalProperty("geaendertAm", "Geändert am", "STRING", "DATE", "TEMPORAL"));
+			}
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private JSONObject additionalProperty(String fieldname, String label, String type, String htmltype, String category) {
+		JSONObject path = new JSONObject();
+		
+		JSONObject general = new JSONObject();
+		path.put("general", general);
+		general.put("mappingType", "GENERIC_PROPERTY");
+		general.put("name", fieldname);
+		general.put("enabled", true);
+		general.put("sortPriority", priority++);
+		general.put("filterable", false);
+		general.put("type", category);
+		
+		// Add default schema.org mapping in HTML
+		JSONObject html = new JSONObject();
+		path.put("text/html", html);
+		html.put("mappingType", "MICRODATA_PROPERTY");
+		html.put("name", label);
+		html.put("type", htmltype);
+		html.put("showInCollection", false);
+		if (htmltype.equalsIgnoreCase("DATE"))
+			html.put("format", "dd.MM.yyyy[', 'HH:mm:ss[' 'z]]");
+		
+		// Add default GeoJSON mapping
+		JSONObject json = new JSONObject();
+		path.put("application/geo+json", json);
+		json.put("mappingType", "GEO_JSON_PROPERTY");
+		json.put("type", type);				
+		
+		return path;
+	}
+	
 	@Override
 	public void write() {
 		// Nothing to do here, since this is a SingleTarget
@@ -892,7 +964,7 @@ public class Config implements SingleTarget, MessageSource {
 		JSONObject html = new JSONObject();
 		path.put("text/html", html);
 		html.put("mappingType", "MICRODATA_PROPERTY");
-		html.put("name", "Id");
+		html.put("name", "id");
 		html.put("type", "ID");
 		html.put("showInCollection", true);
 		
@@ -987,7 +1059,7 @@ public class Config implements SingleTarget, MessageSource {
 							// Add mappings for all properties
 							if (!cix.properties().isEmpty()) {
 								for (PropertyInfo pix : cix.properties().values()) {
-									processProperty(pix, featuretype, dtbasepath, (basename!=null ? basename+"." : "") + field+"["+field+"]", (baselabel!=null ? baselabel+" - " : "") + label, dttabname);
+									processProperty(pix, featuretype, dtbasepath, (basename!=null ? basename+"." : "") + pi.name()+"["+dttabname+"]", (baselabel!=null ? baselabel+" - " : "") + label, dttabname);
 								}
 							}
 						} else {
@@ -998,13 +1070,9 @@ public class Config implements SingleTarget, MessageSource {
 					} else if (cix.category()==Options.FEATURE) {
 						if (pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_FT_AS_NTOM)) {
 							category = "REFERENCE";
-							if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT)) {
-								// TODO Should we limit this to the non-abstract link targets?
-								basepath = basepath + "/[" + primaryKeyField + "="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/[" + field + foreignKeySuffix + "=" + primaryKeyField + "]" + rootFeatureTable;
-							} else if (!cix.isAbstract()) {
-								targettabname = deriveName(cix);
-								// TODO This could also stop at the intermediate table as we have the id in that table already
-								basepath = basepath + "/[" + primaryKeyField + "="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/" + field + foreignKeySuffix + "=" + primaryKeyField + "]" + targettabname;
+							if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT) || !cix.isAbstract()) {
+								targettabname = deriveNameNtoM(tabname, field);
+								basepath = basepath + "/[" + primaryKeyField + "="+ tabname + foreignKeySuffix + "]" + targettabname;
 							} else {
 								MessageContext m = result.addError(this, 4);
 								m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
@@ -1018,125 +1086,129 @@ public class Config implements SingleTarget, MessageSource {
 					} else if ((cix.category()==Options.CODELIST || cix.category()==Options.ENUMERATION) && pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_CL_AS_STRING)) {
 						// Nothing to do, the default works 
 						// ... unless we have a machine readable mapping of code values to readable text
-						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST) && !mapCL.containsKey(cix.name())) {
-							// Look for the first "codeList" tagged value that has a http URI
-							String sa[] = cix.taggedValuesForTag("codeList");
-							if (sa!=null && sa.length>0) {
-								for (String surl : sa) {
-									if (surl.startsWith("http://") || surl.startsWith("https://")) {
-										// retrieve codelist
-										
-										// TODO, make this generic
-										surl = surl.replace("/okey/referenzlisten/", "/repository/services/");
-										
-										// get xml doc
-										InputStream configStream = null;
-
-										URL url;
-										try {
-											url = new URL(surl);
-											configStream = url.openStream();
-										} catch (MalformedURLException e) {
-											MessageContext m = result.addError(this, 7, surl);
-											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-											// try the next tagged value
-											continue;
-										} catch (IOException e) {
-											MessageContext m = result.addError(this, 8, surl);
-											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-											// try the next tagged value
-											continue;
-										}
-
-										// TODO make this more generic
-										DocumentBuilder builder = null;
-										ShapeChangeErrorHandler handler = null;
-										try {
-											System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-													"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-											DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-											factory.setNamespaceAware(false);
-											factory.setValidating(false);
-											factory.setFeature("http://apache.org/xml/features/validation/schema", false);
-											factory.setIgnoringElementContentWhitespace(true);
-											factory.setIgnoringComments(true);
-											factory.setXIncludeAware(true);
-											factory.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
-											builder = factory.newDocumentBuilder();
-											handler = new ShapeChangeErrorHandler();
-											builder.setErrorHandler(handler);
-										} catch (FactoryConfigurationError e) {
-											MessageContext m = result.addError(this, 9, surl);
-											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-											// try the next tagged value
-											continue;
-										} catch (ParserConfigurationException e) {
-											MessageContext m = result.addError(this, 10, surl);
-											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-											// try the next tagged value
-											continue;
-										}
-
-										// parse file
-										try {
-											Document document = builder.parse(configStream);
-											if (handler.errorsFound()) {
-												MessageContext m = result.addError(this, 11, surl);
+						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST)) {
+							if (!mapCL.containsKey(cix.name())) {
+								// Look for the first "codeList" tagged value that has a http URI
+								String sa[] = cix.taggedValuesForTag("codeList");
+								if (sa!=null && sa.length>0) {
+									for (String surl : sa) {
+										if (surl.startsWith("http://") || surl.startsWith("https://")) {
+											// retrieve codelist
+											
+											// TODO, make this generic
+											surl = surl.replace("/okey/referenzlisten/", "/repository/services/");
+											
+											// get xml doc
+											InputStream configStream = null;
+	
+											URL url;
+											try {
+												url = new URL(surl);
+												configStream = url.openStream();
+											} catch (MalformedURLException e) {
+												MessageContext m = result.addError(this, 7, surl);
+												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												// try the next tagged value
+												continue;
+											} catch (IOException e) {
+												MessageContext m = result.addError(this, 8, surl);
 												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
 												// try the next tagged value
 												continue;
 											}
-
-											JSONObject cl = new JSONObject();
-											cl.put("id", cix.name());
-											cl.put("label", cix.definition());
-											cl.put("sourceUrl", surl);
-											cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
-											
-											JSONObject entries = new JSONObject();
-											cl.put("entries", entries);
-											
-											// parse input element specific content
-											NodeList nl = document.getElementsByTagName("item");
-											for (int j = 0; j < nl.getLength(); j++) {
-												Element e = (Element) nl.item(j);
-												Node n = e.getElementsByTagName("atomid").item(0);
-												String code = (n!=null ? ((Element)n).getTextContent().trim() : null);
-												n = e.getElementsByTagName("shortname").item(0);
-												String label1 = (n!=null ? ((Element)n).getTextContent().trim() : "");
-												n = e.getElementsByTagName("longname").item(0);
-												String label2 = (n!=null ? ((Element)n).getTextContent().trim() : "");
-												if (code!=null) {
-													// "(shortname) - longname"
-													// "longname", if shortname is missing
-													// "(shortname)", if longname is missing
-													// "(code)", if both are missing
-													if (label1.isEmpty() && label2.isEmpty())
-														entries.put(code, "("+code+")");
-													else
-														entries.put(code, (label1.isEmpty() ? "" : "("+label1+")" + (label2.isEmpty() ? "" : " - ")) + label2);
-												} else {
-													MessageContext m = result.addError(this, 13, surl, "atomid");
-													m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-												}
+	
+											// TODO make this more generic
+											DocumentBuilder builder = null;
+											ShapeChangeErrorHandler handler = null;
+											try {
+												System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+														"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+												DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+												factory.setNamespaceAware(false);
+												factory.setValidating(false);
+												factory.setFeature("http://apache.org/xml/features/validation/schema", false);
+												factory.setIgnoringElementContentWhitespace(true);
+												factory.setIgnoringComments(true);
+												factory.setXIncludeAware(true);
+												factory.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
+												builder = factory.newDocumentBuilder();
+												handler = new ShapeChangeErrorHandler();
+												builder.setErrorHandler(handler);
+											} catch (FactoryConfigurationError e) {
+												MessageContext m = result.addError(this, 9, surl);
+												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												// try the next tagged value
+												continue;
+											} catch (ParserConfigurationException e) {
+												MessageContext m = result.addError(this, 10, surl);
+												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												// try the next tagged value
+												continue;
 											}
-
-											mapCL.put(cix.name(), cl);
-											codelist = cix.name();
-
-										} catch (Exception e) {
-											String msg = e.getMessage();
-											if (msg==null)
-												msg = "Unknown error.";
-											MessageContext m = result.addError(this, 12, surl, msg);
-											m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-											// try the next tagged value
-											continue;
+	
+											// parse file
+											try {
+												Document document = builder.parse(configStream);
+												if (handler.errorsFound()) {
+													MessageContext m = result.addError(this, 11, surl);
+													m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+													// try the next tagged value
+													continue;
+												}
+	
+												JSONObject cl = new JSONObject();
+												cl.put("id", cix.name());
+												cl.put("label", cix.definition());
+												cl.put("sourceUrl", surl);
+												cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
+												
+												JSONObject entries = new JSONObject();
+												cl.put("entries", entries);
+												
+												// parse input element specific content
+												NodeList nl = document.getElementsByTagName("item");
+												for (int j = 0; j < nl.getLength(); j++) {
+													Element e = (Element) nl.item(j);
+													Node n = e.getElementsByTagName("atomid").item(0);
+													String code = (n!=null ? ((Element)n).getTextContent().trim() : null);
+													n = e.getElementsByTagName("shortname").item(0);
+													String label1 = (n!=null ? ((Element)n).getTextContent().trim() : "");
+													n = e.getElementsByTagName("longname").item(0);
+													String label2 = (n!=null ? ((Element)n).getTextContent().trim() : "");
+													if (code!=null) {
+														// "(shortname) - longname"
+														// "longname", if shortname is missing
+														// "(shortname)", if longname is missing
+														// "(code)", if both are missing
+														if (label1.isEmpty() && label2.isEmpty())
+															entries.put(code, "("+code+")");
+														else
+															entries.put(code, (label1.isEmpty() ? "" : "("+label1+")" + (label2.isEmpty() ? "" : " - ")) + label2);
+													} else {
+														MessageContext m = result.addError(this, 13, surl, "atomid");
+														m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+													}
+												}
+	
+												mapCL.put(cix.name(), cl);
+												codelist = cix.name();
+	
+											} catch (Exception e) {
+												String msg = e.getMessage();
+												if (msg==null)
+													msg = "Unknown error.";
+												MessageContext m = result.addError(this, 12, surl, msg);
+												m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+												// try the next tagged value
+												continue;
+											}
+									
+											break;
 										}
-								
-										break;
 									}
 								}
+							} else {
+								codelist = cix.name();								
 							}
 						}
 					} else if (cix.category()==Options.UNION) {
@@ -1154,19 +1226,13 @@ public class Config implements SingleTarget, MessageSource {
 		
 		JSONObject path = new JSONObject();
 		String proppath = basepath+"/"+field;
-		String fieldname = (basename!=null ? basename+"."+field : field);
+		String fieldname = (basename!=null ? basename+"."+pi.name() : pi.name());
 
 		// Special cases
 		if (category.equalsIgnoreCase("REFERENCE")) {
-			if (targettabname==null) {
-				fieldname = fieldname + "[" + rootFeatureTable + "]"; 
-				proppath = basepath + "/" + primaryKeyField + ":" + rootCollectionField;
-				pattern = "{{serviceUrl}}/collections/{{" + rootCollectionField + "}}/items/{{" + primaryKeyField + "}}";
-			} else {
-				fieldname = fieldname + "[" + targettabname + "]"; 
-				proppath = basepath + "/" + primaryKeyField;
-				pattern = "{{serviceUrl}}/collections/" + targettabname + "/items/{{" + primaryKeyField + "}}";
-			}
+			fieldname = fieldname + "[" + targettabname + "]"; 
+			proppath = basepath + "/" + rootCollectionField + ":" + field + foreignKeySuffix;
+			pattern = "{{serviceUrl}}/collections/{{" + rootCollectionField + "}}/items/{{" + field + foreignKeySuffix + "}}";
 		} else if (category.equalsIgnoreCase("SPATIAL")) {
 			// For geometries, multiple values are not supported
 			if (pi.cardinality().maxOccurs > 1) {

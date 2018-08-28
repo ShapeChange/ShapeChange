@@ -3824,8 +3824,8 @@ public class Options {
 		addRule("rule-ldp-prop-multiple-single-values-as-1-to-n-relations");
 		addRule("rule-ldp-prop-separate-geometry-table");
 		addRule("rule-ldp-prop-all-codelist-values-as-strings");
+		addRule("rule-ldp-cls-oneo-metadata");
 		/*
-		addRule("");
 		addRule("");
 		addRule("");
 		*/
