@@ -642,7 +642,7 @@ public class Config implements SingleTarget, MessageSource {
 			// Add default schema.org mapping in HTML
 			JSONObject html = new JSONObject();
 			path.put("text/html", html);
-			String name = ConfigConstants.PARAM_PRIMARY_KEY_FIELD;
+			String name = primaryKeyField;
 			for (String f : htmlLabelFields) {
 				if (f.startsWith(tabname+".") || f.startsWith("*.")) {
 					name = f.substring(f.indexOf(".") + 1);
