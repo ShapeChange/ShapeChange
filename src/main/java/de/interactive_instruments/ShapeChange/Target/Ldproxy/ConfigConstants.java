@@ -103,6 +103,21 @@ public class ConfigConstants {
 	 * <p>
 	 * Required / Optional: optional
 	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: 1.0.0
+	 * <p>
+	 * Explanation: Version of this service API
+	 * <p>
+	 * Applies to Rule(s): none – default behavior 
+	 */
+	public static final String PARAM_SERVICE_VERSION = "serviceVersion";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
 	 * Type: Boolean ("true" or "false")
 	 * <p>
 	 * Default Value: not secured
@@ -299,6 +314,25 @@ public class ConfigConstants {
 	 * <p>
 	 * Type: String
 	 * <p>
+	 * Default Value: primary key fields
+	 * <p>
+	 * Explanation: By default, the field that is the primary key is used as the label of a feature in HTML. To set the label
+	 * for a feature type to another field, specify them in a comma-separated list where each value uses the
+	 * template "{{tablename}}.{{fieldlabel}}" where "tablename" is the name of the feature table that includes the property
+	 * and "fieldlabel" is the label of the field. Example: "table1.Field 1,table2.Field 2". Use "*" as the table name to
+	 * select a field for all feature types.  Example: "*.Full Name".
+	 * <p>
+	 * Applies to Rule(s): none - default behaviour
+	 */
+	public static final String PARAM_HTML_LABEL = "htmlLabels";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
 	 * Default Value: all feature types
 	 * <p>
 	 * Explanation: By default, the configuration is generated for all feature types. To reduce the configuration to a subset of 
@@ -373,5 +407,13 @@ public class ConfigConstants {
 	 */
 	public static final String RULE_TGT_LDP_CLS_CODELIST = "rule-ldp-cls-generate-codelist";
 	
+	/**
+	 * Add oNeo metadata fields in feature tables. This assumes the following fields in each feature table:
+	 * <li> erstelltvon character varying(255)
+	 * <li> erstelltam timestamp without time zone
+	 * <li> geaendertvon character varying(255)
+	 * <li> geaendertam timestamp without time zone
+	 */
+	public static final String RULE_TGT_LDP_CLS_ONEO_METADATA = "rule-ldp-cls-oneo-metadata";
 
 }
