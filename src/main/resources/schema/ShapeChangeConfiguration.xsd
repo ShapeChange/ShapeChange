@@ -957,7 +957,7 @@
      <documentation>Identifies a UML or RDF/OWL property for which the RDF/OWL implementation of the UML property is a subPropertyOf. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
     </annotation>
    </element>
-   <element maxOccurs="unbounded" minOccurs="0" name="AdditionalProperty">
+   <element maxOccurs="unbounded" minOccurs="0" name="additionalProperty">
     <annotation>
      <documentation>Additional property expression that applies to the general property (e.g. skos:definition, rdfs:label).</documentation>
     </annotation>
