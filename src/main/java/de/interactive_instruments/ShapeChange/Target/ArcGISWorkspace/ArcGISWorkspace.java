@@ -210,7 +210,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static SortedMap<ClassInfo, Integer> elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 	private static SortedMap<ClassInfo, String> elementNameByClassInfo = new TreeMap<ClassInfo, String>();
 
-	private static SortedSet<Integer> elementIdOfCodedValueDomain = new TreeSet<>();
+	private static SortedSet<Integer> elementIdsOfUnusedCodedValueDomain = new TreeSet<>();
 
 	private static SortedMap<ClassInfo, String> objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 	private static SortedMap<ClassInfo, String> identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
@@ -1173,7 +1173,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		 * Keep track of element IDs of coded value domains, so that unused ones
 		 * can be removed during postprocessing.
 		 */
-		elementIdOfCodedValueDomain.add(elementID);
+		elementIdsOfUnusedCodedValueDomain.add(elementID);
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
@@ -3375,7 +3375,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			 * contains IDs of the coded value domains that are not used in the
 			 * model.
 			 */
-			elementIdOfCodedValueDomain.remove(eaClassifierId);
+			elementIdsOfUnusedCodedValueDomain.remove(eaClassifierId);
 		}
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
@@ -3408,7 +3408,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		geometryTypeCache = new TreeMap<ClassInfo, ArcGISGeometryType>();
 		elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 		elementNameByClassInfo = new TreeMap<ClassInfo, String>();
-		elementIdOfCodedValueDomain = new TreeSet<>();
+		elementIdsOfUnusedCodedValueDomain = new TreeSet<>();
 		objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		generalisations = new TreeMap<ClassInfo, ClassInfo>();
@@ -4241,7 +4241,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						ArcGISWorkspaceConstants.RULE_ALL_POSTPROCESS_REMOVE_UNUSED_CODED_VALUE_DOMAINS)) {
 			result.addInfo(this, 30001);
 
-			for (Integer elementIDOfUnusedCodedValueDomain : elementIdOfCodedValueDomain) {
+			for (Integer elementIDOfUnusedCodedValueDomain : elementIdsOfUnusedCodedValueDomain) {
 				Element elmtToRemove = rep
 						.GetElementByID(elementIDOfUnusedCodedValueDomain);
 				int pkgId = elmtToRemove.GetPackageID();
@@ -4427,7 +4427,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 									tagToUpdate = "Length";
 									fqNameOfTag = "ArcGIS::Field::Length";
-									newValue = "" + maxLengthFromSubtypes;
+									
+									if (maxLengthFromSubtypes == 0
+											&& parentLength > 0
+											&& parentLength < 255) {
+										newValue = "" + parentLength;
+									} else {
+										newValue = "" + maxLengthFromSubtypes;
+									}
 
 									updateFieldInArcGISParentAndSubtypes(
 											fieldToUpdate, tagToUpdate,
