@@ -5134,9 +5134,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 		}
 
-		// create union classes for the classes that have subclasses (including
-		// mixins, for the rare case that a property is of a mixin type)
-
 		/*
 		 * mapping of superclass to list of its subclasses key: superclass;
 		 * value: list of all its subclasses (sorted by subclass name)
@@ -5145,6 +5142,34 @@ public class Flattener implements Transformer, MessageSource {
 
 		for (GenericClassInfo genSuperclass : genSuperclassesById.values()) {
 
+			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
+					genSuperclass, trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES));
+
+			// sort the subclasses by name so that the resulting order of
+			// choices is always the same
+			List<GenericClassInfo> subclassesList = new ArrayList<GenericClassInfo>(
+					subclasses);
+			Collections.sort(subclassesList,
+					new Comparator<GenericClassInfo>() {
+						public int compare(GenericClassInfo f1,
+								GenericClassInfo f2) {
+							return f1.name().compareTo(f2.name());
+						}
+					});
+
+			/*
+			 * keep track of subclass list for later use (when associations are
+			 * moved down
+			 */
+			allSubclassesByTheirSuperclass.put(genSuperclass, subclassesList);
+		}
+
+		// create union classes for the classes that have subclasses (including
+		// mixins, for the rare case that a property is of a mixin type)
+
+		for (GenericClassInfo genSuperclass : genSuperclassesById.values()) {
+			
 			GenericClassInfo genSuperclassUnion = new GenericClassInfo(genModel,
 					genSuperclass.id() + "_union",
 					genSuperclass.name() + "Union", Options.UNION);
@@ -5173,33 +5198,11 @@ public class Flattener implements Transformer, MessageSource {
 			((GenericPackageInfo) genSuperclassUnion.pkg())
 					.addClass(genSuperclassUnion);
 
-			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
-					genSuperclass, trfConfig.hasRule(
-							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES));
-			int seqNumIndex = 1;
-
-			// sort the subclasses by name so that the resulting order of
-			// choices is always the same
-			List<GenericClassInfo> subclassesList = new ArrayList<GenericClassInfo>(
-					subclasses);
-			Collections.sort(subclassesList,
-					new Comparator<GenericClassInfo>() {
-						public int compare(GenericClassInfo f1,
-								GenericClassInfo f2) {
-							return f1.name().compareTo(f2.name());
-						}
-					});
-
-			/*
-			 * keep track of subclass list for later use (when associations are
-			 * moved down
-			 */
-			allSubclassesByTheirSuperclass.put(genSuperclass, subclassesList);
-
 			/*
 			 * if the superclass is neither abstract nor a mixin, add it to the
 			 * union
 			 */
+			int seqNumIndex = 1;
 			if (!genSuperclass.isAbstract()
 					&& !(genSuperclass.category() == Options.MIXIN)) {
 
@@ -5216,7 +5219,8 @@ public class Flattener implements Transformer, MessageSource {
 			 * if the subtype is neither abstract nor a mixin, add it to the
 			 * union
 			 */
-			for (GenericClassInfo genCiSub : subclassesList) {
+			for (GenericClassInfo genCiSub : allSubclassesByTheirSuperclass
+					.get(genSuperclass)) {
 
 				if (genCiSub.isAbstract()
 						|| genCiSub.category() == Options.MIXIN)
@@ -5242,7 +5246,7 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		/*
-		 * change the type of all attributes in the model that use one of the
+		 * Change the type of all attributes in the model that use one of the
 		 * superclasses to the corresponding union, with the exception of the
 		 * property being contained in the union itself (for the case that the
 		 * superclass is neither abstract nor a mixin) or being contained in one
