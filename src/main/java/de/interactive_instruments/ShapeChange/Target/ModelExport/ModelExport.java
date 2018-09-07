@@ -325,7 +325,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public String getTargetName(){
+	public String getTargetName() {
 		return "Model Export";
 	}
 
@@ -464,7 +464,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printInfoFields(pi);
 
-		printDataElement("isSchema", pi.isSchema(), false);
 		printDataElement("version", pi.version());
 		printDataElement("targetNamespace", pi.targetNamespace());
 		printDataElement("xmlns", pi.xmlns());
@@ -624,7 +623,15 @@ public class ModelExport implements SingleTarget, MessageSource {
 		if (!ci.properties().isEmpty()) {
 			writer.startElement(NS, "properties");
 			for (PropertyInfo pi : ci.properties().values()) {
-				printProperty(pi, false);
+				/*
+				 * 20180907 JE: ClassInfo.properties() should only return
+				 * navigable properties. However, we've had the case that this
+				 * contract was not fulfilled by an external model
+				 * implementation. Therefore, we enforce the contract here.
+				 */
+				if (pi.isNavigable()) {
+					printProperty(pi, false);
+				}
 			}
 			writer.endElement(NS, "properties");
 		}
@@ -830,7 +837,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("isUnique", pi.isUnique(), true);
 		printDataElement("isComposition", pi.isComposition(), false);
 		printDataElement("isAggregation", pi.isAggregation(), false);
-		
+
 		printDataElement("initialValue", pi.initialValue());
 		printDataElement("inlineOrByReference", pi.inlineOrByReference(),
 				"inlineOrByReference");
@@ -897,7 +904,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		 * TBD: We could add a parameter to list the descriptors that shall be
 		 * exported
 		 */
-//		printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
+		// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
 		printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
 		printDescriptorElement(Descriptor.LANGUAGE, descriptors);
 		printDescriptorElement(Descriptor.EXAMPLE, descriptors);

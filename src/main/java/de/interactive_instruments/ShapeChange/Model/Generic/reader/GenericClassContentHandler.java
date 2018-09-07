@@ -54,6 +54,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -301,11 +302,43 @@ public class GenericClassContentHandler
 
 			// set contained properties
 			SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
+
+			/*
+			 * Also keep track of any non-navigable property which might have
+			 * been encoded (incorrectly) - this is for backwards compatibility
+			 * for the time when the ModelExport did not enforce that only
+			 * navigable properties should be encoded for a Class element.
+			 */
+			List<GenericPropertyContentHandler> handlersOfNonNavigableProperties = new ArrayList<>();
+
 			for (GenericPropertyContentHandler gpch : this.propertyContentHandlers) {
-				properties.put(gpch.getGenericProperty().sequenceNumber(),
-						gpch.getGenericProperty());
+				GenericPropertyInfo genPi = gpch.getGenericProperty();
+				/*
+				 * 20180907 JE: A ClassInfo should only store navigable
+				 * properties. However, we've had the case that this contract
+				 * was not fulfilled by an external model implementation, which
+				 * resulted in non-navigable properties having been exported
+				 * using ModelExport.java (which in the meantime has been
+				 * revised to prevent writing non-navigable properties for a
+				 * class element). Therefore, we enforce the contract here by
+				 * ignoring any non-navigable property that might have been part
+				 * of the class element in the SCXML.
+				 */
+				if (genPi.isNavigable()) {
+					properties.put(gpch.getGenericProperty().sequenceNumber(),
+							genPi);
+				} else {
+					handlersOfNonNavigableProperties.add(gpch);
+				}
 			}
 			this.genCi.setProperties(properties);
+
+			/*
+			 * Now remove the property content handlers for non-navigable
+			 * properties from the content handler list.
+			 */
+			this.propertyContentHandlers
+					.removeAll(handlersOfNonNavigableProperties);
 
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
@@ -368,7 +401,7 @@ public class GenericClassContentHandler
 	public String getBaseClassId() {
 		return baseClassId;
 	}
-	
+
 	/**
 	 * @return the linkedDocument
 	 */

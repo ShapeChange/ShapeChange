@@ -980,7 +980,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
-			genPi.setIsSchema(pi.isSchema());
+//			genPi.setIsSchema(pi.isSchema());
 
 			genPi.setDiagrams(pi.getDiagrams());
 

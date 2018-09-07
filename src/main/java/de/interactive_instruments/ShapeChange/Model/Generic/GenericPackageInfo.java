@@ -31,8 +31,6 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -41,8 +39,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
@@ -67,7 +63,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	protected String xsdDocument = null;
 	protected String version = null;
 	protected GenericPackageInfo owner = null;
-	protected boolean isSchema = false;
+//	protected boolean isSchema = false;
 	protected SortedSet<GenericPackageInfo> childPi = null;
 	protected SortedSet<String> supplierIds = null;
 
@@ -135,10 +131,10 @@ public class GenericPackageInfo extends PackageInfoImpl
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#isSchema()
 	 */
-	@Override
-	public boolean isSchema() {
-		return isSchema;
-	}
+//	@Override
+//	public boolean isSchema() {
+//		return isSchema;
+//	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
@@ -195,13 +191,13 @@ public class GenericPackageInfo extends PackageInfoImpl
 
 	}
 
-	/**
-	 * @param isSchema
-	 */
-	public void setIsSchema(boolean isSchema) {
-		this.isSchema = isSchema;
-
-	}
+	// /**
+	// * @param isSchema
+	// */
+	// public void setIsSchema(boolean isSchema) {
+	// this.isSchema = isSchema;
+	//
+	// }
 
 	/**
 	 * @param model
@@ -500,10 +496,17 @@ public class GenericPackageInfo extends PackageInfoImpl
 		} else {
 			PackageInfo o = owner();
 			if (o != null) {
-				return owner().targetNamespace();
-			} else {
-				return null;
-			}
+				String tgtns = owner().targetNamespace();
+				if(tgtns != null) {
+					return tgtns;
+				}
+			} 
+			/*
+			 * if the target namespace was not set explicitly - on this class or
+			 * its owner, use the default implementation to determine the target
+			 * namespace
+			 */
+			return super.targetNamespace();
 		}
 	}
 

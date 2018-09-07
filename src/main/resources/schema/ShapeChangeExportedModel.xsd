@@ -110,7 +110,6 @@
    <element minOccurs="0" ref="sc:stereotypes"/>
    <element ref="sc:descriptors"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
-   <element default="false" minOccurs="0" name="isSchema" type="boolean"/>
    <element minOccurs="0" name="version" type="string"/>
    <element minOccurs="0" name="targetNamespace" type="string"/>
    <element minOccurs="0" name="xmlns" type="string"/>
