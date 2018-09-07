@@ -52,10 +52,10 @@ public interface Target {
 	 *            a schema from the model selected via the configuration (see
 	 *            {@link Model#selectedSchemas()}) - not necessarily always an
 	 *            application schema
-	 * @param m
-	 * @param o
-	 * @param r
-	 * @param diagOnly
+	 * @param m		the model
+	 * @param o		the options object for this configuration
+	 * @param r		the results object to report log messages
+	 * @param diagOnly	a flag to request a dry run only, no output will be created
 	 * @throws ShapeChangeAbortException
 	 * @see Model#selectedSchemas()
 	 * @see PackageInfo#isSchema()

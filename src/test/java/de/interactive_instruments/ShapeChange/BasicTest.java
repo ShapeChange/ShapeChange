@@ -539,6 +539,31 @@ public abstract class BasicTest {
 		}
 	}
 
+	protected void ldproxyTest(String config, String[] files,
+			String basedirResults, String basedirReference) {
+
+		String actualConfig = getActualConfig(config);
+
+		long start = (new Date()).getTime();
+		TestInstance test = new TestInstance(actualConfig);
+		long end = (new Date()).getTime();
+		System.out.println(
+				"Execution time " + actualConfig + ": " + (end - start) + "ms");
+		assertTrue("Test model execution failed", test.noError());
+		if (testTime)
+			assertTrue("Exceution time too long", end - start < 90000);
+
+		if (!exportModel) {
+			for (String file : files) {
+
+				String fileName = basedirResults + "/" + file;
+				String referenceFileName = basedirReference + "/" + file;
+
+				similarJson(fileName, referenceFileName);
+			}
+		}
+	}
+
 	protected void jsonTest(String config, String[] typenames,
 			String basedirResults, String basedirReference) {
 

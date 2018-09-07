@@ -59,10 +59,10 @@
       </header>
       <article class="exp">
               <xsl:choose>
-                <xsl:when test="/*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')] and not /*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')]">
+                <xsl:when test="/*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')] and not /*/atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))]">
                   <xsl:attribute name="bgcolor">#ffe6e6</xsl:attribute>
                 </xsl:when>
-                <xsl:when test="/*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')] and not /*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')]">
+                <xsl:when test="/*/atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))] and not /*/atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')]">
                   <xsl:attribute name="bgcolor">#e6ffe6</xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
@@ -191,10 +191,10 @@
                <xsl:sort select="atom:id"/>
                <tr>
               <xsl:choose>
-                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')])=0">
+                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')] and count(atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))])=0">
                   <xsl:attribute name="bgcolor">#ffe6e6</xsl:attribute>
                 </xsl:when>
-                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')])=0">
+                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')])=0">
                   <xsl:attribute name="bgcolor">#e6ffe6</xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
@@ -247,10 +247,10 @@
                <xsl:sort select="atom:id"/>
                <tr>
               <xsl:choose>
-                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')])=0">
+                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')] and count(atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))])=0">
                   <xsl:attribute name="bgcolor">#ffe6e6</xsl:attribute>
                 </xsl:when>
-                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'7.0')] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6.0')])=0">
+                <xsl:when test="atom:category[@scheme=concat($baseuri,'/version') and (starts-with(@term,'7') or starts-with(@term,'0'))] and count(atom:category[@scheme=concat($baseuri,'/version') and starts-with(@term,'6')])=0">
                   <xsl:attribute name="bgcolor">#e6ffe6</xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
