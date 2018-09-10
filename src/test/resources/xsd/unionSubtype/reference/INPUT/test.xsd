@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/xsd/unionSubtype" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/unionSubtype" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="UnionSubtype" substitutionGroup="test:UnionSupertype" type="test:UnionSubtypeType"/>
+  <complexType name="UnionSubtypeType">
+    <complexContent>
+      <extension base="test:UnionSupertypeType"/>
+    </complexContent>
+  </complexType>
+  <complexType name="UnionSubtypePropertyType">
+    <sequence>
+      <element ref="test:UnionSubtype"/>
+    </sequence>
+  </complexType>
+  <element name="UnionSupertype" substitutionGroup="gml:AbstractObject" type="test:UnionSupertypeType"/>
+  <complexType name="UnionSupertypeType">
+    <choice>
+      <element name="choice1" type="string"/>
+      <element name="choice2" type="double"/>
+    </choice>
+  </complexType>
+  <complexType name="UnionSupertypePropertyType">
+    <sequence>
+      <element ref="test:UnionSupertype"/>
+    </sequence>
+  </complexType>
+</schema>

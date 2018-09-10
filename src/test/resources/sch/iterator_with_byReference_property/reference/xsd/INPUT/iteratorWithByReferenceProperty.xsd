@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/iteratorWithByReferenceProperty" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/iteratorWithByReferenceProperty" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DT1" substitutionGroup="gml:AbstractObject" type="ex:DT1Type"/>
+  <complexType name="DT1Type">
+    <sequence>
+      <element name="attDT2" type="ex:DT2PropertyType"/>
+    </sequence>
+  </complexType>
+  <complexType name="DT1PropertyType">
+    <sequence>
+      <element ref="ex:DT1"/>
+    </sequence>
+  </complexType>
+  <element name="DT2" substitutionGroup="gml:AbstractObject" type="ex:DT2Type"/>
+  <complexType name="DT2Type">
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="attDT3" type="ex:DT3PropertyType"/>
+      <element maxOccurs="unbounded" minOccurs="0" name="value" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DT2PropertyType">
+    <sequence>
+      <element ref="ex:DT2"/>
+    </sequence>
+  </complexType>
+  <element name="DT3" substitutionGroup="gml:AbstractObject" type="ex:DT3Type"/>
+  <complexType name="DT3Type">
+    <sequence>
+      <element name="value" type="double"/>
+    </sequence>
+  </complexType>
+  <complexType name="DT3PropertyType">
+    <sequence>
+      <element ref="ex:DT3"/>
+    </sequence>
+  </complexType>
+  <element name="FT1" substitutionGroup="gml:AbstractFeature" type="ex:FT1Type"/>
+  <complexType name="FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="attDT1" type="ex:DT1PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="ft2" type="ex:FT2PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2" substitutionGroup="gml:AbstractFeature" type="ex:FT2Type"/>
+  <complexType name="FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="ft3" type="ex:FT3PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT3" substitutionGroup="gml:AbstractFeature" type="ex:FT3Type"/>
+  <complexType name="FT3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="value" type="string"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="ft4" type="ex:FT4PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT3Sub" substitutionGroup="ex:FT3" type="ex:FT3SubType"/>
+  <complexType name="FT3SubType">
+    <complexContent>
+      <extension base="ex:FT3Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT3SubPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT3Sub"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT4" substitutionGroup="gml:AbstractFeature" type="ex:FT4Type"/>
+  <complexType name="FT4Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT4Sub" substitutionGroup="ex:FT4" type="ex:FT4SubType"/>
+  <complexType name="FT4SubType">
+    <complexContent>
+      <extension base="ex:FT4Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT4SubPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT4Sub"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

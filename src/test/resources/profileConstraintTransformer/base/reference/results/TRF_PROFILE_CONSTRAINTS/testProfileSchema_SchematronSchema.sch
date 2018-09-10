@@ -12,7 +12,7 @@
       <assert test="not(.)">B_FeatureType3_prohibited: B_FeatureType3 is prohibited. Use (one of) the following type(s) instead: P_FeatureType3.</assert>
     </rule>
     <rule context="pctbs:B_FeatureTypeX">
-      <assert test="not(.)">B_FeatureTypeX_prohibited: B_FeatureTypeX is prohibited. Use (one of) the following type(s) instead: P_FeatureTypeX.</assert>
+      <assert test="not(pctbs:attX/*)">attX_prohibited: attX is prohibited.</assert>
     </rule>
     <rule context="pctp:P_FeatureType3">
       <assert test="not(pctbs:att2/*)">att2_prohibited: att2 is prohibited.</assert>

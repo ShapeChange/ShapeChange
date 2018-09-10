@@ -2836,7 +2836,7 @@ public class FeatureCatalogue
 
 				cmds.add(XsltWriter.PARAM_xsltMainFileUri);
 				cmds.add("\"" + xsltMainFileUriString + "\"");
-
+	
 				result.addInfo(this, 26, StringUtils.join(cmds, " "));
 
 				ProcessBuilder pb = new ProcessBuilder(cmds);
@@ -2861,7 +2861,7 @@ public class FeatureCatalogue
 						result.addInfo(this, 25, outputGobbler.getResult());
 					}
 
-					if (exitVal != 0) {
+					if (exitVal != 0 || errorGobbler.hasResult()) {
 
 						// log error
 						if (errorGobbler.hasResult()) {

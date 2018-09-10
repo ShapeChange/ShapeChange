@@ -43,6 +43,7 @@
 				<ProcessParameter name="profileSchemaName" value="Profile Schema" />
 				<ProcessParameter name="profileName" value="A" />
 				<ProcessParameter name="subtypeNamePrefix" value="P_" />
+				<ProcessParameter name="baseSchemaClassesNotToBeProhibitedRegex" value="B_FeatureTypeX"/>
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="trf">

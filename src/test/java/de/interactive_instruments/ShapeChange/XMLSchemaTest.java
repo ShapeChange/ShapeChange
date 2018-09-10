@@ -251,4 +251,14 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/xsd/globalIdentifierAnnotation",
 				"src/test/resources/xsd/globalIdentifierAnnotation/reference");
 	}
+	
+	@Test
+	public void test_unionSubtype() {
+		
+		multiTest(
+				"src/test/resources/xsd/unionSubtype/testEA_xsd_unionSubtype.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/unionSubtype",
+				"src/test/resources/xsd/unionSubtype/reference");
+	}
 }
