@@ -239,7 +239,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	 * @param c2Name
 	 * @throws EAException
 	 */
-	public static void createEAGeneralization(Repository rep, int c1ElementId,
+	public static Connector createEAGeneralization(Repository rep, int c1ElementId,
 			String c1Name, int c2ElementId, String c2Name) throws EAException {
 
 		Element c1 = rep.GetElementByID(c1ElementId);
@@ -256,6 +256,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		}
 
 		c1Cons.Refresh();
+		
+		return con;
 	}
 
 	/**
@@ -267,7 +269,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	 * @param c2
 	 * @throws EAException
 	 */
-	public static void createEAGeneralization(Repository rep, Element c1,
+	public static Connector createEAGeneralization(Repository rep, Element c1,
 			Element c2) throws EAException {
 
 		Collection<Connector> c1Cons = c1.GetConnectors();
@@ -282,6 +284,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		}
 
 		c1Cons.Refresh();
+		
+		return con;
 	}
 
 	/**

@@ -15,7 +15,7 @@
 		<repository>
 			<id>ShapeChange</id>
 			<name>ShapeChange (plus additional components) release repository</name>
-			<url>http://shapechange.net/resources/dist/</url>
+			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -147,6 +147,11 @@
 			<artifactId>guava</artifactId>
 			<version>20.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1.1</version>
+		</dependency>		
 	</dependencies>
 	<url>http://shapechange.net/</url>
 	<description>ShapeChange - processing application schemas for geographic information</description>
@@ -155,8 +160,8 @@
 	</properties>
 	<distributionManagement>
 		<repository>
-			<id>ftp-repository</id>
-			<url>ftp://shapechange.net/</url>
+			<id>ssh-repository</id>
+			<url>scpexe://ec2-18-195-82-157.eu-central-1.compute.amazonaws.com/home/bitnami/apps/wordpress/htdocs/resources/dist</url>
 		</repository>
 	</distributionManagement>
 	<build>
@@ -469,6 +474,11 @@
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
 				<version>2.2</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>3.1.0</version>
 			</extension>
 		</extensions>
 	</build>

@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -50,6 +51,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
@@ -77,11 +79,13 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAAttributeUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
+import de.interactive_instruments.ShapeChange.Util.ea.EAPackageUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
@@ -92,13 +96,17 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
  */
 public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
+	private static String REGEX_TO_SPLIT_BY_COMMA_WITH_ESCAPING = "(?<!(?:^|[^\\\\])(?:\\\\\\\\){0,5}\\\\),";
+	private static String REGEX_TO_SPLIT_BY_COLON_WITH_ESCAPING = "(?<!(?:^|[^\\\\])(?:\\\\\\\\){0,5}\\\\):";
+
 	/* -------------------- */
 	/* --- enumerations --- */
 	/* -------------------- */
 
 	public enum ArcGISGeometryType {
-		POINT("Point"), MULTIPOINT("Multipoint"), POLYLINE("Polyline"), POLYGON(
-				"Polygon"), UNKNOWN("Unknown"), NONE("None");
+		POINT("ArcGIS::Point"), MULTIPOINT("ArcGIS::Multipoint"), POLYLINE(
+				"ArcGIS::Polyline"), POLYGON(
+						"ArcGIS::Polygon"), UNKNOWN("Unknown"), NONE("None");
 
 		private String stereotype;
 
@@ -202,11 +210,30 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static SortedMap<ClassInfo, Integer> elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 	private static SortedMap<ClassInfo, String> elementNameByClassInfo = new TreeMap<ClassInfo, String>();
 
+	private static SortedSet<Integer> elementIdsOfUnusedCodedValueDomain = new TreeSet<>();
+
 	private static SortedMap<ClassInfo, String> objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 	private static SortedMap<ClassInfo, String> identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 
 	private static SortedMap<ClassInfo, ClassInfo> generalisations = new TreeMap<ClassInfo, ClassInfo>();
 	private static SortedSet<AssociationInfo> associations = new TreeSet<AssociationInfo>();
+
+	/**
+	 * Set of explicit ArcGIS subtypes, for establishing generalization
+	 * relationships with stereotype ArcGIS::Subtype during writeAll.
+	 */
+	private static Set<ClassInfo> arcgisSubtypes = new HashSet<>();
+	private static Map<ClassInfo, Map<String, Integer>> subtypeElementIdBySubtypeNameByParent = new TreeMap<>();
+	/**
+	 * Key: 1) parent class (ClassInfo), 2) property of parent class
+	 * (PropertyInfo)
+	 * <p>
+	 * Value: SortedMap with key being the subtype name and value being the EA
+	 * element ID of the subtype specific coded value domain to be used as type
+	 * of the field that represents the property in the subtype
+	 */
+	@SuppressWarnings("rawtypes")
+	private static MultiKeyMap subtypeCodedValueDomainEAIDByMultiKey = new MultiKeyMap();
 
 	/**
 	 * key: name that would usually be assigned to a relationship class; value:
@@ -270,7 +297,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	protected static SortedMap<Integer, SortedMap<PackageInfo, Integer>> eaPkgIdByModelPkg_byWorkspaceSubPkgId = new TreeMap<Integer, SortedMap<PackageInfo, Integer>>();
 
 	/**
-	 * TODO: value of 'rule' attribute is currently ignored
+	 * NOTE: value of 'rule' attribute is currently ignored
 	 * <p>
 	 * key: 'type' attribute value of map entry defined for the target; value:
 	 * according map entry
@@ -317,8 +344,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * key: name of the class element; value: the range domain element
 	 */
 	private static SortedMap<String, Integer> numericRangeElementIdsByClassName = new TreeMap<String, Integer>();
-
-	// TODO Unit Test
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
@@ -591,7 +616,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			for (ProcessMapEntry pme : mapEntries) {
 				/*
-				 * TODO ignores value of 'rule' attribute in map entry, so if
+				 * NOTE: ignores value of 'rule' attribute in map entry, so if
 				 * there were map entries for different rules with same 'type'
 				 * attribute value, this needs to be updated
 				 */
@@ -684,7 +709,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			int cat = ci.category();
 
-			if (cat == Options.OBJECT || (cat == Options.FEATURE
+			if (isExplicitlyModeledArcGISSubtype(ci)) {
+
+				createExplicitlyModeledArcGISSubtype(ci);
+
+			} else if (cat == Options.OBJECT || (cat == Options.FEATURE
 					&& determineArcGISGeometryType(ci)
 							.equals(ArcGISGeometryType.NONE))) {
 
@@ -721,11 +750,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			} else if (cat == Options.ENUMERATION) {
 
-				createCodedValueDomain(ci);
+				if (isSubtypeSetDefinition(ci)) {
+					result.addInfo(this, 254, ci.name());
+				} else {
+					createCodedValueDomain(ci);
+				}
 
 			} else if (cat == Options.CODELIST) {
 
-				createCodedValueDomain(ci);
+				if (isSubtypeSetDefinition(ci)) {
+					result.addInfo(this, 255, ci.name());
+				} else {
+					createCodedValueDomain(ci);
+				}
 
 			} else if (cat == Options.UNION) {
 
@@ -759,6 +796,115 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			result.addError(this, 201, e.getMessage());
 			ignoredCis.add(ci);
 		}
+	}
+
+	/**
+	 * @param ci
+	 * @return <code>true</code> if the given class is the type of a property in
+	 *         the schemas selected for processing that has tagged value
+	 *         'arcgisDefaultSubtype' with non-empty value; else
+	 *         <code>false</code>.
+	 */
+	private boolean isSubtypeSetDefinition(ClassInfo ci) {
+
+		if (!ci.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)) {
+			return false;
+		}
+
+		SortedSet<? extends PropertyInfo> pis = ci.model()
+				.selectedSchemaProperties();
+
+		for (PropertyInfo pi : pis) {
+
+			if ((pi.typeInfo().id.equals(ci.id())
+					|| pi.typeInfo().name.equals(ci.name()))
+					&& StringUtils.isNotBlank(
+							pi.taggedValue("arcgisDefaultSubtype"))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void createExplicitlyModeledArcGISSubtype(ClassInfo ci)
+			throws EAException {
+
+		ClassInfo parent = ci.baseClass();
+
+		int eaPkgId;
+		if (parent.category() == Options.FEATURE) {
+			eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(parent,
+					featuresPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+					numberOfSchemasSelectedForProcessing);
+		} else {
+			eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(ci,
+					tablesPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+					numberOfSchemasSelectedForProcessing);
+		}
+
+		// create class element
+
+		/*
+		 * 2018-08-16: do NOT normalize or clip subtype name!
+		 */
+
+		Element eaElement = EARepositoryUtil.createEAClass(rep, ci.name(),
+				eaPkgId);
+
+		// store mapping between ClassInfo and EA Element
+		elementIdByClassInfo.put(ci, eaElement.GetElementID());
+		elementNameByClassInfo.put(ci, ci.name());
+
+		// set alias, notes, abstractness
+		setCommonItems(ci, eaElement);
+
+		/*
+		 * set stereotype of EA element to <<Subtype>> (with correct MDG ID:
+		 * ArcGIS::Subtype)
+		 */
+		EAElementUtil.setEAStereotypeEx(eaElement, "ArcGIS::Subtype");
+
+		/*
+		 * create the SubtypeCode tagged value (from tagged value
+		 * arcgisSubtypeCode)
+		 */
+		String arcgisSubtypeCode = ci.taggedValue("arcgisSubtypeCode");
+		int subtypeCode = -1;
+		if (StringUtils.isBlank(arcgisSubtypeCode)) {
+			MessageContext mc = result.addError(this, 252, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, -1, ci.fullNameInSchema());
+			}
+		} else {
+			try {
+				subtypeCode = Integer.parseInt(arcgisSubtypeCode);
+			} catch (Exception e) {
+				MessageContext mc = result.addError(this, 253, ci.name(),
+						arcgisSubtypeCode);
+				if (mc != null) {
+					mc.addDetail(this, -1, ci.fullNameInSchema());
+				}
+			}
+		}
+		EAElementUtil.updateTaggedValue(eaElement, "SubtypeCode",
+				"" + subtypeCode, false);
+
+		/*
+		 * note the subtype for creation of generalization with correct
+		 * stereotype
+		 */
+		arcgisSubtypes.add(ci);
+
+		/*
+		 * properties cannot be processed now, because we do not necessarily
+		 * have EA Elements for all classes in the model yet; thus the type of a
+		 * property cannot be set using the GUID of the element - and thus the
+		 * class would not be linked to correctly
+		 */
+
+		// keep track of generalizations
+		identifyGeneralisationRelationships(ci);
 	}
 
 	private void parseNumericRangeConstraints(ClassInfo ci) {
@@ -1001,7 +1147,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
-	private void createCodedValueDomain(ClassInfo ci) throws EAException {
+	private Element createCodedValueDomain(ClassInfo ci) throws EAException {
 
 		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(ci,
 				domainsPkgId, eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
@@ -1019,13 +1165,20 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
-		elementIdByClassInfo.put(ci, e.GetElementID());
+		int elementID = e.GetElementID();
+		elementIdByClassInfo.put(ci, elementID);
 		elementNameByClassInfo.put(ci, name);
+
+		/*
+		 * Keep track of element IDs of coded value domains, so that unused ones
+		 * can be removed during postprocessing.
+		 */
+		elementIdsOfUnusedCodedValueDomain.add(elementID);
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
-		EAElementUtil.setEAStereotypeEx(e, "CodedValueDomain");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::CodedValueDomain");
 
 		String documentation = ci.derivedDocumentation(documentationTemplate,
 				"<no description available>");
@@ -1033,44 +1186,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		EAElementUtil.setTaggedValue(e,
 				new EATaggedValue("Description", documentation, true));
 
-		// identify field type for the coded value domain
-		String fieldType = "esriFieldTypeString";
+		String fieldType = determineFieldTypeForCodedValueDomain(ci);
 
-		if (isNumericallyValued(ci)) {
-			String numericFieldConceptualType = ci
-					.taggedValue(ArcGISWorkspaceConstants.TV_NUMERIC_TYPE)
-					.trim();
-			if (processMapEntries.containsKey(numericFieldConceptualType)) {
-				// use target type defined by map entry for the conceptual type
-				fieldType = processMapEntries.get(numericFieldConceptualType)
-						.getTargetType();
-			} else {
-				// log error and keep fieldType as is
-				MessageContext mc = result.addError(this, 245,
-						numericFieldConceptualType);
-				if (mc != null) {
-					mc.addDetail(this, -1, ci.fullNameInSchema());
-				}
-			}
-		}
-		String fieldTypeTV = ci
-				.taggedValue(ArcGISWorkspaceConstants.TV_FIELD_TYPE);
-		if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
-			fieldType = fieldTypeTV.trim();
-		}
-
-		// create required properties: FieldType, MergePolicy, SplitPolicy
-		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, false, fieldType, new Multiplicity(1, 1),
-				"esriFieldType", null);
-
-		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
-				null, false, false, false, "esriMPTDefaultValue",
-				new Multiplicity(1, 1), "esriMergePolicyType", null);
-
-		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
-				null, false, false, false, "esriSPTDuplicate",
-				new Multiplicity(1, 1), "esriSplitPolicyType", null);
+		createRequiredFieldsOfCodedValueDomain(e, fieldType);
 
 		// for each enum/code of the class, create an according property
 		if (ci.properties() != null) {
@@ -1081,18 +1199,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			for (PropertyInfo pi : ci.properties().values()) {
 
-				String initialValue;
-
-				if (pi.matches(
-						ArcGISWorkspaceConstants.RULE_ENUM_INITIAL_VALUE_BY_ALIAS)) {
-					initialValue = pi.aliasName();
-				} else {
-					initialValue = pi.initialValue();
-				}
-
-				if (initialValue == null || initialValue.trim().length() == 0) {
-					initialValue = pi.name();
-				}
+				String initialValue = determineInitialValueForDomainCodedValue(
+						pi);
 
 				Attribute eaAtt = EAElementUtil.createEAAttribute(e, pi.name(),
 						null,
@@ -1104,6 +1212,133 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				addTaggedValuesToRepresent(eaAtt, pi);
 			}
 		}
+
+		return e;
+	}
+
+	private Element createSubtypeSpecificCodedValueDomain(String subtypeName,
+			ClassInfo codeListOrEnumeration, SortedSet<PropertyInfo> codes)
+			throws EAException {
+
+		int eaPkgId = EARepositoryUtil.establishEAPackageHierarchy(
+				codeListOrEnumeration, domainsPkgId,
+				eaPkgIdByModelPkg_byWorkspaceSubPkgId, rep,
+				numberOfSchemasSelectedForProcessing);
+
+		String fullName = codeListOrEnumeration.name() + subtypeName;
+
+		// create class element
+		String name = normalizeName(fullName);
+
+		if (exceedsMaxLength(name)) {
+			this.result.addWarning(this, 205, name, fullName, subtypeName,
+					"" + maxNameLength);
+			name = clipToMaxLength(name);
+		}
+
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
+
+		// set alias, notes, abstractness
+		// setCommonItems(codeListOrEnumeration, e);
+
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::CodedValueDomain");
+
+		// String documentation =
+		// codeListOrEnumeration.derivedDocumentation(documentationTemplate,
+		// "<no description available>");
+
+		// EAElementUtil.setTaggedValue(e,
+		// new EATaggedValue("Description", documentation, true));
+
+		String fieldType = determineFieldTypeForCodedValueDomain(
+				codeListOrEnumeration);
+
+		createRequiredFieldsOfCodedValueDomain(e, fieldType);
+
+		// for each enum/code for the subtype, create an according property
+
+		SortedSet<String> enumStereotype = new TreeSet<String>();
+		enumStereotype
+				.add(ArcGISWorkspaceConstants.STEREOTYPE_DOMAIN_CODED_VALUE);
+
+		for (PropertyInfo pi : codes) {
+
+			String initialValue = determineInitialValueForDomainCodedValue(pi);
+
+			Attribute eaAtt = EAElementUtil.createEAAttribute(e, pi.name(),
+					null,
+					pi.derivedDocumentation(documentationTemplate,
+							documentationNoValue),
+					enumStereotype, null, false, false, false, initialValue,
+					new Multiplicity(1, 1), null, null);
+
+			addTaggedValuesToRepresent(eaAtt, pi);
+		}
+
+		return e;
+	}
+
+	private String determineInitialValueForDomainCodedValue(PropertyInfo pi) {
+		String initialValue;
+		if (pi.matches(
+				ArcGISWorkspaceConstants.RULE_ENUM_INITIAL_VALUE_BY_ALIAS)) {
+			initialValue = pi.aliasName();
+		} else {
+			initialValue = pi.initialValue();
+		}
+
+		if (StringUtils.isBlank(initialValue)) {
+			initialValue = pi.name();
+		}
+		return initialValue;
+	}
+
+	private void createRequiredFieldsOfCodedValueDomain(Element eaElement,
+			String fieldType) throws EAException {
+
+		EAElementUtil.createEAAttribute(eaElement, "FieldType", null, null,
+				null, null, false, false, false, fieldType,
+				new Multiplicity(1, 1), "esriFieldType", null);
+
+		EAElementUtil.createEAAttribute(eaElement, "MergePolicy", null, null,
+				null, null, false, false, false, "esriMPTDefaultValue",
+				new Multiplicity(1, 1), "esriMergePolicyType", null);
+
+		EAElementUtil.createEAAttribute(eaElement, "SplitPolicy", null, null,
+				null, null, false, false, false, "esriSPTDuplicate",
+				new Multiplicity(1, 1), "esriSplitPolicyType", null);
+	}
+
+	private String determineFieldTypeForCodedValueDomain(
+			ClassInfo codeListOrEnumeration) {
+
+		String fieldType = "esriFieldTypeString";
+
+		if (isNumericallyValued(codeListOrEnumeration)) {
+			String numericFieldConceptualType = codeListOrEnumeration
+					.taggedValue(ArcGISWorkspaceConstants.TV_NUMERIC_TYPE)
+					.trim();
+			if (processMapEntries.containsKey(numericFieldConceptualType)) {
+				// use target type defined by map entry for the conceptual type
+				fieldType = processMapEntries.get(numericFieldConceptualType)
+						.getTargetType();
+			} else {
+				// log error and keep fieldType as is
+				MessageContext mc = result.addError(this, 245,
+						numericFieldConceptualType);
+				if (mc != null) {
+					mc.addDetail(this, -1,
+							codeListOrEnumeration.fullNameInSchema());
+				}
+			}
+		}
+		String fieldTypeTV = codeListOrEnumeration
+				.taggedValue(ArcGISWorkspaceConstants.TV_FIELD_TYPE);
+		if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
+			fieldType = fieldTypeTV.trim();
+		}
+
+		return fieldType;
 	}
 
 	private Element createRangeDomain(String rangeDomainName,
@@ -1118,7 +1353,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// create class element
 		String name = rangeDomainName;
 
-		// TODO - think of naming scheme for range domains
+		// TBD - think of naming scheme for range domains
 		// String name = normalizeName(rangeDomainName);
 		//
 		// if (exceedsMaxLength(name)) {
@@ -1136,7 +1371,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// TBD: set alias or notes?
 
-		EAElementUtil.setEAStereotypeEx(e, "RangeDomain");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::RangeDomain");
 
 		EAElementUtil.setTaggedValue(e,
 				new EATaggedValue("Description",
@@ -1218,25 +1453,25 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			createSystemFieldOBJECTIDIDX(e);
 			createSystemFieldShapeIDX(e);
 
-			// now set tagged values for feature class
-
-			List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+			// now update tagged values for feature class
 
 			if (geomType.equals(ArcGISGeometryType.POINT)) {
-				tvs.add(new EATaggedValue("AncillaryRole", "esriNCARNone"));
+				EAElementUtil.updateTaggedValue(e, "AncillaryRole",
+						"esriNCARNone", false);
 			}
 
 			if (geomType.equals(ArcGISGeometryType.POLYGON)) {
-				tvs.add(new EATaggedValue("AreaFieldName",
-						shapeAreaField.GetAttributeGUID()));
+				EAElementUtil.updateTaggedValue(e, "AreaFieldName",
+						shapeAreaField.GetAttributeGUID(), false);
 			} else {
-				tvs.add(new EATaggedValue("AreaFieldName", ""));
+				EAElementUtil.updateTaggedValue(e, "AreaFieldName", "", false);
 			}
 
-			tvs.add(new EATaggedValue("CanVersion", "false"));
-			tvs.add(new EATaggedValue("DSID", ""));
-			tvs.add(new EATaggedValue("FeatureType", "esriFTSimple"));
-			tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
+			EAElementUtil.updateTaggedValue(e, "CanVersion", "false", false);
+			EAElementUtil.updateTaggedValue(e, "DSID", "", false);
+			EAElementUtil.updateTaggedValue(e, "FeatureType", "esriFTSimple",
+					false);
+			EAElementUtil.updateTaggedValue(e, "GlobalIDFieldName", "", false);
 
 			String hasM = "false";
 			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASM)) {
@@ -1246,9 +1481,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					hasM = "true";
 				}
 			}
-			tvs.add(new EATaggedValue("HasM", hasM));
+			EAElementUtil.updateTaggedValue(e, "HasM", hasM, false);
 
-			tvs.add(new EATaggedValue("HasSpatialIndex", "true"));
+			EAElementUtil.updateTaggedValue(e, "HasSpatialIndex", "true",
+					false);
 
 			String hasZ = "false";
 			if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASZ)) {
@@ -1258,27 +1494,26 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					hasZ = "true";
 				}
 			}
-			tvs.add(new EATaggedValue("HasZ", hasZ));
+			EAElementUtil.updateTaggedValue(e, "HasZ", hasZ, false);
 
 			if (geomType.equals(ArcGISGeometryType.POLYGON)
 					|| geomType.equals(ArcGISGeometryType.POLYLINE)) {
-				tvs.add(new EATaggedValue("LengthFieldName",
-						shapeLengthField.GetAttributeGUID()));
+				EAElementUtil.updateTaggedValue(e, "LengthFieldName",
+						shapeLengthField.GetAttributeGUID(), false);
 			} else {
-				tvs.add(new EATaggedValue("LengthFieldName", ""));
+				EAElementUtil.updateTaggedValue(e, "LengthFieldName", "",
+						false);
 			}
 
-			tvs.add(new EATaggedValue("Metadata", "", true));
-			tvs.add(new EATaggedValue("ModelName", ""));
-			tvs.add(new EATaggedValue("OIDFieldName",
-					objectIdField.GetAttributeGUID()));
-			tvs.add(new EATaggedValue("RasterFieldName", ""));
-			tvs.add(new EATaggedValue("ShapeFieldName",
-					shapeField.GetAttributeGUID()));
-			tvs.add(new EATaggedValue("SpatialReference", ""));
-			tvs.add(new EATaggedValue("Versioned", "false"));
-
-			EAElementUtil.setTaggedValues(e, tvs);
+			EAElementUtil.updateTaggedValue(e, "Metadata", "", true);
+			EAElementUtil.updateTaggedValue(e, "ModelName", "", false);
+			EAElementUtil.updateTaggedValue(e, "OIDFieldName",
+					objectIdField.GetAttributeGUID(), false);
+			EAElementUtil.updateTaggedValue(e, "RasterFieldName", "", false);
+			EAElementUtil.updateTaggedValue(e, "ShapeFieldName",
+					shapeField.GetAttributeGUID(), false);
+			EAElementUtil.updateTaggedValue(e, "SpatialReference", "", false);
+			EAElementUtil.updateTaggedValue(e, "Versioned", "false", false);
 		}
 
 		// properties cannot be processed now, because we do not necessarily
@@ -1289,6 +1524,272 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// keep track of generalizations
 		identifyGeneralisationRelationships(ci);
+
+		handleArcGISSubtypesDefinedByFieldType(ci, eaPkgId, e);
+	}
+
+	private boolean isExplicitlyModeledArcGISSubtype(ClassInfo ci) {
+
+		if (ci.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)
+				&& ArcGISUtil.isArcGISSubtype(ci)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void handleArcGISSubtypesDefinedByFieldType(ClassInfo parent,
+			int eaPkgId, Element parentEAElement) throws EAException {
+
+		if (!parent.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)) {
+			return;
+		}
+
+		// determine if one of the properties defines a subtype set
+		ClassInfo subtypeSetCi = null;
+		String arcgisDefaultSubtypeTV = null;
+
+		for (PropertyInfo pi : parent.propertiesAll()) {
+
+			arcgisDefaultSubtypeTV = pi.taggedValue("arcgisDefaultSubtype");
+			if (StringUtils.isNotBlank(arcgisDefaultSubtypeTV)) {
+				ClassInfo typeCi = parent.model()
+						.classByIdOrName(pi.typeInfo());
+				if (typeCi != null && (typeCi.category() == Options.ENUMERATION
+						|| typeCi.category() == Options.CODELIST)) {
+					subtypeSetCi = typeCi;
+					break;
+				}
+			}
+		}
+
+		if (subtypeSetCi == null) {
+			return;
+		}
+
+		// just check that the defaultSubtype is an integer
+		try {
+			Integer.parseInt(arcgisDefaultSubtypeTV.trim());
+		} catch (Exception e) {
+			MessageContext mc = result.addError(this, 256,
+					arcgisDefaultSubtypeTV.trim());
+			if (mc != null) {
+				mc.addDetail(this, -1, parent.fullNameInSchema());
+			}
+		}
+
+		SortedMap<String, Integer> subtypeCodeBySubtypeName = new TreeMap<>();
+
+		if (subtypeSetCi.properties().isEmpty()) {
+			result.addError(this, 257, subtypeSetCi.name());
+			return;
+		} else {
+
+			for (PropertyInfo pi : subtypeSetCi.properties().values()) {
+				String subtypeCodeTV = pi.taggedValue("arcgisSubtypeCode");
+				int subtypeCode = -1;
+				if (StringUtils.isBlank(subtypeCodeTV)) {
+					MessageContext mc = result.addError(this, 258, pi.name(),
+							subtypeSetCi.name());
+					if (mc != null) {
+						mc.addDetail(this, -2, pi.fullNameInSchema());
+					}
+					continue;
+				} else {
+					try {
+						subtypeCode = Integer.parseInt(subtypeCodeTV);
+					} catch (Exception e) {
+						MessageContext mc = result.addError(this, 259,
+								pi.name(), subtypeSetCi.name(), subtypeCodeTV);
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+						continue;
+					}
+				}
+
+				/*
+				 * Check for duplicate code. Duplicate subtype name should
+				 * already be identified while loading the model.
+				 */
+				if (subtypeCodeBySubtypeName.containsValue(subtypeCode)) {
+					MessageContext mc = result.addError(this, 260,
+							"" + subtypeCode, subtypeSetCi.name(), pi.name());
+					if (mc != null) {
+						mc.addDetail(this, -1, subtypeSetCi.fullNameInSchema());
+					}
+				} else {
+					subtypeCodeBySubtypeName.put(pi.name(), subtypeCode);
+				}
+			}
+		}
+
+		// create EA elements for the subtypes
+		for (Entry<String, Integer> stDef : subtypeCodeBySubtypeName
+				.entrySet()) {
+
+			String subtypeName = stDef.getKey();
+			int subtypeCode = stDef.getValue();
+
+			// create class element
+
+			/*
+			 * NOTE: no normalization or clipping of subtype name
+			 */
+
+			Element subtypeEAElement = EARepositoryUtil.createEAClass(rep,
+					subtypeName, eaPkgId);
+
+			// store mapping for subtype element id
+			int subtypeEAElementID = subtypeEAElement.GetElementID();
+			Map<String, Integer> subtypeElementIdBySubtypeName = null;
+			if (subtypeElementIdBySubtypeNameByParent.containsKey(parent)) {
+				subtypeElementIdBySubtypeName = subtypeElementIdBySubtypeNameByParent
+						.get(parent);
+			} else {
+				subtypeElementIdBySubtypeName = new TreeMap<>();
+				subtypeElementIdBySubtypeNameByParent.put(parent,
+						subtypeElementIdBySubtypeName);
+			}
+			subtypeElementIdBySubtypeName.put(subtypeName, subtypeEAElementID);
+
+			/*
+			 * set stereotype of subtype EA element to <<Subtype>> (with correct
+			 * MDG ID: ArcGIS::Subtype)
+			 */
+			EAElementUtil.setEAStereotypeEx(subtypeEAElement,
+					"ArcGIS::Subtype");
+
+			/*
+			 * create the SubtypeCode tagged value
+			 */
+			EAElementUtil.updateTaggedValue(subtypeEAElement, "SubtypeCode",
+					"" + subtypeCode, false);
+
+			/* Create the <<Subtype>> generalization relationship */
+			String c1Name = subtypeName;
+			String c2Name = elementNameByClassInfo.get(parent);
+
+			try {
+				Connector con = EARepositoryUtil.createEAGeneralization(rep,
+						subtypeEAElementID, c1Name,
+						elementIdByClassInfo.get(parent), c2Name);
+				EAConnectorUtil.setEAStereotypeEx(con, "ArcGIS::Subtype");
+			} catch (EAException e) {
+				result.addWarning(this, 10006, c1Name, c2Name, e.getMessage());
+			}
+		}
+
+		/*
+		 * determine if specific coded value domains are needed - if so, create
+		 * them
+		 */
+		for (PropertyInfo parentPi : parent.properties().values()) {
+
+			if (parentPi.categoryOfValue() == Options.CODELIST
+					|| parentPi.categoryOfValue() == Options.ENUMERATION) {
+
+				// get the codelist/enumeration
+				ClassInfo clOrEnum = parent.model()
+						.classByIdOrName(parentPi.typeInfo());
+
+				if (clOrEnum == null) {
+					MessageContext mc = result.addError(this, 261,
+							parent.name(), parentPi.name(),
+							parentPi.typeInfo().name);
+					if (mc != null) {
+						mc.addDetail(this, -2, parentPi.fullNameInSchema());
+					}
+					continue;
+				}
+
+				// identify which codes/enums specifically apply to which
+				// subtypes
+				SortedMap<String, SortedSet<PropertyInfo>> codesBySubtypeName = new TreeMap<>();
+
+				for (PropertyInfo codePi : clOrEnum.properties().values()) {
+
+					String arcgisUsedBySubtypes = codePi
+							.taggedValue("arcgisUsedBySubtypes");
+
+					if (StringUtils.isNotBlank(arcgisUsedBySubtypes)) {
+
+						String[] subtypesThatUseTheCode_escaped = arcgisUsedBySubtypes
+								.split(REGEX_TO_SPLIT_BY_COMMA_WITH_ESCAPING);
+
+						for (String s : subtypesThatUseTheCode_escaped) {
+							if (StringUtils.isNotBlank(s)) {
+								/*
+								 * Unescape ',' and '\'.
+								 */
+								String unescapedSubtypeName = s
+										.replace("\\,", ",")
+										.replace("\\\\", "\\");
+
+								SortedSet<PropertyInfo> codesOfSubtype = null;
+								if (codesBySubtypeName
+										.containsKey(unescapedSubtypeName)) {
+									codesOfSubtype = codesBySubtypeName
+											.get(unescapedSubtypeName);
+								} else {
+									codesOfSubtype = new TreeSet<PropertyInfo>();
+									codesBySubtypeName.put(unescapedSubtypeName,
+											codesOfSubtype);
+								}
+								codesOfSubtype.add(codePi);
+							}
+						}
+					}
+				}
+
+				/*
+				 * Create coded value domains as necessary
+				 */
+				for (Entry<String, SortedSet<PropertyInfo>> e : codesBySubtypeName
+						.entrySet()) {
+
+					String subtypeName = e.getKey();
+
+					Element eaElementOfSubtypeSpecificCodedValueDomain = createSubtypeSpecificCodedValueDomain(
+							subtypeName, clOrEnum, e.getValue());
+
+					String documentation = clOrEnum.derivedDocumentation(
+							documentationTemplate,
+							"<no description available>");
+
+					EAElementUtil.setTaggedValue(
+							eaElementOfSubtypeSpecificCodedValueDomain,
+							new EATaggedValue("Description",
+									subtypeName + ": " + documentation, true));
+
+					SortedMap<String, Integer> subtypeSpecificCodedValueDomainEAIDBySubtypeName = null;
+					if (subtypeCodedValueDomainEAIDByMultiKey
+							.containsKey(parent, parentPi)) {
+						subtypeSpecificCodedValueDomainEAIDBySubtypeName = (SortedMap<String, Integer>) subtypeCodedValueDomainEAIDByMultiKey
+								.get(parent, parentPi);
+					} else {
+						subtypeSpecificCodedValueDomainEAIDBySubtypeName = new TreeMap<>();
+						subtypeCodedValueDomainEAIDByMultiKey.put(parent,
+								parentPi,
+								subtypeSpecificCodedValueDomainEAIDBySubtypeName);
+					}
+
+					subtypeSpecificCodedValueDomainEAIDBySubtypeName.put(
+							subtypeName,
+							eaElementOfSubtypeSpecificCodedValueDomain
+									.GetElementID());
+				}
+			}
+		}
+
+		/*
+		 * NOTE: since some coded value domain may not be specifically created
+		 * for the subtype, but instead be encoded from a code list or
+		 * enumeration, and used by the subtype (e.g. with specific default
+		 * value), we cannot create the fields of subtypes here.
+		 */
+
 	}
 
 	private Attribute createSystemFieldShapeIDX(Element e) throws EAException {
@@ -1436,8 +1937,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			name = clipToMaxLength(name);
 		}
 
-		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId,
-				"ArcGIS::ObjectClass");
+		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, e.GetElementID());
@@ -1446,27 +1946,24 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
-		EAElementUtil.setEAStereotypeEx(e, "ObjectClass");
+		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::ObjectClass");
 
 		Attribute objectIdField = createSystemFieldOBJECTID(e);
 		objectIdAttributeGUIDByClass.put(ci, objectIdField.GetAttributeGUID());
 
 		createSystemFieldOBJECTIDIDX(e);
 
-		// now set tagged values for feature class
-		List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+		// now update tagged values for feature class
 
-		tvs.add(new EATaggedValue("CanVersion", "false"));
-		tvs.add(new EATaggedValue("DSID", ""));
-		tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-		tvs.add(new EATaggedValue("Metadata", "", true));
-		tvs.add(new EATaggedValue("ModelName", ""));
-		tvs.add(new EATaggedValue("OIDFieldName",
-				objectIdField.GetAttributeGUID()));
-		tvs.add(new EATaggedValue("RasterFieldName", ""));
-		tvs.add(new EATaggedValue("Versioned", "false"));
-
-		EAElementUtil.setTaggedValues(e, tvs);
+		EAElementUtil.updateTaggedValue(e, "CanVersion", "false", false);
+		EAElementUtil.updateTaggedValue(e, "DSID", "", false);
+		EAElementUtil.updateTaggedValue(e, "GlobalIDFieldName", "", false);
+		EAElementUtil.updateTaggedValue(e, "Metadata", "", true);
+		EAElementUtil.updateTaggedValue(e, "ModelName", "", false);
+		EAElementUtil.updateTaggedValue(e, "OIDFieldName",
+				objectIdField.GetAttributeGUID(), false);
+		EAElementUtil.updateTaggedValue(e, "RasterFieldName", "", false);
+		EAElementUtil.updateTaggedValue(e, "Versioned", "false", false);
 
 		// properties cannot be processed now, because we do not necessarily
 		// have EA Elements for all classes in the model yet; thus the type of a
@@ -1477,6 +1974,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// keep track of generalizations
 		identifyGeneralisationRelationships(ci);
 
+		handleArcGISSubtypesDefinedByFieldType(ci, eaPkgId, e);
 	}
 
 	private void checkRequirements(ClassInfo ci) {
@@ -1525,6 +2023,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	private void identifyGeneralisationRelationships(ClassInfo ci) {
+
+		/*
+		 * The target currently only supports one generalization relationship
+		 * per subtype (the key of the generalisations map is the subtype).
+		 * Thus, if we encounter a class that has more than one supertype, this
+		 * is an error (since the result would be unexpected).
+		 */
+		if (ci.supertypes().size() > 1) {
+			MessageContext mc = result.addError(this, 268, ci.name());
+			if (mc != null) {
+				mc.addDetail(this, -1, ci.fullNameInSchema());
+			}
+		}
 
 		for (String tid : ci.supertypes()) {
 
@@ -1680,12 +2191,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return geometryTypeCache.get(ci);
 		}
 
-		Map<String, PropertyInfo> allPis = getAllPisForClassInfo(ci);
+		SortedSet<PropertyInfo> allPis = ci.propertiesAll();
 
 		ArcGISGeometryType result = ArcGISGeometryType.NONE;
 
-		// loop through properties - in order determined by sequence numbers
-		for (PropertyInfo pi : allPis.values()) {
+		// loop through properties
+		for (PropertyInfo pi : allPis) {
 
 			Type t = pi.typeInfo();
 
@@ -1721,16 +2232,18 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	private boolean hasMultipleGeometryProperties(ClassInfo ci) {
 
-		/*
-		 * determine full set of properties relevant for this class, so also
-		 * from all supertypes (ignoring those properties that are specialized
-		 * in subtypes)
-		 */
-		Map<String, PropertyInfo> allPis = getAllPisForClassInfo(ci);
+		// /*
+		// * determine full set of properties relevant for this class, so also
+		// * from all supertypes (ignoring those properties that are specialized
+		// * in subtypes)
+		// */
+		// Map<String, PropertyInfo> allPis = getAllPisForClassInfo(ci);
+
+		SortedSet<PropertyInfo> allPis = ci.propertiesAll();
 
 		boolean geomPropFound = false;
 
-		for (PropertyInfo pi : allPis.values()) {
+		for (PropertyInfo pi : allPis) {
 
 			Type t = pi.typeInfo();
 
@@ -1750,63 +2263,6 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		return false;
-	}
-
-	private Map<String, PropertyInfo> getAllPisForClassInfo(ClassInfo ci) {
-
-		// set to keep track of supertypes that have already been visited, in
-		// case that there is a shared supertype in the supertype hierarchy
-		SortedSet<String> idsOfVisitedSupertypes = new TreeSet<String>();
-
-		Map<String, PropertyInfo> pis = computeAllPis(ci,
-				idsOfVisitedSupertypes);
-
-		return pis;
-	}
-
-	private Map<String, PropertyInfo> computeAllPis(ClassInfo ci,
-			Set<String> idsOfVisitedSupertypes) {
-
-		SortedMap<String, PropertyInfo> result = new TreeMap<String, PropertyInfo>();
-
-		// first look up properties in all supertypes
-		if (ci.supertypes() != null) {
-
-			for (String supertypeId : ci.supertypes()) {
-
-				if (idsOfVisitedSupertypes.contains(supertypeId)) {
-					continue;
-				} else {
-					idsOfVisitedSupertypes.add(supertypeId);
-				}
-
-				ClassInfo supertype = model.classById(supertypeId);
-
-				if (supertype != null) {
-
-					// look up properties from supertype
-					Map<String, PropertyInfo> supertypePis = computeAllPis(
-							supertype, idsOfVisitedSupertypes);
-
-					for (PropertyInfo supertypePi : supertypePis.values()) {
-						result.put(supertypePi.name(), supertypePi);
-					}
-				}
-			}
-
-		}
-
-		// now add properties of the given class, overriding those from
-		// supertypes
-		if (ci.properties() != null) {
-
-			for (PropertyInfo pi : ci.properties().values()) {
-				// overrides property if one with same name already existed
-				result.put(pi.name(), pi);
-			}
-		}
-
-		return result;
 	}
 
 	@Override
@@ -2048,39 +2504,52 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAElementUtil.setEAStereotypeEx(assocClass,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
-					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
-
-					tvs.add(new EATaggedValue("CanVersion", "false"));
-					tvs.add(new EATaggedValue("CatalogPath", ""));
-					tvs.add(new EATaggedValue("ClassKey",
-							"esriRelClassKeyUndefined"));
-					tvs.add(new EATaggedValue("DSID", "-1"));
-					tvs.add(new EATaggedValue("DatasetType",
-							"esriDTRelationshipClass"));
-					tvs.add(new EATaggedValue("DestinationForeignKey",
-							foreignKeyFieldTgt.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("DestinationPrimaryKey",
-							determinePrimaryKeyGUID(target_)));
-					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-					tvs.add(new EATaggedValue("IsAttachmentRelationship",
-							"false"));
-					tvs.add(new EATaggedValue("IsComposite", "false"));
-					tvs.add(new EATaggedValue("IsReflexive", "false"));
-					tvs.add(new EATaggedValue("KeyType",
-							"esriRelKeyTypeSingle"));
-					tvs.add(new EATaggedValue("Metadata", "", true));
-					tvs.add(new EATaggedValue("MetadataRetrieved", "false"));
-					tvs.add(new EATaggedValue("ModelName", ""));
-					tvs.add(new EATaggedValue("Notification",
-							"useUMLConnectorDirection"));
-					tvs.add(new EATaggedValue("OIDFieldName",
-							ridField.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("OriginForeignKey",
-							foreignKeyFieldSrc.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							determinePrimaryKeyGUID(source_)));
-					tvs.add(new EATaggedValue("RasterFieldName", ""));
-					tvs.add(new EATaggedValue("Versioned", "false"));
+					EAElementUtil.updateTaggedValue(assocClass, "CanVersion",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "CatalogPath",
+							"", false);
+					EAElementUtil.updateTaggedValue(assocClass, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAElementUtil.updateTaggedValue(assocClass, "DSID", "-1",
+							false);
+					EAElementUtil.updateTaggedValue(assocClass, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"DestinationForeignKey",
+							foreignKeyFieldTgt.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"DestinationPrimaryKey",
+							determinePrimaryKeyGUID(target_), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"GlobalIDFieldName", "", false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"IsAttachmentRelationship", "false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "IsComposite",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "IsReflexive",
+							"false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAElementUtil.updateTaggedValue(assocClass, "Metadata", "",
+							true);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"MetadataRetrieved", "false", false);
+					EAElementUtil.updateTaggedValue(assocClass, "ModelName", "",
+							false);
+					EAElementUtil.updateTaggedValue(assocClass, "Notification",
+							"useUMLConnectorDirection", false);
+					EAElementUtil.updateTaggedValue(assocClass, "OIDFieldName",
+							ridField.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"OriginForeignKey",
+							foreignKeyFieldSrc.GetAttributeGUID(), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAElementUtil.updateTaggedValue(assocClass,
+							"RasterFieldName", "", false);
+					EAElementUtil.updateTaggedValue(assocClass, "Versioned",
+							"false", false);
 
 					/*
 					 * create <<RelationshipClass>> association
@@ -2095,7 +2564,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					 * reuse the name here
 					 */
 					EAConnectorUtil.setEAName(con, assocClassName);
-					EAConnectorUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAStereotypeEx(con,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2146,11 +2615,53 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
 					/*
-					 * set tagged values on association - they are the same as
-					 * for the association class
+					 * update tagged values on association - they are the same
+					 * as for the association class
 					 */
 
-					EAConnectorUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.updateTaggedValue(con, "CanVersion",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "CatalogPath", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAConnectorUtil.updateTaggedValue(con, "DSID", "-1", false);
+					EAConnectorUtil.updateTaggedValue(con, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationForeignKey",
+							foreignKeyFieldTgt.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationPrimaryKey",
+							determinePrimaryKeyGUID(target_), false);
+					EAConnectorUtil.updateTaggedValue(con, "GlobalIDFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"IsAttachmentRelationship", "false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsComposite",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsReflexive",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAConnectorUtil.updateTaggedValue(con, "Metadata", "",
+							true);
+					EAConnectorUtil.updateTaggedValue(con, "MetadataRetrieved",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "ModelName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "Notification",
+							"useUMLConnectorDirection", false);
+					EAConnectorUtil.updateTaggedValue(con, "OIDFieldName",
+							ridField.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginForeignKey",
+							foreignKeyFieldSrc.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAConnectorUtil.updateTaggedValue(con, "RasterFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "Versioned", "false",
+							false);
 
 					EAConnectorUtil.setEAAssociationClass(con, assocClass);
 
@@ -2401,7 +2912,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					}
 
 					EAConnectorUtil.setEAName(con, relClassName);
-					EAConnectorUtil.setEAStereotype(con,
+					EAConnectorUtil.setEAStereotypeEx(con,
 							ArcGISWorkspaceConstants.STEREOTYPE_RELATIONSHIP_CLASS);
 
 					ConnectorEnd clientEnd = con.GetClientEnd();
@@ -2448,39 +2959,49 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					EAConnectorEndUtil.setEACardinality(clientEnd, "1");
 					EAConnectorEndUtil.setEACardinality(supplierEnd, "0..*");
 
-					// set tagged values on association
-					List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
+					// update tagged values on association
 
-					tvs.add(new EATaggedValue("KeyType",
-							"esriRelKeyTypeSingle"));
-					tvs.add(new EATaggedValue("ClassKey",
-							"esriRelClassKeyUndefined"));
-					tvs.add(new EATaggedValue("OriginPrimaryKey",
-							determinePrimaryKeyGUID(source_)));
-					tvs.add(new EATaggedValue("OriginForeignKey",
-							foreignKeyField.GetAttributeGUID()));
-					tvs.add(new EATaggedValue("DestinationPrimaryKey", ""));
-					tvs.add(new EATaggedValue("DestinationForeignKey", ""));
-					tvs.add(new EATaggedValue("IsComposite", "false"));
-					tvs.add(new EATaggedValue("IsReflexive", "false"));
-					tvs.add(new EATaggedValue("DatasetType",
-							"esriDTRelationshipClass"));
-					tvs.add(new EATaggedValue("OIDFieldName", ""));
-					tvs.add(new EATaggedValue("DSID", "-1"));
-					tvs.add(new EATaggedValue("ModelName", ""));
-					tvs.add(new EATaggedValue("GlobalIDFieldName", ""));
-					tvs.add(new EATaggedValue("CatalogPath", ""));
-					tvs.add(new EATaggedValue("RasterFieldName", ""));
-					tvs.add(new EATaggedValue("Versioned", "false"));
-					tvs.add(new EATaggedValue("CanVersion", "false"));
-					tvs.add(new EATaggedValue("MetadataRetrieved", "false"));
-					tvs.add(new EATaggedValue("Metadata", "", true));
-					tvs.add(new EATaggedValue("Notification",
-							"useUMLConnectorDirection"));
-					tvs.add(new EATaggedValue("IsAttachmentRelationship",
-							"false"));
-
-					EAConnectorUtil.setTaggedValues(con, tvs);
+					EAConnectorUtil.updateTaggedValue(con, "KeyType",
+							"esriRelKeyTypeSingle", false);
+					EAConnectorUtil.updateTaggedValue(con, "ClassKey",
+							"esriRelClassKeyUndefined", false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginPrimaryKey",
+							determinePrimaryKeyGUID(source_), false);
+					EAConnectorUtil.updateTaggedValue(con, "OriginForeignKey",
+							foreignKeyField.GetAttributeGUID(), false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationPrimaryKey", "", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"DestinationForeignKey", "", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsComposite",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "IsReflexive",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "DatasetType",
+							"esriDTRelationshipClass", false);
+					EAConnectorUtil.updateTaggedValue(con, "OIDFieldName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "DSID", "-1", false);
+					EAConnectorUtil.updateTaggedValue(con, "ModelName", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "GlobalIDFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "CatalogPath", "",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "RasterFieldName",
+							"", false);
+					EAConnectorUtil.updateTaggedValue(con, "Versioned", "false",
+							false);
+					EAConnectorUtil.updateTaggedValue(con, "CanVersion",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "MetadataRetrieved",
+							"false", false);
+					EAConnectorUtil.updateTaggedValue(con, "Metadata", "",
+							true);
+					EAConnectorUtil.updateTaggedValue(con, "Notification",
+							"useUMLConnectorDirection", false);
+					EAConnectorUtil.updateTaggedValue(con,
+							"IsAttachmentRelationship", "false", false);
 
 				} catch (EAException e) {
 
@@ -2559,6 +3080,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 	}
 
+	/**
+	 * Computes the list of the (direct and indirect) non abstract subtypes of
+	 * the given class. NOTE: Ignores explicitly modelled subtypes if
+	 * {@value ArcGISWorkspaceConstants#RULE_ALL_SUBTYPES} is enabled.
+	 * 
+	 * @param ci
+	 * @return
+	 */
 	private SortedSet<ClassInfo> computeListOfAllNonAbstractSubtypes(
 			ClassInfo ci) {
 
@@ -2574,6 +3103,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					result.addWarning(this, 219, subtypeId, ci.name());
 					continue;
+				}
+
+				if (isExplicitlyModeledArcGISSubtype(subtype)) {
+					// ignore explicitly modelled ArcGIS subtype
 				}
 
 				if (model.isInSelectedSchemas(subtype)) {
@@ -2713,7 +3246,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 					try {
 						Integer value = Integer.parseInt(tv.trim());
-						if (value > 0) {
+						if (value >= 0) {
 							return value;
 						}
 					} catch (NumberFormatException e) {
@@ -2759,7 +3292,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 				try {
 					Integer value = Integer.parseInt(tv.trim());
-					if (value > 0) {
+					if (value >= 0) {
 						return value;
 					}
 				} catch (NumberFormatException e) {
@@ -2808,6 +3341,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			String tvPrecision, String tvScale, Integer eaClassifierId,
 			String initialValue, boolean isNullable) throws EAException {
 
+		return createField(e, name, alias, documentation, eaType, tvLength,
+				tvPrecision, tvScale, eaClassifierId, initialValue, isNullable,
+				"Field");
+	}
+
+	private Attribute createField(Element e, String name, String alias,
+			String documentation, String eaType, String tvLength,
+			String tvPrecision, String tvScale, Integer eaClassifierId,
+			String initialValue, boolean isNullable, String stereotype)
+			throws EAException {
+
 		List<EATaggedValue> tvs = new ArrayList<EATaggedValue>();
 
 		tvs.add(new EATaggedValue("DomainFixed", "false"));
@@ -2822,7 +3366,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		tvs.add(new EATaggedValue("Scale", tvScale));
 
 		SortedSet<String> stereotypes = new TreeSet<String>();
-		stereotypes.add("Field");
+		stereotypes.add(stereotype);
+
+		if (eaClassifierId != null) {
+			/*
+			 * Remove eaClassifierId in elementIdOfCodedValueDomain - so that at
+			 * the end of processing, the set elementIdOfCodedValueDomain only
+			 * contains IDs of the coded value domains that are not used in the
+			 * model.
+			 */
+			elementIdsOfUnusedCodedValueDomain.remove(eaClassifierId);
+		}
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
 				stereotypes, tvs, false, false, false, initialValue,
@@ -2834,6 +3388,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		return "ArcGIS Workspace";
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void reset() {
 
 		initialised = false;
@@ -2853,9 +3408,13 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		geometryTypeCache = new TreeMap<ClassInfo, ArcGISGeometryType>();
 		elementIdByClassInfo = new TreeMap<ClassInfo, Integer>();
 		elementNameByClassInfo = new TreeMap<ClassInfo, String>();
+		elementIdsOfUnusedCodedValueDomain = new TreeSet<>();
 		objectIdAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		identifierAttributeGUIDByClass = new TreeMap<ClassInfo, String>();
 		generalisations = new TreeMap<ClassInfo, ClassInfo>();
+		arcgisSubtypes = new HashSet<ClassInfo>();
+		subtypeElementIdBySubtypeNameByParent = new TreeMap<>();
+		subtypeCodedValueDomainEAIDByMultiKey = new MultiKeyMap();
 		associations = new TreeSet<AssociationInfo>();
 		counterByRelationshipClassName = new TreeMap<String, Integer>();
 		counterByPropertyNameByClass = new TreeMap<ClassInfo, SortedMap<String, Integer>>();
@@ -2906,10 +3465,19 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				String c1Name = elementNameByClassInfo.get(ci1);
 				String c2Name = elementNameByClassInfo.get(ci2);
 
+				String generalizationStereotype = "";
+				if (arcgisSubtypes.contains(ci1)) {
+					generalizationStereotype = "ArcGIS::Subtype";
+				}
+
 				try {
-					EARepositoryUtil.createEAGeneralization(rep,
+					Connector con = EARepositoryUtil.createEAGeneralization(rep,
 							elementIdByClassInfo.get(ci1), c1Name,
 							elementIdByClassInfo.get(ci2), c2Name);
+					if (StringUtils.isNotBlank(generalizationStereotype)) {
+						EAConnectorUtil.setEAStereotypeEx(con,
+								generalizationStereotype);
+					}
 				} catch (EAException e) {
 					result.addWarning(this, 10002, c1Name, c2Name,
 							e.getMessage());
@@ -2938,6 +3506,39 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			Element eaClass = rep.GetElementByID(eaElementId);
 
 			for (PropertyInfo pi : ci.properties().values()) {
+
+				/*
+				 * Check properties on an explicitly modelled ArcGIS subtype.
+				 */
+				if (isExplicitlyModeledArcGISSubtype(ci)) {
+
+					ClassInfo supertype = ci.baseClass();
+
+					/*
+					 * Ignore geometry properties.
+					 */
+					Type t = pi.typeInfo();
+					if (t.name.startsWith("GM_")) {
+						MessageContext mc = result.addWarning(this, 266,
+								ci.name(), supertype.name(), pi.name(), t.name);
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+						continue;
+					}
+
+					/*
+					 * Ignore properties that the supertype does not define.
+					 */
+					if (supertype.property(pi.name()) == null) {
+						MessageContext mc = result.addWarning(this, 265,
+								ci.name(), supertype.name(), pi.name());
+						if (mc != null) {
+							mc.addDetail(this, -2, pi.fullNameInSchema());
+						}
+						continue;
+					}
+				}
 
 				Attribute eaAtt = null;
 
@@ -2999,7 +3600,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					continue;
 				}
 
-				ClassInfo typeCi = model.classById(typeInfo.id);
+				ClassInfo typeCi = model.classByIdOrName(typeInfo);
 
 				String normalizedPiName = normalizeName(pi.name());
 
@@ -3035,113 +3636,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 							.contains(pme.getTargetType())
 							&& numericRangeConstraintByPropNameByClassName
 									.containsKey(ci)) {
-
-						/*
-						 * determine if pi has a name or alias that starts with
-						 * a property name in the range constraint map for ci.
-						 * We must check via a 'startsWith' instead of equals
-						 * because flattening can change the name of a property;
-						 * a prominent example is where a numeric property can
-						 * have a single or interval value (then you'd have
-						 * three properties instead of one after flattening).
-						 * Name flattening may have switched the name of a model
-						 * element with its alias, so we have to check both
-						 * fields.
-						 */
-						Set<String> originalPropertyNames = numericRangeConstraintByPropNameByClassName
-								.get(ci).keySet();
-
-						for (String origPropName : originalPropertyNames) {
-
-							if (pi.name().startsWith(origPropName)
-									|| (pi.aliasName() != null && pi.aliasName()
-											.startsWith(origPropName))) {
-
-								// apply range constraint!
-
-								// check if a range domain already exists - if
-								// so, reuse it
-								String rangeDomainName = ci.name() + "_"
-										+ origPropName + "_NumRange";
-
-								if (numericRangeElementIdsByClassName
-										.containsKey(rangeDomainName)) {
-
-									int numRangeElementId = numericRangeElementIdsByClassName
-											.get(rangeDomainName);
-									numericRange = rep
-											.GetElementByID(numRangeElementId);
-
-								} else {
-
-									// create range domain element
-
-									NumericRangeConstraintMetadata nrcm = numericRangeConstraintByPropNameByClassName
-											.get(ci).get(origPropName);
-
-									double minValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-									double maxValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
-
-									if (nrcm.hasLowerBoundaryValue()) {
-										if (nrcm.isLowerBoundaryInclusive()) {
-											minValue = nrcm
-													.getLowerBoundaryValue();
-										} else {
-											minValue = nrcm
-													.getLowerBoundaryValue()
-													+ numRangeDelta;
-										}
-									}
-
-									if (nrcm.hasUpperBoundaryValue()) {
-										if (nrcm.isUpperBoundaryInclusive()) {
-											maxValue = nrcm
-													.getUpperBoundaryValue();
-										} else {
-											maxValue = nrcm
-													.getUpperBoundaryValue()
-													- numRangeDelta;
-										}
-									}
-
-									try {
-
-										// TODO parse documentation from range
-										// constraint
-										Element rd = this.createRangeDomain(
-												rangeDomainName, null,
-												pme.getTargetType(), ci);
-
-										// create min and max fields
-										EAElementUtil.createEAAttribute(rd,
-												"MinValue", null, null, null,
-												null, false, false, false,
-												doubleToString(minValue),
-												new Multiplicity(1, 1), null,
-												null);
-										EAElementUtil.createEAAttribute(rd,
-												"MaxValue", null, null, null,
-												null, false, false, false,
-												doubleToString(maxValue),
-												new Multiplicity(1, 1), null,
-												null);
-
-										numericRange = rd;
-
-									} catch (EAException e) {
-
-										// log an error, but proceed
-										result.addError(this, 230,
-												rangeDomainName,
-												e.getMessage());
-										numericRange = null;
-									}
-
-								}
-
-								break;
-							}
-						}
+						numericRange = determineNumericRange(ci, pi, pme);
 					}
 
 					if (numericRange != null) {
@@ -3204,17 +3699,132 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 						try {
 
-							eaAtt = createField(eaClass, normalizedPiName,
-									normalizedPiAlias,
-									pi.derivedDocumentation(
-											documentationTemplate,
-											documentationNoValue),
-									eaTargetType,
-									"" + computeLength(pi, mappedTypeName),
-									"" + computePrecision(pi, mappedTypeName),
-									"" + computeScale(pi, mappedTypeName),
-									eaTargetClassifierId, initialValue,
-									computeIsNullable(pi));
+							if (pi.matches(
+									ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)
+									&& StringUtils.isNotBlank(pi.taggedValue(
+											"arcgisDefaultSubtype"))) {
+
+								if (!pi.typeInfo().name
+										.equalsIgnoreCase("Integer")) {
+									MessageContext mc = result.addWarning(this,
+											267, ci.name(), pi.name(),
+											pi.typeInfo().name);
+									if (mc != null) {
+										mc.addDetail(this, -2,
+												pi.fullNameInSchema());
+									}
+								}
+
+								eaAtt = createField(eaClass, normalizedPiName,
+										normalizedPiAlias,
+										pi.derivedDocumentation(
+												documentationTemplate,
+												documentationNoValue),
+										"esriFieldTypeInteger", "0", "9", "0",
+										null,
+										pi.taggedValue("arcgisDefaultSubtype")
+												.trim(),
+										computeIsNullable(pi),
+										"ArcGIS::SubtypeField");
+
+							} else {
+
+								String derivedDocumentation = pi
+										.derivedDocumentation(
+												documentationTemplate,
+												documentationNoValue);
+								String length = ""
+										+ computeLength(pi, mappedTypeName);
+								String precision = ""
+										+ computePrecision(pi, mappedTypeName);
+								String scale = ""
+										+ computeScale(pi, mappedTypeName);
+								boolean isNullable = computeIsNullable(pi);
+
+								eaAtt = createField(eaClass, normalizedPiName,
+										normalizedPiAlias, derivedDocumentation,
+										eaTargetType, length, precision, scale,
+										eaTargetClassifierId, initialValue,
+										isNullable);
+
+								/*
+								 * Create fields in ArcGIS subtypes if
+								 * necessary. That is only the case here if the
+								 * class is the parent of ArcGIS subtypes
+								 * modelled via a property with a codelist or
+								 * enumeration that defines a set of subtypes
+								 * AND tagged value 'arcgisSubtypeInitialValue'
+								 * of the current property is not empty. In that
+								 * case, subtype specific initial values are
+								 * used.
+								 */
+								String arcgisSubtypeInitialValues = pi
+										.taggedValue(
+												"arcgisSubtypeInitialValues");
+								if (subtypeElementIdBySubtypeNameByParent
+										.containsKey(ci)
+										&& StringUtils.isNotBlank(
+												arcgisSubtypeInitialValues)) {
+
+									Map<String, Integer> subtypeEAIDBySubtypeName = subtypeElementIdBySubtypeNameByParent
+											.get(ci);
+
+									Map<String, String> initialValueBySubtypeName = parseArcGISSubtypeInitialValues(
+											arcgisSubtypeInitialValues, pi);
+
+									if (!initialValueBySubtypeName.isEmpty()) {
+
+										for (String subtypeName : initialValueBySubtypeName
+												.keySet()) {
+
+											if (!subtypeEAIDBySubtypeName
+													.containsKey(subtypeName)) {
+
+												MessageContext mc = result
+														.addError(this, 264,
+																pi.name(),
+																subtypeName,
+																ci.name());
+												if (mc != null) {
+													mc.addDetail(this, -2, pi
+															.fullNameInSchema());
+												}
+												continue;
+											}
+
+											int subtypeEAElementID = subtypeEAIDBySubtypeName
+													.get(subtypeName);
+											Element subtypeEAElement = rep
+													.GetElementByID(
+															subtypeEAElementID);
+
+											String subtypeInitialValue = initialValueBySubtypeName
+													.get(subtypeName);
+
+											Attribute subtypeEAAtt = createField(
+													subtypeEAElement,
+													normalizedPiName,
+													normalizedPiAlias,
+													derivedDocumentation,
+													eaTargetType, length,
+													precision, scale,
+													eaTargetClassifierId,
+													subtypeInitialValue,
+													isNullable);
+
+											try {
+												addTaggedValuesToRepresent(
+														subtypeEAAtt, pi);
+											} catch (EAException e) {
+												result.addError(this, 251,
+														pi.name(),
+														e.getMessage());
+											}
+
+										}
+									}
+								}
+							}
 
 							if (ci.matches(
 									ArcGISWorkspaceConstants.RULE_CLS_IDENTIFIER_STEREOTYPE)
@@ -3259,70 +3869,210 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				} else if (pi.categoryOfValue() == Options.ENUMERATION
 						|| pi.categoryOfValue() == Options.CODELIST) {
 
-					String eaType;
-					Integer eaClassifierId = null;
+					if (pi.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)
+							&& StringUtils.isNotBlank(
+									pi.taggedValue("arcgisDefaultSubtype"))) {
 
-					if (typeCi == null
-							|| !elementIdByClassInfo.containsKey(typeCi)) {
-						result.addWarning(this, 216, typeInfo.name, pi.name(),
-								ci.name());
-						eaType = clipToMaxLength(typeInfo.name);
-					} else {
-						int eaTypeElementId = elementIdByClassInfo.get(typeCi);
-						Element eaTypeClass = rep
-								.GetElementByID(eaTypeElementId);
-						eaType = eaTypeClass.GetName();
-						eaClassifierId = eaTypeClass.GetElementID();
-					}
+						// this is the property that defines the subtype set
 
-					try {
-
-						int length = computeLengthForCodelistOrEnumerationValueType(
-								pi);
-						Integer precision = computePrecision(pi,
-								pi.typeInfo().name);
-						Integer scale = computeScale(pi, pi.typeInfo().name);
-
-						if (typeCi != null && isNumericallyValued(typeCi)) {
-
-							/*
-							 * NOTE: We don't check here that a mapping exists
-							 * for the numeric conceptual type specified by the
-							 * numeric type tagged value of typeCi. If it cannot
-							 * be mapped then an error will be logged when
-							 * constructing the coded value domain for typeCi.
-							 * Another check here should therefore not be
-							 * necessary.
-							 */
-
-							if (precision <= 0 && scale <= 0) {
-								/*
-								 * Precision and scale on property override the
-								 * same settings on a numerically valued code
-								 * list / enumeration. Only if precision and
-								 * scale are not set (<= 0), try to get a useful
-								 * value from the code list / enumeration
-								 * itself.
-								 */
-								precision = computePrecision(typeCi,
-										typeCi.name());
-								scale = computeScale(typeCi, typeCi.name());
-							}
-
-							length = 0;
+						try {
+							eaAtt = createField(eaClass, normalizedPiName,
+									normalizedPiAlias,
+									pi.derivedDocumentation(
+											documentationTemplate,
+											documentationNoValue),
+									"esriFieldTypeInteger", "0", "9", "0", null,
+									pi.taggedValue("arcgisDefaultSubtype")
+											.trim(),
+									computeIsNullable(pi),
+									"ArcGIS::SubtypeField");
+						} catch (EAException e) {
+							result.addError(this, 10003, pi.name(), ci.name(),
+									e.getMessage());
 						}
 
-						eaAtt = createField(eaClass, normalizedPiName,
-								normalizedPiAlias,
-								pi.derivedDocumentation(documentationTemplate,
-										documentationNoValue),
-								eaType, "" + length, "" + precision, "" + scale,
-								eaClassifierId, initialValue,
-								computeIsNullable(pi));
+					} else {
 
-					} catch (EAException e) {
-						result.addError(this, 10003, pi.name(), ci.name(),
-								e.getMessage());
+						String eaType;
+						Integer eaClassifierId = null;
+
+						if (typeCi == null
+								|| !elementIdByClassInfo.containsKey(typeCi)) {
+							result.addWarning(this, 216, typeInfo.name,
+									pi.name(), ci.name());
+							eaType = clipToMaxLength(typeInfo.name);
+						} else {
+							int eaTypeElementId = elementIdByClassInfo
+									.get(typeCi);
+							Element eaTypeClass = rep
+									.GetElementByID(eaTypeElementId);
+							eaType = eaTypeClass.GetName();
+							eaClassifierId = eaTypeClass.GetElementID();
+						}
+
+						try {
+
+							int length = computeLengthForCodelistOrEnumerationValueType(
+									pi);
+							Integer precision = computePrecision(pi,
+									pi.typeInfo().name);
+							Integer scale = computeScale(pi,
+									pi.typeInfo().name);
+
+							if (typeCi != null && isNumericallyValued(typeCi)) {
+
+								/*
+								 * NOTE: We don't check here that a mapping
+								 * exists for the numeric conceptual type
+								 * specified by the numeric type tagged value of
+								 * typeCi. If it cannot be mapped then an error
+								 * will be logged when constructing the coded
+								 * value domain for typeCi. Another check here
+								 * should therefore not be necessary.
+								 */
+
+								if (precision <= 0 && scale <= 0) {
+									/*
+									 * Precision and scale on property override
+									 * the same settings on a numerically valued
+									 * code list / enumeration. Only if
+									 * precision and scale are not set (<= 0),
+									 * try to get a useful value from the code
+									 * list / enumeration itself.
+									 */
+									precision = computePrecision(typeCi,
+											typeCi.name());
+									scale = computeScale(typeCi, typeCi.name());
+								}
+
+								length = 0;
+							}
+
+							/*
+							 * Create fields in ArcGIS subtypes if necessary.
+							 * That is the case if ci is the parent of ArcGIS
+							 * subtypes modelled via a property with a codelist
+							 * or enumeration that defines a set of subtypes AND
+							 * a subtype specific coded value domain shall be
+							 * used as type. Tagged value
+							 * 'arcgisSubtypeInitialValue' of the current
+							 * property may also play a role, regarding the
+							 * initial value, if not empty.
+							 * 
+							 * If one of the two situations applies for this
+							 * property, then subtype specific fields need to be
+							 * created - and the type of the field in the parent
+							 * class (that represents pi) shall be the esri
+							 * field type of the coded value domain.
+							 */
+
+							String eaTypeForNonSubtypeField = eaType;
+							Integer eaClassifierIdForNonSubtypeField = eaClassifierId;
+							boolean isNullable = computeIsNullable(pi);
+							String derivedDocumentation = pi
+									.derivedDocumentation(documentationTemplate,
+											documentationNoValue);
+
+							// first, check if there's any subtype at all
+							if (subtypeElementIdBySubtypeNameByParent
+									.containsKey(ci)) {
+
+								String arcgisSubtypeInitialValues = pi
+										.taggedValue(
+												"arcgisSubtypeInitialValues");
+
+								@SuppressWarnings("unchecked")
+								SortedMap<String, Integer> subtypeSpecificCodedValueDomainEAIDBySubtypeName = (SortedMap<String, Integer>) subtypeCodedValueDomainEAIDByMultiKey
+										.get(ci, pi);
+
+								if (StringUtils
+										.isNotBlank(arcgisSubtypeInitialValues)
+										|| (subtypeSpecificCodedValueDomainEAIDBySubtypeName != null
+												&& !subtypeSpecificCodedValueDomainEAIDBySubtypeName
+														.isEmpty())) {
+
+									/*
+									 * Alright, so we have subtype specific
+									 * codelist/enumeration use.
+									 * 
+									 * Modify the ea type and classifier of the
+									 * non subtype field.
+									 */
+									eaTypeForNonSubtypeField = determineFieldTypeForCodedValueDomain(
+											typeCi);
+									eaClassifierIdForNonSubtypeField = null;
+
+									Map<String, String> initialValueBySubtypeName = parseArcGISSubtypeInitialValues(
+											arcgisSubtypeInitialValues, pi);
+
+									Map<String, Integer> subtypeEAIDBySubtypeName = subtypeElementIdBySubtypeNameByParent
+											.get(ci);
+
+									// walk through all established subtypes
+									for (Entry<String, Integer> stEntry : subtypeEAIDBySubtypeName
+											.entrySet()) {
+
+										String subtypeName = stEntry.getKey();
+										int subtypeEAElementID = stEntry
+												.getValue();
+										Element subtypeEAElement = rep
+												.GetElementByID(
+														subtypeEAElementID);
+
+										String subtypeInitialValue = initialValueBySubtypeName
+												.get(subtypeName);
+
+										String eaTypeForSubtypeField = eaType;
+										Integer eaClassifierIdForSubtypeField = eaClassifierId;
+
+										if (subtypeSpecificCodedValueDomainEAIDBySubtypeName != null
+												&& subtypeSpecificCodedValueDomainEAIDBySubtypeName
+														.containsKey(
+																subtypeName)) {
+											int subtypeSpecificCodedValueDomainEAID = subtypeSpecificCodedValueDomainEAIDBySubtypeName
+													.get(subtypeName);
+											Element subtypeSpecificCodedValueDomain = rep
+													.GetElementByID(
+															subtypeSpecificCodedValueDomainEAID);
+											eaTypeForSubtypeField = subtypeSpecificCodedValueDomain
+													.GetName();
+											eaClassifierIdForSubtypeField = subtypeSpecificCodedValueDomainEAID;
+										}
+
+										Attribute subtypeEAAtt = createField(
+												subtypeEAElement,
+												normalizedPiName,
+												normalizedPiAlias,
+												derivedDocumentation,
+												eaTypeForSubtypeField,
+												"" + length, "" + precision,
+												"" + scale,
+												eaClassifierIdForSubtypeField,
+												subtypeInitialValue,
+												isNullable);
+
+										try {
+											addTaggedValuesToRepresent(
+													subtypeEAAtt, pi);
+										} catch (EAException e) {
+											result.addError(this, 251,
+													pi.name(), e.getMessage());
+										}
+									}
+								}
+							}
+
+							eaAtt = createField(eaClass, normalizedPiName,
+									normalizedPiAlias, derivedDocumentation,
+									eaTypeForNonSubtypeField, "" + length,
+									"" + precision, "" + scale,
+									eaClassifierIdForNonSubtypeField,
+									initialValue, isNullable);
+
+						} catch (EAException e) {
+							result.addError(this, 10003, pi.name(), ci.name(),
+									e.getMessage());
+						}
 					}
 
 				} else if (pi.categoryOfValue() == Options.UNION) {
@@ -3477,7 +4227,481 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 		}
 
+		postprocess();
+
 		EARepositoryUtil.closeRepository(rep);
+	}
+
+	private void postprocess() {
+
+		result.addInfo(this, 30000);
+
+		if (!elementIdByClassInfo.isEmpty()
+				&& elementIdByClassInfo.keySet().iterator().next().matches(
+						ArcGISWorkspaceConstants.RULE_ALL_POSTPROCESS_REMOVE_UNUSED_CODED_VALUE_DOMAINS)) {
+			result.addInfo(this, 30001);
+
+			for (Integer elementIDOfUnusedCodedValueDomain : elementIdsOfUnusedCodedValueDomain) {
+				Element elmtToRemove = rep
+						.GetElementByID(elementIDOfUnusedCodedValueDomain);
+				int pkgId = elmtToRemove.GetPackageID();
+				Package pkg = rep.GetPackageByID(pkgId);
+				result.addInfo(this, 272, elmtToRemove.GetName());
+				EAPackageUtil.deleteElement(pkg,
+						elementIDOfUnusedCodedValueDomain);
+			}
+		}
+
+		if (!elementIdByClassInfo.isEmpty()
+				&& elementIdByClassInfo.keySet().iterator().next()
+						.matches(ArcGISWorkspaceConstants.RULE_ALL_SUBTYPES)) {
+
+			result.addInfo(this, 30002);
+
+			/*
+			 * For each class that has an ArcGIS subtype, check all its fields
+			 * to determine the maximum length, scale, precision, and whether it
+			 * is nullable from its subtypes.
+			 */
+			for (ClassInfo ci : elementIdByClassInfo.keySet()) {
+
+				if (ArcGISUtil.hasArcGISSubtype(ci)) {
+
+					Element parentElement = rep
+							.GetElementByID(elementIdByClassInfo.get(ci));
+
+					/*
+					 * Get map of all subtypes and their EA elements.
+					 */
+					SortedMap<String, Element> subtypeElementByName = new TreeMap<>();
+					for (String subtypeId : ci.subtypes()) {
+
+						ClassInfo subtype = ci.model().classById(subtypeId);
+						Element subtypeElement = rep.GetElementByID(
+								elementIdByClassInfo.get(subtype));
+						subtypeElementByName.put(subtype.name(),
+								subtypeElement);
+					}
+
+					Collection<Attribute> parentAtts = parentElement
+							.GetAttributes();
+					for (short i = 0; i < parentAtts.GetCount(); i++) {
+
+						Attribute parentAtt = parentAtts.GetAt(i);
+						String parentAttName = parentAtt.GetName();
+
+						if (parentAtt.GetStereotype().equals("Field")) {
+
+							SortedMap<String, EATaggedValue> parentAttTVs = EAAttributeUtil
+									.getEATaggedValuesWithCombinedKeys(
+											parentAtt);
+
+							String tvKey;
+
+							int parentLength = 0;
+							tvKey = "Length#ArcGIS::Field::Length";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentLength = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
+
+							int parentPrecision = 0;
+							tvKey = "Precision#ArcGIS::Field::Precision";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentPrecision = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
+
+							int parentScale = 0;
+							tvKey = "Scale#ArcGIS::Field::Scale";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentScale = Integer.parseInt(parentAttTVs
+										.get(tvKey).getValues().get(0));
+							}
+
+							boolean parentIsNullable = false;
+							tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+							if (parentAttTVs.containsKey(tvKey)) {
+								parentIsNullable = Boolean
+										.parseBoolean(parentAttTVs.get(tvKey)
+												.getValues().get(0));
+							}
+
+							boolean lengthChange = false;
+							boolean scaleChange = false;
+							boolean precisionChange = false;
+							boolean isNullableChange = false;
+
+							int maxLengthFromSubtypes = 0;
+							int maxPrecisionFromSubtypes = 0;
+							int maxScaleFromSubtypes = 0;
+							boolean isNullableFromSubtypes = false;
+
+							/*
+							 * Determine if the corresponding (same name) fields
+							 * in the subtypes - which may or may not exist -
+							 * have different length, scale, precision, or
+							 * isNullable. Also determine the maximum value and
+							 * if isNullable should be true.
+							 */
+							for (Entry<String, Element> e : subtypeElementByName
+									.entrySet()) {
+
+								// String subtypeName = e.getKey();
+								Element subtypeElement = e.getValue();
+
+								Attribute subtypeAtt = EAElementUtil
+										.getAttributeByName(subtypeElement,
+												parentAttName);
+
+								if (subtypeAtt != null) {
+
+									SortedMap<String, EATaggedValue> subtypeAttTVs = EAAttributeUtil
+											.getEATaggedValuesWithCombinedKeys(
+													subtypeAtt);
+
+									tvKey = "Length#ArcGIS::Field::Length";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypeLength = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentLength != subtypeLength) {
+											lengthChange = true;
+											if (subtypeLength > maxLengthFromSubtypes) {
+												maxLengthFromSubtypes = subtypeLength;
+											}
+										}
+									}
+
+									tvKey = "Precision#ArcGIS::Field::Precision";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypePrecision = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentPrecision != subtypePrecision) {
+											precisionChange = true;
+											if (subtypePrecision > maxPrecisionFromSubtypes) {
+												maxPrecisionFromSubtypes = subtypePrecision;
+											}
+										}
+									}
+
+									tvKey = "Scale#ArcGIS::Field::Scale";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										int subtypeScale = Integer.parseInt(
+												subtypeAttTVs.get(tvKey)
+														.getValues().get(0));
+										if (parentScale != subtypeScale) {
+											scaleChange = true;
+											if (subtypeScale > maxScaleFromSubtypes) {
+												maxScaleFromSubtypes = subtypeScale;
+											}
+										}
+									}
+
+									tvKey = "IsNullable#ArcGIS::Field::IsNullable";
+									if (subtypeAttTVs.containsKey(tvKey)) {
+										boolean subtypeIsNullable = Boolean
+												.parseBoolean(subtypeAttTVs
+														.get(tvKey).getValues()
+														.get(0));
+										if (parentIsNullable != subtypeIsNullable) {
+											isNullableChange = true;
+											if (subtypeIsNullable) {
+												isNullableFromSubtypes = true;
+											}
+										}
+									}
+								}
+							}
+
+							String parentName = ci.name();
+							String fieldToUpdate = parentAttName;
+							String tagToUpdate = "";
+							String fqNameOfTag = "";
+							String newValue = "";
+
+							try {
+
+								if (lengthChange) {
+
+									tagToUpdate = "Length";
+									fqNameOfTag = "ArcGIS::Field::Length";
+									
+									if (maxLengthFromSubtypes == 0
+											&& parentLength > 0
+											&& parentLength < 255) {
+										newValue = "" + parentLength;
+									} else {
+										newValue = "" + maxLengthFromSubtypes;
+									}
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
+								}
+
+								if (precisionChange) {
+
+									tagToUpdate = "Precision";
+									fqNameOfTag = "ArcGIS::Field::Precision";
+									newValue = "" + maxPrecisionFromSubtypes;
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
+								}
+
+								if (scaleChange) {
+
+									tagToUpdate = "Scale";
+									fqNameOfTag = "ArcGIS::Field::Scale";
+									newValue = "" + maxScaleFromSubtypes;
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
+								}
+
+								if (isNullableChange) {
+
+									tagToUpdate = "IsNullable";
+									fqNameOfTag = "ArcGIS::Field::IsNullable";
+									newValue = isNullableFromSubtypes ? "true"
+											: "false";
+
+									updateFieldInArcGISParentAndSubtypes(
+											fieldToUpdate, tagToUpdate,
+											fqNameOfTag, newValue, parentName,
+											parentAtt, subtypeElementByName);
+								}
+
+							} catch (EAException e1) {
+								result.addError(this, 10007, tagToUpdate,
+										fieldToUpdate, parentName,
+										e1.getMessage());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void updateFieldInArcGISParentAndSubtypes(String fieldToUpdate,
+			String tagToUpdate, String fqNameOfTag, String newValue,
+			String parentName, Attribute parentAtt,
+			SortedMap<String, Element> subtypeElementByName)
+			throws EAException {
+
+		result.addInfo(this, 270, parentName, tagToUpdate, fieldToUpdate);
+
+		String parentAttTagValue = EAAttributeUtil.taggedValue(parentAtt,
+				tagToUpdate);
+		if (!newValue.equals(parentAttTagValue)) {
+			result.addInfo(this, 271, parentName, tagToUpdate, fieldToUpdate,
+					newValue);
+			EAAttributeUtil.updateTaggedValue(parentAtt, fqNameOfTag, newValue,
+					false);
+		}
+
+		updateFieldTaggedValueOfArcGISSubtypes(subtypeElementByName,
+				fieldToUpdate, tagToUpdate, fqNameOfTag, newValue);
+	}
+
+	private void updateFieldTaggedValueOfArcGISSubtypes(
+			SortedMap<String, Element> subtypeElementByName, String attName,
+			String tvName, String fqNameOfTag, String tvValue)
+			throws EAException {
+
+		for (Entry<String, Element> e : subtypeElementByName.entrySet()) {
+
+			Element subtypeElement = e.getValue();
+
+			Attribute subtypeAtt = EAElementUtil
+					.getAttributeByName(subtypeElement, attName);
+
+			if (subtypeAtt != null) {
+
+				String subtypeAttTagValue = EAAttributeUtil
+						.taggedValue(subtypeAtt, tvName);
+
+				if (!tvValue.equals(subtypeAttTagValue)) {
+
+					String subtypeName = e.getKey();
+
+					result.addInfo(this, 269, subtypeName, attName, tvName,
+							tvValue);
+
+					EAAttributeUtil.updateTaggedValue(subtypeAtt, fqNameOfTag,
+							tvValue, false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param arcgisSubtypeInitialValues,
+	 *            can be <code>null</code>
+	 * @return map with subtype name as key and initial value as value; can be
+	 *         empty but not null;
+	 */
+	private SortedMap<String, String> parseArcGISSubtypeInitialValues(
+			String arcgisSubtypeInitialValues, PropertyInfo pi) {
+
+		SortedMap<String, String> initialValuesBySubtypeName = new TreeMap<>();
+
+		String[] subtypeInitialValueDefinitions_escaped = arcgisSubtypeInitialValues == null
+				? new String[] {}
+				: arcgisSubtypeInitialValues
+						.split(REGEX_TO_SPLIT_BY_COMMA_WITH_ESCAPING);
+
+		for (String s : subtypeInitialValueDefinitions_escaped) {
+
+			if (StringUtils.isNotBlank(s)) {
+
+				String[] subtypeInitialValueDefinitionParts_escaped = s
+						.split(REGEX_TO_SPLIT_BY_COLON_WITH_ESCAPING);
+
+				if (subtypeInitialValueDefinitionParts_escaped.length != 2) {
+					MessageContext mc = result.addError(this, 263, pi.name());
+					if (mc != null) {
+						mc.addDetail(this, -2, pi.fullNameInSchema());
+					}
+					return new TreeMap<String, String>();
+				}
+
+				String subtypeName_escaped = subtypeInitialValueDefinitionParts_escaped[0];
+				String subtypeInitialValue_escaped = subtypeInitialValueDefinitionParts_escaped[1];
+
+				if (StringUtils.isBlank(subtypeName_escaped)
+						|| StringUtils.isBlank(subtypeInitialValue_escaped)) {
+
+					MessageContext mc = result.addError(this, 263, pi.name());
+					if (mc != null) {
+						mc.addDetail(this, -2, pi.fullNameInSchema());
+					}
+					return new TreeMap<String, String>();
+				}
+
+				/*
+				 * Unescape ',' as well as ':' and '\'.
+				 */
+				String unescapedSubtypeName = subtypeName_escaped
+						.replace("\\,", ",").replace("\\:", ":")
+						.replace("\\\\", "\\");
+				String unescapedInitialValue = subtypeInitialValue_escaped
+						.replace("\\,", ",").replace("\\:", ":")
+						.replace("\\\\", "\\");
+				initialValuesBySubtypeName.put(unescapedSubtypeName,
+						unescapedInitialValue);
+			}
+		}
+
+		return initialValuesBySubtypeName;
+	}
+
+	private Element determineNumericRange(ClassInfo ci, PropertyInfo pi,
+			ProcessMapEntry pme) {
+
+		Element numericRange = null;
+
+		/*
+		 * determine if pi has a name or alias that starts with a property name
+		 * in the range constraint map for ci. We must check via a 'startsWith'
+		 * instead of equals because flattening can change the name of a
+		 * property; a prominent example is where a numeric property can have a
+		 * single or interval value (then you'd have three properties instead of
+		 * one after flattening). Name flattening may have switched the name of
+		 * a model element with its alias, so we have to check both fields.
+		 */
+		Set<String> originalPropertyNames = numericRangeConstraintByPropNameByClassName
+				.get(ci).keySet();
+
+		for (String origPropName : originalPropertyNames) {
+
+			if (pi.name().startsWith(origPropName) || (pi.aliasName() != null
+					&& pi.aliasName().startsWith(origPropName))) {
+
+				// apply range constraint!
+
+				// check if a range domain already exists - if
+				// so, reuse it
+				String rangeDomainName = ci.name() + "_" + origPropName
+						+ "_NumRange";
+
+				if (numericRangeElementIdsByClassName
+						.containsKey(rangeDomainName)) {
+
+					int numRangeElementId = numericRangeElementIdsByClassName
+							.get(rangeDomainName);
+					numericRange = rep.GetElementByID(numRangeElementId);
+
+				} else {
+
+					// create range domain element
+
+					NumericRangeConstraintMetadata nrcm = numericRangeConstraintByPropNameByClassName
+							.get(ci).get(origPropName);
+
+					double minValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+					double maxValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+
+					if (nrcm.hasLowerBoundaryValue()) {
+						if (nrcm.isLowerBoundaryInclusive()) {
+							minValue = nrcm.getLowerBoundaryValue();
+						} else {
+							minValue = nrcm.getLowerBoundaryValue()
+									+ numRangeDelta;
+						}
+					}
+
+					if (nrcm.hasUpperBoundaryValue()) {
+						if (nrcm.isUpperBoundaryInclusive()) {
+							maxValue = nrcm.getUpperBoundaryValue();
+						} else {
+							maxValue = nrcm.getUpperBoundaryValue()
+									- numRangeDelta;
+						}
+					}
+
+					try {
+
+						// TODO parse documentation from range
+						// constraint
+						Element rd = this.createRangeDomain(rangeDomainName,
+								null, pme.getTargetType(), ci);
+
+						// create min and max fields
+						EAElementUtil.createEAAttribute(rd, "MinValue", null,
+								null, null, null, false, false, false,
+								doubleToString(minValue),
+								new Multiplicity(1, 1), null, null);
+						EAElementUtil.createEAAttribute(rd, "MaxValue", null,
+								null, null, null, false, false, false,
+								doubleToString(maxValue),
+								new Multiplicity(1, 1), null, null);
+
+						numericRange = rd;
+
+					} catch (EAException e) {
+
+						// log an error, but proceed
+						result.addError(this, 230, rangeDomainName,
+								e.getMessage());
+						numericRange = null;
+					}
+
+				}
+
+				break;
+			}
+		}
+
+		return numericRange;
 	}
 
 	/**
@@ -3850,6 +5074,48 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "Could not add tagged values to represent on class '$1$'. Exception message is: '$2$'.";
 		case 251:
 			return "Could not add tagged values to represent on property '$1$'. Exception message is: '$2$'.";
+		case 252:
+			return "Class '$1$' is an ArcGIS Subtype. Therefore, it must define tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype amongst the other children of its parent. The tagged value is undefined or empty. Using subtype code -1.";
+		case 253:
+			return "Class '$1$' is an ArcGIS Subtype. Value '$2$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Using subtype code -1.";
+		case 254:
+			return "Enumeration '$1$' defines a set of subtypes. This enumeration will not be encoded as a coded value domain.";
+		case 255:
+			return "Code list '$1$' defines a set of subtypes. This code list will not be encoded as a coded value domain.";
+		case 256:
+			return "Value '$1$' of tag 'arcgisDefaultSubtype' cannot be parsed to an integer. Using subtype code -1.";
+		case 257:
+			return "Class '$1$' is supposed to define a set of subtypes, but actually has no properties.";
+		case 258:
+			return "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Therefore, it must have tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype. The tagged value is undefined or empty. Ignoring this subtype.";
+		case 259:
+			return "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Value '$3$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Ignoring this subtype.";
+		case 260:
+			return "Duplicate subtype code '$1$' detected in properties of class '$2$' which defines a set of ArcGIS Subtypes. Subtype '$3$' will be ignored.";
+		case 261:
+			return "Class '$1$' is the parent of ArcGIS subtypes. Its property '$2$' has a codelist or enumeration as type, whose name is '$3$'. That type was not found in the model. Consequently, it is not possible to check if the codes/enums only apply to specific subtypes.";
+		case 262:
+			return "Length of normalized name '$1$' (full name would be '$2$') of coded value domain for subtype '$3$' exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
+		case 263:
+			return "??Invalid format of tagged value 'arcgisSubtypeInitialValues' of property '$1$'. The tagged value will be ignored. Ensure that the tagged value contains a comma-separated list of key-value pairs (with subtype name as key, initial value as value, and colon as separator).";
+		case 264:
+			return "??Tagged value 'arcgisSubtypeInitialValues' of property '$1$' contains subtype '$2$', which was not found in the set of subtypes defined for class '$3$'. The subtype will be ignored.";
+		case 265:
+			return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', but '$2$' does not. This is not allowed. An ArcGIS subtype may only restrict the properties of its supertype. The property will be ignored.";
+		case 266:
+			return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', which has a geometry type ('$4$'). This is not allowed. An ArcGIS subtype may not redefine the geometry type of its supertype. The property will be ignored.";
+		case 267:
+			return "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
+		case 268:
+			return "Class '$1$' has more than one supertype. The target only supports one generalization relationship per subtype.";
+		case 269:
+			return "--- Subtype '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+		case 270:
+			return "Change of '$2$' required for field '$3$' of ArcGIS parent '$1$' and/or (one or more of) its subtypes.";
+		case 271:
+			return "--- Parent '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+		case 272:
+			return "Removing coded value domain '$1$'.";
 
 		// 10001-10100: EA exceptions
 		case 10001:
@@ -3862,10 +5128,21 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return "EA exception encountered while creating <<AttributeIndex>> attribute for property '$1$' in class '$2$'. Error message: $3$";
 		case 10005:
 			return "EA exception encountered while creating <<Field>> attribute for reflexive relationship property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+		case 10006:
+			return "EA exception encountered while creating generalization relationship between class '$1$' and its subtype '$2$': $3$";
+		case 10007:
+			return "EA exception encountered while updating tag '$1$' in field '$2$' of ArcGIS parent '$3$' and its subtypes. Error message: $4$";
 
 		// 20001 - 20100: message context
 		case 20001:
 			return "Property: $1$";
+
+		case 30000:
+			return "=============== Postprocessing ===============";
+		case 30001:
+			return "---------- Removing unused coded value domains  ----------";
+		case 30002:
+			return "---------- Aligning field length, scale, precision, isNullable of ArcGIS parent and subtypes  ----------";
 
 		default:
 			return "(" + ArcGISWorkspace.class.getName()

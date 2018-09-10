@@ -97,13 +97,14 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyPositionIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
 
 /**
@@ -273,6 +274,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES = "rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
 	public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
 	public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
@@ -1215,33 +1217,30 @@ public class Flattener implements Transformer, MessageSource {
 			return;
 		}
 
+		Set<String> typesToRemoveAsSet = new HashSet<>(
+				Arrays.asList(typesToRemove));
+
 		/*
-		 * Now identify if the types exist in the application schema; if so,
-		 * remove all properties and associations in the app schema that use
-		 * these types, remove the types themselves, and also remove any direct
-		 * inheritance relationships with these types.
+		 * Now identify all classes in the schemas selected for processing whose
+		 * name equals one of the types to remove.
 		 */
-		for (String typeToRemove : typesToRemove) {
+		List<GenericClassInfo> cisToRemove = new ArrayList<>();
 
-			ClassInfo ciToRemove = genModel.classByName(typeToRemove);
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-			if (ciToRemove == null) {
-
-				continue;
-
-			} else {
-
-				if (ciToRemove instanceof GenericClassInfo) {
-
-					GenericClassInfo genCiToRemove = (GenericClassInfo) ciToRemove;
-
-					genModel.remove(genCiToRemove);
-
-				} else {
-
-					result.addWarning(this, 20321, ciToRemove.name());
-				}
+			if (typesToRemoveAsSet.contains(genCi.name())) {
+				cisToRemove.add(genCi);
 			}
+		}
+
+		/*
+		 * Remove all properties and associations in the app schema that use the
+		 * identified types, remove the types themselves, and also remove any
+		 * direct inheritance relationships with these types.
+		 */
+		for (GenericClassInfo ciToRemove : cisToRemove) {
+
+			genModel.remove(ciToRemove);
 		}
 	}
 
@@ -4967,8 +4966,24 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		for (GenericClassInfo genCls : genModel.selectedSchemaClasses()) {
 
-			if (genCls.subtypes() != null && genCls.subtypes().size() > 0
-					&& !allSubtypesOutsideSelectedSchemas(genCls)) {
+			/*
+			 * Ignore classes that represent ArcGIS subtypes. We are interested
+			 * in their parents, because we want flattening inheritance to reach
+			 * the parents (i.e., the properties of the supertypes are copied
+			 * down to the parents).
+			 */
+			if (trfConfig.hasRule(
+					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+					&& ArcGISUtil.isArcGISSubtype(genCls)) {
+				continue;
+			}
+
+			if (!genCls.subtypes().isEmpty()
+					&& !allSubtypesOutsideSelectedSchemas(genCls)
+					&& !(trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+							&& ArcGISUtil.hasArcGISDefaultSubtypeAttribute(
+									genCls))) {
 
 				boolean includeSupertype = true;
 
@@ -5119,9 +5134,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 		}
 
-		// create union classes for the classes that have subclasses (including
-		// mixins, for the rare case that a property is of a mixin type)
-
 		/*
 		 * mapping of superclass to list of its subclasses key: superclass;
 		 * value: list of all its subclasses (sorted by subclass name)
@@ -5130,6 +5142,34 @@ public class Flattener implements Transformer, MessageSource {
 
 		for (GenericClassInfo genSuperclass : genSuperclassesById.values()) {
 
+			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
+					genSuperclass, trfConfig.hasRule(
+							RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES));
+
+			// sort the subclasses by name so that the resulting order of
+			// choices is always the same
+			List<GenericClassInfo> subclassesList = new ArrayList<GenericClassInfo>(
+					subclasses);
+			Collections.sort(subclassesList,
+					new Comparator<GenericClassInfo>() {
+						public int compare(GenericClassInfo f1,
+								GenericClassInfo f2) {
+							return f1.name().compareTo(f2.name());
+						}
+					});
+
+			/*
+			 * keep track of subclass list for later use (when associations are
+			 * moved down
+			 */
+			allSubclassesByTheirSuperclass.put(genSuperclass, subclassesList);
+		}
+
+		// create union classes for the classes that have subclasses (including
+		// mixins, for the rare case that a property is of a mixin type)
+
+		for (GenericClassInfo genSuperclass : genSuperclassesById.values()) {
+			
 			GenericClassInfo genSuperclassUnion = new GenericClassInfo(genModel,
 					genSuperclass.id() + "_union",
 					genSuperclass.name() + "Union", Options.UNION);
@@ -5158,32 +5198,11 @@ public class Flattener implements Transformer, MessageSource {
 			((GenericPackageInfo) genSuperclassUnion.pkg())
 					.addClass(genSuperclassUnion);
 
-			Set<GenericClassInfo> subclasses = getAllSubclassesFromSchemasSelectedForProcessing(
-					genSuperclass);
-			int seqNumIndex = 1;
-
-			// sort the subclasses by name so that the resulting order of
-			// choices is always the same
-			List<GenericClassInfo> subclassesList = new ArrayList<GenericClassInfo>(
-					subclasses);
-			Collections.sort(subclassesList,
-					new Comparator<GenericClassInfo>() {
-						public int compare(GenericClassInfo f1,
-								GenericClassInfo f2) {
-							return f1.name().compareTo(f2.name());
-						}
-					});
-
-			/*
-			 * keep track of subclass list for later use (when associations are
-			 * moved down
-			 */
-			allSubclassesByTheirSuperclass.put(genSuperclass, subclassesList);
-
 			/*
 			 * if the superclass is neither abstract nor a mixin, add it to the
 			 * union
 			 */
+			int seqNumIndex = 1;
 			if (!genSuperclass.isAbstract()
 					&& !(genSuperclass.category() == Options.MIXIN)) {
 
@@ -5200,7 +5219,8 @@ public class Flattener implements Transformer, MessageSource {
 			 * if the subtype is neither abstract nor a mixin, add it to the
 			 * union
 			 */
-			for (GenericClassInfo genCiSub : subclassesList) {
+			for (GenericClassInfo genCiSub : allSubclassesByTheirSuperclass
+					.get(genSuperclass)) {
 
 				if (genCiSub.isAbstract()
 						|| genCiSub.category() == Options.MIXIN)
@@ -5226,7 +5246,7 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		/*
-		 * change the type of all attributes in the model that use one of the
+		 * Change the type of all attributes in the model that use one of the
 		 * superclasses to the corresponding union, with the exception of the
 		 * property being contained in the union itself (for the case that the
 		 * superclass is neither abstract nor a mixin) or being contained in one
@@ -5774,12 +5794,36 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 
 		/*
-		 * remove inheritance relationships from leaf classes (set baseClass and
-		 * supertypes to null)
+		 * remove inheritance relationships from leaf classes, but keep
+		 * relationships to ArcGIS parent if
+		 * RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES is enabled.
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
-			leafCi.setBaseClass(null);
-			leafCi.setSupertypes(null);
+
+			if (trfConfig.hasRule(
+					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+					&& ArcGISUtil.isArcGISSubtype(leafCi)) {
+				// do not remove relationship to baseClass
+			} else {
+				leafCi.setBaseClass(null);
+			}
+
+			TreeSet<String> newSupertypes = new TreeSet<>();
+
+			for (String supertypeID : leafCi.supertypes()) {
+
+				ClassInfo supertype = genModel.classById(supertypeID);
+
+				if (trfConfig.hasRule(
+						RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+						&& supertype != null && ArcGISUtil
+								.hasArcGISDefaultSubtypeAttribute(supertype)) {
+					// keep relationship to this supertype
+					newSupertypes.add(supertypeID);
+				}
+			}
+
+			leafCi.setSupertypes(newSupertypes);
 		}
 
 		/*
@@ -6258,15 +6302,24 @@ public class Flattener implements Transformer, MessageSource {
 
 	/**
 	 * @param genCi
+	 * @param ignoreArcGISSubtypes
+	 *            <code>true</code> if subtypes that represent ArcGIS subtypes
+	 *            (i.e. that have a supertype where one of the properties has
+	 *            tagged value 'arcgisDefaultSubtype' with non-empty value)
+	 *            shall be ignored, else <code>false</code>
 	 * @return The set of all direct or indirect subclasses of the given class
 	 *         that belong to schemas selected for processing, can be empty (if
 	 *         the class has no subclasses that belong to the schemas selected
-	 *         for processing) but not null.
+	 *         for processing) but not <code>null</code>. Note that subtypes
+	 *         that represent ArcGIS subtypes (i.e. that have a supertype where
+	 *         one of the properties has tagged value 'arcgisDefaultSubtype'
+	 *         with non-empty value) are not included if parameter
+	 *         {@code ignoreArcGISSubtypes} is <code>true</code>.
 	 */
 	private Set<GenericClassInfo> getAllSubclassesFromSchemasSelectedForProcessing(
-			GenericClassInfo genCi) {
+			GenericClassInfo genCi, boolean ignoreArcGISSubtypes) {
 
-		if (genCi.subtypes() == null || genCi.subtypes().isEmpty()) {
+		if (genCi.subtypes().isEmpty()) {
 
 			return new HashSet<GenericClassInfo>();
 
@@ -6282,10 +6335,15 @@ public class Flattener implements Transformer, MessageSource {
 
 					GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
-					subtypes.add(genSubtype);
-					Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
-							genSubtype);
-					subtypes.addAll(subsubtypes);
+					if (ignoreArcGISSubtypes
+							&& ArcGISUtil.isArcGISSubtype(genSubtype)) {
+						// nothing to do
+					} else {
+						subtypes.add(genSubtype);
+						Set<GenericClassInfo> subsubtypes = getAllSubclassesFromSchemasSelectedForProcessing(
+								genSubtype, ignoreArcGISSubtypes);
+						subtypes.addAll(subsubtypes);
+					}
 				}
 			}
 

@@ -80,7 +80,13 @@ public interface Model {
 	 *         empty but not <code>null</code>.
 	 */
 	public SortedSet<? extends ClassInfo> selectedSchemaClasses();
-	
+
+	/**
+	 * @return a set with the navigable properties of all classes that belong to
+	 *         selected schemas; can be empty but not <code>null</code>.
+	 */
+	public SortedSet<? extends PropertyInfo> selectedSchemaProperties();
+
 	/**
 	 * Return all ClassInfo objects contained in the given package and in sub-
 	 * packages, which belong to the same targetNamespace as the given package.
