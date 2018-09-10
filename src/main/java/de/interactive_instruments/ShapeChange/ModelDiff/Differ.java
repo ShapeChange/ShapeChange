@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange.ModelDiff;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -133,7 +134,7 @@ public class Differ {
 		SortedSet<PackageInfo> sub = curr.containedPackages();
 		infoArr = new Info[sub.size()];
 		sub.toArray(infoArr);
-		SortedSet<PackageInfo> subRef = ref.containedPackages();
+		SortedSet<PackageInfo> subRef = (ref==null? new TreeSet<PackageInfo>() : ref.containedPackages());
 		infoArrRef = new Info[subRef.size()];
 		subRef.toArray(infoArrRef);
 
@@ -150,7 +151,7 @@ public class Differ {
 		}
 		infoArr = new Info[cls.size()];
 		cls.toArray(infoArr);
-		temp = ref.model().classes(ref);
+		temp = (ref==null? new TreeSet<ClassInfo>() : ref.model().classes(ref));
 		HashSet<ClassInfo> clsRef = new HashSet<ClassInfo>();
 		for (ClassInfo ci : temp) {
 			if (ci.pkg() == ref && MatchingMA(ci))
@@ -489,15 +490,15 @@ public class Differ {
 		 * Done for legalBasis and primaryCode; TBD: example and
 		 * dataCaptureStatement
 		 */
+		String refs;
 		if (aaaModel && curr instanceof ClassInfo) {
 			String currdoc = addConstraints((ClassInfo) curr,
 					curr.documentation());
-			String refdoc = addConstraints((ClassInfo) ref,
-					ref.documentation());
+			String refdoc = (ref==null ? "" : addConstraints((ClassInfo) ref, ref.documentation()));
 			diff = stringDiff(ElementType.DOCUMENTATION, refdoc, currdoc);
 		} else {
-			diff = stringDiff(ElementType.DOCUMENTATION, ref.documentation(),
-					curr.documentation());
+			refs = (ref==null ? "" : ref.documentation());
+			diff = stringDiff(ElementType.DOCUMENTATION, refs, curr.documentation());
 		}
 
 		if (diff != null) {
@@ -507,7 +508,8 @@ public class Differ {
 		}
 
 		// perform diff for the name
-		diff = stringDiff(ElementType.NAME, ref.name(), curr.name());
+		refs = (ref==null ? "" : ref.name());
+		diff = stringDiff(ElementType.NAME, refs, curr.name());
 		if (diff != null) {
 			if (!diffs.containsKey(curr))
 				diffs.put(curr, new TreeSet<DiffElement>());
@@ -515,7 +517,7 @@ public class Differ {
 		}
 
 		// perform diff for the alias
-		String s1 = ref.aliasName();
+		String s1 = (ref==null? "": ref.aliasName());
 		if (s1 == null)
 			s1 = "";
 		String s2 = curr.aliasName();
@@ -529,7 +531,7 @@ public class Differ {
 		}
 
 		// perform diff for the definition
-		s1 = ref.definition();
+		s1 = (ref==null ? "" : ref.definition());
 		if (s1 == null)
 			s1 = "";
 		s2 = curr.definition();
@@ -543,7 +545,7 @@ public class Differ {
 		}
 
 		// perform diff for the description
-		s1 = ref.description();
+		s1 = (ref==null ? "" : ref.description());
 		if (s1 == null)
 			s1 = "";
 		s2 = curr.description();
@@ -557,7 +559,7 @@ public class Differ {
 		}
 
 		// perform diff for the legal basis
-		s1 = ref.legalBasis();
+		s1 = (ref==null ? "" : ref.legalBasis());
 		if (s1 == null)
 			s1 = "";
 		s2 = curr.legalBasis();
@@ -571,7 +573,7 @@ public class Differ {
 		}
 
 		// perform diff for the primary code
-		s1 = ref.primaryCode();
+		s1 = (ref==null ? "" : ref.primaryCode());
 		if (s1 == null)
 			s1 = "";
 		s2 = curr.primaryCode();
@@ -585,7 +587,7 @@ public class Differ {
 		}
 		
 		// perform diff for the global identifier
-		s1 = ref.globalIdentifier();
+		s1 = (ref==null ? "" : ref.globalIdentifier());
 		if (s1 == null)
 			s1 = "";
 		s2 = curr.globalIdentifier();
@@ -599,10 +601,10 @@ public class Differ {
 		}
 
 		// perform diff for the stereotype
+		refs = (ref==null ? "" : ref.stereotypes().toString().replace("[", "").replace("]", ""));
 		diff = stringDiff(ElementType.STEREOTYPE,
-				ref.stereotypes().toString().replace("[", "").replace("]", ""),
-				curr.stereotypes().toString().replace("[", "").replace("]",
-						""));
+				refs,
+				curr.stereotypes().toString().replace("[", "").replace("]", ""));
 		if (diff != null) {
 			if (!diffs.containsKey(curr))
 				diffs.put(curr, new TreeSet<DiffElement>());
@@ -613,7 +615,7 @@ public class Differ {
 		// TODO handle tags with multiple values
 		String taglist = curr.options().parameter("representTaggedValues");
 		Map<String, String> taggedValues = curr.taggedValues(taglist);
-		Map<String, String> taggedValuesRef = ref.taggedValues(taglist);
+		Map<String, String> taggedValuesRef = (ref==null? null: ref.taggedValues(taglist));
 
 		for (Map.Entry<String, String> entry : taggedValues.entrySet()) {
 			String key = entry.getKey();
@@ -621,7 +623,7 @@ public class Differ {
 			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
 					|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
 				String valref = null;
-				if (taggedValuesRef.containsKey(key)) {
+				if (taggedValuesRef!=null && taggedValuesRef.containsKey(key)) {
 					valref = taggedValuesRef.get(key);
 				}
 				if (key.equalsIgnoreCase("AAA:Modellart")) {
@@ -663,7 +665,7 @@ public class Differ {
 					}
 				}
 			} else {
-				if (taggedValuesRef.containsKey(key)) {
+				if (taggedValuesRef!=null && taggedValuesRef.containsKey(key)) {
 					String valref = taggedValuesRef.get(key);
 					diff = stringDiff(ElementType.TAG, valref, val);
 				} else {
@@ -677,66 +679,68 @@ public class Differ {
 				}
 			}
 		}
-		for (Map.Entry<String, String> entry : taggedValuesRef.entrySet()) {
-			String key = entry.getKey();
-			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
-					|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
-				String valref = taggedValuesRef.get(key);
-				String val = null;
-				if (taggedValues.containsKey(key)) {
-					val = taggedValues.get(key);
-				}
-				if (key.equalsIgnoreCase("AAA:Modellart")) {
-					if (val == null || val.isEmpty())
-						val = "Alle";
-					if (valref == null || valref.isEmpty())
-						val = "Alle";
-				} else {
-					if (val == null)
-						val = "";
-					if (valref == null)
-						val = "";
-				}
-				for (String ma : valref.split(",")) {
-					ma = ma.trim();
-					for (String max : maArrRef) {
-						if (ma.equals(max.trim())) {
-							boolean found = false;
-							for (String ma2 : val.split(",")) {
-								ma2 = ma2.trim();
-								if (ma2.equals(ma)) {
-									found = true;
-									break;
+		if (taggedValuesRef!=null) {
+			for (Map.Entry<String, String> entry : taggedValuesRef.entrySet()) {
+				String key = entry.getKey();
+				if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
+						|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
+					String valref = taggedValuesRef.get(key);
+					String val = null;
+					if (taggedValues.containsKey(key)) {
+						val = taggedValues.get(key);
+					}
+					if (key.equalsIgnoreCase("AAA:Modellart")) {
+						if (val == null || val.isEmpty())
+							val = "Alle";
+						if (valref == null || valref.isEmpty())
+							val = "Alle";
+					} else {
+						if (val == null)
+							val = "";
+						if (valref == null)
+							val = "";
+					}
+					for (String ma : valref.split(",")) {
+						ma = ma.trim();
+						for (String max : maArrRef) {
+							if (ma.equals(max.trim())) {
+								boolean found = false;
+								for (String ma2 : val.split(",")) {
+									ma2 = ma2.trim();
+									if (ma2.equals(ma)) {
+										found = true;
+										break;
+									}
 								}
-							}
-							if (!found) {
-								diff = new DiffElement();
-								diff.change = Operation.DELETE;
-								if (key.equalsIgnoreCase("AAA:Modellart"))
-									diff.subElementType = ElementType.AAAMODELLART;
-								else
-									diff.subElementType = ElementType.AAAGRUNDDATENBESTAND;
-								diff.tag = ma;
-								if (!diffs.containsKey(curr))
-									diffs.put(curr, new TreeSet<DiffElement>());
-								diffs.get(curr).add(diff);
+								if (!found) {
+									diff = new DiffElement();
+									diff.change = Operation.DELETE;
+									if (key.equalsIgnoreCase("AAA:Modellart"))
+										diff.subElementType = ElementType.AAAMODELLART;
+									else
+										diff.subElementType = ElementType.AAAGRUNDDATENBESTAND;
+									diff.tag = ma;
+									if (!diffs.containsKey(curr))
+										diffs.put(curr, new TreeSet<DiffElement>());
+									diffs.get(curr).add(diff);
+								}
 							}
 						}
 					}
-				}
-			} else {
-				if (!taggedValues.containsKey(key)) {
-					diff = stringDiff(ElementType.TAG, entry.getValue(), "");
-					if (diff != null) {
-						diff.tag = key;
-						if (!diffs.containsKey(curr))
-							diffs.put(curr, new TreeSet<DiffElement>());
-						diffs.get(curr).add(diff);
+				} else {
+					if (!taggedValues.containsKey(key)) {
+						diff = stringDiff(ElementType.TAG, entry.getValue(), "");
+						if (diff != null) {
+							diff.tag = key;
+							if (!diffs.containsKey(curr))
+								diffs.put(curr, new TreeSet<DiffElement>());
+							diffs.get(curr).add(diff);
+						}
 					}
 				}
 			}
 		}
-
+		
 		return diffs;
 	}
 

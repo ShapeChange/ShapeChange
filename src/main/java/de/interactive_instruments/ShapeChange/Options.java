@@ -134,6 +134,7 @@ public class Options {
 	public static final String TargetProfileTransferEA = "de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA";
 	public static final String TargetCDB = "de.interactive_instruments.ShapeChange.Target.CDB.CDB";
 	public static final String TargetCodeListDictionariesML = "de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML";
+	public static final String TargetLdproxy = "de.interactive_instruments.ShapeChange.Target.Ldproxy.Config";
 
 	/** XML Schema encoding rules */
 	public static final String ISO19136_2007 = "iso19136_2007".toLowerCase();
@@ -3810,6 +3811,26 @@ public class Options {
 		 * CodeListDictionariesML conversion rules
 		 */
 		addRule("rule-cldml-prop-codeListAndCodeNameAsGmlId");
+
+		/*
+		 * ldproxy Configuration conversion rules
+		 */
+		addRule("rule-ldp-cls-non-abstract-feature-types-as-collection");
+		addRule("rule-ldp-cls-table-per-feature-type");
+		addRule("rule-ldp-cls-id-field");
+		addRule("rule-ldp-cls-generate-codelist");
+		addRule("rule-ldp-all-names-in-lowercase");
+		addRule("rule-ldp-all-names-max-length");
+		addRule("rule-ldp-prop-all-datatype-relations-as-n-to-m-relations");
+		addRule("rule-ldp-prop-all-featuretype-relations-as-n-to-m-relations");
+		addRule("rule-ldp-prop-multiple-single-values-as-1-to-n-relations");
+		addRule("rule-ldp-prop-separate-geometry-table");
+		addRule("rule-ldp-prop-all-codelist-values-as-strings");
+		addRule("rule-ldp-cls-oneo-metadata");
+		/*
+		addRule("");
+		addRule("");
+		*/
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3942,6 +3963,8 @@ public class Options {
 			return Options.TargetCDB;
 		else if (ra[1].equals("cldml"))
 			return Options.TargetCodeListDictionariesML;
+		else if (ra[1].equals("ldp"))
+			return Options.TargetLdproxy;
 
 		return null;
 	}
