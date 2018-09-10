@@ -34,18 +34,14 @@ package de.interactive_instruments.ShapeChange.Util.ea;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.Collection;
 import org.sparx.Connector;
-import org.sparx.ConnectorEnd;
 import org.sparx.Element;
 import org.sparx.Method;
-import org.sparx.Repository;
 import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -505,7 +501,7 @@ public class EAElementUtil extends AbstractEAUtil {
 
 		cTV.Refresh();
 	}
-
+	
 	public static Method createEAMethod(Element elmt, String name)
 			throws EAException {
 
@@ -665,6 +661,32 @@ public class EAElementUtil extends AbstractEAUtil {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param elmt
+	 *            EA element in which to look for the attribute
+	 * @param attName
+	 *            name of the attribute to look up
+	 * @return the EA attribute that belongs to the EA element and has the given
+	 *         attribute name; can be <code>null</code> if no such attribute was
+	 *         found
+	 */
+	public static Attribute getAttributeByName(Element elmt, String attName) {
+
+		Attribute result = null;
+
+		Collection<Attribute> atts = elmt.GetAttributes();
+
+		for (short i = 0; i < atts.GetCount(); i++) {
+			Attribute att = atts.GetAt(i);
+			if (att.GetName().equals(attName)) {
+				result = att;
+				break;
+			}
+		}
+
+		return result;
 	}
 
 	/**

@@ -44,6 +44,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrRuleLoader;
@@ -116,7 +118,9 @@ public abstract class ModelImpl implements Model {
 			"scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique",
 			"codelistType", "sqlOnUpdate", "sqlOnDelete", "shortName",
 			"codeListSource", "codeListSourceCharset",
-			"codeListSourceRepresentation", "codeListRestriction" };
+			"codeListSourceRepresentation", "codeListRestriction",
+			"arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
+			"arcgisSubtypeInitialValues" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -286,6 +290,24 @@ public abstract class ModelImpl implements Model {
 			for (ClassInfo ci : cisOfSelectedSchema) {
 
 				res.add(ci);
+			}
+		}
+
+		return res;
+	}
+
+	@Override
+	public SortedSet<? extends PropertyInfo> selectedSchemaProperties() {
+
+		SortedSet<? extends ClassInfo> selCis = this.selectedSchemaClasses();
+
+		SortedSet<PropertyInfo> res = new TreeSet<PropertyInfo>();
+
+		for (ClassInfo selCi : selCis) {
+
+			for (PropertyInfo pi : selCi.properties().values()) {
+
+				res.add(pi);
 			}
 		}
 
