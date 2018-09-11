@@ -227,7 +227,7 @@ public abstract class BasicTest {
 		}
 	}
 
-	private void multiTestInDirs(Set<String> fileFormatsToCheck,
+	protected void multiTestInDirs(Set<String> fileFormatsToCheck,
 			String dirResults, String dirReference) {
 
 		String[] extensions = fileFormatsToCheck
@@ -535,6 +535,31 @@ public abstract class BasicTest {
 							basedirReference + "/" + sql + ".sql", true, true,
 							true);
 				}
+			}
+		}
+	}
+
+	protected void ldproxyTest(String config, String[] files,
+			String basedirResults, String basedirReference) {
+
+		String actualConfig = getActualConfig(config);
+
+		long start = (new Date()).getTime();
+		TestInstance test = new TestInstance(actualConfig);
+		long end = (new Date()).getTime();
+		System.out.println(
+				"Execution time " + actualConfig + ": " + (end - start) + "ms");
+		assertTrue("Test model execution failed", test.noError());
+		if (testTime)
+			assertTrue("Exceution time too long", end - start < 90000);
+
+		if (!exportModel) {
+			for (String file : files) {
+
+				String fileName = basedirResults + "/" + file;
+				String referenceFileName = basedirReference + "/" + file;
+
+				similarJson(fileName, referenceFileName);
 			}
 		}
 	}

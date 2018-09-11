@@ -1686,6 +1686,8 @@ public class SchematronSchema implements MessageSource {
 			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" 'current date' OCL extension cannot be expressed in Xpath 1.0.";
 		case 126:
 			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" comparison between structured non-object types not supported.";
+		case 127:
+			return "??Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" nested byReference property \"$3$\" in iterator construct cannot be resolved due to limitations of Xpath 1.0 (variables inside XPath expression not supported).";
 		case 131:
 			return "";
 		}

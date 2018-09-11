@@ -244,19 +244,23 @@ public class XsltWriter {
 			// parse parameter values
 			Map<String, URI> hrefMappings = new HashMap<String, URI>();
 
-			List<NameValuePair> hrefMappingsList = URLEncodedUtils
-					.parse(hrefMappingsString, ENCODING_CHARSET);
-			for (NameValuePair nvp : hrefMappingsList) {
+			if (hrefMappingsString != null) {
+				List<NameValuePair> hrefMappingsList = URLEncodedUtils
+						.parse(hrefMappingsString, ENCODING_CHARSET);
+				for (NameValuePair nvp : hrefMappingsList) {
 
-				hrefMappings.put(nvp.getName(), new URI(nvp.getValue()));
+					hrefMappings.put(nvp.getName(), new URI(nvp.getValue()));
+				}
 			}
 
 			Map<String, String> transformationParameters = new HashMap<String, String>();
 
-			List<NameValuePair> transParamList = URLEncodedUtils
-					.parse(transformationParametersString, ENCODING_CHARSET);
-			for (NameValuePair nvp : transParamList) {
-				transformationParameters.put(nvp.getName(), nvp.getValue());
+			if (transformationParametersString != null) {
+				List<NameValuePair> transParamList = URLEncodedUtils.parse(
+						transformationParametersString, ENCODING_CHARSET);
+				for (NameValuePair nvp : transParamList) {
+					transformationParameters.put(nvp.getName(), nvp.getValue());
+				}
 			}
 
 			boolean invalidParameters = false;
@@ -300,6 +304,8 @@ public class XsltWriter {
 				System.err.println(
 						"Exception occurred while processing the XSL transformation.");
 			}
+
+			e.printStackTrace(System.err);
 		}
 	}
 

@@ -848,7 +848,47 @@ public class XsdDocument implements MessageSource {
 		Element ret = null;
 		if (cat == Options.UNION
 				&& ci.matches("rule-xsd-cls-union-as-choice")) {
-			ret = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
+			/*
+			 * 2018-08-02 JE: If the union is a subtype of another union, then
+			 * we want to avoid adding an empty choice, which would occur if the
+			 * ci union did not define any property itself. Otherwise, an empty
+			 * choice would lead to an unsolvable situation and validation would
+			 * never succeed.
+			 * 
+			 * A test showed that if the subtype union defines one or more
+			 * attributes and a choice for these options is created, then an XML
+			 * validator expects that one element from the choice of the
+			 * supertype union is encoded in XML, followed by an element from
+			 * the choice of the subtype union. That wouldn't make sense from a
+			 * modeling perspective (only one option shall be encoded).
+			 */
+			if (cibase == null && ci.properties().size() > 0) {
+				/*
+				 * The union defines attributes and has no supertype. So create
+				 * a <choice/>.
+				 */
+				ret = document.createElementNS(Options.W3C_XML_SCHEMA,
+						"choice");
+
+			} else if (ci.properties().size() > 0
+					&& cibase.properties().size() > 0) {
+				/*
+				 * Both supertype and subtype union define attributes. This must
+				 * not be encoded with an additional <choice/> for the subtype
+				 * union. Report an error.
+				 */
+				MessageContext mc = result.addError(this, 2000, ci.name(),
+						cibase.name());
+				if (mc != null) {
+					mc.addDetail(null, 400, "Class", ci.fullName());
+				}
+			} else {
+				/*
+				 * We have a subtype union that does not define any attributes;
+				 * just ignore the choice.
+				 */
+			}
+
 		} else if (ci.matches("rule-xsd-cls-sequence")) {
 			ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
 			if (ci.matches("rule-xsd-cls-mixin-classes")) {
@@ -863,7 +903,9 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Class", ci.fullName());
 			ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
 		}
-		e3.appendChild(ret);
+		if (ret != null) {
+			e3.appendChild(ret);
+		}
 
 		if (ci.baseClass() != null
 				&& ci.matches("rule-xsd-cls-standard-19139-isoType")) {
@@ -4490,6 +4532,12 @@ public class XsdDocument implements MessageSource {
 		case 1001:
 			return "??Code list URI of code list '$1$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list.";
 
+		/*
+		 * 2000-2999: Additional messages defined directly by this class (not
+		 * ShapeChangeResult)
+		 */
+		case 2000:
+			return "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
 		}
 		return null;
 	}

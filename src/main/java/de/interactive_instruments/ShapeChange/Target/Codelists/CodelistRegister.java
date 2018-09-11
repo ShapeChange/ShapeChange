@@ -226,45 +226,8 @@ public class CodelistRegister implements SingleTarget {
 			if (s!=null && s.length()>0)
 				outputDirectory = s;
 
-			version = p.version();
-			
 			refModel = getReferenceModel();
-			if (refModel!=null) {
-				SortedSet<PackageInfo> set = refModel.schemas(p.name());
-				if (set.size()==1) {
-					differ = new Differ(true,new String[0]);
-					refPackage = set.iterator().next();
-					refVersion = refPackage.version();
-					diffs = differ.diff(p, refPackage);
-					for (Entry<Info,SortedSet<DiffElement>> me : diffs.entrySet()) {
-						MessageContext mc = result.addInfo("Model difference - "+me.getKey().fullName().replace(p.fullName(),p.name()));
-						if (mc!=null) {
-							for (DiffElement diff : me.getValue()) {
-								s = diff.change+" "+diff.subElementType;
-								if (diff.subElementType==ElementType.TAG)
-									s += "("+diff.tag+")";
-								if (diff.subElement!=null) {
-									s += " "+diff.subElement.name(); 
-									if (diff.subElementType==ElementType.CLASS || diff.subElementType==ElementType.SUBPACKAGE || diff.subElementType==ElementType.PROPERTY) {
-										String s2 = diff.subElement.taggedValue("AAA:Kennung"); 
-										if (s2!=null && !s2.isEmpty()) 
-											s += " ("+s2+")";
-									} else if (diff.subElementType==ElementType.ENUM) {
-										String s2 = ((PropertyInfo)diff.subElement).initialValue(); 
-										if (s2!=null && !s2.isEmpty()) 
-											s += " ("+s2+")";
-									}
-								} else if (diff.diff!=null)
-									s += " "+ differ.diff_toString(diff.diff).replace("[[/ins]][[ins]]", "").replace("[[/del]][[del]]", "").replace("[[ins]][[/ins]]", "").replace("[[del]][[/del]]", "");
-								else
-									s += " ???";
-								mc.addDetail(s);
-							}
-						}
-					}
-				}
-			}
-			
+
 			rootDocument = createDocument();
 			
 			documentMap.put(baseURI, rootDocument);
@@ -332,6 +295,49 @@ public class CodelistRegister implements SingleTarget {
 			root.appendChild(e1);
 			e1.appendChild(rootDocument.createTextNode(baseURI));
 		}
+		
+		// analyse versions and diff for each schema
+		version = p.version();
+		if (refModel!=null) {
+			SortedSet<PackageInfo> set = refModel.schemas(p.name());
+			if (set.size()==0) {
+				differ = new Differ(true,new String[0]);
+				refPackage = null;
+				refVersion = null;
+				diffs = differ.diff(p, refPackage);
+			} else if (set.size()==1) {
+				differ = new Differ(true,new String[0]);
+				refPackage = set.iterator().next();
+				refVersion = refPackage.version();
+				diffs = differ.diff(p, refPackage);
+				for (Entry<Info,SortedSet<DiffElement>> me : diffs.entrySet()) {
+					MessageContext mc = result.addInfo("Model difference - "+me.getKey().fullName().replace(p.fullName(),p.name()));
+					if (mc!=null) {
+						for (DiffElement diff : me.getValue()) {
+							String s = diff.change+" "+diff.subElementType;
+							if (diff.subElementType==ElementType.TAG)
+								s += "("+diff.tag+")";
+							if (diff.subElement!=null) {
+								s += " "+diff.subElement.name(); 
+								if (diff.subElementType==ElementType.CLASS || diff.subElementType==ElementType.SUBPACKAGE || diff.subElementType==ElementType.PROPERTY) {
+									String s2 = diff.subElement.taggedValue("AAA:Kennung"); 
+									if (s2!=null && !s2.isEmpty()) 
+										s += " ("+s2+")";
+								} else if (diff.subElementType==ElementType.ENUM) {
+									String s2 = ((PropertyInfo)diff.subElement).initialValue(); 
+									if (s2!=null && !s2.isEmpty()) 
+										s += " ("+s2+")";
+								}
+							} else if (diff.diff!=null)
+								s += " "+ differ.diff_toString(diff.diff).replace("[[/ins]][[ins]]", "").replace("[[/del]][[del]]", "").replace("[[ins]][[/ins]]", "").replace("[[del]][[/del]]", "");
+							else
+								s += " ???";
+							mc.addDetail(s);
+						}
+					}
+				}
+			}
+		}		
 	}
 
 	private Model getReferenceModel() {
@@ -435,7 +441,7 @@ public class CodelistRegister implements SingleTarget {
 		if (refModel!=null && op==null) {
 			PackageInfo pix = ci.pkg();
 			while (pix!=null) {
-				if (diffs!=null && diffs.get(pix.owner())!=null)
+				if (diffs!=null && pix.owner()!=null && diffs.get(pix.owner())!=null)
 					for (DiffElement diff : diffs.get(pix.owner())) {
 						if (diff.subElementType==ElementType.SUBPACKAGE && ((PackageInfo)diff.subElement)==pix && diff.change==Operation.INSERT) {
 							op=Operation.INSERT;

@@ -76,7 +76,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 				new String[] { "eap" }, "testResults/arcgis/linkedDocuments",
 				"src/test/resources/arcgis/linkedDocuments/reference");
 	}
-	
+
 	@Test
 	public void testRepresentTaggedValues() {
 
@@ -85,5 +85,35 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 				new String[] { "eap" },
 				"testResults/arcgis/representTaggedValues",
 				"src/test/resources/arcgis/representTaggedValues/reference");
+	}
+
+	@Test
+	public void testSubtypesFromFeatureTypes() {
+
+		multiTest(
+				"src/test/resources/arcgis/subtypesFromFeatureTypes/testEA_arcgis_subtypesFromFeatureTypes.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/subtypesFromFeatureTypes",
+				"src/test/resources/arcgis/subtypesFromFeatureTypes/reference");
+	}
+
+	@Test
+	public void testSubtypesFromFeatureTypes_lengthCorrection() {
+
+		multiTest(
+				"src/test/resources/arcgis/subtypesFromFeatureTypes_lengthCorrection/testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/subtypesFromFeatureTypes_lengthCorrection",
+				"src/test/resources/arcgis/subtypesFromFeatureTypes_lengthCorrection/reference");
+	}
+
+	@Test
+	public void testSubtypesFromSubtypeSet() {
+
+		multiTest(
+				"src/test/resources/arcgis/subtypesFromSubtypeSet/testEA_arcgis_subtypesFromSubtypeSet.xml",
+				new String[] { "eap" },
+				"testResults/arcgis/subtypesFromSubtypeSet",
+				"src/test/resources/arcgis/subtypesFromSubtypeSet/reference");
 	}
 }

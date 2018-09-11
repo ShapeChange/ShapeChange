@@ -143,7 +143,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 *            the supertypes to set, can be <code>null</code>
 	 */
 	public void setSupertypes(TreeSet<String> supertypes) {
-		this.supertypes = supertypes;
+		this.supertypes = (supertypes == null || supertypes.isEmpty()) ? null
+				: supertypes;
 	}
 
 	/**

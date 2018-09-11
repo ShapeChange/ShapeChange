@@ -404,7 +404,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */
-	public static SortedMap<String, EATaggedValue> getEATaggedValues(
+	public static SortedMap<String, EATaggedValue> getEATaggedValuesWithCombinedKeys(
 			Attribute att) {
 
 		/*
@@ -442,6 +442,49 @@ public class EAAttributeUtil extends AbstractEAUtil {
 
 		return result;
 	}
+	
+	/**
+	 * @param att
+	 * @return sorted map of the tagged values (key: {tag name}; value:
+	 *         according EATaggedValue); can be empty but not <code>null</code>
+	 */
+	public static SortedMap<String, EATaggedValue> getEATaggedValuesWithPlainKeys(
+			Attribute att) {
+
+		/*
+		 * key: {tag name}; value: according EATaggedValue
+		 */
+		SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
+
+		Collection<AttributeTag> tvs = att.GetTaggedValues();
+
+		for (short i = 0; i < tvs.GetCount(); i++) {
+
+			AttributeTag tv = tvs.GetAt(i);
+
+			String name = tv.GetName();
+			String value;
+
+			String tvValue = tv.GetValue();
+
+			if (tvValue.equals("<memo>")) {
+				value = tv.GetNotes();
+			} else {
+				value = tvValue;
+			}
+
+			String key = name;
+
+			if (result.containsKey(key)) {
+				EATaggedValue eatv = result.get(key);
+				eatv.addValue(value);
+			} else {
+				result.put(key, new EATaggedValue(name, value));
+			}
+		}
+
+		return result;
+	}
 
 	/**
 	 * @param att
@@ -471,6 +514,64 @@ public class EAAttributeUtil extends AbstractEAUtil {
 		} else {
 			return con;
 		}
+	}
+	
+	/**
+	 * Updates the tagged values with given name (which can be a fully qualified
+	 * name) in the tagged values of the given attribute. Does NOT delete those
+	 * tagged values. NOTE: This method is especially useful when setting tagged
+	 * values that are defined by an MDG / UML Profile, since these tagged
+	 * values cannot be created programmatically (they are created by EA - for
+	 * further details, see
+	 * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+	 * 
+	 * @param att
+	 *            the attribute in which the tagged values shall be updated
+	 * @param name
+	 *            (fully qualified or unqualified) name of the tagged value to
+	 *            update, must not be <code>null</code>
+	 * @param value
+	 *            value of the tagged value to update, can be <code>null</code>
+	 * @param createAsMemoField
+	 *            If set to <code>true</code>, the value shall be encoded using a
+	 *            &lt;memo&gt; field, regardless of the actual length of the
+	 *            value.
+	 * @throws EAException
+	 *             If updating the attribute did not succeed, this exception
+	 *             contains the error message.
+	 */
+	public static void updateTaggedValue(Attribute att, String name, String value,
+			boolean createAsMemoField) throws EAException {
+
+		boolean isQualifiedName = name.contains("::");
+
+		Collection<AttributeTag> cTV = att.GetTaggedValues();
+
+		cTV.Refresh();
+
+		for (short i = 0; i < cTV.GetCount(); i++) {
+
+			AttributeTag tv = cTV.GetAt(i);
+
+			if ((isQualifiedName && tv.GetFQName().equalsIgnoreCase(name))
+					|| tv.GetName().equalsIgnoreCase(name)) {
+
+				if (createAsMemoField || value.length() > 255) {
+					tv.SetValue("<memo>");
+					tv.SetNotes(value);
+				} else {
+					tv.SetValue(value);
+					tv.SetNotes("");
+				}
+
+				if (!tv.Update()) {
+					throw new EAException(createMessage(message(102), name,
+							att.GetName(), value, tv.GetLastError()));
+				}
+			}
+		}
+
+		cTV.Refresh();
 	}
 
 	public static String message(int mnr) {

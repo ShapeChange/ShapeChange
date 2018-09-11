@@ -37,7 +37,7 @@ package de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace;
  *
  */
 public class ArcGISWorkspaceConstants {
-
+	
 	/**
 	 * If this rule is enabled, the initial value for a <<DomainCodedValue>>,
 	 * which is an attribute of a <<CodedValueDomain>> that results from
@@ -100,6 +100,8 @@ public class ArcGISWorkspaceConstants {
 	 */
 	public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
 
+	public static final String RULE_ALL_POSTPROCESS_REMOVE_UNUSED_CODED_VALUE_DOMAINS = "rule-arcgis-all-postprocess-removeUnusedCodedValueDomains";
+
 	/**
 	 * If this rule is enabled, then - for properties with a code list or
 	 * enumeration as value type - ShapeChange will use the value of the tagged
@@ -129,6 +131,8 @@ public class ArcGISWorkspaceConstants {
 	 * {@value #RULE_ALL_PRECISION} instead.
 	 */
 	public static final String RULE_PROP_PRECISION = "rule-arcgis-prop-precision";
+	
+	public static final String RULE_ALL_SUBTYPES = "rule-arcgis-all-subtypes";
 
 	public static final String RULE_ALL_SCALE = "rule-arcgis-all-scale";
 	/**
@@ -244,9 +248,9 @@ public class ArcGISWorkspaceConstants {
 	/* --- ArcGIS Workspace Stereotypes --- */
 	/* ------------------------------------ */
 
-	public static final String STEREOTYPE_RELATIONSHIP_CLASS = "RelationshipClass";
+	public static final String STEREOTYPE_RELATIONSHIP_CLASS = "ArcGIS::RelationshipClass";
 
-	public static final String STEREOTYPE_DOMAIN_CODED_VALUE = "DomainCodedValue";
+	public static final String STEREOTYPE_DOMAIN_CODED_VALUE = "ArcGIS::DomainCodedValue";
 
 	/* ----------------------- */
 	/* --- Other constants --- */

@@ -1,5 +1,53 @@
 # Change Log
 
+## [2.6.0](https://github.com/ShapeChange/ShapeChange/tree/2.6.0) (2018-09-11)
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.5.1...2.6.0)
+
+**Implemented enhancements:**
+
+- New transformer to load codes of externally managed code list into model [\#150](https://github.com/ShapeChange/ShapeChange/issues/150)
+- ConstraintConverter & XmlSchema target - Derive code list restrictions from OCL and use the information to create Schematron assertions for code list checks [\#149](https://github.com/ShapeChange/ShapeChange/issues/149)
+- XmlSchema target / Schematron - Improve translation of oclIsTypeOf\(\) [\#148](https://github.com/ShapeChange/ShapeChange/issues/148)
+- SqlDdl and ArcGIS Workspace targets - Represent specific tagged values in UML model created by the target [\#143](https://github.com/ShapeChange/ShapeChange/issues/143)
+- SqlDdl target - Support range checks [\#142](https://github.com/ShapeChange/ShapeChange/issues/142)
+- SqlDdl target - Support using short names when creating constraint name [\#141](https://github.com/ShapeChange/ShapeChange/issues/141)
+- SqlDdl target - Support foreign key options \(on delete, on update\) [\#140](https://github.com/ShapeChange/ShapeChange/issues/140)
+- ArcGIS Workspace target - Add support for creation of ArcGIS subtypes [\#158](https://github.com/ShapeChange/ShapeChange/issues/158)
+- ldproxy target \(new\) - generate configuration file [\#153](https://github.com/ShapeChange/ShapeChange/issues/153)
+- XmlSchema target / Schematron - support single byReference property in iterator expression [\#152](https://github.com/ShapeChange/ShapeChange/issues/152)
+- General - Add transformer to create OCL constraints for a profile schema [\#138](https://github.com/ShapeChange/ShapeChange/issues/138)
+- XmlSchema target - Add mechanism to skip creation of XSDs \(if just Schematron is of interest\) [\#137](https://github.com/ShapeChange/ShapeChange/issues/137)
+- General - Extend the mechanism to select the schemas for processing to transformers [\#136](https://github.com/ShapeChange/ShapeChange/issues/136)
+- XmlSchema target / Schematron - Improve support for cast in OCL expression [\#133](https://github.com/ShapeChange/ShapeChange/issues/133)
+- General - Update and document code list dictionary targets [\#129](https://github.com/ShapeChange/ShapeChange/issues/129)
+- XmlSchema target - Create @gco:isoType attribute for elements in a metadata profile \(ISO 19139 encoded\) [\#127](https://github.com/ShapeChange/ShapeChange/issues/127)
+- XmlSchema target: Add configuration parameter to control naming of generated Schematron files [\#31](https://github.com/ShapeChange/ShapeChange/issues/31)
+- New target: ldproxy configurations [\#159](https://github.com/ShapeChange/ShapeChange/pull/159) ([cportele](https://github.com/cportele))
+
+**Fixed bugs:**
+
+- FeatureCatalogue target - XSL transformation with external JRE fails \(NPE for hrefMappings in XsltWriter\) [\#157](https://github.com/ShapeChange/ShapeChange/issues/157)
+- XML Schema target - fix encoding of \<\<union\>\> subtype without attributes [\#156](https://github.com/ShapeChange/ShapeChange/issues/156)
+- Flattener transformation - remove type logic does not work for multiple types with same name [\#155](https://github.com/ShapeChange/ShapeChange/issues/155)
+- XmlSchema target - Fix type choice for code list valued property [\#139](https://github.com/ShapeChange/ShapeChange/issues/139)
+- XmlSchema target - Fix ISO 19139 union encoding [\#134](https://github.com/ShapeChange/ShapeChange/issues/134)
+- XmlSchema target / Schematron - Missing parentheses for inlineOrByReference encoding of a property [\#132](https://github.com/ShapeChange/ShapeChange/issues/132)
+- XmlSchema target / Schematron - Wrong id attribute in XPath for ISO 19139 encoded property type [\#126](https://github.com/ShapeChange/ShapeChange/issues/126)
+- XmlSchema target / Schematron - Incorrect XPath encoding for ISO 19139 elements with simple content [\#125](https://github.com/ShapeChange/ShapeChange/issues/125)
+- XmlSchema target / Schematron - Incorrect XPath encoding for ISO 19139 elements that are not referenceable [\#124](https://github.com/ShapeChange/ShapeChange/issues/124)
+
+**Closed issues:**
+
+- UML taggedValue cannot be written to XML schema [\#146](https://github.com/ShapeChange/ShapeChange/issues/146)
+- StandardMapEntries for CI\_Responsibility [\#144](https://github.com/ShapeChange/ShapeChange/issues/144)
+
+**Merged pull requests:**
+
+- Schematron [\#161](https://github.com/ShapeChange/ShapeChange/pull/161) ([jechterhoff](https://github.com/jechterhoff))
+- ArcGIS [\#160](https://github.com/ShapeChange/ShapeChange/pull/160) ([jechterhoff](https://github.com/jechterhoff))
+- Schematron [\#151](https://github.com/ShapeChange/ShapeChange/pull/151) ([jechterhoff](https://github.com/jechterhoff))
+- Sql and arc gis [\#147](https://github.com/ShapeChange/ShapeChange/pull/147) ([jechterhoff](https://github.com/jechterhoff))
+
 ## [2.5.1](https://github.com/ShapeChange/ShapeChange/tree/2.5.1) (2018-02-23)
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.5.0...2.5.1)
 

@@ -192,15 +192,15 @@ public class ConstraintConverter implements Transformer, MessageSource {
 		 * Regular expression that covers the case of a property with max mult >
 		 * 1:
 		 * 
-		 * (?s).*inv:\s*(?:self\.)?(\w+)->forAll\(\w+\|(?:\w+->notEmpty\(\)
-		 * implies )?\w+\.oclIsTypeOf\((\w+)\)\)\s*
+		 * (?s).*inv:\s*(?:(?:self\.)?\w+->notEmpty\(\) implies
+		 * )?(?:self\.)?(\w+)->forAll\(\w+\|\w+\.oclIsTypeOf\((\w+)\)\)\s*
 		 * 
 		 * group 1: property name
 		 * 
 		 * group 2: type name
 		 */
 		Pattern regex2 = Pattern.compile(
-				"(?s).*inv:\\s*(?:self\\.)?(\\w+)->forAll\\(\\w+\\|(?:\\w+->notEmpty\\(\\) implies )?\\w+\\.oclIsTypeOf\\((\\w+)\\)\\)\\s*");
+				"(?s).*inv:\\s*(?:(?:self\\.)?\\w+->notEmpty\\(\\) implies )?(?:self\\.)?(\\w+)->forAll\\(\\w+\\|\\w+\\.oclIsTypeOf\\((\\w+)\\)\\)\\s*");
 
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 

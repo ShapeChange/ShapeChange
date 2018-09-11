@@ -155,6 +155,21 @@ public class EAPackageUtil extends AbstractEAUtil {
 			lookUpElements(pkgs.GetAt(i), elementTypes, resultMap);
 		}
 	}
+	
+	public static void deleteElement(Package pkg, int elementId) {
+		
+		Collection<Element> elmts = pkg.GetElements();
+		
+		for(short i = 0; i<elmts.GetCount(); i++) {
+			Element e = elmts.GetAt(i);
+			if(e.GetElementID() == elementId) {
+				elmts.Delete(i);
+				break;
+			}
+		}
+		
+		elmts.Refresh();
+	}
 
 	public static String message(int mnr) {
 
