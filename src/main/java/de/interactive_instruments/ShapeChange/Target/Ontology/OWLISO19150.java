@@ -299,6 +299,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public static final String PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY = "propExternalReference_targetProperty";
 
+	public static final String PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY = "suppressMessagesForUnsupportedCategoryOfClasses";
+
 	/**
 	 * key: a package, value: the according ontology object
 	 */
@@ -358,6 +360,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String ontologyNameTaggedValue = "ontologyName";
 	private static String ontologyNameCode = null;
 	private static String defaultTypeImplementation = null;
+	private static boolean suppressMessagesForUnsupportedCategoryOfClasses = false;
 
 	/**
 	 * Will be populated when writeAll is called.
@@ -540,6 +543,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			propExternalReference_targetProperty = propExternalReference_targetProperty_tmp
 					.trim();
 		}
+
+		suppressMessagesForUnsupportedCategoryOfClasses = options
+				.parameterAsBoolean(this.getClass().getName(),
+						PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY,
+						false);
 
 		/*
 		 * Initialize an ontology for the package and - unless stated otherwise
@@ -1172,6 +1180,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
 		OWLISO19150.ontologyNameCode = null;
 		OWLISO19150.defaultTypeImplementation = null;
+		OWLISO19150.suppressMessagesForUnsupportedCategoryOfClasses = false;
 
 		OWLISO19150.ontologyByPropertyConversionTargetReference = null;
 	}
@@ -1258,6 +1267,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public String getUriBase() {
 		return uriBase;
+	}
+
+	public boolean isSuppressMessagesForUnsupportedCategoryOfClasses() {
+		return suppressMessagesForUnsupportedCategoryOfClasses;
 	}
 
 	/**

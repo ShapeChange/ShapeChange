@@ -621,15 +621,22 @@ public class OntologyModel implements MessageSource {
 						break;
 					}
 				default:
+
 					this.resourceByClassInfo.put(ci, defaultTypeImplementation);
-					MessageContext mc = result.addWarning(this, 5,
-							options.categoryName(cat));
-					if (mc != null) {
-						mc.addDetail(this, 10000, ci.fullName());
-					}
-					MessageContext mc2 = result.addWarning(this, 41, ci.name());
-					if (mc2 != null) {
-						mc2.addDetail(this, 10000, ci.fullName());
+
+					if (!owliso19150
+							.isSuppressMessagesForUnsupportedCategoryOfClasses()) {
+						
+						MessageContext mc = result.addInfo(this, 5,
+								options.categoryName(cat));
+						if (mc != null) {
+							mc.addDetail(this, 10000, ci.fullName());
+						}
+						MessageContext mc2 = result.addInfo(this, 41,
+								ci.name());
+						if (mc2 != null) {
+							mc2.addDetail(this, 10000, ci.fullName());
+						}
 					}
 				}
 			}
@@ -2882,12 +2889,20 @@ public class OntologyModel implements MessageSource {
 			 * be encoded under RULE_OWL_CLS_CODELIST_EXTERNAL
 			 */
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
-			MessageContext mc = result.addWarning(this, 41, ci.name());
+
+			MessageContext mc = result.addDebug(this, 43, ci.name(),
+					OWLISO19150.RULE_OWL_CLS_CODELIST_EXTERNAL);
 			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
 
 		} else if (ci.matches(OWLISO19150.RULE_OWL_CLS_CODELIST_191502)) {
+
+			MessageContext mc = result.addDebug(this, 43, ci.name(),
+					OWLISO19150.RULE_OWL_CLS_CODELIST_191502);
+			if (mc != null) {
+				mc.addDetail(this, 10000, ci.fullName());
+			}
 
 			this.ontmodel.setNsPrefix("skos", OWLISO19150.RDF_NS_W3C_SKOS);
 
@@ -3009,9 +3024,9 @@ public class OntologyModel implements MessageSource {
 
 						} else {
 
-							MessageContext mc = result.addWarning(this, 38);
-							if (mc != null) {
-								mc.addDetail(this, 10001,
+							MessageContext mc2 = result.addWarning(this, 38);
+							if (mc2 != null) {
+								mc2.addDetail(this, 10001,
 										ci.property(piName).fullNameInSchema());
 							}
 							indi.addProperty(SKOS.topConceptOf, cs);
@@ -3052,7 +3067,7 @@ public class OntologyModel implements MessageSource {
 
 			// none of the code list encoding rules matches
 			this.resourceByClassInfo.put(ci, defaultTypeImplementation);
-			MessageContext mc = result.addWarning(this, 41, ci.name());
+			MessageContext mc = result.addWarning(this, 44, ci.name());
 			if (mc != null) {
 				mc.addDetail(this, 10000, ci.fullName());
 			}
@@ -3161,7 +3176,7 @@ public class OntologyModel implements MessageSource {
 		case 4:
 			return "Could not add namespace declaration info for (rdf) namespace '$1$' because no abbreviation/prefix was found for it.";
 		case 5:
-			return "Unsupported class category ($1$). Ensure that the encoding rule includes a rule that enables the conversion of this type of class.";
+			return "Unsupported class category ($1$). Ensure that the encoding rule includes a rule that enables the conversion of this type of class – unless your intention is to exclude this class category.";
 		case 6:
 			return "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
 		case 7:
@@ -3238,6 +3253,10 @@ public class OntologyModel implements MessageSource {
 			return "??Default type implementation is used to implement type '$1$'.";
 		case 42:
 			return "Default type implementation is used as range of property '$1$'.";
+		case 43:
+			return "??Code list '$1$' is encoded according to $2$.";
+		case 44:
+			return "??None of the code list conversion rules applies to code list '$1$'. The default type implementation is used to implement the code list.";
 
 		case 10000:
 			return "--- Context - Class: $1$";
