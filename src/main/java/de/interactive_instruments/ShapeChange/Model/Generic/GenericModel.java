@@ -980,7 +980,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
-//			genPi.setIsSchema(pi.isSchema());
+			// genPi.setIsSchema(pi.isSchema());
 
 			genPi.setDiagrams(pi.getDiagrams());
 
@@ -1744,7 +1744,16 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	private void remove(GenericClassInfo ciToRemove,
 			boolean keepAssociationProperties) {
 
-		if (ciToRemove == null || !this.isInAppSchema(ciToRemove))
+		/*
+		 * Ensure that the class is only removed if it is still registered in
+		 * the model (in genClassInfosById). The check shall prevent removing a
+		 * class twice, once because it is an association class which is removed
+		 * together with an association, and then later on again - for example
+		 * because the class does not belong to a profile and is therefore
+		 * explicitly removed by the Profiler.
+		 */
+		if (ciToRemove == null || !this.isInAppSchema(ciToRemove)
+				|| !this.genClassInfosById.containsKey(ciToRemove.id()))
 			return;
 
 		// Identify all properties to remove
