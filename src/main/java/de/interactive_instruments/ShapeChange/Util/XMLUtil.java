@@ -33,24 +33,27 @@ package de.interactive_instruments.ShapeChange.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class XMLUtil {
 
 	/**
 	 * @param parent
-	 *            the element in which to look for the first child element with
-	 *            given name
+	 *                        the element in which to look for the first child
+	 *                        element with given name
 	 * @param elementName
-	 *            name of the child element to look up
+	 *                        name of the child element to look up
 	 * @return the first child element with given name; can be <code>null</code>
 	 *         if no such element was found
 	 */
@@ -74,10 +77,26 @@ public class XMLUtil {
 	}
 
 	/**
-	 * @param parentElement
-	 *            Element in which to look up the children with given name
+	 * @param parent
+	 *                        the element in which to look for the first child
+	 *                        element with given name
 	 * @param elementName
-	 *            name of child elements to look up
+	 *                        name of the child element to look up
+	 * @return the text content of the first child element with given name; can
+	 *         be <code>null</code> if no such element was found
+	 */
+	public static String getTextContentOfFirstElement(Element parent,
+			String elementName) {
+		Element e = getFirstElement(parent, elementName);
+		return e != null ? e.getTextContent() : null;
+	}
+
+	/**
+	 * @param parentElement
+	 *                          Element in which to look up the children with
+	 *                          given name
+	 * @param elementName
+	 *                          name of child elements to look up
 	 * @return List of child elements of the given parent element that have the
 	 *         given element name. Can be empty but not <code>null</code>.
 	 */
@@ -101,5 +120,45 @@ public class XMLUtil {
 		}
 
 		return result;
+	}
+
+	/**
+	 * @param parentElement
+	 *                          Element in which to look up the children with
+	 *                          given name
+	 * @param elementName
+	 *                          name of child elements to look up
+	 * @return List of text contents of the child elements of the given parent
+	 *         element that have the given element name. Can be empty but not
+	 *         <code>null</code>.
+	 */
+	public static List<String> getTextContentOfChildElements(
+			Element parentElement, String elementName) {
+
+		List<String> result = new ArrayList<>();
+
+		List<Element> elements = getChildElements(parentElement, elementName);
+
+		for (Element e : elements) {
+			result.add(e.getTextContent());
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param s
+	 * @return <code>true</code> if the given string equals '1' or equals,
+	 *         ignoring case, 'true'; else <code>false</code>
+	 */
+	public static boolean parseBoolean(String s) {
+
+		if (StringUtils.isBlank(s)) {
+			return false;
+		} else if (s.trim().equalsIgnoreCase("true") || s.trim().equals("1")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

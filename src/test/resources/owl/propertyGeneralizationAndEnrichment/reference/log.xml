@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/owl/propertyGeneralizationAndEnrichment/testEA_owl_propertyGeneralizationAndEnrichment.xml" end="Fri Sep 28 11:31:28 CEST 2018" resultCode="0" start="Fri Sep 28 11:31:02 CEST 2018" version="2.6.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150' and @inputs 'associationClassMapper' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\owl\propertyGeneralizationAndEnrichment\test_owl_propertyGeneralizationAndEnrichment.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\owl\propertyGeneralizationAndEnrichment\test_owl_propertyGeneralizationAndEnrichment.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\owl\propertyGeneralizationAndEnrichment\test_owl_propertyGeneralizationAndEnrichment.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\owl\propertyGeneralizationAndEnrichment\test_owl_propertyGeneralizationAndEnrichment.eap"/>
+    <Info message="Now processing transformation 'associationClassMapper' for input ID: 'original'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'associationClassMapper' for input ID: 'original'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment'"/>
+    <Info message="Now processing target 'ISO 19150-2 OWL Ontology' for input 'associationClassMapper'."/>
+    <Info message="The default type implementation is 'owl:Class'."/>
+    <Warning message="Property 'http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment/otherNamespace#roleGeneral2' is defined to be both reflexive and irreflexive. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150' for input ID: 'associationClassMapper'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/propertyGeneralizationAndEnrichment/owl/associationClassMapper/test.ttl" scope="http://example.org/ontology/test" target="ISO 19150-2 OWL Ontology">test.ttl</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/owl/propertyGeneralizationAndEnrichment/owl/associationClassMapper/http_example_org_shapechange_owl_propertyGeneralizationAndEnrichment_otherNamespace_.ttl" scope="http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment/otherNamespace" target="ISO 19150-2 OWL Ontology">http_example_org_shapechange_owl_propertyGeneralizationAndEnrichment_otherNamespace_.ttl</Result>
+  </Results>
+</ShapeChangeResult>

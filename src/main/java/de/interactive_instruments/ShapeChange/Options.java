@@ -79,6 +79,10 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheArray;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue;
+import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralDataProperty;
+import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralObjectProperty;
+import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -2340,6 +2344,8 @@ public class Options {
 								tgtE);
 						Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 								tgtE);
+						
+						List<RdfGeneralProperty> generalProperties = parseGeneralProperties(tgtE);
 
 						List<Namespace> namespaces = parseNamespaces(tgtE);
 
@@ -2352,7 +2358,7 @@ public class Options {
 								stereotypeConversionParameters,
 								typeConversionParameters,
 								propertyConversionParameters, descriptorTargets,
-								constraintMappings);
+								constraintMappings,generalProperties);
 
 						owlConfig.validate();
 
@@ -2378,6 +2384,27 @@ public class Options {
 			}
 		}
 		return tgtConfigs;
+	}
+
+	private List<RdfGeneralProperty> parseGeneralProperties(Element targetElement) {
+		
+		List<RdfGeneralProperty> result = new ArrayList<>();
+		
+		List<Element> gopEs = XMLUtil.getChildElements(targetElement, "GeneralObjectProperty");
+		
+		for(Element gopE : gopEs) {
+			GeneralObjectProperty gop = new GeneralObjectProperty(gopE);
+			result.add(gop);
+		}
+		
+		List<Element> gdpEs = XMLUtil.getChildElements(targetElement, "GeneralDataProperty");
+		
+		for(Element gdpE : gdpEs) {
+			GeneralDataProperty gdp = new GeneralDataProperty(gdpE);
+			result.add(gdp);
+		}
+
+		return result;
 	}
 
 	private Element parseAdvancedProcessConfigurations(Element processElement) {
@@ -3795,6 +3822,7 @@ public class Options {
 		addRule("rule-owl-prop-mapping-compare-specifications");
 		addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
 		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
+		addRule("rule-owl-prop-propertyEnrichment");
 		addRule("rule-owl-prop-range-global");
 		addRule("rule-owl-prop-range-local-withUniversalQuantification");
 		addRule("rule-owl-prop-voidable-as-minCardinality0");

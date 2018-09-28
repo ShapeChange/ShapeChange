@@ -92,4 +92,14 @@ public class OntologyTest extends WindowsBasicTest {
 				"testResults/owl/labelFromLocalName/owl",
 				"src/test/resources/owl/labelFromLocalName/reference/owl");
 	}
+	
+	@Test
+	public void testPropertyGeneralizationAndEnrichment() {
+		
+		multiTest(
+				"src/test/resources/owl/propertyGeneralizationAndEnrichment/testEA_owl_propertyGeneralizationAndEnrichment.xml",
+				new String[] { "ttl" },
+				"testResults/owl/propertyGeneralizationAndEnrichment/owl",
+				"src/test/resources/owl/propertyGeneralizationAndEnrichment/reference/owl");
+	}
 }

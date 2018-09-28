@@ -1,0 +1,37 @@
+@prefix test:  <http://example.org/ontology/test#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/ontology/test>
+        a       owl:Ontology .
+
+test:FT1.attFT1  a                owl:TransitiveProperty , owl:FunctionalProperty , owl:DatatypeProperty ;
+        rdfs:domain               test:FT1 ;
+        rdfs:range                xsd:boolean ;
+        rdfs:subPropertyOf        test:attGeneral ;
+        owl:propertyDisjointWith  test:FT2.attFT2 , test:FT1.roleFT1toFT2 .
+
+test:FT1.roleFT1toFT2
+        a                   owl:ObjectProperty ;
+        rdfs:domain         test:FT1 ;
+        rdfs:range          test:FT2 ;
+        rdfs:subPropertyOf  test:roleGeneral .
+
+test:FT2.attFT2  a          owl:DatatypeProperty ;
+        rdfs:domain         test:FT2 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  test:attGeneral .
+
+test:FT2  a     owl:Class .
+
+test:attGeneral  a   owl:FunctionalProperty , owl:DatatypeProperty ;
+        rdfs:domain  [ a            owl:Class ;
+                       owl:unionOf  ( test:FT1 test:FT2 )
+                     ] ;
+        rdfs:label   "label of attGeneral"@en .
+
+test:roleGeneral  a  owl:SymmetricProperty , owl:ObjectProperty .
+
+test:FT1  a     owl:Class .

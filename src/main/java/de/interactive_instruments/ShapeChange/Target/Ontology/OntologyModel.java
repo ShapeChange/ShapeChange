@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.ObjectProperty;
@@ -58,6 +60,7 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.OWL2;
@@ -136,6 +139,12 @@ public class OntologyModel implements MessageSource {
 	private SortedMap<String, OwlProperty> properties = new TreeMap<String, OwlProperty>();
 
 	/**
+	 * key: ontology name of the general property (so a URI); value:
+	 * OwlGeneralProperty
+	 */
+	private SortedMap<String, OwlGeneralProperty> generalProperties = new TreeMap<String, OwlGeneralProperty>();
+
+	/**
 	 * Map to keep track of the RDF implementation of a ClassInfo. Can be a
 	 * specific class or datatype but also the 'defaultTypeImplementation'
 	 * (which defaults to OWL Class). This information is necessary whenever the
@@ -165,6 +174,16 @@ public class OntologyModel implements MessageSource {
 
 		public OwlProperty(PropertyInfo pi, OntProperty p) {
 			this.pi = pi;
+			this.p = p;
+		}
+	}
+
+	class OwlGeneralProperty {
+		protected RdfGeneralProperty gp;
+		protected OntProperty p;
+
+		public OwlGeneralProperty(RdfGeneralProperty gp, OntProperty p) {
+			this.gp = gp;
 			this.p = p;
 		}
 	}
@@ -626,7 +645,7 @@ public class OntologyModel implements MessageSource {
 
 					if (!owliso19150
 							.isSuppressMessagesForUnsupportedCategoryOfClasses()) {
-						
+
 						MessageContext mc = result.addInfo(this, 5,
 								options.categoryName(cat));
 						if (mc != null) {
@@ -696,6 +715,52 @@ public class OntologyModel implements MessageSource {
 
 				Resource range = computeRange(pi);
 				this.rangeByPropertyInfo.put(pi, range);
+			}
+		}
+	}
+
+	public void createGeneralProperty(String nsabr, String namespace,
+			RdfGeneralProperty gp) {
+
+		String propAbout = namespace + gp.getName();
+
+		if (properties.containsKey(propAbout)) {
+			/*
+			 * a property with this id has already been declared - do not add it
+			 * again
+			 */
+		} else {
+
+			OntProperty p;
+
+			// Determine if this is a DatatypeProperty or ObjectProperty
+			if (gp instanceof GeneralDataProperty) {
+
+				// we have a datatype
+				DatatypeProperty dp = ontmodel
+						.createDatatypeProperty(propAbout);
+				p = dp.asProperty();
+
+			} else {
+
+				// we have an object type
+				ObjectProperty op = ontmodel.createObjectProperty(propAbout);
+				p = op.asProperty();
+			}
+
+			generalProperties.put(propAbout, new OwlGeneralProperty(gp, p));
+
+			if (gp.hasRange()) {
+				Resource range = mapClass(gp.getRange());
+				p.addRange(range);
+			}
+
+			/*
+			 * If a domain is explicitly defined, add it now
+			 */
+			if (gp.hasDomain()) {
+				Resource domain = mapClass(gp.getDomain());
+				p.addDomain(domain);
 			}
 		}
 	}
@@ -1311,7 +1376,7 @@ public class OntologyModel implements MessageSource {
 
 				if (pi.isNavigable()) {
 
-					OntProperty p = this.ontPropertyByPropertyInfo.get(pi);
+					OntProperty op = this.ontPropertyByPropertyInfo.get(pi);
 
 					AssociationInfo ai = pi.association();
 
@@ -1340,9 +1405,9 @@ public class OntologyModel implements MessageSource {
 								}
 
 								if (ip != null)
-									p.addInverseOf(ip);
+									op.addInverseOf(ip);
 								else {
-									result.addError(this, 13, p.getURI());
+									result.addError(this, 13, op.getURI());
 								}
 							} else {
 								/*
@@ -1361,7 +1426,7 @@ public class OntologyModel implements MessageSource {
 							this.ontmodel.setNsPrefix(
 									OWLISO19150.PREFIX_ISO_19150_2,
 									OWLISO19150.RDF_NS_ISO_19150_2);
-							p.addProperty(ISO19150_2.associationName, aiName);
+							op.addProperty(ISO19150_2.associationName, aiName);
 						}
 
 						if ((pi.isComposition() || pi.isAggregation())
@@ -1371,18 +1436,323 @@ public class OntologyModel implements MessageSource {
 								this.ontmodel.setNsPrefix(
 										OWLISO19150.PREFIX_ISO_19150_2,
 										OWLISO19150.RDF_NS_ISO_19150_2);
-								p.addProperty(ISO19150_2.aggregationType,
+								op.addProperty(ISO19150_2.aggregationType,
 										"partOfCompositeAggregation");
 							} else if (pi.isAggregation()) {
 								this.ontmodel.setNsPrefix(
 										OWLISO19150.PREFIX_ISO_19150_2,
 										OWLISO19150.RDF_NS_ISO_19150_2);
-								p.addProperty(ISO19150_2.aggregationType,
+								op.addProperty(ISO19150_2.aggregationType,
 										"partOfSharedAggregation");
 							} else {
 								// no special aggregation to document
 							}
 						}
+					}
+
+					// apply property enrichment
+					if (pi.matches(
+							OWLISO19150.RULE_OWL_PROP_PROPERTYENRICHMENT)) {
+						
+						addPropertyAxiom(pi, op, PropertyAxiom.EQUIVALENT);
+						addPropertyAxiom(pi, op, PropertyAxiom.DISJOINT);
+						addPropertyAxiom(pi, op, PropertyAxiom.INVERSE);
+						addPropertyAxiom(pi, op, PropertyAxiom.SUBPROPERTYOF);
+
+						String owlLogicalCharacteristicsTV = pi
+								.taggedValue("owlLogicalCharacteristics");
+						if (StringUtils
+								.isNotBlank(owlLogicalCharacteristicsTV)) {
+							String[] tvValues = StringUtils
+									.split(owlLogicalCharacteristicsTV, ", ");
+							SortedSet<PropertyAxiom> propertyAxioms = new TreeSet<>();
+							for (String tvValue : tvValues) {
+								try {
+									PropertyAxiom pa = PropertyAxiom
+											.fromString(tvValue);
+									if (pa == PropertyAxiom.FUNCTIONAL
+											|| pa == PropertyAxiom.INVERSEFUNCTIONAL
+											|| pa == PropertyAxiom.REFLEXIVE
+											|| pa == PropertyAxiom.IRREFLEXIVE
+											|| pa == PropertyAxiom.SYMMETRIC
+											|| pa == PropertyAxiom.ASYMMETRIC
+											|| pa == PropertyAxiom.TRANSITIVE) {
+										propertyAxioms.add(pa);
+									}
+								} catch (Exception e) {
+									MessageContext mc = result.addError(this,
+											52, tvValue, pi.name());
+									if (mc != null) {
+										mc.addDetail(this, -2,
+												pi.fullNameInSchema());
+									}
+								}
+							}
+
+							addPropertyCharacteristicAxioms(op, propertyAxioms);
+						}
+					}
+				}
+			}
+		}
+
+		for (OwlGeneralProperty ogp : generalProperties.values()) {
+
+			RdfGeneralProperty gp = ogp.gp;
+			OntProperty op = ogp.p;
+
+			addGeneralPropertyAxiom(gp, op, gp.getEquivalentProperty(),
+					PropertyAxiom.EQUIVALENT);
+
+			addGeneralPropertyAxiom(gp, op, gp.getDisjointProperty(),
+					PropertyAxiom.DISJOINT);
+
+			addGeneralPropertyAxiom(gp, op, gp.getSubPropertyOf(),
+					PropertyAxiom.SUBPROPERTYOF);
+
+			for (Entry<String, List<RdfPropertyValue>> addProp : gp
+					.getAdditionalProperties().entrySet()) {
+
+				String propQName = addProp.getKey();
+				List<RdfPropertyValue> values = addProp.getValue();
+
+				Property prop = mapProperty(propQName);
+
+				for (RdfPropertyValue rpv : values) {
+
+					if (rpv.isIRI()) {
+
+						OntResource value = ontmodel
+								.createOntResource(rpv.getValue());
+						op.addProperty(prop, value);
+
+					} else {
+
+						Literal l = rpv.hasLang()
+								? ontmodel.createLiteral(rpv.getValue(),
+										rpv.getLang())
+								: ontmodel.createLiteral(rpv.getValue());
+
+						op.addLiteral(prop, l);
+					}
+				}
+			}
+
+			if (gp instanceof GeneralDataProperty) {
+
+				GeneralDataProperty gdp = (GeneralDataProperty) gp;
+
+				if (gdp.isFunctional()) {
+					op.addRDFType(OWL2.FunctionalProperty);
+				}
+
+			} else {
+
+				GeneralObjectProperty gop = (GeneralObjectProperty) gp;
+
+				addGeneralPropertyAxiom(gp, op, gop.getInverseProperty(),
+						PropertyAxiom.INVERSE);
+
+				SortedSet<PropertyAxiom> propertyAxioms = gop
+						.getPropertyCharacteristicAxioms();
+
+				addPropertyCharacteristicAxioms(op, propertyAxioms);
+			}
+		}
+	}
+
+	private void addPropertyCharacteristicAxioms(OntProperty op,
+			SortedSet<PropertyAxiom> propertyAxioms) {
+
+		if (propertyAxioms.isEmpty()) {
+			return;
+		}
+
+		if (propertyAxioms.contains(PropertyAxiom.FUNCTIONAL)
+				&& propertyAxioms.contains(PropertyAxiom.INVERSEFUNCTIONAL)) {
+			result.addWarning(this, 49, op.getURI());
+		} else if (propertyAxioms.contains(PropertyAxiom.REFLEXIVE)
+				&& propertyAxioms.contains(PropertyAxiom.IRREFLEXIVE)) {
+			result.addWarning(this, 50, op.getURI());
+		} else if (propertyAxioms.contains(PropertyAxiom.SYMMETRIC)
+				&& propertyAxioms.contains(PropertyAxiom.ASYMMETRIC)) {
+			result.addWarning(this, 51, op.getURI());
+		}
+
+		for (PropertyAxiom opca : propertyAxioms) {
+
+			if (opca == PropertyAxiom.ASYMMETRIC) {
+				op.addRDFType(OWL2.AsymmetricProperty);
+			} else if (opca == PropertyAxiom.FUNCTIONAL) {
+				op.addRDFType(OWL2.FunctionalProperty);
+			} else if (opca == PropertyAxiom.INVERSEFUNCTIONAL) {
+				op.addRDFType(OWL2.InverseFunctionalProperty);
+			} else if (opca == PropertyAxiom.IRREFLEXIVE) {
+				op.addRDFType(OWL2.IrreflexiveProperty);
+			} else if (opca == PropertyAxiom.REFLEXIVE) {
+				op.addRDFType(OWL2.ReflexiveProperty);
+			} else if (opca == PropertyAxiom.SYMMETRIC) {
+				op.addRDFType(OWL2.SymmetricProperty);
+			} else if (opca == PropertyAxiom.TRANSITIVE) {
+				op.addRDFType(OWL2.TransitiveProperty);
+			}
+		}
+	}
+
+	/**
+	 * @param gp
+	 * @param op
+	 * @param propertyIdentifiers
+	 * @param axiom
+	 *                                SUBPROPERTYOF, EQUIVALENT, DISJOINT, or
+	 *                                INVERSE
+	 */
+	private void addGeneralPropertyAxiom(RdfGeneralProperty gp, OntProperty op,
+			SortedSet<String> propertyIdentifiers, PropertyAxiom axiom) {
+
+		if (!(axiom == PropertyAxiom.SUBPROPERTYOF
+				|| axiom == PropertyAxiom.EQUIVALENT
+				|| axiom == PropertyAxiom.DISJOINT
+				|| axiom == PropertyAxiom.INVERSE)) {
+			return;
+		}
+
+		for (String propId : propertyIdentifiers) {
+
+			Property p = null;
+
+			if (propId.contains("::")) {
+
+				PropertyInfo pi = model.propertyByFullNameInSchema(propId);
+
+				if (pi == null) {
+					result.addError(this, 45, gp.getName(), propId,
+							axiom.getNameForMessages());
+				} else {
+
+					p = mapProperty(pi);
+
+					if (p == null) {
+
+						// no mapping is defined for the property
+						OntologyModel om = owliso19150
+								.computeRelevantOntology(pi.inClass());
+
+						if (om != null) {
+							p = om.getOntProperty(pi);
+						}
+					}
+
+					if (p == null) {
+						result.addError(this, 46, gp.getName(), propId,
+								axiom.getNameForMessages());
+					}
+				}
+
+			} else {
+
+				p = mapProperty(propId);
+			}
+
+			if (p != null) {
+				if (axiom == PropertyAxiom.SUBPROPERTYOF) {
+					op.addSuperProperty(p);
+					owliso19150.registerSubPropertyOfRelationship(p.getURI(),
+							op);
+				} else if (axiom == PropertyAxiom.INVERSE) {
+					op.addInverseOf(p);
+				} else if (axiom == PropertyAxiom.DISJOINT) {
+					op.addProperty(OWL2.propertyDisjointWith, p);
+				} else if (axiom == PropertyAxiom.EQUIVALENT) {
+					op.addEquivalentProperty(p);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param gp
+	 * @param op
+	 * @param axiom
+	 *                  SUBPROPERTYOF, EQUIVALENT, DISJOINT, or INVERSE
+	 */
+	private void addPropertyAxiom(PropertyInfo pi, OntProperty op,
+			PropertyAxiom axiom) {
+
+		String tvName = null;
+		if (axiom == PropertyAxiom.SUBPROPERTYOF) {
+			tvName = "owlSubPropertyOf";
+		} else if (axiom == PropertyAxiom.EQUIVALENT) {
+			tvName = "owlEquivalentProperties";
+		} else if (axiom == PropertyAxiom.DISJOINT) {
+			tvName = "owlDisjointProperties";
+		} else if (axiom == PropertyAxiom.INVERSE) {
+			tvName = "owlInverseProperties";
+		} else {
+			// none of the allowed axioms
+			return;
+		}
+
+		String tv = pi.taggedValue(tvName);
+
+		if (StringUtils.isNotBlank(tv)) {
+
+			String[] tmp = StringUtils.split(tv, ",");
+			SortedSet<String> propertyIdentifiers = new TreeSet<String>();
+
+			for (String t : tmp) {
+				propertyIdentifiers.add(t.trim());
+			}
+
+			for (String propId : propertyIdentifiers) {
+
+				Property p = null;
+
+				if (propId.contains("::")) {
+
+					PropertyInfo piRef = model
+							.propertyByFullNameInSchema(propId);
+
+					if (piRef == null) {
+						result.addError(this, 47, pi.name(), propId,
+								axiom.getNameForMessages());
+					} else {
+
+						p = mapProperty(piRef);
+
+						if (p == null) {
+
+							// no mapping is defined for the property
+							OntologyModel om = owliso19150
+									.computeRelevantOntology(piRef.inClass());
+
+							if (om != null) {
+								p = om.getOntProperty(piRef);
+							}
+						}
+
+						if (p == null) {
+							result.addError(this, 48, pi.name(), propId,
+									axiom.getNameForMessages());
+						}
+					}
+
+				} else {
+
+					p = mapProperty(propId);
+				}
+
+				if (p != null) {
+					if (axiom == PropertyAxiom.SUBPROPERTYOF) {
+						op.addSuperProperty(p);
+						owliso19150.registerSubPropertyOfRelationship(
+								p.getURI(), op);
+					} else if (axiom == PropertyAxiom.INVERSE) {
+						op.addInverseOf(p);
+					} else if (axiom == PropertyAxiom.DISJOINT) {
+						op.addProperty(OWL2.propertyDisjointWith, p);
+					} else if (axiom == PropertyAxiom.EQUIVALENT) {
+						op.addEquivalentProperty(p);
 					}
 				}
 			}
@@ -1469,12 +1839,12 @@ public class OntologyModel implements MessageSource {
 							.equals(DescriptorTarget.AppliesTo.ONTOLOGY))
 							|| ((i instanceof ClassInfo) && !((dt.getAppliesTo()
 									.equals(DescriptorTarget.AppliesTo.CLASS)
-									&& appliesTo
-											.equals(DescriptorTarget.AppliesTo.CLASS))
-									|| (dt.getAppliesTo()
-											.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME)
-											&& appliesTo
-													.equals(DescriptorTarget.AppliesTo.CONCEPT_SCHEME))))
+									&& appliesTo.equals(
+											DescriptorTarget.AppliesTo.CLASS))
+									|| (dt.getAppliesTo().equals(
+											DescriptorTarget.AppliesTo.CONCEPT_SCHEME)
+											&& appliesTo.equals(
+													DescriptorTarget.AppliesTo.CONCEPT_SCHEME))))
 							|| ((i instanceof PropertyInfo)
 									&& !dt.getAppliesTo().equals(
 											DescriptorTarget.AppliesTo.PROPERTY)))) {
@@ -1810,11 +2180,11 @@ public class OntologyModel implements MessageSource {
 
 	/**
 	 * @param rdfns
-	 *            full namespace of the ontology to import
+	 *                  full namespace of the ontology to import
 	 * @param uri
-	 *            location of the ontology to import, can be <code>null</code>
-	 *            to indicate that the location is unknown (in that case, an
-	 *            import is not created)
+	 *                  location of the ontology to import, can be
+	 *                  <code>null</code> to indicate that the location is
+	 *                  unknown (in that case, an import is not created)
 	 */
 	public void addImport(String rdfns, String uri) {
 
@@ -1964,11 +2334,11 @@ public class OntologyModel implements MessageSource {
 
 	/**
 	 * @param cls
-	 *            class for which a all-values-from restriction is created
+	 *                class for which a all-values-from restriction is created
 	 * @param pi
-	 *            property
+	 *                property
 	 * @param p
-	 *            ontology representation of the property
+	 *                ontology representation of the property
 	 */
 	protected void addAllValuesFrom(OntClass cls, PropertyInfo pi, Property p) {
 
@@ -2230,11 +2600,12 @@ public class OntologyModel implements MessageSource {
 
 	/**
 	 * @param pi1
-	 *            property 1 (that is usually mapped to or implemented by pi2)
+	 *                      property 1 (that is usually mapped to or implemented
+	 *                      by pi2)
 	 * @param propAbout
-	 *            ontology name of pi1
+	 *                      ontology name of pi1
 	 * @param pi2
-	 *            property 2
+	 *                      property 2
 	 */
 	private void comparePropertySpecifications(PropertyInfo pi1,
 			PropertyInfo pi2) {
@@ -2310,7 +2681,9 @@ public class OntologyModel implements MessageSource {
 			for (String spo : pcp.getSubPropertyOf()) {
 
 				Property mapping = mapProperty(spo);
-				p.asProperty().addSuperProperty(mapping);
+				p.addSuperProperty(mapping);
+				owliso19150.registerSubPropertyOfRelationship(mapping.getURI(),
+						p);
 			}
 		}
 	}
@@ -2351,7 +2724,7 @@ public class OntologyModel implements MessageSource {
 	 * the resource.
 	 * 
 	 * @param qname
-	 *            identifies a resource
+	 *                  identifies a resource
 	 * @return resource identified by the qname
 	 */
 	private Resource mapResource(String qname) {
@@ -2382,7 +2755,7 @@ public class OntologyModel implements MessageSource {
 	 * configuration of namespaces. Also creates an import of that namespace.
 	 * 
 	 * @param qname
-	 *            identifies a class
+	 *                  identifies a class
 	 * @return ontology class identified by the qname
 	 */
 	private Resource mapClass(String qname) {
@@ -2409,13 +2782,16 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
-	 * Creates an ontology property (in the internal {@link #refmodel} - unless
-	 * it already exists in the refmodel), with namespace identified by looking
-	 * up the prefix of the QName in the configuration of namespaces. Also
-	 * creates an import of that namespace.
+	 * First attempts to find a property with the given qname in one of the
+	 * ontology models created by the target. Otherwise, if the namespace
+	 * abbreviation belongs to a namespace that is defined in the configuration,
+	 * the method creates an ontology property (in the internal
+	 * {@link #refmodel} - unless it already exists in the refmodel), with
+	 * namespace identified by looking up the prefix of the QName in the
+	 * configuration of namespaces; also creates an import of that namespace.
 	 * 
 	 * @param qname
-	 *            identifies a property
+	 *                  identifies a property
 	 * @return property identified by the qname
 	 */
 	private Property mapProperty(String qname) {
@@ -2424,20 +2800,55 @@ public class OntologyModel implements MessageSource {
 		String prefix = qnamePars[0];
 		String propertyName = qnamePars[1];
 
-		// identify rdf namespace based upon prefix and standard namespaces
-		String rdfNs = config.fullNamespace(prefix);
-		String location = config.locationOfNamespace(rdfNs);
+		String rdfNs = null;
+		String location = null;
+		Property p = null;
 
-		String uri = rdfNs + propertyName;
-		Property p = refmodel.getProperty(uri);
-		if (p == null)
-			p = refmodel.createProperty(uri);
+		OntologyModel om = owliso19150.computeRelevantOntology(prefix);
+
+		if (om != null) {
+
+			rdfNs = om.getRdfNamespace();
+			location = om.getName();
+			String pURI = rdfNs + propertyName;
+			p = om.getOntProperty(pURI);
+
+		} else if (config.hasNamespaceWithAbbreviation(prefix)) {
+
+			// identify rdf namespace based upon prefix and standard namespaces
+			rdfNs = config.fullNamespace(prefix);
+			location = config.locationOfNamespace(rdfNs);
+
+			String uri = rdfNs + propertyName;
+			p = refmodel.getProperty(uri);
+			if (p == null)
+				p = refmodel.createProperty(uri);
+		}
 
 		// also add import for the namespace
 		addImport(rdfNs, location);
 
 		// return correct element definition
 		return p;
+	}
+
+	/**
+	 * @param propertyURI
+	 * @return the property ("normal" or general) with the given URI, or
+	 *         <code>null</code> if no such property is defined in the ontology
+	 *         model
+	 */
+	public OntProperty getOntProperty(String propertyURI) {
+
+		OntProperty result = null;
+
+		if (this.properties.containsKey(propertyURI)) {
+			result = this.properties.get(propertyURI).p;
+		} else if (this.generalProperties.containsKey(propertyURI)) {
+			result = this.generalProperties.get(propertyURI).p;
+		}
+
+		return result;
 	}
 
 	/**
@@ -3163,12 +3574,73 @@ public class OntologyModel implements MessageSource {
 		return p;
 	}
 
+	public void addGeneralPropertyDomainByUnionOfSubPropertyDomains() {
+
+		for (Entry<String, OwlGeneralProperty> e : generalProperties
+				.entrySet()) {
+
+			String gpIRI = e.getKey();
+			OwlGeneralProperty ogp = e.getValue();
+			RdfGeneralProperty gp = ogp.gp;
+			OntProperty op = ogp.p;
+
+			if (gp.isDomainByUnionOfSubPropertyDomains()) {
+
+				/*
+				 * identify all ontology properties that are direct or indirect
+				 * subproperties of the general property
+				 */
+				SortedMap<String, OntProperty> subProperties = owliso19150
+						.getAllSubproperties(gpIRI);
+
+				if (subProperties.isEmpty()) {
+					result.addInfo(this, 53, gp.getName());
+				} else {
+
+					SortedMap<String, OntResource> subPropertyDomains = new TreeMap<>();
+
+					for (OntProperty subProp : subProperties.values()) {
+						ExtendedIterator<? extends OntResource> domains = subProp
+								.listDomain();
+						while (domains.hasNext()) {
+							OntResource domain = domains.next();
+							/*
+							 * Ignore blank nodes, which most likely represent
+							 * unions themselves. We can ignore such unions
+							 * because the represent domains of general
+							 * properties that happen to be subproperties
+							 * themselves. The map of sub properties includes
+							 * all direct and indirect subproperties, and thus
+							 * also the sub properties of these general
+							 * properties (that are subproperties).
+							 */
+							if (domain.asNode().isURI()) {
+								subPropertyDomains.put(domain.getURI(), domain);
+							}
+						}
+					}
+
+					OntClass unionOfDomains = this.ontmodel
+							.createUnionClass(null, this.ontmodel.createList(
+									subPropertyDomains.values().iterator()));
+
+					op.setDomain(unionOfDomains);
+				}
+			}
+		}
+
+	}
+
 	/**
 	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
 	 */
 	public String message(int mnr) {
 
 		switch (mnr) {
+		case -2:
+			return "Context: property '$1$'";
+		case -1:
+			return "Context: class '$1$'";
 		case 1:
 			return "ParserConfigurationException when creating document for package '$1$'.";
 		case 3:
@@ -3257,6 +3729,24 @@ public class OntologyModel implements MessageSource {
 			return "??Code list '$1$' is encoded according to $2$.";
 		case 44:
 			return "??None of the code list conversion rules applies to code list '$1$'. The default type implementation is used to implement the code list.";
+		case 45:
+			return "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
+		case 46:
+			return "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
+		case 47:
+			return "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
+		case 48:
+			return "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
+		case 49:
+			return "Property '$1$' is defined to be both functional and inverse-functional. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+		case 50:
+			return "Property '$1$' is defined to be both reflexive and irreflexive. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+		case 51:
+			return "Property '$1$' is defined to be both symmetric and asymmetric. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+		case 52:
+			return "Component '$1$' of tagged value 'owlLogicalCharacteristics' from property '$2$' was not recognized and will be ignored.";
+		case 53:
+			return "Domain of general property '$1$' shall be defined as a union of the domains of its direct and indirect sub properties. No sub property was found, therefore no domain will be specified for '$1$'";
 
 		case 10000:
 			return "--- Context - Class: $1$";
@@ -3272,5 +3762,4 @@ public class OntologyModel implements MessageSource {
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
 }

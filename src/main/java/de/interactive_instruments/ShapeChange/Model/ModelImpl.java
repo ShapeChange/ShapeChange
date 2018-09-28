@@ -89,6 +89,13 @@ public abstract class ModelImpl implements Model {
 	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType" };
 
 	/*
+	 * the list of tagged values specified by the ontology target
+	 */
+	protected static String[] owlTags = { "owlSubPropertyOf",
+			"owlEquivalentProperties", "owlDisjointProperties",
+			"owlInverseProperties", "owlLogicalCharacteristics" };
+
+	/*
 	 * the list of tagged values specified by other encoding rules
 	 */
 	protected static String[] shapeChangeTags = { "xsdEncodingRule",
@@ -314,6 +321,47 @@ public abstract class ModelImpl implements Model {
 		return res;
 	}
 
+	@Override
+	public SortedSet<ClassInfo> classes() {
+
+		SortedSet<ClassInfo> result = new TreeSet<>();
+
+		SortedSet<PackageInfo> packages = packages();
+
+		for (PackageInfo pkg : packages) {
+			result.addAll(pkg.containedClasses());
+		}
+
+		return result;
+	}
+
+	@Override
+	public SortedSet<PropertyInfo> properties() {
+
+		SortedSet<PropertyInfo> result = new TreeSet<>();
+
+		SortedSet<ClassInfo> classes = classes();
+
+		for (ClassInfo cls : classes) {
+			result.addAll(cls.properties().values());
+		}
+
+		return result;
+	}
+
+	@Override
+	public PropertyInfo propertyByFullNameInSchema(String fullNameInSchema) {
+
+		for (PropertyInfo pi : properties()) {
+
+			if (pi.fullNameInSchema().equals(fullNameInSchema)) {
+				return pi;
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -423,6 +471,8 @@ public abstract class ModelImpl implements Model {
 			for (String s : jsonTags)
 				allowedTags.add(s);
 			for (String s : arcgisTags)
+				allowedTags.add(s);
+			for (String s : owlTags)
 				allowedTags.add(s);
 			for (String s : shapeChangeTags)
 				allowedTags.add(s);

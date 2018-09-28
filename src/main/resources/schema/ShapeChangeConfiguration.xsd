@@ -963,9 +963,9 @@
     </annotation>
     <complexType>
      <sequence>
-      <element name="IRI" type="string">
+      <element name="property" type="string">
        <annotation>
-        <documentation>IRI of the additional RDF/OWL property.</documentation>
+        <documentation>Identifies the additional property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
        </annotation>
       </element>
       <element maxOccurs="unbounded" name="value">

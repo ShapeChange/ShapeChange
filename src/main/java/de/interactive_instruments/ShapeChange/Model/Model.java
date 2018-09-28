@@ -59,7 +59,7 @@ public interface Model {
 	 * considered.
 	 * 
 	 * @param name
-	 *            to restrict the search; can be <code>null</code>
+	 *                 to restrict the search; can be <code>null</code>
 	 * 
 	 * @return relevant schemas; can be empty but not <code>null</code>
 	 */
@@ -149,6 +149,20 @@ public interface Model {
 	public SortedSet<PackageInfo> packages();
 
 	/**
+	 * 
+	 * @return all {@link ClassInfo} objects contained in the model; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<ClassInfo> classes();
+
+	/**
+	 * 
+	 * @return all {@link PropertyInfo} objects contained in the model; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<PropertyInfo> properties();
+
+	/**
 	 * @param schema
 	 * @return all packages in the model that have the same targetNamespace as
 	 *         the given package. Can be empty (if the given package does not
@@ -172,7 +186,7 @@ public interface Model {
 
 	/**
 	 * @param ci
-	 *            Class to check
+	 *               Class to check
 	 * @return <code>true</code> if the given ClassInfo belongs to one of the
 	 *         selected schemas, otherwise <code>false</code>
 	 */
@@ -185,7 +199,7 @@ public interface Model {
 	 * using {@link PackageInfo#isAppSchema()}.
 	 * 
 	 * @param ci
-	 *            Class to check
+	 *               Class to check
 	 * @return The package that represents the schema or application schema of
 	 *         the class. If the class is not a child of such a package, then
 	 *         the result is <code>null</code> .
@@ -198,4 +212,12 @@ public interface Model {
 	 *         namespace; can be empty but not <code>null</code>
 	 */
 	public SortedSet<PackageInfo> allPackagesFromSelectedSchemas();
+
+	/**
+	 * @param fullNameInSchema
+	 * @return the property that has the fully qualified name (omitting packages
+	 *         that are outside of the schema the property belongs to); can be
+	 *         <code>null</code> if no such property was found
+	 */
+	public PropertyInfo propertyByFullNameInSchema(String fullNameInSchema);
 }
