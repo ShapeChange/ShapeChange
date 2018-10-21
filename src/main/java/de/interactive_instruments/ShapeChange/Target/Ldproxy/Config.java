@@ -31,12 +31,17 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -219,17 +224,17 @@ public class Config implements SingleTarget, MessageSource {
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writer = null;
+	private static OutputStreamWriter writer = null;
 
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writerGeojson = null;
+	private static OutputStreamWriter writerGeojson = null;
 
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writerGml = null;
+	private static OutputStreamWriter writerGml = null;
 
 	/**
 	 * The writers to export the codelist files.
@@ -451,9 +456,9 @@ public class Config implements SingleTarget, MessageSource {
 				// If a dry run is requested, simply do not create the writers. Everything will be
 				// executed as normal, but nothing will be written.
 				if (!diagOnly) {
-					writer = new FileWriter(directoryMain + "/" + srvid);
-					writerGeojson = new FileWriter(directoryGeojson + "/GeoJsonConfig");
-					writerGml = new FileWriter(directoryGml + "/GmlConfig");
+					writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryMain + "/" + srvid)), StandardCharsets.UTF_8);
+					writerGeojson = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryGeojson + "/GeoJsonConfig")), StandardCharsets.UTF_8);
+					writerGml = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryGml + "/GmlConfig")), StandardCharsets.UTF_8);
 				}
 				
 				// Initialize the JSON object that will become the main configuration
@@ -732,8 +737,8 @@ public class Config implements SingleTarget, MessageSource {
 		result = r;
 		options = r.options();
 		
-		FileWriter writerCL = null;
-
+		OutputStreamWriter writerCL = null;
+		
 		try {
 
 			// If diagOnly was selected, the writers will be 'null'
@@ -757,7 +762,7 @@ public class Config implements SingleTarget, MessageSource {
 			
 			if (mapCL != null) {
 				for (Map.Entry<String,JSONObject> entry : mapCL.entrySet()) {
-					writerCL = new FileWriter(directoryCL + "/" + entry.getKey());
+					writerCL = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryCL + "/" + entry.getKey())), StandardCharsets.UTF_8);
 					writerCL.write(entry.getValue().toJSONString());
 					writerCL.flush();
 					writerCL.close();
@@ -1055,7 +1060,8 @@ public class Config implements SingleTarget, MessageSource {
 					if (cix.category()==Options.DATATYPE || cix.category()==Options.OBJECT) {
 						if (pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_DT_AS_NTOM)) {
 							String dttabname = deriveName(cix);
-							String dtbasepath = basepath + "/["+primaryKeyField+"="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/[" + field + foreignKeySuffix + "=" + primaryKeyField + "]" + dttabname;
+							String makeUnique = (tabname.equals(field)? "_" : "");
+							String dtbasepath = basepath + "/["+primaryKeyField+"="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/[" + field + makeUnique + foreignKeySuffix + "=" + primaryKeyField + "]" + dttabname;
 							// Add mappings for all properties
 							if (!cix.properties().isEmpty()) {
 								for (PropertyInfo pix : cix.properties().values()) {
@@ -1096,7 +1102,7 @@ public class Config implements SingleTarget, MessageSource {
 											// retrieve codelist
 											
 											// TODO, make this generic
-											surl = surl.replace("/okey/referenzlisten/", "/repository/services/");
+											surl = surl.replace("/referenzlisten/", "/repository/");
 											
 											// get xml doc
 											InputStream configStream = null;
