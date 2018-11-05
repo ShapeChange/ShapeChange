@@ -343,6 +343,39 @@ public class ConfigConstants {
 	public static final String PARAM_FEATURE_TYPES = "featureTypes";
 
 	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: 'codeList'
+	 * <p>
+	 * Explanation: By default, code lists are accessed using the standard 'codeList' tagged value. To support other
+	 * UML profiles, another tagged value may be specified that is not normalized to 'codeList'.
+	 * <p>
+	 * Applies to Rule(s): {@value #RULE_TGT_LDP_CLS_CODELIST}
+	 */
+	public static final String PARAM_CL_URL = "taggedValueForCodeListUrl";
+	
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: all properties
+	 * <p>
+	 * Explanation: By default, all properties are included in the output. To support publishing only a subset,
+	 * only the properties are enabled in the configuration with a tagged value 'reportable' and one of the values
+	 * in this parameter. Specify the values in a comma-separated list, e.g. 'true,internal'.
+	 * <p>
+	 * Applies to Rule(s): none - default behaviour
+	 */
+	public static final String PARAM_REPORTABLE = "enablePropertiesReportable";
+	
+	/**
 	 * This rule states that all properties with a value that is a data type are represented in the database
 	 * using an intermediate table. The name of the table is determined by {@value #PARAM_NTOM_TABLE_TEMPLATE}.
 	 */
@@ -403,7 +436,8 @@ public class ConfigConstants {
 	public static final String RULE_TGT_LDP_CLS_ID_FIELD = "rule-ldp-cls-id-field";
 	
 	/**
-	 * Try to process also the codelist values and add a codelist file to the configuration
+	 * Try to process also the codelist values and add a codelist file to the configuration.
+	 * The 'codeList' tagged value is taken by default, the value can be changed using {@value #PARAM_CL_URL}.
 	 */
 	public static final String RULE_TGT_LDP_CLS_CODELIST = "rule-ldp-cls-generate-codelist";
 	

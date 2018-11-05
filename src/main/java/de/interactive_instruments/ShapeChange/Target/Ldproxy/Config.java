@@ -193,6 +193,16 @@ public class Config implements SingleTarget, MessageSource {
 	private static Set<String> featureTypes = null;
 	
 	/**
+	 * @see ConfigConstants#PARAM_CL_URL
+	 */
+	private static String clUrlTV = null;
+	
+	/**
+	 * @see ConfigConstants#PARAM_REPORTABLE
+	 */
+	private static Set<String> reportables = null;
+	
+	/**
 	 * The JSON object representing the main configuration file.
 	 */
 	private static JSONObject cfgobj = null;
@@ -453,6 +463,21 @@ public class Config implements SingleTarget, MessageSource {
 				if (maxLength == null)
 					maxLength = 60;
 
+				s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_CL_URL);
+				if (s != null)
+					clUrlTV = s.trim();
+				if (clUrlTV == null)
+					clUrlTV = "codeList";
+
+				reportables = new TreeSet<String>();
+				s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_REPORTABLE);
+				if (s != null) {
+					String[] sarr = s.split(",");
+					for (String s2 : sarr) {
+						reportables.add(s2.trim().toLowerCase());
+					}
+				}				
+				
 				// If a dry run is requested, simply do not create the writers. Everything will be
 				// executed as normal, but nothing will be written.
 				if (!diagOnly) {
@@ -697,7 +722,16 @@ public class Config implements SingleTarget, MessageSource {
 		path.put("general", general);
 		general.put("mappingType", "GENERIC_PROPERTY");
 		general.put("name", fieldname);
-		general.put("enabled", true);
+		
+		boolean enable = false;
+		for (String rep : reportables) {
+			if (rep.equalsIgnoreCase("internal")) {
+				enable = true;
+				break;
+			}
+		}
+		general.put("enabled", enable);
+		
 		general.put("sortPriority", priority++);
 		general.put("filterable", false);
 		general.put("type", category);
@@ -1094,8 +1128,8 @@ public class Config implements SingleTarget, MessageSource {
 						// ... unless we have a machine readable mapping of code values to readable text
 						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST)) {
 							if (!mapCL.containsKey(cix.name())) {
-								// Look for the first "codeList" tagged value that has a http URI
-								String sa[] = cix.taggedValuesForTag("codeList");
+								// Look for the first "codeListXML" tagged value that has a http URI
+								String sa[] = cix.taggedValuesForTag(clUrlTV);
 								if (sa!=null && sa.length>0) {
 									for (String surl : sa) {
 										if (surl.startsWith("http://") || surl.startsWith("https://")) {
@@ -1262,7 +1296,26 @@ public class Config implements SingleTarget, MessageSource {
 		String mappingType = "GENERIC_PROPERTY";
 		general.put("mappingType", mappingType);
 		general.put("name", fieldname);
-		general.put("enabled", true);
+		
+		boolean enable = true;
+		if (!reportables.isEmpty()) {
+			enable = false;
+			String sa[] = pi.taggedValuesForTag("reportable");
+			if (sa!=null && sa.length>0) {
+				for (String srep : sa) {
+					for (String rep : reportables) {
+						if (srep.equalsIgnoreCase(rep)) {
+							enable = true;
+							break;
+						}
+					}
+					if (enable)
+						break;
+				}
+			}
+		}
+		general.put("enabled", enable);
+
 		general.put("sortPriority", priority++);
 		boolean filterable = false;
 		if (category.equalsIgnoreCase("SPATIAL"))
