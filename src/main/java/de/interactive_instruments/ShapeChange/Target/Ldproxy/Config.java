@@ -31,12 +31,17 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -188,6 +193,16 @@ public class Config implements SingleTarget, MessageSource {
 	private static Set<String> featureTypes = null;
 	
 	/**
+	 * @see ConfigConstants#PARAM_CL_URL
+	 */
+	private static String clUrlTV = null;
+	
+	/**
+	 * @see ConfigConstants#PARAM_REPORTABLE
+	 */
+	private static Set<String> reportables = null;
+	
+	/**
 	 * The JSON object representing the main configuration file.
 	 */
 	private static JSONObject cfgobj = null;
@@ -219,17 +234,17 @@ public class Config implements SingleTarget, MessageSource {
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writer = null;
+	private static OutputStreamWriter writer = null;
 
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writerGeojson = null;
+	private static OutputStreamWriter writerGeojson = null;
 
 	/**
 	 * The writer to export the main configuration file.
 	 */
-	private static FileWriter writerGml = null;
+	private static OutputStreamWriter writerGml = null;
 
 	/**
 	 * The writers to export the codelist files.
@@ -448,12 +463,27 @@ public class Config implements SingleTarget, MessageSource {
 				if (maxLength == null)
 					maxLength = 60;
 
+				s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_CL_URL);
+				if (s != null)
+					clUrlTV = s.trim();
+				if (clUrlTV == null)
+					clUrlTV = "codeList";
+
+				reportables = new TreeSet<String>();
+				s  = options.parameter(Config.class.getName(), ConfigConstants.PARAM_REPORTABLE);
+				if (s != null) {
+					String[] sarr = s.split(",");
+					for (String s2 : sarr) {
+						reportables.add(s2.trim().toLowerCase());
+					}
+				}				
+				
 				// If a dry run is requested, simply do not create the writers. Everything will be
 				// executed as normal, but nothing will be written.
 				if (!diagOnly) {
-					writer = new FileWriter(directoryMain + "/" + srvid);
-					writerGeojson = new FileWriter(directoryGeojson + "/GeoJsonConfig");
-					writerGml = new FileWriter(directoryGml + "/GmlConfig");
+					writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryMain + "/" + srvid)), StandardCharsets.UTF_8);
+					writerGeojson = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryGeojson + "/GeoJsonConfig")), StandardCharsets.UTF_8);
+					writerGml = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryGml + "/GmlConfig")), StandardCharsets.UTF_8);
 				}
 				
 				// Initialize the JSON object that will become the main configuration
@@ -692,7 +722,16 @@ public class Config implements SingleTarget, MessageSource {
 		path.put("general", general);
 		general.put("mappingType", "GENERIC_PROPERTY");
 		general.put("name", fieldname);
-		general.put("enabled", true);
+		
+		boolean enable = false;
+		for (String rep : reportables) {
+			if (rep.equalsIgnoreCase("internal")) {
+				enable = true;
+				break;
+			}
+		}
+		general.put("enabled", enable);
+		
 		general.put("sortPriority", priority++);
 		general.put("filterable", false);
 		general.put("type", category);
@@ -732,8 +771,8 @@ public class Config implements SingleTarget, MessageSource {
 		result = r;
 		options = r.options();
 		
-		FileWriter writerCL = null;
-
+		OutputStreamWriter writerCL = null;
+		
 		try {
 
 			// If diagOnly was selected, the writers will be 'null'
@@ -757,7 +796,7 @@ public class Config implements SingleTarget, MessageSource {
 			
 			if (mapCL != null) {
 				for (Map.Entry<String,JSONObject> entry : mapCL.entrySet()) {
-					writerCL = new FileWriter(directoryCL + "/" + entry.getKey());
+					writerCL = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryCL + "/" + entry.getKey())), StandardCharsets.UTF_8);
 					writerCL.write(entry.getValue().toJSONString());
 					writerCL.flush();
 					writerCL.close();
@@ -1055,7 +1094,8 @@ public class Config implements SingleTarget, MessageSource {
 					if (cix.category()==Options.DATATYPE || cix.category()==Options.OBJECT) {
 						if (pi.matches(ConfigConstants.RULE_TGT_LDP_PROP_DT_AS_NTOM)) {
 							String dttabname = deriveName(cix);
-							String dtbasepath = basepath + "/["+primaryKeyField+"="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/[" + field + foreignKeySuffix + "=" + primaryKeyField + "]" + dttabname;
+							String makeUnique = (tabname.equals(field)? "_" : "");
+							String dtbasepath = basepath + "/["+primaryKeyField+"="+ tabname + foreignKeySuffix + "]" + deriveNameNtoM(tabname, field) + "/[" + field + makeUnique + foreignKeySuffix + "=" + primaryKeyField + "]" + dttabname;
 							// Add mappings for all properties
 							if (!cix.properties().isEmpty()) {
 								for (PropertyInfo pix : cix.properties().values()) {
@@ -1088,15 +1128,15 @@ public class Config implements SingleTarget, MessageSource {
 						// ... unless we have a machine readable mapping of code values to readable text
 						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST)) {
 							if (!mapCL.containsKey(cix.name())) {
-								// Look for the first "codeList" tagged value that has a http URI
-								String sa[] = cix.taggedValuesForTag("codeList");
+								// Look for the first "codeListXML" tagged value that has a http URI
+								String sa[] = cix.taggedValuesForTag(clUrlTV);
 								if (sa!=null && sa.length>0) {
 									for (String surl : sa) {
 										if (surl.startsWith("http://") || surl.startsWith("https://")) {
 											// retrieve codelist
 											
 											// TODO, make this generic
-											surl = surl.replace("/okey/referenzlisten/", "/repository/services/");
+											surl = surl.replace("/referenzlisten/", "/repository/");
 											
 											// get xml doc
 											InputStream configStream = null;
@@ -1256,7 +1296,26 @@ public class Config implements SingleTarget, MessageSource {
 		String mappingType = "GENERIC_PROPERTY";
 		general.put("mappingType", mappingType);
 		general.put("name", fieldname);
-		general.put("enabled", true);
+		
+		boolean enable = true;
+		if (!reportables.isEmpty()) {
+			enable = false;
+			String sa[] = pi.taggedValuesForTag("reportable");
+			if (sa!=null && sa.length>0) {
+				for (String srep : sa) {
+					for (String rep : reportables) {
+						if (srep.equalsIgnoreCase(rep)) {
+							enable = true;
+							break;
+						}
+					}
+					if (enable)
+						break;
+				}
+			}
+		}
+		general.put("enabled", enable);
+
 		general.put("sortPriority", priority++);
 		boolean filterable = false;
 		if (category.equalsIgnoreCase("SPATIAL"))
