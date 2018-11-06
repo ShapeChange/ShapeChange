@@ -51,6 +51,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharUtils;
+import org.apache.commons.lang.StringUtils;
 import org.sparx.Collection;
 import org.sparx.Diagram;
 import org.sparx.Element;
@@ -598,6 +599,13 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 			repository.OpenDiagram(d.GetDiagramID());
 			projectInterface.SaveDiagramImageToFile(img.getAbsolutePath());
+			String lastError = projectInterface.GetLastError();
+			if (StringUtils.isNotBlank(lastError)) {
+				result.addWarning(
+						"An error was reported by the EA ProjectInterface after saving image of diagram '"
+								+ imgName + "' to file '"
+								+ img.getAbsolutePath() + "': " + lastError);
+			}
 			repository.CloseDiagram(d.GetDiagramID());
 
 			BufferedImage bimg;
