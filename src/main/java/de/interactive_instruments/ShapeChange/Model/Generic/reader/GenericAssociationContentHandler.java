@@ -45,8 +45,8 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericAssociationContentHandler
@@ -240,7 +240,7 @@ public class GenericAssociationContentHandler
 	@Override
 	public void setTaggedValues(TaggedValues taggedValues) {
 
-		this.genAi.setTaggedValues(taggedValues);
+		this.genAi.setTaggedValues(taggedValues, false);
 	}
 
 	@Override

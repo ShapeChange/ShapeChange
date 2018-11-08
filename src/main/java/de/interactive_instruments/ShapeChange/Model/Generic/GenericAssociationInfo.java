@@ -145,7 +145,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	/**
 	 * @param end1
-	 *            the end1 to set
+	 *                 the end1 to set
 	 */
 	public void setEnd1(PropertyInfo end1) {
 		this.end1 = end1;
@@ -161,7 +161,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	/**
 	 * @param end2
-	 *            the end2 to set
+	 *                 the end2 to set
 	 */
 	public void setEnd2(PropertyInfo end2) {
 		this.end2 = end2;
@@ -177,7 +177,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	/**
 	 * @param assocClass
-	 *            the assocClass to set
+	 *                       the assocClass to set
 	 */
 	public void setAssocClass(ClassInfo assocClass) {
 		this.assocClass = assocClass;
@@ -231,10 +231,37 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	/**
 	 * @param taggedValues
+	 * @param updateFields
+	 *                         true if class fields should be updated based upon
+	 *                         information from given tagged values, else false
 	 */
-	public void setTaggedValues(TaggedValues taggedValues) {
+	public void setTaggedValues(TaggedValues taggedValues,
+			boolean updateFields) {
+
 		// clone tagged values
 		taggedValuesCache = options().taggedValueFactory(taggedValues);
+
+		// Now update fields, if they are affected by tagged values
+		if (updateFields && !taggedValuesCache.isEmpty()) {
+
+			for (String key : taggedValues.keySet()) {
+				updateFieldsForTaggedValue(key,
+						taggedValuesCache.getFirstValue(key)); // FIXME first
+																// only?
+			}
+		}
+	}
+
+	/**
+	 * Encapsulates the logic to update class fields based upon the value of a
+	 * named tagged value.
+	 * 
+	 * @param tvName
+	 * @param tvValue
+	 */
+	private void updateFieldsForTaggedValue(String tvName, String tvValue) {
+
+		// TODO add more updates for relevant tagged values
 	}
 
 	/**

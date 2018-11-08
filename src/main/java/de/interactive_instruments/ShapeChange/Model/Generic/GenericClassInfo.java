@@ -1234,6 +1234,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 */
 	public void setTaggedValue(String tvName, String tvValue,
 			boolean updateFields) {
+		
 		validateTaggedValuesCache();
 
 		taggedValuesCache.put(tvName, tvValue);

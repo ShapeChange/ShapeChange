@@ -57,6 +57,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
@@ -469,6 +470,40 @@ public class TransformationManager implements MessageSource {
 			}
 
 			genPi.setTaggedValues(genPiTVs, true);
+		}
+		
+		for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+
+			TaggedValues genAiTVs = genAi.taggedValuesAll();
+
+			for (TaggedValueConfigurationEntry tvce : taggedValues) {
+
+				if (tvce.getModelElementSelectionInfo().matches(genAi)) {
+
+					if (genAiTVs.containsKey(tvce.getName())) {
+						// tagged value already exists on model element
+
+						/*
+						 * if the tagged value configuration contains an actual
+						 * value, use it - otherwise use the existing value(s)
+						 */
+						if (tvce.hasValue()) {
+							genAiTVs.put(tvce.getName(), tvce.getValue());
+						}
+
+					} else {
+						// tagged value does not exist on model element
+						/*
+						 * if the tagged value configuration contains an actual
+						 * value, use it - otherwise use the empty string
+						 */
+						genAiTVs.put(tvce.getName(),
+								tvce.hasValue() ? tvce.getValue() : "");
+					}
+				}
+			}
+
+			genAi.setTaggedValues(genAiTVs, true);
 		}
 
 	}
