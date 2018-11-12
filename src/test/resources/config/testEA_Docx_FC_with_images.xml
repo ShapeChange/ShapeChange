@@ -34,6 +34,7 @@
       		<targetParameter name="includeDiagrams" value="true"/>
 			<targetParameter name="producer" value="interactive instruments GmbH"/>
 			<targetParameter name="xslTransformerFactory" value="net.sf.saxon.TransformerFactoryImpl"/>
+			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

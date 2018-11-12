@@ -76,6 +76,22 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"src/test/resources/reference/docx");
 	}
 
+	// 2018-11-09 JE: NOTE: the following test is commented out on purpose: It
+	// is only used for internal testing, since the image size depends
+	// on the settings in EA, which are user dependent.
+
+	// @Test
+	// public void testDocxFeatureCatalogue_with_images() {
+	// /*
+	// * A simple model to test the creation of a docx feature catalogue
+	// *
+	// *
+	// */
+	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
+	// new String[] { "test" }, "testResults/docx_with_images/myInputId",
+	// "src/test/resources/reference/docx");
+	// }
+
 	@Test
 	public void testInheritedPropertiesAndNoAlphabeticSortingForProperties() {
 		/*
@@ -101,9 +117,11 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 
 	@Test
 	public void testTaggedValues() {
-		
-		multiTest("src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
-				new String[] { "xml", "html", "docx" }, "testResults/featureCatalogue/taggedValues/results",
+
+		multiTest(
+				"src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
+				new String[] { "xml", "html", "docx" },
+				"testResults/featureCatalogue/taggedValues/results",
 				"src/test/resources/featureCatalogue/taggedValues/reference/results");
 	}
 }
