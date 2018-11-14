@@ -62,7 +62,10 @@ public class GenericPackageContentHandler
 
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "targetNamespace", "xmlns",
-					"xsdDocument", "version", "isSchema" }));
+					"xsdDocument", "version"}));
+
+	private static final Set<String> DEPRECATED_SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "isAppSchema", "isSchema" }));
 
 	private boolean isInPackages = false;
 
@@ -115,6 +118,10 @@ public class GenericPackageContentHandler
 		} else if (SIMPLE_PACKAGE_FIELDS.contains(localName)) {
 
 			sb = new StringBuffer();
+
+		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
+
+			// ignore
 
 		} else if (localName.equals("supplierIds")) {
 
@@ -214,9 +221,9 @@ public class GenericPackageContentHandler
 
 			this.genPi.setVersion(sb.toString());
 
-		} else if (localName.equals("isSchema")) {
-
-			this.genPi.setIsSchema(toBooleanValue(sb));
+			// } else if (localName.equals("isSchema")) {
+			//
+			// this.genPi.setIsSchema(toBooleanValue(sb));
 
 		} else if (localName.equals("supplierIds")) {
 
@@ -262,6 +269,10 @@ public class GenericPackageContentHandler
 				// Switch handler back to parent
 				reader.setContentHandler(parent);
 			}
+
+		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
+
+			// ignore
 
 		} else {
 			// do not throw an exception, just log a warning - the schema could

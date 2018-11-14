@@ -36,12 +36,19 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.rdf.model.RDFWriter;
 import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.RDFDataMgr;
@@ -61,6 +68,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 
 /**
  * UML to RDF/OWL/SKOS (based on ISO 19150-2)
@@ -140,6 +148,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String RULE_OWL_ALL_CONSTRAINTS_BY_CONSTRAINT_MAPPING = "rule-owl-all-constraints-byConstraintMapping";
 
 	public static final String RULE_OWL_CLS_19150_2_ISABSTRACT = "rule-owl-cls-iso191502IsAbstract";
+	
+	public static final String RULE_OWL_PROP_PROPERTYENRICHMENT = "rule-owl-prop-propertyEnrichment";
 
 	/**
 	 * If this rule is included, the base ontology defined by ISO 19150-2 with
@@ -227,6 +237,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE = "codeListOwlClassNamespace";
 	public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS = "codeListOwlClassNamespaceForEnumerations";
 
+	public static final String PARAM_GENERAL_PROPERTY_NSABR = "generalPropertyNamespaceAbbreviation";
 	/**
 	 * 
 	 */
@@ -258,7 +269,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * optional. It defaults to {@value #DEFAULT_RDFXMLWRITER_BLOCKRULES}.
 	 */
 	public static final String PARAM_RDFXMLWRITER_BLOCKRULES = "rdfXmlWriterBlockRules";
-	public static final String DEFAULT_RDFXMLWRITER_BLOCKRULES = "idAttr,daml:collection,propertyAttr";
+	public static final String DEFAULT_RDFXMLWRITER_BLOCKRULES = "idAttr,propertyAttr";
 
 	/**
 	 * Per 19150-2package:rdfNamespace, the default separator that is appended
@@ -298,6 +309,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * {@value #RULE_OWL_PROP_EXTERNAL_REFERENCE}. Default is 'rdfs:seeAlso'.
 	 */
 	public static final String PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY = "propExternalReference_targetProperty";
+
+	public static final String PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY = "suppressMessagesForUnsupportedCategoryOfClasses";
 
 	/**
 	 * key: a package, value: the according ontology object
@@ -343,6 +356,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	private static ShapeChangeResult result = null;
 	private static Model model = null;
+	private static PackageInfo mainAppSchema = null;
+	private static String mainAppSchemaNamespace = null;
 
 	private static String skosConceptSchemeSuffix = "";
 	private static String skosConceptSchemeSubclassSuffix = "";
@@ -358,6 +373,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	private static String ontologyNameTaggedValue = "ontologyName";
 	private static String ontologyNameCode = null;
 	private static String defaultTypeImplementation = null;
+	private static boolean suppressMessagesForUnsupportedCategoryOfClasses = false;
+	private static String generalPropertyNamespaceAbbreviation = null;
 
 	/**
 	 * Will be populated when writeAll is called.
@@ -365,6 +382,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * key: property-name '#' schema-name
 	 */
 	private static SortedMap<String, OntologyModel> ontologyByPropertyConversionTargetReference = null;
+
+	private static SortedMap<String, List<OntProperty>> subPropertyByURIOfSuperProperty = new TreeMap<>();
 
 	@Override
 	public String getTargetName() {
@@ -379,6 +398,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		options = o;
 		result = r;
 		model = m;
+		mainAppSchema = TargetUtil
+				.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
 
 		ProcessConfiguration tmp = o.getCurrentProcessConfig();
 
@@ -441,6 +462,14 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		if (sourceFromConfig != null) {
 			source = sourceFromConfig;
 		}
+
+		generalPropertyNamespaceAbbreviation = config
+				.getParameterValue(PARAM_GENERAL_PROPERTY_NSABR);
+		/*
+		 * NOTE: The configuration validator cheks that the target configuration
+		 * contains a namespace definition with matching abbreviation, if a
+		 * value is set for the parameter.
+		 */
 
 		String skosConceptSchemeSuffixFromConfig = config
 				.getParameterValue(PARAM_SKOS_CONCEPT_SCHEME_SUFFIX);
@@ -541,6 +570,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 					.trim();
 		}
 
+		suppressMessagesForUnsupportedCategoryOfClasses = options
+				.parameterAsBoolean(this.getClass().getName(),
+						PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY,
+						false);
+
 		/*
 		 * Initialize an ontology for the package and - unless stated otherwise
 		 * via a rule - for the sub-packages in the same target namespace. Also
@@ -565,6 +599,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		ontologyByPiMap.put(p, od);
 		ontologyByRdfNs.put(od.getRdfNamespace(), od);
+
+		if (mainAppSchema != null && mainAppSchema == p) {
+			mainAppSchemaNamespace = od.getRdfNamespace();
+		}
 
 		if (p.matches(RULE_OWL_PKG_SINGLE_ONTOLOGY_PER_SCHEMA)) {
 
@@ -741,8 +779,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * 
 	 * @param pi
 	 * @param result
-	 *            set of all descendant packages that are in the same target
-	 *            namespace as pi
+	 *                   set of all descendant packages that are in the same
+	 *                   target namespace as pi
 	 */
 	private SortedSet<PackageInfo> subPackagesInSameTNS(PackageInfo pi) {
 
@@ -791,7 +829,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	/**
 	 * @param ci
-	 *            a code list or enumeration
+	 *               a code list or enumeration
 	 * @return
 	 */
 	public OntologyModel computeRelevantOntologyForIndividuals(ClassInfo ci) {
@@ -839,6 +877,22 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			// there must be an OntologyModel for the individuals
 			return null;
 		}
+	}
+
+	/**
+	 * @param nsabr
+	 * @return the ontology document that has the given prefix, or
+	 *         <code>null</code> if no such ontology could be found
+	 */
+	public OntologyModel computeRelevantOntology(String prefix) {
+
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			if (om.getPrefix().equals(prefix)) {
+				return om;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1038,6 +1092,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			om.createClasses();
 		}
 
+		addGeneralProperties();
+
 		for (OntologyModel om : ontologyByRdfNs.values()) {
 			om.createProperties();
 		}
@@ -1050,6 +1106,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			om.createAdditionalPropertyDetails();
 		}
 
+		for (OntologyModel om : ontologyByRdfNs.values()) {
+			om.addGeneralPropertyDomainByUnionOfSubPropertyDomains();
+		}
+
 		// output ontologies in folder hierarchy as determined by their
 		// path - using normalized package names
 
@@ -1059,6 +1119,107 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		}
 
 		printed = true;
+	}
+
+	private void addGeneralProperties() {
+
+		for (RdfGeneralProperty gp : this.getConfig().getGeneralProperties()) {
+
+			String nsabr = gp.getNamespaceAbbreviation();
+			String namespace = null;
+
+			if (nsabr == null) {
+
+				if (StringUtils
+						.isNotBlank(generalPropertyNamespaceAbbreviation)) {
+
+					nsabr = generalPropertyNamespaceAbbreviation;
+					/*
+					 * Validation of the configuration already ensured that a
+					 * namespace with that abbreviation is configured.
+					 */
+					namespace = config.fullNamespace(nsabr);
+
+				} else {
+
+					if (StringUtils.isBlank(mainAppSchemaNamespace)) {
+						result.addError(this, 100, gp.getName());
+					} else {
+						namespace = mainAppSchemaNamespace;
+					}
+				}
+
+			} else {
+
+				/*
+				 * Check available ontology models as well as namespaces from
+				 * configuration
+				 */
+
+				if (config.hasNamespaceWithAbbreviation(nsabr)) {
+					namespace = config.fullNamespace(nsabr);
+				} else {
+					for (OntologyModel om : ontologyByRdfNs.values()) {
+						if (om.getPrefix().equals(nsabr)) {
+							namespace = om.getRdfNamespace();
+							break;
+						}
+					}
+					if (namespace == null) {
+						result.addError(this, 101, gp.getName(), nsabr);
+					}
+				}
+			}
+
+			if (namespace != null) {
+
+				// store the namespace for later use
+				gp.setNamespace(namespace);
+
+				// Find or create the ontology to add the property
+				OntologyModel om = null;
+
+				if (ontologyByRdfNs.containsKey(namespace)) {
+
+					om = ontologyByRdfNs.get(namespace);
+
+				} else {
+
+					// create a new ontology model
+
+					String ontologyName = StringUtils.endsWithAny(namespace,
+							new String[] { "#", "/" })
+									? namespace.substring(0,
+											namespace.length() - 1)
+									: namespace;
+					String path = "";
+					String location = config.locationOfNamespace(namespace);
+					String fileName;
+
+					if (StringUtils.isNotBlank(location)) {
+						fileName = FilenameUtils.getBaseName(location);
+					} else {
+						fileName = namespace.replaceAll("[^a-zA-Z]", "_");
+						fileName = fileName.replaceAll("_+", "_");
+					}
+
+					try {
+						om = new OntologyModel(model, options, result, nsabr,
+								namespace, ontologyName, path, fileName, this);
+						ontologyByRdfNs.put(namespace, om);
+
+					} catch (ShapeChangeAbortException e) {
+						result.addError(this, 102, gp.getName(),
+								e.getMessage());
+						continue;
+					}
+				}
+
+				// now add the general property to the model
+				om.createGeneralProperty(nsabr, namespace, gp);
+			}
+		}
+
 	}
 
 	public void print(OntologyModel om, String outputDirectory,
@@ -1157,6 +1318,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		OWLISO19150.result = null;
 		OWLISO19150.model = null;
+		OWLISO19150.mainAppSchema = null;
+		OWLISO19150.mainAppSchemaNamespace = null;
 
 		OWLISO19150.skosConceptSchemeSuffix = "";
 		OWLISO19150.skosConceptSchemeSubclassSuffix = "";
@@ -1172,8 +1335,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		OWLISO19150.ontologyNameTaggedValue = "ontologyName";
 		OWLISO19150.ontologyNameCode = null;
 		OWLISO19150.defaultTypeImplementation = null;
+		OWLISO19150.suppressMessagesForUnsupportedCategoryOfClasses = false;
 
 		OWLISO19150.ontologyByPropertyConversionTargetReference = null;
+
+		OWLISO19150.generalPropertyNamespaceAbbreviation = null;
+		
+		OWLISO19150.subPropertyByURIOfSuperProperty = new TreeMap<>();
 	}
 
 	/**
@@ -1258,6 +1426,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 */
 	public String getUriBase() {
 		return uriBase;
+	}
+
+	public boolean isSuppressMessagesForUnsupportedCategoryOfClasses() {
+		return suppressMessagesForUnsupportedCategoryOfClasses;
 	}
 
 	/**
@@ -1353,7 +1525,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	 * number can be redirected to the function at hand.
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text, including $x$ substitution points.
 	 */
 	public String message(int mnr) {
@@ -1369,12 +1541,92 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		return prefix + "OWL ISO 19150 Target: " + mess;
 	}
 
+	public void registerSubPropertyOfRelationship(String superPropertyURI,
+			OntProperty subProperty) {
+
+		List<OntProperty> subProps;
+		if (subPropertyByURIOfSuperProperty.containsKey(superPropertyURI)) {
+			subProps = subPropertyByURIOfSuperProperty.get(superPropertyURI);
+		} else {
+			subProps = new ArrayList<>();
+			subPropertyByURIOfSuperProperty.put(superPropertyURI,subProps);
+		}
+
+		if (!subProps.contains(subProperty)) {
+			subProps.add(subProperty);
+		}
+	}
+
+	/**
+	 * 
+	 * @param propertyURI
+	 * @return A map with the direct and indirect sub properties registered for
+	 *         the property with given URI, sorted by their URI; can be empty
+	 *         but not <code>null</code>.
+	 */
+	public SortedMap<String, OntProperty> getAllSubproperties(
+			String propertyURI) {
+
+		SortedMap<String, OntProperty> result = new TreeMap<>();
+
+		/*
+		 * Note: We need to prevent an endless loop (caused by a sub property A
+		 * of property B also being - maybe indirectly - a super property of B).
+		 */
+
+		Set<String> visitedSuperProperties = new HashSet<String>();
+		Set<OntProperty> subProperties = getAllSubproperties(propertyURI,
+				visitedSuperProperties);
+
+		for (OntProperty subProp : subProperties) {
+			result.put(subProp.getURI(), subProp);
+		}
+
+		return result;
+	}
+
+	/**
+	 * @param propertyURI
+	 * @param visitedSuperProperties
+	 *                                   set to keep track of the URIs of super
+	 *                                   properties that have been visited
+	 * @return A set of the direct and indirect sub properties registered for
+	 *         the property with given URI; can be empty but not
+	 *         <code>null</code>.
+	 */
+	private Set<OntProperty> getAllSubproperties(String propertyURI,
+			Set<String> visitedSuperProperties) {
+
+		Set<OntProperty> subProperties = new HashSet<OntProperty>();
+
+		if (!visitedSuperProperties.contains(propertyURI)) {
+
+			visitedSuperProperties.add(propertyURI);
+
+			List<OntProperty> directSubProperties = this.subPropertyByURIOfSuperProperty
+					.get(propertyURI);
+
+			if (directSubProperties != null) {
+
+				subProperties.addAll(directSubProperties);
+
+				// drill down
+				for (OntProperty subProp : directSubProperties) {
+					subProperties.addAll(getAllSubproperties(subProp.getURI(),
+							visitedSuperProperties));
+				}
+			}
+		}
+
+		return subProperties;
+	}
+
 	/**
 	 * This is the message text provision proper. It returns a message for a
 	 * number.
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text or null
 	 */
 	protected String messageText(int mnr) {
@@ -1404,6 +1656,18 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 					+ "' nor the parameter '"
 					+ PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS
 					+ "' are set to a specific value. The rule does not have any effect.";
+		case 10:
+			return "??";
+
+		case 100:
+			return "No namespace abbreviation is defined for general property '$1$'. Parameter '"
+					+ PARAM_GENERAL_PROPERTY_NSABR
+					+ "' is not set, and a main schema that would define the namespace of the property could not be identified. The property will be ignored.";
+		case 101:
+			return "Namespace abbreviation for general property '$1$' is '$2$'. The configuration does not define a namespace with that abbreviation, and none of the ontologies created by the target has that abbreviation, either. The general property will be ignored.";
+		case 102:
+			return "Exception encountered while creating new ontology model for general property '$1$'. The property will be ignored. Exception message is: $2$";
+
 		case 10000:
 			return "--- Context - class: '$1$'";
 		case 20000:

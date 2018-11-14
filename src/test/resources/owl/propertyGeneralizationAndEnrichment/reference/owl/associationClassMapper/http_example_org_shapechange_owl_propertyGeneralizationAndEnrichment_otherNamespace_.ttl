@@ -1,0 +1,14 @@
+@prefix other: <http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment/otherNamespace#> .
+@prefix test:  <http://example.org/ontology/test#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+other:roleGeneral2  a       owl:IrreflexiveProperty , owl:ReflexiveProperty , owl:ObjectProperty ;
+        rdfs:label          "label of roleGeneral2"@en ;
+        rdfs:subPropertyOf  test:roleGeneral .
+
+<http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment/otherNamespace>
+        a            owl:Ontology ;
+        owl:imports  <http://example.org/ontology/test> .

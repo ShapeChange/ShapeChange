@@ -47,7 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/core</sc:targetNamespace>
               <sc:xmlns>tvicore</sc:xmlns>
@@ -240,7 +239,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:targetNamespace>
               <sc:xmlns>tviext</sc:xmlns>

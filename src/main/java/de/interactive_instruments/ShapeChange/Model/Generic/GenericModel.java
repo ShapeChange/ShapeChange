@@ -827,8 +827,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * Updates/fixes references to PackageInfos.
 	 * 
 	 * @param pIn
-	 *            PackageInfo for which to search an update; may be
-	 *            <code>null</code>
+	 *                PackageInfo for which to search an update; may be
+	 *                <code>null</code>
 	 * @return a GenericPackageInfo with the same id as the given PackageInfo,
 	 *         if it exists, otherwise the given PackageInfo
 	 */
@@ -844,8 +844,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * Updates/fixes references to ClassInfos.
 	 * 
 	 * @param cIn
-	 *            ClassInfo for which to search an update; may be
-	 *            <code>null</code>
+	 *                ClassInfo for which to search an update; may be
+	 *                <code>null</code>
 	 * @return a GenericClassInfo with the same id as the given ClassInfo, if it
 	 *         exists, otherwise the given ClassInfo
 	 */
@@ -861,8 +861,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * Updates/fixes references to PropertyInfos.
 	 * 
 	 * @param pIn
-	 *            PropertyInfo for which to search an update; may be
-	 *            <code>null</code>
+	 *                PropertyInfo for which to search an update; may be
+	 *                <code>null</code>
 	 * @return a GenericPropertyInfo with the same id as the given PropertyInfo,
 	 *         if it exists, otherwise the given PropertyInfo
 	 */
@@ -926,8 +926,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * Updates/fixes references to AssociationInfos.
 	 * 
 	 * @param aIn
-	 *            AssociationInfo for which to search an update; may be
-	 *            <code>null</code>
+	 *                AssociationInfo for which to search an update; may be
+	 *                <code>null</code>
 	 * @return a GenericAssociationInfo with the same id as the given
 	 *         AssociationInfo, if it exists, otherwise the given
 	 *         AssociationInfo
@@ -980,7 +980,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			// genPi.setSchemaId(pi.schemaId());
 			// genPi.setRootPackage(pi.rootPackage());
 
-			genPi.setIsSchema(pi.isSchema());
+			// genPi.setIsSchema(pi.isSchema());
 
 			genPi.setDiagrams(pi.getDiagrams());
 
@@ -1024,9 +1024,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * tree of ci2 created by its subtypes.
 	 * 
 	 * @param childCi
-	 *            - the potential child class
+	 *                     - the potential child class
 	 * @param parentCi
-	 *            - the potential parent class
+	 *                     - the potential parent class
 	 * @return <code>true</code> if ci1 is kind of ci2 (includes that ci1 and
 	 *         ci2 are of the same type)
 	 */
@@ -1737,14 +1737,25 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	/**
 	 * @param ciToRemove
 	 * @param keepAssociationProperties
-	 *            true if navigable properties of the association that the given
-	 *            class may be an association class for shall not be removed
-	 *            from the model, else false
+	 *                                      true if navigable properties of the
+	 *                                      association that the given class may
+	 *                                      be an association class for shall
+	 *                                      not be removed from the model, else
+	 *                                      false
 	 */
 	private void remove(GenericClassInfo ciToRemove,
 			boolean keepAssociationProperties) {
 
-		if (ciToRemove == null || !this.isInAppSchema(ciToRemove))
+		/*
+		 * Ensure that the class is only removed if it is still registered in
+		 * the model (in genClassInfosById). The check shall prevent removing a
+		 * class twice, once because it is an association class which is removed
+		 * together with an association, and then later on again - for example
+		 * because the class does not belong to a profile and is therefore
+		 * explicitly removed by the Profiler.
+		 */
+		if (ciToRemove == null || !this.isInAppSchema(ciToRemove)
+				|| !this.genClassInfosById.containsKey(ciToRemove.id()))
 			return;
 
 		// Identify all properties to remove
@@ -2024,15 +2035,18 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 * properties and any association class.
 	 * 
 	 * @param genPi
-	 *            the property that potentially is removed from the model and
-	 *            its class (depends on the tryKeepAssociation parameter and
-	 *            whether the property is navigable or not)
+	 *                               the property that potentially is removed
+	 *                               from the model and its class (depends on
+	 *                               the tryKeepAssociation parameter and
+	 *                               whether the property is navigable or not)
 	 * @param tryKeepAssociation
-	 *            true if the algorithm should only delete the property if the
-	 *            association it potentially belongs to is no longer navigable
-	 *            (in both directions) after the property has been set to be
-	 *            non-navigable, false if any association the property belongs
-	 *            to shall be removed outright.
+	 *                               true if the algorithm should only delete
+	 *                               the property if the association it
+	 *                               potentially belongs to is no longer
+	 *                               navigable (in both directions) after the
+	 *                               property has been set to be non-navigable,
+	 *                               false if any association the property
+	 *                               belongs to shall be removed outright.
 	 */
 	public void remove(GenericPropertyInfo genPi, boolean tryKeepAssociation) {
 
@@ -2285,7 +2299,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		genAi.setDescriptors(ai.descriptors().createCopy());
 
 		genAi.setStereotypes(ai.stereotypes());
-		genAi.setTaggedValues(ai.taggedValuesAll());
+		genAi.setTaggedValues(ai.taggedValuesAll(), false);
 
 		genAi.setEnd1(ai.end1());
 		genAi.setEnd2(ai.end2());
@@ -2668,7 +2682,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param genPackageInfosById
-	 *            the genPackageInfosById to set
+	 *                                the genPackageInfosById to set
 	 */
 	public void setGenPackageInfosById(
 			Map<String, GenericPackageInfo> genPackageInfosById) {
@@ -2677,7 +2691,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param genClassInfosById
-	 *            the genClassInfosById to set
+	 *                              the genClassInfosById to set
 	 */
 	public void setGenClassInfosById(
 			Map<String, GenericClassInfo> genClassInfosById) {
@@ -2686,7 +2700,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param genClassInfosByName
-	 *            the genClassInfosByName to set
+	 *                                the genClassInfosByName to set
 	 */
 	public void setGenClassInfosByName(
 			Map<String, GenericClassInfo> genClassInfosByName) {
@@ -2695,7 +2709,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param genAssociationInfosById
-	 *            the genAssociationInfosById to set
+	 *                                    the genAssociationInfosById to set
 	 */
 	public void setGenAssociationInfosById(
 			Map<String, GenericAssociationInfo> genAssociationInfosById) {
@@ -2704,7 +2718,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param genPropertiesById
-	 *            the genPropertiesById to set
+	 *                              the genPropertiesById to set
 	 */
 	public void setGenPropertiesById(
 			Map<String, GenericPropertyInfo> genPropertiesById) {
@@ -2979,10 +2993,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	/**
 	 * @param con
-	 *            constraint to validate
+	 *                  constraint to validate
 	 * 
 	 * @param genCi
-	 *            context of the constraint
+	 *                  context of the constraint
 	 * 
 	 */
 	protected Constraint parse(OclConstraint con, GenericClassInfo genCi) {

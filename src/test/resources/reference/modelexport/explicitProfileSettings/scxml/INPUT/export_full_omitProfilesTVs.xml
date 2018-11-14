@@ -47,7 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/export/scxml</sc:targetNamespace>
               <sc:xmlns>sc</sc:xmlns>
@@ -759,7 +758,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/export/scxml/iso</sc:targetNamespace>
               <sc:xmlns>iso</sc:xmlns>

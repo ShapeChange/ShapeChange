@@ -17,4 +17,14 @@
  </element>
  <element name="targetCodeListURI" type="string"/>
  <element name="globalIdentifier" type="string"/>
+ <element name="descriptor">
+  <complexType>
+   <simpleContent>
+    <extension base="string">
+     <attribute name="name" type="string" use="required"/>
+     <attribute name="lang" type="string"/>
+    </extension>
+   </simpleContent>
+  </complexType>
+ </element>
 </schema>

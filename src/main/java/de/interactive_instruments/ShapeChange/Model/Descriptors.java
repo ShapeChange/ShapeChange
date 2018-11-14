@@ -44,8 +44,8 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Cache for descriptors.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class Descriptors {
@@ -160,10 +160,19 @@ public class Descriptors {
 	}
 
 	/**
+	 * @return <code>true</code> if no descriptors are available, else
+	 *         <code>false</code>.
+	 */
+	public boolean isEmpty() {
+		return descriptorValues.isEmpty();
+	}
+
+	/**
 	 * @param descriptor
 	 * @param lang
-	 *            Identifier for the language to search values for. Can be
-	 *            <code>null</code>, to search for the values without language.
+	 *                       Identifier for the language to search values for.
+	 *                       Can be <code>null</code>, to search for the values
+	 *                       without language.
 	 * @return the list of values for the given language, or the values without
 	 *         language if parameter 'lang' is <code>null</code>; the list can
 	 *         be empty but not <code>null</code>
@@ -192,6 +201,11 @@ public class Descriptors {
 		return result;
 	}
 
+	/**
+	 * @param descriptor
+	 * @return the value for this descriptor, or <code>null</code> if no value
+	 *         is available.
+	 */
 	public DescriptorValue get(Descriptor descriptor) {
 
 		return this.descriptorValues.get(descriptor);
@@ -320,8 +334,10 @@ public class Descriptors {
 	 * used when appending to a descriptor value.
 	 * 
 	 * @param separatorAndSuffixByDescriptor
-	 *            Map (can be empty or null) with key: Descriptor; value: pair
-	 *            of first the separator to use, then the suffix
+	 *                                           Map (can be empty or null) with
+	 *                                           key: Descriptor; value: pair of
+	 *                                           first the separator to use,
+	 *                                           then the suffix
 	 */
 	public void appendSuffix(
 			EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor,

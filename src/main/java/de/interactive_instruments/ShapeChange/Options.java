@@ -77,8 +77,11 @@ import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheArray;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
-import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue;
+import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralDataProperty;
+import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralObjectProperty;
+import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
@@ -1378,6 +1381,47 @@ public class Options {
 		return loc;
 	}
 
+	public String categoryName(int category) {
+
+		switch (category) {
+
+		case Options.AIXMEXTENSION:
+			return "aixmextension";
+		case Options.UNKNOWN:
+			return "unknown";
+		case Options.FEATURE:
+			return "feature";
+		case Options.CODELIST:
+			return "codelist";
+		case Options.ENUMERATION:
+			return "enumeration";
+		case Options.MIXIN:
+			return "mixin";
+		case Options.DATATYPE:
+			return "datatype";
+		case Options.OBJECT:
+			return "object";
+		case Options.BASICTYPE:
+			return "basic type";
+		case Options.UNION:
+			return "union";
+		case Options.OKSTRAKEY:
+			return "okstra key";
+		case Options.OKSTRAFID:
+			return "okstra fid";
+		case Options.FEATURECONCEPT:
+			return "feature concept";
+		case Options.ATTRIBUTECONCEPT:
+			return "attribute concept";
+		case Options.VALUECONCEPT:
+			return "value concept";
+		case Options.ROLECONCEPT:
+			return "role concept";
+		default:
+			return "unknown category";
+		}
+	}
+
 	public void loadConfiguration() throws ShapeChangeAbortException {
 
 		InputStream configStream = null;
@@ -2299,6 +2343,8 @@ public class Options {
 								tgtE);
 						Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 								tgtE);
+						
+						List<RdfGeneralProperty> generalProperties = parseGeneralProperties(tgtE);
 
 						List<Namespace> namespaces = parseNamespaces(tgtE);
 
@@ -2311,7 +2357,7 @@ public class Options {
 								stereotypeConversionParameters,
 								typeConversionParameters,
 								propertyConversionParameters, descriptorTargets,
-								constraintMappings);
+								constraintMappings,generalProperties);
 
 						owlConfig.validate();
 
@@ -2337,6 +2383,27 @@ public class Options {
 			}
 		}
 		return tgtConfigs;
+	}
+
+	private List<RdfGeneralProperty> parseGeneralProperties(Element targetElement) {
+		
+		List<RdfGeneralProperty> result = new ArrayList<>();
+		
+		List<Element> gopEs = XMLUtil.getChildElements(targetElement, "GeneralObjectProperty");
+		
+		for(Element gopE : gopEs) {
+			GeneralObjectProperty gop = new GeneralObjectProperty(gopE);
+			result.add(gop);
+		}
+		
+		List<Element> gdpEs = XMLUtil.getChildElements(targetElement, "GeneralDataProperty");
+		
+		for(Element gdpE : gdpEs) {
+			GeneralDataProperty gdp = new GeneralDataProperty(gdpE);
+			result.add(gdp);
+		}
+
+		return result;
 	}
 
 	private Element parseAdvancedProcessConfigurations(Element processElement) {
@@ -3577,6 +3644,7 @@ public class Options {
 		/*
 		 * non-standard extensions - conversion rules
 		 */
+		addRule("rule-xsd-all-descriptorAnnotation");
 		addRule("rule-xsd-all-globalIdentifierAnnotation");
 		addRule("rule-xsd-all-notEncoded");
 		addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
@@ -3749,10 +3817,12 @@ public class Options {
 		addRule("rule-owl-prop-iso191502Aggregation");
 		addRule("rule-owl-prop-iso191502AssociationName");
 		addRule("rule-owl-prop-iso191502-naming");
+		addRule("rule-owl-prop-labelFromLocalName");
 		addRule("rule-owl-prop-localScopeAll");
 		addRule("rule-owl-prop-mapping-compare-specifications");
 		addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
 		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
+		addRule("rule-owl-prop-propertyEnrichment");
 		addRule("rule-owl-prop-range-global");
 		addRule("rule-owl-prop-range-local-withUniversalQuantification");
 		addRule("rule-owl-prop-voidable-as-minCardinality0");

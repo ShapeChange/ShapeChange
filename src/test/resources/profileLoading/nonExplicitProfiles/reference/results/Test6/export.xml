@@ -47,7 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/b</sc:targetNamespace>
               <sc:xmlns>sc</sc:xmlns>
@@ -339,7 +338,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileLoading/iso</sc:targetNamespace>
               <sc:xmlns>iso</sc:xmlns>
@@ -542,7 +540,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isSchema>true</sc:isSchema>
               <sc:version>1.0</sc:version>
               <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/ext</sc:targetNamespace>
               <sc:xmlns>ext</sc:xmlns>

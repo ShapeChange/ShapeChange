@@ -42,9 +42,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -74,7 +76,10 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -106,6 +111,8 @@ public class XsdDocument implements MessageSource {
 	protected String okstraPrefix;
 	protected String okstra;
 	protected String codeListRepresentationTVFallback;
+	protected EnumSet<Descriptor> descriptorsToRepresent = EnumSet
+			.noneOf(Descriptor.class);
 
 	public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r,
 			String n)
@@ -131,6 +138,20 @@ public class XsdDocument implements MessageSource {
 		codeListRepresentationTVFallback = options.parameterAsString(
 				XmlSchema.class.getName(), "defaultCodeListRepresentation",
 				null, false, true);
+
+		List<String> namesOfDescriptorsToRepresent = options
+				.parameterAsStringList(Options.TargetXmlSchemaClass,
+						"representDescriptors", null, true, true);
+
+		for (String descriptorName : namesOfDescriptorsToRepresent) {
+			/*
+			 * NOTE: The configuration validator ensures that the parameter only
+			 * contains known descriptors.
+			 */
+			Descriptor desc = Descriptor
+					.valueOf(descriptorName.toUpperCase(Locale.ENGLISH));
+			descriptorsToRepresent.add(desc);
+		}
 
 		String s = options.parameter(Options.TargetXmlSchemaClass,
 				"okstraKeyValuePropertyType");
@@ -464,6 +485,50 @@ public class XsdDocument implements MessageSource {
 									Options.SCAI_NS, "taggedValue");
 							addAttribute(e3, "tag", tag);
 							e3.appendChild(document.createTextNode(v));
+							e2.appendChild(e3);
+							addImport("sc", Options.SCAI_NS);
+						}
+					}
+				}
+			}
+		}
+
+		if (info.matches("rule-xsd-all-descriptorAnnotation")
+				&& !descriptorsToRepresent.isEmpty()) {
+
+			Descriptors descriptors = info.descriptors();
+
+			if (!descriptors.isEmpty()) {
+
+				// sort results alphabetically to support unit testing
+
+				for (Descriptor descToRep : descriptorsToRepresent) {
+
+					if (!descriptors.has(descToRep)) {
+						continue;
+					}
+
+					List<LangString> descVals = descriptors.values(descToRep);
+					Collections.sort(descVals);
+
+					// add appinfo elements
+					for (LangString ls : descVals) {
+
+						if (ls.hasValue()) {
+
+							if (e2 == null) {
+								e2 = document.createElementNS(
+										Options.W3C_XML_SCHEMA, "appinfo");
+							}
+
+							Element e3 = document.createElementNS(
+									Options.SCAI_NS, "descriptor");
+							addAttribute(e3, "name", descToRep.getName());
+							if (ls.hasLang()) {
+								addAttribute(e3, "lang", ls.getLang());
+							}
+							e3.appendChild(
+									document.createTextNode(ls.getValue()));
 							e2.appendChild(e3);
 							addImport("sc", Options.SCAI_NS);
 						}
@@ -1806,7 +1871,7 @@ public class XsdDocument implements MessageSource {
 	 * (union between enumeration and other-pattern)
 	 * 
 	 * @param ci
-	 *            the code list class
+	 *               the code list class
 	 */
 	public void pGlobalCodeList(ClassInfo ci) {
 		Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
@@ -1948,11 +2013,11 @@ public class XsdDocument implements MessageSource {
 	 * Process a single property.
 	 * 
 	 * @param cibase
-	 *            a class
+	 *                   a class
 	 * @param pi
-	 *            property of cibase
+	 *                   property of cibase
 	 * @param m
-	 *            multiplicity of the property, can be <code>null</code>
+	 *                   multiplicity of the property, can be <code>null</code>
 	 * @param schDoc
 	 * @return
 	 */
@@ -2484,15 +2549,15 @@ public class XsdDocument implements MessageSource {
 	 * Set the type for a property element.
 	 * 
 	 * @param cibase
-	 *            class that owns the property
+	 *                         class that owns the property
 	 * @param propi
-	 *            the property
+	 *                         the property
 	 * @param e
-	 *            property element
+	 *                         property element
 	 * @param inAssocClass
-	 *            flag is set, if the class is an association class
+	 *                         flag is set, if the class is an association class
 	 * @param schDoc
-	 *            Schematron schema, optional
+	 *                         Schematron schema, optional
 	 * @return true, if the multiplicity of the property element has already
 	 *         been set, false otherwise
 	 */
@@ -2862,7 +2927,8 @@ public class XsdDocument implements MessageSource {
 					int propiMinOccurs = propi.cardinality().minOccurs;
 
 					int minOccurs = (propiMinOccurs < pi2MinOccurs)
-							? propiMinOccurs : pi2MinOccurs;
+							? propiMinOccurs
+							: pi2MinOccurs;
 
 					int pi2MaxOccurs = pi2.cardinality().maxOccurs;
 					int propiMaxOccurs = propi.cardinality().maxOccurs;
@@ -2896,9 +2962,8 @@ public class XsdDocument implements MessageSource {
 				mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 
-		if (ci.category() == Options.UNION
-				&& ci.matches(
-						"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+		if (ci.category() == Options.UNION && ci.matches(
+				"rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
 				&& "true".equalsIgnoreCase(
 						ci.taggedValue("representsFeatureTypeSet"))) {
 
@@ -3367,14 +3432,14 @@ public class XsdDocument implements MessageSource {
 
 	/**
 	 * @param cibase
-	 *            class that owns the property
+	 *                   class that owns the property
 	 * @param propi
-	 *            the property
+	 *                   the property
 	 * @param typeCi
-	 *            a code list type; typically the (value) type of the property,
-	 *            but could also be a code list type that was defined via an
-	 *            additional restriction (tagged value - potentially derived
-	 *            from an OCL constraint)
+	 *                   a code list type; typically the (value) type of the
+	 *                   property, but could also be a code list type that was
+	 *                   defined via an additional restriction (tagged value -
+	 *                   potentially derived from an OCL constraint)
 	 * @param schDoc
 	 */
 	private void addAssertionForCodelistUri(ClassInfo cibase,
@@ -3998,15 +4063,14 @@ public class XsdDocument implements MessageSource {
 									"application/gml+xml;version=3.2")) {
 
 						schDoc.registerNamespace("gml");
-						xpathCodeListValueExists = new XpathFragment(0,
-								"every " + "$codeListUrl in " + clRefExp + ", "
-										+ "$codeListValue in ./text()"
-										+ " satisfies"
-										+ "(not(contains($codeListUrl, '#')) and doc-available($codeListUrl) and "
-										+ "doc($codeListUrl)/*/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]) "
-										+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
-										+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
-										+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue])",
+						xpathCodeListValueExists = new XpathFragment(0, "every "
+								+ "$codeListUrl in " + clRefExp + ", "
+								+ "$codeListValue in ./text()" + " satisfies"
+								+ "(not(contains($codeListUrl, '#')) and doc-available($codeListUrl) and "
+								+ "doc($codeListUrl)/*/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue]) "
+								+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
+								+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+								+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue])",
 								XpathType.BOOLEAN, false);
 
 					} else if (clRepTV
@@ -4015,15 +4079,14 @@ public class XsdDocument implements MessageSource {
 						schDoc.registerNamespace("gml");
 						schDoc.registerNamespace("gmx");
 
-						xpathCodeListValueExists = new XpathFragment(0,
-								"every " + "$codeListUrl in " + clRefExp + ", "
-										+ "$codeListValue in ./text()"
-										+ " satisfies"
-										+ "(not(contains($codeListUrl, '#')) and doc-available($codeListUrl) and "
-										+ "doc($codeListUrl)/*/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue]) "
-										+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
-										+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
-										+ "/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue])",
+						xpathCodeListValueExists = new XpathFragment(0, "every "
+								+ "$codeListUrl in " + clRefExp + ", "
+								+ "$codeListValue in ./text()" + " satisfies"
+								+ "(not(contains($codeListUrl, '#')) and doc-available($codeListUrl) and "
+								+ "doc($codeListUrl)/*/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue]) "
+								+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
+								+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
+								+ "/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue])",
 								XpathType.BOOLEAN, false);
 					}
 
@@ -4495,7 +4558,7 @@ public class XsdDocument implements MessageSource {
 	 * </p>
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text, including $x$ substitution points.
 	 */
 	public String message(int mnr) {
@@ -4516,7 +4579,7 @@ public class XsdDocument implements MessageSource {
 	 * number.
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text or null
 	 */
 	protected String messageText(int mnr) {

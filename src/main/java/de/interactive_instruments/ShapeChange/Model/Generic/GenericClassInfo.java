@@ -344,6 +344,18 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	private void updateFieldsForTaggedValue(String tvName, String tvValue) {
 
 		// TODO add more updates for relevant tagged values
+		
+		if (tvName.equalsIgnoreCase("profiles")) {
+			
+			// unset existing profiles
+			this.profiles = null;
+			
+			/*
+			 * invoke ClassInfoImpl.profiles() method to parse profile info from TV
+			 * profiles
+			 */
+			super.profiles();
+		}
 
 		/*
 		 * TBD: Descriptors should not be modified right away, since the
@@ -1222,6 +1234,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 */
 	public void setTaggedValue(String tvName, String tvValue,
 			boolean updateFields) {
+		
 		validateTaggedValuesCache();
 
 		taggedValuesCache.put(tvName, tvValue);

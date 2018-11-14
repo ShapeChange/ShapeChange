@@ -51,10 +51,11 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class TargetOwlConfiguration extends TargetConfiguration {
@@ -70,31 +71,44 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	private Map<String, PropertyConversionParameter> propertyConversionParameters = new HashMap<String, PropertyConversionParameter>();
 	private List<DescriptorTarget> descriptorTargets;
 	private Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings;
+	private List<RdfGeneralProperty> generalProperties;
 
 	/**
 	 * Creates a TargetOwlConfiguration.
 	 * 
 	 * @param className
-	 *            The fully qualified name of the class implementing the target.
+	 *                                           The fully qualified name of the
+	 *                                           class implementing the target.
 	 * @param processMode
-	 *            The execution mode of the target.
+	 *                                           The execution mode of the
+	 *                                           target.
 	 * @param parameters
-	 *            The target parameters. <code>null</code> if no parameters were
-	 *            declared in the configuration.
+	 *                                           The target parameters.
+	 *                                           <code>null</code> if no
+	 *                                           parameters were declared in the
+	 *                                           configuration.
 	 * @param ruleSets
-	 *            The encoding rule sets declared for the target.
-	 *            <code>null</code> if no rule sets were declared in the
-	 *            configuration.
+	 *                                           The encoding rule sets declared
+	 *                                           for the target.
+	 *                                           <code>null</code> if no rule
+	 *                                           sets were declared in the
+	 *                                           configuration.
 	 * @param inputIds
-	 *            Set of identifiers referencing either the input model or a
-	 *            transformer.
+	 *                                           Set of identifiers referencing
+	 *                                           either the input model or a
+	 *                                           transformer.
 	 * @param namespaces
-	 *            List of namespaces for the target. <code>null</code> if no
-	 *            namespaces were declared in the configuration.
+	 *                                           List of namespaces for the
+	 *                                           target. <code>null</code> if no
+	 *                                           namespaces were declared in the
+	 *                                           configuration.
 	 * @param advancedProcessConfigurations
-	 *            the 'advancedProcessConfigurations' element from the
-	 *            configuration of the process; <code>null</code> if it is not
-	 *            set there
+	 *                                           the
+	 *                                           'advancedProcessConfigurations'
+	 *                                           element from the configuration
+	 *                                           of the process;
+	 *                                           <code>null</code> if it is not
+	 *                                           set there
 	 * @param rdfTypeMapEntries
 	 * @param rdfPropertyMapEntries
 	 * @param stereotypeConversionParameters
@@ -102,6 +116,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * @param propertyConversionParameters
 	 * @param descriptorTargets
 	 * @param constraintMappings
+	 * @param generalProperties
 	 */
 	public TargetOwlConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
@@ -113,7 +128,8 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 			Map<String, List<TypeConversionParameter>> typeConversionParameters,
 			Map<String, List<PropertyConversionParameter>> propertyConversionParameters,
 			List<DescriptorTarget> descriptorTargets,
-			Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings) {
+			Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings,
+			List<RdfGeneralProperty> generalProperties) {
 
 		super(className, processMode, parameters, ruleSets, null, inputIds,
 				namespaces, advancedProcessConfigurations);
@@ -159,6 +175,8 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 
 		this.descriptorTargets = descriptorTargets;
 		this.constraintMappings = constraintMappings;
+		this.generalProperties = generalProperties != null ? generalProperties
+				: new ArrayList<>();
 	}
 
 	/**
@@ -222,8 +240,9 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * 
 	 * @param typeName
 	 * @param schemaName
-	 *            name of the schema to which the type belongs, may be
-	 *            <code>null</code> to only look for generic mappings
+	 *                       name of the schema to which the type belongs, may
+	 *                       be <code>null</code> to only look for generic
+	 *                       mappings
 	 * @return the map entry that applies to this type; <code>null</code> if
 	 *         none is applicable
 	 */
@@ -275,12 +294,15 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * </ul>
 	 * 
 	 * @param propertyNameScopedToClass
-	 *            name of the property to look up an applicable map entry; the
-	 *            name has a class name as prefix, separated by "::" (example:
-	 *            Feature1::att4), may NOT be <code>null</code> or empty
+	 *                                      name of the property to look up an
+	 *                                      applicable map entry; the name has a
+	 *                                      class name as prefix, separated by
+	 *                                      "::" (example: Feature1::att4), may
+	 *                                      NOT be <code>null</code> or empty
 	 * @param schemaName
-	 *            name of the schema to which the property belongs, may NOT be
-	 *            <code>null</code> or empty
+	 *                                      name of the schema to which the
+	 *                                      property belongs, may NOT be
+	 *                                      <code>null</code> or empty
 	 * @return the map entry that applies to this property; <code>null</code> if
 	 *         none is applicable
 	 */
@@ -353,9 +375,9 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * 
 	 * @param typeName
 	 * @param schemaName
-	 *            name of the schema to which the type belongs, may be
-	 *            <code>null</code> to only look for generic conversion
-	 *            parameters
+	 *                       name of the schema to which the type belongs, may
+	 *                       be <code>null</code> to only look for generic
+	 *                       conversion parameters
 	 * @return the conversion parameter that applies to this type;
 	 *         <code>null</code> if none is applicable
 	 */
@@ -411,13 +433,16 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * </ul>
 	 * 
 	 * @param propertyNameScopedToClass
-	 *            name of the property to look up an applicable conversion
-	 *            parameter; the name has a class name as prefix, separated by
-	 *            "::" (example: Feature1::att4), may NOT be <code>null</code>
-	 *            or empty
+	 *                                      name of the property to look up an
+	 *                                      applicable conversion parameter; the
+	 *                                      name has a class name as prefix,
+	 *                                      separated by "::" (example:
+	 *                                      Feature1::att4), may NOT be
+	 *                                      <code>null</code> or empty
 	 * @param schemaName
-	 *            name of the schema to which the property belongs, may NOT be
-	 *            <code>null</code> or empty
+	 *                                      name of the schema to which the
+	 *                                      property belongs, may NOT be
+	 *                                      <code>null</code> or empty
 	 * @return the conversion parameter that applies to this property;
 	 *         <code>null</code> if none is applicable
 	 */
@@ -495,6 +520,14 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	}
 
 	/**
+	 * @return the list of general property specifications defined by the
+	 *         configuration; can be empty but not <code>null</code>
+	 */
+	public List<RdfGeneralProperty> getGeneralProperties() {
+		return this.generalProperties;
+	}
+
+	/**
 	 * Performs a number of tests.
 	 * 
 	 * @throws ShapeChangeAbortException
@@ -565,7 +598,8 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 						+ "' of attribute 'target' in the RdfTypeMapEntry configuration element (for type '"
 						+ rtme.getType() + "'"
 						+ (rtme.hasSchema()
-								? " in schema '" + rtme.getSchema() + "'" : "")
+								? " in schema '" + rtme.getSchema() + "'"
+								: "")
 						+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
 			}
 
@@ -635,13 +669,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 				String[] parts = property.split("::");
 				if (parts.length != 2 || parts[0].trim().length() == 0
 						|| parts[1].trim().length() == 0) {
-					messages.add(
-							"Value '" + property
-									+ "' of attribute 'property' in the RdfPropertyMapEntry configuration element (for property '"
-									+ property + "'"
-									+ (rpme.hasSchema() ? " in schema '"
-											+ rpme.getSchema() + "'" : "")
-									+ ") is not well-formed.");
+					messages.add("Value '" + property
+							+ "' of attribute 'property' in the RdfPropertyMapEntry configuration element (for property '"
+							+ property + "'"
+							+ (rpme.hasSchema()
+									? " in schema '" + rpme.getSchema() + "'"
+									: "")
+							+ ") is not well-formed.");
 				}
 			}
 
@@ -657,14 +691,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 						|| target.endsWith(":")
 						|| !this.hasNamespaceWithAbbreviation(
 								target.split(":")[0])) {
-					messages.add(
-							"Value '" + target
-									+ "' of attribute 'target' in the RdfPropertyMapEntry configuration element (for property '"
-									+ property + "'" + (rpme.hasSchema()
-											? " in schema '" + rpme.getSchema()
-													+ "'"
-											: "")
-									+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
+					messages.add("Value '" + target
+							+ "' of attribute 'target' in the RdfPropertyMapEntry configuration element (for property '"
+							+ property + "'"
+							+ (rpme.hasSchema()
+									? " in schema '" + rpme.getSchema() + "'"
+									: "")
+							+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
 				}
 			}
 
@@ -678,14 +711,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 						|| range.endsWith(":")
 						|| !this.hasNamespaceWithAbbreviation(
 								range.split(":")[0])) {
-					messages.add(
-							"Value '" + range
-									+ "' of attribute 'range' in the RdfPropertyMapEntry configuration element (for property '"
-									+ property + "'" + (rpme.hasSchema()
-											? " in schema '" + rpme.getSchema()
-													+ "'"
-											: "")
-									+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
+					messages.add("Value '" + range
+							+ "' of attribute 'range' in the RdfPropertyMapEntry configuration element (for property '"
+							+ property + "'"
+							+ (rpme.hasSchema()
+									? " in schema '" + rpme.getSchema() + "'"
+									: "")
+							+ ") is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
 				}
 			}
 
@@ -782,14 +814,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 						|| sco.endsWith(":")
 						|| !this.hasNamespaceWithAbbreviation(
 								sco.split(":")[0])) {
-					messages.add(
-							"Value '" + sco
-									+ "' of attribute 'subClassOf' in the TypeConversionParameter configuration element (for type '"
-									+ tcp.getType() + "'" + (tcp.hasSchema()
-											? " in schema '" + tcp.getSchema()
-													+ "'"
-											: "")
-									+ " )' is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
+					messages.add("Value '" + sco
+							+ "' of attribute 'subClassOf' in the TypeConversionParameter configuration element (for type '"
+							+ tcp.getType() + "'"
+							+ (tcp.hasSchema()
+									? " in schema '" + tcp.getSchema() + "'"
+									: "")
+							+ " )' is not well-formed. The prefix must be equal to the namespace abbreviation of a namespace that is contained in the configuration of the target.");
 				}
 			}
 		}
@@ -808,13 +839,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 				String[] parts = property.split("::");
 				if (parts.length != 2 || parts[0].trim().length() == 0
 						|| parts[1].trim().length() == 0) {
-					messages.add(
-							"Value '" + property
-									+ "' of attribute 'property' in the PropertyConversionParameter configuration element (for property '"
-									+ property + "'"
-									+ (pcp.hasSchema() ? " in schema '"
-											+ pcp.getSchema() + "'" : "")
-									+ ") is not well-formed.");
+					messages.add("Value '" + property
+							+ "' of attribute 'property' in the PropertyConversionParameter configuration element (for property '"
+							+ property + "'"
+							+ (pcp.hasSchema()
+									? " in schema '" + pcp.getSchema() + "'"
+									: "")
+							+ ") is not well-formed.");
 				}
 			}
 
@@ -825,14 +856,13 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 				 */
 				String target = pcp.getTarget();
 				if (target.isEmpty() || !target.contains("::")) {
-					messages.add(
-							"Value '" + target
-									+ "' of attribute 'target' in the PropertyConversionParameter configuration element (for property '"
-									+ property + "'" + (pcp.hasSchema()
-											? " in schema '" + pcp.getSchema()
-													+ "'"
-											: "")
-									+ ") is not well-formed. It must not be empty and must include '::' (because it shall identify a global property, scoped to a specific class, and from a specific schema).");
+					messages.add("Value '" + target
+							+ "' of attribute 'target' in the PropertyConversionParameter configuration element (for property '"
+							+ property + "'"
+							+ (pcp.hasSchema()
+									? " in schema '" + pcp.getSchema() + "'"
+									: "")
+							+ ") is not well-formed. It must not be empty and must include '::' (because it shall identify a global property, scoped to a specific class, and from a specific schema).");
 				}
 
 				/*
@@ -842,8 +872,10 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 					messages.add(
 							"The PropertyConversionParameter configuration element (for property '"
 									+ property + "'"
-									+ (pcp.hasSchema() ? " in schema '"
-											+ pcp.getSchema() + "'" : "")
+									+ (pcp.hasSchema()
+											? " in schema '" + pcp.getSchema()
+													+ "'"
+											: "")
 									+ ") has a 'target' but does not have a 'targetSchema' - both must be set or none of them.");
 				}
 			}
@@ -880,7 +912,8 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 				messages.add("The PropertyConversionParameter (for property '"
 						+ pcp.getProperty() + "'"
 						+ (pcp.hasSchema()
-								? " in schema '" + pcp.getSchema() + "'" : "")
+								? " in schema '" + pcp.getSchema() + "'"
+								: "")
 						+ ")' with 'global' set to true is not well-formed. The 'property' must be scoped to a class and a schema must be given so that the parameter identifies a single property from the model.");
 			}
 		}

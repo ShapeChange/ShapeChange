@@ -39,11 +39,11 @@ import java.util.regex.Pattern;
 /**
  * Stores a string value and optional language identifier.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
-public class LangString {
+public class LangString implements Comparable<LangString> {
 
 	private static final Pattern langPattern = Pattern
 			.compile("^\"(.*)\"@([a-zA-Z0-9\\-]{2,})$");
@@ -53,7 +53,7 @@ public class LangString {
 
 	/**
 	 * @param string
-	 *            - must not be <code>null</code>
+	 *                   - must not be <code>null</code>
 	 * @return the LangString parsed from the given string
 	 */
 	public static LangString parse(String string) {
@@ -94,9 +94,9 @@ public class LangString {
 
 	/**
 	 * @param value
-	 *            can be <code>null</code>
+	 *                  can be <code>null</code>
 	 * @param lang
-	 *            can be <code>null</code>
+	 *                  can be <code>null</code>
 	 */
 	public LangString(String value, String lang) {
 		super();
@@ -110,7 +110,7 @@ public class LangString {
 
 	/**
 	 * @param value
-	 *            can be <code>null</code>
+	 *                  can be <code>null</code>
 	 */
 	public LangString(String value) {
 		super();
@@ -128,7 +128,7 @@ public class LangString {
 
 	/**
 	 * @param value
-	 *            the value to set
+	 *                  the value to set
 	 */
 	public void setValue(String value) {
 		if (value != null) {
@@ -147,7 +147,7 @@ public class LangString {
 
 	/**
 	 * @param lang
-	 *            the lang to set
+	 *                 the lang to set
 	 */
 	public void setLang(String lang) {
 		if (lang != null) {
@@ -158,11 +158,19 @@ public class LangString {
 	}
 
 	/**
-	 * @return <code>true</code> if lang is not null and has a length greater
-	 *         than 0.
+	 * @return <code>true</code> if lang is not <code>null</code> and has a
+	 *         length greater than 0.
 	 */
 	public boolean hasLang() {
 		return this.lang != null && this.lang.length() > 0;
+	}
+
+	/**
+	 * @return <code>true</code> if value is not <code>null</code> and has a
+	 *         length greater than 0.
+	 */
+	public boolean hasValue() {
+		return this.getValue() != null && this.getValue().length() > 0;
 	}
 
 	public String toString() {
@@ -180,5 +188,35 @@ public class LangString {
 
 	public void appendSuffix(String s) {
 		this.value += s;
+	}
+
+	/**
+	 * Sorts first by comparing the language value, then by comparing the actual
+	 * value.
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(LangString other) {
+
+		if (!this.hasLang() && other.hasLang()) {
+			return -1;
+		} else if (this.hasLang() && !other.hasLang()) {
+			return 1;
+		} else if (this.hasLang() && other.hasLang()
+				&& this.getLang().compareTo(other.getLang()) != 0) {
+			return this.getLang().compareTo(other.getLang());
+		} else {
+			// lang is equal
+			if (!this.hasValue() && !other.hasValue()) {
+				return 0;
+			} else if (!this.hasValue() && other.hasValue()) {
+				return -1;
+			} else if (this.hasValue() && !other.hasValue()) {
+				return 1;
+			} else {
+				return this.getValue().compareTo(other.getValue());
+			}
+		}
 	}
 }

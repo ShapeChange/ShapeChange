@@ -45,8 +45,6 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
-import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
@@ -707,6 +705,17 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			 * because this method is only called after setting a tagged value.
 			 */
 			this.setSequenceNumber(new StructuredNumber(tvValue), false);
+			
+		} else if (tvName.equalsIgnoreCase("profiles")) {
+			
+			// unset existing profiles
+			this.profiles = null;
+			
+			/*
+			 * invoke PropertyInfoImpl.profiles() method to parse profile info from TV
+			 * profiles
+			 */
+			super.profiles();
 		}
 
 		/*

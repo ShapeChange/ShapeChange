@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" xmlns:test="http://example.org/shapechange/xsd/descriptorAnnotation" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/descriptorAnnotation" version="1.0">
+  <annotation>
+    <appinfo>
+      <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_3C71400F_3784_4f7a_B884_573BFC270352</descriptor>
+    </appinfo>
+  </annotation>
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="CodeListType">
+    <annotation>
+      <appinfo>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">CL</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">CodeList documentation</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</descriptor>
+      </appinfo>
+    </annotation>
+    <union memberTypes="test:CodeListEnumerationType test:CodeListOtherType"/>
+  </simpleType>
+  <simpleType name="CodeListEnumerationType">
+    <annotation>
+      <appinfo>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">CL</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">CodeList documentation</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</descriptor>
+      </appinfo>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="code1">
+        <annotation>
+          <appinfo>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">c1</descriptor>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">code1 documentation</descriptor>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_AB6E277F_52A4_4d0c_B8FB_4A0B114A7725</descriptor>
+          </appinfo>
+        </annotation>
+      </enumeration>
+      <enumeration value="code2">
+        <annotation>
+          <appinfo>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">c2</descriptor>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">code2 documentation</descriptor>
+            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_CC8937E2_D8C5_4a9a_A92C_25861E78AF93</descriptor>
+          </appinfo>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="CodeListOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeType">
+    <annotation>
+      <documentation>FT: FeatureType definition english</documentation>
+      <appinfo>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">FT</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">FeatureType documentation</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" lang="de" name="definition">FeatureType definition deutsch</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" lang="en" name="definition">FeatureType definition english</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</descriptor>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="integer">
+            <annotation>
+              <appinfo>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">a1</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="primaryCode">primaryCode att1</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">att1 documentation</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="description">description att1</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="language">en</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_BECBC365_6DEA_445b_A5A7_CDF12FAB81D4</descriptor>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="role1" type="test:TypePropertyType">
+            <annotation>
+              <appinfo>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">r1</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">role1 documentation</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="legalBasis">legalBasis role1</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_dstAD9263_21FE_4ee9_B470_16B459EFA385</descriptor>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Type" substitutionGroup="gml:AbstractGML" type="test:TypeType">
+    <annotation>
+      <appinfo>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">T</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">Type documentation</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="example">Example1 Type</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="example">Example2 Type</descriptor>
+        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_A8C59613_4BA2_43dc_AD65_D6E50F36396E</descriptor>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="att2" type="test:CodeListType">
+            <annotation>
+              <appinfo>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">a2</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">att2 documentation</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="dataCaptureStatement">data capture statement att2</descriptor>
+                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_A8BB3719_132F_4c68_8BF9_2320CBEB6CEE</descriptor>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

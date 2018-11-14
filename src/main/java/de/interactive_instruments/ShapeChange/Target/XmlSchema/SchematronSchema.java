@@ -1663,9 +1663,9 @@ public class SchematronSchema implements MessageSource {
 		case 103:
 			return "Failure to compile OCL constraint named \"$2$\" in class \"$3$\". Operation \"$1$\" not implemented.";
 		case 104:
-			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" argument to operator \"$3$\" must be class constant.";
+			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\": the argument to operator \"$3$\" must be a class constant.";
 		case 105:
-			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" object of operator \"allInstances\" must be class constant.";
+			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\": the object of operator \"allInstances\" must be a class constant.";
 		case 106:
 			return "Failure to compile OCL constraint named \"$2$\" in class \"$3$\". Attribute construct named \"$1$\" not implemented.";
 		case 107:
