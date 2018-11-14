@@ -77,7 +77,6 @@ import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheArray;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
-import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue;
 import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralDataProperty;
 import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralObjectProperty;
@@ -3645,6 +3644,7 @@ public class Options {
 		/*
 		 * non-standard extensions - conversion rules
 		 */
+		addRule("rule-xsd-all-descriptorAnnotation");
 		addRule("rule-xsd-all-globalIdentifierAnnotation");
 		addRule("rule-xsd-all-notEncoded");
 		addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");

@@ -253,6 +253,16 @@ public class XMLSchemaTest extends WindowsBasicTest {
 	}
 	
 	@Test
+	public void test_descriptorAnnotation() {
+		
+		multiTest(
+				"src/test/resources/xsd/descriptorAnnotation/testEA_xsd_descriptorAnnotation.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/descriptorAnnotation",
+				"src/test/resources/xsd/descriptorAnnotation/reference");
+	}
+	
+	@Test
 	public void test_unionSubtype() {
 		
 		multiTest(
