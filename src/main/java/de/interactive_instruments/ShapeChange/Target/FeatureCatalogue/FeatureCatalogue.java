@@ -718,7 +718,12 @@ public class FeatureCatalogue
 			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
 		else if (imt.equalsIgnoreCase("gsip"))
 			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-
+		else if (imt.equalsIgnoreCase("scxml")) {
+			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
+		} else {
+			result.addInfo(this, 29, imt);
+		}
+		
 		Model m = null;
 
 		// Get model object from reflection API
@@ -3230,7 +3235,9 @@ public class FeatureCatalogue
 			return "Message from external java executable: $1$";
 		case 28:
 			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
-
+		case 29:
+			return "Value of parameter 'referenceModelType' is '$1$'.";
+		
 		}
 		return null;
 	}
