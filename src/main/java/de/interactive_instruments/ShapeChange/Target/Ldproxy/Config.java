@@ -52,6 +52,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -201,6 +202,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * @see ConfigConstants#PARAM_REPORTABLE
 	 */
 	private static Set<String> reportables = null;
+	
+	/**
+	 * @see ConfigConstants#PARAM_TRIGGER_ONDELETE
+	 */
+	private static Set<String> trigger_onDelete = null;
 	
 	/**
 	 * The JSON object representing the main configuration file.
@@ -477,6 +483,15 @@ public class Config implements SingleTarget, MessageSource {
 						reportables.add(s2.trim().toLowerCase());
 					}
 				}				
+
+				trigger_onDelete = new TreeSet<String>();
+				s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_TRIGGER_ONDELETE);
+				if (s != null) {
+					String[] sarr = s.split(";");
+					for (String s2 : sarr) {
+						trigger_onDelete.add(s2.trim());
+					}
+				}
 				
 				// If a dry run is requested, simply do not create the writers. Everything will be
 				// executed as normal, but nothing will be written.
@@ -523,6 +538,17 @@ public class Config implements SingleTarget, MessageSource {
 				connectionInfo.put("database", "FIXME");
 				connectionInfo.put("user", "FIXME");
 				connectionInfo.put("password", "FIXME-base64encoded");
+				
+				// Add onDelete trigger
+				if (!trigger_onDelete.isEmpty()) {
+					JSONObject trigger = new JSONObject();
+					featureProvider.put("trigger", trigger);
+					JSONArray onDelete = new JSONArray(); 
+					for (String trg: trigger_onDelete) {
+						onDelete.add(trg);
+					}
+					trigger.put("onDelete", onDelete);
+				}
 
 				// Create a mappings object, which will be populated when the feature types are processed.
 				mappings = new JSONObject();
@@ -574,7 +600,10 @@ public class Config implements SingleTarget, MessageSource {
 		rootCollectionField = null;
 		filterableFields = null;	
 		htmlLabelFields = null;
-		featureTypes = null;		
+		featureTypes = null;
+		clUrlTV = null;
+		reportables = null;
+		trigger_onDelete = null;
 		outputDirectory = null;
 		
 		writer = null;
