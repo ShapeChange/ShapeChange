@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -49,6 +50,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
@@ -59,7 +61,9 @@ public class Differ {
 	private boolean aaaModel = false;
 	private String[] maArrRef = new String[0];
 	private diff_match_patch strDiffer = new diff_match_patch();
-	private HashSet<ClassInfo> processed = new HashSet<ClassInfo>();
+	private Set<ClassInfo> processed = new HashSet<ClassInfo>();
+	private Map<ClassInfo,Collection<PropertyInfo>> hiddenPropertiesCurr = new HashMap<ClassInfo,Collection<PropertyInfo>>();
+	private Map<ClassInfo,Collection<PropertyInfo>> hiddenPropertiesRef = new HashMap<ClassInfo,Collection<PropertyInfo>>();
 
 	public Differ() {
 	}
@@ -67,6 +71,39 @@ public class Differ {
 	public Differ(boolean aaa, String[] maArr) {
 		aaaModel = true;
 		maArrRef = maArr;
+	}
+	
+	public Differ(boolean aaa, String[] maArr, Model curr, Model ref) {
+		aaaModel = true;
+		maArrRef = maArr;
+		
+		PropertyInfo rpi;
+		ClassInfo ci;
+		if (aaaModel) {
+			// add reverse properties in the AAA model, as these are used, too, in targets
+			for (PropertyInfo pi : curr.properties()) {
+				rpi = pi.reverseProperty();
+				if (rpi!=null && !rpi.isNavigable() && rpi.name()!=null && !rpi.name().startsWith("role_")) {
+					ci = rpi.inClass();
+					if (!hiddenPropertiesCurr.containsKey(ci)) {
+						hiddenPropertiesCurr.put(ci, new HashSet<PropertyInfo>());
+					} 
+					Collection<PropertyInfo> coll = hiddenPropertiesCurr.get(ci);
+					coll.add(rpi);
+				}
+			}
+			for (PropertyInfo pi : ref.properties()) {
+				rpi = pi.reverseProperty();
+				if (rpi!=null && !rpi.isNavigable() && rpi.name()!=null && !rpi.name().startsWith("role_")) {
+					ci = rpi.inClass();
+					if (!hiddenPropertiesRef.containsKey(ci)) {
+						hiddenPropertiesRef.put(ci, new HashSet<PropertyInfo>());
+					} 
+					Collection<PropertyInfo> coll = hiddenPropertiesRef.get(ci);
+					coll.add(rpi);
+				}
+			}
+		}		
 	}
 
 	private boolean MatchingMA(Info i) {
@@ -175,10 +212,24 @@ public class Differ {
 		Info[] infoArr, infoArrRef;
 		SortedMap<Info, SortedSet<DiffElement>> diffs2;
 
-		Collection<PropertyInfo> prop = curr.properties().values();
+		Set<PropertyInfo> prop = new HashSet<PropertyInfo>();
+		prop.addAll(curr.properties().values());
+		if (aaaModel) {
+			Collection<PropertyInfo> propadd = hiddenPropertiesCurr.get(curr);
+			if (propadd!=null && !propadd.isEmpty()) {
+				prop.addAll(propadd);
+			}
+		}		
 		infoArr = new Info[prop.size()];
 		prop.toArray(infoArr);
-		Collection<PropertyInfo> propRef = ref.properties().values();
+		Set<PropertyInfo> propRef = new HashSet<PropertyInfo>();
+		propRef.addAll(ref.properties().values());
+		if (aaaModel) {
+			Collection<PropertyInfo> propadd = hiddenPropertiesRef.get(ref);
+			if (propadd!=null && !propadd.isEmpty()) {
+				propRef.addAll(propadd);
+			}
+		}		
 		infoArrRef = new Info[propRef.size()];
 		propRef.toArray(infoArrRef);
 		if (curr.category() == Options.ENUMERATION
@@ -610,6 +661,26 @@ public class Differ {
 				diffs.put(curr, new TreeSet<DiffElement>());
 			diffs.get(curr).add(diff);
 		}
+		
+		// diff for retired in AAA
+		if (aaaModel) {
+			boolean retired = curr.stereotypes().contains("retired");
+			boolean retiredRef = ref.stereotypes().contains("retired");
+			diff = null;
+			if (!retiredRef && retired) {
+				diff = new DiffElement();
+				diff.change = Operation.INSERT;
+			} else if (retiredRef && !retired) {
+				diff = new DiffElement();
+				diff.change = Operation.DELETE;
+			}
+			if (diff!=null) {
+				diff.subElementType = ElementType.AAARETIRED;
+				if (!diffs.containsKey(curr))
+					diffs.put(curr, new TreeSet<DiffElement>());
+				diffs.get(curr).add(diff);
+			}
+		}
 
 		// perform diff for the tagged values
 		// TODO handle tags with multiple values
@@ -620,7 +691,7 @@ public class Differ {
 		for (Map.Entry<String, String> entry : taggedValues.entrySet()) {
 			String key = entry.getKey();
 			String val = entry.getValue();
-			if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
+			if (aaaModel && (key.equalsIgnoreCase("AAA:Modellart")
 					|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
 				String valref = null;
 				if (taggedValuesRef!=null && taggedValuesRef.containsKey(key)) {
@@ -664,6 +735,32 @@ public class Differ {
 						}
 					}
 				}
+			} else if (aaaModel && key.equalsIgnoreCase("AAA:Landnutzung")) {
+				String valref = null;
+				if (taggedValuesRef!=null && taggedValuesRef.containsKey(key)) {
+					valref = taggedValuesRef.get(key);
+				}
+				// normalize values
+				if (val!=null && !val.equalsIgnoreCase("true"))
+					val = null;
+				if (valref!=null && !valref.equalsIgnoreCase("true"))
+					valref = null;
+				diff = null;
+				if (valref==null && val!=null) {
+					diff = new DiffElement();
+					diff.change = Operation.INSERT;
+					diff.tag = val;
+				} else if (val==null && valref!=null) {
+					diff = new DiffElement();
+					diff.change = Operation.DELETE;
+					diff.tag = valref;
+				}
+				if (diff!=null) {
+					diff.subElementType = ElementType.AAALANDNUTZUNG;
+					if (!diffs.containsKey(curr))
+						diffs.put(curr, new TreeSet<DiffElement>());
+					diffs.get(curr).add(diff);
+				}
 			} else {
 				if (taggedValuesRef!=null && taggedValuesRef.containsKey(key)) {
 					String valref = taggedValuesRef.get(key);
@@ -672,7 +769,10 @@ public class Differ {
 					diff = stringDiff(ElementType.TAG, "", val);
 				}
 				if (diff != null) {
-					diff.tag = key;
+					if (aaaModel && key.equalsIgnoreCase("AAA:GueltigBis"))
+						diff.subElementType = ElementType.AAAGUELTIGBIS;
+					else
+						diff.tag = key;
 					if (!diffs.containsKey(curr))
 						diffs.put(curr, new TreeSet<DiffElement>());
 					diffs.get(curr).add(diff);
@@ -682,7 +782,7 @@ public class Differ {
 		if (taggedValuesRef!=null) {
 			for (Map.Entry<String, String> entry : taggedValuesRef.entrySet()) {
 				String key = entry.getKey();
-				if (aaaModel & (key.equalsIgnoreCase("AAA:Modellart")
+				if (aaaModel && (key.equalsIgnoreCase("AAA:Modellart")
 						|| key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
 					String valref = taggedValuesRef.get(key);
 					String val = null;
@@ -727,11 +827,41 @@ public class Differ {
 							}
 						}
 					}
+				} else if (aaaModel && key.equalsIgnoreCase("AAA:Landnutzung")) {
+					String valref = taggedValuesRef.get(key);
+					String val = null;
+					if (taggedValues.containsKey(key)) {
+						val = taggedValues.get(key);
+					}
+					// normalize values
+					if (val!=null && !val.equalsIgnoreCase("true"))
+						val = null;
+					if (valref!=null && !valref.equalsIgnoreCase("true"))
+						valref = null;
+					diff = null;
+					if (valref==null && val!=null) {
+						diff = new DiffElement();
+						diff.change = Operation.INSERT;
+						diff.tag = val;
+					} else if (val==null && valref!=null) {
+						diff = new DiffElement();
+						diff.change = Operation.DELETE;
+						diff.tag = valref;
+				}
+					if (diff!=null) {
+						diff.subElementType = ElementType.AAALANDNUTZUNG;
+						if (!diffs.containsKey(curr))
+							diffs.put(curr, new TreeSet<DiffElement>());
+						diffs.get(curr).add(diff);
+					}
 				} else {
 					if (!taggedValues.containsKey(key)) {
 						diff = stringDiff(ElementType.TAG, entry.getValue(), "");
 						if (diff != null) {
-							diff.tag = key;
+							if (aaaModel && key.equalsIgnoreCase("AAA:GueltigBis"))
+								diff.subElementType = ElementType.AAAGUELTIGBIS;
+							else
+								diff.tag = key;
 							if (!diffs.containsKey(curr))
 								diffs.put(curr, new TreeSet<DiffElement>());
 							diffs.get(curr).add(diff);
