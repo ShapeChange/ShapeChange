@@ -28,7 +28,7 @@
 			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>
 			<targetParameter name="xslhtmlFile" value="html.xsl"/>
 			<targetParameter name="referenceModelType" value="EA7"/>
-			<targetParameter name="referenceModelFile" value="src/test/resources/test_ref.eap"/>
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/test_ref.eap"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

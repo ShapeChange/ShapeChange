@@ -34,6 +34,9 @@
  <xsl:param name="noAlphabeticSortingForProperties">false</xsl:param>
  <!-- The path to the catalogue tmp xml is set automatically by ShapeChange. -->
  <xsl:param name="catalogXmlPath"/>
+ <!-- Name of the logo to include in the catalogue. May be empty (then do not include a logo). -->
+ <xsl:param name="logoFileName"/>
+ 
  <!-- When executed with ShapeChange, the absolute URI to the catalog XML is automatically determined via a custom URI resolver. -->
  <xsl:variable name="catalogDocument" select="document($catalogXmlPath)"/>
  <xsl:variable name="catalog" select="$catalogDocument/FeatureCatalogue"/>
@@ -148,11 +151,23 @@
      </title>
      <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css"/>
     </head>
-
+    
     <header>
-     <h1 class="banner">
-      <xsl:value-of select="$appSchemaName"/>
-     </h1>
+     <xsl:choose>
+      <xsl:when test="$logoFileName">
+       <div class="logoDiv">
+        <img src="{$logoFileName}" alt="logo" class="logo" />
+        <h1 class="banner">
+         <xsl:value-of select="$appSchemaName"/>
+        </h1>
+       </div>
+      </xsl:when>
+      <xsl:otherwise>
+       <h1 class="banner">
+        <xsl:value-of select="$appSchemaName"/>
+       </h1>
+      </xsl:otherwise>
+     </xsl:choose>
     </header>
    </html>
    <xsl:if test="$debug">

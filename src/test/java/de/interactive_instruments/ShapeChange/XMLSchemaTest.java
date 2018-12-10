@@ -271,4 +271,24 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/xsd/unionSubtype",
 				"src/test/resources/xsd/unionSubtype/reference");
 	}
+	
+	@Test
+	public void test_xsdPropertyMapEntry() {
+		
+		multiTest(
+				"src/test/resources/xsd/xsdPropertyMapEntry/test_xsdPropertyMapEntry.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/xsdPropertyMapEntry",
+				"src/test/resources/xsd/xsdPropertyMapEntry/reference");
+	}
+	
+	@Test
+	public void test_allowAllTags() {
+		
+		multiTest(
+				"src/test/resources/xsd/allowAllTags/test_allowAllTags.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/allowAllTags",
+				"src/test/resources/xsd/allowAllTags/reference");
+	}
 }

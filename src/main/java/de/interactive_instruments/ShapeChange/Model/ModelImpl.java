@@ -38,14 +38,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrRuleLoader;
@@ -127,7 +126,8 @@ public abstract class ModelImpl implements Model {
 			"codeListSource", "codeListSourceCharset",
 			"codeListSourceRepresentation", "codeListRestriction",
 			"arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
-			"arcgisSubtypeInitialValues", "codeListXML", "reportable" };
+			"arcgisSubtypeInitialValues", "codeListXML", "reportable",
+			"dissolveAssociationAttributeType" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to
@@ -501,9 +501,6 @@ public abstract class ModelImpl implements Model {
 		// Now check tag aliases provided in the configuration
 		tag = options().normalizeTag(tag);
 
-		// So, if it's one of these just return the argument ...
-		if (allowedTags.contains(tag))
-			return tag;
 		// Now allow for some deprecated stuff
 		if (tag.equals("xmlNamespace"))
 			return "targetNamespace";
@@ -516,7 +513,8 @@ public abstract class ModelImpl implements Model {
 		if (tag.equals("implementedByNilReason"))
 			return "gmlImplementedByNilReason";
 
-		// TBD: add input parameter to allow any tag
+		if (options().allowAllTags() || allowedTags.contains(tag))
+			return tag;
 
 		// None of these, return null
 		return null;
@@ -650,5 +648,20 @@ public abstract class ModelImpl implements Model {
 			}
 			return result;
 		}
+	}
+
+	@Override
+	public Type typeByName(String typeName) {
+
+		ClassInfo ci = this.classByName(typeName);
+		Type typeInfo = new Type();
+		typeInfo.name = typeName;
+		if (ci != null) {
+			typeInfo.id = ci.id();
+		} else {
+			typeInfo.id = "UNKNOWN";
+		}
+
+		return typeInfo;
 	}
 }

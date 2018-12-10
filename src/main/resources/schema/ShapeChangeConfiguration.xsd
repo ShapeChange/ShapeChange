@@ -342,6 +342,7 @@
   <complexType>
    <choice minOccurs="0" maxOccurs="unbounded">
     <element ref="sc:XsdMapEntry"/>
+    <element ref="sc:XsdPropertyMapEntry"/>
     <element ref="sc:xsdMapEntries"/>
    </choice>
   </complexType>
@@ -380,6 +381,24 @@
   <attribute name="xmlReferenceable" type="boolean"/>
   <attribute name="xmlElementHasSimpleContent" type="boolean"/>
   <attribute name="nsabr" type="string"/>
+ </complexType>
+ <element name="XsdPropertyMapEntry" type="sc:XsdPropertyMapEntryType"/>
+ <complexType name="XsdPropertyMapEntryType">
+  <attribute name="property" type="string" use="required">
+   <annotation>
+    <documentation>Name of a UML property, optionally scoped to a class (example: FeatureX::propertyY).</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="schema" type="string">
+   <annotation>
+    <documentation>The name of the application schema package to which the UML property belongs. Used to avoid ambiguity in case that multiple schemas are being processed.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="targetElement" type="string" use="optional">
+   <annotation>
+    <documentation>XML Element to which the UML property shall be mapped (e.g. ex:elementX). Can be empty or omitted if the property shall not be encoded</documentation>
+   </annotation>
+  </attribute>
  </complexType>
  <element name="rules">
   <complexType>

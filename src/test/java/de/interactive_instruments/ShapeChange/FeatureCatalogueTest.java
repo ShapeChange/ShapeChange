@@ -124,4 +124,34 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/taggedValues/results",
 				"src/test/resources/featureCatalogue/taggedValues/reference/results");
 	}
+	
+	@Test
+	public void testInheritedConstraints() {
+
+		multiTest(
+				"src/test/resources/featureCatalogue/inheritedConstraints/testEA_featureCatalogue_inheritedConstraints.xml",
+				new String[] { "xml", "html", "docx" },
+				"testResults/featureCatalogue/inheritedConstraints/results",
+				"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
+	}
+	
+	@Test
+	public void testLogo() {
+
+		multiTest(
+				"src/test/resources/featureCatalogue/logo/testEA_featureCatalogue_logo.xml",
+				new String[] { "xml", "html", "docx" },
+				"testResults/featureCatalogue/logo/results",
+				"src/test/resources/featureCatalogue/logo/reference/results");
+	}
+	
+	@Test
+	public void testDocxStyle_custom1() {
+
+		multiTest(
+				"src/test/resources/featureCatalogue/docxStyle_custom1/test_featureCatalogue_docxStyle_custom1.xml",
+				new String[] { "docx" },
+				"testResults/featureCatalogue/docxStyle_custom1/results",
+				"src/test/resources/featureCatalogue/docxStyle_custom1/reference/results");
+	}
 }

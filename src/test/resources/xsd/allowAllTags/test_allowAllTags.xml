@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/xsd/allowAllTags/test_allowAllTags.EAP" />
+		<parameter name="appSchemaName" value="Test Schema" />
+		<parameter name="addTaggedValues" value="*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<descriptorSources>						
+			<DescriptorSource descriptor="documentation" source="none"/>
+			<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml" />
+			<DescriptorSource descriptor="definition" source="tag" tag="test1"/>
+			<DescriptorSource descriptor="description" source="tag"  tag="test2"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="alias" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/xsd/allowAllTags/log.xml" />
+	</log>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/xsd/allowAllTags" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="documentationTemplate" value="Definition: [[definition]] - Description: [[description]]"/>
+			<targetParameter name="documentationNoValue" value="NA"/>
+			<targetParameter name="defaultEncodingRule" value="gml33" />
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />			
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

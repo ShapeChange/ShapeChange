@@ -73,7 +73,9 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
+import de.interactive_instruments.ShapeChange.XsdPropertyMapEntry;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
@@ -95,7 +97,8 @@ public class XsdDocument implements MessageSource {
 	protected Element root = null;
 	protected Element rootAnnotation = null;
 	protected Options options = null;
-	public ShapeChangeResult result = null;
+	protected ShapeChangeResult result = null;
+	protected TargetXmlSchemaConfiguration config = null;
 	protected Model model = null;
 	protected String name = null;
 	protected Vector<String> includes = new Vector<String>();
@@ -115,11 +118,12 @@ public class XsdDocument implements MessageSource {
 			.noneOf(Descriptor.class);
 
 	public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r,
-			String n)
+			TargetXmlSchemaConfiguration c, String n)
 			throws ShapeChangeAbortException, ParserConfigurationException {
 		options = o;
 		result = r;
 		model = m;
+		config = c;
 		name = n;
 
 		outputDirectory = options.parameter(Options.TargetXmlSchemaClass,
@@ -438,8 +442,8 @@ public class XsdDocument implements MessageSource {
 				Element e3 = document.createElementNS(options.GML_NS,
 						"reversePropertyName");
 				e2.appendChild(e3);
-				e3.appendChild(document
-						.createTextNode(propi.reverseProperty().qname()));
+				e3.appendChild(document.createTextNode(
+						config.determineQName(propi.reverseProperty())));
 			}
 			if (info.matches("rule-xsd-prop-defaultCodeSpace")
 					&& !propi.defaultCodeSpace().isEmpty() && options.GML_NS
@@ -1910,11 +1914,15 @@ public class XsdDocument implements MessageSource {
 	};
 
 	private boolean includeProperty(PropertyInfo pi) {
+
+		XsdPropertyMapEntry pme = config.getPropertyMapEntry(pi);
+
 		return pi.isNavigable() && !pi.isRestriction()
 				&& (!pi.matches("rule-xsd-prop-exclude-derived")
 						|| !pi.isDerived())
-				&& !(pi.matches("rule-xsd-all-notEncoded") && pi
-						.encodingRule("xsd").equalsIgnoreCase("notencoded"));
+				&& !(pi.matches("rule-xsd-all-notEncoded")
+						&& pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
+						&& (pme == null || pme.hasTargetElement());
 	}
 
 	/**
@@ -2021,8 +2029,24 @@ public class XsdDocument implements MessageSource {
 	 * @param schDoc
 	 * @return
 	 */
-	protected Element addProperty(ClassInfo cibase, PropertyInfo pi,
-			Multiplicity m, SchematronSchema schDoc) {
+	protected Element addProperty(ClassInfo cibase, PropertyInfo pi, Multiplicity m, SchematronSchema schDoc) {
+
+		Element e1;
+
+		/*
+		 * Map the property, if an according map entry exists.
+		 * 
+		 * NOTE: That the map entry defines omission of the property is checked
+		 * in method includeProperty(PropertyInfo).
+		 */
+		XsdPropertyMapEntry pme = config.getPropertyMapEntry(pi);
+		if (pme != null) {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+			addStandardAnnotation(e1, pi);
+			addAttribute(e1, "ref", addImport(pme.getTargetElement()));
+			addMinMaxOccurs(e1, pi.cardinality());
+			return e1;
+		}
 
 		boolean inAssocClass = true;
 		if (m == null) {
@@ -2030,7 +2054,6 @@ public class XsdDocument implements MessageSource {
 			inAssocClass = false;
 		}
 
-		Element e1;
 		ClassInfo ci = model.classById(pi.typeInfo().id);
 
 		String asAtt = pi.taggedValue("xsdAsAttribute");

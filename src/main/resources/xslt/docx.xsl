@@ -28,6 +28,7 @@
  <!-- When executed with ShapeChange, the absolute URI to the catalog XML is automatically determined via a custom URI resolver. -->
  <xsl:variable name="catalog" select="document($catalogXmlPath)"/>
  <xsl:key match="/*/*[@id]" name="modelElement" use="@id"/>
+ <xsl:variable name="appSchemaCount" select="count($catalog/*:FeatureCatalogue/*:ApplicationSchema)"/>
 
  <!-- ============== -->
  <!-- Docx style XML -->
@@ -35,6 +36,8 @@
  <!-- The path to the docx internal document.xml is set automatically by ShapeChange. -->
  <xsl:param name="styleXmlPath"/>
  <!-- When executed with ShapeChange, the absolute URI to the style XML is automatically determined via a custom URI resolver. -->
+ <xsl:variable name="titleId"
+  select="document($styleXmlPath)/w:styles/w:style[w:name/@w:val = 'Title']/@w:styleId"/>
  <xsl:variable name="heading1Id"
   select="document($styleXmlPath)/w:styles/w:style[w:name/@w:val = 'heading 1']/@w:styleId"/>
  <xsl:variable name="heading2Id"
@@ -80,6 +83,8 @@
  <!-- ===================== -->
  <!-- Set the similarly named targetParameter to 'true' to prevent alphabetic sorting of properties -->
  <xsl:param name="noAlphabeticSortingForProperties">false</xsl:param>
+ <!-- Defines how the DOCX feature catalogue shall be styled. -->
+ <xsl:param name="docxStyle">default</xsl:param>
 
  <!-- =============================================================== -->
  <!-- Variables and functions for transformation of image information -->
@@ -143,7 +148,14 @@
    <w:pPr>
     <w:pStyle>
      <xsl:attribute name="w:val">
-      <xsl:value-of disable-output-escaping="no" select="$heading1Id"/>
+      <xsl:choose>
+       <xsl:when test="$docxStyle = 'custom1'">
+        <xsl:value-of disable-output-escaping="no" select="$titleId"/>
+       </xsl:when>
+       <xsl:otherwise>
+        <xsl:value-of disable-output-escaping="no" select="$heading1Id"/>
+       </xsl:otherwise>
+      </xsl:choose>
      </xsl:attribute>
     </w:pStyle>
    </w:pPr>
@@ -179,7 +191,14 @@
    </w:pPr>
    <w:r>
     <w:t>
-     <xsl:value-of disable-output-escaping="no" select="versionNumber"/>
+     <xsl:choose>
+      <xsl:when test="$docxStyle = 'custom1' and $appSchemaCount = 1 and ./ApplicationSchema/versionNumber">
+       <xsl:value-of disable-output-escaping="no" select="./ApplicationSchema/versionNumber"/>
+      </xsl:when>
+      <xsl:otherwise>
+       <xsl:value-of disable-output-escaping="no" select="versionNumber"/>
+      </xsl:otherwise>
+     </xsl:choose>     
     </w:t>
    </w:r>
   </w:p>
@@ -254,8 +273,9 @@
   <!--w:p/-->
   <!-- TBD: TOC relevant at this location for a docx catalogue? -->
   <xsl:for-each select="Package | ApplicationSchema">
+   <!--   
    <xsl:sort select="./code"/>
-   <xsl:sort select="./name"/>
+   <xsl:sort select="./name"/>-->
    <xsl:apply-templates mode="detail" select="."/>
   </xsl:for-each>
   <!--w:p/-->
@@ -265,38 +285,48 @@
   <xsl:variable name="package" select="."/>
   <!-- Test if there are any (feature) types or packages that belong to this package. -->
   <xsl:if
-   test="/FeatureCatalogue/FeatureType/package[attribute::idref = $package/@id] | /FeatureCatalogue/Package/parent[attribute::idref = $package/@id]">
-   <w:p>
-    <w:pPr>
-     <w:pStyle>
-      <xsl:attribute name="w:val">
-       <xsl:value-of disable-output-escaping="no" select="$heading2Id"/>
+   test="/FeatureCatalogue/FeatureType/package[@idref = $package/@id] | /FeatureCatalogue/Package/parent[@idref = $package/@id]">
+   <xsl:if
+    test="not($docxStyle = 'custom1' and $appSchemaCount = 1 and local-name($package) = 'ApplicationSchema')">
+    <w:p>
+     <w:pPr>
+      <w:pStyle>
+       <xsl:attribute name="w:val">
+        <xsl:choose>
+         <xsl:when test="$docxStyle = 'custom1'">
+          <xsl:value-of disable-output-escaping="no" select="$heading1Id"/>
+         </xsl:when>
+         <xsl:otherwise>
+          <xsl:value-of disable-output-escaping="no" select="$heading2Id"/>
+         </xsl:otherwise>
+        </xsl:choose>
+       </xsl:attribute>
+      </w:pStyle>
+     </w:pPr>
+     <w:bookmarkStart w:id="0">
+      <xsl:attribute name="w:name">
+       <xsl:text>_Ref</xsl:text>
+       <xsl:value-of disable-output-escaping="no" select="$package/@id"/>
       </xsl:attribute>
-     </w:pStyle>
-    </w:pPr>
-    <w:bookmarkStart w:id="0">
-     <xsl:attribute name="w:name">
-      <xsl:text>_Ref</xsl:text>
-      <xsl:value-of disable-output-escaping="no" select="$package/@id"/>
-     </xsl:attribute>
-    </w:bookmarkStart>
-    <w:r>
-     <w:t>
-      <xsl:choose>
-       <xsl:when test="count($package/parent) = 1">
-        <xsl:value-of select="$fc.Package"/>
-       </xsl:when>
-       <xsl:otherwise>
-        <xsl:value-of select="$fc.ApplicationSchema"/>
-       </xsl:otherwise>
-      </xsl:choose>
-      <xsl:text>: </xsl:text>
-      <xsl:value-of disable-output-escaping="no" select="name"/>
-     </w:t>
-    </w:r>
-    <w:bookmarkEnd w:id="0"/>
-   </w:p>
-   <!--w:p/-->
+     </w:bookmarkStart>
+     <w:r>
+      <w:t>
+       <xsl:choose>
+        <xsl:when test="count($package/parent) = 1">
+         <xsl:value-of select="$fc.Package"/>
+        </xsl:when>
+        <xsl:otherwise>
+         <xsl:value-of select="$fc.ApplicationSchema"/>
+        </xsl:otherwise>
+       </xsl:choose>
+       <xsl:text>: </xsl:text>
+       <xsl:value-of disable-output-escaping="no" select="name"/>
+      </w:t>
+     </w:r>
+     <w:bookmarkEnd w:id="0"/>
+    </w:p>
+    <!--w:p/-->
+   </xsl:if>
    <xsl:if test="title">
     <w:p>
      <w:r>
@@ -445,7 +475,9 @@
      </w:p>
     </xsl:for-each>
    </xsl:if>
-   <xsl:if test="versionNumber">
+   <!-- Handle application schema version -->
+   <xsl:if
+    test="versionNumber and not($docxStyle = 'custom1' and $appSchemaCount = 1 and local-name($package) = 'ApplicationSchema')">
     <w:p>
      <w:r>
       <w:rPr>
@@ -468,53 +500,36 @@
      </w:r>
     </w:p>
    </xsl:if>
-   <xsl:if test="versionDate">
-    <w:p>
-     <w:r>
-      <w:rPr>
-       <w:b/>
-      </w:rPr>
-      <w:t>
-       <xsl:value-of select="$fc.Date"/>
-       <xsl:text>:</xsl:text>
-      </w:t>
-     </w:r>
-    </w:p>
+   <xsl:if
+    test="$docxStyle = 'custom1' and $appSchemaCount = 1 and local-name($package) = 'ApplicationSchema'">
     <w:p>
      <w:pPr>
-      <w:ind w:left="{$indent}"/>
+      <w:pStyle>
+       <xsl:attribute name="w:val">
+        <xsl:value-of disable-output-escaping="no" select="$heading1Id"/>
+       </xsl:attribute>
+      </w:pStyle>
      </w:pPr>
+     <w:bookmarkStart w:id="0">
+      <xsl:attribute name="w:name">
+       <xsl:text>_Ref</xsl:text>
+       <xsl:value-of disable-output-escaping="no" select="$package/@id"/>
+      </xsl:attribute>
+     </w:bookmarkStart>
      <w:r>
       <w:t>
-       <xsl:value-of disable-output-escaping="no" select="versionDate"/>
+       <xsl:value-of select="$fc.OverviewAndDependencies"/>
       </w:t>
      </w:r>
+     <w:bookmarkEnd w:id="0"/>
     </w:p>
+    <!--w:p/-->
    </xsl:if>
-   <xsl:if test="producer">
-    <w:p>
-     <w:r>
-      <w:rPr>
-       <w:b/>
-      </w:rPr>
-      <w:t>
-       <xsl:value-of select="$fc.ResponsibleOrganization"/>
-       <xsl:text>:</xsl:text>
-      </w:t>
-     </w:r>
-    </w:p>
-    <w:p>
-     <w:pPr>
-      <w:ind w:left="{$indent}"/>
-     </w:pPr>
-     <w:r>
-      <w:t>
-       <xsl:value-of disable-output-escaping="no" select="producer"/>
-      </w:t>
-     </w:r>
-    </w:p>
-   </xsl:if>
-   <xsl:if test="/FeatureCatalogue/Package[parent/@idref = $package/@id]">
+   <!-- Ensure that sub packages are only encoded if they are not empty (i.e., they have feature types or subpackages). -->
+   <xsl:if
+    test="
+     some $potentialSubPackage in /FeatureCatalogue/Package[parent/@idref = $package/@id]
+      satisfies (/FeatureCatalogue/FeatureType/package[@idref = $potentialSubPackage/@id] | /FeatureCatalogue/Package/parent[@idref = $potentialSubPackage/@id])">
     <w:p>
      <w:r>
       <w:rPr>
@@ -529,28 +544,33 @@
     <xsl:for-each select="/FeatureCatalogue/Package[parent/@idref = $package/@id]">
      <xsl:sort select="./code"/>
      <xsl:sort select="./name"/>
-     <w:p>
-      <w:pPr>
-       <w:ind w:left="{$indent}"/>
-      </w:pPr>
-      <w:r>
-       <w:fldChar w:fldCharType="begin"/>
-      </w:r>
-      <w:r>
-       <w:instrText xml:space="preserve"><xsl:text> REF _Ref</xsl:text><xsl:value-of select="@id"/><xsl:text> \h </xsl:text></w:instrText>
-      </w:r>
-      <w:r>
-       <w:fldChar w:fldCharType="separate"/>
-      </w:r>
-      <w:r>
-       <w:t>
-        <xsl:value-of disable-output-escaping="no" select="name"/>
-       </w:t>
-      </w:r>
-      <w:r>
-       <w:fldChar w:fldCharType="end"/>
-      </w:r>
-     </w:p>
+     <xsl:variable name="subpackage" select="."/>
+     <!-- Ignore the subpackage if it is empty (has no feature type or subpackage) -->
+     <xsl:if
+      test="/FeatureCatalogue/FeatureType/package[@idref = $subpackage/@id] | /FeatureCatalogue/Package/parent[@idref = $subpackage/@id]">
+      <w:p>
+       <w:pPr>
+        <w:ind w:left="{$indent}"/>
+       </w:pPr>
+       <w:r>
+        <w:fldChar w:fldCharType="begin"/>
+       </w:r>
+       <w:r>
+        <w:instrText xml:space="preserve"><xsl:text> REF _Ref</xsl:text><xsl:value-of select="@id"/><xsl:text> \h </xsl:text></w:instrText>
+       </w:r>
+       <w:r>
+        <w:fldChar w:fldCharType="separate"/>
+       </w:r>
+       <w:r>
+        <w:t>
+         <xsl:value-of disable-output-escaping="no" select="name"/>
+        </w:t>
+       </w:r>
+       <w:r>
+        <w:fldChar w:fldCharType="end"/>
+       </w:r>
+      </w:p>
+     </xsl:if>
     </xsl:for-each>
    </xsl:if>
    <xsl:if test="parent">
@@ -610,7 +630,14 @@
    <w:pPr>
     <w:pStyle>
      <xsl:attribute name="w:val">
-      <xsl:value-of disable-output-escaping="no" select="$heading3Id"/>
+      <xsl:choose>
+       <xsl:when test="$docxStyle = 'custom1'">
+        <xsl:value-of disable-output-escaping="no" select="$heading2Id"/>
+       </xsl:when>
+       <xsl:otherwise>
+        <xsl:value-of disable-output-escaping="no" select="$heading3Id"/>
+       </xsl:otherwise>
+      </xsl:choose>
      </xsl:attribute>
     </w:pStyle>
    </w:pPr>
@@ -1742,7 +1769,7 @@
           <w:tcW w:type="pct" w:w="{$clentryTableColumnTwoWidth}"/>
          </w:tcPr>
          <w:p>
-          <w:r>           
+          <w:r>
            <w:t>
             <xsl:value-of disable-output-escaping="no" select="./text()"/>
            </w:t>

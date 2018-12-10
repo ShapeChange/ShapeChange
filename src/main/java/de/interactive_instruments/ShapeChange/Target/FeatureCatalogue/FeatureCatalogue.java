@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +43,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,8 +55,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -63,6 +67,7 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -72,8 +77,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-
-import name.fraser.neil.plaintext.diff_match_patch;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -122,11 +125,12 @@ import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.XsltWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
+import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
  * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  * 
  */
 public class FeatureCatalogue
@@ -173,7 +177,11 @@ public class FeatureCatalogue
 	public static final String PARAM_INCLUDE_CODELIST_URI = "includeCodelistURI";
 
 	public static final String PARAM_XSL_TRANSFORMER_FACTORY = "xslTransformerFactory";
+
 	public static final String PARAM_OUTPUT_FORMAT = "outputFormat";
+
+	public static final String PARAM_DOCX_STYLE = "docxStyle";
+
 	/**
 	 * Path to a java executable (usually 64bit). This parameter should be used
 	 * whenever the feature catalogue to produce will be very large (hundreds of
@@ -217,13 +225,16 @@ public class FeatureCatalogue
 	 */
 	private static Map<String, ClassInfo> inputSchemaClassesByFullNameInSchema = null;
 
-	private static Boolean Inherit = false;
+	private static boolean inheritedConstraints = true;
+	private static boolean inheritedProperties = false;
 	private static TreeSet<PropertyInfo> exportedRoles = new TreeSet<PropertyInfo>();
 	private static TreeSet<PropertyInfo> exportedProperties = new TreeSet<PropertyInfo>();
 	private static String OutputFormat = "";
 	private static String outputDirectory = null;
 	private static String outputFilename = null;
 	private static String docxTemplateFilePath = DOCX_TEMPLATE_URL;
+	private static String docxStyle = "default";
+	private static String logoFilePath = null;
 	private static boolean error = false;
 	private static boolean printed = false;
 	private static String encoding = null;
@@ -236,6 +247,7 @@ public class FeatureCatalogue
 	private static String xslrtffileName = "rtf.xsl";
 	private static String xsldocxfileName = "docx.xsl";
 	private static String xsldocxrelsfileName = "docx_rels.xsl";
+	private static String xsldocxContentTypesFileName = "docx_contentTypes.xsl";
 	private static String xslxmlfileName = "xml.xsl";
 	private static String xsltPath = "http://shapechange.net/resources/xslt";
 	// private static String xsltPath = "src/main/resources/xslt";
@@ -304,13 +316,16 @@ public class FeatureCatalogue
 		Package = "";
 		additionalClasses.clear();
 		enumerations.clear();
-		Inherit = false;
+		inheritedConstraints = true;
+		inheritedProperties = false;
 		exportedRoles.clear();
 		exportedProperties.clear();
 		OutputFormat = "";
 		outputDirectory = null;
 		outputFilename = null;
 		docxTemplateFilePath = DOCX_TEMPLATE_URL;
+		docxStyle = "default";
+		logoFilePath = null;
 		error = false;
 		printed = false;
 		encoding = null;
@@ -320,6 +335,7 @@ public class FeatureCatalogue
 		xslrtffileName = "rtf.xsl";
 		xsldocxfileName = "docx.xsl";
 		xsldocxrelsfileName = "docx_rels.xsl";
+		xsldocxContentTypesFileName = "docx_contentTypes.xsl";
 		xslxmlfileName = "xml.xsl";
 		// xsltPath = "src/main/resources/xslt";
 		xsltPath = "http://shapechange.net/resources/xslt";
@@ -454,10 +470,17 @@ public class FeatureCatalogue
 					writer.dataElement("versionNumber", "unknown");
 
 				s = options.parameter(this.getClass().getName(), "versionDate");
-				if (s != null && s.length() > 0)
+				if (StringUtils.isNotBlank(s)) {
+
+					if (s.trim().equalsIgnoreCase("now")) {
+						/* NOTE: cannot be unit tested */
+						s = ZonedDateTime.now(ZoneOffset.systemDefault())
+								.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+					}
 					writer.dataElement("versionDate", s);
-				else
+				} else {
 					writer.dataElement("versionDate", "unknown");
+				}
 
 				s = options.parameter(this.getClass().getName(), "producer");
 				if (s != null && s.length() > 0)
@@ -723,7 +746,7 @@ public class FeatureCatalogue
 		} else {
 			result.addInfo(this, 29, imt);
 		}
-		
+
 		Model m = null;
 
 		// Get model object from reflection API
@@ -914,11 +937,11 @@ public class FeatureCatalogue
 	 * Otherwise the given String is returned.
 	 * 
 	 * @param s
-	 *            original String
+	 *                 original String
 	 * @param i
-	 *            Info object for which a diff might exist
+	 *                 Info object for which a diff might exist
 	 * @param type
-	 *            the type of element for which a diff shall be looked up
+	 *                 the type of element for which a diff shall be looked up
 	 * @return the diff with the given ElementType for the given Info object, if
 	 *         it exists - otherwise the original String
 	 */
@@ -1181,7 +1204,7 @@ public class FeatureCatalogue
 			PrintClass(ci, true, op, ci.pkg());
 			break;
 		case Options.MIXIN:
-			if (!Inherit)
+			if (!inheritedProperties)
 				PrintClass(ci, true, op, ci.pkg());
 			break;
 		case Options.OKSTRAKEY:
@@ -1356,7 +1379,7 @@ public class FeatureCatalogue
 							opForGeneralization = Operation.INSERT;
 						}
 
-						if (inserted || !Inherit
+						if (inserted || !inheritedProperties
 								|| cix.category() != Options.MIXIN) {
 
 							name = options.internalize(name);
@@ -1422,13 +1445,19 @@ public class FeatureCatalogue
 				}
 
 				String s;
-				for (Constraint ocl : ci.constraints()) {
+				for (Constraint constraint : ci.constraints()) {
+
+					// check if the constraint shall be encoded
+					if (!inheritedConstraints
+							&& isInheritedConstraint(constraint, ci)) {
+						continue;
+					}
 
 					writer.startElement("constraint");
 
-					writer.dataElement("name", ocl.name());
+					writer.dataElement("name", constraint.name());
 
-					s = ocl.text();
+					s = constraint.text();
 					String description = null;
 					String expression = null;
 					if (s != null && s.contains("/*") && s.contains("*/")) {
@@ -1507,6 +1536,31 @@ public class FeatureCatalogue
 			}
 			e.printStackTrace(System.err);
 		}
+	}
+
+	/**
+	 * Check if the given constraint is inherited, i.e. if one of the direct or
+	 * indirect supertypes of the given class (to which the constraint belongs)
+	 * has a constraint with the same name and text.
+	 * 
+	 * @param constraint
+	 * @param ci
+	 * @return <code>true</code> if the constraint is inherited, else
+	 *         <code>false</code>
+	 */
+	private boolean isInheritedConstraint(Constraint constraint, ClassInfo ci) {
+
+		for (ClassInfo supertype : ci.supertypesInCompleteHierarchy()) {
+
+			for (Constraint stCon : supertype.constraints()) {
+				if (stCon.name().equals(constraint.name())
+						&& stCon.text().equals(constraint.text())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void PrintTaggedValues(Info i, String taglist, Operation op)
@@ -1597,7 +1651,7 @@ public class FeatureCatalogue
 		 * IMPORTANT: it is important that inherited properties are printed
 		 * before those that directly belong to the class (ci).
 		 */
-		if (/* FIXME listOnly && */Inherit) {
+		if (/* FIXME listOnly && */inheritedProperties) {
 
 			for (String cid : ci.supertypes()) {
 				ClassInfo cix = model.classById(cid);
@@ -2164,13 +2218,30 @@ public class FeatureCatalogue
 			transformationParameters.put("catalogXmlPath",
 					xmlFile.toURI().toString());
 
+			// directory that will contain index.html etc.
+			File outputDir = new File(outDir, outfileBasename);
+			if (!outputDir.exists()) {
+				try {
+					FileUtils.forceMkdir(outputDir);
+				} catch (IOException ioex) {
+					result.addError(this, 31, outputDir.getAbsolutePath());
+				}
+			}
+
+			if (logoFilePath != null) {
+				String logoFileName = readAndStoreLogo(outputDir,
+						outfileBasename);
+				if (logoFileName != null) {
+					transformationParameters.put("logoFileName", logoFileName);
+				}
+			}
+
 			if (xmlName != null && xmlName.length() > 0
 					&& xslframeHtmlFileName != null
 					&& xslframeHtmlFileName.length() > 0) {
 				xsltWrite(xmlName, xslframeHtmlFileName, htmlfileName);
 			}
 
-			File outputDir = new File(outDir, outfileBasename);
 			File cssDestination = new File(outputDir, cssFileName);
 
 			try {
@@ -2214,11 +2285,47 @@ public class FeatureCatalogue
 
 			StatusBoard.getStatusBoard().statusChanged(STATUS_WRITE_HTML);
 
+			File outDir = new File(outputDirectory);
+
+			if (logoFilePath != null) {
+				String logoFileName = readAndStoreLogo(outDir, outfileBasename);
+				if (logoFileName != null) {
+					transformationParameters.put("logoFileName", logoFileName);
+				}
+			}
+
 			if (xmlName != null && xmlName.length() > 0
 					&& xslhtmlfileName != null && xslhtmlfileName.length() > 0
 					&& htmlfileName != null && htmlfileName.length() > 0) {
 				xsltWrite(xmlName, xslhtmlfileName, htmlfileName);
 			}
+		}
+	}
+
+	private String readAndStoreLogo(File outputDir, String outfileBasename) {
+
+		String logoFileName = outfileBasename + "_logo.png";
+		File logoFile = new File(outputDir, logoFileName);
+
+		try {
+
+			BufferedImage img = null;
+
+			if (logoFilePath.toLowerCase().startsWith("http")) {
+				URL logoUrl = new URL(logoFilePath);
+				img = ImageIO.read(logoUrl);
+			} else {
+				File localLogoFile = new File(logoFilePath);
+				img = ImageIO.read(localLogoFile);
+			}
+
+			ImageIO.write(img, "png", logoFile);
+
+			return logoFileName;
+
+		} catch (Exception e) {
+			result.addError(this, 30, logoFilePath, e.getMessage());
+			return null;
 		}
 	}
 
@@ -2229,10 +2336,11 @@ public class FeatureCatalogue
 	 * file is not modified.
 	 * 
 	 * @param xmlName
-	 *            Name of the temporary feature catalogue xml file, located in
-	 *            the output directory.
+	 *                            Name of the temporary feature catalogue xml
+	 *                            file, located in the output directory.
 	 * @param outfileBasename
-	 *            Base name of the output file, without file type ending.
+	 *                            Base name of the output file, without file
+	 *                            type ending.
 	 */
 	private void writeDOCX(String xmlName, String outfileBasename) {
 
@@ -2335,6 +2443,7 @@ public class FeatureCatalogue
 			transformationParameters.put("catalogXmlPath",
 					xmlFile.toURI().toString());
 			transformationParameters.put("DOCX_PLACEHOLDER", DOCX_PLACEHOLDER);
+			transformationParameters.put("docxStyle", docxStyle);
 
 			/*
 			 * Execute the transformation.
@@ -2342,7 +2451,7 @@ public class FeatureCatalogue
 			this.xsltWrite(indocumentxmlFile, xsldocxfileName,
 					outdocumentxmlFile);
 
-			if (includeDiagrams) {
+			if (includeDiagrams && !imageSet.isEmpty()) {
 				/*
 				 * === Process image information ===
 				 */
@@ -2462,6 +2571,45 @@ public class FeatureCatalogue
 				 */
 				this.xsltWrite(inRelsXmlFile, xsldocxrelsfileName,
 						outRelsXmlFile);
+
+				/*
+				 * 4. Apply transformation to content types file
+				 * 
+				 * NOTE: To ensure it contains: <Default Extension="jpg"
+				 * ContentType="image/jpeg"/>
+				 */
+
+				/*
+				 * Get hold of the input content types file (internal file from
+				 * the docx template). It will be used as the source for the
+				 * transformation.
+				 */
+
+				File inContentTypesXmlFile = new File(tmpinputDir,
+						"[Content_Types].xml");
+				if (!inContentTypesXmlFile.canRead()) {
+					result.addError(null, 301, inContentTypesXmlFile.getName(),
+							"[Content_Types].xml");
+					return;
+				}
+
+				/*
+				 * Get hold of the output content types file. It will be used as
+				 * the transformation target.
+				 */
+				File outContentTypesXmlFile = new File(tmpoutputDir,
+						"[Content_Types].xml");
+				if (!outContentTypesXmlFile.canWrite()) {
+					result.addError(null, 307, outContentTypesXmlFile.getName(),
+							"[Content_Types].xml");
+					return;
+				}
+
+				/*
+				 * Execute the transformation.
+				 */
+				this.xsltWrite(inContentTypesXmlFile,
+						xsldocxContentTypesFileName, outContentTypesXmlFile);
 			}
 
 			/*
@@ -2841,7 +2989,7 @@ public class FeatureCatalogue
 
 				cmds.add(XsltWriter.PARAM_xsltMainFileUri);
 				cmds.add("\"" + xsltMainFileUriString + "\"");
-	
+
 				result.addInfo(this, 26, StringUtils.join(cmds, " "));
 
 				ProcessBuilder pb = new ProcessBuilder(cmds);
@@ -2921,7 +3069,7 @@ public class FeatureCatalogue
 	 * </p>
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text, including $x$ substitution points.
 	 */
 	public String message(int mnr) {
@@ -3003,13 +3151,28 @@ public class FeatureCatalogue
 					DOCX_TEMPLATE_URL);
 		}
 
+		String docxStyleParamValue = options.parameter(
+				this.getClass().getName(), FeatureCatalogue.PARAM_DOCX_STYLE);
+		if (docxStyleParamValue != null) {
+			// configuration validation will ensure that parameter value is
+			// valid
+			docxStyle = docxStyleParamValue;
+		}
+
+		logoFilePath = options.parameter(this.getClass().getName(),
+				"logoFilePath");
+
 		String s = options.parameter(this.getClass().getName(),
-				"inheritedProperties");
-		if (s != null && s.equals("true"))
-			Inherit = true;
+				"inheritedConstraints");
+		if (s != null && s.equalsIgnoreCase("false"))
+			inheritedConstraints = false;
+
+		s = options.parameter(this.getClass().getName(), "inheritedProperties");
+		if (s != null && s.equalsIgnoreCase("true"))
+			inheritedProperties = true;
 
 		s = options.parameter(this.getClass().getName(), "deleteXmlfile");
-		if (s != null && s.equals("true"))
+		if (s != null && s.equalsIgnoreCase("true"))
 			deleteXmlFile = true;
 
 		s = options.parameter(this.getClass().getName(), "package");
@@ -3029,11 +3192,11 @@ public class FeatureCatalogue
 			featureTerm = s;
 
 		s = options.parameter(this.getClass().getName(), "includeDiagrams");
-		if (s != null && s.equals("true"))
+		if (s != null && s.equalsIgnoreCase("true"))
 			includeDiagrams = true;
 
 		s = options.parameter(this.getClass().getName(), PARAM_DONT_TRANSFORM);
-		if (s != null && s.equals("true"))
+		if (s != null && s.equalsIgnoreCase("true"))
 			dontTransform = true;
 
 		s = options.parameter(this.getClass().getName(),
@@ -3050,9 +3213,16 @@ public class FeatureCatalogue
 		if (s != null && s.equalsIgnoreCase("false"))
 			includeVoidable = false;
 
-		s = options.parameter(this.getClass().getName(), "includeTitle");
-		if (s != null && s.equalsIgnoreCase("false"))
-			includeTitle = false;
+		s = options.parameter(this.getClass().getName(), "includeAlias");
+		if (s != null) {
+			if (s.equalsIgnoreCase("false"))
+				includeTitle = false;
+		} else {
+			// support for old, somewhat misleading, name for this parameter
+			s = options.parameter(this.getClass().getName(), "includeTitle");
+			if (s != null && s.equalsIgnoreCase("false"))
+				includeTitle = false;
+		}
 
 		if (model != null) {
 			encoding = model.characterEncoding();
@@ -3117,8 +3287,8 @@ public class FeatureCatalogue
 
 		s = options.parameter(this.getClass().getName(),
 				"noAlphabeticSortingForProperties");
-		if (s != null && s.trim().length() > 0)
-			noAlphabeticSortingForProperties = s.trim();
+		if (s != null && s.equalsIgnoreCase("true"))
+			noAlphabeticSortingForProperties = "true";
 
 		s = options.parameter(this.getClass().getName(), "xslLocalizationUri");
 		if (s != null && s.length() > 0) {
@@ -3196,7 +3366,7 @@ public class FeatureCatalogue
 	 * number.
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text or null
 	 */
 	protected String messageText(int mnr) {
@@ -3237,7 +3407,10 @@ public class FeatureCatalogue
 			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
 		case 29:
 			return "Value of parameter 'referenceModelType' is '$1$'.";
-		
+		case 30:
+			return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
+		case 31:
+			return "Directory '$1$' could not be created.";
 		}
 		return null;
 	}

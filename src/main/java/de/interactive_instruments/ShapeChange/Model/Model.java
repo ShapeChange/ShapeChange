@@ -220,4 +220,17 @@ public interface Model {
 	 *         <code>null</code> if no such property was found
 	 */
 	public PropertyInfo propertyByFullNameInSchema(String fullNameInSchema);
+
+	/**
+	 * Create a {@link Type} that can be used as value type of a
+	 * {@link PropertyInfo}.
+	 * 
+	 * @param typeName
+	 *                     Name of a class
+	 * @return a {@link Type} with the given name, and id as defined for a class
+	 *         with that name, if it exists in the model, otherwise the id is
+	 *         set to 'UNKNOWN'
+	 */
+	public Type typeByName(String typeName);
+
 }

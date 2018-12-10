@@ -51,6 +51,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Model;
@@ -70,6 +71,7 @@ public class XmlSchema implements Target, MessageSource {
 	private SchematronSchema schDoc = null;
 	private boolean diagnosticsOnly = false;
 	private String outputDirectory;
+	private TargetXmlSchemaConfiguration config;
 
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
@@ -86,6 +88,8 @@ public class XmlSchema implements Target, MessageSource {
 			return;
 
 		result.addDebug(null, 10012, pi.name());
+
+		config = (TargetXmlSchemaConfiguration) o.getCurrentProcessConfig();
 
 		outputDirectory = options.parameter(this.getClass().getName(),
 				"outputDirectory");
@@ -344,9 +348,9 @@ public class XmlSchema implements Target, MessageSource {
 				this.getClass().getName(), "skipXmlSchemaOutput", false);
 
 		if (skipXmlSchemaOutput) {
-			
-			result.addInfo(this,1000);
-			
+
+			result.addInfo(this, 1000);
+
 		} else {
 
 			Properties outputFormat = OutputPropertiesFactory
@@ -394,7 +398,8 @@ public class XmlSchema implements Target, MessageSource {
 		if (xsdDocument != null && xsdDocument.length() > 0) {
 			try {
 				result.addDebug(null, 10017, xsdDocument, pi.name());
-				xsd = new XsdDocument(pi, model, options, result, xsdDocument);
+				xsd = new XsdDocument(pi, model, options, result, config,
+						xsdDocument);
 				res = true;
 			} catch (ParserConfigurationException e) {
 				result.addFatalError(null, 2);
@@ -407,7 +412,7 @@ public class XmlSchema implements Target, MessageSource {
 				result.addWarning(null, 15, pi.name(), xsdDocument);
 				try {
 					result.addDebug(null, 10017, xsdDocument, pi.name());
-					xsd = new XsdDocument(pi, model, options, result,
+					xsd = new XsdDocument(pi, model, options, result, config,
 							xsdDocument);
 					res = true;
 				} catch (ParserConfigurationException e) {
@@ -533,7 +538,7 @@ public class XmlSchema implements Target, MessageSource {
 	 * element construct.
 	 * 
 	 * @param ci
-	 *            ClassInfo of class to be inquired
+	 *               ClassInfo of class to be inquired
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classHasObjectElement(ClassInfo ci) {
@@ -621,7 +626,7 @@ public class XmlSchema implements Target, MessageSource {
 	 * referenced by means of xlink:href.
 	 * 
 	 * @param ci
-	 *            ClassInfo of class to be inquired
+	 *               ClassInfo of class to be inquired
 	 * @return Flag returning the requested information
 	 */
 	static public boolean classCanBeReferenced(ClassInfo ci) {
@@ -674,7 +679,7 @@ public class XmlSchema implements Target, MessageSource {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String message(int mnr) {
 
@@ -690,7 +695,6 @@ public class XmlSchema implements Target, MessageSource {
 
 		case 1000:
 			return "Skipping XML Schema output, as configured.";
-		
 
 		default:
 			return "(" + this.getClass().getName()

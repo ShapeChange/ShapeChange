@@ -47,8 +47,8 @@ import com.google.common.base.Joiner;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class BasicConfigurationValidator implements MessageSource {
@@ -198,6 +198,34 @@ public class BasicConfigurationValidator implements MessageSource {
 						isValid = false;
 					}
 				}
+
+				for (XsdPropertyMapEntry xpme : xsdConf
+						.getXsdPropertyMapEntries().values()) {
+
+					/*
+					 * Ensure that the targetElement contains a QName like
+					 * string.
+					 */
+					if (xpme.hasTargetElement()) {
+
+						String targetElement = xpme.getTargetElement();
+
+						if (StringUtils.countMatches(targetElement, ":") != 1) {
+
+							result.addError(this, 301, xpme.toString());
+							isValid = false;
+
+						} else {
+
+							String nsabr = targetElement.split(":")[0];
+							if (options.fullNamespace(nsabr) == null) {
+								result.addError(this, 302, xpme.toString(),
+										nsabr);
+								isValid = false;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -237,10 +265,13 @@ public class BasicConfigurationValidator implements MessageSource {
 		case 201:
 			return "Source for descriptor '$1$' is 'tag', but required tag is not provided.";
 
-		// 300-399: Validation of XsdMapEntries
+		// 300-399: Validation of XsdMapEntries and XsdPropertyMapEntries
 		case 300:
 			return "XsdMapEntry with @type '$1$' and @xsdEncodingRule '$2$' is invalid because @xmlElementHasSimpleContent is set but @xmlElement has no value.";
-
+		case 301:
+			return "XsdPropertyMapEntry '$1$' is invalid because the @targetElement is not a QName like string.";
+		case 302:
+			return "XsdPropertyMapEntry '$1$' is invalid because the configuration does not contain a namespace definition with the namespace prefix '$2$', which is used by the @targetElement.";
 		default:
 			return "(" + BasicConfigurationValidator.class.getName()
 					+ ") Unknown message with number: " + mnr;

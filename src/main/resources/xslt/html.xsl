@@ -25,7 +25,9 @@
  <!-- ========== -->
  <!-- Set the similarly named targetParameter to 'true' to prevent alphabetic sorting of properties -->
  <xsl:param name="noAlphabeticSortingForProperties">false</xsl:param>
-
+ <!-- Name of the logo to include in the catalogue. May be empty (then do not include a logo). -->
+ <xsl:param name="logoFileName"/>
+ 
  <!-- ======================== -->
  <!-- Transformation templates -->
  <!-- ======================== -->
@@ -142,10 +144,23 @@
           }</style>
    </head>
    <body>
-    <h1>
-     <xsl:value-of select="$fc.FeatureCatalogue"/>
-     <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
-    </h1>
+    <xsl:choose>
+     <xsl:when test="$logoFileName">
+      <div style="display: inline-block;width: 100%;">
+       <img src="{$logoFileName}" alt="logo" style="float:left;" />
+       <h1 style="text-align:center;">
+        <xsl:value-of select="$fc.FeatureCatalogue"/>
+        <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
+       </h1>
+      </div>
+     </xsl:when>
+     <xsl:otherwise>
+      <h1>
+       <xsl:value-of select="$fc.FeatureCatalogue"/>
+       <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
+      </h1>
+     </xsl:otherwise>
+    </xsl:choose>    
     <p>
      <b><xsl:value-of select="$fc.Version"/>:</b>
     </p>

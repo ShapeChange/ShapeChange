@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://www.example.org/shapechange/input/allowAllTags" elementFormDefault="qualified" targetNamespace="http://www.example.org/shapechange/input/allowAllTags" version="1.0">
+  <annotation>
+    <documentation>Definition: NA - Description: NA</documentation>
+  </annotation>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MyFeatureType" substitutionGroup="gml:AbstractFeature" type="t:MyFeatureTypeType">
+    <annotation>
+      <documentation>Definition: Definition MyFeatureType - Description: Description MyFeatureType</documentation>
+    </annotation>
+  </element>
+  <complexType name="MyFeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propA" type="integer">
+            <annotation>
+              <documentation>Definition: Definition propA - Description: NA</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propB" type="string">
+            <annotation>
+              <documentation>Definition: NA - Description: Description propB</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MyFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
