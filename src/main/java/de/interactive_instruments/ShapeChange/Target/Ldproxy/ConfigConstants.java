@@ -376,6 +376,24 @@ public class ConfigConstants {
 	public static final String PARAM_REPORTABLE = "enablePropertiesReportable";
 	
 	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value: no onDelete trigger
+	 * <p>
+	 * Explanation: If a feature is deleted using the HTTP DELETE method, additional SQL statements can be 
+	 * executed in the database. Example: "DELETE FROM othertable WHERE objectid={{id}}" where "{{id}}" is the
+	 * value of the "id" column in the table of the deleted feature. Specify the values in a 
+	 * semicolon-separated list.
+	 * <p>
+	 * Applies to Rule(s): none - default behaviour
+	 */
+	public static final String PARAM_TRIGGER_ONDELETE = "trigger_onDelete";
+	
+	/**
 	 * This rule states that all properties with a value that is a data type are represented in the database
 	 * using an intermediate table. The name of the table is determined by {@value #PARAM_NTOM_TABLE_TEMPLATE}.
 	 */

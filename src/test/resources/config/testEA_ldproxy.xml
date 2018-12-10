@@ -32,6 +32,7 @@
 			<targetParameter name="rootFeatureTable" value="root"/>
 			<targetParameter name="rootCollectionField" value="collection"/>
 			<targetParameter name="filterableFields" value="featuretype1.datetime,featuretype1.codelist"/>
+			<targetParameter name="trigger_onDelete" value="DELETE FROM othertable WHERE objectid={{id}};NULL"/>
 			<targetParameter name="_unitTestOverride" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="ldptest"/>
 			<rules>
