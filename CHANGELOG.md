@@ -1,5 +1,37 @@
 # Change Log
 
+## [2.7.0](https://github.com/ShapeChange/ShapeChange/tree/2.7.0) (2018-12-10)
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.6.0...2.7.0)
+
+**Implemented enhancements:**
+
+- Feature Catalogue target - Custom style for docx formatted catalogue [\#178](https://github.com/ShapeChange/ShapeChange/issues/178)
+- General - Provide configuration option to load all tagged values [\#177](https://github.com/ShapeChange/ShapeChange/issues/177)
+- XML Schema target - support mapping of properties [\#176](https://github.com/ShapeChange/ShapeChange/issues/176)
+- TypeConverter transformation - dissolve association - define new type by tagged value [\#175](https://github.com/ShapeChange/ShapeChange/issues/175)
+- SQL DDL target - replication schema - add geometry annotation [\#174](https://github.com/ShapeChange/ShapeChange/issues/174)
+- FeatureCatalogue target - Adding a logo [\#173](https://github.com/ShapeChange/ShapeChange/issues/173)
+- FeatureCatalogue target - Option to prevent inclusion of inherited constraints [\#172](https://github.com/ShapeChange/ShapeChange/issues/172)
+- XmlSchema target - Add rule to encode descriptors in appInfo annotation [\#170](https://github.com/ShapeChange/ShapeChange/issues/170)
+- Ontology target - Property generalization and enrichment [\#167](https://github.com/ShapeChange/ShapeChange/issues/167)
+- Ontology target - parameter to suppress log messages about unsupported categories of classes [\#163](https://github.com/ShapeChange/ShapeChange/issues/163)
+- Ontology target - Add rule to create rdfs:label of a property from its local name [\#145](https://github.com/ShapeChange/ShapeChange/issues/145)
+
+**Fixed bugs:**
+
+- Common transformer functionality - setting tagged values for associations does not work [\#169](https://github.com/ShapeChange/ShapeChange/issues/169)
+- Ontology target - default type implementation does not apply if no conversion rule for codelist is defined [\#154](https://github.com/ShapeChange/ShapeChange/issues/154)
+
+**Closed issues:**
+
+- Feature Catalogue in xml format [\#168](https://github.com/ShapeChange/ShapeChange/issues/168)
+- Ontology target : WARN  BaseXMLWriter:81 - Cannot block rule \<http://www.w3.org/TR/rdf-syntax-grammar\#daml:collection\> [\#164](https://github.com/ShapeChange/ShapeChange/issues/164)
+
+**Merged pull requests:**
+
+- Sdfe [\#179](https://github.com/ShapeChange/ShapeChange/pull/179) ([jechterhoff](https://github.com/jechterhoff))
+- Owl [\#171](https://github.com/ShapeChange/ShapeChange/pull/171) ([jechterhoff](https://github.com/jechterhoff))
+
 ## [2.6.0](https://github.com/ShapeChange/ShapeChange/tree/2.6.0) (2018-09-11)
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.5.1...2.6.0)
 
