@@ -39,6 +39,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
@@ -56,14 +58,15 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class TypeConverter implements Transformer, MessageSource {
 
 	public static final String TV_DISSOLVE_ASSOCIATION = "dissolveAssociation";
 	public static final String TV_TO_CODELIST = "toCodelist";
+	public static final String TV_DISSOLVE_ASSOCIATION_ATTRIBUTE_TYPE = "dissolveAssociationAttributeType";
 
 	/**
 	 * Define a suffix to be added to the names of attributes that have been
@@ -360,14 +363,8 @@ public class TypeConverter implements Transformer, MessageSource {
 		String attributeTypeName = trfConfig.parameterAsString(
 				PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE,
 				DEFAULT_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE, false, true);
-		ClassInfo attributeType = genModel.classByName(attributeTypeName);
-		Type attributeTypeInfoTemplate = new Type();
-		attributeTypeInfoTemplate.name = attributeTypeName;
-		if (attributeType != null) {
-			attributeTypeInfoTemplate.id = attributeType.id();
-		} else {
-			attributeTypeInfoTemplate.id = "UNKNOWN";
-		}
+		Type attributeTypeFromParameter = genModel
+				.typeByName(attributeTypeName);
 
 		boolean keepType = trfConfig
 				.hasRule(RULE_DISSOLVE_ASSOCIATIONS_KEEP_TYPE);
@@ -442,19 +439,19 @@ public class TypeConverter implements Transformer, MessageSource {
 
 			if (end1.isNavigable()) {
 				handleAttributeAfterDissolvingAssociation(end1,
-						attributeTypeInfoTemplate, attributeNameSuffix,
+						attributeTypeFromParameter, attributeNameSuffix,
 						keepType);
 			}
 			if (end2.isNavigable()) {
 				handleAttributeAfterDissolvingAssociation(end2,
-						attributeTypeInfoTemplate, attributeNameSuffix,
+						attributeTypeFromParameter, attributeNameSuffix,
 						keepType);
 			}
 		}
 	}
 
 	private void handleAttributeAfterDissolvingAssociation(
-			GenericPropertyInfo attribute, Type attributeTypeInfoTemplate,
+			GenericPropertyInfo attribute, Type attributeTypeFromParameter,
 			String attributeNameSuffix, boolean keepType) {
 
 		if (attribute.cardinality().maxOccurs > 1 && trfConfig.hasRule(
@@ -464,10 +461,20 @@ public class TypeConverter implements Transformer, MessageSource {
 
 		} else {
 
+			// determine type to use
+			Type newAttributeType = attributeTypeFromParameter;
+
+			String dissolveAssociationAttributeType = attribute
+					.taggedValue(TV_DISSOLVE_ASSOCIATION_ATTRIBUTE_TYPE);
+			if (StringUtils.isNotBlank(dissolveAssociationAttributeType)) {
+				newAttributeType = genModel
+						.typeByName(dissolveAssociationAttributeType);
+			}
+
 			// Add suffix to attribute name and set attribute type
 			attribute.setName(attribute.name() + attributeNameSuffix);
 			if (!keepType) {
-				attribute.setTypeInfo(attributeTypeInfoTemplate.createCopy());
+				attribute.setTypeInfo(newAttributeType.createCopy());
 			}
 		}
 	}

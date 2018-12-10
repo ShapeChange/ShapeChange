@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t1="http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/1" elementFormDefault="qualified" targetNamespace="http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/1" version="1.0">
+  <import namespace="http://purl.org/dc/terms/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MyFeatureType" substitutionGroup="gml:AbstractFeature" type="t1:MyFeatureTypeType"/>
+  <complexType name="MyFeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="geometry" type="gml:CurvePropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="attachment" type="t1:ResourcePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:MyFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Resource" substitutionGroup="gml:AbstractFeature" type="t1:ResourceType"/>
+  <complexType name="ResourceType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" ref="dcterms:creator"/>
+          <element minOccurs="0" ref="dcterms:date"/>
+          <element ref="dcterms:format"/>
+          <element maxOccurs="unbounded" minOccurs="0" ref="dcterms:identifier"/>
+          <element name="path" type="anyURI"/>
+          <element name="position" type="gml:GeometricPrimitivePropertyType"/>
+          <element ref="dcterms:title"/>
+          <element name="type" type="t1:ResourcetypeType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ResourcePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t1:Resource"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="ResourcetypeType">
+    <restriction base="string">
+      <enumeration value="type1"/>
+      <enumeration value="type2"/>
+    </restriction>
+  </simpleType>
+</schema>

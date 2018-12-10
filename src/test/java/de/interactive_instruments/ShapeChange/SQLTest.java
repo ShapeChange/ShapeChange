@@ -224,4 +224,14 @@ public class SQLTest extends WindowsBasicTest {
 				new String[] { "sql" }, "testResults/sql/statementFilters",
 				"src/test/resources/sql/statementFilters/reference");
 	}
+
+	@Test
+	public void testRepSchemaGeometryAnnotation() {
+
+		multiTest(
+				"src/test/resources/sql/repSchemaGeometryAnnotation/test_repSchemaGeometryAnnotation.xml",
+				new String[] { "xsd" },
+				"testResults/sql/repSchemaGeometryAnnotation",
+				"src/test/resources/sql/repSchemaGeometryAnnotation/reference");
+	}
 }

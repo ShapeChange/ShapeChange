@@ -84,8 +84,8 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class Options {
@@ -560,6 +560,7 @@ public class Options {
 
 	protected boolean useStringInterning = false;
 	protected boolean dontConstructAssociationNames = false;
+	protected boolean allowAllTags = false;
 	protected String language = "en";
 
 	/**
@@ -706,15 +707,15 @@ public class Options {
 	 * </ul>
 	 *
 	 * @param k1
-	 *            type
+	 *               type
 	 * @param k2
-	 *            xsdEncodingRule
+	 *               xsdEncodingRule
 	 * @param s1
-	 *            ("direct")
+	 *               ("direct")
 	 * @param s2
-	 *            xmlType
+	 *               xmlType
 	 * @param s3
-	 *            xmlTypeType+"/"+xmlTypeContent
+	 *               xmlTypeType+"/"+xmlTypeContent
 	 */
 	protected void addBaseMapEntry(String k1, String k2, String s1, String s2,
 			String s3) {
@@ -726,9 +727,9 @@ public class Options {
 	 * xmlType, based upon the given encoding rule or any rules it extends.
 	 *
 	 * @param k1
-	 *            type name
+	 *               type name
 	 * @param k2
-	 *            encoding rule name
+	 *               encoding rule name
 	 * @return MapEntry with rule=("direct"), p1=xmlType and
 	 *         p2=xmlTypeType+"/"+xmlTypeContent
 	 */
@@ -748,14 +749,15 @@ public class Options {
 	 * encoding rule or any rules it extends.
 	 *
 	 * @param k1
-	 *            type name
+	 *                           type name
 	 * @param k2
-	 *            encoding rule name
+	 *                           encoding rule name
 	 * @param xmlTypeType
-	 *            Identifies, if the xmlType is “simple” or “complex”.
+	 *                           Identifies, if the xmlType is “simple” or
+	 *                           “complex”.
 	 * @param xmlTypeContent
-	 *            Identifies, if the content of the xmlType is “simple” or
-	 *            “complex”.
+	 *                           Identifies, if the content of the xmlType is
+	 *                           “simple” or “complex”.
 	 * @return MapEntry with rule=("direct"), p1=xmlType and
 	 *         p2=xmlTypeType+"/"+xmlTypeContent
 	 */
@@ -789,9 +791,9 @@ public class Options {
 	 * xmlElement, based upon the given encoding rule or any rules it extends.
 	 *
 	 * @param k1
-	 *            type name
+	 *               type name
 	 * @param k2
-	 *            encoding rule name
+	 *               encoding rule name
 	 * @return MapEntry with rule=("direct"), p1=xmlElement - or
 	 *         <code>null</code> if no such map entry was found
 	 */
@@ -872,10 +874,10 @@ public class Options {
 
 	/**
 	 * @param t
-	 *            class name; can be <code>null</code> to search for an input
-	 *            parameter
+	 *               class name; can be <code>null</code> to search for an input
+	 *               parameter
 	 * @param k1
-	 *            parameter name
+	 *               parameter name
 	 * @return the parameter value, or <code>null</code> if no value was found
 	 */
 	public String parameter(String t, String k1) {
@@ -888,12 +890,13 @@ public class Options {
 
 	/**
 	 * @param className
-	 *            Fully qualified name of the target class for which the
-	 *            existence of the parameter with given name shall be
-	 *            determined; can be <code>null</code> to check the existence of
-	 *            an input parameter
+	 *                          Fully qualified name of the target class for
+	 *                          which the existence of the parameter with given
+	 *                          name shall be determined; can be
+	 *                          <code>null</code> to check the existence of an
+	 *                          input parameter
 	 * @param parameterName
-	 *            name of the parameter to check
+	 *                          name of the parameter to check
 	 * @return <code>true</code> if the parameter exists (i.e., is set in the
 	 *         configuration), else <code>false</code>
 	 */
@@ -911,20 +914,30 @@ public class Options {
 
 	/**
 	 * @param className
-	 *            Fully qualified name of the target class for which the values
-	 *            of the parameter with given name shall be searched; can be
-	 *            <code>null</code> to search for an input parameter
+	 *                                            Fully qualified name of the
+	 *                                            target class for which the
+	 *                                            values of the parameter with
+	 *                                            given name shall be searched;
+	 *                                            can be <code>null</code> to
+	 *                                            search for an input parameter
 	 * @param parameterName
-	 *            name of the parameter to retrieve the value from
+	 *                                            name of the parameter to
+	 *                                            retrieve the value from
 	 * @param defaultValue
-	 *            value that will be returned if no valid value was found; NOTE:
-	 *            <code>null</code> is NOT converted
+	 *                                            value that will be returned if
+	 *                                            no valid value was found;
+	 *                                            NOTE: <code>null</code> is NOT
+	 *                                            converted
 	 * @param allowNonEmptyTrimmedStringValue
-	 *            <code>true</code> if the parameter value may be empty if it
-	 *            was trimmed, else <code>false</code>
+	 *                                            <code>true</code> if the
+	 *                                            parameter value may be empty
+	 *                                            if it was trimmed, else
+	 *                                            <code>false</code>
 	 * @param trimValue
-	 *            <code>true</code> if leading and trailing whitespace shall be
-	 *            removed from the parameter value
+	 *                                            <code>true</code> if leading
+	 *                                            and trailing whitespace shall
+	 *                                            be removed from the parameter
+	 *                                            value
 	 * @return Value retrieved from this parameter, or the default value if the
 	 *         parameter was not set or did not contain a valid value; can be
 	 *         <code>null</code>
@@ -949,21 +962,24 @@ public class Options {
 
 	/**
 	 * @param className
-	 *            Fully qualified name of the target class for which the values
-	 *            of the parameter with given name shall be searched; can be
-	 *            <code>null</code> to search for an input parameter
+	 *                             Fully qualified name of the target class for
+	 *                             which the values of the parameter with given
+	 *                             name shall be searched; can be
+	 *                             <code>null</code> to search for an input
+	 *                             parameter
 	 * @param parameterName
-	 *            name of the parameter to retrieve the comma separated values
-	 *            from
+	 *                             name of the parameter to retrieve the comma
+	 *                             separated values from
 	 * @param defaultValues
-	 *            values that will be returned if no values were found;
-	 *            <code>null</code> is converted to an empty list of strings
+	 *                             values that will be returned if no values
+	 *                             were found; <code>null</code> is converted to
+	 *                             an empty list of strings
 	 * @param omitEmptyStrings
-	 *            <code>true</code> if values may NOT be empty if they were
-	 *            trimmed, else <code>false</code>
+	 *                             <code>true</code> if values may NOT be empty
+	 *                             if they were trimmed, else <code>false</code>
 	 * @param trimResults
-	 *            <code>true</code> if leading and trailing whitespace shall be
-	 *            removed from a value
+	 *                             <code>true</code> if leading and trailing
+	 *                             whitespace shall be removed from a value
 	 * @return List of values (originally separated by commas) retrieved from
 	 *         this parameter, or the default values if the parameter was not
 	 *         set or did not contain valid values; can be empty but not
@@ -974,7 +990,8 @@ public class Options {
 			boolean omitEmptyStrings, boolean trimResults) {
 
 		List<String> defaultValuesList = defaultValues == null
-				? new ArrayList<String>() : Arrays.asList(defaultValues);
+				? new ArrayList<String>()
+				: Arrays.asList(defaultValues);
 
 		String paramValue = this.parameter(className, parameterName);
 
@@ -1008,14 +1025,16 @@ public class Options {
 
 	/**
 	 * @param className
-	 *            Fully qualified name of the target class for which the value
-	 *            of the parameter with given name shall be searched; can be
-	 *            <code>null</code> to search for an input parameter
+	 *                          Fully qualified name of the target class for
+	 *                          which the value of the parameter with given name
+	 *                          shall be searched; can be <code>null</code> to
+	 *                          search for an input parameter
 	 * @param parameterName
-	 *            name of the parameter to retrieve the value from
+	 *                          name of the parameter to retrieve the value from
 	 * @param defaultValue
-	 *            value that will be returned if no valid value was found (i.e.,
-	 *            if the parameter value could not be parsed to an int)
+	 *                          value that will be returned if no valid value
+	 *                          was found (i.e., if the parameter value could
+	 *                          not be parsed to an int)
 	 * @return Value retrieved from this parameter, or the default value if the
 	 *         parameter was not set or did not contain a valid value.
 	 */
@@ -1051,14 +1070,18 @@ public class Options {
 
 	/**
 	 * @param className
-	 *            Fully qualified name of the target class for which the boolean
-	 *            value of the parameter with given name shall be searched; can
-	 *            be <code>null</code> to search for an input parameter
+	 *                          Fully qualified name of the target class for
+	 *                          which the boolean value of the parameter with
+	 *                          given name shall be searched; can be
+	 *                          <code>null</code> to search for an input
+	 *                          parameter
 	 * @param parameterName
-	 *            name of the parameter to retrieve the boolean value from
+	 *                          name of the parameter to retrieve the boolean
+	 *                          value from
 	 * @param defaultValue
-	 *            value that will be returned if no valid value was found (i.e.,
-	 *            if the parameter value could not be parsed to a boolean)
+	 *                          value that will be returned if no valid value
+	 *                          was found (i.e., if the parameter value could
+	 *                          not be parsed to a boolean)
 	 * @return Value retrieved from this parameter (<code>true</code> if the
 	 *         parameter was set and is equal, ignoring case, to the string
 	 *         "true"), or the default value if the parameter was not set or did
@@ -1122,10 +1145,10 @@ public class Options {
 	 * Adds a stereotype alias mapping.
 	 *
 	 * @param alias
-	 *            - the stereotype alias (in lower case)
+	 *                      - the stereotype alias (in lower case)
 	 * @param wellknown
-	 *            - the wellknown stereotype (in lower case) to which the alias
-	 *            maps
+	 *                      - the wellknown stereotype (in lower case) to which
+	 *                      the alias maps
 	 */
 	protected void addStereotypeAlias(String alias, String wellknown) {
 		fStereotypeAliases.put(alias, wellknown);
@@ -1138,8 +1161,8 @@ public class Options {
 	 * values in the stereotype map have also been converted to lower case).
 	 *
 	 * @param alias
-	 *            stereotype for which a mapping to a wellknown stereotype is
-	 *            being looked up
+	 *                  stereotype for which a mapping to a wellknown stereotype
+	 *                  is being looked up
 	 * @return the wellknown stereotype to which the alias maps, or
 	 *         <code>null</code> if no such mapping exists
 	 */
@@ -1151,9 +1174,9 @@ public class Options {
 	 * Adds a tag alias mapping.
 	 * 
 	 * @param alias
-	 *            - the tag alias (will be converted to lower case)
+	 *                      - the tag alias (will be converted to lower case)
 	 * @param wellknown
-	 *            - the tag to which the alias maps
+	 *                      - the tag to which the alias maps
 	 */
 	protected void addTagAlias(String alias, String wellknown) {
 		fTagAliases.put(alias.toLowerCase(Locale.ENGLISH), wellknown);
@@ -1165,7 +1188,8 @@ public class Options {
 	 * be converted to lower case to look up the mapping.
 	 * 
 	 * @param alias
-	 *            tag for which a mapping to a wellknown tag is being looked up
+	 *                  tag for which a mapping to a wellknown tag is being
+	 *                  looked up
 	 * @return the wellknown tag to which the alias maps, or <code>null</code>
 	 *         if no such mapping exists
 	 */
@@ -1177,9 +1201,9 @@ public class Options {
 	 * Adds a descriptor-source mapping.
 	 * 
 	 * @param descriptor
-	 *            - the descriptor (in lower case)
+	 *                       - the descriptor (in lower case)
 	 * @param source
-	 *            - the source (in lower case)
+	 *                       - the source (in lower case)
 	 */
 	protected void addDescriptorSource(String descriptor, String source) {
 		fDescriptorSources.put(descriptor, source);
@@ -1192,7 +1216,7 @@ public class Options {
 	 * values in the stereotype map have also been converted to lower case).
 	 * 
 	 * @param descriptor
-	 *            - the descriptor (in lower case)
+	 *                       - the descriptor (in lower case)
 	 * @return the source where the descriptor is represented in the model or
 	 *         <code>null</code> if no such mapping exists
 	 */
@@ -1202,11 +1226,11 @@ public class Options {
 
 	/**
 	 * @param k1
-	 *            namespace abbreviation / prefix
+	 *               namespace abbreviation / prefix
 	 * @param s1
-	 *            namespace
+	 *               namespace
 	 * @param s2
-	 *            location
+	 *               location
 	 */
 	protected void addNamespace(String k1, String s1, String s2) {
 		fNamespaces.put(k1, new MapEntry(s1, s2));
@@ -1275,9 +1299,9 @@ public class Options {
 
 	/**
 	 * @param k1
-	 *            namespace
+	 *               namespace
 	 * @param s1
-	 *            location
+	 *               location
 	 */
 	public void addSchemaLocation(String k1, String s1) {
 		// This will overwrite any previously existing value for the given key
@@ -1287,7 +1311,7 @@ public class Options {
 
 	/**
 	 * @param k1
-	 *            nsabr (namespace abbreviation / prefix)
+	 *               nsabr (namespace abbreviation / prefix)
 	 * @return the MapEntry belonging to the nsabr (with namespace as 'rule' and
 	 *         location as 'p1') - or <code>null</code> if the nsabr is unknown
 	 */
@@ -1317,8 +1341,9 @@ public class Options {
 
 	/**
 	 * @param k1
-	 *            nsabr (namespace abbreviation / prefix)
-	 * @return the full namespace
+	 *               nsabr (namespace abbreviation / prefix)
+	 * @return the full namespace, can be <code>null</code> if none was found
+	 *         for the given nsabr
 	 */
 	public String fullNamespace(String k1) {
 		MapEntry me = fNamespaces.get(k1);
@@ -1338,7 +1363,7 @@ public class Options {
 
 	/**
 	 * @param packageName
-	 *            name of a package
+	 *                        name of a package
 	 * @return namespace abbreviation (nsabr) defined by a package configuration
 	 *         entry for a package with given name; can be <code>null</code> if
 	 *         no such entry exists
@@ -1369,7 +1394,7 @@ public class Options {
 
 	/**
 	 * @param k1
-	 *            - namespace
+	 *               - namespace
 	 * @return schema location, if defined, else <code>null</code>
 	 */
 	public String schemaLocationOfNamespace(String k1) {
@@ -1869,6 +1894,13 @@ public class Options {
 				this.dontConstructAssociationNames = true;
 			}
 
+			String addTaggedValues_value = parameter("addTaggedValues");
+
+			if (addTaggedValues_value != null
+					&& addTaggedValues_value.trim().equals("*")) {
+				this.allowAllTags = true;
+			}
+
 			String language_value = inputConfig.getParameters()
 					.get(PARAM_LANGUAGE);
 
@@ -2343,8 +2375,9 @@ public class Options {
 								tgtE);
 						Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 								tgtE);
-						
-						List<RdfGeneralProperty> generalProperties = parseGeneralProperties(tgtE);
+
+						List<RdfGeneralProperty> generalProperties = parseGeneralProperties(
+								tgtE);
 
 						List<Namespace> namespaces = parseNamespaces(tgtE);
 
@@ -2357,7 +2390,7 @@ public class Options {
 								stereotypeConversionParameters,
 								typeConversionParameters,
 								propertyConversionParameters, descriptorTargets,
-								constraintMappings,generalProperties);
+								constraintMappings, generalProperties);
 
 						owlConfig.validate();
 
@@ -2369,14 +2402,17 @@ public class Options {
 						List<XsdMapEntry> xsdMapEntries = parseXsdMapEntries(
 								tgtE);
 
+						Map<String, List<XsdPropertyMapEntry>> xsdPropertyMapEntries = parseXsdPropertyMapEntries(
+								tgtE);
+
 						List<XmlNamespace> xmlNamespaces = parseXmlNamespaces(
 								tgtE);
 
 						tgtConfig = new TargetXmlSchemaConfiguration(
 								tgtConfigName, tgtMode, processParameters,
 								processRuleSets, null, xsdMapEntries,
-								xmlNamespaces, tgtConfigInputs,
-								advancedProcessConfigurations);
+								xsdPropertyMapEntries, xmlNamespaces,
+								tgtConfigInputs, advancedProcessConfigurations);
 					}
 					tgtConfigs.add(tgtConfig);
 				}
@@ -2385,20 +2421,80 @@ public class Options {
 		return tgtConfigs;
 	}
 
-	private List<RdfGeneralProperty> parseGeneralProperties(Element targetElement) {
-		
+	/**
+	 * @param targetElement
+	 * @return map (can be empty but not <code>null</code>), with key: property
+	 *         name (optionally scoped to a class), and value: list of map
+	 *         entries for properties with that name (which can be more than
+	 *         one, if schemas are different)
+	 */
+	private Map<String, List<XsdPropertyMapEntry>> parseXsdPropertyMapEntries(
+			Element targetElement) {
+
+		NodeList xpmeNl = targetElement
+				.getElementsByTagName("XsdPropertyMapEntry");
+		Node xpmeN;
+		Element xpmeE;
+
+		Map<String, List<XsdPropertyMapEntry>> result = new TreeMap<>();
+
+		if (xpmeNl != null && xpmeNl.getLength() != 0) {
+
+			for (int k = 0; k < xpmeNl.getLength(); k++) {
+
+				xpmeN = xpmeNl.item(k);
+				if (xpmeN.getNodeType() == Node.ELEMENT_NODE) {
+
+					xpmeE = (Element) xpmeN;
+
+					String property = xpmeE.getAttribute("property").trim();
+
+					String schema = xpmeE.hasAttribute("schema")
+							? xpmeE.getAttribute("schema").trim()
+							: null;
+
+					String target = xpmeE.hasAttribute("targetElement")
+							? xpmeE.getAttribute("targetElement").trim()
+							: null;
+					if (StringUtils.isBlank(target)) {
+						target = null;
+					}
+
+					XsdPropertyMapEntry xpme = new XsdPropertyMapEntry(property,
+							schema, target);
+
+					List<XsdPropertyMapEntry> list;
+					if (result.containsKey(property)) {
+						list = result.get(property);
+					} else {
+						list = new ArrayList<XsdPropertyMapEntry>();
+						result.put(property, list);
+					}
+					list.add(xpme);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private List<RdfGeneralProperty> parseGeneralProperties(
+			Element targetElement) {
+
 		List<RdfGeneralProperty> result = new ArrayList<>();
-		
-		List<Element> gopEs = XMLUtil.getChildElements(targetElement, "GeneralObjectProperty");
-		
-		for(Element gopE : gopEs) {
+
+		List<Element> gopEs = XMLUtil.getChildElements(targetElement,
+				"GeneralObjectProperty");
+
+		for (Element gopE : gopEs) {
 			GeneralObjectProperty gop = new GeneralObjectProperty(gopE);
 			result.add(gop);
 		}
-		
-		List<Element> gdpEs = XMLUtil.getChildElements(targetElement, "GeneralDataProperty");
-		
-		for(Element gdpE : gdpEs) {
+
+		List<Element> gdpEs = XMLUtil.getChildElements(targetElement,
+				"GeneralDataProperty");
+
+		for (Element gdpE : gdpEs) {
 			GeneralDataProperty gdp = new GeneralDataProperty(gdpE);
 			result.add(gdp);
 		}
@@ -2469,7 +2565,8 @@ public class Options {
 							Arrays.asList(StringUtils.split(subClassOf_tmp)));
 
 					String rule = scpE.hasAttribute("rule")
-							? scpE.getAttribute("rule").trim() : "*";
+							? scpE.getAttribute("rule").trim()
+							: "*";
 
 					StereotypeConversionParameter scp = new StereotypeConversionParameter(
 							wellknown, subClassOf, rule);
@@ -2517,14 +2614,16 @@ public class Options {
 					String type = tcpE.getAttribute("type");
 
 					String schema = tcpE.hasAttribute("schema")
-							? tcpE.getAttribute("schema") : null;
+							? tcpE.getAttribute("schema")
+							: null;
 
 					Set<String> subClassOf = new TreeSet<String>(
 							Arrays.asList(StringUtils
 									.split(tcpE.getAttribute("subClassOf"))));
 
 					String rule = tcpE.hasAttribute("rule")
-							? tcpE.getAttribute("rule") : "*";
+							? tcpE.getAttribute("rule")
+							: "*";
 
 					TypeConversionParameter tcp = new TypeConversionParameter(
 							type, schema, subClassOf, rule);
@@ -2573,11 +2672,12 @@ public class Options {
 					String property = pcpE.getAttribute("property").trim();
 
 					String schema = pcpE.hasAttribute("schema")
-							? pcpE.getAttribute("schema").trim() : null;
+							? pcpE.getAttribute("schema").trim()
+							: null;
 
 					boolean global = pcpE.hasAttribute("global")
-							? javax.xml.bind.DatatypeConverter.parseBoolean(
-									pcpE.getAttribute("global"))
+							? javax.xml.bind.DatatypeConverter
+									.parseBoolean(pcpE.getAttribute("global"))
 							: false;
 
 					String subPropertyOf_tmp = pcpE
@@ -2591,13 +2691,16 @@ public class Options {
 					}
 
 					String target = pcpE.hasAttribute("target")
-							? pcpE.getAttribute("target").trim() : null;
+							? pcpE.getAttribute("target").trim()
+							: null;
 
 					String targetSchema = pcpE.hasAttribute("targetSchema")
-							? pcpE.getAttribute("targetSchema").trim() : null;
+							? pcpE.getAttribute("targetSchema").trim()
+							: null;
 
 					String rule = pcpE.hasAttribute("rule")
-							? pcpE.getAttribute("rule").trim() : "*";
+							? pcpE.getAttribute("rule").trim()
+							: "*";
 
 					PropertyConversionParameter pcp = new PropertyConversionParameter(
 							property, schema, global, subPropertyOf, target,
@@ -2645,7 +2748,8 @@ public class Options {
 					String type = rtmeE.getAttribute("type").trim();
 
 					String schema = rtmeE.hasAttribute("schema")
-							? rtmeE.getAttribute("schema").trim() : null;
+							? rtmeE.getAttribute("schema").trim()
+							: null;
 
 					String target = rtmeE.getAttribute("target").trim();
 
@@ -2660,7 +2764,8 @@ public class Options {
 					}
 
 					String rule = rtmeE.hasAttribute("rule")
-							? rtmeE.getAttribute("rule").trim() : "*";
+							? rtmeE.getAttribute("rule").trim()
+							: "*";
 
 					RdfTypeMapEntry rtme = new RdfTypeMapEntry(type, schema,
 							target, targetType, rule);
@@ -2709,19 +2814,23 @@ public class Options {
 					String property = rpmeE.getAttribute("property").trim();
 
 					String schema = rpmeE.hasAttribute("schema")
-							? rpmeE.getAttribute("schema").trim() : null;
+							? rpmeE.getAttribute("schema").trim()
+							: null;
 
 					String target = rpmeE.hasAttribute("target")
-							? rpmeE.getAttribute("target").trim() : null;
+							? rpmeE.getAttribute("target").trim()
+							: null;
 					if (target != null && target.isEmpty()) {
 						target = null;
 					}
 
 					String range = rpmeE.hasAttribute("range")
-							? rpmeE.getAttribute("range").trim() : null;
+							? rpmeE.getAttribute("range").trim()
+							: null;
 
 					String rule = rpmeE.hasAttribute("rule")
-							? rpmeE.getAttribute("rule").trim() : "*";
+							? rpmeE.getAttribute("rule").trim()
+							: "*";
 
 					RdfPropertyMapEntry rpme = new RdfPropertyMapEntry(property,
 							schema, target, range, rule);
@@ -2782,7 +2891,8 @@ public class Options {
 					String template = cmE.getAttribute("template");
 
 					String noValue = cmE.hasAttribute("noValue")
-							? cmE.getAttribute("noValue") : " ";
+							? cmE.getAttribute("noValue")
+							: " ";
 
 					String mvct = cmE.hasAttribute("multiValueConnectorToken")
 							? cmE.getAttribute("multiValueConnectorToken")
@@ -2863,7 +2973,8 @@ public class Options {
 					}
 
 					String noValueText = dtE.hasAttribute("noValueText")
-							? dtE.getAttribute("noValueText") : "";
+							? dtE.getAttribute("noValueText")
+							: "";
 
 					DescriptorTarget.MultiValueBehavior multiValueBehavior = DescriptorTarget.MultiValueBehavior.CONNECT_IN_SINGLE_TARGET;
 					if (dtE.hasAttribute("multiValueBehavior")) {
@@ -3020,7 +3131,8 @@ public class Options {
 	 * XsdMapEntries it contains.
 	 *
 	 * @param targetXmlSchemaElement
-	 *            The TargetXmlSchema element from the ShapeChangeConfiguration
+	 *                                   The TargetXmlSchema element from the
+	 *                                   ShapeChangeConfiguration
 	 * @return map of the XsdMapEntries contained in the TargetXmlSchema element
 	 *         (key: XsdMapEntry type)
 	 */
@@ -3056,7 +3168,8 @@ public class Options {
 					}
 
 					String xmlType = xsdMapEntryE.hasAttribute("xmlType")
-							? xsdMapEntryE.getAttribute("xmlType") : null;
+							? xsdMapEntryE.getAttribute("xmlType")
+							: null;
 
 					String xmlTypeContent = "";
 					if (xsdMapEntryE.hasAttribute("xmlTypeContent")) {
@@ -3089,12 +3202,13 @@ public class Options {
 					}
 
 					String xmlElement = xsdMapEntryE.hasAttribute("xmlElement")
-							? xsdMapEntryE.getAttribute("xmlElement") : null;
+							? xsdMapEntryE.getAttribute("xmlElement")
+							: null;
 
 					String xmlPropertyType = xsdMapEntryE
 							.hasAttribute("xmlPropertyType")
-									? xsdMapEntryE.getAttribute(
-											"xmlPropertyType")
+									? xsdMapEntryE
+											.getAttribute("xmlPropertyType")
 									: null;
 
 					String xmlAttribute = xsdMapEntryE
@@ -3104,14 +3218,14 @@ public class Options {
 
 					String xmlAttributeGroup = xsdMapEntryE
 							.hasAttribute("xmlAttributeGroup")
-									? xsdMapEntryE.getAttribute(
-											"xmlAttributeGroup")
+									? xsdMapEntryE
+											.getAttribute("xmlAttributeGroup")
 									: null;
 
 					String xmlReferenceable = xsdMapEntryE
 							.hasAttribute("xmlReferenceable")
-									? xsdMapEntryE.getAttribute(
-											"xmlReferenceable")
+									? xsdMapEntryE
+											.getAttribute("xmlReferenceable")
 									: null;
 
 					String xmlElementHasSimpleContent = xsdMapEntryE
@@ -3121,7 +3235,8 @@ public class Options {
 									: null;
 
 					String nsabr = xsdMapEntryE.hasAttribute("nsabr")
-							? xsdMapEntryE.getAttribute("nsabr") : null;
+							? xsdMapEntryE.getAttribute("nsabr")
+							: null;
 
 					result.add(new XsdMapEntry(type, encodingRules, xmlType,
 							xmlTypeContent, xmlTypeType, xmlTypeNilReason,
@@ -3139,8 +3254,8 @@ public class Options {
 	 * contains.
 	 *
 	 * @param processElement
-	 *            A Transformer or Target element from the
-	 *            ShapeChangeConfiguration
+	 *                           A Transformer or Target element from the
+	 *                           ShapeChangeConfiguration
 	 * @param string
 	 * @return map of the map entries contained in the process element (key:
 	 *         ProcessMapEntry type)
@@ -3173,7 +3288,8 @@ public class Options {
 											.getAttribute("targetType")
 									: null;
 					String param = processMapEntryE.hasAttribute("param")
-							? processMapEntryE.getAttribute("param") : null;
+							? processMapEntryE.getAttribute("param")
+							: null;
 
 					result.add(
 							new ProcessMapEntry(type, rule, targetType, param));
@@ -3276,7 +3392,7 @@ public class Options {
 
 	/**
 	 * @param trfE
-	 *            "Transformer" element from the configuration
+	 *                 "Transformer" element from the configuration
 	 * @return list of tagged values defined for the transformer or
 	 *         <code>null</code> if no tagged values are defined for it.
 	 */
@@ -3758,6 +3874,7 @@ public class Options {
 
 		addRule("rule-sql-all-replicationSchema");
 		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
+		addRule("rule-sql-prop-replicationSchema-geometryAnnotation");
 		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
 		addRule("rule-sql-prop-replicationSchema-nillable");
 		addRule("rule-sql-prop-replicationSchema-optional");
@@ -3832,7 +3949,7 @@ public class Options {
 		 */
 		addRule("rule-arcgis-all-postprocess-removeUnusedCodedValueDomains");
 		addRule("rule-arcgis-all-precision");
-		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");		
+		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
 		addRule("rule-arcgis-all-representTaggedValues");
 		addRule("rule-arcgis-all-scale");
 		addRule("rule-arcgis-all-subtypes");
@@ -3897,10 +4014,6 @@ public class Options {
 		addRule("rule-ldp-prop-separate-geometry-table");
 		addRule("rule-ldp-prop-all-codelist-values-as-strings");
 		addRule("rule-ldp-cls-oneo-metadata");
-		/*
-		addRule("");
-		addRule("");
-		*/
 	}
 
 	/** Normalize a stereotype fetched from the model. */
@@ -3936,7 +4049,7 @@ public class Options {
 	 * <code>true</code>.
 	 * 
 	 * @param pi
-	 *            package to check
+	 *               package to check
 	 * @return <code>true</code> if the given package shall be skipped, else
 	 *         <code>false</code>
 	 */
@@ -4059,7 +4172,7 @@ public class Options {
 
 	/**
 	 * @param currentProcessConfig
-	 *            the currentProcessConfig to set
+	 *                                 the currentProcessConfig to set
 	 */
 	public void setCurrentProcessConfig(
 			ProcessConfiguration currentProcessConfig) {
@@ -4225,6 +4338,10 @@ public class Options {
 
 	public boolean dontConstructAssociationNames() {
 		return this.dontConstructAssociationNames;
+	}
+
+	public boolean allowAllTags() {
+		return this.allowAllTags;
 	}
 
 	/**

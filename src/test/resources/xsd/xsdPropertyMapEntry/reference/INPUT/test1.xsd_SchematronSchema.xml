@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <title>Schematron constraints for schema 'Test Schema1'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="t1" uri="http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/1"/>
+  <ns prefix="dcterms" uri="http://purl.org/dc/terms/"/>
+  <pattern>
+    <rule context="t1:MyFeatureType">
+      <assert test="t1:identifier">ocl_identifier</assert>
+    </rule>
+    <rule context="t1:Resource">
+      <assert test="string-length(dcterms:format) &gt;= 2">ocl_format</assert>
+    </rule>
+  </pattern>
+</schema>

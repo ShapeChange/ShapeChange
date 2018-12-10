@@ -27,7 +27,9 @@
  <xsl:param name="background-color-delete">#ffe6e6</xsl:param>
  <xsl:param name="background-color-insert">#e6ffe6</xsl:param>
  <xsl:param name="background-color-normal">#f4f6fe</xsl:param>
-
+ <!-- Name of the logo to include in the catalogue. May be empty (then do not include a logo). -->
+ <xsl:param name="logoFileName"/>
+ 
  <!-- ======================== -->
  <!-- Transformation templates -->
  <!-- ======================== -->
@@ -154,10 +156,23 @@
           }</style>
    </head>
    <body>
-    <h1>
-     <xsl:value-of select="$fc.FeatureCatalogue"/>
-     <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
-    </h1>
+    <xsl:choose>
+     <xsl:when test="$logoFileName">
+      <div style="display: inline-block;width: 100%;">
+       <img src="{$logoFileName}" alt="logo" style="float:left;" />
+       <h1 style="text-align:center;">
+        <xsl:value-of select="$fc.FeatureCatalogue"/>
+        <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
+       </h1>
+      </div>
+     </xsl:when>
+     <xsl:otherwise>
+      <h1>
+       <xsl:value-of select="$fc.FeatureCatalogue"/>
+       <xsl:value-of disable-output-escaping="yes" select="FeatureCatalogue/name"/>
+      </h1>
+     </xsl:otherwise>
+    </xsl:choose>
     <p>
      <b><xsl:value-of select="$fc.Version"/>:</b>
     </p>

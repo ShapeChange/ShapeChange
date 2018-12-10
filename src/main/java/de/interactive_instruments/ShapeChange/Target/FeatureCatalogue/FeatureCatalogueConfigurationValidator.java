@@ -49,26 +49,63 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class FeatureCatalogueConfigurationValidator
 		implements ConfigurationValidator, MessageSource {
 
+	private TargetConfiguration tgtConfig = null;
+	private Options options = null;
+	private ShapeChangeResult result = null;
+	private String inputs = null;
+
 	@Override
 	public boolean isValid(ProcessConfiguration pConfig, Options options,
 			ShapeChangeResult result) {
-
-		boolean isValid = true;
 
 		/*
 		 * NOTE: No type check for the configuration is performed, since a
 		 * mismatch would be a system error
 		 */
-		TargetConfiguration tgtConfig = (TargetConfiguration) pConfig;
+		this.tgtConfig = (TargetConfiguration) pConfig;
+		this.options = options;
+		this.result = result;
 
-		String inputs = StringUtils.join(tgtConfig.getInputIds(), ", ");
+		inputs = StringUtils.join(tgtConfig.getInputIds(), ", ");
+
+		boolean isValid = true;
+
+		// check parameter types
+		isValid &= checkIsBooleanValueIfSet(
+				FeatureCatalogue.PARAM_DONT_TRANSFORM);
+		isValid &= checkIsBooleanValueIfSet("deleteXmlfile");
+		isValid &= checkIsBooleanValueIfSet("includeAlias");
+		isValid &= checkIsBooleanValueIfSet("includeCodelistURI");
+		isValid &= checkIsBooleanValueIfSet("includeDiagrams");
+		isValid &= checkIsBooleanValueIfSet("includeTitle");
+		isValid &= checkIsBooleanValueIfSet("includeVoidable");
+		isValid &= checkIsBooleanValueIfSet("inheritedConstraints");
+		isValid &= checkIsBooleanValueIfSet("inheritedProperties");
+		isValid &= checkIsBooleanValueIfSet("noAlphabeticSortingForProperties");
+
+		/*
+		 * Check that parameter docxStyle, if set, has known values
+		 */
+		String docxStyle = tgtConfig
+				.getParameterValue(FeatureCatalogue.PARAM_DOCX_STYLE);
+		if (docxStyle != null && !("default".equals(docxStyle)
+				|| "custom1".equals(docxStyle))) {
+
+			MessageContext mc = result.addError(this, 5,
+					FeatureCatalogue.PARAM_DOCX_STYLE, docxStyle);
+			if (mc != null) {
+				mc.addDetail(this, 0, inputs);
+			}
+
+			isValid = false;
+		}
 
 		/*
 		 * Check that the configured XSL transformer factory is available
@@ -235,6 +272,38 @@ public class FeatureCatalogueConfigurationValidator
 		return isValid;
 	}
 
+	/**
+	 * Checks if the configuration of the target has a parameter with given
+	 * name. If it is, and if its value is neither 'true' nor 'false' (ignoring
+	 * case), then the check will fail and an error will be logged. Otherwise
+	 * the check will succeed.
+	 * 
+	 * @param parameterName
+	 * @return <code>true</code> if either the parameter is not set in the
+	 *         configuration of the target, or if its value is 'true' or 'false'
+	 *         (ignoring case). Otherwise, <code>false</code> is returned.
+	 */
+	private boolean checkIsBooleanValueIfSet(String parameterName) {
+
+		String paramValue = tgtConfig.getParameterValue(parameterName);
+
+		if (paramValue == null || paramValue.equalsIgnoreCase("true")
+				|| paramValue.equalsIgnoreCase("false")) {
+
+			return true;
+
+		} else {
+
+			MessageContext mc = result.addError(this, 106, parameterName,
+					paramValue);
+			if (mc != null) {
+				mc.addDetail(this, 0, inputs);
+			}
+
+			return false;
+		}
+	}
+
 	@Override
 	public String message(int mnr) {
 
@@ -249,6 +318,9 @@ public class FeatureCatalogueConfigurationValidator
 			return FeatureCatalogue.PARAM_JAVA_OPTIONS + " is: $1$";
 		case 4:
 			return "Message from external java executable: $1$";
+		case 5:
+			return "Value of parameter '$1$' is invalid. Found: $2$";
+
 		case 100:
 			return "Parameter '"
 					+ FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
@@ -268,6 +340,8 @@ public class FeatureCatalogueConfigurationValidator
 			return "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
 		case 105:
 			return "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+		case 106:
+			return "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
 
 		default:
 			return "(" + FeatureCatalogue.class.getName()

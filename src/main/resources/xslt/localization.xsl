@@ -52,6 +52,7 @@
   <xsl:variable name="fc.ObjectType"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.ObjectType']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.ObjectTypes"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.ObjectTypes']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Operation"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Operation']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.OverviewAndDependencies"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.OverviewAndDependencies']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Package"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Package']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Packages"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Packages']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Parent"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Parent']/text[contains(@lang,$lang)]"/></xsl:variable>

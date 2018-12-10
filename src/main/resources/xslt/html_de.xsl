@@ -18,7 +18,9 @@
   <!-- ========== -->
   <!-- Set the similarly named targetParameter to 'true' to prevent alphabetic sorting of properties -->
   <xsl:param name="noAlphabeticSortingForProperties">false</xsl:param>
-  
+  <!-- Name of the logo to include in the catalogue. May be empty (then do not include a logo). -->
+  <xsl:param name="logoFileName"/>
+ 
   <!-- ======================== -->
   <!-- Transformation templates -->
   <!-- ======================== -->
@@ -134,6 +136,21 @@
           }</style>
       </head>
       <body>
+       <xsl:choose>
+        <xsl:when test="$logoFileName">
+         <div style="display: inline-block;width: 100%;">
+          <img src="{$logoFileName}" alt="logo" style="float:left;" />          
+          <h1 style="text-align:center;"> Objektartenkatalog <xsl:value-of select="FeatureCatalogue/name"
+           disable-output-escaping="yes"/>
+          </h1>
+         </div>
+        </xsl:when>
+        <xsl:otherwise>
+         <h1> Objektartenkatalog <xsl:value-of select="FeatureCatalogue/name"
+          disable-output-escaping="yes"/>
+         </h1>
+        </xsl:otherwise>
+       </xsl:choose>
         <h1> Objektartenkatalog <xsl:value-of select="FeatureCatalogue/name"
             disable-output-escaping="yes"/>
         </h1>

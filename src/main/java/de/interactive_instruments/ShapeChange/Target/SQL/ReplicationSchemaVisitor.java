@@ -69,8 +69,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ReplicationSchemaVisitor
@@ -344,9 +344,12 @@ public class ReplicationSchemaVisitor
 			 * property from the model (it can also be an identifier column)
 			 * 
 			 * - documentation, if required
+			 * 
+			 * - geometry type and srid, if required
 			 */
 			String globalIdForColumnElement = null;
 			String documentationForColumnElement = null;
+			String geometryType = null;
 
 			if (propForColumn != null) {
 
@@ -358,10 +361,17 @@ public class ReplicationSchemaVisitor
 								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE)) {
 					documentationForColumnElement = SqlDdl.repSchemaDocumentationUnlimitedLengthCharacterDataType;
 				}
+
+				if (propForColumn.typeInfo().name.startsWith("GM_")
+						&& propForColumn.matches(
+								ReplicationSchemaConstants.RULE_TGT_SQL_PROP_REPSCHEMA_GEOMETRY_ANNOTATION)) {
+					geometryType = propForColumn.typeInfo().name;
+				}
 			}
 
 			if (globalIdForColumnElement != null
-					|| documentationForColumnElement != null) {
+					|| documentationForColumnElement != null
+					|| geometryType != null) {
 
 				Element annotationColumnElement = addAnnotation(
 						columnDefinitionElement);
@@ -370,6 +380,8 @@ public class ReplicationSchemaVisitor
 
 				addDocumentation(annotationColumnElement,
 						documentationForColumnElement);
+
+				addGeometryAnnotation(annotationColumnElement, geometryType);
 			}
 
 			// add maxLength restriction if applicable
@@ -400,6 +412,40 @@ public class ReplicationSchemaVisitor
 			}
 		}
 
+	}
+
+	/**
+	 * Adds an 'appinfo' element to the given annotation element, with two
+	 * children: an element with the given geometry type and an element with the
+	 * configured srid.
+	 * 
+	 * @param annotation
+	 *                         an 'annotation' element, must not be
+	 *                         <code>null</code>
+	 * @param geometryType
+	 *                         the geometry type to add, may be
+	 *                         <code>null</code> (in that case, no 'appinfo' is
+	 *                         added)
+	 */
+	private void addGeometryAnnotation(Element annotation,
+			String geometryType) {
+
+		if (geometryType != null) {
+
+			Element eAppInfo = document.createElementNS(Options.W3C_XML_SCHEMA,
+					"appinfo");
+
+			Element eGeomType = document.createElementNS(Options.SCAI_NS,
+					"geometryType");
+			eGeomType.appendChild(document.createTextNode(geometryType));
+			eAppInfo.appendChild(eGeomType);
+
+			Element eSrid = document.createElementNS(Options.SCAI_NS, "srid");
+			eSrid.appendChild(document.createTextNode("" + SqlDdl.srid));
+			eAppInfo.appendChild(eSrid);
+
+			annotation.appendChild(eAppInfo);
+		}
 	}
 
 	/**
@@ -443,10 +489,11 @@ public class ReplicationSchemaVisitor
 	 * element.
 	 * 
 	 * @param annotation
-	 *            - an 'annotation' element, must not be <code>null</code>
+	 *                       - an 'annotation' element, must not be
+	 *                       <code>null</code>
 	 * @param globalId
-	 *            - the globalId to add, may be <code>null</code> (in that case,
-	 *            no 'appinfo' is added)
+	 *                       - the globalId to add, may be <code>null</code> (in
+	 *                       that case, no 'appinfo' is added)
 	 */
 	private void addGlobalId(Element annotation, String globalId) {
 
@@ -464,10 +511,12 @@ public class ReplicationSchemaVisitor
 	 * Adds a 'documentation' element to the given annotation element.
 	 * 
 	 * @param annotation
-	 *            - an 'annotation' element, must not be <code>null</code>
+	 *                          - an 'annotation' element, must not be
+	 *                          <code>null</code>
 	 * @param documentation
-	 *            - the documentation to add, may be <code>null</code> (in that
-	 *            case, no 'documentation' is added)
+	 *                          - the documentation to add, may be
+	 *                          <code>null</code> (in that case, no
+	 *                          'documentation' is added)
 	 */
 	private void addDocumentation(Element annotation, String documentation) {
 
@@ -500,8 +549,8 @@ public class ReplicationSchemaVisitor
 	 * to the document.
 	 * 
 	 * @param ci
-	 *            must be an enumeration, otherwise this method does not add
-	 *            anything
+	 *               must be an enumeration, otherwise this method does not add
+	 *               anything
 	 */
 	private void addGlobalEnumeration(ClassInfo ci) {
 
