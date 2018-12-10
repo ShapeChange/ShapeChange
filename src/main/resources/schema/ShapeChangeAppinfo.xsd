@@ -27,4 +27,6 @@
    </simpleContent>
   </complexType>
  </element>
+ <element name="geometryType" type="string"/>
+ <element name="srid" type="positiveInteger"/>
 </schema>

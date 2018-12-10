@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t2="http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/2" elementFormDefault="qualified" targetNamespace="http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/2" version="1.0">
+  <import namespace="http://purl.org/dc/terms/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MyOtherFeatureType" substitutionGroup="gml:AbstractFeature" type="t2:MyOtherFeatureTypeType"/>
+  <complexType name="MyOtherFeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="integer"/>
+          <element name="identifier" type="string"/>
+          <element ref="dcterms:creator"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyOtherFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t2:MyOtherFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

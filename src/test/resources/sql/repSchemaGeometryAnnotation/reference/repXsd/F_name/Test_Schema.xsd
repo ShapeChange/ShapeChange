@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ts="http://example.org/shapechange/repSchema/geometryAnnotation/rep" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/repSchema/geometryAnnotation/rep" version="1.0">
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FEATURETYPE1" type="ts:FEATURETYPE1Type">
+    <annotation>
+      <appinfo>EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</appinfo>
+    </annotation>
+  </element>
+  <complexType name="FEATURETYPE1Type">
+    <sequence>
+      <element name="TESTOBJECTIDENTIFIER" type="integer"/>
+      <element name="STRING" type="string">
+        <annotation>
+          <appinfo>EAID_087AE1E7_30BF_44dd_B86F_3D27E622CC7E</appinfo>
+        </annotation>
+      </element>
+      <element name="GEOMETRY" type="string">
+        <annotation>
+          <appinfo>EAID_E0F4E64B_1C2C_41ec_BB0D_9D57168B8068</appinfo>
+          <appinfo>
+            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Point</geometryType>
+            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="ROLE2_FK" type="string">
+        <annotation>
+          <appinfo>EAID_dst929FE8_B89A_48b3_913A_9865EC35C1C9</appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <element name="FEATURETYPE1_SECONDGEOMETRY" type="ts:FEATURETYPE1_SECONDGEOMETRYType">
+    <annotation>
+      <appinfo>EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E.EAID_7B0284E1_408E_4851_B63D_38E6913DF236</appinfo>
+    </annotation>
+  </element>
+  <complexType name="FEATURETYPE1_SECONDGEOMETRYType">
+    <sequence>
+      <element name="FEATURETYPE1TESTOBJECTIDENTIFI" type="string"/>
+      <element name="SECONDGEOMETRY" type="string">
+        <annotation>
+          <appinfo>EAID_7B0284E1_408E_4851_B63D_38E6913DF236</appinfo>
+          <appinfo>
+            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Surface</geometryType>
+            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+          </appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <element name="FEATURETYPE2" type="ts:FEATURETYPE2Type">
+    <annotation>
+      <appinfo>EAID_CC8E89F8_7CC8_4af4_942A_C928856361C4</appinfo>
+    </annotation>
+  </element>
+  <complexType name="FEATURETYPE2Type">
+    <sequence>
+      <element name="TESTOBJECTIDENTIFIER" type="integer"/>
+      <element minOccurs="0" name="UNION_OPTION1" type="string">
+        <annotation>
+          <appinfo>EAID_D667C723_BB8D_4d52_A708_8CEC90AADFC3.EAID_CDDC5C85_CD8A_48b4_BECD_FBFFBEAC015C</appinfo>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="UNION_OPTION2" type="string">
+        <annotation>
+          <appinfo>EAID_D667C723_BB8D_4d52_A708_8CEC90AADFC3.EAID_5752E024_0B0B_421c_9B40_000DD10A1F3C</appinfo>
+          <appinfo>
+            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Curve</geometryType>
+            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+          </appinfo>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+</schema>

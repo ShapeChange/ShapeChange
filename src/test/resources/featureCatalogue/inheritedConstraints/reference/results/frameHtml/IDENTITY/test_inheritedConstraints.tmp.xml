@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C33">
+    <name>FT1</name>
+    <characterizedBy idref="_A33_35"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>Constraint_FT1_A</name>
+      <description>Defined in FT1</description>
+      <expression>inv: attFT1 &gt; 0</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT1_B</name>
+      <description>Defined in FT1</description>
+      <expression>inv: attFT1-&gt;notEmpty()</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A33_35">
+    <name>attFT1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C34">
+    <name>FT2</name>
+    <subtypeOf idref="_C33">FT1</subtypeOf>
+    <characterizedBy idref="_A34_36"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>Constraint_FT1_A</name>
+      <description>Override in FT2</description>
+      <expression>inv: attFT1 &gt; 50</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT2</name>
+      <description>Defined in FT2</description>
+      <expression>inv: attFT2 &gt; 5</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A34_36">
+    <name>attFT2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C37">
+    <name>FT3</name>
+    <isAbstract>1</isAbstract>
+    <characterizedBy idref="_A37_37"></characterizedBy>
+    <package idref="_P4"></package>
+    <constraint>
+      <name>Constraint_FT3_A</name>
+      <description>Defined in FT3</description>
+      <expression>inv: attFT3-&gt;notEmpty()</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT3_B</name>
+      <description>Defined in FT3</description>
+      <expression>inv: attFT3 &gt; 0</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A37_37">
+    <name>attFT3</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C36">
+    <name>FT4</name>
+    <subtypeOf idref="_C34">FT2</subtypeOf>
+    <subtypeOf idref="_C37">FT3</subtypeOf>
+    <characterizedBy idref="_A36_38"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>Constraint_FT3_B</name>
+      <description>Override in FT4</description>
+      <expression>inv: attFT3 &gt; 7</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT4</name>
+      <description>Defined in FT4</description>
+      <expression>inv: attFT4 &gt; 3</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A36_38">
+    <name>attFT4</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+</FeatureCatalogue>

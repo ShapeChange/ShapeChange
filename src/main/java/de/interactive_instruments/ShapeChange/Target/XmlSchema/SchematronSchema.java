@@ -62,6 +62,8 @@ import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
+import de.interactive_instruments.ShapeChange.XsdPropertyMapEntry;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -74,6 +76,7 @@ public class SchematronSchema implements MessageSource {
 
 	Model model;
 	Options options;
+	TargetXmlSchemaConfiguration config;
 	ShapeChangeResult result;
 	PackageInfo pi;
 	Document document;
@@ -129,13 +132,13 @@ public class SchematronSchema implements MessageSource {
 	 * Ctor
 	 * 
 	 * @param mdl
-	 *            Model object
+	 *                Model object
 	 * @param o
-	 *            Options object
+	 *                Options object
 	 * @param r
-	 *            Result object
+	 *                Result object
 	 * @param p
-	 *            PackageInfo object
+	 *                PackageInfo object
 	 */
 	public SchematronSchema(Model mdl, Options o, ShapeChangeResult r,
 			PackageInfo p) {
@@ -146,6 +149,9 @@ public class SchematronSchema implements MessageSource {
 		result = r;
 		document = null;
 		classname = XmlSchema.class.getName();
+
+		config = (TargetXmlSchemaConfiguration) options
+				.getCurrentProcessConfig();
 
 		// Get prefix and postfix of xlink:href references
 		String s = options.parameter(classname, "schematronXlinkHrefPrefix");
@@ -262,9 +268,9 @@ public class SchematronSchema implements MessageSource {
 	 * within the proper &lt;rule> context.
 	 * 
 	 * @param ci
-	 *            ClassInfo object, which is context to the constraint.
+	 *               ClassInfo object, which is context to the constraint.
 	 * @param c
-	 *            OCL constraint. Must be invariant.
+	 *               OCL constraint. Must be invariant.
 	 */
 	protected void addAssertion(ClassInfo ci, OclConstraint c) {
 
@@ -366,11 +372,11 @@ public class SchematronSchema implements MessageSource {
 	 * merged including the necessary name corrections in the text.
 	 * 
 	 * @param ci
-	 *            ClassInfo object, which is context to the constraint.
+	 *                  ClassInfo object, which is context to the constraint.
 	 * @param xpath
-	 *            Assertion embodied in an XpathFragment object.
+	 *                  Assertion embodied in an XpathFragment object.
 	 * @param text
-	 *            Explanatory text concerning the assertion
+	 *                  Explanatory text concerning the assertion
 	 * @param
 	 */
 	protected void addAssertion(ClassInfo ci,
@@ -446,19 +452,26 @@ public class SchematronSchema implements MessageSource {
 	 * the necessary name corrections in the text.
 	 * 
 	 * @param cib
-	 *            ClassInfo object, which is base of the rule context. Can be
-	 *            <code>null</code>, then the class that owns the property is
-	 *            the base of the rule context.
+	 *                                           ClassInfo object, which is base
+	 *                                           of the rule context. Can be
+	 *                                           <code>null</code>, then the
+	 *                                           class that owns the property is
+	 *                                           the base of the rule context.
 	 * @param pi
-	 *            Property that completes the context
+	 *                                           Property that completes the
+	 *                                           context
 	 * @param addToSubtypesInSelectedSchemas
-	 *            true to add the assertion to direct and indirect subtypes of
-	 *            cib (or the class that owns pi) that are in the schemas
-	 *            selected for processing
+	 *                                           true to add the assertion to
+	 *                                           direct and indirect subtypes of
+	 *                                           cib (or the class that owns pi)
+	 *                                           that are in the schemas
+	 *                                           selected for processing
 	 * @param xpath
-	 *            Assertion embodied in an XpathFragment object.
+	 *                                           Assertion embodied in an
+	 *                                           XpathFragment object.
 	 * @param text
-	 *            Explanatory text concerning the assertion
+	 *                                           Explanatory text concerning the
+	 *                                           assertion
 	 * @param
 	 */
 	protected void addAssertion(ClassInfo cib, PropertyInfo pi,
@@ -492,7 +505,7 @@ public class SchematronSchema implements MessageSource {
 			 * 
 			 * TBD: add nil check to context?
 			 */
-			String ruleContext = ci.qname() + "/" + pi.qname();
+			String ruleContext = ci.qname() + "/" + getAndRegisterXmlName(pi);
 			RuleCreationStatus rulecs = ruleCreationStatusMap.get(ruleContext);
 			String asserttext;
 
@@ -582,17 +595,31 @@ public class SchematronSchema implements MessageSource {
 	 * Auxiliary method to find out the full, namespace adorned name of a
 	 * property from the model. As a side effect the method makes the namespace
 	 * also known to the Schematron schema, appending another &lt;ns> element if
-	 * necessary.
+	 * necessary. Takes into account XsdPropertyMapEntry defined in the
+	 * configuration.
 	 * 
 	 * @param pi
-	 *            PropertyInfo object
+	 *               PropertyInfo object
 	 * @return Element name of property (a QName: {ns prefix}:{property name})
 	 */
 	public String getAndRegisterXmlName(PropertyInfo pi) {
-		String nspref = pi.inClass().pkg().xmlns();
-		String proper = nspref + ":" + pi.name();
-		registerNamespace(nspref, pi.inClass());
-		return proper;
+
+		XsdPropertyMapEntry xpme = config.getPropertyMapEntry(pi);
+
+		if (xpme != null && xpme.hasTargetElement()) {
+
+			String qname = xpme.getTargetElement();
+			String nspref = qname.split(":")[0];
+			registerNamespace(nspref);
+			return qname;
+
+		} else {
+
+			String nspref = pi.inClass().pkg().xmlns();
+			String proper = nspref + ":" + pi.name();
+			registerNamespace(nspref, pi.inClass());
+			return proper;
+		}
 	}
 
 	/**
@@ -608,7 +635,7 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param pi
-	 *            ClassInfo object
+	 *               ClassInfo object
 	 * @return Element name of class
 	 */
 	public String getAndRegisterXmlName(ClassInfo ci) {
@@ -638,9 +665,9 @@ public class SchematronSchema implements MessageSource {
 	 * namespace occurs the first time.
 	 * 
 	 * @param xmlns
-	 *            Namespace prefix
+	 *                  Namespace prefix
 	 * @param ns
-	 *            Namespace proper
+	 *                  Namespace proper
 	 */
 	public void registerNamespace(String xmlns, String ns) {
 		if (!namespaces.contains(xmlns)) {
@@ -673,7 +700,7 @@ public class SchematronSchema implements MessageSource {
 	 * first time
 	 * 
 	 * @param xmlns
-	 *            Namespace prefix
+	 *                  Namespace prefix
 	 */
 	public void registerNamespace(String xmlns) {
 		if (!namespaces.contains(xmlns)) {
@@ -689,9 +716,9 @@ public class SchematronSchema implements MessageSource {
 	 * Options object.
 	 * 
 	 * @param xmlns
-	 *            Namespace prefix
+	 *                  Namespace prefix
 	 * @param ci
-	 *            ClassInfo object to fetch the namespace uri from
+	 *                  ClassInfo object to fetch the namespace uri from
 	 */
 	public void registerNamespace(String xmlns, ClassInfo ci) {
 		if (!namespaces.contains(xmlns)) {
@@ -712,7 +739,7 @@ public class SchematronSchema implements MessageSource {
 	 * consulted.
 	 * 
 	 * @param ci
-	 *            ClassInfo object to fetch the xmlns and namespace uri from
+	 *               ClassInfo object to fetch the xmlns and namespace uri from
 	 */
 	public void registerNamespace(ClassInfo ci) {
 		String xmlns = ci.pkg().xmlns();
@@ -735,13 +762,13 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param ocl
-	 *            OclNode of some level, initially called with
-	 *            OclNode.Expression
+	 *                      OclNode of some level, initially called with
+	 *                      OclNode.Expression
 	 * @param enclosing
-	 *            Enclosing target construct, may be null
+	 *                      Enclosing target construct, may be null
 	 * @param negate
-	 *            Flag to indicate that a logical negation is to be pushed
-	 *            downwards
+	 *                      Flag to indicate that a logical negation is to be
+	 *                      pushed downwards
 	 * @return Constructed SchematronConstraintNode tree. null if in error.
 	 */
 	protected SchematronConstraintNode translateConstraintToSchematronNode(
@@ -818,12 +845,12 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param iter
-	 *            The IterationCallExp node to be processed
+	 *                      The IterationCallExp node to be processed
 	 * @param enclosing
-	 *            Enclosing target construct
+	 *                      Enclosing target construct
 	 * @param negate
-	 *            Flag to indicate that a logical negation is to be pushed
-	 *            downwards
+	 *                      Flag to indicate that a logical negation is to be
+	 *                      pushed downwards
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintIterationToSchematronNode(
@@ -900,12 +927,12 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param oper
-	 *            The OperationCallExp node to be processed
+	 *                      The OperationCallExp node to be processed
 	 * @param enclosing
-	 *            Enclosing target construct
+	 *                      Enclosing target construct
 	 * @param negate
-	 *            Flag to indicate that a logical negation is to be pushed
-	 *            downwards
+	 *                      Flag to indicate that a logical negation is to be
+	 *                      pushed downwards
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintOperationToSchematronNode(
@@ -1262,13 +1289,14 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param attr
-	 *            The AttibuteCallExp object
+	 *                      The AttibuteCallExp object
 	 * @param enclosing
-	 *            If an enclosing Logic object is passed, the attribute must be
-	 *            of type Boolean. Otherwise an error is generated.
+	 *                      If an enclosing Logic object is passed, the
+	 *                      attribute must be of type Boolean. Otherwise an
+	 *                      error is generated.
 	 * @param negate
-	 *            A pushed down negation will only be considered if the
-	 *            attribute is of type Boolean.
+	 *                      A pushed down negation will only be considered if
+	 *                      the attribute is of type Boolean.
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintAttributeToSchematronNode(
@@ -1384,13 +1412,13 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param lit
-	 *            The OclNode.Literal object
+	 *                      The OclNode.Literal object
 	 * @param enclosing
-	 *            If an enclosing Logic object is passed, the literal must be of
-	 *            type Boolean.
+	 *                      If an enclosing Logic object is passed, the literal
+	 *                      must be of type Boolean.
 	 * @param negate
-	 *            A pushed down negation will only be considered if the literal
-	 *            is of type Boolean.
+	 *                      A pushed down negation will only be considered if
+	 *                      the literal is of type Boolean.
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintLiteralToSchematronNode(
@@ -1424,12 +1452,13 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param ifex
-	 *            The OclNode.IfExp object
+	 *                      The OclNode.IfExp object
 	 * @param enclosing
-	 *            If an enclosing Logic object is passed, the type of the IfExp
-	 *            must be Boolean.
+	 *                      If an enclosing Logic object is passed, the type of
+	 *                      the IfExp must be Boolean.
 	 * @param negate
-	 *            A pushed down negation will switch the then and else parts.
+	 *                      A pushed down negation will switch the then and else
+	 *                      parts.
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintIfExpToSchematronNode(
@@ -1468,12 +1497,12 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param letex
-	 *            The OclNode.LetExp object
+	 *                      The OclNode.LetExp object
 	 * @param enclosing
-	 *            If an enclosing Logic object is passed, the type of the LetExp
-	 *            must be Boolean.
+	 *                      If an enclosing Logic object is passed, the type of
+	 *                      the LetExp must be Boolean.
 	 * @param negate
-	 *            A pushed down negation will be passed to the body.
+	 *                      A pushed down negation will be passed to the body.
 	 * @return Constructed SchematronConstraintNode tree
 	 */
 	protected SchematronConstraintNode translateConstraintLetExpToSchematronNode(
@@ -1562,7 +1591,7 @@ public class SchematronSchema implements MessageSource {
 	 * explicit errors. If it does, provide messages accordingly.
 	 * 
 	 * @param xpath
-	 *            The Xpath fragment to examine.
+	 *                  The Xpath fragment to examine.
 	 * @return Flag, if true an error has been found
 	 */
 	private boolean checkErrorsInXpathFragment(
@@ -1602,7 +1631,7 @@ public class SchematronSchema implements MessageSource {
 	 * </p>
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text, including $x$ substitution points.
 	 */
 	public String message(int mnr) {
@@ -1627,8 +1656,9 @@ public class SchematronSchema implements MessageSource {
 	 * 
 	 * @param codelist
 	 * @param defaultPattern
-	 *            pattern to use if the lookup via tagged value and target
-	 *            parameter did not yield a non-empty result
+	 *                           pattern to use if the lookup via tagged value
+	 *                           and target parameter did not yield a non-empty
+	 *                           result
 	 * @return
 	 */
 	public String determineCodeListValuePattern(ClassInfo codelist,
@@ -1650,7 +1680,7 @@ public class SchematronSchema implements MessageSource {
 	 * number.
 	 * 
 	 * @param mnr
-	 *            Message number
+	 *                Message number
 	 * @return Message text or null
 	 */
 	protected String messageText(int mnr) {

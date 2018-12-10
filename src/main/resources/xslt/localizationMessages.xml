@@ -223,6 +223,12 @@
     <text lang="nl">Methode</text>
     <text lang="fr">Opération</text>
   </message>
+ <message id="fc.OverviewAndDependencies">
+  <text lang="de">Überblick und Abhängigkeiten</text>
+  <text lang="en">Overview and dependencies</text>
+  <text lang="nl">Overzicht en afhankelijkheden</text>
+  <text lang="fr">Vue d'ensemble et dépendances</text>
+ </message>
   <message id="fc.Package">
     <text lang="de">Paket</text>
     <text lang="en">Package</text>

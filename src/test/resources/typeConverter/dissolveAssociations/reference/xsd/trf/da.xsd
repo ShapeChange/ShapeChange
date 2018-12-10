@@ -13,7 +13,7 @@ NOTE Desc FeatureType</documentation>
         <sequence>
           <element name="rFt1_nto1_directID" type="integer"/>
           <element maxOccurs="unbounded" minOccurs="0" name="rFt1_ntom_direct_keep" type="da:FeatureType2PropertyType"/>
-          <element name="rFt1_1to1ID" type="integer"/>
+          <element name="rFt1_1to1ID" type="string"/>
           <element name="rFt1_nto1ID" type="integer"/>
           <element maxOccurs="unbounded" name="rFt1_ntom_keep" type="da:FeatureType2PropertyType">
             <annotation>

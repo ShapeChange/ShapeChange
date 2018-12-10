@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ReplicationSchemaConstants {
@@ -89,9 +89,9 @@ public class ReplicationSchemaConstants {
 	public static final String PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE = "replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType";
 
 	/**
-	 * (available since v2.4.0) If this rule is included, the target
-	 * creates an internal SQL structure. However, instead of deriving DDL from
-	 * this structure, a replication schema is derived.
+	 * (available since v2.4.0) If this rule is included, the target creates an
+	 * internal SQL structure. However, instead of deriving DDL from this
+	 * structure, a replication schema is derived.
 	 * 
 	 */
 	public static final String RULE_TGT_SQL_ALL_REPSCHEMA = "rule-sql-all-replicationSchema";
@@ -117,6 +117,21 @@ public class ReplicationSchemaConstants {
 	 * string.”
 	 */
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE = "rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType";
+
+	/**
+	 * If the value type of a property that is represented by a column has a
+	 * name starting with “GM_” (typically an ISO 19107 type, for example
+	 * GM_Surface), then the following appinfo annotations are added to the XML
+	 * element of the replication schema that represents that column:
+	 * 
+	 * <ul>
+	 * <li>&lt;sc:geometryType&gt;{name of the property type, e.g.
+	 * GM_Surface}&lt;/sc:geometryType&gt;</li>
+	 * <li>&lt;sc:srid&gt;{value of the srid target
+	 * parameter}&lt;/sc:srid&gt;</li>
+	 * </ul>
+	 */
+	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_GEOMETRY_ANNOTATION = "rule-sql-prop-replicationSchema-geometryAnnotation";
 
 	/**
 	 * If this rule is included, the attribute nillable=true will be added to

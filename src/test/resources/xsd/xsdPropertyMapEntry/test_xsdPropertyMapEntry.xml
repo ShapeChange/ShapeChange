@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/xsd/xsdPropertyMapEntry/test_xsdPropertyMapEntry.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<descriptorSources>						
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml" />
+			<DescriptorSource descriptor="definition" source="tag" tag="definition"/>
+			<DescriptorSource descriptor="description" source="tag"  tag="description"/>
+			<DescriptorSource descriptor="example" source="tag" tag="example"/>
+			<DescriptorSource descriptor="alias" source="tag" tag="alias"/>
+			<DescriptorSource descriptor="legalBasis" source="tag" tag="legalBasis"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="tag" tag="dataCaptureStatement"/>
+			<DescriptorSource descriptor="language" source="tag" tag="language"/>
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/xsd/xsdPropertyMapEntry/log.xml" />
+	</log>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/xsd/xsdPropertyMapEntry" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="myrule" />
+			<rules>
+				<EncodingRule name="myrule" extends="gml33">
+					<rule name="rule-xsd-pkg-schematron" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+			<xsdMapEntries>
+				<!-- Omit 'identifier' from MyFeatureType in Test Schema1 -->
+				<XsdPropertyMapEntry property="MyFeatureType::identifier" schema="Test Schema1" />
+				<!-- Map other occurrences of 'identifier' to dcterms:identifier - but only in Test Schema1. -->
+				<XsdPropertyMapEntry property="identifier" schema="Test Schema1" targetElement="dcterms:identifier"/>
+				<!-- Map occurrences of 'creator' to dcterms:creator - in any schema selected for processing. -->
+				<XsdPropertyMapEntry property="creator" targetElement="dcterms:creator"/>
+				<XsdPropertyMapEntry property="date" schema="Test Schema1" targetElement="dcterms:date"/>
+				<XsdPropertyMapEntry property="format" schema="Test Schema1" targetElement="dcterms:format"/>
+				<XsdPropertyMapEntry property="title" schema="Test Schema1" targetElement="dcterms:title"/>
+				<XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+			</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace nsabr="dcterms" ns="http://purl.org/dc/terms/" location="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
+			</xmlNamespaces>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>
