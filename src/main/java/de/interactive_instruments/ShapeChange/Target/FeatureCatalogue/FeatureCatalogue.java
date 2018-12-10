@@ -2298,8 +2298,8 @@ public class FeatureCatalogue
 			 * this file will be used as a transformation parameter.
 			 */
 			File xmlFile = new File(outDir, xmlName);
-			if (!styleXmlFile.canRead()) {
-				result.addError(null, 301, styleXmlFile.getName(), xmlName);
+			if (!xmlFile.canRead()) {
+				result.addError(null, 301, xmlFile.getName(), xmlName);
 				return;
 			}
 
