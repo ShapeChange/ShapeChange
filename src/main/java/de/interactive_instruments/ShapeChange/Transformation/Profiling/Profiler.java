@@ -1169,18 +1169,15 @@ public class Profiler implements Transformer, MessageSource {
 		case 103:
 			return "";
 
-		case 20201:
-			return "Profile identifier is not well-formed.";
-		case 20202:
-			return "<UNUSED_20202>";
-		case 20203:
-			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
-		case 20204:
-			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+		
+//		case 20202:
+//			return "<UNUSED_20202>";
+//		case 20203:
+//			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
+//		case 20204:
+//			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
 		case 20205:
 			return "The application schema package '$1$' is completely empty after profiling.";
-		case 20206:
-			return "Error parsing component of '$1$' configuration parameter: $2$";
 		case 20207:
 			return "Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
 		case 20208:
@@ -1195,23 +1192,15 @@ public class Profiler implements Transformer, MessageSource {
 			return "Unrecognized constraint context model element type: '$1$'.";
 		case 20213:
 			return "Unrecognized constraint type: '$1$'.";
-		case 20214:
-			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
+//		case 20214:
+//			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
 		case 20215:
 			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
-		case 20216:
-			return "Context: model element: '$1$'";
-		case 20217:
-			return "Context: parsing message: '$1$'";
-		case 20218:
-			return "Context: profiles string: '$1$'";
 		case 20219:
 			return "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
 		case 20220:
 			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
-		case 20221:
-			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
-
+		
 		default:
 			return "(Unknown message in " + this.getClass().getName()
 					+ ". Message number was: " + mnr + ")";
