@@ -45,8 +45,8 @@ import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class FlattenerConfigurationValidator
@@ -81,7 +81,7 @@ public class FlattenerConfigurationValidator
 			}
 		}
 
-		// validate
+		// validate parameter: descriptorModification_nonUnionSeparator
 		String descModSeparator = trfConfig.parameterAsString(
 				Flattener.PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, null, false,
 				true);
@@ -106,6 +106,22 @@ public class FlattenerConfigurationValidator
 			}
 		}
 
+		// validate parameter: flattenTypesPropertyCopyDuplicateBehavior
+		String propertyCopyDuplicateBehavior = trfConfig.parameterAsString(
+				Flattener.PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR,
+				null, false, true);
+
+		if (propertyCopyDuplicateBehavior != null) {
+
+			if (!("IGNORE".equals(propertyCopyDuplicateBehavior)
+					|| "OVERWRITE".equals(propertyCopyDuplicateBehavior))) {
+				result.addError(this, 101,
+						Flattener.PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR,
+						propertyCopyDuplicateBehavior);
+				isValid = false;
+			}
+		}
+
 		return isValid;
 	}
 
@@ -120,6 +136,9 @@ public class FlattenerConfigurationValidator
 					+ "' is required for the execution of '"
 					+ Flattener.RULE_TRF_ALL_REMOVETYPE
 					+ "'. The configuration does not contain this parameter with a non-empty string.";
+		case 101:
+			return "Configuration parameter '$1$' must be 'IGNORE' or 'OVERWRITE'. Found: $2$ ";
+
 		case 20348:
 			return "Configuration parameter '$1$' contains unknown descriptor '$2$'. ";
 

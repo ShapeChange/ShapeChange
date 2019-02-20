@@ -1022,6 +1022,20 @@ public class ShapeChangeResult {
 
 		case 20103:
 			return "---------- now processing: $1$ ----------";
+			
+		// common profiling related messages 
+		case 20201:
+			return "Profile identifier is not well-formed.";
+		case 20206:
+			return "Error parsing component of '$1$' configuration parameter: $2$";		
+		case 20216:
+			return "Context: model element: '$1$'";
+		case 20217:
+			return "Context: parsing message: '$1$'";
+		case 20218:
+			return "Context: profiles string: '$1$'";
+		case 20221:
+			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
 
 		case 30800:
 			return "(Generic model element reader) Unexpected start element found by $1$: '$2$'.";

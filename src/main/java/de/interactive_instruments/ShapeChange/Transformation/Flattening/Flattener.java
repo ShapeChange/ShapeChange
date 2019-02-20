@@ -179,7 +179,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
 	public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
 	public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
-
+	public static final String PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR = "flattenTypesPropertyCopyDuplicateBehavior";
 	/**
 	 * Alias: none
 	 * <p>
@@ -3341,6 +3341,9 @@ public class Flattener implements Transformer, MessageSource {
 				.parameterAsBoolean(
 						PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION,
 						true);
+		
+		String propertyCopyDuplicateBehavior_s = trfConfig.parameterAsString(PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR, "IGNORE", false, true);
+		PropertyCopyDuplicatBehaviorIndicator propertyCopyDuplicateBehavior = PropertyCopyDuplicatBehaviorIndicator.valueOf(propertyCopyDuplicateBehavior_s);
 
 		EnumMap<Descriptor, String> nonUnionSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
 				PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, trfConfig);
@@ -3913,10 +3916,12 @@ public class Flattener implements Transformer, MessageSource {
 					}
 				}
 
-				// add new properties, if any, to inClass and model, ignoring
-				// already existing ones
+				/*
+				 * Add new properties, if any, to inClass and model, using
+				 * duplicate behavior defined via configuration
+				 */
 				genModel.add(propsToAdd,
-						PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+						propertyCopyDuplicateBehavior);
 
 				// remove properties of the current class which have been
 				// processed from both the class and the model

@@ -138,4 +138,13 @@ public class FlattenerTest extends WindowsBasicTest {
 				"testResults/flattening/inheritanceIgnoringArcGISSubtypes",
 				"src/test/resources/flattener/inheritanceIgnoringArcGISSubtypes/reference");
 	}
+	
+	@Test
+	public void test_flattenTypes_propertyCopyDuplicateBehavior() {
+		multiTest(
+				"src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/test_Flattener_flattenTypes_propertyCopyDuplicateBehavior.xml",
+				new String[] { "xsd" },
+				"testResults/flattening/flattenTypes_propertyCopyDuplicateBehavior",
+				"src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/reference");
+	}	
 }
