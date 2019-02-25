@@ -83,8 +83,8 @@ import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ModelExport implements SingleTarget, MessageSource {
@@ -336,19 +336,15 @@ public class ModelExport implements SingleTarget, MessageSource {
 		options = r.options();
 
 		try {
-			// writer.forceNSDecl("http://www.w3.org/2001/XMLSchema-instance",
-			// "xsi");
+			writer.forceNSDecl("http://www.w3.org/2001/XMLSchema-instance",
+					"xsi");
 			writer.forceNSDecl(NS, "sc");
 			writer.startDocument();
 
 			AttributesImpl atts = new AttributesImpl();
-			// atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
-			// "schemaLocation",
-			// "xsi:schemaLocation", "CDATA", NS + "
-			// http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd");
-			// atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
-			// "noNamespaceSchemaLocation",
-			// "xsi:noNamespaceSchemaLocation", "CDATA", "TBD.xsd");
+			atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
+					"schemaLocation", "xsi:schemaLocation", "CDATA",
+					NS + "http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd");
 			atts.addAttribute("", "encoding", "", "string",
 					model.characterEncoding());
 			writer.startElement(NS, "Model", "", atts);
@@ -620,7 +616,9 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printConstraints(ci.constraints());
 
-		if (!ci.properties().isEmpty()) {
+		if (!ci.properties().isEmpty() && ci.properties().values().stream()
+				.anyMatch(property -> property.isNavigable())) {
+
 			writer.startElement(NS, "properties");
 			for (PropertyInfo pi : ci.properties().values()) {
 				/*

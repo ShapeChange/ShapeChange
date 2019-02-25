@@ -101,7 +101,7 @@ public interface PackageInfo extends Info {
 	/**
 	 * Determine whether the package represents an 'application schema'. The
 	 * package is regarded an 'application schema', if it carries a stereotype
-	 * with normalized name "application schema".
+	 * with normalized name "application schema" or "schema".
 	 */
 	public boolean isAppSchema();
 

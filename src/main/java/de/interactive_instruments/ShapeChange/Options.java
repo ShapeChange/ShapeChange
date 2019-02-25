@@ -166,7 +166,7 @@ public class Options {
 			"identifier", "version", "property", "estimated", "enum",
 			"retired" };
 	public static final String[] packageStereotypes = { "application schema",
-			"bundle", "leaf", "retired" };
+			"schema", "bundle", "leaf", "retired" };
 	public static final String[] depStereotypes = { "import", "include",
 			"retired" };
 

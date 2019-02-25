@@ -249,7 +249,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	 */
 	@Override
 	public boolean isAppSchema() {
-		if (stereotype("application schema")) {
+		if (stereotype("application schema") || stereotype("schema")) {
 			return true;
 		}
 		return false;

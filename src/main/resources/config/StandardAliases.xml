@@ -4,7 +4,6 @@
 	<!-- Mappings for stereotypes of packages -->
 	<StereotypeAlias wellknown="Application Schema" alias="applicationSchema" />
 	<StereotypeAlias wellknown="Application Schema" alias="requirementsClass" />
-	<StereotypeAlias wellknown="Application Schema" alias="schema" />	
 	<StereotypeAlias wellknown="" alias="bundle" />	
 	<StereotypeAlias wellknown="" alias="leaf" />
 	<!-- Mappings for stereotypes of classes -->
