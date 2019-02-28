@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.ModelExport;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ModelExportConstants {
@@ -91,6 +91,27 @@ public class ModelExportConstants {
 	 * Applies to Rule(s): none – default behavior
 	 */
 	public static final String PARAM_MODEL_EXPLICIT_PROFILES = "profilesInModelSetExplicitly";
+
+	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: String
+	 * <p>
+	 * Default Value:
+	 * http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd
+	 * <p>
+	 * Explanation: The location of the XML Schema that shall be referenced by
+	 * the xsi:schemaLocation attribute, which will be added to the root of the
+	 * generated SCXML file. Note that the namespace, which is the first part of
+	 * the xsi:schemaLocation, will not be changed by this parameter. Only the
+	 * schema location is changed.
+	 * <p>
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_SCHEMA_LOCATION = "schemaLocation";
+	public static final String DEFAULT_SCHEMA_LOCATION = "http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd";
 
 	/**
 	 * Alias: none

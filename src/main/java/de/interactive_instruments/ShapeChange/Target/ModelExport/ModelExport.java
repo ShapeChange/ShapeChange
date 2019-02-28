@@ -107,6 +107,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	private static Pattern ignoreTaggedValuesPattern = null;
 	private static boolean exportProfilesFromWholeModel = false;
 	private static boolean zipOutput = false;
+	private static String schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
 
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -214,6 +215,12 @@ public class ModelExport implements SingleTarget, MessageSource {
 						ModelExport.class.getName(),
 						ModelExportConstants.PARAM_ZIP_OUTPUT, false);
 
+				schemaLocation = options.parameterAsString(
+						ModelExport.class.getName(),
+						ModelExportConstants.PARAM_SCHEMA_LOCATION,
+						ModelExportConstants.DEFAULT_SCHEMA_LOCATION, false,
+						true);
+
 				boolean profilesInModelSetExplicitly = options
 						.parameterAsBoolean(ModelExport.class.getName(),
 								ModelExportConstants.PARAM_MODEL_EXPLICIT_PROFILES,
@@ -312,6 +319,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		ignoreTaggedValuesPattern = null;
 		exportProfilesFromWholeModel = false;
 		zipOutput = false;
+		schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
 	}
 
 	@Override
@@ -344,7 +352,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 			AttributesImpl atts = new AttributesImpl();
 			atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
 					"schemaLocation", "xsi:schemaLocation", "CDATA",
-					NS + " http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd");
+					NS + " " + schemaLocation);
 			atts.addAttribute("", "encoding", "", "string",
 					model.characterEncoding());
 			writer.startElement(NS, "Model", "", atts);
