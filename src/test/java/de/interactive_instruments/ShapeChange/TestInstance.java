@@ -70,9 +70,10 @@ public class TestInstance {
 			result = new ShapeChangeResult(options);
 
 			String javaVersion = System.getProperty("java.version");
-			char major = javaVersion.charAt(0);
-			char minor = javaVersion.charAt(2);
-			if (major == '1' && minor < '6') {
+			String[] components = javaVersion.split("\\.");
+			int major = Integer.parseInt(components[0]);
+			int minor = Integer.parseInt(components[1]);
+			if (major == 1 && minor < 8) {
 				result.addError(null, 18, javaVersion);
 				System.exit(1);
 			}

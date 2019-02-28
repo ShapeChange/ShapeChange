@@ -684,7 +684,7 @@ public class ShapeChangeResult {
 		case 17:
 			return "Unknown input model type: '$1$'.";
 		case 18:
-			return "Unsupported Java version: '$1$'. Java 1.6 or higher required.";
+			return "Unsupported Java version: '$1$'. Java 1.8 or higher required.";
 		case 19:
 			return "Model object could not be instantiated: '$1$'.";
 		case 20:

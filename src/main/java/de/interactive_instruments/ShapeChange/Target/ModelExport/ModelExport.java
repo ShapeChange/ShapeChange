@@ -344,7 +344,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 			AttributesImpl atts = new AttributesImpl();
 			atts.addAttribute("http://www.w3.org/2001/XMLSchema-instance",
 					"schemaLocation", "xsi:schemaLocation", "CDATA",
-					NS + "http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd");
+					NS + " http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd");
 			atts.addAttribute("", "encoding", "", "string",
 					model.characterEncoding());
 			writer.startElement(NS, "Model", "", atts);

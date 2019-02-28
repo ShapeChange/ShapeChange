@@ -66,24 +66,27 @@
      <enumeration value="CodeList"/>
      <enumeration value="DataType"/>
      <enumeration value="disjoint"/>
+     <enumeration value="enum"/>
      <enumeration value="Enumeration"/>
+     <enumeration value="estimated"/>
      <enumeration value="FachId"/>
      <enumeration value="featureConcept"/>
      <enumeration value="FeatureType"/>
+     <enumeration value="identifier"/>
      <enumeration value="import"/>
      <enumeration value="include"/>
      <enumeration value="Interface"/>
      <enumeration value="leaf"/>
+     <enumeration value="property"/>
+     <enumeration value="retired"/>
+     <enumeration value="roleConcept"/>
+     <enumeration value="schema"/>
      <enumeration value="Schluesseltabelle"/>
      <enumeration value="Type"/>
      <enumeration value="Union"/>
      <enumeration value="valueConcept"/>
      <enumeration value="version"/>
-     <enumeration value="voidable"/>
-     <enumeration value="enum"/>
-     <enumeration value="property"/>
-     <enumeration value="identifier"/>
-     <enumeration value="estimated"/>
+     <enumeration value="voidable"/>     
     </restriction>
    </simpleType>
   </attribute>
