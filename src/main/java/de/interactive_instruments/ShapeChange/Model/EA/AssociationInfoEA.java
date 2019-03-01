@@ -200,7 +200,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 	/** Return model-unique id of association */
 	public String id() {
-		return new Integer(eaConnectorId).toString();
+		return Integer.valueOf(eaConnectorId).toString();
 	} // id()
 
 	/** Return Model object */

@@ -157,7 +157,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		// The Id
 		eaPropertyId = ci.id();
 		eaPropertyId += "_";
-		eaPropertyId += new Integer(eaAttributeId).toString();
+		eaPropertyId += Integer.valueOf(eaAttributeId).toString();
 
 		// Property name
 		eaName = eaAttribute.GetName();
@@ -252,7 +252,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		// Id of property. Since ConnectorEnds have no Id, we resort to the
 		// Id of the Connector and prefix a letter S or T.
 		eaPropertyId = (reversed ? "S" : "T")
-				+ new Integer(ai.eaConnectorId).toString();
+				+ Integer.valueOf(ai.eaConnectorId).toString();
 
 		// Name of role
 		eaName = eaCE.GetRole();
@@ -438,7 +438,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 			if (isAttribute()) {
 				// Fetch from EA model
-				isReadOnlyCache = new Boolean(eaAttribute.GetIsConst());
+				isReadOnlyCache = Boolean.valueOf(eaAttribute.GetIsConst());
 			} else {
 				isReadOnlyCache = false;
 			}
@@ -537,7 +537,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isDerived() {
 		if (isDerivedCache == null) {
-			isDerivedCache = new Boolean(isAttribute()
+			isDerivedCache = Boolean.valueOf(isAttribute()
 					? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
 		}
 		return isDerivedCache;
@@ -548,7 +548,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isNavigable() {
 		if (isNavigableCache == null) {
-			isNavigableCache = new Boolean(true);
+			isNavigableCache = Boolean.valueOf(true);
 			// Attributes always are.
 			if (!isAttribute()) {
 				// First get navigability from role
@@ -615,7 +615,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isOrdered() {
 		if (isOrderedCache == null) {
-			isOrderedCache = new Boolean(false);
+			isOrderedCache = Boolean.FALSE;
 			if (isAttribute()) {
 				// Inquire from Attribute
 				isOrderedCache = eaAttribute.GetIsOrdered();
@@ -634,7 +634,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isUnique() {
 		if (isUniqueCache == null) {
-			isUniqueCache = new Boolean(true);
+			isUniqueCache = Boolean.TRUE;
 			if (isAttribute()) {
 				// Inquire from Attribute
 				isUniqueCache = !eaAttribute.GetAllowDuplicates();

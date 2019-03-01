@@ -122,7 +122,7 @@ public class XSLT implements Target {
 		
 		s = options.parameter(this.getClass().getName(),"maxFolderLevel");
 		if (s!=null && s.length()>0) {
-			maxLevel = new Integer(s);			
+			maxLevel = Integer.parseInt(s);			
 		}
 		
 		s = options.parameter(this.getClass().getName(),"north");

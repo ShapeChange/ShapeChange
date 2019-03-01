@@ -1515,7 +1515,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	public Quantifier visitExactlyNQuantifier(ExactlyNQuantifierContext ctx) {
 
 		Quantifier q = new Quantifier();
-		Integer i = new Integer(ctx.value.getText());
+		Integer i = Integer.valueOf(ctx.value.getText());
 		q.setLowerBoundary(i);
 		q.setUpperBoundary(i);
 		return q;
@@ -1526,8 +1526,8 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 			NumericRangeQuantifierContext ctx) {
 
 		Quantifier q = new Quantifier();
-		Integer lv = new Integer(ctx.lowerValue.getText());
-		Integer uv = new Integer(ctx.upperValue.getText());
+		Integer lv = Integer.valueOf(ctx.lowerValue.getText());
+		Integer uv = Integer.valueOf(ctx.upperValue.getText());
 		q.setLowerBoundary(lv);
 		q.setUpperBoundary(uv);
 		return q;
@@ -1545,7 +1545,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	public Quantifier visitAtLeastNQuantifier(AtLeastNQuantifierContext ctx) {
 
 		Quantifier q = new Quantifier();
-		Integer i = new Integer(ctx.value.getText());
+		Integer i = Integer.valueOf(ctx.value.getText());
 		q.setLowerBoundary(i);
 		return q;
 	}
@@ -1562,7 +1562,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	public Quantifier visitAtMostNQuantifier(AtMostNQuantifierContext ctx) {
 
 		Quantifier q = new Quantifier();
-		Integer i = new Integer(ctx.value.getText());
+		Integer i = Integer.valueOf(ctx.value.getText());
 		q.setUpperBoundary(i);
 		return q;
 	}

@@ -39,8 +39,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
-import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
-import de.interactive_instruments.ShapeChange.Target.SQL.SqlDdlConfigurationValidator;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>

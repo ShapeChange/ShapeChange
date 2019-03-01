@@ -45,19 +45,19 @@ public class Main {
 
 	/** Main ShapeChange entry point. */
 	public static void main(String argv[]) {
-		
+
 		Options options = new Options();
 		ShapeChangeResult result = new ShapeChangeResult(options);
-		
+
 		// test for Java 1.6 or later
 		String javaVersion = System.getProperty("java.version");
 		char major = javaVersion.charAt(0);
 		char minor = javaVersion.charAt(2);
-	    if (major == '1' && minor < '6') {
-			result.addFatalError(null,18, javaVersion);
+		if (major == '1' && minor < '6') {
+			result.addFatalError(null, 18, javaVersion);
 			System.exit(1);
-	    }
-	    		
+		}
+
 		Converter converter = new Converter(options, result);
 
 		boolean dialog = false;
@@ -74,7 +74,7 @@ public class Main {
 				}
 				if (option.equals("c")) {
 					if (++i == argv.length) {
-						result.addError(null,111, "-c");
+						result.addError(null, 111, "-c");
 					} else
 						options.configFile = argv[i];
 					continue;
@@ -82,16 +82,16 @@ public class Main {
 				if (option.equals("x")) {
 					String x1 = null, x2 = null;
 					if (++i == argv.length)
-						result.addError(null,111, "-x");
+						result.addError(null, 111, "-x");
 					else {
 						x1 = argv[i];
 						if (++i == argv.length)
-							result.addError(null,111, "-x");
+							result.addError(null, 111, "-x");
 						else
 							x2 = argv[i];
 					}
-					if (x2!=null)
-						options.setReplaceValue(x1,x2); 
+					if (x2 != null)
+						options.setReplaceValue(x1, x2);
 					continue;
 				}
 				if (option.equals("d")) {
@@ -99,13 +99,13 @@ public class Main {
 					continue;
 				}
 			}
-		}	
-		
+		}
+
 		// if no configuration file is provided, invoke the dialog
-		if (options.configFile==null) {
+		if (options.configFile == null) {
 			dialog = true;
 		}
-		
+
 		if (dialog) {
 			createAndShowGUI(converter, options, result);
 		} else {
@@ -116,73 +116,88 @@ public class Main {
 				System.err.println(e.getMessage());
 				System.exit(1);
 			}
-		}			
+		}
 	} // main(String[])
 
-	private static void createAndShowGUI(Converter c, Options o, ShapeChangeResult r) {
-    	Dialog dialog = null;
-    	String modelFile = null;
+	private static void createAndShowGUI(Converter c, Options o,
+			ShapeChangeResult r) {
+		Dialog dialog = null;
+		String modelFile = null;
 
-        // SO 30.07.2009: Extend GUI loading with the ability to load a class,
-        // which is given in the config file (parameter 'dialog'). This dialog
-        // class should implement the 'Dialog' interface.
-        // The formerly named 'Dialog' class is now called 'DefaultDialog'.
-        try {
-        	o.loadConfiguration();
-        } catch (ShapeChangeAbortException e) {
-			String msg = "Error while loading the configuration."+System.getProperty("line.separator")+e.toString();
+		// SO 30.07.2009: Extend GUI loading with the ability to load a class,
+		// which is given in the config file (parameter 'dialog'). This dialog
+		// class should implement the 'Dialog' interface.
+		// The formerly named 'Dialog' class is now called 'DefaultDialog'.
+		try {
+			o.loadConfiguration();
+		} catch (ShapeChangeAbortException e) {
+			String msg = "Error while loading the configuration."
+					+ System.getProperty("line.separator") + e.toString();
 			String title = "Error";
-			JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, msg, title,
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
-        }
-        try {
-        	String classname = o.parameter("dialogClass");
-        	if(classname != null){
-				@SuppressWarnings("rawtypes")
-				Class theClass = Class.forName(classname);
-				dialog = (Dialog)theClass.newInstance();
-        		dialog.initialise(c, o, r, o.parameter("inputFile"));
-        	}
-       	} catch (Exception e) {
-			String msg = "Error while creating input dialog."+System.getProperty("line.separator")+e.toString();
+		}
+		try {
+			String classname = o.parameter("dialogClass");
+			if (classname != null) {
+				Class<?> theClass = Class.forName(classname);
+				dialog = (Dialog) theClass.getConstructor().newInstance();
+				dialog.initialise(c, o, r, o.parameter("inputFile"));
+			}
+		} catch (Exception e) {
+			String msg = "Error while creating input dialog."
+					+ System.getProperty("line.separator") + e.toString();
 			String title = "Error";
-			JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, msg, title,
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 
-		if(dialog==null)
+		if (dialog == null)
 			dialog = new DefaultDialog(c, o, r, modelFile);
-		
+
 		dialog.setVisible(true);
-    }
+	}
 
- 	/** Prints the usage. */
- 	protected static void printUsage() {
+	/** Prints the usage. */
+	protected static void printUsage() {
 
- 		System.err.println("ShapeChange command line interface");
- 		System.err.println();
- 		System.err.println("ShapeChange takes a ISO 19109 application schema"); 
- 		System.err.println("from a UML model and translates it into a GML application");
- 		System.err.println("schema or other implementation representations");
- 		System.err.println();
- 		System.err.println("usage: java -jar ShapeChange.jar (options) modelfile");
- 		System.err.println();
- 		System.err.println("options:");
- 		System.err.println(" -c cfgfile The location of the main configuration");
- 		System.err.println("            file. XInclude is supported and can be used");
- 		System.err.println("            to modularise the confguration. The default is");
- 		System.err.println("            http://shapechange.net/resources/config/minimal.xml.");
- 		System.err.println(" -x val rep If a configuration file contains a parameter");
- 		System.err.println("            with a value of 'val' then the value will be");
- 		System.err.println("            replaced by 'rep'. This option may occur multiple");
- 		System.err.println("            times.");
- 		System.err.println("            Example: -x '$dir$' './result/xsd' would replace.");
- 		System.err.println("            any parameter values '$dir$' in the configuration.");
- 		System.err.println("            file with './result/xsd'.");
- 		System.err.println(" -d         Invokes the user interface.");
- 		System.err.println(" -h         This help screen.");
- 		System.err.println();
+		System.err.println("ShapeChange command line interface");
+		System.err.println();
+		System.err.println("ShapeChange takes a ISO 19109 application schema");
+		System.err.println(
+				"from a UML model and translates it into a GML application");
+		System.err.println("schema or other implementation representations");
+		System.err.println();
+		System.err.println(
+				"usage: java -jar ShapeChange.jar (options) modelfile");
+		System.err.println();
+		System.err.println("options:");
+		System.err
+				.println(" -c cfgfile The location of the main configuration");
+		System.err.println(
+				"            file. XInclude is supported and can be used");
+		System.err.println(
+				"            to modularise the confguration. The default is");
+		System.err.println(
+				"            http://shapechange.net/resources/config/minimal.xml.");
+		System.err.println(
+				" -x val rep If a configuration file contains a parameter");
+		System.err.println(
+				"            with a value of 'val' then the value will be");
+		System.err.println(
+				"            replaced by 'rep'. This option may occur multiple");
+		System.err.println("            times.");
+		System.err.println(
+				"            Example: -x '$dir$' './result/xsd' would replace.");
+		System.err.println(
+				"            any parameter values '$dir$' in the configuration.");
+		System.err.println("            file with './result/xsd'.");
+		System.err.println(" -d         Invokes the user interface.");
+		System.err.println(" -h         This help screen.");
+		System.err.println();
 
- 	} // printUsage()
-    
+	} // printUsage()
+
 }

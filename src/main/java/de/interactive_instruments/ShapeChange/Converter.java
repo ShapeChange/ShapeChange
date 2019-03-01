@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,10 +101,9 @@ public class Converter implements MessageSource {
 		boolean skipSemanticValidation = false;
 		if (options.parameter(
 				Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG) != null
-				&& options
-						.parameter(
-								Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG)
-						.trim().equalsIgnoreCase("true")) {
+				&& options.parameter(
+						Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG).trim()
+						.equalsIgnoreCase("true")) {
 			skipSemanticValidation = true;
 		}
 
@@ -192,12 +192,11 @@ public class Converter implements MessageSource {
 
 				try {
 
-					@SuppressWarnings("rawtypes")
-					Class theClass = Class.forName(
+					Class<?> theClass = Class.forName(
 							pConfig.getClassName() + "ConfigurationValidator");
 
 					ConfigurationValidator validator = (ConfigurationValidator) theClass
-							.newInstance();
+							.getConstructor().newInstance();
 
 					if (pConfig instanceof TransformerConfiguration) {
 
@@ -359,7 +358,6 @@ public class Converter implements MessageSource {
 	 * @param targetConfigs
 	 * @throws Exception
 	 */
-	@SuppressWarnings("rawtypes")
 	private void executeDeferrableOutputWriters(
 			List<TargetConfiguration> targetConfigs) throws Exception {
 
@@ -369,7 +367,7 @@ public class Converter implements MessageSource {
 				continue;
 
 			String classname = tgt.getClassName();
-			Class theClass = Class.forName(classname);
+			Class<?> theClass = Class.forName(classname);
 
 			if (!isDeferrableOutputWriter(theClass)) {
 				continue;
@@ -417,7 +415,7 @@ public class Converter implements MessageSource {
 				 * === initialise deferrable output writer and write output ===
 				 */
 				DeferrableOutputWriter dowTarget = (DeferrableOutputWriter) theClass
-						.newInstance();
+						.getConstructor().newInstance();
 
 				dowTarget.initialise(options, result);
 
@@ -451,7 +449,8 @@ public class Converter implements MessageSource {
 
 	/**
 	 * @param outputDirectory
-	 *            directory to observe, if <code>null</code> then "." is assumed
+	 *                            directory to observe, if <code>null</code>
+	 *                            then "." is assumed
 	 * @param listener
 	 * @param tgt
 	 * @return observer for the given output directory, can be <code>null</code>
@@ -659,12 +658,12 @@ public class Converter implements MessageSource {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	private void executeTargets(Model model, String modelProviderId,
 			List<TargetConfiguration> targetConfigs)
 			throws ShapeChangeAbortException, ClassNotFoundException,
 			InstantiationException, IllegalAccessException,
-			NoSuchMethodException, SecurityException {
+			NoSuchMethodException, SecurityException, IllegalArgumentException,
+			InvocationTargetException {
 
 		if (processIdsToIgnore.contains(modelProviderId)) {
 			// do not execute this target
@@ -709,7 +708,7 @@ public class Converter implements MessageSource {
 
 			String classname = tgt.getClassName();
 			ProcessMode tmode = options.targetMode(classname);
-			Class theClass = Class.forName(classname);
+			Class<?> theClass = Class.forName(classname);
 			boolean targetCalled = false;
 
 			for (PackageInfo pi : selectedSchemas) {
@@ -736,10 +735,10 @@ public class Converter implements MessageSource {
 				if (tmode.equals(ProcessMode.disabled))
 					continue;
 
-				target = (Target) theClass.newInstance();
+				target = (Target) theClass.getConstructor().newInstance();
 
 				if (target != null) {
-					
+
 					targetCalled = true;
 
 					result.addInfo(this, 503, target.getTargetName(),
@@ -818,7 +817,7 @@ public class Converter implements MessageSource {
 				if (isSingleTarget(theClass)) {
 
 					SingleTarget starget = (SingleTarget) theClass
-							.newInstance();
+							.getConstructor().newInstance();
 
 					/*
 					 * announce target class-wide so that StatusReaders can
@@ -983,14 +982,15 @@ public class Converter implements MessageSource {
 	 * SingleTarget instances the result can only be created after all schemas
 	 * have been processed), so they have to be reseted before a new conversion.
 	 */
-	@SuppressWarnings("rawtypes")
 	private void resetSingleTargets() throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
 		Vector<String> targets = options.targets();
 		for (Iterator<String> j = targets.iterator(); j.hasNext();) {
 			String classname = j.next();
-			Class theClass = Class.forName(classname);
-			target = (Target) theClass.newInstance();
+			Class<?> theClass = Class.forName(classname);
+			target = (Target) theClass.getConstructor().newInstance();
 
 			if (target != null) {
 				ProcessMode tmode = options.targetMode(classname);
@@ -999,7 +999,7 @@ public class Converter implements MessageSource {
 
 				if (isSingleTarget(theClass)) {
 					SingleTarget starget = (SingleTarget) theClass
-							.newInstance();
+							.getConstructor().newInstance();
 					if (starget != null) {
 						starget.reset();
 					}
@@ -1083,9 +1083,9 @@ public class Converter implements MessageSource {
 				// }
 
 				try {
-					@SuppressWarnings("rawtypes")
-					Class theClass = Class.forName(transformer);
-					Transformer t = (Transformer) theClass.newInstance();
+					Class<?> theClass = Class.forName(transformer);
+					Transformer t = (Transformer) theClass.getConstructor()
+							.newInstance();
 					t.initialise(options, result, mdl);
 					t.transform();
 					t.shutdown();
@@ -1099,15 +1099,14 @@ public class Converter implements MessageSource {
 		Model m = null;
 
 		// Get model object from reflection API
-		@SuppressWarnings("rawtypes")
-		Class theClass;
+		Class<?> theClass;
 		try {
 			theClass = Class.forName(imt);
 			if (theClass == null) {
 				result.addFatalError(null, 17, imt);
 				throw new ShapeChangeAbortException();
 			}
-			m = (Model) theClass.newInstance();
+			m = (Model) theClass.getConstructor().newInstance();
 			if (m != null) {
 
 				/*
@@ -1140,7 +1139,8 @@ public class Converter implements MessageSource {
 		} catch (ClassNotFoundException e) {
 			result.addFatalError(null, 17, imt);
 			throw new ShapeChangeAbortException();
-		} catch (InstantiationException e) {
+		} catch (IllegalArgumentException | InstantiationException
+				| InvocationTargetException | NoSuchMethodException e) {
 			result.addFatalError(null, 19, imt);
 			throw new ShapeChangeAbortException();
 		} catch (IllegalAccessException e) {

@@ -89,7 +89,7 @@ public class ConfigConfigurationValidator
 
 			String s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_MAX_LENGTH);
 			
-			try { new Integer(s); }
+			try { Integer.valueOf(s); }
 			catch (Exception e) {
 				result.addError(this, 3, ConfigConstants.PARAM_MAX_LENGTH, s);
 				isValid = false;

@@ -2219,9 +2219,8 @@ public class SqlBuilder implements MessageSource {
 					if (pi.matches(
 							SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE)) {
 
-						Double lowerBoundaryValue = new Double(-1000000000);
-						;
-						Double upperBoundaryValue = new Double(1000000000);
+						Double lowerBoundaryValue = Double.valueOf(-1000000000);						
+						Double upperBoundaryValue = Double.valueOf(1000000000);
 
 						boolean foundLowerBoundary = false;
 						boolean foundUpperBoundary = false;

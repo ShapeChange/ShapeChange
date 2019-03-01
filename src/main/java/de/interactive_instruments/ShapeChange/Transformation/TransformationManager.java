@@ -67,8 +67,8 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
  * Manages the transformation of a model, executing common pre- and
  * postprocessing tasks (e.g. setting of tagged values).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  */
 public class TransformationManager implements MessageSource {
 
@@ -87,13 +87,12 @@ public class TransformationManager implements MessageSource {
 		this.options = o;
 		this.result = r;
 
-		@SuppressWarnings("rawtypes")
-		Class theClass;
+		Class<?> theClass;
 		de.interactive_instruments.ShapeChange.Transformation.Transformer transformer;
 		try {
 			theClass = Class.forName(trfConfig.getClassName());
 			transformer = (de.interactive_instruments.ShapeChange.Transformation.Transformer) theClass
-					.newInstance();
+					.getConstructor().newInstance();
 		} catch (Exception e) {
 			throw new ShapeChangeAbortException(
 					"Could not load transformer class '"
@@ -337,9 +336,8 @@ public class TransformationManager implements MessageSource {
 
 		if (trfConfig.hasParameter(
 				TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
-				&& trfConfig
-						.getParameterValue(
-								TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
+				&& trfConfig.getParameterValue(
+						TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
 						.trim().equalsIgnoreCase("true")) {
 			setGenerationDateTimeTaggedValue(genModel);
 		}
@@ -471,8 +469,9 @@ public class TransformationManager implements MessageSource {
 
 			genPi.setTaggedValues(genPiTVs, true);
 		}
-		
-		for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+
+		for (GenericAssociationInfo genAi : genModel
+				.selectedSchemaAssociations()) {
 
 			TaggedValues genAiTVs = genAi.taggedValuesAll();
 
@@ -519,7 +518,7 @@ public class TransformationManager implements MessageSource {
 		SortedSet<PackageInfo> appSchema = genModel.selectedSchemas();
 
 		for (PackageInfo pi : appSchema) {
-			
+
 			GenericPackageInfo genPi = (GenericPackageInfo) pi;
 
 			TaggedValues genPiTVs = genPi.taggedValuesAll();

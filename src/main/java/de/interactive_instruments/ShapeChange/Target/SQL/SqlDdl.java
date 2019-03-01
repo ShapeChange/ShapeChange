@@ -624,7 +624,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 							if (metaKey.equalsIgnoreCase("columnName")) {
 								columnName = metaValue;
 							} else if (metaKey.equalsIgnoreCase("size")) {
-								size = new Integer(metaValue);
+								size = Integer.valueOf(metaValue);
 							} else if (metaKey
 									.equalsIgnoreCase("columnDocumentation")) {
 								documentation = metaValue;

@@ -1103,6 +1103,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		boolean isZip = repositoryFileName.toLowerCase().endsWith(".zip");
 
+		ZipFile zip = null;
+		
 		try {
 
 			/*
@@ -1115,7 +1117,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			if (isZip) {
 
-				ZipFile zip = new ZipFile(modelfile);
+				zip = new ZipFile(modelfile);
 				Enumeration<? extends ZipEntry> entries = zip.entries();
 
 				if (entries.hasMoreElements()) {
@@ -1408,6 +1410,15 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		} catch (IOException e) {
 			result.addFatalError(null, 30803, e.getMessage());
 			throw new ShapeChangeAbortException();
+		} finally {
+			if(zip != null) {
+				try {
+					zip.close();
+				} catch (IOException e) {
+					result.addFatalError(null, 30803, e.getMessage());
+					throw new ShapeChangeAbortException();
+				}
+			}
 		}
 	}
 

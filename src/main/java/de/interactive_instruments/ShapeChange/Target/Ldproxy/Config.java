@@ -34,23 +34,21 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -465,7 +463,7 @@ public class Config implements SingleTarget, MessageSource {
 								
 				s = options.parameter(Config.class.getName(), ConfigConstants.PARAM_MAX_LENGTH);
 				if (s != null)
-					maxLength = new Integer(s);
+					maxLength = Integer.valueOf(s);
 				if (maxLength == null)
 					maxLength = 60;
 

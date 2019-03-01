@@ -139,10 +139,10 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 			int count = encounteredAppSchemasByName.get(pi.name()).intValue();
 			count++;
 			nameForAppSchema = pi.name() + " (" + count + ")";
-			encounteredAppSchemasByName.put(pi.name(), new Integer(count));
+			encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(count));
 		} else {
 			nameForAppSchema = pi.name();
-			encounteredAppSchemasByName.put(pi.name(), new Integer(1));
+			encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(1));
 		}
 
 		schemaStat = new SchemaStatistic(nameForAppSchema, pi);

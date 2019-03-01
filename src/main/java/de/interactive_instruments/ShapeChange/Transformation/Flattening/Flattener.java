@@ -1255,7 +1255,7 @@ public class Flattener implements Transformer, MessageSource {
 				.hasParameter(PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES)) {
 			String paramValue = trfConfig.getParameterValue(
 					PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES);
-			Boolean b = new Boolean(paramValue);
+			Boolean b = Boolean.valueOf(paramValue);
 
 			result.addDebug(this, 20102,
 					PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES,
@@ -1268,7 +1268,7 @@ public class Flattener implements Transformer, MessageSource {
 				PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP)) {
 			String paramValue = trfConfig.getParameterValue(
 					PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP);
-			Boolean b = new Boolean(paramValue);
+			Boolean b = Boolean.valueOf(paramValue);
 
 			result.addDebug(this, 20102,
 					PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP,
@@ -4554,7 +4554,7 @@ public class Flattener implements Transformer, MessageSource {
 							PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES, smo);
 				} else {
 					try {
-						Integer i = new Integer(smoParts[2]);
+						Integer i = Integer.valueOf(smoParts[2]);
 						specificMaxOccursByIdPattern
 								.put(smoParts[0] + "::" + smoParts[1], i);
 					} catch (NumberFormatException e) {

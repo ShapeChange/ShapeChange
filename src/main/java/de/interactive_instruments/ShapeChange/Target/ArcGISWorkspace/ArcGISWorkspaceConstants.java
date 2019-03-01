@@ -260,9 +260,9 @@ public class ArcGISWorkspaceConstants {
 
 	public static final double NUM_RANGE_DELTA = 0.01;
 
-	public static final Double DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY = new Double(
+	public static final Double DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY = Double.valueOf(
 			-1000000000);
-	public static final Double DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY = new Double(
+	public static final Double DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY = Double.valueOf(
 			1000000000);
 
 	public static final int LENGTH_TAGGED_VALUE_DEFAULT = 255;

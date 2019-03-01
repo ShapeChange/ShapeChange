@@ -290,7 +290,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 			fPackageById.put(pi.id(), pi);
 			if (packelmt != null)
 				this.fPackageByElmtId.put(
-						new Integer(packelmt.GetElementID()).toString(), pi);
+						Integer.valueOf(packelmt.GetElementID()).toString(), pi);
 
 			// Now pick all classes and add these to their to caches.
 			for (org.sparx.Element elmt : pack.GetElements()) {

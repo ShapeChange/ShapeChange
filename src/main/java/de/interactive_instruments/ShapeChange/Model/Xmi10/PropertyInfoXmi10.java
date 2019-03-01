@@ -200,7 +200,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 			Element e2 = doc.elementOfProperty(e1,
 					"Foundation.Data_Types.Multiplicity.range");
 			if (e2 != null) {
-				Integer lower = new Integer(doc.textOfProperty(e2,
+				Integer lower = Integer.valueOf(doc.textOfProperty(e2,
 						"Foundation.Data_Types.MultiplicityRange.lower"));
 				m.minOccurs = lower.intValue();
 
@@ -209,7 +209,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 				if (upperval.equals("*")) {
 					m.maxOccurs = Integer.MAX_VALUE;
 				} else {
-					Integer upper = new Integer(upperval);
+					Integer upper = Integer.valueOf(upperval);
 					m.maxOccurs = upper.intValue();
 					if (m.maxOccurs == -1) {
 						m.maxOccurs = Integer.MAX_VALUE;

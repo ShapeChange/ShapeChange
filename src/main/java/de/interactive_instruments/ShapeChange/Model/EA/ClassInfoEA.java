@@ -335,7 +335,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				// First find out whether the association has already been
 				// processed from its other end. If so, discard.
 				id = conn.GetConnectorID();
-				connid = new Integer(id).toString();
+				connid = Integer.valueOf(id).toString();
 				known = document.fAssociationById.containsKey(connid);
 				if (known)
 					continue;
@@ -835,7 +835,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	/** Return model-unique id of class. */
 	public String id() {
-		return new Integer(eaClassId).toString();
+		return Integer.valueOf(eaClassId).toString();
 	} // id()
 
 	/** Obtain the name of the class. */

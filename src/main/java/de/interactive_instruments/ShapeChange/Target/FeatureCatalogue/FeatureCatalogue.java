@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -570,10 +571,11 @@ public class FeatureCatalogue
 						.intValue();
 				count++;
 				nameForAppSchema = pi.name() + " (" + count + ")";
-				encounteredAppSchemasByName.put(pi.name(), new Integer(count));
+				encounteredAppSchemasByName.put(pi.name(),
+						Integer.valueOf(count));
 			} else {
 				nameForAppSchema = pi.name();
-				encounteredAppSchemasByName.put(pi.name(), new Integer(1));
+				encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(1));
 			}
 
 			// now set the name of the application schema
@@ -750,8 +752,7 @@ public class FeatureCatalogue
 		Model m = null;
 
 		// Get model object from reflection API
-		@SuppressWarnings("rawtypes")
-		Class theClass;
+		Class<?> theClass;
 		try {
 			theClass = Class.forName(imt);
 			if (theClass == null) {
@@ -759,7 +760,7 @@ public class FeatureCatalogue
 				result.addError(null, 22, mdl);
 				return null;
 			}
-			m = (Model) theClass.newInstance();
+			m = (Model) theClass.getConstructor().newInstance();
 			if (m != null) {
 				m.initialise(result, options, mdl);
 			} else {
@@ -770,10 +771,11 @@ public class FeatureCatalogue
 		} catch (ClassNotFoundException e) {
 			result.addError(null, 17, imt);
 			result.addError(null, 22, mdl);
-		} catch (InstantiationException e) {
+		} catch (IllegalArgumentException | InstantiationException
+				| InvocationTargetException | NoSuchMethodException e) {
 			result.addError(null, 19, imt);
 			result.addError(null, 22, mdl);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException | SecurityException e) {
 			result.addError(null, 20, imt);
 			result.addError(null, 22, mdl);
 		} catch (ShapeChangeAbortException e) {
@@ -2893,16 +2895,19 @@ public class FeatureCatalogue
 					File jarDir = jarF.getParentFile();
 
 					// get manifest and the classpath entries defined by it
-					Manifest mf = new JarFile(jarF).getManifest();
-					String classPath = mf.getMainAttributes()
-							.getValue("Class-Path");
+					try (JarFile jf = new JarFile(jarF)) {
 
-					if (classPath != null) {
+						Manifest mf = jf.getManifest();
+						String classPath = mf.getMainAttributes()
+								.getValue("Class-Path");
 
-						for (String dependency : classPath.split(" ")) {
-							// add path to dependency to class path entries
-							File dependencyF = new File(jarDir, dependency);
-							cpEntries.add(dependencyF.getPath());
+						if (classPath != null) {
+
+							for (String dependency : classPath.split(" ")) {
+								// add path to dependency to class path entries
+								File dependencyF = new File(jarDir, dependency);
+								cpEntries.add(dependencyF.getPath());
+							}
 						}
 					}
 

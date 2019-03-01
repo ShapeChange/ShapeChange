@@ -291,7 +291,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 	/** Return model-unique id of package. */
 	public String id() {
-		return new Integer(eaPackageId).toString();
+		return Integer.valueOf(eaPackageId).toString();
 	} // id()
 
 	/** Obtain the name of the package. */

@@ -53,7 +53,7 @@ public class StructuredNumber implements Comparable<StructuredNumber> {
 		components = new int[cmp.length];
 		for (int i = 0; i < cmp.length; i++) {
 			try {
-				components[i] = new Integer(cmp[i]);
+				components[i] = Integer.parseInt(cmp[i]);
 			} catch (NumberFormatException e) {
 				components[i] = 0;
 			}

@@ -40,7 +40,6 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.EqualsExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;

@@ -79,12 +79,12 @@ public class OracleStyleForeignKeyNamingStrategy
 			}
 
 			res = fk + count;
-			countByForeignKeyOracleStyle.put(fk, new Integer(count + 1));
+			countByForeignKeyOracleStyle.put(fk, Integer.valueOf(count + 1));
 
 		} else {
 
 			res = fk;
-			countByForeignKeyOracleStyle.put(fk, new Integer(0));
+			countByForeignKeyOracleStyle.put(fk, Integer.valueOf(0));
 		}
 
 		return res;

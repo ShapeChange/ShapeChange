@@ -648,7 +648,7 @@ public class Options {
 			return true;
 		else
 			return this.classTypesToCreateConstraintsFor
-					.contains(new Integer(classCategory));
+					.contains(Integer.valueOf(classCategory));
 	}
 
 	/** A map entry. */
@@ -1807,52 +1807,52 @@ public class Options {
 						String sForCons = stereotype.toLowerCase();
 						if (sForCons.equals("enumeration")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(ENUMERATION));
+									.add(Integer.valueOf(ENUMERATION));
 						} else if (sForCons.equals("codelist")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(CODELIST));
+									.add(Integer.valueOf(CODELIST));
 						} else if (sForCons.equals("schluesseltabelle")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(OKSTRAKEY));
+									.add(Integer.valueOf(OKSTRAKEY));
 						} else if (sForCons.equals("fachid")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(OKSTRAFID));
+									.add(Integer.valueOf(OKSTRAFID));
 						} else if (sForCons.equals("datatype")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(DATATYPE));
+									.add(Integer.valueOf(DATATYPE));
 						} else if (sForCons.equals("union")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(UNION));
+									.add(Integer.valueOf(UNION));
 						} else if (sForCons.equals("featureconcept")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(FEATURECONCEPT));
+									.add(Integer.valueOf(FEATURECONCEPT));
 						} else if (sForCons.equals("attributeconcept")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(ATTRIBUTECONCEPT));
+									.add(Integer.valueOf(ATTRIBUTECONCEPT));
 						} else if (sForCons.equals("roleconcept")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(ROLECONCEPT));
+									.add(Integer.valueOf(ROLECONCEPT));
 						} else if (sForCons.equals("valueconcept")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(VALUECONCEPT));
+									.add(Integer.valueOf(VALUECONCEPT));
 						} else if (sForCons.equals("interface")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(MIXIN));
+									.add(Integer.valueOf(MIXIN));
 						} else if (sForCons.equals("basictype")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(BASICTYPE));
+									.add(Integer.valueOf(BASICTYPE));
 						} else if (sForCons.equals("adeelement")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(FEATURE));
+									.add(Integer.valueOf(FEATURE));
 						} else if (sForCons.equals("featuretype")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(FEATURE));
+									.add(Integer.valueOf(FEATURE));
 						} else if (sForCons.equals("type")) {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(OBJECT));
+									.add(Integer.valueOf(OBJECT));
 						} else {
 							this.classTypesToCreateConstraintsFor
-									.add(new Integer(UNKNOWN));
+									.add(Integer.valueOf(UNKNOWN));
 						}
 					}
 				}

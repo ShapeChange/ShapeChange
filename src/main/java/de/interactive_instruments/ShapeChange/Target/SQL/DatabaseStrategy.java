@@ -35,7 +35,6 @@ import java.util.Map;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;

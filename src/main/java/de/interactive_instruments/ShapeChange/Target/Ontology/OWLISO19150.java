@@ -1603,7 +1603,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 			visitedSuperProperties.add(propertyURI);
 
-			List<OntProperty> directSubProperties = this.subPropertyByURIOfSuperProperty
+			List<OntProperty> directSubProperties = subPropertyByURIOfSuperProperty
 					.get(propertyURI);
 
 			if (directSubProperties != null) {

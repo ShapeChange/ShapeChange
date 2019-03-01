@@ -1136,7 +1136,6 @@ public class XMLWriter extends XMLFilterImpl {
 	 */
 	private void writeNSDecls() throws SAXException {
 
-		@SuppressWarnings("unchecked")
 		Enumeration<String> prefixes = nsSupport.getDeclaredPrefixes();
 
 		while (prefixes.hasMoreElements()) {

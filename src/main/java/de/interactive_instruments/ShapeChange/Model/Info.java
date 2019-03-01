@@ -467,7 +467,7 @@ public interface Info extends Comparable<Info> {
 	 *         empty map but not <code>null</code>. If there are multiple values
 	 *         for a tag only the first is provided.
 	 */
-	@Deprecated
+	@Deprecated(since="2.5.0")
 	public Map<String, String> taggedValues();
 
 	/**
@@ -482,7 +482,7 @@ public interface Info extends Comparable<Info> {
 	 *         empty map but not <code>null</code>. If there are multiple values
 	 *         for a tag only the first is provided.
 	 */
-	@Deprecated
+	@Deprecated(since="2.5.0")
 	public Map<String, String> taggedValues(String tagList);
 
 	/**

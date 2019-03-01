@@ -1134,7 +1134,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					String propertyName = matcher.group(1);
 					String length = matcher.group(2);
 
-					Integer i = new Integer(length);
+					Integer i = Integer.valueOf(length);
 
 					lengthByClassPropName.put(ci.name() + "_" + propertyName,
 							i);
