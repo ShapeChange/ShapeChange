@@ -48,13 +48,13 @@ public class Main {
 
 		Options options = new Options();
 		ShapeChangeResult result = new ShapeChangeResult(options);
-
-		// test for Java 1.6 or later
+		
 		String javaVersion = System.getProperty("java.version");
-		char major = javaVersion.charAt(0);
-		char minor = javaVersion.charAt(2);
-		if (major == '1' && minor < '6') {
-			result.addFatalError(null, 18, javaVersion);
+		String[] components = javaVersion.split("\\.");
+		int major = Integer.parseInt(components[0]);
+		int minor = Integer.parseInt(components[1]);
+		if (major == 1 && minor < 8) {
+			result.addError(null, 18, javaVersion);
 			System.exit(1);
 		}
 
