@@ -1,5 +1,24 @@
 # Change Log
 
+## [2.8.0](https://github.com/ShapeChange/ShapeChange/tree/2.8.0) (2019-03-28)
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.7.0...2.8.0)
+
+**Implemented enhancements:**
+
+- Application Schema Metadata target - new rule to identify type usage [\#187](https://github.com/ShapeChange/ShapeChange/issues/187)
+- ModelExport target - add parameter to specify schema location [\#186](https://github.com/ShapeChange/ShapeChange/issues/186)
+- General - Add "schema" to set of well-known stereotypes [\#185](https://github.com/ShapeChange/ShapeChange/issues/185)
+- ModelExport - Add schemaLocation to SCXML [\#183](https://github.com/ShapeChange/ShapeChange/issues/183)
+- Flattener transformation - Add parameter to control property copy behavior in case of duplicate property [\#180](https://github.com/ShapeChange/ShapeChange/issues/180)
+
+**Fixed bugs:**
+
+- ModelExport - empty \<sc:properties\> should not be created [\#184](https://github.com/ShapeChange/ShapeChange/issues/184)
+
+**Merged pull requests:**
+
+- Pods [\#182](https://github.com/ShapeChange/ShapeChange/pull/182) ([jechterhoff](https://github.com/jechterhoff))
+
 ## [2.7.0](https://github.com/ShapeChange/ShapeChange/tree/2.7.0) (2018-12-10)
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.6.0...2.7.0)
 
