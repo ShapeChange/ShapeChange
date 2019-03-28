@@ -1032,10 +1032,10 @@ public abstract class InfoImpl implements Info {
 	}
 
 	/**
-	 * @deprecated With UML 2, there may be multiple values per tag. Use
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
 	 *             <code>taggedValuesAll(String tagOrTaglist)</code> instead.
 	 */
-	@Deprecated(since="2.5.0")
+	@Deprecated
 	public Map<String, String> taggedValues(String tagList) {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();
@@ -1060,10 +1060,10 @@ public abstract class InfoImpl implements Info {
 	}
 
 	/**
-	 * @deprecated With UML 2, there may be multiple values per tag. Use
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
 	 *             <code>taggedValuesAll()</code> instead.
 	 */
-	@Deprecated(since="2.5.0")
+	@Deprecated
 	public Map<String, String> taggedValues() {
 		// Validate tagged values cache first
 		validateTaggedValuesCache();

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><ApplicationSchemaMetadata xmlns="http://shapechange.net/targets/ApplicationSchemaMetadata">
+  <!--Created by ShapeChange - http://shapechange.net/-->
+  <schema>
+    <ApplicationSchema>
+      <name>Test Schema</name>
+      <targetNamespace>http://shapechange.net/test/appSchemaMetadata/identifyTypeUsage</targetNamespace>
+      <metadata>
+        <TypesUsageMetadata>
+          <typeUsage directlyOrIndirectlyUsedBy="T1_FeatureTypeA, T1_FeatureTypeB" type="T1_DataTypeB"/>
+          <typeUsage directlyOrIndirectlyUsedBy="T1_FeatureTypeB" type="T1_Union"/>
+        </TypesUsageMetadata>
+      </metadata>
+    </ApplicationSchema>
+  </schema>
+</ApplicationSchemaMetadata>

@@ -3980,6 +3980,7 @@ public class Options {
 		 * Application schema metadata rules
 		 */
 		addRule("rule-asm-all-identify-profiles");
+		addRule("rule-asm-all-identifyTypeUsage");
 
 		/*
 		 * Model export conversion rules

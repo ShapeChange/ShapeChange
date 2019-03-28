@@ -458,7 +458,7 @@ public interface Info extends Comparable<Info> {
 	/**
 	 * Retrieves all tagged values of the model element.
 	 * 
-	 * @deprecated With UML 2, there may be multiple values per tag. Use
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
 	 *             <code>taggedValuesMult()</code> instead.
 	 * 
 	 * 
@@ -467,14 +467,14 @@ public interface Info extends Comparable<Info> {
 	 *         empty map but not <code>null</code>. If there are multiple values
 	 *         for a tag only the first is provided.
 	 */
-	@Deprecated(since="2.5.0")
+	@Deprecated
 	public Map<String, String> taggedValues();
 
 	/**
 	 * Return all the tagged values listed in the input string. Tags are assumed
 	 * to be normalized and separated by commas.
 	 * 
-	 * @deprecated With UML 2, there may be multiple values per tag. Use
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
 	 *             <code>taggedValuesMult(tagList)</code> instead.
 	 * 
 	 * @return a map with the tagged values defined for this object (key: tagged
@@ -482,7 +482,7 @@ public interface Info extends Comparable<Info> {
 	 *         empty map but not <code>null</code>. If there are multiple values
 	 *         for a tag only the first is provided.
 	 */
-	@Deprecated(since="2.5.0")
+	@Deprecated
 	public Map<String, String> taggedValues(String tagList);
 
 	/**

@@ -39,10 +39,14 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -75,8 +79,8 @@ import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
@@ -84,12 +88,17 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	public static final String NS = "http://shapechange.net/targets/ApplicationSchemaMetadata";
 
 	public static int STATUS_RULE_ALL_IDENTIFY_PROFILES = 301500;
+	public static int STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE = 301501;
 
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
 	/* ------------------------------------------- */
 
-	// none at present
+	/**
+	 * Required parameter for rule {@value #RULE_ALL_IDENTIFY_TYPE_USAGE}.
+	 * Multiple (union or data) type names are separated by commas.
+	 */
+	public static final String PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION = "typesForTypeUsageIdentification";
 
 	/* ------------------------ */
 	/* --- rule identifiers --- */
@@ -101,6 +110,14 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	 * are listed within ProfilesMetadata/containedProfile elements.
 	 */
 	public static final String RULE_ALL_IDENTIFY_PROFILES = "rule-asm-all-identify-profiles";
+
+	/**
+	 * This rule identifies which feature and object types directly or
+	 * indirectly make use (as property value type) of one or more of the union or data types
+	 * defined by target parameter
+	 * {@value #PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION}.
+	 */
+	public static final String RULE_ALL_IDENTIFY_TYPE_USAGE = "rule-asm-all-identifyTypeUsage";
 
 	/* --------------------- */
 	/* --- tagged values --- */
@@ -276,9 +293,128 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 				processProfilesMetadata(appSchemaElement);
 			}
 
+			if (schemaPi.matches(RULE_ALL_IDENTIFY_TYPE_USAGE)) {
+				StatusBoard.getStatusBoard()
+						.statusChanged(STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE);
+
+				identifyTypeUsage(appSchemaElement);
+			}
+
 			// add additional rules to compute metadata here
 		}
 
+	}
+
+	private void identifyTypeUsage(Element appSchemaElement) {
+
+		/*
+		 * 
+		 */
+
+		SortedSet<String> typesForTypeUsage = new TreeSet<>(
+				options.parameterAsStringList(this.getClass().getName(),
+						PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION, null, true,
+						true));
+
+		// NOTE: parameter value checked by configuration validator
+
+		// identify all classes and properties that belong to the schema
+		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+
+		if (schemaClasses != null) {
+
+			/*
+			 * For a given feature or object type, get all direct and indirect
+			 * properties - ignoring model routes that lead through feature or
+			 * object types; also ignore enumerations and code lists. Keep track
+			 * of visited types (to avoid an endless loop). Check if one of
+			 * these properties has a type from the parameter.
+			 */
+
+			SortedMap<ClassInfo, Set<String>> resultMap = new TreeMap<>();
+
+			for (ClassInfo ci : schemaClasses) {
+
+				if (ci.category() == Options.FEATURE
+						|| ci.category() == Options.OBJECT) {
+
+					SortedSet<ClassInfo> foundDataOrUnionTypes = new TreeSet<>();
+
+					searchTypeUses(ci, foundDataOrUnionTypes);
+
+					Set<String> namesOfFoundDataOrUnionTypes = foundDataOrUnionTypes
+							.stream().map(type -> type.name())
+							.filter(type -> typesForTypeUsage.contains(type))
+							.collect(Collectors.toSet());
+
+					if (!namesOfFoundDataOrUnionTypes.isEmpty()) {
+
+						resultMap.put(ci, namesOfFoundDataOrUnionTypes);
+					}
+				}
+			}
+
+			// now create the ProfilesMetadata XML element
+			Element e_tum = document.createElement("TypesUsageMetadata");
+
+			if (resultMap.isEmpty()) {
+
+				result.addInfo(this, 200, String.join(", ", typesForTypeUsage));
+
+			} else {
+
+				result.addInfo(this, 201, String.join(", ", typesForTypeUsage));
+
+				for (String type : typesForTypeUsage) {
+
+					SortedSet<String> classesUsingType = new TreeSet<>();
+
+					for (Entry<ClassInfo, Set<String>> e : resultMap
+							.entrySet()) {
+
+						if (e.getValue().contains(type)) {
+							classesUsingType.add(e.getKey().name());
+						}
+					}
+
+					if (!classesUsingType.isEmpty()) {
+
+						String classes = String.join(", ", classesUsingType);
+						result.addInfo(this, 202, type, classes);
+						Element e_tu = document.createElement("typeUsage");
+						e_tu.setAttribute("type", type);
+						e_tu.setAttribute("directlyOrIndirectlyUsedBy",
+								classes);
+						e_tum.appendChild(e_tu);
+					}
+				}
+			}
+
+			Element e_m = document.createElement("metadata");
+
+			e_m.appendChild(e_tum);
+
+			appSchemaElement.appendChild(e_m);
+		}
+	}
+
+	private void searchTypeUses(ClassInfo ci,
+			SortedSet<ClassInfo> foundDataOrUnionTypes) {
+
+		for (PropertyInfo pi : ci.properties().values()) {
+
+			ClassInfo type = model.classByIdOrName(pi.typeInfo());
+
+			if (type != null && !foundDataOrUnionTypes.contains(type)) {
+
+				foundDataOrUnionTypes.add(type);
+
+				if (type.category() == Options.DATATYPE
+						|| type.category() == Options.UNION) {
+					searchTypeUses(type, foundDataOrUnionTypes);
+				}
+			}
+		}
 	}
 
 	protected void processProfilesMetadata(Element appSchemaElement) {
@@ -378,37 +514,6 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	@Override
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 0:
-			return "Context: class ApplicationSchemaMetadata";
-		case 1:
-			return "Retrieving metadata for application schema '$1$'.";
-		case 2:
-			return "XML Schema document with name '$1$' could not be created, invalid filename.";
-		case 3:
-			return "Could not write output to file '$1$'. Exception message is: $2$.";
-		case 4:
-			return "File has been deleted.";
-		case 5:
-			return ""; // unused (moved to ShapeChangeResult)
-		case 6:
-			return "Processing class '$1$'.";
-		case 7:
-			return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
-		case 8:
-			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
-
-		case 100:
-			return "Context: property '$1$' in class '$2$'.";
-		default:
-			return "(" + ApplicationSchemaMetadata.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
-
-	@Override
 	public void writeAll(ShapeChangeResult r) {
 
 		if (printed || diagnosticsOnly) {
@@ -469,4 +574,42 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 		mapEntryByType = new HashMap<String, ProcessMapEntry>();
 	}
 
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+		case 0:
+			return "Context: class ApplicationSchemaMetadata";
+		case 1:
+			return "Retrieving metadata for application schema '$1$'.";
+		case 2:
+			return "XML Schema document with name '$1$' could not be created, invalid filename.";
+		case 3:
+			return "Could not write output to file '$1$'. Exception message is: $2$.";
+		case 4:
+			return "File has been deleted.";
+		case 5:
+			return ""; // unused (moved to ShapeChangeResult)
+		case 6:
+			return "Processing class '$1$'.";
+		case 7:
+			return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
+		case 8:
+			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+
+		case 100:
+			return "Context: property '$1$' in class '$2$'.";
+
+		case 200:
+			return "No classes with direct or indirect use of the type(s) $1$.";
+		case 201:
+			return "One or more classes with direct or indirect use of the type(s) $1$ was found.";
+		case 202:
+			return "Type '$1$' directly or indirectly used by the following class(es): $2$";
+
+		default:
+			return "(" + ApplicationSchemaMetadata.class.getName()
+					+ ") Unknown message with number: " + mnr;
+		}
+	}
 }

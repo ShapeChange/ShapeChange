@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema"
- elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
  <element name="Model" type="sc:ModelType"/>
  <complexType name="ModelType">
   <sequence>
@@ -104,7 +102,7 @@
   </complexType>
  </element>
  <complexType name="PackageType">
-  <all maxOccurs="1">
+  <all>
    <element minOccurs="0" name="name" type="string"/>
    <element name="id" type="string"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
@@ -289,13 +287,13 @@
  </complexType>
  <element abstract="true" name="Constraint" type="sc:ConstraintType"/>
  <complexType name="ConstraintType">
-  <sequence>
+  <all>
    <element name="name" type="string"/>
    <element minOccurs="0" name="status" type="string"/>
    <element name="text" type="string" minOccurs="0"/>
    <element name="contextModelElementId" type="string"/>
    <element default="CLASS" minOccurs="0" name="contextModelElementType" type="string"/>
-  </sequence>
+  </all>
  </complexType>
  <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
  <complexType name="OclConstraintType">
@@ -307,9 +305,9 @@
  <complexType name="FolConstraintType">
   <complexContent>
    <extension base="sc:ConstraintType">
-    <sequence>
+    <all>
      <element minOccurs="0" name="sourceType" type="string"/>
-    </sequence>
+    </all>
    </extension>
   </complexContent>
  </complexType>
@@ -317,9 +315,9 @@
  <complexType name="TextConstraintType">
   <complexContent>
    <extension base="sc:ConstraintType">
-    <sequence>
+    <all>
      <element minOccurs="0" name="type" type="string"/>
-    </sequence>
+    </all>
    </extension>
   </complexContent>
  </complexType>
@@ -334,8 +332,8 @@
     <element minOccurs="0" name="description" type="sc:DescriptorType"/>
     <element minOccurs="0" name="legalBasis" type="sc:DescriptorType"/>
     <element minOccurs="0" name="language" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="example" type="sc:DescriptorType"> </element>
-    <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType"> </element>
+    <element minOccurs="0" name="example" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType"/>
    </all>
   </complexType>
  </element>

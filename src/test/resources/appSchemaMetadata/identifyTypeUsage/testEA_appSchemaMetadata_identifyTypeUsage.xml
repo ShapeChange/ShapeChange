@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/test_schema_metadata.eap" />
+			value="src/test/resources/appSchemaMetadata/identifyTypeUsage/test_appSchemaMetadata_identifyTypeUsage.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -33,18 +33,19 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/schema_metadata/log.xml" />
+		<parameter name="logFile" value="testResults/appSchemaMetadata/identifyTypeUsage/log.xml" />
 	</log>
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/schema_metadata" />
+			<targetParameter name="outputDirectory" value="testResults/appSchemaMetadata/identifyTypeUsage" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="metadata" />
+			<targetParameter name="typesForTypeUsageIdentification" value="T1_DataTypeB, T1_Union"/>
 			<rules>
 				<EncodingRule name="metadata">
-					<rule name="rule-asm-all-identify-profiles" />
+					<rule name="rule-asm-all-identifyTypeUsage" />
 				</EncodingRule>
 			</rules>
 		</Target>

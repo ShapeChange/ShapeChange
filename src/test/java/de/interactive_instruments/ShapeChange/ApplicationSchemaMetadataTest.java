@@ -36,13 +36,22 @@ import org.junit.Test;
 public class ApplicationSchemaMetadataTest extends WindowsBasicTest {
 
 	@Test
-	public void testApplicationSchemaMetadataDerivation() {
+	public void testApplicationSchemaMetadata_identifyProfiles() {
 		/*
 		 * Test derivation of application schema metadata.
 		 */
-		multiTest("src/test/resources/config/testEA_schema_metadata.xml",
-				new String[] { "xml" }, "testResults/schema_metadata/INPUT",
-				"src/test/resources/reference/schema_metadata/INPUT");
+		multiTest("src/test/resources/appSchemaMetadata/identifyProfiles/testEA_appSchemaMetadata_identifyProfiles.xml",
+				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyProfiles/INPUT",
+				"src/test/resources/appSchemaMetadata/identifyProfiles/reference/INPUT");
 	}
 
+	@Test
+	public void testApplicationSchemaMetadata_identifyTypeUsage() {
+		/*
+		 * Test derivation of application schema metadata.
+		 */
+		multiTest("src/test/resources/appSchemaMetadata/identifyTypeUsage/testEA_appSchemaMetadata_identifyTypeUsage.xml",
+				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyTypeUsage/INPUT",
+				"src/test/resources/appSchemaMetadata/identifyTypeUsage/reference/INPUT");
+	}
 }
