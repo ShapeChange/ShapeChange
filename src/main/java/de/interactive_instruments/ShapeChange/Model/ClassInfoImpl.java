@@ -491,10 +491,10 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		}
 	}
 
-	/*
-	 * identify types that should be treated as "basic types" with a canonical
+	/**
+	 * Identify types that should be treated as "basic types" with a canonical
 	 * implementation. Either they carry a basictype stereotype or a supertype
-	 * is identified as a basic type through a map entry
+	 * is identified as a basic type through a map entry.
 	 */
 	private void identifyBasicTypes() {
 		if ((category == Options.DATATYPE || category == Options.OBJECT

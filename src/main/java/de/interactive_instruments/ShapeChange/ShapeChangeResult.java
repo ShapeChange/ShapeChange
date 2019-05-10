@@ -1044,7 +1044,7 @@ public class ShapeChangeResult {
 		case 30802:
 			return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
 		case 30803:
-			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
+			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $1$.";
 
 		default:
 			return "(" + ShapeChangeResult.class.getName()

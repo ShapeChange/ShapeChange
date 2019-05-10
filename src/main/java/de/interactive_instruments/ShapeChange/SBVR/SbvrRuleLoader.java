@@ -134,10 +134,6 @@ public class SbvrRuleLoader implements MessageSource {
 					Workbook sbvrXls = WorkbookFactory.create(sbvrFile);
 					sbvrRules = parseSBVRRuleInfos(sbvrXls);
 
-				} catch (InvalidFormatException e) {
-
-					result.addError(this, 1, e.getMessage());
-
 				} catch (IOException e) {
 
 					result.addError(this, 2, e.getMessage());
@@ -208,7 +204,7 @@ public class SbvrRuleLoader implements MessageSource {
 
 		for (short i = header.getFirstCellNum(); i < header.getLastCellNum(); i++) {
 
-			Cell c = header.getCell(i, Row.RETURN_BLANK_AS_NULL);
+			Cell c = header.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
 			if (c == null) {
 				// this is allowed
@@ -277,7 +273,7 @@ public class SbvrRuleLoader implements MessageSource {
 			// get rule name (required)
 			Cell c = r.getCell(
 					fieldIndexes.get(SbvrRuleInfo.RULE_NAME_COLUMN_NAME),
-					Row.RETURN_BLANK_AS_NULL);
+					Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 			if (c == null) {
 				// log message
 				result.addWarning(this, 6, "" + rowNumber);
@@ -296,7 +292,7 @@ public class SbvrRuleLoader implements MessageSource {
 
 			// get rule text (required)
 			c = r.getCell(fieldIndexes.get(SbvrRuleInfo.RULE_TEXT_COLUMN_NAME),
-					Row.RETURN_BLANK_AS_NULL);
+					Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 			if (c == null) {
 				// log message
 				result.addWarning(this, 7, "" + rowNumber);
@@ -309,7 +305,7 @@ public class SbvrRuleLoader implements MessageSource {
 			if (commentsFound) {
 				c = r.getCell(
 						fieldIndexes.get(SbvrRuleInfo.COMMENT_COLUMN_NAME),
-						Row.RETURN_BLANK_AS_NULL);
+						Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 				if (c != null) {
 					sri.setComment(c.getStringCellValue());
 				}
@@ -319,7 +315,7 @@ public class SbvrRuleLoader implements MessageSource {
 			if (schemaPackageFound) {
 				c = r.getCell(fieldIndexes
 						.get(SbvrRuleInfo.SCHEMA_PACKAGE_COLUMN_NAME),
-						Row.RETURN_BLANK_AS_NULL);
+						Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 				if (c == null) {
 					sri.setSchemaPackageName(UNSPECIFIED_SCHEMA_PACKAGE_NAME);
 				} else {
@@ -333,7 +329,7 @@ public class SbvrRuleLoader implements MessageSource {
 			 */
 			if (classNameFound) {
 				c = r.getCell(fieldIndexes.get(SbvrRuleInfo.CLASS_COLUMN_NAME),
-						Row.RETURN_BLANK_AS_NULL);
+						Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 				if (c == null) {
 					/*
 					 * then after this we'll try to parse the class name from

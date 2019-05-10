@@ -61,13 +61,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
 import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
 import org.jgrapht.alg.cycle.TarjanSimpleCycles;
 import org.jgrapht.alg.cycle.TiernanSimpleCycles;
-import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import com.google.common.base.Joiner;
@@ -4287,9 +4285,11 @@ public class Flattener implements Transformer, MessageSource {
 
 		result.addInfo(this, 20329);
 
-		DirectedGraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
-				new ClassBasedEdgeFactory<String, PropertySetEdge>(
-						PropertySetEdge.class));
+		DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(PropertySetEdge.class);
+				
+//		DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
+//				new ClassBasedEdgeFactory<String, PropertySetEdge>(
+//						PropertySetEdge.class));
 
 		// establish graph vertices
 		for (GenericClassInfo typeToProcess : typesToProcessById.values()) {

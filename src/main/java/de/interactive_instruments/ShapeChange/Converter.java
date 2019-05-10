@@ -48,7 +48,7 @@ import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -1071,16 +1071,6 @@ public class Converter implements MessageSource {
 				"de.interactive_instruments.ShapeChange.Model.EA.EADocument")) {
 			String transformer = options.parameter("transformer");
 			if (transformer != null && transformer.length() > 0) {
-
-				// TBD: at the moment the 'old' transformer only works with the
-				// inputFile parameter
-				// if (mdl == null || mdl.trim().length() == 0) {
-				// throw new
-				// ShapeChangeAbortException("Transformation with 'transformer'
-				// specified via the according input parameter is only supported
-				// for models contained in EAP file - but no inputFile was
-				// provided.");
-				// }
 
 				try {
 					Class<?> theClass = Class.forName(transformer);

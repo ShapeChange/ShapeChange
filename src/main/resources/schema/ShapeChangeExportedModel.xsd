@@ -1,6 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
- <element name="Model" type="sc:ModelType"/>
+<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <element name="Model" type="sc:ModelType">
+  <key name="packageKey">
+   <selector xpath=".//sc:Package"/>
+   <field xpath="sc:id"/>
+  </key>
+  <key name="classKey">
+   <selector xpath=".//sc:Class"/>
+   <field xpath="sc:id"/>
+  </key>
+  <key name="propertyKey">
+   <selector xpath=".//sc:Property"/>
+   <field xpath="sc:id"/>
+  </key>
+  <key name="associationKey">
+   <selector xpath="./sc:associations/sc:Association"/>
+   <field xpath="sc:id"/>
+  </key>
+  <key name="classPropertyKey">
+   <selector xpath=".//sc:Class/sc:properties/sc:Property"/>
+   <field xpath="sc:id"/>
+  </key>
+  <key name="constraintContextModelElementKey">
+   <selector xpath=".//sc:Class | .//sc:Property"/>
+   <field xpath="sc:id"/>
+  </key>
+  <keyref name="packageSupplierKeyRef" refer="sc:packageKey">
+   <selector xpath=".//sc:SupplierId"/>
+   <field xpath="."/>
+  </keyref>
+  <keyref name="classToAssociationKeyRef" refer="sc:associationKey">
+   <selector xpath=".//sc:Class"/>
+   <field xpath="sc:associationId"/>
+  </keyref>
+  <keyref name="classBaseClassKeyRef" refer="sc:classKey">
+   <selector xpath=".//sc:Class"/>
+   <field xpath="sc:baseClassId"/>
+  </keyref>
+  <keyref name="classSupertypeKeyRef" refer="sc:classKey">
+   <selector xpath=".//sc:SupertypeId"/>
+   <field xpath="."/>
+  </keyref>
+  <keyref name="classSubtypeKeyRef" refer="sc:classKey">
+   <selector xpath=".//sc:SubtypeId"/>
+   <field xpath="."/>
+  </keyref>
+  <keyref name="constraintContextModelElementKeyRef" refer="sc:constraintContextModelElementKey">
+   <selector xpath=".//sc:OclConstraint | .//sc:FolConstraint | .//sc:TextConstraint"/>
+   <field xpath="sc:contextModelElementId"/>
+  </keyref>
+  <keyref name="propertyTypeKeyref" refer="sc:classKey">
+   <selector xpath=".//sc:Property"/>
+   <field xpath="sc:typeId"/>
+  </keyref>
+  <keyref name="propertyInClassKeyRef" refer="sc:classKey">
+   <selector xpath=".//sc:Property"/>
+   <field xpath="sc:inClassId"/>
+  </keyref>
+  <keyref name="propertyReversePropertyKeyRef" refer="sc:propertyKey">
+   <selector xpath=".//sc:Property"/>
+   <field xpath="sc:reversePropertyId"/>
+  </keyref>
+  <keyref name="propertyToAssociationKeyRef" refer="sc:associationKey">
+   <selector xpath=".//sc:Property"/>
+   <field xpath="sc:associationId"/>
+  </keyref>
+  <keyref name="associationToClassKeyRef" refer="sc:classKey">
+   <selector xpath="./sc:associations/sc:Association"/>
+   <field xpath="sc:assocClassId"/>
+  </keyref>
+  <keyref name="associationEndKeyRef" refer="sc:classPropertyKey">
+   <selector xpath="./sc:associations/sc:Association/sc:end1 | ./sc:associations/sc:Association/sc:end2"/>
+   <field xpath="@ref"/>
+  </keyref>
+ </element>
  <complexType name="ModelType">
   <sequence>
    <element minOccurs="0" name="globalProfileInfos">
@@ -104,11 +177,11 @@
  <complexType name="PackageType">
   <all>
    <element minOccurs="0" name="name" type="string"/>
-   <element name="id" type="string"/>
+   <element name="id" type="string" nillable="false"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors"/>
+   <element ref="sc:descriptors" minOccurs="1"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
-   <element minOccurs="0" name="version" type="string"/>
+   <element minOccurs="0" name="version" type="string" maxOccurs="1"/>
    <element minOccurs="0" name="targetNamespace" type="string"/>
    <element minOccurs="0" name="xmlns" type="string"/>
    <element minOccurs="0" name="xsdDocument" type="string"/>
@@ -198,7 +271,6 @@
     </complexType>
    </element>
   </all>
-
  </complexType>
  <element name="Property" type="sc:PropertyType"/>
  <complexType name="PropertyType">
@@ -217,7 +289,13 @@
    </element>
    <element name="cardinality" type="string" default="1" minOccurs="0"/>
    <element default="true" minOccurs="0" name="isNavigable" type="boolean"/>
-   <element name="sequenceNumber" type="string"/>
+   <element name="sequenceNumber">
+    <simpleType>
+     <restriction base="string">
+      <pattern value="(-)?\d+(\.(-)?\d+)*"/>
+     </restriction>
+    </simpleType>
+   </element>
    <element minOccurs="0" name="typeId" type="string"/>
    <element minOccurs="0" name="typeName" type="string"/>
    <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
@@ -285,6 +363,15 @@
    <element name="height" type="positiveInteger"/>
   </sequence>
  </complexType>
+ <simpleType name="ConstraintContextModelElementType">
+  <restriction base="string">
+   <enumeration value="CLASS"/>
+   <enumeration value="ATTRIBUTE"/>
+   <enumeration value="ROLE"/>
+  </restriction>
+ </simpleType>
+
+ <!-- XSD 1.1 constraint modeling -->
  <element abstract="true" name="Constraint" type="sc:ConstraintType"/>
  <complexType name="ConstraintType">
   <all>
@@ -292,7 +379,7 @@
    <element minOccurs="0" name="status" type="string"/>
    <element name="text" type="string" minOccurs="0"/>
    <element name="contextModelElementId" type="string"/>
-   <element default="CLASS" minOccurs="0" name="contextModelElementType" type="string"/>
+   <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
   </all>
  </complexType>
  <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
@@ -321,6 +408,55 @@
    </extension>
   </complexContent>
  </complexType>
+
+ <!-- XSD 1.0 constraint modeling -->
+ <!--<element abstract="true" name="Constraint" type="sc:ConstraintType"/>
+ <complexType name="ConstraintType"/>
+  <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
+ <complexType name="OclConstraintType">
+  <complexContent>
+   <extension base="sc:ConstraintType">
+    <all>
+     <element name="name" type="string"/>
+     <element minOccurs="0" name="status" type="string"/>
+     <element name="text" type="string" minOccurs="0"/>
+     <element name="contextModelElementId" type="string"/>
+     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
+    </all>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="FolConstraint" substitutionGroup="sc:Constraint" type="sc:FolConstraintType"/>
+ <complexType name="FolConstraintType">
+  <complexContent>
+   <extension base="sc:ConstraintType">
+    <all>
+     <element name="name" type="string"/>
+     <element minOccurs="0" name="status" type="string"/>
+     <element name="text" type="string" minOccurs="0"/>
+     <element name="contextModelElementId" type="string"/>
+     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
+     <element minOccurs="0" name="sourceType" type="string"/>
+    </all>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="TextConstraint" substitutionGroup="sc:Constraint" type="sc:TextConstraintType"/>
+ <complexType name="TextConstraintType">
+  <complexContent>
+   <extension base="sc:ConstraintType">
+    <all>
+     <element name="name" type="string"/>
+     <element minOccurs="0" name="status" type="string"/>
+     <element name="text" type="string" minOccurs="0"/>
+     <element name="contextModelElementId" type="string"/>
+     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
+     <element minOccurs="0" name="type" type="string"/>
+    </all>
+   </extension>
+  </complexContent>
+ </complexType>-->
+
  <element name="descriptors">
   <complexType>
    <all>

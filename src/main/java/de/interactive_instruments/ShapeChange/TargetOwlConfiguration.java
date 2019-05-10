@@ -44,7 +44,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;

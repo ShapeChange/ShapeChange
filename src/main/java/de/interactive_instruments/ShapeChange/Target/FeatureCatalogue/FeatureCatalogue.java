@@ -80,7 +80,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -2699,7 +2699,7 @@ public class FeatureCatalogue
 
 		try {
 			// configure fopFactory as desired
-			FopFactory fopFactory = FopFactory.newInstance();
+			FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
 			FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 			// configure foUserAgent as desired

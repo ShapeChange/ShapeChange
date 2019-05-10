@@ -33,7 +33,7 @@ package de.interactive_instruments.ShapeChange.Target;
 
 import java.util.SortedSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
