@@ -1264,17 +1264,14 @@ public class FeatureCatalogue
 		}
 
 		/*
-		 * 2018-02-16 JE: since code lists and their codes are only partially
+		 * 2019-05-14 JE - NOTE: code lists and their codes are only partially
 		 * represented in the feature catalogues by ShapeChange (typically a
-		 * table of the codes), we do not add the tagged values of codes to the
-		 * temporary XML.
+		 * table of the codes).
 		 */
-		// if (representTaggedValues != null) {
-		// writer.startElement("taggedValues");
-		// // TBD diff tagged values
-		// PrintTaggedValues(propi, representTaggedValues, null);
-		// writer.endElement("taggedValues");
-		// }
+		if (representTaggedValues != null) {
+			// TBD diff tagged values
+			PrintTaggedValues(propi, representTaggedValues, null, true);
+		}
 
 		writer.endElement("Value");
 	}
@@ -1513,7 +1510,7 @@ public class FeatureCatalogue
 
 				if (representTaggedValues != null) {
 					// TODO diff tagged values
-					PrintTaggedValues(ci, representTaggedValues, null);
+					PrintTaggedValues(ci, representTaggedValues, null, false);
 				}
 
 				writer.endElement("taggedValues");
@@ -1565,12 +1562,32 @@ public class FeatureCatalogue
 		return false;
 	}
 
-	private void PrintTaggedValues(Info i, String taglist, Operation op)
-			throws SAXException {
+	/**
+	 * @param i
+	 * @param taglist
+	 * @param op
+	 * @param printTaggedValuesElement
+	 *                                     <code>true</code>, if the surrounding
+	 *                                     &lt;taggedValues&gt; element shall be
+	 *                                     added, if the Info object has at
+	 *                                     least one value for the tags from the
+	 *                                     list; else <code>false</code> (in
+	 *                                     that case, the &lt;taggedValues&gt;
+	 *                                     element will never be added and is
+	 *                                     assumed to be set outside of the
+	 *                                     method)
+	 * @throws SAXException
+	 */
+	private void PrintTaggedValues(Info i, String taglist, Operation op,
+			boolean printTaggedValuesElement) throws SAXException {
 
 		TaggedValues taggedValues = i.taggedValuesForTagList(taglist);
 
 		if (!taggedValues.isEmpty()) {
+
+			if (printTaggedValuesElement) {
+				writer.startElement("taggedValues");
+			}
 
 			// sort results alphabetically by tag name for consistent output
 			TreeSet<String> tags = new TreeSet<String>(taggedValues.keySet());
@@ -1586,6 +1603,10 @@ public class FeatureCatalogue
 						// writer.dataElement(tag, PrepareToPrint(v));
 					}
 				}
+			}
+
+			if (printTaggedValuesElement) {
+				writer.endElement("taggedValues");
 			}
 		}
 	}
@@ -1827,7 +1848,7 @@ public class FeatureCatalogue
 		}
 
 		if (representTaggedValues != null) {
-			PrintTaggedValues(propi, representTaggedValues, null);
+			PrintTaggedValues(propi, representTaggedValues, null, false);
 		}
 
 		writer.endElement("taggedValues");
