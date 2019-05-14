@@ -265,7 +265,7 @@ public class FeatureCatalogue
 	private static boolean includeDiagrams = false;
 	private static int imgIntegerIdCounter = 0;
 	private static int imgIntegerIdStepwidth = 2;
-	private static Set<ImageMetadata> imageSet = new HashSet<ImageMetadata>();
+	private static List<ImageMetadata> imageList = new ArrayList<ImageMetadata>();
 
 	private static boolean dontTransform = false;
 
@@ -358,6 +358,11 @@ public class FeatureCatalogue
 		diffs = new TreeMap<Info, SortedSet<DiffElement>>();
 		differ = null;
 		inputSchemaClassesByFullNameInSchema = null;
+		
+		includeDiagrams = false;
+		imgIntegerIdCounter = 0;
+		imgIntegerIdStepwidth = 2;
+		imageList = new ArrayList<ImageMetadata>();
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
@@ -689,14 +694,6 @@ public class FeatureCatalogue
 			return;
 		}
 
-		Collections.sort(images, new Comparator<ImageMetadata>() {
-
-			@Override
-			public int compare(ImageMetadata o1, ImageMetadata o2) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		});
-
 		writer.startElement("images");
 
 		for (ImageMetadata img : images) {
@@ -717,7 +714,7 @@ public class FeatureCatalogue
 			writer.emptyElement("image", atts);
 
 			// also keep track of the image metadata for later use
-			imageSet.add(img);
+			imageList.add(img);
 		}
 
 		writer.endElement("images");
@@ -2474,7 +2471,7 @@ public class FeatureCatalogue
 			this.xsltWrite(indocumentxmlFile, xsldocxfileName,
 					outdocumentxmlFile);
 
-			if (includeDiagrams && !imageSet.isEmpty()) {
+			if (includeDiagrams && !imageList.isEmpty()) {
 				/*
 				 * === Process image information ===
 				 */
@@ -2501,16 +2498,6 @@ public class FeatureCatalogue
 
 				addAttribute(imgInfoDoc, imgInfoRoot, "xmlns:xsi",
 						"http://www.w3.org/2001/XMLSchema-instance");
-
-				List<ImageMetadata> imageList = new ArrayList<ImageMetadata>(
-						imageSet);
-				Collections.sort(imageList, new Comparator<ImageMetadata>() {
-
-					@Override
-					public int compare(ImageMetadata o1, ImageMetadata o2) {
-						return o1.getId().compareTo(o2.getId());
-					}
-				});
 
 				for (ImageMetadata im : imageList) {
 

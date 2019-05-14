@@ -11,6 +11,7 @@
 	  <parameter name="loadDiagrams" value="true"/>
 	  <parameter name="packageDiagramRegex" value="[\w|\W]*NAME[\w|\W]*"/>
 	  <parameter name="classDiagramRegex" value="[\w|\W]*NAME[\w|\W]*"/>
+	  <parameter name="sortDiagramsByName" value="false"/>
 		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
 	</input>
 	<log>
