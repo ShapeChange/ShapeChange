@@ -291,4 +291,14 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/xsd/allowAllTags",
 				"src/test/resources/xsd/allowAllTags/reference");
 	}
+	
+	@Test
+	public void test_codelistAsEAEnumeration() {
+		
+		multiTest(
+				"src/test/resources/xsd/codelistAsEAEnumeration/test_codelistAsEAEnumeration.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/codelistAsEAEnumeration",
+				"src/test/resources/xsd/codelistAsEAEnumeration/reference");
+	}
 }
