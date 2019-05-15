@@ -164,6 +164,10 @@ public class DdlVisitor implements StatementVisitor {
 				} else if (colDataType.hasLength()) {
 					sb.append("(");
 					sb.append(colDataType.getLength());
+					if(colDataType.hasLengthQualifier()) {
+						sb.append(" ");
+						sb.append(colDataType.getLengthQualifier());
+					}
 					sb.append(")");
 				}
 

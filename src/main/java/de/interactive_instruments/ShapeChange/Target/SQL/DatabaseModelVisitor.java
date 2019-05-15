@@ -102,8 +102,8 @@ import de.interactive_instruments.ShapeChange.Util.ea.EASupportedDBMS;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
@@ -428,6 +428,11 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 				EAAttributeUtil.setEAScale(att, scale);
 				if (coldt.hasLength()) {
 					EAAttributeUtil.setEALength(att, "" + coldt.getLength());
+
+					if (coldt.hasLengthQualifier()) {
+						EAAttributeUtil.setTaggedValue(att, "LengthType",
+								coldt.getLengthQualifier());
+					}
 				}
 
 				if (col.isForeignKeyColumn()) {

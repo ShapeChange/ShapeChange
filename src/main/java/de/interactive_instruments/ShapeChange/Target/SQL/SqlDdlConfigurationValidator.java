@@ -53,8 +53,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  */
 public class SqlDdlConfigurationValidator
 		implements ConfigurationValidator, MessageSource {
@@ -141,6 +141,20 @@ public class SqlDdlConfigurationValidator
 				isValid = false;
 				result.addError(this, 5, SqlConstants.PARAM_FILE_DDL_BOTTOM,
 						fileDdlBottom);
+			}
+		}
+
+		String lengthQualifier = config.parameterAsString(
+				SqlConstants.PARAM_LENGTH_QUALIFIER, null, false, true);
+
+		if (lengthQualifier != null) {
+
+			if (!("BYTE".equalsIgnoreCase(lengthQualifier)
+					|| "CHAR".equalsIgnoreCase(lengthQualifier))) {
+
+				isValid = false;
+				result.addError(this, 100, SqlConstants.PARAM_LENGTH_QUALIFIER,
+						lengthQualifier);
 			}
 		}
 
@@ -286,6 +300,30 @@ public class SqlDdlConfigurationValidator
 					}
 				}
 			}
+			
+			if (characteristicsByParameter
+					.containsKey(SqlConstants.ME_PARAM_LENGTH)) {
+
+				Map<String, String> lengthCharacteristics = characteristicsByParameter
+						.get(SqlConstants.ME_PARAM_LENGTH);
+
+				if (lengthCharacteristics.containsKey(
+						SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER)) {
+
+					String lengthQualifier = lengthCharacteristics
+							.get(SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
+
+					if (!("BYTE".equalsIgnoreCase(lengthQualifier)
+							|| "CHAR".equalsIgnoreCase(lengthQualifier))) {
+
+						isValid = false;
+						result.addError(this, 106, typeRuleKey,
+								lengthQualifier == null ? "<null>" : lengthQualifier,
+								SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER,
+								SqlConstants.ME_PARAM_LENGTH);
+					} 
+				}
+			}
 		}
 
 		return isValid;
@@ -319,7 +357,7 @@ public class SqlDdlConfigurationValidator
 
 		String descriptorsForCodelistByConfig = config
 				.getParameterValue(SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST);
-				
+
 		if (StringUtils.isNotBlank(descriptorsForCodelistByConfig)) {
 
 			String fullRegex = SqlConstants.DESCRIPTORS_FOR_CODELIST_REGEX
@@ -329,7 +367,7 @@ public class SqlDdlConfigurationValidator
 
 				SortedSet<String> descriptorsForCodelist = new TreeSet<String>();
 
-				String[]  descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
+				String[] descriptorsForCodelistFromConfig = descriptorsForCodelistByConfig
 						.trim().split("(?<!\\\\),");
 
 				boolean unknownDescriptorFound = false;
@@ -400,7 +438,9 @@ public class SqlDdlConfigurationValidator
 			return "Invalid map entry for type#rule '$1$': the map entry has paramter '$2$' but the targetType has a parameterization with two numbers. With parameter '$2$', the targetType of the map entry may only have a single number.";
 		case 105:
 			return "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
-
+		case 106:
+			return "Invalid map entry for type#rule '$1$': value '$2$' provided for characteristic '$3$' of parameter '$4$' is invalid.";
+		
 		default:
 			return "(" + SqlDdlConfigurationValidator.class.getName()
 					+ ") Unknown message with number: " + mnr;

@@ -107,8 +107,8 @@ import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 /**
  * Creates SQL DDL for an application schema.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlDdl implements SingleTarget, MessageSource {
@@ -146,6 +146,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeStatusCLType;
 	protected static int codeStatusCLLength;
 	protected static String idColumnName;
+	protected static String lengthQualifier;
 	protected static String oneToManyReferenceColumnName;
 	protected static String foreignKeyColumnSuffix;
 	protected static String foreignKeyColumnSuffixDatatype;
@@ -313,7 +314,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
 				constraintNameUsingShortName = true;
 			}
-			
+
 			if (pi.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME)) {
 				indexNameUsingShortName = true;
@@ -445,6 +446,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.PARAM_ID_COLUMN_NAME,
 					SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
 
+			String lengthQualifier_tmp = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_LENGTH_QUALIFIER, null, false, true);
+			
+			if(lengthQualifier_tmp != null) {
+				if(lengthQualifier_tmp.equalsIgnoreCase("BYTE")) {
+					lengthQualifier = "BYTE";
+				} else if(lengthQualifier_tmp.equalsIgnoreCase("CHAR")) {
+					lengthQualifier = "CHAR";
+				}
+			}
+
 			oneToManyReferenceColumnName = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_ONE_TO_MANY_REF_COLUMN_NAME,
@@ -517,7 +530,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION,
 					null, false, true);
-			
+
 			nameCodeSupercedesColumn = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_NAME_CODESUPERCEDES_COLUMN,
@@ -1091,10 +1104,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	/**
 	 * @param stmts
-	 *            the list of statements to write as SQL DDL in the output file
+	 *                     the list of statements to write as SQL DDL in the
+	 *                     output file
 	 * @param fileName
-	 *            the name of the output file (to be created in the output
-	 *            directory), including the file extension
+	 *                     the name of the output file (to be created in the
+	 *                     output directory), including the file extension
 	 * @throws Exception
 	 */
 	private void writeDdl(List<Statement> stmts, String fileName)
@@ -1190,6 +1204,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		codeStatusCLType = null;
 		codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
 		idColumnName = null;
+		lengthQualifier = null;
 		oneToManyReferenceColumnName = null;
 		foreignKeyColumnSuffix = null;
 		foreignKeyColumnSuffixDatatype = null;
