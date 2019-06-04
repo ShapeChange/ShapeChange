@@ -47,10 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/export/scxml</sc:targetNamespace>
-              <sc:xmlns>sc</sc:xmlns>
-              <sc:xsdDocument>export_scxml.xsd</sc:xsdDocument>
               <sc:packages>
                 <sc:Package>
                   <sc:name>Test1 Elements with profiles</sc:name>
@@ -61,9 +57,6 @@
                       <sc:name>xsdDocument</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:version>1</sc:version>
-                  <sc:targetNamespace>http://example.org/shapechange/export/scxml</sc:targetNamespace>
-                  <sc:xmlns>sc</sc:xmlns>
                   <sc:classes>
                     <sc:Class>
                       <sc:name>T1_FeatureTypeA</sc:name>
@@ -456,9 +449,6 @@
                       <sc:name>xsdDocument</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:version>1</sc:version>
-                  <sc:targetNamespace>http://example.org/shapechange/export/scxml</sc:targetNamespace>
-                  <sc:xmlns>sc</sc:xmlns>
                   <sc:classes>
                     <sc:Class>
                       <sc:name>T2_FeatureTypeA</sc:name>
@@ -758,10 +748,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/export/scxml/iso</sc:targetNamespace>
-              <sc:xmlns>iso</sc:xmlns>
-              <sc:xsdDocument>iso_stub.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>Real</sc:name>

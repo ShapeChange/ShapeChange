@@ -53,10 +53,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1.0</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profiling/withMetadata</sc:targetNamespace>
-              <sc:xmlns>sc</sc:xmlns>
-              <sc:xsdDocument>profilingWithMetadata.xsd</sc:xsdDocument>
               <sc:packages>
                 <sc:Package>
                   <sc:name>Test4 remove profile infos during postprocessing</sc:name>
@@ -73,9 +69,6 @@
                       <sc:name>xsdDocument</sc:name>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:version>1.0</sc:version>
-                  <sc:targetNamespace>http://example.org/shapechange/profiling/withMetadata</sc:targetNamespace>
-                  <sc:xmlns>sc</sc:xmlns>
                   <sc:classes>
                     <sc:Class>
                       <sc:name>T4_FeatureA</sc:name>

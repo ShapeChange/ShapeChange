@@ -978,16 +978,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			genPi.setDescriptors(pi.descriptors().createCopy());
 
-			genPi.setTargetNamespace(pi.targetNamespace());
-			genPi.setXmlns(pi.xmlns());
-			genPi.setXsdDocument(pi.xsdDocument());
-			genPi.setVersion(pi.version());
-			// genPi.setOwner(pi.owner());
-			// genPi.setSchemaId(pi.schemaId());
-			// genPi.setRootPackage(pi.rootPackage());
-
-			// genPi.setIsSchema(pi.isSchema());
-
 			genPi.setDiagrams(pi.getDiagrams());
 
 			SortedSet<GenericPackageInfo> genChildPi = new TreeSet<GenericPackageInfo>();

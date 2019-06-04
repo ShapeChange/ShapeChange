@@ -61,11 +61,11 @@ public class GenericPackageContentHandler
 		extends AbstractGenericInfoContentHandler {
 
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "targetNamespace", "xmlns",
-					"xsdDocument", "version"}));
+			Arrays.asList(new String[] { }));
 
 	private static final Set<String> DEPRECATED_SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "isAppSchema", "isSchema" }));
+			Arrays.asList(new String[] { "isAppSchema", "isSchema", "targetNamespace", "xmlns",
+					"xsdDocument", "version" }));
 
 	private boolean isInPackages = false;
 
@@ -204,26 +204,6 @@ public class GenericPackageContentHandler
 			/*
 			 * ignore - DiagramsContentHandler calls this.setDiagrams(...)
 			 */
-
-		} else if (localName.equals("targetNamespace")) {
-
-			this.genPi.setTargetNamespace(sb.toString());
-
-		} else if (localName.equals("xmlns")) {
-
-			this.genPi.setXmlns(sb.toString());
-
-		} else if (localName.equals("xsdDocument")) {
-
-			this.genPi.setXsdDocument(sb.toString());
-
-		} else if (localName.equals("version")) {
-
-			this.genPi.setVersion(sb.toString());
-
-			// } else if (localName.equals("isSchema")) {
-			//
-			// this.genPi.setIsSchema(toBooleanValue(sb));
 
 		} else if (localName.equals("supplierIds")) {
 

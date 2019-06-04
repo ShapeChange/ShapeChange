@@ -47,6 +47,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -468,11 +469,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		printInfoFields(pi);
 
-		printDataElement("version", pi.version());
-		printDataElement("targetNamespace", pi.targetNamespace());
-		printDataElement("xmlns", pi.xmlns());
-		printDataElement("xsdDocument", pi.xsdDocument());
-
 		if (pi.supplierIds() != null && !pi.supplierIds().isEmpty()) {
 
 			writer.startElement(NS, "supplierIds");
@@ -833,7 +829,9 @@ public class ModelExport implements SingleTarget, MessageSource {
 			if (ci != null) {
 				printDataElement("typeId", ti.id);
 			}
-			printDataElement("typeName", ti.name);
+			if (StringUtils.isNotBlank(ti.name)) {
+				printDataElement("typeName", ti.name);
+			}
 		}
 
 		printDataElement("isDerived", pi.isDerived(), false);

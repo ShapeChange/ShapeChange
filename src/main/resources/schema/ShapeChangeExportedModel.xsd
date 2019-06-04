@@ -75,36 +75,36 @@
   </keyref>
  </element>
  <complexType name="ModelType">
-  <sequence>
+  <all>
    <element minOccurs="0" name="globalProfileInfos">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="Profile">
        <complexType>
-        <sequence>
+        <all>
          <element name="name" type="string"/>
          <element name="description" type="string"/>
-        </sequence>
+        </all>
        </complexType>
       </element>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element name="packages">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Package"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="associations">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="Association" type="sc:AssociationType"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
-  </sequence>
+  </all>
   <attribute name="encoding" type="string" use="required"/>
  </complexType>
  <!-- <complexType name="InfoType">
@@ -117,10 +117,10 @@
   </all>
  </complexType>-->
  <complexType name="DescriptorType">
-  <sequence>
+  <all>
    <element minOccurs="1" name="descriptorValues">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="DescriptorValue">
        <complexType>
         <simpleContent>
@@ -130,39 +130,39 @@
         </simpleContent>
        </complexType>
       </element>
-     </sequence>
+     </all>
     </complexType>
    </element>
-  </sequence>
+  </all>
  </complexType>
  <element name="Profile" type="sc:ProfileType"/>
  <complexType name="ProfileType">
-  <sequence>
+  <all>
    <element minOccurs="0" name="versionIdentifier">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="VersionRange">
        <complexType>
         <attribute name="begin" type="string" use="required"/>
         <attribute name="end" type="string" use="required"/>
        </complexType>
       </element>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="parameter">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" minOccurs="1" name="ProfileParameter">
        <complexType>
         <attribute name="name" type="string" use="required"/>
         <attribute name="value" type="string"/>
        </complexType>
       </element>
-     </sequence>
+     </all>
     </complexType>
    </element>
-  </sequence>
+  </all>
   <attribute name="name" type="string" use="required"/>
  </complexType>
  <element name="Package">
@@ -176,41 +176,37 @@
  </element>
  <complexType name="PackageType">
   <all>
-   <element minOccurs="0" name="name" type="string"/>
+   <element minOccurs="1" name="name" type="string"/>
    <element name="id" type="string" nillable="false"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors" minOccurs="1"/>
+   <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
-   <element minOccurs="0" name="version" type="string" maxOccurs="1"/>
-   <element minOccurs="0" name="targetNamespace" type="string"/>
-   <element minOccurs="0" name="xmlns" type="string"/>
-   <element minOccurs="0" name="xsdDocument" type="string"/>
    <element minOccurs="0" name="supplierIds">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="SupplierId" type="string"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="diagrams">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element maxOccurs="1" minOccurs="0" name="classes">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Class"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="packages">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Package"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
   </all>
@@ -218,16 +214,16 @@
  <element name="Class" type="sc:ClassType"/>
  <complexType name="ClassType">
   <all>
-   <element minOccurs="0" name="name" type="string"/>
+   <element minOccurs="1" name="name" type="string"/>
    <element name="id" type="string"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors"/>
+   <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="profiles">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element default="false" minOccurs="0" name="isAbstract" type="boolean"/>
@@ -237,37 +233,37 @@
    <element minOccurs="0" name="linkedDocument" type="string"/>
    <element minOccurs="0" name="supertypes">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="SupertypeId" type="string"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="subtypes">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="SubtypeId" type="string"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="constraints">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Constraint"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="diagrams">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="properties">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Property"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
   </all>
@@ -278,13 +274,13 @@
    <element minOccurs="0" name="name" type="string"/>
    <element name="id" type="string"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors"/>
+   <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="profiles">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element name="cardinality" type="string" default="1" minOccurs="0"/>
@@ -305,20 +301,21 @@
    <element default="true" minOccurs="0" name="isUnique" type="boolean"/>
    <element default="false" minOccurs="0" name="isComposition" type="boolean"/>
    <element default="false" minOccurs="0" name="isAggregation" type="boolean"/>
+   <element default="false" minOccurs="0" name="isOwned" type="boolean"/>
    <element minOccurs="0" name="initialValue" type="string"/>
    <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
    <element minOccurs="0" name="qualifiers">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" name="Qualifier">
        <complexType>
-        <sequence>
+        <all>
          <element name="name" type="string"/>
          <element name="type" type="string"/>
-        </sequence>
+        </all>
        </complexType>
       </element>
-     </sequence>
+     </all>
     </complexType>
    </element>
    <element minOccurs="0" name="inClassId" type="string"/>
@@ -326,9 +323,9 @@
    <element minOccurs="0" name="associationId" type="string"/>
    <element minOccurs="0" name="constraints">
     <complexType>
-     <sequence>
+     <all>
       <element maxOccurs="unbounded" ref="sc:Constraint"/>
-     </sequence>
+     </all>
     </complexType>
    </element>
   </all>
@@ -339,7 +336,7 @@
    <element minOccurs="0" name="name" type="string"/>
    <element name="id" type="string"/>
    <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors"/>
+   <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="assocClassId" type="string"/>
    <element name="end1" type="sc:AssociationRoleType"/>
@@ -347,21 +344,21 @@
   </all>
  </complexType>
  <complexType name="AssociationRoleType">
-  <sequence>
+  <all>
    <element minOccurs="0" ref="sc:Property"/>
-  </sequence>
+  </all>
   <attribute name="ref" type="string"/>
  </complexType>
  <element name="ImageMetadata" type="sc:ImageMetadataType"/>
  <complexType name="ImageMetadataType">
-  <sequence>
+  <all>
    <element name="id" type="ID"/>
    <element name="name" type="string"/>
    <element name="file" type="string"/>
    <element name="relPathToFile" type="string"/>
    <element name="width" type="positiveInteger"/>
    <element name="height" type="positiveInteger"/>
-  </sequence>
+  </all>
  </complexType>
  <simpleType name="ConstraintContextModelElementType">
   <restriction base="string">
@@ -475,29 +472,29 @@
  </element>
  <element name="stereotypes">
   <complexType>
-   <sequence>
+   <all>
     <element maxOccurs="unbounded" name="Stereotype" type="string"/>
-   </sequence>
+   </all>
   </complexType>
  </element>
  <element name="taggedValues">
   <complexType>
-   <sequence>
+   <all>
     <element maxOccurs="unbounded" name="TaggedValue">
      <complexType>
-      <sequence>
+      <all>
        <element name="name" type="string"/>
        <element minOccurs="0" name="values">
         <complexType>
-         <sequence>
+         <all>
           <element maxOccurs="unbounded" name="Value" type="string"/>
-         </sequence>
+         </all>
         </complexType>
        </element>
-      </sequence>
+      </all>
      </complexType>
     </element>
-   </sequence>
+   </all>
   </complexType>
  </element>
 </schema>

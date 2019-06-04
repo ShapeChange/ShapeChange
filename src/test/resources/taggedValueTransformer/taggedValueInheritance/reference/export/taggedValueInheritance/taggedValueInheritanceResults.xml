@@ -47,10 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/core</sc:targetNamespace>
-              <sc:xmlns>tvicore</sc:xmlns>
-              <sc:xsdDocument>tvicore.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>CoreFeatureType1</sc:name>
@@ -239,10 +235,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:targetNamespace>
-              <sc:xmlns>tviext</sc:xmlns>
-              <sc:xsdDocument>tviext.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>ExtFeatureType1</sc:name>

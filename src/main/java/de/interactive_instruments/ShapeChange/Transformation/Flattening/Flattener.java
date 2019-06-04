@@ -533,22 +533,13 @@ public class Flattener implements Transformer, MessageSource {
 
 						String targetNamespace = appSchema.targetNamespace();
 
-						if (targetNamespace.endsWith(targetNamespaceSuffix))
-							continue;
-
-						for (GenericPackageInfo pi : appSchema.getAllPackages(
-								new HashSet<GenericPackageInfo>())) {
+						if (!targetNamespace.endsWith(targetNamespaceSuffix)) {
 							/*
 							 * TBD: some more processing to identify if a '/' is
 							 * missing or too much
 							 */
-
-							// just in case a package in the tree is not in the
-							// app schema namespace
-							if (pi.targetNamespace().equals(targetNamespace)) {
-								pi.setTargetNamespace(targetNamespace
-										+ targetNamespaceSuffix);
-							}
+							appSchema.setTargetNamespace(targetNamespace
+									+ targetNamespaceSuffix);
 						}
 					}
 				}

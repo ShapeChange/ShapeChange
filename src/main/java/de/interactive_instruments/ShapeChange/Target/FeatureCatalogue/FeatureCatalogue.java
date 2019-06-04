@@ -2814,6 +2814,11 @@ public class FeatureCatalogue
 
 		xsltWrite(transformationSourceFile, xsltfileName,
 				transformationTargetFile);
+		
+		if(transformationTargetFile.exists() && transformationTargetFile.length() == 0) {
+			FileUtils.deleteQuietly(transformationTargetFile);
+			result.addDebug(this,32,transformationTargetFile.getAbsolutePath());
+		}
 	}
 
 	public void xsltWrite(File transformationSource, String xsltfileName,
@@ -3416,6 +3421,8 @@ public class FeatureCatalogue
 			return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
 		case 31:
 			return "Directory '$1$' could not be created.";
+		case 32:
+			return "Removed empty XSLT transformation target file at $1$.";
 		}
 		return null;
 	}

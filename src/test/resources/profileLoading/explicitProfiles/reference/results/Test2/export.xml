@@ -47,10 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/a</sc:targetNamespace>
-              <sc:xmlns>sc</sc:xmlns>
-              <sc:xsdDocument>a.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>FeatureTypeA</sc:name>
@@ -337,10 +333,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/iso</sc:targetNamespace>
-              <sc:xmlns>iso</sc:xmlns>
-              <sc:xsdDocument>iso_stub.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>Real</sc:name>
@@ -539,10 +531,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1.0</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/ext</sc:targetNamespace>
-              <sc:xmlns>ext</sc:xmlns>
-              <sc:xsdDocument>ext.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>ExtFeatureType</sc:name>

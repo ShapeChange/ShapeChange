@@ -25,7 +25,6 @@
     <element ref="sc:tagAliases"/>
     <element ref="sc:descriptorSources"/>
     <element ref="sc:packages"/>
-    <element ref="sc:language"/>
     <element ref="xi:include"/>
    </choice>
    <attribute name="id" type="ID"/>
@@ -35,11 +34,6 @@
   <complexType>
    <attribute name="name" type="string" use="required"/>
    <attribute name="value" type="string" use="required"/>
-  </complexType>
- </element>
- <element name="language">
-  <complexType>
-   <attribute name="default" type="string" use="required"/>
   </complexType>
  </element>
  <element name="stereotypeAliases">
