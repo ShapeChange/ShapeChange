@@ -331,7 +331,8 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				// normalize deprecated tags.
 				for (ConnectorTag tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))

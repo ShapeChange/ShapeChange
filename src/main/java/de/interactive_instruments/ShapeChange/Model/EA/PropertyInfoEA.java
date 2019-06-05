@@ -706,7 +706,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 					// normalize deprecated tags.
 					for (AttributeTag tv : tvs) {
 						String t = tv.GetName();
-						t = document.normalizeTaggedValue(t);
+						t = options().taggedValueNormalizer()
+								.normalizeTaggedValue(t);
 						if (t != null) {
 							String v = tv.GetValue();
 							if (v.equals("<memo>"))
@@ -732,7 +733,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 					for (RoleTag tv : tvs) {
 
 						String t = tv.GetTag();
-						t = document.normalizeTaggedValue(t);
+						t = options().taggedValueNormalizer()
+								.normalizeTaggedValue(t);
 
 						if (t != null) {
 

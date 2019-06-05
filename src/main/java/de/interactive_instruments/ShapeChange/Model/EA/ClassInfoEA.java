@@ -724,7 +724,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (model().descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaClassElement.GetAlias();
 
@@ -890,7 +891,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				// normalize deprecated tags.
 				for (TaggedValue tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))

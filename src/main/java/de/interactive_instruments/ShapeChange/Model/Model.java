@@ -98,15 +98,6 @@ public interface Model {
 	public SortedSet<ClassInfo> classes(PackageInfo pi);
 
 	/**
-	 * Tagged values normalization. This returns the tag given or a
-	 * de-deprecated tag or null.
-	 * 
-	 * @param tag
-	 * @return
-	 */
-	public String normalizeTaggedValue(String tag);
-
-	/**
 	 * Execute postprocessing and validation checks after the model has been
 	 * loaded.
 	 */

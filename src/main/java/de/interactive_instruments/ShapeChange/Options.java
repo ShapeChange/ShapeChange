@@ -74,6 +74,7 @@ import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
+import de.interactive_instruments.ShapeChange.Model.TaggedValueNormalizer;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheArray;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
@@ -586,6 +587,8 @@ public class Options {
 
 	protected File imageTmpDir = null;
 	protected File linkedDocTmpDir = null;
+	
+	protected TaggedValueNormalizer tvNormalizer = null;
 
 	private Map<String, AIXMSchemaInfo> schemaInfos;
 
@@ -4439,6 +4442,15 @@ public class Options {
 			result = new TaggedValuesCacheMap(original, tagList, this);
 		}
 		return result;
+	}
+	
+	public TaggedValueNormalizer taggedValueNormalizer() {
+		
+		if(this.tvNormalizer == null) {
+			this.tvNormalizer = new TaggedValueNormalizer(this);
+		}
+		
+		return this.tvNormalizer;
 	}
 
 	/**

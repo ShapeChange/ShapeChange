@@ -652,7 +652,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 				id = parent.getAttribute("xmi.id");
 			}
 
-			String t = normalizeTaggedValue(tag);
+			String t = options().taggedValueNormalizer()
+					.normalizeTaggedValue(tag);
 			if (t != null) {
 				TaggedValues tvs;
 				if (fTaggedValues.containsKey(id)) {

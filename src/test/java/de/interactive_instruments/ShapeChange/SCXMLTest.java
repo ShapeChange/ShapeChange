@@ -54,4 +54,14 @@ public class SCXMLTest extends WindowsBasicTest {
 				"testResults/scxml/stereotypeNormalization/results",
 				"src/test/resources/scxml/stereotypeNormalization/reference/results");
 	}
+	
+	@Test
+	public void testSCXML_taggedValueNormalization() {
+
+		multiTest(
+				"src/test/resources/scxml/taggedValueNormalization/test_scxml_taggedValueNormalization.xml",
+				new String[] { "xml" },
+				"testResults/scxml/taggedValueNormalization/results",
+				"src/test/resources/scxml/taggedValueNormalization/reference/results");
+	}
 }

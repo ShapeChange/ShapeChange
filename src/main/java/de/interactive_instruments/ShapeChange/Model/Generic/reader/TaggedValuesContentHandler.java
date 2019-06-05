@@ -42,8 +42,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class TaggedValuesContentHandler extends AbstractContentHandler {
@@ -90,7 +90,8 @@ public class TaggedValuesContentHandler extends AbstractContentHandler {
 
 		if (localName.equals("name")) {
 
-			this.name = sb.toString();
+			this.name = options.taggedValueNormalizer()
+					.normalizeTaggedValue(sb.toString());
 
 		} else if (localName.equals("values")) {
 
@@ -98,13 +99,20 @@ public class TaggedValuesContentHandler extends AbstractContentHandler {
 
 		} else if (localName.equals("TaggedValue")) {
 
-			if (!this.stringList.isEmpty()) {
+			/*
+			 * We need to check if this tag shall be ignored. That is the case
+			 * if its name is null (due to normalization).
+			 */
+			if (this.name != null) {
 
-				taggedValues.put(this.name, this.stringList);
+				if (!this.stringList.isEmpty()) {
 
-			} else {
+					taggedValues.put(this.name, this.stringList);
 
-				taggedValues.add(this.name, "");
+				} else {
+
+					taggedValues.add(this.name, "");
+				}
 			}
 
 		} else if (localName.equals("taggedValues")) {
