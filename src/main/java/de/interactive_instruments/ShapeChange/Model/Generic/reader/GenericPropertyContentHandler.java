@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -288,7 +289,16 @@ public class GenericPropertyContentHandler
 		} else if (localName.equals("Property")) {
 
 			// set descriptors in genPi
-			this.genPi.setDescriptors(descriptorsHandler.getDescriptors());
+			Descriptors desc;
+			
+			if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+				desc = null;
+			} else if(descriptorsHandler == null) {
+				desc = new Descriptors();
+			} else {
+				desc = descriptorsHandler.getDescriptors();
+			}
+			this.genPi.setDescriptors(desc);
 
 			Type type = new Type();
 			type.id = options.internalize(this.typeId);

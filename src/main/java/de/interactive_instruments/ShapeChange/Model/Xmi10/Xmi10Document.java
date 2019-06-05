@@ -65,6 +65,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.ModelImpl;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -121,7 +122,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 	public ShapeChangeResult result() {
 		return result;
 	} // result()
-	
+
 	/** Load the application schema(s). */
 	public void initialise(ShapeChangeResult r, Options o, String xmifile)
 			throws ShapeChangeAbortException {
@@ -151,7 +152,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 			options.addSchemaLocation(pi.targetNamespace(), pi.xsdDocument());
 		}
 	} // Xmi10Document()
-	
+
 	public void open(String xmlfile) throws ShapeChangeAbortException {
 
 		DocumentBuilder builder = null;
@@ -178,7 +179,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 
 		// parse file
 		try {
-			// consider pre- and postprocessing files with a configurable XSLT script
+			// consider pre- and postprocessing files with a configurable XSLT
+			// script
 			document = builder.parse(xmlfile);
 
 			if (errorHandler.errorsFound()) {
@@ -240,12 +242,12 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 		return null;
 	}
-	
+
 	/** Verify XMI version */
 	protected void verify() throws ShapeChangeAbortException {
-		if (document.getDoctype()==null) {
+		if (document.getDoctype() == null) {
 			result.addFatalError(null, 16);
-			throw new ShapeChangeAbortException();			
+			throw new ShapeChangeAbortException();
 		}
 		NodeList nl = document.getElementsByTagName("XMI");
 		if (nl.getLength() == 1) {
@@ -460,7 +462,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 	}
 
 	/** Get value of attribute node. */
-	protected String attributeOfProperty(Element elmt, String child, String att) {
+	protected String attributeOfProperty(Element elmt, String child,
+			String att) {
 		NodeList nl1 = elmt.getChildNodes();
 		for (int j = 0; j < nl1.getLength(); j++) {
 			Node n1 = nl1.item(j);
@@ -504,15 +507,15 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 		if (options.parameter("publicOnly").equals("true")
 				&& !"public".equals(attributeOfProperty(e,
-								"Foundation.Core.ModelElement.visibility",
-								"xmi.value"))
+						"Foundation.Core.ModelElement.visibility", "xmi.value"))
 				&& !"".equals(attributeOfProperty(e,
-								"Foundation.Core.ModelElement.visibility",
-								"xmi.value"))) {
+						"Foundation.Core.ModelElement.visibility",
+						"xmi.value"))) {
 			return false;
 		}
 		Stereotypes stereotypes = fStereotypes.get(e.getAttribute("xmi.id"));
-		if (stereotypes != null && stereotypes.contains("_ShapeChangeIgnore_")) {
+		if (stereotypes != null
+				&& stereotypes.contains("_ShapeChangeIgnore_")) {
 			return false;
 		}
 		return true;
@@ -522,10 +525,11 @@ public class Xmi10Document extends ModelImpl implements Model {
 	public String taggedValue(String idref, String tag) {
 		String res = null;
 		TaggedValues tvs = fTaggedValues.get(idref);
-		if (tvs==null && options.eaBugFixWrongID) {
+		if (tvs == null && options.eaBugFixWrongID) {
 			/*
-			 * The following is a bugfix for Enterprise Architect which sometimes
-			 * creates references with the wrong prefix in the idref value
+			 * The following is a bugfix for Enterprise Architect which
+			 * sometimes creates references with the wrong prefix in the idref
+			 * value
 			 */
 			if (idref.startsWith("EAID")) {
 				tvs = fTaggedValues.get("EAPK" + idref.substring(4));
@@ -533,23 +537,25 @@ public class Xmi10Document extends ModelImpl implements Model {
 				tvs = fTaggedValues.get("EAID" + idref.substring(4));
 			}
 		}
-		
-		if (tvs!=null && tvs.containsKey(tag))
+
+		if (tvs != null && tvs.containsKey(tag))
 			res = tvs.getFirstValue(tag);
 
 		return res;
 	}
-	
+
 	/**
-	 * @param idref identifies a model element
+	 * @param idref
+	 *                  identifies a model element
 	 * @return the tagged values for the model element identified by idref
 	 */
 	public TaggedValues taggedValues(String idref) {
 		TaggedValues tvs = fTaggedValues.get(idref);
-		if (tvs==null && options.eaBugFixWrongID) {
+		if (tvs == null && options.eaBugFixWrongID) {
 			/*
-			 * The following is a bugfix for Enterprise Architect which sometimes
-			 * creates references with the wrong prefix in the idref value
+			 * The following is a bugfix for Enterprise Architect which
+			 * sometimes creates references with the wrong prefix in the idref
+			 * value
 			 */
 			if (idref.startsWith("EAID")) {
 				tvs = fTaggedValues.get("EAPK" + idref.substring(4));
@@ -581,7 +587,10 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return id;
 	}
 
-	/** Verify that an element is a model element and not just a reference to one. */
+	/**
+	 * Verify that an element is a model element and not just a reference to
+	 * one.
+	 */
 	protected boolean notAReference(Element e) {
 		if (e.getAttribute("xmi.id").equals("")) {
 			return false;
@@ -611,7 +620,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		NodeList nl1;
 		NodeList nl2;
 
-		nl1 = document.getElementsByTagName("Foundation.Extension_Mechanisms.TaggedValue");
+		nl1 = document.getElementsByTagName(
+				"Foundation.Extension_Mechanisms.TaggedValue");
 		for (int j = 0; j < nl1.getLength(); j++) {
 			n1 = nl1.item(j);
 			nl2 = n1.getChildNodes();
@@ -643,7 +653,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 			}
 
 			String t = normalizeTaggedValue(tag);
-			if (t!=null) {
+			if (t != null) {
 				TaggedValues tvs;
 				if (fTaggedValues.containsKey(id)) {
 					tvs = fTaggedValues.get(id);
@@ -652,7 +662,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 					fTaggedValues.put(id, tvs);
 				}
 				tvs.add(tag, value);
-				
+
 				result.addDebug(null, 10000, tag, id, value);
 			}
 		}
@@ -664,8 +674,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		Element n1;
 		NodeList nl1;
 
-		nl1 = document
-				.getElementsByTagName("Foundation.Extension_Mechanisms.Stereotype");
+		nl1 = document.getElementsByTagName(
+				"Foundation.Extension_Mechanisms.Stereotype");
 		for (int j = 0; j < nl1.getLength(); j++) {
 			n1 = (Element) nl1.item(j);
 
@@ -687,20 +697,24 @@ public class Xmi10Document extends ModelImpl implements Model {
 			if (name.equals("")) {
 				continue;
 			}
-			
+
 			boolean found = false;
 
 			if (baseClass.equals("Class")) {
 				for (int i = 0; i < Options.classStereotypes.length; i++) {
-					if (name.toLowerCase().equals(Options.classStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+					if (name.toLowerCase()
+							.equals(Options.classStereotypes[i])) {
+						Vector<String> ids = idsOfProperty(n1,
+								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 						if (ids.size() == 0) {
 							ids = getOwnerId(n1);
 						}
-						for (Iterator<String> k = ids.iterator(); k.hasNext();) {
+						for (Iterator<String> k = ids.iterator(); k
+								.hasNext();) {
 							s = k.next();
 							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(options.normalizeStereotype(name)));
+							st.add(options.internalize(
+									options.normalizeStereotype(name)));
 							fStereotypes.put(s, st);
 							result.addDebug(null, 10019, name, s);
 						}
@@ -709,18 +723,22 @@ public class Xmi10Document extends ModelImpl implements Model {
 					}
 				}
 			}
-			
+
 			if (baseClass.equals("Association")) {
 				for (int i = 0; i < Options.assocStereotypes.length; i++) {
-					if (name.toLowerCase().equals(Options.assocStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+					if (name.toLowerCase()
+							.equals(Options.assocStereotypes[i])) {
+						Vector<String> ids = idsOfProperty(n1,
+								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 						if (ids.size() == 0) {
 							ids = getOwnerId(n1);
 						}
-						for (Iterator<String> k = ids.iterator(); k.hasNext();) {
+						for (Iterator<String> k = ids.iterator(); k
+								.hasNext();) {
 							s = k.next();
 							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(options.normalizeStereotype(name)));
+							st.add(options.internalize(
+									options.normalizeStereotype(name)));
 							fStereotypes.put(s, st);
 							result.addDebug(null, 10019, name, s);
 						}
@@ -728,25 +746,31 @@ public class Xmi10Document extends ModelImpl implements Model {
 						break;
 					}
 				}
-			} 
-			
-			if (baseClass.equals("Package") || baseClass.equals("ClassifierRole")) {
+			}
+
+			if (baseClass.equals("Package")
+					|| baseClass.equals("ClassifierRole")) {
 				for (int i = 0; i < Options.packageStereotypes.length; i++) {
-					if (name.toLowerCase().equals(Options.packageStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+					if (name.toLowerCase()
+							.equals(Options.packageStereotypes[i])) {
+						Vector<String> ids = idsOfProperty(n1,
+								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 						if (ids.size() == 0) {
 							ids = getOwnerId(n1);
 						}
-						for (Iterator<String> k = ids.iterator(); k.hasNext();) {
+						for (Iterator<String> k = ids.iterator(); k
+								.hasNext();) {
 							s = k.next();
 							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(options.normalizeStereotype(name)));
+							st.add(options.internalize(
+									options.normalizeStereotype(name)));
 							fStereotypes.put(s, st);
 							result.addDebug(null, 10019, name, s);
 							Element e1 = document.getElementById(s);
 							if (e1 != null) {
-								String ename = textOfProperty(e1,"Foundation.Core.ModelElement.name");
-								result.addDebug(null,10020, ename);
+								String ename = textOfProperty(e1,
+										"Foundation.Core.ModelElement.name");
+								result.addDebug(null, 10020, ename);
 								fSchemas.put(ename, e1);
 							}
 						}
@@ -759,14 +783,17 @@ public class Xmi10Document extends ModelImpl implements Model {
 			if (baseClass.equals("Dependency")) {
 				for (int i = 0; i < Options.depStereotypes.length; i++) {
 					if (name.toLowerCase().equals(Options.depStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+						Vector<String> ids = idsOfProperty(n1,
+								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 						if (ids.size() == 0) {
 							ids = getOwnerId(n1);
 						}
-						for (Iterator<String> k = ids.iterator(); k.hasNext();) {
+						for (Iterator<String> k = ids.iterator(); k
+								.hasNext();) {
 							s = k.next();
 							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(options.normalizeStereotype(name)));
+							st.add(options.internalize(
+									options.normalizeStereotype(name)));
 							fStereotypes.put(s, st);
 							result.addDebug(null, 10019, name, s);
 						}
@@ -774,19 +801,24 @@ public class Xmi10Document extends ModelImpl implements Model {
 						break;
 					}
 				}
-			} 
+			}
 
-			if (baseClass.equals("Attribute") || baseClass.equals("AssociationEnd")) {
+			if (baseClass.equals("Attribute")
+					|| baseClass.equals("AssociationEnd")) {
 				for (int i = 0; i < Options.propertyStereotypes.length; i++) {
-					if (name.toLowerCase().equals(Options.propertyStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+					if (name.toLowerCase()
+							.equals(Options.propertyStereotypes[i])) {
+						Vector<String> ids = idsOfProperty(n1,
+								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 						if (ids.size() == 0) {
 							ids = getOwnerId(n1);
 						}
-						for (Iterator<String> k = ids.iterator(); k.hasNext();) {
+						for (Iterator<String> k = ids.iterator(); k
+								.hasNext();) {
 							s = k.next();
 							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(options.normalizeStereotype(name)));
+							st.add(options.internalize(
+									options.normalizeStereotype(name)));
 							fStereotypes.put(s, st);
 							result.addDebug(null, 10019, name, s);
 						}
@@ -794,26 +826,29 @@ public class Xmi10Document extends ModelImpl implements Model {
 						break;
 					}
 				}
-			} 
+			}
 
 			if (!found) {
-				result.addWarning(null,1005,name, baseClass);
-				Vector<String> ids = idsOfProperty(n1,"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				result.addWarning(null, 1005, name, baseClass);
+				Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
 				for (Iterator<String> i = ids.iterator(); i.hasNext();) {
 					id = i.next();
 					Stereotypes st = options.stereotypesFactory();
-					st.add(options.internalize(options.normalizeStereotype("_ShapeChangeIgnore_")));
+					st.add(options.internalize(options
+							.normalizeStereotype("_ShapeChangeIgnore_")));
 					fStereotypes.put(id, st);
 					Element e1 = document.getElementById(id);
 					if (e1 != null) {
-						name = textOfProperty(e1,"Foundation.Core.ModelElement.name");
+						name = textOfProperty(e1,
+								"Foundation.Core.ModelElement.name");
 					} else {
 						name = "";
 					}
 					if (name == null || name.equals("")) {
 						name = "(unknown)";
 					}
-					result.addWarning(null,1006,baseClass, name);
+					result.addWarning(null, 1006, baseClass, name);
 				}
 			}
 		}
@@ -832,15 +867,19 @@ public class Xmi10Document extends ModelImpl implements Model {
 			if (!visible(n1)) {
 				continue;
 			}
-			String disc = textOfProperty(n1,"Foundation.Core.Generalization.discriminator");
+			String disc = textOfProperty(n1,
+					"Foundation.Core.Generalization.discriminator");
 			if (disc != null && !disc.equals("")) {
-				result.addWarning(null,1007, id);
+				result.addWarning(null, 1007, id);
 				continue;
 			}
-			Vector<String> childs = idsOfProperty(n1,"Foundation.Core.Generalization.child");
-			Vector<String> parents = idsOfProperty(n1,"Foundation.Core.Generalization.parent");
+			Vector<String> childs = idsOfProperty(n1,
+					"Foundation.Core.Generalization.child");
+			Vector<String> parents = idsOfProperty(n1,
+					"Foundation.Core.Generalization.parent");
 			for (Iterator<String> idx = childs.iterator(); idx.hasNext();) {
-				for (Iterator<String> jdx = parents.iterator(); jdx.hasNext();) {
+				for (Iterator<String> jdx = parents.iterator(); jdx
+						.hasNext();) {
 					String child = idx.next();
 					String parent = jdx.next();
 					if (fSubtypes.containsKey(parent)) {
@@ -913,11 +952,12 @@ public class Xmi10Document extends ModelImpl implements Model {
 	protected void initPackages() throws ShapeChangeAbortException {
 		Element root = document.getDocumentElement();
 		addPackageElements(root.getElementsByTagName("Model_Management.Model"));
-		addPackageElements(root
-				.getElementsByTagName("Model_Management.Package"));
+		addPackageElements(
+				root.getElementsByTagName("Model_Management.Package"));
 	}
 
-	private void addClassElements(NodeList nl) throws ShapeChangeAbortException {
+	private void addClassElements(NodeList nl)
+			throws ShapeChangeAbortException {
 		for (int j = 0; j < nl.getLength(); j++) {
 			Element e = (Element) nl.item(j);
 			if (visible(e) && notAReference(e)) {
@@ -938,12 +978,16 @@ public class Xmi10Document extends ModelImpl implements Model {
 						if (ci2 != null) {
 							if (ci.id().startsWith("G.")) {
 								fClasses.put(ci.id(), ci2);
-								result.addDebug(null,10018,ci.name()+" ("+ci.id()+")", ci2.name()+" ("+ci2.id()+")");
+								result.addDebug(null, 10018,
+										ci.name() + " (" + ci.id() + ")",
+										ci2.name() + " (" + ci2.id() + ")");
 							}
 							if (ci2.id().startsWith("G.")) {
 								fClasses.put(ci2.id(), ci);
 								fClassnames.put(ci.name(), ci);
-								result.addDebug(null,10018,ci2.name()+" ("+ci2.id()+")", ci.name()+" ("+ci.id()+")");
+								result.addDebug(null, 10018,
+										ci2.name() + " (" + ci2.id() + ")",
+										ci.name() + " (" + ci.id() + ")");
 							}
 						} else {
 							fClassnames.put(ci.name(), ci);
@@ -963,13 +1007,15 @@ public class Xmi10Document extends ModelImpl implements Model {
 		// First generate all the basic class info in the full model
 		Element root = document.getDocumentElement();
 		addClassElements(root.getElementsByTagName("Foundation.Core.Class"));
-		addClassElements(root.getElementsByTagName("Foundation.Core.Interface"));
+		addClassElements(
+				root.getElementsByTagName("Foundation.Core.Interface"));
 		addClassElements(root.getElementsByTagName("Foundation.Core.DataType"));
 		if (options.eaIncludeExtentsions) {
-			addClassElements(root.getElementsByTagName("Foundation.Core.ModelElement"));
+			addClassElements(
+					root.getElementsByTagName("Foundation.Core.ModelElement"));
 		}
 	}
-	
+
 	public PackageInfo packageById(String id) {
 		return fPackages.get(id);
 	}
@@ -1023,7 +1069,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 					try {
 						upper = Integer.parseInt(minmax[1]);
 					} catch (NumberFormatException e) {
-						result.addWarning(null,1003, minmax[1]);
+						result.addWarning(null, 1003, minmax[1]);
 						upper = Integer.MAX_VALUE;
 					}
 				}
@@ -1037,7 +1083,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 						lower = Integer.parseInt(ranges[i]);
 						upper = lower;
 					} catch (NumberFormatException e) {
-						result.addWarning(null,1003, ranges[i]);
+						result.addWarning(null, 1003, ranges[i]);
 						lower = 0;
 						upper = Integer.MAX_VALUE;
 					}
@@ -1062,7 +1108,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 	public void shutdown() {
 		// nothing to be done for XMI files
 	}
-	
+
 	@Override
 	public SortedSet<PackageInfo> packages() {
 		SortedSet<PackageInfo> allPackages = new TreeSet<PackageInfo>();
@@ -1070,6 +1116,31 @@ public class Xmi10Document extends ModelImpl implements Model {
 			allPackages.add(pi);
 		}
 		return allPackages;
+	}
+
+	@Override
+	public String descriptorSource(Descriptor descriptor) {
+
+		String source = options().descriptorSource(descriptor.getName());
+
+		// if nothing has been configured, use defaults
+		if (source == null) {
+
+			if (descriptor == Descriptor.DOCUMENTATION)
+				source = "tag#documentation;description";
+			else if (descriptor == Descriptor.ALIAS)
+				source = "tag#alias";
+			else if (descriptor == Descriptor.GLOBALIDENTIFIER)
+				source = "tag#globalIdentifier";
+			else if (descriptor == Descriptor.DEFINITION)
+				source = "sc:extract#PROLOG";
+			else if (descriptor == Descriptor.DESCRIPTION)
+				source = "none";
+			else
+				source = "tag#" + descriptor;
+		}
+
+		return source;
 	}
 
 };

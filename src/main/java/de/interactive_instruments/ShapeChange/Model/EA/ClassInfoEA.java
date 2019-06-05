@@ -656,7 +656,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				String s = null;
 
 				// Try EA notes if ea:notes is the source
-				if (descriptorSource(Descriptor.DOCUMENTATION)
+				if (model().descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 					s = eaClassElement.GetNotes();
 					// Fix for EA7.5 bug
@@ -713,7 +713,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -733,7 +733,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
 
 					String a = eaClassElement.GetAlias();
 

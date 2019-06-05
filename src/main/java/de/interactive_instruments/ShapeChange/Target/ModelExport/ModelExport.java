@@ -896,25 +896,28 @@ public class ModelExport implements SingleTarget, MessageSource {
 			writer.endElement(NS, "stereotypes");
 		}
 
-		// print descriptors
-		writer.startElement(NS, "descriptors");
+		// print descriptors - if not empty
 		Descriptors descriptors = i.descriptors();
-		printDescriptorElement(Descriptor.ALIAS, descriptors);
-		printDescriptorElement(Descriptor.PRIMARYCODE, descriptors);
-		printDescriptorElement(Descriptor.GLOBALIDENTIFIER, descriptors);
-		printDescriptorElement(Descriptor.DEFINITION, descriptors);
-		printDescriptorElement(Descriptor.DESCRIPTION, descriptors);
-		/*
-		 * TBD: We could add a parameter to list the descriptors that shall be
-		 * exported
-		 */
-		// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
-		printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
-		printDescriptorElement(Descriptor.LANGUAGE, descriptors);
-		printDescriptorElement(Descriptor.EXAMPLE, descriptors);
-		printDescriptorElement(Descriptor.DATACAPTURESTATEMENT, descriptors);
-		writer.endElement(NS, "descriptors");
-
+		if (!descriptors.isEmpty()) {
+			writer.startElement(NS, "descriptors");
+			printDescriptorElement(Descriptor.ALIAS, descriptors);
+			printDescriptorElement(Descriptor.PRIMARYCODE, descriptors);
+			printDescriptorElement(Descriptor.GLOBALIDENTIFIER, descriptors);
+			printDescriptorElement(Descriptor.DEFINITION, descriptors);
+			printDescriptorElement(Descriptor.DESCRIPTION, descriptors);
+			/*
+			 * TBD: We could add a parameter to list the descriptors that shall
+			 * be exported
+			 */
+			// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
+			printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
+			printDescriptorElement(Descriptor.LANGUAGE, descriptors);
+			printDescriptorElement(Descriptor.EXAMPLE, descriptors);
+			printDescriptorElement(Descriptor.DATACAPTURESTATEMENT,
+					descriptors);
+			writer.endElement(NS, "descriptors");
+		}
+		
 		TaggedValues tvs = i.taggedValuesAll();
 
 		// identify set of tagged values to export

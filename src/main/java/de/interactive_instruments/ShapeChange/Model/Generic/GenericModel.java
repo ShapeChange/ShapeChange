@@ -82,6 +82,7 @@ import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Constraint.ModelElmtContextType;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -121,6 +122,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	protected ShapeChangeResult result = null;
 
 	protected String characterEncoding = null;
+	protected boolean loadingFromScxml = false;
 	// protected Model model = null;
 
 	protected Map<String, GenericPropertyInfo> genPropertiesById = new HashMap<String, GenericPropertyInfo>();
@@ -1376,6 +1378,12 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				}
 
 				this.characterEncoding = modelHandler.getEncoding();
+				this.loadingFromScxml = true;
+
+				if (options.parameterAsBoolean(null,
+						"applyDescriptorSourcesWhenLoadingScxml", false)) {
+					result.addDebug(this,30401);
+				}
 
 				Map<String, GenericPackageContentHandler> packageHandlers = modelHandler
 						.getAllPackageContentHandlers();
@@ -1388,6 +1396,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 					GenericPackageInfo genPkg = pkgHandler.getGenericPackage();
 					genPkg.setModel(this);
+					/*
+					 * Ensure that descriptors are loaded from descriptor
+					 * sources, if so configured.
+					 */
+					genPkg.descriptors();
 
 					this.genPackageInfosById.put(genPkg.id(),
 							pkgHandler.getGenericPackage());
@@ -1397,6 +1410,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 						GenericClassInfo genCi = clsHandler.getGenericClass();
 						genCi.setModel(this);
+						/*
+						 * Ensure that descriptors are loaded from descriptor
+						 * sources, if so configured.
+						 */
+						genCi.descriptors();
 
 						classHandlers.put(genCi.id(), clsHandler);
 						this.genClassInfosById.put(genCi.id(), genCi);
@@ -1408,6 +1426,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 							GenericPropertyInfo genProp = propHandler
 									.getGenericProperty();
 							genProp.setModel(this);
+							/*
+							 * Ensure that descriptors are loaded from
+							 * descriptor sources, if so configured.
+							 */
+							genProp.descriptors();
 
 							propertyHandlers.put(genProp.id(), propHandler);
 							this.genPropertiesById.put(genProp.id(), genProp);
@@ -1421,6 +1444,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					GenericAssociationInfo genAi = assocHandler
 							.getGenericAssociationInfo();
 					genAi.setModel(this);
+					/*
+					 * Ensure that descriptors are loaded from descriptor
+					 * sources, if so configured.
+					 */
+					genAi.descriptors();
 
 					associationHandlers.put(genAi.id(), assocHandler);
 					this.genAssociationInfosById.put(genAi.id(), genAi);
@@ -1434,6 +1462,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 						GenericPropertyInfo genPropEnd1 = end1Handler
 								.getGenericProperty();
 						genPropEnd1.setModel(this);
+						/*
+						 * Ensure that descriptors are loaded from descriptor
+						 * sources, if so configured.
+						 */
+						genPropEnd1.descriptors();
 						propertyHandlers.put(genPropEnd1.id(), end1Handler);
 						this.genPropertiesById.put(genPropEnd1.id(),
 								genPropEnd1);
@@ -1442,6 +1475,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 						GenericPropertyInfo genPropEnd2 = end2Handler
 								.getGenericProperty();
 						genPropEnd2.setModel(this);
+						/*
+						 * Ensure that descriptors are loaded from descriptor
+						 * sources, if so configured.
+						 */
+						genPropEnd2.descriptors();
 						propertyHandlers.put(genPropEnd2.id(), end2Handler);
 						this.genPropertiesById.put(genPropEnd2.id(),
 								genPropEnd2);
@@ -1639,6 +1677,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					throw new ShapeChangeAbortException();
 				}
 			}
+			this.loadingFromScxml = false;
 		}
 	}
 
@@ -3281,6 +3320,30 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
 
 	@Override
+	public String descriptorSource(Descriptor descriptor) {
+
+		String source = null;
+
+		if (options().parameterAsBoolean(null,
+				"applyDescriptorSourcesWhenLoadingScxml", false)
+				&& loadingFromScxml) {
+
+			source = options().descriptorSource(descriptor.getName());
+
+			// if nothing has been configured, use tag as default
+			if (source == null) {
+				source = "tag#" + descriptor;
+			}
+
+		} else {
+
+			source = "sc:internal";
+		}
+
+		return source;
+	}
+
+	@Override
 	public String message(int mnr) {
 
 		switch (mnr) {
@@ -3356,7 +3419,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		case 30400:
 			return "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
-
+		case 30401:
+			return "Input parameter 'applyDescriptorSourcesWhenLoadingScxml' is set to 'true'. Descriptors elements in SCXML will be ignored. Descriptors of model elements loaded from SCXML will be determined based upon configured descriptor sources.";
+		
 		case 30500:
 			return "--- SCXML VALIDATION RESULTS - START ---";
 		case 30501:

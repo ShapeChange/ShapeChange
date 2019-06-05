@@ -113,7 +113,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
-	
+
 	public int getEaPackageId() {
 		return eaPackageId;
 	}
@@ -438,7 +438,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -458,7 +458,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaPackage.GetAlias();
 

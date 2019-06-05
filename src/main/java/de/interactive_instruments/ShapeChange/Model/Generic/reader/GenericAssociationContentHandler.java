@@ -39,6 +39,7 @@ import org.xml.sax.XMLReader;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
@@ -193,7 +194,18 @@ public class GenericAssociationContentHandler
 		} else if (localName.equals("Association")) {
 
 			// set descriptors in genAi
-			this.genAi.setDescriptors(descriptorsHandler.getDescriptors());
+			
+			Descriptors desc;
+			
+			if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+				desc = null;
+			} else if(descriptorsHandler == null) {
+				desc = new Descriptors();
+			} else {
+				desc = descriptorsHandler.getDescriptors();
+			}
+			this.genAi.setDescriptors(desc);
+			
 			// for (Entry<Descriptor, Descriptors> entry : descriptors
 			// .getDescriptors().entrySet()) {
 			//

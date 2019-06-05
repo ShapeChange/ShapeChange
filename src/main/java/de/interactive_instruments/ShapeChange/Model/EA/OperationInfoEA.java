@@ -317,7 +317,7 @@ public class OperationInfoEA extends OperationInfoImpl
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -337,7 +337,8 @@ public class OperationInfoEA extends OperationInfoImpl
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaMethod.GetStyle();
 

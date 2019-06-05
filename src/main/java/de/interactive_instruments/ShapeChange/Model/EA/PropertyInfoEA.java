@@ -100,7 +100,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** EA attribute object, if this is an attribute */
 	protected Attribute eaAttribute = null;
-	
+
 	protected int eaAttributeId = -1;
 
 	/** Association context and EA ConnectorEnd if this is a role */
@@ -413,8 +413,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			// Normalize
 			if (initialValueCache != null) {
 				initialValueCache = initialValueCache.trim();
-				initialValueCache = StringUtils.removeStart(initialValueCache, "\"");
-				initialValueCache = StringUtils.removeEnd(initialValueCache, "\"");
+				initialValueCache = StringUtils.removeStart(initialValueCache,
+						"\"");
+				initialValueCache = StringUtils.removeEnd(initialValueCache,
+						"\"");
 				String iv = initialValueCache.toLowerCase();
 				if (iv.equals("true"))
 					initialValueCache = "true";
@@ -517,7 +519,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isAttribute() {
 		return eaAttribute != null;
 	} // isAttribute()
-	
+
 	public int getEAAttributeId() {
 		return this.eaAttributeId;
 	}
@@ -537,8 +539,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isDerived() {
 		if (isDerivedCache == null) {
-			isDerivedCache = Boolean.valueOf(isAttribute()
-					? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
+			isDerivedCache = Boolean
+					.valueOf(isAttribute() ? eaAttribute.GetIsDerived()
+							: eaConnectorEnd.GetDerived());
 		}
 		return isDerivedCache;
 	} // isDerived()
@@ -597,11 +600,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				// }
 
 				// navigable only with a name, but not with a default name
-				if (eaName == null
-						|| eaName
-								.substring(0, eaName.length() < 5
-										? eaName.length() : 5)
-								.compareTo("role_") == 0)
+				if (eaName == null || eaName
+						.substring(0, eaName.length() < 5 ? eaName.length() : 5)
+						.compareTo("role_") == 0)
 					nav = false;
 
 				isNavigableCache = nav;
@@ -1113,7 +1114,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				String s = null;
 
-				if (descriptorSource(Descriptor.DOCUMENTATION)
+				if (model().descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 
 					if (isAttribute())
@@ -1248,7 +1249,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi;
@@ -1287,7 +1288,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a;
 					if (isAttribute())

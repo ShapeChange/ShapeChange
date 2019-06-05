@@ -160,11 +160,20 @@ public class Descriptors {
 	}
 
 	/**
-	 * @return <code>true</code> if no descriptors are available, else
+	 * @return <code>true</code> if no descriptor values are available, else
 	 *         <code>false</code>.
 	 */
 	public boolean isEmpty() {
-		return descriptorValues.isEmpty();
+		if(descriptorValues == null || descriptorValues.isEmpty()) {
+			return true;
+		} else {
+			for(DescriptorValue dv : descriptorValues.values()) {
+				if(dv != null && !dv.getValues().isEmpty()) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	/**

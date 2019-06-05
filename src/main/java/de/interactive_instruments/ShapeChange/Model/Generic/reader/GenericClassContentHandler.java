@@ -49,6 +49,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -271,7 +272,18 @@ public class GenericClassContentHandler
 		} else if (localName.equals("Class")) {
 
 			// set descriptors in genCi
-			this.genCi.setDescriptors(descriptorsHandler.getDescriptors());
+			
+			Descriptors desc;
+			
+			if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+				desc = null;
+			} else if(descriptorsHandler == null) {
+				desc = new Descriptors();
+			} else {
+				desc = descriptorsHandler.getDescriptors();
+			}
+			this.genCi.setDescriptors(desc);
+			
 			// for (Entry<Descriptor, Descriptors> entry : descriptors
 			// .getDescriptors().entrySet()) {
 			//

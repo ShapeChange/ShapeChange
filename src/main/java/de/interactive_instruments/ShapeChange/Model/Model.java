@@ -233,4 +233,21 @@ public interface Model {
 	 */
 	public Type typeByName(String typeName);
 
+	/**
+	 * Provides the source for a given descriptor. Sources are typically
+	 * configured in the ShapeChange configuration, and should thus be checked
+	 * first. If no explicit configuration for the source is available, model
+	 * type specific sources may be used as defaults (e.g. ea:alias for the
+	 * alias within an EA model). tag#{descriptor} can be used as ultimate
+	 * fallback. In some situations, even a case based source resolution may be
+	 * necessary.
+	 * 
+	 * @param descriptor
+	 *                       the descriptor for which to identify the source
+	 * @return the source identifier (e.g. sc:extract#PROLOG, ea:alias,
+	 *         ea:notes, tag#{descriptor}, sc:internal, none,
+	 *         tag#globalIdentifier).
+	 */
+	public String descriptorSource(Descriptor descriptor);
+
 }

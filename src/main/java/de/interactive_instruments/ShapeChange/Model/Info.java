@@ -68,7 +68,11 @@ public interface Info extends Comparable<Info> {
 	public Descriptors descriptors();
 
 	/**
-	 * Return unique id of model element (unique within the model).
+	 * Return unique id of model element. Global uniqueness is preferred.
+	 * However, ShapeChange only requires that IDs of model elements of the same
+	 * type (packages, classes, properties, associations, operations) are
+	 * unique. For example, an association class is represented by both an
+	 * association and a class, which may have the same id.
 	 */
 	public String id();
 
@@ -167,13 +171,14 @@ public interface Info extends Comparable<Info> {
 
 	/**
 	 * @param template
-	 *            The text to use as a template for the documentation. The
-	 *            placeholders [[descriptor]] will be replaced by the value of
-	 *            the descriptor. I.e. '[[definition]]' will be replaced by the
-	 *            definition of the model element
+	 *                     The text to use as a template for the documentation.
+	 *                     The placeholders [[descriptor]] will be replaced by
+	 *                     the value of the descriptor. I.e. '[[definition]]'
+	 *                     will be replaced by the definition of the model
+	 *                     element
 	 * @param novalue
-	 *            The value that will be used, if the descriptor is empty or
-	 *            null
+	 *                     The value that will be used, if the descriptor is
+	 *                     empty or null
 	 * @return text documentation of the model element derived from the
 	 *         descriptors using the template
 	 */
@@ -342,7 +347,7 @@ public interface Info extends Comparable<Info> {
 	 * Test whether the model element carries a certain stereotype.
 	 * 
 	 * @param stereotype
-	 *            a normalized stereotype
+	 *                       a normalized stereotype
 	 * @return <code>true</code>, if the element carries the stereotype,
 	 *         <code>false</code> otherwise
 	 */
@@ -360,10 +365,10 @@ public interface Info extends Comparable<Info> {
 	 * other cases to use <code>taggedValuesForTag(String tag)</code> instead.
 	 * 
 	 * @param the
-	 *            normalized tag name of the tagged value to look up
+	 *                normalized tag name of the tagged value to look up
 	 * @return The tagged value for the tag given or <code>null</code> if the
 	 *         tagged value is missing. If there are multiple values with the
-	 *         tag only the first is provided.
+	 *         tag only one is provided.
 	 */
 	public String taggedValue(String tag);
 
@@ -371,7 +376,7 @@ public interface Info extends Comparable<Info> {
 	 * Retrieves all tagged values of the model element with the specified tag.
 	 * 
 	 * @param the
-	 *            normalized tag name of the tagged value to look up
+	 *                normalized tag name of the tagged value to look up
 	 * @return List of values for the given tag (as objects that have a string
 	 *         value and optional language indicator); can be empty if no value
 	 *         has been found but not <code>null</code> .
@@ -384,9 +389,9 @@ public interface Info extends Comparable<Info> {
 	 * <br/>
 	 * 
 	 * @param the
-	 *            normalized tag name of the tagged value to look up
-	 * @return The tagged values for the tag given or an emtpy list if no value
-	 *         has been found.
+	 *                normalized tag name of the tagged value to look up
+	 * @return The tagged values for the tag given or an emtpy collection if no
+	 *         value has been found.
 	 */
 	public String[] taggedValuesForTag(String tag);
 
@@ -400,13 +405,14 @@ public interface Info extends Comparable<Info> {
 	 * provided.
 	 * 
 	 * @param the
-	 *            normalized tag name of the tagged value to look up
+	 *                     normalized tag name of the tagged value to look up
 	 * @param language
-	 *            the language to use, use codes from IETF RFC 5646, e.g. "en".
+	 *                     the language to use, use codes from IETF RFC 5646,
+	 *                     e.g. "en".
 	 * @return The tagged value (in the requested language) for the tag given or
 	 *         <code>null</code> if the tagged value is missing. If there are
-	 *         multiple values with the tag only the first (in the given
-	 *         language) is provided.
+	 *         multiple values with the tag only one (in the given language) is
+	 *         provided.
 	 */
 	public String taggedValueInLanguage(String tag, String language);
 
@@ -415,9 +421,10 @@ public interface Info extends Comparable<Info> {
 	 * and if it is associated with the requested language.
 	 * 
 	 * @param the
-	 *            normalized tag name of the tagged value to look up
+	 *                     normalized tag name of the tagged value to look up
 	 * @param language
-	 *            the language to use, use codes from IETF RFC 5646, e.g. "en".
+	 *                     the language to use, use codes from IETF RFC 5646,
+	 *                     e.g. "en".
 	 * @return The tagged values (in the requested language or without language
 	 *         classification) for the tag given or an emtpy list if no value
 	 *         has been found.
@@ -429,8 +436,9 @@ public interface Info extends Comparable<Info> {
 	 * replaces taggedValue(String tag) and taggedValues(String taglist).
 	 * 
 	 * @param tagList
-	 *            name(s) of the tagged values to look up. If multiple tags are
-	 *            provided, tags are assumed to be separated by commas.
+	 *                    name(s) of the tagged values to look up. If multiple
+	 *                    tags are provided, tags are assumed to be separated by
+	 *                    commas.
 	 * @return The values for the given tags; can be empty but not
 	 *         <code>null</code>. The result is a copy of the tagged values of
 	 *         this Info object - thus modifications to the result won't affect
@@ -458,14 +466,14 @@ public interface Info extends Comparable<Info> {
 	/**
 	 * Retrieves all tagged values of the model element.
 	 * 
-	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
-	 *             <code>taggedValuesMult()</code> instead.
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per
+	 *             tag. Use <code>taggedValuesMult()</code> instead.
 	 * 
 	 * 
 	 * @return a map with the tagged values defined for this object (key: tagged
 	 *         value name, value: the value of the tagged value); can be an
 	 *         empty map but not <code>null</code>. If there are multiple values
-	 *         for a tag only the first is provided.
+	 *         for a tag only one is provided.
 	 */
 	@Deprecated
 	public Map<String, String> taggedValues();
@@ -474,13 +482,13 @@ public interface Info extends Comparable<Info> {
 	 * Return all the tagged values listed in the input string. Tags are assumed
 	 * to be normalized and separated by commas.
 	 * 
-	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
-	 *             <code>taggedValuesMult(tagList)</code> instead.
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per
+	 *             tag. Use <code>taggedValuesMult(tagList)</code> instead.
 	 * 
 	 * @return a map with the tagged values defined for this object (key: tagged
 	 *         value name, value: the value of the tagged value); can be an
 	 *         empty map but not <code>null</code>. If there are multiple values
-	 *         for a tag only the first is provided.
+	 *         for a tag only one is provided.
 	 */
 	@Deprecated
 	public Map<String, String> taggedValues(String tagList);

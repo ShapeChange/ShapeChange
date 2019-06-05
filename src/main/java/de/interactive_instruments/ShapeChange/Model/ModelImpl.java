@@ -664,4 +664,17 @@ public abstract class ModelImpl implements Model {
 
 		return typeInfo;
 	}
+
+	@Override
+	public String descriptorSource(Descriptor descriptor) {
+
+		String source = options().descriptorSource(descriptor.getName());
+
+		// if nothing has been configured, use tag as default
+		if (source == null) {
+			source = "tag#" + descriptor;
+		}
+
+		return source;
+	}
 }

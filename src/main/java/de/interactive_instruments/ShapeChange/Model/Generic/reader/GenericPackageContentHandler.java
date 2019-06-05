@@ -46,6 +46,7 @@ import org.xml.sax.XMLReader;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
@@ -226,7 +227,17 @@ public class GenericPackageContentHandler
 			if (!isInPackages) {
 
 				// set descriptors in genPi
-				this.genPi.setDescriptors(descriptorsHandler.getDescriptors());
+				
+				Descriptors desc;
+				
+				if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+					desc = null;
+				} else if(descriptorsHandler == null) {
+					desc = new Descriptors();
+				} else {
+					desc = descriptorsHandler.getDescriptors();
+				}
+				this.genPi.setDescriptors(desc);
 
 				// set contained packages
 				SortedSet<GenericPackageInfo> children = new TreeSet<GenericPackageInfo>();

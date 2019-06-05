@@ -64,6 +64,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ModelImpl;
@@ -874,6 +875,31 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 			allPackages.add(pi);
 		}
 		return allPackages;
+	}
+	
+	@Override
+	public String descriptorSource(Descriptor descriptor) {
+
+		String source = options().descriptorSource(descriptor.getName());
+
+		// if nothing has been configured, use defaults
+		if (source == null) {
+
+			if (descriptor == Descriptor.DOCUMENTATION)
+				source = "ea:notes";
+			else if (descriptor == Descriptor.ALIAS)
+				source = "ea:alias";
+			else if (descriptor == Descriptor.GLOBALIDENTIFIER)
+				source = "none";
+			else if (descriptor == Descriptor.DEFINITION)
+				source = "sc:extract#PROLOG";
+			else if (descriptor == Descriptor.DESCRIPTION)
+				source = "none";
+			else
+				source = "tag#" + descriptor;
+		}
+
+		return source;
 	}
 
 	/**

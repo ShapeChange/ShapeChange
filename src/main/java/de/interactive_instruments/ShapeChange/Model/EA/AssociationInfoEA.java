@@ -318,7 +318,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 	} // validateStereotypesCache()
-	
+
 	public int getEAConnectorId() {
 		return this.eaConnectorId;
 	}
@@ -413,7 +413,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -433,7 +433,8 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaConnector.GetAlias();
 
