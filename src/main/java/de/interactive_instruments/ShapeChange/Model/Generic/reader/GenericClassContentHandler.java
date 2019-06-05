@@ -52,14 +52,15 @@ import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericClassContentHandler
@@ -191,10 +192,12 @@ public class GenericClassContentHandler
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genCi);
+
 			this.genCi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -272,18 +275,19 @@ public class GenericClassContentHandler
 		} else if (localName.equals("Class")) {
 
 			// set descriptors in genCi
-			
+
 			Descriptors desc;
-			
-			if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+
+			if (options.parameterAsBoolean(null,
+					"applyDescriptorSourcesWhenLoadingScxml", false)) {
 				desc = null;
-			} else if(descriptorsHandler == null) {
+			} else if (descriptorsHandler == null) {
 				desc = new Descriptors();
 			} else {
 				desc = descriptorsHandler.getDescriptors();
 			}
 			this.genCi.setDescriptors(desc);
-			
+
 			// for (Entry<Descriptor, Descriptors> entry : descriptors
 			// .getDescriptors().entrySet()) {
 			//

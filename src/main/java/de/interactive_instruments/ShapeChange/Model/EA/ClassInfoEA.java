@@ -62,6 +62,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 
 public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
@@ -582,18 +583,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			String[] stereotypes = sts.split("\\,");
 
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in class selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.classStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 
 			/*
 			 * 2017-03-23 JE: Apparently when calling

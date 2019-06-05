@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
@@ -177,18 +178,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 			String sts = eaPackage.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in package selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.packageStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 

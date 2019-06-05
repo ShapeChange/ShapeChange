@@ -44,4 +44,14 @@ public class SCXMLTest extends WindowsBasicTest {
 				"testResults/scxml/applyingDescriptorSources/scxml",
 				"src/test/resources/scxml/applyingDescriptorSources/reference/scxml");
 	}
+	
+	@Test
+	public void testSCXML_stereotypeNormalization() {
+
+		multiTest(
+				"src/test/resources/scxml/stereotypeNormalization/test_scxml_stereotypeNormalization.xml",
+				new String[] { "xsd", "xml" },
+				"testResults/scxml/stereotypeNormalization/results",
+				"src/test/resources/scxml/stereotypeNormalization/reference/results");
+	}
 }

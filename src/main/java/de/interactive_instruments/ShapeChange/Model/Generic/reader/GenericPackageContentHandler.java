@@ -48,25 +48,26 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericPackageContentHandler
 		extends AbstractGenericInfoContentHandler {
 
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { }));
+			Arrays.asList(new String[] {}));
 
 	private static final Set<String> DEPRECATED_SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "isAppSchema", "isSchema", "targetNamespace", "xmlns",
-					"xsdDocument", "version" }));
+			Arrays.asList(new String[] { "isAppSchema", "isSchema",
+					"targetNamespace", "xmlns", "xsdDocument", "version" }));
 
 	private boolean isInPackages = false;
 
@@ -181,10 +182,12 @@ public class GenericPackageContentHandler
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genPi);
+
 			this.genPi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -227,12 +230,13 @@ public class GenericPackageContentHandler
 			if (!isInPackages) {
 
 				// set descriptors in genPi
-				
+
 				Descriptors desc;
-				
-				if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+
+				if (options.parameterAsBoolean(null,
+						"applyDescriptorSourcesWhenLoadingScxml", false)) {
 					desc = null;
-				} else if(descriptorsHandler == null) {
+				} else if (descriptorsHandler == null) {
 					desc = new Descriptors();
 				} else {
 					desc = descriptorsHandler.getDescriptors();

@@ -41,6 +41,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
@@ -156,10 +157,12 @@ public class GenericAssociationContentHandler
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genAi);
+
 			this.genAi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -194,18 +197,19 @@ public class GenericAssociationContentHandler
 		} else if (localName.equals("Association")) {
 
 			// set descriptors in genAi
-			
+
 			Descriptors desc;
-			
-			if(options.parameterAsBoolean(null, "applyDescriptorSourcesWhenLoadingScxml", false)) {
+
+			if (options.parameterAsBoolean(null,
+					"applyDescriptorSourcesWhenLoadingScxml", false)) {
 				desc = null;
-			} else if(descriptorsHandler == null) {
+			} else if (descriptorsHandler == null) {
 				desc = new Descriptors();
 			} else {
 				desc = descriptorsHandler.getDescriptors();
 			}
 			this.genAi.setDescriptors(desc);
-			
+
 			// for (Entry<Descriptor, Descriptors> entry : descriptors
 			// .getDescriptors().entrySet()) {
 			//

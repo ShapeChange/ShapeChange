@@ -58,6 +58,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
@@ -678,18 +679,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				sts = eaConnectorEnd.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in property selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.propertyStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
