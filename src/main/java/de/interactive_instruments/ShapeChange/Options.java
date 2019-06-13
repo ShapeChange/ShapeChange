@@ -587,7 +587,7 @@ public class Options {
 
 	protected File imageTmpDir = null;
 	protected File linkedDocTmpDir = null;
-	
+
 	protected TaggedValueNormalizer tvNormalizer = null;
 
 	private Map<String, AIXMSchemaInfo> schemaInfos;
@@ -4035,8 +4035,6 @@ public class Options {
 			return s;
 		return stereotype;
 	};
-	
-	
 
 	/**
 	 * Normalize a tag fetched from the model.
@@ -4193,7 +4191,8 @@ public class Options {
 	}
 
 	/**
-	 * @return the currentProcessConfig
+	 * @return the configuration of the process that is currently being
+	 *         executed; can be <code>null</code> during the input loading phase
 	 */
 	public ProcessConfiguration getCurrentProcessConfig() {
 		return currentProcessConfig;
@@ -4443,13 +4442,13 @@ public class Options {
 		}
 		return result;
 	}
-	
+
 	public TaggedValueNormalizer taggedValueNormalizer() {
-		
-		if(this.tvNormalizer == null) {
+
+		if (this.tvNormalizer == null) {
 			this.tvNormalizer = new TaggedValueNormalizer(this);
 		}
-		
+
 		return this.tvNormalizer;
 	}
 

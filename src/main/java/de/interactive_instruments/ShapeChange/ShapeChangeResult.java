@@ -681,14 +681,8 @@ public class ShapeChangeResult {
 			return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 		case 16:
 			return "The XMI file is not associated with a DTD. The DTD is required for validating and processing the XMI file.";
-		case 17:
-			return "Unknown input model type: '$1$'.";
 		case 18:
 			return "Unsupported Java version: '$1$'. Java 1.8 or higher required.";
-		case 19:
-			return "Model object could not be instantiated: '$1$'.";
-		case 20:
-			return "Model object could not be accessed: '$1$'.";
 		case 21:
 			return "??Rule name '$1$' is not valid. The rule is ignored.";
 		case 22:

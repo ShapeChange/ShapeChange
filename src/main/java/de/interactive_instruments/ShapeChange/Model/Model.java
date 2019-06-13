@@ -172,8 +172,14 @@ public interface Model {
 	 * collections that are copies of the ones used in model classes. If this is
 	 * not sufficient, either change the model interfaces or create a
 	 * transformation that can perform the necessary model modifications.
+	 * 
+	 * @param isLoadingInputModel
+	 *                                <code>true</code> If the method is called
+	 *                                during the input loading phase,
+	 *                                <code>false</code> if it is called while
+	 *                                executing a transformer or target.
 	 */
-	public void loadInformationFromExternalSources();
+	public void loadInformationFromExternalSources(boolean isLoadingInputModel);
 
 	/**
 	 * @param ci

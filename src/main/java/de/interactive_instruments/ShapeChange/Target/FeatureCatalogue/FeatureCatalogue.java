@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -97,6 +96,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.interactive_instruments.ShapeChange.DefaultModelProvider;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -380,7 +380,21 @@ public class FeatureCatalogue
 
 				String s = null;
 
-				Model refModel_tmp = getReferenceModel();
+				Model refModel_tmp = null;
+
+				String imt = options.parameter(this.getClass().getName(),
+						"referenceModelType");
+				String mdl = options.parameter(this.getClass().getName(),
+						"referenceModelFileNameOrConnectionString");
+
+				if (StringUtils.isNotBlank(imt)
+						&& StringUtils.isNotBlank(mdl)) {
+
+					DefaultModelProvider mp = new DefaultModelProvider(result,
+							options);
+					refModel_tmp = mp.getModel(imt, mdl, null, null, false,
+							null);
+				}
 
 				if (refModel_tmp != null) {
 
@@ -721,68 +735,6 @@ public class FeatureCatalogue
 		}
 
 		writer.endElement("images");
-	}
-
-	private Model getReferenceModel() {
-
-		String imt = options.parameter(this.getClass().getName(),
-				"referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(),
-				"referenceModelFileNameOrConnectionString");
-
-		if (imt == null || imt.isEmpty())
-			return null;
-
-		if (mdl == null || mdl.isEmpty())
-			return null;
-
-		// Support original model type codes
-		if (imt.equalsIgnoreCase("ea7"))
-			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		else if (imt.equalsIgnoreCase("xmi10"))
-			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-		else if (imt.equalsIgnoreCase("scxml")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
-		} else {
-			result.addInfo(this, 29, imt);
-		}
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-		try {
-			theClass = Class.forName(imt);
-			if (theClass == null) {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-			m = (Model) theClass.getConstructor().newInstance();
-			if (m != null) {
-				m.initialise(result, options, mdl);
-			} else {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-		} catch (ClassNotFoundException e) {
-			result.addError(null, 17, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addError(null, 19, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalAccessException | SecurityException e) {
-			result.addError(null, 20, imt);
-			result.addError(null, 22, mdl);
-		} catch (ShapeChangeAbortException e) {
-			result.addError(null, 22, mdl);
-			m = null;
-		}
-		return m;
 	}
 
 	private void PrintDescriptors(Info i, boolean isClass, Operation op)
@@ -2699,7 +2651,8 @@ public class FeatureCatalogue
 
 		try {
 			// configure fopFactory as desired
-			FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+			FopFactory fopFactory = FopFactory
+					.newInstance(new File(".").toURI());
 
 			FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 			// configure foUserAgent as desired
@@ -2814,10 +2767,12 @@ public class FeatureCatalogue
 
 		xsltWrite(transformationSourceFile, xsltfileName,
 				transformationTargetFile);
-		
-		if(transformationTargetFile.exists() && transformationTargetFile.length() == 0) {
+
+		if (transformationTargetFile.exists()
+				&& transformationTargetFile.length() == 0) {
 			FileUtils.deleteQuietly(transformationTargetFile);
-			result.addDebug(this,32,transformationTargetFile.getAbsolutePath());
+			result.addDebug(this, 32,
+					transformationTargetFile.getAbsolutePath());
 		}
 	}
 
@@ -3415,8 +3370,6 @@ public class FeatureCatalogue
 			return "Message from external java executable: $1$";
 		case 28:
 			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
-		case 29:
-			return "Value of parameter 'referenceModelType' is '$1$'.";
 		case 30:
 			return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
 		case 31:

@@ -162,7 +162,7 @@ public abstract class ModelImpl implements Model {
 	}
 
 	@Override
-	public void loadInformationFromExternalSources() {
+	public void loadInformationFromExternalSources(boolean isLoadingInputModel) {
 
 		// do not execute this once the model has been postprocessed
 		if (postprocessed)
@@ -172,24 +172,28 @@ public abstract class ModelImpl implements Model {
 		ShapeChangeResult result = result();
 
 		// ============================================================
-		// load SBVR constraint info from excel file
+		// If we are loading the input model, load SBVR constraint info from
+		// excel file
 		// NOTE: can also be done via ConstraintLoader transformation
 
-		String sbvrFileLocation = options()
-				.parameter(Options.PARAM_CONSTRAINT_EXCEL_FILE);
+		if (isLoadingInputModel) {
 
-		if (sbvrFileLocation != null) {
+			String sbvrFileLocation = options()
+					.parameter(Options.PARAM_CONSTRAINT_EXCEL_FILE);
 
-			/*
-			 * if no sbvr file is provided, the loader will simply not contain
-			 * any sbvr rules
-			 */
-			SbvrRuleLoader sbvrLoader = new SbvrRuleLoader(sbvrFileLocation,
-					options, result, this);
+			if (sbvrFileLocation != null) {
 
-			for (PackageInfo pi : selectedSchemas()) {
+				/*
+				 * if no sbvr file is provided, the loader will simply not
+				 * contain any sbvr rules
+				 */
+				SbvrRuleLoader sbvrLoader = new SbvrRuleLoader(sbvrFileLocation,
+						options, result, this);
 
-				sbvrLoader.loadSBVRRulesAsConstraints(pi);
+				for (PackageInfo pi : selectedSchemas()) {
+
+					sbvrLoader.loadSBVRRulesAsConstraints(pi);
+				}
 			}
 		}
 	}
