@@ -1382,7 +1382,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 				if (options.parameterAsBoolean(null,
 						"applyDescriptorSourcesWhenLoadingScxml", false)) {
-					result.addDebug(this,30401);
+					result.addDebug(this, 30401);
 				}
 
 				Map<String, GenericPackageContentHandler> packageHandlers = modelHandler
@@ -1772,19 +1772,40 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	public void postprocessAfterLoadingAndValidate() {
 
 		/*
-		 * Remove classes that have tagged value 'status' with prohibited value
+		 * Take into account input parameter
+		 * loadConstraintsForSelectedSchemasOnly (cannot be done in
+		 * GenericClass/PropertyContentHandler because model structure is not
+		 * fully established while parsing the SCXML).
 		 */
-		SortedSet<GenericClassInfo> classesToRemove = new TreeSet<GenericClassInfo>();
-		for (GenericClassInfo genCi : this.genClassInfosById.values()) {
-			String statusTaggedValue = genCi.taggedValue("status");
-			if (statusTaggedValue != null
-					&& options().prohibitedStatusValuesWhenLoadingClasses()
-							.contains(statusTaggedValue)) {
-				classesToRemove.add(genCi);
+		if (options.isLoadConstraintsForSelectedSchemasOnly()) {
+			for (GenericClassInfo genCi : this.genClassInfosById.values()) {
+				removeConstraintsOfClassAndItsProperties(genCi);
 			}
 		}
-		for (GenericClassInfo classToRemove : classesToRemove) {
-			this.remove(classToRemove);
+		
+		/*
+		 * Take into account input parameter excluded packages.
+		 */
+		Set<PackageInfo> genPkgsToRemove = new HashSet<>();
+		Set<String> excludedPkgNames = options.getExcludedPackages();
+		for(GenericPackageInfo genPi : this.getGenPackages().values()) {
+			if(excludedPkgNames.contains(genPi.name())) {
+				genPkgsToRemove.add(genPi);
+			}
+		}
+		this.remove(genPkgsToRemove);
+
+		super.postprocessAfterLoadingAndValidate();
+
+		/*
+		 * Take into account input parameter classTypesToCreateConstraintsFor
+		 * (must be performed after class categories have fully been established
+		 * (by super.postprocessAfterLoadingAndValidate())
+		 */
+		for (GenericClassInfo genCi : this.genClassInfosById.values()) {
+			if (!options.isClassTypeToCreateConstraintsFor(genCi.category())) {
+				removeConstraintsOfClassAndItsProperties(genCi);
+			}
 		}
 
 		/*
@@ -1792,8 +1813,21 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		 * current model)
 		 */
 		this.validateConstraints();
+	}
 
-		super.postprocessAfterLoadingAndValidate();
+	private void removeConstraintsOfClassAndItsProperties(
+			GenericClassInfo genCi) {
+
+		if (genCi.hasConstraints()) {
+			genCi.setConstraints(null);
+		}
+
+		for (PropertyInfo pi : genCi.properties().values()) {
+			GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+			if (genPi.hasConstraints()) {
+				genPi.setConstraints(null);
+			}
+		}
 	}
 
 	@Override
@@ -3421,7 +3455,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			return "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
 		case 30401:
 			return "Input parameter 'applyDescriptorSourcesWhenLoadingScxml' is set to 'true'. Descriptors elements in SCXML will be ignored. Descriptors of model elements loaded from SCXML will be determined based upon configured descriptor sources.";
-		
+
 		case 30500:
 			return "--- SCXML VALIDATION RESULTS - START ---";
 		case 30501:

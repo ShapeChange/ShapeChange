@@ -288,34 +288,6 @@ public class GenericClassContentHandler
 			}
 			this.genCi.setDescriptors(desc);
 
-			// for (Entry<Descriptor, Descriptors> entry : descriptors
-			// .getDescriptors().entrySet()) {
-			//
-			// if (entry.getKey() == Descriptor.ALIAS) {
-			// this.genCi.setAliasNameAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.PRIMARYCODE) {
-			// this.genCi.setPrimaryCodeAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
-			// this.genCi.setGlobalIdentifierAll(entry.getValue());
-			// }
-			// // else if(entry.getKey() == Descriptor.DOCUMENTATION) {
-			// // this.genCi.setDocumentationAll(entry.getValue());
-			// // }
-			// else if (entry.getKey() == Descriptor.DEFINITION) {
-			// this.genCi.setDefinitionAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.DESCRIPTION) {
-			// this.genCi.setDescriptionAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.LEGALBASIS) {
-			// this.genCi.setLegalBasisAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.LANGUAGE) {
-			// this.genCi.setLanguageAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.EXAMPLE) {
-			// this.genCi.setExamplesAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.DATACAPTURESTATEMENT) {
-			// this.genCi.setDataCaptureStatementsAll(entry.getValue());
-			// }
-			// }
-
 			// set contained properties
 			SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
 
@@ -358,9 +330,23 @@ public class GenericClassContentHandler
 
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
-			for (ConstraintContentHandler cch : this.constraintContentHandlers) {
-				cons.add(cch.getConstraint());
-			}
+
+			String check = options.parameter("checkingConstraints");
+			if ("disabled".equalsIgnoreCase(check)) {
+				
+				/*
+				 * drop constraint content handlers so that updating the
+				 * constraint context is not performed
+				 */
+				this.constraintContentHandlers = new ArrayList<>();
+				
+			} else {
+
+				for (ConstraintContentHandler cch : this.constraintContentHandlers) {
+					cons.add(cch.getConstraint());
+				}
+			}			
+			
 			this.genCi.setConstraints(cons);
 
 			// let parent know that we reached the end of the Class entry

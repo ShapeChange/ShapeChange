@@ -62,9 +62,6 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	/** The EA object id of the association object */
 	protected int eaConnectorId = 0;
 
-	/** Name of Association */
-	protected String name = null;
-
 	/** Navigability 0=both, +1=source->target, -1=target->source */
 	protected int navigability = 0;
 
@@ -161,140 +158,39 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 
-		// If there is no name present, we construct one from the names of the
-		// classes ...
-		// A default name is used if the role is unset, e.g. orphaned Note Link.
-		/*
-		 * 2016-07-26 JE: The association name should not always automatically
-		 * be constructed. For rule-owl-prop-iso191502Aggregation we would get
-		 * association names that are not in the model. I've added a new input
-		 * parameter to control the behavior.
-		 */
-		if (name == null || name.length() == 0) {
-			if (options().dontConstructAssociationNames()) {
-				name = "";
-			} else {
-				if (roles[0].ci != null)
-					name = roles[0].ci.name() + "_";
-				else
-					name = "roles[0]_";
-				if (roles[1].ci != null)
-					name = name + roles[1].ci.name();
-				else
-					name = name + "roles[1]";
-			}
-		}
-
 		// Write to debug trace ...
 		document.result.addDebug(null, 10013, "association", id(), name());
-	} // AssociationInfoEA Ctor
+	}
 
 	/** Return PropertyInfo from source end */
 	public PropertyInfo end1() {
 		return properties[0];
-	} // end1()
+	}
 
 	/** Return PropertyInfo from source end */
 	public PropertyInfo end2() {
 		return properties[1];
-	} // end2()
+	}
 
 	/** Return model-unique id of association */
 	public String id() {
 		return Integer.valueOf(eaConnectorId).toString();
-	} // id()
+	}
 
 	/** Return Model object */
 	public Model model() {
 		return document;
-	} // model()
-
-	@Override
-	public String name() {
-		return name;
-	} // name()
-
-	// @Override
-	// public Descriptors aliasNameAll() {
-	//
-	// // Retrieve/compute the alias only once
-	// // Cache the result for subsequent use
-	// if (!aliasAccessed) {
-	//
-	// aliasAccessed = true;
-	//
-	// // Obtain alias name from default implementation
-	// Descriptors ls = super.aliasNameAll();
-	//
-	// // If not present, obtain from EA model directly
-	// if (ls.isEmpty()
-	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
-	//
-	// String alias = eaConnector.GetAlias();
-	//
-	// if (alias != null && !alias.isEmpty()) {
-	//
-	// super.aliasName = new Descriptors(
-	// new LangString(options().internalize(alias)));
-	// } else {
-	// super.aliasName = new Descriptors();
-	// }
-	// }
-	// }
-	// return super.aliasName;
-	// }
-
-	// /**
-	// * Return the documentation attached to the property object. This is
-	// fetched
-	// * from tagged values and - if this is absent - from the 'notes' specific
-	// to
-	// * the EA objects model.
-	// */
-	// @Override
-	// public Descriptors documentationAll() {
-	//
-	// // Retrieve/compute the documentation only once
-	// // Cache the result for subsequent use
-	// if (!documentationAccessed) {
-	//
-	// documentationAccessed = true;
-	//
-	// // Fetch from tagged values
-	// Descriptors ls = super.documentationAll();
-	//
-	// // Try EA notes, if both tagged values fail and ea:notes is the
-	// // source
-	// if (ls.isEmpty() && descriptorSource(Descriptor.DOCUMENTATION)
-	// .equals("ea:notes")) {
-	//
-	// String s = eaConnector.GetNotes();
-	//
-	// // Fix for EA7.5 bug
-	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
-	// }
-	//
-	// if (s == null) {
-	// super.documentation = new Descriptors();
-	// } else {
-	// super.documentation = new Descriptors(
-	// new LangString(options().internalize(s)));
-	// }
-	// }
-	// }
-	// return super.documentation;
-	// }
-
+	}
+	
 	/** Return options and configuration object. */
 	public Options options() {
 		return document.options;
-	} // options()
+	}
 
 	/** Return result object for error reporting. */
 	public ShapeChangeResult result() {
 		return document.result;
-	} // result()
+	}
 
 	// Validate stereotypes cache of the association. The stereotypes found are
 	// 1. restricted to those defined within ShapeChange and 2. deprecated ones
@@ -308,7 +204,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			stereotypesCache = StereotypeNormalizer
 					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
-	} // validateStereotypesCache()
+	}
 
 	public int getEAConnectorId() {
 		return this.eaConnectorId;
@@ -344,7 +240,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				taggedValuesCache = options().taggedValueFactory(0);
 			}
 		}
-	} // validateTaggedValuesCache()
+	}
 
 	public ClassInfo assocClass() {
 		String s = eaConnector.GetSubtype();
@@ -354,25 +250,6 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		}
 		return assocClass;
 	}
-
-	// @Override
-	// public Descriptors globalIdentifierAll() {
-	//
-	// // Obtain global identifier from default implementation
-	// Descriptors ls = super.globalIdentifierAll();
-	//
-	// // If not present, obtain from EA model directly
-	// if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
-	// .equals("ea:guidtoxml")) {
-	//
-	// String gi = document.repository.GetProjectInterface()
-	// .GUIDtoXML(eaConnector.GetConnectorGUID());
-	//
-	// super.globalIdentifier = new Descriptors(
-	// new LangString(options().internalize(gi)));
-	// }
-	// return super.globalIdentifier;
-	// }
 
 	@Override
 	protected List<LangString> descriptorValues(Descriptor descriptor) {

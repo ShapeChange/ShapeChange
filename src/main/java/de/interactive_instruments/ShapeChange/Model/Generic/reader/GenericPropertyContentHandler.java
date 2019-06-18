@@ -310,9 +310,21 @@ public class GenericPropertyContentHandler
 
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
-			for (ConstraintContentHandler cch : this.constraintContentHandlers) {
-				cons.add(cch.getConstraint());
+
+			String check = options.parameter("checkingConstraints");
+			if ("disabled".equalsIgnoreCase(check)
+					|| !options.isConstraintCreationForProperties()) {
+				/*
+				 * drop constraint content handlers so that updating the
+				 * constraint context is not performed
+				 */
+				this.constraintContentHandlers = new ArrayList<>();
+			} else {
+				for (ConstraintContentHandler cch : this.constraintContentHandlers) {
+					cons.add(cch.getConstraint());
+				}
 			}
+
 			this.genPi.setConstraints(cons);
 
 			if (this.genPi.cardinality() == null) {

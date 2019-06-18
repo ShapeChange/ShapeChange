@@ -727,22 +727,14 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 			diagramList.add(d);
 		}
 
-		boolean sortDiagramsByName;
-		String paramSortDiagramsByName = options
-				.parameter("sortDiagramsByName");
-		if (paramSortDiagramsByName == null) {
-			sortDiagramsByName = true; // default
-		} else {
-			sortDiagramsByName = Boolean.parseBoolean(paramSortDiagramsByName);
-		}
+		boolean sortDiagramsByName = options.parameterAsBoolean(null,
+				"sortDiagramsByName", true);
 		if (sortDiagramsByName) {
 			Collections.sort(diagramList, new Comparator<Diagram>() {
-
 				@Override
 				public int compare(Diagram o1, Diagram o2) {
 					return o1.GetName().compareTo(o2.GetName());
 				}
-
 			});
 		}
 		return diagramList;

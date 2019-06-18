@@ -34,6 +34,8 @@ package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,8 +49,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class DiagramsContentHandler extends AbstractContentHandler {
@@ -146,7 +148,21 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 		} else if (localName.equals("diagrams")) {
 
-			parent.setDiagrams(diagrams);
+			if ("true".equalsIgnoreCase(options.parameter("loadDiagrams"))) {
+
+				boolean sortDiagramsByName = options.parameterAsBoolean(null,
+						"sortDiagramsByName", true);
+				if (sortDiagramsByName) {
+					Collections.sort(diagrams, new Comparator<ImageMetadata>() {
+						@Override
+						public int compare(ImageMetadata o1, ImageMetadata o2) {
+							return o1.getName().compareTo(o2.getName());
+						}
+					});
+				}
+
+				parent.setDiagrams(diagrams);
+			}
 
 			// let parent know that we reached the end of the diagrams entry
 			// (so that for example depth can properly be tracked)

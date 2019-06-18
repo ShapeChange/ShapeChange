@@ -252,9 +252,24 @@ public class GenericPackageContentHandler
 
 				// set contained classes
 				SortedSet<GenericClassInfo> classes = new TreeSet<GenericClassInfo>();
+				List<GenericClassContentHandler> classHandlersToRemove = new ArrayList<>();
+				
 				for (GenericClassContentHandler gcch : this.classContentHandlers) {
-					classes.add(gcch.getGenericClass());
+					
+					GenericClassInfo genCi = gcch.getGenericClass();
+					
+					// handle loading of prohibited classes
+					String statusTaggedValue = genCi.taggedValue("status");
+					if (statusTaggedValue != null && options
+							.prohibitedStatusValuesWhenLoadingClasses()
+							.contains(statusTaggedValue)) {
+						classHandlersToRemove.add(gcch);
+					} else {
+						classes.add(gcch.getGenericClass());
+					}
 				}
+				
+				this.classContentHandlers.removeAll(classHandlersToRemove);
 				this.genPi.setClasses(classes);
 
 				// let parent know that we reached the end of the Package entry
