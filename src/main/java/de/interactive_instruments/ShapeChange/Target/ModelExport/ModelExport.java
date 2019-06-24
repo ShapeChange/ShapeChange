@@ -837,10 +837,37 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("isDerived", pi.isDerived(), false);
 		printDataElement("isReadOnly", pi.isReadOnly(), false);
 		printDataElement("isAttribute", pi.isAttribute(), true);
-		printDataElement("isOrdered", pi.isOrdered(), false);
-		printDataElement("isUnique", pi.isUnique(), true);
-		printDataElement("isComposition", pi.isComposition(), false);
-		printDataElement("isAggregation", pi.isAggregation(), false);
+
+		if (pi.isOrdered() && pi.matches(
+				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+			result.addDebug(this, 13, "isOrdered", "true",
+					pi.fullNameInSchema());
+		} else {
+			printDataElement("isOrdered", pi.isOrdered(), false);
+		}
+
+		if (!pi.isUnique() && pi.matches(
+				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+			result.addDebug(this, 13, "isUnique", "false",
+					pi.fullNameInSchema());
+		} else {
+			printDataElement("isUnique", pi.isUnique(), true);
+		}
+
+		if (pi.isComposition() && pi.matches(
+				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+			result.addDebug(this, 13, "isComposition", "true",
+					pi.fullNameInSchema());
+		} else {
+			printDataElement("isComposition", pi.isComposition(), false);
+		}
+		if (pi.isAggregation() && pi.matches(
+				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+			result.addDebug(this, 13, "isAggregation", "true",
+					pi.fullNameInSchema());
+		} else {
+			printDataElement("isAggregation", pi.isAggregation(), false);
+		}
 
 		printDataElement("initialValue", pi.initialValue());
 		printDataElement("inlineOrByReference", pi.inlineOrByReference(),
@@ -917,7 +944,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 					descriptors);
 			writer.endElement(NS, "descriptors");
 		}
-		
+
 		TaggedValues tvs = i.taggedValuesAll();
 
 		// identify set of tagged values to export
@@ -1045,6 +1072,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
 		case 12:
 			return "Directory named '$1$' does not exist or is not accessible.";
+		case 13:
+			return "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
 
 		default:
 			return "(ModelExport.java) Unknown message with number: " + mnr;

@@ -33,6 +33,8 @@ package de.interactive_instruments.ShapeChange.Target.Metadata;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import de.interactive_instruments.ShapeChange.ConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -49,26 +51,59 @@ public class ApplicationSchemaMetadataConfigurationValidator
 		implements ConfigurationValidator, MessageSource {
 
 	@Override
-	public boolean isValid(ProcessConfiguration pConfig, Options options,
+	public boolean isValid(ProcessConfiguration config, Options options,
 			ShapeChangeResult result) {
 
 		boolean isValid = true;
 
-		if (pConfig.getAllRules().contains(
+		if (config.getAllRules().contains(
 				ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE)) {
 
 			Set<String> typesForTypeUsage = new HashSet<>(
-					options.parameterAsStringList(ApplicationSchemaMetadata.class.getName(),
+					options.parameterAsStringList(
+							ApplicationSchemaMetadata.class.getName(),
 							ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION,
 							null, true, true));
 
 			if (typesForTypeUsage.isEmpty()) {
-				
+
 				isValid = false;
-				
+
 				result.addError(this, 3,
 						ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE,
 						ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION);
+			}
+		}
+
+		if (config.getAllRules().contains(
+				ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
+
+			// check required parameter PARAM_TAG_NAME_REGEX
+			try {
+				Pattern tagNamePattern = config.parameterAsRegexPattern(
+						ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX, null);
+				if (tagNamePattern == null) {
+					isValid = false;
+					result.addError(this, 100,
+							ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
+							ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
+				}
+			} catch (PatternSyntaxException e) {
+				isValid = false;
+				result.addError(this, 1,
+						ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
+						e.getMessage());
+			}
+
+			// check optional parameter PARAM_TAG_VALUE_REGEX
+			try {
+				config.parameterAsRegexPattern(
+						ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX, null);
+			} catch (PatternSyntaxException e) {
+				isValid = false;
+				result.addError(this, 1,
+						ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX,
+						e.getMessage());
 			}
 		}
 
@@ -86,6 +121,9 @@ public class ApplicationSchemaMetadataConfigurationValidator
 			return "Output directory '$1$' does not exist or is not accessible.";
 		case 3:
 			return "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
+		case 100:
+			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+
 		default:
 			return "(ApplicationSchemaMetadata.java) Unknown message with number: "
 					+ mnr;

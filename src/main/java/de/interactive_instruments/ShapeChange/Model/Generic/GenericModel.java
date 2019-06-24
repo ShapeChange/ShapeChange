@@ -1782,19 +1782,22 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				removeConstraintsOfClassAndItsProperties(genCi);
 			}
 		}
-		
+
 		/*
 		 * Take into account input parameter excluded packages.
 		 */
 		Set<PackageInfo> genPkgsToRemove = new HashSet<>();
 		Set<String> excludedPkgNames = options.getExcludedPackages();
-		for(GenericPackageInfo genPi : this.getGenPackages().values()) {
-			if(excludedPkgNames.contains(genPi.name())) {
+		for (GenericPackageInfo genPi : this.getGenPackages().values()) {
+			if (excludedPkgNames.contains(genPi.name())) {
 				genPkgsToRemove.add(genPi);
 			}
 		}
 		this.remove(genPkgsToRemove);
 
+		/*
+		 * Postprocessing in ModelImpl.java also fixes class categories!
+		 */
 		super.postprocessAfterLoadingAndValidate();
 
 		/*
@@ -1813,6 +1816,48 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		 * current model)
 		 */
 		this.validateConstraints();
+
+		/*
+		 * Fix some settings for properties that represent codes/enums.
+		 */
+		for (GenericPropertyInfo genPi : this.getGenProperties().values()) {
+			
+			if (genPi.inClass().category() == Options.ENUMERATION
+					|| genPi.inClass().category() == Options.CODELIST) {
+
+				if(genPi.isOrdered()) {
+					genPi.setOrdered(false);
+					MessageContext mc = result.addDebug(this, 30330, "isOrdered", genPi.name(),"true");
+					if(mc != null) {
+						mc.addDetail(this, 1, genPi.fullNameInSchema());
+					}
+				}
+				
+				if(!genPi.isUnique()) {
+					genPi.setUnique(true);
+					MessageContext mc = result.addDebug(this, 30330, "isUnique", genPi.name(),"false");
+					if(mc != null) {
+						mc.addDetail(this, 1, genPi.fullNameInSchema());
+					}
+				}
+				
+				if(genPi.isComposition()) {
+					genPi.setComposition(false);
+					MessageContext mc = result.addDebug(this, 30330, "isComposition", genPi.name(),"true");
+					if(mc != null) {
+						mc.addDetail(this, 1, genPi.fullNameInSchema());
+					}
+				}
+				
+				if(genPi.isAggregation()) {
+					genPi.setAggregation(false);
+					MessageContext mc = result.addDebug(this, 30330, "isAggregation", genPi.name(),"true");
+					if(mc != null) {
+						mc.addDetail(this, 1, genPi.fullNameInSchema());
+					}
+				}
+			}
+		}
 	}
 
 	private void removeConstraintsOfClassAndItsProperties(
@@ -3382,6 +3427,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		switch (mnr) {
 
+		case 1:
+			return "Context: property '$1$'";
+		case 2:
+			return "Context: class '$1$'";
+					
 		case 25:
 			return "Model repository file named '$1$' not found";
 
@@ -3450,7 +3500,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
 		case 30329:
 			return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
-
+		case 30330:
+			return "Field '$1$' of code/enum '$2$' is $3$, which is not the applicable default. Using default for this property.";
+					
 		case 30400:
 			return "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
 		case 30401:

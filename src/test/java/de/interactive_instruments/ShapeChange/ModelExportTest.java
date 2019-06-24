@@ -39,19 +39,29 @@ public class ModelExportTest extends WindowsBasicTest {
 	public void testModelExport_explicitProfileSettings() {
 
 		multiTest(
-				"src/test/resources/config/testEA_export_scxml_explicitProfileSettings.xml",
+				"src/test/resources/modelExport/explicitProfileSettings/testEA_export_scxml_explicitProfileSettings.xml",
 				new String[] { "xml" },
 				"testResults/modelexport/explicitProfileSettings/scxml",
-				"src/test/resources/reference/modelexport/explicitProfileSettings/scxml");
+				"src/test/resources/modelExport/explicitProfileSettings/reference/scxml");
 	}
 
 	@Test
 	public void testModelExport_profileInheritance() {
 
 		multiTest(
-				"src/test/resources/config/testEA_export_scxml_profileInheritance.xml",
+				"src/test/resources/modelExport/profileInheritance/testEA_export_scxml_profileInheritance.xml",
 				new String[] { "xml" },
 				"testResults/modelexport/profileInheritance/scxml",
-				"src/test/resources/reference/modelexport/profileInheritance/scxml");
+				"src/test/resources/modelExport/profileInheritance/reference/scxml");
+	}
+	
+	@Test
+	public void testModelExport_suppressMeaninglessCodeEnumCharacteristics() {
+
+		multiTest(
+				"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/testEA_export_suppressMeaninglessCodeEnumCharacteristics.xml",
+				new String[] { "xml" },
+				"testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/scxml",
+				"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/reference/scxml");
 	}
 }

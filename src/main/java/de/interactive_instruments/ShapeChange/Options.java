@@ -3984,6 +3984,7 @@ public class Options {
 		 */
 		addRule("rule-asm-all-identify-profiles");
 		addRule("rule-asm-all-identifyTypeUsage");
+		addRule("rule-asm-all-identifyPropertiesWithSpecificTaggedValues");
 
 		/*
 		 * Model export conversion rules
@@ -3991,6 +3992,7 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
+		addRule("rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning");
 
 		/*
 		 * CDB conversion rules

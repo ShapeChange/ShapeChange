@@ -192,4 +192,11 @@ public class ModelExportConstants {
 	 */
 	public static final String RULE_TGT_EXP_PKG_ALL_EDITABLE = "rule-exp-pkg-allPackagesAreEditable";
 
+	/**
+	 * If this rule is enabled, then the following property characteristics will
+	 * not be encoded for codes/enums, because they do not have semantic meaning
+	 * (for a code/enum): isOrdered, isUnique, isAggregation, isComposition.
+	 */
+	public static final String RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS = "rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning";
+
 }

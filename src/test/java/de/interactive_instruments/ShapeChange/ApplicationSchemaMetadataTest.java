@@ -54,4 +54,14 @@ public class ApplicationSchemaMetadataTest extends WindowsBasicTest {
 				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyTypeUsage/INPUT",
 				"src/test/resources/appSchemaMetadata/identifyTypeUsage/reference/INPUT");
 	}
+	
+	@Test
+	public void testApplicationSchemaMetadata_identifyPropertiesWithSpecificTaggedValues() {
+		/*
+		 * Test derivation of application schema metadata.
+		 */
+		multiTest("src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/testEA_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.xml",
+				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/results",
+				"src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/reference/results");
+	}
 }

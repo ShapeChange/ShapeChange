@@ -297,10 +297,26 @@
    <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
    <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
    <element default="true" minOccurs="0" name="isAttribute" type="boolean"/>
-   <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
-   <element default="true" minOccurs="0" name="isUnique" type="boolean"/>
-   <element default="false" minOccurs="0" name="isComposition" type="boolean"/>
-   <element default="false" minOccurs="0" name="isAggregation" type="boolean"/>
+   <element default="false" minOccurs="0" name="isOrdered" type="boolean">
+    <annotation>
+     <documentation>Defines if the property represents an ordered collection. Default is false (as specified in UML 2.4.1). NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
+    </annotation>
+   </element>
+   <element default="true" minOccurs="0" name="isUnique" type="boolean">
+    <annotation>
+     <documentation>Defines if the property allows duplicates in the values (false) or if only unique values are allowed (true). Default is true (as specified in UML 2.4.1). NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
+    </annotation>
+   </element>
+   <element default="false" minOccurs="0" name="isComposition" type="boolean">
+    <annotation>
+     <documentation>Defines if the property is a composition. Default is false. NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
+    </annotation>
+   </element>
+   <element default="false" minOccurs="0" name="isAggregation" type="boolean">
+    <annotation>
+     <documentation>Defines if the property is an aggregation. Default is false. NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
+    </annotation>
+   </element>
    <element default="false" minOccurs="0" name="isOwned" type="boolean"/>
    <element minOccurs="0" name="initialValue" type="string"/>
    <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
@@ -360,16 +376,19 @@
    <element name="height" type="positiveInteger"/>
   </all>
  </complexType>
+
+ <!-- XSD 1.1 constraint modeling -->
+ <element abstract="true" name="Constraint" type="sc:ConstraintType"/>
  <simpleType name="ConstraintContextModelElementType">
+  <annotation>
+   <documentation>Define the type of the model element that provides the context for the constraint. That typically is a class. ShapeChange also supports constraints defined on attributes.</documentation>
+  </annotation>
   <restriction base="string">
    <enumeration value="CLASS"/>
    <enumeration value="ATTRIBUTE"/>
    <enumeration value="ROLE"/>
   </restriction>
  </simpleType>
-
- <!-- XSD 1.1 constraint modeling -->
- <element abstract="true" name="Constraint" type="sc:ConstraintType"/>
  <complexType name="ConstraintType">
   <all>
    <element name="name" type="string"/>
