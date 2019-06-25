@@ -7135,6 +7135,7 @@ public class Flattener implements Transformer, MessageSource {
 		enumPi.setNavigable(true);
 		enumPi.setOrdered(false);
 		enumPi.setUnique(true);
+		enumPi.setOwned(false);
 		enumPi.setComposition(false);
 		enumPi.setAggregation(false);
 		Multiplicity mult = new Multiplicity();

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
- xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
- xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
- attributeFormDefault="unqualified" version="1.1.0b1">
+<schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.0b1">
  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
  <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
  <complexType name="ShapeChangeConfigurationType">
@@ -80,7 +76,7 @@
      <enumeration value="Union"/>
      <enumeration value="valueConcept"/>
      <enumeration value="version"/>
-     <enumeration value="voidable"/>     
+     <enumeration value="voidable"/>
     </restriction>
    </simpleType>
   </attribute>
@@ -446,8 +442,7 @@
   <attribute name="value" type="string"/>
   <attributeGroup ref="sc:modelElementSelectionGroup"/>
  </complexType>
- <element name="DescriptorValue" substitutionGroup="sc:AdvancedProcessConfigurationElement"
-  type="sc:DescriptorValueType"/>
+ <element name="DescriptorValue" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:DescriptorValueType"/>
  <complexType name="DescriptorValueType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -549,11 +544,9 @@
    </choice>
   </complexType>
  </element>
- <element abstract="true" name="AdvancedProcessConfigurationElement"
-  type="sc:AdvancedProcessConfigurationType"/>
+ <element abstract="true" name="AdvancedProcessConfigurationElement" type="sc:AdvancedProcessConfigurationType"/>
  <complexType name="AdvancedProcessConfigurationType"/>
- <element name="AttributeDefinition" type="sc:AttributeDefinitionType"
-  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
+ <element name="AttributeDefinition" type="sc:AttributeDefinitionType" substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="AttributeDefinitionType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -578,6 +571,7 @@
      <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
      <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
      <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
+     <element default="false" minOccurs="0" name="isOwned" type="boolean"/>
      <element name="name" type="string"/>
      <element default="1" minOccurs="0" name="multiplicity" type="string"/>
      <element minOccurs="0" name="stereotypes">
@@ -604,8 +598,7 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType"
-  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
+ <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType" substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="CDBUnitDefinitionType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -1006,8 +999,7 @@
    </element>
   </sequence>
  </complexType>
- <element name="GeneralObjectProperty" substitutionGroup="sc:AbstractRdfGeneralProperty"
-  type="sc:GeneralObjectPropertyType"/>
+ <element name="GeneralObjectProperty" substitutionGroup="sc:AbstractRdfGeneralProperty" type="sc:GeneralObjectPropertyType"/>
  <complexType name="GeneralObjectPropertyType">
   <complexContent>
    <extension base="sc:AbstractRdfGeneralPropertyType">
@@ -1017,8 +1009,7 @@
        <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is inverse. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
       </annotation>
      </element>
-     <element default="" minOccurs="0" name="propertyCharacteristicAxioms"
-      type="sc:ObjectPropertyCharacteristicAxiomList">
+     <element default="" minOccurs="0" name="propertyCharacteristicAxioms" type="sc:ObjectPropertyCharacteristicAxiomList">
       <annotation>
        <documentation>List of characteristic axioms that apply to the general object property.</documentation>
       </annotation>
@@ -1027,8 +1018,7 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="GeneralDataProperty" substitutionGroup="sc:AbstractRdfGeneralProperty"
-  type="sc:GeneralDataPropertyType"/>
+ <element name="GeneralDataProperty" substitutionGroup="sc:AbstractRdfGeneralProperty" type="sc:GeneralDataPropertyType"/>
  <complexType name="GeneralDataPropertyType">
   <complexContent>
    <extension base="sc:AbstractRdfGeneralPropertyType">

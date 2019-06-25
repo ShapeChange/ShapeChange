@@ -70,7 +70,7 @@ public class GenericPropertyContentHandler
 					"isUnique", "isComposition", "isAggregation",
 					"initialValue", "inlineOrByReference", "sequenceNumber",
 					"reversePropertyId", "associationId", "typeId", "typeName",
-					"inClassId" }));
+					"inClassId", "isOwned" }));
 
 	private GenericPropertyInfo genPi = new GenericPropertyInfo();
 
@@ -233,6 +233,10 @@ public class GenericPropertyContentHandler
 		} else if (localName.equals("isUnique")) {
 
 			this.genPi.setUnique(toBooleanValue(sb));
+
+		} else if (localName.equals("isOwned")) {
+
+			this.genPi.setOwned(toBooleanValue(sb));
 
 		} else if (localName.equals("isComposition")) {
 

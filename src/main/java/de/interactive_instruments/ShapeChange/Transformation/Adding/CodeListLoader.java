@@ -338,6 +338,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 							genPi.setNavigable(true);
 							genPi.setOrdered(false);
 							genPi.setUnique(false);
+							genPi.setOwned(false);
 							genPi.setComposition(true);
 							genPi.setAggregation(false);
 							genPi.setCardinality(new Multiplicity());

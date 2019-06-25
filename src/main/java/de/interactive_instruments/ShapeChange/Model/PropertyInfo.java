@@ -125,6 +125,13 @@ public interface PropertyInfo extends Info {
 	 */
 	public boolean isAggregation();
 
+	/**
+	 * @return <code>true</code>, if the property is an association end that is
+	 *         owned (by the {@link #inClass()}), else <code>false</code> (then
+	 *         it is either an attribute or owned by the association)
+	 */
+	public boolean isOwned();
+
 	public Multiplicity cardinality();
 
 	/**

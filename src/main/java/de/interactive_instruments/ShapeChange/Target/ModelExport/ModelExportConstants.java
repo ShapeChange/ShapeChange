@@ -195,7 +195,7 @@ public class ModelExportConstants {
 	/**
 	 * If this rule is enabled, then the following property characteristics will
 	 * not be encoded for codes/enums, because they do not have semantic meaning
-	 * (for a code/enum): isOrdered, isUnique, isAggregation, isComposition.
+	 * (for a code/enum): isOrdered, isUnique, isAggregation, isComposition, isOwned.
 	 */
 	public static final String RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS = "rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning";
 

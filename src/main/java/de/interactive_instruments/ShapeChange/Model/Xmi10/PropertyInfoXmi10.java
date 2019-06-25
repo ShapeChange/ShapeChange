@@ -449,4 +449,10 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		return ls;
 	}
+
+	@Override
+	public boolean isOwned() {
+		// TODO
+		return false;
+	}
 }

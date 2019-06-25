@@ -61,8 +61,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class EAModelDiff {
@@ -167,8 +167,8 @@ public class EAModelDiff {
 		 * @param id
 		 * @param modelPath
 		 * @param element
-		 *            - can be <code>null</code> (e.g. in case of a model
-		 *            package)
+		 *                      - can be <code>null</code> (e.g. in case of a
+		 *                      model package)
 		 */
 		public EAPackageInfo(String name, Integer id, String modelPath,
 				EAModelElementInfo element) {
@@ -335,24 +335,18 @@ public class EAModelDiff {
 
 				if (pkgsForName.size() > refPkgsForName.size()) {
 
-					System.out
-							.println(
-									(parentPkg == null ? "Model"
-											: "Package "
-													+ parentPkg.getModelPath())
-											+ " - Reference has less child packages with name '"
-											+ refPkgName + "'.");
+					System.out.println((parentPkg == null ? "Model"
+							: "Package " + parentPkg.getModelPath())
+							+ " - Reference has less child packages with name '"
+							+ refPkgName + "'.");
 					result = false;
 
 				} else if (pkgsForName.size() < refPkgsForName.size()) {
 
-					System.out
-							.println(
-									(parentPkg == null ? "Model"
-											: "Package "
-													+ parentPkg.getModelPath())
-											+ " - Reference has more child packages with name '"
-											+ refPkgName + "'.");
+					System.out.println((parentPkg == null ? "Model"
+							: "Package " + parentPkg.getModelPath())
+							+ " - Reference has more child packages with name '"
+							+ refPkgName + "'.");
 					result = false;
 
 				} else {
@@ -877,7 +871,7 @@ public class EAModelDiff {
 	 * @param elmtModelPath
 	 * @param conns
 	 * @param repOfConns
-	 *            the repository to which the connectors belong
+	 *                          the repository to which the connectors belong
 	 * @return multimap of connectors infos, with connector keys as defined by
 	 *         {@link #getKey(Connector, ConnectorEnd, ConnectorEnd)} as sorted
 	 *         keys, and connectors stored in an array list
@@ -1321,9 +1315,11 @@ public class EAModelDiff {
 	/**
 	 * @param modelPath
 	 * @param tvs
-	 *            key: {name '#' fqName}; value: according EATaggedValue
+	 *                      key: {name '#' fqName}; value: according
+	 *                      EATaggedValue
 	 * @param refTvs
-	 *            key: {name '#' fqName}; value: according EATaggedValue
+	 *                      key: {name '#' fqName}; value: according
+	 *                      EATaggedValue
 	 * @return
 	 */
 	private boolean similar(String modelPath,
@@ -1838,6 +1834,10 @@ public class EAModelDiff {
 
 		result &= similar(modelPath, "AllowDuplicates",
 				connEnd.GetAllowDuplicates(), refConnEnd.GetAllowDuplicates());
+
+		result &= similar(modelPath, "OwnedByClassifier",
+				connEnd.GetOwnedByClassifier(),
+				refConnEnd.GetOwnedByClassifier());
 
 		result &= similar(modelPath, "Cardinality", connEnd.GetCardinality(),
 				refConnEnd.GetCardinality());

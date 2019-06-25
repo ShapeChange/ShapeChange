@@ -89,8 +89,8 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
  * @author Clemens Portele
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class UmlModel implements SingleTarget, MessageSource {
@@ -103,11 +103,13 @@ public class UmlModel implements SingleTarget, MessageSource {
 	public static final String PARAM_MODEL_FILENAME = "modelFilename";
 	public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
 	public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
+	public static final String PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP = "includeAssociationEndOwnership";
 
 	private static boolean initialised = false;
 	private static String outputFilename = null;
 	private static String documentationTemplate = null;
 	private static String documentationNoValue = null;
+	private static boolean includeAssociationEndOwnership = false;
 	private static Repository rep = null;
 	private static Integer pOut_EaPkgId = null;
 	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
@@ -154,6 +156,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 			documentationNoValue = options.parameter(this.getClass().getName(),
 					"documentationNoValue");
 
+			includeAssociationEndOwnership = options.parameterAsBoolean(
+					this.getClass().getName(),
+					PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
 			/*
 			 * Make sure repository file exists
 			 */
@@ -522,7 +527,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			result.addError(this, 10004,
 					i.name() == null || i.name().trim().length() == 0
-							? "<without_name>" : i.name(),
+							? "<without_name>"
+							: i.name(),
 					exc.getMessage());
 		}
 	}
@@ -562,6 +568,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			EAConnectorEndUtil.setEAAllowDuplicates(ce, !i.isUnique());
 
+			if (includeAssociationEndOwnership && i.isOwned()) {
+				EAConnectorEndUtil.setEAOwnedByClassifier(ce, true);
+			}
+
 			if (i.reverseProperty() != null) {
 				if (i.reverseProperty().isAggregation()) {
 					EAConnectorEndUtil.setEAAggregation(ce,
@@ -579,7 +589,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			result.addError(this, 10004,
 					i.name() == null || i.name().trim().length() == 0
-							? "<without_name>" : i.name(),
+							? "<without_name>"
+							: i.name(),
 					exc.getMessage());
 		}
 	}
@@ -755,6 +766,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 		classesToProcess = new ArrayList<>();
 		generalisations = HashMultimap.create();
 		stereotypeMappings = new HashMap<>();
+
+		includeAssociationEndOwnership = false;
 	}
 
 	/**

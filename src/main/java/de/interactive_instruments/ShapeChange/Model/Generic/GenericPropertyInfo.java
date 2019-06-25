@@ -104,6 +104,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * Default value is <code>false</code>.
 	 */
 	protected boolean isAggregation = false;
+	
+	/**
+	 * Default value is <code>false</code>.
+	 */
+	protected boolean isOwned = false;
 
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
@@ -190,6 +195,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	@Override
 	public boolean isUnique() {
 		return isUnique;
+	}
+	
+	@Override
+	public boolean isOwned() {
+		return isOwned;
 	}
 
 	public boolean hasConstraints() {
@@ -374,6 +384,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setUnique(boolean isUnique) {
 		this.isUnique = isUnique;
+	}
+	
+	public void setOwned(boolean isOwned) {
+		this.isOwned = isOwned;
 	}
 
 	/**
@@ -609,6 +623,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setNavigable(isNavigable);
 		copy.setOrdered(isOrdered);
 		copy.setUnique(isUnique);
+		copy.setOwned(isOwned);
 		copy.setComposition(isComposition);
 		copy.setAggregation(isAggregation);
 		copy.setCardinality(new Multiplicity(cardinality.toString()));

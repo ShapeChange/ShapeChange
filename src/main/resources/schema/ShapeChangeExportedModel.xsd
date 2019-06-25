@@ -317,7 +317,11 @@
      <documentation>Defines if the property is an aggregation. Default is false. NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
     </annotation>
    </element>
-   <element default="false" minOccurs="0" name="isOwned" type="boolean"/>
+   <element default="false" minOccurs="0" name="isOwned" type="boolean">
+    <annotation>
+     <documentation>True, if the property is an association end that is owned by the class (at the other end of the association), else false (then the property is either an attribute or owned by the association).</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" name="initialValue" type="string"/>
    <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
    <element minOccurs="0" name="qualifiers">

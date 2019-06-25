@@ -838,35 +838,36 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("isReadOnly", pi.isReadOnly(), false);
 		printDataElement("isAttribute", pi.isAttribute(), true);
 
-		if (pi.isOrdered() && pi.matches(
-				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
-			result.addDebug(this, 13, "isOrdered", "true",
-					pi.fullNameInSchema());
+		if ((pi.inClass().category() == Options.ENUMERATION
+				|| pi.inClass().category() == Options.CODELIST)
+				&& pi.matches(
+						ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+
+			if (pi.isOrdered()) {
+				result.addDebug(this, 13, "isOrdered", "true",
+						pi.fullNameInSchema());
+			}
+			if (!pi.isUnique()) {
+				result.addDebug(this, 13, "isUnique", "false",
+						pi.fullNameInSchema());
+			}
+			if (pi.isComposition()) {
+				result.addDebug(this, 13, "isComposition", "true",
+						pi.fullNameInSchema());
+			}
+			if (pi.isAggregation()) {
+				result.addDebug(this, 13, "isAggregation", "true",
+						pi.fullNameInSchema());
+			}
+			if (pi.isOwned()) {
+				result.addDebug(this, 13, "isOwned", "true", pi.fullNameInSchema());
+			}
 		} else {
 			printDataElement("isOrdered", pi.isOrdered(), false);
-		}
-
-		if (!pi.isUnique() && pi.matches(
-				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
-			result.addDebug(this, 13, "isUnique", "false",
-					pi.fullNameInSchema());
-		} else {
 			printDataElement("isUnique", pi.isUnique(), true);
-		}
-
-		if (pi.isComposition() && pi.matches(
-				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
-			result.addDebug(this, 13, "isComposition", "true",
-					pi.fullNameInSchema());
-		} else {
 			printDataElement("isComposition", pi.isComposition(), false);
-		}
-		if (pi.isAggregation() && pi.matches(
-				ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
-			result.addDebug(this, 13, "isAggregation", "true",
-					pi.fullNameInSchema());
-		} else {
 			printDataElement("isAggregation", pi.isAggregation(), false);
+			printDataElement("isOwned", pi.isOwned(), false);
 		}
 
 		printDataElement("initialValue", pi.initialValue());

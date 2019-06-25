@@ -136,6 +136,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** Cache for uniqueness in property */
 	protected Boolean isUniqueCache = null;
+	
+	/** Cache for isOwned in property */
+	protected Boolean isOwnedCache = null;
 
 	/** Cache set for stereotypes */
 	// this map is already defined in InfoImpl
@@ -649,6 +652,18 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		}
 		return isUniqueCache;
 	} // isUnique()
+	
+	@Override
+	public boolean isOwned() {
+		if(isOwnedCache == null) {
+			isOwnedCache = Boolean.FALSE;
+			if (!isAttribute()) {				
+				// Inquire from ConnectorEnd
+				isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
+			}
+		}
+		return isOwnedCache;
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#reverseProperty()

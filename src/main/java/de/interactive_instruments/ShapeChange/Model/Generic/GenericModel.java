@@ -324,6 +324,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				genPi.setNavigable(pi.isNavigable());
 				genPi.setOrdered(pi.isOrdered());
 				genPi.setUnique(pi.isUnique());
+				genPi.setOwned(pi.isOwned());
 				genPi.setComposition(pi.isComposition());
 				genPi.setAggregation(pi.isAggregation());
 				Multiplicity mult = pi.cardinality();
@@ -1841,6 +1842,14 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					}
 				}
 				
+				if(genPi.isOwned()) {
+					genPi.setOwned(false);
+					MessageContext mc = result.addDebug(this, 30330, "isOwned", genPi.name(),"true");
+					if(mc != null) {
+						mc.addDetail(this, 1, genPi.fullNameInSchema());
+					}
+				}
+				
 				if(genPi.isComposition()) {
 					genPi.setComposition(false);
 					MessageContext mc = result.addDebug(this, 30330, "isComposition", genPi.name(),"true");
@@ -2733,6 +2742,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		copy.setNavigable(pi.isNavigable());
 		copy.setOrdered(pi.isOrdered());
 		copy.setUnique(pi.isUnique());
+		copy.setOwned(pi.isOwned());
 		copy.setComposition(pi.isComposition());
 		copy.setAggregation(pi.isAggregation());
 		copy.setCardinality(new Multiplicity(pi.cardinality().toString()));
