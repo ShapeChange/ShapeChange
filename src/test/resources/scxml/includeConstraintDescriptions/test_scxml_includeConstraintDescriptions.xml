@@ -7,10 +7,10 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/connectorEndOwnedByClassifier/test_uml_connectorEndOwnedByClassifier.eap" />
+			value="src/test/resources/scxml/includeConstraintDescriptions/test_scxml_includeConstraintDescriptions.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
-		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="dontConstructAssociationNames" value="true" />
 		<parameter name="extractSeparator" value="--" />
 		<descriptorSources>
@@ -30,7 +30,7 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/uml/connectorEndOwnedByClassifier/log.xml" />
+		<parameter name="logFile" value="testResults/scxml/includeConstraintDescriptions/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -38,42 +38,13 @@
 			id="model" input="input" mode="enabled" />
 	</transformers>
 	<targets>		
-		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel"
-			mode="enabled" inputs="model">
-			<targetParameter name="outputDirectory" value="testResults/uml/connectorEndOwnedByClassifier/results/eap" />
-			<targetParameter name="documentationTemplate" value="[[documentation]]" />
-			<targetParameter name="omitOutputPackageDateTime"
-				value="true" />
-			<targetParameter name="includeAssociationEndOwnership" value="true"/>
-			<targetParameter name="eapTemplate"
-				value="src/main/resources/templates/UmlModel_template.eap" />
-			<mapEntries>
-				<MapEntry type="application schema" rule="*"
-					targetType="ShapeChange::applicationSchema" param="stereotype" />
-				<MapEntry type="featuretype" rule="*"
-					targetType="ShapeChange::featureType" param="stereotype" />
-				<MapEntry type="type" rule="*" targetType="ShapeChange::type"
-					param="stereotype" />
-				<MapEntry type="datatype" rule="*" targetType="ShapeChange::dataType"
-					param="stereotype" />
-				<MapEntry type="union" rule="*" targetType="ShapeChange::union"
-					param="stereotype" />
-				<MapEntry type="codelist" rule="*" targetType="ShapeChange::codeList"
-					param="stereotype" />
-				<MapEntry type="enumeration" rule="*"
-					targetType="ShapeChange::enumeration" param="stereotype" />
-				<MapEntry type="property" rule="*" targetType="ShapeChange::property"
-					param="stereotype" />
-				<MapEntry type="enum" rule="*" targetType="ShapeChange::enum"
-					param="stereotype" />
-			</mapEntries>
-		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
               mode="enabled" inputs="model">
-         <targetParameter name="outputDirectory" value="testResults/uml/connectorEndOwnedByClassifier/results/scxml"/>
+         <targetParameter name="outputDirectory" value="testResults/scxml/includeConstraintDescriptions/results/scxml"/>
          <targetParameter name="outputFilename" value="export"/>
          <targetParameter name="sortedOutput" value="true"/>
          <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="includeConstraintDescriptions" value="true"/>
          <rules>
             <EncodingRule name="export">
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>

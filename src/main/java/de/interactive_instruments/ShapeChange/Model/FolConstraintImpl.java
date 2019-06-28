@@ -31,6 +31,12 @@
  */
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 
 /**
@@ -70,33 +76,21 @@ public class FolConstraintImpl implements FolConstraint {
 	
 	protected String[] comments = null;
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Constraint#name()
-	 */
 	@Override
 	public String name() {
 		return constraintName.trim();
-	} // name()
+	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Constraint#status()
-	 */
 	@Override
 	public String status() {
 		return constraintStatus;
-	} // status()
+	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Constraint#text()
-	 */
 	@Override
 	public String text() {
 		return constraintText;
-	} // text()
+	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.FolConstraint#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String text) {
 		if (text == null) {
@@ -106,33 +100,21 @@ public class FolConstraintImpl implements FolConstraint {
 		}
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Constraint#contextModelElmt()
-	 */
 	@Override
 	public Info contextModelElmt() {
 		return contextModelElmt;
-	} // contextModelElmt()
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Constraint#contextModelElmtType()
-	 */
+	}
+	
 	@Override
 	public ModelElmtContextType contextModelElmtType() {
 		return contextModelElmtType;
-	} // contextModelElmtType()
+	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.FolConstraint#setFolExpression(de.interactive_instruments.ShapeChange.FOL.FolExpression)
-	 */
 	@Override
 	public void setFolExpression(FolExpression folExpr) {
 		this.folExpr = folExpr;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.FolConstraint#folExpression()
-	 */
 	@Override
 	public FolExpression folExpression() {
 		return folExpr;
@@ -148,9 +130,6 @@ public class FolConstraintImpl implements FolConstraint {
 		return sourceType;
 	}
 	
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.FolConstraint#setSourceType(java.lang.String)
-	 */
 	@Override
 	public void setSourceType(String sourceType) {
 		this.sourceType = sourceType;
@@ -195,6 +174,35 @@ public class FolConstraintImpl implements FolConstraint {
 	@Override
 	public void setComments(String[] comments) {
 		this.comments = comments;
+	}
+
+	@Override
+	public void mergeComments(String[] additionalComments) {
+
+		if (this.comments == null || this.comments.length == 0) {
+			
+			this.comments = additionalComments;
+			
+		} else if (additionalComments == null || additionalComments.length == 0) {
+			/*
+			 * Nothing to do. Just keep comments as set.
+			 */
+		} else {
+			/*
+			 * Merge existing comments and additional comments. Each additional comment
+			 * that is not contained in the existing comments shall be added to
+			 * the existing comments.
+			 */
+			List<String> additionalCommentsList = new ArrayList<>();
+			for (String c : additionalComments) {
+				if (!Arrays.stream(this.comments).anyMatch(c::equals)) {
+					additionalCommentsList.add(c);
+				}
+			}
+
+			this.comments = ArrayUtils.addAll(this.comments,
+					additionalCommentsList.stream().toArray(String[]::new));
+		}
 	}
 
 }

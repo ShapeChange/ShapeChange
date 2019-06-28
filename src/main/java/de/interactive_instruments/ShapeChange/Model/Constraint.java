@@ -34,37 +34,39 @@ package de.interactive_instruments.ShapeChange.Model;
 
 /**
  * The Constraint interface stands for any type of constraints, which may be
- * attached to UML metamodel objects. A Constraint is supposed to have a name, 
- * a status and a textual representation. 
+ * attached to UML metamodel objects. A Constraint is supposed to have a name, a
+ * status and a textual representation.
  */
 public interface Constraint {
 
 	/** Type for possible model elements the constraint applies to */
 	enum ModelElmtContextType {
-		CLASS,			// Context is a Class
-		ATTRIBUTE		// Context is a Property being a class attribute
+		CLASS, // Context is a Class
+		ATTRIBUTE // Context is a Property being a class attribute
 	}
-	
-	
+
 	/** Name of the constraint */
 	public String name();
 
-	/** Status of the constraint. Note: While this is experimental software
-	 * the 'status' of a constraint is meant to be some string in 
-	 * conspiracy between the model source and the code generator. This may
-	 * be changed to an enum later, when some practice is achieved. The 
-	 * 'status' is supposed to express some state of refinedness, validity or
-	 * purpose of the constraint. */
+	/**
+	 * Status of the constraint. Note: While this is experimental software the
+	 * 'status' of a constraint is meant to be some string in conspiracy between
+	 * the model source and the code generator. This may be changed to an enum
+	 * later, when some practice is achieved. The 'status' is supposed to
+	 * express some state of refinedness, validity or purpose of the constraint.
+	 */
 	public String status();
-	
+
 	/** The textual representation of the constraint. */
 	public String text();
-	
-	/** Inquire context model element, i.e. the parent. Currently this in one of ClassInfo
-	 * or PropertyInfo. */
+
+	/**
+	 * Inquire context model element, i.e. the parent. Currently this in one of
+	 * ClassInfo or PropertyInfo.
+	 */
 	public Info contextModelElmt();
 
 	/** Inquire model element context type. */
 	public ModelElmtContextType contextModelElmtType();
-	
+
 }

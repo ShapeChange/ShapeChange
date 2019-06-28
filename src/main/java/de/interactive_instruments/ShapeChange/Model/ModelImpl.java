@@ -130,7 +130,7 @@ public abstract class ModelImpl implements Model {
 						if (folCon.sourceType()
 								.equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 
-							folCon.setComments(new String[] { folCon.text() });
+							folCon.mergeComments(new String[] { folCon.text() });
 
 							FolExpression folExpr = sbvrParser.parse(folCon);
 
@@ -162,7 +162,8 @@ public abstract class ModelImpl implements Model {
 	}
 
 	@Override
-	public void loadInformationFromExternalSources(boolean isLoadingInputModel) {
+	public void loadInformationFromExternalSources(
+			boolean isLoadingInputModel) {
 
 		// do not execute this once the model has been postprocessed
 		if (postprocessed)

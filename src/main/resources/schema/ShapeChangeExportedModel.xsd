@@ -1,35 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
  <element name="Model" type="sc:ModelType">
+  <annotation>
+   <documentation>Representation of a UML model</documentation>
+  </annotation>
   <key name="packageKey">
+   <annotation>
+    <documentation>The ids of all Package elements shall be unique.</documentation>
+   </annotation>
    <selector xpath=".//sc:Package"/>
    <field xpath="sc:id"/>
   </key>
   <key name="classKey">
+   <annotation>
+    <documentation>The ids of all Class elements shall be unique.</documentation>
+   </annotation>
    <selector xpath=".//sc:Class"/>
    <field xpath="sc:id"/>
   </key>
   <key name="propertyKey">
+   <annotation>
+    <documentation>The ids of all Property elements shall be unique.</documentation>
+   </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:id"/>
   </key>
   <key name="associationKey">
+   <annotation>
+    <documentation>The ids of all Association elements shall be unique.</documentation>
+   </annotation>
    <selector xpath="./sc:associations/sc:Association"/>
    <field xpath="sc:id"/>
   </key>
   <key name="classPropertyKey">
+   <annotation>
+    <documentation>Defines a set with the ids of all Property elements that belong to Class elements.</documentation>
+   </annotation>
    <selector xpath=".//sc:Class/sc:properties/sc:Property"/>
    <field xpath="sc:id"/>
   </key>
   <key name="constraintContextModelElementKey">
+   <annotation>
+    <documentation>Defines a set with the ids of all Class and Property elements. These ids may be referenced as context model elements from constraints.</documentation>
+   </annotation>
    <selector xpath=".//sc:Class | .//sc:Property"/>
    <field xpath="sc:id"/>
   </key>
   <keyref name="packageSupplierKeyRef" refer="sc:packageKey">
+   <annotation>
+    <documentation>The value of a SupplierId element must be equal to the value of a Package/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:SupplierId"/>
    <field xpath="."/>
   </keyref>
   <keyref name="classToAssociationKeyRef" refer="sc:associationKey">
+   <annotation>
+    <documentation>The value of a Class/associationId element must be equal to an Association/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Class"/>
    <field xpath="sc:associationId"/>
   </keyref>
@@ -77,13 +104,27 @@
  <complexType name="ModelType">
   <all>
    <element minOccurs="0" name="globalProfileInfos">
+    <annotation>
+     <documentation>Information about profiles. Primarily used by the PMT.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" name="Profile">
+       <annotation>
+        <documentation>High-level documentation of a named profile. Maintained by the PMT.</documentation>
+       </annotation>
        <complexType>
         <all>
-         <element name="name" type="string"/>
-         <element name="description" type="string"/>
+         <element name="name" type="string">
+          <annotation>
+           <documentation>Name of the profile.</documentation>
+          </annotation>
+         </element>
+         <element name="description" type="string">
+          <annotation>
+           <documentation>Description of the profile.</documentation>
+          </annotation>
+         </element>
         </all>
        </complexType>
       </element>
@@ -91,13 +132,23 @@
     </complexType>
    </element>
    <element name="packages">
+    <annotation>
+     <documentation>The top level packages contained in the model.</documentation>
+    </annotation>
     <complexType>
      <all>
-      <element maxOccurs="unbounded" ref="sc:Package"/>
+      <element maxOccurs="unbounded" ref="sc:Package">
+       <annotation>
+        <documentation>Representation of a UML package.</documentation>
+       </annotation>
+      </element>
      </all>
     </complexType>
    </element>
    <element minOccurs="0" name="associations">
+    <annotation>
+     <documentation>Contains the associations that exist within the model.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" name="Association" type="sc:AssociationType"/>
@@ -105,7 +156,11 @@
     </complexType>
    </element>
   </all>
-  <attribute name="encoding" type="string" use="required"/>
+  <attribute name="encoding" type="string" use="required">
+   <annotation>
+    <documentation>Character encoding used within the model.</documentation>
+   </annotation>
+  </attribute>
  </complexType>
  <!-- <complexType name="InfoType">
   <all>
@@ -169,7 +224,11 @@
   <complexType>
    <complexContent>
     <extension base="sc:PackageType">
-     <attribute default="true" name="editable" type="boolean"/>
+     <attribute default="true" name="editable" type="boolean">
+      <annotation>
+       <documentation>Field that is used - and set - by the PMT. Defines if the user can edit the contents of the package.</documentation>
+      </annotation>
+     </attribute>
     </extension>
    </complexContent>
   </complexType>
@@ -319,7 +378,7 @@
    </element>
    <element default="false" minOccurs="0" name="isOwned" type="boolean">
     <annotation>
-     <documentation>True, if the property is an association end that is owned by the class (at the other end of the association), else false (then the property is either an attribute or owned by the association).</documentation>
+     <documentation>True, if the property is an association end that is owned by the class, else false (then the property is either an attribute or owned by the association).</documentation>
     </annotation>
    </element>
    <element minOccurs="0" name="initialValue" type="string"/>
@@ -405,7 +464,15 @@
  <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
  <complexType name="OclConstraintType">
   <complexContent>
-   <extension base="sc:ConstraintType"/>
+   <extension base="sc:ConstraintType">
+    <all>
+     <element minOccurs="0" name="description" type="string" maxOccurs="unbounded">
+      <annotation>
+       <documentation>Informative documentation of the constraint.</documentation>
+      </annotation>
+     </element>
+    </all>
+   </extension>
   </complexContent>
  </complexType>
  <element name="FolConstraint" substitutionGroup="sc:Constraint" type="sc:FolConstraintType"/>
@@ -414,6 +481,11 @@
    <extension base="sc:ConstraintType">
     <all>
      <element minOccurs="0" name="sourceType" type="string"/>
+     <element minOccurs="0" name="description" type="string" maxOccurs="unbounded">
+      <annotation>
+       <documentation>Informative documentation of the constraint.</documentation>
+      </annotation>
+     </element>
     </all>
    </extension>
   </complexContent>

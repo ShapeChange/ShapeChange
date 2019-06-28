@@ -32,10 +32,10 @@
          <targetParameter name="outputFilename" value="export"/>
          <targetParameter name="sortedOutput" value="true"/>
          <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning" value="true"/>
          <rules>
             <EncodingRule name="export">
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
-            	<rule name="rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning"/>
             </EncodingRule>
          </rules>
       </Target>      

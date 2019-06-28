@@ -51,7 +51,9 @@ public interface FolConstraint extends TextConstraint {
 	public boolean hasComments();
 	
 	public void setComments(String[] comments);
-
+	
+	public void mergeComments(String[] additionalComments);
+	
 	/**
 	 * @return the first order logic expression represented by this constraint;
 	 *         can be <code>null</code> if parsing the constraint text did not

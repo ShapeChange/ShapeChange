@@ -71,6 +71,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -104,12 +105,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 	public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
 	public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
 	public static final String PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP = "includeAssociationEndOwnership";
+	public static final String PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT = "mergeConstraintCommentsIntoText";
 
 	private static boolean initialised = false;
 	private static String outputFilename = null;
 	private static String documentationTemplate = null;
 	private static String documentationNoValue = null;
 	private static boolean includeAssociationEndOwnership = false;
+	private static boolean mergeConstraintCommentsIntoText = false;
 	private static Repository rep = null;
 	private static Integer pOut_EaPkgId = null;
 	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
@@ -159,6 +162,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 			includeAssociationEndOwnership = options.parameterAsBoolean(
 					this.getClass().getName(),
 					PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
+
+			mergeConstraintCommentsIntoText = options.parameterAsBoolean(
+					this.getClass().getName(),
+					PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, false);
+
 			/*
 			 * Make sure repository file exists
 			 */
@@ -363,7 +371,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 		}
 		for (Constraint constr : ci.constraints()) {
 			String type = determineConstraintType(constr);
-			EAElementUtil.addConstraint(e, constr.name(), type, constr.text());
+			String text = determineConstraintText(constr);
+			EAElementUtil.addConstraint(e, constr.name(), type, text);
 		}
 
 		for (PropertyInfo propi : ci.properties().values()) {
@@ -399,6 +408,38 @@ public class UmlModel implements SingleTarget, MessageSource {
 			 * in writeAll()
 			 */
 		}
+	}
+
+	private String determineConstraintText(Constraint constr) {
+
+		String text = constr.text();
+
+		if (mergeConstraintCommentsIntoText
+				&& constr instanceof OclConstraint) {
+
+			OclConstraint oclCon = (OclConstraint) constr;
+
+			if (oclCon.hasComments()) {
+
+				String[] comments = oclCon.comments();
+
+				List<String> commentsToMerge = new ArrayList<>();
+
+				for (String comment : comments) {
+					if (!text.contains(comment)) {
+						commentsToMerge.add("/*" + comment + "*/");
+					}
+				}
+
+				String merged = String.join(" ", commentsToMerge);
+
+				if (StringUtils.isNotBlank(merged)) {
+					text = merged + " " + text;
+				}
+			}
+		}
+
+		return text;
 	}
 
 	/**
@@ -443,8 +484,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			for (Constraint constr : propi.constraints()) {
 
 				String type = determineConstraintType(constr);
-				EAAttributeUtil.addConstraint(att, constr.name(), type,
-						constr.text());
+				String text = determineConstraintText(constr);
+				EAAttributeUtil.addConstraint(att, constr.name(), type, text);
 			}
 
 		} catch (EAException exc) {
@@ -768,6 +809,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 		stereotypeMappings = new HashMap<>();
 
 		includeAssociationEndOwnership = false;
+		mergeConstraintCommentsIntoText = false;
 	}
 
 	/**

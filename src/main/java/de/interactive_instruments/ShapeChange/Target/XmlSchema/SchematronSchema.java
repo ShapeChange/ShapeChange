@@ -327,11 +327,7 @@ public class SchematronSchema implements MessageSource {
 		String[] comments = c.comments();
 		if (comments != null && comments.length > 0) {
 			text += ":";
-			for (String cl : comments) {
-				if (cl.startsWith("/*"))
-					cl = cl.substring(2);
-				if (cl.endsWith("*/"))
-					cl = cl.substring(0, cl.length() - 2);
+			for (String cl : comments) {				
 				text += " " + cl;
 			}
 		}

@@ -186,6 +186,25 @@ public class ModelExportConstants {
 	public static final String PARAM_EXPORT_PROFILES_FROM_WHOLE_MODEL = "exportProfilesFromWholeModel";
 
 	/**
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: Boolean
+	 * <p>
+	 * Default Value: <code>false</code>
+	 * <p>
+	 * Explanation: If <code>true</code>, descriptive information of OCL and FOL
+	 * constraints is encoded in &lt;description&gt; elements. If
+	 * <code>false</code> (the default behavior, for backwards-compatibility
+	 * reasons), no &lt;description&gt; elements will be created for
+	 * constraints.
+	 * 
+	 * Applies to Rule(s): none – default behavior
+	 */
+	public static final String PARAM_INCLUDE_CONSTRAINT_DESCRIPTIONS = "includeConstraintDescriptions";
+
+	/**
 	 * By default, packages that do not belong to the schemas selected for
 	 * processing are marked as not editable. If this rule is enabled, all
 	 * packages are exported as editable.
@@ -193,10 +212,20 @@ public class ModelExportConstants {
 	public static final String RULE_TGT_EXP_PKG_ALL_EDITABLE = "rule-exp-pkg-allPackagesAreEditable";
 
 	/**
-	 * If this rule is enabled, then the following property characteristics will
-	 * not be encoded for codes/enums, because they do not have semantic meaning
-	 * (for a code/enum): isOrdered, isUnique, isAggregation, isComposition, isOwned.
+	 * Alias: none
+	 * <p>
+	 * Required / Optional: optional
+	 * <p>
+	 * Type: Boolean
+	 * <p>
+	 * Default Value: <code>false</code>
+	 * <p>
+	 * Explanation: If <code>true</code>, then the following property
+	 * characteristics will not be encoded for codes/enums, because they do not
+	 * have semantic meaning (for a code/enum): isOrdered, isUnique,
+	 * isAggregation, isComposition, isOwned.
+	 * 
+	 * Applies to Rule(s): none – default behavior
 	 */
-	public static final String RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS = "rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning";
-
+	public static final String PARAM_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS = "suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning";
 }

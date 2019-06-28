@@ -5,12 +5,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="input">
-		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputModelType" value="SCXML" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/connectorEndOwnedByClassifier/test_uml_connectorEndOwnedByClassifier.eap" />
+			value="src/test/resources/uml/mergeConstraintCommentsIntoText/sc.xml" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
-		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="dontConstructAssociationNames" value="true" />
 		<parameter name="extractSeparator" value="--" />
 		<descriptorSources>
@@ -30,7 +30,7 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/uml/connectorEndOwnedByClassifier/log.xml" />
+		<parameter name="logFile" value="testResults/uml/mergeConstraintCommentsIntoText/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -40,11 +40,10 @@
 	<targets>		
 		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel"
 			mode="enabled" inputs="model">
-			<targetParameter name="outputDirectory" value="testResults/uml/connectorEndOwnedByClassifier/results/eap" />
+			<targetParameter name="outputDirectory" value="testResults/uml/mergeConstraintCommentsIntoText/results/eap" />
 			<targetParameter name="documentationTemplate" value="[[documentation]]" />
-			<targetParameter name="omitOutputPackageDateTime"
-				value="true" />
-			<targetParameter name="includeAssociationEndOwnership" value="true"/>
+			<targetParameter name="omitOutputPackageDateTime" value="true" />
+			<targetParameter name="mergeConstraintCommentsIntoText" value="true" />
 			<targetParameter name="eapTemplate"
 				value="src/main/resources/templates/UmlModel_template.eap" />
 			<mapEntries>
@@ -68,17 +67,5 @@
 					param="stereotype" />
 			</mapEntries>
 		</Target>
-		<Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
-              mode="enabled" inputs="model">
-         <targetParameter name="outputDirectory" value="testResults/uml/connectorEndOwnedByClassifier/results/scxml"/>
-         <targetParameter name="outputFilename" value="export"/>
-         <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="defaultEncodingRule" value="export"/>
-         <rules>
-            <EncodingRule name="export">
-            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
-            </EncodingRule>
-         </rules>
-      </Target>   
 	</targets>
 </ShapeChangeConfiguration>

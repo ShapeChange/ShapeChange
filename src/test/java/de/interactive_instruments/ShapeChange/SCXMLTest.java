@@ -64,4 +64,14 @@ public class SCXMLTest extends WindowsBasicTest {
 				"testResults/scxml/taggedValueNormalization/results",
 				"src/test/resources/scxml/taggedValueNormalization/reference/results");
 	}
+	
+	@Test
+	public void testSCXML_includeConstraintDescriptions() {
+
+		multiTest(
+				"src/test/resources/scxml/includeConstraintDescriptions/test_scxml_includeConstraintDescriptions.xml",
+				new String[] { "xml" },
+				"testResults/scxml/includeConstraintDescriptions/results",
+				"src/test/resources/scxml/includeConstraintDescriptions/reference/results");
+	}
 }

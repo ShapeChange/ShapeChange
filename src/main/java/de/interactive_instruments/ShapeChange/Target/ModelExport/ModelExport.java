@@ -107,6 +107,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 	private static boolean omitExistingProfiles = false;
 	private static Pattern ignoreTaggedValuesPattern = null;
 	private static boolean exportProfilesFromWholeModel = false;
+	private static boolean includeConstraintDescriptions = false;
+	private static boolean suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning = false;
 	private static boolean zipOutput = false;
 	private static String schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
 
@@ -211,6 +213,16 @@ public class ModelExport implements SingleTarget, MessageSource {
 						ModelExport.class.getName(),
 						ModelExportConstants.PARAM_EXPORT_PROFILES_FROM_WHOLE_MODEL,
 						false);
+
+				includeConstraintDescriptions = options.parameterAsBoolean(
+						ModelExport.class.getName(),
+						ModelExportConstants.PARAM_INCLUDE_CONSTRAINT_DESCRIPTIONS,
+						false);
+
+				suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning = options
+						.parameterAsBoolean(ModelExport.class.getName(),
+								ModelExportConstants.PARAM_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS,
+								false);
 
 				zipOutput = options.parameterAsBoolean(
 						ModelExport.class.getName(),
@@ -319,6 +331,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 		omitExistingProfiles = false;
 		ignoreTaggedValuesPattern = null;
 		exportProfilesFromWholeModel = false;
+		includeConstraintDescriptions = false;
+		suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning = false;
 		zipOutput = false;
 		schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
 	}
@@ -751,15 +765,18 @@ public class ModelExport implements SingleTarget, MessageSource {
 				String elementName;
 				String type = null;
 				String sourceType = null;
+				String[] comments = null;
 
 				if (con instanceof FolConstraint) {
 
 					elementName = "FolConstraint";
 					sourceType = ((FolConstraint) con).sourceType();
+					comments = ((FolConstraint) con).comments();
 
 				} else if (con instanceof OclConstraint) {
 
 					elementName = "OclConstraint";
+					comments = ((OclConstraint) con).comments();
 
 				} else {
 
@@ -786,10 +803,11 @@ public class ModelExport implements SingleTarget, MessageSource {
 				printDataElement("contextModelElementType",
 						contextModelElmtType, "CLASS");
 
-				if (type != null) {
-					printDataElement("type", type);
-				}
+				printDataElement("type", type);
 				printDataElement("sourceType", sourceType);
+				if (includeConstraintDescriptions) {
+					printDataElements("description", comments);
+				}
 
 				writer.endElement(NS, elementName);
 
@@ -838,10 +856,9 @@ public class ModelExport implements SingleTarget, MessageSource {
 		printDataElement("isReadOnly", pi.isReadOnly(), false);
 		printDataElement("isAttribute", pi.isAttribute(), true);
 
-		if ((pi.inClass().category() == Options.ENUMERATION
-				|| pi.inClass().category() == Options.CODELIST)
-				&& pi.matches(
-						ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS)) {
+		if (suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning
+				&& (pi.inClass().category() == Options.ENUMERATION
+						|| pi.inClass().category() == Options.CODELIST)) {
 
 			if (pi.isOrdered()) {
 				result.addDebug(this, 13, "isOrdered", "true",
@@ -860,7 +877,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 						pi.fullNameInSchema());
 			}
 			if (pi.isOwned()) {
-				result.addDebug(this, 13, "isOwned", "true", pi.fullNameInSchema());
+				result.addDebug(this, 13, "isOwned", "true",
+						pi.fullNameInSchema());
 			}
 		} else {
 			printDataElement("isOrdered", pi.isOrdered(), false);
@@ -1040,6 +1058,24 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		if (s != null && s.length() > 0) {
 			writer.dataElement(NS, elementName, s);
+		}
+	}
+
+	/**
+	 * For each string in the given array of strings, creates an element with
+	 * the given name, containing the string as value - if and only if the
+	 * string is not <code>null</code> and has a length greater than 0.
+	 * 
+	 * @param elementName
+	 * @param strings
+	 * @throws SAXException
+	 */
+	private void printDataElements(String elementName, String[] strings)
+			throws SAXException {
+
+		if (strings != null) {
+			for (String s : strings)
+				printDataElement(elementName, s);
 		}
 	}
 

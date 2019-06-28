@@ -66,4 +66,14 @@ public class UmlModelTest extends WindowsBasicTest {
 				"testResults/uml/connectorEndOwnedByClassifier/results",
 				"src/test/resources/uml/connectorEndOwnedByClassifier/reference/results");
 	}
+		
+	@Test
+	public void testMergeConstraintCommentsIntoText() {
+
+		multiTest(
+				"src/test/resources/uml/mergeConstraintCommentsIntoText/test_uml_mergeConstraintCommentsIntoText.xml",
+				new String[] { "eap" },
+				"testResults/uml/mergeConstraintCommentsIntoText/results",
+				"src/test/resources/uml/mergeConstraintCommentsIntoText/reference/results");
+	}
 }
