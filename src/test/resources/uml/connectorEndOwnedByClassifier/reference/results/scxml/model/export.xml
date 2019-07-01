@@ -4,12 +4,10 @@
     <sc:Package>
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -54,7 +51,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -85,7 +81,6 @@
                     <sc:Property>
                       <sc:name>c1RoleA</sc:name>
                       <sc:id>T83</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -105,7 +100,6 @@
                     <sc:Property>
                       <sc:name>c1RoleB</sc:name>
                       <sc:id>T84</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -130,7 +124,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -161,7 +154,6 @@
                     <sc:Property>
                       <sc:name>c2Role</sc:name>
                       <sc:id>S84</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -190,12 +182,10 @@
   <sc:associations>
     <sc:Association>
       <sc:id>83</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:end1>
         <sc:Property>
           <sc:name>role_S83</sc:name>
           <sc:id>S83</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:taggedValues>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
@@ -218,7 +208,6 @@
     </sc:Association>
     <sc:Association>
       <sc:id>84</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:end1 ref="S84"></sc:end1>
       <sc:end2 ref="T84"></sc:end2>
     </sc:Association>

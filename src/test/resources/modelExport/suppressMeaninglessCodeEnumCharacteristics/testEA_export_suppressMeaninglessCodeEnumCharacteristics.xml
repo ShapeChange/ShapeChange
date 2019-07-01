@@ -36,6 +36,7 @@
          <rules>
             <EncodingRule name="export">
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+            	<rule name="rule-exp-all-omitDescriptors"/>
             </EncodingRule>
          </rules>
       </Target>      

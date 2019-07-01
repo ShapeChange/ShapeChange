@@ -944,7 +944,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		// print descriptors - if not empty
 		Descriptors descriptors = i.descriptors();
-		if (!descriptors.isEmpty()) {
+		if (!descriptors.isEmpty() && !i.matches(
+				ModelExportConstants.RULE_TGT_EXP_ALL_OMIT_DESCRIPTORS)) {			
 			writer.startElement(NS, "descriptors");
 			printDescriptorElement(Descriptor.ALIAS, descriptors);
 			printDescriptorElement(Descriptor.PRIMARYCODE, descriptors);
@@ -955,7 +956,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 			 * TBD: We could add a parameter to list the descriptors that shall
 			 * be exported
 			 */
-			// printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
+			printDescriptorElement(Descriptor.DOCUMENTATION, descriptors);
 			printDescriptorElement(Descriptor.LEGALBASIS, descriptors);
 			printDescriptorElement(Descriptor.LANGUAGE, descriptors);
 			printDescriptorElement(Descriptor.EXAMPLE, descriptors);

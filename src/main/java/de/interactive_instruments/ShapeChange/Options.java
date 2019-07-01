@@ -3989,10 +3989,10 @@ public class Options {
 		/*
 		 * Model export conversion rules
 		 */
+		addRule("rule-exp-all-omitDescriptors");
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
-		addRule("rule-exp-prop-suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning");
 
 		/*
 		 * CDB conversion rules

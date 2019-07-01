@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema A</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -65,6 +62,11 @@
                         <sc:DescriptorValue>Definition of FeatureTypeA</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of FeatureTypeA</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -113,6 +115,11 @@
                             <sc:DescriptorValue>Definition of propA1</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA1&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -159,6 +166,11 @@
                             <sc:DescriptorValue>Definition of propA2</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA2&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -202,6 +214,11 @@
                             <sc:DescriptorValue>Definition of propA3</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA3&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -255,6 +272,11 @@
                         <sc:DescriptorValue>Definition of Subtype</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of Subtype&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -304,6 +326,11 @@
                         <sc:DescriptorValue>Definition of AssociationClass</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of AssociationClass</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -344,7 +371,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -435,6 +461,11 @@
                         <sc:DescriptorValue>Definition of CharacterString</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of CharacterString&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -526,6 +557,11 @@
                         <sc:DescriptorValue>Definition of Boolean</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of Boolean&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                 </sc:Class>
               </sc:classes>
@@ -590,6 +626,11 @@
                         <sc:DescriptorValue>Definition of ExtFeatureType</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of ExtFeatureType&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -666,13 +707,11 @@
     <sc:Association>
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
       <sc:id>87</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:assocClassId>167</sc:assocClassId>
       <sc:end1>
         <sc:Property>
           <sc:name>role_S87</sc:name>
           <sc:id>S87</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:taggedValues>
             <sc:TaggedValue>
               <sc:name>inlineOrByReference</sc:name>

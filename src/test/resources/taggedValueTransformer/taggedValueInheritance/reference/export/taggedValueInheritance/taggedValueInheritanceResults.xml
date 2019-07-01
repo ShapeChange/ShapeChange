@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package editable="false">
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package editable="false">
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package editable="false">
               <sc:name>Test Schema</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -54,7 +51,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -74,7 +70,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -104,7 +99,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -145,7 +139,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -171,7 +164,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -242,7 +234,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>

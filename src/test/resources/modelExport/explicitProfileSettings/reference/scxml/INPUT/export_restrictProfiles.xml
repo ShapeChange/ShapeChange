@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -51,7 +48,6 @@
                 <sc:Package>
                   <sc:name>Test1 Elements with profiles</sc:name>
                   <sc:id>31</sc:id>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>xsdDocument</sc:name>
@@ -75,6 +71,11 @@
                             <sc:DescriptorValue>T1_FeatureTypeA definition</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;T1_FeatureTypeA definition</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -120,6 +121,11 @@
                                 <sc:DescriptorValue>roleA1 T1_FeatureTypeA definition</sc:DescriptorValue>
                               </sc:descriptorValues>
                             </sc:definition>
+                            <sc:documentation>
+                              <sc:descriptorValues>
+                                <sc:DescriptorValue>-- Definition --&#xD;&#xA;roleA1 T1_FeatureTypeA definition</sc:DescriptorValue>
+                              </sc:descriptorValues>
+                            </sc:documentation>
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
@@ -165,6 +171,11 @@
                                 <sc:DescriptorValue>attA2 T1_FeatureTypeA definition</sc:DescriptorValue>
                               </sc:descriptorValues>
                             </sc:definition>
+                            <sc:documentation>
+                              <sc:descriptorValues>
+                                <sc:DescriptorValue>-- Definition --&#xD;&#xA;attA2 T1_FeatureTypeA definition</sc:DescriptorValue>
+                              </sc:descriptorValues>
+                            </sc:documentation>
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
@@ -213,6 +224,11 @@
                             <sc:DescriptorValue>T1_FeatureTypeB definition</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;T1_FeatureTypeB definition</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -258,6 +274,11 @@
                                 <sc:DescriptorValue>roleB1 T1_FeatureTypeB definition</sc:DescriptorValue>
                               </sc:descriptorValues>
                             </sc:definition>
+                            <sc:documentation>
+                              <sc:descriptorValues>
+                                <sc:DescriptorValue>-- Definition --&#xD;&#xA;roleB1 T1_FeatureTypeB definition</sc:DescriptorValue>
+                              </sc:descriptorValues>
+                            </sc:documentation>
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
@@ -303,6 +324,11 @@
                                 <sc:DescriptorValue>attB2 T1_FeatureTypeB definition</sc:DescriptorValue>
                               </sc:descriptorValues>
                             </sc:definition>
+                            <sc:documentation>
+                              <sc:descriptorValues>
+                                <sc:DescriptorValue>-- Definition --&#xD;&#xA;attB2 T1_FeatureTypeB definition</sc:DescriptorValue>
+                              </sc:descriptorValues>
+                            </sc:documentation>
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
@@ -351,6 +377,11 @@
                             <sc:DescriptorValue>T1_FeatureTypeC definition</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;T1_FeatureTypeC definition</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -398,6 +429,11 @@
                                 <sc:DescriptorValue>attC2 T1_FeatureTypeC definition</sc:DescriptorValue>
                               </sc:descriptorValues>
                             </sc:definition>
+                            <sc:documentation>
+                              <sc:descriptorValues>
+                                <sc:DescriptorValue>-- Definition --&#xD;&#xA;attC2 T1_FeatureTypeC definition</sc:DescriptorValue>
+                              </sc:descriptorValues>
+                            </sc:documentation>
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
@@ -435,7 +471,6 @@
                 <sc:Package>
                   <sc:name>Test2 Elements without profiles</sc:name>
                   <sc:id>32</sc:id>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>xsdDocument</sc:name>
@@ -448,7 +483,6 @@
                       <sc:stereotypes>
                         <sc:Stereotype>featuretype</sc:Stereotype>
                       </sc:stereotypes>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>byValuePropertyType</sc:name>
@@ -479,7 +513,6 @@
                         <sc:Property>
                           <sc:name>roleA1</sc:name>
                           <sc:id>T81</sc:id>
-                          <sc:descriptors></sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -510,7 +543,6 @@
                         <sc:Property>
                           <sc:name>attA2</sc:name>
                           <sc:id>150_159</sc:id>
-                          <sc:descriptors></sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -544,7 +576,6 @@
                       <sc:stereotypes>
                         <sc:Stereotype>featuretype</sc:Stereotype>
                       </sc:stereotypes>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>byValuePropertyType</sc:name>
@@ -575,7 +606,6 @@
                         <sc:Property>
                           <sc:name>roleB1</sc:name>
                           <sc:id>S81</sc:id>
-                          <sc:descriptors></sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -606,7 +636,6 @@
                         <sc:Property>
                           <sc:name>attB2</sc:name>
                           <sc:id>151_160</sc:id>
-                          <sc:descriptors></sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -640,7 +669,6 @@
                       <sc:stereotypes>
                         <sc:Stereotype>featuretype</sc:Stereotype>
                       </sc:stereotypes>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>byValuePropertyType</sc:name>
@@ -672,7 +700,6 @@
                         <sc:Property>
                           <sc:name>attC1</sc:name>
                           <sc:id>152_161</sc:id>
-                          <sc:descriptors></sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -710,7 +737,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -747,7 +773,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>type</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -784,7 +809,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>type</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -821,7 +845,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>type</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -858,7 +881,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>enumeration</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                 </sc:Class>
               </sc:classes>
             </sc:Package>
@@ -870,14 +892,12 @@
   <sc:associations>
     <sc:Association>
       <sc:id>80</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:assocClassId>148</sc:assocClassId>
       <sc:end1 ref="S80"></sc:end1>
       <sc:end2 ref="T80"></sc:end2>
     </sc:Association>
     <sc:Association>
       <sc:id>81</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:assocClassId>152</sc:assocClassId>
       <sc:end1 ref="S81"></sc:end1>
       <sc:end2 ref="T81"></sc:end2>

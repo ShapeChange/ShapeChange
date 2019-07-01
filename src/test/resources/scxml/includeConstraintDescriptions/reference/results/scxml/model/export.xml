@@ -4,12 +4,10 @@
     <sc:Package>
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -54,7 +51,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>byValuePropertyType</sc:name>
@@ -102,7 +98,6 @@
                     <sc:Property>
                       <sc:name>propA</sc:name>
                       <sc:id>163_166</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>inlineOrByReference</sc:name>

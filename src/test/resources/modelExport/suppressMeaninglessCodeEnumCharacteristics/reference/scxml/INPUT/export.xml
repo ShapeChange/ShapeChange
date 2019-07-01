@@ -4,12 +4,10 @@
     <sc:Package>
       <sc:name>Model</sc:name>
       <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
           <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
@@ -17,7 +15,6 @@
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -54,12 +51,10 @@
                   <sc:stereotypes>
                     <sc:Stereotype>enumeration</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:properties>
                     <sc:Property>
                       <sc:name>enum1</sc:name>
                       <sc:id>159_162</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -73,7 +68,6 @@
                     <sc:Property>
                       <sc:name>enum2</sc:name>
                       <sc:id>159_163</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -92,7 +86,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>codelist</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>asDictionary</sc:name>
@@ -105,7 +98,6 @@
                     <sc:Property>
                       <sc:name>code1</sc:name>
                       <sc:id>160_164</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -119,7 +111,6 @@
                     <sc:Property>
                       <sc:name>code2</sc:name>
                       <sc:id>160_165</sc:id>
-                      <sc:descriptors></sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>
@@ -129,6 +120,97 @@
                         </sc:TaggedValue>
                       </sc:taggedValues>
                       <sc:sequenceNumber>2</sc:sequenceNumber>
+                    </sc:Property>
+                  </sc:properties>
+                </sc:Class>
+                <sc:Class>
+                  <sc:name>Class1</sc:name>
+                  <sc:id>161</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>byValuePropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>gmlMixin</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>isCollection</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>noPropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                  <sc:properties>
+                    <sc:Property>
+                      <sc:name>codelist</sc:name>
+                      <sc:id>161_167</sc:id>
+                      <sc:taggedValues>
+                        <sc:TaggedValue>
+                          <sc:name>inlineOrByReference</sc:name>
+                          <sc:values>
+                            <sc:Value>inlineOrByReference</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>isMetadata</sc:name>
+                          <sc:values>
+                            <sc:Value>false</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>sequenceNumber</sc:name>
+                          <sc:values>
+                            <sc:Value>1</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                      </sc:taggedValues>
+                      <sc:sequenceNumber>1</sc:sequenceNumber>
+                      <sc:typeId>160</sc:typeId>
+                      <sc:typeName>CodeList</sc:typeName>
+                      <sc:isComposition>true</sc:isComposition>
+                    </sc:Property>
+                    <sc:Property>
+                      <sc:name>enumeration</sc:name>
+                      <sc:id>161_166</sc:id>
+                      <sc:taggedValues>
+                        <sc:TaggedValue>
+                          <sc:name>inlineOrByReference</sc:name>
+                          <sc:values>
+                            <sc:Value>inlineOrByReference</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>isMetadata</sc:name>
+                          <sc:values>
+                            <sc:Value>false</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>sequenceNumber</sc:name>
+                          <sc:values>
+                            <sc:Value>2</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                      </sc:taggedValues>
+                      <sc:sequenceNumber>2</sc:sequenceNumber>
+                      <sc:typeId>159</sc:typeId>
+                      <sc:typeName>Enumeration</sc:typeName>
+                      <sc:isComposition>true</sc:isComposition>
                     </sc:Property>
                   </sc:properties>
                 </sc:Class>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/testEA_export_suppressMeaninglessCodeEnumCharacteristics.xml" end="Mon Jun 24 12:58:17 CEST 2019" resultCode="0" start="Mon Jun 24 12:58:06 CEST 2019" version="2.8.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/testEA_export_suppressMeaninglessCodeEnumCharacteristics.xml" end="Mon Jul 01 08:53:27 CEST 2019" resultCode="0" start="Mon Jul 01 08:53:17 CEST 2019" version="2.8.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'INPUT' ..."/>
@@ -10,7 +10,10 @@
     <Debug message="The 'property' with ID '159_163' and name 'enum2' was created."/>
     <Debug message="The 'property' with ID '160_164' and name 'code1' was created."/>
     <Debug message="The 'property' with ID '160_165' and name 'code2' was created."/>
+    <Debug message="The 'property' with ID '161_167' and name 'codelist' was created."/>
+    <Debug message="The 'property' with ID '161_166' and name 'enumeration' was created."/>
     <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\suppressMeaninglessCodeEnumCharacteristics\test_export_suppressMeaninglessCodeEnumCharacteristics.eap"/>
+    <Debug message="Checking overloading. Class = 'Class1'; current class = 'Class1'."/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/export/scxml'"/>
     <Info message="Now processing target 'Model Export' for input 'INPUT'."/>
     <Debug message="Suppressing semantically meaningless characteristic 'isOrdered' (with value 'true') of code/enum 'Test Schema::Enumeration::enum1'."/>

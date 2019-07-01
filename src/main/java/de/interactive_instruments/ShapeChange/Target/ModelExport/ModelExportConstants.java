@@ -137,6 +137,12 @@ public class ModelExportConstants {
 	public static final String RULE_TGT_EXP_ALL_OMIT_EXISTING_PROFILES = "rule-exp-all-omitExistingProfiles";
 
 	/**
+	 * If this rule is included, descriptors of model elements will not be
+	 * encoded.
+	 */
+	public static final String RULE_TGT_EXP_ALL_OMIT_DESCRIPTORS = "rule-exp-all-omitDescriptors";
+
+	/**
 	 * By default, existing profiles are exported. With this rule, that behavior
 	 * can be changed to restrict the set of profiles that are exported. The
 	 * target parameter {@value #PARAM_PROFILES_TO_EXPORT} contains a
