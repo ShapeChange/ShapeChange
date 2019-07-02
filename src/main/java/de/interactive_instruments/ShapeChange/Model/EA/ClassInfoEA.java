@@ -111,7 +111,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	protected PackageInfoEA packageInfo;
 
 	/** Baseclasses */
-	protected ClassInfoEA baseclassInfo = null;
 	protected TreeSet<ClassInfoEA> baseclassInfoSet = null;
 
 	/** Subclasses */
@@ -219,7 +218,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			 * found are registered as base classes. In the base classes
 			 * register this class as subclass.
 			 */
-			int nbcl = 0;
 			int clientid, bclid, cat;
 			String conntype;
 			boolean gen, rea;
@@ -257,21 +255,12 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (cat != Options.MIXIN)
 							continue;
 					}
-					/*
-					 * Establish as base class. Since most classes indeed
-					 * possess at most one base class, this case will be treated
-					 * somewhat storage-optimized.
-					 */
-					if (++nbcl == 1) {
-						baseclassInfo = baseCI;
-					} else {
-						if (baseclassInfoSet == null) {
-							baseclassInfoSet = new TreeSet<ClassInfoEA>();
-							baseclassInfoSet.add(baseclassInfo);
-							baseclassInfo = null;
-						}
-						baseclassInfoSet.add(baseCI);
+					
+					if (baseclassInfoSet == null) {
+						baseclassInfoSet = new TreeSet<ClassInfoEA>();
 					}
+					baseclassInfoSet.add(baseCI);
+
 					// Register with the subclasses of the base class.
 					baseCI.subclassInfoSet.add(this);
 				}
@@ -383,110 +372,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return document.result;
 	} // result()
 
-	@Override
-	public ClassInfo baseClass() {
-		// Initialize
-		int stsize = 0; // # of proper base candidates
-		ClassInfo cir = null; // the base result
-		int cat = category(); // category of this class
-		// Check if the class has one of the acknowledged categories. If not
-		// no bases classes will be reported.
-		if (cat == Options.FEATURE || cat == Options.OBJECT
-				|| cat == Options.DATATYPE || cat == Options.MIXIN
-				|| cat == Options.UNION) {
-			// Get hold of the available base classes
-			TreeSet<ClassInfoEA> baseCIs = null;
-			if (baseclassInfoSet != null)
-				baseCIs = baseclassInfoSet;
-			else if (baseclassInfo != null) {
-				baseCIs = new TreeSet<ClassInfoEA>();
-				baseCIs.add(baseclassInfo);
-			}
-			// Loop over base classes and select the GML-relevant one
-			if (baseCIs != null) {
-				for (ClassInfoEA baseCI : baseCIs) {
-					// Get base class category
-					int bcat = baseCI.category();
-					// Needs to compatible and not a mixin. If not so,
-					// we have an error
-					if ((cat == bcat || bcat == Options.UNKNOWN)
-							&& bcat != Options.MIXIN) {
-						// Compatible select and count
-						stsize++;
-						cir = baseCI;
-					} else if (bcat != Options.MIXIN) {
-
-						// Ignore, if we accept supertypes that are not mixins
-						// and we are a mixin
-						if (cat == Options.MIXIN && matches(
-								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
-
-							// do nothing and ignore
-
-							/*
-							 * FIXME 2017-09-12 JE: Method baseClass() should be
-							 * in ClassInfoImpl(). However, that we are matching
-							 * on a specific target rule here is an issue.
-							 * Everything in the XxxImpl classes should not
-							 * depend on specific target rules, since
-							 * transformations can produce models for multiple
-							 * targets. Rules such as the one above should be
-							 * general rules that apply for the whole processing
-							 * chain.
-							 */
-
-						} else if (this.model().isInSelectedSchemas(this)) {
-							// Not compatible and not mixin: An error
-							MessageContext mc = document.result.addError(null,
-									108, name());
-							if (mc != null)
-								mc.addDetail(null, 400, "Package",
-										pkg().fullName());
-							document.result.addDebug(null, 10003, name(),
-									"" + cat, "!FALSE");
-							document.result.addDebug(null, 10003, name(),
-									"" + bcat, "!TRUE");
-						} else {
-							/*
-							 * 2015-07-17 JE: So this is a class that violates
-							 * multiple inheritance rules. However, it is
-							 * outside the selected schemas. We could log a
-							 * debug, info, or even warning message. However, we
-							 * should not raise an error because creation of a
-							 * complete GenericModel that also copies ISO
-							 * classes would raise an error which would cause a
-							 * unit test to fail.
-							 */
-						}
-					}
-				}
-			}
-			// Did we find more than one suitable base class? Which is
-			// an error.
-			if (stsize > 1) {
-
-				if (this.model().isInSelectedSchemas(this)) {
-					MessageContext mc = document.result.addError(null, 109,
-							name());
-					if (mc != null)
-						mc.addDetail(null, 400, "Package", pkg().fullName());
-				} else {
-					/*
-					 * 2015-07-17 JE: So this is a class that violates multiple
-					 * inheritance rules. However, it is outside the selected
-					 * schemas. We could log a debug, info, or even warning
-					 * message. However, we should not raise an error because
-					 * creation of a complete GenericModel that also copies ISO
-					 * classes would raise an error which would cause a unit
-					 * test to fail.
-					 */
-				}
-			}
-		}
-		// Return, what we found
-		return cir;
-	} // baseClass()
-
 	/**
 	 * This is supposed to find out, whether the given category 'cat' applied in
 	 * 'this' class complies to the categories of all its base classes. If at
@@ -498,9 +383,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public boolean checkSupertypes(int cat) {
 		// Prepare set of base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		// Consider all baseclasses in turn, break as soon as a first non-
 		// compliancy is detected.
@@ -559,9 +442,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		}
 		// Go and search in base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		for (ClassInfoEA bci : bcis) {
 			PropertyInfo pi = bci.property(name);
@@ -623,9 +504,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public SortedSet<String> supertypes() {
 		// Convert base class object set to base class id set.
 		SortedSet<String> baseids = new TreeSet<String>();
-		if (baseclassInfo != null)
-			baseids.add(baseclassInfo.id());
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			for (ClassInfoEA bci : baseclassInfoSet)
 				baseids.add(bci.id());
 		return baseids;
@@ -1063,9 +942,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	private HashSet<ClassInfoEA> supertypesAsClassInfoEA() {
 		// Create base class object set
 		HashSet<ClassInfoEA> baseClasses = new HashSet<ClassInfoEA>(1);
-		if (baseclassInfo != null)
-			baseClasses.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			for (ClassInfoEA bci : baseclassInfoSet)
 				baseClasses.add(bci);
 		return baseClasses;
@@ -1197,9 +1074,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		}
 		// Go and search in base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		for (ClassInfoEA bci : bcis) {
 			OperationInfo oi = bci.operation(name, types);

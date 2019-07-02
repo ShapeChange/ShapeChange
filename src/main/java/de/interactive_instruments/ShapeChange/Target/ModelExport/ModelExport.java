@@ -575,8 +575,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 				 */
 				writer.dataElement(NS, "id", im.getId());
 				writer.dataElement(NS, "name", im.getName());
-				// TBD: system independent path?
-				writer.dataElement(NS, "file", im.getFile().getAbsolutePath());
 				writer.dataElement(NS, "relPathToFile", im.getRelPathToFile());
 				writer.dataElement(NS, "width", "" + im.getWidth());
 				writer.dataElement(NS, "height", "" + im.getHeight());
@@ -603,6 +601,13 @@ public class ModelExport implements SingleTarget, MessageSource {
 		}
 		if (ci.baseClass() != null) {
 			printDataElement("baseClassId", ci.baseClass().id());
+		}
+		if (ci.getLinkedDocument() != null) {
+			File linkedDoc = ci.getLinkedDocument();
+			File linkedDocsDir = options.linkedDocumentsTmpDir();
+			String relativePath = linkedDocsDir.toPath()
+					.relativize(linkedDoc.toPath()).toString();
+			printDataElement("linkedDocument", relativePath);
 		}
 
 		if (exportProfilesFromWholeModel
@@ -945,7 +950,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 		// print descriptors - if not empty
 		Descriptors descriptors = i.descriptors();
 		if (!descriptors.isEmpty() && !i.matches(
-				ModelExportConstants.RULE_TGT_EXP_ALL_OMIT_DESCRIPTORS)) {			
+				ModelExportConstants.RULE_TGT_EXP_ALL_OMIT_DESCRIPTORS)) {
 			writer.startElement(NS, "descriptors");
 			printDescriptorElement(Descriptor.ALIAS, descriptors);
 			printDescriptorElement(Descriptor.PRIMARYCODE, descriptors);

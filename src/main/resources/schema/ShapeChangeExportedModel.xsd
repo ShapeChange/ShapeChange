@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+ <defaultOpenContent mode="interleave">
+  <annotation>
+   <documentation>This schema supports open content. For an element that is defined by this schema and that has complex content, an instance of this element may contain further elements that are not explicitly defined as content of the element - even if the additional elements have the same namespace as the target namespace of this schema - except for global elements declared by this schema. NOTE: Deprecated elements that have been removed from the SCXML schema will thus be allowed in instance data.</documentation>
+  </annotation>
+  <any notQName="##definedSibling ##defined" namespace="##any" processContents="lax"/>
+ </defaultOpenContent>
  <element name="Model" type="sc:ModelType">
   <annotation>
    <documentation>Representation of a UML model</documentation>
   </annotation>
   <key name="packageKey">
    <annotation>
-    <documentation>The ids of all Package elements shall be unique.</documentation>
+    <documentation>All Package elements shall be identifiable and referencable by their id element.</documentation>
    </annotation>
    <selector xpath=".//sc:Package"/>
    <field xpath="sc:id"/>
   </key>
   <key name="classKey">
    <annotation>
-    <documentation>The ids of all Class elements shall be unique.</documentation>
+    <documentation>All Class elements shall be identifiable and referencable by their id element.</documentation>
    </annotation>
    <selector xpath=".//sc:Class"/>
    <field xpath="sc:id"/>
   </key>
   <key name="propertyKey">
    <annotation>
-    <documentation>The ids of all Property elements shall be unique.</documentation>
+    <documentation>All Property elements shall be identifiable and referencable by their id element.</documentation>
    </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:id"/>
   </key>
   <key name="associationKey">
    <annotation>
-    <documentation>The ids of all Association elements shall be unique.</documentation>
+    <documentation>All Association elements shall be identifiable and referencable by their id element.</documentation>
    </annotation>
    <selector xpath="./sc:associations/sc:Association"/>
    <field xpath="sc:id"/>
@@ -61,42 +67,72 @@
    <field xpath="sc:associationId"/>
   </keyref>
   <keyref name="classBaseClassKeyRef" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of a Class/baseClassId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Class"/>
    <field xpath="sc:baseClassId"/>
   </keyref>
   <keyref name="classSupertypeKeyRef" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of a SupertypeId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:SupertypeId"/>
    <field xpath="."/>
   </keyref>
   <keyref name="classSubtypeKeyRef" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of a SubtypeId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:SubtypeId"/>
    <field xpath="."/>
   </keyref>
   <keyref name="constraintContextModelElementKeyRef" refer="sc:constraintContextModelElementKey">
+   <annotation>
+    <documentation>The value of the contextModelElementId element, child of an OclConstraint, FolConstraint, or TextConstraint element, must be equal to an id contained in the constraintContextModelElementKey key set.</documentation>
+   </annotation>
    <selector xpath=".//sc:OclConstraint | .//sc:FolConstraint | .//sc:TextConstraint"/>
    <field xpath="sc:contextModelElementId"/>
   </keyref>
   <keyref name="propertyTypeKeyref" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of a Property/typeId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:typeId"/>
   </keyref>
   <keyref name="propertyInClassKeyRef" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of a Property/inClassId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:inClassId"/>
   </keyref>
   <keyref name="propertyReversePropertyKeyRef" refer="sc:propertyKey">
+   <annotation>
+    <documentation>The value of a Property/reversePropertyId element must be equal to a Property/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:reversePropertyId"/>
   </keyref>
   <keyref name="propertyToAssociationKeyRef" refer="sc:associationKey">
+   <annotation>
+    <documentation>The value of a Property/associationId element must be equal to an Association/id element.</documentation>
+   </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:associationId"/>
   </keyref>
   <keyref name="associationToClassKeyRef" refer="sc:classKey">
+   <annotation>
+    <documentation>The value of an Association/assocClassId element must be equal to a Class/id element.</documentation>
+   </annotation>
    <selector xpath="./sc:associations/sc:Association"/>
    <field xpath="sc:assocClassId"/>
   </keyref>
   <keyref name="associationEndKeyRef" refer="sc:classPropertyKey">
+   <annotation>
+    <documentation>The value of @ref within an Association/end1 or -end2 element must be equal to an id contained in the classPropertyKey key set.</documentation>
+   </annotation>
    <selector xpath="./sc:associations/sc:Association/sc:end1 | ./sc:associations/sc:Association/sc:end2"/>
    <field xpath="@ref"/>
   </keyref>
@@ -161,6 +197,16 @@
     <documentation>Character encoding used within the model.</documentation>
    </annotation>
   </attribute>
+  <attribute name="scxmlProducer" type="string">
+   <annotation>
+    <documentation>Identifies the software that produced the SCXML.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="scxmlProducerVersion" type="string">
+   <annotation>
+    <documentation>The version of the software that produced the SCXML.</documentation>
+   </annotation>
+  </attribute>
  </complexType>
  <!-- <complexType name="InfoType">
   <all>
@@ -174,13 +220,23 @@
  <complexType name="DescriptorType">
   <all>
    <element minOccurs="1" name="descriptorValues">
+    <annotation>
+     <documentation>A descriptor has one or more values.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" name="DescriptorValue">
+       <annotation>
+        <documentation>Textual value of a descriptor. The language of the text can be defined via attribute 'lang'. If that attribute is undefined, the text is assumed to be given in the default language, which is application specific.</documentation>
+       </annotation>
        <complexType>
         <simpleContent>
          <extension base="string">
-          <attribute name="lang" type="string"/>
+          <attribute name="lang" type="string">
+           <annotation>
+            <documentation>Language identifier.</documentation>
+           </annotation>
+          </attribute>
          </extension>
         </simpleContent>
        </complexType>
@@ -190,37 +246,76 @@
    </element>
   </all>
  </complexType>
- <element name="Profile" type="sc:ProfileType"/>
+ <element name="Profile" type="sc:ProfileType">
+  <annotation>
+   <documentation>Information about a profile to which a model element belongs.</documentation>
+  </annotation>
+ </element>
  <complexType name="ProfileType">
   <all>
    <element minOccurs="0" name="versionIdentifier">
+    <annotation>
+     <documentation>Defines, to which versions of a profile a model element belongs. If omitted, the model element belongs to all versions of the profile. NOTE: Often, it is better to handle versioning of profiles through differently named profiles, rather than using version identifiers.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" name="VersionRange">
+       <annotation>
+        <documentation>Defines an interval of profile versions.</documentation>
+       </annotation>
        <complexType>
-        <attribute name="begin" type="string" use="required"/>
-        <attribute name="end" type="string" use="required"/>
+        <attribute name="begin" type="string" use="required">
+         <annotation>
+          <documentation>Start of the version range, indicated by a single version identifier (e.g. 1 or 1.2).</documentation>
+         </annotation>
+        </attribute>
+        <attribute name="end" type="string" use="required">
+         <annotation>
+          <documentation>End of the version range, indicated by a single version identifier (e.g. 10 or 15.3.2).</documentation>
+         </annotation>
+        </attribute>
        </complexType>
       </element>
      </all>
     </complexType>
    </element>
    <element minOccurs="0" name="parameter">
+    <annotation>
+     <documentation>Contains the profile parameters defined for the profile.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" minOccurs="1" name="ProfileParameter">
+       <annotation>
+        <documentation>Parameter defined for the profile (and the model element for which the profile is defined). Consists of a parameter name and optional value.</documentation>
+       </annotation>
        <complexType>
-        <attribute name="name" type="string" use="required"/>
-        <attribute name="value" type="string"/>
+        <attribute name="name" type="string" use="required">
+         <annotation>
+          <documentation>The name of the profile parameter.</documentation>
+         </annotation>
+        </attribute>
+        <attribute name="value" type="string">
+         <annotation>
+          <documentation>The value of the profile parameter. NOTE: Some parameters may not have a value.</documentation>
+         </annotation>
+        </attribute>
        </complexType>
       </element>
      </all>
     </complexType>
    </element>
   </all>
-  <attribute name="name" type="string" use="required"/>
+  <attribute name="name" type="string" use="required">
+   <annotation>
+    <documentation>The name of the profile.</documentation>
+   </annotation>
+  </attribute>
  </complexType>
  <element name="Package">
+  <annotation>
+   <documentation>A package contained in the model.</documentation>
+  </annotation>
   <complexType>
    <complexContent>
     <extension base="sc:PackageType">
@@ -235,19 +330,45 @@
  </element>
  <complexType name="PackageType">
   <all>
-   <element minOccurs="1" name="name" type="string"/>
-   <element name="id" type="string" nillable="false"/>
-   <element minOccurs="0" ref="sc:stereotypes"/>
-   <element ref="sc:descriptors" minOccurs="0"/>
+   <element minOccurs="1" name="name" type="string">
+    <annotation>
+     <documentation>The name of the package.</documentation>
+    </annotation>
+   </element>
+   <element name="id" type="string" nillable="false">
+    <annotation>
+     <documentation>The model internal ID of the package. Shall be unique amongst the IDs of all packages contained in the model.</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" ref="sc:stereotypes">
+    <annotation>
+     <documentation>The stereotypes of the model element.</documentation>
+    </annotation>
+   </element>
+   <element ref="sc:descriptors" minOccurs="0">
+    <annotation>
+     <documentation>The descriptors of the model element.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="supplierIds">
+    <annotation>
+     <documentation>Set of ids of the packages on which the package depends.</documentation>
+    </annotation>
     <complexType>
      <all>
-      <element maxOccurs="unbounded" name="SupplierId" type="string"/>
+      <element maxOccurs="unbounded" name="SupplierId" type="string">
+       <annotation>
+        <documentation>Id of a package on which the package depends.</documentation>
+       </annotation>
+      </element>
      </all>
     </complexType>
    </element>
    <element minOccurs="0" name="diagrams">
+    <annotation>
+     <documentation>Information about the UML diagrams assigned to the package.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
@@ -255,6 +376,9 @@
     </complexType>
    </element>
    <element maxOccurs="1" minOccurs="0" name="classes">
+    <annotation>
+     <documentation>The classes that are directly contained in the package.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Class"/>
@@ -262,6 +386,9 @@
     </complexType>
    </element>
    <element minOccurs="0" name="packages">
+    <annotation>
+     <documentation>The directly contained (child) packages.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Package"/>
@@ -270,41 +397,100 @@
    </element>
   </all>
  </complexType>
- <element name="Class" type="sc:ClassType"/>
+ <element name="Class" type="sc:ClassType">
+  <annotation>
+   <documentation>A class contained in the model.</documentation>
+  </annotation>
+  <unique name="classPropertyStructuredNumber">
+   <annotation>
+    <documentation>The properties of a class shall be unique with respect to their sequence numbers.</documentation>
+   </annotation>
+   <selector xpath="./sc:properties/sc:Property"/>
+   <field xpath="./sc:sequenceNumber"/>
+  </unique>
+ </element>
  <complexType name="ClassType">
   <all>
-   <element minOccurs="1" name="name" type="string"/>
-   <element name="id" type="string"/>
+   <element minOccurs="1" name="name" type="string">
+    <annotation>
+     <documentation>The name of the class.</documentation>
+    </annotation>
+   </element>
+   <element name="id" type="string">
+    <annotation>
+     <documentation>The model internal ID of the class. Shall be unique amongst the IDs of all classes contained in the model.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" ref="sc:stereotypes"/>
    <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="profiles">
+    <annotation>
+     <documentation>The profiles to which the class belongs.</documentation>
+    </annotation>
     <complexType>
      <all>
-      <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
+      <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="1"/>
      </all>
     </complexType>
    </element>
-   <element default="false" minOccurs="0" name="isAbstract" type="boolean"/>
-   <element default="false" minOccurs="0" name="isLeaf" type="boolean"/>
-   <element minOccurs="0" name="associationId" type="string"/>
-   <element minOccurs="0" name="baseClassId" type="string"/>
-   <element minOccurs="0" name="linkedDocument" type="string"/>
+   <element default="false" minOccurs="0" name="isAbstract" type="boolean">
+    <annotation>
+     <documentation>Specifies if the class is abstract.</documentation>
+    </annotation>
+   </element>
+   <element default="false" minOccurs="0" name="isLeaf" type="boolean">
+    <annotation>
+     <documentation>Specifies if the class is a leaf node (and therefore is not a parent for any other model elements).</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="associationId" type="string">
+    <annotation>
+     <documentation>The ID of the association, if the class is an association class.</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="baseClassId" type="string">
+    <annotation>
+     <documentation>DEPRECATED (since ShapeChange v2.9.0)</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="linkedDocument" type="string">
+    <annotation>
+     <documentation>Path to a docx document that is linked to the class, relative to a directory that contains all linked documents. For ShapeChange, that is directory 'linkedDocuments', which is a subdirectory of the directory that is identified via the ShapeChange input parameter 'tmpDirectory'. Example: linkedDoc_MyFeatureType.docx</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" name="supertypes">
+    <annotation>
+     <documentation>The direct supertypes of the class.</documentation>
+    </annotation>
     <complexType>
      <all>
-      <element maxOccurs="unbounded" name="SupertypeId" type="string"/>
+      <element maxOccurs="unbounded" name="SupertypeId" type="string">
+       <annotation>
+        <documentation>Id of a class (from the model) that is a direct supertype of this class.</documentation>
+       </annotation>
+      </element>
      </all>
     </complexType>
    </element>
    <element minOccurs="0" name="subtypes">
+    <annotation>
+     <documentation>The direct subtypes of the class.</documentation>
+    </annotation>
     <complexType>
      <all>
-      <element maxOccurs="unbounded" name="SubtypeId" type="string"/>
+      <element maxOccurs="unbounded" name="SubtypeId" type="string">
+       <annotation>
+        <documentation>Id of a class (from the model) that is a direct subtype of this class.</documentation>
+       </annotation>
+      </element>
      </all>
     </complexType>
    </element>
    <element minOccurs="0" name="constraints">
+    <annotation>
+     <documentation>The constraints defined on the class.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Constraint"/>
@@ -312,6 +498,9 @@
     </complexType>
    </element>
    <element minOccurs="0" name="diagrams">
+    <annotation>
+     <documentation>Information about the UML diagrams assigned to the class.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:ImageMetadata"/>
@@ -319,6 +508,9 @@
     </complexType>
    </element>
    <element minOccurs="0" name="properties">
+    <annotation>
+     <documentation>The navigable, direct (i.e. not inherited) properties of the class. In other words, the combination of all attributes of the class and the navigable association roles.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Property"/>
@@ -327,35 +519,82 @@
    </element>
   </all>
  </complexType>
- <element name="Property" type="sc:PropertyType"/>
+ <element name="Property" type="sc:PropertyType">
+  <annotation>
+   <documentation>Represents an attribute or an association role.</documentation>
+  </annotation>
+ </element>
  <complexType name="PropertyType">
   <all>
-   <element minOccurs="0" name="name" type="string"/>
-   <element name="id" type="string"/>
+   <element minOccurs="0" name="name" type="string">
+    <annotation>
+     <documentation>The name of the property. May be omitted for non-navigable association roles.</documentation>
+    </annotation>
+   </element>
+   <element name="id" type="string">
+    <annotation>
+     <documentation>The model internal ID of the property. Shall be unique amongst the IDs of all properties contained in the model.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" ref="sc:stereotypes"/>
    <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
    <element minOccurs="0" name="profiles">
+    <annotation>
+     <documentation>The profiles to which the property belongs.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Profile" minOccurs="0"/>
      </all>
     </complexType>
    </element>
-   <element name="cardinality" type="string" default="1" minOccurs="0"/>
-   <element default="true" minOccurs="0" name="isNavigable" type="boolean"/>
+   <element name="cardinality" type="string" default="1" minOccurs="0">
+    <annotation>
+     <documentation>The multiplicity of the property as a string, in typical UML notation. Examples: 0..1, 1..4, 1..*, *.</documentation>
+    </annotation>
+   </element>
+   <element default="true" minOccurs="0" name="isNavigable" type="boolean">
+    <annotation>
+     <documentation>Indicates whether the property is navigable. An attribute is always navigable (thus the default is 'true'), while an association role may not be navigable.</documentation>
+    </annotation>
+   </element>
    <element name="sequenceNumber">
+    <annotation>
+     <documentation>The sequence number defined for the property. Shall be unique amongst the properties of a class.</documentation>
+    </annotation>
     <simpleType>
      <restriction base="string">
       <pattern value="(-)?\d+(\.(-)?\d+)*"/>
      </restriction>
     </simpleType>
    </element>
-   <element minOccurs="0" name="typeId" type="string"/>
-   <element minOccurs="0" name="typeName" type="string"/>
-   <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
-   <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
-   <element default="true" minOccurs="0" name="isAttribute" type="boolean"/>
+   <element minOccurs="0" name="typeId" type="string">
+    <annotation>
+     <documentation>Identifies the value type of the property by its id. Can be omitted in case that no value type is defined for the property. Codes and enums typically have no value type.</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="typeName" type="string">
+    <annotation>
+     <documentation>The name of the value type of the property. Can be omitted in case that no value type is defined for the property. Codes and enums typically have no value type.</documentation>
+    </annotation>
+   </element>
+   <element default="false" minOccurs="0" name="isDerived" type="boolean">
+    <annotation>
+     <documentation>Defines if the property is a derived property.</documentation>
+    </annotation>
+   </element>
+   <element default="false" minOccurs="0" name="isReadOnly" type="boolean">
+    <annotation>
+     <documentation/>
+     <documentation>Defines if the property may not be written to after initialization.</documentation>
+    </annotation>
+   </element>
+   <element default="true" minOccurs="0" name="isAttribute" type="boolean">
+    <annotation>
+     <documentation>Indicates whether this property is an attribute (and not an association role).</documentation>
+    </annotation>
+   </element>
    <element default="false" minOccurs="0" name="isOrdered" type="boolean">
     <annotation>
      <documentation>Defines if the property represents an ordered collection. Default is false (as specified in UML 2.4.1). NOTE: Has no semantic meaning if the property represents a code/enum.</documentation>
@@ -381,26 +620,63 @@
      <documentation>True, if the property is an association end that is owned by the class, else false (then the property is either an attribute or owned by the association).</documentation>
     </annotation>
    </element>
-   <element minOccurs="0" name="initialValue" type="string"/>
-   <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string"/>
+   <element minOccurs="0" name="initialValue" type="string">
+    <annotation>
+     <documentation>The initial value defined for the property (only applicable to attributes).</documentation>
+    </annotation>
+   </element>
+   <element default="inlineOrByReference" minOccurs="0" name="inlineOrByReference" type="string">
+    <annotation>
+     <documentation>Indicates whether the property value shall be encoded inline, by reference, or if it should be possible to encode a property value as a combination of both. Typically used for producing a GML application schema.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" name="qualifiers">
+    <annotation>
+     <documentation>The qualifiers that apply to an association role.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" name="Qualifier">
+       <annotation>
+        <documentation>A qualifier, given as name and optional type.</documentation>
+       </annotation>
        <complexType>
         <all>
-         <element name="name" type="string"/>
-         <element name="type" type="string"/>
+         <element name="name" type="string">
+          <annotation>
+           <documentation>The qualifier name.</documentation>
+          </annotation>
+         </element>
+         <element name="type" type="string" minOccurs="0">
+          <annotation>
+           <documentation>The qualifier type.</documentation>
+          </annotation>
+         </element>
         </all>
        </complexType>
       </element>
      </all>
     </complexType>
    </element>
-   <element minOccurs="0" name="inClassId" type="string"/>
-   <element minOccurs="0" name="reversePropertyId" type="string"/>
-   <element minOccurs="0" name="associationId" type="string"/>
+   <element minOccurs="0" name="inClassId" type="string">
+    <annotation>
+     <documentation>The id of the class to which this property belongs. Only relevant for non-navigable association roles. All other properties are encoded as properties of the class to which they belong (thus the inClass relationship is implied).</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="reversePropertyId" type="string">
+    <annotation>
+     <documentation>Id of the property at the other end of the association. Thus only applicable for association roles.</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="associationId" type="string">
+    <annotation>
+     <documentation>The id of the association to which this property belongs, in case that the property is not an attribute.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" name="constraints">
+    <annotation>
+     <documentation>The constraints defined on the property.</documentation>
+    </annotation>
     <complexType>
      <all>
       <element maxOccurs="unbounded" ref="sc:Constraint"/>
@@ -409,39 +685,100 @@
    </element>
   </all>
  </complexType>
- <element name="Association" type="sc:AssociationType"/>
+ <element name="Association" type="sc:AssociationType">
+  <annotation>
+   <documentation>An association contained in the model.</documentation>
+  </annotation>
+ </element>
  <complexType name="AssociationType">
   <all>
-   <element minOccurs="0" name="name" type="string"/>
-   <element name="id" type="string"/>
+   <element minOccurs="0" name="name" type="string">
+    <annotation>
+     <documentation>The name of the association.</documentation>
+    </annotation>
+   </element>
+   <element name="id" type="string">
+    <annotation>
+     <documentation>The model internal ID of the association. Shall be unique amongst the IDs of all associations contained in the model.</documentation>
+    </annotation>
+   </element>
    <element minOccurs="0" ref="sc:stereotypes"/>
    <element ref="sc:descriptors" minOccurs="0"/>
    <element minOccurs="0" ref="sc:taggedValues"/>
-   <element minOccurs="0" name="assocClassId" type="string"/>
-   <element name="end1" type="sc:AssociationRoleType"/>
-   <element name="end2" type="sc:AssociationRoleType"/>
+   <element minOccurs="0" name="assocClassId" type="string">
+    <annotation>
+     <documentation>Id of a class, if the class and this association represent an association class.</documentation>
+    </annotation>
+   </element>
+   <element name="end1" type="sc:AssociationRoleType">
+    <annotation>
+     <documentation>One end of a binary association. No specific ordering is implied.</documentation>
+    </annotation>
+   </element>
+   <element name="end2" type="sc:AssociationRoleType">
+    <annotation>
+     <documentation>The other end of a binary association. No specific ordering is implied.</documentation>
+    </annotation>
+   </element>
   </all>
  </complexType>
  <complexType name="AssociationRoleType">
+  <annotation>
+   <documentation>Identifies the association role, either by reference (for a navigable role) or by directly encoding it (for a non-navigable role).</documentation>
+  </annotation>
   <all>
    <element minOccurs="0" ref="sc:Property"/>
   </all>
-  <attribute name="ref" type="string"/>
+  <attribute name="ref" type="string">
+   <annotation>
+    <documentation>The id of the association role, in case that it is defined within the properties of a class.</documentation>
+   </annotation>
+  </attribute>
  </complexType>
- <element name="ImageMetadata" type="sc:ImageMetadataType"/>
+ <element name="ImageMetadata" type="sc:ImageMetadataType">
+  <annotation>
+   <documentation>Information about a UML diagram associated with the model element.</documentation>
+  </annotation>
+ </element>
  <complexType name="ImageMetadataType">
   <all>
-   <element name="id" type="ID"/>
-   <element name="name" type="string"/>
-   <element name="file" type="string"/>
-   <element name="relPathToFile" type="string"/>
-   <element name="width" type="positiveInteger"/>
-   <element name="height" type="positiveInteger"/>
+   <element name="id" type="ID">
+    <annotation>
+     <documentation>Unique ID for the image metadata.</documentation>
+    </annotation>
+   </element>
+   <element name="name" type="string">
+    <annotation>
+     <documentation>The name of the UML diagram.</documentation>
+    </annotation>
+   </element>
+   <element name="file" type="string" minOccurs="0">
+    <annotation>
+     <documentation>DEPRECATED (since ShapeChange v2.9.0)</documentation>
+    </annotation>
+   </element>
+   <element name="relPathToFile" type="string">
+    <annotation>
+     <documentation>Path to the image, relative to a directory that contains the images of all UML diagrams. For ShapeChange, that is directory 'images', which is a subdirectory of the directory that is identified via the ShapeChange input parameter 'tmpDirectory'. Example: package_1/package_2/Model element X.jpg</documentation>
+    </annotation>
+   </element>
+   <element name="width" type="positiveInteger">
+    <annotation>
+     <documentation>Image width (in pixels).</documentation>
+    </annotation>
+   </element>
+   <element name="height" type="positiveInteger">
+    <annotation>
+     <documentation>Image height (in pixels).</documentation>
+    </annotation>
+   </element>
   </all>
  </complexType>
-
- <!-- XSD 1.1 constraint modeling -->
- <element abstract="true" name="Constraint" type="sc:ConstraintType"/>
+ <element abstract="true" name="Constraint" type="sc:ConstraintType">
+  <annotation>
+   <documentation/>
+  </annotation>
+ </element>
  <simpleType name="ConstraintContextModelElementType">
   <annotation>
    <documentation>Define the type of the model element that provides the context for the constraint. That typically is a class. ShapeChange also supports constraints defined on attributes.</documentation>
@@ -454,14 +791,39 @@
  </simpleType>
  <complexType name="ConstraintType">
   <all>
-   <element name="name" type="string"/>
-   <element minOccurs="0" name="status" type="string"/>
-   <element name="text" type="string" minOccurs="0"/>
-   <element name="contextModelElementId" type="string"/>
-   <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
+   <element name="name" type="string">
+    <annotation>
+     <documentation>The name of the constraint.</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="status" type="string">
+    <annotation>
+     <documentation>Status of the constraint. NOTE: The 'status' of a constraint is meant to be some string in conspiracy between the model source and some code generator. This may be changed to an enum later, when some practice is achieved. The 'status' is supposed to express some state of refinedness, validity or purpose of the constraint.
+</documentation>
+    </annotation>
+   </element>
+   <element name="text" type="string" minOccurs="0">
+    <annotation>
+     <documentation>The textual representation of the constraint.</documentation>
+    </annotation>
+   </element>
+   <element name="contextModelElementId" type="string">
+    <annotation>
+     <documentation>Id of the model element on which the constraint is defined.</documentation>
+    </annotation>
+   </element>
+   <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType">
+    <annotation>
+     <documentation>Identifies the type of the model element on which the constraint is defined.</documentation>
+    </annotation>
+   </element>
   </all>
  </complexType>
- <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
+ <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType">
+  <annotation>
+   <documentation>An OCL constraint.</documentation>
+  </annotation>
+ </element>
  <complexType name="OclConstraintType">
   <complexContent>
    <extension base="sc:ConstraintType">
@@ -475,12 +837,20 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="FolConstraint" substitutionGroup="sc:Constraint" type="sc:FolConstraintType"/>
+ <element name="FolConstraint" substitutionGroup="sc:Constraint" type="sc:FolConstraintType">
+  <annotation>
+   <documentation>A First Order Logic constraint.</documentation>
+  </annotation>
+ </element>
  <complexType name="FolConstraintType">
   <complexContent>
    <extension base="sc:ConstraintType">
     <all>
-     <element minOccurs="0" name="sourceType" type="string"/>
+     <element minOccurs="0" name="sourceType" type="string">
+      <annotation>
+       <documentation>The type of the source from which the constraint was created (e.g. 'SBVR').</documentation>
+      </annotation>
+     </element>
      <element minOccurs="0" name="description" type="string" maxOccurs="unbounded">
       <annotation>
        <documentation>Informative documentation of the constraint.</documentation>
@@ -490,99 +860,125 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="TextConstraint" substitutionGroup="sc:Constraint" type="sc:TextConstraintType"/>
+ <element name="TextConstraint" substitutionGroup="sc:Constraint" type="sc:TextConstraintType">
+  <annotation>
+   <documentation>A simple, human-readable constraint.</documentation>
+  </annotation>
+ </element>
  <complexType name="TextConstraintType">
   <complexContent>
    <extension base="sc:ConstraintType">
     <all>
-     <element minOccurs="0" name="type" type="string"/>
+     <element minOccurs="0" name="type" type="string">
+      <annotation>
+       <documentation>The 'type' of the constraint. Principally, types are chosen in conspiracy between the model source and some target code generator to describe the nature of the constraint. NOTE: The value of type must not be equal to "OCL".</documentation>
+      </annotation>
+     </element>
     </all>
    </extension>
   </complexContent>
  </complexType>
-
- <!-- XSD 1.0 constraint modeling -->
- <!--<element abstract="true" name="Constraint" type="sc:ConstraintType"/>
- <complexType name="ConstraintType"/>
-  <element name="OclConstraint" substitutionGroup="sc:Constraint" type="sc:OclConstraintType"/>
- <complexType name="OclConstraintType">
-  <complexContent>
-   <extension base="sc:ConstraintType">
-    <all>
-     <element name="name" type="string"/>
-     <element minOccurs="0" name="status" type="string"/>
-     <element name="text" type="string" minOccurs="0"/>
-     <element name="contextModelElementId" type="string"/>
-     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
-    </all>
-   </extension>
-  </complexContent>
- </complexType>
- <element name="FolConstraint" substitutionGroup="sc:Constraint" type="sc:FolConstraintType"/>
- <complexType name="FolConstraintType">
-  <complexContent>
-   <extension base="sc:ConstraintType">
-    <all>
-     <element name="name" type="string"/>
-     <element minOccurs="0" name="status" type="string"/>
-     <element name="text" type="string" minOccurs="0"/>
-     <element name="contextModelElementId" type="string"/>
-     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
-     <element minOccurs="0" name="sourceType" type="string"/>
-    </all>
-   </extension>
-  </complexContent>
- </complexType>
- <element name="TextConstraint" substitutionGroup="sc:Constraint" type="sc:TextConstraintType"/>
- <complexType name="TextConstraintType">
-  <complexContent>
-   <extension base="sc:ConstraintType">
-    <all>
-     <element name="name" type="string"/>
-     <element minOccurs="0" name="status" type="string"/>
-     <element name="text" type="string" minOccurs="0"/>
-     <element name="contextModelElementId" type="string"/>
-     <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType"/>
-     <element minOccurs="0" name="type" type="string"/>
-    </all>
-   </extension>
-  </complexContent>
- </complexType>-->
-
  <element name="descriptors">
+  <annotation>
+   <documentation>Contains specific kinds of descriptive information for the model element.</documentation>
+  </annotation>
   <complexType>
    <all>
-    <element minOccurs="0" name="alias" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="primaryCode" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="globalIdentifier" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="documentation" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="definition" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="description" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="legalBasis" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="language" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="example" type="sc:DescriptorType"/>
-    <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType"/>
+    <element minOccurs="0" name="alias" type="sc:DescriptorType">
+     <annotation>
+      <documentation>An alternative, human-readable name for the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="primaryCode" type="sc:DescriptorType">
+     <annotation>
+      <documentation>The primary code for the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="globalIdentifier" type="sc:DescriptorType">
+     <annotation>
+      <documentation>The globally unique identifier of the model element; that is, unique across models.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="documentation" type="sc:DescriptorType">
+     <annotation>
+      <documentation>A documentation field per model element that includes one or more descriptors, typically the notes field of the UML tool.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="definition" type="sc:DescriptorType">
+     <annotation>
+      <documentation>The normative specification of the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="description" type="sc:DescriptorType">
+     <annotation>
+      <documentation>Additional informative information about the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="legalBasis" type="sc:DescriptorType">
+     <annotation>
+      <documentation>The legal basis for the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="language" type="sc:DescriptorType">
+     <annotation>
+      <documentation>The default language, if no language information is provided in definitions, descriptions, examples, etc.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="example" type="sc:DescriptorType">
+     <annotation>
+      <documentation>An example illustrating the model element.</documentation>
+     </annotation>
+    </element>
+    <element minOccurs="0" name="dataCaptureStatement" type="sc:DescriptorType">
+     <annotation>
+      <documentation>A statement describing how to capture instances of this model element from the real-world.</documentation>
+     </annotation>
+    </element>
    </all>
   </complexType>
  </element>
  <element name="stereotypes">
+  <annotation>
+   <documentation>The stereotypes assigned to the model element.</documentation>
+  </annotation>
   <complexType>
    <all>
-    <element maxOccurs="unbounded" name="Stereotype" type="string"/>
+    <element maxOccurs="unbounded" name="Stereotype" type="string">
+     <annotation>
+      <documentation>The name of a stereotype.</documentation>
+     </annotation>
+    </element>
    </all>
   </complexType>
  </element>
  <element name="taggedValues">
+  <annotation>
+   <documentation>The tagged values of the model element.</documentation>
+  </annotation>
   <complexType>
    <all>
     <element maxOccurs="unbounded" name="TaggedValue">
+     <annotation>
+      <documentation>A tagged value is defined by the tag name and, optionally, one or more string values.</documentation>
+     </annotation>
      <complexType>
       <all>
-       <element name="name" type="string"/>
+       <element name="name" type="string">
+        <annotation>
+         <documentation>The tag name.</documentation>
+        </annotation>
+       </element>
        <element minOccurs="0" name="values">
+        <annotation>
+         <documentation>The tag values.</documentation>
+        </annotation>
         <complexType>
          <all>
-          <element maxOccurs="unbounded" name="Value" type="string"/>
+          <element maxOccurs="unbounded" name="Value" type="string">
+           <annotation>
+            <documentation>A tag value is given as a simple string.</documentation>
+           </annotation>
+          </element>
          </all>
         </complexType>
        </element>

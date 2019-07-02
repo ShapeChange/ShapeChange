@@ -56,8 +56,11 @@ import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 public class DiagramsContentHandler extends AbstractContentHandler {
 
 	private static final Set<String> IMAGE_METADATA_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "id", "name", "file", "relPathToFile",
-					"width", "height" }));
+			Arrays.asList(new String[] { "id", "name", "relPathToFile", "width",
+					"height" }));
+
+	private static final Set<String> DEPRECATED_IMAGE_METADATA_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "file" }));
 
 	private AbstractGenericInfoContentHandler parent;
 
@@ -65,7 +68,6 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 	private String id = null;
 	private String name = null;
-	private String file = null;
 	private String relPathToFile = null;
 	private String width = null;
 	private String height = null;
@@ -85,7 +87,6 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 			// reset fields
 			this.id = null;
 			this.name = null;
-			this.file = null;
 			this.relPathToFile = null;
 			this.width = null;
 			this.height = null;
@@ -114,9 +115,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 			this.name = sb.toString();
 
-		} else if (localName.equals("file")) {
+		} else if (DEPRECATED_IMAGE_METADATA_FIELDS.contains(localName)) {
 
-			this.file = sb.toString();
+			// ignore
 
 		} else if (localName.equals("relPathToFile")) {
 
@@ -134,7 +135,7 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 			try {
 
-				File f = new File(file);
+				File f = new File(options.imageTmpDir(), relPathToFile);
 				int w = Integer.parseInt(width);
 				int h = Integer.parseInt(height);
 

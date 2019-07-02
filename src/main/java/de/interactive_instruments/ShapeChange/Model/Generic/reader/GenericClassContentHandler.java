@@ -69,11 +69,13 @@ public class GenericClassContentHandler
 	private static final Set<String> SIMPLE_CLASS_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "isAbstract", "isLeaf",
 					"associationId", "baseClassId", "linkedDocument" }));
+	
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "baseClassId" }));
 
 	private GenericClassInfo genCi = new GenericClassInfo();
 
 	private String associationId = null;
-	private String baseClassId = null;
 	private String linkedDocument = null;
 
 	private List<GenericPropertyContentHandler> propertyContentHandlers = new ArrayList<GenericPropertyContentHandler>();
@@ -235,15 +237,9 @@ public class GenericClassContentHandler
 
 			this.associationId = sb.toString();
 
-		}
-		// else if (localName.equals("packageId")) {
-		//
-		// this.packageId = sb.toString();
-		//
-		// }
-		else if (localName.equals("baseClassId")) {
+		} else if (DEPRECATED_FIELDS.contains(localName)) {
 
-			this.baseClassId = sb.toString();
+			// ignore
 
 		} else if (localName.equals("linkedDocument")) {
 
@@ -388,20 +384,6 @@ public class GenericClassContentHandler
 	 */
 	public String getAssociationId() {
 		return associationId;
-	}
-
-	// /**
-	// * @return the packageId
-	// */
-	// public String getPackageId() {
-	// return packageId;
-	// }
-
-	/**
-	 * @return the baseClassId
-	 */
-	public String getBaseClassId() {
-		return baseClassId;
 	}
 
 	/**

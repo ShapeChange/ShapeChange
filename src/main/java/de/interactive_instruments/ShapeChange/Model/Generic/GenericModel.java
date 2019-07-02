@@ -265,7 +265,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				genCi.setAssocInfo(ci.isAssocClass());
 				genCi.setSupertypes(copy(ci.supertypes()));
 				genCi.setSubtypes(copy(ci.subtypes()));
-				genCi.setBaseClass(ci.baseClass());
 				genCi.setProperties(ci.properties());
 				genCi.setConstraints(copy(ci.constraints()));
 
@@ -435,9 +434,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			AssociationInfo assoClass = gci.isAssocClass();
 			gci.setAssocInfo(updateAssociationInfo(assoClass));
-
-			ClassInfo baseClass = gci.baseClass();
-			gci.setBaseClass(updateClassInfo(baseClass));
 
 			SortedMap<StructuredNumber, PropertyInfo> properties = gci
 					.properties();
@@ -1523,26 +1519,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 								.get(clsHandler.getAssociationId()));
 					}
 
-					// if (clsHandler.getPackageId() != null) {
-					// genCi.setPkg(this.genPackageInfosById
-					// .get(clsHandler.getPackageId()));
-					// }
-
-					/*
-					 * Base class is a member of the supertypes set. However,
-					 * specific rules apply for a base class. Thus we keep the
-					 * explicit element to store the relationship of a class and
-					 * its base class.
-					 */
-					if (clsHandler.getBaseClassId() != null) {
-						genCi.setBaseClass(this.genClassInfosById
-								.get(clsHandler.getBaseClassId()));
-					}
-
 					if (StringUtils
 							.isNotBlank(clsHandler.getLinkedDocument())) {
 
-						File ldFile = new File(clsHandler.getLinkedDocument());
+						File ldFile = new File(options.linkedDocumentsTmpDir(),
+								clsHandler.getLinkedDocument());
 
 						if (!ldFile.exists()) {
 
@@ -2275,12 +2256,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					GenericClassInfo genCiToRemoveSubtype = (GenericClassInfo) ciToRemoveSubtype;
 
 					genCiToRemoveSubtype.removeSupertype(ciToRemove.id());
-
-					if (genCiToRemoveSubtype.baseClass() != null
-							&& genCiToRemoveSubtype.baseClass().id()
-									.equals(ciToRemove.id())) {
-						genCiToRemoveSubtype.setBaseClass(null);
-					}
 				}
 			}
 		}
@@ -2707,7 +2682,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		genCi.setSupertypes(copy(ci.supertypes()));
 		genCi.setSubtypes(copy(ci.subtypes()));
-		genCi.setBaseClass(ci.baseClass());
 
 		genCi.setProperties(ci.properties());
 

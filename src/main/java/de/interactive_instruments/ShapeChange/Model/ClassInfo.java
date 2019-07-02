@@ -151,6 +151,15 @@ public interface ClassInfo extends Info {
 	public SortedSet<ClassInfo> supertypesInCompleteHierarchy();
 
 	/**
+	 * @return Set with all direct supertypes of this class (WARNING: this can
+	 *         be a shallow copy or derived set, thus it is not safe to assume
+	 *         that modifications to this set will update the supertype
+	 *         information in the class itself). Can be empty but not
+	 *         <code>null</code>
+	 */
+	public SortedSet<ClassInfo> supertypeClasses();
+
+	/**
 	 * Check whether the class and the package pi are part of the same schema (=
 	 * XML namespace).
 	 */
@@ -302,7 +311,7 @@ public interface ClassInfo extends Info {
 
 	/**
 	 * @param diagrams
-	 *            metadata about the diagrams relevant for this class
+	 *                     metadata about the diagrams relevant for this class
 	 */
 	public void setDiagrams(List<ImageMetadata> diagrams);
 
@@ -315,8 +324,8 @@ public interface ClassInfo extends Info {
 
 	/**
 	 * @param linkedDocument
-	 *            a .docx file that is linked to this class; can be
-	 *            <code>null</code>
+	 *                           a .docx file that is linked to this class; can
+	 *                           be <code>null</code>
 	 */
 	public void setLinkedDocument(File linkedDocument);
 

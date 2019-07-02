@@ -937,10 +937,6 @@ public class Flattener implements Transformer, MessageSource {
 
 			for (String supertypeIdToRemove : supertypeIdsToRemove) {
 
-				if (genCi.baseClass() != null
-						&& genCi.baseClass().id().equals(supertypeIdToRemove)) {
-					genCi.setBaseClass(null);
-				}
 				genCi.removeSupertype(supertypeIdToRemove);
 			}
 		}
@@ -1021,11 +1017,6 @@ public class Flattener implements Transformer, MessageSource {
 
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
-			if (genCi.baseClass() != null && idsOfRelevantSupertypes
-					.contains(genCi.baseClass().id())) {
-				genCi.setBaseClass(null);
-			}
-
 			TreeSet<String> idsOfSupertypesToKeep = new TreeSet<String>();
 
 			for (String supertypeId : genCi.supertypes()) {
@@ -1040,12 +1031,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 
 			genCi.setSupertypes(idsOfSupertypesToKeep);
-
-			if (idsOfSupertypesToKeep.size() == 1) {
-				GenericClassInfo base = genModel.getGenClasses()
-						.get(idsOfSupertypesToKeep.first());
-				genCi.setBaseClass(base);
-			}
 		}
 	}
 
@@ -2637,11 +2622,7 @@ public class Flattener implements Transformer, MessageSource {
 				// info of subtypeCopy; if the baseClass of subtypeCopy is
 				// genCi, set it to genCiCopy
 				subtypeCopy.updateSupertypeId(genCi.id(), genCiCopy.id());
-				if (subtypeCopy.baseClass() != null
-						&& subtypeCopy.baseClass().id().equals(genCi.id())) {
-					subtypeCopy.setBaseClass(genCiCopy);
-				}
-
+				
 				// update the subtype info in all supertypes of subtypeCopy
 				// replace subGenCi.id with subtypeCopy.id in the subtype list
 
@@ -5796,24 +5777,13 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 
-			if (trfConfig.hasRule(
-					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-					&& ArcGISUtil.isArcGISSubtype(leafCi)) {
-				// do not remove relationship to baseClass
-			} else {
-				leafCi.setBaseClass(null);
-			}
-
 			TreeSet<String> newSupertypes = new TreeSet<>();
 
 			for (String supertypeID : leafCi.supertypes()) {
 
-				ClassInfo supertype = genModel.classById(supertypeID);
-
 				if (trfConfig.hasRule(
 						RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-						&& supertype != null && ArcGISUtil
-								.hasArcGISDefaultSubtypeAttribute(supertype)) {
+						&& ArcGISUtil.isArcGISSubtype(leafCi)) {
 					// keep relationship to this supertype
 					newSupertypes.add(supertypeID);
 				}
@@ -5832,7 +5802,6 @@ public class Flattener implements Transformer, MessageSource {
 					|| superclass.category() == Options.MIXIN) {
 				genModel.remove(superclass);
 			} else {
-				superclass.setBaseClass(null);
 				superclass.setSupertypes(null);
 				superclass.setSubtypes(null);
 			}
@@ -6612,7 +6581,6 @@ public class Flattener implements Transformer, MessageSource {
 						booleanWithOninaCi.setAssocInfo(null);
 						booleanWithOninaCi.setSupertypes(new TreeSet<String>());
 						booleanWithOninaCi.setSubtypes(null);
-						booleanWithOninaCi.setBaseClass(null);
 
 						booleanWithOninaCi.setProperties(ci.properties());
 						TreeMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();

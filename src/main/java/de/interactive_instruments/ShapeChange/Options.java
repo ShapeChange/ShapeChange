@@ -2076,6 +2076,69 @@ public class Options {
 			}
 		}
 
+		/*
+		 * FIXME 2019-07-02 JE: Now we need to overwrite standard settings like
+		 * defaultEncodingRule and rule sets defined by XmlSchema targets -
+		 * unless the current process config is an XmlSchema target. That is
+		 * important for rule matching throughout the processing chain of
+		 * ShapeChange. This kind of target specific behavior is undesirable,
+		 * but too intertwined with the current code in order to be easily
+		 * fixed. Refactoring the code will probably lead to a new major version
+		 * of ShapeChange. That version could also be written in such a way that
+		 * new transformations and targets can be added without code changes to
+		 * the core of ShapeChange.
+		 */
+		int countXmlSchemaConfigs = 0;
+		for (TargetConfiguration tgtConfig : targetConfigs) {
+
+			if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)
+					&& tgtConfig instanceof TargetXmlSchemaConfiguration
+					&& !(currentProcessConfig != null
+							&& currentProcessConfig instanceof TargetXmlSchemaConfiguration)) {
+
+				countXmlSchemaConfigs++;
+				if (countXmlSchemaConfigs == 2) {
+
+					/*
+					 * FIXME develop/use common logging mechanism that is
+					 * available to all ShapeChange code
+					 */
+					System.out.println(
+							"Warning: Multiple non-disabled XmlSchema targets "
+									+ "found in the ShapeChange configuration. If these "
+									+ "targets have different encoding rules or different"
+									+ " values for the target parameter defaultEncodingRule,"
+									+ " that may lead to unexpected results.");
+				}
+
+				/*
+				 * Ensure that we have all the rules defined by the XmlSchema
+				 * target.
+				 */
+				for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
+					String nam = prs.getName();
+					String ext = prs.getExtendedRuleSetName();
+					addExtendsEncRule(nam, ext);
+
+					if (prs.hasAdditionalRules()) {
+						for (String rule : prs.getAdditionalRules()) {
+							addRule(rule, nam);
+						}
+					}
+				}
+
+				/*
+				 * Also load parameter defaultEncodingRule, if set in the
+				 * XmlSchema target configuration.
+				 */
+				if (tgtConfig.hasParameter("defaultEncodingRule")) {
+					setParameter(tgtConfig.getClassName(),
+							"defaultEncodingRule", tgtConfig.getParameters()
+									.get("defaultEncodingRule"));
+				}
+			}
+		}
+
 		if (currentProcessConfig != null) {
 
 			this.gmlVersion = currentProcessConfig.getGmlVersion();
@@ -2085,9 +2148,11 @@ public class Options {
 
 			// initialise fields for common targets and xml schema targets
 			if (currentProcessConfig instanceof TargetConfiguration) {
-				// add all parameters from current process configuration (only
-				// required
-				// for targets)
+
+				/*
+				 * add all parameters from current process configuration (only
+				 * required for targets)
+				 */
 				for (String name : currentProcessConfig.getParameters()
 						.keySet()) {
 					setParameter(currentProcessConfig.getClassName(), name,
