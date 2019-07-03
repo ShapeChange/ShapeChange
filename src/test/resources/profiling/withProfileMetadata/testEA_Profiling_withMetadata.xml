@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/testProfiling_withMetadata.eap" />
+			value="src/test/resources/profiling/withProfileMetadata/testProfiling_withMetadata.eap" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="sortedSchemaOutput" value="true" />
@@ -16,7 +16,7 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/profiling_withProfileMetadata/log.xml" />
+			value="testResults/profiling/withProfileMetadata/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -146,7 +146,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
 			inputs="A B_and_C_homogeneousgeometry E_homogeneousgeometry" mode="enabled">
 			<targetParameter name="outputDirectory"
-				value="testResults/profiling_withProfileMetadata/results/xsd" />
+				value="testResults/profiling/withProfileMetadata/results/xsd" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="gml33" />
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
@@ -157,7 +157,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
 			inputs="D" mode="enabled">
 			<targetParameter name="outputDirectory"
-				value="testResults/profiling_withProfileMetadata/results/scxml" />
+				value="testResults/profiling/withProfileMetadata/results/scxml" />
 			<targetParameter name="outputFilename" value="profileDExport" />
 			<targetParameter name="defaultEncodingRule" value="export" />
 			<rules>

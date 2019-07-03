@@ -50,15 +50,12 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	protected GenericModel model = null;
 
 	protected String id = null;
-	protected String name = null;
+//	protected String name = null;
 
 	protected PropertyInfo end1 = null;
 	protected PropertyInfo end2 = null;
 	protected ClassInfo assocClass = null;
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#options()
-	 */
+	
 	@Override
 	public Options options() {
 		return options;
@@ -70,10 +67,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	public void setOptions(Options options) {
 		this.options = options;
 	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#result()
-	 */
+	
 	@Override
 	public ShapeChangeResult result() {
 		return result;
@@ -87,9 +81,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
-	 */
 	@Override
 	public GenericModel model() {
 		return model;
@@ -103,9 +94,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
-	 */
 	@Override
 	public String id() {
 		return id;
@@ -119,13 +107,13 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
-	 */
-	@Override
-	public String name() {
-		return name;
-	}
+//	/**
+//	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
+//	 */
+//	@Override
+//	public String name() {
+//		return name;
+//	}
 
 	/**
 	 * @param name
@@ -135,9 +123,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end1()
-	 */
 	@Override
 	public PropertyInfo end1() {
 		return end1;
@@ -151,9 +136,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		this.end1 = end1;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#end2()
-	 */
 	@Override
 	public PropertyInfo end2() {
 		return end2;
@@ -167,9 +149,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		this.end2 = end2;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.AssociationInfo#assocClass()
-	 */
 	@Override
 	public ClassInfo assocClass() {
 		return assocClass;
@@ -192,7 +171,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		// do nothing else, stereotypes have to be set explicitly using
 		// setStereotypes
 
-	} // validateStereotypesCache
+	}
 
 	/**
 	 * @param stereotypeSet

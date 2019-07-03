@@ -5,9 +5,10 @@
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
   <input>
+    <parameter name="taggedValueImplementation" value="array"/>
     <parameter name="inputModelType" value="EA7"/>
-    <parameter name="inputFile" value="src/test/resources/testProfiling.eap"/>
-    <parameter name="appSchemaNameRegex" value="Test[1-7].*"/>
+    <parameter name="inputFile" value="src/test/resources/profiling/explicitProfileSettings/testProfiling_explicitProfileSettings.eap"/>
+    <parameter name="appSchemaName" value="Test Schema"/>
     <parameter name="publicOnly" value="true"/>
     <parameter name="checkingConstraints" value="enabled"/>
     <parameter name="sortedSchemaOutput" value="true"/>
@@ -15,11 +16,11 @@
   </input>
   <log>
     <parameter name="reportLevel" value="INFO"/>
-    <parameter name="logFile" value="testResults/profiling/log.xml"/>
+    <parameter name="logFile" value="testResults/profiling/explicitProfileSettings/log.xml"/>
   </log>
   <transformers>
     <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="A" mode="enabled">
+      id="A_EPS" mode="enabled">
       <parameters>
         <ProcessParameter name="profiles" value="A"/>
         <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
@@ -28,43 +29,13 @@
         <ProcessRuleSet name="profiler">
           <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
           <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
         </ProcessRuleSet>
       </rules>
     </Transformer>
     <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="A1" mode="enabled">
-      <parameters>
-        <ProcessParameter name="profiles" value="A[1]"/>
-        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
-      </parameters>
-      <rules>
-        <ProcessRuleSet name="profiler">
-          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
-          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
-        </ProcessRuleSet>
-      </rules>
-    </Transformer>
-    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="A2.3" mode="enabled">
-      <parameters>
-        <ProcessParameter name="profiles" value="A[2.3]"/>
-        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
-      </parameters>
-      <rules>
-        <ProcessRuleSet name="profiler">
-          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
-          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
-        </ProcessRuleSet>
-      </rules>
-    </Transformer>
-    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="B" mode="enabled">
+      id="B_EPS" mode="enabled">
       <parameters>
         <ProcessParameter name="profiles" value="B"/>
         <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
@@ -73,43 +44,13 @@
         <ProcessRuleSet name="profiler">
           <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
           <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
         </ProcessRuleSet>
       </rules>
     </Transformer>
     <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="B1.7" mode="enabled">
-      <parameters>
-        <ProcessParameter name="profiles" value="B[1.7]"/>
-        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
-      </parameters>
-      <rules>
-        <ProcessRuleSet name="profiler">
-          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
-          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
-        </ProcessRuleSet>
-      </rules>
-    </Transformer>
-    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="A9B5.5" mode="enabled">
-      <parameters>
-        <ProcessParameter name="profiles" value="A[9],B[5.5]"/>
-        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
-      </parameters>
-      <rules>
-        <ProcessRuleSet name="profiler">
-          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
-          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
-        </ProcessRuleSet>
-      </rules>
-    </Transformer>
-    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="C" mode="enabled">
+      id="C_EPS" mode="enabled">
       <parameters>
         <ProcessParameter name="profiles" value="C"/>
         <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
@@ -118,13 +59,13 @@
         <ProcessRuleSet name="profiler">
           <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
           <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
         </ProcessRuleSet>
       </rules>
     </Transformer>
     <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="D" mode="enabled">
+      id="D_EPS" mode="enabled">
       <parameters>
         <ProcessParameter name="profiles" value="D"/>
         <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
@@ -133,13 +74,14 @@
         <ProcessRuleSet name="profiler">
           <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
           <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
         </ProcessRuleSet>
       </rules>
     </Transformer>
     <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
-      id="E" mode="enabled">
+      id="E_EPS" mode="enabled">
       <parameters>
         <ProcessParameter name="profiles" value="E"/>
         <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
@@ -148,16 +90,34 @@
         <ProcessRuleSet name="profiler">
           <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
           <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
-          <rule name="rule-trf-profiling-postprocessing-removeResidualTypes"/>
-          <rule name="rule-trf-profiling-postprocessing-removeEmptyPackages"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.Profiler"
+      id="F_EPS" mode="enabled">
+      <parameters>
+        <ProcessParameter name="profiles" value="F"/>
+        <ProcessParameter name="constraintHandling" value="removeByPropertyNameInConstraintName"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="profiler">
+          <rule name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck"/>
+          <rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck"/>
+          <rule name="rule-trf-profiling-processing-explicitProfileSettings"/>
+          <rule name="rule-trf-profiling-processing-classRemovalIncludesAllSubtypes"/>
+          <rule name="rule-trf-profiling-processing-keepAssociationAsIs"/>
         </ProcessRuleSet>
       </rules>
     </Transformer>
   </transformers>
   <targets>
     <TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
-      inputs="A A1 A2.3 B B1.7 A9B5.5 C D E" mode="enabled">
-      <targetParameter name="outputDirectory" value="testResults/profiling/xsd"/>
+      inputs="A_EPS B_EPS C_EPS D_EPS E_EPS F_EPS" mode="enabled">
+      <targetParameter name="outputDirectory"
+        value="testResults/profiling/explicitProfileSettings/xsd"/>
       <targetParameter name="sortedOutput" value="true"/>
       <targetParameter name="defaultEncodingRule" value="gml33-with-schematron"/>
       <targetParameter name="schematronExtension.matches.namespace"
@@ -173,9 +133,10 @@
       <xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
       <xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
     </TargetXmlSchema>
-   <!-- <Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
-      inputs="A A1 A2.3 B B1.7 A9B5.5 C D E" mode="enabled">
-      <targetParameter name="outputDirectory" value="testResults/profiling/html"/>
+    <!--<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
+      inputs="A_EPS B_EPS C_EPS D_EPS E_EPS F_EPS" mode="enabled">
+      <targetParameter name="outputDirectory"
+        value="testResults/profiling/explicitProfileSettings/html"/>
       <targetParameter name="outputFilename" value="test"/>
       <targetParameter name="sortedOutput" value="true"/>
       <targetParameter name="inheritedProperties" value="false"/>
