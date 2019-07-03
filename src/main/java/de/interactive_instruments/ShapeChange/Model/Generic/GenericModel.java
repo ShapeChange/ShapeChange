@@ -37,6 +37,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +58,6 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -1096,32 +1097,21 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			throw new ShapeChangeAbortException();
 		}
 
-		// try (BufferedReader br = new BufferedReader(new
-		// FileReader(modelfile))) {
-		// String line = null;
-		// while ((line = br.readLine()) != null) {
-		// System.out.println(line);
-		// }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-
 		boolean isZip = repositoryFileName.toLowerCase().endsWith(".zip");
 
 		ZipFile zip = null;
 
-		/*
-		 * Apparently no specific performance gain when using SAX based
-		 * validation. So we could entirely rely upon XSD 1.1 based validation
-		 * of SCXML.
-		 */
-		boolean validate = true;
-		boolean useXsd11Validation = true;
-
 		try {
 
-			if (validate && useXsd11Validation) {
+			/*
+			 * Validate SCXML if a schema was provided
+			 */
+			String scxmlXsdLocation = options.parameterAsString(null,
+					"scxmlXsdLocation", null, false, true);
+			if (scxmlXsdLocation != null) {
+
 				InputStream inputStreamForValidation;
+
 				if (isZip) {
 
 					zip = new ZipFile(modelfile);
@@ -1145,8 +1135,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 				if (inputStreamForValidation != null) {
 
-					File schemaFile = new File(
-							"C:/REPOSITORIES/ii/JE/ShapeChange/src/main/resources/schema/ShapeChangeExportedModel.xsd");
 					Source instanceDocument = new StreamSource(
 							inputStreamForValidation);
 
@@ -1155,71 +1143,68 @@ public class GenericModel extends ModelImpl implements MessageSource {
 							"org.apache.xerces.jaxp.validation.XMLSchema11Factory");
 					SchemaFactory sf = SchemaFactory.newInstance(
 							"http://www.w3.org/XML/XMLSchema/v1.1");
-					// SchemaFactory sf = SchemaFactory
-					// .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-					// sf.setFeature("http://apache.org/xml/features/validation/schema",
-					// true); - not recongized
-					// sf.setFeature("http://xml.org/sax/features/namespaces",
-					// true); - not recognized
-					// sf.setFeature("http://apache.org/xml/features/validation/schema-full-checking",
-					// true);
+					Schema s = null;
 
-					// feature
-					// http://apache.org/xml/features/validation/identity-constraint-checking
-					// not recognized by SchemaFactory
-
-					Schema s = sf.newSchema(schemaFile);
-					Validator v = s.newValidator();
-
-					// v.setFeature("http://xml.org/sax/features/namespaces",
-					// true); - not recognized
-					v.setFeature(
-							"http://apache.org/xml/features/validation/schema",
-							true);
-					v.setFeature(
-							"http://apache.org/xml/features/validation/schema-full-checking",
-							true);
-
-					// sf.setFeature("http://apache.org/xml/features/validation/schema",
-					// true);
-					// sf.setFeature("http://apache.org/xml/features/validation/identity-constraint-checking",
-					// true);
-
-					GenericModelErrorHandler errorHandler = new GenericModelErrorHandler();
-					v.setErrorHandler(errorHandler);
-
-					v.validate(instanceDocument);
-
-					// check validation results
-					if (errorHandler.hasWarnings()
-							|| errorHandler.hasErrors()) {
-						result.addInfo(this, 30500);
-
-						if (errorHandler.hasWarnings()) {
-							List<String> warnings = errorHandler.warnings();
-							for (String w : warnings) {
-								result.addInfo(this, 30502, w);
-							}
+					try {
+						if (scxmlXsdLocation.startsWith("http")) {
+							s = sf.newSchema(new URL(scxmlXsdLocation));
+						} else {
+							File schemaFile = new File(scxmlXsdLocation);
+							s = sf.newSchema(schemaFile);
 						}
-						if (errorHandler.hasErrors()) {
-							List<String> errors = errorHandler.errors();
-							for (String e : errors) {
-								result.addInfo(this, 30503, e);
-							}
-						}
-
-						result.addInfo(this, 30501);
-
-						if (errorHandler.hasErrors()) {
-							result.addFatalError(this, 30504);
-							throw new ShapeChangeAbortException();
-						}
-
-					} else {
-						result.addInfo(this, 30505);
+					} catch (SAXException e) {
+						result.addError(this, 30507, scxmlXsdLocation,
+								e.getMessage());
+					} catch (MalformedURLException e) {
+						result.addError(this, 30506, scxmlXsdLocation,
+								e.getMessage());
 					}
 
+					if (s != null) {
+						Validator v = s.newValidator();
+
+						v.setFeature(
+								"http://apache.org/xml/features/validation/schema",
+								true);
+						v.setFeature(
+								"http://apache.org/xml/features/validation/schema-full-checking",
+								true);
+
+						GenericModelErrorHandler errorHandler = new GenericModelErrorHandler();
+						v.setErrorHandler(errorHandler);
+
+						v.validate(instanceDocument);
+
+						// check validation results
+						if (errorHandler.hasWarnings()
+								|| errorHandler.hasErrors()) {
+							result.addInfo(this, 30500);
+
+							if (errorHandler.hasWarnings()) {
+								List<String> warnings = errorHandler.warnings();
+								for (String w : warnings) {
+									result.addInfo(this, 30502, w);
+								}
+							}
+							if (errorHandler.hasErrors()) {
+								List<String> errors = errorHandler.errors();
+								for (String e : errors) {
+									result.addInfo(this, 30503, e);
+								}
+							}
+
+							result.addInfo(this, 30501);
+
+							if (errorHandler.hasErrors()) {
+								result.addFatalError(this, 30504);
+								throw new ShapeChangeAbortException();
+							}
+
+						} else {
+							result.addInfo(this, 30505);
+						}
+					}
 				}
 			}
 
@@ -1254,31 +1239,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			if (inputStream != null) {
 
-				File schemaFile = new File(
-						"C:/REPOSITORIES/ii/JE/ShapeChange/src/main/resources/schema/ShapeChangeExportedModel.xsd");
-
-				// the following does not seem to work as expected (XSD 1.1 all
-				// compositor extension still not recognized)
-				// System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/XML/XMLSchema/v1.1",
-				// "org.apache.xerces.jaxp.validation.XMLSchema11Factory");
-				// SchemaFactory sf = SchemaFactory
-				// .newInstance("http://www.w3.org/XML/XMLSchema/v1.1");
-
-				// UNCOMMENT the following to set an explicit schema for
-				// validation during SAX parsing
-				Schema schema = null;
-				if (validate && !useXsd11Validation) {
-					SchemaFactory sf = SchemaFactory
-							.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-					sf.setFeature(
-							"http://apache.org/xml/features/validation/schema-full-checking",
-							true);
-					schema = sf.newSchema(schemaFile);
-				}
-				// final Class versionClass =
-				// Class.forName("org.apache.xerces.impl.Version");
-				// System.out.println(versionClass.getProtectionDomain().getCodeSource().getLocation().toExternalForm());
-
 				InputSource is = new InputSource(inputStream);
 
 				System.setProperty("javax.xml.parsers.SAXParserFactory",
@@ -1286,93 +1246,18 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 				SAXParserFactory spf = SAXParserFactory.newInstance();
 				spf.setNamespaceAware(true);
-				if (validate && !useXsd11Validation) {
-					spf.setSchema(schema);
-
-					/*
-					 * NOTE: If the schema requires XSD 1.1
-					 * (xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
-					 * vc:minVersion="1.1") then Xerces appears to not load the
-					 * schema correctly. A validation error informed that no
-					 * declaration for sc:Model was found (much like if feature
-					 * http://apache.org/xml/features/validation/schema was set
-					 * and no xsiSchemaLocation was defined - see XmlReader
-					 * settings below).
-					 */
-				}
 
 				SAXParser saxParser = spf.newSAXParser();
-
-				// the following cannot be used if a schema was explicitly set
-				// saxParser.setProperty(
-				// "http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-				// "http://www.w3.org/2001/XMLSchema/v1.1");
 
 				// === Create XML Pipeline
 				XMLReader xmlReader = saxParser.getXMLReader();
 
-				// UNCOMMENT the following if validation during SAX parsing
-				// shall be used; however, this does not seem to support XSD 1.1
-				// all compositor extension
-				if (validate && !useXsd11Validation) {
-					xmlReader.setFeature(
-							"http://xml.org/sax/features/namespaces", true);
-					/*
-					 * The following feature appears to ignore the explicitly
-					 * set XSD, and instead only looks for a schema defined by
-					 * xsi:schemaLocation
-					 */
-					// xmlReader.setFeature(
-					// "http://apache.org/xml/features/validation/schema",
-					// true);
-					xmlReader.setFeature(
-							"http://apache.org/xml/features/validation/identity-constraint-checking",
-							true);
-					xmlReader.setFeature(
-							"http://apache.org/xml/features/validation/schema-full-checking",
-							true);
-				}
-
 				GenericModelContentHandler modelHandler = new GenericModelContentHandler(
 						result, options, xmlReader);
-
-				GenericModelErrorHandler errorHandler = null;
-				if (validate && !useXsd11Validation) {
-					errorHandler = new GenericModelErrorHandler();
-					xmlReader.setErrorHandler(errorHandler);
-				}
 
 				xmlReader.setContentHandler(modelHandler);
 
 				xmlReader.parse(is);
-
-				if (validate && !useXsd11Validation) {
-					// check validation results
-					if (errorHandler.hasWarnings()
-							|| errorHandler.hasErrors()) {
-						result.addInfo(this, 30500);
-					}
-					if (errorHandler.hasWarnings()) {
-						List<String> warnings = errorHandler.warnings();
-						for (String w : warnings) {
-							result.addInfo(this, 30502, w);
-						}
-					}
-					if (errorHandler.hasErrors()) {
-						List<String> errors = errorHandler.errors();
-						for (String e : errors) {
-							result.addInfo(this, 30503, e);
-						}
-					}
-					if (errorHandler.hasWarnings()
-							|| errorHandler.hasErrors()) {
-						result.addInfo(this, 30501);
-					}
-					if (errorHandler.hasErrors()) {
-						result.addFatalError(this, 30504);
-						throw new ShapeChangeAbortException();
-					}
-				}
 
 				this.characterEncoding = modelHandler.getEncoding();
 				this.loadingFromScxml = true;
@@ -3509,6 +3394,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			return "SCXML is invalid. Execution will stop now.";
 		case 30505:
 			return "--- SCXML IS VALID ---";
+		case 30506:
+			return "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
+		case 30507:
+			return "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
 
 		default:
 			return "(" + this.getClass().getName()

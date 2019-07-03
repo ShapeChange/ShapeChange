@@ -8,6 +8,7 @@
 		<parameter name="inputModelType" value="SCXML" />
 		<parameter name="repositoryFileNameOrConnectionString"
 			value="src/test/resources/uml/mergeConstraintCommentsIntoText/sc.xml" />
+		<parameter name="scxmlXsdLocation" value="src/main/resources/schema/ShapeChangeExportedModel.xsd"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

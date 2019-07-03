@@ -149,7 +149,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	 */
 	public static final String PARAM_TAG_NAME_REGEX = "tagNameRegex";
 	/**
-	 * If set, then the value of a tag whose name matches
+	 * If set, then all values of a tag whose name matches
 	 * {@link #PARAM_TAG_NAME_REGEX} must match this regular expression, in
 	 * order for the tagged value to be reported by
 	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.

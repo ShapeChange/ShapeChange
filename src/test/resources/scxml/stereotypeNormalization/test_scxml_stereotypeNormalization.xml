@@ -3,6 +3,7 @@
 	<input>
 		<parameter name="inputModelType" value="SCXML"/>
 		<parameter name="inputFile" value="src/test/resources/scxml/stereotypeNormalization/scxml.xml"/>
+		<parameter name="scxmlXsdLocation" value="src/main/resources/schema/ShapeChangeExportedModel.xsd"/>
 		<parameter name="appSchemaName" value="Test Schema"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="dontConstructAssociationNames" value="true"/>
