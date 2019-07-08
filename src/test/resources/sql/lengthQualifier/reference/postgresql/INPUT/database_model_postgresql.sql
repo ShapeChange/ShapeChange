@@ -18,7 +18,8 @@ CREATE TABLE featuretype1 (
    p1 character varying(30) NOT NULL,
    p4 integer NOT NULL,
    p5 text NOT NULL,
-   p6 text NOT NULL
+   p6 text NOT NULL,
+   p7 text NOT NULL
 );
 
 CREATE TABLE featuretype1_p2 (

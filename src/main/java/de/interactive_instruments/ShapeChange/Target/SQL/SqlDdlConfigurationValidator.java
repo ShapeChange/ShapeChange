@@ -300,7 +300,7 @@ public class SqlDdlConfigurationValidator
 					}
 				}
 			}
-			
+
 			if (characteristicsByParameter
 					.containsKey(SqlConstants.ME_PARAM_LENGTH)) {
 
@@ -314,14 +314,15 @@ public class SqlDdlConfigurationValidator
 							.get(SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
 
 					if (!("BYTE".equalsIgnoreCase(lengthQualifier)
-							|| "CHAR".equalsIgnoreCase(lengthQualifier))) {
+							|| "CHAR".equalsIgnoreCase(lengthQualifier)
+							|| "NONE".equalsIgnoreCase(lengthQualifier))) {
 
 						isValid = false;
 						result.addError(this, 106, typeRuleKey,
 								lengthQualifier == null ? "<null>" : lengthQualifier,
 								SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER,
 								SqlConstants.ME_PARAM_LENGTH);
-					} 
+					}
 				}
 			}
 		}
@@ -440,7 +441,7 @@ public class SqlDdlConfigurationValidator
 			return "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
 		case 106:
 			return "Invalid map entry for type#rule '$1$': value '$2$' provided for characteristic '$3$' of parameter '$4$' is invalid.";
-		
+
 		default:
 			return "(" + SqlDdlConfigurationValidator.class.getName()
 					+ ") Unknown message with number: " + mnr;

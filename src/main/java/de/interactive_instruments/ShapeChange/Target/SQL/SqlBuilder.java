@@ -165,7 +165,7 @@ public class SqlBuilder implements MessageSource {
 
 		/*
 		 * Add field to reference pi.inClass
-		 * 
+		 *
 		 * NOTE: the primary key for the table will be defined later
 		 */
 		String classReferenceFieldName = pi.inClass().name()
@@ -259,7 +259,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 * 
+	 *
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci) {
@@ -269,7 +269,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 * 
+	 *
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci, String tableName) {
@@ -277,7 +277,7 @@ public class SqlBuilder implements MessageSource {
 		/*
 		 * Identify all properties that will be converted to columns. Create
 		 * associative tables as necessary.
-		 * 
+		 *
 		 * NOTE: The order of the properties is defined by their sequence
 		 * numbers (which is automatically provided by a TreeMap).
 		 */
@@ -571,7 +571,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given table, with the documentation
 	 * of the table. If the documentation is empty then no comment statement
 	 * will be created.
-	 * 
+	 *
 	 * @param table
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Table table) {
@@ -586,7 +586,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given column, with the documentation
 	 * of the column. If the documentation is empty then no comment statement
 	 * will be created.
-	 * 
+	 *
 	 * @param column
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Column column) {
@@ -1753,7 +1753,7 @@ public class SqlBuilder implements MessageSource {
 					// result.addError(this, 30, me.getType(),
 					// me.getTargetType(), e.getMessage());
 					// }
-					
+
 					lengthQualifier = determineLengthQualifierFromMapEntry(me);
 
 				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
@@ -1912,15 +1912,24 @@ public class SqlBuilder implements MessageSource {
 
 		if (me != null) {
 			lengthQualifier = determineLengthQualifierFromMapEntry(me);
+		} else {
+			lengthQualifier = SqlDdl.lengthQualifier;
 		}
 
 		return determineCharacterVaryingOrText(size,lengthQualifier);
 	}
-	
+
 	private String determineLengthQualifierFromMapEntry(ProcessMapEntry me) {
-		return SqlDdl.mapEntryParamInfos.getCharacteristic(
+		String statedLengthQualifier = SqlDdl.mapEntryParamInfos.getCharacteristic(
 				me.getType(), me.getRule(), SqlConstants.ME_PARAM_LENGTH,
 				SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
+		String lengthQualifier;
+		if ("NONE".equalsIgnoreCase(statedLengthQualifier)) {
+			lengthQualifier = null;
+		} else {
+			lengthQualifier = statedLengthQualifier;
+		}
+		return lengthQualifier;
 	}
 
 	private ColumnDataType determineCharacterVaryingOrText(int size,
@@ -1970,7 +1979,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Generates an index creation statement for the given geometry
 	 * property/column.
-	 * 
+	 *
 	 * @param tableWithColumn
 	 * @param columnForProperty
 	 * @param pi
@@ -2865,7 +2874,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Look up the table with the given name. If no such table exists, a new one
 	 * is created (this is logged on debug level) and returned.
-	 * 
+	 *
 	 * @param tableName
 	 *                      name of the table to look up, must not be
 	 *                      <code>null</code>
