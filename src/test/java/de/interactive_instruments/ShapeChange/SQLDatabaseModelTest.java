@@ -136,7 +136,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/lengthQualifier/testEA_sql_lengthQualifier.xml",
-				new String[] { "eap" }, "testResults/sql/lengthQualifier",
+				new String[] { "sql","eap" }, "testResults/sql/lengthQualifier",
 				"src/test/resources/sql/lengthQualifier/reference");
 	}
 }

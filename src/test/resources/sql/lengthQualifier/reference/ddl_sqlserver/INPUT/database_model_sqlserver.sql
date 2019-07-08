@@ -19,7 +19,7 @@ CREATE TABLE FeatureType1 (
    p4 int NOT NULL,
    p5 nvarchar(max) NOT NULL,
    p6 nvarchar(max) NOT NULL,
-   p7 nvarchar(max) NOT NULL
+   p7 nvarchar(6) NOT NULL
 );
 
 CREATE TABLE FeatureType1_p2 (
