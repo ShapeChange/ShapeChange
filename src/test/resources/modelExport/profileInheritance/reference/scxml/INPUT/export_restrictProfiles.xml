@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -122,7 +122,6 @@
                           <sc:typeId>151</sc:typeId>
                           <sc:typeName>T2_FeatureTypeB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>S81</sc:reversePropertyId>
                           <sc:associationId>81</sc:associationId>
                         </sc:Property>
                         <sc:Property>
@@ -227,7 +226,6 @@
                           <sc:typeId>150</sc:typeId>
                           <sc:typeName>T2_FeatureTypeA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>T81</sc:reversePropertyId>
                           <sc:associationId>81</sc:associationId>
                         </sc:Property>
                         <sc:Property>
@@ -447,7 +445,6 @@
                           <sc:typeId>147</sc:typeId>
                           <sc:typeName>T1_FeatureTypeB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>S80</sc:reversePropertyId>
                           <sc:associationId>80</sc:associationId>
                         </sc:Property>
                         <sc:Property>
@@ -601,7 +598,6 @@
                           <sc:typeId>146</sc:typeId>
                           <sc:typeName>T1_FeatureTypeA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>T80</sc:reversePropertyId>
                           <sc:associationId>80</sc:associationId>
                         </sc:Property>
                         <sc:Property>
@@ -832,7 +828,6 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:baseClassId>156</sc:baseClassId>
                       <sc:profiles>
                         <sc:Profile name="A"></sc:Profile>
                         <sc:Profile name="C"></sc:Profile>
@@ -905,7 +900,6 @@
                           <sc:typeId>156</sc:typeId>
                           <sc:typeName>T1_FeatureTypeD</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>S84</sc:reversePropertyId>
                           <sc:associationId>84</sc:associationId>
                         </sc:Property>
                       </sc:properties>
@@ -1117,7 +1111,6 @@
           <sc:typeName>T1_FeatureTypeF</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>156</sc:inClassId>
-          <sc:reversePropertyId>T84</sc:reversePropertyId>
           <sc:associationId>84</sc:associationId>
         </sc:Property>
       </sc:end1>

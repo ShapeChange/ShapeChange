@@ -6237,9 +6237,6 @@ public class Flattener implements Transformer, MessageSource {
 			genPi2.setCardinality(newCardinalityEnd2);
 		}
 
-		genPi1.setReverseProperty(genPi2);
-		genPi2.setReverseProperty(genPi1);
-
 		aiCopy.setEnd1(genPi1);
 		aiCopy.setEnd2(genPi2);
 
@@ -7112,7 +7109,6 @@ public class Flattener implements Transformer, MessageSource {
 		enumPi.setCardinality(mult);
 		enumPi.setInitialValue(null);
 		enumPi.setInlineOrByReference("inlineOrByReference");
-		enumPi.setReverseProperty(null);
 		enumPi.setInClass(ci);
 		/*
 		 * ensure that "sequenceNumber" tagged value is also set

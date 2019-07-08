@@ -127,7 +127,6 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end2);
 					doc.fRoles.put(end1.typeInfo().id, l1);
 				}
-				end1.reverseProperty = end2;
 				doc.result.addDebug(null,10002,end2.name(), end1.name());
 			}
 
@@ -139,7 +138,6 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end1);
 					doc.fRoles.put(end2.typeInfo().id, l1);
 				}
-				end2.reverseProperty = end1;
 				doc.result.addDebug(null,10002,end1.name(), end2.name());
 			}
 		} else if (!ass.hasAttribute("xmi.idref")) {

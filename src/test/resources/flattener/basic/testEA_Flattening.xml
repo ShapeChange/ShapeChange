@@ -136,7 +136,7 @@
 	<targets>
 		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
 		  inputs="step1 flattenNamesSeparatorTest" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/flattening/xsd"/>
+			<targetParameter name="outputDirectory" value="testResults/flattening/basic/results/xsd"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
@@ -149,7 +149,7 @@
 		</TargetXmlSchema>
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			inputs="step1" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/flattening/html"/>
+			<targetParameter name="outputDirectory" value="testResults/flattening/basic/results/html"/>
 			<targetParameter name="outputFilename" value="test"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="inheritedProperties" value="false"/>

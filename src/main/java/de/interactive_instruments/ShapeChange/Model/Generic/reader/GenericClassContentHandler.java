@@ -69,7 +69,7 @@ public class GenericClassContentHandler
 	private static final Set<String> SIMPLE_CLASS_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "isAbstract", "isLeaf",
 					"associationId", "baseClassId", "linkedDocument" }));
-	
+
 	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "baseClassId" }));
 
@@ -94,7 +94,11 @@ public class GenericClassContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -168,9 +172,9 @@ public class GenericClassContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericClassContentHandler",
+			result.addDebug(null, 30800, "GenericClassContentHandler",
 					localName);
 		}
 	}
@@ -182,11 +186,6 @@ public class GenericClassContentHandler
 		if (localName.equals("id")) {
 
 			this.genCi.setId(sb.toString());
-
-			// String id = sb.toString();
-			// // strip "_C" prefix added by ModelExport
-			// id = id.substring(2);
-			// this.genCi.setId(id);
 
 		} else if (localName.equals("name")) {
 
@@ -329,20 +328,20 @@ public class GenericClassContentHandler
 
 			String check = options.parameter("checkingConstraints");
 			if ("disabled".equalsIgnoreCase(check)) {
-				
+
 				/*
 				 * drop constraint content handlers so that updating the
 				 * constraint context is not performed
 				 */
 				this.constraintContentHandlers = new ArrayList<>();
-				
+
 			} else {
 
 				for (ConstraintContentHandler cch : this.constraintContentHandlers) {
 					cons.add(cch.getConstraint());
 				}
-			}			
-			
+			}
+
 			this.genCi.setConstraints(cons);
 
 			// let parent know that we reached the end of the Class entry
@@ -353,9 +352,9 @@ public class GenericClassContentHandler
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericClassContentHandler",
+			result.addDebug(null, 30801, "GenericClassContentHandler",
 					localName);
 		}
 	}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -94,7 +94,6 @@
                       <sc:typeName>Class2</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
                       <sc:isOwned>true</sc:isOwned>
-                      <sc:reversePropertyId>S83</sc:reversePropertyId>
                       <sc:associationId>83</sc:associationId>
                     </sc:Property>
                     <sc:Property>
@@ -113,7 +112,6 @@
                       <sc:typeName>Class2</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
                       <sc:isOwned>true</sc:isOwned>
-                      <sc:reversePropertyId>S84</sc:reversePropertyId>
                       <sc:associationId>84</sc:associationId>
                     </sc:Property>
                   </sc:properties>
@@ -167,7 +165,6 @@
                       <sc:typeName>Class1</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
                       <sc:isOwned>true</sc:isOwned>
-                      <sc:reversePropertyId>T84</sc:reversePropertyId>
                       <sc:associationId>84</sc:associationId>
                     </sc:Property>
                   </sc:properties>
@@ -200,7 +197,6 @@
           <sc:typeName>Class1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>162</sc:inClassId>
-          <sc:reversePropertyId>T83</sc:reversePropertyId>
           <sc:associationId>83</sc:associationId>
         </sc:Property>
       </sc:end1>

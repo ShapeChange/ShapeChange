@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -140,7 +140,6 @@
                       <sc:typeId>164</sc:typeId>
                       <sc:typeName>ExtFeatureType</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
-                      <sc:reversePropertyId>S87</sc:reversePropertyId>
                       <sc:associationId>87</sc:associationId>
                     </sc:Property>
                     <sc:Property>
@@ -661,7 +660,6 @@
           <sc:typeName>FeatureTypeA</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>164</sc:inClassId>
-          <sc:reversePropertyId>T87</sc:reversePropertyId>
           <sc:associationId>87</sc:associationId>
         </sc:Property>
       </sc:end1>

@@ -455,6 +455,30 @@ public abstract class PropertyInfoImpl extends InfoImpl
 		return res;
 	}
 
+	@Override
+	public boolean propertyMetadata() {
+
+		// Validate cache
+		validateStereotypesCache();
+
+		return stereotypesCache.contains("propertymetadata");
+	}
+	
+	@Override
+	public PropertyInfo reverseProperty() {
+		
+		if(this.isAttribute() || this.association() == null) {
+			return null;
+		} else {
+			AssociationInfo assoc = this.association();
+			if(assoc.end1() == this) {
+				return assoc.end2();
+			} else {
+				return assoc.end1();
+			}
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * <p>

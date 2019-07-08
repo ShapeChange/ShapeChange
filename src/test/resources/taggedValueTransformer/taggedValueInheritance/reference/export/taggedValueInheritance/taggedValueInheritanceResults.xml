@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package editable="false">
       <sc:name>Model</sc:name>
@@ -84,7 +84,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>91</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>91</sc:SupertypeId>
                   </sc:supertypes>
@@ -125,7 +124,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>91</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>91</sc:SupertypeId>
                   </sc:supertypes>
@@ -153,7 +151,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>94</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>94</sc:SupertypeId>
                   </sc:supertypes>
@@ -178,7 +175,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>94</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>94</sc:SupertypeId>
                   </sc:supertypes>
@@ -254,7 +250,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>95</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>95</sc:SupertypeId>
                   </sc:supertypes>

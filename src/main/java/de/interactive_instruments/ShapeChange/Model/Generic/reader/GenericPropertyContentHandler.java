@@ -69,12 +69,14 @@ public class GenericPropertyContentHandler
 					"isReadOnly", "isAttribute", "isNavigable", "isOrdered",
 					"isUnique", "isComposition", "isAggregation",
 					"initialValue", "inlineOrByReference", "sequenceNumber",
-					"reversePropertyId", "associationId", "typeId", "typeName",
+					"associationId", "typeId", "typeName",
 					"inClassId", "isOwned" }));
 
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "reversePropertyId" }));
+	
 	private GenericPropertyInfo genPi = new GenericPropertyInfo();
 
-	private String reversePropertyId = null;
 	private String associationId = null;
 	private String inClassId = null;
 
@@ -100,7 +102,11 @@ public class GenericPropertyContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -153,9 +159,9 @@ public class GenericPropertyContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericPropertyContentHandler",
+			result.addDebug(null, 30800, "GenericPropertyContentHandler",
 					localName);
 		}
 	}
@@ -164,14 +170,13 @@ public class GenericPropertyContentHandler
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (localName.equals("id")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("id")) {
 
 			this.genPi.setId(sb.toString());
-
-			// String id = sb.toString();
-			// // strip "_P" prefix added by ModelExport
-			// id = id.substring(2);
-			// this.genPi.setId(id);
 
 		} else if (localName.equals("name")) {
 
@@ -263,10 +268,6 @@ public class GenericPropertyContentHandler
 
 			this.inClassId = sb.toString();
 
-		} else if (localName.equals("reversePropertyId")) {
-
-			this.reversePropertyId = sb.toString();
-
 		} else if (localName.equals("associationId")) {
 
 			this.associationId = sb.toString();
@@ -344,9 +345,9 @@ public class GenericPropertyContentHandler
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericPropertyContentHandler",
+			result.addDebug(null, 30801, "GenericPropertyContentHandler",
 					localName);
 		}
 	}
@@ -367,13 +368,6 @@ public class GenericPropertyContentHandler
 	@Override
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		// ignore
-	}
-
-	/**
-	 * @return the reversePropertyId
-	 */
-	public String getReversePropertyId() {
-		return reversePropertyId;
 	}
 
 	/**

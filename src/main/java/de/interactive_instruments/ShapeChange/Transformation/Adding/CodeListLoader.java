@@ -344,7 +344,6 @@ public class CodeListLoader implements Transformer, MessageSource {
 							genPi.setCardinality(new Multiplicity());
 							genPi.setInitialValue(null);
 							genPi.setInlineOrByReference("inlineOrByReference");
-							genPi.setReverseProperty(null);
 							genPi.setInClass(genCi);
 							StructuredNumber strucNum = new StructuredNumber(
 									index);

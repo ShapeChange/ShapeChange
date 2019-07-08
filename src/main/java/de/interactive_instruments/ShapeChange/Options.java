@@ -165,7 +165,7 @@ public class Options {
 
 	public static final String[] propertyStereotypes = { "voidable",
 			"identifier", "version", "property", "estimated", "enum",
-			"retired" };
+			"retired", "propertymetadata" };
 	public static final String[] packageStereotypes = { "application schema",
 			"schema", "bundle", "leaf", "retired" };
 	public static final String[] depStereotypes = { "import", "include",
@@ -3860,6 +3860,7 @@ public class Options {
 		addRule("rule-xsd-prop-exclude-derived");
 		addRule("rule-xsd-prop-length-size-pattern");
 		addRule("rule-xsd-prop-featureType-gmlsf-byReference");
+		addRule("rule-xsd-prop-metadata");
 		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 		addRule("rule-xsd-prop-nillable");
 		addRule("rule-xsd-prop-nilReasonAllowed");

@@ -65,7 +65,7 @@ public class GenericPackageContentHandler
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] {}));
 
-	private static final Set<String> DEPRECATED_SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "isAppSchema", "isSchema",
 					"targetNamespace", "xmlns", "xsdDocument", "version" }));
 
@@ -89,7 +89,11 @@ public class GenericPackageContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -120,10 +124,6 @@ public class GenericPackageContentHandler
 		} else if (SIMPLE_PACKAGE_FIELDS.contains(localName)) {
 
 			sb = new StringBuffer();
-
-		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
-
-			// ignore
 
 		} else if (localName.equals("supplierIds")) {
 
@@ -156,9 +156,9 @@ public class GenericPackageContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericPackageContentHandler",
+			result.addDebug(null, 30800, "GenericPackageContentHandler",
 					localName);
 		}
 	}
@@ -167,7 +167,11 @@ public class GenericPackageContentHandler
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (localName.equals("id")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("id")) {
 
 			this.genPi.setId(sb.toString());
 
@@ -280,14 +284,10 @@ public class GenericPackageContentHandler
 				reader.setContentHandler(parent);
 			}
 
-		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
-
-			// ignore
-
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericPackageContentHandler",
+			result.addDebug(null, 30801, "GenericPackageContentHandler",
 					localName);
 		}
 	}

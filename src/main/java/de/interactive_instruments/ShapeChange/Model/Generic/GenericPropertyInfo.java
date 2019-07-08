@@ -45,7 +45,6 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -113,7 +112,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
 
-	protected PropertyInfo reverseProperty = null;
 	protected AssociationInfo association = null;
 	protected List<Constraint> constraints = null;
 
@@ -141,14 +139,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 */
 	public void setAttribute(boolean isAttribute) {
 		this.isAttribute = isAttribute;
-	}
-
-	/**
-	 * @param reverseProperty
-	 *                            the reverseProperty to set
-	 */
-	public void setReverseProperty(PropertyInfo reverseProperty) {
-		this.reverseProperty = reverseProperty;
 	}
 
 	/**
@@ -243,11 +233,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		} else {
 			return inlineOrByReference;
 		}
-	}
-
-	@Override
-	public PropertyInfo reverseProperty() {
-		return reverseProperty;
 	}
 
 	@Override
@@ -629,7 +614,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setCardinality(new Multiplicity(cardinality.toString()));
 		copy.setInitialValue(initialValue);
 		copy.setInlineOrByReference(inlineOrByReference);
-		copy.setReverseProperty(reverseProperty);
 		copy.setInClass(inClass);
 
 		StringBuffer sb = new StringBuffer();

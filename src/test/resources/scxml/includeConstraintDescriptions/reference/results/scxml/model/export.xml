@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -82,7 +82,6 @@
                       <sc:name>constraint1</sc:name>
                       <sc:status>Approved</sc:status>
                       <sc:text>/* &lt;Comment 1&gt; */ &#xD;&#xA;/* Comment 2*/ */&#xD;&#xA;inv: self.propA &gt; 0</sc:text>
-                      <sc:contextModelElementId>163</sc:contextModelElementId>
                       <sc:description>&lt;Comment 1&gt;</sc:description>
                       <sc:description>Comment 2*/</sc:description>
                     </sc:OclConstraint>
@@ -90,7 +89,6 @@
                       <sc:name>constraint2</sc:name>
                       <sc:status>Approved</sc:status>
                       <sc:text>inv: self.oclIsTypeOf(Class1) /* Placeholder NULL Constraint */</sc:text>
-                      <sc:contextModelElementId>163</sc:contextModelElementId>
                       <sc:description>Placeholder NULL Constraint</sc:description>
                     </sc:OclConstraint>
                   </sc:constraints>

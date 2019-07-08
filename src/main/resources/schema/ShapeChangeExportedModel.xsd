@@ -45,13 +45,6 @@
    <selector xpath=".//sc:Class/sc:properties/sc:Property"/>
    <field xpath="sc:id"/>
   </key>
-  <key name="constraintContextModelElementKey">
-   <annotation>
-    <documentation>Defines a set with the ids of all Class and Property elements. These ids may be referenced as context model elements from constraints.</documentation>
-   </annotation>
-   <selector xpath=".//sc:Class | .//sc:Property"/>
-   <field xpath="sc:id"/>
-  </key>
   <keyref name="packageSupplierKeyRef" refer="sc:packageKey">
    <annotation>
     <documentation>The value of a SupplierId element must be equal to the value of a Package/id element.</documentation>
@@ -65,13 +58,6 @@
    </annotation>
    <selector xpath=".//sc:Class"/>
    <field xpath="sc:associationId"/>
-  </keyref>
-  <keyref name="classBaseClassKeyRef" refer="sc:classKey">
-   <annotation>
-    <documentation>The value of a Class/baseClassId element must be equal to a Class/id element.</documentation>
-   </annotation>
-   <selector xpath=".//sc:Class"/>
-   <field xpath="sc:baseClassId"/>
   </keyref>
   <keyref name="classSupertypeKeyRef" refer="sc:classKey">
    <annotation>
@@ -87,13 +73,6 @@
    <selector xpath=".//sc:SubtypeId"/>
    <field xpath="."/>
   </keyref>
-  <keyref name="constraintContextModelElementKeyRef" refer="sc:constraintContextModelElementKey">
-   <annotation>
-    <documentation>The value of the contextModelElementId element, child of an OclConstraint, FolConstraint, or TextConstraint element, must be equal to an id contained in the constraintContextModelElementKey key set.</documentation>
-   </annotation>
-   <selector xpath=".//sc:OclConstraint | .//sc:FolConstraint | .//sc:TextConstraint"/>
-   <field xpath="sc:contextModelElementId"/>
-  </keyref>
   <keyref name="propertyTypeKeyref" refer="sc:classKey">
    <annotation>
     <documentation>The value of a Property/typeId element must be equal to a Class/id element.</documentation>
@@ -107,13 +86,6 @@
    </annotation>
    <selector xpath=".//sc:Property"/>
    <field xpath="sc:inClassId"/>
-  </keyref>
-  <keyref name="propertyReversePropertyKeyRef" refer="sc:propertyKey">
-   <annotation>
-    <documentation>The value of a Property/reversePropertyId element must be equal to a Property/id element.</documentation>
-   </annotation>
-   <selector xpath=".//sc:Property"/>
-   <field xpath="sc:reversePropertyId"/>
   </keyref>
   <keyref name="propertyToAssociationKeyRef" refer="sc:associationKey">
    <annotation>
@@ -449,11 +421,6 @@
      <documentation>The ID of the association, if the class is an association class.</documentation>
     </annotation>
    </element>
-   <element minOccurs="0" name="baseClassId" type="string">
-    <annotation>
-     <documentation>DEPRECATED (since ShapeChange v2.9.0)</documentation>
-    </annotation>
-   </element>
    <element minOccurs="0" name="linkedDocument" type="string">
     <annotation>
      <documentation>Path to a docx document that is linked to the class, relative to a directory that contains all linked documents. For ShapeChange, that is directory 'linkedDocuments', which is a subdirectory of the directory that is identified via the ShapeChange input parameter 'tmpDirectory'. Example: linkedDoc_MyFeatureType.docx</documentation>
@@ -663,11 +630,6 @@
      <documentation>The id of the class to which this property belongs. Only relevant for non-navigable association roles. All other properties are encoded as properties of the class to which they belong (thus the inClass relationship is implied).</documentation>
     </annotation>
    </element>
-   <element minOccurs="0" name="reversePropertyId" type="string">
-    <annotation>
-     <documentation>Id of the property at the other end of the association. Thus only applicable for association roles.</documentation>
-    </annotation>
-   </element>
    <element minOccurs="0" name="associationId" type="string">
     <annotation>
      <documentation>The id of the association to which this property belongs, in case that the property is not an attribute.</documentation>
@@ -752,11 +714,6 @@
      <documentation>The name of the UML diagram.</documentation>
     </annotation>
    </element>
-   <element name="file" type="string" minOccurs="0">
-    <annotation>
-     <documentation>DEPRECATED (since ShapeChange v2.9.0)</documentation>
-    </annotation>
-   </element>
    <element name="relPathToFile" type="string">
     <annotation>
      <documentation>Path to the image, relative to a directory that contains the images of all UML diagrams. For ShapeChange, that is directory 'images', which is a subdirectory of the directory that is identified via the ShapeChange input parameter 'tmpDirectory'. Example: package_1/package_2/Model element X.jpg</documentation>
@@ -779,16 +736,6 @@
    <documentation/>
   </annotation>
  </element>
- <simpleType name="ConstraintContextModelElementType">
-  <annotation>
-   <documentation>Define the type of the model element that provides the context for the constraint. That typically is a class. ShapeChange also supports constraints defined on attributes.</documentation>
-  </annotation>
-  <restriction base="string">
-   <enumeration value="CLASS"/>
-   <enumeration value="ATTRIBUTE"/>
-   <enumeration value="ROLE"/>
-  </restriction>
- </simpleType>
  <complexType name="ConstraintType">
   <all>
    <element name="name" type="string">
@@ -805,16 +752,6 @@
    <element name="text" type="string" minOccurs="0">
     <annotation>
      <documentation>The textual representation of the constraint.</documentation>
-    </annotation>
-   </element>
-   <element name="contextModelElementId" type="string">
-    <annotation>
-     <documentation>Id of the model element on which the constraint is defined.</documentation>
-    </annotation>
-   </element>
-   <element default="CLASS" minOccurs="0" name="contextModelElementType" type="sc:ConstraintContextModelElementType">
-    <annotation>
-     <documentation>Identifies the type of the model element on which the constraint is defined.</documentation>
     </annotation>
    </element>
   </all>

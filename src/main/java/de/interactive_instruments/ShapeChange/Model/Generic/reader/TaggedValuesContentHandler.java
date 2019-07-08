@@ -81,6 +81,12 @@ public class TaggedValuesContentHandler extends AbstractContentHandler {
 
 			reader.setContentHandler(new StringListContentHandler(result,
 					options, reader, this));
+
+		} else {
+			// do not throw an exception, just log a message - the schema could
+			// have been extended
+			result.addDebug(null, 30801, "TaggedValuesContentHandler",
+					localName);
 		}
 	}
 
@@ -123,6 +129,12 @@ public class TaggedValuesContentHandler extends AbstractContentHandler {
 
 			// Switch handler back to parent
 			reader.setContentHandler(parent);
+
+		} else {
+			// do not throw an exception, just log a message - the schema could
+			// have been extended
+			result.addDebug(null, 30801, "TaggedValuesContentHandler",
+					localName);
 		}
 	}
 }

@@ -91,11 +91,11 @@
               </appinfo>
             </annotation>
             <complexType>
-              <simpleContent>
+              <complexContent>
                 <extension base="gml:ReferenceType">
-                  <attribute name="q" type="test:Enumeration"/>
+                  <attribute name="q" type="test:EnumerationType"/>
                 </extension>
-              </simpleContent>
+              </complexContent>
             </complexType>
           </element>
         </sequence>

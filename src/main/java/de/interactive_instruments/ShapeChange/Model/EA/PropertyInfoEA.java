@@ -47,6 +47,7 @@ import org.sparx.RoleTag;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -59,7 +60,6 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
@@ -136,7 +136,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** Cache for uniqueness in property */
 	protected Boolean isUniqueCache = null;
-	
+
 	/** Cache for isOwned in property */
 	protected Boolean isOwnedCache = null;
 
@@ -554,6 +554,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isNavigable()
 	 */
 	public boolean isNavigable() {
+
 		if (isNavigableCache == null) {
 			isNavigableCache = Boolean.valueOf(true);
 			// Attributes always are.
@@ -567,23 +568,37 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				// AssociationEnds with not-known stereotypes are skipped
 				if (nav) {
-					String sn = eaConnectorEnd.GetStereotype();
-					if (sn != null)
-						sn = options().normalizeStereotype(sn);
-					if (sn != null && sn.length() > 0) {
-						boolean found = false;
-						for (String st : Options.propertyStereotypes) {
-							if (sn.equals(st)) {
+					String sts = eaConnectorEnd.GetStereotypeEx();
+					if (sts != null) {
+
+						String[] stereotypes = sts.split("\\,");
+
+						for (String stereotype : stereotypes) {
+
+							String st = options()
+									.normalizeStereotype(stereotype.trim());
+							boolean found = false;
+
+							if (st.length() == 0) {
 								found = true;
-								break;
+							} else {
+								for (String s : Options.propertyStereotypes) {
+									if (st.toLowerCase().equals(s)) {
+										found = true;
+										break;
+									}
+								}
 							}
-						}
-						if (!found) {
-							MessageContext mc = document.result.addWarning(null,
-									1005, sn, "AssociationEnd");
-							if (mc != null)
-								mc.addDetail(null, 400, "Property", fullName());
-							nav = false;
+
+							if (!found) {
+								MessageContext mc = document.result.addWarning(
+										null, 1005, stereotype,
+										"AssociationEnd");
+								if (mc != null)
+									mc.addDetail(null, 400, "Property",
+											fullName());
+								nav = false;
+							}
 						}
 					}
 				}
@@ -652,29 +667,18 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		}
 		return isUniqueCache;
 	} // isUnique()
-	
+
 	@Override
 	public boolean isOwned() {
-		if(isOwnedCache == null) {
+		if (isOwnedCache == null) {
 			isOwnedCache = Boolean.FALSE;
-			if (!isAttribute()) {				
+			if (!isAttribute()) {
 				// Inquire from ConnectorEnd
 				isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
 			}
 		}
 		return isOwnedCache;
 	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#reverseProperty()
-	 */
-	public PropertyInfo reverseProperty() {
-		// Not applicable for attributes ...
-		if (isAttribute())
-			return null;
-		// Grab 'the other' property from the association ...
-		return associationInfo.properties[reversedAssoc ? 1 : 0];
-	} // reverseProperty()
 
 	// Return the sequence number of the property. */
 	public StructuredNumber sequenceNumber() {

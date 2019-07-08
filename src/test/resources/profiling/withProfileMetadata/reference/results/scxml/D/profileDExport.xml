@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -155,7 +155,6 @@
                           <sc:typeId>16497</sc:typeId>
                           <sc:typeName>T4_FeatureB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>T51477</sc:reversePropertyId>
                           <sc:associationId>51477</sc:associationId>
                         </sc:Property>
                       </sc:properties>
@@ -220,7 +219,6 @@
                           <sc:typeId>16496</sc:typeId>
                           <sc:typeName>T4_FeatureA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:reversePropertyId>S51477</sc:reversePropertyId>
                           <sc:associationId>51477</sc:associationId>
                         </sc:Property>
                       </sc:properties>

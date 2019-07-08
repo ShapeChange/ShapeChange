@@ -59,7 +59,7 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 			Arrays.asList(new String[] { "id", "name", "relPathToFile", "width",
 					"height" }));
 
-	private static final Set<String> DEPRECATED_IMAGE_METADATA_FIELDS = new HashSet<String>(
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "file" }));
 
 	private AbstractGenericInfoContentHandler parent;
@@ -82,7 +82,11 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (localName.equals("ImageMetadata")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("ImageMetadata")) {
 
 			// reset fields
 			this.id = null;
@@ -97,9 +101,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "DiagramsContentHandler", localName);
+			result.addDebug(null, 30800, "DiagramsContentHandler", localName);
 		}
 	}
 
@@ -115,7 +119,7 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 			this.name = sb.toString();
 
-		} else if (DEPRECATED_IMAGE_METADATA_FIELDS.contains(localName)) {
+		} else if (DEPRECATED_FIELDS.contains(localName)) {
 
 			// ignore
 
@@ -173,9 +177,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "DiagramsContentHandler", localName);
+			result.addDebug(null, 30801, "DiagramsContentHandler", localName);
 		}
 	}
 

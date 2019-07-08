@@ -413,7 +413,13 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				documentationAccessed = true;
 
 				String s = eaPackage.GetNotes();
-
+				
+//				String txt = document.repository.GetFormatFromField("TXT", s);
+//				String html = document.repository.GetFormatFromField("HTML", s);
+//				String rtf = document.repository.GetFormatFromField("RTF", s);
+//				
+//				s = txt;
+				
 				// Fix for EA7.5 bug
 				if (s != null) {
 					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);

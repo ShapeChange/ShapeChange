@@ -334,7 +334,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 				genPi.setCardinality(multC);
 				genPi.setInitialValue(pi.initialValue());
 				genPi.setInlineOrByReference(pi.inlineOrByReference());
-				genPi.setReverseProperty(pi.reverseProperty());
 				genPi.setInClass(pi.inClass());
 				StructuredNumber strucNum = pi.sequenceNumber();
 
@@ -502,9 +501,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		// update information in GenericPropertyInfo
 		for (GenericPropertyInfo gpi : genPropertiesById.values()) {
-
-			PropertyInfo reverseProperty = gpi.reverseProperty();
-			gpi.setReverseProperty(updatePropertyInfo(reverseProperty));
 
 			ClassInfo inClass = gpi.inClass();
 			gpi.setInClass(updateClassInfo(inClass));
@@ -1436,7 +1432,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					for (ConstraintContentHandler conHandler : clsHandler
 							.getConstraintContentHandlers()) {
 
-						updateConstraintContext(conHandler);
+						updateConstraintContext(conHandler, genCi);
 					}
 				}
 
@@ -1485,11 +1481,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 								.get(propHandler.getAssociationId()));
 					}
 
-					if (propHandler.getReversePropertyId() != null) {
-						genPi.setReverseProperty(this.genPropertiesById
-								.get(propHandler.getReversePropertyId()));
-					}
-
 					/*
 					 * set inClass if the information is provided by the handler
 					 * - typically only for non-navigable association roles
@@ -1502,7 +1493,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 					for (ConstraintContentHandler conHandler : propHandler
 							.getConstraintContentHandlers()) {
 
-						updateConstraintContext(conHandler);
+						updateConstraintContext(conHandler, genPi);
 					}
 				}
 
@@ -1548,29 +1539,29 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		}
 	}
 
-	private void updateConstraintContext(ConstraintContentHandler conHandler) {
+	private void updateConstraintContext(ConstraintContentHandler conHandler,
+			Info contextModelElement) {
 
 		Constraint con = conHandler.getConstraint();
 
-		Info contextModelElement;
-		if (con.contextModelElmtType() == ModelElmtContextType.ATTRIBUTE) {
-			contextModelElement = this.genPropertiesById
-					.get(conHandler.getContextModelElementId());
-		} else {
-			contextModelElement = this.genClassInfosById
-					.get(conHandler.getContextModelElementId());
+		ModelElmtContextType contextModelElementType = ModelElmtContextType.CLASS;
+		if (contextModelElement instanceof PropertyInfo) {
+			contextModelElementType = ModelElmtContextType.ATTRIBUTE;
 		}
 
 		if (con instanceof GenericFolConstraint) {
-			((GenericFolConstraint) con)
-					.setContextModelElmt(contextModelElement);
+			GenericFolConstraint genCon = (GenericFolConstraint) con;
+			genCon.setContextModelElmt(contextModelElement);
+			genCon.setContextModelElmtType(contextModelElementType);
 		} else if (con instanceof GenericOclConstraint) {
-			((GenericOclConstraint) con)
-					.setContextModelElmt(contextModelElement);
+			GenericOclConstraint genCon = (GenericOclConstraint) con;
+			genCon.setContextModelElmt(contextModelElement);
+			genCon.setContextModelElmtType(contextModelElementType);
 		} else {
 			// assume GenericTextConstraint
-			((GenericTextConstraint) con)
-					.setContextModelElmt(contextModelElement);
+			GenericTextConstraint genCon = (GenericTextConstraint) con;
+			genCon.setContextModelElmt(contextModelElement);
+			genCon.setContextModelElmtType(contextModelElementType);
 		}
 	}
 
@@ -2612,7 +2603,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		copy.setCardinality(new Multiplicity(pi.cardinality().toString()));
 		copy.setInitialValue(pi.initialValue());
 		copy.setInlineOrByReference(pi.inlineOrByReference());
-		copy.setReverseProperty(pi.reverseProperty());
 		copy.setInClass(pi.inClass());
 
 		StringBuffer sb = new StringBuffer();
@@ -2728,7 +2718,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			} else {
 
 				// turn this property into an attribute one
-				genPi.setReverseProperty(null);
 				genPi.setAssociation(null);
 
 				genPi.setAttribute(true);

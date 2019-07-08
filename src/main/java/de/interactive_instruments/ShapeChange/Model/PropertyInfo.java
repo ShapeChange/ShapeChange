@@ -206,6 +206,12 @@ public interface PropertyInfo extends Info {
 	public boolean voidable();
 
 	/**
+	 * @return <code>true</code> if the property owns the (normalized)
+	 *         stereotype 'propertymetadata', else <code>false</code>
+	 */
+	public boolean propertyMetadata();
+
+	/**
 	 * This method returns the constraints associated with the property.
 	 * 
 	 * @return the constraints associated with the property; can be empty but

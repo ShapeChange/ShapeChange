@@ -1920,9 +1920,9 @@ public class XsdDocument implements MessageSource {
 		return pi.isNavigable() && !pi.isRestriction()
 				&& (!pi.matches("rule-xsd-prop-exclude-derived")
 						|| !pi.isDerived())
-				&& !(pi.matches("rule-xsd-all-notEncoded")
-						&& pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
-						&& (pme == null || pme.hasTargetElement());
+				&& !(pi.matches("rule-xsd-all-notEncoded") && pi
+						.encodingRule("xsd").equalsIgnoreCase("notencoded"))
+				&& (pme == null || pme.hasTargetElement());
 	}
 
 	/**
@@ -2029,7 +2029,8 @@ public class XsdDocument implements MessageSource {
 	 * @param schDoc
 	 * @return
 	 */
-	protected Element addProperty(ClassInfo cibase, PropertyInfo pi, Multiplicity m, SchematronSchema schDoc) {
+	protected Element addProperty(ClassInfo cibase, PropertyInfo pi,
+			Multiplicity m, SchematronSchema schDoc) {
 
 		Element e1;
 
@@ -2534,7 +2535,7 @@ public class XsdDocument implements MessageSource {
 				ClassInfo ci = model.classByName(q.type);
 				if (ci != null) {
 					if (ci.category() == Options.ENUMERATION) {
-						addAttribute(e1, "type", ci.qname());
+						addAttribute(e1, "type", ci.qname()+"Type");
 						addImport(ci.qname());
 					} else if (ci.category() == Options.CODELIST
 							|| ci.category() == Options.FEATURE
@@ -2586,6 +2587,7 @@ public class XsdDocument implements MessageSource {
 	 */
 	protected boolean mapPropertyType(ClassInfo cibase, PropertyInfo propi,
 			Element e, boolean inAssocClass, SchematronSchema schDoc) {
+
 		String pName = cibase.name() + "." + propi.name();
 		boolean isAttribute = e.getLocalName().equals("attribute");
 		Element e1 = null;
@@ -2598,6 +2600,12 @@ public class XsdDocument implements MessageSource {
 		MapEntry me = options.typeMapEntry(ti.name, cibase.encodingRule("xsd"));
 
 		boolean multiplicityAlreadySet = false;
+
+		boolean addMetadata = false;
+		if (propi.propertyMetadata()
+				&& propi.matches("rule-xsd-prop-metadata")) {
+			addMetadata = true;
+		}
 
 		/*
 		 * Generate code list checks for properties where the property type is
@@ -2663,6 +2671,9 @@ public class XsdDocument implements MessageSource {
 							e1.appendChild(e2);
 							addNilReason(e2);
 						}
+						if (addMetadata) {
+							addMetadata(e1);
+						}
 						if (softtyped) {
 							Element e2 = document.createElementNS(
 									Options.W3C_XML_SCHEMA, "attribute");
@@ -2716,7 +2727,8 @@ public class XsdDocument implements MessageSource {
 				if (isAttribute) {
 					boolean simpleType = me.p2 != null
 							&& me.p2.equals("simple/simple");
-					if (!simpleType || addNilReason || softtyped) {
+					if (!simpleType || addNilReason || addMetadata
+							|| softtyped) {
 						MessageContext mc = result.addError(null, 128, pName);
 						if (mc != null)
 							mc.addDetail(null, 400, "Property",
@@ -2728,6 +2740,7 @@ public class XsdDocument implements MessageSource {
 							return false;
 
 						addNilReason = false;
+						addMetadata = false;
 						softtyped = false;
 					}
 				}
@@ -2765,11 +2778,11 @@ public class XsdDocument implements MessageSource {
 
 				// FIXME 2014-01-21 JE: does this correctly take into account
 				// the inlineOrByReference setting?
-				if (!addNilReason && !softtyped && !asArray && !asList
-						&& !withQualifiers) {
+				if (!addNilReason && !addMetadata && !softtyped && !asArray
+						&& !asList && !withQualifiers) {
 					/*
-					 * We have a property type and no need to add a nilReason or
-					 * name attribute: simply add the type name
+					 * We have a property type and no need to add a nilReason,
+					 * metadata, or name attribute: simply add the type name
 					 */
 					addAttribute(e, "type", propertyTypeName);
 					return false;
@@ -2866,6 +2879,9 @@ public class XsdDocument implements MessageSource {
 								Options.W3C_XML_SCHEMA, "attribute");
 						e3.appendChild(e2);
 						addNilReason(e2);
+					}
+					if (addMetadata) {
+						addMetadata(e3);
 					}
 					if (softtyped) {
 						Element e2 = document.createElementNS(
@@ -2990,7 +3006,21 @@ public class XsdDocument implements MessageSource {
 				&& "true".equalsIgnoreCase(
 						ci.taggedValue("representsFeatureTypeSet"))) {
 
-			addAttribute(e, "type", "gml:ReferenceType");
+			if (addMetadata) {
+				Element e1x = document.createElementNS(Options.W3C_XML_SCHEMA,
+						"complexType");
+				e.appendChild(e1x);
+				Element e4x = document.createElementNS(Options.W3C_XML_SCHEMA,
+						"complexContent");
+				e1x.appendChild(e4x);
+				Element e3x = document.createElementNS(Options.W3C_XML_SCHEMA,
+						"extension");
+				e4x.appendChild(e3x);
+				addAttribute(e3x, "base", "gml:ReferenceType");
+				addMetadata(e3x);
+			} else {
+				addAttribute(e, "type", "gml:ReferenceType");
+			}
 			addImport("gml", options.fullNamespace("gml"));
 
 			if (propi.matches("rule-xsd-prop-targetElement") && options.GML_NS
@@ -3061,7 +3091,25 @@ public class XsdDocument implements MessageSource {
 
 			} else if (ci
 					.matches("rule-xsd-cls-standard-19139-property-types")) {
-				addAttribute(e, "type", propertyTypeName(ci, true));
+
+				String type = propertyTypeName(ci, true);
+
+				if (addMetadata) {
+					Element e1x = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "complexType");
+					e.appendChild(e1x);
+					Element e4x = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "complexContent");
+					e1x.appendChild(e4x);
+					Element e3x = document.createElementNS(
+							Options.W3C_XML_SCHEMA, "extension");
+					e4x.appendChild(e3x);
+					addAttribute(e3x, "base", type);
+					addMetadata(e3x);
+				} else {
+					addAttribute(e, "type", type);
+				}
+
 				addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
 				if (ci.category() == Options.CODELIST) {
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
@@ -3130,6 +3178,11 @@ public class XsdDocument implements MessageSource {
 					embedPropertyType = embedPropertyType
 							|| qualifiers(propi) != null;
 
+					/*
+					 * 6. the property has metadata
+					 */
+					embedPropertyType = embedPropertyType || addMetadata;
+
 					if (!embedPropertyType) {
 						if (classHasIdentity(ci))
 							addAttribute(e, "type",
@@ -3195,6 +3248,11 @@ public class XsdDocument implements MessageSource {
 					 */
 					embedPropertyType = embedPropertyType
 							|| qualifiers(propi) != null;
+
+					/*
+					 * 7. the property has metadata
+					 */
+					embedPropertyType = embedPropertyType || addMetadata;
 
 					if (!embedPropertyType)
 						addAttribute(e, "type", propertyTypeName(ci, true));
@@ -3265,7 +3323,21 @@ public class XsdDocument implements MessageSource {
 					 * The GML 3.3 encoding rule applies to the property.
 					 */
 
-					addAttribute(e, "type", "gml:ReferenceType");
+					if (addMetadata) {
+						Element e1x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "complexType");
+						e.appendChild(e1x);
+						Element e4x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "complexContent");
+						e1x.appendChild(e4x);
+						Element e3x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "extension");
+						e4x.appendChild(e3x);
+						addAttribute(e3x, "base", "gml:ReferenceType");
+						addMetadata(e3x);
+					} else {
+						addAttribute(e, "type", "gml:ReferenceType");
+					}
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
 
 				} else if (propi.inClass()
@@ -3275,7 +3347,21 @@ public class XsdDocument implements MessageSource {
 					 * SWE Common encoding applies to the property.
 					 */
 
-					addAttribute(e, "type", "swe:ReferenceType");
+					if (addMetadata) {
+						Element e1x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "complexType");
+						e.appendChild(e1x);
+						Element e4x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "complexContent");
+						e1x.appendChild(e4x);
+						Element e3x = document.createElementNS(
+								Options.W3C_XML_SCHEMA, "extension");
+						e4x.appendChild(e3x);
+						addAttribute(e3x, "base", "swe:ReferenceType");
+						addMetadata(e3x);
+					} else {
+						addAttribute(e, "type", "swe:ReferenceType");
+					}
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
 
 				} else {
@@ -3286,8 +3372,10 @@ public class XsdDocument implements MessageSource {
 					 * gml:CodeType as type.
 					 */
 
-					if (!propi.nilReasonAllowed() && !(propi.voidable()
-							&& propi.matches("rule-xsd-prop-nillable"))) {
+					if (!propi.nilReasonAllowed()
+							&& !(propi.voidable()
+									&& propi.matches("rule-xsd-prop-nillable"))
+							&& !addMetadata) {
 						addAttribute(e, "type", "gml:CodeType");
 					} else {
 						e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
@@ -3300,10 +3388,18 @@ public class XsdDocument implements MessageSource {
 								Options.W3C_XML_SCHEMA, "extension");
 						e4.appendChild(e3);
 						addAttribute(e3, "base", "gml:CodeType");
-						Element e2 = document.createElementNS(
-								Options.W3C_XML_SCHEMA, "attribute");
-						e3.appendChild(e2);
-						addNilReason(e2);
+
+						if (propi.nilReasonAllowed() || (propi.voidable()
+								&& propi.matches("rule-xsd-prop-nillable"))) {
+							Element e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "attribute");
+							e3.appendChild(e2);
+							addNilReason(e2);
+						}
+
+						if (addMetadata) {
+							addMetadata(e3);
+						}
 					}
 
 					addAssertionForCodelistUri(cibase, propi, ci, schDoc);
@@ -3334,11 +3430,14 @@ public class XsdDocument implements MessageSource {
 						mc.addDetail(null, 400, "Class", ci.fullName());
 				} else {
 
-					if (!propi.nilReasonAllowed() && !(propi.voidable()
-							&& propi.matches("rule-xsd-prop-nillable"))) {
+					if (!propi.nilReasonAllowed()
+							&& !(propi.voidable()
+									&& propi.matches("rule-xsd-prop-nillable"))
+							&& !addMetadata) {
 						addAttribute(e, "type",
 								options.internalize(ci.qname() + "Type"));
 					} else {
+
 						e1 = document.createElementNS(Options.W3C_XML_SCHEMA,
 								"complexType");
 						e.appendChild(e1);
@@ -3350,10 +3449,18 @@ public class XsdDocument implements MessageSource {
 						e4.appendChild(e3);
 						addAttribute(e3, "base",
 								options.internalize(ci.qname() + "Type"));
-						Element e2 = document.createElementNS(
-								Options.W3C_XML_SCHEMA, "attribute");
-						e3.appendChild(e2);
-						addNilReason(e2);
+
+						if (propi.nilReasonAllowed() || (propi.voidable()
+								&& propi.matches("rule-xsd-prop-nillable"))) {
+							Element e2 = document.createElementNS(
+									Options.W3C_XML_SCHEMA, "attribute");
+							e3.appendChild(e2);
+							addNilReason(e2);
+						}
+
+						if (addMetadata) {
+							addMetadata(e3);
+						}
 					}
 
 					addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
@@ -4151,6 +4258,12 @@ public class XsdDocument implements MessageSource {
 			return false;
 		}
 
+		boolean addMetadata = false;
+		if (propi.propertyMetadata()
+				&& propi.matches("rule-xsd-prop-metadata")) {
+			addMetadata = true;
+		}
+
 		// First address cases where no property type is necessary or only a
 		// very simple one
 
@@ -4189,6 +4302,7 @@ public class XsdDocument implements MessageSource {
 			if (options.GML_NS.equals("http://www.opengis.net/gml")) {
 
 				boolean addNilReason = false;
+
 				if (propi.nilReasonAllowed() || (propi.voidable())
 						&& propi.matches("rule-xsd-prop-nillable")) {
 					addNilReason = true;
@@ -4213,12 +4327,16 @@ public class XsdDocument implements MessageSource {
 						addAttribute(e5, "type", "gml:NullType");
 						e1.appendChild(e5);
 					}
-				} else if (qualifiers(propi) != null || addNilReason) {
+					if (addMetadata) {
+						addMetadata(e1);
+					}
+				} else if (qualifiers(propi) != null || addNilReason
+						|| addMetadata) {
 					Element e1 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "complexType");
 					e.appendChild(e1);
 					Element e4 = document.createElementNS(
-							Options.W3C_XML_SCHEMA, "simpleContent");
+							Options.W3C_XML_SCHEMA, "complexContent");
 					e1.appendChild(e4);
 					Element e3 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "extension");
@@ -4238,6 +4356,9 @@ public class XsdDocument implements MessageSource {
 						addAttribute(e5, "type", "gml:NullType");
 						e3.appendChild(e5);
 					}
+					if (addMetadata) {
+						addMetadata(e3);
+					}
 				} else {
 					addAttribute(e, "type", "gml:ReferenceType");
 				}
@@ -4251,12 +4372,12 @@ public class XsdDocument implements MessageSource {
 					// nothing to do, special type construction necessary
 				} else if (propi.isAggregation() || propi.isComposition()) {
 					// nothing to do, special type construction necessary
-				} else if (qualifiers(propi) != null) {
+				} else if (qualifiers(propi) != null || addMetadata) {
 					Element e1 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "complexType");
 					e.appendChild(e1);
 					Element e4 = document.createElementNS(
-							Options.W3C_XML_SCHEMA, "simpleContent");
+							Options.W3C_XML_SCHEMA, "complexContent");
 					e1.appendChild(e4);
 					Element e3 = document.createElementNS(
 							Options.W3C_XML_SCHEMA, "extension");
@@ -4267,6 +4388,9 @@ public class XsdDocument implements MessageSource {
 						addAttribute(e, "minOccurs", "0");
 						addAttribute(e, "maxOccurs", "unbounded");
 						multiplicityAlreadySet = true;
+					}
+					if (addMetadata) {
+						addMetadata(e3);
 					}
 					return multiplicityAlreadySet;
 				} else {
@@ -4421,6 +4545,10 @@ public class XsdDocument implements MessageSource {
 			multiplicityAlreadySet = true;
 		}
 
+		if (addMetadata) {
+			addMetadata(typeOrExtension);
+		}
+
 		if (cibase.matches("rule-xsd-cls-no-gml-types")) {
 			addImport("xlink", options.fullNamespace("xlink"));
 		} else if (cibase.matches("rule-xsd-cls-standard-swe-property-types")) {
@@ -4429,6 +4557,14 @@ public class XsdDocument implements MessageSource {
 			addImport("gml", options.fullNamespace("gml"));
 		}
 		return multiplicityAlreadySet;
+	}
+
+	private void addMetadata(Element e) {
+		Element m = document.createElementNS(Options.W3C_XML_SCHEMA,
+				"attribute");
+		e.appendChild(m);
+		addAttribute(m, "name", "metadata");
+		addAttribute(m, "type", "anyURI");
 	}
 
 	/** Strip quotes. */

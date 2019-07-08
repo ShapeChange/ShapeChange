@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -47,8 +48,8 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericModelContentHandler extends AbstractContentHandler {
@@ -81,10 +82,24 @@ public class GenericModelContentHandler extends AbstractContentHandler {
 		} else if (localName.equals("Model")) {
 
 			if (atts != null) {
+
 				String encoding_ = atts.getValue("encoding");
 				if (encoding_ != null) {
 					this.encoding = encoding_;
 				}
+
+				String scxmlProducer = atts.getValue("scxmlProducer");
+				if (StringUtils.isBlank(scxmlProducer)) {
+					scxmlProducer = "<not set>";
+				}
+				String scxmlProducerVersion = atts
+						.getValue("scxmlProducerVersion");
+				if (StringUtils.isBlank(scxmlProducerVersion)) {
+					scxmlProducerVersion = "<not set>";
+				}
+				result.addDebug(null, 30804, scxmlProducer,
+						scxmlProducerVersion);
+
 			}
 
 		} else if (localName.equals("packages")) {
@@ -111,9 +126,9 @@ public class GenericModelContentHandler extends AbstractContentHandler {
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericModelContentHandler",
+			result.addDebug(null, 30800, "GenericModelContentHandler",
 					localName);
 		}
 	}

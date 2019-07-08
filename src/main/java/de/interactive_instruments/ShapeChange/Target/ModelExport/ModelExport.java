@@ -35,11 +35,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
@@ -53,19 +55,18 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
-import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.Constraint.ModelElmtContextType;
-import de.interactive_instruments.ShapeChange.Model.LangString;
+import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
@@ -75,8 +76,8 @@ import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
-import de.interactive_instruments.ShapeChange.Profile.ProfileUtil;
 import de.interactive_instruments.ShapeChange.Profile.ProfileIdentifier;
+import de.interactive_instruments.ShapeChange.Profile.ProfileUtil;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Profile.VersionRange;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
@@ -370,6 +371,24 @@ public class ModelExport implements SingleTarget, MessageSource {
 					NS + " " + schemaLocation);
 			atts.addAttribute("", "encoding", "", "string",
 					model.characterEncoding());
+
+			String scversion = "[dev]";
+			String scunittesting = System.getProperty("sc.unittesting");
+			if ("true".equalsIgnoreCase(scunittesting)) {
+				scversion = "unittest";
+			} else {
+				InputStream stream = getClass()
+						.getResourceAsStream("/sc.properties");
+				if (stream != null) {
+					Properties properties = new Properties();
+					properties.load(stream);
+					scversion = properties.getProperty("sc.version");
+				}
+			}
+			atts.addAttribute("", "scxmlProducer", "", "string", "ShapeChange");
+			atts.addAttribute("", "scxmlProducerVersion", "", "string",
+					scversion);
+
 			writer.startElement(NS, "Model", "", atts);
 
 			SortedSet<PackageInfo> packagesToPrint = new TreeSet<PackageInfo>();
@@ -599,9 +618,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 		if (ci.isAssocClass() != null) {
 			printDataElement("associationId", ci.isAssocClass().id());
 		}
-		if (ci.baseClass() != null) {
-			printDataElement("baseClassId", ci.baseClass().id());
-		}
 		if (ci.getLinkedDocument() != null) {
 			File linkedDoc = ci.getLinkedDocument();
 			File linkedDocsDir = options.linkedDocumentsTmpDir();
@@ -795,19 +811,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 				printDataElement("status", con.status());
 				printDataElement("text", con.text());
 
-				String contextModelElmtId;
-				String contextModelElmtType;
-				if (con.contextModelElmtType() == ModelElmtContextType.ATTRIBUTE) {
-					contextModelElmtType = "ATTRIBUTE";
-					contextModelElmtId = con.contextModelElmt().id();
-				} else {
-					contextModelElmtType = "CLASS";
-					contextModelElmtId = con.contextModelElmt().id();
-				}
-				printDataElement("contextModelElementId", contextModelElmtId);
-				printDataElement("contextModelElementType",
-						contextModelElmtType, "CLASS");
-
 				printDataElement("type", type);
 				printDataElement("sourceType", sourceType);
 				if (includeConstraintDescriptions) {
@@ -910,10 +913,6 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 		if (printInClass && pi.inClass() != null) {
 			printDataElement("inClassId", pi.inClass().id());
-		}
-
-		if (pi.reverseProperty() != null) {
-			printDataElement("reversePropertyId", pi.reverseProperty().id());
 		}
 
 		if (pi.association() != null) {

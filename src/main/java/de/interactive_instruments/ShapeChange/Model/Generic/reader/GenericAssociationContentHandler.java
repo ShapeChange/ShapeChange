@@ -131,9 +131,9 @@ public class GenericAssociationContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericAssociationContentHandler",
+			result.addDebug(null, 30800, "GenericAssociationContentHandler",
 					localName);
 		}
 	}
@@ -149,11 +149,6 @@ public class GenericAssociationContentHandler
 		} else if (localName.equals("id")) {
 
 			this.genAi.setId(sb.toString());
-
-			// String id = sb.toString();
-			// // strip "_A" prefix added by ModelExport
-			// id = id.substring(2);
-			// this.genAi.setId(id);
 
 		} else if (localName.equals("stereotypes")) {
 
@@ -210,34 +205,6 @@ public class GenericAssociationContentHandler
 			}
 			this.genAi.setDescriptors(desc);
 
-			// for (Entry<Descriptor, Descriptors> entry : descriptors
-			// .getDescriptors().entrySet()) {
-			//
-			// if(entry.getKey() == Descriptor.ALIAS) {
-			// this.genAi.setAliasNameAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.PRIMARYCODE) {
-			// this.genAi.setPrimaryCodeAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
-			// this.genAi.setGlobalIdentifierAll(entry.getValue());
-			// }
-			//// else if(entry.getKey() == Descriptor.DOCUMENTATION) {
-			//// this.genAi.setDocumentationAll(entry.getValue());
-			//// }
-			// else if(entry.getKey() == Descriptor.DEFINITION) {
-			// this.genAi.setDefinitionAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.DESCRIPTION) {
-			// this.genAi.setDescriptionAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.LEGALBASIS) {
-			// this.genAi.setLegalBasisAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.LANGUAGE) {
-			// this.genAi.setLanguageAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.EXAMPLE) {
-			// this.genAi.setExamplesAll(entry.getValue());
-			// } else if(entry.getKey() == Descriptor.DATACAPTURESTATEMENT) {
-			// this.genAi.setDataCaptureStatementsAll(entry.getValue());
-			// }
-			// }
-
 			// let parent know that we reached the end of the Association entry
 			// (so that for example depth can properly be tracked)
 			parent.endElement(uri, localName, qName);
@@ -246,9 +213,9 @@ public class GenericAssociationContentHandler
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericAssociationContentHandler",
+			result.addDebug(null, 30801, "GenericAssociationContentHandler",
 					localName);
 		}
 	}
