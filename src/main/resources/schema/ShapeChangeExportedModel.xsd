@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xmlns:saxon="http://saxon.sf.net/" xmlns:xerces="http://xerces.apache.org">
  <defaultOpenContent mode="interleave">
   <annotation>
    <documentation>This schema supports open content. For an element that is defined by this schema and that has complex content, an instance of this element may contain further elements that are not explicitly defined as content of the element - even if the additional elements have the same namespace as the target namespace of this schema - except for global elements declared by this schema. NOTE: Deprecated elements that have been removed from the SCXML schema will thus be allowed in instance data.</documentation>
@@ -485,6 +485,13 @@
     </complexType>
    </element>
   </all>
+  <assert test="
+    every $property in sc:properties/sc:Property
+     satisfies (not(exists($property/sc:isNavigable)) or $property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="All properties of a class shall be navigable." xerces:message="All properties of a class shall be navigable.">
+   <annotation>
+    <documentation>All properties of a class shall be navigable.</documentation>
+   </annotation>
+  </assert>
  </complexType>
  <element name="Property" type="sc:PropertyType">
   <annotation>
@@ -516,10 +523,15 @@
      </all>
     </complexType>
    </element>
-   <element name="cardinality" type="string" default="1" minOccurs="0">
+   <element name="cardinality" default="1" minOccurs="0">
     <annotation>
      <documentation>The multiplicity of the property as a string, in typical UML notation. Examples: 0..1, 1..4, 1..*, *.</documentation>
     </annotation>
+    <simpleType>
+     <restriction base="string">
+      <pattern value="[1-9]\d*|\*|((0|[1-9]\d*)\.\.([1-9]\d*|\*))"/>
+     </restriction>
+    </simpleType>
    </element>
    <element default="true" minOccurs="0" name="isNavigable" type="boolean">
     <annotation>
@@ -646,6 +658,36 @@
     </complexType>
    </element>
   </all>
+  <assert test="not(exists(sc:initialValue)) or (not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true'))" saxon:message="An initial value can only be defined for an attribute." xerces:message="An initial value can only be defined for an attribute.">
+   <annotation>
+    <documentation>An initial value can only be defined for an attribute.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true')) or (not(exists(sc:isNavigable)) or sc:isNavigable/text() = ('1', 'true'))" saxon:message="If a property is an attribute, then it shall be navigable." xerces:message="If a property is an attribute, then it shall be navigable.">
+   <annotation>
+    <documentation>If a property is an attribute, then it shall be navigable.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:qualifiers)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="Qualifiers can only be defined for an association role." xerces:message="Qualifiers can only be defined for an association role.">
+   <annotation>
+    <documentation>Qualifiers can only be defined for an association role.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:inClassId)) or (sc:isAttribute/text() = ('0', 'false') and sc:isNavigable/text() = ('0', 'false'))" saxon:message="sc:inClassId shall only be defined for non-navigable association roles." xerces:message="sc:inClassId shall only be defined for non-navigable association roles.">
+   <annotation>
+    <documentation>sc:inClassId shall only be defined for non-navigable association roles.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(sc:isAttribute/text() = ('0', 'false') and sc:isNavigable/text() = ('0', 'false')) or (exists(sc:inClassId))" saxon:message="sc:inClassId shall be defined for non-navigable association roles." xerces:message="sc:inClassId shall be defined for non-navigable association roles.">
+   <annotation>
+    <documentation>sc:inClassId shall be defined for non-navigable association roles.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:associationId)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="sc:associationId shall only be used on association roles." xerces:message="sc:associationId shall only be used on association roles.">
+   <annotation>
+    <documentation>sc:associationId shall only be used on association roles.</documentation>
+   </annotation>
+  </assert>
  </complexType>
  <element name="Association" type="sc:AssociationType">
   <annotation>
@@ -683,6 +725,26 @@
     </annotation>
    </element>
   </all>
+  <assert test="(exists(sc:end1/@ref) and not(exists(sc:end1/sc:Property))) or (exists(sc:end1/sc:Property) and not(exists(sc:end1/@ref)))" saxon:message="For association end1, either @ref or sc:Property shall be present." xerces:message="For association end1, either @ref or sc:Property shall be present.">
+   <annotation>
+    <documentation>For association end1, either @ref or sc:Property shall be present.</documentation>
+   </annotation>
+  </assert>
+  <assert test="(exists(sc:end2/@ref) and not(exists(sc:end2/sc:Property))) or (exists(sc:end2/sc:Property) and not(exists(sc:end2/@ref)))" saxon:message="For association end2, either @ref or sc:Property shall be present." xerces:message="For association end2, either @ref or sc:Property shall be present.">
+   <annotation>
+    <documentation>For association end2, either @ref or sc:Property shall be present.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:end1/sc:Property)) or sc:end1/sc:Property/sc:isNavigable/text() = ('0', 'false')" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.">
+   <annotation>
+    <documentation>An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:end2/sc:Property)) or sc:end2/sc:Property/sc:isNavigable/text() = ('0', 'false')" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.">
+   <annotation>
+    <documentation>An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.</documentation>
+   </annotation>
+  </assert>
  </complexType>
  <complexType name="AssociationRoleType">
   <annotation>
@@ -886,6 +948,14 @@
      </annotation>
     </element>
    </all>
+   <assert test="
+     count(distinct-values(for $st in sc:Stereotype
+     return
+      lower-case($st))) eq count(sc:Stereotype)" saxon:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case)." xerces:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case).">
+    <annotation>
+     <documentation>Within a collection of stereotypes, all stereotype names shall be unique (ignoring case).</documentation>
+    </annotation>
+   </assert>
   </complexType>
  </element>
  <element name="taggedValues">
@@ -924,5 +994,12 @@
     </element>
    </all>
   </complexType>
+  <unique name="uniqueTagNames">
+   <annotation>
+    <documentation>Within a collection of tagged values, each tagged value shall have a unique name.</documentation>
+   </annotation>
+   <selector xpath="sc:TaggedValue"/>
+   <field xpath="sc:name"/>
+  </unique>
  </element>
 </schema>
