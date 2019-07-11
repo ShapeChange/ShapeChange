@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2019 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,34 +31,47 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot> de)
  *
  */
-public interface StatementVisitor {
-
-	public void visit(Insert insert);
-
-	public void visit(CreateTable createTable);
-
-	public void visit(CreateIndex createIndex);
-
-	public void visit(Alter alter);
-
-	public void visit(Comment comment);
-
-	public void visit(List<Statement> stmts);
-
-	public void visit(Select select);
-
-	public void visit(SQLitePragma sqLitePragma);
+public class SQLitePragma implements Statement {
+	
+	protected String name;
+	protected String value;
 
 	/**
-	 * Signals the visitor that all statements have been visited, so that any
-	 * necessary postprocessing can be performed.
+	 * @param name
+	 * @param value may be <code>null</code>
 	 */
-	public void postprocess();
+	public SQLitePragma(String name, String value) {
+		super();
+		this.name = name;
+		this.value = value;
+	}
+
+	@Override
+	public void accept(StatementVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	public boolean hasValue() {
+		return StringUtils.isNotBlank(this.value);
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
 }

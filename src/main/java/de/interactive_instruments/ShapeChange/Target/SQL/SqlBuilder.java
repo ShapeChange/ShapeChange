@@ -75,6 +75,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
@@ -105,14 +106,15 @@ public class SqlBuilder implements MessageSource {
 
 	private List<Table> tables = new ArrayList<Table>();
 
-	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
-	private List<Alter> foreignKeyConstraints = new ArrayList<Alter>();
-	private List<Alter> checkConstraints = new ArrayList<Alter>();
-	private List<Alter> uniqueConstraints = new ArrayList<Alter>();
-	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<Statement>();
-	private List<Statement> geometryIndexStatements = new ArrayList<Statement>();
-	private List<Insert> insertStatements = new ArrayList<Insert>();
-	private List<Comment> commentStatements = new ArrayList<Comment>();
+	private List<SQLitePragma> sqLitePragmas = new ArrayList<>();
+	private List<CreateTable> createTableStatements = new ArrayList<>();
+	private List<Alter> foreignKeyConstraints = new ArrayList<>();
+	private List<Alter> checkConstraints = new ArrayList<>();
+	private List<Alter> uniqueConstraints = new ArrayList<>();
+	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<>();
+	private List<Statement> geometryIndexStatements = new ArrayList<>();
+	private List<Insert> insertStatements = new ArrayList<>();
+	private List<Comment> commentStatements = new ArrayList<>();
 
 	private SqlNamingScheme namingScheme;
 	private SqlDdl sqlddl;
@@ -165,7 +167,7 @@ public class SqlBuilder implements MessageSource {
 
 		/*
 		 * Add field to reference pi.inClass
-		 *
+		 * 
 		 * NOTE: the primary key for the table will be defined later
 		 */
 		String classReferenceFieldName = pi.inClass().name()
@@ -259,7 +261,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 *
+	 * 
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci) {
@@ -269,7 +271,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 *
+	 * 
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci, String tableName) {
@@ -277,7 +279,7 @@ public class SqlBuilder implements MessageSource {
 		/*
 		 * Identify all properties that will be converted to columns. Create
 		 * associative tables as necessary.
-		 *
+		 * 
 		 * NOTE: The order of the properties is defined by their sequence
 		 * numbers (which is automatically provided by a TreeMap).
 		 */
@@ -571,7 +573,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given table, with the documentation
 	 * of the table. If the documentation is empty then no comment statement
 	 * will be created.
-	 *
+	 * 
 	 * @param table
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Table table) {
@@ -586,7 +588,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given column, with the documentation
 	 * of the column. If the documentation is empty then no comment statement
 	 * will be created.
-	 *
+	 * 
 	 * @param column
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Column column) {
@@ -1131,25 +1133,6 @@ public class SqlBuilder implements MessageSource {
 
 			this.checkConstraints.add(alter);
 		}
-	}
-
-	/**
-	 * @param pi
-	 * @return <code>true</code> if the value type of the given property is a
-	 *         geometry type - which requires a map entry for the value type
-	 *         whose param contains the {@value #ME_PARAM_GEOMETRY} parameter;
-	 *         otherwise <code>false</code> is returned.
-	 */
-	private boolean isGeometryTypedProperty(PropertyInfo pi) {
-
-		String valueTypeName = pi.typeInfo().name;
-		String piEncodingRule = pi.encodingRule("sql");
-
-		ProcessMapEntry pme = options.targetMapEntry(valueTypeName,
-				piEncodingRule);
-
-		return pme != null && SqlDdl.mapEntryParamInfos.hasParameter(
-				valueTypeName, piEncodingRule, SqlConstants.ME_PARAM_GEOMETRY);
 	}
 
 	/**
@@ -1916,13 +1899,14 @@ public class SqlBuilder implements MessageSource {
 			lengthQualifier = SqlDdl.lengthQualifier;
 		}
 
-		return determineCharacterVaryingOrText(size,lengthQualifier);
+		return determineCharacterVaryingOrText(size, lengthQualifier);
 	}
 
 	private String determineLengthQualifierFromMapEntry(ProcessMapEntry me) {
-		String statedLengthQualifier = SqlDdl.mapEntryParamInfos.getCharacteristic(
-				me.getType(), me.getRule(), SqlConstants.ME_PARAM_LENGTH,
-				SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
+		String statedLengthQualifier = SqlDdl.mapEntryParamInfos
+				.getCharacteristic(me.getType(), me.getRule(),
+						SqlConstants.ME_PARAM_LENGTH,
+						SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
 		String lengthQualifier;
 		if ("NONE".equalsIgnoreCase(statedLengthQualifier)) {
 			lengthQualifier = null;
@@ -1979,7 +1963,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Generates an index creation statement for the given geometry
 	 * property/column.
-	 *
+	 * 
 	 * @param tableWithColumn
 	 * @param columnForProperty
 	 * @param pi
@@ -2358,6 +2342,8 @@ public class SqlBuilder implements MessageSource {
 		// which may adjust constraint names to make them unique
 		if (SqlDdl.createReferences) {
 
+			boolean foreignKeyConstraintCreated = false;
+
 			// Process in order of table and column names
 			List<CreateTable> cts = new ArrayList<CreateTable>(
 					this.createTableStatements);
@@ -2388,8 +2374,17 @@ public class SqlBuilder implements MessageSource {
 								cd, cd.getReferencedTable());
 
 						foreignKeyConstraints.add(alter);
+
+						foreignKeyConstraintCreated = true;
 					}
 				}
+			}
+
+			if (foreignKeyConstraintCreated
+					&& SqlDdl.databaseStrategy instanceof SQLiteStrategy) {
+				
+				SQLitePragma pragma = new SQLitePragma("foreign_keys", "ON");
+				sqLitePragmas.add(pragma);
 			}
 		}
 
@@ -2407,7 +2402,7 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi != null) {
 
-					if (isGeometryTypedProperty(pi)) {
+					if (SqlUtil.isGeometryTypedProperty(pi)) {
 
 						Statement stmt = SqlDdl.databaseStrategy
 								.geometryMetadataUpdateStatement(t, col,
@@ -2435,7 +2430,7 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi != null) {
 
-					if (isGeometryTypedProperty(pi)) {
+					if (SqlUtil.isGeometryTypedProperty(pi)) {
 
 						Statement stmt = this.generateGeometryIndex(t, col, pi);
 
@@ -2709,6 +2704,7 @@ public class SqlBuilder implements MessageSource {
 
 		List<Statement> stmts = new ArrayList<Statement>();
 
+		stmts.addAll(this.sqLitePragmas);
 		stmts.addAll(this.createTableStatements);
 		stmts.addAll(this.checkConstraints);
 		stmts.addAll(this.foreignKeyConstraints);
@@ -2874,7 +2870,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Look up the table with the given name. If no such table exists, a new one
 	 * is created (this is logged on debug level) and returned.
-	 *
+	 * 
 	 * @param tableName
 	 *                      name of the table to look up, must not be
 	 *                      <code>null</code>

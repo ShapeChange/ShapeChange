@@ -96,6 +96,8 @@ public class SqlDdlConfigurationValidator
 			databaseStrategy = new OracleStrategy(result);
 		} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
 			databaseStrategy = new SQLServerStrategy(result);
+		} else if ("sqlite".equalsIgnoreCase(databaseSystem)) {
+			databaseStrategy = new SQLServerStrategy(result);
 		} else {
 			databaseStrategy = new PostgreSQLStrategy();
 			result.addError(this, 100, SqlConstants.PARAM_DATABASE_SYSTEM,

@@ -128,6 +128,16 @@ public class SqlConstants {
 	public static final String PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
 
 	/**
+	 * Global definition of the dimension of geometry types, which is used by
+	 * DBMSs such as SQLite (more specifically, SQLite in combination with the
+	 * spatial extension SpatiaLite). Used as fallback if no specific geometry
+	 * dimension is defined via the map entry (and its geometry dimension
+	 * characteristic) that applies to the value type of a geometry typed
+	 * property.
+	 */
+	public static final String PARAM_GEOMETRY_DIMENSION = "geometryDimension";
+
+	/**
 	 * Datatype to use for foreign key fields, for example 'bigint' in case of a
 	 * PostgreSQL database. The default is the primary key type defined by the
 	 * database strategy.
@@ -641,6 +651,12 @@ public class SqlConstants {
 	 */
 	public static final String ME_PARAM_GEOMETRY = "geometry";
 	/**
+	 * Characteristic for the parameter {@value #ME_PARAM_GEOMETRY} that
+	 * specifies the dimension of the geometry in the mapping that the parameter
+	 * applies to. There is no default value for this characteristic.
+	 */
+	public static final String ME_PARAM_GEOMETRY_CHARACT_DIMENSION = "dimension";
+	/**
 	 * Name of the parameter to indicate (via the 'param' attribute) that the
 	 * type of a map entry is represented by a table.
 	 */
@@ -669,7 +685,7 @@ public class SqlConstants {
 	 * parameterization). The parameter is mutually exclusive with 'precision'.
 	 */
 	public static final String ME_PARAM_LENGTH = "length";
-	
+
 	/**
 	 * A qualification for a textual data type with limited length.
 	 *

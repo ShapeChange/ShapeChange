@@ -39,8 +39,8 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class Table {
@@ -70,7 +70,7 @@ public class Table {
 
 	/**
 	 * @param name
-	 *            the name to set
+	 *                 the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -85,13 +85,21 @@ public class Table {
 
 	/**
 	 * @param columns
-	 *            the columns to set
+	 *                    the columns to set
 	 */
 	public void setColumns(List<Column> columns) {
 		if (columns != null) {
 			this.columns = columns;
 		} else {
 			this.columns = new ArrayList<Column>();
+		}
+	}
+
+	public void removeColumns(List<Column> columnsToRemove) {
+		if (columnsToRemove != null) {
+			for (Column ctr : columnsToRemove) {
+				this.columns.remove(ctr);
+			}
 		}
 	}
 
@@ -105,7 +113,7 @@ public class Table {
 
 	/**
 	 * @param constraints
-	 *            the constraints to set
+	 *                        the constraints to set
 	 */
 	public void setConstraints(List<SqlConstraint> constraints) {
 		if (constraints == null) {
@@ -117,6 +125,10 @@ public class Table {
 
 	public void addConstraint(SqlConstraint constraint) {
 		this.constraints.add(constraint);
+	}
+	
+	public void addConstraints(List<SqlConstraint> constraints) {
+		this.constraints.addAll(constraints);
 	}
 
 	public String toString() {
@@ -136,7 +148,7 @@ public class Table {
 
 	/**
 	 * @param isAssociativeTable
-	 *            the isAssociativeTable to set
+	 *                               the isAssociativeTable to set
 	 */
 	public void setAssociativeTable(boolean isAssociativeTable) {
 		this.isAssociativeTable = isAssociativeTable;
@@ -151,7 +163,7 @@ public class Table {
 
 	/**
 	 * @param representedClass
-	 *            the representedClass to set
+	 *                             the representedClass to set
 	 */
 	public void setRepresentedClass(ClassInfo representedClass) {
 		this.representedClass = representedClass;
@@ -166,7 +178,7 @@ public class Table {
 
 	/**
 	 * @param representedAssociation
-	 *            the representedAssociation to set
+	 *                                   the representedAssociation to set
 	 */
 	public void setRepresentedAssociation(
 			AssociationInfo representedAssociation) {
@@ -182,7 +194,7 @@ public class Table {
 
 	/**
 	 * @param representedProperty
-	 *            the representedProperty to set
+	 *                                the representedProperty to set
 	 */
 	public void setRepresentedProperty(PropertyInfo representedProperty) {
 		this.representedProperty = representedProperty;

@@ -178,9 +178,10 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 					Map<String, String> geometryCharacteristics = characteristicsByParameter
 							.get(SqlConstants.ME_PARAM_GEOMETRY);
 
-					// ensure that layer_gtype has a value and that it is one of
-					// the
-					// allowed ones
+					/*
+					 * ensure that layer_gtype has a value and that it is one of
+					 * the allowed ones
+					 */
 					if (geometryCharacteristics
 							.containsKey(GEOM_PARAM_LAYER_GTYPE)) {
 

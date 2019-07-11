@@ -68,6 +68,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteCreateSpatialIndexExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CheckConstraint;
@@ -82,6 +83,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyCon
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.StatementVisitor;
@@ -144,8 +147,10 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	 */
 	protected SortedMap<Integer, SortedMap<PackageInfo, Integer>> eaPkgIdByModelPkg_byDatabaseModelSubPkgId = new TreeMap<Integer, SortedMap<PackageInfo, Integer>>();
 
-	protected Map<Column, Integer> eaAttributeIDByColumn = new HashMap<Column, Integer>();
-	protected Map<Table, Integer> eaElementIDByTable = new HashMap<Table, Integer>();
+	protected Map<Column, Integer> eaAttributeIDByColumn = new HashMap<>();
+	protected Map<Table, Integer> eaElementIDByTable = new HashMap<>();
+
+	protected Map<String, Integer> spatialIndexCounterByTableName = new HashMap<>();
 
 	public DatabaseModelVisitor(SqlDdl sqlddl, Repository repository) {
 
@@ -170,6 +175,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			eadbms = EASupportedDBMS.ORACLE;
 		} else if (SqlDdl.databaseStrategy instanceof SQLServerStrategy) {
 			eadbms = EASupportedDBMS.SQLSERVER2012;
+		} else if (SqlDdl.databaseStrategy instanceof SQLiteStrategy) {
+			eadbms = EASupportedDBMS.SQLITE;
 		} else {
 			eadbms = EASupportedDBMS.POSTGRESQL;
 		}
@@ -855,6 +862,56 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	}
 
 	@Override
+	public void visit(Select select) {
+
+		if (select.getExpression() != null && select
+				.getExpression() instanceof SpatiaLiteCreateSpatialIndexExpression) {
+
+			SpatiaLiteCreateSpatialIndexExpression expr = (SpatiaLiteCreateSpatialIndexExpression) select
+					.getExpression();
+
+			Table table = expr.getTable();
+			Column indexCol = expr.getColumn();
+
+			Element tableElmt = repository
+					.GetElementByID(this.eaElementIDByTable.get(table));
+
+			int indexCounter;
+			if (spatialIndexCounterByTableName.containsKey(table.getName())) {
+				indexCounter = spatialIndexCounterByTableName
+						.get(table.getName());
+			} else {
+				indexCounter = 0;
+			}
+			indexCounter++;
+			spatialIndexCounterByTableName.put(table.getName(), indexCounter);
+
+			String indexName = "spatialIndex" + indexCounter;
+
+			try {
+
+				/* Create index 'operation' */
+				Method m = EAElementUtil.createEAMethod(tableElmt, indexName);
+				EAMethodUtil.setEAStereotypeEx(m, "EAUML::index");
+
+				Parameter param = EAMethodUtil.createEAParameter(m,
+						indexCol.getName());
+
+				EAParameterUtil.setEAType(param, mapDataType(indexCol));
+
+			} catch (EAException e) {
+				result.addError(this, 112, indexName, table.getName(),
+						indexCol.getName(), e.getMessage());
+			}
+		}
+	}
+	
+	@Override
+	public void visit(SQLitePragma sqLitePragma) {
+		// ignore
+	}
+
+	@Override
 	public String message(int mnr) {
 
 		switch (mnr) {
@@ -890,6 +947,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			return "Exception encountered while creating unique constraint '$1$' on table '$2$'. Exception message: '$3$'";
 		case 111:
 			return "Could not create foreign key constraint '$1$' on table '$2$' because no ElementID was found for referenced table '$3$'. Does that table belong to a schema that was not selected for processing?";
+		case 112:
+			return "Exception encountered while creating spatial index '$1$' on table '$2$' (column '$3$') from SpatiaLite CreateSpatialIndex. Exception message: '$4$'";
 
 		default:
 			return "(" + DatabaseModelVisitor.class.getName()

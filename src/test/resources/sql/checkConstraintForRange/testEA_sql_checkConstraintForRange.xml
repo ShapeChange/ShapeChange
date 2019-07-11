@@ -85,5 +85,21 @@
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-SQLServer.xml" />
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/checkConstraintForRange/ddl_sqlite" />
+			<targetParameter name="createReferences" value="true" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-prop-check-constraint-for-range" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLite.xml" />
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

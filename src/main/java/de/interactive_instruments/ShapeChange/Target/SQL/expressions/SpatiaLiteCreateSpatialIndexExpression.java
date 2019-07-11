@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2019 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,36 +29,51 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.SQL.structure;
+package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 
-import java.util.List;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
  *         de)
  *
  */
-public interface StatementVisitor {
+public class SpatiaLiteCreateSpatialIndexExpression implements Expression {
 
-	public void visit(Insert insert);
+	protected Table table;
+	protected Column column;
 
-	public void visit(CreateTable createTable);
+	public SpatiaLiteCreateSpatialIndexExpression(Table table, Column column) {
 
-	public void visit(CreateIndex createIndex);
+		this.table = table;
+		this.column = column;
+	}
 
-	public void visit(Alter alter);
+	@Override
+	public void accept(ExpressionVisitor expressionVisitor) {
+		expressionVisitor.visit(this);
+	}
+	
+	public Table getTable() {
+		return this.table;
+	}
+	
+	public Column getColumn() {
+		return this.column;
+	}
 
-	public void visit(Comment comment);
+	public String toString() {
 
-	public void visit(List<Statement> stmts);
+		StringBuffer sb = new StringBuffer();
 
-	public void visit(Select select);
+		sb.append("CreateSpatialIndex('");
+		sb.append(this.table.getName());
+		sb.append("', '");
+		sb.append(this.column.getName());
+		sb.append("')");
 
-	public void visit(SQLitePragma sqLitePragma);
+		return sb.toString();
+	}
 
-	/**
-	 * Signals the visitor that all statements have been visited, so that any
-	 * necessary postprocessing can be performed.
-	 */
-	public void postprocess();
 }
