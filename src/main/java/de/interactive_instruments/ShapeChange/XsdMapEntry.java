@@ -33,7 +33,7 @@ package de.interactive_instruments.ShapeChange;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments

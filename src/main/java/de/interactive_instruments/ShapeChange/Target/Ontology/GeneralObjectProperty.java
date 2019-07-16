@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ontology;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;

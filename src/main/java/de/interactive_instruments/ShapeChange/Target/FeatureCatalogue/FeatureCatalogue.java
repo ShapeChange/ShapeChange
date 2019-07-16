@@ -80,7 +80,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -2698,8 +2698,12 @@ public class FeatureCatalogue
 		fl.addHandler(fmh);
 
 		try {
-			// configure fopFactory as desired
-			FopFactory fopFactory = FopFactory.newInstance();
+			/*
+			 * 2019-07-16 JE: with FOP 1.0 it was just FopFactory.newInstance().
+			 * It is not clear how the factory should be configured.
+			 */
+			FopFactory fopFactory = FopFactory
+					.newInstance(new File(".").toURI());
 
 			FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 			// configure foUserAgent as desired

@@ -48,7 +48,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;

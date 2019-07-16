@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Used to convert a (list of) expressions into a (comma-separated) string. The
