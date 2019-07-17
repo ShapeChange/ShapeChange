@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange;
 
 import static org.junit.Assert.*;
 
+import java.lang.Runtime.Version;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -69,12 +70,9 @@ public class TestInstance {
 			options = new Options();
 			result = new ShapeChangeResult(options);
 
-			String javaVersion = System.getProperty("java.version");
-			String[] components = javaVersion.split("\\.");
-			int major = Integer.parseInt(components[0]);
-			int minor = Integer.parseInt(components[1]);
-			if (major == 1 && minor < 8) {
-				result.addError(null, 18, javaVersion);
+			Version javaVersion = Runtime.version();
+			if (javaVersion.feature() < 11) {
+				result.addError(null, 18, javaVersion.toString());
 				System.exit(1);
 			}
 

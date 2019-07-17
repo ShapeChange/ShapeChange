@@ -32,6 +32,8 @@
 
 package de.interactive_instruments.ShapeChange;
 
+import java.lang.Runtime.Version;
+
 import javax.swing.JOptionPane;
 
 import de.interactive_instruments.ShapeChange.UI.Dialog;
@@ -49,12 +51,9 @@ public class Main {
 		Options options = new Options();
 		ShapeChangeResult result = new ShapeChangeResult(options);
 		
-		String javaVersion = System.getProperty("java.version");
-		String[] components = javaVersion.split("\\.");
-		int major = Integer.parseInt(components[0]);
-		int minor = Integer.parseInt(components[1]);
-		if (major == 1 && minor < 8) {
-			result.addError(null, 18, javaVersion);
+		Version javaVersion = Runtime.version();
+		if (javaVersion.feature() < 11) {
+			result.addError(null, 18, javaVersion.toString());
 			System.exit(1);
 		}
 

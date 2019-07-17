@@ -43,7 +43,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,8 +62,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,6 +123,7 @@ import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.XsltWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
+import io.github.classgraph.ClassGraph;
 import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
@@ -2846,7 +2844,7 @@ public class FeatureCatalogue
 			// ==============================
 			// 2. perform the transformation
 			// ==============================
-
+						
 			// determine if we need to run with a specific JRE
 			if (pathToJavaExe == null) {
 
@@ -2871,63 +2869,12 @@ public class FeatureCatalogue
 
 				cmds.add("-cp");
 				List<String> cpEntries = new ArrayList<String>();
-
-				// determine if execution from jar or from class file
-				URL writerResource = XsltWriter.class
-						.getResource("XsltWriter.class");
-				String writerResourceAsString = writerResource.toString();
-
-				if (writerResourceAsString.startsWith("jar:")) {
-
-					// execution from jar
-
-					// get path to main ShapeChange jar file
-					String jarPath = writerResourceAsString.substring(4,
-							writerResourceAsString.indexOf("!"));
-
-					URI jarUri = new URI(jarPath);
-
-					// add path to man jar file to class path entries
-					File jarF = new File(jarUri);
-					cpEntries.add(jarF.getPath());
-
-					/*
-					 * Get parent directory in which ShapeChange JAR file
-					 * exists, because class path entries in manifest are
-					 * defined relative to it.
-					 */
-					File jarDir = jarF.getParentFile();
-
-					// get manifest and the classpath entries defined by it
-					try (JarFile jf = new JarFile(jarF)) {
-
-						Manifest mf = jf.getManifest();
-						String classPath = mf.getMainAttributes()
-								.getValue("Class-Path");
-
-						if (classPath != null) {
-
-							for (String dependency : classPath.split(" ")) {
-								// add path to dependency to class path entries
-								File dependencyF = new File(jarDir, dependency);
-								cpEntries.add(dependencyF.getPath());
-							}
-						}
-					}
-
-				} else {
-
-					// execution with class files
-
-					// get classpath entries from system class loader
-					ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-					URL[] urls = ((URLClassLoader) cl).getURLs();
-
-					for (URL url : urls) {
-						File dependencyF = new File(url.getPath());
-						cpEntries.add(dependencyF.getPath());
-					}
+				
+				ClassGraph cg = new ClassGraph();	
+				List<URL> cpUrls = cg.getClasspathURLs();
+				for(URL u : cpUrls) {
+					String path = FileUtils.toFile(u).getAbsolutePath();
+					cpEntries.add(path);
 				}
 
 				String cpValue = StringUtils.join(cpEntries,

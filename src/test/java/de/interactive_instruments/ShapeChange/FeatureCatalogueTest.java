@@ -124,7 +124,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/taggedValues/results",
 				"src/test/resources/featureCatalogue/taggedValues/reference/results");
 	}
-	
+
 	@Test
 	public void testInheritedConstraints() {
 
@@ -134,7 +134,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/inheritedConstraints/results",
 				"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
 	}
-	
+
 	@Test
 	public void testLogo() {
 
@@ -144,7 +144,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/logo/results",
 				"src/test/resources/featureCatalogue/logo/reference/results");
 	}
-	
+
 	@Test
 	public void testDocxStyle_custom1() {
 
@@ -154,4 +154,21 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/docxStyle_custom1/results",
 				"src/test/resources/featureCatalogue/docxStyle_custom1/reference/results");
 	}
+
+	/*
+	 * Test is disabled because the path to the external JRE is user specific.
+	 * Thus the test is not portable. However, it is useful for local testing of
+	 * this functionality. The target parameter 'pathToJavaExecutable' may need
+	 * to be updated in the ShapeChange configuration, to reflect paths of a
+	 * given user.
+	 */
+	// @Test
+	// public void testExternalJRE() {
+	//
+	// multiTest(
+	// "src/test/resources/featureCatalogue/externalJRE/testEA_featureCatalogue_externalJRE.xml",
+	// new String[] { "html" },
+	// "testResults/featureCatalogue/externalJRE/results",
+	// "src/test/resources/featureCatalogue/externalJRE/reference/results");
+	// }
 }
