@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
@@ -134,7 +134,7 @@
                     </sc:Property>
                     <sc:Property>
                       <sc:name>propA1</sc:name>
-                      <sc:id>T87</sc:id>
+                      <sc:id>Tas87</sc:id>
                       <sc:descriptors>
                         <sc:alias>
                           <sc:descriptorValues>
@@ -172,8 +172,8 @@
                       <sc:typeId>164</sc:typeId>
                       <sc:typeName>ExtFeatureType</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
-                      <sc:reversePropertyId>S87</sc:reversePropertyId>
-                      <sc:associationId>87</sc:associationId>
+                      <sc:reversePropertyId>Sas87</sc:reversePropertyId>
+                      <sc:associationId>as87</sc:associationId>
                     </sc:Property>
                     <sc:Property>
                       <sc:name>propA3</sc:name>
@@ -680,12 +680,12 @@
   <sc:associations>
     <sc:Association>
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
-      <sc:id>87</sc:id>
+      <sc:id>as87</sc:id>
       <sc:descriptors></sc:descriptors>
       <sc:end1>
         <sc:Property>
-          <sc:name>role_S87</sc:name>
-          <sc:id>S87</sc:id>
+          <sc:name>role_Sas87</sc:name>
+          <sc:id>Sas87</sc:id>
           <sc:descriptors></sc:descriptors>
           <sc:taggedValues>
             <sc:TaggedValue>
@@ -713,11 +713,11 @@
           <sc:typeName>FeatureTypeA</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>164</sc:inClassId>
-          <sc:reversePropertyId>T87</sc:reversePropertyId>
-          <sc:associationId>87</sc:associationId>
+          <sc:reversePropertyId>Tas87</sc:reversePropertyId>
+          <sc:associationId>as87</sc:associationId>
         </sc:Property>
       </sc:end1>
-      <sc:end2 ref="T87"></sc:end2>
+      <sc:end2 ref="Tas87"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>

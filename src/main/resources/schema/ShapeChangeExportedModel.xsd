@@ -108,6 +108,13 @@
    <selector xpath="./sc:associations/sc:Association/sc:end1 | ./sc:associations/sc:Association/sc:end2"/>
    <field xpath="@ref"/>
   </keyref>
+  <unique name="uniqueIds">
+   <annotation>
+    <documentation>IDs of model elements must be unique.</documentation>
+   </annotation>
+   <selector xpath=".//sc:id"/>
+   <field xpath="."/>
+  </unique>
  </element>
  <complexType name="ModelType">
   <all>

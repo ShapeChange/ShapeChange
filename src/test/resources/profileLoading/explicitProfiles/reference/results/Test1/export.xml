@@ -104,7 +104,7 @@
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propA1</sc:name>
-                      <sc:id>T87</sc:id>
+                      <sc:id>Tas87</sc:id>
                       <sc:descriptors>
                         <sc:alias>
                           <sc:descriptorValues>
@@ -150,7 +150,7 @@
                       <sc:typeId>164</sc:typeId>
                       <sc:typeName>ExtFeatureType</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
-                      <sc:associationId>87</sc:associationId>
+                      <sc:associationId>as87</sc:associationId>
                     </sc:Property>
                     <sc:Property>
                       <sc:name>propA2</sc:name>
@@ -655,11 +655,11 @@
   <sc:associations>
     <sc:Association>
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
-      <sc:id>87</sc:id>
+      <sc:id>as87</sc:id>
       <sc:end1>
         <sc:Property>
-          <sc:name>role_S87</sc:name>
-          <sc:id>S87</sc:id>
+          <sc:name>role_Sas87</sc:name>
+          <sc:id>Sas87</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
               <sc:name>inlineOrByReference</sc:name>
@@ -686,10 +686,10 @@
           <sc:typeName>FeatureTypeA</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>164</sc:inClassId>
-          <sc:associationId>87</sc:associationId>
+          <sc:associationId>as87</sc:associationId>
         </sc:Property>
       </sc:end1>
-      <sc:end2 ref="T87"></sc:end2>
+      <sc:end2 ref="Tas87"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>

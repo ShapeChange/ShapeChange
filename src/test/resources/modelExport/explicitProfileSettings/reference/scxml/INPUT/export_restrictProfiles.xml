@@ -109,7 +109,7 @@
                       <sc:properties>
                         <sc:Property>
                           <sc:name>roleA1</sc:name>
-                          <sc:id>T80</sc:id>
+                          <sc:id>Tas80</sc:id>
                           <sc:descriptors>
                             <sc:alias>
                               <sc:descriptorValues>
@@ -154,7 +154,7 @@
                           <sc:typeId>147</sc:typeId>
                           <sc:typeName>T1_FeatureTypeB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>80</sc:associationId>
+                          <sc:associationId>as80</sc:associationId>
                         </sc:Property>
                         <sc:Property>
                           <sc:name>attA2</sc:name>
@@ -261,7 +261,7 @@
                       <sc:properties>
                         <sc:Property>
                           <sc:name>roleB1</sc:name>
-                          <sc:id>S80</sc:id>
+                          <sc:id>Sas80</sc:id>
                           <sc:descriptors>
                             <sc:alias>
                               <sc:descriptorValues>
@@ -306,7 +306,7 @@
                           <sc:typeId>146</sc:typeId>
                           <sc:typeName>T1_FeatureTypeA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>80</sc:associationId>
+                          <sc:associationId>as80</sc:associationId>
                         </sc:Property>
                         <sc:Property>
                           <sc:name>attB2</sc:name>
@@ -407,7 +407,7 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:associationId>80</sc:associationId>
+                      <sc:associationId>as80</sc:associationId>
                       <sc:profiles>
                         <sc:Profile name="A"></sc:Profile>
                         <sc:Profile name="C"></sc:Profile>
@@ -510,7 +510,7 @@
                       <sc:properties>
                         <sc:Property>
                           <sc:name>roleA1</sc:name>
-                          <sc:id>T81</sc:id>
+                          <sc:id>Tas81</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -535,7 +535,7 @@
                           <sc:typeId>151</sc:typeId>
                           <sc:typeName>T2_FeatureTypeB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>81</sc:associationId>
+                          <sc:associationId>as81</sc:associationId>
                         </sc:Property>
                         <sc:Property>
                           <sc:name>attA2</sc:name>
@@ -602,7 +602,7 @@
                       <sc:properties>
                         <sc:Property>
                           <sc:name>roleB1</sc:name>
-                          <sc:id>S81</sc:id>
+                          <sc:id>Sas81</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -627,7 +627,7 @@
                           <sc:typeId>150</sc:typeId>
                           <sc:typeName>T2_FeatureTypeA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>81</sc:associationId>
+                          <sc:associationId>as81</sc:associationId>
                         </sc:Property>
                         <sc:Property>
                           <sc:name>attB2</sc:name>
@@ -691,7 +691,7 @@
                           </sc:values>
                         </sc:TaggedValue>
                       </sc:taggedValues>
-                      <sc:associationId>81</sc:associationId>
+                      <sc:associationId>as81</sc:associationId>
                       <sc:properties>
                         <sc:Property>
                           <sc:name>attC1</sc:name>
@@ -887,16 +887,16 @@
   </sc:packages>
   <sc:associations>
     <sc:Association>
-      <sc:id>80</sc:id>
+      <sc:id>as80</sc:id>
       <sc:assocClassId>148</sc:assocClassId>
-      <sc:end1 ref="S80"></sc:end1>
-      <sc:end2 ref="T80"></sc:end2>
+      <sc:end1 ref="Sas80"></sc:end1>
+      <sc:end2 ref="Tas80"></sc:end2>
     </sc:Association>
     <sc:Association>
-      <sc:id>81</sc:id>
+      <sc:id>as81</sc:id>
       <sc:assocClassId>152</sc:assocClassId>
-      <sc:end1 ref="S81"></sc:end1>
-      <sc:end2 ref="T81"></sc:end2>
+      <sc:end1 ref="Sas81"></sc:end1>
+      <sc:end2 ref="Tas81"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>

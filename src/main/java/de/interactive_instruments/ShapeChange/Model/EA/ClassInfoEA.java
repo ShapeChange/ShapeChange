@@ -57,6 +57,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
@@ -255,7 +256,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (cat != Options.MIXIN)
 							continue;
 					}
-					
+
 					if (baseclassInfoSet == null) {
 						baseclassInfoSet = new TreeSet<ClassInfoEA>();
 					}
@@ -325,20 +326,32 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				// First find out whether the association has already been
 				// processed from its other end. If so, discard.
 				id = conn.GetConnectorID();
-				connid = Integer.valueOf(id).toString();
+				connid = createAssociationId(Integer.valueOf(id).toString());
 				known = document.fAssociationById.containsKey(connid);
 				if (known)
 					continue;
 				// First encounter: Create AssociationInfo wrapper and
 				// properties linkage.
 				AssociationInfoEA ai = new AssociationInfoEA(document, conn,
-						id);
+						connid);
 				// Register with global associations map, if relevant class
 				// association
 				if (ai.relevant)
 					document.fAssociationById.put(connid, ai);
 			}
 		}
+	}
+
+	/**
+	 * In EA, the association and the class of an association class construct
+	 * may have the same ID. That is not allowed by ShapeChange. See
+	 * {@link Info#id()}. Therefore, this method augments the base ID of an
+	 * association connector.
+	 * 
+	 * @param baseId
+	 */
+	private String createAssociationId(String baseId) {
+		return "as" + baseId;
 	}
 
 	// Establish the roles attached to the class. This auxiliary initializing
@@ -1094,7 +1107,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			if (eaClassElement.GetSubtype() == 17
 					&& !eaClassElement.MiscData(3).isEmpty()) {
 				assoc = document.fAssociationById
-						.get(eaClassElement.MiscData(3));
+						.get(createAssociationId(eaClassElement.MiscData(3)));
 			}
 		}
 		return assoc;

@@ -255,8 +255,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 		// Id of property. Since ConnectorEnds have no Id, we resort to the
 		// Id of the Connector and prefix a letter S or T.
-		eaPropertyId = (reversed ? "S" : "T")
-				+ Integer.valueOf(ai.eaConnectorId).toString();
+		eaPropertyId = (reversed ? "S" : "T") + ai.id();
 
 		// Name of role
 		eaName = eaCE.GetRole();

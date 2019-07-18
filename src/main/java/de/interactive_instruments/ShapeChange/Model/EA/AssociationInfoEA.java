@@ -49,6 +49,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
 
 public class AssociationInfoEA extends AssociationInfoImpl
 		implements AssociationInfo {
@@ -59,8 +60,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	/** EA connector handle */
 	Connector eaConnector = null;
 
-	/** The EA object id of the association object */
-	protected int eaConnectorId = 0;
+	protected String connectorId = null;
 
 	/** Navigability 0=both, +1=source->target, -1=target->source */
 	protected int navigability = 0;
@@ -96,12 +96,13 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	// this map is already defined in InfoImpl
 
 	/** AssociationInfoEA Ctor */
-	AssociationInfoEA(EADocument doc, Connector conn, int id) {
+	AssociationInfoEA(EADocument doc, Connector conn, String id) {
 
 		// Memorize parameters
 		document = doc;
 		eaConnector = conn;
-		eaConnectorId = id;
+
+		connectorId = id;
 
 		// Fetch the necessary data from the connector
 		name = eaConnector.GetName();
@@ -174,7 +175,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 	/** Return model-unique id of association */
 	public String id() {
-		return Integer.valueOf(eaConnectorId).toString();
+		return connectorId;
 	}
 
 	/** Return Model object */
@@ -206,9 +207,9 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		}
 	}
 
-	public int getEAConnectorId() {
-		return this.eaConnectorId;
-	}
+//	public int getEAConnectorId() {
+//		return this.eaConnectorId;
+//	}
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -241,11 +242,10 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 	}
-
+	
 	public ClassInfo assocClass() {
-		String s = eaConnector.GetSubtype();
 		ClassInfo assocClass = null;
-		if (s.equalsIgnoreCase("class") && !eaConnector.MiscData(0).isEmpty()) {
+		if (EAConnectorUtil.isAssociationClassConnector(eaConnector)) {
 			assocClass = document.fClassById.get(eaConnector.MiscData(0));
 		}
 		return assocClass;

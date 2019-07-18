@@ -68,11 +68,9 @@ public interface Info extends Comparable<Info> {
 	public Descriptors descriptors();
 
 	/**
-	 * Return unique id of model element. Global uniqueness is preferred.
-	 * However, ShapeChange only requires that IDs of model elements of the same
-	 * type (packages, classes, properties, associations, operations) are
-	 * unique. For example, an association class is represented by both an
-	 * association and a class, which may have the same id.
+	 * Return unique id of model element. IDs of model elements - even if they
+	 * are of different type (packages, classes, properties, associations,
+	 * operations) - shall be unique.
 	 */
 	public String id();
 

@@ -69,7 +69,7 @@ public class XMLSchemaTest extends WindowsBasicTest {
 		 * Test property options: ordered, uniqueness and inline/byReference
 		 */
 		multiTest("src/test/resources/config/testEA_prop.xml",
-				new String[] { "xsd", "xml", "html" },
+				new String[] { "xsd", "html" },
 				"testResults/ea/prop/INPUT",
 				"src/test/resources/reference/prop");
 	}

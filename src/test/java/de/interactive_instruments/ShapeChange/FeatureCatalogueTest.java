@@ -99,7 +99,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 		 * inheritedProperties=true and noAlphabeticSortingForProperties = true
 		 */
 		multiTest("src/test/resources/config/testEA_fc_inheritedProperties.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/inheritedProperties/INPUT",
 				"src/test/resources/reference/html/inheritedProperties/INPUT");
 	}
@@ -111,7 +111,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 		 * page HTML feature catalogue).
 		 */
 		multiTest("src/test/resources/config/testEA_model_diff.xml",
-				new String[] { "xml", "html" }, "testResults/html/diff/INPUT",
+				new String[] { "html" }, "testResults/html/diff/INPUT",
 				"src/test/resources/reference/html/diff/INPUT");
 	}
 
@@ -120,7 +120,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
-				new String[] { "xml", "html", "docx" },
+				new String[] { "html", "docx" },
 				"testResults/featureCatalogue/taggedValues/results",
 				"src/test/resources/featureCatalogue/taggedValues/reference/results");
 	}
@@ -130,7 +130,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/featureCatalogue/inheritedConstraints/testEA_featureCatalogue_inheritedConstraints.xml",
-				new String[] { "xml", "html", "docx" },
+				new String[] { "html", "docx" },
 				"testResults/featureCatalogue/inheritedConstraints/results",
 				"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
 	}
@@ -140,7 +140,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/featureCatalogue/logo/testEA_featureCatalogue_logo.xml",
-				new String[] { "xml", "html", "docx" },
+				new String[] { "html", "docx" },
 				"testResults/featureCatalogue/logo/results",
 				"src/test/resources/featureCatalogue/logo/reference/results");
 	}

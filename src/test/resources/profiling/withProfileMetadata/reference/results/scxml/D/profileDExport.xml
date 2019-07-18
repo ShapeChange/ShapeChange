@@ -130,7 +130,7 @@
                         </sc:Property>
                         <sc:Property>
                           <sc:name>a2</sc:name>
-                          <sc:id>S51477</sc:id>
+                          <sc:id>Sas51477</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -155,7 +155,7 @@
                           <sc:typeId>16497</sc:typeId>
                           <sc:typeName>T4_FeatureB</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>51477</sc:associationId>
+                          <sc:associationId>as51477</sc:associationId>
                         </sc:Property>
                       </sc:properties>
                     </sc:Class>
@@ -194,7 +194,7 @@
                       <sc:properties>
                         <sc:Property>
                           <sc:name>b1</sc:name>
-                          <sc:id>T51477</sc:id>
+                          <sc:id>Tas51477</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
@@ -219,7 +219,7 @@
                           <sc:typeId>16496</sc:typeId>
                           <sc:typeName>T4_FeatureA</sc:typeName>
                           <sc:isAttribute>false</sc:isAttribute>
-                          <sc:associationId>51477</sc:associationId>
+                          <sc:associationId>as51477</sc:associationId>
                         </sc:Property>
                       </sc:properties>
                     </sc:Class>
@@ -235,9 +235,9 @@
   <sc:associations>
     <sc:Association>
       <sc:name>T4_FeatureB_T4_FeatureA</sc:name>
-      <sc:id>51477</sc:id>
-      <sc:end1 ref="S51477"></sc:end1>
-      <sc:end2 ref="T51477"></sc:end2>
+      <sc:id>as51477</sc:id>
+      <sc:end1 ref="Sas51477"></sc:end1>
+      <sc:end2 ref="Tas51477"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>
