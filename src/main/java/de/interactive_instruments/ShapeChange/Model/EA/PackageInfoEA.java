@@ -95,6 +95,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	/** The EA object id of the package object */
 	protected int eaPackageId = 0;
 
+	protected String packageId = null;
+
 	/** The EA element object possibly associated to the package */
 	protected Element eaPackageElmt = null;
 
@@ -130,6 +132,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		// Store EA package object and inquire its id and name.
 		eaPackage = pack;
 		eaPackageId = eaPackage.GetPackageID();
+		// augment integer id to achieve model-wide unique IDs required by
+		// Info.id()
+		packageId = "P" + Integer.valueOf(eaPackageId).toString();
 		eaName = eaPackage.GetName().trim();
 
 		// Store the possibly associated EA element (describing the package) and
@@ -282,8 +287,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 	/** Return model-unique id of package. */
 	public String id() {
-		return Integer.valueOf(eaPackageId).toString();
-	} // id()
+		return packageId;
+	}
 
 	/** Obtain the name of the package. */
 	public String name() {
@@ -413,13 +418,16 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				documentationAccessed = true;
 
 				String s = eaPackage.GetNotes();
-				
-//				String txt = document.repository.GetFormatFromField("TXT", s);
-//				String html = document.repository.GetFormatFromField("HTML", s);
-//				String rtf = document.repository.GetFormatFromField("RTF", s);
-//				
-//				s = txt;
-				
+
+				// String txt = document.repository.GetFormatFromField("TXT",
+				// s);
+				// String html = document.repository.GetFormatFromField("HTML",
+				// s);
+				// String rtf = document.repository.GetFormatFromField("RTF",
+				// s);
+				//
+				// s = txt;
+
 				// Fix for EA7.5 bug
 				if (s != null) {
 					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);

@@ -571,7 +571,7 @@ public class FeatureCatalogue
 				}
 			}
 
-			writer.startElement("ApplicationSchema", "id", "_P" + pi.id());
+			writer.startElement("ApplicationSchema", "id", packageId(pi));
 
 			/*
 			 * Determine if app schema with same name has been encountered
@@ -662,6 +662,14 @@ public class FeatureCatalogue
 			}
 			e.printStackTrace(System.err);
 		}
+	}
+
+	private String packageId(PackageInfo pkg) {
+		return pkg.id().startsWith("P") ? "_" + pkg.id() : "_P" + pkg.id();
+	}
+	
+	private String packageId(String pkgId) {
+		return pkgId.startsWith("P") ? "_" + pkgId : "_P" + pkgId;
 	}
 
 	private void printDeletedClasses(PackageInfo pix) {
@@ -917,7 +925,7 @@ public class FeatureCatalogue
 
 		if (packageInPackage(pix)) {
 
-			writer.startElement("Package", "id", "_P" + pix.id(), op);
+			writer.startElement("Package", "id", packageId(pix), op);
 
 			PrintDescriptors(pix, false, op);
 
@@ -933,7 +941,7 @@ public class FeatureCatalogue
 				pixOwnerId = ownerOfInputModel.id();
 			}
 
-			writer.emptyElement("parent", "idref", "_P" + pixOwnerId);
+			writer.emptyElement("parent", "idref", packageId(pixOwnerId));
 
 			if (pix.getDiagrams() != null) {
 				appendImageInfo(pix.getDiagrams());
@@ -1374,7 +1382,7 @@ public class FeatureCatalogue
 				 * TODO PrintOperations true;
 				 */
 
-				writer.emptyElement("package", "idref", "_P" + pix.id());
+				writer.emptyElement("package", "idref", packageId(pix));
 
 				switch (ci.category()) {
 				case Options.FEATURE:

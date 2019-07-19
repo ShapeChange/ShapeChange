@@ -3,15 +3,15 @@
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
+      <sc:id>P1</sc:id>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
-          <sc:id>2</sc:id>
+          <sc:id>P2</sc:id>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
-              <sc:id>10</sc:id>
+              <sc:id>P10</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -47,7 +47,7 @@
               <sc:packages>
                 <sc:Package>
                   <sc:name>Test1 Elements with profiles</sc:name>
-                  <sc:id>31</sc:id>
+                  <sc:id>P31</sc:id>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>xsdDocument</sc:name>
@@ -442,7 +442,7 @@
                 </sc:Package>
                 <sc:Package>
                   <sc:name>Test2 Elements without profiles</sc:name>
-                  <sc:id>32</sc:id>
+                  <sc:id>P32</sc:id>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>xsdDocument</sc:name>
@@ -703,7 +703,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>ISO Stub</sc:name>
-              <sc:id>21</sc:id>
+              <sc:id>P21</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>

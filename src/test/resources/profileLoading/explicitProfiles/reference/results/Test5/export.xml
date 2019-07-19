@@ -3,15 +3,15 @@
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
+      <sc:id>P1</sc:id>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
-          <sc:id>2</sc:id>
+          <sc:id>P2</sc:id>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema A</sc:name>
-              <sc:id>10</sc:id>
+              <sc:id>P10</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -310,7 +310,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>ISO Stub</sc:name>
-              <sc:id>21</sc:id>
+              <sc:id>P21</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -511,7 +511,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>External Schema</sc:name>
-              <sc:id>35</sc:id>
+              <sc:id>P35</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>

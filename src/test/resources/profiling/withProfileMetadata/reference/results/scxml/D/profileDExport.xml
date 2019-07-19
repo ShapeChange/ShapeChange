@@ -3,15 +3,15 @@
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
+      <sc:id>P1</sc:id>
       <sc:packages>
         <sc:Package>
           <sc:name>Schemas</sc:name>
-          <sc:id>174</sc:id>
+          <sc:id>P174</sc:id>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema</sc:name>
-              <sc:id>175</sc:id>
+              <sc:id>P175</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -54,7 +54,7 @@
               <sc:packages>
                 <sc:Package>
                   <sc:name>Test4 remove profile infos during postprocessing</sc:name>
-                  <sc:id>179</sc:id>
+                  <sc:id>P179</sc:id>
                   <sc:descriptors>
                     <sc:alias>
                       <sc:descriptorValues>
