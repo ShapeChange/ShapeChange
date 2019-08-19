@@ -82,8 +82,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstra
 /**
  * Builds SQL statements for model elements.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlBuilder implements MessageSource {
@@ -165,7 +165,7 @@ public class SqlBuilder implements MessageSource {
 
 		/*
 		 * Add field to reference pi.inClass
-		 * 
+		 *
 		 * NOTE: the primary key for the table will be defined later
 		 */
 		String classReferenceFieldName = pi.inClass().name()
@@ -217,7 +217,8 @@ public class SqlBuilder implements MessageSource {
 					} else {
 						fieldType = SqlDdl.databaseStrategy
 								.limitedLengthCharacterDataType(
-										SqlDdl.codeNameSize);
+										SqlDdl.codeNameSize,
+										SqlDdl.lengthQualifier);
 					}
 
 					cdPi = createColumn(table, pi, piDocumentation, piFieldName,
@@ -258,7 +259,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 * 
+	 *
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci) {
@@ -268,7 +269,7 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Will create a table to represent the given class. Will also create
 	 * associative tables, as applicable.
-	 * 
+	 *
 	 * @param ci
 	 */
 	private Table createTables(ClassInfo ci, String tableName) {
@@ -276,7 +277,7 @@ public class SqlBuilder implements MessageSource {
 		/*
 		 * Identify all properties that will be converted to columns. Create
 		 * associative tables as necessary.
-		 * 
+		 *
 		 * NOTE: The order of the properties is defined by their sequence
 		 * numbers (which is automatically provided by a TreeMap).
 		 */
@@ -570,7 +571,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given table, with the documentation
 	 * of the table. If the documentation is empty then no comment statement
 	 * will be created.
-	 * 
+	 *
 	 * @param table
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Table table) {
@@ -585,7 +586,7 @@ public class SqlBuilder implements MessageSource {
 	 * Creates a comment statement for the given column, with the documentation
 	 * of the column. If the documentation is empty then no comment statement
 	 * will be created.
-	 * 
+	 *
 	 * @param column
 	 */
 	private void createExplicitCommentUnlessNoDocumentation(Column column) {
@@ -789,7 +790,8 @@ public class SqlBuilder implements MessageSource {
 			} else {
 
 				codeColumnType = SqlDdl.databaseStrategy
-						.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
+						.limitedLengthCharacterDataType(SqlDdl.codeNameSize,
+								SqlDdl.lengthQualifier);
 			}
 
 			cd_codename = createColumn(table, null, codeNameColumnDocumentation,
@@ -811,7 +813,8 @@ public class SqlBuilder implements MessageSource {
 						.unlimitedLengthCharacterDataType();
 			} else {
 				descriptor_fieldType = SqlDdl.databaseStrategy
-						.limitedLengthCharacterDataType(descriptor.getSize());
+						.limitedLengthCharacterDataType(descriptor.getSize(),
+								SqlDdl.lengthQualifier);
 			}
 
 			String descriptorDocumentation = descriptor.getDocumentation();
@@ -844,7 +847,8 @@ public class SqlBuilder implements MessageSource {
 
 						// assume textual type
 						ColumnDataType codeStatusCLDataType = determineCharacterVaryingOrText(
-								SqlDdl.codeStatusCLLength);
+								SqlDdl.codeStatusCLLength,
+								SqlDdl.lengthQualifier);
 						cd_codeStatusCl.setDataType(codeStatusCLDataType);
 
 						// now check if the code status type is numerically
@@ -886,7 +890,7 @@ public class SqlBuilder implements MessageSource {
 						SqlDdl.codeStatusNotesColumnDocumentation,
 						SqlDdl.nameCodeStatusNotesColumn,
 						SqlDdl.databaseStrategy.limitedLengthCharacterDataType(
-								255),
+								255, SqlDdl.lengthQualifier),
 						"", false, false);
 				columns.add(cd_codeStatusNotes);
 
@@ -973,8 +977,10 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * @param column
 	 * @param propertyNameForConstraintName
-	 *            name of the property for which the check constraint is
-	 *            created; relevant for constructing the constraint name
+	 *                                          name of the property for which
+	 *                                          the check constraint is created;
+	 *                                          relevant for constructing the
+	 *                                          constraint name
 	 * @param enumCi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
@@ -1325,9 +1331,10 @@ public class SqlBuilder implements MessageSource {
 	 *
 	 * @param pi
 	 * @param alwaysNotNull
-	 *            <code>true</code> if the column definition shall be created
-	 *            with NOT NULL, otherwise <code>false</code> (then default
-	 *            behavior applies)
+	 *                          <code>true</code> if the column definition shall
+	 *                          be created with NOT NULL, otherwise
+	 *                          <code>false</code> (then default behavior
+	 *                          applies)
 	 * @return The SQL statement with the definition of the column to represent
 	 *         the property
 	 */
@@ -1412,8 +1419,8 @@ public class SqlBuilder implements MessageSource {
 
 				if (characteristics.containsKey(
 						SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)) {
-					quoted = characteristics
-							.get(SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)
+					quoted = characteristics.get(
+							SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)
 							.equalsIgnoreCase("true");
 				}
 			}
@@ -1655,7 +1662,8 @@ public class SqlBuilder implements MessageSource {
 							} else {
 								return SqlDdl.databaseStrategy
 										.limitedLengthCharacterDataType(
-												SqlDdl.codeNameSize);
+												SqlDdl.codeNameSize,
+												SqlDdl.lengthQualifier);
 							}
 
 						} else {
@@ -1713,6 +1721,7 @@ public class SqlBuilder implements MessageSource {
 		String dtName = me.getTargetType();
 
 		Integer length = null;
+		String lengthQualifier = null;
 		Integer precision = null;
 		Integer scale = null;
 
@@ -1744,6 +1753,8 @@ public class SqlBuilder implements MessageSource {
 					// result.addError(this, 30, me.getType(),
 					// me.getTargetType(), e.getMessage());
 					// }
+
+					lengthQualifier = determineLengthQualifierFromMapEntry(me);
 
 				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 						SqlConstants.ME_PARAM_PRECISION)) {
@@ -1782,7 +1793,8 @@ public class SqlBuilder implements MessageSource {
 			}
 		}
 
-		return new ColumnDataType(dtName, precision, scale, length);
+		return new ColumnDataType(dtName, precision, scale, length,
+				lengthQualifier);
 	}
 
 	/**
@@ -1893,15 +1905,41 @@ public class SqlBuilder implements MessageSource {
 		// keep track of the result for use by the replication schema
 		this.sizeByCharacterValuedProperty.put(pi, size);
 
-		return determineCharacterVaryingOrText(size);
+		String lengthQualifier = null;
+
+		ProcessMapEntry me = options.targetMapEntry(pi.typeInfo().name,
+				pi.encodingRule("sql"));
+
+		if (me != null) {
+			lengthQualifier = determineLengthQualifierFromMapEntry(me);
+		} else {
+			lengthQualifier = SqlDdl.lengthQualifier;
+		}
+
+		return determineCharacterVaryingOrText(size,lengthQualifier);
 	}
 
-	private ColumnDataType determineCharacterVaryingOrText(int size) {
+	private String determineLengthQualifierFromMapEntry(ProcessMapEntry me) {
+		String statedLengthQualifier = SqlDdl.mapEntryParamInfos.getCharacteristic(
+				me.getType(), me.getRule(), SqlConstants.ME_PARAM_LENGTH,
+				SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
+		String lengthQualifier;
+		if ("NONE".equalsIgnoreCase(statedLengthQualifier)) {
+			lengthQualifier = null;
+		} else {
+			lengthQualifier = statedLengthQualifier;
+		}
+		return lengthQualifier;
+	}
+
+	private ColumnDataType determineCharacterVaryingOrText(int size,
+			String lengthQualifier) {
 
 		if (size < 1) {
 			return SqlDdl.databaseStrategy.unlimitedLengthCharacterDataType();
 		} else {
-			return SqlDdl.databaseStrategy.limitedLengthCharacterDataType(size);
+			return SqlDdl.databaseStrategy.limitedLengthCharacterDataType(size,
+					lengthQualifier);
 		}
 	}
 
@@ -1941,11 +1979,11 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Generates an index creation statement for the given geometry
 	 * property/column.
-	 * 
+	 *
 	 * @param tableWithColumn
 	 * @param columnForProperty
 	 * @param pi
-	 *            property represented by the column
+	 *                              property represented by the column
 	 * @return
 	 */
 	private Statement generateGeometryIndex(Table tableWithColumn,
@@ -2172,7 +2210,8 @@ public class SqlBuilder implements MessageSource {
 							 */
 							col.setDataType(new ColumnDataType(
 									refColdt.getName(), refColdt.getPrecision(),
-									refColdt.getScale(), refColdt.getLength()));
+									refColdt.getScale(), refColdt.getLength(),
+									refColdt.getLengthQualifier()));
 						}
 					}
 				}
@@ -2219,7 +2258,7 @@ public class SqlBuilder implements MessageSource {
 					if (pi.matches(
 							SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE)) {
 
-						Double lowerBoundaryValue = Double.valueOf(-1000000000);						
+						Double lowerBoundaryValue = Double.valueOf(-1000000000);
 						Double upperBoundaryValue = Double.valueOf(1000000000);
 
 						boolean foundLowerBoundary = false;
@@ -2730,19 +2769,21 @@ public class SqlBuilder implements MessageSource {
 
 	/**
 	 * @param isOnDelete
-	 *            <code>true</code> if the option is for the 'ON DELETE' clause,
-	 *            <code>false</code> if it is for the 'ON UPDATE' clause.
+	 *                         <code>true</code> if the option is for the 'ON
+	 *                         DELETE' clause, <code>false</code> if it is for
+	 *                         the 'ON UPDATE' clause.
 	 * @param optionValue
-	 *            String value for the option; can be <code>null</code> (then
-	 *            this method has no effect)
+	 *                         String value for the option; can be
+	 *                         <code>null</code> (then this method has no
+	 *                         effect)
 	 * @param fkc
-	 *            the constraint on which the option would be set
+	 *                         the constraint on which the option would be set
 	 * @param column
-	 *            the column to which the constraint applies, relevant for
-	 *            validity checks on the option
+	 *                         the column to which the constraint applies,
+	 *                         relevant for validity checks on the option
 	 * @param relevantInfo
-	 *            the model element that defines the option via tagged value,
-	 *            relevant for log messages
+	 *                         the model element that defines the option via
+	 *                         tagged value, relevant for log messages
 	 */
 	private void setForeignKeyOption(boolean isOnDelete, String optionValue,
 			ForeignKeyConstraint fkc, Column column, Info relevantInfo) {
@@ -2817,7 +2858,7 @@ public class SqlBuilder implements MessageSource {
 
 	/**
 	 * @param pi
-	 *            property, may be <code>null</code>
+	 *               property, may be <code>null</code>
 	 * @return the size that is applicable for the property - or
 	 *         <code>null</code> if the property is not character valued or has
 	 *         no specific size set
@@ -2833,9 +2874,10 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * Look up the table with the given name. If no such table exists, a new one
 	 * is created (this is logged on debug level) and returned.
-	 * 
+	 *
 	 * @param tableName
-	 *            name of the table to look up, must not be <code>null</code>
+	 *                      name of the table to look up, must not be
+	 *                      <code>null</code>
 	 * @return
 	 */
 	private Table map(String tableName) {

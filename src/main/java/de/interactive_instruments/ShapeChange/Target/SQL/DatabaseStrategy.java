@@ -64,7 +64,7 @@ public interface DatabaseStrategy {
 
 	public ColumnDataType unlimitedLengthCharacterDataType();
 
-	public ColumnDataType limitedLengthCharacterDataType(int size);
+	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier);
 
 	/**
 	 * @param indexName

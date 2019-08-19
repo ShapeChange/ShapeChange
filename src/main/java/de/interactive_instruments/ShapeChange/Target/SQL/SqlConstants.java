@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlConstants {
@@ -75,6 +75,18 @@ public class SqlConstants {
 	 * {@value #DEFAULT_ID_COLUMN_NAME}.
 	 */
 	public static final String PARAM_ID_COLUMN_NAME = "idColumnName";
+
+	/**
+	 * To qualify textual data types with limited length, for all cases in which
+	 * such a type is not generated based upon a type map entry.
+	 *
+	 * Recognized values for the Oracle database system are:
+	 * <ul>
+	 * <li>BYTE</li>
+	 * <li>CHAR</li>
+	 * </ul>
+	 */
+	public static final String PARAM_LENGTH_QUALIFIER = "lengthQualifier";
 
 	/**
 	 * Specification for the primary key of a 'normal' table (neither an
@@ -182,7 +194,7 @@ public class SqlConstants {
 	public static final String PARAM_SRID = "srid";
 
 	public static final String PARAM_TVS_TO_KEEP = "taggedValuesToKeep";
-	
+
 	/**
 	 * Flag to indicate that foreign key creation is desired (true); default is
 	 * false.
@@ -290,8 +302,8 @@ public class SqlConstants {
 	public static final String PARAM_NAME_CODESTATUSNOTES_COLUMN = "nameForCodeStatusNotesColumn";
 	public static final String DEFAULT_NAME_CODESTATUSNOTES_COLUMN = "CODE_STATUS_NOTES";
 	public static final String PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION = "codeStatusNotesColumnDocumentation";
-	
-	public static final String PARAM_NAME_CODESUPERCEDES_COLUMN = "nameForCodeSupercedesColumn";	
+
+	public static final String PARAM_NAME_CODESUPERCEDES_COLUMN = "nameForCodeSupercedesColumn";
 	public static final String DEFAULT_NAME_CODESUPERCEDES_COLUMN = "CODE_SUPERCEDES";
 	public static final String PARAM_CODE_SUPERSEDES_COLUMN_DOCUMENTATION = "codeSupercedesColumnDocumentation";
 
@@ -504,11 +516,11 @@ public class SqlConstants {
 	 * clipped to the first seven characters</li>
 	 * <li>pearsonHash is the pearson hash (see
 	 * https://en.wikipedia.org/wiki/Pearson_hashing and the original paper:
-	 * Pearson, Peter K. (June 1990),
-	 * "Fast Hashing of Variable-Length Text Strings", Communications of the
-	 * ACM, 33 (6): 677, doi:10.1145/78973.78978) of the concatenation of
-	 * tableName, targetTableName, and fieldName, padded with zeros so it has a
-	 * length of 3</li>
+	 * Pearson, Peter K. (June 1990), "Fast Hashing of Variable-Length Text
+	 * Strings", Communications of the ACM, 33 (6): 677,
+	 * doi:10.1145/78973.78978) of the concatenation of tableName,
+	 * targetTableName, and fieldName, padded with zeros so it has a length of
+	 * 3</li>
 	 * </ul>
 	 * NOTE: The total length of the foreign key constraint will not exceed 29
 	 * characters.
@@ -534,7 +546,7 @@ public class SqlConstants {
 	public static final String RULE_TGT_SQL_ALL_NORMALIZING_ORACLE = "rule-sql-all-normalizing-oracle";
 
 	public static final String RULE_TGT_SQL_ALL_REPRESENT_TAGGED_VALUES = "rule-sql-all-representTaggedValues";
-	
+
 	/**
 	 * Prevents creation of documentation of schema elements via inline
 	 * comments. This rule overrides parameter
@@ -657,6 +669,18 @@ public class SqlConstants {
 	 * parameterization). The parameter is mutually exclusive with 'precision'.
 	 */
 	public static final String ME_PARAM_LENGTH = "length";
+	
+	/**
+	 * A qualification for a textual data type with limited length.
+	 *
+	 * Recognized values for the Oracle database system are:
+	 * <ul>
+	 * <li>BYTE</li>
+	 * <li>CHAR</li>
+	 * </ul>
+	 */
+	public static final String ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER = "lengthQualifier";
+
 	/**
 	 * The target type can have precision. This is important for correctly
 	 * parsing the precision (and optional scale) from the targetType (more

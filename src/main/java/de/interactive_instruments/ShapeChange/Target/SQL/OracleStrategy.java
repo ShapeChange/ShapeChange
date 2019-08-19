@@ -91,8 +91,9 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public ColumnDataType limitedLengthCharacterDataType(int size) {
-		return new ColumnDataType("VARCHAR2", null, null, size);
+	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier) {
+				
+		return new ColumnDataType("VARCHAR2", null, null, size, lengthQualifier);
 	}
 
 	@Override

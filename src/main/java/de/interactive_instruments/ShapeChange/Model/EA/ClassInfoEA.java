@@ -170,11 +170,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		// Determine some class flags
 		isAbstract = eaClassElement.GetAbstract().equals("1");
 		isLeaf = eaClassElement.GetIsLeaf();
+
 		// Determine class category
-		if (elmt.GetType().equalsIgnoreCase("enumeration"))
+		establishCategory();
+		if (category == Options.UNKNOWN
+				&& elmt.GetType().equalsIgnoreCase("enumeration")) {
 			category = Options.ENUMERATION;
-		else
-			establishCategory();
+		}
 
 		// Cache if realisations should not be treated as generalisations
 		/*
