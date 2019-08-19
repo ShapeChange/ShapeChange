@@ -41,7 +41,7 @@ import de.interactive_instruments.ShapeChange.Model.Transformer;
 
 /**
  * Default implementation for loading models. Recognized model types are EA7,
- * XMI, and SCXML (as well as GSIP, for backwards compatibility).
+ * XMI, and SCXML (as well as GCSR, for backwards compatibility).
  * 
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
  *         de)
@@ -79,8 +79,8 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 			modelType = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
 		} else if (modelType.equalsIgnoreCase("xmi10")) {
 			modelType = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		} else if (modelType.equalsIgnoreCase("gsip")) {
-			modelType = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
+		} else if (modelType.equalsIgnoreCase("gcsr")) {
+			modelType = "gov.nga.ShapeChange.Model.GCSR.GCSRModel";
 		} else if (modelType.equalsIgnoreCase("scxml")) {
 			modelType = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
 		} else {

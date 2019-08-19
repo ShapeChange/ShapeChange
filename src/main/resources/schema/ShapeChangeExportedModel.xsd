@@ -135,7 +135,7 @@
            <documentation>Name of the profile.</documentation>
           </annotation>
          </element>
-         <element name="description" type="string">
+         <element name="description" type="string" minOccurs="0">
           <annotation>
            <documentation>Description of the profile.</documentation>
           </annotation>

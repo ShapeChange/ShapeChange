@@ -114,6 +114,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
@@ -667,7 +668,7 @@ public class FeatureCatalogue
 	private String packageId(PackageInfo pkg) {
 		return pkg.id().startsWith("P") ? "_" + pkg.id() : "_P" + pkg.id();
 	}
-	
+
 	private String packageId(String pkgId) {
 		return pkgId.startsWith("P") ? "_" + pkgId : "_P" + pkgId;
 	}
@@ -1422,10 +1423,14 @@ public class FeatureCatalogue
 					s = constraint.text();
 					String description = null;
 					String expression = null;
-					if (s != null && s.contains("/*") && s.contains("*/")) {
+					if(constraint instanceof TextConstraint) {
+						expression = s;
+					} else if (s != null && s.contains("/*") && s.contains("*/")) {
 						String[] sa = s.split("\\*/");
 						description = sa[0].replaceFirst("/\\*", "").trim();
-						expression = sa[1].trim();
+						if (sa.length > 1) {
+							expression = sa[1].trim();
+						}
 					} else {
 						expression = s;
 					}
