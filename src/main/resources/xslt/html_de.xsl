@@ -207,7 +207,7 @@
   <xsl:template match="Package|ApplicationSchema" mode="overview">
     <xsl:variable name="package" select="."/>
     <xsl:if
-      test="/FeatureCatalogue/FeatureType/package[attribute::idref=$package/@id]|/FeatureCatalogue/Package/parent[attribute::idref=$package/@id]">
+     test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[attribute::idref=$package/@id]|/FeatureCatalogue/Package/parent[attribute::idref=$package/@id]">
       <div>
         <tr border="0">
           <td class="package" border="0">
@@ -277,7 +277,7 @@
           </td>
           <td class="package" border="0"/>
         </tr>
-        <xsl:for-each select="/FeatureCatalogue/FeatureType[package/@idref=$package/@id]">
+       <xsl:for-each select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref=$package/@id]">
           <xsl:sort select="./code"/>
           <xsl:sort select="./name"/>
           <xsl:variable name="featuretype" select="."/>
@@ -307,7 +307,7 @@
   <xsl:template match="Package|ApplicationSchema" mode="detail">
     <xsl:variable name="package" select="."/>
     <xsl:if
-      test="/FeatureCatalogue/FeatureType/package[attribute::idref=$package/@id]|/FeatureCatalogue/Package/parent[attribute::idref=$package/@id]">
+     test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[attribute::idref=$package/@id]|/FeatureCatalogue/Package/parent[attribute::idref=$package/@id]">
       <hr/>
       <h2>
         <a>
@@ -432,7 +432,7 @@
           </td>
         </tr>
       </table>
-      <xsl:for-each select="/FeatureCatalogue/FeatureType[package/@idref=$package/@id]">
+     <xsl:for-each select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref=$package/@id]">
         <xsl:sort select="./code"/>
         <xsl:sort select="./name"/>
         <xsl:apply-templates select="." mode="detail"/>
@@ -484,8 +484,8 @@
       </xsl:call-template>
       <xsl:call-template name="subtypeentry">
         <xsl:with-param name="title">Oberklasse von</xsl:with-param>
-        <!-- <xsl:with-param name="types" select="//FeatureType[subtypeOf/@idref=$featuretype/@id]"/> -->
-        <xsl:with-param name="types" select="/FeatureCatalogue/FeatureType[subtypeOf/@idref=$featuretype/@id]"/>
+       <!-- <xsl:with-param name="types" select="//FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][subtypeOf/@idref=$featuretype/@id]"/> -->
+       <xsl:with-param name="types" select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][subtypeOf/@idref=$featuretype/@id]"/>
       </xsl:call-template>
     <xsl:choose>
     	<xsl:when test="$featuretype/type='Feature Type' or $featuretype/type='Object Type'">
@@ -595,10 +595,8 @@
           <xsl:if test="$featureAtt/ValueDomainType = 1">
             <xsl:call-template name="clentry">
               <xsl:with-param name="title">Werte</xsl:with-param>
-              <!-- <xsl:with-param name="values"
-                select="/FeatureCatalogue/Value[@id=$featureAtt/enumeratedBy/@idref]"/> -->
                 <xsl:with-param name="values"
-                select="key('modelElement',$featureAtt/enumeratedBy/@idref)"/>
+                 select="key('modelElement',$featureAtt/enumeratedBy/@idref)"/>
             </xsl:call-template>
           </xsl:if>
         </table>

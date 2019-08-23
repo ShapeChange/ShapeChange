@@ -17,7 +17,7 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			mode="enabled">
 			<targetParameter name="docxTemplateFilePath" value="src/main/resources/templates/template.docx"/>
-<!-- 			<targetParameter name="xsltPath" value="src/main/resources/xslt"/> -->
+			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>
 			<targetParameter name="outputDirectory" value="testResults/docx"/>
 			<targetParameter name="outputFilename" value="test"/>
 			<targetParameter name="sortedOutput" value="true"/>
