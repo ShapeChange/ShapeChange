@@ -427,7 +427,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 				for (String comment : comments) {
 					if (!text.contains(comment)) {
-						commentsToMerge.add("/*" + comment + "*/");
+						commentsToMerge.add("/* " + comment + " */");
 					}
 				}
 

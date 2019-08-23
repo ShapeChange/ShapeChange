@@ -3872,7 +3872,7 @@ public class XsdDocument implements MessageSource {
 									+ " satisfies " + codeListExpr + "='" + clTV
 									+ "'",
 							XpathType.BOOLEAN, false);
-					schDoc.addAssertion(cibase, propi, true, xpathCodeListUse,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathCodeListUse,
 							"Code list shall be '" + clTV + "'");
 				}
 
@@ -3895,7 +3895,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//*[@gml:id = substring-after($codeListUrl,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListExists, "Code list shall exist");
 				}
 
@@ -3917,7 +3917,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codeListUrl,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListCorrectRepresentation,
 							"Code list dictionary shall be represented using a GML 3.2 Dictionary");
 
@@ -3937,7 +3937,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeListDictionary' or local-name() = 'CodeListDictionary') and @gml:id = substring-after($codeListUrl,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListCorrectRepresentation,
 							"Code list dictionary shall be represented using an ISO 19139 CodeListDictionary");
 				}
@@ -3981,7 +3981,7 @@ public class XsdDocument implements MessageSource {
 				}
 
 				if (xpathCodeListValueExists != null) {
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListValueExists,
 							"Code list value shall exist");
 				}
@@ -4015,7 +4015,7 @@ public class XsdDocument implements MessageSource {
 									+ "starts-with(" + clRefExp + ",'" + clTV
 									+ "')",
 							XpathType.BOOLEAN, false);
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValUriStartsWith,
 							"Code list value URI shall start with '" + clTV
 									+ "'");
@@ -4041,7 +4041,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//*[@gml:id = substring-after($clValueUri,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true, xpathCLValueExists,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathCLValueExists,
 							"Code list value shall exist");
 				}
 
@@ -4063,7 +4063,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//gml:Definition[@gml:id = substring-after($clValueUri,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValueCorrectRepresentation,
 							"Code list value shall be represented using GML 3.2 (gml:Definition)");
 
@@ -4083,7 +4083,7 @@ public class XsdDocument implements MessageSource {
 									+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and @gml:id = substring-after($clValueUri,'#')])))",
 							XpathType.BOOLEAN, false);
 
-					schDoc.addAssertion(cibase, propi, true,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValueCorrectRepresentation,
 							"Code list dictionary item shall be represented using an ISO 19139 CodeDefinition");
 				}
@@ -4113,7 +4113,7 @@ public class XsdDocument implements MessageSource {
 					XpathFragment xpathCodeListUse = new XpathFragment(0,
 							"if (not(@codeSpace)) then true() else "
 									+ "@codeSpace='" + clTV + "'");
-					schDoc.addAssertion(cibase, propi, true, xpathCodeListUse,
+					schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathCodeListUse,
 							"Code space, if set, shall be '" + clTV + "'");
 
 					/*
@@ -4135,7 +4135,7 @@ public class XsdDocument implements MessageSource {
 										+ "return exists($codelistDoc//*[@gml:id = substring-after($codeListUrl,'#')])))",
 								XpathType.BOOLEAN, false);
 
-						schDoc.addAssertion(cibase, propi, true,
+						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListExists, "Code list shall exist");
 					}
 
@@ -4158,7 +4158,7 @@ public class XsdDocument implements MessageSource {
 										+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codeListUrl,'#')])))",
 								XpathType.BOOLEAN, false);
 
-						schDoc.addAssertion(cibase, propi, true,
+						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListCorrectRepresentation,
 								"Code list dictionary shall be represented using a GML 3.2 Dictionary");
 
@@ -4178,7 +4178,7 @@ public class XsdDocument implements MessageSource {
 										+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeListDictionary' or local-name() = 'CodeListDictionary') and @gml:id = substring-after($codeListUrl,'#')])))",
 								XpathType.BOOLEAN, false);
 
-						schDoc.addAssertion(cibase, propi, true,
+						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListCorrectRepresentation,
 								"Code list dictionary shall be represented using an ISO 19139 CodeListDictionary");
 					}
@@ -4221,7 +4221,7 @@ public class XsdDocument implements MessageSource {
 					}
 
 					if (xpathCodeListValueExists != null) {
-						schDoc.addAssertion(cibase, propi, true,
+						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListValueExists,
 								"Code list value shall exist");
 					}

@@ -433,7 +433,191 @@ public class SchematronSchema implements MessageSource {
 		// Memorize we have output at least one rule
 		assertion = true;
 	}
+	
+	/**
+	 * Add an assertion statement - that will result by translating the given
+	 * OCL constraint, which is defined for a property, to an XpathFragment object - and output
+	 * it as a Schematron &lt;assert> element. Does not add an assertion to
+	 * abstract or suppressed classes.
+	 * <p/>
+	 * The rule context is a class, which is determined by parameter cib. 
+	 * This supports cases in which the context class is a
+	 * subtype of the class that owns the property: b:subtype/a:property instead
+	 * of a:owner/a:property.
+	 * <p/>
+	 * &lt;let> elements are searched for identities and are merged including
+	 * the necessary name corrections in the text.
+	 *
+	 * @param c OCL constraint that shall be translated to 
+	 *          the check of a Schematron assertion
+	 * @param cib
+	 *                                           ClassInfo object, which defines
+	 *                                           the rule context. Can be
+	 *                                           <code>null</code>, then the
+	 *                                           class that owns the property for which the OCL 
+	 *                                           constraint is defined provides the rule context.
+	 * @param addToSubtypesInSelectedSchemas
+	 *                                           true to add the assertion to
+	 *                                           direct and indirect subtypes of
+	 *                                           cib (or the class that owns the property 
+	 *                                           for which the OCL constraint is defined)
+	 *                                           that are in the schemas
+	 *                                           selected for processing
 
+	 */
+	protected void addAssertionForPropertyConstraint(OclConstraint c, ClassInfo cib,
+			boolean addToSubtypesInSelectedSchemas) {
+	    	    
+	 // Get hold of the syntax tree
+		 OclNode.Expression oclex = c.syntaxTree();
+
+		 // Derive the target Schematron syntax tree from the OCL tree,
+		 // quit if in error due to implementation restrictions
+		 SchematronConstraintNode scn = translateConstraintToSchematronNode(
+		 				oclex, null, false);
+		 if (scn == null)
+		     return;
+
+		 // Now, translate this to an Xpath fragment object, which is supposed
+		 // to contain all necessary information to generate the Rule.
+		 SchematronConstraintNode.BindingContext ctx = new SchematronConstraintNode.BindingContext(
+		 	SchematronConstraintNode.BindingContext.CtxState.ATCURRENT);
+		 SchematronConstraintNode.XpathFragment xpath = scn.translate(ctx);
+
+		 // The generated Xpath syntax may still contain errors, which have
+		 // been detected during the compilation process and which are coded
+		 // in the result by means of a particular string pattern. Find out.
+		 if (checkErrorsInXpathFragment(xpath))
+		 	return;
+
+		 // We will have to create an assertion. Besides the test, which is
+		 // contained in the xpath object, we can output some explanatory text,
+		 // which we create from the name of the constraint and any OCL
+		 // comments, which we find in the constraint
+		 String text = c.name();
+		 String[] comments = c.comments();
+		 if (comments != null && comments.length > 0) {
+		     text += ":";
+		 	for (String cl : comments) {				
+		 		text += " " + cl;
+		 	}
+		 }
+		 
+		 PropertyInfo pi = (PropertyInfo)c.contextModelElmt();
+	    
+	 ClassInfo ci = cib != null ? cib : pi.inClass();
+
+		/*
+		 * Do not add assertion for abstract and suppressed classes.
+		 * 
+		 * Also, if the class or the property is prohibited in the profile
+		 * schema, do not create any checks for the property and this class.
+		 */
+		if (!ci.isAbstract() && !ci.suppressed()
+				&& !(ci.matches(
+						"rule-xsd-all-propertyAssertion-ignoreProhibited")
+						&& "true".equalsIgnoreCase(
+								ci.taggedValue("prohibitedInProfile")))
+				&& !(pi.matches(
+						"rule-xsd-all-propertyAssertion-ignoreProhibited")
+						&& "true".equalsIgnoreCase(
+								pi.taggedValue("prohibitedInProfile")))) {
+
+			registerNamespace(ci);
+			registerNamespace(pi.inClass());
+
+			/*
+			 * Create an assertion. Find out if a rule for the required context
+			 * already exists.
+			 * 
+			 * TBD: add nil check to context?
+			 */
+			String ruleContext = ci.qname();
+			RuleCreationStatus rulecs = ruleCreationStatusMap.get(ruleContext);
+			String asserttext;
+
+			if (rulecs == null) {
+
+				// First time we encounter this context: Create a <rule>
+				Element rule = document.createElementNS(Options.SCHEMATRON_NS,
+						"rule");
+				pattern.appendChild(rule);
+				addAttribute(document, rule, "context", ruleContext);
+
+				// Initialize the necessary DOM hooks and info
+				rulecs = new RuleCreationStatus();
+				rulecs.ruleElement = rule;
+
+				// Initialize accumulation of the result fragments
+				rulecs.lastPathStatus = xpath;
+				asserttext = xpath.fragment;
+
+				// Store away
+				ruleCreationStatusMap.put(ruleContext, rulecs);
+
+			} else {
+
+				// Second time: We need to merge the result fragment
+				asserttext = rulecs.lastPathStatus.merge(xpath);
+			}
+
+			// Add the let-assignments, which are new for this assert
+			if (xpath.lets != null) {
+
+				for (Entry<String, String> l : rulecs.lastPathStatus.lets
+						.entrySet()) {
+
+					if (rulecs.letVarsAlreadyOutput.contains(l.getKey())) {
+						continue;
+					}
+
+					Element let = document
+							.createElementNS(Options.SCHEMATRON_NS, "let");
+					rulecs.ruleElement.insertBefore(let,
+							rulecs.firstAssertElement);
+					addAttribute(document, let, "name", l.getKey());
+					addAttribute(document, let, "value", l.getValue());
+					rulecs.letVarsAlreadyOutput.add(l.getKey());
+				}
+			}
+
+			// Add the assertion
+			Element ass = document.createElementNS(Options.SCHEMATRON_NS,
+					"assert");
+			rulecs.ruleElement.appendChild(ass);
+			if (rulecs.firstAssertElement == null) {
+				rulecs.firstAssertElement = ass;
+			}
+			addAttribute(document, ass, "test", asserttext);
+			ass.appendChild(document.createTextNode(text));
+
+			// Memorize we have output at least one rule
+			assertion = true;
+		}
+
+		if (addToSubtypesInSelectedSchemas) {
+
+			for (String subtypeId : ci.subtypes()) {
+
+				ClassInfo subtype = model.classById(subtypeId);
+
+				if (model.isInSelectedSchemas(subtype)) {
+				    
+				    addAssertionForPropertyConstraint(c, subtype, true);
+
+					if (!schematronTitleExtended && !subtype.pkg()
+							.targetNamespace()
+							.equalsIgnoreCase(ci.pkg().targetNamespace())) {
+						schematronTitleHook.setTextContent(
+								schematronTitleHook.getTextContent()
+										+ " and dependent schema(s)");
+						schematronTitleExtended = true;
+					}
+				}
+			}
+		}	 
+	}
+	
 	/**
 	 * Add an assertion statement embodied in an XpathFragment object and output
 	 * it as a Schematron &lt;assert> element. Does not add an assertion to
@@ -470,7 +654,7 @@ public class SchematronSchema implements MessageSource {
 	 *                                           assertion
 	 * @param
 	 */
-	protected void addAssertion(ClassInfo cib, PropertyInfo pi,
+	protected void addAssertionForExplicitProperty(ClassInfo cib, PropertyInfo pi,
 			boolean addToSubtypesInSelectedSchemas,
 			SchematronConstraintNode.XpathFragment xpath, String text) {
 
@@ -572,7 +756,7 @@ public class SchematronSchema implements MessageSource {
 
 				if (model.isInSelectedSchemas(subtype)) {
 
-					addAssertion(subtype, pi, true, xpath, text);
+				    addAssertionForExplicitProperty(subtype, pi, true, xpath, text);
 
 					if (!schematronTitleExtended && !subtype.pkg()
 							.targetNamespace()

@@ -149,6 +149,7 @@ public class XmlSchema implements Target, MessageSource {
 		}
 
 		if (schDoc != null) {
+		    
 			List<Constraint> cs = ci.constraints();
 
 			Collections.sort(cs, new Comparator<Constraint>() {
@@ -161,6 +162,24 @@ public class XmlSchema implements Target, MessageSource {
 				if (c != null && c instanceof OclConstraint && schDoc != null
 						&& ((OclConstraint) c).syntaxTree() != null) {
 					schDoc.addAssertion(ci, (OclConstraint) c);
+				}
+			}
+			
+			for(PropertyInfo propi : ci.properties().values()) {
+			    
+			    List<Constraint> propiCs = propi.constraints();
+
+				Collections.sort(propiCs, new Comparator<Constraint>() {
+					public int compare(Constraint ci1, Constraint ci2) {
+						return ci1.name().compareTo(ci2.name());
+					}
+				});
+
+				for (Constraint c : propiCs) {
+					if (c != null && c instanceof OclConstraint && schDoc != null
+							&& ((OclConstraint) c).syntaxTree() != null) {
+						schDoc.addAssertionForPropertyConstraint((OclConstraint) c, null, true);
+					}
 				}
 			}
 		}

@@ -12,7 +12,7 @@
 		<parameter name="checkingConstraints" value="enabled"/>
 		<parameter name="classTypesToCreateConstraintsFor" value="featuretype,type"/>
 		<parameter name="constraintCreationForProperties" value="false"/>
-		<parameter name="oclConstraintTypeRegex" value=""/>
+        <parameter name="loadConstraintsForSelectedSchemasOnly" value="true"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
 		<parameter name="extractSeparator" value="--"/>
 		<descriptorSources>

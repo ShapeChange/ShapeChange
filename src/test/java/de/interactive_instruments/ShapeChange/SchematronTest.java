@@ -89,5 +89,12 @@ public class SchematronTest extends WindowsBasicTest {
 		multiTest("src/test/resources/sch/iterator_with_byReference_property/testEA_sch_iterator_with_byReference_property.xml",
 				new String[] { "sch" }, "testResults/sch/iterator_with_byReference_property",
 				"src/test/resources/sch/iterator_with_byReference_property/reference");
-	}	
+	}
+	
+	@Test
+	public void schematronTest_oclConstraintOnProperties() {
+		multiTest("src/test/resources/sch/oclConstraintOnProperties/testEA_sch_oclConstraintOnProperties.xml",
+				new String[] { "sch", "xml" }, "testResults/sch/oclConstraintOnProperties/results",
+				"src/test/resources/sch/oclConstraintOnProperties/reference/results");
+	}
 }
