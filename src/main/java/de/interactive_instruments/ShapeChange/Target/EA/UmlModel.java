@@ -46,6 +46,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,6 +77,7 @@ import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Util.ea.EAAggregation;
@@ -96,23 +99,14 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
  */
 public class UmlModel implements SingleTarget, MessageSource {
 
-	/**
-	 * Optional (default is the current run directory) - The path to the folder
-	 * in which the resulting UML model will be created.
-	 */
-	public static final String PARAM_OUTPUT_DIR = "outputDirectory";
-	public static final String PARAM_MODEL_FILENAME = "modelFilename";
-	public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
-	public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
-	public static final String PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP = "includeAssociationEndOwnership";
-	public static final String PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT = "mergeConstraintCommentsIntoText";
-
 	private static boolean initialised = false;
 	private static String outputFilename = null;
 	private static String documentationTemplate = null;
 	private static String documentationNoValue = null;
 	private static boolean includeAssociationEndOwnership = false;
 	private static boolean mergeConstraintCommentsIntoText = false;
+	private static Pattern ignoreTaggedValuesPattern = null;
+	
 	private static Repository rep = null;
 	private static Integer pOut_EaPkgId = null;
 	private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
@@ -143,14 +137,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 		if (!initialised) {
 
 			String outputDirectory = options
-					.parameter(this.getClass().getName(), PARAM_OUTPUT_DIR);
+					.parameter(this.getClass().getName(), UmlModelConstants.PARAM_OUTPUT_DIR);
 			if (outputDirectory == null)
 				outputDirectory = options.parameter("outputDirectory");
 			if (outputDirectory == null)
 				outputDirectory = ".";
 
 			outputFilename = options.parameterAsString(
-					this.getClass().getName(), PARAM_MODEL_FILENAME,
+					this.getClass().getName(), UmlModelConstants.PARAM_MODEL_FILENAME,
 					"ShapeChangeExport.eap", false, true);
 
 			// change the default documentation template?
@@ -161,12 +155,25 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			includeAssociationEndOwnership = options.parameterAsBoolean(
 					this.getClass().getName(),
-					PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
+					UmlModelConstants.PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
 
 			mergeConstraintCommentsIntoText = options.parameterAsBoolean(
 					this.getClass().getName(),
-					PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, false);
+					UmlModelConstants.PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, false);
 
+			try {
+			    String itvpParam = options
+					.parameterAsString(UmlModel.class.getName(),
+						UmlModelConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,null,
+							true, false);
+				ignoreTaggedValuesPattern = itvpParam == null ? null : Pattern.compile(itvpParam);
+			} catch (PatternSyntaxException e) {
+				result.addError(this, 54,
+					UmlModelConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
+						e.getMessage());
+				ignoreTaggedValuesPattern = null;
+			}
+			
 			/*
 			 * Make sure repository file exists
 			 */
@@ -207,7 +214,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				 */
 
 				String eapTemplateFilePath = options.parameter(
-						this.getClass().getName(), PARAM_EAP_TEMPLATE);
+						this.getClass().getName(), UmlModelConstants.PARAM_EAP_TEMPLATE);
 
 				if (eapTemplateFilePath != null) {
 
@@ -271,7 +278,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 			boolean omitOutputPackageDateTime = options.parameterAsBoolean(
 					this.getClass().getName(),
-					PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
+					UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
 
 			if (!omitOutputPackageDateTime) {
 				TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -470,7 +477,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			 * values of the tag are stored in memo fields.
 			 */
 			List<EATaggedValue> taggedValues = EATaggedValue
-					.fromTaggedValues(propi.taggedValuesAll());
+					.fromTaggedValues(filterTaggedValues(propi.taggedValuesAll()));
 
 			org.sparx.Attribute att = EAElementUtil.createEAAttribute(e,
 					propi.name(), propi.aliasName(),
@@ -495,7 +502,25 @@ public class UmlModel implements SingleTarget, MessageSource {
 		}
 	}
 
-	/**
+	private TaggedValues filterTaggedValues(TaggedValues taggedValues) {
+	    
+	    if(ignoreTaggedValuesPattern == null) {
+		
+		return taggedValues;
+		
+	    } else {
+		
+		TaggedValues tvsToWrite = options.taggedValueFactory();
+		for (String tagName : taggedValues.keySet()) {
+			if (!ignoreTaggedValuesPattern.matcher(tagName).matches()) {
+			    tvsToWrite.put(tagName, taggedValues.get(tagName));
+			}
+		}
+		return tvsToWrite;
+	    }
+    }
+
+    /**
 	 * Maps the given stereotypes according to map entries (with param attribute
 	 * 'stereotype') defined in the target configuration.
 	 * 
@@ -540,7 +565,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			EAElementUtil.setEAStereotype(e,
 					mapStereotypes(i.stereotypes()).toString());
 
-			EAElementUtil.setTaggedValues(e, i.taggedValuesAll());
+			EAElementUtil.setTaggedValues(e, filterTaggedValues(i.taggedValuesAll()));
 
 			e.Refresh();
 
@@ -562,7 +587,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 			EAConnectorUtil.setEAStereotype(con,
 					mapStereotypes(i.stereotypes()).toString());
 
-			EAConnectorUtil.setTaggedValues(con, i.taggedValuesAll());
+			EAConnectorUtil.setTaggedValues(con, filterTaggedValues(i.taggedValuesAll()));
 
 		} catch (EAException exc) {
 
@@ -626,7 +651,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 				}
 			}
 
-			EAConnectorEndUtil.setTaggedValues(ce, i.taggedValuesAll());
+			EAConnectorEndUtil.setTaggedValues(ce, filterTaggedValues(i.taggedValuesAll()));
 
 		} catch (EAException exc) {
 
@@ -812,6 +837,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 		includeAssociationEndOwnership = false;
 		mergeConstraintCommentsIntoText = false;
+		ignoreTaggedValuesPattern = null;
 	}
 
 	/**
@@ -839,15 +865,17 @@ public class UmlModel implements SingleTarget, MessageSource {
 			return "Could not write the model, because the target has not been initialized properly.";
 		case 51:
 			return "URL '$1$' provided for configuration parameter "
-					+ PARAM_EAP_TEMPLATE
+					+ UmlModelConstants.PARAM_EAP_TEMPLATE
 					+ " is malformed. Execution will be aborted. Exception message is: '$2$'.";
 		case 52:
 			return "EAP template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-					+ PARAM_EAP_TEMPLATE
+					+ UmlModelConstants.PARAM_EAP_TEMPLATE
 					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 		case 53:
 			return "Exception encountered when copying EAP template file to output destination. Message is: $1$.";
-
+		case 54:
+			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+		
 		// 101-200: issues with the model
 		case 101:
 			return "Supertype with id '$1$' of class '$2$' was not found in the model.";

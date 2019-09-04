@@ -153,10 +153,6 @@ public class ModelExportConstants {
 	public static final String RULE_TGT_EXP_ALL_RESTRICT_EXISTING_PROFILES = "rule-exp-all-restrictExistingProfiles";
 
 	/**
-	 * If this rule is enabled, then the tagged value 'profiles' will be removed
-	 * on exported classes and properties.
-	 */
-	/**
 	 * Alias: none
 	 * <p>
 	 * Required / Optional: optional
