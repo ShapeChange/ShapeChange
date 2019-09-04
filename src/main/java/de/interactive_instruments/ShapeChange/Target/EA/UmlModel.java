@@ -612,6 +612,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 			if (includeAssociationEndOwnership && i.isOwned()) {
 				EAConnectorEndUtil.setEAOwnedByClassifier(ce, true);
 			}
+			
+			EAConnectorEndUtil.setEADerived(ce, i.isDerived());
 
 			if (i.reverseProperty() != null) {
 				if (i.reverseProperty().isAggregation()) {

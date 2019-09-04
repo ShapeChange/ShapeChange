@@ -210,6 +210,11 @@ public interface PropertyInfo extends Info {
 	 *         stereotype 'propertymetadata', else <code>false</code>
 	 */
 	public boolean propertyMetadata();
+	
+	/**
+	 * @return the metadata type declared via tagged value 'metadataType', if it is defined as such, and can be found in the model, else <code>null</code>
+	 */
+	public ClassInfo propertyMetadataType();
 
 	/**
 	 * This method returns the constraints associated with the property.

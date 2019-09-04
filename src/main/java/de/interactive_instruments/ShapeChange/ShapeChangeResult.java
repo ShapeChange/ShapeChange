@@ -69,7 +69,7 @@ import org.w3c.dom.Element;
 /** The result is xxx as an XML file. */
 public class ShapeChangeResult {
 	// Data
-	protected Document document = null;
+	public Document document = null;
 	protected Element root = null;
 	protected Element messages = null;
 	protected Element resultFiles = null;

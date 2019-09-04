@@ -309,6 +309,7 @@ public class MessageCollection {
 		messageTexts.put( 44, "Prefix operation '%1%' is not available for operand of type '%2%'." );
 		messageTexts.put( 45, "Collection type result is not permitted for an 'invariant' condition." );
 		messageTexts.put( 46, "A collection type of a 'derive' or 'init' condition result requires a context property, which has a cardinality greater 1." );
+		messageTexts.put( 47, "Operation propertyMetadata() is invoked on a property or variable '%1%'. Either a metadata type is not declared for the corresponding property via tagged value 'metadataType' or that type cannot be found in the model." );
 	}
 	static String 
 		unknown = "System error: Unknown message number %1% encountered.";

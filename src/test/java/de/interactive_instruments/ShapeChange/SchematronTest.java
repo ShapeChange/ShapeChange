@@ -97,4 +97,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch", "xml" }, "testResults/sch/oclConstraintOnProperties/results",
 				"src/test/resources/sch/oclConstraintOnProperties/reference/results");
 	}
+	
+	@Test
+	public void schematronTest_oclPropertyMetadata() {
+		multiTest("src/test/resources/sch/oclPropertyMetadata/testEA_sch_oclPropertyMetadata.xml",
+				new String[] { "sch" }, "testResults/sch/oclPropertyMetadata/results",
+				"src/test/resources/sch/oclPropertyMetadata/reference/results");
+	}
 }

@@ -1479,6 +1479,140 @@ public abstract class SchematronConstraintNode {
 		}
 
 	}
+	
+	/**
+	 * ************************************************************************
+	 * <p>
+	 * This class represents the operation propertyMetadata(). It selects the
+	 * metadata object associated with a property.
+	 * </p>
+	 */
+	public static class PropertyMetadata extends SchematronConstraintNode {
+
+	    protected ClassInfo metadataType;
+	    
+		/**
+		 * Ctor
+		 * 
+		 * @param schemaObject
+		 *            The schema object
+		 */
+		public PropertyMetadata(SchematronSchema schemaObject, ClassInfo metadataType,
+				boolean negated) {
+			this.schemaObject = schemaObject;
+			this.metadataType = metadataType;
+			this.negated = negated;
+		}
+
+		/**
+		 * <p>
+		 * PropertyMetadata can produce a set. That depends on the collection 
+		 * (of property values, taking into account multiple property steps, 
+		 * i.e. a sequence of implicit collect operations) or variable it is operating on.
+		 * </p>
+		 * 
+		 * @return Flag indicating whether the node can return multiple values
+		 */
+		public boolean isMultiple() {
+			return true;
+		}
+
+		/**
+		 * <p>
+		 * propertyMetadata() is never simple. Otherwise it could not be referenced.
+		 * </p>
+		 * 
+		 * @return Flag indicating whether the node has a simple type
+		 */
+		public boolean hasSimpleType() {
+			return false;
+		}
+
+		/**
+		 * <p>
+		 * This predicate finds out whether the propertyMetadata results in a
+		 * collection of instances, which conceptually have identity.
+		 * </p>
+		 * 
+		 * @return Flag indicating whether the node is an identity carrying type
+		 */
+		public boolean hasIdentity() {
+			return XmlSchema.classCanBeReferenced(metadataType);
+		}
+
+		/**
+		 * <p>
+		 * propertyMetadata() is translated to a lookup of referenced metadata. The
+		 * result is a nodeset containing metadata objects.
+		 * </p>
+		 * 
+		 * @param ctx
+		 *            BindingContext this node shall be compiled in
+		 */
+		public XpathFragment translate(BindingContext ctx) {
+		    
+		    boolean metadataTypeIs19139Encoded = metadataType.matches(
+				"rule-xsd-cls-standard-19139-property-types");
+		    
+			SchematronConstraintNode objnode = children.get(0);
+			XpathFragment obj = objnode.translate(ctx);
+		 			
+			// store current obj.fragment as a variable
+			String var = obj.findOrAdd(obj.fragment);
+			obj.fragment = "$" + var;
+			obj.priority = 11;
+
+			if (ctx.inPredicateExpression) {
+				obj.fragment = "***ERROR[128]***";
+			}
+										
+			String idAttributeFrag;
+			if (metadataTypeIs19139Encoded) {
+				idAttributeFrag = "@id";
+			} else {
+				idAttributeFrag = "@gml:id";
+				schemaObject.registerNamespace("gml");
+			}
+					
+			String attmlink = obj.fragment;
+			if (attmlink.length() > 0) {
+			    
+				if (obj.priority < 9) {
+					attmlink = "(" + attmlink + ")";
+					/*
+					 * NOTE: Setting the obj.priority here (to 11)
+					 * is not necessary. The priority of the whole
+					 * obj.fragment, once it has been created, is
+					 * important. It will be set later on.
+					 */
+				}
+			}
+			
+			attmlink += "/@metadata";
+			String frag_ref = "//*[";					
+			frag_ref += idAttributeFrag;					
+			frag_ref += "=" + attmlink + "]";
+			
+			// Whatever binding context we had before, it is lost
+			if (obj.atEnd != null) {
+				obj.atEnd.setState(BindingContext.CtxState.OTHER);
+			}
+					
+			obj.fragment = frag_ref;
+			obj.priority = 10;
+
+			// Treat negation. Note that if this is being negated it must be
+			// unique and boolean ...
+			if (negated) {
+				obj.fragment = "not(" + obj.fragment + ")";
+				obj.priority = 11;
+				obj.atEnd.setState(BindingContext.CtxState.NONE);
+			}
+
+			return obj;
+		}
+
+	}
 
 	/**
 	 * ************************************************************************

@@ -1439,6 +1439,20 @@ public class SchematronSchema implements MessageSource {
 				enclosing.addChild(allinst);
 			return allinst;
 
+		} else if (opname.equals("propertyMetadata")) {
+		    		    			
+			SchematronConstraintNode.PropertyMetadata pm = new SchematronConstraintNode.PropertyMetadata(
+					this, oper.object.dataType.metadataType, negate);
+			
+			// Evaluate the operand to be tested
+			pm.addChild(translateConstraintToSchematronNode(oper.object,
+					null, false));
+			
+			// Merge PropertyMetadata node into enclosing logic if there is one
+			if (enclosing != null)
+				enclosing.addChild(pm);
+			return pm;
+
 		} else if (opname.startsWith("error_")) {
 
 			// Create the ErrorComment node
@@ -1504,7 +1518,8 @@ public class SchematronSchema implements MessageSource {
 		// Variable, AllInstances or Select?
 		if (objnode instanceof SchematronConstraintNode.Variable
 				|| objnode instanceof SchematronConstraintNode.AllInstances
-				|| objnode instanceof SchematronConstraintNode.Select) {
+				|| objnode instanceof SchematronConstraintNode.Select
+				|| objnode instanceof SchematronConstraintNode.PropertyMetadata) {
 
 			// Find out, whether this is a normal attribute or if it is
 			// absorbing the current attribute member (which includes nilReason
@@ -1898,6 +1913,8 @@ public class SchematronSchema implements MessageSource {
 			return "Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" comparison between structured non-object types not supported.";
 		case 127:
 			return "??Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" nested byReference property \"$3$\" in iterator construct cannot be resolved due to limitations of Xpath 1.0 (variables inside XPath expression not supported).";
+		case 128:
+			return "??Implementation restriction - in OCL constraint \"$1$\" in class \"$2$\" propertyMetadata() in iterator construct cannot be resolved due to limitations of Xpath 1.0 (variables inside XPath expression not supported).";
 		case 131:
 			return "";
 		}

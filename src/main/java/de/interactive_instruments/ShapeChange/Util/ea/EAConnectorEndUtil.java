@@ -296,6 +296,17 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 					conEnd.GetLastError()));
 		}
 	}
+	
+	public static void setEADerived(ConnectorEnd conEnd,
+		boolean isDerived) throws EAException {
+
+        	conEnd.SetDerived(isDerived);
+        
+        	if (!conEnd.Update()) {
+        		throw new EAException(createMessage(message(114), conEnd.GetRole(),
+        				conEnd.GetLastError()));
+        	}
+        }
 
 	public static void setEAAggregation(ConnectorEnd conEnd, EAAggregation aggregation)
 			throws EAException {
@@ -575,6 +586,8 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'Stereotype' of EA connector end '$1$'. Error message is: $2$";
 		case 113:
 			return "EA error encountered while updating 'OwnedByClassifier' of EA connector end '$1$'. Error message is: $2$";
+		case 114:
+			return "EA error encountered while updating 'Derived' of EA connector end '$1$'. Error message is: $2$";
 		
 		default:
 			return "(" + EAConnectorUtil.class.getName()

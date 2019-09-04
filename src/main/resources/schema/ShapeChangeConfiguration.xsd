@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.0b1">
  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
- <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
+ <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
+	<element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
  <complexType name="ShapeChangeConfigurationType">
   <choice minOccurs="0" maxOccurs="unbounded">
    <element ref="sc:ShapeChangeConfiguration"/>
@@ -12,7 +13,8 @@
    <element ref="sc:targets"/>
    <element ref="xi:include"/>
   </choice>
- </complexType>
+ <attribute ref="xml:base"/>
+	</complexType>
  <element name="input">
   <complexType>
    <choice minOccurs="0" maxOccurs="unbounded">
@@ -37,7 +39,8 @@
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element ref="sc:StereotypeAlias"/>
    </sequence>
-  </complexType>
+  <attribute ref="xml:base"/>
+		</complexType>
  </element>
  <element name="StereotypeAlias" type="sc:StereotypeAliasType"/>
  <complexType name="StereotypeAliasType">
@@ -88,7 +91,8 @@
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element ref="sc:TagAlias"/>
    </sequence>
-  </complexType>
+  <attribute ref="xml:base"/>
+		</complexType>
  </element>
  <element name="TagAlias" type="sc:TagAliasType"/>
  <complexType name="TagAliasType">
@@ -322,7 +326,8 @@
     <element ref="sc:XmlNamespace"/>
     <element ref="sc:xmlNamespaces"/>
    </choice>
-  </complexType>
+  <attribute ref="xml:base"/>
+		</complexType>
  </element>
  <element name="XmlNamespace" type="sc:XmlNamespaceType"/>
  <complexType name="XmlNamespaceType">
@@ -339,7 +344,8 @@
     <element ref="sc:XsdPropertyMapEntry"/>
     <element ref="sc:xsdMapEntries"/>
    </choice>
-  </complexType>
+  <attribute ref="xml:base"/>
+		</complexType>
  </element>
  <element name="XsdMapEntry" type="sc:XsdMapEntryType"/>
  <complexType name="XsdMapEntryType">
@@ -399,7 +405,8 @@
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element name="EncodingRule" type="sc:EncodingRuleType"/>
    </sequence>
-  </complexType>
+  <attribute ref="xml:base"/>
+		</complexType>
  </element>
  <complexType name="RuleRefType">
   <attribute name="name" type="string" use="required"/>

@@ -288,6 +288,19 @@ public abstract class ModelImpl implements Model {
 
 		return null;
 	}
+	
+	@Override
+	public ClassInfo classByFullNameInSchema(String fullNameInSchema) {
+
+		for (ClassInfo ci : classes()) {
+
+			if (ci.fullNameInSchema().equals(fullNameInSchema)) {
+				return ci;
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * {@inheritDoc}

@@ -219,6 +219,14 @@ public interface Model {
 	public PropertyInfo propertyByFullNameInSchema(String fullNameInSchema);
 
 	/**
+	 * @param fullNameInSchema
+	 * @return the class that has the fully qualified name (omitting packages
+	 *         that are outside of the schema the class belongs to); can be
+	 *         <code>null</code> if no such class was found
+	 */
+	public ClassInfo classByFullNameInSchema(String fullNameInSchema);
+	
+	/**
 	 * Create a {@link Type} that can be used as value type of a
 	 * {@link PropertyInfo}.
 	 * 
