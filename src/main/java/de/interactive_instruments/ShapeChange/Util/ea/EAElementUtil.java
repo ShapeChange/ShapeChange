@@ -555,7 +555,7 @@ public class EAElementUtil extends AbstractEAUtil {
 	public static Attribute createEAAttribute(Element e, String name,
 			String alias, String documentation, Set<String> stereotypes,
 			List<EATaggedValue> taggedValues, boolean isDerived,
-			boolean isOrdered, boolean allowDuplicates, String initialValue,
+			boolean isOrdered, boolean allowDuplicates, String initialValue, boolean isReadOnly,
 			Multiplicity m, String type, Integer classifierID)
 			throws EAException {
 
@@ -593,6 +593,8 @@ public class EAElementUtil extends AbstractEAUtil {
 		if (initialValue != null) {
 			att.SetDefault(initialValue);
 		}
+		
+		att.SetIsConst(isReadOnly);
 
 		att.SetVisibility("public");
 

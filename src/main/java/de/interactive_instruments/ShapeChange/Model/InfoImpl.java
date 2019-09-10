@@ -307,7 +307,7 @@ public abstract class InfoImpl implements Info {
 
 				/*
 				 * NOTE: the default source for the descriptor 'documentation'
-				 * in XMI10 and GSIP is: tag#documentation;description, that is
+				 * in XMI10 and GCSR is: tag#documentation;description, that is
 				 * why we split here and look at multiple tags in the subsequent
 				 * for-loop. If a value is found in one iteration, we can break.
 				 */

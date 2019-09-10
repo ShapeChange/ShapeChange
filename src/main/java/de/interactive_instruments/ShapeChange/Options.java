@@ -153,7 +153,7 @@ public class Options {
 	public static final String SQL = "sql";
 	public static final String SWECOMMON2 = "ogcSweCommon2".toLowerCase();
 	public static final String NOT_ENCODED = "notEncoded".toLowerCase();
-	public static final String GSIP_ENC = "gsip".toLowerCase();
+	public static final String GCSR_ENC = "gcsr".toLowerCase();
 
 	/** Well known stereotypes */
 	public static final String[] classStereotypes = { "codelist", "enumeration",
@@ -3777,27 +3777,27 @@ public class Options {
 		addRule("rule-xsd-cls-codelist-anonymous-xlink", "gml21");
 
 		/*
-		 * addExtendsEncRule("gsip","*");
-		 * addRule("req-xsd-cls-mixin-supertypes","gsip");
-		 * addRule("req-xsd-cls-codelist-no-supertypes","gsip");
-		 * addRule("rule-xsd-cls-union-asCharacterString","gsip");
-		 * addRule("rule-xsd-cls-union-asGroup","gsip");
-		 * addRule("rule-xsd-cls-enum-supertypes","gsip");
-		 * addRule("rule-xsd-cls-enum-subtypes","gsip");
-		 * addRule("rule-xsd-cls-basictype","gsip");
-		 * addRule("rule-xsd-cls-union-direct","gsip");
-		 * addRule("rule-xsd-cls-codelist-constraints","gsip");
-		 * addRule("rule-xsd-cls-mixin-classes-as-group","gsip");
-		 * addRule("rule-xsd-cls-mixin-classes","gsip");
-		 * addRule("rule-xsd-prop-exclude-derived","gsip");
-		 * addRule("rule-xsd-prop-length-size-pattern","gsip");
-		 * addRule("rule-xsd-prop-xsdAsAttribute","gsip");
-		 * addRule("rule-xsd-prop-nillable","gsip");
-		 * addRule("rule-xsd-prop-nilReasonAllowed","gsip");
-		 * addRule("rule-xsd-prop-initialValue","gsip");
-		 * addRule("rule-xsd-prop-att-map-entry","gsip");
-		 * addRule("rule-xsd-pkg-schematron","gsip");
-		 * addRule("rule-xsd-all-tagged-values","gsip");
+		 * addExtendsEncRule("gcsr","*");
+		 * addRule("req-xsd-cls-mixin-supertypes","gcsr");
+		 * addRule("req-xsd-cls-codelist-no-supertypes","gcsr");
+		 * addRule("rule-xsd-cls-union-asCharacterString","gcsr");
+		 * addRule("rule-xsd-cls-union-asGroup","gcsr");
+		 * addRule("rule-xsd-cls-enum-supertypes","gcsr");
+		 * addRule("rule-xsd-cls-enum-subtypes","gcsr");
+		 * addRule("rule-xsd-cls-basictype","gcsr");
+		 * addRule("rule-xsd-cls-union-direct","gcsr");
+		 * addRule("rule-xsd-cls-codelist-constraints","gcsr");
+		 * addRule("rule-xsd-cls-mixin-classes-as-group","gcsr");
+		 * addRule("rule-xsd-cls-mixin-classes","gcsr");
+		 * addRule("rule-xsd-prop-exclude-derived","gcsr");
+		 * addRule("rule-xsd-prop-length-size-pattern","gcsr");
+		 * addRule("rule-xsd-prop-xsdAsAttribute","gcsr");
+		 * addRule("rule-xsd-prop-nillable","gcsr");
+		 * addRule("rule-xsd-prop-nilReasonAllowed","gcsr");
+		 * addRule("rule-xsd-prop-initialValue","gcsr");
+		 * addRule("rule-xsd-prop-att-map-entry","gcsr");
+		 * addRule("rule-xsd-pkg-schematron","gcsr");
+		 * addRule("rule-xsd-all-tagged-values","gcsr");
 		 */
 
 		/*

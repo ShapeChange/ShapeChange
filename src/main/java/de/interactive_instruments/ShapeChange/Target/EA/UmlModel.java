@@ -485,7 +485,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 							documentationNoValue),
 					mapStereotypes(propi.stereotypes()).asSet(), taggedValues,
 					propi.isDerived(), propi.isOrdered(), !propi.isUnique(),
-					propi.initialValue(), propi.cardinality(),
+					propi.initialValue(), propi.isReadOnly(), propi.cardinality(),
 					propi.typeInfo().name, null);
 
 			for (Constraint constr : propi.constraints()) {
