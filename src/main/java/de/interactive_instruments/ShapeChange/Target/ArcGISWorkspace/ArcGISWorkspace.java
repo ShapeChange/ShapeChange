@@ -1206,7 +1206,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						null,
 						pi.derivedDocumentation(documentationTemplate,
 								documentationNoValue),
-						enumStereotype, null, false, false, false, initialValue,
+						enumStereotype, null, false, false, false, initialValue, false,
 						new Multiplicity(1, 1), null, null);
 
 				addTaggedValuesToRepresent(eaAtt, pi);
@@ -1269,7 +1269,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					null,
 					pi.derivedDocumentation(documentationTemplate,
 							documentationNoValue),
-					enumStereotype, null, false, false, false, initialValue,
+					enumStereotype, null, false, false, false, initialValue,false,
 					new Multiplicity(1, 1), null, null);
 
 			addTaggedValuesToRepresent(eaAtt, pi);
@@ -1297,15 +1297,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			String fieldType) throws EAException {
 
 		EAElementUtil.createEAAttribute(eaElement, "FieldType", null, null,
-				null, null, false, false, false, fieldType,
+				null, null, false, false, false, fieldType,false,
 				new Multiplicity(1, 1), "esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(eaElement, "MergePolicy", null, null,
-				null, null, false, false, false, "esriMPTDefaultValue",
+				null, null, false, false, false, "esriMPTDefaultValue",false,
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(eaElement, "SplitPolicy", null, null,
-				null, null, false, false, false, "esriSPTDuplicate",
+				null, null, false, false, false, "esriSPTDuplicate", false,
 				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 	}
 
@@ -1382,15 +1382,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, false, esriFieldType, new Multiplicity(1, 1),
+				false, false, false, esriFieldType,false, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
-				null, false, false, false, "esriMPTDefaultValue",
+				null, false, false, false, "esriMPTDefaultValue",false,
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
-				null, false, false, false, "esriSPTDuplicate",
+				null, false, false, false, "esriSPTDuplicate",false,
 				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 
 		return e;
@@ -1803,7 +1803,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("SpatialIndex");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_IDX", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "", null);
 	}
 
@@ -1820,7 +1820,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("AttributeIndex");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "", null);
 	}
 
@@ -1843,7 +1843,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Area", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
@@ -1867,7 +1867,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Length", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
@@ -1893,7 +1893,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeGeometry", null);
 	}
 
@@ -1916,7 +1916,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeOID", null);
 	}
 
@@ -3379,7 +3379,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
-				stereotypes, tvs, false, false, false, initialValue,
+				stereotypes, tvs, false, false, false, initialValue,false,
 				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
 
@@ -4678,11 +4678,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						// create min and max fields
 						EAElementUtil.createEAAttribute(rd, "MinValue", null,
 								null, null, null, false, false, false,
-								doubleToString(minValue),
+								doubleToString(minValue),false,
 								new Multiplicity(1, 1), null, null);
 						EAElementUtil.createEAAttribute(rd, "MaxValue", null,
 								null, null, null, false, false, false,
-								doubleToString(maxValue),
+								doubleToString(maxValue),false,
 								new Multiplicity(1, 1), null, null);
 
 						numericRange = rd;
@@ -4896,7 +4896,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			EAElementUtil.createEAAttribute(eaClass,
 					eaClass.GetName() + "_" + eaAtt.GetName() + "_IDX", null,
-					null, stereotypes, tvs, false, false, false, null,
+					null, stereotypes, tvs, false, false, false, null,false,
 					new Multiplicity(1, 1), "", null);
 
 		} catch (EAException e) {

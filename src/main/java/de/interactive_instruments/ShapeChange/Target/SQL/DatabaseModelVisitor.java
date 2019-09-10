@@ -410,7 +410,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 						col.getName(), null, columnDocumentation,
 						columnStereotypes, null, false, false, false,
 						col.hasDefaultValue() ? col.getDefaultValue().toString()
-								: null,
+								: null,false,
 						new Multiplicity(1, 1), mapDataType(col), null);
 
 				this.eaAttributeIDByColumn.put(col, att.GetAttributeID());
