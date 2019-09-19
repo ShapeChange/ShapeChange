@@ -295,7 +295,7 @@ public interface ClassInfo extends Info {
 	public boolean asDictionaryGml33();
 
 	/**
-	 * Special case of a <<union>> with two properties (value and reasons) that
+	 * Special case of a &lt;&lt;union>> with two properties (value and reasons) that
 	 * can be mapped to a native nil/void/null mechanism in some implementation
 	 * environments, e.g. XML Schema
 	 * 

@@ -88,8 +88,6 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
-import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathFragment;
-import de.interactive_instruments.ShapeChange.Target.XmlSchema.SchematronConstraintNode.XpathType;
 
 public class XsdDocument implements MessageSource {
 
@@ -3579,7 +3577,7 @@ public class XsdDocument implements MessageSource {
 				&& cibase.matches("rule-xsd-cls-codelist-constraints")) {
 
 			// add assertion for code list URI
-			SchematronConstraintNode.XpathFragment xpath;
+			XpathFragment xpath;
 
 			String s = typeCi.taggedValue("codeList");
 			if (s == null || s.isEmpty())
@@ -3871,7 +3869,7 @@ public class XsdDocument implements MessageSource {
 							"every $codeListUrl in " + codeListExpr
 									+ " satisfies " + codeListExpr + "='" + clTV
 									+ "'",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathCodeListUse,
 							"Code list shall be '" + clTV + "'");
 				}
@@ -3893,7 +3891,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 									+ "return exists($codelistDoc//*[@gml:id = substring-after($codeListUrl,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListExists, "Code list shall exist");
@@ -3915,7 +3913,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 									+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codeListUrl,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListCorrectRepresentation,
@@ -3935,7 +3933,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 									+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeListDictionary' or local-name() = 'CodeListDictionary') and @gml:id = substring-after($codeListUrl,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCodeListCorrectRepresentation,
@@ -3960,7 +3958,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
 									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
 									+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue])",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 				} else if (clRepTV
 						.equalsIgnoreCase("application/x.iso19139+xml")) {
@@ -3977,7 +3975,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
 									+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
 									+ "/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue])",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 				}
 
 				if (xpathCodeListValueExists != null) {
@@ -4014,7 +4012,7 @@ public class XsdDocument implements MessageSource {
 							"every $clValueUri in " + clRefExp + " satisfies "
 									+ "starts-with(" + clRefExp + ",'" + clTV
 									+ "')",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValUriStartsWith,
 							"Code list value URI shall start with '" + clTV
@@ -4039,7 +4037,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($clValueUri, '#') and doc-available(substring-before($clValueUri,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
 									+ "return exists($codelistDoc//*[@gml:id = substring-after($clValueUri,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathCLValueExists,
 							"Code list value shall exist");
@@ -4061,7 +4059,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($clValueUri, '#') and doc-available(substring-before($clValueUri,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
 									+ "return exists($codelistDoc//gml:Definition[@gml:id = substring-after($clValueUri,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValueCorrectRepresentation,
@@ -4081,7 +4079,7 @@ public class XsdDocument implements MessageSource {
 									+ "or (contains($clValueUri, '#') and doc-available(substring-before($clValueUri,'#')) and boolean("
 									+ "for $codelistDoc in doc(substring-before($clValueUri,'#')) "
 									+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and @gml:id = substring-after($clValueUri,'#')])))",
-							XpathType.BOOLEAN, false);
+							XpathType.BOOLEAN);
 
 					schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 							xpathCLValueCorrectRepresentation,
@@ -4133,7 +4131,7 @@ public class XsdDocument implements MessageSource {
 										+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 										+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 										+ "return exists($codelistDoc//*[@gml:id = substring-after($codeListUrl,'#')])))",
-								XpathType.BOOLEAN, false);
+								XpathType.BOOLEAN);
 
 						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListExists, "Code list shall exist");
@@ -4156,7 +4154,7 @@ public class XsdDocument implements MessageSource {
 										+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 										+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 										+ "return exists($codelistDoc//gml:Dictionary[@gml:id = substring-after($codeListUrl,'#')])))",
-								XpathType.BOOLEAN, false);
+								XpathType.BOOLEAN);
 
 						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListCorrectRepresentation,
@@ -4176,7 +4174,7 @@ public class XsdDocument implements MessageSource {
 										+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and boolean("
 										+ "for $codelistDoc in doc(substring-before($codeListUrl,'#')) "
 										+ "return exists($codelistDoc//*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeListDictionary' or local-name() = 'CodeListDictionary') and @gml:id = substring-after($codeListUrl,'#')])))",
-								XpathType.BOOLEAN, false);
+								XpathType.BOOLEAN);
 
 						schDoc.addAssertionForExplicitProperty(cibase, propi, true,
 								xpathCodeListCorrectRepresentation,
@@ -4201,7 +4199,7 @@ public class XsdDocument implements MessageSource {
 								+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
 								+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
 								+ "/gml:dictionaryEntry/gml:Definition[gml:identifier = $codeListValue])",
-								XpathType.BOOLEAN, false);
+								XpathType.BOOLEAN);
 
 					} else if (clRepTV
 							.equalsIgnoreCase("application/x.iso19139+xml")) {
@@ -4217,7 +4215,7 @@ public class XsdDocument implements MessageSource {
 								+ "or (contains($codeListUrl, '#') and doc-available(substring-before($codeListUrl,'#')) and "
 								+ "doc(substring-before($codeListUrl,'#'))//*[@gml:id = substring-after($codeListUrl,'#')]"
 								+ "/gmx:codeEntry/*[namespace-uri() = 'http://www.isotc211.org/2005/gmx' and (local-name() = 'ML_CodeDefinition' or local-name() = 'CodeDefinition') and gml:identifier = $codeListValue])",
-								XpathType.BOOLEAN, false);
+								XpathType.BOOLEAN);
 					}
 
 					if (xpathCodeListValueExists != null) {

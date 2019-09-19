@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex2="http://example.org/shapechange/sch/xslt2QueryBinding/s2" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s2" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS2_FT1" substitutionGroup="gml:AbstractFeature" type="ex2:TS2_FT1Type"/>
+  <complexType name="TS2_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="att" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS2_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:TS2_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="TS2_FT2" substitutionGroup="ex2:TS2_FT1" type="ex2:TS2_FT2Type"/>
+  <complexType abstract="true" name="TS2_FT2Type">
+    <complexContent>
+      <extension base="ex2:TS2_FT1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS2_FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:TS2_FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS2_FT3" substitutionGroup="ex2:TS2_FT2" type="ex2:TS2_FT3Type"/>
+  <complexType name="TS2_FT3Type">
+    <complexContent>
+      <extension base="ex2:TS2_FT2Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS2_FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:TS2_FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS2_FT4" substitutionGroup="ex2:TS2_FT1" type="ex2:TS2_FT4Type"/>
+  <complexType name="TS2_FT4Type">
+    <complexContent>
+      <extension base="ex2:TS2_FT1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS2_FT4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:TS2_FT4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS2_FTX" substitutionGroup="gml:AbstractFeature" type="ex2:TS2_FTXType"/>
+  <complexType name="TS2_FTXType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="ftCount" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS2_FTXPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex2:TS2_FTX"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

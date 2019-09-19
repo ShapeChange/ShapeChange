@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test8_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex8="http://example.org/shapechange/sch/xslt2QueryBinding/s8"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s8 ../reference/results/xsd_sch_xslt2/INPUT/test8.xsd">
+ <gml:featureMember>
+  <ex8:TS8_FT1 gml:id="ft_PASS">
+   <ex8:att1>1</ex8:att1>
+   <ex8:rFT1toFT2a xlink:href="#ft2"/>
+  </ex8:TS8_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex8:TS8_FT1 gml:id="ft_FAIL">
+   <ex8:att2>1</ex8:att2>
+   <ex8:rFT1toFT2b xlink:href="#ft2"/>
+  </ex8:TS8_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex8:TS8_FT2 gml:id="ft2"/>  
+ </gml:featureMember>
+</gml:FeatureCollection>

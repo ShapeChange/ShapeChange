@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex16="http://example.org/shapechange/sch/xslt2QueryBinding/s16" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s16" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Metadata" substitutionGroup="gml:AbstractFeature" type="ex16:MetadataType"/>
+  <complexType name="MetadataType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attMeta" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MetadataPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex16:Metadata"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS16_FT1" substitutionGroup="gml:AbstractFeature" type="ex16:TS16_FT1Type"/>
+  <complexType name="TS16_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att">
+            <complexType>
+              <simpleContent>
+                <extension base="string">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="rFT1toFT2">
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="ex16:TS16_FT2"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS16_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex16:TS16_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS16_FT2" substitutionGroup="gml:AbstractFeature" type="ex16:TS16_FT2Type"/>
+  <complexType name="TS16_FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT2toFT3">
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="ex16:TS16_FT3"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS16_FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex16:TS16_FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS16_FT3" substitutionGroup="gml:AbstractFeature" type="ex16:TS16_FT3Type"/>
+  <complexType name="TS16_FT3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS16_FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex16:TS16_FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

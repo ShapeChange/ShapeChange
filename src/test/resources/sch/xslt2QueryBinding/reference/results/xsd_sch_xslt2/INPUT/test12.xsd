@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex12="http://example.org/shapechange/sch/xslt2QueryBinding/s12" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s12" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS12_DT1" substitutionGroup="gml:AbstractObject" type="ex12:TS12_DT1Type"/>
+  <complexType name="TS12_DT1Type">
+    <sequence/>
+  </complexType>
+  <complexType name="TS12_DT1PropertyType">
+    <sequence>
+      <element ref="ex12:TS12_DT1"/>
+    </sequence>
+  </complexType>
+  <element abstract="true" name="TS12_DT2" substitutionGroup="ex12:TS12_DT1" type="ex12:TS12_DT2Type"/>
+  <complexType abstract="true" name="TS12_DT2Type">
+    <complexContent>
+      <extension base="ex12:TS12_DT1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS12_DT2PropertyType">
+    <sequence>
+      <element ref="ex12:TS12_DT2"/>
+    </sequence>
+  </complexType>
+  <element name="TS12_DT3" substitutionGroup="ex12:TS12_DT2" type="ex12:TS12_DT3Type"/>
+  <complexType name="TS12_DT3Type">
+    <complexContent>
+      <extension base="ex12:TS12_DT2Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS12_DT3PropertyType">
+    <sequence>
+      <element ref="ex12:TS12_DT3"/>
+    </sequence>
+  </complexType>
+  <element name="TS12_DT4" substitutionGroup="ex12:TS12_DT2" type="ex12:TS12_DT4Type"/>
+  <complexType name="TS12_DT4Type">
+    <complexContent>
+      <extension base="ex12:TS12_DT2Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS12_DT4PropertyType">
+    <sequence>
+      <element ref="ex12:TS12_DT4"/>
+    </sequence>
+  </complexType>
+  <element name="TS12_DT5" substitutionGroup="ex12:TS12_DT1" type="ex12:TS12_DT5Type"/>
+  <complexType name="TS12_DT5Type">
+    <complexContent>
+      <extension base="ex12:TS12_DT1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS12_DT5PropertyType">
+    <sequence>
+      <element ref="ex12:TS12_DT5"/>
+    </sequence>
+  </complexType>
+  <element name="TS12_FT" substitutionGroup="gml:AbstractFeature" type="ex12:TS12_FTType"/>
+  <complexType name="TS12_FTType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="ex12:TS12_DT1PropertyType"/>
+          <element maxOccurs="unbounded" name="att2" type="ex12:TS12_DT1PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS12_FTPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex12:TS12_FT"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -68,7 +68,7 @@ public class XmlSchema implements Target, MessageSource {
 	private Options options = null;
 	private boolean printed = false;
 	private final HashMap<String, XsdDocument> xsdMap = new HashMap<String, XsdDocument>();
-	private SchematronSchema schDoc = null;
+	protected SchematronSchema schDoc = null;
 	private boolean diagnosticsOnly = false;
 	private String outputDirectory;
 	private TargetXmlSchemaConfiguration config;
@@ -97,10 +97,17 @@ public class XmlSchema implements Target, MessageSource {
 			outputDirectory = options.parameter("outputDirectory");
 		if (outputDirectory == null)
 			outputDirectory = options.parameter(".");
+		
+		String explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(), "schematronQueryBinding", null, false, true);
 
-		if (pi.matches("rule-xsd-pkg-schematron"))
-			schDoc = new SchematronSchema(model, options, result, pi);
-
+		if (pi.matches("rule-xsd-pkg-schematron")) {
+		    if("xslt2".equalsIgnoreCase(explicitSchematronQueryBinding)) {
+			schDoc = new SchematronSchemaXslt2(model, options, result, pi);
+		    } else {
+			schDoc = new SchematronSchemaOld(model, options, result, pi);
+		    }
+		}
+		
 		/** Create XML Schema documents */
 		createXSDs(pi, null);
 
@@ -161,7 +168,10 @@ public class XmlSchema implements Target, MessageSource {
 			for (Constraint c : cs) {
 				if (c != null && c instanceof OclConstraint && schDoc != null
 						&& ((OclConstraint) c).syntaxTree() != null) {
+				    
+//				    if(c.name().equalsIgnoreCase("ts16_ft1_constraint3")) {
 					schDoc.addAssertion(ci, (OclConstraint) c);
+//				    }
 				}
 			}
 			

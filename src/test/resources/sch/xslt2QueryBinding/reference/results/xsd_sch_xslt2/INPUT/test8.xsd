@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex8="http://example.org/shapechange/sch/xslt2QueryBinding/s8" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s8" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS8_FT1" substitutionGroup="gml:AbstractFeature" type="ex8:TS8_FT1Type"/>
+  <complexType name="TS8_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="att1" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="boolean"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2a" type="ex8:TS8_FT2PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2b" type="ex8:TS8_FT2PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS8_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex8:TS8_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS8_FT2" substitutionGroup="gml:AbstractFeature" type="ex8:TS8_FT2Type"/>
+  <complexType name="TS8_FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS8_FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex8:TS8_FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

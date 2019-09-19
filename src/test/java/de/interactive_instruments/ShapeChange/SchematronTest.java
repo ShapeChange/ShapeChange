@@ -104,4 +104,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch" }, "testResults/sch/oclPropertyMetadata/results",
 				"src/test/resources/sch/oclPropertyMetadata/reference/results");
 	}
+	
+	@Test
+	public void schematronTest_xslt2QueryBinding() {
+		multiTest("src/test/resources/sch/xslt2QueryBinding/testEA_sch_xslt2QueryBinding.xml",
+				new String[] { "sch" }, "testResults/sch/xslt2QueryBinding/results",
+				"src/test/resources/sch/xslt2QueryBinding/reference/results");
+	}
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test18_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex18="http://example.org/shapechange/sch/xslt2QueryBinding/s18"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s18 ../reference/results/xsd_sch_xslt2/INPUT/test18.xsd">
+ <gml:featureMember>
+  <ex18:TS18_FT gml:id="ft_PASS">
+   <ex18:att1>1</ex18:att1>
+   <ex18:att1>1</ex18:att1>
+   <ex18:att1>1</ex18:att1>
+   <ex18:att1>1</ex18:att1>
+   <ex18:att2>xxxxxx</ex18:att2>
+  </ex18:TS18_FT>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex18:TS18_FT gml:id="ft_FAIL">
+   <ex18:att1>2</ex18:att1>
+   <ex18:att1>2</ex18:att1>
+   <ex18:att1>2</ex18:att1>
+   <ex18:att2>xxxxx</ex18:att2>
+  </ex18:TS18_FT>  
+ </gml:featureMember>
+</gml:FeatureCollection>

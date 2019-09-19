@@ -84,13 +84,8 @@ public abstract class SchematronConstraintNode {
 	/** The parent reference */
 	protected SchematronConstraintNode parent = null;
 
-	/** Link back to SchematronSchema object */
-	protected SchematronSchema schemaObject = null;
-
-	/** Types of XPath */
-	protected enum XpathType {
-		BOOLEAN, NUMBER, STRING, NODESET
-	}
+	/** Link back to SchematronSchemaOld object */
+	protected SchematronSchemaOld schemaObject = null;
 
 	/**
 	 * Method to add children to a node and at the same time establish the node
@@ -262,310 +257,7 @@ public abstract class SchematronConstraintNode {
 				return true;
 		return false;
 	}
-
-	/**
-	 * <p>
-	 * The primary information stored in this class is whether there is
-	 * currently a nodeset context at all - NONE if the expression is not a
-	 * nodeset - and if the context is currently identical to current() -
-	 * ATCURRENT. All other contexts are combined in OTHER.
-	 * </p>
-	 * <p>
-	 * The vars part comes into living as soon as variables are encountered.
-	 * They are tracked together with the information how far they are up the
-	 * stack.
-	 * </p>
-	 * <p>
-	 * Also has a flag to indicate if an expression is to be translated to an
-	 * XPath fragment that will be contained within a predicate
-	 * (...[...fragment...]). This information is relevant for preventing the
-	 * creation of a let variable to store an expression for a byReference
-	 * property that must be evaluated in the expression context, but which
-	 * would be evaluated in the overall context (current()) due to being a let
-	 * variable. Such a case could only be supported with XSLT/XPath 2.0.
-	 * </p>
-	 */
-	public static class BindingContext {
-		public enum CtxState {
-			NONE, ATCURRENT, OTHER
-		}
-
-		public CtxState state;
-
-		/**
-		 * <code>true</code> if an expression would be evaluated to an XPath
-		 * fragment that will be contained within an XPath predicate; else
-		 * <code>false</code>.
-		 */
-		public boolean inPredicateExpression = false;
-
-		public class CtxElmt {
-			public Declaration vardecl;
-			public int noOfSteps = 0;
-
-			CtxElmt(Declaration vd) {
-				vardecl = vd;
-			}
-		}
-
-		ArrayList<CtxElmt> vars = null;
-
-		// Ctor
-		BindingContext(CtxState state) {
-			this.state = state;
-		}
-
-		// clone() override
-		public BindingContext clone() {
-			BindingContext copy = new BindingContext(state);
-			if (vars != null) {
-				for (CtxElmt ce : vars) {
-					copy.pushDeclaration(ce.vardecl);
-					copy.vars
-							.get(copy.vars.size() - 1).noOfSteps = ce.noOfSteps;
-				}
-			}
-			copy.inPredicateExpression = inPredicateExpression;
-			return copy;
-		}
-
-		// Reset state
-		public void setState(CtxState state) {
-			this.state = state;
-			this.vars = null;
-		}
-
-		public void setStateKeepingVariables(CtxState state) {
-			this.state = state;
-		}
-
-		/** Push a new variable declaration */
-		public void pushDeclaration(Declaration vd) {
-			if (vars == null)
-				vars = new ArrayList<CtxElmt>();
-			vars.add(new CtxElmt(vd));
-			this.state = CtxState.OTHER;
-		}
-
-		/** Increment the child step counter from the last declaration */
-		public void addStep() {
-			if (vars == null || vars.size() == 0)
-				return;
-			++(vars.get(vars.size() - 1).noOfSteps);
-		}
-
-		/** Do away with the last variable declaration */
-		public void popDeclaration() {
-			if (vars == null || vars.size() == 0)
-				return;
-			vars.remove(vars.size() - 1);
-		}
-
-		/** Merge another context */
-		public void merge(BindingContext ctx) {
-			if (ctx == null)
-				return;
-			if (state == CtxState.NONE)
-				return;
-			if (ctx.state == CtxState.NONE) {
-				setState(CtxState.NONE);
-				return;
-			}
-			if (ctx.state == CtxState.ATCURRENT && state == CtxState.ATCURRENT)
-				return;
-			if (ctx.state == CtxState.OTHER && state == CtxState.OTHER) {
-				int thissize = vars == null ? 0 : vars.size();
-				int ctxsize = ctx.vars == null ? 0 : ctx.vars.size();
-				int i = thissize - 1;
-				int j = ctxsize - 1;
-				for (; i >= 0 && j >= 0; --i, --j) {
-					CtxElmt cei = vars.get(i);
-					CtxElmt cej = ctx.vars.get(j);
-					if (cei.vardecl != cej.vardecl)
-						break;
-					if (cei.noOfSteps != cej.noOfSteps)
-						break;
-				}
-				while (i >= 0)
-					vars.remove(i--);
-				if (vars != null && vars.size() == 0)
-					vars = null;
-			} else {
-				state = CtxState.OTHER;
-				vars = null;
-			}
-		}
-	}
-
-	/**
-	 * <p>
-	 * This auxiliary class encapsulates an Xpath expression, which can be
-	 * formulated using variables defined using &lt;let> expressions of a
-	 * Schematron &lt;rule>. Additionally there is a number indicating the XPath
-	 * operator precedence of that fragment. Priorities are as follows:
-	 * </p>
-	 * <ol>
-	 * <li>or
-	 * <li>and
-	 * <li>Equality operators
-	 * <li>Other comparison operators
-	 * <li>Infix +, -
-	 * <li>*, div, mod
-	 * <li>Prefix -
-	 * <li>union |
-	 * <li>PathExpression
-	 * <li>FilterExpression id[...]
-	 * <li>(bracketed expressions) or identifier
-	 * </ol>
-	 */
-	protected static class XpathFragment {
-
-		public int priority;
-		public boolean variableMerging = true;
-		public String fragment;
-		public XpathType type;
-		public TreeMap<String, String> lets = null;
-		public BindingContext atEnd = new BindingContext(
-				BindingContext.CtxState.NONE);
-
-		// Constructor from priority, type and expression
-		public XpathFragment(int p, String f, XpathType t) {
-			priority = p;
-			fragment = f;
-			type = t;
-		}
-
-		/**
-		 * @param p
-		 * @param f
-		 * @param t
-		 * @param vm
-		 *            <code>true</code> to perform variable merging, else
-		 *            <code>false</code>
-		 */
-		public XpathFragment(int p, String f, XpathType t, boolean vm) {
-			this(p, f, t);
-			variableMerging = vm;
-		}
-
-		// Constructor from priority and expression. Type assumed 'nodeset'
-		public XpathFragment(int p, String f) {
-			priority = p;
-			fragment = f;
-			type = XpathType.NODESET;
-		}
-
-		/**
-		 * @param p
-		 * @param f
-		 * @param vm
-		 *            <code>true</code> to perform variable merging, else
-		 *            <code>false</code>
-		 */
-		public XpathFragment(int p, String f, boolean vm) {
-			this(p, f, XpathType.NODESET);
-			variableMerging = vm;
-		}
-
-		/**
-		 * Bracket the current expression
-		 */
-		public void bracket() {
-			fragment = "(" + fragment + ")";
-			priority = 11;
-		}
-
-		/**
-		 * Add another fragment performing let variable merging. The argument
-		 * fragment is destroyed. If binding contexts are given they are also
-		 * merged.
-		 * 
-		 * @return the merged fragment string
-		 */
-		public String merge(XpathFragment xf) {
-			if (variableMerging && xf.variableMerging) {
-				xf.replace("\\$(\\w*)", "%$1");
-				if (xf.lets != null)
-					for (Map.Entry<String, String> ve : xf.lets.entrySet()) {
-						String vn = ve.getKey();
-						String ex = ve.getValue();
-						String vnew = findOrAdd(ex);
-						xf.replace("%" + vn, "\\$" + vnew);
-					}
-				if (atEnd != null)
-					atEnd.merge(xf.atEnd);
-				return xf.fragment;
-			} else {
-				return xf.fragment;
-			}
-		}
-
-		/**
-		 * Function to find or add a variable given the expression
-		 */
-		public String findOrAdd(String ex) {
-
-			if (lets == null) {
-				lets = new TreeMap<String, String>();
-			}
-
-			/*
-			 * If ex is an existing let variable, just return it (and thus
-			 * prevent a let expression with a variable as value).
-			 */
-			if (ex.startsWith("$") && lets.containsKey(ex.substring(1))) {
-				return ex.substring(1);
-			}
-
-			/*
-			 * Determine if a let variable with the given expression already
-			 * exists.
-			 */
-			for (Map.Entry<String, String> ve : lets.entrySet()) {
-				if (ve.getValue().equals(ex))
-					return ve.getKey();
-			}
-
-			/*
-			 * Create a new let variable.
-			 */
-			String newkey = "A";
-			if (!lets.isEmpty()) {
-				String last = lets.lastKey();
-				String lc = last.substring(last.length() - 1);
-				if (lc.equals("Z"))
-					newkey = last + "A";
-				else {
-					try {
-						byte[] bytes = lc.getBytes("US-ASCII");
-						bytes[0]++;
-						newkey = last.substring(0, last.length() - 1)
-								+ new String(bytes, "US-ASCII");
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			lets.put(newkey, ex);
-			return newkey;
-		}
-
-		/**
-		 * Auxiliary function to replace variable names
-		 */
-		private void replace(String from, String to) {
-			Pattern pat = Pattern.compile(from);
-			if (lets != null)
-				for (Map.Entry<String, String> ve : lets.entrySet()) {
-					String ex = ve.getValue();
-					Matcher matcher = pat.matcher(ex);
-					ve.setValue(matcher.replaceAll(to));
-				}
-			Matcher matcher = pat.matcher(fragment);
-			fragment = matcher.replaceAll(to);
-		}
-	}
-
+	
 	/**
 	 * <p>
 	 * This abstract method compiles a node to an XPath expression fragment.
@@ -600,7 +292,7 @@ public abstract class SchematronConstraintNode {
 		 * @param isAnd
 		 *            Flag to make this an AND (true) or an OR (false)
 		 */
-		public Logic(SchematronSchema schemaObject, LogicType logic) {
+		public Logic(SchematronSchemaOld schemaObject, LogicType logic) {
 			this.schemaObject = schemaObject;
 			this.logic = logic;
 		}
@@ -718,7 +410,7 @@ public abstract class SchematronConstraintNode {
 		 * @param name
 		 *            One of =, <>, <, <=, >, >=
 		 */
-		public Comparison(SchematronSchema schemaObject, String name) {
+		public Comparison(SchematronSchemaOld schemaObject, String name) {
 			this.schemaObject = schemaObject;
 			opname = name.equals("<>") ? "!=" : name;
 		}
@@ -736,9 +428,13 @@ public abstract class SchematronConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Operator priority
-			int refprio = 4;
-			if (opname.equals("=") || opname.equals("!="))
+			int refprio;
+			if (opname.equals("=") || opname.equals("!=")) {
 				refprio = 3;
+			} else {
+			    // <, <=, >, >=
+			    refprio = 4;
+			}
 
 			// Check and compile children
 			XpathFragment[] child_xpt = new XpathFragment[2];
@@ -797,7 +493,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Flag: isEmpty (false) and notEmpty (true)
 		 */
-		public Empty(SchematronSchema schemaObject, boolean neg) {
+		public Empty(SchematronSchemaOld schemaObject, boolean neg) {
 			this.schemaObject = schemaObject;
 			negated = neg;
 		}
@@ -859,7 +555,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Negation flag
 		 */
-		public Exists(SchematronSchema schemaObject,
+		public Exists(SchematronSchemaOld schemaObject,
 				OclNode.Declaration vardecl, boolean neg) {
 			this.schemaObject = schemaObject;
 			this.negated = neg;
@@ -957,7 +653,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Negation flag
 		 */
-		public Unique(SchematronSchema schemaObject,
+		public Unique(SchematronSchemaOld schemaObject,
 				OclNode.Declaration vardecl, boolean neg) {
 			this.schemaObject = schemaObject;
 			this.negated = neg;
@@ -1243,7 +939,7 @@ public abstract class SchematronConstraintNode {
 		 * @param vardecl
 		 *            OclNode.Declaration object
 		 */
-		public Select(SchematronSchema schemaObject,
+		public Select(SchematronSchemaOld schemaObject,
 				OclNode.Declaration vardecl) {
 			this.schemaObject = schemaObject;
 			this.vardecl = vardecl;
@@ -1379,7 +1075,7 @@ public abstract class SchematronConstraintNode {
 		 * @param negated
 		 *            May be negated if of type boolean
 		 */
-		public AllInstances(SchematronSchema schemaObject, ClassInfo ci,
+		public AllInstances(SchematronSchemaOld schemaObject, ClassInfo ci,
 				boolean negated) {
 			this.schemaObject = schemaObject;
 			this.objectClass = ci;
@@ -1497,7 +1193,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public PropertyMetadata(SchematronSchema schemaObject, ClassInfo metadataType,
+		public PropertyMetadata(SchematronSchemaOld schemaObject, ClassInfo metadataType,
 				boolean negated) {
 			this.schemaObject = schemaObject;
 			this.metadataType = metadataType;
@@ -1638,7 +1334,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Flag: Negated meaning
 		 */
-		public KindOf(SchematronSchema schemaObject, boolean exact,
+		public KindOf(SchematronSchemaOld schemaObject, boolean exact,
 				boolean neg) {
 			this.schemaObject = schemaObject;
 			this.exact = exact;
@@ -1810,7 +1506,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public Cast(SchematronSchema schemaObject) {
+		public Cast(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 		}
 
@@ -2074,7 +1770,7 @@ public abstract class SchematronConstraintNode {
 		 * @param set
 		 *            Flag: This is a set operation
 		 */
-		public Size(SchematronSchema schemaObject, boolean set) {
+		public Size(SchematronSchemaOld schemaObject, boolean set) {
 			this.schemaObject = schemaObject;
 			this.setoper = set;
 		}
@@ -2132,7 +1828,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public Concatenate(SchematronSchema schemaObject) {
+		public Concatenate(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 		}
 
@@ -2187,7 +1883,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public Substring(SchematronSchema schemaObject) {
+		public Substring(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 		}
 
@@ -2253,7 +1949,7 @@ public abstract class SchematronConstraintNode {
 		 * @param oper
 		 *            the actual operation: toUpper, toLower
 		 */
-		public ChangeCase(SchematronSchema schemaObject, String oper) {
+		public ChangeCase(SchematronSchemaOld schemaObject, String oper) {
 			this.schemaObject = schemaObject;
 			this.operation = oper;
 		}
@@ -2289,7 +1985,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public Matches(SchematronSchema schemaObject) {
+		public Matches(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 		}
 
@@ -2317,7 +2013,7 @@ public abstract class SchematronConstraintNode {
 			String patstring = xptobj.merge(xptpat);
 
 			// Fetch the extension template
-			SchematronSchema.ExtensionFunctionTemplate eft = schemaObject.extensionFunctions
+			SchematronSchemaOld.ExtensionFunctionTemplate eft = schemaObject.extensionFunctions
 					.get("matches");
 			if (eft == null)
 				return new XpathFragment(11, "***ERROR[123]***");
@@ -2356,7 +2052,7 @@ public abstract class SchematronConstraintNode {
 		 * @param oper
 		 *            The operation symbol, one of + ,-, *, /
 		 */
-		public Arithmetic(SchematronSchema schemaObject, String oper) {
+		public Arithmetic(SchematronSchemaOld schemaObject, String oper) {
 			this.schemaObject = schemaObject;
 			this.operation = oper;
 		}
@@ -2438,7 +2134,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Negation flag
 		 */
-		public Variable(SchematronSchema schemaObject,
+		public Variable(SchematronSchemaOld schemaObject,
 				OclNode.Declaration vardecl, boolean neg) {
 			this.schemaObject = schemaObject;
 			this.vardecl = vardecl;
@@ -2700,7 +2396,7 @@ public abstract class SchematronConstraintNode {
 		 * @param negated
 		 *            May be negated if of type boolean
 		 */
-		public Attribute(SchematronSchema schemaObject,
+		public Attribute(SchematronSchemaOld schemaObject,
 				OclNode.AttributeCallExp attr, boolean negated) {
 			this.schemaObject = schemaObject;
 			this.attributes = new AttrComp[] { new AttrComp(attr) };
@@ -2717,7 +2413,7 @@ public abstract class SchematronConstraintNode {
 		 * @param negated
 		 *            May be negated if of type boolean
 		 */
-		public Attribute(SchematronSchema schemaObject, AttrComp atc,
+		public Attribute(SchematronSchemaOld schemaObject, AttrComp atc,
 				boolean negated) {
 			this.schemaObject = schemaObject;
 			this.attributes = new AttrComp[] { new AttrComp(atc) };
@@ -3533,7 +3229,7 @@ public abstract class SchematronConstraintNode {
 		 * @param neg
 		 *            Negation flag
 		 */
-		public Literal(SchematronSchema schemaObject, OclNode.LiteralExp lit,
+		public Literal(SchematronSchemaOld schemaObject, OclNode.LiteralExp lit,
 				boolean neg) {
 			this.schemaObject = schemaObject;
 			literal = lit;
@@ -3702,7 +3398,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public IfThenElse(SchematronSchema schemaObject) {
+		public IfThenElse(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 		}
 
@@ -3829,7 +3525,7 @@ public abstract class SchematronConstraintNode {
 		 * @param vardecl
 		 *            OclNode.Declaration object
 		 */
-		public Let(SchematronSchema schemaObject,
+		public Let(SchematronSchemaOld schemaObject,
 				OclNode.Declaration[] vardecls) {
 			this.schemaObject = schemaObject;
 			this.vardecls = vardecls;
@@ -3898,7 +3594,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public Error(SchematronSchema schemaObject) {
+		public Error(SchematronSchemaOld schemaObject) {
 			this.schemaObject = schemaObject;
 			// Dummy - no action required
 		}
@@ -3922,7 +3618,7 @@ public abstract class SchematronConstraintNode {
 		 * @param schemaObject
 		 *            The schema object
 		 */
-		public MessageComment(SchematronSchema schemaObject, String name) {
+		public MessageComment(SchematronSchemaOld schemaObject, String name) {
 			this.schemaObject = schemaObject;
 			this.name = name;
 		}

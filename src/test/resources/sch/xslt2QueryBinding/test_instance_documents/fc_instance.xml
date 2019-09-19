@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex="http://example.org/shapechange/sch/xslt2QueryBinding"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/gml/3.2 file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/xslt2QueryBinding/results/xsd_sch_xslt2/INPUT/test.xsd">
+ <!-- ../reference/results/xsd_sch_xslt1/INPUT/test.xsd -->
+ <gml:featureMember>
+  <ex:FeatureType gml:id="FT1_1">
+   <ex:att1>1</ex:att1>
+   <ex:att1>3</ex:att1>
+   <ex:att2>test</ex:att2>
+   <ex:att3>
+    <ex:DataType>
+     <ex:dtAtt>x</ex:dtAtt>
+    </ex:DataType>
+   </ex:att3>
+   <ex:rFT1toFT2 xlink:href="#FT2_1"/>
+  </ex:FeatureType>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex:FeatureType2 gml:id="FT2_1">
+   <ex:attFT2>abc</ex:attFT2>
+   <ex:rFT2toFT1 xlink:href="#FT1_1"/>
+   <ex:rFT2toFT3 xlink:href="#FT3_1"/>
+  </ex:FeatureType2>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex:FeatureType3 gml:id="FT3_1">
+   <ex:attFT3>42</ex:attFT3>
+   <ex:rFT3toFT2 xlink:href="#FT2_1"/>
+   <ex:rFT3toFT4>
+    <ex:FeatureType4 gml:id="FT4_1">
+     <ex:attFT4>true</ex:attFT4>
+     <ex:rFT4toFT3 xlink:href="#FT3_1"/>
+    </ex:FeatureType4>
+   </ex:rFT3toFT4>
+   <ex:rFT3toFT4 xlink:href="#FT4_1"/>
+   <ex:rFT3toFT4 xlink:href="#FT4_1"/>
+   <ex:rFT3toFT4>
+    <ex:FeatureType4 gml:id="FT4_2">
+     <ex:attFT4>false</ex:attFT4>
+    </ex:FeatureType4>
+   </ex:rFT3toFT4>
+   <ex:rFT3toFT4>
+    <ex:FeatureType4 gml:id="FT4_3">
+     <ex:attFT4>false</ex:attFT4>
+    </ex:FeatureType4>
+   </ex:rFT3toFT4>
+  </ex:FeatureType3>
+ </gml:featureMember>
+ <gml:featureMember>
+  
+ </gml:featureMember>
+</gml:FeatureCollection>
