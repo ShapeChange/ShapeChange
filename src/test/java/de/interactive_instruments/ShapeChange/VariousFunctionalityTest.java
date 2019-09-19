@@ -41,7 +41,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 * Test the descriptor functionality
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_fc_en.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/descriptors/fc_en/INPUT",
 				"src/test/resources/reference/html/descriptors/fc_en");
 	}
@@ -52,7 +52,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 * Test the descriptor functionality
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/descriptors/fc_de/INPUT",
 				"src/test/resources/reference/html/descriptors/fc_de");
 	}
@@ -63,7 +63,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 * Test the descriptor functionality
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_inspire.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/descriptors/inspire/INPUT",
 				"src/test/resources/reference/html/descriptors/inspire");
 	}
@@ -74,7 +74,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 * Test the descriptor functionality
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/descriptors/aaa/INPUT",
 				"src/test/resources/reference/html/descriptors/aaa");
 	}
@@ -85,7 +85,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 		 * Test the descriptor functionality
 		 */
 		multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
-				new String[] { "xml", "html" },
+				new String[] { "html" },
 				"testResults/html/descriptors/bbr/INPUT",
 				"src/test/resources/reference/html/descriptors/bbr");
 	}
@@ -103,7 +103,7 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 	public void testLoadingWithProhibitedStatusSetting() {
 		
 		multiTest("src/test/resources/config/testEA_loadingWithProhibitedStatusSetting.xml",
-				new String[] { "xsd", "xml" },
+				new String[] { "xsd", "html" },
 				"testResults/loadingWithProhibitedStatusSetting/results",
 				"src/test/resources/reference/loadingWithProhibitedStatusSetting");
 	}

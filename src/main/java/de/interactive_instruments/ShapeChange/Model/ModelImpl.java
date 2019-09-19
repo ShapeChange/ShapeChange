@@ -127,7 +127,7 @@ public abstract class ModelImpl implements Model {
 			"codeListSourceRepresentation", "codeListRestriction",
 			"arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
 			"arcgisSubtypeInitialValues", "codeListXML", "reportable",
-			"dissolveAssociationAttributeType" };
+			"dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference" };
 
 	/*
 	 * temporary storage for validating the names of the XML Schema documents to

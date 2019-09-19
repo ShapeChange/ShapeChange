@@ -80,11 +80,10 @@ public class OclConstraintEA
 		constraintName = constr.GetName();
 		constraintStatus = constr.GetStatus();		
 
-		// The constraint text - contains fix for EA7.5 bug
 		constraintText = constr.GetNotes();
 		if(constraintText!=null)
 			constraintText = 
-				EADocument.removeSpuriousEA75EntitiesFromStrings(
+				doc.applyEAFormatting(
 						constraintText);
 		
 		// Compiler
@@ -162,11 +161,10 @@ public class OclConstraintEA
 			constraintName = constraintName.substring(0, ib);
 		}
 			
-		// The constraint text - contains fix for EA7.5 bug
 		constraintText = constr.GetNotes();
 		if(constraintText!=null)
 			constraintText = 
-				EADocument.removeSpuriousEA75EntitiesFromStrings(
+				doc.applyEAFormatting(
 						constraintText);
 	
 		// Compiler

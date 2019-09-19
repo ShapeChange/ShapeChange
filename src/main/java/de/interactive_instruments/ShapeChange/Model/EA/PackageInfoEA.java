@@ -273,9 +273,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	// && descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// String s = eaPackage.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	//
 	// if (s == null) {
@@ -422,9 +422,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 				String s = eaPackage.GetNotes();
 
-				// Fix for EA7.5 bug
+				// Handle EA formatting
 				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					s = document.applyEAFormatting(s);
 				}
 
 				if (s != null) {

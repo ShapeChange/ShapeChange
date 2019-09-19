@@ -882,9 +882,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// s = eaAttribute.GetNotes();
 	// else
 	// s = eaConnectorEnd.GetRoleNote();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//
@@ -1120,9 +1120,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 						s = eaAttribute.GetNotes();
 					else
 						s = eaConnectorEnd.GetRoleNote();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -1194,9 +1194,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				// if (descriptorSource(Descriptor.DOCUMENTATION)
 				// .equals("ea:notes")) {
 				// s = eaClassElement.GetNotes();
-				// // Fix for EA7.5 bug
+				// // Handle EA formatting
 				// if (s != null) {
-				// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				// s = document.applyEAFormatting(s);
 				// }
 				// }
 				//

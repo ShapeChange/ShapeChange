@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+<ShapeChangeConfiguration
+	xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
 	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -15,23 +16,29 @@
 			value="true" />
 		<parameter name="extractSeparator" value="--" />
 		<descriptorSources>
-			<DescriptorSource descriptor="documentation" source="ea:notes" />
-			<DescriptorSource descriptor="alias" source="ea:alias" />
-			<DescriptorSource descriptor="definition" source="sc:extract"
-				token="Definition" />
-			<DescriptorSource descriptor="description" source="sc:extract"
-				token="Description" />
+			<DescriptorSource descriptor="documentation"
+				source="ea:notes" />
+			<DescriptorSource descriptor="alias"
+				source="ea:alias" />
+			<DescriptorSource descriptor="definition"
+				source="sc:extract" token="Definition" />
+			<DescriptorSource descriptor="description"
+				source="sc:extract" token="Description" />
 			<DescriptorSource descriptor="example" source="none" />
-			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="legalBasis"
+				source="none" />
 			<DescriptorSource descriptor="dataCaptureStatement"
 				source="none" />
-			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="language"
+				source="none" />
 		</descriptorSources>
-		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+		<xi:include
+			href="src/main/resources/config/StandardAliases.xml" />
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/arcgis/base/log.xml" />
+		<parameter name="logFile"
+			value="testResults/arcgis/base/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -41,24 +48,27 @@
 				<ProcessParameter name="removeType"
 					value="TypeMeta,FeatureAttMetadata,GeometryMetadata" />
 				<ProcessParameter name="maxOccurs" value="3" />
-				<ProcessParameter name="maxOccursForSpecificProperties"
+				<ProcessParameter
+					name="maxOccursForSpecificProperties"
 					value="FeatureEntity::propGeometry::1,SourceInfo::prop9::2" />
-				<ProcessParameter name="ignoreFeatureOrObjectTypedProperties"
-					value="true" />
-				<ProcessParameter name="flattenObjectTypes" value="false" />
-				<ProcessParameter name="flattenObjectTypesIncludeRegex"
-					value=".*GeometryInfo" />
+				<ProcessParameter
+					name="ignoreFeatureOrObjectTypedProperties" value="true" />
+				<ProcessParameter name="flattenObjectTypes"
+					value="false" />
+				<ProcessParameter
+					name="flattenObjectTypesIncludeRegex" value=".*GeometryInfo" />
 				<!-- no need to remove the SolidGeometryInfo and MultiSolidGeometryInfo 
 					types, because they will automatically be ignored by the ArcGISWorkspace 
 					target -->
 				<ProcessParameter name="lowerCaseCodeForProperties"
 					value="true" />
-				<ProcessParameter name="removePropertyNameAndCodeComponent"
+				<ProcessParameter
+					name="removePropertyNameAndCodeComponent"
 					value="(?i)\.valueOrReason" />
-				<ProcessParameter name="flattenInheritanceIncludeRegex"
-					value=".*GeometryInfo" />
-				<ProcessParameter name="applyHomogeneousGeometriesOnSubtypes"
-					value="true" />
+				<ProcessParameter
+					name="flattenInheritanceIncludeRegex" value=".*GeometryInfo" />
+				<ProcessParameter
+					name="applyHomogeneousGeometriesOnSubtypes" value="true" />
 				<ProcessParameter name="codeForEnumerationValues"
 					value="false" />
 			</parameters>
@@ -72,7 +82,8 @@
 					<rule name="rule-trf-all-flatten-name" />
 					<rule name="rule-trf-prop-remove-name-and-code-component" />
 					<rule name="rule-trf-prop-flatten-homogeneousgeometries" />
-					<rule name="rule-trf-all-postprocess-skip-constraint-validation" />
+					<rule
+						name="rule-trf-all-postprocess-skip-constraint-validation" />
 				</ProcessRuleSet>
 			</rules>
 			<mapEntries>
@@ -81,31 +92,33 @@
 				<ProcessMapEntry rule="rule-trf-prop-flatten-types"
 					targetType="Real" type="Measure" />
 				<ProcessMapEntry param="_P"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Point"
-					type="GM_Point" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_Point" type="GM_Point" />
 				<ProcessMapEntry param="_MP"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_MultiPoint"
-					type="GM_MultiPoint" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_MultiPoint" type="GM_MultiPoint" />
 				<ProcessMapEntry param="_C"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Curve"
-					type="GM_Curve" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_Curve" type="GM_Curve" />
 				<!-- Omit GM_MultiCurve to avoid ambiguous results -->
-				<ProcessMapEntry rule="rule-trf-prop-flatten-homogeneousgeometries"
+				<ProcessMapEntry
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
 					type="GM_MultiCurve" />
 				<ProcessMapEntry param="_S"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Surface"
-					type="GM_Surface" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_Surface" type="GM_Surface" />
 				<!-- Omit GM_MultiSurface to avoid ambiguous results -->
-				<ProcessMapEntry rule="rule-trf-prop-flatten-homogeneousgeometries"
+				<ProcessMapEntry
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
 					type="GM_MultiSurface" />
 				<!-- Keep (Multi)Solid for testing purposes - they should be removed/ignored 
 					by ArcGISWorkspace target -->
 				<ProcessMapEntry param="_So"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Solid"
-					type="GM_Solid" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_Solid" type="GM_Solid" />
 				<ProcessMapEntry param="_MSo"
-					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_MultiSolid"
-					type="GM_MultiSolid" />
+					rule="rule-trf-prop-flatten-homogeneousgeometries"
+					targetType="GM_MultiSolid" type="GM_MultiSolid" />
 			</mapEntries>
 		</Transformer>
 	</transformers>
@@ -113,12 +126,17 @@
 		<TargetXmlSchema
 			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
 			inputs="input" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/arcgis/base/xsd" />
+			<targetParameter name="outputDirectory"
+				value="testResults/arcgis/base/xsd" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
-			<xi:include href="src/main/resources/config/StandardRules.xml" />
-			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
-			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+			<targetParameter name="defaultEncodingRule"
+				value="iso19136_2007" />
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries.xml" />
 			<xsdMapEntries>
 				<XsdMapEntry type="URI" xmlPropertyType="anyURI"
 					xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple"
@@ -132,6 +150,7 @@
 		<!-- <targetParameter name="sortedOutput" value="true"/> -->
 		<!-- <targetParameter name="inheritedProperties" value="false"/> -->
 		<!-- <targetParameter name="outputFormat" value="FRAMEHTML"/> -->
+		<!-- <targetParameter name="xsltPath" value="src/main/resources/xslt"/> -->
 		<!-- <targetParameter name="xslTransformerFactory" -->
 		<!-- value="net.sf.saxon.TransformerFactoryImpl"/> -->
 		<!-- <targetParameter name="name" value="'Test application schema'"/> -->
@@ -146,13 +165,15 @@
 
 			<targetParameter name="workspaceTemplate"
 				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
-			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
+			<targetParameter name="defaultEncodingRule"
+				value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"
 				value="testResults/arcgis/base/arcgis" />
-			<targetParameter name="valueRangeExcludedBoundaryDelta"
-				value="0.001" />
-			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter
+				name="valueRangeExcludedBoundaryDelta" value="0.001" />
+			<targetParameter name="documentationTemplate"
+				value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
 			<rules>

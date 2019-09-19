@@ -36,6 +36,8 @@
  <xsl:param name="catalogXmlPath"/>
  <!-- Name of the logo to include in the catalogue. May be empty (then do not include a logo). -->
  <xsl:param name="logoFileName"/>
+ <!-- Set the similarly named targetParameter to 'true' in order to include code lists and enumerations in the feature catalogue. -->
+ <xsl:param name="includeCodelistsAndEnumerations">false</xsl:param>
  
  <!-- When executed with ShapeChange, the absolute URI to the catalog XML is automatically determined via a custom URI resolver. -->
  <xsl:variable name="catalogDocument" select="document($catalogXmlPath)"/>
@@ -293,7 +295,7 @@
          <xsl:choose>
           <xsl:when test="key('modelElement', id, $catalog)/definition">
            <td>
-            <xsl:value-of select="key('modelElement', id, $catalog)/definition"/>
+            <xsl:value-of disable-output-escaping="yes" select="key('modelElement', id, $catalog)/definition"/>
            </td>
           </xsl:when>
           <xsl:otherwise>
@@ -303,7 +305,7 @@
          <xsl:choose>
           <xsl:when test="key('modelElement', id, $catalog)/description">
            <td>
-            <xsl:value-of select="key('modelElement', id, $catalog)/description"/>
+            <xsl:value-of disable-output-escaping="yes" select="key('modelElement', id, $catalog)/description"/>
            </td>
           </xsl:when>
           <xsl:otherwise>
@@ -394,6 +396,32 @@
         </h2>
         <ul>
          <xsl:for-each select="$catalog/FeatureType[type = 'Union Data Type']">
+          <xsl:sort select="name"/>
+          <xsl:apply-templates mode="allClassesFrame_TypeListEntry" select="."/>
+         </xsl:for-each>
+        </ul>
+       </div>
+      </xsl:if>      
+      <xsl:if test="$includeCodelistsAndEnumerations = 'true' and $catalog/FeatureType[type = 'Code List Type']">
+       <div>
+        <h2 class="sidepanel">
+         <xsl:value-of select="$fc.CodelistTypes"/>
+        </h2>
+        <ul>
+         <xsl:for-each select="$catalog/FeatureType[type = 'Code List Type']">
+          <xsl:sort select="name"/>
+          <xsl:apply-templates mode="allClassesFrame_TypeListEntry" select="."/>
+         </xsl:for-each>
+        </ul>
+       </div>
+      </xsl:if>
+      <xsl:if test="$includeCodelistsAndEnumerations = 'true' and $catalog/FeatureType[type = 'Enumeration Type']">
+       <div>
+        <h2 class="sidepanel">
+         <xsl:value-of select="$fc.EnumerationTypes"/>
+        </h2>
+        <ul>
+         <xsl:for-each select="$catalog/FeatureType[type = 'Enumeration Type']">
           <xsl:sort select="name"/>
           <xsl:apply-templates mode="allClassesFrame_TypeListEntry" select="."/>
          </xsl:for-each>
@@ -517,6 +545,36 @@
        </ul>
       </div>
      </xsl:if>
+     <xsl:if
+      test="$includeCodelistsAndEnumerations = 'true' and $catalog/FeatureType[package[@idref = $package/@id] and type = 'Code List Type']">
+      <div>
+       <h2 class="sidepanel">
+        <xsl:value-of select="$fc.CodelistTypes"/>
+       </h2>
+       <ul>
+        <xsl:for-each
+         select="$catalog/FeatureType[package[@idref = $package/@id] and type = 'Code List Type']">
+         <xsl:sort select="name"/>
+         <xsl:apply-templates mode="packageFrame_TypeListEntry" select="."/>
+        </xsl:for-each>
+       </ul>
+      </div>
+     </xsl:if>
+     <xsl:if
+      test="$includeCodelistsAndEnumerations = 'true' and $catalog/FeatureType[package[@idref = $package/@id] and type = 'Enumeration Type']">
+      <div>
+       <h2 class="sidepanel">
+        <xsl:value-of select="$fc.EnumerationTypes"/>
+       </h2>
+       <ul>
+        <xsl:for-each
+         select="$catalog/FeatureType[package[@idref = $package/@id] and type = 'Enumeration Type']">
+         <xsl:sort select="name"/>
+         <xsl:apply-templates mode="packageFrame_TypeListEntry" select="."/>
+        </xsl:for-each>
+       </ul>
+      </div>
+     </xsl:if>
      <xsl:if test="not($catalog/FeatureType[package[@idref = $package/@id]])">
       <br/>
       <div>
@@ -594,6 +652,20 @@
         <xsl:value-of disable-output-escaping="yes" select="taggedValues/generationDateTime"/>
        </p>
       </xsl:if>
+      <xsl:if test="definition or description">
+      <p>
+       <table>
+        <xsl:call-template name="entry">
+         <xsl:with-param name="title" select="$fc.Definition"/>
+         <xsl:with-param name="lines" select="definition"/>
+        </xsl:call-template>
+        <xsl:call-template name="entry">
+         <xsl:with-param name="title" select="$fc.Description"/>
+         <xsl:with-param name="lines" select="description"/>
+        </xsl:call-template>
+       </table>
+      </p>
+      </xsl:if>
       <xsl:for-each select="$catalog/Package[parent/@idref = $package/@id]">
        <xsl:sort select="./code"/>
        <xsl:sort select="./name"/>
@@ -608,7 +680,7 @@
       </xsl:for-each>
       <tr>
        <xsl:choose>
-        <xsl:when test="$catalog/FeatureType/package[@idref = $package/@id]">
+        <xsl:when test="$catalog/FeatureType[not($includeCodelistsAndEnumerations = 'false') or not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $package/@id]">
          <p>
           <h2>
            <xsl:value-of select="$fc.frame.RelevantTypes"/>
@@ -631,13 +703,15 @@
             <xsl:value-of select="$fc.Description"/>
            </th>
           </tr>
-          <xsl:for-each select="$catalog/FeatureType[package[@idref = $package/@id]]">
+          <xsl:for-each select="$catalog/FeatureType[not($includeCodelistsAndEnumerations = 'false') or not(type = 'Code List Type' or type = 'Enumeration Type')][package[@idref = $package/@id]]">
            <xsl:sort data-type="number" order="ascending"
             select="
              (number(type = $featureTypeSynonym) * 1) +
              (number(type = 'Object Type') * 2) +
              (number(type = 'Data Type') * 3) +
-             (number(type = 'Union Data Type') * 4)"/>
+             (number(type = 'Union Data Type') * 4) +
+             (number(type = 'Code List Type') * 5) +
+             (number(type = 'Enumeration Type') * 6)"/>
            <xsl:sort select="name"/>
            <tr>
             <xsl:choose>
@@ -692,7 +766,7 @@
   </xsl:result-document>
 
   <xsl:apply-templates mode="typeDetailHtml"
-   select="$catalog/FeatureType[package/@idref = $package/@id]"/>
+   select="$catalog/FeatureType[not($includeCodelistsAndEnumerations = 'false') or not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref = $package/@id]"/>
 
  </xsl:template>
 
@@ -756,7 +830,7 @@
   <xsl:choose>
    <xsl:when test="definition">
     <td>
-     <xsl:value-of select="definition"/>
+     <xsl:value-of disable-output-escaping="yes" select="definition"/>
     </td>
    </xsl:when>
    <xsl:otherwise>
@@ -766,7 +840,7 @@
   <xsl:choose>
    <xsl:when test="description">
     <td>
-     <xsl:value-of select="description"/>
+     <xsl:value-of disable-output-escaping="yes" select="description"/>
     </td>
    </xsl:when>
    <xsl:otherwise>
@@ -1334,7 +1408,17 @@
      </td>
      <td>
       <p>
-       <xsl:value-of disable-output-escaping="yes" select="$tv/text()"/>
+       <xsl:choose>
+        <xsl:when test="starts-with($tv/text(),'http')">
+         <a>
+          <xsl:attribute name="href"><xsl:value-of disable-output-escaping="yes" select="$tv/text()"/></xsl:attribute>
+          <xsl:value-of disable-output-escaping="yes" select="$tv/text()"/>
+         </a>
+        </xsl:when>
+        <xsl:otherwise>
+         <xsl:value-of disable-output-escaping="yes" select="$tv/text()"/>
+        </xsl:otherwise>
+       </xsl:choose>
       </p>
      </td>
     </tr>
@@ -1761,6 +1845,12 @@
    </xsl:when>
    <xsl:when test="$type = 'Union Data Type'">
     <xsl:value-of select="$fc.UnionType"/>
+   </xsl:when>
+   <xsl:when test="$type = 'Code List Type'">
+    <xsl:value-of select="$fc.CodelistType"/>
+   </xsl:when>
+   <xsl:when test="$type = 'Enumeration Type'">
+    <xsl:value-of select="$fc.EnumerationType"/>
    </xsl:when>
    <xsl:otherwise>
     <xsl:value-of select="$type"/>

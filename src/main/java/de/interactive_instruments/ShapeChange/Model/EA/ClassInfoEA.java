@@ -661,9 +661,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				if (descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 					s = eaClassElement.GetNotes();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -778,9 +778,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	// if (descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// s = eaClassElement.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//
