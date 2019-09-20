@@ -1083,8 +1083,9 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // plus the variable.
 	    BindingContext bodyctx = xpt.atEnd.clone();
 	    bodyctx.pushDeclaration(vardecl);
+	    
 	    bodyctx.inPredicateExpression = true;
-
+	  
 	    // Compile the boolean expression in the iterator body
 	    SchematronConstraintNodeXslt2 pred = children.get(1);
 	    XpathFragment prd = pred.translate(bodyctx);
@@ -1095,7 +1096,13 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    if (xpt.priority < 19) {
 		xpt.bracket();
 	    }
-	    xpt.fragment += "[" + filter + "]";
+	    
+	    xpt.fragment += "[";
+	    if(!vardecl.name.equalsIgnoreCase("(noname)")) {
+		xpt.fragment += "for $"+vardecl.name + " in . return ";
+	    }
+	    xpt.fragment += filter + "]";
+	    
 	    xpt.priority = 19;
 
 	    return xpt;
@@ -2099,6 +2106,10 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xpt.fragment = "$" + this.vardecl.name;
 
 	    } else if (binds != null && binds instanceof ForAll) {
+
+		xpt.fragment = "$" + this.vardecl.name;
+
+	    } else if (binds != null && binds instanceof Select) {
 
 		xpt.fragment = "$" + this.vardecl.name;
 
