@@ -4,7 +4,7 @@
   <ns prefix="ex15" uri="http://example.org/shapechange/sch/xslt2QueryBinding/s15"/>
   <pattern>
     <rule context="ex15:TS15_FT">
-      <assert test="matches(ex15:att, '^(foo|bar)$')">ts15_ft_constraint1: att.matches('^(foo|bar)$')</assert>
+      <assert test="matches(current()/ex15:att, '^(foo|bar)$')">ts15_ft_constraint1: att.matches('^(foo|bar)$')</assert>
     </rule>
   </pattern>
 </schema>

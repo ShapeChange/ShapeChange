@@ -51,7 +51,7 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode;
  *
  */
 public class SchematronSchemaXslt2 extends AbstractSchematronSchema implements MessageSource {
-
+    
     /**
      * Ctor
      *
@@ -71,7 +71,7 @@ public class SchematronSchemaXslt2 extends AbstractSchematronSchema implements M
 	    // TODO log error, since this implementation only supports xslt2
 	}
     }
-
+    
     @Override
     public void addAssertion(ClassInfo ci, OclConstraint c) {
 

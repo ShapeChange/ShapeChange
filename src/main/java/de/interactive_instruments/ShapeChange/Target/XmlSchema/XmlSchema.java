@@ -169,9 +169,7 @@ public class XmlSchema implements Target, MessageSource {
 				if (c != null && c instanceof OclConstraint && schDoc != null
 						&& ((OclConstraint) c).syntaxTree() != null) {
 				    
-//				    if(c.name().equalsIgnoreCase("ts17_ft1_constraint1")) {
 					schDoc.addAssertion(ci, (OclConstraint) c);
-//				    }
 				}
 			}
 			

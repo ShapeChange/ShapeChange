@@ -58,9 +58,10 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.MultiplicityMapping;
  * method <i>translate</i>.
  * </ul>
  * 
- * @author Reinhard Erstling
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
  *         de)
+ * @author Reinhard Erstling
+ * 
  */
 public abstract class SchematronConstraintNodeXslt2 {
 
@@ -437,7 +438,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    child_xpt.type = XpathType.BOOLEAN;
 		    child_xpt.priority = 20;
 
-		} else if (child_xpt.priority < refprio) {
+		} else if (child_xpt.priority <= refprio) {
 
 		    child_xpt.bracket();
 		}
@@ -742,6 +743,8 @@ public abstract class SchematronConstraintNodeXslt2 {
      */
     public static class Unique extends SchematronConstraintNodeXslt2 {
 
+	public static final String IS_UNIQUE_EMPTY_TOKEN = "SC_EMPTY_ISU_BODY";
+
 	// The variable declaration attached to the iterator
 	OclNode.Declaration vardecl;
 
@@ -792,8 +795,9 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    // Get hold of the expression argument and take cases on its
 	    // nature ...
-	    SchematronConstraintNodeXslt2 expr = children.get(1);
-	    if (!expr.isDependentOn(vardecl)) {
+	    SchematronConstraintNodeXslt2 body = children.get(1);
+
+	    if (!body.isDependentOn(vardecl)) {
 
 		// A constant expression can be unique only if the object
 		// is of cardinality zero or one.
@@ -803,172 +807,183 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xpt.type = XpathType.BOOLEAN;
 		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
-	    } else if (expr.isVarOrAttribBased(vardecl) && expr instanceof Variable) {
+	    } else if (body.isVarOrAttribBased(vardecl) && body instanceof Variable) {
 
-		// If the expression is the identity mapping, the result depends
-		// on the nature of the object types.
+		/*
+		 * This is the identity case. Example: x->isUnique(y|y)
+		 */
+
 		boolean simple = false;
+		boolean hasIdentity = false;
+
 		// Determine the Attribute behind the object
 		Attribute obat = null;
+		// The type name is relevant in case of 'Boolean'
+		String objAttNameOfLastClass = null;
+
 		if (obj instanceof Attribute)
 		    obat = (Attribute) obj;
 		else if (obj instanceof Variable) {
 		    obat = obj.generatingAttribute();
 		}
+
+		// TODO: error if obat cannot be determined?
+
 		if (obat != null) {
-		    ClassInfo ci = obat.attributes[obat.attributes.length - 1].main.dataType.umlClass;
-		    if (ci != null) {
-			Boolean indicatorSimpleType = XmlSchema.indicatorForObjectElementWithSimpleContent(ci);
-			simple = !XmlSchema.classHasObjectElement(ci)
-				|| (indicatorSimpleType != null && indicatorSimpleType);
-		    } else {
-			String tname = obat.attributes[obat.attributes.length - 1].main.dataType.name;
-			String er = schemaObject.currentOclConstraintClass.encodingRule("xsd");
-			MapEntry me = schemaObject.options.typeMapEntry(tname, er);
-			if (me != null)
-			    simple = me.p2.equalsIgnoreCase("simple/simple")
-				    || me.p2.equalsIgnoreCase("complex/simple");
-		    }
+
+		    simple = obat.hasSimpleType();
+		    // TODO: If umlClass is not found in the model, does hasSimpleType work as
+		    // expected? Else add the logic to search via dataType.name there.
+
+		    hasIdentity = obat.hasIdentity();
+
+		    objAttNameOfLastClass = obat.attributes[obat.attributes.length - 1].main.dataType.name;
 		}
+
+		String objXpt = xpt.fragment;
+		// TODO only assign object xpath to let variable if it is evaluated in the
+		// context of self. Can this be identified by some variable check, instead of
+		// the current approach?
+
+		if (objXpt.startsWith("current()")) {
+		    objXpt = "$" + xpt.findOrAdd(xpt.fragment);
+		}
+
 		if (simple) {
-		    /*
-		     * The object is expressed by means of a type with simple content. The nodeset
-		     * will need to undergo a pairwise value comparison. Note that 19139 treatment
-		     * has already been done on the object compiled to xpt.fragment.
-		     */
-		    String var = null;
-		    if (xpt.fragment.matches("^\\$[A-Z]+$"))
-			var = xpt.fragment;
-		    else
-			var = "$" + xpt.findOrAdd(xpt.fragment);
-		    xpt.fragment = var + "[. = (preceding::*|ancestor::*)[count(.|" + var + ")=count(" + var + ")]]";
-		    xpt.priority = 19;
-		    neg = !neg;
+
+		    xpt.fragment = "count(" + objXpt + ") = count(distinct-values(" + objXpt;
+		    if ("Boolean".equalsIgnoreCase(objAttNameOfLastClass)) {
+			xpt.fragment += "/xs:boolean(.)";
+		    }
+		    xpt.fragment += "))";
+
+		    xpt.priority = 6;
+		    xpt.type = XpathType.BOOLEAN;
+		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
+
+		} else if (hasIdentity) {
+
+		    // complex type with identity
+
+		    xpt.fragment = "count(" + objXpt + ") = count(distinct-values(" + objXpt + "/@*:id" + "))";
+
+		    xpt.priority = 6;
+		    xpt.type = XpathType.BOOLEAN;
+		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
+
 		} else {
-		    // The object is element valued. Elements in a nodeset are
-		    // are always distinct, so uniqueness is trivially true.
-		    xpt.fragment = neg ? "false()" : "true()";
-		    neg = false;
-		    xpt.priority = 20;
+
+		    // complex type without identity
+
+		    xpt.fragment = "for $COUNT1 in count(" + objXpt + "), $COUNT2 in " + "sum(for $ISUVAR1 in " + objXpt
+			    + ", $ISUVAR2 in " + objXpt + " return ("
+			    + "if(empty($ISUVAR1) and empty($ISUVAR2)) then 0 else "
+			    + "if ((empty($ISUVAR1) and not(empty($ISUVAR2))) or (not(empty($ISUVAR1)) and empty($ISUVAR2))) then 1 else "
+			    + "if (generate-id($ISUVAR1) = generate-id($ISUVAR2)) then 0 else "
+			    + "if (deep-equal($ISUVAR1/*,$ISUVAR2/*)) then 0 else 1)) "
+			    + "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
+
+		    xpt.priority = 3;
 		    xpt.type = XpathType.BOOLEAN;
 		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
 		}
-	    } else if (expr.isVarOrAttribBased(vardecl)) {
 
-		// If we have an attribute, which is based on the binding
-		// variable, we can try a translation. Precondition, however,
-		// is that all selectors have an attached cardinality of 1
-		// or 0.
-		if (!expr.isMultiple()) {
-		    // Non-multiple attribute access using the binding variable.
-		    Attribute exat = (Attribute) expr;
-		    Attribute exat1 = exat.splitBefore(1);
-		    if (exat1 == null) {
-			// Just 1 selector contained. We can now translate into
-			// an equivalent Xpath expression ...
-			if (!exat.hasSimpleType()) {
-			    // Class is expressed by means of an element
-			    // construct.
-			    SchematronConstraintNodeXslt2 sv = exat.children.get(0);
-			    exat.children.set(0, children.get(0));
-			    XpathFragment xpta = exat.translate(ctx);
-			    xpt.merge(xpta);
-			    xpt.fragment = "count(" + xpt.fragment + ") " + (neg ? "!=" : "=") + " count("
-				    + xpta.fragment + ")";
-			    neg = false;
-			    xpt.priority = 6;
-			    xpt.type = XpathType.BOOLEAN;
-			    xpt.atEnd.setState(BindingContext.CtxState.NONE);
-			    exat.children.set(0, sv);
-			} else {
-			    /*
-			     * Class is expressed by means of a simple type. This also includes 'reason'
-			     * access in GML's nilReason treatment.
-			     */
-			    String var = null;
-			    if (xpt.fragment.matches("^\\$[A-Z]+$"))
-				var = xpt.fragment;
-			    else
-				var = "$" + xpt.findOrAdd(xpt.fragment);
-			    PropertyInfo pi = (PropertyInfo) exat.attributes[0].main.selector.modelProperty;
-			    String prop = schemaObject.getAndRegisterXmlName(pi);
-			    // Find out about modified circumstances concerning
-			    // value access ...
-			    String cid = pi.typeInfo().id;
-			    ClassInfo ci = null;
-			    if (cid != null)
-				ci = pi.model().classById(cid);
-			    boolean iscodelist = ci != null && ci.category() == Options.CODELIST;
-			    boolean is19139 = ci != null && ci.matches("rule-xsd-all-naming-19139");
-			    // Treat special cases in property access
-			    if (exat.attributes[0].absType == 0) {
-				if (is19139) {
-				    prop += "/*";
-				    if (iscodelist)
-					prop += "/@codeListValue";
-				} else if (iscodelist && pi.inClass().matches("rule-xsd-cls-codelist-asDictionaryGml33")
-					&& (ci.asDictionary() || ci.asDictionaryGml33()) && !is19139) {
-				    prop += "/@xlink:href";
-				    schemaObject.registerNamespace("xlink");
-				}
-			    }
-			    // NilReason treatment ...
-			    String nil = "";
-			    if (exat.attributes[0].absType == 2) {
-				if (is19139) {
-				    nil = "[not(*)]/@gco:nilReason";
-				    schemaObject.registerNamespace("gco");
-				} else {
-				    nil = "[@xsi:nil='true']/@nilReason";
-				    schemaObject.registerNamespace("xsi");
-				}
-			    }
-			    // Compile the overall syntax
-			    xpt.fragment = var + "[" + prop + nil + " = (preceding::*|ancestor::*)[count(.|" + var
-				    + ")=count(" + var + ")]/" + prop + nil + "]";
-			    xpt.priority = 19;
-			    neg = !neg;
-			}
-		    } else {
-			// The split was successful. We will recursively descend
-			// into the split parts of the attribute and combine the
-			// results with an 'and' ...
-			boolean savednegated = negated;
-			negated = false;
-			// 1st: obj->isUnique(v|v.a1)
-			children.set(1, exat1.children.get(0));
-			XpathFragment xpt1 = translate(ctx);
-			// 2nd: obj.a1->isUnique(w|w.a2....) -- Note variable
-			// is incorrectly used - Type is not o.k.
-			Attribute exat0 = (Attribute) exat1.children.get(0);
-			Variable v0 = (Variable) exat0.children.get(0);
-			exat0.children.set(0, children.get(0));
-			exat1.children.set(0, v0); // Note wrong type
-			children.set(0, exat0);
-			children.set(1, exat1);
-			XpathFragment xpt2 = translate(ctx);
-			// Merge and create result
-			String frag2 = xpt1.merge(xpt2);
-			if (xpt1.priority < 5)
-			    xpt1.bracket();
-			if (xpt2.priority < 5)
-			    frag2 = "(" + frag2 + ")";
-			xpt1.fragment += " and " + frag2;
-			xpt1.priority = 5;
-			xpt1.type = XpathType.BOOLEAN;
-			xpt1.atEnd.setState(BindingContext.CtxState.NONE);
-			xpt = xpt1;
-			// Restore object
-			children.set(0, obj);
-			children.set(1, expr);
-			negated = savednegated;
-		    }
+	    } else if (body.isVarOrAttribBased(vardecl)) {
 
-		} else {
+		/*
+		 * If we have an attribute, which is based on the binding variable, we can try a
+		 * translation. Precondition, however, is that all selectors have an attached
+		 * cardinality of 1 or 0.
+		 */
+
+		if (body.isMultiple()) {
+
 		    // Multiple selectors encountered. Signal implementation
 		    // restriction ...
 		    return new XpathFragment(20, "***ERROR[121]***");
+
+		} else {
+
+		    // Non-multiple attribute access using the binding variable.
+		    Attribute bodyAtt = (Attribute) body;
+		    // The type name is relevant in case of 'Boolean'
+		    String objAttNameOfLastClass = bodyAtt.attributes[bodyAtt.attributes.length - 1].main.dataType.name;
+
+		    // TODO: If umlClass is not found in the model, does hasSimpleType work as
+		    // expected?
+		    boolean simple = bodyAtt.hasSimpleType();
+		    boolean hasIdentity = bodyAtt.hasIdentity();
+
+		    String objXpt = xpt.fragment;
+		    // TODO only assign object xpath to let variable if it is evaluated in the
+		    // context of self. Can this be identified by some variable check, instead of
+		    // the current approach?
+
+		    if (objXpt.startsWith("current()")) {
+			objXpt = "$" + xpt.findOrAdd(xpt.fragment);
+		    }
+
+		    // Prepare the binding context for compilation of the iterator
+		    // body. This is primarily the context at the end of the object
+		    // plus the variable.
+		    BindingContext bodyctx = xpt.atEnd.clone();
+		    bodyctx.pushDeclaration(vardecl);
+		    bodyctx.inPredicateExpression = false;
+
+		    // Compile the expression in the iterator body
+		    XpathFragment bodyXpt = body.translate(bodyctx);
+		    bodyXpt.atEnd = null; // This suppresses the merging of ending contexts
+
+		    String iterVar = "$" + vardecl.name;
+
+		    if (simple) {
+
+			xpt.fragment = "count(" + objXpt + ") = count(distinct-values(";
+
+			xpt.fragment += "for " + iterVar + " in " + objXpt + " return (if (empty(" + bodyXpt.fragment
+				+ ")) then '" + IS_UNIQUE_EMPTY_TOKEN + "' else " + bodyXpt.fragment;
+
+			if ("Boolean".equalsIgnoreCase(objAttNameOfLastClass)) {
+			    xpt.fragment += "/xs:boolean(.)";
+			}
+			xpt.fragment += ")))";
+
+			xpt.priority = 6;
+			xpt.type = XpathType.BOOLEAN;
+			xpt.atEnd.setState(BindingContext.CtxState.NONE);
+
+		    } else if (hasIdentity) {
+
+			// complex type with identity
+
+			xpt.fragment = "count(" + objXpt + ") = count(distinct-values(" + "for " + iterVar + " in "
+				+ objXpt + " return (if (empty(" + bodyXpt.fragment + ")) then '"
+				+ IS_UNIQUE_EMPTY_TOKEN + "' else " + bodyXpt.fragment + "/@*:id" + ")))";
+
+			xpt.priority = 6;
+			xpt.type = XpathType.BOOLEAN;
+			xpt.atEnd.setState(BindingContext.CtxState.NONE);
+
+		    } else {
+
+			// complex type without identity
+
+			xpt.fragment = "for $COUNT1 in count(" + objXpt + "), $COUNT2 in " + "sum(" + "for " + iterVar
+				+ " in " + objXpt + ", $ISUVAR1 in " + bodyXpt.fragment + ", $ISUVAR2 in "
+				+ bodyXpt.fragment + " return ("
+				+ "if(empty($ISUVAR1) and empty($ISUVAR2)) then 0 else "
+				+ "if ((empty($ISUVAR1) and not(empty($ISUVAR2))) or (not(empty($ISUVAR1)) and empty($ISUVAR2))) then 1 else "
+				+ "if (generate-id($ISUVAR1) = generate-id($ISUVAR2)) then 0 else "
+				+ "if (deep-equal($ISUVAR1/*,$ISUVAR2/*)) then 0 else 1)) "
+				+ "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
+
+			xpt.priority = 3;
+			xpt.type = XpathType.BOOLEAN;
+			xpt.atEnd.setState(BindingContext.CtxState.NONE);
+		    }
+
 		}
+
 	    } else {
 
 		// Expression other than constant, identity of attribute
@@ -1083,9 +1098,9 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // plus the variable.
 	    BindingContext bodyctx = xpt.atEnd.clone();
 	    bodyctx.pushDeclaration(vardecl);
-	    
+
 	    bodyctx.inPredicateExpression = true;
-	  
+
 	    // Compile the boolean expression in the iterator body
 	    SchematronConstraintNodeXslt2 pred = children.get(1);
 	    XpathFragment prd = pred.translate(bodyctx);
@@ -1096,13 +1111,13 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    if (xpt.priority < 19) {
 		xpt.bracket();
 	    }
-	    
+
 	    xpt.fragment += "[";
-	    if(!vardecl.name.equalsIgnoreCase("(noname)")) {
-		xpt.fragment += "for $"+vardecl.name + " in . return ";
+	    if (!vardecl.name.equalsIgnoreCase("(noname)")) {
+		xpt.fragment += "for $" + vardecl.name + " in . return ";
 	    }
 	    xpt.fragment += filter + "]";
-	    
+
 	    xpt.priority = 19;
 
 	    return xpt;
@@ -1263,8 +1278,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public XpathFragment translate(BindingContext ctx) {
 
-	    boolean metadataTypeIs19139Encoded = metadataType.matches("rule-xsd-cls-standard-19139-property-types");
-
 	    SchematronConstraintNodeXslt2 objnode = children.get(0);
 	    // update the binding context to let attribute translation know that access to
 	    // property metadata is the intent
@@ -1280,42 +1293,33 @@ public abstract class SchematronConstraintNodeXslt2 {
 		// in xlink:href references
 		String alpha = schemaObject.alpha;
 		String beta = schemaObject.beta;
-		boolean alphaEx = alpha != null && alpha.length() > 0;
-		boolean betaEx = beta != null && beta.length() > 0;
-
-		String idAttributeFrag;
-		if (metadataTypeIs19139Encoded) {
-		    idAttributeFrag = "@id";
-		} else {
-		    idAttributeFrag = "@gml:id";
-		    schemaObject.registerNamespace("gml");
-		}
+		boolean alphaEx = StringUtils.isNotBlank(alpha);
+		boolean betaEx = StringUtils.isNotBlank(beta);
 
 		String metalink = (obj.fragment.isEmpty() ? "current()" : obj.fragment);
-
 		if (obj.priority < 18) {
 		    metalink = "(" + metalink + ")";
 		}
-
 		metalink += "/@metadata";
 
-		String frag_ref = "//*[";
-		if (alphaEx || betaEx) {
-		    frag_ref += "concat(";
-		    if (alphaEx) {
-			frag_ref += "'" + alpha + "',";
-		    }
-		    frag_ref += idAttributeFrag;
-		    if (betaEx) {
-			frag_ref += ",'" + beta + "'";
-		    }
-		    frag_ref += ")";
+		String refIdExpr = null;
+		if (alphaEx && betaEx) {
+		    // identifier prefix and suffix exist
+		    refIdExpr = "substring-before(substring-after($METAREFVAR,'" + alpha + "'),'" + beta + "')";
+		} else if (alphaEx) {
+		    // only identifier prefix exists
+		    refIdExpr = "substring-after($METAREFVAR,'" + alpha + "')";
+		} else if (betaEx) {
+		    // only identifier suffix exists
+		    refIdExpr = "substring-before($METAREFVAR,'" + beta + "')";
 		} else {
-		    frag_ref += idAttributeFrag;
+		    // neither identifier prefix nor suffix exist
+		    refIdExpr = "$METAREFVAR";
 		}
-		frag_ref += "=" + metalink + "]";
 
-		obj.fragment = "for $META in " + frag_ref + " return $META";
+		obj.fragment = "for $METAREFVAR in " + metalink + " return key('idKey'," + refIdExpr + ")";
+		schemaObject.addIdKey();
+
 		obj.priority = 3;
 
 		// Treat negation. Note that if this is being negated it must be
@@ -1326,7 +1330,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    obj.atEnd.setState(BindingContext.CtxState.NONE);
 		}
 	    }
-	    
+
 	    return obj;
 	}
     }
@@ -1810,30 +1814,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // Merge
 	    String patstring = xptobj.merge(xptpat);
 
-	    /*
-	     * 2019-09-10 JE: previous logic no longer required as we translate directly to
-	     * XPath fn:matches(..) function
-	     */
-
-	    // // Fetch the extension template
-	    // AbstractSchematronSchema.ExtensionFunctionTemplate eft =
-	    // schemaObject.extensionFunctions.get("matches");
-	    // if (eft == null) return new XpathFragment(20, "***ERROR[123]***");
-	    //
-	    // // Construct the extension function call
-	    // String fcall =
-	    // eft.function.replace("$object$", xptobj.fragment).replace("$pattern$",
-	    // patstring);
-	    // xptobj.fragment = eft.nsPrefix + ":" + fcall;
-	    //
-	    // // Accompany with the required fragment attributes
-	    // xptobj.type = XpathType.STRING;
-	    // xptobj.priority = 20;
-	    // xptobj.atEnd.setState(BindingContext.CtxState.NONE);
-	    //
-	    // // We need to declare the namespace
-	    // schemaObject.registerNamespace(eft.nsPrefix, eft.namespace);
-
 	    xptobj.fragment = "matches(" + xptobj.fragment + ", " + patstring + ")";
 
 	    // Accompany with the required fragment attributes
@@ -2101,15 +2081,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 		if (ctx.state != BindingContext.CtxState.ATCURRENT) {
 		    xpt.fragment = "current()";
 		}
-	    } else if (binds != null && binds instanceof Exists) {
-
-		xpt.fragment = "$" + this.vardecl.name;
-
-	    } else if (binds != null && binds instanceof ForAll) {
-
-		xpt.fragment = "$" + this.vardecl.name;
-
-	    } else if (binds != null && binds instanceof Select) {
+	    } else if (binds != null && (binds instanceof Exists || binds instanceof ForAll || binds instanceof Select
+		    || binds instanceof Unique)) {
 
 		xpt.fragment = "$" + this.vardecl.name;
 
@@ -2144,10 +2117,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    xpt.atEnd = new BindingContext(BindingContext.CtxState.OTHER);
 		}
 	    }
-
-	    // if (xpt.fragment.isEmpty()) {
-	    // xpt.fragment = "current()";
-	    // }
 
 	    return xpt;
 	}
@@ -2460,8 +2429,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // in xlink:href references
 	    String alpha = schemaObject.alpha;
 	    String beta = schemaObject.beta;
-	    boolean alphaEx = alpha != null && alpha.length() > 0;
-	    boolean betaEx = beta != null && beta.length() > 0;
+	    boolean alphaEx = StringUtils.isNotBlank(alpha);
+	    boolean betaEx = StringUtils.isNotBlank(beta);
 
 	    // Now step along the properties and generate the associated Xpath
 	    // code for it.
@@ -2590,16 +2559,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		     */
 
 		    if (obj.fragment.length() > 0) {
-
-			// if (obj.priority < 18) {
-			// obj.bracket();
-			// }
-
-			// DONE? TODO JE: we likely have to check if we need to append to a custom
-			// 'for'-variable
-			// here, instead of to the object fragment
 			obj.fragment += "/";
-			// obj.priority = 18;
 		    }
 		    obj.fragment += propertyQName;
 
@@ -2620,7 +2580,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		     * to the code list value pattern.
 		     */
 		    String clvpat = "{value}";
-		    // int nsubst = 1;
 
 		    if (typeCi != null && iscodelist && !piIsGml33Encoded) {
 
@@ -2648,20 +2607,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 			if (!clvpat.equals("{value}")) {
 
 			    clvpat = "concat(" + clvpat + ")";
-			    // nsubst = 2;
-			    //
-			    // /*
-			    // * We will be using a function as location step in
-			    // * the path expression. This is not supported by
-			    // * (the syntax of) XPath 1.0. Also see comments from
-			    // * Dimitre Novatchev and Michael Kay on
-			    // * https://stackoverflow.com/questions/333249/how-to
-			    // * -apply-the- xpath-function-substring-after and
-			    // * https://www.oxygenxml.com/archives/xsl-list/
-			    // * 200603/msg00610. html. However, XPath 2.0 / the
-			    // * xslt2 query binding supports this.
-			    // */
-			    // schemaObject.setQueryBinding("xslt2");
 			}
 		    }
 
@@ -2710,31 +2655,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 			    // For codelists we have to add an attribute access
 			    if (typeCi != null && typeCi.category() == Options.CODELIST) {
 
-				/*
-				 * TODO JE: binding to a let variable will likely be a problem (better to avoid
-				 * this) - test with UnitTest
-				 * SchematronTest.schematronTestOclOnCodelistTypedProperty - and XSLT2 binding.
-				 */
-				// if (nsubst == 2 && atcurr) {
-				// String v = obj.findOrAdd(obj.fragment);
-				// obj.fragment = "$" + v;
-				// }
-
-				// /*
-				// * Only consider elements that have a value. In
-				// * 19139 encoding, that means that a child
-				// * element must be present. If we didn't add
-				// * this check, then the comparison with the
-				// * translated code/enumeration literal would
-				// * fail for an empty element. However, we do not
-				// * need the check if clvpat is just {value},
-				// * because then an empty element would
-				// * automatically be ignored.
-				// */
-				// if (!clvpat.equals("{value}")) {
-				// obj.fragment += "[*]";
-				// }
-
 				obj.fragment = createCodeListValueExpression(obj.fragment, clvpat, "@codeList",
 					"@codeListValue");
 			    }
@@ -2774,11 +2694,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 				 * If using GML 3.3 type codelist treatment, we have to refer to the xlink:href
 				 * attribute
 				 */
-				// TODO JE: again, why replace with let variable here? Better to avoid this!
-				// if (nsubst == 2 && atcurr) {
-				// String v = obj.findOrAdd(obj.fragment);
-				// obj.fragment = "$" + v;
-				// }
 				obj.fragment += "/@xlink:href";
 				schemaObject.registerNamespace("xlink");
 			    }
@@ -2814,39 +2729,30 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 		    if (conCode == 2 || conCode == 3) {
 
-			// Reference containment must be treated
-
-			// --> //*[@gml:id]=.../attr/@xlink:href]
-			// --> if @gml:id is surrounded with additional text,
-			// --> a concat() construct is used.
-
-			String idAttributeFrag;
-			if (is19139) {
-			    idAttributeFrag = "@id";
-			} else {
-			    idAttributeFrag = "@gml:id";
-			    schemaObject.registerNamespace("gml");
-			}
+			// Handle byReference case
 
 			String attxlink = (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/");
 			attxlink += propertyQName;
 			attxlink += "/@xlink:href";
 
-			frag_ref = "//*[";
-			if (alphaEx || betaEx) {
-			    frag_ref += "concat(";
-			    if (alphaEx) {
-				frag_ref += "'" + alpha + "',";
-			    }
-			    frag_ref += idAttributeFrag;
-			    if (betaEx) {
-				frag_ref += ",'" + beta + "'";
-			    }
-			    frag_ref += ")";
+			String refIdExpr = null;
+			if (alphaEx && betaEx) {
+			    // identifier prefix and suffix exist
+			    refIdExpr = "substring-before(substring-after($BYREFVAR,'" + alpha + "'),'" + beta + "')";
+			} else if (alphaEx) {
+			    // only identifier prefix exists
+			    refIdExpr = "substring-after($BYREFVAR,'" + alpha + "')";
+			} else if (betaEx) {
+			    // only identifier suffix exists
+			    refIdExpr = "substring-before($BYREFVAR,'" + beta + "')";
 			} else {
-			    frag_ref += idAttributeFrag;
+			    // neither identifier prefix nor suffix exist
+			    refIdExpr = "$BYREFVAR";
 			}
-			frag_ref += "=" + attxlink + "]";
+
+			frag_ref = "for $BYREFVAR in " + attxlink + " return key('idKey'," + refIdExpr + ")";
+			schemaObject.addIdKey();
+
 			schemaObject.registerNamespace("xlink");
 		    }
 
@@ -2864,15 +2770,18 @@ public abstract class SchematronConstraintNodeXslt2 {
 			if (conCode == 2) {
 			    inExpr = frag_ref;
 			} else {
-			    inExpr = "(" + frag_inl + " | " + frag_ref + ")";
+			    /*
+			     * We use sequence concatenation instead of the union-operator here, because the
+			     * union operator would combine sequences (thus removing empty sequences) and
+			     * also remove duplicate nodes (which can be important, for example when
+			     * counting values and determining unique values).
+			     */
+			    inExpr = "(" + frag_inl + ", (" + frag_ref + "))";
 			}
 
 			forExprVariableCounter += 1;
 			String newForExprVar = "$" + forExprVariablePrefix + forExprVariableCounter;
-			obj.fragment += "(for " + newForExprVar + " in "
-			// + (lastForExprVariable.isEmpty() ? "" :
-			// lastForExprVariable+ "/")
-				+ inExpr + " return ";
+			obj.fragment += "(for " + newForExprVar + " in " + inExpr + " return ";
 			lastForExprVariable = newForExprVar;
 			countForExpr++;
 		    }
@@ -2880,181 +2789,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    if (obj.atEnd != null) {
 			obj.atEnd.setState(BindingContext.CtxState.OTHER);
 		    }
-
-		    // // Other: different modes of containment are possible
-		    // String frag_inl = null;
-		    // String frag_ref = null;
-		    // boolean isVar = false;
-		    //
-		    // if (conCode == 2 || conCode == 3) {
-		    //
-		    // /*
-		    // * If not inline, we will create a 'let' variable unless
-		    // * we are in the middle of some relative addressing
-		    // * scheme
-		    // */
-		    // if (obj.atEnd.state == BindingContext.CtxState.OTHER
-		    // && obj.fragment.length() > 0
-		    // && !obj.fragment.startsWith(".")) {
-		    //
-		    // // store current obj.fragment as a variable
-		    // String var = obj.findOrAdd(obj.fragment);
-		    // obj.fragment = "$" + var;
-		    // obj.priority = 20;
-		    // isVar = true;
-		    //
-		    // if (ctx.inPredicateExpression) {
-		    // obj.fragment = "***ERROR[127," + pi.name() + "]***";
-		    // }
-		    // }
-		    // }
-		    //
-		    // if (conCode == 1 || conCode == 3) {
-		    //
-		    // // In-line containment must be treated
-		    // // --> .../attr/*
-		    // frag_inl = obj.fragment;
-		    //
-		    // if (frag_inl.length() > 0) {
-		    //
-		    // if (obj.priority < 18) {
-		    //
-		    // frag_inl = "(" + frag_inl + ")";
-		    // /*
-		    // * NOTE: Setting the obj.priority here (to 11)
-		    // * is not necessary. The priority of the whole
-		    // * obj.fragment, once it has been created, is
-		    // * important. It will be set later on.
-		    // */
-		    // }
-		    //
-		    // frag_inl += "/";
-		    // }
-		    // frag_inl += propertyQName;
-		    // if (obj.atEnd != null) obj.atEnd.addStep();
-		    // frag_inl += "/*";
-		    // if (obj.atEnd != null) obj.atEnd.addStep();
-		    //
-		    // if (obj.atEnd != null) {
-		    // obj.atEnd.setState(BindingContext.CtxState.OTHER);
-		    // }
-		    // }
-		    //
-		    // if (conCode == 2 || conCode == 3) {
-		    //
-		    // // Reference containment must be treated
-		    //
-		    // if (!isVar) {
-		    //
-		    // // If not stored in a variable, the object now
-		    // // has to be compiled in an undefined context.
-		    // BindingContext ctx1 = ctx.clone();
-		    //
-		    // /*
-		    // * 2018-06-19 JE: Setting a cloned context with
-		    // * state OTHER is fine. However, setState() also
-		    // * sets the variables to null. That is an issue in
-		    // * case that the variable need to be looked up, for
-		    // * example in a constraint like: inv:
-		    // * prop1->forAll(x|x.prop2->size() = 1)
-		    // *
-		    // * The way that let variables are created further
-		    // * above can be an issue if a longer property path
-		    // * was used in forAll(), like:
-		    // * prop1->forAll(x|x.prop2.prop3->size() = 1)
-		    // *
-		    // * If prop3 can be encoded byReference (conCode==2
-		    // * or conCode==3), then at the moment a let variable
-		    // * would be created to compute objects of prop2.
-		    // * However, the context of prop2 in the let
-		    // * statement would be the "current" object, not an
-		    // * object of prop1. That is a limitation with
-		    // * XSLT/XPath 1. With XSLT/XPath 2 we could use the
-		    // * XPath expression
-		    // * "for $var in expr return expr".
-		    // *
-		    // * To support the simple case of a single property
-		    // * step within forAll(), we reset the state but keep
-		    // * the variables.
-		    // */
-		    //
-		    // // ctx1.setState(BindingContext.CtxState.OTHER);
-		    // ctx1.setStateKeepingVariables(BindingContext.CtxState.OTHER);
-		    //
-		    // XpathFragment obj1 = children.get(0).translate(ctx1);
-		    // String frag = obj.merge(obj1);
-		    // obj.fragment = frag;
-		    // }
-		    //
-		    // // --> //*[@gml:id]=.../attr/@xlink:href]
-		    // // --> if @gml:id is surrounded with additional text,
-		    // // --> a concat() construct is used.
-		    //
-		    // String idAttributeFrag;
-		    // if (is19139) {
-		    // idAttributeFrag = "@id";
-		    // } else {
-		    // idAttributeFrag = "@gml:id";
-		    // schemaObject.registerNamespace("gml");
-		    // }
-		    //
-		    // String attxlink = obj.fragment;
-		    // if (attxlink.length() > 0) {
-		    //
-		    // if (obj.priority < 18) {
-		    // attxlink = "(" + attxlink + ")";
-		    // /*
-		    // * NOTE: Setting the obj.priority here (to 11)
-		    // * is not necessary. The priority of the whole
-		    // * obj.fragment, once it has been created, is
-		    // * important. It will be set later on.
-		    // */
-		    // }
-		    //
-		    // attxlink += "/";
-		    // }
-		    // attxlink += propertyQName;
-		    // attxlink += "/@xlink:href";
-		    // frag_ref = "//*[";
-		    // if (alphaEx || betaEx) {
-		    // frag_ref += "concat(";
-		    // if (alphaEx) {
-		    // frag_ref += "'" + alpha + "',";
-		    // }
-		    // frag_ref += idAttributeFrag;
-		    // if (betaEx) {
-		    // frag_ref += ",'" + beta + "'";
-		    // }
-		    // frag_ref += ")";
-		    // } else {
-		    // frag_ref += idAttributeFrag;
-		    // }
-		    // frag_ref += "=" + attxlink + "]";
-		    // schemaObject.registerNamespace("xlink");
-		    //
-		    // // Whatever binding context we had before, it is lost
-		    // if (obj.atEnd != null) {
-		    // obj.atEnd.setState(BindingContext.CtxState.OTHER);
-		    // }
-		    // }
-		    //
-		    // // Set the fragment value, possibly combining both
-		    // // containment representations
-		    // if (conCode == 3) {
-		    //
-		    // obj.fragment = frag_inl + " | " + frag_ref;
-		    // obj.priority = 10;
-		    //
-		    // } else if (conCode == 1) {
-		    //
-		    // obj.fragment = frag_inl;
-		    // obj.priority = 18;
-		    //
-		    // } else {
-		    //
-		    // obj.fragment = frag_ref;
-		    // obj.priority = 19;
-		    // }
 		}
 	    }
 

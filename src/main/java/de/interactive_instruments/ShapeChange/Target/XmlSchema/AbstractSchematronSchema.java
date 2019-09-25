@@ -75,6 +75,8 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	HashSet<String> letVarsAlreadyOutput = new HashSet<String>();
     }
 
+    protected boolean addIdKey = false;
+
     /** key: rule context, value: rule creation status */
     HashMap<String, RuleCreationStatus> ruleCreationStatusMap = new HashMap<String, RuleCreationStatus>();
 
@@ -511,6 +513,10 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	return vp;
     }
 
+    public void addIdKey() {
+	addIdKey = true;
+    }
+
     /**
      * This function serializes the generated Schematron schema to the given
      * directory. The document name is derived from the name of the GML application
@@ -523,6 +529,17 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	if (printed || !assertion) {
 	    return;
+	}
+
+	if (addIdKey) {
+
+	    addAttribute(document, root, "xmlns:xsl", "http://www.w3.org/1999/XSL/Transform");
+
+	    Element e = document.createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:key");
+	    addAttribute(document, e, "name", "idKey");
+	    addAttribute(document, e, "match", "*[@*:id]");
+	    addAttribute(document, e, "use", "@*:id");
+	    root.insertBefore(e, pattern);
 	}
 
 	// identify file name

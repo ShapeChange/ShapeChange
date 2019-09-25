@@ -32,9 +32,9 @@
   </ex2:TS2_FT3>
  </gml:featureMember>
  <gml:featureMember>
-  <ex2:TS2_FT4 gml:id="ft4_1">
+  <ex2:TS2_FT3 gml:id="ft3_2">
    <ex2:att>1</ex2:att>
-  </ex2:TS2_FT4>
+  </ex2:TS2_FT3>
  </gml:featureMember>
  <gml:featureMember>
   <ex2:TS2_FT4 gml:id="ft4_2">

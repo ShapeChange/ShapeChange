@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test14_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex14="http://example.org/shapechange/sch/xslt2QueryBinding/s14"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s14 ../reference/results/xsd_sch_xslt2/INPUT/test14.xsd">
+ <gml:featureMember>
+  <ex14:TS14_FT gml:id="ft1_PASS">
+   <ex14:att1>true</ex14:att1>
+   <ex14:att2>true</ex14:att2>
+   <ex14:att3>false</ex14:att3>
+   <ex14:att4>true</ex14:att4>
+   <ex14:att5>false</ex14:att5>
+   <ex14:att6>true</ex14:att6>
+   <ex14:att7>false</ex14:att7>
+   <ex14:att8>false</ex14:att8>
+   <ex14:att9>false</ex14:att9>
+  </ex14:TS14_FT>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex14:TS14_FT gml:id="ft1_FAIL">
+   <ex14:att1>true</ex14:att1>
+   <ex14:att2>false</ex14:att2>
+   <ex14:att3>false</ex14:att3>
+   <ex14:att4>false</ex14:att4>
+   <ex14:att5>true</ex14:att5>
+   <ex14:att6>true</ex14:att6>
+   <ex14:att7>true</ex14:att7>
+   <ex14:att8>false</ex14:att8>
+   <ex14:att9>true</ex14:att9>
+  </ex14:TS14_FT>  
+ </gml:featureMember>
+</gml:FeatureCollection>
