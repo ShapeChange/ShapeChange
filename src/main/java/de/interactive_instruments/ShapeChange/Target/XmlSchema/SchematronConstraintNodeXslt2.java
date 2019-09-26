@@ -40,6 +40,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode.AttributeCallExp;
+import de.interactive_instruments.ShapeChange.Ocl.OclNode.DataType;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode.MultiplicityMapping;
 
 /**
@@ -208,6 +209,38 @@ public abstract class SchematronConstraintNodeXslt2 {
 	} else {
 	    return true;
 	}
+    }
+
+    protected boolean isAttributeWithVariableSelfAsSource(SchematronConstraintNodeXslt2 node) {
+
+	if (node instanceof Attribute) {
+	    Attribute att = (Attribute) node;
+	    SchematronConstraintNodeXslt2 source = att.children.get(0);
+	    if (source instanceof Variable && ((Variable) source).getName().equalsIgnoreCase("self")) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    protected boolean isSimpleType(ClassInfo ci, String ciName) {
+
+	boolean isSimple = false;
+
+	if (ci != null) {
+	    Boolean indicatorSimpleType = XmlSchema.indicatorForObjectElementWithSimpleContent(ci);
+	    isSimple = !XmlSchema.classHasObjectElement(ci) || (indicatorSimpleType != null && indicatorSimpleType);
+	} else {
+	    String tname = ciName;
+	    String er = schemaObject.currentOclConstraintClass.encodingRule("xsd");
+	    MapEntry me = schemaObject.options.typeMapEntry(tname, er);
+	    if (me != null)
+		isSimple = me.p2.equalsIgnoreCase("simple/simple") || me.p2.equalsIgnoreCase("complex/simple");
+	}
+
+	return isSimple;
+
     }
 
     /**
@@ -457,8 +490,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // Correct priority and type
 	    result.priority = refprio;
 	    result.type = XpathType.BOOLEAN;
-	    // BindingContext at expression end is already set correctly to
-	    // NONE.
+	    result.atEnd = new BindingContext(BindingContext.CtxState.NONE);
 
 	    return result;
 	}
@@ -570,6 +602,12 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xpt.fragment = ".";
 	    }
 
+	    /*
+	     * NOTE: In the case of notEmpty(), the XPath results in a node set. The default
+	     * type of the XpathFragment is therefore ok. In the negated form (isEmpty())
+	     * the addition of not(..) results in a type change to BOOLEAN.
+	     */
+
 	    // isEmpty() requires an additional not(...)
 	    if (!negated) {
 		xpt.fragment = "not(" + xpt.fragment + ")";
@@ -648,11 +686,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 	    xpt.fragment = "some $" + vardecl.name + " in " + xpt.fragment + " satisfies " + filter;
 	    xpt.priority = 3;
+	    xpt.type = XpathType.BOOLEAN;
 
 	    // Consider negated form
 	    if (negated) {
 		xpt.fragment = "not(" + xpt.fragment + ")";
-		xpt.type = XpathType.BOOLEAN;
 		xpt.priority = 20;
 		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 	    }
@@ -723,11 +761,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 	    xpt.fragment = "every $" + vardecl.name + " in " + xpt.fragment + " satisfies " + filter;
 	    xpt.priority = 3;
+	    xpt.type = XpathType.BOOLEAN;
 
 	    // Consider negated form
 	    if (negated) {
 		xpt.fragment = "not(" + xpt.fragment + ")";
-		xpt.type = XpathType.BOOLEAN;
 		xpt.priority = 20;
 		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 	    }
@@ -804,8 +842,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xpt.fragment = "count(" + xpt.fragment + ") " + (neg ? ">" : "<=") + " 1";
 		neg = false;
 		xpt.priority = 6;
-		xpt.type = XpathType.BOOLEAN;
-		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 	    } else if (body.isVarOrAttribBased(vardecl) && body instanceof Variable) {
 
@@ -832,20 +868,14 @@ public abstract class SchematronConstraintNodeXslt2 {
 		if (obat != null) {
 
 		    simple = obat.hasSimpleType();
-		    // TODO: If umlClass is not found in the model, does hasSimpleType work as
-		    // expected? Else add the logic to search via dataType.name there.
-
 		    hasIdentity = obat.hasIdentity();
 
 		    objAttNameOfLastClass = obat.attributes[obat.attributes.length - 1].main.dataType.name;
 		}
 
 		String objXpt = xpt.fragment;
-		// TODO only assign object xpath to let variable if it is evaluated in the
-		// context of self. Can this be identified by some variable check, instead of
-		// the current approach?
 
-		if (objXpt.startsWith("current()")) {
+		if (isAttributeWithVariableSelfAsSource(obj)) {
 		    objXpt = "$" + xpt.findOrAdd(xpt.fragment);
 		}
 
@@ -858,8 +888,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    xpt.fragment += "))";
 
 		    xpt.priority = 6;
-		    xpt.type = XpathType.BOOLEAN;
-		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 		} else if (hasIdentity) {
 
@@ -868,8 +896,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    xpt.fragment = "count(" + objXpt + ") = count(distinct-values(" + objXpt + "/@*:id" + "))";
 
 		    xpt.priority = 6;
-		    xpt.type = XpathType.BOOLEAN;
-		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 		} else {
 
@@ -884,8 +910,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 			    + "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
 
 		    xpt.priority = 3;
-		    xpt.type = XpathType.BOOLEAN;
-		    xpt.atEnd.setState(BindingContext.CtxState.NONE);
 		}
 
 	    } else if (body.isVarOrAttribBased(vardecl)) {
@@ -909,17 +933,12 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    // The type name is relevant in case of 'Boolean'
 		    String objAttNameOfLastClass = bodyAtt.attributes[bodyAtt.attributes.length - 1].main.dataType.name;
 
-		    // TODO: If umlClass is not found in the model, does hasSimpleType work as
-		    // expected?
 		    boolean simple = bodyAtt.hasSimpleType();
 		    boolean hasIdentity = bodyAtt.hasIdentity();
 
 		    String objXpt = xpt.fragment;
-		    // TODO only assign object xpath to let variable if it is evaluated in the
-		    // context of self. Can this be identified by some variable check, instead of
-		    // the current approach?
 
-		    if (objXpt.startsWith("current()")) {
+		    if (isAttributeWithVariableSelfAsSource(obj)) {
 			objXpt = "$" + xpt.findOrAdd(xpt.fragment);
 		    }
 
@@ -949,8 +968,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 			xpt.fragment += ")))";
 
 			xpt.priority = 6;
-			xpt.type = XpathType.BOOLEAN;
-			xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 		    } else if (hasIdentity) {
 
@@ -961,8 +978,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 				+ IS_UNIQUE_EMPTY_TOKEN + "' else " + bodyXpt.fragment + "/@*:id" + ")))";
 
 			xpt.priority = 6;
-			xpt.type = XpathType.BOOLEAN;
-			xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 		    } else {
 
@@ -978,8 +993,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 				+ "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
 
 			xpt.priority = 3;
-			xpt.type = XpathType.BOOLEAN;
-			xpt.atEnd.setState(BindingContext.CtxState.NONE);
 		    }
 
 		}
@@ -991,12 +1004,13 @@ public abstract class SchematronConstraintNodeXslt2 {
 		return new XpathFragment(20, "***ERROR[122]***");
 	    }
 
+	    xpt.type = XpathType.BOOLEAN;
+	    xpt.atEnd.setState(BindingContext.CtxState.NONE);
+
 	    // Consider negated form
 	    if (neg) {
 		xpt.fragment = "not(" + xpt.fragment + ")";
-		xpt.type = XpathType.BOOLEAN;
 		xpt.priority = 20;
-		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 	    }
 
 	    return xpt;
@@ -1211,11 +1225,13 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    // Wrap and provide proper priority. Set binding context.
 	    XpathFragment xpt = new XpathFragment(19, fragment);
+
 	    xpt.atEnd = new BindingContext(BindingContext.CtxState.OTHER);
 
 	    String var = xpt.findOrAdd(fragment);
 	    xpt.fragment = "$" + var;
 	    xpt.priority = 20;
+	    // xpt.type = NODESET - set by default; already correct
 
 	    return xpt;
 	}
@@ -1474,7 +1490,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return Flag indicating whether the node has a simple type
 	 */
 	public boolean hasSimpleType() {
-	    return children.get(0).hasSimpleType();
+	    return isSimpleType(argumentClass, argumentClass.name());
 	}
 
 	/**
@@ -1484,7 +1500,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return Flag indicating whether the node is an identity carrying type
 	 */
 	public boolean hasIdentity() {
-	    return children.get(0).hasIdentity();
+	    return XmlSchema.classCanBeReferenced(argumentClass);
 	}
 
 	/**
@@ -1505,6 +1521,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    if (xptobj.fragment.length() == 0) {
 		xptobj.fragment = "self::*";
 		xptobj.priority = 19;
+	    }
+	    
+	    if (isAttributeWithVariableSelfAsSource(objnode)) {
+		xptobj.fragment = "$" + xptobj.findOrAdd(xptobj.fragment);
+		xptobj.priority = 20;
 	    }
 
 	    // Obtain the necessary classes from the model
@@ -1643,6 +1664,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    XpathFragment xpt = obj.translate(ctx);
 	    if (xpt.fragment.length() == 0) {
 		xpt.fragment = ".";
+	    }
+
+	    if (isAttributeWithVariableSelfAsSource(obj)) {
+		xpt.fragment = "$" + xpt.findOrAdd(xpt.fragment);
+		xpt.priority = 20;
 	    }
 
 	    // Is it the string length function or a set count?
@@ -1894,6 +1920,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    xpt1.type = XpathType.NUMBER;
 	    xpt1.atEnd = new BindingContext(BindingContext.CtxState.NONE);
+
 	    return xpt1;
 	}
     }
@@ -2332,25 +2359,17 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public boolean hasSimpleType(int idx) {
 
-	    ClassInfo ci;
 	    boolean result = true;
+	    DataType dt = null;
 
 	    switch (attributes[idx].absType) {
 	    case 0: // Normal attribute
-		ci = attributes[idx].main.dataType.umlClass;
-		if (ci != null) {
-		    Boolean indicatorSimpleType = XmlSchema.indicatorForObjectElementWithSimpleContent(ci);
-		    result = !XmlSchema.classHasObjectElement(ci)
-			    || (indicatorSimpleType != null && indicatorSimpleType);
-		}
+		dt = attributes[idx].main.dataType;
+		result = isSimpleType(dt.umlClass, dt.name);
 		break;
 	    case 1: // Normal absorption
-		ci = attributes[idx].absAttr.dataType.umlClass;
-		if (ci != null) {
-		    Boolean indicatorSimpleType = XmlSchema.indicatorForObjectElementWithSimpleContent(ci);
-		    result = !XmlSchema.classHasObjectElement(ci)
-			    || (indicatorSimpleType != null && indicatorSimpleType);
-		}
+		dt = attributes[idx].absAttr.dataType;
+		result = isSimpleType(dt.umlClass, dt.name);
 		break;
 	    case 2: // Nil-implementation attribute with a "reason" selector
 	    }
@@ -2417,11 +2436,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	     * allInstances() or any type of iterator such as exists, forAll, select.
 	     */
 	    SchematronConstraintNodeXslt2 objnode = children.get(0);
-	    XpathFragment obj = objnode.translate(ctx);
+	    XpathFragment xpt = objnode.translate(ctx);
 
-	    if (obj.fragment.length() > 0) {
-		if (obj.priority < 18) {
-		    obj.bracket();
+	    if (xpt.fragment.length() > 0) {
+		if (xpt.priority < 18) {
+		    xpt.bracket();
 		}
 	    }
 
@@ -2443,10 +2462,10 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    // contains the $ sign as prefix
 	    String lastForExprVariable;
-	    if (obj.fragment.isEmpty()) {
+	    if (xpt.fragment.isEmpty()) {
 		lastForExprVariable = "current()";
 	    } else {
-		lastForExprVariable = obj.fragment;
+		lastForExprVariable = xpt.fragment;
 	    }
 
 	    String fragmentForInlinePropertySequence = "";
@@ -2456,7 +2475,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	     * variable name is now stored in lastForExprVariable, which is added by the
 	     * following code - which also adds to obj.fragment.
 	     */
-	    obj.fragment = "";
+	    xpt.fragment = "";
 
 	    int countForExpr = 0;
 
@@ -2501,7 +2520,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 			 * We need to append the fragment built in previous iterations now. No need for
 			 * a 'for' expression.
 			 */
-			obj.fragment += (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/")
+			xpt.fragment += (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/")
 				+ fragmentForInlinePropertySequence;
 
 			lastForExprVariable = "";
@@ -2517,7 +2536,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 			forExprVariableCounter += 1;
 			String newForExprVar = "$" + forExprVariablePrefix + forExprVariableCounter;
-			obj.fragment += "(for " + newForExprVar + " in "
+			xpt.fragment += "(for " + newForExprVar + " in "
 				+ (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/")
 				+ fragmentForInlinePropertySequence + " return ";
 			lastForExprVariable = newForExprVar;
@@ -2533,7 +2552,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		     * before we encode the property (with simple type, or for property metadata
 		     * access).
 		     */
-		    obj.fragment += lastForExprVariable;
+		    xpt.fragment += lastForExprVariable;
 		    lastForExprVariable = "";
 		}
 
@@ -2549,7 +2568,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    // the goal is to access the metadata of the current property; simply append the
 		    // QName of the property; ignore containment (because metadata access occurs via
 		    // the @metadata XML attribute of the property element)
-		    obj.fragment += "/" + propertyQName;
+		    xpt.fragment += "/" + propertyQName;
 
 		} else if (conCode == 0) {
 
@@ -2558,10 +2577,10 @@ public abstract class SchematronConstraintNodeXslt2 {
 		     * in GML's nilReason treatment.
 		     */
 
-		    if (obj.fragment.length() > 0) {
-			obj.fragment += "/";
+		    if (xpt.fragment.length() > 0) {
+			xpt.fragment += "/";
 		    }
-		    obj.fragment += propertyQName;
+		    xpt.fragment += propertyQName;
 
 		    /*
 		     * We also need to know if the property has a codelist type.
@@ -2613,26 +2632,26 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    // 'reason' access in GML or 19139 nilReason treatment?
 		    if (attributes[idx].absType == 2) {
 			if (is19139) {
-			    obj.fragment += "[not(*)]/@gco:nilReason";
+			    xpt.fragment += "[not(*)]/@gco:nilReason";
 			    schemaObject.registerNamespace("gco");
 			} else {
-			    obj.fragment += "[@xsi:nil='true']/@nilReason";
+			    xpt.fragment += "[@xsi:nil='true']/@nilReason";
 			    schemaObject.registerNamespace("xsi");
 			}
-			obj.priority = 18;
+			xpt.priority = 18;
 		    }
 
 		    // Nillable 'value' access in GML
 		    if (attributes[idx].absType == 1) {
 			if (typeCi.isUnionDirect()) {
-			    obj.fragment += "[not(@xsi:nil='true')]";
+			    xpt.fragment += "[not(@xsi:nil='true')]";
 			    schemaObject.registerNamespace("xsi");
 			}
 		    }
 
 		    // Adjust relative adressing of variables
-		    if (obj.atEnd != null) {
-			obj.atEnd.addStep();
+		    if (xpt.atEnd != null) {
+			xpt.atEnd.addStep();
 		    }
 
 		    // In a normal property access, we still have to treat some
@@ -2647,15 +2666,15 @@ public abstract class SchematronConstraintNodeXslt2 {
 			     * Under 19139 encoding, we will have to match another element level, even for
 			     * simple types
 			     */
-			    obj.fragment += "/*";
-			    if (obj.atEnd != null) {
-				obj.atEnd.addStep();
+			    xpt.fragment += "/*";
+			    if (xpt.atEnd != null) {
+				xpt.atEnd.addStep();
 			    }
 
 			    // For codelists we have to add an attribute access
 			    if (typeCi != null && typeCi.category() == Options.CODELIST) {
 
-				obj.fragment = createCodeListValueExpression(obj.fragment, clvpat, "@codeList",
+				xpt.fragment = createCodeListValueExpression(xpt.fragment, clvpat, "@codeList",
 					"@codeListValue");
 			    }
 
@@ -2681,11 +2700,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 				 * element without text content would automatically be ignored).
 				 */
 				if (pi.voidable() && !clvpat.equals("{value}")) {
-				    obj.fragment += "[not(@xsi:nil='true')]";
+				    xpt.fragment += "[not(@xsi:nil='true')]";
 				    schemaObject.registerNamespace("xsi");
 				}
 
-				obj.fragment = createCodeListValueExpression(obj.fragment, clvpat, "@codeSpace",
+				xpt.fragment = createCodeListValueExpression(xpt.fragment, clvpat, "@codeSpace",
 					"text()");
 
 			    } else {
@@ -2694,7 +2713,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 				 * If using GML 3.3 type codelist treatment, we have to refer to the xlink:href
 				 * attribute
 				 */
-				obj.fragment += "/@xlink:href";
+				xpt.fragment += "/@xlink:href";
 				schemaObject.registerNamespace("xlink");
 			    }
 			}
@@ -2720,11 +2739,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 			    frag_inl += "/";
 			}
 			frag_inl += propertyQName;
-			if (obj.atEnd != null)
-			    obj.atEnd.addStep();
+			if (xpt.atEnd != null)
+			    xpt.atEnd.addStep();
 			frag_inl += "/*";
-			if (obj.atEnd != null)
-			    obj.atEnd.addStep();
+			if (xpt.atEnd != null)
+			    xpt.atEnd.addStep();
 		    }
 
 		    if (conCode == 2 || conCode == 3) {
@@ -2781,42 +2800,43 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 			forExprVariableCounter += 1;
 			String newForExprVar = "$" + forExprVariablePrefix + forExprVariableCounter;
-			obj.fragment += "(for " + newForExprVar + " in " + inExpr + " return ";
+			xpt.fragment += "(for " + newForExprVar + " in " + inExpr + " return ";
 			lastForExprVariable = newForExprVar;
 			countForExpr++;
 		    }
 
-		    if (obj.atEnd != null) {
-			obj.atEnd.setState(BindingContext.CtxState.OTHER);
+		    if (xpt.atEnd != null) {
+			xpt.atEnd.setState(BindingContext.CtxState.OTHER);
 		    }
 		}
 	    }
 
 	    if (!fragmentForInlinePropertySequence.isEmpty()) {
-		obj.fragment += (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/")
+		xpt.fragment += (lastForExprVariable.isEmpty() ? "" : lastForExprVariable + "/")
 			+ fragmentForInlinePropertySequence;
 	    } else if (!lastForExprVariable.isEmpty()) {
-		obj.fragment += lastForExprVariable;
+		xpt.fragment += lastForExprVariable;
 	    }
 	    // add closing brackets, strip overall surrounding brackets
 	    if (countForExpr > 0) {
-		obj.fragment += StringUtils.repeat(")", countForExpr - 1);
-		obj.fragment = obj.fragment.substring(1);
-		obj.priority = 3;
+		xpt.fragment += StringUtils.repeat(")", countForExpr - 1);
+		xpt.fragment = xpt.fragment.substring(1);
+		xpt.priority = 3;
 	    } else {
-		obj.priority = 18;
+		xpt.priority = 18;
 	    }
-
+	   
 	    // Treat negation. Note that if this is being negated it must be
 	    // unique and boolean ...
 	    if (negated) {
-		obj.fragment = "not(" + obj.fragment + ")";
-		obj.priority = 20;
-		obj.atEnd.setState(BindingContext.CtxState.NONE);
+		xpt.fragment = "not(" + xpt.fragment + ")";
+		xpt.priority = 20;
+		xpt.type = XpathType.BOOLEAN;
+		xpt.atEnd.setState(BindingContext.CtxState.NONE);
 	    }
 
 	    // Return fragment
-	    return obj;
+	    return xpt;
 	}
 
 	private int getContainmentCode(int idx, PropertyInfo pi) {
@@ -3070,7 +3090,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    SchematronConstraintNodeXslt2 con = children.get(0);
 	    SchematronConstraintNodeXslt2 thn = children.get(1);
 	    SchematronConstraintNodeXslt2 els = children.get(2);
-
+	    
 	    XpathFragment xptcon = con.translate(ctx);
 	    XpathFragment xptthn = thn.translate(ctx);
 	    XpathFragment xptels = els.translate(ctx);

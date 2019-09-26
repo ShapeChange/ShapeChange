@@ -239,7 +239,7 @@ public class XpathFragment {
 	    // replace $ in front of let variables (not other variables!) with %
 	    for (Map.Entry<String, String> ve : xf.lets.entrySet()) {
 		String vn = ve.getKey();
-		xf.replace("\\$" + vn, "%" + vn);
+		xf.replace("\\$" + vn + "(?!\\w)", "%" + vn);
 	    }
 
 	    /*
@@ -251,7 +251,7 @@ public class XpathFragment {
 		String vn = ve.getKey();
 		String ex = ve.getValue();
 		String vnew = findOrAdd(ex);
-		xf.replace("%" + vn, "\\$" + vnew);
+		xf.replace("%" + vn + "(?!\\w)", "\\$" + vnew);
 	    }
 	}
 	if (atEnd != null)
