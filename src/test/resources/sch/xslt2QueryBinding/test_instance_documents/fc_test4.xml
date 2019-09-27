@@ -4,7 +4,7 @@
  <gml:featureMember>
   <ex4:TS4_FT1 gml:id="ft1_PASS">
    <ex4:ft1Att>1</ex4:ft1Att>
-   <ex4:ft1AttFt4Check>1</ex4:ft1AttFt4Check>   
+   <ex4:ft1AttFt4Check>1</ex4:ft1AttFt4Check>
    <ex4:ft1AttDt1>
     <ex4:TS4_DT1>
      <ex4:dt1Att>2.5</ex4:dt1Att>
@@ -61,7 +61,7 @@
    </ex4:rFT2toFT3Inline>
    <ex4:rFT2toFT3Inline>
     <ex4:TS4_FT3 gml:id="ft2_byReference_ft3_inline_2">
-     <ex4:ft3Att>1</ex4:ft3Att>     
+     <ex4:ft3Att>1</ex4:ft3Att>
      <ex4:rFT3toFT4Inline>
       <ex4:TS4_FT4 gml:id="ft2_byReference_ft3_inline_2_ft4_inline">
        <ex4:ft4Att>1</ex4:ft4Att>
@@ -78,7 +78,7 @@
    <ex4:rFT2toFT3InlineOrByReference xlink:href="#ft3_byReference"/>
   </ex4:TS4_FT2>
  </gml:featureMember>
- 
+
  <gml:featureMember>
   <ex4:TS4_FT3 gml:id="ft3_byReference">
    <ex4:ft3Att>1</ex4:ft3Att>
@@ -89,7 +89,7 @@
    </ex4:rFT3toFT4Inline>
    <ex4:rFT3toFT4Inline>
     <ex4:TS4_FT4 gml:id="ft3_byReference_ft4_inline_2">
-     <ex4:ft4Att>1</ex4:ft4Att>  
+     <ex4:ft4Att>1</ex4:ft4Att>
     </ex4:TS4_FT4>
    </ex4:rFT3toFT4Inline>
    <ex4:rFT3toFT4ByReference xlink:href="#ft4_byReference"/>
@@ -101,17 +101,43 @@
    <ex4:rFT3toFT4InlineOrByReference xlink:href="#ft4_byReference"/>
   </ex4:TS4_FT3>
  </gml:featureMember>
- 
- 
+
+
  <gml:featureMember>
   <ex4:TS4_FT4 gml:id="ft4_byReference">
    <ex4:ft4Att>1</ex4:ft4Att>
   </ex4:TS4_FT4>
  </gml:featureMember>
- 
+
  <gml:featureMember>
   <ex4:TS4_FT1 gml:id="ft1_FAIL">
    <ex4:ft1AttFt4Check>20</ex4:ft1AttFt4Check>
+   <ex4:rFT1toFT2Inline>
+    <ex4:TS4_FT2 gml:id="ft2_fail_1">
+     <ex4:ft2AttClGml32 codeSpace="http://example.org/codelist">XXX</ex4:ft2AttClGml32>
+     <ex4:ft2AttClIso19139>
+      <ex4:TS4_CL_ISO19139 codeList="http://example.org/XXX" codeListValue="code">code</ex4:TS4_CL_ISO19139>
+     </ex4:ft2AttClIso19139>
+    </ex4:TS4_FT2>
+   </ex4:rFT1toFT2Inline>
+   <ex4:rFT1toFT2ByReference xlink:href="#ft2_fail_1"/>
+   <ex4:rFT1toFT2InlineOrByReference>
+    <ex4:TS4_FT2 gml:id="ft2_fail_2">
+     <ex4:ft2AttClGml32 codeSpace="http://example.org/codelist">code</ex4:ft2AttClGml32>
+     <ex4:ft2AttClIso19139>
+      <ex4:TS4_CL_ISO19139 codeList="http://example.org/XXX" codeListValue="code">code</ex4:TS4_CL_ISO19139>
+     </ex4:ft2AttClIso19139>
+    </ex4:TS4_FT2>
+   </ex4:rFT1toFT2InlineOrByReference>
+   <ex4:rFT1toFT2InlineOrByReference xlink:href="#ft2_fail_3"/>
   </ex4:TS4_FT1>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex4:TS4_FT2 gml:id="ft2_fail_3">
+   <ex4:ft2AttClGml32 codeSpace="http://example.org/codelist">XXX</ex4:ft2AttClGml32>
+   <ex4:ft2AttClIso19139>
+    <ex4:TS4_CL_ISO19139 codeList="http://example.org/codelist" codeListValue="code">code</ex4:TS4_CL_ISO19139>
+   </ex4:ft2AttClIso19139>
+  </ex4:TS4_FT2>
  </gml:featureMember>
 </gml:FeatureCollection>

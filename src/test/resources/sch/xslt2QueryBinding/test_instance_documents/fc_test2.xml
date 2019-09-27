@@ -36,6 +36,7 @@
    <ex2:att>1</ex2:att>
   </ex2:TS2_FT3>
  </gml:featureMember>
+ <!-- Adding another TS2_FT3 with ex2:att would result in a violation of constraint2 (for all instances of TS2_FTX, including ftx_PASS). -->
  <gml:featureMember>
   <ex2:TS2_FT4 gml:id="ft4_2">
    <ex2:att>1</ex2:att>

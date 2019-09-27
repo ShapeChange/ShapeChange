@@ -180,6 +180,7 @@
    <ex20:rFT1toType xlink:href="#t_2"/>
    <ex20:rFT1toFT3 xlink:href="#ft3_1"/>
    <ex20:rFT1toFT3 xlink:href="#ft3_2"/>
+   <!-- att1 in ft3_x1 and ft3_x2 is null, thus the following two property values are not unique. -->
    <ex20:rFT1toFT3>
     <ex20:TS20_FT3 gml:id="ft3_x1"/>
    </ex20:rFT1toFT3>

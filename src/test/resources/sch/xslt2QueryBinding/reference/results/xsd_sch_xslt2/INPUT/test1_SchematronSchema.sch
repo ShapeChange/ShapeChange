@@ -6,8 +6,10 @@
   <xsl:key match="*[@*:id]" name="idKey" use="@*:id"/>
   <pattern>
     <rule context="ex1:TS1_FeatureType3">
-      <assert test="every $x in for $VAR1 in (current()/ex1:rFT3toFT2/*, (for $BYREFVAR in current()/ex1:rFT3toFT2/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return (for $VAR2 in ($VAR1/ex1:rFT2toFT1/*, (for $BYREFVAR in $VAR1/ex1:rFT2toFT1/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR2/ex1:att3/*/ex1:dtAtt) satisfies $x = 'test'">ts1_ft3_constraint1: self.rFT3toFT2.rFT2toFT1.att3.dtAtt = 'test'</assert>
-      <assert test="every $ft2 in for $VAR1 in (current()/ex1:rFT3toFT2/*, (for $BYREFVAR in current()/ex1:rFT3toFT2/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR1 satisfies some $ft1 in for $VAR1 in ($ft2/ex1:rFT2toFT1/*, (for $BYREFVAR in $ft2/ex1:rFT2toFT1/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR1 satisfies $ft1/ex1:att1 = 5">ts1_ft3_constraint2: self.rFT3toFT2-&gt;forAll(ft2|ft2.rFT2toFT1-&gt;exists(ft1|ft1.att1 = 5))</assert>
+      <let name="A" value="for $VAR1 in (current()/ex1:rFT3toFT2/*, (for $BYREFVAR in current()/ex1:rFT3toFT2/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return (for $VAR2 in ($VAR1/ex1:rFT2toFT1/*, (for $BYREFVAR in $VAR1/ex1:rFT2toFT1/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR2/ex1:att3/*/ex1:dtAtt)"/>
+      <let name="B" value="for $VAR1 in (current()/ex1:rFT3toFT2/*, (for $BYREFVAR in current()/ex1:rFT3toFT2/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR1"/>
+      <assert test="every $x in $A satisfies $x = 'test'">ts1_ft3_constraint1: self.rFT3toFT2.rFT2toFT1.att3.dtAtt = 'test'</assert>
+      <assert test="every $ft2 in $B satisfies some $ft1 in for $VAR1 in ($ft2/ex1:rFT2toFT1/*, (for $BYREFVAR in $ft2/ex1:rFT2toFT1/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR1 satisfies $ft1/ex1:att1 = 5">ts1_ft3_constraint2: self.rFT3toFT2-&gt;forAll(ft2|ft2.rFT2toFT1-&gt;exists(ft1|ft1.att1 = 5))</assert>
     </rule>
     <rule context="ex1:TS1_LetTest">
       <let name="A" value="current()/ex1:att1"/>

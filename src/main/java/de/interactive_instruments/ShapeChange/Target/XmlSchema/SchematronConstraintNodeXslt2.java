@@ -906,7 +906,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 			    + "if(empty($ISUVAR1) and empty($ISUVAR2)) then 0 else "
 			    + "if ((empty($ISUVAR1) and not(empty($ISUVAR2))) or (not(empty($ISUVAR1)) and empty($ISUVAR2))) then 1 else "
 			    + "if (generate-id($ISUVAR1) = generate-id($ISUVAR2)) then 0 else "
-			    + "if (deep-equal($ISUVAR1/*,$ISUVAR2/*)) then 0 else 1)) "
+			    + "if (deep-equal($ISUVAR1,$ISUVAR2)) then 0 else 1)) "
 			    + "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
 
 		    xpt.priority = 3;
@@ -989,7 +989,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 				+ "if(empty($ISUVAR1) and empty($ISUVAR2)) then 0 else "
 				+ "if ((empty($ISUVAR1) and not(empty($ISUVAR2))) or (not(empty($ISUVAR1)) and empty($ISUVAR2))) then 1 else "
 				+ "if (generate-id($ISUVAR1) = generate-id($ISUVAR2)) then 0 else "
-				+ "if (deep-equal($ISUVAR1/*,$ISUVAR2/*)) then 0 else 1)) "
+				+ "if (deep-equal($ISUVAR1,$ISUVAR2)) then 0 else 1)) "
 				+ "return $COUNT1 * ($COUNT1 - 1) = $COUNT2";
 
 			xpt.priority = 3;
@@ -1522,7 +1522,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xptobj.fragment = "self::*";
 		xptobj.priority = 19;
 	    }
-	    
+
 	    if (isAttributeWithVariableSelfAsSource(objnode)) {
 		xptobj.fragment = "$" + xptobj.findOrAdd(xptobj.fragment);
 		xptobj.priority = 20;
@@ -1783,6 +1783,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    // Merge
+	    // TBD: merging of xptto, and concatenation of only fr and to?
 	    String fr = xptobj.merge(xptfr);
 	    // String to = xptobj.merge( xptto );
 
@@ -2825,7 +2826,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    } else {
 		xpt.priority = 18;
 	    }
-	   
+
 	    // Treat negation. Note that if this is being negated it must be
 	    // unique and boolean ...
 	    if (negated) {
@@ -2833,6 +2834,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 		xpt.priority = 20;
 		xpt.type = XpathType.BOOLEAN;
 		xpt.atEnd.setState(BindingContext.CtxState.NONE);
+	    }
+
+	    if (isAttributeWithVariableSelfAsSource(this)) {
+		xpt.fragment = "$" + xpt.findOrAdd(xpt.fragment);
+		xpt.priority = 20; 
 	    }
 
 	    // Return fragment
@@ -3090,13 +3096,13 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    SchematronConstraintNodeXslt2 con = children.get(0);
 	    SchematronConstraintNodeXslt2 thn = children.get(1);
 	    SchematronConstraintNodeXslt2 els = children.get(2);
-	    
+
 	    XpathFragment xptcon = con.translate(ctx);
 	    XpathFragment xptthn = thn.translate(ctx);
 	    XpathFragment xptels = els.translate(ctx);
 
 	    // merge let variables of then- and else-part
-	    String elsepart = xptthn.merge(xptels);
+	    String elsepart = xptcon.merge(xptels);
 	    String thenpart = xptcon.merge(xptthn);
 
 	    xptcon.fragment = "if (" + xptcon.fragment + ") then " + thenpart + " else " + elsepart;

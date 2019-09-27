@@ -1846,7 +1846,9 @@ public abstract class SchematronConstraintNode {
 
 			// Loop over the arguments and construct the parameter list
 			XpathFragment result = null;
+			
 			for (SchematronConstraintNode arg : children) {
+			    
 				XpathFragment xptarg = arg.translate(ctx);
 				if (result == null) {
 					// First argument / the object

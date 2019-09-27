@@ -4,7 +4,10 @@
   <ns prefix="ex7" uri="http://example.org/shapechange/sch/xslt2QueryBinding/s7"/>
   <pattern>
     <rule context="ex7:TS7_FT">
-      <assert test="concat(current()/ex7:att1, current()/ex7:att2) = current()/ex7:att3">ts7_ft_constraint1: att1.concat(att2) = att3</assert>
+      <let name="A" value="current()/ex7:att1"/>
+      <let name="B" value="current()/ex7:att2"/>
+      <let name="C" value="current()/ex7:att3"/>
+      <assert test="concat($A, $B) = $C">ts7_ft_constraint1: att1.concat(att2) = att3</assert>
     </rule>
   </pattern>
 </schema>
