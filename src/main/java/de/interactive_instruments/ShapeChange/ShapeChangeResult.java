@@ -672,7 +672,7 @@ public class ShapeChangeResult {
 		case 10:
 			return "Class '$1$' in package '$2$' is not associated with an XSD document.";
 		case 11:
-			return "Stereotype <<$2$>> of class '$1$' is not an allowed value in encoding rule '$3$' and is ignored.";
+			return "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
 		case 12:
 			return "No application schema found.";
 		case 13:
