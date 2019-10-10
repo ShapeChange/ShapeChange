@@ -627,6 +627,15 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				stereotypesCache.add("enumeration");
 				document.result.addDebug(null, 52, name(), "enumeration");
 			}
+			/*
+			 * The same reasoning applies for data types, which are not classes 
+			 * according to the UML spec, but another type of classifier.
+			 */
+			if (!stereotypesCache.contains("datatype") && eaClassElement
+					.GetType().equalsIgnoreCase("datatype")) {
+				stereotypesCache.add("datatype");
+				document.result.addDebug(null, 52, name(), "datatype");
+			}
 		}
 	} // validateStereotypesCache()
 
