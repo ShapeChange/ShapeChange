@@ -346,7 +346,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			 */
 			category = Options.ENUMERATION;
 		} else {
-			result().addInfo(null, 11, name(),
+			result().addWarning(null, 11, name(),
 					stereotypes().toString().replace("[", "").replace("]", ""),
 					encodingRule("xsd"));
 			category = Options.UNKNOWN;

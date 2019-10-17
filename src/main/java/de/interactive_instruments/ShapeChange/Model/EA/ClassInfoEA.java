@@ -581,6 +581,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 			// Fetch stereotypes 'collection' ...
 			String sts = eaClassElement.GetStereotypeEx();
+			document.result.addDebug(null, 50, name(), sts);
 			String[] stereotypes = sts.split("\\,");
 
 			// Allocate cache
@@ -590,11 +591,20 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			for (String stereotype : stereotypes) {
 				String st = document.options
 						.normalizeStereotype(stereotype.trim());
-				if (st != null)
+				if (st != null) {
+					document.result.addDebug(null, 51, name(), stereotype, st);
+					boolean wellKnownStereotypeFound = false;
 					for (String s : Options.classStereotypes) {
-						if (st.toLowerCase().equals(s))
+						if (st.toLowerCase().equals(s)) {
 							stereotypesCache.add(s);
+							document.result.addDebug(null, 52, name(), s);
+							wellKnownStereotypeFound = true;
+						}
 					}
+					if (!wellKnownStereotypeFound) {
+						document.result.addDebug(null, 53, name(), st);
+					}
+				}
 			}
 
 			/*
@@ -615,6 +625,16 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			if (!stereotypesCache.contains("enumeration") && eaClassElement
 					.GetType().equalsIgnoreCase("enumeration")) {
 				stereotypesCache.add("enumeration");
+				document.result.addDebug(null, 52, name(), "enumeration");
+			}
+			/*
+			 * The same reasoning applies for data types, which are not classes 
+			 * according to the UML spec, but another type of classifier.
+			 */
+			if (!stereotypesCache.contains("datatype") && eaClassElement
+					.GetType().equalsIgnoreCase("datatype")) {
+				stereotypesCache.add("datatype");
+				document.result.addDebug(null, 52, name(), "datatype");
 			}
 		}
 	} // validateStereotypesCache()
