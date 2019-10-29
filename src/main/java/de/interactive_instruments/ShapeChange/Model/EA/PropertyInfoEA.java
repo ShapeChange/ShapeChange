@@ -47,6 +47,7 @@ import org.sparx.RoleTag;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -58,7 +59,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
 
 public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
@@ -664,31 +665,22 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return sequenceNumber;
 	} // sequenceNumber()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			// Fetch stereotypes 'collection' ...
-			String sts;
-			if (isAttribute())
-				sts = eaAttribute.GetStereotypeEx();
-			else
-				sts = eaConnectorEnd.GetStereotypeEx();
-			String[] stereotypes = sts.split("\\,");
-			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in property selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.propertyStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
+			String eaStereotypeEx;
+			if (isAttribute()) {
+				eaStereotypeEx = eaAttribute.GetStereotypeEx();
+			} else {
+				eaStereotypeEx = eaConnectorEnd.GetStereotypeEx();
 			}
+			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
+					eaStereotypeEx, Options.propertyStereotypes, this);
 		}
 	} // validateStereotypesCache()
 

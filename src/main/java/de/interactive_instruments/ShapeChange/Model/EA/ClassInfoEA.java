@@ -62,6 +62,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
 
 public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
@@ -572,40 +573,18 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return null;
 	} // property()
 
-	// Validate stereotypes cache of the class. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 
 		if (stereotypesCache == null) {
-
-			// Fetch stereotypes 'collection' ...
-			String sts = eaClassElement.GetStereotypeEx();
-			document.result.addDebug(null, 50, name(), sts);
-			String[] stereotypes = sts.split("\\,");
-
-			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in class selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null) {
-					document.result.addDebug(null, 51, name(), stereotype, st);
-					boolean wellKnownStereotypeFound = false;
-					for (String s : Options.classStereotypes) {
-						if (st.toLowerCase().equals(s)) {
-							stereotypesCache.add(s);
-							document.result.addDebug(null, 52, name(), s);
-							wellKnownStereotypeFound = true;
-						}
-					}
-					if (!wellKnownStereotypeFound) {
-						document.result.addDebug(null, 53, name(), st);
-					}
-				}
-			}
+			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
+					eaClassElement.GetStereotypeEx(), Options.classStereotypes,
+					this);
 
 			/*
 			 * 2017-03-23 JE: Apparently when calling
@@ -625,7 +604,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			if (!stereotypesCache.contains("enumeration") && eaClassElement
 					.GetType().equalsIgnoreCase("enumeration")) {
 				stereotypesCache.add("enumeration");
-				document.result.addDebug(null, 52, name(), "enumeration");
+				document.result.addDebug(null, 52, this.name(), "enumeration");
 			}
 			/*
 			 * The same reasoning applies for data types, which are not classes 
@@ -634,8 +613,11 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			if (!stereotypesCache.contains("datatype") && eaClassElement
 					.GetType().equalsIgnoreCase("datatype")) {
 				stereotypesCache.add("datatype");
-				document.result.addDebug(null, 52, name(), "datatype");
+				document.result.addDebug(null, 52, this.name(), "datatype");
 			}
+			document.result.addDebug(null, 55, this.name(),
+					Integer.toString(stereotypesCache.size()),
+					stereotypesCache.toString());
 		}
 	} // validateStereotypesCache()
 

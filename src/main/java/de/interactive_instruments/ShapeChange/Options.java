@@ -4017,7 +4017,10 @@ public class Options {
 		addRule("rule-ldp-cls-oneo-metadata");
 	}
 
-	/** Normalize a stereotype fetched from the model. */
+	/**
+	 * Normalize a stereotype fetched from the model. This includes trimming the
+	 * incoming stereotype and looking it up in the defined stereotype aliases.
+	 */
 	public String normalizeStereotype(String stereotype) {
 		// Map stereotype alias to well-known stereotype
 		String s = stereotypeAlias(stereotype.trim());

@@ -43,12 +43,13 @@ import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
 
 public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
@@ -168,27 +169,16 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return (TreeSet<PackageInfo>) childPI.clone();
 	} // containedPackages()
 
-	// Validate stereotypes cache of the package. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			// Fetch stereotypes 'collection' ...
-			String sts = eaPackage.GetStereotypeEx();
-			String[] stereotypes = sts.split("\\,");
-			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in package selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.packageStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
+					eaPackage.GetStereotypeEx(), Options.packageStereotypes, this);
 		}
 	} // validateStereotypesCache()
 
