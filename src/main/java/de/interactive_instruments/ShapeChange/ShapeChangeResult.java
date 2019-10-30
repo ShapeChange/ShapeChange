@@ -734,13 +734,17 @@ public class ShapeChangeResult {
 			
 		
 		case 50:
-			return "Element '$1$' has the following stereotype(s): '$2$'.";
+			return "Element '$1$' has the following stereotype(s) in the input model: '$2$'.";
 		case 51:
 			return "Stereotype '$2$' of element '$1$' normalized to '$3$'.";
 		case 52:
 			return "Well-known stereotype '$2$' added to element '$1$'.";
 		case 53:
 			return "No well-known stereotype found for stereotype '$2$' of element '$1$', ignoring it.";
+		case 54:
+			return "Element '$1$' has $2$ well-known stereotype(s): '$3$'";
+		case 55:
+			return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
 
 		case 100:
 			return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";

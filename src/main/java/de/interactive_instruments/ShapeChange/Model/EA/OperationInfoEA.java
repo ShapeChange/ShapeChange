@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
+import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
 
 public class OperationInfoEA extends OperationInfoImpl
 		implements OperationInfo {
@@ -227,28 +228,16 @@ public class OperationInfoEA extends OperationInfoImpl
 		return document.result;
 	} // result()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			// Fetch stereotypes 'collection' ...
-			String sts;
-			sts = eaMethod.GetStereotypeEx();
-			String[] stereotypes = sts.split("\\,");
-			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in property selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.propertyStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
+					eaMethod.GetStereotypeEx(), Options.propertyStereotypes, this);
 		}
 	} // validateStereotypesCache()
 
