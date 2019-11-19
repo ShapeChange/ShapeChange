@@ -145,6 +145,13 @@ public interface Model {
 	 *         empty but not <code>null</code>.
 	 */
 	public SortedSet<ClassInfo> classes();
+	
+	/**
+	 * 
+	 * @return all {@link AssociationInfo} objects contained in the model; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<AssociationInfo> associations();
 
 	/**
 	 * 

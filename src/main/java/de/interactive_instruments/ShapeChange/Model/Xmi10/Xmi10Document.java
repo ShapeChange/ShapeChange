@@ -1118,6 +1118,12 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 		return allPackages;
 	}
+	
+	    @Override
+	    public SortedSet<AssociationInfo> associations() {
+		return fAssociations.isEmpty() ? new TreeSet<>()
+			: new TreeSet<AssociationInfo>(fAssociations.values());
+	    }
 
 	@Override
 	public String descriptorSource(Descriptor descriptor) {
