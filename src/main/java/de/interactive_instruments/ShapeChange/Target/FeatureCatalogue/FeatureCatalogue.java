@@ -200,6 +200,14 @@ public class FeatureCatalogue
 	 * source document.
 	 */
 	public static final String PARAM_JAVA_OPTIONS = "javaOptions";
+	
+	/**
+	 * Suffix to add to the 'id' attribute of a Value element that represents an enum, and 
+	 * to the 'idref' attribute of an enumeratedBy element that refers to that Value. Necessary
+	 * in order to avoid same 'id' attributes for enums that are encoded both as FeatureAttribute
+	 * (if target parameter {@link #includeCodelistsAndEnumerations} is true) and as Value elements.  
+	 */
+	private static final String VALUE_ID_SUFFIX = "_VALUE";
 
 	private static boolean initialised = false;
 	private static XMLWriter writer = null;
@@ -256,6 +264,7 @@ public class FeatureCatalogue
 	private static String lang = "en";
 	private static String featureTerm = "Feature";
 	private static String noAlphabeticSortingForProperties = "false";
+	private static String includeCodelistsAndEnumerations = "false";
 	private static boolean includeVoidable = true;
 	private static boolean includeTitle = true;
 	private static boolean includeCodelistURI = true;
@@ -344,6 +353,7 @@ public class FeatureCatalogue
 		xslTransformerFactory = null;
 		lang = "en";
 		noAlphabeticSortingForProperties = "false";
+		includeCodelistsAndEnumerations = "false";
 		hrefMappings = new TreeMap<String, URI>();
 		featureTerm = "Feature";
 		includeVoidable = true;
@@ -1210,6 +1220,8 @@ public class FeatureCatalogue
 		case Options.DATATYPE:
 		case Options.UNION:
 		case Options.BASICTYPE:
+		case Options.CODELIST:
+		case Options.ENUMERATION:
 			PrintClass(ci, true, op, ci.pkg());
 			for (String t : ci.supertypes()) {
 				ClassInfo cix = model.classById(t);
@@ -1217,18 +1229,14 @@ public class FeatureCatalogue
 					additionalClasses.add(cix);
 				}
 			}
-			break;
-		case Options.CODELIST:
-		case Options.ENUMERATION:
-			// PrintValues(ci);
-			break;
+			break;		
 		}
 	}
 
 	private void PrintValue(PropertyInfo propi, Operation op)
 			throws SAXException {
 
-		String propiid = "_A" + propi.id();
+		String propiid = "_A" + propi.id() + VALUE_ID_SUFFIX;
 		propiid = options.internalize(propiid);
 
 		writer.startElement("Value", "id", propiid, op);
@@ -1437,6 +1445,12 @@ public class FeatureCatalogue
 					break;
 				case Options.UNION:
 					writer.dataElement("type", "Union Data Type", op);
+					break;
+				case Options.CODELIST:
+				    writer.dataElement("type", "Code List Type", op);
+					break;
+				case Options.ENUMERATION:
+					writer.dataElement("type", "Enumeration Type", op);
 					break;
 				}
 
@@ -1953,7 +1967,7 @@ public class FeatureCatalogue
 							for (PropertyInfo ei : cix.properties().values()) {
 								if (ei != null && ExportValue(ei)) {
 
-									String eiid = "_A" + ei.id();
+									String eiid = "_A" + ei.id() + VALUE_ID_SUFFIX;
 									eiid = options.internalize(eiid);
 
 									writer.emptyElement("enumeratedBy", "idref",
@@ -1969,7 +1983,7 @@ public class FeatureCatalogue
 										writer.emptyElement("enumeratedBy",
 												"idref",
 												"_A" + ((PropertyInfo) diff.subElement)
-														.id());
+														.id()  + VALUE_ID_SUFFIX);
 									}
 								}
 							}
@@ -3137,6 +3151,8 @@ public class FeatureCatalogue
 		this.transformationParameters.put("lang", lang);
 		this.transformationParameters.put("noAlphabeticSortingForProperties",
 				noAlphabeticSortingForProperties);
+		this.transformationParameters.put("includeCodelistsAndEnumerations",
+			includeCodelistsAndEnumerations);
 	}
 
 	private void initialiseFromOptions() {
@@ -3302,7 +3318,12 @@ public class FeatureCatalogue
 				"noAlphabeticSortingForProperties");
 		if (s != null && s.equalsIgnoreCase("true"))
 			noAlphabeticSortingForProperties = "true";
-
+		
+		s = options.parameter(this.getClass().getName(),
+			"includeCodelistsAndEnumerations");
+		if (s != null && s.equalsIgnoreCase("true"))
+		    includeCodelistsAndEnumerations = "true";
+		
 		s = options.parameter(this.getClass().getName(), "xslLocalizationUri");
 		if (s != null && s.length() > 0) {
 

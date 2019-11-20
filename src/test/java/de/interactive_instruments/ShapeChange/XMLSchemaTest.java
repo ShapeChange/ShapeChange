@@ -69,7 +69,7 @@ public class XMLSchemaTest extends WindowsBasicTest {
 		 * Test property options: ordered, uniqueness and inline/byReference
 		 */
 		multiTest("src/test/resources/config/testEA_prop.xml",
-				new String[] { "xsd", "xml", "html" },
+				new String[] { "xsd", "html" },
 				"testResults/ea/prop/INPUT",
 				"src/test/resources/reference/prop");
 	}
@@ -300,5 +300,15 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				new String[] { "xsd" },
 				"testResults/xsd/codelistAsEAEnumeration",
 				"src/test/resources/xsd/codelistAsEAEnumeration/reference");
+	}
+	
+	@Test
+	public void test_dataTypeAsUMLClassifier() {
+		
+		multiTest(
+				"src/test/resources/xsd/dataTypeAsUMLClassifier/test_dataTypeAsUMLClassifier.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/dataTypeAsUMLClassifier",
+				"src/test/resources/xsd/dataTypeAsUMLClassifier/reference");
 	}
 }

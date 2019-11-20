@@ -99,7 +99,8 @@
 			<targetParameter name="scope" value="This feature catalogue ..."/>
 			<targetParameter name="versionNumber" value="n/a"/>
 			<targetParameter name="versionDate" value="n/a"/>
-			<targetParameter name="producer" value="interactive instruments GmbH"/>	
+			<targetParameter name="producer" value="interactive instruments GmbH"/>
+			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>	
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

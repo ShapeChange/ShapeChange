@@ -67,6 +67,7 @@ public class TypeConverter implements Transformer, MessageSource {
 	public static final String TV_DISSOLVE_ASSOCIATION = "dissolveAssociation";
 	public static final String TV_TO_CODELIST = "toCodelist";
 	public static final String TV_DISSOLVE_ASSOCIATION_ATTRIBUTE_TYPE = "dissolveAssociationAttributeType";
+	public static final String TV_DISSOLVE_ASSOCIATION_IORBR = "dissolveAssociationInlineOrByReference";
 
 	/**
 	 * Define a suffix to be added to the names of attributes that have been
@@ -475,6 +476,12 @@ public class TypeConverter implements Transformer, MessageSource {
 			attribute.setName(attribute.name() + attributeNameSuffix);
 			if (!keepType) {
 				attribute.setTypeInfo(newAttributeType.createCopy());
+			}
+			
+			// Update inlineOrByReference if necessary
+			String newIobr = attribute.taggedValue(TV_DISSOLVE_ASSOCIATION_IORBR);
+			if(StringUtils.isNotBlank(newIobr)) {
+			    attribute.setTaggedValue("inlineOrByReference", newIobr, true);
 			}
 		}
 	}

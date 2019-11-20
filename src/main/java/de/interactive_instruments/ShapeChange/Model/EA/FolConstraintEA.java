@@ -78,8 +78,8 @@ public class FolConstraintEA extends FolConstraintImpl {
 
 		constraintText = constr.GetNotes();
 		if (constraintText != null)
-			this.setText(EADocument
-					.removeSpuriousEA75EntitiesFromStrings(constraintText));
+			this.setText(document
+					.applyEAFormatting(constraintText));
 		
 		/*
 		 * NOTE: setting comments is done during postprocessing of FOL
@@ -117,8 +117,8 @@ public class FolConstraintEA extends FolConstraintImpl {
 
 		constraintText = constr.GetNotes();
 		if (constraintText != null)
-			this.setText(EADocument
-					.removeSpuriousEA75EntitiesFromStrings(constraintText));
+			this.setText(document
+					.applyEAFormatting(constraintText));
 
 		/*
 		 * NOTE: setting comments is done during postprocessing of FOL

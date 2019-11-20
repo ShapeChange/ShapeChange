@@ -672,7 +672,7 @@ public class ShapeChangeResult {
 		case 10:
 			return "Class '$1$' in package '$2$' is not associated with an XSD document.";
 		case 11:
-			return "Stereotype <<$2$>> of class '$1$' is not an allowed value in encoding rule '$3$' and is ignored.";
+			return "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
 		case 12:
 			return "No application schema found.";
 		case 13:
@@ -731,6 +731,20 @@ public class ShapeChangeResult {
 			return "Starting reading $1$";
 		case 46:
 			return "Finished reading $1$";
+			
+		
+		case 50:
+			return "Element '$1$' has the following stereotype(s) in the input model: '$2$'.";
+		case 51:
+			return "Stereotype '$2$' of element '$1$' normalized to '$3$'.";
+		case 52:
+			return "Well-known stereotype '$2$' added to element '$1$'.";
+		case 53:
+			return "No well-known stereotype found for stereotype '$2$' of element '$1$', ignoring it.";
+		case 54:
+			return "Element '$1$' has $2$ well-known stereotype(s): '$3$'";
+		case 55:
+			return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
 
 		case 100:
 			return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";

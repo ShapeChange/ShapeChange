@@ -35,27 +35,38 @@ import org.junit.Test;
 
 public class TypeConverterTest extends WindowsBasicTest {
 
-	@Test
-	public void testRuleTrfEnumerationToCodelist() {
-		/*
-		 * Test rule-trf-enumeration-to-codelist of TypeConverter transformation
-		 */
-		multiTest(
-				"src/test/resources/typeConverter/enumerationToCodelist/testEA_typeConverter_enumerationToCodelist.xml",
-				new String[] { "xsd" },
-				"testResults/typeConversion/enumerationToCodelist",
-				"src/test/resources/typeConverter/enumerationToCodelist/reference");
-	}
-	
-	@Test
-	public void testRuleTrfDissolveAssociations() {
-		/*
-		 * Test rule-trf-dissolveAssociations of TypeConverter transformation
-		 */
-		multiTest(
-				"src/test/resources/typeConverter/dissolveAssociations/testEA_typeConverter_dissolveAssociations.xml",
-				new String[] { "xsd" },
-				"testResults/typeConversion/dissolveAssociations",
-				"src/test/resources/typeConverter/dissolveAssociations/reference");
-	}
+    @Test
+    public void testRuleTrfEnumerationToCodelist() {
+	/*
+	 * Test rule-trf-enumeration-to-codelist of TypeConverter transformation
+	 */
+	multiTest(
+		"src/test/resources/typeConverter/enumerationToCodelist/testEA_typeConverter_enumerationToCodelist.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/enumerationToCodelist",
+		"src/test/resources/typeConverter/enumerationToCodelist/reference");
+    }
+
+    @Test
+    public void testRuleTrfDissolveAssociations() {
+	/*
+	 * Test rule-trf-dissolveAssociations of TypeConverter transformation
+	 */
+	multiTest("src/test/resources/typeConverter/dissolveAssociations/testEA_typeConverter_dissolveAssociations.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/dissolveAssociations",
+		"src/test/resources/typeConverter/dissolveAssociations/reference");
+    }
+
+    @Test
+    public void testRuleTrfTargetElementByReference() {
+	/*
+	 * Test rule-trf-dissolveAssociations of TypeConverter transformation for the
+	 * case that: -> tagged value inlineOrByReference is set to byReference on the
+	 * navigable association end of the association to be dissolved -> the type
+	 * referred to in parameter attributeType is a type present in the model
+	 */
+	multiTest(
+		"src/test/resources/typeConverter/targetElementByReference/testEA_typeConverter_targetElementByReference.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/targetElementByReference",
+		"src/test/resources/typeConverter/targetElementByReference/reference");
+    }
 }

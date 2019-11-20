@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test</name>
+    <definition>Notes of package Test.</definition>
+    <definition></definition>
+    <definition>1. item1</definition>
+    <definition>2. item2</definition>
+    <definition></definition>
+    <definition>italic text</definition>
+    <definition>- bullet item 1</definition>
+    <definition>- bullet item 2</definition>
+    <definition>underlined text</definition>
+    <definition>bold text</definition>
+    <definition>1 + 1 &gt; 1</definition>
+    <definition>http://www.example.org and link to example.org</definition>
+    <definition>&lt;a href="http://www.example.org"&gt;other link to example.org&lt;/a&gt;</definition>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C33">
+    <name>FT1</name>
+    <definition>Notes FT1</definition>
+    <definition>1 + 1 &gt; 1</definition>
+    <definition>http://www.example.org and link to example.org</definition>
+    <definition>&lt;a href="http://www.example.org"&gt;other link to example.org&lt;/a&gt;</definition>
+    <characterizedBy idref="_A33_35"></characterizedBy>
+    <characterizedBy idref="_AT7"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>Constraint_FT1_A</name>
+      <description>Defined in FT1 &#xD;&#xA;1 + 1 &gt; 1 &#xD;&#xA;http://www.example.org and link to example.org &#xD;&#xA;&lt;a href="http://www.example.org"&gt;other link to example.org&lt;/a&gt;</description>
+      <expression>inv: attFT1 &gt; 0</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT1_B</name>
+      <description>Defined in FT1</description>
+      <expression>inv: attFT1-&gt;notEmpty()</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A33_35">
+    <name>attFT1</name>
+    <definition>Notes attFT1</definition>
+    <definition>1 + 1 &gt; 1</definition>
+    <definition>http://www.example.org and link to example.org</definition>
+    <definition>&lt;a href="http://www.example.org"&gt;other link to example.org&lt;/a&gt;</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__T7">
+    <name>(unbestimmt)</name>
+    <roles idref="_AT7"></roles>
+    <roles idref="_AS7"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_AT7">
+    <name>roleFT1toFT2</name>
+    <definition>Notes roleFT1toFT2</definition>
+    <definition>1 + 1 &gt; 1</definition>
+    <definition>http://www.example.org</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C34" category="feature type">FT2</FeatureTypeIncluded>
+    <relation idref="__T7"></relation>
+    <InverseRole idref="_AS7"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_AS7">
+    <name>roleFT2toFT1</name>
+    <definition>Notes roleFT2toFT1</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C33" category="feature type">FT1</FeatureTypeIncluded>
+    <relation idref="__T7"></relation>
+    <InverseRole idref="_AT7"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C34">
+    <name>FT2</name>
+    <definition>Notes FT2</definition>
+    <characterizedBy idref="_A34_36"></characterizedBy>
+    <characterizedBy idref="_AS7"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <constraint>
+      <name>Constraint_FT2_A</name>
+      <description>Defined in FT2</description>
+      <expression>inv: attFT2 &gt; 50</expression>
+    </constraint>
+    <constraint>
+      <name>Constraint_FT2_B</name>
+      <description>Defined in FT2</description>
+      <expression>inv: attFT2 &gt; 5</expression>
+    </constraint>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A34_36">
+    <name>attFT2</name>
+    <definition>Notes attFT2</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+</FeatureCatalogue>

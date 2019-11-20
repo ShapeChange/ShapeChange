@@ -285,7 +285,7 @@
   <xsl:variable name="package" select="."/>
   <!-- Test if there are any (feature) types or packages that belong to this package. -->
   <xsl:if
-   test="/FeatureCatalogue/FeatureType/package[@idref = $package/@id] | /FeatureCatalogue/Package/parent[@idref = $package/@id]">
+   test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $package/@id] | /FeatureCatalogue/Package/parent[@idref = $package/@id]">
    <xsl:if
     test="not($docxStyle = 'custom1' and $appSchemaCount = 1 and local-name($package) = 'ApplicationSchema')">
     <w:p>
@@ -529,7 +529,7 @@
    <xsl:if
     test="
      some $potentialSubPackage in /FeatureCatalogue/Package[parent/@idref = $package/@id]
-      satisfies (/FeatureCatalogue/FeatureType/package[@idref = $potentialSubPackage/@id] | /FeatureCatalogue/Package/parent[@idref = $potentialSubPackage/@id])">
+     satisfies (/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $potentialSubPackage/@id] | /FeatureCatalogue/Package/parent[@idref = $potentialSubPackage/@id])">
     <w:p>
      <w:r>
       <w:rPr>
@@ -547,7 +547,7 @@
      <xsl:variable name="subpackage" select="."/>
      <!-- Ignore the subpackage if it is empty (has no feature type or subpackage) -->
      <xsl:if
-      test="/FeatureCatalogue/FeatureType/package[@idref = $subpackage/@id] | /FeatureCatalogue/Package/parent[@idref = $subpackage/@id]">
+      test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $subpackage/@id] | /FeatureCatalogue/Package/parent[@idref = $subpackage/@id]">
       <w:p>
        <w:pPr>
         <w:ind w:left="{$indent}"/>
@@ -613,7 +613,7 @@
    <xsl:apply-templates select="$package/images"/>
    <!--</xsl:for-each>-->
    <!-- TBD: provide a reference back to the TOC, a feature catalogue overview (TBD), a specific chapter heading (e.g. the main feature catalogue chapter heading)? -->
-   <xsl:for-each select="/FeatureCatalogue/FeatureType[package/@idref = $package/@id]">
+   <xsl:for-each select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref = $package/@id]">
     <xsl:sort select="./code"/>
     <xsl:sort select="./name"/>
     <xsl:apply-templates mode="detail" select="."/>
@@ -740,7 +740,7 @@
       <xsl:call-template name="subtypeentry">
        <xsl:with-param name="title" select="$fc.SupertypeOf"/>
        <xsl:with-param name="types"
-        select="/FeatureCatalogue/FeatureType[subtypeOf/@idref = $featuretype/@id]"/>
+        select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][subtypeOf/@idref = $featuretype/@id]"/>
       </xsl:call-template>
       <xsl:call-template name="entry">
        <xsl:with-param name="title" select="$fc.Type"/>
