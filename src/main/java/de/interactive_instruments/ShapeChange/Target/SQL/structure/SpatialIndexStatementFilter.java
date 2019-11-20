@@ -37,13 +37,14 @@ import java.util.List;
 import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Target.SQL.PostgreSQLConstants;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteCreateSpatialIndexExpression;
 
 /**
  * Identifies statements related to spatial indexes (creation, but also
  * insertion of geometry metadata).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SpatialIndexStatementFilter implements StatementFilter {
@@ -57,11 +58,21 @@ public class SpatialIndexStatementFilter implements StatementFilter {
 
 		for (Statement stmt : statements) {
 
-			if (stmt instanceof Insert) {
+			if (stmt instanceof Select) {
+
+				Select select = (Select) stmt;
+
+				if (select.hasExpression() && select
+						.getExpression() instanceof SpatiaLiteCreateSpatialIndexExpression) {
+					result.add(select);
+				}
+
+			} else if (stmt instanceof Insert) {
 
 				Insert ins = (Insert) stmt;
-				
-				if(ins.getTable().getName().equalsIgnoreCase("USER_SDO_GEOM_METADATA")) {
+
+				if (ins.getTable().getName()
+						.equalsIgnoreCase("USER_SDO_GEOM_METADATA")) {
 					result.add(stmt);
 				}
 
@@ -75,7 +86,7 @@ public class SpatialIndexStatementFilter implements StatementFilter {
 						|| "GIST".equals(index.getProperties().getProperty(
 								PostgreSQLConstants.PROPERTY_METHOD))
 						|| "SPATIAL".equals(index.getType())) {
-					
+
 					result.add(stmt);
 				}
 			}

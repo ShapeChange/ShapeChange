@@ -33,7 +33,10 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Comparator;
 
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteAddGeometryColumn;
+import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteCreateSpatialIndexExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ToStringExpressionVisitor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
@@ -43,13 +46,15 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class StatementSortAlphabetic implements Comparator<Statement> {
@@ -72,12 +77,68 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 		// same type of statement for o1 and o2
 
-		if (o1 instanceof CreateTable) {
+		if (o1 instanceof SQLitePragma) {
+
+			String p1Name = ((SQLitePragma) o1).getName();
+			String p2Name = ((SQLitePragma) o2).getName();
+
+			return p1Name.compareTo(p2Name);
+
+		} else if (o1 instanceof CreateTable) {
 
 			String tableName_o1 = ((CreateTable) o1).getTable().getName();
 			String tableName_o2 = ((CreateTable) o2).getTable().getName();
 
 			return tableName_o1.compareTo(tableName_o2);
+
+		} else if (o1 instanceof Select) {
+
+			Select s1 = (Select) o1;
+			Select s2 = (Select) o2;
+
+			if (s1.hasExpression() && s2.hasExpression()) {
+
+				Expression e1 = s1.getExpression();
+				Expression e2 = s2.getExpression();
+
+				if (e1 instanceof SpatiaLiteAddGeometryColumn
+						&& e2 instanceof SpatiaLiteCreateSpatialIndexExpression) {
+					return -1;
+				} else if (e1 instanceof SpatiaLiteCreateSpatialIndexExpression
+						&& e2 instanceof SpatiaLiteAddGeometryColumn) {
+					return 1;
+				} else if (e1 instanceof SpatiaLiteCreateSpatialIndexExpression
+						&& e2 instanceof SpatiaLiteCreateSpatialIndexExpression) {
+					SpatiaLiteCreateSpatialIndexExpression csie1 = (SpatiaLiteCreateSpatialIndexExpression) e1;
+					SpatiaLiteCreateSpatialIndexExpression csie2 = (SpatiaLiteCreateSpatialIndexExpression) e2;
+					int tableNameComp = csie1.getTable().getName()
+							.compareTo(csie2.getTable().getName());
+					if (tableNameComp == 0) {
+						return csie1.getColumn().getName()
+								.compareTo(csie2.getColumn().getName());
+					} else {
+						return tableNameComp;
+					}
+				} else if (e1 instanceof SpatiaLiteAddGeometryColumn
+						&& e2 instanceof SpatiaLiteAddGeometryColumn) {
+					SpatiaLiteAddGeometryColumn agc1 = (SpatiaLiteAddGeometryColumn) e1;
+					SpatiaLiteAddGeometryColumn agc2 = (SpatiaLiteAddGeometryColumn) e2;
+					int tableNameComp = agc1.getTable().getName()
+							.compareTo(agc2.getTable().getName());
+					if (tableNameComp == 0) {
+						return agc1.getColumn().getName()
+								.compareTo(agc2.getColumn().getName());
+					} else {
+						return tableNameComp;
+					}
+				} else {
+					// add more expression comparisons
+					return 0;
+				}
+
+			} else {
+				return 0;
+			}
 
 		} else if (o1 instanceof Alter) {
 
@@ -97,7 +158,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 				AlterExpression ae1 = a1.getExpression();
 				AlterExpression ae2 = a2.getExpression();
-				
+
 				if (ae1 instanceof ConstraintAlterExpression
 						&& ae2 instanceof ConstraintAlterExpression) {
 
@@ -152,11 +213,12 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Table tins2 = ins2.getTable();
 
 			/*
-			 * Ensure that inserts for the CodeStatusCL type come first, then inserts for other types.
+			 * Ensure that inserts for the CodeStatusCL type come first, then
+			 * inserts for other types.
 			 */
 			if (tins1.representsCodeStatusCLType()) {
 				return -1;
-			} else if(tins2.representsCodeStatusCLType()) {
+			} else if (tins2.representsCodeStatusCLType()) {
 				return 1;
 			}
 
@@ -198,10 +260,18 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 	private int typePriority(Statement o1) {
 
-		if (o1 instanceof CreateTable) {
+		if (o1 instanceof SQLitePragma) {
+			return 5;
+		} else if (o1 instanceof CreateTable) {
 			return 10;
 		} else if (o1 instanceof Alter) {
 			return 20;
+		} else if (o1 instanceof Select) {
+			/*
+			 * Higher priority than Insert because SQLite spatial columns are
+			 * added via SELECT AddGeometryColumn(...);
+			 */
+			return 25;
 		} else if (o1 instanceof Insert) {
 			return 30;
 		} else if (o1 instanceof CreateIndex) {

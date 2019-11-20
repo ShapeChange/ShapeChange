@@ -34,8 +34,9 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
@@ -45,11 +46,30 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlUtil {
+
+	/**
+	 * @param pi
+	 * @return <code>true</code> if the value type of the given property is a
+	 *         geometry type - which requires a map entry for the value type
+	 *         whose param contains the {@value #ME_PARAM_GEOMETRY} parameter;
+	 *         otherwise <code>false</code> is returned.
+	 */
+	public static boolean isGeometryTypedProperty(PropertyInfo pi) {
+
+		String valueTypeName = pi.typeInfo().name;
+		String piEncodingRule = pi.encodingRule("sql");
+
+		ProcessMapEntry pme = pi.options().targetMapEntry(valueTypeName,
+				piEncodingRule);
+
+		return pme != null && SqlDdl.mapEntryParamInfos.hasParameter(
+				valueTypeName, piEncodingRule, SqlConstants.ME_PARAM_GEOMETRY);
+	}
 
 	public static List<StringValueExpression> toStringValueList(
 			String... strings) {
@@ -93,12 +113,12 @@ public class SqlUtil {
 	 * Prints the list, using the toString() method of its members.
 	 *
 	 * @param list
-	 *            list of objects to print
+	 *                        list of objects to print
 	 * @param useComma
-	 *            true if the printed members shall be separated by a comma, in
-	 *            addition to a space character
+	 *                        true if the printed members shall be separated by
+	 *                        a comma, in addition to a space character
 	 * @param useBrackets
-	 *            true if the list shall be enclosed in brackets
+	 *                        true if the list shall be enclosed in brackets
 	 * @return String representation of the list
 	 */
 	public static String getStringList(List<?> list, boolean useComma,
@@ -136,8 +156,8 @@ public class SqlUtil {
 	 * 
 	 * @param col
 	 * @param useShortName
-	 *            <code>true</code> if the short name should be used, if
-	 *            available
+	 *                         <code>true</code> if the short name should be
+	 *                         used, if available
 	 * @return
 	 */
 	public static String determineName(Table table, boolean useShortName) {
@@ -177,8 +197,8 @@ public class SqlUtil {
 	 * 
 	 * @param col
 	 * @param useShortName
-	 *            <code>true</code> if the short name should be used, if
-	 *            available
+	 *                         <code>true</code> if the short name should be
+	 *                         used, if available
 	 * @return
 	 */
 	public static String determineName(Column col, boolean useShortName) {

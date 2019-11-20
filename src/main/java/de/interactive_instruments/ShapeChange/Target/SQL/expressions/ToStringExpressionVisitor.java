@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Used to convert a (list of) expressions into a (comma-separated) string. The
@@ -132,5 +132,16 @@ public class ToStringExpressionVisitor implements ExpressionVisitor {
 	@Override
 	public void visit(DoubleValueExpression doubleValueExpression) {
 		this.expressions.add(doubleValueExpression.toString());
+	}
+
+	@Override
+	public void visit(
+			SpatiaLiteCreateSpatialIndexExpression spatiaLiteCreateSpatialIndexExpression) {
+		this.expressions.add(spatiaLiteCreateSpatialIndexExpression.toString());
+	}
+
+	@Override
+	public void visit(SpatiaLiteAddGeometryColumn spatiaLiteAddGeometryColumn) {
+		this.expressions.add(spatiaLiteAddGeometryColumn.toString());
 	}
 }
