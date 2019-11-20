@@ -41,6 +41,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlt
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 
 /**
@@ -73,6 +75,12 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 
 	@Override
 	public void visit(Insert insert) {
+
+		// nothing specific to normalize here
+	}
+	
+	@Override
+	public void visit(Select select) {
 
 		// nothing specific to normalize here
 	}
@@ -130,6 +138,11 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 
 	@Override
 	public void postprocess() {
+		// ignore
+	}
+	
+	@Override
+	public void visit(SQLitePragma pragma) {
 		// ignore
 	}
 

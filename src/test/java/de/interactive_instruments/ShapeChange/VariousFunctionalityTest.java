@@ -36,7 +36,7 @@ import org.junit.Test;
 public class VariousFunctionalityTest extends WindowsBasicTest {
 
 	@Test
-	public void testDescriptorFunctionality() {
+	public void testDescriptorFunctionality_fc_en() {
 		/*
 		 * Test the descriptor functionality
 		 */
@@ -44,22 +44,46 @@ public class VariousFunctionalityTest extends WindowsBasicTest {
 				new String[] { "html" },
 				"testResults/html/descriptors/fc_en/INPUT",
 				"src/test/resources/reference/html/descriptors/fc_en");
-
+	}
+	
+	@Test
+	public void testDescriptorFunctionality_fc_de() {
+		/*
+		 * Test the descriptor functionality
+		 */
 		multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
 				new String[] { "html" },
 				"testResults/html/descriptors/fc_de/INPUT",
 				"src/test/resources/reference/html/descriptors/fc_de");
-
+	}
+	
+	@Test
+	public void testDescriptorFunctionality_inspire() {
+		/*
+		 * Test the descriptor functionality
+		 */
 		multiTest("src/test/resources/config/testEA_descriptors_inspire.xml",
 				new String[] { "html" },
 				"testResults/html/descriptors/inspire/INPUT",
 				"src/test/resources/reference/html/descriptors/inspire");
-
+	}
+	
+	@Test
+	public void testDescriptorFunctionality_aaa() {
+		/*
+		 * Test the descriptor functionality
+		 */
 		multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
 				new String[] { "html" },
 				"testResults/html/descriptors/aaa/INPUT",
 				"src/test/resources/reference/html/descriptors/aaa");
-
+	}
+	
+	@Test
+	public void testDescriptorFunctionality_bbr() {
+		/*
+		 * Test the descriptor functionality
+		 */
 		multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
 				new String[] { "html" },
 				"testResults/html/descriptors/bbr/INPUT",

@@ -201,6 +201,14 @@ public class FeatureCatalogue
 	 * source document.
 	 */
 	public static final String PARAM_JAVA_OPTIONS = "javaOptions";
+	
+	/**
+	 * Suffix to add to the 'id' attribute of a Value element that represents an enum, and 
+	 * to the 'idref' attribute of an enumeratedBy element that refers to that Value. Necessary
+	 * in order to avoid same 'id' attributes for enums that are encoded both as FeatureAttribute
+	 * (if target parameter {@link #includeCodelistsAndEnumerations} is true) and as Value elements.  
+	 */
+	private static final String VALUE_ID_SUFFIX = "_VALUE";
 
 	private static boolean initialised = false;
 	private static XMLWriter writer = null;
@@ -257,6 +265,7 @@ public class FeatureCatalogue
 	private static String lang = "en";
 	private static String featureTerm = "Feature";
 	private static String noAlphabeticSortingForProperties = "false";
+	private static String includeCodelistsAndEnumerations = "false";
 	private static boolean includeVoidable = true;
 	private static boolean includeTitle = true;
 	private static boolean includeCodelistURI = true;
@@ -266,7 +275,7 @@ public class FeatureCatalogue
 	private static boolean includeDiagrams = false;
 	private static int imgIntegerIdCounter = 0;
 	private static int imgIntegerIdStepwidth = 2;
-	private static Set<ImageMetadata> imageSet = new HashSet<ImageMetadata>();
+	private static List<ImageMetadata> imageList = new ArrayList<ImageMetadata>();
 
 	private static boolean dontTransform = false;
 
@@ -345,6 +354,7 @@ public class FeatureCatalogue
 		xslTransformerFactory = null;
 		lang = "en";
 		noAlphabeticSortingForProperties = "false";
+		includeCodelistsAndEnumerations = "false";
 		hrefMappings = new TreeMap<String, URI>();
 		featureTerm = "Feature";
 		includeVoidable = true;
@@ -359,6 +369,11 @@ public class FeatureCatalogue
 		diffs = new TreeMap<Info, SortedSet<DiffElement>>();
 		differ = null;
 		inputSchemaClassesByFullNameInSchema = null;
+		
+		includeDiagrams = false;
+		imgIntegerIdCounter = 0;
+		imgIntegerIdStepwidth = 2;
+		imageList = new ArrayList<ImageMetadata>();
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
@@ -712,14 +727,6 @@ public class FeatureCatalogue
 			return;
 		}
 
-		Collections.sort(images, new Comparator<ImageMetadata>() {
-
-			@Override
-			public int compare(ImageMetadata o1, ImageMetadata o2) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		});
-
 		writer.startElement("images");
 
 		for (ImageMetadata img : images) {
@@ -740,7 +747,7 @@ public class FeatureCatalogue
 			writer.emptyElement("image", atts);
 
 			// also keep track of the image metadata for later use
-			imageSet.add(img);
+			imageList.add(img);
 		}
 
 		writer.endElement("images");
@@ -1174,6 +1181,8 @@ public class FeatureCatalogue
 		case Options.DATATYPE:
 		case Options.UNION:
 		case Options.BASICTYPE:
+		case Options.CODELIST:
+		case Options.ENUMERATION:
 			PrintClass(ci, true, op, ci.pkg());
 			for (String t : ci.supertypes()) {
 				ClassInfo cix = model.classById(t);
@@ -1181,18 +1190,14 @@ public class FeatureCatalogue
 					additionalClasses.add(cix);
 				}
 			}
-			break;
-		case Options.CODELIST:
-		case Options.ENUMERATION:
-			// PrintValues(ci);
-			break;
+			break;		
 		}
 	}
 
 	private void PrintValue(PropertyInfo propi, Operation op)
 			throws SAXException {
 
-		String propiid = "_A" + propi.id();
+		String propiid = "_A" + propi.id() + VALUE_ID_SUFFIX;
 		propiid = options.internalize(propiid);
 
 		writer.startElement("Value", "id", propiid, op);
@@ -1225,17 +1230,14 @@ public class FeatureCatalogue
 		}
 
 		/*
-		 * 2018-02-16 JE: since code lists and their codes are only partially
+		 * 2019-05-14 JE - NOTE: code lists and their codes are only partially
 		 * represented in the feature catalogues by ShapeChange (typically a
-		 * table of the codes), we do not add the tagged values of codes to the
-		 * temporary XML.
+		 * table of the codes).
 		 */
-		// if (representTaggedValues != null) {
-		// writer.startElement("taggedValues");
-		// // TBD diff tagged values
-		// PrintTaggedValues(propi, representTaggedValues, null);
-		// writer.endElement("taggedValues");
-		// }
+		if (representTaggedValues != null) {
+			// TBD diff tagged values
+			PrintTaggedValues(propi, representTaggedValues, null, true);
+		}
 
 		writer.endElement("Value");
 	}
@@ -1405,6 +1407,12 @@ public class FeatureCatalogue
 				case Options.UNION:
 					writer.dataElement("type", "Union Data Type", op);
 					break;
+				case Options.CODELIST:
+				    writer.dataElement("type", "Code List Type", op);
+					break;
+				case Options.ENUMERATION:
+					writer.dataElement("type", "Enumeration Type", op);
+					break;
 				}
 
 				String s;
@@ -1478,7 +1486,7 @@ public class FeatureCatalogue
 
 				if (representTaggedValues != null) {
 					// TODO diff tagged values
-					PrintTaggedValues(ci, representTaggedValues, null);
+					PrintTaggedValues(ci, representTaggedValues, null, false);
 				}
 
 				writer.endElement("taggedValues");
@@ -1530,12 +1538,32 @@ public class FeatureCatalogue
 		return false;
 	}
 
-	private void PrintTaggedValues(Info i, String taglist, Operation op)
-			throws SAXException {
+	/**
+	 * @param i
+	 * @param taglist
+	 * @param op
+	 * @param printTaggedValuesElement
+	 *                                     <code>true</code>, if the surrounding
+	 *                                     &lt;taggedValues&gt; element shall be
+	 *                                     added, if the Info object has at
+	 *                                     least one value for the tags from the
+	 *                                     list; else <code>false</code> (in
+	 *                                     that case, the &lt;taggedValues&gt;
+	 *                                     element will never be added and is
+	 *                                     assumed to be set outside of the
+	 *                                     method)
+	 * @throws SAXException
+	 */
+	private void PrintTaggedValues(Info i, String taglist, Operation op,
+			boolean printTaggedValuesElement) throws SAXException {
 
 		TaggedValues taggedValues = i.taggedValuesForTagList(taglist);
 
 		if (!taggedValues.isEmpty()) {
+
+			if (printTaggedValuesElement) {
+				writer.startElement("taggedValues");
+			}
 
 			// sort results alphabetically by tag name for consistent output
 			TreeSet<String> tags = new TreeSet<String>(taggedValues.keySet());
@@ -1551,6 +1579,10 @@ public class FeatureCatalogue
 						// writer.dataElement(tag, PrepareToPrint(v));
 					}
 				}
+			}
+
+			if (printTaggedValuesElement) {
+				writer.endElement("taggedValues");
 			}
 		}
 	}
@@ -1792,7 +1824,7 @@ public class FeatureCatalogue
 		}
 
 		if (representTaggedValues != null) {
-			PrintTaggedValues(propi, representTaggedValues, null);
+			PrintTaggedValues(propi, representTaggedValues, null, false);
 		}
 
 		writer.endElement("taggedValues");
@@ -1900,7 +1932,7 @@ public class FeatureCatalogue
 							for (PropertyInfo ei : cix.properties().values()) {
 								if (ei != null && ExportValue(ei)) {
 
-									String eiid = "_A" + ei.id();
+									String eiid = "_A" + ei.id() + VALUE_ID_SUFFIX;
 									eiid = options.internalize(eiid);
 
 									writer.emptyElement("enumeratedBy", "idref",
@@ -1916,7 +1948,7 @@ public class FeatureCatalogue
 										writer.emptyElement("enumeratedBy",
 												"idref",
 												"_A" + ((PropertyInfo) diff.subElement)
-														.id());
+														.id()  + VALUE_ID_SUFFIX);
 									}
 								}
 							}
@@ -2418,7 +2450,7 @@ public class FeatureCatalogue
 			this.xsltWrite(indocumentxmlFile, xsldocxfileName,
 					outdocumentxmlFile);
 
-			if (includeDiagrams && !imageSet.isEmpty()) {
+			if (includeDiagrams && !imageList.isEmpty()) {
 				/*
 				 * === Process image information ===
 				 */
@@ -2445,16 +2477,6 @@ public class FeatureCatalogue
 
 				addAttribute(imgInfoDoc, imgInfoRoot, "xmlns:xsi",
 						"http://www.w3.org/2001/XMLSchema-instance");
-
-				List<ImageMetadata> imageList = new ArrayList<ImageMetadata>(
-						imageSet);
-				Collections.sort(imageList, new Comparator<ImageMetadata>() {
-
-					@Override
-					public int compare(ImageMetadata o1, ImageMetadata o2) {
-						return o1.getId().compareTo(o2.getId());
-					}
-				});
 
 				for (ImageMetadata im : imageList) {
 
@@ -3102,6 +3124,8 @@ public class FeatureCatalogue
 		this.transformationParameters.put("lang", lang);
 		this.transformationParameters.put("noAlphabeticSortingForProperties",
 				noAlphabeticSortingForProperties);
+		this.transformationParameters.put("includeCodelistsAndEnumerations",
+			includeCodelistsAndEnumerations);
 	}
 
 	private void initialiseFromOptions() {
@@ -3267,7 +3291,12 @@ public class FeatureCatalogue
 				"noAlphabeticSortingForProperties");
 		if (s != null && s.equalsIgnoreCase("true"))
 			noAlphabeticSortingForProperties = "true";
-
+		
+		s = options.parameter(this.getClass().getName(),
+			"includeCodelistsAndEnumerations");
+		if (s != null && s.equalsIgnoreCase("true"))
+		    includeCodelistsAndEnumerations = "true";
+		
 		s = options.parameter(this.getClass().getName(), "xslLocalizationUri");
 		if (s != null && s.length() > 0) {
 

@@ -174,9 +174,12 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return (TreeSet<PackageInfo>) childPI.clone();
 	} // containedPackages()
 
-	// Validate stereotypes cache of the package. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
@@ -269,9 +272,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	// && descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// String s = eaPackage.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	//
 	// if (s == null) {
@@ -419,18 +422,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 				String s = eaPackage.GetNotes();
 
-				// String txt = document.repository.GetFormatFromField("TXT",
-				// s);
-				// String html = document.repository.GetFormatFromField("HTML",
-				// s);
-				// String rtf = document.repository.GetFormatFromField("RTF",
-				// s);
-				//
-				// s = txt;
-
-				// Fix for EA7.5 bug
+				// Handle EA formatting
 				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					s = document.applyEAFormatting(s);
 				}
 
 				if (s != null) {

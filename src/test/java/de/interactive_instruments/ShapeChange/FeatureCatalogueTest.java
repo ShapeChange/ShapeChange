@@ -35,15 +35,22 @@ import org.junit.Test;
 
 public class FeatureCatalogueTest extends WindowsBasicTest {
 
-	/*
-	 * A simple model to test the creation of a docx feature catalogue that
-	 * includes UML diagrams
-	 */
-	// TODO image file names and sizes not stable
-	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-	// new String[]{"test_featurecatalog_with_images"},
-	// "testResults/docx_with_images/myInputId",
-	// "src/test/resources/reference/docx");
+	// 2018-11-09 JE: NOTE: the following test is commented out on purpose: It
+	// is only used for internal testing, since the image size depends
+	// on the settings in EA, which are user dependent.
+
+//	 @Test
+//	 public void testUMLDiagrams() {
+//	 /*
+//	 * A simple model to test the creation of a docx feature catalogue that
+//	 * includes UML diagrams
+//	 */
+//	
+//	 docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
+//	 new String[] { "test_featurecatalog_with_images" },
+//	 "testResults/docx_with_images/myInputId",
+//	 "src/test/resources/reference/docx");
+//	 }
 
 	@Test
 	public void testSingleFileHtmlFeatureCatalogue() {
@@ -75,22 +82,6 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				new String[] { "test" }, "testResults/docx/myInputId",
 				"src/test/resources/reference/docx");
 	}
-
-	// 2018-11-09 JE: NOTE: the following test is commented out on purpose: It
-	// is only used for internal testing, since the image size depends
-	// on the settings in EA, which are user dependent.
-
-	// @Test
-	// public void testDocxFeatureCatalogue_with_images() {
-	// /*
-	// * A simple model to test the creation of a docx feature catalogue
-	// *
-	// *
-	// */
-	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-	// new String[] { "test" }, "testResults/docx_with_images/myInputId",
-	// "src/test/resources/reference/docx");
-	// }
 
 	@Test
 	public void testInheritedPropertiesAndNoAlphabeticSortingForProperties() {
@@ -124,7 +115,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/taggedValues/results",
 				"src/test/resources/featureCatalogue/taggedValues/reference/results");
 	}
-	
+
 	@Test
 	public void testInheritedConstraints() {
 
@@ -134,7 +125,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/inheritedConstraints/results",
 				"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
 	}
-	
+
 	@Test
 	public void testLogo() {
 
@@ -144,7 +135,7 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				"testResults/featureCatalogue/logo/results",
 				"src/test/resources/featureCatalogue/logo/reference/results");
 	}
-	
+
 	@Test
 	public void testDocxStyle_custom1() {
 
@@ -153,5 +144,15 @@ public class FeatureCatalogueTest extends WindowsBasicTest {
 				new String[] { "docx" },
 				"testResults/featureCatalogue/docxStyle_custom1/results",
 				"src/test/resources/featureCatalogue/docxStyle_custom1/reference/results");
+	}
+	
+	@Test
+	public void testEATextFormatting() {
+
+		multiTest(
+				"src/test/resources/featureCatalogue/eaTextFormatting/testEA_featureCatalogue_eaTextFormatting.xml",
+				new String[] { "docx", "html" },
+				"testResults/featureCatalogue/eaTextFormatting/results",
+				"src/test/resources/featureCatalogue/eaTextFormatting/reference/results");
 	}
 }

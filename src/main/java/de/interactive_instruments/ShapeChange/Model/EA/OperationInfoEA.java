@@ -228,9 +228,12 @@ public class OperationInfoEA extends OperationInfoImpl
 		return document.result;
 	} // result()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...

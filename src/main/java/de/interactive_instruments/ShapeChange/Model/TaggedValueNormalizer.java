@@ -113,7 +113,7 @@ public class TaggedValueNormalizer {
 			"codeListSourceRepresentation", "codeListRestriction",
 			"arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
 			"arcgisSubtypeInitialValues", "codeListXML", "reportable",
-			"dissolveAssociationAttributeType", "extensibility", "obligation",
+			"dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference", "extensibility", "obligation",
 			"metadataType", "voidReasonType" };
 
 	/*

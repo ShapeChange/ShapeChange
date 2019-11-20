@@ -133,4 +133,15 @@ public class ToStringExpressionVisitor implements ExpressionVisitor {
 	public void visit(DoubleValueExpression doubleValueExpression) {
 		this.expressions.add(doubleValueExpression.toString());
 	}
+
+	@Override
+	public void visit(
+			SpatiaLiteCreateSpatialIndexExpression spatiaLiteCreateSpatialIndexExpression) {
+		this.expressions.add(spatiaLiteCreateSpatialIndexExpression.toString());
+	}
+
+	@Override
+	public void visit(SpatiaLiteAddGeometryColumn spatiaLiteAddGeometryColumn) {
+		this.expressions.add(spatiaLiteAddGeometryColumn.toString());
+	}
 }

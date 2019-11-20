@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://www.example.org/shapechange/xsd/dataTypeAsUMLClassifier" elementFormDefault="qualified" targetNamespace="http://www.example.org/shapechange/xsd/dataTypeAsUMLClassifier" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="t:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="attr1" type="string" />
+      <element name="attr2" type="string" />
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="t:DataType"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="t:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="property" type="t:DataTypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

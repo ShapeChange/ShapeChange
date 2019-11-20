@@ -171,11 +171,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		// Determine some class flags
 		isAbstract = eaClassElement.GetAbstract().equals("1");
 		isLeaf = eaClassElement.GetIsLeaf();
+		
 		// Determine class category
-		if (elmt.GetType().equalsIgnoreCase("enumeration"))
+		establishCategory();
+		if (category == Options.UNKNOWN
+				&& elmt.GetType().equalsIgnoreCase("enumeration")) {
 			category = Options.ENUMERATION;
-		else
-			establishCategory();
+		}
 
 		// Cache if realisations should not be treated as generalisations
 		/*
@@ -465,9 +467,12 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return null;
 	} // property()
 
-	// Validate stereotypes cache of the class. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 
 		if (stereotypesCache == null) {
@@ -495,10 +500,23 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			 * established based upon the stereotype (and potentially existing
 			 * XML Schema conversion rules) when importing an SCXML model.
 			 */
-			if (!stereotypesCache.contains("enumeration") && eaClassElement
+			if (stereotypesCache.isEmpty() && eaClassElement
 					.GetType().equalsIgnoreCase("enumeration")) {
 				stereotypesCache.add("enumeration");
+				document.result.addDebug(null, 52, this.name(), "enumeration");
 			}
+			/*
+			 * The same reasoning applies for data types, which are not classes 
+			 * according to the UML spec, but another type of classifier.
+			 */
+			if (stereotypesCache.isEmpty() && eaClassElement
+					.GetType().equalsIgnoreCase("datatype")) {
+				stereotypesCache.add("datatype");
+				document.result.addDebug(null, 52, this.name(), "datatype");
+			}
+			document.result.addDebug(null, 55, this.name(),
+					Integer.toString(stereotypesCache.size()),
+					stereotypesCache.toString());
 		}
 	} // validateStereotypesCache()
 
@@ -542,9 +560,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				if (model().descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 					s = eaClassElement.GetNotes();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -660,9 +678,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	// if (descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// s = eaClassElement.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//

@@ -58,6 +58,8 @@ public class StereotypeNormalizer {
 	 */
 	public static Stereotypes normalizeAndMapToWellKnownStereotype(
 			String[] stereotypes, Info infoObject) {
+	    
+	    	infoObject.result().addDebug(null, 50, infoObject.name(), String.join(", ", stereotypes));
 
 		Options options = infoObject.options();
 
@@ -65,9 +67,12 @@ public class StereotypeNormalizer {
 
 		for (String stereotype : stereotypes) {
 
-			String st = options.normalizeStereotype(stereotype.trim());
+			String normalizedStereotype = options.normalizeStereotype(stereotype.trim());
 
-			if (st != null) {
+			if (normalizedStereotype != null) {
+			    
+			    infoObject.result().addDebug(null, 51, infoObject.name(), stereotype,
+					normalizedStereotype);
 
 				String[] wellKnownStereotypes;
 
@@ -83,12 +88,25 @@ public class StereotypeNormalizer {
 					wellKnownStereotypes = new String[] {};
 				}
 
+				boolean wellKnownStereotypeFound = false;
 				for (String s : wellKnownStereotypes) {
-					if (st.toLowerCase().equals(s))
+					if (normalizedStereotype.toLowerCase().equals(s)) {
 						result.add(s);
+						infoObject.result().addDebug(null, 52, infoObject.name(), s);
+						wellKnownStereotypeFound = true;
+					}
+				}
+				
+				if (!wellKnownStereotypeFound) {
+				    infoObject.result().addDebug(null, 53, infoObject.name(),
+							normalizedStereotype);
 				}
 			}
 		}
+		
+		infoObject.result().addDebug(null, 54, infoObject.name(),
+			Integer.toString(result.size()),
+			result.toString());
 
 		return result;
 	}

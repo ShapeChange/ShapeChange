@@ -385,9 +385,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * necessary.
 	 */
 	public void establishCategory() throws ShapeChangeAbortException {
-		if (stereotype("enumeration")) {
-			category = Options.ENUMERATION;
-		} else if (stereotype("codelist")) {
+		if (stereotype("codelist")) {
 			category = Options.CODELIST;
 		} else if (stereotype("datatype")) {
 			category = Options.DATATYPE;
@@ -433,8 +431,18 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			category = Options.OKSTRAFID;
 		} else if (stereotype("aixmextension") && options().isAIXM()) {
 			category = Options.AIXMEXTENSION;
+		} else if (stereotype("enumeration")) {
+			/*
+			 * NOTE: Check for stereotype enumeration is at the end of the check
+			 * list because in Enterprise Architect models, EA elements of type
+			 * enumeration apparently automatically have stereotype
+			 * 'enumeration'. Some communities, however, assign a different
+			 * stereotype to such elements - for example 'codeList' - which are
+			 * therefore checked first.
+			 */
+			category = Options.ENUMERATION;
 		} else {
-			result().addInfo(null, 11, name(),
+			result().addWarning(null, 11, name(),
 					stereotypes().toString().replace("[", "").replace("]", ""),
 					encodingRule("xsd"));
 			category = Options.UNKNOWN;

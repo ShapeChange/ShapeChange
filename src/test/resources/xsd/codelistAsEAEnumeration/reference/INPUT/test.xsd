@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://www.example.org/shapechange/xsd/codelistAsEAEnumeration" elementFormDefault="qualified" targetNamespace="http://www.example.org/shapechange/xsd/codelistAsEAEnumeration" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="CodelistAsEAEnumerationType">
+    <union memberTypes="t:CodelistAsEAEnumerationEnumerationType t:CodelistAsEAEnumerationOtherType"/>
+  </simpleType>
+  <simpleType name="CodelistAsEAEnumerationEnumerationType">
+    <restriction base="string">
+      <enumeration value="code1"/>
+      <enumeration value="code2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="CodelistAsEAEnumerationOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="t:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="property" type="t:CodelistAsEAEnumerationType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

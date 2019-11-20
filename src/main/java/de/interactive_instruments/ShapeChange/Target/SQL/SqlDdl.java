@@ -46,6 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -107,8 +108,8 @@ import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 /**
  * Creates SQL DDL for an application schema.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlDdl implements SingleTarget, MessageSource {
@@ -146,6 +147,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeStatusCLType;
 	protected static int codeStatusCLLength;
 	protected static String idColumnName;
+	protected static String lengthQualifier;
 	protected static String oneToManyReferenceColumnName;
 	protected static String foreignKeyColumnSuffix;
 	protected static String foreignKeyColumnSuffixDatatype;
@@ -162,6 +164,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	protected static String codeSupercedesColumnDocumentation;
 	protected static int defaultSize;
 	protected static int srid;
+	protected static String geometryDimension;
 	protected static String shortNameByTaggedValue = null;
 	protected static boolean constraintNameUsingShortName = false;
 	protected static boolean indexNameUsingShortName = false;
@@ -313,7 +316,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
 				constraintNameUsingShortName = true;
 			}
-			
+
 			if (pi.matches(
 					SqlConstants.RULE_TGT_SQL_ALL_INDEXNAMEUSINGSHORTNAME)) {
 				indexNameUsingShortName = true;
@@ -398,6 +401,20 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					ukNaming = new DefaultSQLServerUniqueConstraintNamingStrategy();
 				}
 
+			} else if (databaseSystem != null
+					&& "sqlite".equalsIgnoreCase(databaseSystem)) {
+
+				databaseStrategy = new SQLiteStrategy(result);
+				if (normalizer == null) {
+					normalizer = new LowerCaseNameNormalizer();
+				}
+				if (ckNaming == null) {
+					ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
+				}
+				if (ukNaming == null) {
+					ukNaming = new DefaultPostgreSQLUniqueConstraintNamingStrategy();
+				}
+
 			} else {
 
 				if (databaseSystem != null
@@ -440,10 +457,22 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUSCL_LENGTH,
 					SqlConstants.DEFAULT_CODESTATUSCL_LENGTH);
-
+			
 			idColumnName = options.parameterAsString(this.getClass().getName(),
 					SqlConstants.PARAM_ID_COLUMN_NAME,
 					SqlConstants.DEFAULT_ID_COLUMN_NAME, false, true);
+
+			String lengthQualifier_tmp = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_LENGTH_QUALIFIER, null, false, true);
+
+			if (lengthQualifier_tmp != null) {
+				if (lengthQualifier_tmp.equalsIgnoreCase("BYTE")) {
+					lengthQualifier = "BYTE";
+				} else if (lengthQualifier_tmp.equalsIgnoreCase("CHAR")) {
+					lengthQualifier = "CHAR";
+				}
+			}
 
 			oneToManyReferenceColumnName = options.parameterAsString(
 					this.getClass().getName(),
@@ -517,7 +546,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					this.getClass().getName(),
 					SqlConstants.PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION,
 					null, false, true);
-			
+
 			nameCodeSupercedesColumn = options.parameterAsString(
 					this.getClass().getName(),
 					SqlConstants.PARAM_NAME_CODESUPERCEDES_COLUMN,
@@ -539,6 +568,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 			srid = options.parameterAsInteger(this.getClass().getName(),
 					SqlConstants.PARAM_SRID, SqlConstants.DEFAULT_SRID);
+
+			geometryDimension = options.parameterAsString(
+					this.getClass().getName(),
+					SqlConstants.PARAM_GEOMETRY_DIMENSION, null, false, true);
 
 			shortNameByTaggedValue = options.parameterAsString(
 					this.getClass().getName(),
@@ -960,50 +993,6 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 			} else {
 
-				// --- Create DDL(s)
-
-				// create a copy of the stmt list that we can modify
-				List<Statement> stmtsForDdlCreation = new ArrayList<Statement>(
-						stmts);
-
-				if (separateSpatialIndexStatements) {
-
-					String fileName = outputFilename + "_spatial.sql";
-
-					SpatialIndexStatementFilter stmtFilter = new SpatialIndexStatementFilter();
-
-					List<Statement> filteredStatements = stmtFilter
-							.filter(stmtsForDdlCreation);
-
-					if (!filteredStatements.isEmpty()) {
-						writeDdl(filteredStatements, fileName);
-						stmtsForDdlCreation.removeAll(filteredStatements);
-					}
-				}
-
-				if (!categoriesForSeparatingCodeInsertStatements.isEmpty()) {
-
-					for (String category : categoriesForSeparatingCodeInsertStatements) {
-
-						String fileName = outputFilename
-								+ "_inserts_codelistType_" + category + ".sql";
-
-						CodeByCategoryInsertStatementFilter stmtFilter = new CodeByCategoryInsertStatementFilter(
-								category);
-
-						List<Statement> filteredStatements = stmtFilter
-								.filter(stmtsForDdlCreation);
-
-						if (!filteredStatements.isEmpty()) {
-							writeDdl(filteredStatements, fileName);
-							stmtsForDdlCreation.removeAll(filteredStatements);
-						}
-					}
-				}
-
-				String fileName = outputFilename + ".sql";
-				writeDdl(stmtsForDdlCreation, fileName);
-
 				// --- Create database model
 
 				if (createDatabaseModel) {
@@ -1076,6 +1065,63 @@ public class SqlDdl implements SingleTarget, MessageSource {
 						repository = null;
 					}
 				}
+
+				/*
+				 * -- Create DDL(s)
+				 * 
+				 * WARNING: It is important that DDLs are created last, because
+				 * the SQL structure may be changed, e.g. by the SQLiteDdlFixer
+				 * (which transforms geometry columns into SELECT statements).
+				 */
+
+				// create a copy of the stmt list that we can modify
+				List<Statement> stmtsForDdlCreation = new ArrayList<Statement>(
+						stmts);
+
+				if (databaseStrategy instanceof SQLiteStrategy) {
+					stmtsForDdlCreation = SQLiteDdlFixer
+							.fixDdl(stmtsForDdlCreation);
+					Comparator<Statement> stmtComparator = new StatementSortAlphabetic();
+					Collections.sort(stmtsForDdlCreation, stmtComparator);
+				}
+
+				if (separateSpatialIndexStatements) {
+
+					String fileName = outputFilename + "_spatial.sql";
+
+					SpatialIndexStatementFilter stmtFilter = new SpatialIndexStatementFilter();
+
+					List<Statement> filteredStatements = stmtFilter
+							.filter(stmtsForDdlCreation);
+
+					if (!filteredStatements.isEmpty()) {
+						writeDdl(filteredStatements, fileName);
+						stmtsForDdlCreation.removeAll(filteredStatements);
+					}
+				}
+
+				if (!categoriesForSeparatingCodeInsertStatements.isEmpty()) {
+
+					for (String category : categoriesForSeparatingCodeInsertStatements) {
+
+						String fileName = outputFilename
+								+ "_inserts_codelistType_" + category + ".sql";
+
+						CodeByCategoryInsertStatementFilter stmtFilter = new CodeByCategoryInsertStatementFilter(
+								category);
+
+						List<Statement> filteredStatements = stmtFilter
+								.filter(stmtsForDdlCreation);
+
+						if (!filteredStatements.isEmpty()) {
+							writeDdl(filteredStatements, fileName);
+							stmtsForDdlCreation.removeAll(filteredStatements);
+						}
+					}
+				}
+
+				String fileName = outputFilename + ".sql";
+				writeDdl(stmtsForDdlCreation, fileName);
 			}
 
 		} catch (Exception e) {
@@ -1091,10 +1137,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	/**
 	 * @param stmts
-	 *            the list of statements to write as SQL DDL in the output file
+	 *                     the list of statements to write as SQL DDL in the
+	 *                     output file
 	 * @param fileName
-	 *            the name of the output file (to be created in the output
-	 *            directory), including the file extension
+	 *                     the name of the output file (to be created in the
+	 *                     output directory), including the file extension
 	 * @throws Exception
 	 */
 	private void writeDdl(List<Statement> stmts, String fileName)
@@ -1190,6 +1237,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		codeStatusCLType = null;
 		codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
 		idColumnName = null;
+		lengthQualifier = null;
 		oneToManyReferenceColumnName = null;
 		foreignKeyColumnSuffix = null;
 		foreignKeyColumnSuffixDatatype = null;

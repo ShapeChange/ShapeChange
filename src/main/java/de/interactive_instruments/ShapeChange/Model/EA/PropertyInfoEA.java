@@ -684,9 +684,12 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return sequenceNumber;
 	} // sequenceNumber()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
@@ -894,9 +897,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// s = eaAttribute.GetNotes();
 	// else
 	// s = eaConnectorEnd.GetRoleNote();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//
@@ -1132,9 +1135,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 						s = eaAttribute.GetNotes();
 					else
 						s = eaConnectorEnd.GetRoleNote();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -1206,9 +1209,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				// if (descriptorSource(Descriptor.DOCUMENTATION)
 				// .equals("ea:notes")) {
 				// s = eaClassElement.GetNotes();
-				// // Fix for EA7.5 bug
+				// // Handle EA formatting
 				// if (s != null) {
-				// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				// s = document.applyEAFormatting(s);
 				// }
 				// }
 				//

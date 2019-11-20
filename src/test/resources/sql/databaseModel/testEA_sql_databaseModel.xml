@@ -102,6 +102,43 @@
 					param="precision" />
 			</mapEntries>
 		</Target>
+		
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/databaseModel/sqlite" />
+			<targetParameter name="outputFilename" value="database_model_sqlite" />
+			<targetParameter name="srid" value="4326" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="foreignKeyColumnSuffixCodelist"
+				value="_fk" />
+			<targetParameter name="codeNameColumnName" value="code" />
+			<targetParameter name="dataModelPatternPath"
+			value="src/main/resources/dataModelPatterns" />
+<!-- 			<targetParameter name="dbOwner" value="public" /> -->
+			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-exclude-abstract" />
+					<rule name="rule-sql-cls-code-lists" />
+					<rule name="rule-sql-cls-object-types" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations" />
+
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLite.xml" />
+			<mapEntries>
+				<MapEntry type="Guid" rule="*" targetType="TEXT" />
+				<MapEntry type="MyReal1" rule="*" targetType="REAL" />
+				<MapEntry type="MyReal2" rule="*" targetType="REAL" />
+			</mapEntries>
+		</Target>
 
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			inputs="F_multiplicity" mode="enabled">

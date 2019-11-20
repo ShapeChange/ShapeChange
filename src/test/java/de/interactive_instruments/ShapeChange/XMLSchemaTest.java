@@ -293,6 +293,26 @@ public class XMLSchemaTest extends WindowsBasicTest {
 	}
 	
 	@Test
+	public void test_codelistAsEAEnumeration() {
+		
+		multiTest(
+				"src/test/resources/xsd/codelistAsEAEnumeration/test_codelistAsEAEnumeration.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/codelistAsEAEnumeration",
+				"src/test/resources/xsd/codelistAsEAEnumeration/reference");
+	}
+	
+	@Test
+	public void test_dataTypeAsUMLClassifier() {
+		
+		multiTest(
+				"src/test/resources/xsd/dataTypeAsUMLClassifier/test_dataTypeAsUMLClassifier.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/dataTypeAsUMLClassifier",
+				"src/test/resources/xsd/dataTypeAsUMLClassifier/reference");
+	}
+	
+	@Test
 	public void test_propertyMetadata() {
 		
 		multiTest(

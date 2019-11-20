@@ -65,4 +65,9 @@ public interface ExpressionVisitor {
 	public void visit(BetweenExpression betweenExpression);
 
 	public void visit(DoubleValueExpression doubleValueExpression);
+
+	public void visit(
+			SpatiaLiteCreateSpatialIndexExpression spatiaLiteCreateSpatialIndexExpression);
+
+	public void visit(SpatiaLiteAddGeometryColumn spatiaLiteAddGeometryColumn);
 }

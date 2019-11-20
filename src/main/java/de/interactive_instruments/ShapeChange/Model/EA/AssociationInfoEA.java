@@ -193,9 +193,12 @@ public class AssociationInfoEA extends AssociationInfoImpl
 		return document.result;
 	}
 
-	// Validate stereotypes cache of the association. The stereotypes found are
-	// 1. restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
@@ -266,9 +269,9 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 				String s = eaConnector.GetNotes();
 
-				// Fix for EA7.5 bug
+				// Handle EA formatting
 				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					s = document.applyEAFormatting(s);
 				}
 
 				if (s != null) {

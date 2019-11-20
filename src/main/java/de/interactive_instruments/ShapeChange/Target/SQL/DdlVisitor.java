@@ -46,6 +46,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.StatementVisitor;
@@ -57,8 +59,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  * NOTE: Database system specific visitors should be added as needed, to take
  * into account any database system specific syntax.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class DdlVisitor implements StatementVisitor {
@@ -164,6 +166,10 @@ public class DdlVisitor implements StatementVisitor {
 				} else if (colDataType.hasLength()) {
 					sb.append("(");
 					sb.append(colDataType.getLength());
+					if (colDataType.hasLengthQualifier()) {
+						sb.append(" ");
+						sb.append(colDataType.getLengthQualifier());
+					}
 					sb.append(")");
 				}
 
@@ -282,5 +288,27 @@ public class DdlVisitor implements StatementVisitor {
 	@Override
 	public void postprocess() {
 		// ignore
+	}
+
+	@Override
+	public void visit(Select select) {
+
+		sb.append("SELECT ");
+		sb.append(select.getExpression().toString());
+		sb.append(";");
+		sb.append(crlf);
+	}
+
+	@Override
+	public void visit(SQLitePragma pragma) {
+
+		sb.append("PRAGMA ");
+		sb.append(pragma.getName());
+		if (pragma.hasValue()) {
+			sb.append(" = ");
+			sb.append(pragma.getValue());
+		}
+		sb.append(";");
+		sb.append(crlf);
 	}
 }

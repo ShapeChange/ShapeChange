@@ -492,10 +492,13 @@ public interface Info extends Comparable<Info> {
 	public Map<String, String> taggedValues(String tagList);
 
 	/**
-	 * Create cache of stereotypes and tagged values
+	 * Validate cache of tagged values.
 	 */
 	public void validateTaggedValuesCache();
 
+	/**
+	 * Validate cache of stereotypes.
+	 */
 	public void validateStereotypesCache();
 
 	/**

@@ -62,8 +62,8 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
 	}
 
 	@Override
-	public ColumnDataType limitedLengthCharacterDataType(int size) {
-		return new ColumnDataType("character varying", null, null, size);
+	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier) {
+		return new ColumnDataType("character varying", null, null, size, null);
 	}
 
 	@Override

@@ -794,18 +794,17 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	return repository;
     }
 
-    /**
-     * This auxiliary static method replaces some SGML entities which EA7.5
-     * substitutes for a few symbols in some string fields, but does not bother to
-     * translate back in its automation interface.
-     */
-    public static String removeSpuriousEA75EntitiesFromStrings(String s) {
-	// Straight return if there is nothing to do
-	if (!s.contains("&"))
-	    return s;
-	// Replacement of spurious entities
-	return s.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&").replaceAll("&euro;", "€");
-    }
+	/**
+	 * In case that a string retrieved from a field in the EA repository
+	 * contains formatting, this method converts it to plain text format
+	 * (using EA Repository.GetFormatFromField (...)).
+	 * 
+	 * @param s the string to convert
+	 * @return the string, with any formatting converted to plain text
+	 */
+	public String applyEAFormatting(String s) {
+	    return repository.GetFormatFromField("TXT", s);
+	}
 
     /**
      * Return repository object (for applications using only the EA model option)

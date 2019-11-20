@@ -11,6 +11,7 @@
 	  <parameter name="loadDiagrams" value="true"/>
 	  <parameter name="packageDiagramRegex" value="[\w|\W]*NAME[\w|\W]*"/>
 	  <parameter name="classDiagramRegex" value="[\w|\W]*NAME[\w|\W]*"/>
+	  <parameter name="sortDiagramsByName" value="false"/>
 		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
 	</input>
 	<log>
@@ -21,7 +22,6 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
 			mode="enabled">
 <!--			<targetParameter name="docxTemplateFilePath" value="src/main/resources/templates/template.docx"/>-->
-<!-- 			<targetParameter name="xsltPath" value="src/main/resources/xslt"/> -->
 			<targetParameter name="outputDirectory" value="testResults/docx_with_images"/>
 		  	<targetParameter name="outputFilename" value="test_featurecatalog_with_images"/>
 			<targetParameter name="sortedOutput" value="true"/>
