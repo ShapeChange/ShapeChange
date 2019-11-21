@@ -499,6 +499,13 @@
     <documentation>All properties of a class shall be navigable.</documentation>
    </annotation>
   </assert>
+  <assert test="
+    every $property in sc:properties/sc:Property
+     satisfies not(exists($property/sc:inClassId))" saxon:message="sc:inClassId shall not be defined for properties encoded within a Class." xerces:message="sc:inClassId shall not be defined for properties encoded within a Class.">
+   <annotation>
+    <documentation>sc:inClassId shall not be defined for properties encoded within a Class.</documentation>
+   </annotation>
+  </assert>
  </complexType>
  <element name="Property" type="sc:PropertyType">
   <annotation>
@@ -540,9 +547,11 @@
      </restriction>
     </simpleType>
    </element>
-   <element default="true" minOccurs="0" name="isNavigable" type="boolean">
+   <element minOccurs="0" name="isNavigable" type="boolean">
     <annotation>
-     <documentation>Indicates whether the property is navigable. An attribute is always navigable (thus the default is 'true'), while an association role may not be navigable.</documentation>
+     <documentation>Indicates whether the property is navigable. Typically, an attribute is always navigable, while an association role may not be navigable.
+
+NOTE: In UML 1, property navigability indicated ownership. A navigable association role therefore was always owned by a class. In UML 2.4+, that convention is deprecated. In UML 2.4+, ownership and navigability are separate concepts, and navigability does not have much useful meaning anymore. For UML 1 and UML 2 based schemas, where ownership is not explicitly shown, ownership is derived from property navigability. Since the 'isNavigable' element is optional, without a default value, SCXML supports use cases where the schema explicitly models property ownership and navigability is not used at all. However, use cases where ownership is defined through navigability are also supported.</documentation>
     </annotation>
    </element>
    <element name="sequenceNumber">
@@ -646,7 +655,7 @@
    </element>
    <element minOccurs="0" name="inClassId" type="string">
     <annotation>
-     <documentation>The id of the class to which this property belongs. Only relevant for non-navigable association roles. All other properties are encoded as properties of the class to which they belong (thus the inClass relationship is implied).</documentation>
+     <documentation>The id of the class to which this property belongs. Only relevant for association roles encoded within an Association. All other properties are encoded as properties of the class to which they belong (thus the inClass relationship is implied).</documentation>
     </annotation>
    </element>
    <element minOccurs="0" name="associationId" type="string">
@@ -678,16 +687,6 @@
   <assert test="not(exists(sc:qualifiers)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="Qualifiers can only be defined for an association role." xerces:message="Qualifiers can only be defined for an association role.">
    <annotation>
     <documentation>Qualifiers can only be defined for an association role.</documentation>
-   </annotation>
-  </assert>
-  <assert test="not(exists(sc:inClassId)) or (sc:isAttribute/text() = ('0', 'false') and sc:isNavigable/text() = ('0', 'false'))" saxon:message="sc:inClassId shall only be defined for non-navigable association roles." xerces:message="sc:inClassId shall only be defined for non-navigable association roles.">
-   <annotation>
-    <documentation>sc:inClassId shall only be defined for non-navigable association roles.</documentation>
-   </annotation>
-  </assert>
-  <assert test="not(sc:isAttribute/text() = ('0', 'false') and sc:isNavigable/text() = ('0', 'false')) or (exists(sc:inClassId))" saxon:message="sc:inClassId shall be defined for non-navigable association roles." xerces:message="sc:inClassId shall be defined for non-navigable association roles.">
-   <annotation>
-    <documentation>sc:inClassId shall be defined for non-navigable association roles.</documentation>
    </annotation>
   </assert>
   <assert test="not(exists(sc:associationId)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="sc:associationId shall only be used on association roles." xerces:message="sc:associationId shall only be used on association roles.">
@@ -742,14 +741,24 @@
     <documentation>For association end2, either @ref or sc:Property shall be present.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end1/sc:Property)) or sc:end1/sc:Property/sc:isNavigable/text() = ('0', 'false')" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.">
+  <assert test="not(exists(sc:end1/sc:Property)) or not(sc:end1/sc:Property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.">
    <annotation>
     <documentation>An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end2/sc:Property)) or sc:end2/sc:Property/sc:isNavigable/text() = ('0', 'false')" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.">
+  <assert test="not(exists(sc:end2/sc:Property)) or not(sc:end2/sc:Property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.">
    <annotation>
     <documentation>An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:end1/sc:Property)) or exists(sc:end1/sc:Property/sc:inClassId)" saxon:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association." xerces:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association.">
+   <annotation>
+    <documentation>sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association.</documentation>
+   </annotation>
+  </assert>
+  <assert test="not(exists(sc:end2/sc:Property)) or exists(sc:end2/sc:Property/sc:inClassId)" saxon:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association." xerces:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association.">
+   <annotation>
+    <documentation>sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association.</documentation>
    </annotation>
   </assert>
  </complexType>

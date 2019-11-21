@@ -4085,6 +4085,7 @@ public class Options {
 		addRule("rule-exp-all-omitExistingProfiles");
 		addRule("rule-exp-all-restrictExistingProfiles");
 		addRule("rule-exp-pkg-allPackagesAreEditable");
+		addRule("rule-exp-prop-suppressIsNavigable");
 
 		/*
 		 * CDB conversion rules

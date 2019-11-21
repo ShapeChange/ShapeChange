@@ -80,4 +80,14 @@ public class ModelExportTest extends WindowsBasicTest {
 			"testResults/modelExport/addStereotypes/results/some",
 			"src/test/resources/modelExport/addStereotypes/reference/results/some");
 	}
+	
+	@Test
+	public void testModelExport_suppressIsNavigable() {
+
+		multiTest(
+				"src/test/resources/modelExport/suppressIsNavigable/test_suppressIsNavigable.xml",
+				new String[] { "xml" },
+				"testResults/modelexport/suppressIsNavigable/results",
+				"src/test/resources/modelExport/suppressIsNavigable/reference/results");
+	}
 }

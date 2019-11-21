@@ -777,7 +777,10 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    printDataElement("cardinality", pi.cardinality().toString());
 	}
 
-	printDataElement("isNavigable", pi.isNavigable(), true);
+	if(!pi.matches(ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_ISNAVIGABLE)) {
+	    printDataElement("isNavigable", pi.isNavigable(), true);
+	}
+	
 	printDataElement("sequenceNumber", pi.sequenceNumber().getString());
 
 	Type ti = pi.typeInfo();
