@@ -31,7 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
@@ -40,75 +44,70 @@ import de.interactive_instruments.ShapeChange.Options;
  */
 public class StereotypeNormalizer {
 
-	/**
-	 * Normalizes the given stereotypes based upon configured stereotype
-	 * aliases, and maps them to the well-known ones defined for the given
-	 * {@link Info} object. If a stereotype does not map to a well-known
-	 * stereotype, it will be ignored (and thus not contained in the result).
-	 * 
-	 * @param stereotypes
-	 *                        The stereotypes to normalize and map.
-	 * @param infoObject
-	 *                        The object for which the stereotypes are defined.
-	 *                        Needed to identify the type of object, so that
-	 *                        mapping to the well-known stereotypes defined for
-	 *                        that type can occur.
-	 * @return Stereotypes cache with normalized and mapped stereotypes. Can be
-	 *         empty but not <code>null</code>.
-	 */
-	public static Stereotypes normalizeAndMapToWellKnownStereotype(
-			String[] stereotypes, Info infoObject) {
-	    
-	    	infoObject.result().addDebug(null, 50, infoObject.name(), String.join(", ", stereotypes));
+    /**
+     * Normalizes the given stereotypes based upon configured stereotype aliases,
+     * and maps them to the well-known ones defined for the given {@link Info}
+     * object. If a stereotype does not map to a well-known stereotype, it will be
+     * ignored (and thus not contained in the result).
+     * 
+     * @param stereotypes The stereotypes to normalize and map.
+     * @param infoObject  The object for which the stereotypes are defined. Needed
+     *                    to identify the type of object, so that mapping to the
+     *                    well-known stereotypes defined for that type can occur.
+     * @return Stereotypes cache with normalized and mapped stereotypes. Can be
+     *         empty but not <code>null</code>.
+     */
+    public static Stereotypes normalizeAndMapToWellKnownStereotype(String[] stereotypes, Info infoObject) {
 
-		Options options = infoObject.options();
+	Options options = infoObject.options();
+	ShapeChangeResult result = infoObject.result();
 
-		Stereotypes result = options.stereotypesFactory();
+	result.addDebug(null, 50, infoObject.name(), String.join(", ", stereotypes));
 
-		for (String stereotype : stereotypes) {
+	Stereotypes resultingStereotypes = options.stereotypesFactory();
 
-			String normalizedStereotype = options.normalizeStereotype(stereotype.trim());
+	for (String stereotype : stereotypes) {
 
-			if (normalizedStereotype != null) {
-			    
-			    infoObject.result().addDebug(null, 51, infoObject.name(), stereotype,
-					normalizedStereotype);
+	    String normalizedStereotype = options.normalizeStereotype(stereotype.trim());
 
-				String[] wellKnownStereotypes;
+	    result.addDebug(null, 51, infoObject.name(), stereotype, normalizedStereotype);
 
-				if (infoObject instanceof PropertyInfo) {
-					wellKnownStereotypes = Options.propertyStereotypes;
-				} else if (infoObject instanceof ClassInfo) {
-					wellKnownStereotypes = Options.classStereotypes;
-				} else if (infoObject instanceof PackageInfo) {
-					wellKnownStereotypes = Options.packageStereotypes;
-				} else if (infoObject instanceof AssociationInfo) {
-					wellKnownStereotypes = Options.assocStereotypes;
-				} else {
-					wellKnownStereotypes = new String[] {};
-				}
+	    Set<String> wellKnownStereotypes;
 
-				boolean wellKnownStereotypeFound = false;
-				for (String s : wellKnownStereotypes) {
-					if (normalizedStereotype.toLowerCase().equals(s)) {
-						result.add(s);
-						infoObject.result().addDebug(null, 52, infoObject.name(), s);
-						wellKnownStereotypeFound = true;
-					}
-				}
-				
-				if (!wellKnownStereotypeFound) {
-				    infoObject.result().addDebug(null, 53, infoObject.name(),
-							normalizedStereotype);
-				}
-			}
-		}
+	    if (infoObject instanceof PropertyInfo) {
+		wellKnownStereotypes = Options.propertyStereotypes;
+	    } else if (infoObject instanceof ClassInfo) {
+		wellKnownStereotypes = Options.classStereotypes;
+	    } else if (infoObject instanceof PackageInfo) {
+		wellKnownStereotypes = Options.packageStereotypes;
+	    } else if (infoObject instanceof AssociationInfo) {
+		wellKnownStereotypes = Options.assocStereotypes;
+	    } else {
+		wellKnownStereotypes = new HashSet<>();
+	    }
+
+	    String s = normalizedStereotype.toLowerCase();
+	    if (wellKnownStereotypes.contains(s)) {
+		resultingStereotypes.add(s);
+		result.addDebug(null, 52, infoObject.name(), s);
+	    } else {
 		
-		infoObject.result().addDebug(null, 54, infoObject.name(),
-			Integer.toString(result.size()),
-			result.toString());
-
-		return result;
+		if (options.allowAllStereotypes()) {
+		    resultingStereotypes.add(normalizedStereotype);
+		    result.addDebug(null, 56, infoObject.name(), normalizedStereotype);
+		} else if (options.addedStereotypes().contains(normalizedStereotype)) {
+		    resultingStereotypes.add(normalizedStereotype);
+		    result.addDebug(null, 57, infoObject.name(), normalizedStereotype);
+		} else {
+		    result.addDebug(null, 53, infoObject.name(), normalizedStereotype);
+		}
+	    }
 	}
+
+	result.addDebug(null, 54, infoObject.name(), Integer.toString(resultingStereotypes.size()),
+		resultingStereotypes.toString());
+
+	return resultingStereotypes;
+    }
 
 }

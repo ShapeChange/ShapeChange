@@ -701,132 +701,108 @@ public class Xmi10Document extends ModelImpl implements Model {
 
 			boolean found = false;
 
-			if (baseClass.equals("Class")) {
-				for (int i = 0; i < Options.classStereotypes.length; i++) {
-					if (name.toLowerCase()
-							.equals(Options.classStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,
-								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
-						if (ids.size() == 0) {
-							ids = getOwnerId(n1);
-						}
-						for (Iterator<String> k = ids.iterator(); k
-								.hasNext();) {
-							s = k.next();
-							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(
-									options.normalizeStereotype(name)));
-							fStereotypes.put(s, st);
-							result.addDebug(null, 10019, name, s);
-						}
-						found = true;
-						break;
-					}
+			if (baseClass.equals("Class") && Options.classStereotypes.contains(name.toLowerCase())) {
+				    
+				Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				if (ids.size() == 0) {
+					ids = getOwnerId(n1);
 				}
+				for (Iterator<String> k = ids.iterator(); k
+						.hasNext();) {
+					s = k.next();
+					Stereotypes st = options.stereotypesFactory();
+					st.add(options.internalize(
+							options.normalizeStereotype(name)));
+					fStereotypes.put(s, st);
+					result.addDebug(null, 10019, name, s);
+				}
+				found = true;								
 			}
 
-			if (baseClass.equals("Association")) {
-				for (int i = 0; i < Options.assocStereotypes.length; i++) {
-					if (name.toLowerCase()
-							.equals(Options.assocStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,
-								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
-						if (ids.size() == 0) {
-							ids = getOwnerId(n1);
-						}
-						for (Iterator<String> k = ids.iterator(); k
-								.hasNext();) {
-							s = k.next();
-							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(
-									options.normalizeStereotype(name)));
-							fStereotypes.put(s, st);
-							result.addDebug(null, 10019, name, s);
-						}
-						found = true;
-						break;
-					}
+			if (baseClass.equals("Association") && Options.assocStereotypes.contains(name.toLowerCase())) {
+					    
+				Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				if (ids.size() == 0) {
+					ids = getOwnerId(n1);
 				}
+				for (Iterator<String> k = ids.iterator(); k
+						.hasNext();) {
+					s = k.next();
+					Stereotypes st = options.stereotypesFactory();
+					st.add(options.internalize(
+							options.normalizeStereotype(name)));
+					fStereotypes.put(s, st);
+					result.addDebug(null, 10019, name, s);
+				}
+				found = true;
 			}
 
-			if (baseClass.equals("Package")
-					|| baseClass.equals("ClassifierRole")) {
-				for (int i = 0; i < Options.packageStereotypes.length; i++) {
-					if (name.toLowerCase()
-							.equals(Options.packageStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,
-								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
-						if (ids.size() == 0) {
-							ids = getOwnerId(n1);
-						}
-						for (Iterator<String> k = ids.iterator(); k
-								.hasNext();) {
-							s = k.next();
-							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(
-									options.normalizeStereotype(name)));
-							fStereotypes.put(s, st);
-							result.addDebug(null, 10019, name, s);
-							Element e1 = document.getElementById(s);
-							if (e1 != null) {
-								String ename = textOfProperty(e1,
-										"Foundation.Core.ModelElement.name");
-								result.addDebug(null, 10020, ename);
-								fSchemas.put(ename, e1);
-							}
-						}
-						found = true;
-						break;
+			if ((baseClass.equals("Package")
+					|| baseClass.equals("ClassifierRole")) && Options.packageStereotypes.contains(name.toLowerCase())) {
+				
+			    	Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				if (ids.size() == 0) {
+					ids = getOwnerId(n1);
+				}
+				for (Iterator<String> k = ids.iterator(); k
+						.hasNext();) {
+					s = k.next();
+					Stereotypes st = options.stereotypesFactory();
+					st.add(options.internalize(
+							options.normalizeStereotype(name)));
+					fStereotypes.put(s, st);
+					result.addDebug(null, 10019, name, s);
+					Element e1 = document.getElementById(s);
+					if (e1 != null) {
+						String ename = textOfProperty(e1,
+								"Foundation.Core.ModelElement.name");
+						result.addDebug(null, 10020, ename);
+						fSchemas.put(ename, e1);
 					}
 				}
+				found = true;								
 			}
 
-			if (baseClass.equals("Dependency")) {
-				for (int i = 0; i < Options.depStereotypes.length; i++) {
-					if (name.toLowerCase().equals(Options.depStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,
-								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
-						if (ids.size() == 0) {
-							ids = getOwnerId(n1);
-						}
-						for (Iterator<String> k = ids.iterator(); k
-								.hasNext();) {
-							s = k.next();
-							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(
-									options.normalizeStereotype(name)));
-							fStereotypes.put(s, st);
-							result.addDebug(null, 10019, name, s);
-						}
-						found = true;
-						break;
-					}
+			if (baseClass.equals("Dependency") && Options.depStereotypes.contains(name.toLowerCase())) {
+				
+				Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				if (ids.size() == 0) {
+					ids = getOwnerId(n1);
 				}
+				for (Iterator<String> k = ids.iterator(); k
+						.hasNext();) {
+					s = k.next();
+					Stereotypes st = options.stereotypesFactory();
+					st.add(options.internalize(
+							options.normalizeStereotype(name)));
+					fStereotypes.put(s, st);
+					result.addDebug(null, 10019, name, s);
+				}
+				found = true;
 			}
 
-			if (baseClass.equals("Attribute")
-					|| baseClass.equals("AssociationEnd")) {
-				for (int i = 0; i < Options.propertyStereotypes.length; i++) {
-					if (name.toLowerCase()
-							.equals(Options.propertyStereotypes[i])) {
-						Vector<String> ids = idsOfProperty(n1,
-								"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
-						if (ids.size() == 0) {
-							ids = getOwnerId(n1);
-						}
-						for (Iterator<String> k = ids.iterator(); k
-								.hasNext();) {
-							s = k.next();
-							Stereotypes st = options.stereotypesFactory();
-							st.add(options.internalize(
-									options.normalizeStereotype(name)));
-							fStereotypes.put(s, st);
-							result.addDebug(null, 10019, name, s);
-						}
-						found = true;
-						break;
-					}
+			if ((baseClass.equals("Attribute")
+					|| baseClass.equals("AssociationEnd")) && Options.propertyStereotypes.contains(name.toLowerCase())) {
+				
+				Vector<String> ids = idsOfProperty(n1,
+						"Foundation.Extension_Mechanisms.Stereotype.extendedElement");
+				if (ids.size() == 0) {
+					ids = getOwnerId(n1);
 				}
+				for (Iterator<String> k = ids.iterator(); k
+						.hasNext();) {
+					s = k.next();
+					Stereotypes st = options.stereotypesFactory();
+					st.add(options.internalize(
+							options.normalizeStereotype(name)));
+					fStereotypes.put(s, st);
+					result.addDebug(null, 10019, name, s);
+				}
+				found = true;
 			}
 
 			if (!found) {

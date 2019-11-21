@@ -53,6 +53,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -156,20 +158,25 @@ public class Options {
 	public static final String GCSR_ENC = "gcsr".toLowerCase();
 
 	/** Well known stereotypes */
-	public static final String[] classStereotypes = { "codelist", "enumeration",
+	public static final Set<String> classStereotypes = Stream.of( "codelist", "enumeration",
 			"datatype", "featuretype", "type", "basictype", "interface",
 			"union", "abstract", "fachid", "schluesseltabelle", "adeelement",
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
-			"aixmextension", "retired" };
-	public static final String[] assocStereotypes = { "disjoint", "retired" };
+			"aixmextension", "retired" )
+			    .collect(Collectors.toSet());
+	public static final Set<String> assocStereotypes = Stream.of( "disjoint", "retired" )
+	    .collect(Collectors.toSet());
 
-	public static final String[] propertyStereotypes = { "voidable",
+	public static final Set<String> propertyStereotypes = Stream.of( "voidable",
 			"identifier", "version", "property", "estimated", "enum",
-			"retired", "propertymetadata" };
-	public static final String[] packageStereotypes = { "application schema",
-			"schema", "bundle", "leaf", "retired" };
-	public static final String[] depStereotypes = { "import", "include",
-			"retired" };
+			"retired", "propertymetadata" )
+		    .collect(Collectors.toSet());
+	public static final Set<String> packageStereotypes = Stream.of( "application schema",
+			"schema", "bundle", "leaf", "retired" )
+			    .collect(Collectors.toSet());
+	public static final Set<String> depStereotypes = Stream.of( "import", "include",
+			"retired" )
+	    .collect(Collectors.toSet());
 
 	/** Carriage Return and Line Feed characters. */
 	public static final String CRLF = "\r\n";
@@ -562,6 +569,8 @@ public class Options {
 	protected boolean useStringInterning = false;
 	protected boolean dontConstructAssociationNames = false;
 	protected boolean allowAllTags = false;
+	protected boolean allowAllStereotypes = false;
+	protected Set<String> addedStereotypes = new HashSet<>();
 	protected String language = "en";
 
 	/**
@@ -1903,6 +1912,23 @@ public class Options {
 					&& addTaggedValues_value.trim().equals("*")) {
 				this.allowAllTags = true;
 			}
+			
+			String addStereotypes_value = parameter("addStereotypes");
+
+			if (StringUtils.isNotBlank(addStereotypes_value)) {
+
+			    if(addStereotypes_value.trim().equals("*")) {
+				this.allowAllStereotypes = true;
+			    } else {
+				String[] as = StringUtils.split(addStereotypes_value, ",");
+				for(String s : as) {
+				    if(StringUtils.stripToNull(s) != null) {
+					this.addedStereotypes.add(s.trim());
+				    }
+				}
+			    }
+			}
+			
 
 			String language_value = inputConfig.getParameters()
 					.get(PARAM_LANGUAGE);
@@ -4422,6 +4448,14 @@ public class Options {
 
 	public boolean allowAllTags() {
 		return this.allowAllTags;
+	}
+	
+	public boolean allowAllStereotypes() {
+		return this.allowAllStereotypes;
+	}
+	
+	public Set<String> addedStereotypes() {
+	    return this.addedStereotypes;
 	}
 
 	/**

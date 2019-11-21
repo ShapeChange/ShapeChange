@@ -64,4 +64,20 @@ public class ModelExportTest extends WindowsBasicTest {
 				"testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/scxml",
 				"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/reference/scxml");
 	}
+	
+	@Test
+	public void testModelExport_addStereotypes() {
+
+		multiTest(
+				"src/test/resources/modelExport/addStereotypes/test_addStereotypes_all.xml",
+				new String[] { "xml" },
+				"testResults/modelExport/addStereotypes/results/all",
+				"src/test/resources/modelExport/addStereotypes/reference/results/all");
+		
+		multiTest(
+			"src/test/resources/modelExport/addStereotypes/test_addStereotypes_some.xml",
+			new String[] { "xml" },
+			"testResults/modelExport/addStereotypes/results/some",
+			"src/test/resources/modelExport/addStereotypes/reference/results/some");
+	}
 }
