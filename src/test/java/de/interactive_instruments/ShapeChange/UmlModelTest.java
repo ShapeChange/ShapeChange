@@ -76,4 +76,14 @@ public class UmlModelTest extends WindowsBasicTest {
 				"testResults/uml/mergeConstraintCommentsIntoText/results",
 				"src/test/resources/uml/mergeConstraintCommentsIntoText/reference/results");
 	}
+	
+	@Test
+	public void testAuthorAndStatus() {
+
+		multiTest(
+				"src/test/resources/uml/authorAndStatus/test_uml_authorAndStatus.xml",
+				new String[] { "eap" },
+				"testResults/uml/authorAndStatus/results",
+				"src/test/resources/uml/authorAndStatus/reference/results");
+	}
 }

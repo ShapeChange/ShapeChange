@@ -5,16 +5,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="input">
-		<parameter name="inputModelType" value="SCXML" />
+		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/mergeConstraintCommentsIntoText/sc.xml" />
-		<parameter name="scxmlXsdLocation" value="src/main/resources/schema/ShapeChangeExportedModel.xsd"/>
+			value="src/test/resources/uml/authorAndStatus/test_uml_authorAndStatus.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
-		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="checkingConstraints" value="disabled" />
 		<parameter name="dontConstructAssociationNames" value="true" />
 		<parameter name="extractSeparator" value="--" />
-		<parameter name="addTaggedValues" value="test1,test2"/>
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes" />
 			<DescriptorSource descriptor="alias" source="ea:alias" />
@@ -32,7 +30,7 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/uml/mergeConstraintCommentsIntoText/log.xml" />
+		<parameter name="logFile" value="testResults/uml/authorAndStatus/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -42,11 +40,12 @@
 	<targets>		
 		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel"
 			mode="enabled" inputs="model">
-			<targetParameter name="outputDirectory" value="testResults/uml/mergeConstraintCommentsIntoText/results/eap" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="outputDirectory" value="testResults/uml/authorAndStatus/results/eap" />
 			<targetParameter name="documentationTemplate" value="[[documentation]]" />
-			<targetParameter name="omitOutputPackageDateTime" value="true" />
-			<targetParameter name="mergeConstraintCommentsIntoText" value="true" />
+			<targetParameter name="omitOutputPackageDateTime"
+				value="true" />
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="eaStatus" value="Test Status"/>
 			<targetParameter name="eapTemplate"
 				value="src/main/resources/templates/UmlModel_template.eap" />
 			<mapEntries>

@@ -47,6 +47,16 @@ public class UmlModelConstants {
    * UML model will be created.
    */
   public static final String PARAM_OUTPUT_DIR = "outputDirectory";
+  
+  /**
+   * Optional (default is determined by the EA process) - Value for the field 'Author' of an EA element.
+   */
+  public static final String PARAM_EA_AUTHOR = "eaAuthor";
+  
+  /**
+   * Optional (default is determined by the EA process) - Value for the field 'Status' of an EA element.
+   */
+  public static final String PARAM_EA_STATUS = "eaStatus";
 
   /**
    * Alias: none

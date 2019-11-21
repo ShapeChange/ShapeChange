@@ -134,6 +134,9 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	 * <code>null</code>.
 	 */
 	protected String tablespace;
+	
+	protected String author = null;
+	protected String status = null;
 
 	protected EASupportedDBMS eadbms;
 
@@ -167,6 +170,12 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		dbVersion = options.parameterAsString(sqlddl.getClass().getName(),
 				DatabaseModelConstants.PARAM_DB_VERSION, null, false, true);
+		
+		author = options.parameterAsString(sqlddl.getClass().getName(),
+			DatabaseModelConstants.PARAM_EA_AUTHOR, null, false, true);
+		
+		status = options.parameterAsString(sqlddl.getClass().getName(),
+			DatabaseModelConstants.PARAM_EA_STATUS, null, false, true);
 
 		tablespace = options.parameterAsString(sqlddl.getClass().getName(),
 				DatabaseModelConstants.PARAM_TABLESPACE, null, false, true);
@@ -317,6 +326,8 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 			}
 			Element tableElmt = EARepositoryUtil.createEAClass(repository,
 					table.getName(), eaPkgID);
+			
+			setCommonElementFields(tableElmt);
 
 			this.eaElementIDByTable.put(table, tableElmt.GetElementID());
 
@@ -508,6 +519,17 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 		} catch (EAException e) {
 			result.addError(this, 104, table.getName(), e.getMessage());
 		}
+	}
+
+	private void setCommonElementFields(Element e) throws EAException {
+
+	    if(author != null) {
+		EAElementUtil.setEAAuthor(e, author);
+	    }
+	    
+	    if(status != null) {
+		EAElementUtil.setEAStatus(e, status);
+	    }
 	}
 
 	@Override

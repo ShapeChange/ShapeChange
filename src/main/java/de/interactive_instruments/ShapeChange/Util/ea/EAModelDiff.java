@@ -1014,8 +1014,11 @@ public class EAModelDiff {
 					refRep.GetConnectorByID(
 							refElmt.GetAssociationClassConnectorID()));
 		}
+		
+		result &= similar(elmtInfo.getModelPath(), "Author", elmt.GetAuthor(),
+			refElmt.GetAuthor());
 
-		// Ignore Author, BaseClasses (should be checked via connectors),
+		// Ignore BaseClasses (should be checked via connectors),
 		// ClassifierID, ClassifierName, ClassifierType, Complexity,
 		// CompositeDiagram
 

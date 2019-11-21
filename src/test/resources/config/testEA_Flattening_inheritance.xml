@@ -71,6 +71,7 @@
 		</Target>
 <!-- 		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel" mode="enabled" inputs="step1"> -->
 <!-- 		  <targetParameter name="modelFilename" value="testResults/flattening/inheritance/uml/flattenedInheritance.eap"/> -->
+<!-- 			<targetParameter name="eaAuthor" value="echterhoff"/> -->
 <!-- 		</Target> -->
 	</targets>
 </ShapeChangeConfiguration>

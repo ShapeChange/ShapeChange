@@ -15,6 +15,7 @@
 	<targets>
 		<Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel" mode="enabled">
 			<targetParameter name="modelFilename" value="src/test/resources/test_export_target.eap"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

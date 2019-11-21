@@ -42,6 +42,7 @@
 			mode="enabled" inputs="model">
 			<targetParameter name="outputDirectory"
 				value="testResults/uml/linkedDocument/eap" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<targetParameter name="omitOutputPackageDateTime"
 				value="true" />
 			<targetParameter name="eapTemplate"

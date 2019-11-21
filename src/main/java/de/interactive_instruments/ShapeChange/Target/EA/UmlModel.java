@@ -103,6 +103,8 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static String outputFilename = null;
     private static String documentationTemplate = null;
     private static String documentationNoValue = null;
+    private static String author = null;
+    private static String status = null;
     private static boolean includeAssociationEndOwnership = false;
     private static boolean mergeConstraintCommentsIntoText = false;
     private static Pattern ignoreTaggedValuesPattern = null;
@@ -146,6 +148,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    // change the default documentation template?
 	    documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
 	    documentationNoValue = options.parameter(this.getClass().getName(), "documentationNoValue");
+	    
+	    author = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_AUTHOR,null,false,true);
+	    status = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_STATUS,null,false,true);
 
 	    includeAssociationEndOwnership = options.parameterAsBoolean(this.getClass().getName(),
 		    UmlModelConstants.PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
@@ -523,6 +528,14 @@ public class UmlModel implements SingleTarget, MessageSource {
     private void cloneStandarddItems(Element e, Info i) {
 
 	try {
+	    
+	    if(author != null) {
+		EAElementUtil.setEAAuthor(e, author);
+	    }
+	    
+	    if(status != null) {
+		EAElementUtil.setEAStatus(e, status);
+	    }
 
 	    EAElementUtil.setEAAlias(e, i.aliasName());
 
@@ -773,6 +786,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 	includeAssociationEndOwnership = false;
 	mergeConstraintCommentsIntoText = false;
 	ignoreTaggedValuesPattern = null;
+	
+	author = null;
+	status = null;
     }
 
     /**
