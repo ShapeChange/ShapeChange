@@ -1155,7 +1155,7 @@ public class Config implements SingleTarget, MessageSource {
 						// ... unless we have a machine readable mapping of code values to readable text
 						if (cix.matches(ConfigConstants.RULE_TGT_LDP_CLS_CODELIST)) {
 							if (!mapCL.containsKey(cix.name())) {
-								// Look for the first "codeListXML" tagged value that has a http URI
+								// Look for the first "codeList" tagged value that has a http URI
 								String sa[] = cix.taggedValuesForTag(clUrlTV);
 								if (sa!=null && sa.length>0) {
 									for (String surl : sa) {

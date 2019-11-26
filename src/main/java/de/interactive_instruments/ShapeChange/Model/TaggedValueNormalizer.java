@@ -83,10 +83,10 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by other encoding rules
      */
-    protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", "xsdDerivation",
-	    "gmlAsGroup", "length", "maxLength", "base", "rangeMinimum", "rangeMaximum", "default", "nilReasonAllowed",
-	    "gmlImplementedByNilReason", "implementedByNilReason", "primaryCode", "secondaryCode", "oclExpressions",
-	    "schPatterns", "unitMeasure", "voidable", "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
+    protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", 
+	    "gmlAsGroup", "length", "maxLength", "base", "rangeMinimum", "rangeMaximum", "nilReasonAllowed",
+	    "gmlImplementedByNilReason", "implementedByNilReason", "primaryCode", "oclExpressions",
+	    "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
 	    "suppress", "codeListValuePattern", "codeListRepresentation", "uomResourceURI", "uomResourceValuePattern",
 	    "uomResourceRepresentation", "physicalQuantity", "recommendedMeasure", "noncomparableMeasure",
 	    "asXMLAttribute", "soft-typed", "parent", "AAA:Kennung", "AAA:Datum", "AAA:Organisation", "AAA:Modellart",
@@ -100,7 +100,7 @@ public class TaggedValueNormalizer {
 	    "scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique", "codelistType", "sqlOnUpdate",
 	    "sqlOnDelete", "shortName", "codeListSource", "codeListSourceCharset", "codeListSourceRepresentation",
 	    "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
-	    "arcgisSubtypeInitialValues", "codeListXML", "reportable", "dissolveAssociationAttributeType",
+	    "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
 	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType")
 	    .collect(Collectors.toSet());
 
@@ -122,7 +122,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(arcgisTags);
 	allowedTags.addAll(owlTags);
 	allowedTags.addAll(shapeChangeTags);
-	
+		
 	for (String s : options.parameter("representTaggedValues").split("\\,"))
 	    allowedTags.add(s.trim());
 	for (String s : options.parameter("addTaggedValues").split("\\,"))
