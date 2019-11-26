@@ -4608,4 +4608,12 @@ public class Options {
 	public InputConfiguration getInputConfig() {
 		return this.inputConfig;
 	}
+
+	public boolean constraintLoadingEnabled() {
+	    String value = parameter("checkingConstraints");
+	    if(StringUtils.isBlank(value)) {
+		value = parameter("constraintLoading");
+	    }
+	    return value == null || !value.equalsIgnoreCase("disabled");
+	}
 }

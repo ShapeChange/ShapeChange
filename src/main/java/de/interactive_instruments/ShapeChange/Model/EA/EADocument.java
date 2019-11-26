@@ -331,8 +331,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    ci.establishAssociations();
 	}
 
-	String checkingConstraints = options.parameter("checkingConstraints");
-	if (checkingConstraints == null || !checkingConstraints.toLowerCase().trim().equals("disabled")) {
+	if (options.constraintLoadingEnabled()) {
 	    StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_READCONSTARINTS);
 
 	    // TODO The following may be removed when constraints have been

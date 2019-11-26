@@ -74,8 +74,7 @@ public abstract class ModelImpl implements Model {
 		if (postprocessed)
 			return;
 
-		if (options().parameter("checkingConstraints") == null || options()
-				.parameter("checkingConstraints").equalsIgnoreCase("enabled")) {
+		if (options().constraintLoadingEnabled()) {
 			postprocessFolConstraints();
 		}
 

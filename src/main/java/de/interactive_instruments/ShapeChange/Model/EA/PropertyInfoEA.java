@@ -1050,8 +1050,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			constraintsCache = new Vector<Constraint>();
 
 			// Constraints disabled?
-			String check = document.options.parameter("checkingConstraints");
-			if (check != null && check.equalsIgnoreCase("disabled"))
+			if (!document.options.constraintLoadingEnabled())
 				return;
 
 			// Constraints for properties irrelevant?

@@ -316,8 +316,7 @@ public class GenericPropertyContentHandler
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
 
-			String check = options.parameter("checkingConstraints");
-			if ("disabled".equalsIgnoreCase(check)
+			if (!options.constraintLoadingEnabled()
 					|| !options.isConstraintCreationForProperties()) {
 				/*
 				 * drop constraint content handlers so that updating the

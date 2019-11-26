@@ -853,8 +853,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			// Allocate cache
 			constraintsCache = new Vector<Constraint>();
 			// Constraints disabled?
-			String check = document.options.parameter("checkingConstraints");
-			if (check != null && check.equalsIgnoreCase("disabled"))
+			if (!document.options.constraintLoadingEnabled())
 				return;
 
 			// Constraints for this class category irrelevant?
