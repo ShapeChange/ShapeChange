@@ -60,6 +60,7 @@ import org.w3c.dom.NodeList;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -1382,6 +1383,23 @@ public class Config implements SingleTarget, MessageSource {
 		if (jsongeometrytype!=null)
 			json.put("geometryType", jsongeometrytype);		
 	}	
+	
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-ldp-cls-non-abstract-feature-types-as-collection");
+		r.addRule("rule-ldp-cls-table-per-feature-type");
+		r.addRule("rule-ldp-cls-id-field");
+		r.addRule("rule-ldp-cls-generate-codelist");
+		r.addRule("rule-ldp-all-names-in-lowercase");
+		r.addRule("rule-ldp-all-names-max-length");
+		r.addRule("rule-ldp-prop-all-datatype-relations-as-n-to-m-relations");
+		r.addRule("rule-ldp-prop-all-featuretype-relations-as-n-to-m-relations");
+		r.addRule("rule-ldp-prop-multiple-single-values-as-1-to-n-relations");
+		r.addRule("rule-ldp-prop-separate-geometry-table");
+		r.addRule("rule-ldp-prop-all-codelist-values-as-strings");
+		r.addRule("rule-ldp-cls-oneo-metadata");
+	}
 		
 	@Override
 	public String message(int mnr) {

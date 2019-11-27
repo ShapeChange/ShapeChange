@@ -49,9 +49,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -99,6 +97,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import de.interactive_instruments.ShapeChange.DefaultModelProvider;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -3366,6 +3365,11 @@ public class FeatureCatalogue
 				javaOptions = jo_tmp.trim();
 			}
 		}
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
 	}
 
 	/**

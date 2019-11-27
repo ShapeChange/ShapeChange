@@ -67,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -4940,6 +4941,30 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		} catch (EAException e) {
 			result.addError(this, 10004, pi.name(), ci.name(), e.getMessage());
 		}
+	}
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-arcgis-all-postprocess-removeUnusedCodedValueDomains");
+		r.addRule("rule-arcgis-all-precision");
+		r.addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		r.addRule("rule-arcgis-all-representTaggedValues");
+		r.addRule("rule-arcgis-all-scale");
+		r.addRule("rule-arcgis-all-subtypes");
+		r.addRule("rule-arcgis-cls-hasM");
+		r.addRule("rule-arcgis-cls-hasZ");
+		r.addRule("rule-arcgis-cls-identifierStereotype");
+		r.addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		r.addRule("rule-arcgis-prop-attIndex");
+		r.addRule("rule-arcgis-prop-initialValue");
+		r.addRule("rule-arcgis-prop-initialValueByAlias");
+		r.addRule("rule-arcgis-prop-isNullable");
+		r.addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
+		r.addRule("rule-arcgis-prop-lengthFromTaggedValue");
+		r.addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
+		r.addRule("rule-arcgis-prop-precision"); // deprecated
+		r.addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
+		r.addRule("rule-arcgis-prop-scale"); // deprecated
 	}
 
 	@Override

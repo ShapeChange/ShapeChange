@@ -794,14 +794,14 @@ public abstract class InfoImpl implements Info {
 		}
 		if (s != null)
 			s = s.toLowerCase();
-		if (!options().encRuleExists(s)) {
+		if (!options().getRuleRegistry().encRuleExists(s)) {
 			result().addError(null, 181, s, platform);
 		}
 		return s;
 	}
 
 	public boolean matches(String rule) {
-
+	    
 		String encRule = null;
 		String[] ra = rule.toLowerCase().split("-", 4);
 		/*
@@ -814,7 +814,7 @@ public abstract class InfoImpl implements Info {
 		/*
 		 * test if the rule is known, if not it cannot match
 		 */
-		if (!options().hasRule(rule)) {
+		if (!options().getRuleRegistry().hasRule(rule)) {
 			result().addError(null, 164, rule);
 			return false;
 		}
@@ -896,35 +896,35 @@ public abstract class InfoImpl implements Info {
 
 			encRule = encodingRule("xsd");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("json");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("rdf");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("fc");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("sch");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("sql");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("cdb");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			encRule = encodingRule("cldml");
 			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+				res = res || options().getRuleRegistry().hasRule(rule, encRule);
 
 			return res;
 
@@ -935,7 +935,7 @@ public abstract class InfoImpl implements Info {
 
 			if (encRule != null) {
 
-				boolean encRuleHasRule = options().hasRule(rule, encRule);
+				boolean encRuleHasRule = options().getRuleRegistry().hasRule(rule, encRule);
 
 				if (encRuleHasRule) {
 

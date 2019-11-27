@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -652,6 +653,242 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	}
 	return false;
+    }
+    
+    @Override
+    public void registerRulesAndRequirements(RuleRegistry r) {
+
+	/*
+	 * mandatory rules
+	 */
+	r.addRule("req-xsd-pkg-xsdDocument-unique");
+	r.addRule("req-xsd-cls-name-unique");
+	r.addRule("req-xsd-cls-ncname");
+	r.addRule("req-xsd-prop-data-type");
+	r.addRule("req-xsd-prop-value-type-exists");
+	r.addRule("req-xsd-prop-ncname");
+	r.addRule("rule-xsd-pkg-contained-packages");
+	r.addRule("rule-xsd-pkg-dependencies");
+	r.addRule("rule-xsd-cls-union-as-choice");
+	r.addRule("rule-xsd-cls-unknown-as-object");
+	r.addRule("rule-xsd-cls-sequence");
+	r.addRule("rule-xsd-cls-object-element");
+	r.addRule("rule-xsd-cls-type");
+	r.addRule("rule-xsd-cls-property-type");
+	r.addRule("rule-xsd-cls-local-properties");
+	/*
+	 * Associate these with a core encoding rule
+	 */
+	r.addRule("req-xsd-pkg-xsdDocument-unique", "*");
+	r.addRule("req-xsd-cls-name-unique", "*");
+	r.addRule("req-xsd-cls-ncname", "*");
+	r.addRule("req-xsd-prop-data-type", "*");
+	r.addRule("req-xsd-prop-value-type-exists", "*");
+	r.addRule("req-xsd-prop-ncname", "*");
+	r.addRule("rule-xsd-pkg-contained-packages", "*");
+	r.addRule("rule-xsd-pkg-dependencies", "*");
+	r.addRule("rule-xsd-cls-unknown-as-object", "*");
+	r.addRule("rule-xsd-cls-object-element", "*");
+	r.addRule("rule-xsd-cls-type", "*");
+	r.addRule("rule-xsd-cls-property-type", "*");
+	r.addRule("rule-xsd-cls-local-properties", "*");
+	r.addRule("rule-xsd-cls-union-as-choice", "*");
+	r.addRule("rule-xsd-cls-sequence", "*");
+	/*
+	 * GML 3.2 / ISO 19136:2007 rules
+	 */
+	r.addRule("req-xsd-cls-generalization-consistent");
+	r.addRule("rule-xsd-all-naming-gml");
+	r.addRule("rule-xsd-cls-global-enumeration");
+	r.addRule("rule-xsd-cls-codelist-asDictionary");
+	r.addRule("rule-xsd-cls-noPropertyType");
+	r.addRule("rule-xsd-cls-byValuePropertyType");
+	r.addRule("rule-xsd-cls-standard-gml-property-types");
+	r.addRule("rule-xsd-pkg-gmlProfileSchema");
+	r.addRule("rule-xsd-prop-defaultCodeSpace");
+	r.addRule("rule-xsd-prop-inlineOrByReference");
+	r.addRule("rule-xsd-prop-reverseProperty");
+	r.addRule("rule-xsd-prop-targetElement");
+	/*
+	 * add the iso19136_2007 encoding rule and extend the core encoding rule
+	 */
+	r.addExtendsEncRule("iso19136_2007", "*");
+	r.addRule("req-xsd-cls-generalization-consistent", "iso19136_2007");
+	r.addRule("rule-xsd-all-naming-gml", "iso19136_2007");
+	r.addRule("rule-xsd-cls-global-enumeration", "iso19136_2007");
+	r.addRule("rule-xsd-cls-codelist-asDictionary", "iso19136_2007");
+	r.addRule("rule-xsd-cls-standard-gml-property-types", "iso19136_2007");
+	r.addRule("rule-xsd-cls-noPropertyType", "iso19136_2007");
+	r.addRule("rule-xsd-cls-byValuePropertyType", "iso19136_2007");
+	r.addRule("rule-xsd-pkg-gmlProfileSchema", "iso19136_2007");
+	r.addRule("rule-xsd-prop-targetElement", "iso19136_2007");
+	r.addRule("rule-xsd-prop-reverseProperty", "iso19136_2007");
+	r.addRule("rule-xsd-prop-defaultCodeSpace", "iso19136_2007");
+	r.addRule("rule-xsd-prop-inlineOrByReference", "iso19136_2007");
+	/*
+	 * additional GML 3.3 rules
+	 */
+	r.addRule("rule-xsd-cls-codelist-asDictionaryGml33");
+	r.addRule("rule-xsd-rel-association-classes");
+	/*
+	 * add the gml33 encoding rule and extend the core encoding rule
+	 */
+	r.addExtendsEncRule("gml33", "*");
+	r.addRule("req-xsd-cls-generalization-consistent", "gml33");
+	r.addRule("rule-xsd-all-naming-gml", "gml33");
+	r.addRule("rule-xsd-cls-global-enumeration", "gml33");
+	r.addRule("rule-xsd-cls-codelist-asDictionaryGml33", "gml33");
+	r.addRule("rule-xsd-cls-standard-gml-property-types", "gml33");
+	r.addRule("rule-xsd-cls-noPropertyType", "gml33");
+	r.addRule("rule-xsd-cls-byValuePropertyType", "gml33");
+	r.addRule("rule-xsd-pkg-gmlProfileSchema", "gml33");
+	r.addRule("rule-xsd-prop-targetElement", "gml33");
+	r.addRule("rule-xsd-prop-reverseProperty", "gml33");
+	r.addRule("rule-xsd-prop-defaultCodeSpace", "gml33");
+	r.addRule("rule-xsd-prop-inlineOrByReference", "gml33");
+	r.addRule("rule-xsd-rel-association-classes", "gml33");
+	/*
+	 * ISO/TS 19139:2007 rules
+	 */
+	r.addRule("rule-xsd-all-naming-19139");
+	r.addRule("rule-xsd-cls-standard-19139-isoType");
+	r.addRule("rule-xsd-cls-standard-19139-property-types");
+	r.addRule("rule-xsd-cls-enum-object-element");
+	r.addRule("rule-xsd-cls-enum-property-type");
+
+	/*
+	 * add the iso19139_2007 encoding rule and extend the core encoding rule
+	 */
+	r.addExtendsEncRule("iso19139_2007", "*");
+	r.addRule("rule-xsd-cls-enum-object-element", "iso19139_2007");
+	r.addRule("rule-xsd-cls-enum-property-type", "iso19139_2007");
+	r.addRule("rule-xsd-cls-global-enumeration", "iso19139_2007");
+	r.addRule("rule-xsd-cls-standard-19139-property-types", "iso19139_2007");
+	r.addRule("rule-xsd-all-naming-19139", "iso19139_2007");
+	/*
+	 * SWE Common Data Model 2.0 rules
+	 */
+	r.addRule("rule-xsd-all-naming-swe");
+	r.addRule("rule-xsd-prop-xsdAsAttribute");
+	r.addRule("rule-xsd-prop-soft-typed");
+	r.addRule("rule-xsd-cls-union-as-group-property-type");
+	r.addRule("rule-xsd-cls-standard-swe-property-types");
+	r.addRule("rule-xsd-prop-initialValue");
+	/*
+	 * add the ogcSweCommon2 encoding rule and extend the core encoding rule
+	 */
+	r.addExtendsEncRule("ogcSweCommon2", "*");
+	r.addRule("req-xsd-cls-generalization-consistent", "ogcSweCommon2");
+	r.addRule("rule-xsd-all-naming-swe", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-global-enumeration", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-codelist-asDictionary", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-standard-swe-property-types", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-noPropertyType", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-byValuePropertyType", "ogcSweCommon2");
+	r.addRule("rule-xsd-pkg-gmlProfileSchema", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-targetElement", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-reverseProperty", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-defaultCodeSpace", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-inlineOrByReference", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-xsdAsAttribute", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-soft-typed", "ogcSweCommon2");
+	r.addRule("rule-xsd-cls-union-as-group-property-type", "ogcSweCommon2");
+	r.addRule("rule-xsd-prop-initialValue", "ogcSweCommon2");
+
+	/*
+	 * additional GML 2.1 rules
+	 */
+	r.addRule("rule-xsd-all-gml21");
+	r.addRule("rule-xsd-cls-codelist-anonymous-xlink");
+	/*
+	 * add the gml21 encoding rule and extend the core encoding rule
+	 */
+	r.addExtendsEncRule("gml21", "iso19136_2007");
+	r.addRule("rule-xsd-all-gml21", "gml21");
+	r.addRule("rule-xsd-cls-codelist-anonymous-xlink", "gml21");
+
+
+	/*
+	 * non-standard extensions - requirements
+	 */
+	r.addRule("req-all-all-documentation");
+	r.addRule("req-all-prop-sequenceNumber");
+	r.addRule("req-xsd-pkg-targetNamespace");
+	r.addRule("req-xsd-pkg-xmlns");
+	r.addRule("req-xsd-pkg-namespace-schema-only");
+	r.addRule("rec-xsd-pkg-version");
+	r.addRule("req-xsd-pkg-xsdDocument");
+	r.addRule("req-xsd-pkg-dependencies");
+	r.addRule("req-xsd-cls-codelist-asDictionary-true");
+	r.addRule("req-xsd-cls-codelist-extensibility-values");
+	r.addRule("req-xsd-cls-codelist-extensibility-vocabulary");
+	r.addRule("req-xsd-cls-codelist-no-supertypes");
+	r.addRule("req-xsd-cls-datatype-noPropertyType");
+	r.addRule("req-xsd-cls-enum-no-supertypes");
+	r.addRule("req-xsd-cls-mixin-supertypes");
+	r.addRule("req-xsd-cls-mixin-supertypes-overrule");
+	r.addRule("req-xsd-cls-objecttype-byValuePropertyType");
+	r.addRule("req-xsd-cls-objecttype-noPropertyType");
+	r.addRule("req-xsd-cls-suppress-no-properties");
+	r.addRule("req-xsd-cls-suppress-subtype");
+	r.addRule("req-xsd-cls-suppress-supertype");
+	r.addRule("req-xsd-prop-codelist-obligation");
+	/*
+	 * non-standard extensions - conversion rules
+	 */
+	r.addRule("rule-xsd-all-descriptorAnnotation");
+	r.addRule("rule-xsd-all-globalIdentifierAnnotation");
+	r.addRule("rule-xsd-all-notEncoded");
+	r.addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
+	r.addRule("rule-xsd-cls-adeelement");
+	r.addRule("rule-xsd-cls-basictype");
+	r.addRule("rule-xsd-cls-codelist-constraints");
+	r.addRule("rule-xsd-cls-codelist-constraints2");
+	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
+	r.addRule("rule-xsd-cls-codelist-gmlsf");
+	r.addRule("rule-xsd-cls-enum-subtypes");
+	r.addRule("rule-xsd-cls-enum-supertypes");
+	r.addRule("rule-xsd-cls-mixin-classes-as-group");
+	r.addRule("rule-xsd-cls-mixin-classes");
+	r.addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
+	r.addRule("rule-xsd-cls-no-abstract-classes");
+	r.addRule("rule-xsd-cls-no-base-class");
+	r.addRule("rule-xsd-cls-no-gml-types");
+	r.addRule("rule-xsd-cls-okstra-fid");
+	r.addRule("rule-xsd-cls-okstra-lifecycle");
+	r.addRule("rule-xsd-cls-okstra-schluesseltabelle");
+	r.addRule("rule-xsd-cls-suppress");
+	r.addRule("rule-xsd-cls-union-asCharacterString");
+	r.addRule("rule-xsd-cls-union-asGroup");
+	r.addRule("rule-xsd-cls-union-direct");
+	r.addRule("rule-xsd-cls-union-direct-optionality");
+	r.addRule("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets");
+	r.addRule("rule-xsd-prop-att-map-entry");
+	r.addRule("rule-xsd-prop-constrainingFacets");
+	r.addRule("rule-xsd-prop-exclude-derived");
+	r.addRule("rule-xsd-prop-length-size-pattern");
+	r.addRule("rule-xsd-prop-featureType-gmlsf-byReference");
+	r.addRule("rule-xsd-prop-metadata");
+	r.addRule("rule-xsd-prop-metadata-gmlsf-byReference");
+	r.addRule("rule-xsd-prop-nillable");
+	r.addRule("rule-xsd-prop-nilReasonAllowed");
+	r.addRule("rule-xsd-prop-gmlArrayProperty");
+	r.addRule("rule-xsd-prop-gmlListProperty");
+	r.addRule("rule-xsd-prop-qualified-associations");
+	r.addRule("rule-xsd-prop-targetCodeListURI");
+	r.addRule("rule-xsd-all-no-documentation");
+	r.addRule("rule-xsd-cls-local-enumeration");
+	r.addRule("rule-xsd-cls-local-basictype");
+	r.addRule("rule-xsd-pkg-dgiwgsp");
+	r.addRule("rule-xsd-pkg-gmlsf");
+	r.addRule("rule-xsd-pkg-schematron");
+	r.addRule("rule-xsd-all-tagged-values");
+	r.addRule("rule-xsd-cls-adehook");	
+	
+	// AIXM specific rules
+	r.addRule("rule-all-cls-aixmDatatype");
+	// further rules of a more general nature
+	r.addRule("rule-all-prop-uomAsAttribute");
     }
 
     @Override

@@ -65,6 +65,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -789,6 +790,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 	
 	author = null;
 	status = null;
+    }
+    
+    @Override
+    public void registerRulesAndRequirements(RuleRegistry r) {
+	// no rules or requirements defined for this target, thus nothing to do
     }
 
     /**

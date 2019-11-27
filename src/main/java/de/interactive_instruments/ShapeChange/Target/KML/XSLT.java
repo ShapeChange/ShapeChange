@@ -57,6 +57,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Target.Target;
@@ -1622,6 +1623,11 @@ public class XSLT implements Target {
 			e.printStackTrace(System.err);
 		}
 		printed = true;
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	    // no rules or requirements defined for this target, thus nothing to do  
 	}
 
 	@Override

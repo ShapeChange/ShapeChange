@@ -55,6 +55,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
@@ -1014,6 +1015,15 @@ public class ModelExport implements SingleTarget, MessageSource {
 	if (elementContent != null && elementContent.length() > 0) {
 	    writer.dataElement(NS, elementName, elementContent, attributeName, attributeValue);
 	}
+    }
+    
+    @Override
+    public void registerRulesAndRequirements(RuleRegistry r) {
+	r.addRule("rule-exp-all-omitDescriptors");
+	r.addRule("rule-exp-all-omitExistingProfiles");
+	r.addRule("rule-exp-all-restrictExistingProfiles");
+	r.addRule("rule-exp-pkg-allPackagesAreEditable");
+	r.addRule("rule-exp-prop-suppressIsNavigable");
     }
 
     @Override
