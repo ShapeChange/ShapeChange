@@ -172,7 +172,7 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 		case 26:
 			return "Model type not provided.";
 		case 27:
-			return "Model type defining the model implementation is unknown: '$1$'.";
+			return "Using custom model implementation: '$1$'.";
 
 		default:
 			return "(" + this.getClass().getName()

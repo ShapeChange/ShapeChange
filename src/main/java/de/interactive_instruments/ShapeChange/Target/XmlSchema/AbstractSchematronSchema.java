@@ -245,9 +245,14 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	att.setValue(value);
 	e.setAttributeNode(att);
     }
-
+    
     @Override
     public void addAssertion(ClassInfo ci, XpathFragment xpath, String text) {
+	addAssertion(ci,false,xpath,text);
+    }
+
+    @Override
+    public void addAssertion(ClassInfo ci, boolean addToSubtypesInSelectedSchemas, XpathFragment xpath, String text) {
 
 	// Drop abstract classes
 	if (ci.isAbstract())
@@ -300,6 +305,26 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	// Memorize we have output at least one rule
 	assertion = true;
+	
+	if (addToSubtypesInSelectedSchemas) {
+
+	    for (String subtypeId : ci.subtypes()) {
+
+		ClassInfo subtype = model.classById(subtypeId);
+
+		if (model.isInSelectedSchemas(subtype)) {
+
+		    addAssertion(subtype, true, xpath, text);
+
+		    if (!schematronTitleExtended
+			    && !subtype.pkg().targetNamespace().equalsIgnoreCase(ci.pkg().targetNamespace())) {
+			schematronTitleHook
+				.setTextContent(schematronTitleHook.getTextContent() + " and dependent schema(s)");
+			schematronTitleExtended = true;
+		    }
+		}
+	    }
+	}
     }
 
     @Override

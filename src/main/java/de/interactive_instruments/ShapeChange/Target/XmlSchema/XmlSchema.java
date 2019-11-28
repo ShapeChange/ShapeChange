@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -72,6 +73,7 @@ public class XmlSchema implements Target, MessageSource {
     protected SchematronSchema schDoc = null;
     private boolean diagnosticsOnly = false;
     private String outputDirectory;
+    protected ClassInfo defaultVoidReasonType = null;
     private TargetXmlSchemaConfiguration config;
 
     public void initialise(PackageInfo p, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
@@ -95,6 +97,11 @@ public class XmlSchema implements Target, MessageSource {
 	    outputDirectory = options.parameter("outputDirectory");
 	if (outputDirectory == null)
 	    outputDirectory = options.parameter(".");
+
+	String voidReasonType = options.parameterAsString(this.getClass().getName(), "defaultVoidReasonType", null,
+		false, true);
+	defaultVoidReasonType = voidReasonType == null ? null
+		: findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
 
 	String explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(),
 		"schematronQueryBinding", null, false, true);
@@ -166,12 +173,39 @@ public class XmlSchema implements Target, MessageSource {
 		if (c != null && c instanceof OclConstraint && schDoc != null
 			&& ((OclConstraint) c).syntaxTree() != null) {
 
-		    schDoc.addAssertion(ci, (OclConstraint) c); 
+		    schDoc.addAssertion(ci, (OclConstraint) c);
 		}
 	    }
 
 	    for (PropertyInfo propi : ci.properties().values()) {
 
+		// first create value or nil reason assertions, if necessary
+		if (!(ci.category() == Options.CODELIST || ci.category() == Options.ENUMERATION)
+			&& ((propi.nilReasonAllowed() && propi.matches("rule-xsd-prop-nilReasonAllowed"))
+				|| (propi.voidable() && propi.matches("rule-xsd-prop-nillable")))) {
+
+		    if (propi.matches("rule-xsd-prop-valueOrNilReason-constraints")) {
+			addAssertionForValueOrNilReason(ci, propi, model.classByIdOrName(propi.typeInfo()), schDoc);
+		    }
+
+		    if (propi.matches("rule-xsd-prop-nilReason-constraints")) {
+
+			String voidReasonType = propi.taggedValue("voidReasonType");
+			ClassInfo directVoidReasonType = voidReasonType == null ? null
+				: findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
+
+			ClassInfo vrt = directVoidReasonType;
+			if (vrt == null) {
+			    vrt = defaultVoidReasonType;
+			}
+
+			if (vrt != null && vrt.category() == Options.ENUMERATION && vrt.properties().size() > 0) {
+			    addAssertionForNilReasonCheck(ci, propi, vrt, schDoc);
+			}
+		    }
+		}
+
+		// now handle constraints defined on the property
 		List<Constraint> propiCs = propi.constraints();
 
 		Collections.sort(propiCs, new Comparator<Constraint>() {
@@ -339,6 +373,315 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	    break;
 	}
+    }
+
+    /**
+     * Looks up a class, given its name or full name in schema. If the class name
+     * contains '::', then it is assumed to represent a full name of the class
+     * within its schema. The class will then be looked up by this name within the
+     * model. Otherwise, the name is assumed to be the name of a class within the
+     * schema that is currently processed. Therefore, the class will be searched
+     * within the schema.
+     * 
+     * @param className either the simple class name, or the full name of a class
+     *                  within its schema
+     * @return the class, if found, else <code>null</code>
+     */
+    ClassInfo findClassByFullNameInSchemaInModelOrByNameInSchema(String className) {
+
+	if (className.contains("::")) {
+	    return model.classByFullNameInSchema(className);
+	} else {
+	    return model.classes(pi).stream().filter(schemaCi -> schemaCi.name().equalsIgnoreCase(className))
+		    .findFirst().get();
+	}
+    }
+
+    /**
+     * @param cibase class that owns the property
+     * @param pi     the property
+     * @param schDoc
+     */
+    private void addAssertionForNilReasonCheck(ClassInfo cibase, PropertyInfo propi, ClassInfo voidReasonType,
+	    SchematronSchema schDoc) {
+
+	// First, check cases in which no schematron assertion will be created.
+
+	// check if the property itself is encoded as a simple attribute
+	if (pi.matches("rule-xsd-prop-xsdAsAttribute")) {
+	    MessageContext mc = result.addDebug(this, 2006, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	// check if cibase is encoded as an attribute group or as a string
+	if (cibase.category() == Options.UNION && ((cibase.matches("rule-xsd-cls-union-asCharacterString")
+		&& "true".equalsIgnoreCase(cibase.taggedValue("gmlAsCharacterString")))
+		|| (cibase.matches("rule-xsd-cls-union-asGroup")
+			&& "true".equalsIgnoreCase(cibase.taggedValue("gmlAsGroup"))))) {
+	    MessageContext mc = result.addDebug(this, 2007, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	// check if cibase is a mixin encoded as an attribute group
+	if (cibase.category() == Options.MIXIN && cibase.matches("rule-xsd-cls-mixin-classes-as-group")) {
+	    MessageContext mc = result.addDebug(this, 2008, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	schDoc.setQueryBinding("xslt2");
+
+	String enumSequence = voidReasonType.properties().values().stream().map(enumPi -> "'" + enumPi.name() + "'")
+		.sorted().collect(Collectors.joining(", "));
+
+	String xpath = "not(@*:nilReason) or @*:nilReason = (" + enumSequence + ")";
+
+	XpathFragment xpathNilReasonCheck = new XpathFragment(0, xpath, XpathType.BOOLEAN);
+
+	String assertionText = "If a nil reason is given for property " + propi.name()
+		+ ", then it needs to be one of: " + enumSequence;
+
+	schDoc.addAssertionForExplicitProperty(cibase, propi, true, xpathNilReasonCheck, assertionText);
+
+    }
+
+    /**
+     * @param cibase class that owns the property
+     * @param propi  the property
+     * @param typeCi value type of the property
+     * @param schDoc
+     */
+    private void addAssertionForValueOrNilReason(ClassInfo cibase, PropertyInfo propi, ClassInfo typeCi,
+	    SchematronSchema schDoc) {
+
+	// First, check cases in which no schematron assertion will be created.
+
+	// check if the property itself is encoded as a simple attribute
+	if (propi.matches("rule-xsd-prop-xsdAsAttribute")) {
+	    MessageContext mc = result.addDebug(this, 2002, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	// check if the value type of the property is encoded as an attribute (group)
+	MapEntry mea = options.attributeMapEntry(propi.typeInfo().name, cibase.encodingRule("xsd"));
+	MapEntry meag = options.attributeGroupMapEntry(propi.typeInfo().name, cibase.encodingRule("xsd"));
+	boolean unionAsGroup = typeCi != null && typeCi.matches("rule-xsd-cls-union-asGroup");
+	if (mea != null || meag != null || unionAsGroup) {
+	    MessageContext mc = result.addDebug(this, 2003, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	// check if cibase is encoded as an attribute group or as a string
+	if (cibase.category() == Options.UNION && ((cibase.matches("rule-xsd-cls-union-asCharacterString")
+		&& "true".equalsIgnoreCase(cibase.taggedValue("gmlAsCharacterString")))
+		|| (cibase.matches("rule-xsd-cls-union-asGroup")
+			&& "true".equalsIgnoreCase(cibase.taggedValue("gmlAsGroup"))))) {
+	    MessageContext mc = result.addDebug(this, 2004, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	// check if cibase is a mixin encoded as an attribute group
+	if (cibase.category() == Options.MIXIN && cibase.matches("rule-xsd-cls-mixin-classes-as-group")) {
+	    MessageContext mc = result.addDebug(this, 2005, propi.name(), propi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, propi.fullName());
+	    }
+	    return;
+	}
+
+	boolean valueIsSimpleType = isSimpleType(typeCi, propi.typeInfo().name, propi.encodingRule("xsd"));
+
+	schDoc.setQueryBinding("xslt2");
+
+	/*
+	 * Ensure that if there are elements representing the property, then either
+	 * there is only a single such element that is nil, has a nilReason, and no
+	 * value - or all of these elements are not nil, do not have nilReason
+	 * attributes, and have values.
+	 * 
+	 * Take into account different value type categories and encodings.
+	 */
+
+	String piElementXPath = propi.qname();
+
+	String piValueXPath = null;
+
+	if (propi.matches("rule-xsd-prop-metadata-gmlsf-byReference")
+		&& "true".equalsIgnoreCase(propi.taggedValue("isMetadata"))) {
+
+	    piValueXPath = piElementXPath + "/@xlink:href";
+	    schDoc.registerNamespace("xlink");
+
+	} else {
+
+	    if (typeCi != null) {
+
+		if (typeCi.category() == Options.CODELIST) {
+
+		    if (typeCi.matches("rule-xsd-all-naming-19139")) {
+
+			piValueXPath = piElementXPath + "/*";
+
+		    } else if (propi.inClass().matches("rule-xsd-cls-codelist-asDictionaryGml33")
+			    && typeCi.asDictionaryGml33()) {
+
+			piValueXPath = piElementXPath + "/@xlink:href";
+			schDoc.registerNamespace("xlink");
+		    } else {
+
+			piValueXPath = piElementXPath + "/text()";
+		    }
+
+		} else if (typeCi.category() == Options.ENUMERATION) {
+
+		    if (typeCi.matches("rule-xsd-all-naming-19139")) {
+
+			piValueXPath = piElementXPath + "/*";
+
+		    } else {
+
+			piValueXPath = piElementXPath + "/text()";
+		    }
+
+		} else if (typeCi.category() == Options.UNION) {
+
+		    if (typeCi.matches("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets")
+			    && "true".equalsIgnoreCase(typeCi.taggedValue("representsFeatureTypeSet"))) {
+
+			piValueXPath = piElementXPath + "/@xlink:href";
+			schDoc.registerNamespace("xlink");
+
+		    } else {
+
+			// same for GML and ISO 19139 encoding
+			piValueXPath = piElementXPath + "/*";
+		    }
+
+		} else if (typeCi.category() == Options.BASICTYPE) {
+
+		    piValueXPath = piElementXPath + "/text()";
+
+		} else if (typeCi.category() == Options.DATATYPE) {
+
+		    piValueXPath = piElementXPath + "/*";
+
+		} else if (typeCi.category() == Options.FEATURE) {
+
+		    if (typeCi.matches("rule-xsd-prop-featureType-gmlsf-byReference")) {
+
+			piValueXPath = piElementXPath + "/@xlink:href";
+			schDoc.registerNamespace("xlink");
+
+		    } else if (typeCi.matches("rule-xsd-all-naming-19139")) {
+
+			piValueXPath = piElementXPath + "/(* | @xlink:href)";
+			schDoc.registerNamespace("xlink");
+
+		    } else {
+
+			if ("inline".equalsIgnoreCase(propi.inlineOrByReference())) {
+			    piValueXPath = piElementXPath + "/*";
+			} else if ("byreference".equalsIgnoreCase(propi.inlineOrByReference())) {
+			    piValueXPath = piElementXPath + "/@xlink:href";
+			    schDoc.registerNamespace("xlink");
+			} else {
+			    piValueXPath = piElementXPath + "/(* | @xlink:href)";
+			    schDoc.registerNamespace("xlink");
+			}
+		    }
+
+		} else {
+
+		    if (typeCi.matches("rule-xsd-all-naming-19139")) {
+
+			if (!classCanBeReferenced(typeCi)) {
+			    piValueXPath = piElementXPath + "/*";
+			} else {
+			    piValueXPath = piElementXPath + "/(* | @xlink:href)";
+			    schDoc.registerNamespace("xlink");
+			}
+
+		    } else {
+
+			if (valueIsSimpleType) {
+			    piValueXPath = piElementXPath + "/text()";
+			} else if ("inline".equalsIgnoreCase(propi.inlineOrByReference())) {
+			    piValueXPath = piElementXPath + "/*";
+			} else if ("byreference".equalsIgnoreCase(propi.inlineOrByReference())) {
+			    piValueXPath = piElementXPath + "/@xlink:href";
+			    schDoc.registerNamespace("xlink");
+			} else {
+			    piValueXPath = piElementXPath + "/(* | @xlink:href)";
+			    schDoc.registerNamespace("xlink");
+			}
+		    }
+		}
+
+	    } else {
+
+		if (valueIsSimpleType) {
+		    piValueXPath = piElementXPath + "/text()";
+		} else if ("inline".equalsIgnoreCase(propi.inlineOrByReference())
+			|| !options.xmlReferenceable(propi.typeInfo().name, propi.encodingRule("xsd"))) {
+		    piValueXPath = piElementXPath + "/*";
+		} else if ("byreference".equalsIgnoreCase(propi.inlineOrByReference())) {
+		    piValueXPath = piElementXPath + "/@xlink:href";
+		    schDoc.registerNamespace("xlink");
+		} else {
+		    piValueXPath = piElementXPath + "/(* | @xlink:href)";
+		    schDoc.registerNamespace("xlink");
+		}
+	    }
+	}
+
+	schDoc.registerNamespace("xsi");
+
+	String xpath = "not(" + piElementXPath + ") or " + "(count(" + piElementXPath
+		+ "[@xsi:nil='true' and @*:nilReason]) eq 1 and not(" + piValueXPath + ")) or (count(" + piElementXPath
+		+ "[@xsi:nil='true' or @*:nilReason]) eq 0 and count(" + piValueXPath + ") eq count(" + piElementXPath
+		+ "))";
+
+	XpathFragment xpathValueOrNilReason = new XpathFragment(0, xpath, XpathType.BOOLEAN);
+
+	String assertionText = "If there are elements for property " + propi.name()
+		+ ", then either there is only a single such element that is nil, has a nilReason, and no value - or all of these elements are not nil, do not have nilReason attributes, and have values";
+
+	schDoc.addAssertion(cibase, true, xpathValueOrNilReason, assertionText);
+    }
+
+    public boolean isSimpleType(ClassInfo ci, String ciName, String propiEncodingRule) {
+
+	boolean isSimple = false;
+
+	if (ci != null) {
+	    Boolean indicatorSimpleType = XmlSchema.indicatorForObjectElementWithSimpleContent(ci);
+	    isSimple = !XmlSchema.classHasObjectElement(ci) || (indicatorSimpleType != null && indicatorSimpleType);
+	} else {
+	    String tname = ciName;
+	    MapEntry me = options.typeMapEntry(tname, propiEncodingRule);
+	    if (me != null)
+		isSimple = me.p2.equalsIgnoreCase("simple/simple") || me.p2.equalsIgnoreCase("complex/simple");
+	}
+
+	return isSimple;
+
     }
 
     public void write() {
@@ -654,7 +997,7 @@ public class XmlSchema implements Target, MessageSource {
 	}
 	return false;
     }
-    
+
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
@@ -807,7 +1150,6 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-all-gml21", "gml21");
 	r.addRule("rule-xsd-cls-codelist-anonymous-xlink", "gml21");
 
-
 	/*
 	 * non-standard extensions - requirements
 	 */
@@ -872,10 +1214,12 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-prop-metadata-gmlsf-byReference");
 	r.addRule("rule-xsd-prop-nillable");
 	r.addRule("rule-xsd-prop-nilReasonAllowed");
+	r.addRule("rule-xsd-prop-nilReason-constraints");
 	r.addRule("rule-xsd-prop-gmlArrayProperty");
 	r.addRule("rule-xsd-prop-gmlListProperty");
 	r.addRule("rule-xsd-prop-qualified-associations");
 	r.addRule("rule-xsd-prop-targetCodeListURI");
+	r.addRule("rule-xsd-prop-valueOrNilReason-constraints");
 	r.addRule("rule-xsd-all-no-documentation");
 	r.addRule("rule-xsd-cls-local-enumeration");
 	r.addRule("rule-xsd-cls-local-basictype");
@@ -883,8 +1227,8 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-pkg-gmlsf");
 	r.addRule("rule-xsd-pkg-schematron");
 	r.addRule("rule-xsd-all-tagged-values");
-	r.addRule("rule-xsd-cls-adehook");	
-	
+	r.addRule("rule-xsd-cls-adehook");
+
 	// AIXM specific rules
 	r.addRule("rule-all-cls-aixmDatatype");
 	// further rules of a more general nature
@@ -906,6 +1250,24 @@ public class XmlSchema implements Target, MessageSource {
 
 	case 1000:
 	    return "Skipping XML Schema output, as configured.";
+
+	/*
+	 * 2000 - 2999: Schematron assertions (for value or nilReason etc.)
+	 */
+	case 2002:
+	    return "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check for value or nilReason will not be created.";
+	case 2003:
+	    return "??The value type of property '$1$' of class '$2$' is encoded as an attribute (group). A schematron assertion to check for value or nilReason will not be created.";
+	case 2004:
+	    return "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2005:
+	    return "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2006:
+	    return "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check nilReason values will not be created.";
+	case 2007:
+	    return "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
+	case 2008:
+	    return "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

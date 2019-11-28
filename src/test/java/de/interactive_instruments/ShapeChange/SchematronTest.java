@@ -111,4 +111,11 @@ public class SchematronTest extends WindowsBasicTest {
 				new String[] { "sch" }, "testResults/sch/xslt2QueryBinding/results",
 				"src/test/resources/sch/xslt2QueryBinding/reference/results");
 	}
+	
+	@Test
+	public void schematronTest_valueOrNilReason() {
+		multiTest("src/test/resources/sch/valueOrNilReason/testEA_sch_valueOrNilReason.xml",
+				new String[] { "xsd","sch" }, "testResults/sch/valueOrNilReason",
+				"src/test/resources/sch/valueOrNilReason/reference");
+	}
 }

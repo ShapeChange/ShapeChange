@@ -118,6 +118,8 @@ public interface SchematronSchema {
      * as a Schematron &lt;assert> element, which is contained in a proper &lt;rule>
      * context. &lt;let> elements are searched for identities and are merged
      * including the necessary name corrections in the text.
+     * <p>
+     * NOTE: Does NOT add assertions to subtypes of the given class.
      *
      * @param ci    ClassInfo object, which is context to the constraint.
      * @param xpath Assertion embodied in an XpathFragment object.
@@ -125,6 +127,20 @@ public interface SchematronSchema {
      * @param
      */
     public void addAssertion(ClassInfo ci, XpathFragment xpath, String text);
+    
+    /**
+     * Add an assertion statement embodied in an XpathFragment object and output it
+     * as a Schematron &lt;assert> element, which is contained in a proper &lt;rule>
+     * context. &lt;let> elements are searched for identities and are merged
+     * including the necessary name corrections in the text.
+     *
+     * @param ci    ClassInfo object, which is context to the constraint.
+     * @param addToSubtypesInSelectedSchemas - <code>true</code> if the assertion statement shall also be added to subtypes of ci, else <code>false</code>
+     * @param xpath Assertion embodied in an XpathFragment object.
+     * @param text  Explanatory text concerning the assertion
+     * @param
+     */
+    public void addAssertion(ClassInfo ci, boolean addToSubtypesInSelectedSchemas, XpathFragment xpath, String text);
 
     /**
      * Add another OCL constraint and translate it into a Schematron &lt;assert>,

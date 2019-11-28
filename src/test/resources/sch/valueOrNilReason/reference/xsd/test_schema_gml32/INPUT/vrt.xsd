@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vrt="http://example.org/shapechange/sch/valueOrNilReason/external" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/valueOrNilReason/external" version="1.0">
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="VoidReasonCType">
+    <restriction base="string">
+      <enumeration value="bar"/>
+      <enumeration value="foo"/>
+    </restriction>
+  </simpleType>
+</schema>
