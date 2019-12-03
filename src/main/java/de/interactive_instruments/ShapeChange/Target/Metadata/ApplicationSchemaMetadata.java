@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,7 +66,9 @@ import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -89,6 +94,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 	public static int STATUS_RULE_ALL_IDENTIFY_PROFILES = 301500;
 	public static int STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE = 301501;
+	public static int STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = 301502;
 
 	/* ------------------------------------------- */
 	/* --- configuration parameter identifiers --- */
@@ -113,11 +119,43 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 	/**
 	 * This rule identifies which feature and object types directly or
-	 * indirectly make use (as property value type) of one or more of the union or data types
-	 * defined by target parameter
+	 * indirectly make use (as property value type) of one or more of the union
+	 * or data types defined by target parameter
 	 * {@value #PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION}.
 	 */
 	public static final String RULE_ALL_IDENTIFY_TYPE_USAGE = "rule-asm-all-identifyTypeUsage";
+
+	/**
+	 * This rule identifies all properties (maybe including inherited ones, if
+	 * {@link #PARAM_INHERITED_PROPERTIES} is true) of a class that have tagged
+	 * values whose name matches a regular expression defined by
+	 * {@link #PARAM_TAG_NAME_REGEX}. The optional parameter
+	 * {@link #PARAM_TAG_VALUE_REGEX} can be used to restrict the tags to only
+	 * those whose values match the regular expression defined by that
+	 * parameter.
+	 */
+	public static final String RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = "rule-asm-all-identifyPropertiesWithSpecificTaggedValues";
+	/**
+	 * If true, then the output per class will not only contain the direct
+	 * properties of the class but also the inherited properties. Default is
+	 * false. Applis to
+	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
+	 */
+	public static final String PARAM_INHERITED_PROPERTIES = "inheritedProperties";
+	/**
+	 * Regular expression to match the name of tagged values that shall be
+	 * reported by
+	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}. The
+	 * parameter is required by that rule.
+	 */
+	public static final String PARAM_TAG_NAME_REGEX = "tagNameRegex";
+	/**
+	 * If set, then all values of a tag whose name matches
+	 * {@link #PARAM_TAG_NAME_REGEX} must match this regular expression, in
+	 * order for the tagged value to be reported by
+	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
+	 */
+	public static final String PARAM_TAG_VALUE_REGEX = "tagValueRegex";
 
 	/* --------------------- */
 	/* --- tagged values --- */
@@ -300,9 +338,132 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 				identifyTypeUsage(appSchemaElement);
 			}
 
+			if (schemaPi.matches(
+					RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
+				StatusBoard.getStatusBoard().statusChanged(
+						STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
+
+				identifyPropertiesWithSpecificTaggedValues(appSchemaElement);
+			}
+
 			// add additional rules to compute metadata here
 		}
 
+	}
+
+	private void identifyPropertiesWithSpecificTaggedValues(
+			Element appSchemaElement) {
+
+		ProcessConfiguration config = options.getCurrentProcessConfig();
+
+		Pattern tagNamePattern = null;
+		try {
+			tagNamePattern = config
+					.parameterAsRegexPattern(PARAM_TAG_NAME_REGEX, null);
+			if (tagNamePattern == null) {
+				result.addError(this, 10, PARAM_TAG_NAME_REGEX,
+						RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
+				return;
+			}
+		} catch (PatternSyntaxException e) {
+			result.addError(this, 9, PARAM_TAG_NAME_REGEX, e.getMessage());
+		}
+
+		Pattern tagValuePattern = null;
+		try {
+			tagValuePattern = config
+					.parameterAsRegexPattern(PARAM_TAG_VALUE_REGEX, null);
+		} catch (PatternSyntaxException e) {
+			result.addError(this, 9, PARAM_TAG_VALUE_REGEX, e.getMessage());
+		}
+
+		boolean inheritedProperties = config
+				.parameterAsBoolean(PARAM_INHERITED_PROPERTIES, false);
+
+		Element e_pwstv = document
+				.createElement("PropertiesWithSpecificTaggedValues");
+		appSchemaElement.appendChild(e_pwstv);
+
+		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+
+		for (ClassInfo ci : schemaClasses) {
+
+			Element e_class = document.createElement("Class");
+			e_class.setAttribute("name", ci.name());
+
+			e_pwstv.appendChild(e_class);
+
+			Collection<PropertyInfo> properties = inheritedProperties
+					? (Collection<PropertyInfo>) ci.propertiesAll()
+					: ci.properties().values();
+			for (PropertyInfo pi : properties) {
+
+				SortedMap<String, List<String>> tvs = pi.taggedValuesAll()
+						.asMap();
+				SortedMap<String, List<String>> matchingTvs = new TreeMap<>();
+
+				for (String tag : tvs.keySet()) {
+
+					if (tagNamePattern.matcher(tag).matches()) {
+
+						List<String> values = tvs.get(tag);
+
+						boolean relevantTag = true;
+
+						if (tagValuePattern != null) {
+
+							if (values == null || values.isEmpty()) {
+								relevantTag = false;
+							} else {
+								boolean valuesOk = true;
+								for (String value : values) {
+									if (!tagValuePattern.matcher(value)
+											.matches()) {
+										valuesOk = false;
+										break;
+									}
+								}
+								relevantTag = valuesOk;
+							}
+						}
+
+						if (relevantTag) {
+							matchingTvs.put(tag, values);
+						}
+					}
+				}
+
+				if (!matchingTvs.isEmpty()) {
+
+					Element e_prop = document.createElement("Property");
+					e_prop.setAttribute("name", pi.name());
+
+					e_class.appendChild(e_prop);
+
+					for (Entry<String, List<String>> entry : matchingTvs
+							.entrySet()) {
+
+						String tag = entry.getKey();
+						List<String> values = entry.getValue();
+
+						Element e_tag = document.createElement("Tag");
+						e_tag.setAttribute("name", tag);
+
+						e_prop.appendChild(e_tag);
+
+						if (values != null && !values.isEmpty()) {
+
+							for (String value : values) {
+								Element e_val = document.createElement("Value");
+								e_val.setTextContent(value);
+
+								e_tag.appendChild(e_val);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void identifyTypeUsage(Element appSchemaElement) {
@@ -554,6 +715,13 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 		printed = true;
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-asm-all-identify-profiles");
+		r.addRule("rule-asm-all-identifyTypeUsage");
+		r.addRule("rule-asm-all-identifyPropertiesWithSpecificTaggedValues");
+	}
 
 	@Override
 	public void reset() {
@@ -596,6 +764,10 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
 		case 8:
 			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+		case 9:
+			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+		case 10:
+			return "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
 
 		case 100:
 			return "Context: property '$1$' in class '$2$'.";

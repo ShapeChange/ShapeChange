@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://example.org/shapechange/export/scxml" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/export/scxml" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="T1_FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="sc:T1_FeatureTypeAType">
+    <annotation>
+      <documentation>T1FTA: T1_FeatureTypeA definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T1_FeatureTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleA1" type="sc:T1_FeatureTypeBPropertyType">
+            <annotation>
+              <documentation>RA1: roleA1 T1_FeatureTypeA definition</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">sc:roleB1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attA2" type="double">
+            <annotation>
+              <documentation>AA2: attA2 T1_FeatureTypeA definition</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FeatureTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T1_FeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FeatureTypeB" substitutionGroup="gml:AbstractFeature" type="sc:T1_FeatureTypeBType">
+    <annotation>
+      <documentation>T1FTB: T1_FeatureTypeB definition</documentation>
+    </annotation>
+  </element>
+  <complexType name="T1_FeatureTypeBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleB1" type="sc:T1_FeatureTypeAPropertyType">
+            <annotation>
+              <documentation>RB1: roleB1 T1_FeatureTypeB definition</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">sc:roleA1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attB2" type="boolean">
+            <annotation>
+              <documentation>AB2: attB2 T1_FeatureTypeB definition</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FeatureTypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T1_FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T1_FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="sc:T1_FeatureTypeCType"/>
+  <complexType name="T1_FeatureTypeCType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attC1" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T1_FeatureTypeCPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T1_FeatureTypeC"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="sc:T2_FeatureTypeAType"/>
+  <complexType name="T2_FeatureTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleA1" type="sc:T2_FeatureTypeBPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">sc:roleB1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attA2" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FeatureTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T2_FeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FeatureTypeB" substitutionGroup="gml:AbstractFeature" type="sc:T2_FeatureTypeBType"/>
+  <complexType name="T2_FeatureTypeBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleB1" type="sc:T2_FeatureTypeAPropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">sc:roleA1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attB2" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FeatureTypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T2_FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="T2_FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="sc:T2_FeatureTypeCType"/>
+  <complexType name="T2_FeatureTypeCType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attC1" type="integer"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="T2_FeatureTypeCPropertyType">
+    <sequence minOccurs="0">
+      <element ref="sc:T2_FeatureTypeC"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

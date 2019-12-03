@@ -44,6 +44,7 @@
 			mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/ea/prop"/>
 			<targetParameter name="modelFilename" value="test_prop_out.eap"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/modelExport/addStereotypes/test_addStereotypes_some.xml" end="Thu Nov 21 11:31:56 CET 2019" resultCode="0" start="Thu Nov 21 11:31:44 CET 2019" version="2.8.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'model' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.eap"/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/addStereotypes'"/>
+    <Info message="Now processing target 'Model Export' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

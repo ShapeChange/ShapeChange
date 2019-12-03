@@ -32,7 +32,7 @@
     <definition>http://www.example.org and link to example.org</definition>
     <definition>&lt;a href="http://www.example.org"&gt;other link to example.org&lt;/a&gt;</definition>
     <characterizedBy idref="_A33_35"></characterizedBy>
-    <characterizedBy idref="_AT7"></characterizedBy>
+    <characterizedBy idref="_ATas7"></characterizedBy>
     <package idref="_P4"></package>
     <type>Feature Type</type>
     <constraint>
@@ -60,12 +60,12 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType>Integer</ValueDataType>
   </FeatureAttribute>
-  <FeatureRelationship id="__T7">
+  <FeatureRelationship id="__Tas7">
     <name>(unbestimmt)</name>
-    <roles idref="_AT7"></roles>
-    <roles idref="_AS7"></roles>
+    <roles idref="_ATas7"></roles>
+    <roles idref="_ASas7"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT7">
+  <RelationshipRole id="_ATas7">
     <name>roleFT1toFT2</name>
     <definition>Notes roleFT1toFT2</definition>
     <definition>1 + 1 &gt; 1</definition>
@@ -76,10 +76,10 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C34" category="feature type">FT2</FeatureTypeIncluded>
-    <relation idref="__T7"></relation>
-    <InverseRole idref="_AS7"></InverseRole>
+    <relation idref="__Tas7"></relation>
+    <InverseRole idref="_ASas7"></InverseRole>
   </RelationshipRole>
-  <RelationshipRole id="_AS7">
+  <RelationshipRole id="_ASas7">
     <name>roleFT2toFT1</name>
     <definition>Notes roleFT2toFT1</definition>
     <cardinality>1</cardinality>
@@ -88,14 +88,14 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C33" category="feature type">FT1</FeatureTypeIncluded>
-    <relation idref="__T7"></relation>
-    <InverseRole idref="_AT7"></InverseRole>
+    <relation idref="__Tas7"></relation>
+    <InverseRole idref="_ATas7"></InverseRole>
   </RelationshipRole>
   <FeatureType id="_C34">
     <name>FT2</name>
     <definition>Notes FT2</definition>
     <characterizedBy idref="_A34_36"></characterizedBy>
-    <characterizedBy idref="_AS7"></characterizedBy>
+    <characterizedBy idref="_ASas7"></characterizedBy>
     <package idref="_P4"></package>
     <type>Feature Type</type>
     <constraint>

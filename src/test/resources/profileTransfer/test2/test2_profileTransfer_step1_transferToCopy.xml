@@ -8,6 +8,7 @@
 		<parameter name="inputModelType" value="SCXML" />
 		<parameter name="inputFile"
 			value="src/test/resources/profileTransfer/test2/profiles.xml" />
+		<parameter name="scxmlXsdLocation" value="src/main/resources/schema/ShapeChangeExportedModel.xsd"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

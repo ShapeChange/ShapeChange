@@ -327,7 +327,7 @@ abstract class TempNode {
 			}
 
 			// Create an implicit Declaration for 'self'.
-			DataType type = new DataType(classContext);
+			DataType type = new DataType(classContext,null);
 			OclNode.Declaration dcl = new OclNode.Declaration("self", type,
 					null, last, null, true);
 
@@ -365,14 +365,13 @@ abstract class TempNode {
 				boolean pIsMult = pi.cardinality().maxOccurs > 1;
 				de.interactive_instruments.ShapeChange.Type ptype = pi
 						.typeInfo();
-				ClassInfo ci = model.classById(ptype.id);
-				if (ci == null)
-					ci = model.classByName(ptype.name);
-				DataType ttype = null;
+				ClassInfo ci = model.classByIdOrName(ptype);
+				ClassInfo metadataType = pi.propertyMetadataType();
+				DataType ttype = null;				
 				if (ci != null)
-					ttype = new DataType(ci);
+					ttype = new DataType(ci,metadataType);
 				else
-					ttype = new DataType(ptype.name);
+					ttype = new DataType(ptype.name,metadataType);
 				if (!extype.isSubTypeOf(ttype)) {
 					MessageCollection.Message mess = p
 							.getMessageCollection().new Message(42);
@@ -596,7 +595,7 @@ abstract class TempNode {
 					}
 					// O.k., we found it. Create and return the OperationCallExp
 					result = new OclNode.OperationCallExp(op1, false, name,
-							new OclNode[] { op2 }, new DataType(bid.resType),
+							new OclNode[] { op2 }, new DataType(bid.resType, null),
 							MultiplicityMapping.ONE2ONE, false);
 					break;
 				}
@@ -706,7 +705,7 @@ abstract class TempNode {
 					continue;
 				// O.k., we found it. Create and return the OperationCallExp
 				result = new OclNode.OperationCallExp(object, false, name,
-						new OclNode[] {}, new DataType(bid.resType),
+						new OclNode[] {}, new DataType(bid.resType, null),
 						MultiplicityMapping.ONE2ONE, false);
 				break;
 			}
@@ -1264,11 +1263,25 @@ abstract class TempNode {
 					return null;
 				}
 			}
+			
+			// determine metadata type
+			ClassInfo metadataType = null;
+			String propertyOrVarName = null;
+			if(object instanceof OclNode.AttributeCallExp) {
+			    OclNode.AttributeCallExp att = (OclNode.AttributeCallExp)object;
+			    PropertyInfo propi = (PropertyInfo)att.selector.modelProperty;
+			    propertyOrVarName = propi.name();
+			    metadataType = propi.propertyMetadataType();			       
+			} else if(object instanceof OclNode.VariableExp) {
+			    OclNode.VariableExp var = (OclNode.VariableExp)object;
+			    propertyOrVarName = var.declaration.name;
+			    metadataType = var.dataType.metadataType;
+			}
 
 			// Now create the result object
 			OclNode.PropertyCallExp callexp = null;
 			type = isAddedOper ? addedResultType
-					: new DataType(selectedbid.resType);
+					: new DataType(selectedbid.resType,metadataType);
 
 			// Some special treatment on types
 			if (!isAddedOper) {
@@ -1276,7 +1289,7 @@ abstract class TempNode {
 				case 1: // Type is instance type of class given as object
 					if (bit == OclNode.BuiltInType.CLASS)
 						type = new DataType(
-								((OclNode.ClassLiteralExp) object).umlClass);
+								((OclNode.ClassLiteralExp) object).umlClass,null);
 					break;
 				case 2: // Type is type of object
 					type = object.getDataType();
@@ -1286,7 +1299,7 @@ abstract class TempNode {
 					if (oclargs.length > 0
 							&& oclargs[0].dataType.builtInType == OclNode.BuiltInType.CLASS) {
 						type = new DataType(
-								((OclNode.ClassLiteralExp) oclargs[0]).umlClass);
+								((OclNode.ClassLiteralExp) oclargs[0]).umlClass,null);
 					}
 					break;
 				case 4: // Reverse-find a UML type for the built-in if possible
@@ -1302,6 +1315,20 @@ abstract class TempNode {
 						}
 					}
 					break;
+				case 5: // propertyMetadata - Type is defined by tagged value 'metadataType' on property
+				   
+				   if(metadataType == null) {
+				       if (!quiet) {
+						MessageCollection.Message mess = p
+								.getMessageCollection().new Message(47);
+						mess.substitute(1, propertyOrVarName);
+						mess.addSourceReferences(sourceReferences);
+					}
+				   } else {
+				       // operation propertyMetadata() selects an object whose type is the metadata type as defined in the model via tagged value 'metadataType'
+				       type = new DataType(metadataType, null);
+				   }
+				   break;
 				}
 			}
 
@@ -1703,6 +1730,7 @@ abstract class TempNode {
 		 *            Arbitrary OCL expression. May be null.
 		 */
 		Declaration(String name, TempNode typename, TempNode initializer) {
+		    // TODO JE - store metadataType?
 			// Constituents
 			this.name = name;
 			this.typename = typename;
@@ -1793,13 +1821,14 @@ abstract class TempNode {
 					return null;
 				}
 				Identifier typeid = (Identifier) typename;
+				// TODO JE - connect metadata type?
 				OclNode cls = typeid.connectAsClassOrPackage(p, model, 1, true);
 				if (cls != null) {
 					OclNode.ClassLiteralExp cl = (OclNode.ClassLiteralExp) cls;
 					ClassInfo ci = cl.umlClass;
-					type = new DataType(ci);
+					type = new DataType(ci,null);
 				} else {
-					type = new DataType(typeid.name());
+					type = new DataType(typeid.name(),null);
 					if (type.builtInType == OclNode.BuiltInType.VOID)
 						type = null;
 				}
@@ -1845,7 +1874,7 @@ abstract class TempNode {
 
 			// If there is still no type, we create a Void
 			if (type == null)
-				type = new DataType(OclNode.BuiltInType.VOID);
+				type = new DataType(OclNode.BuiltInType.VOID, null);
 
 			// This sets up the OclNode.Declaration.
 			return new OclNode.Declaration(name, type, init, varctx, null,

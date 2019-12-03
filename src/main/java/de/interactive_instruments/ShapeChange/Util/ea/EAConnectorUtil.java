@@ -44,8 +44,8 @@ import org.sparx.Element;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class EAConnectorUtil extends AbstractEAUtil {
@@ -60,9 +60,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
 	 * @param con
-	 *            the connector to which the tagged value shall be added
+	 *                the connector to which the tagged value shall be added
 	 * @param tv
-	 *            tagged value to add
+	 *                tagged value to add
 	 */
 	public static void addTaggedValue(Connector con, EATaggedValue tv)
 			throws EAException {
@@ -107,9 +107,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
 	 * @param con
-	 *            the connector to which the tagged values shall be added
+	 *                the connector to which the tagged values shall be added
 	 * @param tvs
-	 *            collection of tagged values to add
+	 *                collection of tagged values to add
 	 */
 	public static void addTaggedValues(Connector con, List<EATaggedValue> tvs)
 			throws EAException {
@@ -163,9 +163,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
 	 * @param con
-	 *            the connector to which the tagged values shall be added
+	 *                the connector to which the tagged values shall be added
 	 * @param tvs
-	 *            collection of tagged values to add
+	 *                collection of tagged values to add
 	 */
 	public static void addTaggedValues(Connector con, TaggedValues tvs)
 			throws EAException {
@@ -347,9 +347,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * Then the tagged values will be added.
 	 * 
 	 * @param con
-	 *            the connector in which the tagged values shall be set
+	 *                the connector in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set, must not be <code>null</code>
+	 *                tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Connector con, List<EATaggedValue> tvs)
 			throws EAException {
@@ -366,9 +366,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * deleted. Then the tagged value will be added.
 	 * 
 	 * @param con
-	 *            the connector in which the tagged value shall be set
+	 *                the connector in which the tagged value shall be set
 	 * @param tv
-	 *            tagged value to set, must not be <code>null</code>
+	 *                tagged value to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValue(Connector con, EATaggedValue tv)
 			throws EAException {
@@ -383,9 +383,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * Then the tagged values will be added.
 	 * 
 	 * @param con
-	 *            the connector in which the tagged values shall be set
+	 *                the connector in which the tagged values shall be set
 	 * @param tvs
-	 *            tagged values to set, must not be <code>null</code>
+	 *                tagged values to set, must not be <code>null</code>
 	 */
 	public static void setTaggedValues(Connector con, TaggedValues tvs)
 			throws EAException {
@@ -439,7 +439,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 
 		return result;
 	}
-	
+
 	/**
 	 * Updates the tagged values with given name (which can be a fully qualified
 	 * name) in the tagged values of the given connector. Does NOT delete those
@@ -450,22 +450,26 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
 	 * 
 	 * @param con
-	 *            the connector in which the tagged values shall be updated
+	 *                              the connector in which the tagged values
+	 *                              shall be updated
 	 * @param name
-	 *            (fully qualified or unqualified) name of the tagged value to
-	 *            update, must not be <code>null</code>
+	 *                              (fully qualified or unqualified) name of the
+	 *                              tagged value to update, must not be
+	 *                              <code>null</code>
 	 * @param value
-	 *            value of the tagged value to update, can be <code>null</code>
+	 *                              value of the tagged value to update, can be
+	 *                              <code>null</code>
 	 * @param createAsMemoField
-	 *            If set to <code>true</code>, the values shall be encoded using
-	 *            &lt;memo&gt; fields, regardless of the actual length of each
-	 *            value.
+	 *                              If set to <code>true</code>, the values
+	 *                              shall be encoded using &lt;memo&gt; fields,
+	 *                              regardless of the actual length of each
+	 *                              value.
 	 * @throws EAException
-	 *             If updating the connector did not succeed, this exception
-	 *             contains the error message.
+	 *                         If updating the connector did not succeed, this
+	 *                         exception contains the error message.
 	 */
-	public static void updateTaggedValue(Connector con, String name, String value,
-			boolean createAsMemoField) throws EAException {
+	public static void updateTaggedValue(Connector con, String name,
+			String value, boolean createAsMemoField) throws EAException {
 
 		boolean isQualifiedName = name.contains("::");
 
@@ -496,6 +500,20 @@ public class EAConnectorUtil extends AbstractEAUtil {
 		}
 
 		cTV.Refresh();
+	}
+
+	/**
+	 * Determines if the given connector is the association of an association
+	 * class. That is the case if its subtype is 'class' and MiscData(0) is not
+	 * empty.
+	 * 
+	 * @param con
+	 * @return <code>true</code>, if the given connector is the association of
+	 *         an association class, else <code>false</code>.
+	 */
+	public static boolean isAssociationClassConnector(Connector con) {
+		return con.GetSubtype().equalsIgnoreCase("class")
+				&& !con.MiscData(0).isEmpty();
 	}
 
 	public static String message(int mnr) {

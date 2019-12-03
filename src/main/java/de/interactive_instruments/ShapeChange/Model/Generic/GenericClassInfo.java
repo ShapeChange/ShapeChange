@@ -84,7 +84,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 */
 	protected TreeSet<String> supertypes = new TreeSet<String>();
 	protected TreeSet<String> subtypes = new TreeSet<String>();
-	protected ClassInfo baseClass = null;
 	protected SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
 	/**
 	 * May be null
@@ -153,14 +152,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 */
 	public void setSubtypes(TreeSet<String> subtypes) {
 		this.subtypes = subtypes;
-	}
-
-	/**
-	 * @param baseClass
-	 *            the baseClass to set, can be <code>null</code>
-	 */
-	public void setBaseClass(ClassInfo baseClass) {
-		this.baseClass = baseClass;
 	}
 
 	/**
@@ -456,11 +447,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	@Override
-	public ClassInfo baseClass() {
-		return baseClass;
-	}
-
 	/**
 	 * 
 	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#properties()
@@ -491,10 +477,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 				return pi;
 		}
 		// Go and search in base class, if it exists
-		Map<String, ClassInfo> baseClassesById = new HashMap<String, ClassInfo>();
-		if (baseClass != null) {
-			baseClassesById.put(baseClass.id(), baseClass);
-		}
+		Map<String, ClassInfo> baseClassesById = new HashMap<String, ClassInfo>();		
 		if (supertypes != null && !supertypes.isEmpty()) {
 			for (String supertypeId : supertypes) {
 				baseClassesById.put(supertypeId, model.classById(supertypeId));
@@ -799,7 +782,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 				: (TreeSet<String>) supertypes.clone());
 		copy.setSubtypes(
 				subtypes == null ? null : (TreeSet<String>) subtypes.clone());
-		copy.setBaseClass(baseClass);
 
 		copy.setDiagrams(diagrams);
 		copy.setLinkedDocument(linkedDocument);

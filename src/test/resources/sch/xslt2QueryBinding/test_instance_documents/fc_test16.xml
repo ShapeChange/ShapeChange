@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test16_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex16="http://example.org/shapechange/sch/xslt2QueryBinding/s16"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s16 ../reference/results/xsd_sch_xslt2/INPUT/test16.xsd">
+ <gml:featureMember>
+  <ex16:TS16_FT1 gml:id="ft1_PASS">
+   <ex16:att metadata="#m_1">x</ex16:att>
+   <ex16:rFT1toFT2 metadata="#m_2" xlink:href="#ft2_1"/>
+  </ex16:TS16_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:TS16_FT2 gml:id="ft2_1">
+   <ex16:rFT2toFT3 metadata="#m_3" xlink:href="irrelevantForThisTest"/>
+  </ex16:TS16_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_1">
+   <ex16:attMeta>10</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_2">
+   <ex16:attMeta>20</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_3">
+   <ex16:attMeta>30</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:TS16_FT1 gml:id="ft1_FAIL">
+   <ex16:att metadata="#m_4">x</ex16:att>
+   <ex16:rFT1toFT2 metadata="#m_5" xlink:href="#ft2_2"/>
+  </ex16:TS16_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_4">
+   <ex16:attMeta>50</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_5">
+   <ex16:attMeta>50</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:TS16_FT2 gml:id="ft2_2">
+   <ex16:rFT2toFT3 metadata="#m_6" xlink:href="irrelevantForThisTest"/>
+  </ex16:TS16_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex16:Metadata gml:id="m_6">
+   <ex16:attMeta>50</ex16:attMeta>
+  </ex16:Metadata>
+ </gml:featureMember>
+</gml:FeatureCollection>

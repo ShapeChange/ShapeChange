@@ -43,6 +43,7 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-cls-object-types"/>
@@ -75,6 +76,7 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-cls-object-types"/>
@@ -109,6 +111,7 @@
 				value="true" />
 			<targetParameter name="lengthQualifier" value="BYTE" />
 			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-cls-object-types"/>

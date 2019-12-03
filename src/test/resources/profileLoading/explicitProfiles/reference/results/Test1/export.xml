@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
+      <sc:id>P1</sc:id>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
-          <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
+          <sc:id>P2</sc:id>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema A</sc:name>
-              <sc:id>10</sc:id>
+              <sc:id>P10</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -47,10 +44,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/a</sc:targetNamespace>
-              <sc:xmlns>sc</sc:xmlns>
-              <sc:xsdDocument>a.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>FeatureTypeA</sc:name>
@@ -69,6 +62,11 @@
                         <sc:DescriptorValue>Definition of FeatureTypeA</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of FeatureTypeA</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -106,7 +104,7 @@
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propA1</sc:name>
-                      <sc:id>T87</sc:id>
+                      <sc:id>Tas87</sc:id>
                       <sc:descriptors>
                         <sc:alias>
                           <sc:descriptorValues>
@@ -118,6 +116,11 @@
                             <sc:DescriptorValue>Definition of propA1</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA1&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -147,8 +150,7 @@
                       <sc:typeId>164</sc:typeId>
                       <sc:typeName>ExtFeatureType</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
-                      <sc:reversePropertyId>S87</sc:reversePropertyId>
-                      <sc:associationId>87</sc:associationId>
+                      <sc:associationId>as87</sc:associationId>
                     </sc:Property>
                     <sc:Property>
                       <sc:name>propA2</sc:name>
@@ -164,6 +166,11 @@
                             <sc:DescriptorValue>Definition of propA2</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA2&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -208,6 +215,11 @@
                             <sc:DescriptorValue>Definition of propA3</sc:DescriptorValue>
                           </sc:descriptorValues>
                         </sc:definition>
+                        <sc:documentation>
+                          <sc:descriptorValues>
+                            <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of propA3&#xD;&#xA;</sc:DescriptorValue>
+                          </sc:descriptorValues>
+                        </sc:documentation>
                       </sc:descriptors>
                       <sc:taggedValues>
                         <sc:TaggedValue>
@@ -257,6 +269,11 @@
                         <sc:DescriptorValue>Definition of Subtype</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of Subtype&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -284,7 +301,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>163</sc:baseClassId>
                   <sc:profiles>
                     <sc:Profile name="C">
                       <sc:parameter>
@@ -300,11 +316,10 @@
             </sc:Package>
             <sc:Package>
               <sc:name>ISO Stub</sc:name>
-              <sc:id>21</sc:id>
+              <sc:id>P21</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -334,10 +349,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/iso</sc:targetNamespace>
-              <sc:xmlns>iso</sc:xmlns>
-              <sc:xsdDocument>iso_stub.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>Real</sc:name>
@@ -399,6 +410,11 @@
                         <sc:DescriptorValue>Definition of CharacterString</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of CharacterString&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -490,13 +506,18 @@
                         <sc:DescriptorValue>Definition of Boolean</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of Boolean&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                 </sc:Class>
               </sc:classes>
             </sc:Package>
             <sc:Package>
               <sc:name>External Schema</sc:name>
-              <sc:id>35</sc:id>
+              <sc:id>P35</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -536,10 +557,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1.0</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/ext</sc:targetNamespace>
-              <sc:xmlns>ext</sc:xmlns>
-              <sc:xsdDocument>ext.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>ExtFeatureType</sc:name>
@@ -558,6 +575,11 @@
                         <sc:DescriptorValue>Definition of ExtFeatureType</sc:DescriptorValue>
                       </sc:descriptorValues>
                     </sc:definition>
+                    <sc:documentation>
+                      <sc:descriptorValues>
+                        <sc:DescriptorValue>-- Definition --&#xD;&#xA;Definition of ExtFeatureType&#xD;&#xA;</sc:DescriptorValue>
+                      </sc:descriptorValues>
+                    </sc:documentation>
                   </sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -633,13 +655,11 @@
   <sc:associations>
     <sc:Association>
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
-      <sc:id>87</sc:id>
-      <sc:descriptors></sc:descriptors>
+      <sc:id>as87</sc:id>
       <sc:end1>
         <sc:Property>
-          <sc:name>role_S87</sc:name>
-          <sc:id>S87</sc:id>
-          <sc:descriptors></sc:descriptors>
+          <sc:name>role_Sas87</sc:name>
+          <sc:id>Sas87</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
               <sc:name>inlineOrByReference</sc:name>
@@ -666,11 +686,10 @@
           <sc:typeName>FeatureTypeA</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>164</sc:inClassId>
-          <sc:reversePropertyId>T87</sc:reversePropertyId>
-          <sc:associationId>87</sc:associationId>
+          <sc:associationId>as87</sc:associationId>
         </sc:Property>
       </sc:end1>
-      <sc:end2 ref="T87"></sc:end2>
+      <sc:end2 ref="Tas87"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>

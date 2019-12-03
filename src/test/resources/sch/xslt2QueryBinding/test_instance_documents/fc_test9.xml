@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test9_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex9="http://example.org/shapechange/sch/xslt2QueryBinding/s9"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s9 ../reference/results/xsd_sch_xslt2/INPUT/test9.xsd">
+ <gml:featureMember>
+  <ex9:TS9_FT1 gml:id="ft1_PASS">
+   <ex9:att>foo</ex9:att>
+   <ex9:att>test</ex9:att>
+   <ex9:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex9:rFT1toFT2 xlink:href="#ft2_2"/>
+  </ex9:TS9_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT2 gml:id="ft2_1">
+   <ex9:att>5</ex9:att>
+   <ex9:rFT2toFT3 xlink:href="#ft3_3"/>
+  </ex9:TS9_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT2 gml:id="ft2_2">
+   <ex9:att>5</ex9:att>
+   <ex9:rFT2toFT3 xlink:href="#ft3_1"/>
+   <ex9:rFT2toFT3 xlink:href="#ft3_2"/>
+  </ex9:TS9_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT3 gml:id="ft3_1">
+   <ex9:att>false</ex9:att>
+  </ex9:TS9_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT3 gml:id="ft3_2">
+   <ex9:att>false</ex9:att>
+  </ex9:TS9_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT3 gml:id="ft3_3">
+   <ex9:att>true</ex9:att>
+  </ex9:TS9_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT1 gml:id="ft1_FAIL">
+   <ex9:att>foo</ex9:att>
+   <ex9:att>bar</ex9:att>
+   <ex9:rFT1toFT2 xlink:href="#ft2_3"/>
+  </ex9:TS9_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT2 gml:id="ft2_3">
+   <ex9:att>2</ex9:att>
+   <ex9:rFT2toFT3 xlink:href="#ft3_4"/>
+  </ex9:TS9_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex9:TS9_FT3 gml:id="ft3_4">
+   <ex9:att>false</ex9:att>
+  </ex9:TS9_FT3>  
+ </gml:featureMember>
+</gml:FeatureCollection>

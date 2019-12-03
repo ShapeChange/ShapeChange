@@ -40,13 +40,14 @@ import java.util.Vector;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.FOL.FolExpression;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.FolConstraint;
 import de.interactive_instruments.ShapeChange.Model.OclConstraint;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
@@ -55,7 +56,6 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.SBVR.Sbvr2FolParser;
 import de.interactive_instruments.ShapeChange.SBVR.SbvrConstants;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
@@ -227,8 +227,8 @@ public class ConstraintParserAndValidator implements Transformer {
 
 		if (con.sourceType().equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 
-			con.setComments(new String[] { con.text() });
-
+			con.mergeComments(new String[] { con.text() });
+			
 			FolExpression folExpr = parser.parse(con);
 
 			if (folExpr != null) {

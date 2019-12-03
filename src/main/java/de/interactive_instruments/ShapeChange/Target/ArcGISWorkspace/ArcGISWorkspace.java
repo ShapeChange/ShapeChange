@@ -67,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -200,6 +201,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	private static File outputDirectoryFile = null;
 	private static String documentationTemplate = null;
 	private static String documentationNoValue = null;
+	
+	protected static String author = null;
+	protected static String status = null;
 
 	private static Repository rep = null;
 
@@ -389,6 +393,12 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			}
 			outputFilename = outputFilename.replace("/", "_").replace(" ", "_")
 					+ ".eap";
+			
+			author = options.parameterAsString(this.getClass().getName(),
+				ArcGISWorkspaceConstants.PARAM_EA_AUTHOR, null, false, true);
+			
+			status = options.parameterAsString(this.getClass().getName(),
+				ArcGISWorkspaceConstants.PARAM_EA_STATUS, null, false, true);
 
 			// parse default length parameter
 			String defaultLengthParamValue = options.parameter(
@@ -855,6 +865,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		// store mapping between ClassInfo and EA Element
 		elementIdByClassInfo.put(ci, eaElement.GetElementID());
 		elementNameByClassInfo.put(ci, ci.name());
+		
+		setAuthorAndStatus(eaElement);
 
 		// set alias, notes, abstractness
 		setCommonItems(ci, eaElement);
@@ -905,6 +917,17 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// keep track of generalizations
 		identifyGeneralisationRelationships(ci);
+	}
+
+	private void setAuthorAndStatus(Element e) throws EAException {
+	    
+	    if(StringUtils.isNotBlank(author)) {
+		EAElementUtil.setEAAuthor(e, author);
+	    }
+	    
+	    if(StringUtils.isNotBlank(status)) {
+		EAElementUtil.setEAStatus(e, status);
+	    }	    
 	}
 
 	private void parseNumericRangeConstraints(ClassInfo ci) {
@@ -1175,6 +1198,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		 */
 		elementIdsOfUnusedCodedValueDomain.add(elementID);
 
+		setAuthorAndStatus(e);
+		
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
@@ -1206,7 +1231,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						null,
 						pi.derivedDocumentation(documentationTemplate,
 								documentationNoValue),
-						enumStereotype, null, false, false, false, initialValue,
+						enumStereotype, null, false, false, false, initialValue, false,
 						new Multiplicity(1, 1), null, null);
 
 				addTaggedValuesToRepresent(eaAtt, pi);
@@ -1238,6 +1263,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		Element e = EARepositoryUtil.createEAClass(rep, name, eaPkgId);
 
+		setAuthorAndStatus(e);
+		
 		// set alias, notes, abstractness
 		// setCommonItems(codeListOrEnumeration, e);
 
@@ -1269,7 +1296,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					null,
 					pi.derivedDocumentation(documentationTemplate,
 							documentationNoValue),
-					enumStereotype, null, false, false, false, initialValue,
+					enumStereotype, null, false, false, false, initialValue,false,
 					new Multiplicity(1, 1), null, null);
 
 			addTaggedValuesToRepresent(eaAtt, pi);
@@ -1297,15 +1324,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			String fieldType) throws EAException {
 
 		EAElementUtil.createEAAttribute(eaElement, "FieldType", null, null,
-				null, null, false, false, false, fieldType,
+				null, null, false, false, false, fieldType,false,
 				new Multiplicity(1, 1), "esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(eaElement, "MergePolicy", null, null,
-				null, null, false, false, false, "esriMPTDefaultValue",
+				null, null, false, false, false, "esriMPTDefaultValue",false,
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(eaElement, "SplitPolicy", null, null,
-				null, null, false, false, false, "esriSPTDuplicate",
+				null, null, false, false, false, "esriSPTDuplicate", false,
 				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 	}
 
@@ -1369,6 +1396,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		numericRangeElementIdsByClassName.put(rangeDomainName,
 				e.GetElementID());
 
+		setAuthorAndStatus(e);
+		
 		// TBD: set alias or notes?
 
 		EAElementUtil.setEAStereotypeEx(e, "ArcGIS::RangeDomain");
@@ -1382,15 +1411,15 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		// create required properties: FieldType, MergePolicy, SplitPolicy
 		EAElementUtil.createEAAttribute(e, "FieldType", null, null, null, null,
-				false, false, false, esriFieldType, new Multiplicity(1, 1),
+				false, false, false, esriFieldType,false, new Multiplicity(1, 1),
 				"esriFieldType", null);
 
 		EAElementUtil.createEAAttribute(e, "MergePolicy", null, null, null,
-				null, false, false, false, "esriMPTDefaultValue",
+				null, false, false, false, "esriMPTDefaultValue",false,
 				new Multiplicity(1, 1), "esriMergePolicyType", null);
 
 		EAElementUtil.createEAAttribute(e, "SplitPolicy", null, null, null,
-				null, false, false, false, "esriSPTDuplicate",
+				null, false, false, false, "esriSPTDuplicate",false,
 				new Multiplicity(1, 1), "esriSplitPolicyType", null);
 
 		return e;
@@ -1419,6 +1448,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		elementIdByClassInfo.put(ci, e.GetElementID());
 		elementNameByClassInfo.put(ci, name);
 
+		setAuthorAndStatus(e);
+		
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
@@ -1641,6 +1672,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			Element subtypeEAElement = EARepositoryUtil.createEAClass(rep,
 					subtypeName, eaPkgId);
 
+			setAuthorAndStatus(subtypeEAElement);
+			
 			// store mapping for subtype element id
 			int subtypeEAElementID = subtypeEAElement.GetElementID();
 			Map<String, Integer> subtypeElementIdBySubtypeName = null;
@@ -1803,7 +1836,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("SpatialIndex");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_IDX", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "", null);
 	}
 
@@ -1820,7 +1853,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("AttributeIndex");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID_IDX", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "", null);
 	}
 
@@ -1843,7 +1876,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Area", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
@@ -1867,7 +1900,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape_Length", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeDouble", null);
 	}
 
@@ -1893,7 +1926,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "Shape", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeGeometry", null);
 	}
 
@@ -1916,7 +1949,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		stereotypes.add("RequiredField");
 
 		return EAElementUtil.createEAAttribute(e, "OBJECTID", null, null,
-				stereotypes, tvs, false, false, false, null,
+				stereotypes, tvs, false, false, false, null,false,
 				new Multiplicity(1, 1), "esriFieldTypeOID", null);
 	}
 
@@ -1943,6 +1976,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		elementIdByClassInfo.put(ci, e.GetElementID());
 		elementNameByClassInfo.put(ci, name);
 
+		setAuthorAndStatus(e);
+		
 		// set alias, notes, abstractness
 		setCommonItems(ci, e);
 
@@ -2419,6 +2454,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 					Element assocClass = EARepositoryUtil.createEAClass(rep,
 							assocClassName, assocClassesPkgId);
 
+					setAuthorAndStatus(assocClass);
+					
 					Attribute foreignKeyFieldSrc = null;
 					Attribute foreignKeyFieldTgt = null;
 					Attribute ridField = null;
@@ -3379,7 +3416,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		}
 
 		return EAElementUtil.createEAAttribute(e, name, alias, documentation,
-				stereotypes, tvs, false, false, false, initialValue,
+				stereotypes, tvs, false, false, false, initialValue,false,
 				new Multiplicity(1, 1), eaType, eaClassifierId);
 	}
 
@@ -3439,6 +3476,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		numericRangeElementIdsByClassName = new TreeMap<String, Integer>();
 		taggedValuesToRepresent = null;
 		representTaggedValues = false;
+		author = null;
+		status = null;
 	}
 
 	@Override
@@ -4678,11 +4717,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 						// create min and max fields
 						EAElementUtil.createEAAttribute(rd, "MinValue", null,
 								null, null, null, false, false, false,
-								doubleToString(minValue),
+								doubleToString(minValue),false,
 								new Multiplicity(1, 1), null, null);
 						EAElementUtil.createEAAttribute(rd, "MaxValue", null,
 								null, null, null, false, false, false,
-								doubleToString(maxValue),
+								doubleToString(maxValue),false,
 								new Multiplicity(1, 1), null, null);
 
 						numericRange = rd;
@@ -4896,12 +4935,36 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 			EAElementUtil.createEAAttribute(eaClass,
 					eaClass.GetName() + "_" + eaAtt.GetName() + "_IDX", null,
-					null, stereotypes, tvs, false, false, false, null,
+					null, stereotypes, tvs, false, false, false, null,false,
 					new Multiplicity(1, 1), "", null);
 
 		} catch (EAException e) {
 			result.addError(this, 10004, pi.name(), ci.name(), e.getMessage());
 		}
+	}
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-arcgis-all-postprocess-removeUnusedCodedValueDomains");
+		r.addRule("rule-arcgis-all-precision");
+		r.addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
+		r.addRule("rule-arcgis-all-representTaggedValues");
+		r.addRule("rule-arcgis-all-scale");
+		r.addRule("rule-arcgis-all-subtypes");
+		r.addRule("rule-arcgis-cls-hasM");
+		r.addRule("rule-arcgis-cls-hasZ");
+		r.addRule("rule-arcgis-cls-identifierStereotype");
+		r.addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
+		r.addRule("rule-arcgis-prop-attIndex");
+		r.addRule("rule-arcgis-prop-initialValue");
+		r.addRule("rule-arcgis-prop-initialValueByAlias");
+		r.addRule("rule-arcgis-prop-isNullable");
+		r.addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
+		r.addRule("rule-arcgis-prop-lengthFromTaggedValue");
+		r.addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
+		r.addRule("rule-arcgis-prop-precision"); // deprecated
+		r.addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
+		r.addRule("rule-arcgis-prop-scale"); // deprecated
 	}
 
 	@Override

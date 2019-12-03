@@ -43,13 +43,13 @@ import org.sparx.TaggedValue;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
-import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
@@ -95,6 +95,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	/** The EA object id of the package object */
 	protected int eaPackageId = 0;
 
+	protected String packageId = null;
+
 	/** The EA element object possibly associated to the package */
 	protected Element eaPackageElmt = null;
 
@@ -114,7 +116,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
-	
+
 	public int getEaPackageId() {
 		return eaPackageId;
 	}
@@ -130,6 +132,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		// Store EA package object and inquire its id and name.
 		eaPackage = pack;
 		eaPackageId = eaPackage.GetPackageID();
+		// augment integer id to achieve model-wide unique IDs required by
+		// Info.id()
+		packageId = "P" + Integer.valueOf(eaPackageId).toString();
 		eaName = eaPackage.GetName().trim();
 
 		// Store the possibly associated EA element (describing the package) and
@@ -177,8 +182,12 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
-					eaPackage.GetStereotypeEx(), Options.packageStereotypes, this);
+			// Fetch stereotypes 'collection' ...
+			String sts = eaPackage.GetStereotypeEx();
+			String[] stereotypes = sts.split("\\,");
+			// Allocate cache
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
@@ -281,8 +290,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 	/** Return model-unique id of package. */
 	public String id() {
-		return Integer.valueOf(eaPackageId).toString();
-	} // id()
+		return packageId;
+	}
 
 	/** Obtain the name of the package. */
 	public String name() {
@@ -346,7 +355,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 			if (tvs != null)
 				for (TaggedValue tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -428,7 +438,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -448,7 +458,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaPackage.GetAlias();
 

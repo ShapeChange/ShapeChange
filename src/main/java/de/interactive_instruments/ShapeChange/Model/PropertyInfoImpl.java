@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Model;
 
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.utils.XMLChar;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
@@ -453,6 +454,61 @@ public abstract class PropertyInfoImpl extends InfoImpl
 				res = s.equalsIgnoreCase("true");
 		}
 		return res;
+	}
+
+	@Override
+	public boolean propertyMetadata() {
+
+		// Validate cache
+		validateStereotypesCache();
+
+		return stereotypesCache.contains("propertymetadata");
+	}
+	
+	@Override
+	public ClassInfo propertyMetadataType() {
+	    
+	    ClassInfo result = null;
+	    String mt = this.taggedValue("metadataType");
+	    
+	    if(StringUtils.isNotBlank(mt)) {
+		
+		String className = mt.trim();
+		/* 
+		 * Does the metadata type name contain a semicolon? 
+		 * If so, search by fully qualified name. Otherwise, search in the
+		 * schema to which the class that owns this property belongs.
+		 */
+		if(className.contains(":")) {
+		    
+		    result = this.model().classByFullNameInSchema(className);
+		    
+		} else {
+		    
+		    PackageInfo schemaPkg = this.model().schemaPackage(this.inClass());
+		    if(schemaPkg != null) {
+			result = this.model().classes(schemaPkg).stream().
+				filter(ci -> ci.name().equals(className)).findFirst().orElse(null);
+		    }
+		    
+		}
+	    }
+	    return result;
+	}
+	
+	@Override
+	public PropertyInfo reverseProperty() {
+		
+		if(this.isAttribute() || this.association() == null) {
+			return null;
+		} else {
+			AssociationInfo assoc = this.association();
+			if(assoc.end1() == this) {
+				return assoc.end2();
+			} else {
+				return assoc.end1();
+			}
+		}
 	}
 
 	/**

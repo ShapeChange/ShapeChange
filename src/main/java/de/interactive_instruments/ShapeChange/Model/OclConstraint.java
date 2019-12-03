@@ -44,9 +44,18 @@ public interface OclConstraint extends Constraint {
 
 	/** Type for possible OCL expressions */
 	enum ConditionType {
-		INVARIANT, // An OCL-constraint of type 'inv:'
-		INITIAL, // An OCL-expression of type 'init:'
-		DERIVE // An OCL-expression of type 'derive:'
+		/**
+		 * An OCL-constraint of type 'inv:'
+		 */
+		INVARIANT,
+		/**
+		 * An OCL-expression of type 'init:'
+		 */
+		INITIAL,
+		/**
+		 * An OCL-expression of type 'derive:'
+		 */
+		DERIVE
 	}
 
 	/** Inquire context class - i.e. 'self' */
@@ -55,12 +64,36 @@ public interface OclConstraint extends Constraint {
 	/** Inquire condition type */
 	public ConditionType conditionType();
 
-	/** Inquire constraint syntax tree */
+	/**
+	 * Inquire constraint syntax tree
+	 * 
+	 * @return the constraint syntax tree; can be <code>null</code>, in case
+	 *         that compilation failed
+	 */
 	public OclNode.Expression syntaxTree();
 
 	/**
-	 * @return comments contained in the OCL expression; may be empty but not
+	 * Retrieve informative documentation for the OCL expression.
+	 * 
+	 * Background: OCL constraint expressions can be hard to understand for
+	 * humans. Therefore, informative, human-readable documentation of the
+	 * constraint is useful. ShapeChange can parse such information from the
+	 * text of an OCL constraint, by looking for java-like comments, i.e. text
+	 * surrounded by /* and *&#47;. However, in some cases it is also possible
+	 * to provide the information by some other means, for example via
+	 * &lt;description&gt; elements within an SCXML &lt;OclConstraint&gt;
+	 * element.
+	 * 
+	 * @return informative documentation of the constraint (if originally
+	 *         contained in java-like comment, i.e. surrounded by /* and *&#47;,
+	 *         that markup has been removed); may be empty but not
 	 *         <code>null</code>
 	 */
 	public String[] comments();
+
+	public boolean hasComments();
+
+	public void setComments(String[] comments);
+
+	public void mergeComments(String[] additionalComments);
 }

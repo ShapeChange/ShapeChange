@@ -32,91 +32,145 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import de.interactive_instruments.ShapeChange.Ocl.OclNode;
 
 /**
- * The OclConstraintImpl class is the common root of all OclConstraint 
- * interface implementations of the supported input models. 
+ * The OclConstraintImpl class is the common root of all OclConstraint interface
+ * implementations of the supported input models.
  */
 public abstract class OclConstraintImpl implements OclConstraint {
-	
+
 	/** Class Context - the class, which represents 'self' */
 	protected ClassInfo contextClass = null;
-	
-	/** Model Element Context - class, attribute, operation, etc. This has to
-	 * be downcast to the proper xxxInfo as specified by contextModelElmtType. 
+
+	/**
+	 * Model Element Context - class, attribute, operation, etc. This has to be
+	 * downcast to the proper xxxInfo as specified by contextModelElmtType.
 	 */
 	protected Info contextModelElmt = null;
-	
-	/** Model Element Context Type - the nature of the model context the
-	 * OCL expression is specified in. */
+
+	/**
+	 * Model Element Context Type - the nature of the model context the OCL
+	 * expression is specified in.
+	 */
 	protected ModelElmtContextType contextModelElmtType = null;
-	
+
 	/** Condition Type - the nature of the condition */
 	protected ConditionType conditionType = null;
-	
+
 	/** Name of the constraint */
 	protected String constraintName = null;
 
 	/** The textual representation of the constraint */
 	protected String constraintText = null;
-	
-	/** Constraint status. A string reflecting the status of the constraint
-	 * in conspiracy between the model source and the code generator. */
+
+	/**
+	 * Constraint status. A string reflecting the status of the constraint in
+	 * conspiracy between the model source and the code generator.
+	 */
 	protected String constraintStatus = null;
 
 	/** Compiled representation */
 	protected OclNode.Expression syntaxTree;
-	
+
 	/** Comments contained in the constraint */
 	protected String[] comments = null;
-	
+
 	/** Inquire the condition type. */
+	@Override
 	public ConditionType conditionType() {
 		return conditionType;
-	} // conditionType()
+	}
 
-	/** Inquire the context class of the OCL constraint - the 'self' */
+	@Override
 	public ClassInfo contextClass() {
 		return contextClass;
-	} // contextClass()
+	}
 
-	/** Inquire the model element context. Note the result must be downcast
-	 * according to the value of the model element context type. */
+	@Override
 	public Info contextModelElmt() {
 		return contextModelElmt;
-	} // contextModelElmt()
+	}
 
-	/** Find out about the type of the context model element. Currently only 
-	 * CLASS and ATTRIBUTE are supported. */ 
+	@Override
 	public ModelElmtContextType contextModelElmtType() {
 		return contextModelElmtType;
-	} // contextModelElmtType()
+	}
 
-	/** Inquire name of the constraint. */
+	@Override
 	public String name() {
 		return constraintName.trim();
-	} // name()
+	}
 
-	/** Inquire status of the constraint. */
+	@Override
 	public String status() {
 		return constraintStatus;
-	} // status()
+	}
 
-	/** Inquire the textual representation of the OCL expression. The text is
-	 * supposed to start with condition type inv:, derive: or init:. The string 
-	 * may contain \n characters. */
+	/**
+	 * Inquire the textual representation of the OCL expression. The text is
+	 * supposed to start with condition type inv:, derive: or init:. However,
+	 * the text may contain one or more comments in the form of /* ... *&#47;
+	 * (typically at the start of the text). The string may contain \n
+	 * characters.
+	 */
+	@Override
 	public String text() {
 		return constraintText;
-	} // text()
-	
-	/** If compilation went well, this returns the OCL syntax tree. */
+	}
+
+	@Override
 	public OclNode.Expression syntaxTree() {
 		return syntaxTree;
-	} // syntaxTree()
-	
-	/** The comments contained in the OCL expression */
+	}
+
+	@Override
 	public String[] comments() {
-		return comments;
+		return comments == null ? new String[] {} : comments;
+	}
+
+	@Override
+	public boolean hasComments() {
+		return this.comments != null && this.comments.length > 0;
+	}
+
+	@Override
+	public void setComments(String[] comments) {
+		this.comments = comments;
+	}
+	
+	@Override
+	public void mergeComments(String[] additionalComments) {
+
+		if (this.comments == null || this.comments.length == 0) {
+			
+			this.comments = additionalComments;
+			
+		} else if (additionalComments == null || additionalComments.length == 0) {
+			/*
+			 * Nothing to do. Just keep comments as set.
+			 */
+		} else {
+			/*
+			 * Merge existing comments and additional comments. Each additional comment
+			 * that is not contained in the existing comments shall be added to
+			 * the existing comments.
+			 */
+			List<String> additionalCommentsList = new ArrayList<>();
+			for (String c : additionalComments) {
+				if (!Arrays.stream(this.comments).anyMatch(c::equals)) {
+					additionalCommentsList.add(c);
+				}
+			}
+
+			this.comments = ArrayUtils.addAll(this.comments,
+					additionalCommentsList.stream().toArray(String[]::new));
+		}
 	}
 }

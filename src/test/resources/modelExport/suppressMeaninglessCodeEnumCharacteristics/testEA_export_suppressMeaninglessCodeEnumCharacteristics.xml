@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/test_export_suppressMeaninglessCodeEnumCharacteristics.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="dontConstructAssociationNames" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<descriptorSources>
+			      <DescriptorSource descriptor="alias" source="ea:alias"/>
+			      <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			      <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			      <DescriptorSource descriptor="description" source="none"/>
+			      <DescriptorSource descriptor="documentation" source="ea:notes"/>
+			      <DescriptorSource descriptor="example" source="none"/>
+			      <DescriptorSource descriptor="globalIdentifier" source="none"/>
+			      <DescriptorSource descriptor="language" source="none"/>
+			      <DescriptorSource descriptor="legalBasis" source="none"/>	
+			      <DescriptorSource descriptor="primaryCode" source="none"/>			      		      
+		    </descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="DEBUG"/>
+		<parameter name="logFile" value="testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/log_export_scxml.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport"
+              mode="enabled">
+         <targetParameter name="outputDirectory" value="testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/scxml"/>
+         <targetParameter name="outputFilename" value="export"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning" value="true"/>
+         <rules>
+            <EncodingRule name="export">
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+            	<rule name="rule-exp-all-omitDescriptors"/>
+            </EncodingRule>
+         </rules>
+      </Target>      
+	</targets>
+</ShapeChangeConfiguration>

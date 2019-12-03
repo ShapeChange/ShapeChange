@@ -322,11 +322,6 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 						// remove relationship between supertype and extension
 						ci.removeSupertype(st.id());
 
-						if (ci.baseClass() != null
-								&& ci.baseClass().id().equals(st.id())) {
-							ci.setBaseClass(null);
-						}
-
 						st.removeSubtype(ci.id());
 					}
 				}
@@ -645,7 +640,6 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				assocCopy.setIsLeaf(assocCi.isLeaf());
 				assocCopy.setSupertypes(model.copy(assocCi.supertypes()));
 				assocCopy.setSubtypes(model.copy(assocCi.subtypes()));
-				assocCopy.setBaseClass(assocCi.baseClass());
 				assocCopy.setConstraints(model.copy(assocCi.constraints()));
 
 				// now to the interesting part

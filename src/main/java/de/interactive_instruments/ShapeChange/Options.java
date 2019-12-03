@@ -53,6 +53,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,8 +62,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,6 +76,7 @@ import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.StereotypesCacheSet;
+import de.interactive_instruments.ShapeChange.Model.TaggedValueNormalizer;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheArray;
 import de.interactive_instruments.ShapeChange.Model.TaggedValuesCacheMap;
@@ -152,23 +155,28 @@ public class Options {
 	public static final String SQL = "sql";
 	public static final String SWECOMMON2 = "ogcSweCommon2".toLowerCase();
 	public static final String NOT_ENCODED = "notEncoded".toLowerCase();
-	public static final String GSIP_ENC = "gsip".toLowerCase();
+	public static final String GCSR_ENC = "gcsr".toLowerCase();
 
 	/** Well known stereotypes */
-	public static final String[] classStereotypes = { "codelist", "enumeration",
+	public static final Set<String> classStereotypes = Stream.of( "codelist", "enumeration",
 			"datatype", "featuretype", "type", "basictype", "interface",
 			"union", "abstract", "fachid", "schluesseltabelle", "adeelement",
 			"featureconcept", "attributeconcept", "valueconcept", "roleconcept",
-			"aixmextension", "retired" };
-	public static final String[] assocStereotypes = { "disjoint", "retired" };
+			"aixmextension", "retired" )
+			    .collect(Collectors.toSet());
+	public static final Set<String> assocStereotypes = Stream.of( "disjoint", "retired" )
+	    .collect(Collectors.toSet());
 
-	public static final String[] propertyStereotypes = { "voidable",
+	public static final Set<String> propertyStereotypes = Stream.of( "voidable",
 			"identifier", "version", "property", "estimated", "enum",
-			"retired" };
-	public static final String[] packageStereotypes = { "application schema",
-			"schema", "bundle", "leaf", "retired" };
-	public static final String[] depStereotypes = { "import", "include",
-			"retired" };
+			"retired", "propertymetadata" )
+		    .collect(Collectors.toSet());
+	public static final Set<String> packageStereotypes = Stream.of( "application schema",
+			"schema", "bundle", "leaf", "retired" )
+			    .collect(Collectors.toSet());
+	public static final Set<String> depStereotypes = Stream.of( "import", "include",
+			"retired" )
+	    .collect(Collectors.toSet());
 
 	/** Carriage Return and Line Feed characters. */
 	public static final String CRLF = "\r\n";
@@ -461,13 +469,8 @@ public class Options {
 	 * key: namespace, value: location
 	 */
 	protected HashMap<String, String> fSchemaLocations = new HashMap<String, String>();
-
-	/** Hash table for schema requirements and conversion rules */
-	protected HashSet<String> fAllRules = new HashSet<String>();
-	protected HashSet<String> fRulesInEncRule = new HashSet<String>();
-
-	/** Hash table for encoding rule extensions */
-	protected HashMap<String, String> fExtendsEncRule = new HashMap<String, String>();
+	
+	protected RuleRegistry ruleRegistry = new RuleRegistry();
 
 	/** documentation separators */
 	protected String extractSeparator = null;
@@ -561,6 +564,8 @@ public class Options {
 	protected boolean useStringInterning = false;
 	protected boolean dontConstructAssociationNames = false;
 	protected boolean allowAllTags = false;
+	protected boolean allowAllStereotypes = false;
+	protected Set<String> addedStereotypes = new HashSet<>();
 	protected String language = "en";
 
 	/**
@@ -586,6 +591,8 @@ public class Options {
 
 	protected File imageTmpDir = null;
 	protected File linkedDocTmpDir = null;
+
+	protected TaggedValueNormalizer tvNormalizer = null;
 
 	private Map<String, AIXMSchemaInfo> schemaInfos;
 
@@ -671,7 +678,7 @@ public class Options {
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fTypeMap.get(k1 + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -688,7 +695,7 @@ public class Options {
 
 		while (pme == null && rule != null) {
 			pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 
 		return pme;
@@ -738,7 +745,7 @@ public class Options {
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fBaseMap.get(k1 + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -771,7 +778,7 @@ public class Options {
 					.equalsIgnoreCase(xmlTypeType + "/" + xmlTypeContent)) {
 				me = mex;
 			}
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -802,7 +809,7 @@ public class Options {
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fElementMap.get(k1 + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -816,7 +823,7 @@ public class Options {
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fAttributeMap.get(k1 + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -830,7 +837,7 @@ public class Options {
 		MapEntry me = null;
 		while (me == null && rule != null) {
 			me = fAttributeGroupMap.get(k1 + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return me;
 	}
@@ -1236,61 +1243,61 @@ public class Options {
 		fNamespaces.put(k1, new MapEntry(s1, s2));
 	}
 
-	protected void addRule(String rule) {
-		fAllRules.add(rule.toLowerCase());
-	}
+//	protected void addRule(String rule) {
+//		fAllRules.add(rule.toLowerCase());
+//	}
+//
+//	public boolean hasRule(String rule) {
+//		return fAllRules.contains(rule.toLowerCase());
+//	}
+//
+//	protected void addRule(String rule, String encRule) {
+//		fRulesInEncRule.add(rule.toLowerCase() + "#" + encRule.toLowerCase());
+//	}
+//
+//	public boolean hasRule(String rule, String encRule) {
+//		boolean res = false;
+//		while (!res && encRule != null) {
+//			res = fRulesInEncRule
+//					.contains(rule.toLowerCase() + "#" + encRule.toLowerCase());
+//			encRule = extendsEncRule(encRule);
+//		}
+//		return res;
+//	}
+//
+//	/**
+//	 * Identify if the given encRule is or extends (directly or indirectly) the
+//	 * given baseRule. When comparing encoding rule names, case is ignored.
+//	 * 
+//	 * @param encRule
+//	 * @param baseRule
+//	 * @return <code>true</code> if encRule is or extends (directly or
+//	 *         indirectly) baseRule, else <code>false</code>
+//	 */
+//	public boolean matchesEncRule(String encRule, String baseRule) {
+//		while (encRule != null) {
+//			if (encRule.equalsIgnoreCase(baseRule))
+//				return true;
+//			encRule = extendsEncRule(encRule);
+//		}
+//		return false;
+//	}
 
-	public boolean hasRule(String rule) {
-		return fAllRules.contains(rule.toLowerCase());
-	}
-
-	protected void addRule(String rule, String encRule) {
-		fRulesInEncRule.add(rule.toLowerCase() + "#" + encRule.toLowerCase());
-	}
-
-	public boolean hasRule(String rule, String encRule) {
-		boolean res = false;
-		while (!res && encRule != null) {
-			res = fRulesInEncRule
-					.contains(rule.toLowerCase() + "#" + encRule.toLowerCase());
-			encRule = extendsEncRule(encRule);
-		}
-		return res;
-	}
-
-	/**
-	 * Identify if the given encRule is or extends (directly or indirectly) the
-	 * given baseRule. When comparing encoding rule names, case is ignored.
-	 * 
-	 * @param encRule
-	 * @param baseRule
-	 * @return <code>true</code> if encRule is or extends (directly or
-	 *         indirectly) baseRule, else <code>false</code>
-	 */
-	public boolean matchesEncRule(String encRule, String baseRule) {
-		while (encRule != null) {
-			if (encRule.equalsIgnoreCase(baseRule))
-				return true;
-			encRule = extendsEncRule(encRule);
-		}
-		return false;
-	}
-
-	protected void addExtendsEncRule(String rule1, String rule2) {
-		fExtendsEncRule.put(rule1.toLowerCase(), rule2.toLowerCase());
-	}
-
-	protected String extendsEncRule(String rule1) {
-		return fExtendsEncRule.get(rule1.toLowerCase());
-	}
-
-	public boolean encRuleExists(String encRule) {
-		if ("*".equals(encRule)) {
-			return true;
-		} else {
-			return fExtendsEncRule.containsKey(encRule);
-		}
-	}
+//	protected void addExtendsEncRule(String rule1, String rule2) {
+//		fExtendsEncRule.put(rule1.toLowerCase(), rule2.toLowerCase());
+//	}
+//
+//	protected String extendsEncRule(String rule1) {
+//		return fExtendsEncRule.get(rule1.toLowerCase());
+//	}
+//
+//	public boolean encRuleExists(String encRule) {
+//		if ("*".equals(encRule)) {
+//			return true;
+//		} else {
+//			return fExtendsEncRule.containsKey(encRule);
+//		}
+//	}
 
 	protected void addPackage(String k1, String s1, String s2, String s3,
 			String s4) {
@@ -1674,10 +1681,6 @@ public class Options {
 				}
 			}
 
-			// add standard rules, just so that configured rules can be
-			// validated
-			addStandardRules();
-
 			// Load transformer configurations (if any are provided in the
 			// configuration file)
 			this.transformerConfigs = parseTransformerConfigurations(document);
@@ -1722,11 +1725,11 @@ public class Options {
 							.values()) {
 						String nam = prs.getName();
 						String ext = prs.getExtendedRuleSetName();
-						addExtendsEncRule(nam, ext);
+						ruleRegistry.addExtendsEncRule(nam, ext);
 
 						if (prs.hasAdditionalRules()) {
 							for (String rule : prs.getAdditionalRules()) {
-								addRule(rule, nam);
+							    ruleRegistry.addRule(rule, nam);
 							}
 						}
 					}
@@ -1900,6 +1903,23 @@ public class Options {
 					&& addTaggedValues_value.trim().equals("*")) {
 				this.allowAllTags = true;
 			}
+			
+			String addStereotypes_value = parameter("addStereotypes");
+
+			if (StringUtils.isNotBlank(addStereotypes_value)) {
+
+			    if(addStereotypes_value.trim().equals("*")) {
+				this.allowAllStereotypes = true;
+			    } else {
+				String[] as = StringUtils.split(addStereotypes_value, ",");
+				for(String s : as) {
+				    if(StringUtils.stripToNull(s) != null) {
+					this.addedStereotypes.add(s.trim());
+				    }
+				}
+			    }
+			}
+			
 
 			String language_value = inputConfig.getParameters()
 					.get(PARAM_LANGUAGE);
@@ -1965,7 +1985,7 @@ public class Options {
 		Boolean val = null;
 		while (val == null && rule != null) {
 			val = fXmlElementHasSimpleContentMap.get(type + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return val;
 	}
@@ -1991,7 +2011,7 @@ public class Options {
 		Boolean val = null;
 		while (val == null && rule != null) {
 			val = fXmlReferenceableMap.get(type + "#" + rule);
-			rule = extendsEncRule(rule);
+			rule = ruleRegistry.extendsEncRule(rule);
 		}
 		return val;
 	}
@@ -2016,16 +2036,13 @@ public class Options {
 		fNamespaces = new HashMap<String, MapEntry>();
 		fPackages = new HashMap<String, MapEntry>();
 		fSchemaLocations = new HashMap<String, String>();
-		fAllRules = new HashSet<String>();
-		fExtendsEncRule = new HashMap<String, String>();
-		fRulesInEncRule = new HashSet<String>();
 
 		// repopulate fields
 
 		// set standard parameters first
 		setStandardParameters();
 
-		addStandardRules();
+		ruleRegistry.reset();
 
 		// add all parameters from input
 		for (String key : inputConfig.getParameters().keySet()) {
@@ -2073,6 +2090,69 @@ public class Options {
 			}
 		}
 
+		/*
+		 * FIXME 2019-07-02 JE: Now we need to overwrite standard settings like
+		 * defaultEncodingRule and rule sets defined by XmlSchema targets -
+		 * unless the current process config is an XmlSchema target. That is
+		 * important for rule matching throughout the processing chain of
+		 * ShapeChange. This kind of target specific behavior is undesirable,
+		 * but too intertwined with the current code in order to be easily
+		 * fixed. Refactoring the code will probably lead to a new major version
+		 * of ShapeChange. That version could also be written in such a way that
+		 * new transformations and targets can be added without code changes to
+		 * the core of ShapeChange.
+		 */
+		int countXmlSchemaConfigs = 0;
+		for (TargetConfiguration tgtConfig : targetConfigs) {
+
+			if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)
+					&& tgtConfig instanceof TargetXmlSchemaConfiguration
+					&& !(currentProcessConfig != null
+							&& currentProcessConfig instanceof TargetXmlSchemaConfiguration)) {
+
+				countXmlSchemaConfigs++;
+				if (countXmlSchemaConfigs == 2) {
+
+					/*
+					 * FIXME develop/use common logging mechanism that is
+					 * available to all ShapeChange code
+					 */
+					System.out.println(
+							"Warning: Multiple non-disabled XmlSchema targets "
+									+ "found in the ShapeChange configuration. If these "
+									+ "targets have different encoding rules or different"
+									+ " values for the target parameter defaultEncodingRule,"
+									+ " that may lead to unexpected results.");
+				}
+
+				/*
+				 * Ensure that we have all the rules defined by the XmlSchema
+				 * target.
+				 */
+				for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
+					String nam = prs.getName();
+					String ext = prs.getExtendedRuleSetName();
+					ruleRegistry.addExtendsEncRule(nam, ext);
+
+					if (prs.hasAdditionalRules()) {
+						for (String rule : prs.getAdditionalRules()) {
+						    ruleRegistry.addRule(rule, nam);
+						}
+					}
+				}
+
+				/*
+				 * Also load parameter defaultEncodingRule, if set in the
+				 * XmlSchema target configuration.
+				 */
+				if (tgtConfig.hasParameter("defaultEncodingRule")) {
+					setParameter(tgtConfig.getClassName(),
+							"defaultEncodingRule", tgtConfig.getParameters()
+									.get("defaultEncodingRule"));
+				}
+			}
+		}
+
 		if (currentProcessConfig != null) {
 
 			this.gmlVersion = currentProcessConfig.getGmlVersion();
@@ -2082,9 +2162,11 @@ public class Options {
 
 			// initialise fields for common targets and xml schema targets
 			if (currentProcessConfig instanceof TargetConfiguration) {
-				// add all parameters from current process configuration (only
-				// required
-				// for targets)
+
+				/*
+				 * add all parameters from current process configuration (only
+				 * required for targets)
+				 */
 				for (String name : currentProcessConfig.getParameters()
 						.keySet()) {
 					setParameter(currentProcessConfig.getClassName(), name,
@@ -2096,10 +2178,10 @@ public class Options {
 						.values()) {
 					String nam = prs.getName();
 					String ext = prs.getExtendedRuleSetName();
-					addExtendsEncRule(nam, ext);
+					ruleRegistry.addExtendsEncRule(nam, ext);
 					if (prs.hasAdditionalRules()) {
 						for (String rule : prs.getAdditionalRules()) {
-							addRule(rule, nam);
+						    ruleRegistry.addRule(rule, nam);
 						}
 					}
 				}
@@ -3525,7 +3607,7 @@ public class Options {
 								// we do not need to check rules for
 								// transformers here
 								if (checkRuleExistence) {
-									if (hasRule(ruleName))
+									if (ruleRegistry.hasRule(ruleName))
 										ruleSetRules.add(ruleName);
 									else
 										System.err.println(
@@ -3549,477 +3631,18 @@ public class Options {
 		}
 		return result;
 	}
-
-	private void addStandardRules() {
-
-		/*
-		 * FIXME: Targets should be able to register rules with options. By
-		 * requiring that Options knows all rules up front, one cannot add a new
-		 * target dynamically (e.g. via an additional library on the classpath)
-		 * and make use of the Info.matches(String) function.
-		 */
-
-		/*
-		 * mandatory rules
-		 */
-		addRule("req-xsd-pkg-xsdDocument-unique");
-		addRule("req-xsd-cls-name-unique");
-		addRule("req-xsd-cls-ncname");
-		addRule("req-xsd-prop-data-type");
-		addRule("req-xsd-prop-value-type-exists");
-		addRule("req-xsd-prop-ncname");
-		addRule("rule-xsd-pkg-contained-packages");
-		addRule("rule-xsd-pkg-dependencies");
-		addRule("rule-xsd-cls-union-as-choice");
-		addRule("rule-xsd-cls-unknown-as-object");
-		addRule("rule-xsd-cls-sequence");
-		addRule("rule-xsd-cls-object-element");
-		addRule("rule-xsd-cls-type");
-		addRule("rule-xsd-cls-property-type");
-		addRule("rule-xsd-cls-local-properties");
-		/*
-		 * Associate these with a core encoding rule
-		 */
-		addRule("req-xsd-pkg-xsdDocument-unique", "*");
-		addRule("req-xsd-cls-name-unique", "*");
-		addRule("req-xsd-cls-ncname", "*");
-		addRule("req-xsd-prop-data-type", "*");
-		addRule("req-xsd-prop-value-type-exists", "*");
-		addRule("req-xsd-prop-ncname", "*");
-		addRule("rule-xsd-pkg-contained-packages", "*");
-		addRule("rule-xsd-pkg-dependencies", "*");
-		addRule("rule-xsd-cls-unknown-as-object", "*");
-		addRule("rule-xsd-cls-object-element", "*");
-		addRule("rule-xsd-cls-type", "*");
-		addRule("rule-xsd-cls-property-type", "*");
-		addRule("rule-xsd-cls-local-properties", "*");
-		addRule("rule-xsd-cls-union-as-choice", "*");
-		addRule("rule-xsd-cls-sequence", "*");
-		/*
-		 * GML 3.2 / ISO 19136:2007 rules
-		 */
-		addRule("req-xsd-cls-generalization-consistent");
-		addRule("rule-xsd-all-naming-gml");
-		addRule("rule-xsd-cls-global-enumeration");
-		addRule("rule-xsd-cls-codelist-asDictionary");
-		addRule("rule-xsd-cls-noPropertyType");
-		addRule("rule-xsd-cls-byValuePropertyType");
-		addRule("rule-xsd-cls-standard-gml-property-types");
-		addRule("rule-xsd-pkg-gmlProfileSchema");
-		addRule("rule-xsd-prop-defaultCodeSpace");
-		addRule("rule-xsd-prop-inlineOrByReference");
-		addRule("rule-xsd-prop-reverseProperty");
-		addRule("rule-xsd-prop-targetElement");
-		/*
-		 * add the iso19136_2007 encoding rule and extend the core encoding rule
-		 */
-		addExtendsEncRule("iso19136_2007", "*");
-		addRule("req-xsd-cls-generalization-consistent", "iso19136_2007");
-		addRule("rule-xsd-all-naming-gml", "iso19136_2007");
-		addRule("rule-xsd-cls-global-enumeration", "iso19136_2007");
-		addRule("rule-xsd-cls-codelist-asDictionary", "iso19136_2007");
-		addRule("rule-xsd-cls-standard-gml-property-types", "iso19136_2007");
-		addRule("rule-xsd-cls-noPropertyType", "iso19136_2007");
-		addRule("rule-xsd-cls-byValuePropertyType", "iso19136_2007");
-		addRule("rule-xsd-pkg-gmlProfileSchema", "iso19136_2007");
-		addRule("rule-xsd-prop-targetElement", "iso19136_2007");
-		addRule("rule-xsd-prop-reverseProperty", "iso19136_2007");
-		addRule("rule-xsd-prop-defaultCodeSpace", "iso19136_2007");
-		addRule("rule-xsd-prop-inlineOrByReference", "iso19136_2007");
-		/*
-		 * additional GML 3.3 rules
-		 */
-		addRule("rule-xsd-cls-codelist-asDictionaryGml33");
-		addRule("rule-xsd-rel-association-classes");
-		/*
-		 * add the gml33 encoding rule and extend the core encoding rule
-		 */
-		addExtendsEncRule("gml33", "*");
-		addRule("req-xsd-cls-generalization-consistent", "gml33");
-		addRule("rule-xsd-all-naming-gml", "gml33");
-		addRule("rule-xsd-cls-global-enumeration", "gml33");
-		addRule("rule-xsd-cls-codelist-asDictionaryGml33", "gml33");
-		addRule("rule-xsd-cls-standard-gml-property-types", "gml33");
-		addRule("rule-xsd-cls-noPropertyType", "gml33");
-		addRule("rule-xsd-cls-byValuePropertyType", "gml33");
-		addRule("rule-xsd-pkg-gmlProfileSchema", "gml33");
-		addRule("rule-xsd-prop-targetElement", "gml33");
-		addRule("rule-xsd-prop-reverseProperty", "gml33");
-		addRule("rule-xsd-prop-defaultCodeSpace", "gml33");
-		addRule("rule-xsd-prop-inlineOrByReference", "gml33");
-		addRule("rule-xsd-rel-association-classes", "gml33");
-		/*
-		 * ISO/TS 19139:2007 rules
-		 */
-		addRule("rule-xsd-all-naming-19139");
-		addRule("rule-xsd-cls-standard-19139-isoType");
-		addRule("rule-xsd-cls-standard-19139-property-types");
-		addRule("rule-xsd-cls-enum-object-element");
-		addRule("rule-xsd-cls-enum-property-type");
-
-		/*
-		 * add the iso19139_2007 encoding rule and extend the core encoding rule
-		 */
-		addExtendsEncRule("iso19139_2007", "*");
-		addRule("rule-xsd-cls-enum-object-element", "iso19139_2007");
-		addRule("rule-xsd-cls-enum-property-type", "iso19139_2007");
-		addRule("rule-xsd-cls-global-enumeration", "iso19139_2007");
-		addRule("rule-xsd-cls-standard-19139-property-types", "iso19139_2007");
-		addRule("rule-xsd-all-naming-19139", "iso19139_2007");
-		/*
-		 * SWE Common Data Model 2.0 rules
-		 */
-		addRule("rule-xsd-all-naming-swe");
-		addRule("rule-xsd-prop-xsdAsAttribute");
-		addRule("rule-xsd-prop-soft-typed");
-		addRule("rule-xsd-cls-union-as-group-property-type");
-		addRule("rule-xsd-cls-standard-swe-property-types");
-		addRule("rule-xsd-prop-initialValue");
-		/*
-		 * add the ogcSweCommon2 encoding rule and extend the core encoding rule
-		 */
-		addExtendsEncRule("ogcSweCommon2", "*");
-		addRule("req-xsd-cls-generalization-consistent", "ogcSweCommon2");
-		addRule("rule-xsd-all-naming-swe", "ogcSweCommon2");
-		addRule("rule-xsd-cls-global-enumeration", "ogcSweCommon2");
-		addRule("rule-xsd-cls-codelist-asDictionary", "ogcSweCommon2");
-		addRule("rule-xsd-cls-standard-swe-property-types", "ogcSweCommon2");
-		addRule("rule-xsd-cls-noPropertyType", "ogcSweCommon2");
-		addRule("rule-xsd-cls-byValuePropertyType", "ogcSweCommon2");
-		addRule("rule-xsd-pkg-gmlProfileSchema", "ogcSweCommon2");
-		addRule("rule-xsd-prop-targetElement", "ogcSweCommon2");
-		addRule("rule-xsd-prop-reverseProperty", "ogcSweCommon2");
-		addRule("rule-xsd-prop-defaultCodeSpace", "ogcSweCommon2");
-		addRule("rule-xsd-prop-inlineOrByReference", "ogcSweCommon2");
-		addRule("rule-xsd-prop-xsdAsAttribute", "ogcSweCommon2");
-		addRule("rule-xsd-prop-soft-typed", "ogcSweCommon2");
-		addRule("rule-xsd-cls-union-as-group-property-type", "ogcSweCommon2");
-		addRule("rule-xsd-prop-initialValue", "ogcSweCommon2");
-
-		/*
-		 * additional GML 2.1 rules
-		 */
-		addRule("rule-xsd-all-gml21");
-		addRule("rule-xsd-cls-codelist-anonymous-xlink");
-		/*
-		 * add the gml21 encoding rule and extend the core encoding rule
-		 */
-		addExtendsEncRule("gml21", "iso19136_2007");
-		addRule("rule-xsd-all-gml21", "gml21");
-		addRule("rule-xsd-cls-codelist-anonymous-xlink", "gml21");
-
-		/*
-		 * addExtendsEncRule("gsip","*");
-		 * addRule("req-xsd-cls-mixin-supertypes","gsip");
-		 * addRule("req-xsd-cls-codelist-no-supertypes","gsip");
-		 * addRule("rule-xsd-cls-union-asCharacterString","gsip");
-		 * addRule("rule-xsd-cls-union-asGroup","gsip");
-		 * addRule("rule-xsd-cls-enum-supertypes","gsip");
-		 * addRule("rule-xsd-cls-enum-subtypes","gsip");
-		 * addRule("rule-xsd-cls-basictype","gsip");
-		 * addRule("rule-xsd-cls-union-direct","gsip");
-		 * addRule("rule-xsd-cls-codelist-constraints","gsip");
-		 * addRule("rule-xsd-cls-mixin-classes-as-group","gsip");
-		 * addRule("rule-xsd-cls-mixin-classes","gsip");
-		 * addRule("rule-xsd-prop-exclude-derived","gsip");
-		 * addRule("rule-xsd-prop-length-size-pattern","gsip");
-		 * addRule("rule-xsd-prop-xsdAsAttribute","gsip");
-		 * addRule("rule-xsd-prop-nillable","gsip");
-		 * addRule("rule-xsd-prop-nilReasonAllowed","gsip");
-		 * addRule("rule-xsd-prop-initialValue","gsip");
-		 * addRule("rule-xsd-prop-att-map-entry","gsip");
-		 * addRule("rule-xsd-pkg-schematron","gsip");
-		 * addRule("rule-xsd-all-tagged-values","gsip");
-		 */
-
-		/*
-		 * non-standard extensions - requirements
-		 */
-		addRule("req-all-all-documentation");
-		addRule("req-all-prop-sequenceNumber");
-		addRule("req-xsd-pkg-targetNamespace");
-		addRule("req-xsd-pkg-xmlns");
-		addRule("req-xsd-pkg-namespace-schema-only");
-		addRule("rec-xsd-pkg-version");
-		addRule("req-xsd-pkg-xsdDocument");
-		addRule("req-xsd-pkg-dependencies");
-		addRule("req-xsd-cls-codelist-asDictionary-true");
-		addRule("req-xsd-cls-codelist-extensibility-values");
-		addRule("req-xsd-cls-codelist-extensibility-vocabulary");
-		addRule("req-xsd-cls-codelist-no-supertypes");
-		addRule("req-xsd-cls-datatype-noPropertyType");
-		addRule("req-xsd-cls-enum-no-supertypes");
-		addRule("req-xsd-cls-mixin-supertypes");
-		addRule("req-xsd-cls-mixin-supertypes-overrule");
-		addRule("req-xsd-cls-objecttype-byValuePropertyType");
-		addRule("req-xsd-cls-objecttype-noPropertyType");
-		addRule("req-xsd-cls-suppress-no-properties");
-		addRule("req-xsd-cls-suppress-subtype");
-		addRule("req-xsd-cls-suppress-supertype");
-		addRule("req-xsd-prop-codelist-obligation");
-		/*
-		 * non-standard extensions - conversion rules
-		 */
-		addRule("rule-xsd-all-descriptorAnnotation");
-		addRule("rule-xsd-all-globalIdentifierAnnotation");
-		addRule("rule-xsd-all-notEncoded");
-		addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
-		addRule("rule-xsd-cls-adeelement");
-		addRule("rule-xsd-cls-basictype");
-		addRule("rule-xsd-cls-codelist-constraints");
-		addRule("rule-xsd-cls-codelist-constraints2");
-		addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
-		addRule("rule-xsd-cls-codelist-gmlsf");
-		addRule("rule-xsd-cls-enum-subtypes");
-		addRule("rule-xsd-cls-enum-supertypes");
-		addRule("rule-xsd-cls-mixin-classes-as-group");
-		addRule("rule-xsd-cls-mixin-classes");
-		addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
-		addRule("rule-xsd-cls-no-abstract-classes");
-		addRule("rule-xsd-cls-no-base-class");
-		addRule("rule-xsd-cls-no-gml-types");
-		addRule("rule-xsd-cls-okstra-fid");
-		addRule("rule-xsd-cls-okstra-lifecycle");
-		addRule("rule-xsd-cls-okstra-schluesseltabelle");
-		addRule("rule-xsd-cls-suppress");
-		addRule("rule-xsd-cls-union-asCharacterString");
-		addRule("rule-xsd-cls-union-asGroup");
-		addRule("rule-xsd-cls-union-direct");
-		addRule("rule-xsd-cls-union-direct-optionality");
-		addRule("rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets");
-		addRule("rule-xsd-prop-att-map-entry");
-		addRule("rule-xsd-prop-constrainingFacets");
-		addRule("rule-xsd-prop-exclude-derived");
-		addRule("rule-xsd-prop-length-size-pattern");
-		addRule("rule-xsd-prop-featureType-gmlsf-byReference");
-		addRule("rule-xsd-prop-metadata-gmlsf-byReference");
-		addRule("rule-xsd-prop-nillable");
-		addRule("rule-xsd-prop-nilReasonAllowed");
-		addRule("rule-xsd-prop-gmlArrayProperty");
-		addRule("rule-xsd-prop-gmlListProperty");
-		addRule("rule-xsd-prop-qualified-associations");
-		addRule("rule-xsd-prop-targetCodeListURI");
-		addRule("rule-xsd-all-no-documentation");
-		addRule("rule-xsd-cls-local-enumeration");
-		addRule("rule-xsd-cls-local-basictype");
-		addRule("rule-xsd-pkg-dgiwgsp");
-		addRule("rule-xsd-pkg-gmlsf");
-		addRule("rule-xsd-pkg-schematron");
-		addRule("rule-xsd-all-tagged-values");
-		addRule("rule-xsd-cls-adehook");
-
-		// AIXM specific rules
-		addRule("rule-all-cls-aixmDatatype");
-		// further rules of a more general nature
-		addRule("rule-all-prop-uomAsAttribute");
-
-		/*
-		 * JSON encoding rules
-		 */
-		addRule("rule-json-all-notEncoded");
-
-		addExtendsEncRule("geoservices", "*");
-		addExtendsEncRule("geoservices_extended", "*");
-
-		/*
-		 * RDF encoding rules
-		 */
-		addRule("rule-rdf-prop-parent");
-
-		/*
-		 * SQL encoding rules
-		 */
-
-		addRule("rule-sql-all-associativetables");
-		addRule("rule-sql-all-check-constraint-naming-oracle-default");
-		addRule("rule-sql-all-check-constraint-naming-pearsonhash");
-		addRule("rule-sql-all-check-constraint-naming-postgresql-default");
-		addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
-		addRule("rule-sql-all-constraintNameUsingShortName");
-		addRule("rule-sql-all-databaseModel");
-		addRule("rule-sql-all-documentationViaExplicitCommentStatements");
-		addRule("rule-sql-all-exclude-abstract");
-		addRule("rule-sql-all-foreign-key-oracle-naming-style");
-		addRule("rule-sql-all-foreign-key-pearsonhash-naming");
-		addRule("rule-sql-all-foreign-key-default-naming");
-		addRule("rule-sql-all-indexNameUsingShortName");
-		addRule("rule-sql-all-normalizing-ignore-case");
-		addRule("rule-sql-all-normalizing-lower-case");
-		addRule("rule-sql-all-normalizing-oracle");
-		addRule("rule-sql-all-normalizing-sqlserver");
-		addRule("rule-sql-all-normalizing-upper-case");
-		addRule("rule-sql-all-notEncoded");
-		addRule("rule-sql-all-precisionAndScale");
-		addRule("rule-sql-all-representTaggedValues");
-		addRule("rule-sql-all-suppressDocumentationViaInlineComments");
-		addRule("rule-sql-all-unique-naming-count-suffix");
-
-		addRule("rule-sql-cls-code-lists");
-		addRule("rule-sql-cls-code-lists-pods");
-		addRule("rule-sql-cls-data-types");
-		addRule("rule-sql-cls-data-types-oneToMany-oneTable");
-		addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
-		addRule("rule-sql-cls-data-types-oneToMany-severalTables");
-		addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
-		addRule("rule-sql-cls-feature-types");
-		addRule("rule-sql-cls-identifierStereotype");
-		addRule("rule-sql-cls-object-types");
-		addRule("rule-sql-cls-references-to-external-types");
-
-		addRule("rule-sql-prop-check-constraint-for-range");
-		addRule("rule-sql-prop-check-constraints-for-enumerations");
-		addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
-		addRule("rule-sql-prop-exclude-derived");
-		addRule("rule-sql-prop-uniqueConstraints");
-
-		addRule("rule-sql-all-replicationSchema");
-		addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
-		addRule("rule-sql-prop-replicationSchema-geometryAnnotation");
-		addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
-		addRule("rule-sql-prop-replicationSchema-nillable");
-		addRule("rule-sql-prop-replicationSchema-optional");
-
-		// declare rule sets
-		addExtendsEncRule(SQL, "*");
-		addRule("rule-sql-cls-feature-types", SQL);
-
-		/*
-		 * OWL encoding rules
-		 */
-
-		// declare optional rules
-		addRule("rule-owl-all-constraints-byConstraintMapping");
-		addRule("rule-owl-all-constraints-humanReadableTextOnly");
-
-		addRule("rule-owl-pkg-importISO191502Base");
-		addRule("rule-owl-pkg-dctSourceTitle");
-		addRule("rule-owl-pkg-ontologyName-appendVersion");
-		addRule("rule-owl-pkg-ontologyName-byTaggedValue");
-		addRule("rule-owl-pkg-ontologyName-code");
-		addRule("rule-owl-pkg-ontologyName-withPath");
-		addRule("rule-owl-pkg-ontologyName-iso191502");
-		addRule("rule-owl-pkg-versionInfo");
-		addRule("rule-owl-pkg-versionIRI");
-		addRule("rule-owl-pkg-versionIRI-avoid-duplicate-version");
-		addRule("rule-owl-pkg-singleOntologyPerSchema");
-
-		addRule("rule-owl-cls-codelist-external");
-		addRule("rule-owl-cls-codelist-19150-2");
-		addRule("rule-owl-cls-codelist-19150-2-conceptSchemeSubclass");
-		addRule("rule-owl-cls-codelist-19150-2-differentIndividuals");
-		addRule("rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace");
-		addRule("rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration");
-		addRule("rule-owl-cls-codelist-19150-2-skos-collection");
-		addRule("rule-owl-cls-disjoint-classes");
-		addRule("rule-owl-cls-iso191502Enumeration");
-
-		addRule("rule-owl-cls-encode-featuretypes");
-		addRule("rule-owl-cls-encode-basictypes");
-		addRule("rule-owl-cls-encode-datatypes");
-		addRule("rule-owl-cls-encode-mixintypes");
-		addRule("rule-owl-cls-encode-objecttypes");
-		addRule("rule-owl-cls-enumerationAsCodelist");
-		addRule("rule-owl-cls-generalization");
-		addRule("rule-owl-cls-iso191502IsAbstract");
-		addRule("rule-owl-cls-union");
-		addRule("rule-owl-cls-unionSets");
-
-		addRule("rule-owl-prop-code-broader-byBroaderListedValue");
-		addRule("rule-owl-prop-external-reference");
-		addRule("rule-owl-prop-general");
-		addRule("rule-owl-prop-globalScopeAttributes");
-		addRule("rule-owl-prop-globalScopeByConversionParameter");
-		addRule("rule-owl-prop-globalScopeByUniquePropertyName");
-		addRule("rule-owl-prop-inverseOf");
-		addRule("rule-owl-prop-iso191502Aggregation");
-		addRule("rule-owl-prop-iso191502AssociationName");
-		addRule("rule-owl-prop-iso191502-naming");
-		addRule("rule-owl-prop-labelFromLocalName");
-		addRule("rule-owl-prop-localScopeAll");
-		addRule("rule-owl-prop-mapping-compare-specifications");
-		addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
-		addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
-		addRule("rule-owl-prop-propertyEnrichment");
-		addRule("rule-owl-prop-range-global");
-		addRule("rule-owl-prop-range-local-withUniversalQuantification");
-		addRule("rule-owl-prop-voidable-as-minCardinality0");
-
-		/*
-		 * ArcGIS workspace encoding rules
-		 */
-		addRule("rule-arcgis-all-postprocess-removeUnusedCodedValueDomains");
-		addRule("rule-arcgis-all-precision");
-		addRule("rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses");
-		addRule("rule-arcgis-all-representTaggedValues");
-		addRule("rule-arcgis-all-scale");
-		addRule("rule-arcgis-all-subtypes");
-		addRule("rule-arcgis-cls-hasM");
-		addRule("rule-arcgis-cls-hasZ");
-		addRule("rule-arcgis-cls-identifierStereotype");
-		addRule("rule-arcgis-cls-rangeDomainFromTaggedValues");
-		addRule("rule-arcgis-prop-attIndex");
-		addRule("rule-arcgis-prop-initialValue");
-		addRule("rule-arcgis-prop-initialValueByAlias");
-		addRule("rule-arcgis-prop-isNullable");
-		addRule("rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType");
-		addRule("rule-arcgis-prop-lengthFromTaggedValue");
-		addRule("rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType");
-		addRule("rule-arcgis-prop-precision"); // deprecated
-		addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
-		addRule("rule-arcgis-prop-scale"); // deprecated
-
-		/*
-		 * Replication schema encoding rules
-		 */
-		addRule("rule-rep-prop-optional");
-		addRule("rule-rep-prop-exclude-derived");
-		addRule("rule-rep-cls-generate-objectidentifier");
-		addRule("rule-rep-prop-maxLength-from-size");
-
-		/*
-		 * Application schema metadata rules
-		 */
-		addRule("rule-asm-all-identify-profiles");
-		addRule("rule-asm-all-identifyTypeUsage");
-
-		/*
-		 * Model export conversion rules
-		 */
-		addRule("rule-exp-all-omitExistingProfiles");
-		addRule("rule-exp-all-restrictExistingProfiles");
-		addRule("rule-exp-pkg-allPackagesAreEditable");
-
-		/*
-		 * CDB conversion rules
-		 */
-		addRule("rule-cdb-all-notEncoded");
-		addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
-
-		/*
-		 * CodeListDictionariesML conversion rules
-		 */
-		addRule("rule-cldml-prop-codeListAndCodeNameAsGmlId");
-
-		/*
-		 * ldproxy Configuration conversion rules
-		 */
-		addRule("rule-ldp-cls-non-abstract-feature-types-as-collection");
-		addRule("rule-ldp-cls-table-per-feature-type");
-		addRule("rule-ldp-cls-id-field");
-		addRule("rule-ldp-cls-generate-codelist");
-		addRule("rule-ldp-all-names-in-lowercase");
-		addRule("rule-ldp-all-names-max-length");
-		addRule("rule-ldp-prop-all-datatype-relations-as-n-to-m-relations");
-		addRule("rule-ldp-prop-all-featuretype-relations-as-n-to-m-relations");
-		addRule("rule-ldp-prop-multiple-single-values-as-1-to-n-relations");
-		addRule("rule-ldp-prop-separate-geometry-table");
-		addRule("rule-ldp-prop-all-codelist-values-as-strings");
-		addRule("rule-ldp-cls-oneo-metadata");
+	
+	public RuleRegistry getRuleRegistry() {
+	    return this.ruleRegistry;
 	}
 
 	/**
-	 * Normalize a stereotype fetched from the model. This includes trimming the
-	 * incoming stereotype and looking it up in the defined stereotype aliases.
+	 * Normalize a stereotype fetched from the model.
+	 * 
+	 * @return The well-known stereotype, for which the given stereotype is
+	 *         defined as an alias (via stereotype alias configuration
+	 *         elements), or the given stereotype (if it is not configured as a
+	 *         stereotype alias).
 	 */
 	public String normalizeStereotype(String stereotype) {
 		// Map stereotype alias to well-known stereotype
@@ -4184,7 +3807,8 @@ public class Options {
 	}
 
 	/**
-	 * @return the currentProcessConfig
+	 * @return the configuration of the process that is currently being
+	 *         executed; can be <code>null</code> during the input loading phase
 	 */
 	public ProcessConfiguration getCurrentProcessConfig() {
 		return currentProcessConfig;
@@ -4347,6 +3971,14 @@ public class Options {
 	public boolean allowAllTags() {
 		return this.allowAllTags;
 	}
+	
+	public boolean allowAllStereotypes() {
+		return this.allowAllStereotypes;
+	}
+	
+	public Set<String> addedStereotypes() {
+	    return this.addedStereotypes;
+	}
 
 	/**
 	 * Depending upon whether or not string interning shall be used during
@@ -4435,6 +4067,15 @@ public class Options {
 		return result;
 	}
 
+	public TaggedValueNormalizer taggedValueNormalizer() {
+
+		if (this.tvNormalizer == null) {
+			this.tvNormalizer = new TaggedValueNormalizer(this);
+		}
+
+		return this.tvNormalizer;
+	}
+
 	/**
 	 * @param original
 	 * @return can be empty but not <code>null</code>
@@ -4487,5 +4128,13 @@ public class Options {
 
 	public InputConfiguration getInputConfig() {
 		return this.inputConfig;
+	}
+
+	public boolean constraintLoadingEnabled() {
+	    String value = parameter("checkingConstraints");
+	    if(StringUtils.isBlank(value)) {
+		value = parameter("constraintLoading");
+	    }
+	    return value == null || !value.equalsIgnoreCase("disabled");
 	}
 }

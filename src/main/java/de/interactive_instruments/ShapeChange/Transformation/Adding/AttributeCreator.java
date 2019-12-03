@@ -69,8 +69,8 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class AttributeCreator implements Transformer, MessageSource {
@@ -85,6 +85,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 		private boolean isOrdered;
 		private boolean isUnique;
 		private boolean isReadOnly;
+		private boolean isOwned;
 		private String name;
 		private Multiplicity multiplicity;
 		private TaggedValues tvs;
@@ -178,7 +179,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param ps
-		 *            the ps to set
+		 *               the ps to set
 		 */
 		public void setPackageSelector(PackageSelector ps) {
 			this.ps = ps;
@@ -186,7 +187,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param cs
-		 *            the cs to set
+		 *               the cs to set
 		 */
 		public void setClassSelector(ClassSelector cs) {
 			this.cs = cs;
@@ -194,7 +195,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param aliasName
-		 *            the aliasName to set
+		 *                      the aliasName to set
 		 */
 		public void setAliasName(String aliasName) {
 			this.aliasName = aliasName;
@@ -202,7 +203,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param initialValue
-		 *            the initialValue to set
+		 *                         the initialValue to set
 		 */
 		public void setInitialValue(String initialValue) {
 			this.initialValue = initialValue;
@@ -210,7 +211,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param isDerived
-		 *            the isDerived to set
+		 *                      the isDerived to set
 		 */
 		public void setDerived(boolean isDerived) {
 			this.isDerived = isDerived;
@@ -218,15 +219,19 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param isOrdered
-		 *            the isOrdered to set
+		 *                      the isOrdered to set
 		 */
 		public void setOrdered(boolean isOrdered) {
 			this.isOrdered = isOrdered;
 		}
 
+		public void setOwned(boolean isOwned) {
+			this.isOwned = isOwned;
+		}
+
 		/**
 		 * @param isUnique
-		 *            the isUnique to set
+		 *                     the isUnique to set
 		 */
 		public void setUnique(boolean isUnique) {
 			this.isUnique = isUnique;
@@ -234,7 +239,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param isReadOnly
-		 *            the isReadOnly to set
+		 *                       the isReadOnly to set
 		 */
 		public void setReadOnly(boolean isReadOnly) {
 			this.isReadOnly = isReadOnly;
@@ -242,7 +247,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param name
-		 *            the name to set
+		 *                 the name to set
 		 */
 		public void setName(String name) {
 			this.name = name;
@@ -250,7 +255,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param multiplicity
-		 *            the multiplicity to set
+		 *                         the multiplicity to set
 		 */
 		public void setMultiplicity(Multiplicity multiplicity) {
 			this.multiplicity = multiplicity;
@@ -258,7 +263,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param tvs
-		 *            the tvs to set
+		 *                the tvs to set
 		 */
 		public void setTaggedValues(TaggedValues tvs) {
 			this.tvs = tvs;
@@ -266,7 +271,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param type
-		 *            the type to set
+		 *                 the type to set
 		 */
 		public void setType(Type type) {
 			this.type = type;
@@ -281,7 +286,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		/**
 		 * @param stereotypes
-		 *            the stereotypes to set
+		 *                        the stereotypes to set
 		 */
 		public void setStereotypes(Stereotypes stereotypes) {
 			this.stereotypes = stereotypes;
@@ -293,6 +298,10 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 		public void setDescriptors(Descriptors descriptors) {
 			this.descriptors = descriptors;
+		}
+
+		public boolean isOwned() {
+			return isOwned;
 		}
 	}
 
@@ -387,6 +396,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 						genPi.setDerived(attDef.isDerived());
 						genPi.setOrdered(attDef.isOrdered());
 						genPi.setUnique(attDef.isUnique());
+						genPi.setOwned(attDef.isOwned());
 						genPi.setReadOnly(attDef.isReadOnly());
 						genPi.setCardinality(attDef.getMultiplicity());
 						genPi.setTypeInfo(attDef.getType());
@@ -529,7 +539,7 @@ public class AttributeCreator implements Transformer, MessageSource {
 
 	/**
 	 * @param apcs
-	 *            the advancedProcessConfigurations element
+	 *                 the advancedProcessConfigurations element
 	 * @return a list of parsed AttributeDefinition infos; can be empty but not
 	 *         <code>null</code>
 	 */
@@ -570,10 +580,12 @@ public class AttributeCreator implements Transformer, MessageSource {
 			ad.setName(name);
 
 			// parse PackageSelector and ClassSelector
-			Element selections = XMLUtil.getFirstElement(attDefE, "classSelection");
+			Element selections = XMLUtil.getFirstElement(attDefE,
+					"classSelection");
 
 			PackageSelector ps = new PackageSelector();
-			Element psE = XMLUtil.getFirstElement(selections, "PackageSelector");
+			Element psE = XMLUtil.getFirstElement(selections,
+					"PackageSelector");
 
 			if (psE.hasAttribute("schemaNameRegex")) {
 				String snr = psE.getAttribute("schemaNameRegex");
@@ -653,7 +665,8 @@ public class AttributeCreator implements Transformer, MessageSource {
 			}
 
 			// parse descriptors
-			Element descriptorsE = XMLUtil.getFirstElement(attDefE, "descriptors");
+			Element descriptorsE = XMLUtil.getFirstElement(attDefE,
+					"descriptors");
 			if (descriptorsE != null) {
 
 				Descriptors descriptors = new Descriptors();
@@ -771,9 +784,22 @@ public class AttributeCreator implements Transformer, MessageSource {
 			}
 			ad.setUnique(isUnique);
 
+			// parse isOwned
+			boolean isOwned = false;
+			Element isOwnedE = XMLUtil.getFirstElement(attDefE, "isOwned");
+			if (isOwnedE != null) {
+				String isOwnedS = isOwnedE.getTextContent().trim();
+				if (isOwnedS.equalsIgnoreCase("true")
+						|| isOwnedS.equals("1")) {
+					isOwned = true;
+				}
+			}
+			ad.setOwned(isOwned);
+
 			// parse isReadOnly
 			boolean isReadOnly = false;
-			Element isReadOnlyE = XMLUtil.getFirstElement(attDefE, "isReadOnly");
+			Element isReadOnlyE = XMLUtil.getFirstElement(attDefE,
+					"isReadOnly");
 			if (isReadOnlyE != null) {
 				String isReadOnlyS = isReadOnlyE.getTextContent().trim();
 				if (isReadOnlyS.equalsIgnoreCase("true")

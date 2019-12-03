@@ -46,7 +46,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.rdf.model.RDFWriter;
@@ -58,6 +58,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -1674,5 +1675,66 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 			return "Writing ontology '$1$' to file '$2$'.";
 		}
 		return null;
+	}
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+
+		// declare optional rules
+		r.addRule("rule-owl-all-constraints-byConstraintMapping");
+		r.addRule("rule-owl-all-constraints-humanReadableTextOnly");
+
+		r.addRule("rule-owl-pkg-importISO191502Base");
+		r.addRule("rule-owl-pkg-dctSourceTitle");
+		r.addRule("rule-owl-pkg-ontologyName-appendVersion");
+		r.addRule("rule-owl-pkg-ontologyName-byTaggedValue");
+		r.addRule("rule-owl-pkg-ontologyName-code");
+		r.addRule("rule-owl-pkg-ontologyName-withPath");
+		r.addRule("rule-owl-pkg-ontologyName-iso191502");
+		r.addRule("rule-owl-pkg-versionInfo");
+		r.addRule("rule-owl-pkg-versionIRI");
+		r.addRule("rule-owl-pkg-versionIRI-avoid-duplicate-version");
+		r.addRule("rule-owl-pkg-singleOntologyPerSchema");
+
+		r.addRule("rule-owl-cls-codelist-external");
+		r.addRule("rule-owl-cls-codelist-19150-2");
+		r.addRule("rule-owl-cls-codelist-19150-2-conceptSchemeSubclass");
+		r.addRule("rule-owl-cls-codelist-19150-2-differentIndividuals");
+		r.addRule("rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace");
+		r.addRule("rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration");
+		r.addRule("rule-owl-cls-codelist-19150-2-skos-collection");
+		r.addRule("rule-owl-cls-disjoint-classes");
+		r.addRule("rule-owl-cls-iso191502Enumeration");
+
+		r.addRule("rule-owl-cls-encode-featuretypes");
+		r.addRule("rule-owl-cls-encode-basictypes");
+		r.addRule("rule-owl-cls-encode-datatypes");
+		r.addRule("rule-owl-cls-encode-mixintypes");
+		r.addRule("rule-owl-cls-encode-objecttypes");
+		r.addRule("rule-owl-cls-enumerationAsCodelist");
+		r.addRule("rule-owl-cls-generalization");
+		r.addRule("rule-owl-cls-iso191502IsAbstract");
+		r.addRule("rule-owl-cls-union");
+		r.addRule("rule-owl-cls-unionSets");
+
+		r.addRule("rule-owl-prop-code-broader-byBroaderListedValue");
+		r.addRule("rule-owl-prop-external-reference");
+		r.addRule("rule-owl-prop-general");
+		r.addRule("rule-owl-prop-globalScopeAttributes");
+		r.addRule("rule-owl-prop-globalScopeByConversionParameter");
+		r.addRule("rule-owl-prop-globalScopeByUniquePropertyName");
+		r.addRule("rule-owl-prop-inverseOf");
+		r.addRule("rule-owl-prop-iso191502Aggregation");
+		r.addRule("rule-owl-prop-iso191502AssociationName");
+		r.addRule("rule-owl-prop-iso191502-naming");
+		r.addRule("rule-owl-prop-labelFromLocalName");
+		r.addRule("rule-owl-prop-localScopeAll");
+		r.addRule("rule-owl-prop-mapping-compare-specifications");
+		r.addRule("rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction");
+		r.addRule("rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction");
+		r.addRule("rule-owl-prop-propertyEnrichment");
+		r.addRule("rule-owl-prop-range-global");
+		r.addRule("rule-owl-prop-range-local-withUniversalQuantification");
+		r.addRule("rule-owl-prop-voidable-as-minCardinality0");
 	}
 }

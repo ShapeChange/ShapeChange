@@ -46,26 +46,28 @@ import org.xml.sax.XMLReader;
 
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericPackageContentHandler
 		extends AbstractGenericInfoContentHandler {
 
 	private static final Set<String> SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "targetNamespace", "xmlns",
-					"xsdDocument", "version"}));
+			Arrays.asList(new String[] {}));
 
-	private static final Set<String> DEPRECATED_SIMPLE_PACKAGE_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "isAppSchema", "isSchema" }));
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "isAppSchema", "isSchema",
+					"targetNamespace", "xmlns", "xsdDocument", "version" }));
 
 	private boolean isInPackages = false;
 
@@ -87,7 +89,11 @@ public class GenericPackageContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -118,10 +124,6 @@ public class GenericPackageContentHandler
 		} else if (SIMPLE_PACKAGE_FIELDS.contains(localName)) {
 
 			sb = new StringBuffer();
-
-		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
-
-			// ignore
 
 		} else if (localName.equals("supplierIds")) {
 
@@ -154,9 +156,9 @@ public class GenericPackageContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericPackageContentHandler",
+			result.addDebug(null, 30800, "GenericPackageContentHandler",
 					localName);
 		}
 	}
@@ -165,7 +167,11 @@ public class GenericPackageContentHandler
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (localName.equals("id")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("id")) {
 
 			this.genPi.setId(sb.toString());
 
@@ -180,10 +186,12 @@ public class GenericPackageContentHandler
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genPi);
+
 			this.genPi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -204,26 +212,6 @@ public class GenericPackageContentHandler
 			/*
 			 * ignore - DiagramsContentHandler calls this.setDiagrams(...)
 			 */
-
-		} else if (localName.equals("targetNamespace")) {
-
-			this.genPi.setTargetNamespace(sb.toString());
-
-		} else if (localName.equals("xmlns")) {
-
-			this.genPi.setXmlns(sb.toString());
-
-		} else if (localName.equals("xsdDocument")) {
-
-			this.genPi.setXsdDocument(sb.toString());
-
-		} else if (localName.equals("version")) {
-
-			this.genPi.setVersion(sb.toString());
-
-			// } else if (localName.equals("isSchema")) {
-			//
-			// this.genPi.setIsSchema(toBooleanValue(sb));
 
 		} else if (localName.equals("supplierIds")) {
 
@@ -246,7 +234,18 @@ public class GenericPackageContentHandler
 			if (!isInPackages) {
 
 				// set descriptors in genPi
-				this.genPi.setDescriptors(descriptorsHandler.getDescriptors());
+
+				Descriptors desc;
+
+				if (options.parameterAsBoolean(null,
+						"applyDescriptorSourcesWhenLoadingScxml", false)) {
+					desc = null;
+				} else if (descriptorsHandler == null) {
+					desc = new Descriptors();
+				} else {
+					desc = descriptorsHandler.getDescriptors();
+				}
+				this.genPi.setDescriptors(desc);
 
 				// set contained packages
 				SortedSet<GenericPackageInfo> children = new TreeSet<GenericPackageInfo>();
@@ -257,9 +256,24 @@ public class GenericPackageContentHandler
 
 				// set contained classes
 				SortedSet<GenericClassInfo> classes = new TreeSet<GenericClassInfo>();
+				List<GenericClassContentHandler> classHandlersToRemove = new ArrayList<>();
+				
 				for (GenericClassContentHandler gcch : this.classContentHandlers) {
-					classes.add(gcch.getGenericClass());
+					
+					GenericClassInfo genCi = gcch.getGenericClass();
+					
+					// handle loading of prohibited classes
+					String statusTaggedValue = genCi.taggedValue("status");
+					if (statusTaggedValue != null && options
+							.prohibitedStatusValuesWhenLoadingClasses()
+							.contains(statusTaggedValue)) {
+						classHandlersToRemove.add(gcch);
+					} else {
+						classes.add(gcch.getGenericClass());
+					}
 				}
+				
+				this.classContentHandlers.removeAll(classHandlersToRemove);
 				this.genPi.setClasses(classes);
 
 				// let parent know that we reached the end of the Package entry
@@ -270,14 +284,10 @@ public class GenericPackageContentHandler
 				reader.setContentHandler(parent);
 			}
 
-		} else if (DEPRECATED_SIMPLE_PACKAGE_FIELDS.contains(localName)) {
-
-			// ignore
-
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericPackageContentHandler",
+			result.addDebug(null, 30801, "GenericPackageContentHandler",
 					localName);
 		}
 	}

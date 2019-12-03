@@ -1,6 +1,6 @@
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;

@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.w3c.dom.Element;
 
@@ -101,19 +103,21 @@ public class ProcessConfiguration {
 	 * Creates a ProcessConfiguration.
 	 * 
 	 * @param className
-	 *            The fully qualified name of the class implementing the
-	 *            process.
+	 *                        The fully qualified name of the class implementing
+	 *                        the process.
 	 * @param processMode
-	 *            The execution mode of the process.
+	 *                        The execution mode of the process.
 	 * @param parameters
-	 *            The process parameters. <code>null</code> if no parameters
-	 *            were declared in the configuration.
+	 *                        The process parameters. <code>null</code> if no
+	 *                        parameters were declared in the configuration.
 	 * @param ruleSets
-	 *            The rule sets declared for the process. <code>null</code> if
-	 *            no rule sets were declared in the configuration.
+	 *                        The rule sets declared for the process.
+	 *                        <code>null</code> if no rule sets were declared in
+	 *                        the configuration.
 	 * @param mapEntries
-	 *            The map entries for the process. Can be <code>null</code> if
-	 *            no map entries were declared in the configuration.
+	 *                        The map entries for the process. Can be
+	 *                        <code>null</code> if no map entries were declared
+	 *                        in the configuration.
 	 */
 	public ProcessConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
@@ -167,7 +171,7 @@ public class ProcessConfiguration {
 	 * Gets the value of the parameter with given name.
 	 * 
 	 * @param parameterName
-	 *            Name of the parameter to get the value for.
+	 *                          Name of the parameter to get the value for.
 	 * @return The value of the process parameter with given name.
 	 *         <code>null</code> if no such parameter was declared in the
 	 *         configuration.
@@ -194,16 +198,23 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param parameterName
-	 *            name of the parameter to retrieve the value from
+	 *                                            name of the parameter to
+	 *                                            retrieve the value from
 	 * @param defaultValue
-	 *            value that will be returned if no valid parameter value was
-	 *            found; can be <code>null</code>
+	 *                                            value that will be returned if
+	 *                                            no valid parameter value was
+	 *                                            found; can be
+	 *                                            <code>null</code>
 	 * @param allowNonEmptyTrimmedStringValue
-	 *            <code>true</code> if the parameter value may be empty, if
-	 *            trimmed, else <code>false</code>
+	 *                                            <code>true</code> if the
+	 *                                            parameter value may be empty,
+	 *                                            if trimmed, else
+	 *                                            <code>false</code>
 	 * @param trimValue
-	 *            <code>true</code> if leading and trailing whitespace shall be
-	 *            removed from the parameter value before returning it
+	 *                                            <code>true</code> if leading
+	 *                                            and trailing whitespace shall
+	 *                                            be removed from the parameter
+	 *                                            value before returning it
 	 * @return the parameter value, or the given default value (which can be
 	 *         <code>null</code>) if the parameter value does not fulfill the
 	 *         criteria
@@ -226,17 +237,49 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param parameterName
-	 *            name of the parameter to retrieve the comma separated values
-	 *            from
+	 *                                  name of the parameter to retrieve the
+	 *                                  regular expression from
+	 * @param parameterDefaultValue
+	 *                                  regular expression that will be used if
+	 *                                  the parameter was not found; can be
+	 *                                  <code>null</code>
+	 * @return the compiled regular expression, if a regular expression was
+	 *         provided (either via the parameter or via the default value)
+	 * @throws PatternSyntaxException
+	 *                                    If the regular expression could not be
+	 *                                    compiled
+	 */
+	public Pattern parameterAsRegexPattern(String parameterName,
+			String parameterDefaultValue) throws PatternSyntaxException {
+
+		String regexText = this.parameters == null ? null
+				: this.parameters.get(parameterName);
+
+		if (regexText == null) {
+			regexText = parameterDefaultValue;
+		}
+
+		if (regexText == null) {
+			return null;
+		} else {
+			return Pattern.compile(regexText);
+		}
+	}
+
+	/**
+	 * @param parameterName
+	 *                             name of the parameter to retrieve the comma
+	 *                             separated values from
 	 * @param defaultValues
-	 *            values that will be returned if no values were found;
-	 *            <code>null</code> is converted to an empty list of strings
+	 *                             values that will be returned if no values
+	 *                             were found; <code>null</code> is converted to
+	 *                             an empty list of strings
 	 * @param omitEmptyStrings
-	 *            <code>true</code> if values may NOT be empty if they were
-	 *            trimmed, else <code>false</code>
+	 *                             <code>true</code> if values may NOT be empty
+	 *                             if they were trimmed, else <code>false</code>
 	 * @param trimResults
-	 *            <code>true</code> if leading and trailing whitespace shall be
-	 *            removed from a value
+	 *                             <code>true</code> if leading and trailing
+	 *                             whitespace shall be removed from a value
 	 * @return list of values (originally separated by commas) retrieved from
 	 *         this parameter, or the default values if the parameter was not
 	 *         set or did not contain valid values; can be empty but not
@@ -252,18 +295,21 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param parameterName
-	 *            name of the parameter to retrieve the separated values from
+	 *                             name of the parameter to retrieve the
+	 *                             separated values from
 	 * @param defaultValues
-	 *            values that will be returned if no values were found;
-	 *            <code>null</code> is converted to an empty list of strings
+	 *                             values that will be returned if no values
+	 *                             were found; <code>null</code> is converted to
+	 *                             an empty list of strings
 	 * @param omitEmptyStrings
-	 *            <code>true</code> if values may NOT be empty if they were
-	 *            trimmed, else <code>false</code>
+	 *                             <code>true</code> if values may NOT be empty
+	 *                             if they were trimmed, else <code>false</code>
 	 * @param trimResults
-	 *            <code>true</code> if leading and trailing whitespace shall be
-	 *            removed from a value
+	 *                             <code>true</code> if leading and trailing
+	 *                             whitespace shall be removed from a value
 	 * @param separator
-	 *            the literal, nonempty string to recognize as a separator
+	 *                             the literal, nonempty string to recognize as
+	 *                             a separator
 	 * @return list of values (originally separated via the given separator)
 	 *         retrieved from this parameter, or the default values if the
 	 *         parameter was not set or did not contain valid values; can be
@@ -274,7 +320,8 @@ public class ProcessConfiguration {
 			boolean trimResults, String separator) {
 
 		List<String> defaultValuesList = defaultValues == null
-				? new ArrayList<String>() : Arrays.asList(defaultValues);
+				? new ArrayList<String>()
+				: Arrays.asList(defaultValues);
 
 		String paramValue = this.parameters.get(parameterName);
 
@@ -311,7 +358,7 @@ public class ProcessConfiguration {
 	 * value is a comma-separated list of values, which is returned.
 	 * 
 	 * @param parameterName
-	 *            Name of the parameter to get the value list for.
+	 *                          Name of the parameter to get the value list for.
 	 * @return The list of values computed from the process parameter with given
 	 *         name. <code>null</code> if no such parameter was declared in the
 	 *         configuration.
@@ -468,7 +515,7 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param transformers
-	 *            the transformers to set
+	 *                         the transformers to set
 	 */
 	public void setTransformers(List<TransformerConfiguration> transformers) {
 		this.transformers = transformers;
@@ -488,7 +535,7 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param targets
-	 *            the targets to set
+	 *                    the targets to set
 	 */
 	public void setTargets(List<TargetConfiguration> targets) {
 		this.targets = targets;
@@ -501,8 +548,8 @@ public class ProcessConfiguration {
 
 	/**
 	 * @param type
-	 *            the map entry with the given type, or <code>null</code> if
-	 *            none was found.
+	 *                 the map entry with the given type, or <code>null</code>
+	 *                 if none was found.
 	 * @return
 	 */
 	public ProcessMapEntry getMapEntry(String type) {

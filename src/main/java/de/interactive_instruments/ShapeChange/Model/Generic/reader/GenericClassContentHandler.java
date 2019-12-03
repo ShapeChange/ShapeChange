@@ -49,16 +49,18 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericClassContentHandler
@@ -68,10 +70,12 @@ public class GenericClassContentHandler
 			Arrays.asList(new String[] { "isAbstract", "isLeaf",
 					"associationId", "baseClassId", "linkedDocument" }));
 
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "baseClassId" }));
+
 	private GenericClassInfo genCi = new GenericClassInfo();
 
 	private String associationId = null;
-	private String baseClassId = null;
 	private String linkedDocument = null;
 
 	private List<GenericPropertyContentHandler> propertyContentHandlers = new ArrayList<GenericPropertyContentHandler>();
@@ -90,7 +94,11 @@ public class GenericClassContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -164,9 +172,9 @@ public class GenericClassContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericClassContentHandler",
+			result.addDebug(null, 30800, "GenericClassContentHandler",
 					localName);
 		}
 	}
@@ -179,21 +187,18 @@ public class GenericClassContentHandler
 
 			this.genCi.setId(sb.toString());
 
-			// String id = sb.toString();
-			// // strip "_C" prefix added by ModelExport
-			// id = id.substring(2);
-			// this.genCi.setId(id);
-
 		} else if (localName.equals("name")) {
 
 			this.genCi.setName(sb.toString());
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genCi);
+
 			this.genCi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -231,15 +236,9 @@ public class GenericClassContentHandler
 
 			this.associationId = sb.toString();
 
-		}
-		// else if (localName.equals("packageId")) {
-		//
-		// this.packageId = sb.toString();
-		//
-		// }
-		else if (localName.equals("baseClassId")) {
+		} else if (DEPRECATED_FIELDS.contains(localName)) {
 
-			this.baseClassId = sb.toString();
+			// ignore
 
 		} else if (localName.equals("linkedDocument")) {
 
@@ -271,34 +270,18 @@ public class GenericClassContentHandler
 		} else if (localName.equals("Class")) {
 
 			// set descriptors in genCi
-			this.genCi.setDescriptors(descriptorsHandler.getDescriptors());
-			// for (Entry<Descriptor, Descriptors> entry : descriptors
-			// .getDescriptors().entrySet()) {
-			//
-			// if (entry.getKey() == Descriptor.ALIAS) {
-			// this.genCi.setAliasNameAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.PRIMARYCODE) {
-			// this.genCi.setPrimaryCodeAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.GLOBALIDENTIFIER) {
-			// this.genCi.setGlobalIdentifierAll(entry.getValue());
-			// }
-			// // else if(entry.getKey() == Descriptor.DOCUMENTATION) {
-			// // this.genCi.setDocumentationAll(entry.getValue());
-			// // }
-			// else if (entry.getKey() == Descriptor.DEFINITION) {
-			// this.genCi.setDefinitionAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.DESCRIPTION) {
-			// this.genCi.setDescriptionAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.LEGALBASIS) {
-			// this.genCi.setLegalBasisAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.LANGUAGE) {
-			// this.genCi.setLanguageAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.EXAMPLE) {
-			// this.genCi.setExamplesAll(entry.getValue());
-			// } else if (entry.getKey() == Descriptor.DATACAPTURESTATEMENT) {
-			// this.genCi.setDataCaptureStatementsAll(entry.getValue());
-			// }
-			// }
+
+			Descriptors desc;
+
+			if (options.parameterAsBoolean(null,
+					"applyDescriptorSourcesWhenLoadingScxml", false)) {
+				desc = null;
+			} else if (descriptorsHandler == null) {
+				desc = new Descriptors();
+			} else {
+				desc = descriptorsHandler.getDescriptors();
+			}
+			this.genCi.setDescriptors(desc);
 
 			// set contained properties
 			SortedMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
@@ -342,9 +325,22 @@ public class GenericClassContentHandler
 
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
-			for (ConstraintContentHandler cch : this.constraintContentHandlers) {
-				cons.add(cch.getConstraint());
+
+			if (!options.constraintLoadingEnabled()) {
+
+				/*
+				 * drop constraint content handlers so that updating the
+				 * constraint context is not performed
+				 */
+				this.constraintContentHandlers = new ArrayList<>();
+
+			} else {
+
+				for (ConstraintContentHandler cch : this.constraintContentHandlers) {
+					cons.add(cch.getConstraint());
+				}
 			}
+
 			this.genCi.setConstraints(cons);
 
 			// let parent know that we reached the end of the Class entry
@@ -355,9 +351,9 @@ public class GenericClassContentHandler
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericClassContentHandler",
+			result.addDebug(null, 30801, "GenericClassContentHandler",
 					localName);
 		}
 	}
@@ -386,20 +382,6 @@ public class GenericClassContentHandler
 	 */
 	public String getAssociationId() {
 		return associationId;
-	}
-
-	// /**
-	// * @return the packageId
-	// */
-	// public String getPackageId() {
-	// return packageId;
-	// }
-
-	/**
-	 * @return the baseClassId
-	 */
-	public String getBaseClassId() {
-		return baseClassId;
 	}
 
 	/**

@@ -34,6 +34,8 @@ package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,15 +49,18 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class DiagramsContentHandler extends AbstractContentHandler {
 
 	private static final Set<String> IMAGE_METADATA_FIELDS = new HashSet<String>(
-			Arrays.asList(new String[] { "id", "name", "file", "relPathToFile",
-					"width", "height" }));
+			Arrays.asList(new String[] { "id", "name", "relPathToFile", "width",
+					"height" }));
+
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "file" }));
 
 	private AbstractGenericInfoContentHandler parent;
 
@@ -63,7 +68,6 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 	private String id = null;
 	private String name = null;
-	private String file = null;
 	private String relPathToFile = null;
 	private String width = null;
 	private String height = null;
@@ -78,12 +82,15 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (localName.equals("ImageMetadata")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("ImageMetadata")) {
 
 			// reset fields
 			this.id = null;
 			this.name = null;
-			this.file = null;
 			this.relPathToFile = null;
 			this.width = null;
 			this.height = null;
@@ -94,9 +101,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "DiagramsContentHandler", localName);
+			result.addDebug(null, 30800, "DiagramsContentHandler", localName);
 		}
 	}
 
@@ -112,9 +119,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 			this.name = sb.toString();
 
-		} else if (localName.equals("file")) {
+		} else if (DEPRECATED_FIELDS.contains(localName)) {
 
-			this.file = sb.toString();
+			// ignore
 
 		} else if (localName.equals("relPathToFile")) {
 
@@ -132,7 +139,7 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 			try {
 
-				File f = new File(file);
+				File f = new File(options.imageTmpDir(), relPathToFile);
 				int w = Integer.parseInt(width);
 				int h = Integer.parseInt(height);
 
@@ -146,7 +153,21 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 
 		} else if (localName.equals("diagrams")) {
 
-			parent.setDiagrams(diagrams);
+			if ("true".equalsIgnoreCase(options.parameter("loadDiagrams"))) {
+
+				boolean sortDiagramsByName = options.parameterAsBoolean(null,
+						"sortDiagramsByName", true);
+				if (sortDiagramsByName) {
+					Collections.sort(diagrams, new Comparator<ImageMetadata>() {
+						@Override
+						public int compare(ImageMetadata o1, ImageMetadata o2) {
+							return o1.getName().compareTo(o2.getName());
+						}
+					});
+				}
+
+				parent.setDiagrams(diagrams);
+			}
 
 			// let parent know that we reached the end of the diagrams entry
 			// (so that for example depth can properly be tracked)
@@ -156,9 +177,9 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "DiagramsContentHandler", localName);
+			result.addDebug(null, 30801, "DiagramsContentHandler", localName);
 		}
 	}
 

@@ -37,13 +37,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.apache.xml.serializer.utils.XMLChar;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
-import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
@@ -77,6 +78,101 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			return lang;
 
 		return null;
+	}
+
+	@Override
+	public ClassInfo baseClass() {
+		// Initialize
+		int stsize = 0; // # of proper base candidates
+		ClassInfo cir = null; // the base result
+		int cat = category(); // category of this class
+		// Check if the class has one of the acknowledged categories. If not
+		// no bases classes will be reported.
+		if (cat == Options.FEATURE || cat == Options.OBJECT
+				|| cat == Options.DATATYPE || cat == Options.MIXIN
+				|| cat == Options.UNION) {
+			// Get hold of the available base classes
+			SortedSet<ClassInfo> baseCIs = supertypeClasses();
+			// Loop over base classes and select the GML-relevant one
+			if (baseCIs != null) {
+				for (ClassInfo baseCI : baseCIs) {
+					// Get base class category
+					int bcat = baseCI.category();
+					// Needs to compatible and not a mixin. If not so,
+					// we have an error
+					if ((cat == bcat || bcat == Options.UNKNOWN)
+							&& bcat != Options.MIXIN) {
+						// Compatible select and count
+						stsize++;
+						cir = baseCI;
+					} else if (bcat != Options.MIXIN) {
+
+						// Ignore, if we accept supertypes that are not mixins
+						// and we are a mixin
+						if (cat == Options.MIXIN && matches(
+								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+
+							// do nothing and ignore
+
+							/*
+							 * FIXME 2017-09-12 JE: That we are matching on a
+							 * specific target rule here is an issue. Everything
+							 * in the XxxImpl classes should not depend on
+							 * specific target rules, since transformations can
+							 * produce models for multiple targets. Rules such
+							 * as the one above should be general rules that
+							 * apply for the whole processing chain.
+							 */
+
+						} else if (this.model().isInSelectedSchemas(this)) {
+							// Not compatible and not mixin: An error
+							MessageContext mc = result().addError(null, 108,
+									name());
+							if (mc != null)
+								mc.addDetail(null, 400, "Package",
+										pkg().fullName());
+							result().addDebug(null, 10003, name(), "" + cat,
+									"!FALSE");
+							result().addDebug(null, 10003, name(), "" + bcat,
+									"!TRUE");
+						} else {
+							/*
+							 * 2015-07-17 JE: So this is a class that violates
+							 * multiple inheritance rules. However, it is
+							 * outside the selected schemas. We could log a
+							 * debug, info, or even warning message. However, we
+							 * should not raise an error because creation of a
+							 * complete GenericModel that also copies ISO
+							 * classes would raise an error which would cause a
+							 * unit test to fail.
+							 */
+						}
+					}
+				}
+			}
+			// Did we find more than one suitable base class? Which is
+			// an error.
+			if (stsize > 1) {
+
+				if (this.model().isInSelectedSchemas(this)) {
+					MessageContext mc = result().addError(null, 109, name());
+					if (mc != null)
+						mc.addDetail(null, 400, "Package", pkg().fullName());
+				} else {
+					/*
+					 * 2015-07-17 JE: So this is a class that violates multiple
+					 * inheritance rules. However, it is outside the selected
+					 * schemas. We could log a debug, info, or even warning
+					 * message. However, we should not raise an error because
+					 * creation of a complete GenericModel that also copies ISO
+					 * classes would raise an error which would cause a unit
+					 * test to fail.
+					 */
+				}
+			}
+		}
+		// Return, what we found
+		return cir;
 	}
 
 	/**
@@ -499,10 +595,10 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		}
 	}
 
-	/*
-	 * identify types that should be treated as "basic types" with a canonical
+	/**
+	 * Identify types that should be treated as "basic types" with a canonical
 	 * implementation. Either they carry a basictype stereotype or a supertype
-	 * is identified as a basic type through a map entry
+	 * is identified as a basic type through a map entry.
 	 */
 	private void identifyBasicTypes() {
 		if ((category == Options.DATATYPE || category == Options.OBJECT
@@ -1056,6 +1152,21 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 			result.add(supertype);
 			result.addAll(supertype.supertypesInCompleteHierarchy());
+		}
+
+		return result;
+	}
+
+	@Override
+	public SortedSet<ClassInfo> supertypeClasses() {
+
+		SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+		for (String supertypeId : this.supertypes()) {
+
+			ClassInfo supertype = model().classById(supertypeId);
+
+			result.add(supertype);
 		}
 
 		return result;

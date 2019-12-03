@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><ApplicationSchemaMetadata xmlns="http://shapechange.net/targets/ApplicationSchemaMetadata">
+  <!--Created by ShapeChange - http://shapechange.net/-->
+  <schema>
+    <ApplicationSchema>
+      <name>Test Schema</name>
+      <targetNamespace>http://shapechange.net/test/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues</targetNamespace>
+      <PropertiesWithSpecificTaggedValues>
+        <Class name="T1_DataTypeA">
+          <Property name="prop1">
+            <Tag name="booleanTV">
+              <Value>   true   </Value>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="T1_DataTypeB"/>
+        <Class name="T1_Union">
+          <Property name="choice1">
+            <Tag name="booleanTV">
+              <Value>TRUE</Value>
+            </Tag>
+          </Property>
+          <Property name="choice2">
+            <Tag name="booleanTV">
+              <Value>FALSE</Value>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="Enumeration">
+          <Property name="enum1">
+            <Tag name="booleanTV">
+              <Value>true</Value>
+            </Tag>
+          </Property>
+          <Property name="enum2">
+            <Tag name="booleanTV">
+              <Value/>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="AbstractFeature">
+          <Property name="propOfAbstract">
+            <Tag name="booleanTV">
+              <Value>tRuE</Value>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="CodeList">
+          <Property name="code2">
+            <Tag name="booleanTV">
+              <Value>true</Value>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="T1_FeatureTypeA">
+          <Property name="prop1">
+            <Tag name="booleanTV">
+              <Value>true</Value>
+            </Tag>
+          </Property>
+          <Property name="prop2">
+            <Tag name="booleanTV">
+              <Value>false</Value>
+            </Tag>
+          </Property>
+        </Class>
+        <Class name="T1_FeatureTypeB">
+          <Property name="propB">
+            <Tag name="booleanTV">
+              <Value>false</Value>
+            </Tag>
+          </Property>
+          <Property name="propC">
+            <Tag name="booleanTV">
+              <Value/>
+            </Tag>
+          </Property>
+        </Class>
+      </PropertiesWithSpecificTaggedValues>
+    </ApplicationSchema>
+  </schema>
+</ApplicationSchemaMetadata>

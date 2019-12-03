@@ -48,7 +48,8 @@ import de.interactive_instruments.ShapeChange.Model.Descriptor;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorUtil;
 
 public class AssociationInfoEA extends AssociationInfoImpl
 		implements AssociationInfo {
@@ -59,11 +60,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	/** EA connector handle */
 	Connector eaConnector = null;
 
-	/** The EA object id of the association object */
-	protected int eaConnectorId = 0;
-
-	/** Name of Association */
-	protected String name = null;
+	protected String connectorId = null;
 
 	/** Navigability 0=both, +1=source->target, -1=target->source */
 	protected int navigability = 0;
@@ -99,12 +96,13 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	// this map is already defined in InfoImpl
 
 	/** AssociationInfoEA Ctor */
-	AssociationInfoEA(EADocument doc, Connector conn, int id) {
+	AssociationInfoEA(EADocument doc, Connector conn, String id) {
 
 		// Memorize parameters
 		document = doc;
 		eaConnector = conn;
-		eaConnectorId = id;
+
+		connectorId = id;
 
 		// Fetch the necessary data from the connector
 		name = eaConnector.GetName();
@@ -161,140 +159,39 @@ public class AssociationInfoEA extends AssociationInfoImpl
 			}
 		}
 
-		// If there is no name present, we construct one from the names of the
-		// classes ...
-		// A default name is used if the role is unset, e.g. orphaned Note Link.
-		/*
-		 * 2016-07-26 JE: The association name should not always automatically
-		 * be constructed. For rule-owl-prop-iso191502Aggregation we would get
-		 * association names that are not in the model. I've added a new input
-		 * parameter to control the behavior.
-		 */
-		if (name == null || name.length() == 0) {
-			if (options().dontConstructAssociationNames()) {
-				name = "";
-			} else {
-				if (roles[0].ci != null)
-					name = roles[0].ci.name() + "_";
-				else
-					name = "roles[0]_";
-				if (roles[1].ci != null)
-					name = name + roles[1].ci.name();
-				else
-					name = name + "roles[1]";
-			}
-		}
-
 		// Write to debug trace ...
 		document.result.addDebug(null, 10013, "association", id(), name());
-	} // AssociationInfoEA Ctor
+	}
 
 	/** Return PropertyInfo from source end */
 	public PropertyInfo end1() {
 		return properties[0];
-	} // end1()
+	}
 
 	/** Return PropertyInfo from source end */
 	public PropertyInfo end2() {
 		return properties[1];
-	} // end2()
+	}
 
 	/** Return model-unique id of association */
 	public String id() {
-		return Integer.valueOf(eaConnectorId).toString();
-	} // id()
+		return connectorId;
+	}
 
 	/** Return Model object */
 	public Model model() {
 		return document;
-	} // model()
-
-	@Override
-	public String name() {
-		return name;
-	} // name()
-
-	// @Override
-	// public Descriptors aliasNameAll() {
-	//
-	// // Retrieve/compute the alias only once
-	// // Cache the result for subsequent use
-	// if (!aliasAccessed) {
-	//
-	// aliasAccessed = true;
-	//
-	// // Obtain alias name from default implementation
-	// Descriptors ls = super.aliasNameAll();
-	//
-	// // If not present, obtain from EA model directly
-	// if (ls.isEmpty()
-	// && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
-	//
-	// String alias = eaConnector.GetAlias();
-	//
-	// if (alias != null && !alias.isEmpty()) {
-	//
-	// super.aliasName = new Descriptors(
-	// new LangString(options().internalize(alias)));
-	// } else {
-	// super.aliasName = new Descriptors();
-	// }
-	// }
-	// }
-	// return super.aliasName;
-	// }
-
-	// /**
-	// * Return the documentation attached to the property object. This is
-	// fetched
-	// * from tagged values and - if this is absent - from the 'notes' specific
-	// to
-	// * the EA objects model.
-	// */
-	// @Override
-	// public Descriptors documentationAll() {
-	//
-	// // Retrieve/compute the documentation only once
-	// // Cache the result for subsequent use
-	// if (!documentationAccessed) {
-	//
-	// documentationAccessed = true;
-	//
-	// // Fetch from tagged values
-	// Descriptors ls = super.documentationAll();
-	//
-	// // Try EA notes, if both tagged values fail and ea:notes is the
-	// // source
-	// if (ls.isEmpty() && descriptorSource(Descriptor.DOCUMENTATION)
-	// .equals("ea:notes")) {
-	//
-	// String s = eaConnector.GetNotes();
-	//
-	// // Handle EA formatting
-	// if (s != null) {
-	// s = document.applyEAFormatting(s);
-	// }
-	//
-	// if (s == null) {
-	// super.documentation = new Descriptors();
-	// } else {
-	// super.documentation = new Descriptors(
-	// new LangString(options().internalize(s)));
-	// }
-	// }
-	// }
-	// return super.documentation;
-	// }
-
+	}
+	
 	/** Return options and configuration object. */
 	public Options options() {
 		return document.options;
-	} // options()
+	}
 
 	/** Return result object for error reporting. */
 	public ShapeChangeResult result() {
 		return document.result;
-	} // result()
+	}
 
 	/**
 	 * The stereotypes added to the cache are the well-known equivalents of the
@@ -304,14 +201,18 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
-					eaConnector.GetStereotypeEx(), Options.assocStereotypes, this);
+			// Fetch stereotypes 'collection' ...
+			String sts = eaConnector.GetStereotypeEx();
+			String[] stereotypes = sts.split("\\,");
+			// Allocate cache
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
-	} // validateStereotypesCache()
-	
-	public int getEAConnectorId() {
-		return this.eaConnectorId;
 	}
+
+//	public int getEAConnectorId() {
+//		return this.eaConnectorId;
+//	}
 
 	// Validate tagged values cache, filtering on tagged values defined within
 	// ShapeChange ...
@@ -330,7 +231,8 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				// normalize deprecated tags.
 				for (ConnectorTag tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -342,35 +244,15 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				taggedValuesCache = options().taggedValueFactory(0);
 			}
 		}
-	} // validateTaggedValuesCache()
-
+	}
+	
 	public ClassInfo assocClass() {
-		String s = eaConnector.GetSubtype();
 		ClassInfo assocClass = null;
-		if (s.equalsIgnoreCase("class") && !eaConnector.MiscData(0).isEmpty()) {
+		if (EAConnectorUtil.isAssociationClassConnector(eaConnector)) {
 			assocClass = document.fClassById.get(eaConnector.MiscData(0));
 		}
 		return assocClass;
 	}
-
-	// @Override
-	// public Descriptors globalIdentifierAll() {
-	//
-	// // Obtain global identifier from default implementation
-	// Descriptors ls = super.globalIdentifierAll();
-	//
-	// // If not present, obtain from EA model directly
-	// if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
-	// .equals("ea:guidtoxml")) {
-	//
-	// String gi = document.repository.GetProjectInterface()
-	// .GUIDtoXML(eaConnector.GetConnectorGUID());
-	//
-	// super.globalIdentifier = new Descriptors(
-	// new LangString(options().internalize(gi)));
-	// }
-	// return super.globalIdentifier;
-	// }
 
 	@Override
 	protected List<LangString> descriptorValues(Descriptor descriptor) {
@@ -403,7 +285,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -423,7 +305,8 @@ public class AssociationInfoEA extends AssociationInfoImpl
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaConnector.GetAlias();
 

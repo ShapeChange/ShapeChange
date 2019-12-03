@@ -46,6 +46,16 @@ public class SqlConstants {
 	/* --- Parameters --- */
 	/* ------------------ */
 
+    /**
+     * Optional (default is determined by the EA process) - Value for the field 'Author' of an EA element.
+     */
+    public static final String PARAM_AUTHOR = "eaAuthor";
+    
+    /**
+     * Optional (default is determined by the EA process) - Value for the field 'Status' of an EA element.
+     */
+    public static final String PARAM_STATUS = "eaStatus";
+    
 	/**
 	 * Set to <code>true</code> if empty lines should be removed in SQL DDL
 	 * files created by the target. Some SQL clients choke on such lines.

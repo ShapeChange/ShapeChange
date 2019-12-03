@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:vrt="http://example.org/shapechange/sch/valueOrNilReason/external" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/valueOrNilReason/external" version="1.0">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="VoidReasonC" substitutionGroup="gco:CharacterString" type="vrt:VoidReasonC_Type"/>
+  <simpleType name="VoidReasonC_Type">
+    <restriction base="string">
+      <enumeration value="bar"/>
+      <enumeration value="foo"/>
+    </restriction>
+  </simpleType>
+  <complexType name="VoidReasonC_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="vrt:VoidReasonC"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

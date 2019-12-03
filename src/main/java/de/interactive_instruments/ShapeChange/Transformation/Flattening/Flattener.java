@@ -61,13 +61,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
 import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
 import org.jgrapht.alg.cycle.TarjanSimpleCycles;
 import org.jgrapht.alg.cycle.TiernanSimpleCycles;
-import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import com.google.common.base.Joiner;
@@ -535,22 +533,13 @@ public class Flattener implements Transformer, MessageSource {
 
 						String targetNamespace = appSchema.targetNamespace();
 
-						if (targetNamespace.endsWith(targetNamespaceSuffix))
-							continue;
-
-						for (GenericPackageInfo pi : appSchema.getAllPackages(
-								new HashSet<GenericPackageInfo>())) {
+						if (!targetNamespace.endsWith(targetNamespaceSuffix)) {
 							/*
 							 * TBD: some more processing to identify if a '/' is
 							 * missing or too much
 							 */
-
-							// just in case a package in the tree is not in the
-							// app schema namespace
-							if (pi.targetNamespace().equals(targetNamespace)) {
-								pi.setTargetNamespace(targetNamespace
-										+ targetNamespaceSuffix);
-							}
+							appSchema.setTargetNamespace(targetNamespace
+									+ targetNamespaceSuffix);
 						}
 					}
 				}
@@ -948,10 +937,6 @@ public class Flattener implements Transformer, MessageSource {
 
 			for (String supertypeIdToRemove : supertypeIdsToRemove) {
 
-				if (genCi.baseClass() != null
-						&& genCi.baseClass().id().equals(supertypeIdToRemove)) {
-					genCi.setBaseClass(null);
-				}
 				genCi.removeSupertype(supertypeIdToRemove);
 			}
 		}
@@ -1032,11 +1017,6 @@ public class Flattener implements Transformer, MessageSource {
 
 		for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
-			if (genCi.baseClass() != null && idsOfRelevantSupertypes
-					.contains(genCi.baseClass().id())) {
-				genCi.setBaseClass(null);
-			}
-
 			TreeSet<String> idsOfSupertypesToKeep = new TreeSet<String>();
 
 			for (String supertypeId : genCi.supertypes()) {
@@ -1051,12 +1031,6 @@ public class Flattener implements Transformer, MessageSource {
 			}
 
 			genCi.setSupertypes(idsOfSupertypesToKeep);
-
-			if (idsOfSupertypesToKeep.size() == 1) {
-				GenericClassInfo base = genModel.getGenClasses()
-						.get(idsOfSupertypesToKeep.first());
-				genCi.setBaseClass(base);
-			}
 		}
 	}
 
@@ -2648,11 +2622,7 @@ public class Flattener implements Transformer, MessageSource {
 				// info of subtypeCopy; if the baseClass of subtypeCopy is
 				// genCi, set it to genCiCopy
 				subtypeCopy.updateSupertypeId(genCi.id(), genCiCopy.id());
-				if (subtypeCopy.baseClass() != null
-						&& subtypeCopy.baseClass().id().equals(genCi.id())) {
-					subtypeCopy.setBaseClass(genCiCopy);
-				}
-
+				
 				// update the subtype info in all supertypes of subtypeCopy
 				// replace subGenCi.id with subtypeCopy.id in the subtype list
 
@@ -4287,9 +4257,11 @@ public class Flattener implements Transformer, MessageSource {
 
 		result.addInfo(this, 20329);
 
-		DirectedGraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
-				new ClassBasedEdgeFactory<String, PropertySetEdge>(
-						PropertySetEdge.class));
+		DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(PropertySetEdge.class);
+				
+//		DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
+//				new ClassBasedEdgeFactory<String, PropertySetEdge>(
+//						PropertySetEdge.class));
 
 		// establish graph vertices
 		for (GenericClassInfo typeToProcess : typesToProcessById.values()) {
@@ -5805,24 +5777,13 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 
-			if (trfConfig.hasRule(
-					RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-					&& ArcGISUtil.isArcGISSubtype(leafCi)) {
-				// do not remove relationship to baseClass
-			} else {
-				leafCi.setBaseClass(null);
-			}
-
 			TreeSet<String> newSupertypes = new TreeSet<>();
 
 			for (String supertypeID : leafCi.supertypes()) {
 
-				ClassInfo supertype = genModel.classById(supertypeID);
-
 				if (trfConfig.hasRule(
 						RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-						&& supertype != null && ArcGISUtil
-								.hasArcGISDefaultSubtypeAttribute(supertype)) {
+						&& ArcGISUtil.isArcGISSubtype(leafCi)) {
 					// keep relationship to this supertype
 					newSupertypes.add(supertypeID);
 				}
@@ -5841,7 +5802,6 @@ public class Flattener implements Transformer, MessageSource {
 					|| superclass.category() == Options.MIXIN) {
 				genModel.remove(superclass);
 			} else {
-				superclass.setBaseClass(null);
 				superclass.setSupertypes(null);
 				superclass.setSubtypes(null);
 			}
@@ -6277,9 +6237,6 @@ public class Flattener implements Transformer, MessageSource {
 			genPi2.setCardinality(newCardinalityEnd2);
 		}
 
-		genPi1.setReverseProperty(genPi2);
-		genPi2.setReverseProperty(genPi1);
-
 		aiCopy.setEnd1(genPi1);
 		aiCopy.setEnd2(genPi2);
 
@@ -6621,7 +6578,6 @@ public class Flattener implements Transformer, MessageSource {
 						booleanWithOninaCi.setAssocInfo(null);
 						booleanWithOninaCi.setSupertypes(new TreeSet<String>());
 						booleanWithOninaCi.setSubtypes(null);
-						booleanWithOninaCi.setBaseClass(null);
 
 						booleanWithOninaCi.setProperties(ci.properties());
 						TreeMap<StructuredNumber, PropertyInfo> properties = new TreeMap<StructuredNumber, PropertyInfo>();
@@ -7144,6 +7100,7 @@ public class Flattener implements Transformer, MessageSource {
 		enumPi.setNavigable(true);
 		enumPi.setOrdered(false);
 		enumPi.setUnique(true);
+		enumPi.setOwned(false);
 		enumPi.setComposition(false);
 		enumPi.setAggregation(false);
 		Multiplicity mult = new Multiplicity();
@@ -7152,7 +7109,6 @@ public class Flattener implements Transformer, MessageSource {
 		enumPi.setCardinality(mult);
 		enumPi.setInitialValue(null);
 		enumPi.setInlineOrByReference("inlineOrByReference");
-		enumPi.setReverseProperty(null);
 		enumPi.setInClass(ci);
 		/*
 		 * ensure that "sequenceNumber" tagged value is also set

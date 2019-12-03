@@ -125,6 +125,13 @@ public interface PropertyInfo extends Info {
 	 */
 	public boolean isAggregation();
 
+	/**
+	 * @return <code>true</code>, if the property is an association end that is
+	 *         owned (by the {@link #inClass()}), else <code>false</code> (then
+	 *         it is either an attribute or owned by the association)
+	 */
+	public boolean isOwned();
+
 	public Multiplicity cardinality();
 
 	/**
@@ -197,6 +204,17 @@ public interface PropertyInfo extends Info {
 	 *         or has tagged value 'nillable' = <code>true</code>
 	 */
 	public boolean voidable();
+
+	/**
+	 * @return <code>true</code> if the property owns the (normalized)
+	 *         stereotype 'propertymetadata', else <code>false</code>
+	 */
+	public boolean propertyMetadata();
+	
+	/**
+	 * @return the metadata type declared via tagged value 'metadataType', if it is defined as such, and can be found in the model, else <code>null</code>
+	 */
+	public ClassInfo propertyMetadataType();
 
 	/**
 	 * This method returns the constraints associated with the property.

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex5="http://example.org/shapechange/sch/xslt2QueryBinding/s5" xmlns:gco="http://www.isotc211.org/2005/gco" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s5" version="1">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS5_Codelist" substitutionGroup="gco:CharacterString" type="gco:CodeListValue_Type"/>
+  <complexType name="TS5_Codelist_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:TS5_Codelist"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="TS5_DT1" substitutionGroup="gco:AbstractObject" type="ex5:TS5_DT1_Type"/>
+  <complexType name="TS5_DT1_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS5_DT1_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:TS5_DT1"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element abstract="true" name="AbstractTS5_DT2" substitutionGroup="ex5:TS5_DT1" type="ex5:AbstractTS5_DT2_Type"/>
+  <complexType abstract="true" name="AbstractTS5_DT2_Type">
+    <complexContent>
+      <extension base="ex5:TS5_DT1_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractTS5_DT2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:AbstractTS5_DT2"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="TS5_DT3" substitutionGroup="ex5:AbstractTS5_DT2" type="ex5:TS5_DT3_Type"/>
+  <complexType name="TS5_DT3_Type">
+    <complexContent>
+      <extension base="ex5:AbstractTS5_DT2_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS5_DT3_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:TS5_DT3"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="TS5_DT4" substitutionGroup="ex5:TS5_DT1" type="ex5:TS5_DT4_Type"/>
+  <complexType name="TS5_DT4_Type">
+    <complexContent>
+      <extension base="ex5:TS5_DT1_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS5_DT4_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:TS5_DT4"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="TS5_FT" substitutionGroup="gco:AbstractObject" type="ex5:TS5_FT_Type"/>
+  <complexType name="TS5_FT_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="att1" type="gco:CharacterString_PropertyType"/>
+          <element name="att2" type="ex5:TS5_DT1_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS5_FT_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex5:TS5_FT"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

@@ -48,6 +48,7 @@
 				value="true" />
 			<targetParameter name="dataModelEstablishPackageHierarchy"
 				value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />

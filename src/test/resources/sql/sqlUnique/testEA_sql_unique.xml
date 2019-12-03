@@ -37,6 +37,7 @@
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="sqlrule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />

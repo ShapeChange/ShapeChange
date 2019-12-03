@@ -48,7 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
-import de.interactive_instruments.ShapeChange.Util.ea.EAGeneralUtil;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 
 public class OperationInfoEA extends OperationInfoImpl
 		implements OperationInfo {
@@ -236,8 +236,13 @@ public class OperationInfoEA extends OperationInfoImpl
 	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
-			stereotypesCache = EAGeneralUtil.createAndPopulateStereotypeCache(
-					eaMethod.GetStereotypeEx(), Options.propertyStereotypes, this);
+			// Fetch stereotypes 'collection' ...
+			String sts;
+			sts = eaMethod.GetStereotypeEx();
+			String[] stereotypes = sts.split("\\,");
+			// Allocate cache
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
@@ -258,7 +263,8 @@ public class OperationInfoEA extends OperationInfoImpl
 				// normalize deprecated tags.
 				for (MethodTag tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -306,7 +312,7 @@ public class OperationInfoEA extends OperationInfoImpl
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -326,7 +332,8 @@ public class OperationInfoEA extends OperationInfoImpl
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaMethod.GetStyle();
 

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cliso="http://example.org/shapechange/sch/valueOrNilReason/iso19139" xmlns:ex="http://example.org/shapechange/sch/valueOrNilReason" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/valueOrNilReason" version="1">
+  <import namespace="http://example.org/shapechange/sch/valueOrNilReason/iso19139" schemaLocation="./codeListIso19139.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="ex:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="dtAtt" nillable="true">
+        <complexType>
+          <simpleContent>
+            <extension base="boolean">
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="ex:DataType"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureType1" substitutionGroup="gml:AbstractFeature" type="ex:FeatureType1Type"/>
+  <complexType name="FeatureType1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attribute1" nillable="true" type="cliso:CodeListIso19139_PropertyType"/>
+          <element maxOccurs="unbounded" name="attribute2" nillable="true" type="cliso:CodeListIso19139_PropertyType"/>
+          <element name="attribute3" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" name="attribute4" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="attribute5" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" name="attribute6" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2" nillable="true" type="ex:FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex:rFT2toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" name="rFT1toObjectType" nillable="true">
+            <complexType>
+              <sequence>
+                <element ref="ex:ObjectType"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="gml:AbstractFeature" type="ex:FeatureType2Type"/>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propCharacterString" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="string">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" name="propDataType" nillable="true">
+            <complexType>
+              <sequence>
+                <element ref="ex:DataType"/>
+              </sequence>
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </complexType>
+          </element>
+          <element name="propEnumeration" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="ex:EnumerationType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propInteger" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="integer">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="propUnion" nillable="true">
+            <complexType>
+              <sequence>
+                <element ref="ex:Union"/>
+              </sequence>
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="rFT2toFT1" nillable="true" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">ex:FeatureType1</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex:rFT1toFT2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType3" substitutionGroup="ex:FeatureType1" type="ex:FeatureType3Type"/>
+  <complexType name="FeatureType3Type">
+    <complexContent>
+      <extension base="ex:FeatureType1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="ObjectType" substitutionGroup="gml:AbstractGML" type="ex:ObjectTypeType"/>
+  <complexType name="ObjectTypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ObjectTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:ObjectType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Union" substitutionGroup="gml:AbstractObject" type="ex:UnionType"/>
+  <complexType name="UnionType">
+    <choice>
+      <element name="optionA" nillable="true">
+        <complexType>
+          <simpleContent>
+            <extension base="string">
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="optionB" nillable="true">
+        <complexType>
+          <simpleContent>
+            <extension base="string">
+              <attribute name="nilReason" type="gml:NilReasonType"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </choice>
+  </complexType>
+  <complexType name="UnionPropertyType">
+    <sequence>
+      <element ref="ex:Union"/>
+    </sequence>
+  </complexType>
+  <simpleType name="VoidReasonAType">
+    <restriction base="string">
+      <enumeration value="a"/>
+      <enumeration value="aa"/>
+      <enumeration value="bbb"/>
+      <enumeration value="unknown"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="VoidReasonBType">
+    <restriction base="string">
+      <enumeration value="xxx"/>
+      <enumeration value="yyy"/>
+    </restriction>
+  </simpleType>
+</schema>

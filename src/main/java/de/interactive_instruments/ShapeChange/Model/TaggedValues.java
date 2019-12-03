@@ -44,8 +44,8 @@ import de.interactive_instruments.ShapeChange.Options;
  * for both the tag name and the value(s) while storing a tagged value in the
  * internal data structures (see {@link Options#internalize(String)}).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public interface TaggedValues {
@@ -83,7 +83,10 @@ public interface TaggedValues {
 	 * @param tag
 	 * @return The first of the list of values of the given tag that is stored
 	 *         in this collection, <code>null</code> if this collection does not
-	 *         contain value(s) for the given tag.
+	 *         contain value(s) for the given tag. Note that, in principle, the
+	 *         order of tag values is insignificant! Tag values are stored in
+	 *         lists only for convenience, especially for reproducible results
+	 *         in Unit Tests.
 	 */
 	public String getFirstValue(String tag);
 
@@ -120,8 +123,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param value
-	 *            The value for the tag. NOTE: A <code>null</code> value is
-	 *            automatically converted to the empty string
+	 *                  The value for the tag. NOTE: A <code>null</code> value
+	 *                  is automatically converted to the empty string
 	 */
 	public void put(String tag, String value);
 
@@ -131,19 +134,22 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param values
-	 *            The values for the tag. NOTE: A <code>null</code> value is
-	 *            automatically converted to the empty string
+	 *                   The values for the tag. NOTE: A <code>null</code> value
+	 *                   is automatically converted to the empty string
 	 */
 	public void put(String tag, String[] values);
 
 	/**
 	 * Puts the given tag and its values into this collection. Any value(s)
-	 * previously stored for this tag will be replaced by the given values.
+	 * previously stored for this tag will be replaced by the given values. Note
+	 * that, in principle, the order of tag values is insignificant! Tag values
+	 * are stored in lists only for convenience, especially for reproducible
+	 * results in Unit Tests.
 	 * 
 	 * @param tag
 	 * @param values
-	 *            The values for the tag. NOTE: A <code>null</code> value is
-	 *            automatically converted to the empty string
+	 *                   The values for the tag. NOTE: A <code>null</code> value
+	 *                   is automatically converted to the empty string
 	 */
 	public void put(String tag, List<String> values);
 
@@ -152,7 +158,7 @@ public interface TaggedValues {
 	 * stored for one of these tags will be replaced with the given values.
 	 * 
 	 * @param other
-	 *            can be empty or <code>null</code>
+	 *                  can be empty or <code>null</code>
 	 */
 	public void putAll(TaggedValues other);
 
@@ -163,8 +169,8 @@ public interface TaggedValues {
 	 * 
 	 * @param tag
 	 * @param value
-	 *            The value for the tag. NOTE: A <code>null</code> value is
-	 *            automatically converted to the empty string
+	 *                  The value for the tag. NOTE: A <code>null</code> value
+	 *                  is automatically converted to the empty string
 	 */
 	public void add(String tag, String value);
 
@@ -174,7 +180,10 @@ public interface TaggedValues {
 	 * 
 	 * @return A map with the first of the list of values for each tag stored in
 	 *         this collection. The resulting map can be empty (if this
-	 *         collection is empty) but not <code>null</code>.
+	 *         collection is empty) but not <code>null</code>. Note that, in
+	 *         principle, the order of tag values is insignificant! Tag values
+	 *         are stored in lists only for convenience, especially for
+	 *         reproducible results in Unit Tests.
 	 * 
 	 */
 	public SortedMap<String, String> getFirstValues();
@@ -184,11 +193,14 @@ public interface TaggedValues {
 	 * {@link Info#taggedValuesMult(String tagList)} instead.
 	 * 
 	 * @param tagList
-	 *            comma-separated list of tags
+	 *                    comma-separated list of tags
 	 * @return A map with the first of the list of values for each of the given
 	 *         tags that is stored in this collection. If the given tagList is
 	 *         <code>null</code> or empty, an empty map will be returned. The
-	 *         resulting map can be empty but not <code>null</code>.
+	 *         resulting map can be empty but not <code>null</code>. Note that,
+	 *         in principle, the order of tag values is insignificant! Tag
+	 *         values are stored in lists only for convenience, especially for
+	 *         reproducible results in Unit Tests.
 	 * 
 	 */
 	public SortedMap<String, String> getFirstValues(String tagList);

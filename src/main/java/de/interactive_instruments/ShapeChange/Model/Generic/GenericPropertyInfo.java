@@ -45,7 +45,6 @@ import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
@@ -66,21 +65,53 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	protected String name = null;
 
 	protected Multiplicity cardinality = null;
+	
+	/**
+	 * Default value is <code>true</code>.
+	 */
 	protected boolean isNavigable = true;
+	
 	protected StructuredNumber sequenceNumber = null;
 	protected Type typeInfo = null;
 
+	/**
+	 * Default value is <code>false</code>.
+	 */
 	protected boolean isDerived = false;
+	/**
+	 * Default value is <code>false</code>.
+	 */
 	protected boolean isReadOnly = false;
+	/**
+	 * Default value is <code>true</code>.
+	 */
 	protected boolean isAttribute = true;
+
+	/**
+	 * Default value is <code>false</code>.
+	 */
 	protected boolean isOrdered = false;
+	/**
+	 * Default value is <code>true</code>.
+	 */
 	protected boolean isUnique = true;
+	/**
+	 * Default value is <code>false</code>.
+	 */
 	protected boolean isComposition = false;
+	/**
+	 * Default value is <code>false</code>.
+	 */
 	protected boolean isAggregation = false;
+	
+	/**
+	 * Default value is <code>false</code>.
+	 */
+	protected boolean isOwned = false;
+
 	protected String initialValue = null;
 	protected String inlineOrByReference = null;
 
-	protected PropertyInfo reverseProperty = null;
 	protected AssociationInfo association = null;
 	protected List<Constraint> constraints = null;
 
@@ -104,23 +135,15 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isAttribute
-	 *            the isAttribute to set
+	 *                        the isAttribute to set
 	 */
 	public void setAttribute(boolean isAttribute) {
 		this.isAttribute = isAttribute;
 	}
 
 	/**
-	 * @param reverseProperty
-	 *            the reverseProperty to set
-	 */
-	public void setReverseProperty(PropertyInfo reverseProperty) {
-		this.reverseProperty = reverseProperty;
-	}
-
-	/**
 	 * @param inClass
-	 *            the inClass to set
+	 *                    the inClass to set
 	 */
 	public void setInClass(ClassInfo inClass) {
 		this.inClass = inClass;
@@ -128,7 +151,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param association
-	 *            the association to set
+	 *                        the association to set
 	 */
 	public void setAssociation(AssociationInfo association) {
 		this.association = association;
@@ -162,6 +185,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	@Override
 	public boolean isUnique() {
 		return isUnique;
+	}
+	
+	@Override
+	public boolean isOwned() {
+		return isOwned;
 	}
 
 	public boolean hasConstraints() {
@@ -208,11 +236,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	@Override
-	public PropertyInfo reverseProperty() {
-		return reverseProperty;
-	}
-
-	@Override
 	public ClassInfo inClass() {
 		return inClass;
 	}
@@ -250,7 +273,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param cardinality
-	 *            the cardinality to set
+	 *                        the cardinality to set
 	 */
 	public void setCardinality(Multiplicity cardinality) {
 		this.cardinality = cardinality;
@@ -258,7 +281,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param list
-	 *            the constraints to set; can be empty or <code>null</code>
+	 *                 the constraints to set; can be empty or <code>null</code>
 	 */
 	public void setConstraints(List<Constraint> list) {
 
@@ -271,7 +294,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param initialValue
-	 *            the initialValue to set
+	 *                         the initialValue to set
 	 */
 	public void setInitialValue(String initialValue) {
 
@@ -284,7 +307,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param inlineOrByReference
-	 *            the inlineOrByReference to set
+	 *                                the inlineOrByReference to set
 	 */
 	public void setInlineOrByReference(String inlineOrByReference) {
 
@@ -298,7 +321,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isAggregation
-	 *            the isAggregation to set
+	 *                          the isAggregation to set
 	 */
 	public void setAggregation(boolean isAggregation) {
 		this.isAggregation = isAggregation;
@@ -306,7 +329,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isComposition
-	 *            the isComposition to set
+	 *                          the isComposition to set
 	 */
 	public void setComposition(boolean isComposition) {
 		this.isComposition = isComposition;
@@ -314,7 +337,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isDerived
-	 *            the isDerived to set
+	 *                      the isDerived to set
 	 */
 	public void setDerived(boolean isDerived) {
 		this.isDerived = isDerived;
@@ -322,7 +345,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isNavigable
-	 *            the isNavigable to set
+	 *                        the isNavigable to set
 	 */
 	public void setNavigable(boolean isNavigable) {
 		this.isNavigable = isNavigable;
@@ -330,7 +353,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isOrdered
-	 *            the isOrdered to set
+	 *                      the isOrdered to set
 	 */
 	public void setOrdered(boolean isOrdered) {
 		this.isOrdered = isOrdered;
@@ -342,10 +365,14 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isUnique
-	 *            the isUnique to set
+	 *                     the isUnique to set
 	 */
 	public void setUnique(boolean isUnique) {
 		this.isUnique = isUnique;
+	}
+	
+	public void setOwned(boolean isOwned) {
+		this.isOwned = isOwned;
 	}
 
 	/**
@@ -369,10 +396,11 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * assigned number).
 	 * 
 	 * @param sequenceNumber
-	 *            the sequenceNumber to set
+	 *                              the sequenceNumber to set
 	 * @param updateTaggedValue
-	 *            <code>true</code> if the "sequenceNumber" tagged value shall
-	 *            be set to the given sequence number, else <code>false</code>
+	 *                              <code>true</code> if the "sequenceNumber"
+	 *                              tagged value shall be set to the given
+	 *                              sequence number, else <code>false</code>
 	 */
 	public void setSequenceNumber(StructuredNumber sequenceNumber,
 			boolean updateTaggedValue) {
@@ -395,7 +423,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * instead.
 	 * 
 	 * @param typeInfo
-	 *            the typeInfo to set
+	 *                     the typeInfo to set
 	 */
 	public void setTypeInfo(Type typeInfo) {
 		this.typeInfo = typeInfo;
@@ -539,8 +567,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	/**
 	 * @param taggedValues
 	 * @param updateFields
-	 *            true if class fields should be updated based upon information
-	 *            from given tagged values, else false
+	 *                         true if class fields should be updated based upon
+	 *                         information from given tagged values, else false
 	 */
 	public void setTaggedValues(TaggedValues taggedValues,
 			boolean updateFields) {
@@ -580,12 +608,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		copy.setNavigable(isNavigable);
 		copy.setOrdered(isOrdered);
 		copy.setUnique(isUnique);
+		copy.setOwned(isOwned);
 		copy.setComposition(isComposition);
 		copy.setAggregation(isAggregation);
 		copy.setCardinality(new Multiplicity(cardinality.toString()));
 		copy.setInitialValue(initialValue);
 		copy.setInlineOrByReference(inlineOrByReference);
-		copy.setReverseProperty(reverseProperty);
 		copy.setInClass(inClass);
 
 		StringBuffer sb = new StringBuffer();
@@ -633,7 +661,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param isReadOnly
-	 *            the isReadOnly to set
+	 *                       the isReadOnly to set
 	 */
 	public void setReadOnly(boolean isReadOnly) {
 		this.isReadOnly = isReadOnly;
@@ -643,8 +671,9 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * @param tvName
 	 * @param tvValue
 	 * @param updateFields
-	 *            true if property fields should be updated based upon
-	 *            information from given tagged value, else false
+	 *                         true if property fields should be updated based
+	 *                         upon information from given tagged value, else
+	 *                         false
 	 */
 	public void setTaggedValue(String tvName, String tvValue,
 			boolean updateFields) {
@@ -705,15 +734,15 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 			 * because this method is only called after setting a tagged value.
 			 */
 			this.setSequenceNumber(new StructuredNumber(tvValue), false);
-			
+
 		} else if (tvName.equalsIgnoreCase("profiles")) {
-			
+
 			// unset existing profiles
 			this.profiles = null;
-			
+
 			/*
-			 * invoke PropertyInfoImpl.profiles() method to parse profile info from TV
-			 * profiles
+			 * invoke PropertyInfoImpl.profiles() method to parse profile info
+			 * from TV profiles
 			 */
 			super.profiles();
 		}
@@ -762,8 +791,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	/**
 	 * @param profiles
-	 *            new set of profiles for this property; may be
-	 *            <code>null</code>
+	 *                     new set of profiles for this property; may be
+	 *                     <code>null</code>
 	 */
 	public void setProfiles(Profiles profiles) {
 

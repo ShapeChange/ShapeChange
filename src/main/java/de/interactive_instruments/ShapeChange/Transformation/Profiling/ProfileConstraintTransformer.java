@@ -41,7 +41,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -735,7 +735,6 @@ public class ProfileConstraintTransformer
 			// finally, set model links and register the class
 			subtype.setPkg(profileSchema);
 
-			subtype.setBaseClass(baseClass);
 			subtype.addSupertype(baseClass.id());
 			baseClass.addSubtype(subtype.id());
 

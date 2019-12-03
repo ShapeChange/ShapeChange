@@ -70,6 +70,8 @@ public interface Stereotypes {
 	/**
 	 * Adds the given stereotype to this collection of stereotypes
 	 * 
+	 * NOTE: Also internalizes the given String.
+	 * 
 	 * @param stereotype
 	 */
 	public void add(String stereotype);

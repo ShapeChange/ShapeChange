@@ -37,9 +37,9 @@ public class FlattenerTest extends WindowsBasicTest {
 
 	@Test
 	public void test_flatten() {
-		multiTest("src/test/resources/config/testEA_Flattening.xml",
-				new String[] { "xsd" }, "testResults/flattening/xsd",
-				"src/test/resources/reference/flattening/xsd");
+		multiTest("src/test/resources/flattener/basic/testEA_Flattening.xml",
+				new String[] { "xsd" }, "testResults/flattening/basic/results/xsd",
+				"src/test/resources/flattener/basic/reference/results");
 	}
 
 	@Test

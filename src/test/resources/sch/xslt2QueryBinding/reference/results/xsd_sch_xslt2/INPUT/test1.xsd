@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex1="http://example.org/shapechange/sch/xslt2QueryBinding/s1" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s1" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="ex1:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="dtAtt" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="ex1:DataType"/>
+    </sequence>
+  </complexType>
+  <element name="TS1_FTM" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_FTMType"/>
+  <complexType name="TS1_FTMType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="rFTMtoM" type="ex1:TS1_MPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_FTMPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_FTM"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS1_FeatureType" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_FeatureTypeType"/>
+  <complexType name="TS1_FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="string"/>
+          <element name="att3" type="ex1:DataTypePropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2" type="ex1:TS1_FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex1:rFT2toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS1_FeatureType2" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_FeatureType2Type"/>
+  <complexType name="TS1_FeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attFT2" type="string"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT2toFT1" type="ex1:TS1_FeatureTypePropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex1:rFT1toFT2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT2toFT3" type="ex1:TS1_FeatureType3PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex1:rFT3toFT2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS1_FeatureType3" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_FeatureType3Type"/>
+  <complexType name="TS1_FeatureType3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attFT3" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT3toFT2" type="ex1:TS1_FeatureType2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ex1:rFT2toFT3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_FeatureType3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_FeatureType3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS1_LetTest" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_LetTestType"/>
+  <complexType name="TS1_LetTestType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="att1" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="integer"/>
+          <element name="att3" type="ex1:TS1_LetTest_DataTypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_LetTestPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_LetTest"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS1_LetTest_DataType" substitutionGroup="gml:AbstractObject" type="ex1:TS1_LetTest_DataTypeType"/>
+  <complexType name="TS1_LetTest_DataTypeType">
+    <sequence>
+      <element minOccurs="0" name="attx" type="integer"/>
+    </sequence>
+  </complexType>
+  <complexType name="TS1_LetTest_DataTypePropertyType">
+    <sequence>
+      <element ref="ex1:TS1_LetTest_DataType"/>
+    </sequence>
+  </complexType>
+  <element name="TS1_M" substitutionGroup="gml:AbstractFeature" type="ex1:TS1_MType"/>
+  <complexType name="TS1_MType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS1_MPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex1:TS1_M"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

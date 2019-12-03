@@ -80,6 +80,10 @@ public class QualifiersContentHandler extends AbstractContentHandler {
 		} else if (localName.equals("type")) {
 
 			this.sb = new StringBuffer();
+		} else {
+			// do not throw an exception, just log a message - the schema could
+			// have been extended
+			result.addDebug(null, 30801, "QualifiersContentHandler", localName);
 		}
 	}
 
@@ -111,6 +115,10 @@ public class QualifiersContentHandler extends AbstractContentHandler {
 
 			// Switch handler back to parent
 			reader.setContentHandler(parent);
+		} else {
+			// do not throw an exception, just log a message - the schema could
+			// have been extended
+			result.addDebug(null, 30801, "QualifiersContentHandler", localName);
 		}
 	}
 }

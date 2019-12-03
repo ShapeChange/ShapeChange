@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/oclConstraintOnProperties" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/oclConstraintOnProperties" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="ex:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="dtAtt" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="ex:DataType"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="ex:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="integer"/>
+          <element name="att2" type="ex:DataTypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="OtherFeatureType" substitutionGroup="gml:AbstractFeature" type="ex:OtherFeatureTypeType"/>
+  <complexType name="OtherFeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="boolean"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="OtherFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:OtherFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SubFT1" substitutionGroup="ex:FeatureType" type="ex:SubFT1Type"/>
+  <complexType name="SubFT1Type">
+    <complexContent>
+      <extension base="ex:FeatureTypeType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubFT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:SubFT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SubFT2" substitutionGroup="ex:FeatureType" type="ex:SubFT2Type"/>
+  <complexType name="SubFT2Type">
+    <complexContent>
+      <extension base="ex:FeatureTypeType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubFT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:SubFT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SubSubFT2" substitutionGroup="ex:SubFT1" type="ex:SubSubFT2Type"/>
+  <complexType name="SubSubFT2Type">
+    <complexContent>
+      <extension base="ex:SubFT1Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubSubFT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:SubSubFT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -33,7 +33,7 @@ package de.interactive_instruments.ShapeChange;
 
 import static org.junit.Assume.assumeTrue;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Before;
 
 public abstract class WindowsBasicTest extends BasicTest {

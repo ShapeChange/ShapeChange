@@ -70,11 +70,7 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 	
 	public String id() {
 		return id;
-	};
-
-	public String name() {
-		return doc.textOfProperty(ass, "Foundation.Core.ModelElement.name");
-	};
+	}
 
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
@@ -83,7 +79,7 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 		
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
-	};
+	}
 
 	// Validate tagged values cache, the filtering on tagged values defined 
 	// within ShapeChange has already been done during initial loading of the 
@@ -111,6 +107,7 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 		doc = d;
 		ass = e;
 		id = ass.getAttribute("xmi.id");
+		name = doc.textOfProperty(ass, "Foundation.Core.ModelElement.name");
 
 		boolean vis1;
 		boolean vis2;
@@ -130,7 +127,6 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end2);
 					doc.fRoles.put(end1.typeInfo().id, l1);
 				}
-				end1.reverseProperty = end2;
 				doc.result.addDebug(null,10002,end2.name(), end1.name());
 			}
 
@@ -142,12 +138,11 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end1);
 					doc.fRoles.put(end2.typeInfo().id, l1);
 				}
-				end2.reverseProperty = end1;
 				doc.result.addDebug(null,10002,end1.name(), end2.name());
 			}
 		} else if (!ass.hasAttribute("xmi.idref")) {
 			doc.result.addError(null,103,name(),id, ""+nl.getLength());
-		}
+		}		
 		doc.result.addDebug(null,10013,"association",id, name());
 	}
 

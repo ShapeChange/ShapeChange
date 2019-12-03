@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,9 +49,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +77,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -97,8 +94,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.interactive_instruments.ShapeChange.DefaultModelProvider;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -114,6 +113,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
@@ -395,7 +395,21 @@ public class FeatureCatalogue
 
 				String s = null;
 
-				Model refModel_tmp = getReferenceModel();
+				Model refModel_tmp = null;
+
+				String imt = options.parameter(this.getClass().getName(),
+						"referenceModelType");
+				String mdl = options.parameter(this.getClass().getName(),
+						"referenceModelFileNameOrConnectionString");
+
+				if (StringUtils.isNotBlank(imt)
+						&& StringUtils.isNotBlank(mdl)) {
+
+					DefaultModelProvider mp = new DefaultModelProvider(result,
+							options);
+					refModel_tmp = mp.getModel(imt, mdl, null, null, false,
+							null);
+				}
 
 				if (refModel_tmp != null) {
 
@@ -572,7 +586,7 @@ public class FeatureCatalogue
 				}
 			}
 
-			writer.startElement("ApplicationSchema", "id", "_P" + pi.id());
+			writer.startElement("ApplicationSchema", "id", packageId(pi));
 
 			/*
 			 * Determine if app schema with same name has been encountered
@@ -665,6 +679,14 @@ public class FeatureCatalogue
 		}
 	}
 
+	private String packageId(PackageInfo pkg) {
+		return pkg.id().startsWith("P") ? "_" + pkg.id() : "_P" + pkg.id();
+	}
+
+	private String packageId(String pkgId) {
+		return pkgId.startsWith("P") ? "_" + pkgId : "_P" + pkgId;
+	}
+
 	private void printDeletedClasses(PackageInfo pix) {
 
 		if (hasDiff(pix, ElementType.CLASS, Operation.DELETE)) {
@@ -728,68 +750,6 @@ public class FeatureCatalogue
 		}
 
 		writer.endElement("images");
-	}
-
-	private Model getReferenceModel() {
-
-		String imt = options.parameter(this.getClass().getName(),
-				"referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(),
-				"referenceModelFileNameOrConnectionString");
-
-		if (imt == null || imt.isEmpty())
-			return null;
-
-		if (mdl == null || mdl.isEmpty())
-			return null;
-
-		// Support original model type codes
-		if (imt.equalsIgnoreCase("ea7"))
-			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		else if (imt.equalsIgnoreCase("xmi10"))
-			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-		else if (imt.equalsIgnoreCase("scxml")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
-		} else {
-			result.addInfo(this, 29, imt);
-		}
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-		try {
-			theClass = Class.forName(imt);
-			if (theClass == null) {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-			m = (Model) theClass.getConstructor().newInstance();
-			if (m != null) {
-				m.initialise(result, options, mdl);
-			} else {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-		} catch (ClassNotFoundException e) {
-			result.addError(null, 17, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addError(null, 19, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalAccessException | SecurityException e) {
-			result.addError(null, 20, imt);
-			result.addError(null, 22, mdl);
-		} catch (ShapeChangeAbortException e) {
-			result.addError(null, 22, mdl);
-			m = null;
-		}
-		return m;
 	}
 
 	private void PrintDescriptors(Info i, boolean isClass, Operation op)
@@ -972,7 +932,7 @@ public class FeatureCatalogue
 
 		if (packageInPackage(pix)) {
 
-			writer.startElement("Package", "id", "_P" + pix.id(), op);
+			writer.startElement("Package", "id", packageId(pix), op);
 
 			PrintDescriptors(pix, false, op);
 
@@ -988,7 +948,7 @@ public class FeatureCatalogue
 				pixOwnerId = ownerOfInputModel.id();
 			}
 
-			writer.emptyElement("parent", "idref", "_P" + pixOwnerId);
+			writer.emptyElement("parent", "idref", packageId(pixOwnerId));
 
 			if (pix.getDiagrams() != null) {
 				appendImageInfo(pix.getDiagrams());
@@ -1424,7 +1384,7 @@ public class FeatureCatalogue
 				 * TODO PrintOperations true;
 				 */
 
-				writer.emptyElement("package", "idref", "_P" + pix.id());
+				writer.emptyElement("package", "idref", packageId(pix));
 
 				switch (ci.category()) {
 				case Options.FEATURE:
@@ -1470,10 +1430,14 @@ public class FeatureCatalogue
 					s = constraint.text();
 					String description = null;
 					String expression = null;
-					if (s != null && s.contains("/*") && s.contains("*/")) {
+					if(constraint instanceof TextConstraint) {
+						expression = s;
+					} else if (s != null && s.contains("/*") && s.contains("*/")) {
 						String[] sa = s.split("\\*/");
 						description = sa[0].replaceFirst("/\\*", "").trim();
-						expression = sa[1].trim();
+						if (sa.length > 1) {
+							expression = sa[1].trim();
+						}
 					} else {
 						expression = s;
 					}
@@ -2721,7 +2685,8 @@ public class FeatureCatalogue
 
 		try {
 			// configure fopFactory as desired
-			FopFactory fopFactory = FopFactory.newInstance();
+			FopFactory fopFactory = FopFactory
+					.newInstance(new File(".").toURI());
 
 			FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 			// configure foUserAgent as desired
@@ -2836,6 +2801,13 @@ public class FeatureCatalogue
 
 		xsltWrite(transformationSourceFile, xsltfileName,
 				transformationTargetFile);
+
+		if (transformationTargetFile.exists()
+				&& transformationTargetFile.length() == 0) {
+			FileUtils.deleteQuietly(transformationTargetFile);
+			result.addDebug(this, 32,
+					transformationTargetFile.getAbsolutePath());
+		}
 	}
 
 	public void xsltWrite(File transformationSource, String xsltfileName,
@@ -3394,6 +3366,11 @@ public class FeatureCatalogue
 			}
 		}
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
 
 	/**
 	 * This is the message text provision proper. It returns a message for a
@@ -3439,12 +3416,12 @@ public class FeatureCatalogue
 			return "Message from external java executable: $1$";
 		case 28:
 			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
-		case 29:
-			return "Value of parameter 'referenceModelType' is '$1$'.";
 		case 30:
 			return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
 		case 31:
 			return "Directory '$1$' could not be created.";
+		case 32:
+			return "Removed empty XSLT transformation target file at $1$.";
 		}
 		return null;
 	}

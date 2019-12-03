@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex="http://example.org/shapechange/sch/oclConstraintOnProperties"
+ xmlns:ext="http://example.org/shapechange/sch/oclConstraintOnProperties/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/gml/3.2 ../reference/results/xsd_sch_xslt1/INPUT/test.xsd">
+ <gml:featureMember>
+  <ex:FeatureType>
+   <ex:att1 metadata="MD1">1</ex:att1>
+   <ex:att1 metadata="MD2">2</ex:att1>
+   <ex:att2 metadata="MD3">foo</ex:att2>
+   <ex:att3>
+    <ex:DataType>
+     <ex:dtAtt>dtAtt0</ex:dtAtt>
+    </ex:DataType>
+   </ex:att3>
+  </ex:FeatureType>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex:MetadataType gml:id="MD1">
+   <ex:prop>test</ex:prop>
+  </ex:MetadataType>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex:MetadataType gml:id="MD2">
+   <ex:prop>test</ex:prop>
+  </ex:MetadataType>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ext:MetadataType gml:id="MD3">
+   <ext:att>2</ext:att>
+  </ext:MetadataType>
+ </gml:featureMember>
+</gml:FeatureCollection>

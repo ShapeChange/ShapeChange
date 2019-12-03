@@ -50,6 +50,7 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -513,6 +514,11 @@ public class AppConfiguration implements Target, MessageSource {
 
 		printed = true;
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
 
 	@Override
 	public String getTargetName() {
@@ -544,5 +550,4 @@ public class AppConfiguration implements Target, MessageSource {
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
 }

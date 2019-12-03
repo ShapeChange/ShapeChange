@@ -41,7 +41,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import de.interactive_instruments.ShapeChange.Converter;
 import de.interactive_instruments.ShapeChange.Options;
@@ -258,7 +258,7 @@ public class DefaultDialog extends JFrame
 				else if (mdl.toLowerCase().endsWith(".eap"))
 					options.setParameter("inputModelType", "EA7");
 				else if (mdl.toLowerCase().endsWith(".mdb"))
-					options.setParameter("inputModelType", "GSIP");
+					options.setParameter("inputModelType", "GCSR");
 				
 				options.setParameter("outputDirectory", outField.getText());
 				options.setParameter("logFile", outField.getText()+"/log.xml");

@@ -66,6 +66,15 @@ public class XmlSchemaConfigurationValidator
 		this.result = result;
 
 		boolean isValid = true;
+		
+		// check parameter: schematronQueryBinding
+		String explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(), "schematronQueryBinding", null, false, true);
+		if(explicitSchematronQueryBinding != null) {
+		    if(!explicitSchematronQueryBinding.equalsIgnoreCase("xslt2")) {
+			result.addError(this, 101, explicitSchematronQueryBinding);
+		isValid = false;
+		    }
+		}
 
 		// check parameter: representDescriptors
 		String representDescriptorsParamValue = options.parameterAsString(
@@ -109,6 +118,8 @@ public class XmlSchemaConfigurationValidator
 
 		case 100:
 			return "Configuration parameter 'representDescriptors' contains unknown descriptors. Parameter value is: '$1$'. Unknown descriptors are: '$2$'.";
+		case 101:
+			return "Configuration parameter 'schematronQueryBinding', if set, must have a value equal to (ignoring case) 'xslt2'. Found parameter value: '$1$'.";
 
 		default:
 			return "(" + XmlSchemaConfigurationValidator.class.getName()

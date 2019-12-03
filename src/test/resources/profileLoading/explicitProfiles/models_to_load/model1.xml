@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model" xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package>
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
+      <sc:id>P1</sc:id>
       <sc:descriptors></sc:descriptors>
       <sc:packages>
         <sc:Package>
           <sc:name>Test Model</sc:name>
-          <sc:id>2</sc:id>
+          <sc:id>P2</sc:id>
           <sc:descriptors></sc:descriptors>
           <sc:packages>
             <sc:Package>
               <sc:name>Test Schema A</sc:name>
-              <sc:id>10</sc:id>
+              <sc:id>P10</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -47,12 +47,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
-              <sc:isSchema>true</sc:isSchema>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/a</sc:targetNamespace>
-              <sc:xmlns>sc</sc:xmlns>
-              <sc:xsdDocument>a.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>FeatureTypeA</sc:name>
@@ -114,7 +108,7 @@
                   <sc:properties>
                     <sc:Property>
                       <sc:name>propA1</sc:name>
-                      <sc:id>T87</sc:id>
+                      <sc:id>Tas87</sc:id>
                       <sc:descriptors>
                         <sc:alias>
                           <sc:descriptorValues>
@@ -161,8 +155,8 @@
                       <sc:typeId>164</sc:typeId>
                       <sc:typeName>ExtFeatureType</sc:typeName>
                       <sc:isAttribute>false</sc:isAttribute>
-                      <sc:reversePropertyId>S87</sc:reversePropertyId>
-                      <sc:associationId>87</sc:associationId>
+                      <sc:reversePropertyId>Sas87</sc:reversePropertyId>
+                      <sc:associationId>as87</sc:associationId>
                     </sc:Property>
                     <sc:Property>
                       <sc:name>propA2</sc:name>
@@ -328,7 +322,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>ISO Stub</sc:name>
-              <sc:id>21</sc:id>
+              <sc:id>P21</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -361,13 +355,7 @@
                     <sc:Value>iso_stub.xsd</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
-              </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
-              <sc:isSchema>true</sc:isSchema>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/iso</sc:targetNamespace>
-              <sc:xmlns>iso</sc:xmlns>
-              <sc:xsdDocument>iso_stub.xsd</sc:xsdDocument>
+              </sc:taggedValues>              
               <sc:classes>
                 <sc:Class>
                   <sc:name>Real</sc:name>
@@ -526,7 +514,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>External Schema</sc:name>
-              <sc:id>35</sc:id>
+              <sc:id>P35</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -565,13 +553,7 @@
                     <sc:Value>ext.xsd</sc:Value>
                   </sc:values>
                 </sc:TaggedValue>
-              </sc:taggedValues>
-              <sc:isAppSchema>true</sc:isAppSchema>
-              <sc:isSchema>true</sc:isSchema>
-              <sc:version>1.0</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/profileLoading/schema/ext</sc:targetNamespace>
-              <sc:xmlns>ext</sc:xmlns>
-              <sc:xsdDocument>ext.xsd</sc:xsdDocument>
+              </sc:taggedValues>              
               <sc:classes>
                 <sc:Class>
                   <sc:name>ExtFeatureType</sc:name>
@@ -683,12 +665,12 @@
   <sc:associations>
     <sc:Association>
       <sc:name>FeatureTypeA_ExtFeatureType</sc:name>
-      <sc:id>87</sc:id>
+      <sc:id>as87</sc:id>
       <sc:descriptors></sc:descriptors>
       <sc:end1>
         <sc:Property>
-          <sc:name>role_S87</sc:name>
-          <sc:id>S87</sc:id>
+          <sc:name>role_Sas87</sc:name>
+          <sc:id>Sas87</sc:id>
           <sc:descriptors></sc:descriptors>
           <sc:isNavigable>false</sc:isNavigable>
           <sc:sequenceNumber>-536870912</sc:sequenceNumber>
@@ -696,11 +678,11 @@
           <sc:typeName>FeatureTypeA</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
           <sc:inClassId>164</sc:inClassId>
-          <sc:reversePropertyId>T87</sc:reversePropertyId>
-          <sc:associationId>87</sc:associationId>
+          <sc:reversePropertyId>Tas87</sc:reversePropertyId>
+          <sc:associationId>as87</sc:associationId>
         </sc:Property>
       </sc:end1>
-      <sc:end2 ref="T87"></sc:end2>
+      <sc:end2 ref="Tas87"></sc:end2>
     </sc:Association>
   </sc:associations>
 </sc:Model>

@@ -74,6 +74,7 @@ import org.custommonkey.xmlunit.HTMLDocumentBuilder;
 import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.jaxp13.Validator;
+import org.junit.After;
 import org.junit.Before;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
@@ -965,9 +966,15 @@ public abstract class BasicTest {
 				"org.apache.xerces.jaxp.SAXParserFactoryImpl");
 		System.setProperty("javax.xml.transform.TransformerFactory",
 				"org.apache.xalan.processor.TransformerFactoryImpl");
+		
+		System.setProperty("sc.unittesting", "true");
 
 		XMLUnit.setIgnoreComments(true);
 		XMLUnit.setNormalizeWhitespace(true);
 	}
 
+	@After
+	public void tearDown() {	  
+	   System.setProperty("sc.unittesting", "");	  
+	}
 }

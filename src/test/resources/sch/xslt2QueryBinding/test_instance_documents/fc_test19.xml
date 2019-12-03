@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test19_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex19="http://example.org/shapechange/sch/xslt2QueryBinding/s19"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s19 ../reference/results/xsd_sch_xslt2/INPUT/test19.xsd">
+ <gml:featureMember>
+  <ex19:TS19_FT gml:id="ft_PASS">
+   <ex19:att1>footest</ex19:att1>
+   <ex19:att2>bartest</ex19:att2>
+   <ex19:att2>xxtest</ex19:att2>
+  </ex19:TS19_FT>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex19:TS19_FT gml:id="ft_FAIL">
+   <ex19:att1>xx</ex19:att1>
+   <ex19:att2>foo</ex19:att2>
+   <ex19:att2>testx</ex19:att2>
+  </ex19:TS19_FT>
+ </gml:featureMember>
+</gml:FeatureCollection>

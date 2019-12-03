@@ -8,13 +8,7 @@
         <sequence>
           <element name="pFT1.p1" type="string"/>
           <element name="pFT1.p2" type="boolean"/>
-          <element name="pFT1.pT1" type="flat2:Class2_FT1PropertyType">
-            <annotation>
-              <appinfo>
-                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat2:pFT1</reversePropertyName>
-              </appinfo>
-            </annotation>
-          </element>
+          <element name="pFT1.pT1" type="flat2:Class2_FT1PropertyType"/>
         </sequence>
       </extension>
     </complexContent>

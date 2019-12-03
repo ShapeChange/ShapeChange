@@ -48,15 +48,17 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
+import de.interactive_instruments.ShapeChange.Model.Descriptors;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class GenericPropertyContentHandler
@@ -66,14 +68,15 @@ public class GenericPropertyContentHandler
 			Arrays.asList(new String[] { "cardinality", "isDerived",
 					"isReadOnly", "isAttribute", "isNavigable", "isOrdered",
 					"isUnique", "isComposition", "isAggregation",
-					"initialValue", "inlineOrByReference",
-					"sequenceNumber",
-					"reversePropertyId", "associationId", "typeId",
-					"typeName", "inClassId" }));
+					"initialValue", "inlineOrByReference", "sequenceNumber",
+					"associationId", "typeId", "typeName",
+					"inClassId", "isOwned" }));
 
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "reversePropertyId" }));
+	
 	private GenericPropertyInfo genPi = new GenericPropertyInfo();
 
-	private String reversePropertyId = null;
 	private String associationId = null;
 	private String inClassId = null;
 
@@ -99,7 +102,11 @@ public class GenericPropertyContentHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 
-		if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (GenericModelReaderConstants.SIMPLE_INFO_FIELDS
 				.contains(localName)) {
 
 			sb = new StringBuffer();
@@ -152,9 +159,9 @@ public class GenericPropertyContentHandler
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "GenericPropertyContentHandler",
+			result.addDebug(null, 30800, "GenericPropertyContentHandler",
 					localName);
 		}
 	}
@@ -163,14 +170,13 @@ public class GenericPropertyContentHandler
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (localName.equals("id")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("id")) {
 
 			this.genPi.setId(sb.toString());
-
-			// String id = sb.toString();
-			// // strip "_P" prefix added by ModelExport
-			// id = id.substring(2);
-			// this.genPi.setId(id);
 
 		} else if (localName.equals("name")) {
 
@@ -178,10 +184,12 @@ public class GenericPropertyContentHandler
 
 		} else if (localName.equals("stereotypes")) {
 
-			Stereotypes stereotypesCache = options.stereotypesFactory();
-			for (String stereotype : this.stringList) {
-				stereotypesCache.add(stereotype);
-			}
+			Stereotypes stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(
+							this.stringList.toArray(
+									new String[this.stringList.size()]),
+							this.genPi);
+
 			this.genPi.setStereotypes(stereotypesCache);
 
 		} else if (localName.equals("descriptors")) {
@@ -231,6 +239,10 @@ public class GenericPropertyContentHandler
 
 			this.genPi.setUnique(toBooleanValue(sb));
 
+		} else if (localName.equals("isOwned")) {
+
+			this.genPi.setOwned(toBooleanValue(sb));
+
 		} else if (localName.equals("isComposition")) {
 
 			this.genPi.setComposition(toBooleanValue(sb));
@@ -255,10 +267,6 @@ public class GenericPropertyContentHandler
 		} else if (localName.equals("inClassId")) {
 
 			this.inClassId = sb.toString();
-
-		} else if (localName.equals("reversePropertyId")) {
-
-			this.reversePropertyId = sb.toString();
 
 		} else if (localName.equals("associationId")) {
 
@@ -288,7 +296,17 @@ public class GenericPropertyContentHandler
 		} else if (localName.equals("Property")) {
 
 			// set descriptors in genPi
-			this.genPi.setDescriptors(descriptorsHandler.getDescriptors());
+			Descriptors desc;
+
+			if (options.parameterAsBoolean(null,
+					"applyDescriptorSourcesWhenLoadingScxml", false)) {
+				desc = null;
+			} else if (descriptorsHandler == null) {
+				desc = new Descriptors();
+			} else {
+				desc = descriptorsHandler.getDescriptors();
+			}
+			this.genPi.setDescriptors(desc);
 
 			Type type = new Type();
 			type.id = options.internalize(this.typeId);
@@ -297,9 +315,20 @@ public class GenericPropertyContentHandler
 
 			// set contained constraints
 			Vector<Constraint> cons = new Vector<Constraint>();
-			for (ConstraintContentHandler cch : this.constraintContentHandlers) {
-				cons.add(cch.getConstraint());
+
+			if (!options.constraintLoadingEnabled()
+					|| !options.isConstraintCreationForProperties()) {
+				/*
+				 * drop constraint content handlers so that updating the
+				 * constraint context is not performed
+				 */
+				this.constraintContentHandlers = new ArrayList<>();
+			} else {
+				for (ConstraintContentHandler cch : this.constraintContentHandlers) {
+					cons.add(cch.getConstraint());
+				}
 			}
+
 			this.genPi.setConstraints(cons);
 
 			if (this.genPi.cardinality() == null) {
@@ -315,9 +344,9 @@ public class GenericPropertyContentHandler
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "GenericPropertyContentHandler",
+			result.addDebug(null, 30801, "GenericPropertyContentHandler",
 					localName);
 		}
 	}
@@ -338,13 +367,6 @@ public class GenericPropertyContentHandler
 	@Override
 	public void setDiagrams(List<ImageMetadata> diagrams) {
 		// ignore
-	}
-
-	/**
-	 * @return the reversePropertyId
-	 */
-	public String getReversePropertyId() {
-		return reversePropertyId;
 	}
 
 	/**

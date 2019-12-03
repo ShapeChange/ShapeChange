@@ -294,12 +294,12 @@
     <ValueDataType category="code list">CodeList</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
   </FeatureAttribute>
-  <FeatureRelationship id="__T1">
+  <FeatureRelationship id="__Tas1">
     <name>(unbestimmt)</name>
-    <roles idref="_AT1"></roles>
-    <roles idref="_AS1"></roles>
+    <roles idref="_ATas1"></roles>
+    <roles idref="_ASas1"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT1">
+  <RelationshipRole id="_ATas1">
     <name>role2</name>
     <cardinality>1</cardinality>
     <taggedValues></taggedValues>
@@ -307,10 +307,10 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
-    <relation idref="__T1"></relation>
-    <InverseRole idref="_AS1"></InverseRole>
+    <relation idref="__Tas1"></relation>
+    <InverseRole idref="_ASas1"></InverseRole>
   </RelationshipRole>
-  <RelationshipRole id="_AS1">
+  <RelationshipRole id="_ASas1">
     <name>role1</name>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
@@ -318,15 +318,15 @@
     <orderIndicator>1</orderIndicator>
     <uniquenessIndicator>0</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
-    <relation idref="__T1"></relation>
-    <InverseRole idref="_AT1"></InverseRole>
+    <relation idref="__Tas1"></relation>
+    <InverseRole idref="_ATas1"></InverseRole>
   </RelationshipRole>
-  <FeatureRelationship id="__T40">
+  <FeatureRelationship id="__Tas40">
     <name>(unbestimmt)</name>
-    <roles idref="_AT40"></roles>
-    <roles idref="_AS40"></roles>
+    <roles idref="_ATas40"></roles>
+    <roles idref="_ASas40"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT40">
+  <RelationshipRole id="_ATas40">
     <name>role3</name>
     <cardinality>0..*</cardinality>
     <taggedValues></taggedValues>
@@ -334,10 +334,10 @@
     <orderIndicator>1</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
-    <relation idref="__T40"></relation>
+    <relation idref="__Tas40"></relation>
   </RelationshipRole>
-  <RelationshipRole id="_AS40">
-    <name>role_S40</name>
+  <RelationshipRole id="_ASas40">
+    <name>role_Sas40</name>
     <cardinality>1</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
@@ -345,8 +345,8 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
-    <relation idref="__T40"></relation>
-    <InverseRole idref="_AT40"></InverseRole>
+    <relation idref="__Tas40"></relation>
+    <InverseRole idref="_ATas40"></InverseRole>
   </RelationshipRole>
   <FeatureType id="_C5">
     <name>FeatureTypeProperty</name>

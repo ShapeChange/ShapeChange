@@ -98,15 +98,6 @@ public interface Model {
 	public SortedSet<ClassInfo> classes(PackageInfo pi);
 
 	/**
-	 * Tagged values normalization. This returns the tag given or a
-	 * de-deprecated tag or null.
-	 * 
-	 * @param tag
-	 * @return
-	 */
-	public String normalizeTaggedValue(String tag);
-
-	/**
 	 * Execute postprocessing and validation checks after the model has been
 	 * loaded.
 	 */
@@ -154,6 +145,13 @@ public interface Model {
 	 *         empty but not <code>null</code>.
 	 */
 	public SortedSet<ClassInfo> classes();
+	
+	/**
+	 * 
+	 * @return all {@link AssociationInfo} objects contained in the model; can be
+	 *         empty but not <code>null</code>.
+	 */
+	public SortedSet<AssociationInfo> associations();
 
 	/**
 	 * 
@@ -181,8 +179,14 @@ public interface Model {
 	 * collections that are copies of the ones used in model classes. If this is
 	 * not sufficient, either change the model interfaces or create a
 	 * transformation that can perform the necessary model modifications.
+	 * 
+	 * @param isLoadingInputModel
+	 *                                <code>true</code> If the method is called
+	 *                                during the input loading phase,
+	 *                                <code>false</code> if it is called while
+	 *                                executing a transformer or target.
 	 */
-	public void loadInformationFromExternalSources();
+	public void loadInformationFromExternalSources(boolean isLoadingInputModel);
 
 	/**
 	 * @param ci
@@ -222,6 +226,14 @@ public interface Model {
 	public PropertyInfo propertyByFullNameInSchema(String fullNameInSchema);
 
 	/**
+	 * @param fullNameInSchema
+	 * @return the class that has the fully qualified name (omitting packages
+	 *         that are outside of the schema the class belongs to); can be
+	 *         <code>null</code> if no such class was found
+	 */
+	public ClassInfo classByFullNameInSchema(String fullNameInSchema);
+	
+	/**
 	 * Create a {@link Type} that can be used as value type of a
 	 * {@link PropertyInfo}.
 	 * 
@@ -232,5 +244,22 @@ public interface Model {
 	 *         set to 'UNKNOWN'
 	 */
 	public Type typeByName(String typeName);
+
+	/**
+	 * Provides the source for a given descriptor. Sources are typically
+	 * configured in the ShapeChange configuration, and should thus be checked
+	 * first. If no explicit configuration for the source is available, model
+	 * type specific sources may be used as defaults (e.g. ea:alias for the
+	 * alias within an EA model). tag#{descriptor} can be used as ultimate
+	 * fallback. In some situations, even a case based source resolution may be
+	 * necessary.
+	 * 
+	 * @param descriptor
+	 *                       the descriptor for which to identify the source
+	 * @return the source identifier (e.g. sc:extract#PROLOG, ea:alias,
+	 *         ea:notes, tag#{descriptor}, sc:internal, none,
+	 *         tag#globalIdentifier).
+	 */
+	public String descriptorSource(Descriptor descriptor);
 
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test17_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex17="http://example.org/shapechange/sch/xslt2QueryBinding/s17"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s17 ../reference/results/xsd_sch_xslt2/INPUT/test17.xsd">
+ <gml:featureMember>
+  <ex17:TS17_FT1 gml:id="ft1_PASS">
+   <ex17:att>-1</ex17:att>
+   <ex17:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex17:rFT1toFT2 xlink:href="#ft2_2"/>
+  </ex17:TS17_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT2 gml:id="ft2_1">
+   <ex17:att>xxx</ex17:att>
+   <ex17:rFT2toFT3 xlink:href="#ft3_1"/>
+  </ex17:TS17_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT2 gml:id="ft2_2">
+   <ex17:att>xxx</ex17:att>
+   <ex17:rFT2toFT3 xlink:href="#ft3_2"/>
+  </ex17:TS17_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT3 gml:id="ft3_1">
+   <ex17:att>true</ex17:att>
+  </ex17:TS17_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT3 gml:id="ft3_2">
+   <ex17:att>0</ex17:att>
+  </ex17:TS17_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT1 gml:id="ft1_FAIL">
+   <ex17:att>-1</ex17:att>
+   <ex17:att>-1</ex17:att>
+   <ex17:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex17:rFT1toFT2 xlink:href="#ft2_3"/>
+  </ex17:TS17_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT2 gml:id="ft2_3">
+   <ex17:att>xxx</ex17:att>
+   <ex17:rFT2toFT3 xlink:href="#ft3_3"/>
+  </ex17:TS17_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex17:TS17_FT3 gml:id="ft3_3">
+   <ex17:att>1</ex17:att>
+  </ex17:TS17_FT3>  
+ </gml:featureMember>
+</gml:FeatureCollection>

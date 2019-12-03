@@ -311,4 +311,20 @@ public class XMLSchemaTest extends WindowsBasicTest {
 				"testResults/xsd/dataTypeAsUMLClassifier",
 				"src/test/resources/xsd/dataTypeAsUMLClassifier/reference");
 	}
+	
+	@Test
+	public void test_propertyMetadata() {
+		
+		multiTest(
+				"src/test/resources/xsd/propertyMetadata/testEA_xsd_propertyMetadata.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/propertyMetadata/results",
+				"src/test/resources/xsd/propertyMetadata/reference/results");
+		
+		multiTest(
+				"src/test/resources/xsd/propertyMetadata/testEA_xsd_propertyMetadata_iso19139.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/propertyMetadata/results_iso19139",
+				"src/test/resources/xsd/propertyMetadata/reference/results_iso19139");
+	}
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex14="http://example.org/shapechange/sch/xslt2QueryBinding/s14" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s14" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS14_FT" substitutionGroup="gml:AbstractFeature" type="ex14:TS14_FTType"/>
+  <complexType name="TS14_FTType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="boolean"/>
+          <element name="att2" type="boolean"/>
+          <element name="att3" type="boolean"/>
+          <element name="att4" type="boolean"/>
+          <element name="att5" type="boolean"/>
+          <element name="att6" type="boolean"/>
+          <element name="att7" type="boolean"/>
+          <element name="att8" type="boolean"/>
+          <element name="att9" type="boolean"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS14_FTPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex14:TS14_FT"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

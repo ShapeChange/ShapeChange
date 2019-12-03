@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/featureCatalogue/eaTextFormatting/testEA_featureCatalogue_eaTextFormatting.xml" end="Wed Aug 21 12:31:50 CEST 2019" resultCode="0" start="Wed Aug 21 12:31:37 CEST 2019" version="2.8.1-SNAPSHOT">
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/featureCatalogue/eaTextFormatting/testEA_featureCatalogue_eaTextFormatting.xml" end="Wed Nov 20 16:26:46 CET 2019" resultCode="0" start="Wed Nov 20 16:26:36 CET 2019" version="2.8.1-SNAPSHOT">
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'IDENTITY' ..."/>

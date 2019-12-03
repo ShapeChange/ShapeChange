@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex7="http://example.org/shapechange/sch/xslt2QueryBinding/s7" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s7" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="TS7_FT" substitutionGroup="gml:AbstractFeature" type="ex7:TS7_FTType"/>
+  <complexType name="TS7_FTType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="string"/>
+          <element name="att2" type="string"/>
+          <element name="att3" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS7_FTPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex7:TS7_FT"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

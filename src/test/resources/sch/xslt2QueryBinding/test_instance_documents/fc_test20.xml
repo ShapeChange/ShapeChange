@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test20_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ex20="http://example.org/shapechange/sch/xslt2QueryBinding/s20" xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s20 ../reference/results/xsd_sch_xslt2/INPUT/test20.xsd">
+ <gml:featureMember>
+  <ex20:TS20_FT1 gml:id="ft_PASS">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1.5</ex20:dtAtt1>
+     <ex20:dtAtt2>X</ex20:dtAtt2>
+     <ex20:dtAtt2>Y</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1.5</ex20:dtAtt1>
+     <ex20:dtAtt2>X</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1.5</ex20:dtAtt1>
+     <ex20:dtAtt2>X</ex20:dtAtt2>
+     <ex20:dtAtt2>Z</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1.5</ex20:dtAtt1>
+     <ex20:dtAtt2>Z</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>2</ex20:dtAtt1>
+     <ex20:dtAtt2>Z</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>enum1</ex20:att2>
+   <ex20:att2>enum2</ex20:att2>
+   <ex20:att3>1</ex20:att3>
+   <ex20:att3>2</ex20:att3>
+   <ex20:att3>3</ex20:att3>
+   <ex20:att4>
+    <ex20:TS20_Union>
+     <ex20:optA>A</ex20:optA>
+    </ex20:TS20_Union>
+   </ex20:att4>
+   <ex20:att4>
+    <ex20:TS20_Union>
+     <ex20:optB>B</ex20:optB>
+    </ex20:TS20_Union>
+   </ex20:att4>
+   <ex20:att5>false</ex20:att5>
+   <ex20:att5>1</ex20:att5>
+   <ex20:att6>codeX</ex20:att6>
+   <ex20:att6>codeY</ex20:att6>
+   <ex20:att7>code1</ex20:att7>
+   <ex20:att7>code2</ex20:att7>
+   <ex20:att7>other: test</ex20:att7>
+   <ex20:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex20:rFT1toFT2 xlink:href="#ft2_2"/>
+   <ex20:rFT1toFT2 xlink:href="#ft2_3"/>
+   <ex20:rFT1toType>
+    <ex20:TS20_Type gml:id="t_1"/>
+   </ex20:rFT1toType>
+   <ex20:rFT1toFT3>
+    <ex20:TS20_FT3 gml:id="ft3_1">
+     <ex20:att1>1</ex20:att1>
+    </ex20:TS20_FT3>
+   </ex20:rFT1toFT3>
+   <ex20:rFT1toFT3 xlink:href="#ft3_2"/>
+   <ex20:rFT1toFT3 xlink:href="#ft3_3"/>
+   <ex20:rFT1toFT3 xlink:href="#ft3_4"/>
+   <ex20:rFT1toFT4 xlink:href="#ft4_1"/>
+   <ex20:rFT1toFT4 xlink:href="#ft4_2"/>
+  </ex20:TS20_FT1>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT2 gml:id="ft2_1"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT2 gml:id="ft2_2"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT2 gml:id="ft2_3"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT3 gml:id="ft3_2">
+   <ex20:att1>2</ex20:att1>
+  </ex20:TS20_FT3>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT3 gml:id="ft3_3">
+   <ex20:att1>3</ex20:att1>
+  </ex20:TS20_FT3>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT3 gml:id="ft3_4"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT4 gml:id="ft4_1">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1</ex20:dtAtt1>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>codeX</ex20:att2>
+   <ex20:att3>code1</ex20:att3>
+   <ex20:att4>enum1</ex20:att4>
+   <ex20:rFT4toFT5 xlink:href="#ft5_1"/>
+  </ex20:TS20_FT4>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT4 gml:id="ft4_2">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>2</ex20:dtAtt1>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>codeY</ex20:att2>
+   <ex20:att3>code2</ex20:att3>
+   <ex20:att4>enum2</ex20:att4>
+   <ex20:rFT4toFT5 xlink:href="#ft5_2"/>
+  </ex20:TS20_FT4>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT5 gml:id="ft5_1"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT5 gml:id="ft5_2"/>
+ </gml:featureMember>
+ 
+ <gml:featureMember>
+  <ex20:TS20_FT1 gml:id="ft_FAIL">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>7.5</ex20:dtAtt1>
+     <ex20:dtAtt2>A</ex20:dtAtt2>
+     <ex20:dtAtt2>B</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>7.5</ex20:dtAtt1>
+     <ex20:dtAtt2>A</ex20:dtAtt2>
+     <ex20:dtAtt2>B</ex20:dtAtt2>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>enum1</ex20:att2>
+   <ex20:att2>enum2</ex20:att2>
+   <ex20:att2>enum1</ex20:att2>
+   <ex20:att3>1</ex20:att3>
+   <ex20:att3>2</ex20:att3>
+   <ex20:att3>1</ex20:att3>
+   <ex20:att4>
+    <ex20:TS20_Union>
+     <ex20:optB>A</ex20:optB>
+    </ex20:TS20_Union>
+   </ex20:att4>
+   <ex20:att4>
+    <ex20:TS20_Union>
+     <ex20:optB>A</ex20:optB>
+    </ex20:TS20_Union>
+   </ex20:att4>
+   <ex20:att5>true</ex20:att5>
+   <ex20:att5>0</ex20:att5>
+   <ex20:att5>1</ex20:att5>
+   <ex20:att6>codeX</ex20:att6>
+   <ex20:att6>codeY</ex20:att6>
+   <ex20:att6>codeX</ex20:att6>
+   <ex20:att7>other: test</ex20:att7>
+   <ex20:att7>code1</ex20:att7>
+   <ex20:att7>other: test</ex20:att7>
+   <ex20:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex20:rFT1toFT2 xlink:href="#ft2_2"/>
+   <ex20:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex20:rFT1toType>
+    <ex20:TS20_Type gml:id="t_2"/>
+   </ex20:rFT1toType>
+   <ex20:rFT1toType xlink:href="#t_2"/>
+   <ex20:rFT1toFT3 xlink:href="#ft3_1"/>
+   <ex20:rFT1toFT3 xlink:href="#ft3_2"/>
+   <!-- att1 in ft3_x1 and ft3_x2 is null, thus the following two property values are not unique. -->
+   <ex20:rFT1toFT3>
+    <ex20:TS20_FT3 gml:id="ft3_x1"/>
+   </ex20:rFT1toFT3>
+   <ex20:rFT1toFT3>
+    <ex20:TS20_FT3 gml:id="ft3_x2"/>
+   </ex20:rFT1toFT3>
+   <ex20:rFT1toFT4 xlink:href="#ft4_3"/>
+   <ex20:rFT1toFT4 xlink:href="#ft4_4"/>
+   <ex20:rFT1toFT4 xlink:href="#ft4_5"/>
+  </ex20:TS20_FT1>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT4 gml:id="ft4_3">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1</ex20:dtAtt1>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>codeX</ex20:att2>
+   <ex20:att3>code1</ex20:att3>
+   <ex20:att4>enum1</ex20:att4>
+   <ex20:rFT4toFT5 xlink:href="#ft5_3"/>
+  </ex20:TS20_FT4>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT4 gml:id="ft4_4">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>1</ex20:dtAtt1>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>codeX</ex20:att2>
+   <ex20:att3>code1</ex20:att3>
+   <ex20:att4>enum1</ex20:att4>
+<!--   <ex20:rFT4toFT5 xlink:href="#ft5_4"/>-->
+  </ex20:TS20_FT4>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT4 gml:id="ft4_5">
+   <ex20:att1>
+    <ex20:TS20_Datatype>
+     <ex20:dtAtt1>5</ex20:dtAtt1>
+    </ex20:TS20_Datatype>
+   </ex20:att1>
+   <ex20:att2>codeZ</ex20:att2>
+   <ex20:att3>code2</ex20:att3>
+   <ex20:att4>enum2</ex20:att4>
+<!--      <ex20:rFT4toFT5 xlink:href="#ft5_3"/>-->
+  </ex20:TS20_FT4>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT5 gml:id="ft5_3"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex20:TS20_FT5 gml:id="ft5_4"/>
+ </gml:featureMember>
+</gml:FeatureCollection>

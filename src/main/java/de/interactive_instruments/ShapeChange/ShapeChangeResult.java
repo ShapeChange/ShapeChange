@@ -69,7 +69,7 @@ import org.w3c.dom.Element;
 /** The result is xxx as an XML file. */
 public class ShapeChangeResult {
 	// Data
-	protected Document document = null;
+	public Document document = null;
 	protected Element root = null;
 	protected Element messages = null;
 	protected Element resultFiles = null;
@@ -681,14 +681,8 @@ public class ShapeChangeResult {
 			return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 		case 16:
 			return "The XMI file is not associated with a DTD. The DTD is required for validating and processing the XMI file.";
-		case 17:
-			return "Unknown input model type: '$1$'.";
 		case 18:
 			return "Unsupported Java version: '$1$'. Java 1.8 or higher required.";
-		case 19:
-			return "Model object could not be instantiated: '$1$'.";
-		case 20:
-			return "Model object could not be accessed: '$1$'.";
 		case 21:
 			return "??Rule name '$1$' is not valid. The rule is ignored.";
 		case 22:
@@ -740,12 +734,16 @@ public class ShapeChangeResult {
 		case 52:
 			return "Well-known stereotype '$2$' added to element '$1$'.";
 		case 53:
-			return "No well-known stereotype found for stereotype '$2$' of element '$1$', ignoring it.";
+			return "No well-known stereotype found for stereotype '$2$' of element '$1$'.";
 		case 54:
-			return "Element '$1$' has $2$ well-known stereotype(s): '$3$'";
+			return "Element '$1$' has $2$ (well-known or additional) stereotype(s): '$3$'";
 		case 55:
 			return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
-
+		case 56:
+			return "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '$2$' is added to element '$1$'.";
+		case 57:
+			return "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' that stereotype is allowed. Thus stereotype '$2$' is added to element '$1$'.";
+		
 		case 100:
 			return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";
 		case 101:
@@ -1058,7 +1056,9 @@ public class ShapeChangeResult {
 		case 30802:
 			return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
 		case 30803:
-			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $3$.";
+			return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $1$.";
+		case 30804:
+			return "(Generic model element reader) SCXML producer: $1$, version: $2$";
 
 		default:
 			return "(" + ShapeChangeResult.class.getName()

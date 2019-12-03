@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<sc:Model encoding="Windows-1252" xmlns:sc="http://shapechange.net/model">
+<sc:Model xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" encoding="Windows-1252" scxmlProducer="ShapeChange" scxmlProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <sc:packages>
     <sc:Package editable="false">
       <sc:name>Model</sc:name>
-      <sc:id>1</sc:id>
-      <sc:descriptors></sc:descriptors>
+      <sc:id>P1</sc:id>
       <sc:packages>
         <sc:Package editable="false">
           <sc:name>Test Model</sc:name>
-          <sc:id>2</sc:id>
-          <sc:descriptors></sc:descriptors>
+          <sc:id>P2</sc:id>
           <sc:packages>
             <sc:Package editable="false">
               <sc:name>Test Schema</sc:name>
-              <sc:id>10</sc:id>
+              <sc:id>P10</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
-              <sc:descriptors></sc:descriptors>
               <sc:taggedValues>
                 <sc:TaggedValue>
                   <sc:name>gmlProfileSchema</sc:name>
@@ -47,10 +44,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/core</sc:targetNamespace>
-              <sc:xmlns>tvicore</sc:xmlns>
-              <sc:xsdDocument>tvicore.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>CoreFeatureType1</sc:name>
@@ -58,7 +51,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -78,7 +70,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -93,7 +84,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>91</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>91</sc:SupertypeId>
                   </sc:supertypes>
@@ -108,7 +98,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -135,7 +124,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>91</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>91</sc:SupertypeId>
                   </sc:supertypes>
@@ -149,7 +137,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -164,7 +151,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>94</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>94</sc:SupertypeId>
                   </sc:supertypes>
@@ -175,7 +161,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -190,7 +175,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>94</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>94</sc:SupertypeId>
                   </sc:supertypes>
@@ -199,7 +183,7 @@
             </sc:Package>
             <sc:Package>
               <sc:name>Extension Schema</sc:name>
-              <sc:id>21</sc:id>
+              <sc:id>P21</sc:id>
               <sc:stereotypes>
                 <sc:Stereotype>application schema</sc:Stereotype>
               </sc:stereotypes>
@@ -239,10 +223,6 @@
                   </sc:values>
                 </sc:TaggedValue>
               </sc:taggedValues>
-              <sc:version>1</sc:version>
-              <sc:targetNamespace>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:targetNamespace>
-              <sc:xmlns>tviext</sc:xmlns>
-              <sc:xsdDocument>tviext.xsd</sc:xsdDocument>
               <sc:classes>
                 <sc:Class>
                   <sc:name>ExtFeatureType1</sc:name>
@@ -250,7 +230,6 @@
                   <sc:stereotypes>
                     <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
-                  <sc:descriptors></sc:descriptors>
                   <sc:taggedValues>
                     <sc:TaggedValue>
                       <sc:name>tv1</sc:name>
@@ -271,7 +250,6 @@
                       </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
-                  <sc:baseClassId>95</sc:baseClassId>
                   <sc:supertypes>
                     <sc:SupertypeId>95</sc:SupertypeId>
                   </sc:supertypes>

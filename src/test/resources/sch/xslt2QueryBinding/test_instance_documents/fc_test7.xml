@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test7_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex7="http://example.org/shapechange/sch/xslt2QueryBinding/s7"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s7 ../reference/results/xsd_sch_xslt2/INPUT/test7.xsd">
+ <gml:featureMember>
+  <ex7:TS7_FT gml:id="ft_PASS">
+   <ex7:att1>te</ex7:att1>
+   <ex7:att2>st</ex7:att2>
+   <ex7:att3>test</ex7:att3>
+  </ex7:TS7_FT>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex7:TS7_FT gml:id="ft_FAIL">
+   <ex7:att1>foo</ex7:att1>
+   <ex7:att2>bar</ex7:att2>
+   <ex7:att3>xxx</ex7:att3>
+  </ex7:TS7_FT>  
+ </gml:featureMember>
+</gml:FeatureCollection>

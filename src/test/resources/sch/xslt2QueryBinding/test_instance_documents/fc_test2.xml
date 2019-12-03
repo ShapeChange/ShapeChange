@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test2_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd"
+ xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:gss="http://www.isotc211.org/2005/gss"
+ xmlns:ex2="http://example.org/shapechange/sch/xslt2QueryBinding/s2"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/gml/3.2 ../reference/results/xsd_sch_xslt2/INPUT/test2.xsd">
+ <gml:featureMember>
+  <ex2:TS2_FTX gml:id="ftx_PASS">
+   <ex2:ftCount>4</ex2:ftCount>
+  </ex2:TS2_FTX>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex2:TS2_FTX gml:id="ftx_FAIL">
+   <ex2:ftCount>10</ex2:ftCount>
+  </ex2:TS2_FTX>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex2:TS2_FT1 gml:id="ft1_1">
+   <ex2:att>1</ex2:att>
+  </ex2:TS2_FT1>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex2:TS2_FT3 gml:id="ft3_1">
+   <ex2:att>1</ex2:att>
+  </ex2:TS2_FT3>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex2:TS2_FT3 gml:id="ft3_2">
+   <ex2:att>1</ex2:att>
+  </ex2:TS2_FT3>
+ </gml:featureMember>
+ <!-- Adding another TS2_FT3 with ex2:att would result in a violation of constraint2 (for all instances of TS2_FTX, including ftx_PASS). -->
+ <gml:featureMember>
+  <ex2:TS2_FT4 gml:id="ft4_2">
+   <ex2:att>1</ex2:att>
+  </ex2:TS2_FT4>
+ </gml:featureMember>
+</gml:FeatureCollection>

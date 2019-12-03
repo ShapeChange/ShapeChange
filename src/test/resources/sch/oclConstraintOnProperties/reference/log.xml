@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sch/oclConstraintOnProperties/testEA_sch_oclConstraintOnProperties.xml" end="Fri Aug 23 15:16:57 CEST 2019" resultCode="0" start="Fri Aug 23 15:16:43 CEST 2019" version="2.8.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'INPUT' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclConstraintOnProperties\test_sch_oclConstraintOnProperties.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclConstraintOnProperties\test_sch_oclConstraintOnProperties.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclConstraintOnProperties\test_sch_oclConstraintOnProperties.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclConstraintOnProperties\test_sch_oclConstraintOnProperties.EAP"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/oclConstraintOnProperties'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/oclConstraintOnProperties'"/>
+    <Info message="Now processing target 'Model Export' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/oclConstraintOnProperties/xsd/INPUT/test.xsd" scope="http://example.org/shapechange/sch/oclConstraintOnProperties" target="XML Schema">test.xsd</Result>
+  </Results>
+</ShapeChangeResult>

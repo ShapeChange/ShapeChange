@@ -56,6 +56,7 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
@@ -868,6 +869,12 @@ public class RDF implements Target, MessageSource {
 		}
 
 		printed = true;
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+
+	   r.addRule("rule-rdf-prop-parent");
 	}
 
 	/**

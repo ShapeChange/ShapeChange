@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" queryBinding="xslt2">
+  <title>Schematron constraints for schema 'Test Schema 13 - Let'</title>
+  <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
+  <ns prefix="ex13" uri="http://example.org/shapechange/sch/xslt2QueryBinding/s13"/>
+  <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
+  <xsl:key match="*[@*:id]" name="idKey" use="@*:id"/>
+  <pattern>
+    <rule context="ex13:TS13_FT1">
+      <let name="A" value="for $VAR1 in (current()/ex13:rFT1toFT2/*, (for $BYREFVAR in current()/ex13:rFT1toFT2/@xlink:href return key('idKey',substring-after($BYREFVAR,'#')))) return $VAR1"/>
+      <let name="B" value="//*[local-name()='TS13_FT2' and namespace-uri()='http://example.org/shapechange/sch/xslt2QueryBinding/s13']"/>
+      <let name="C" value="current()/ex13:att1"/>
+      <let name="D" value="current()/ex13:att2"/>
+      <assert test="count($A) = count($B)">ts13_ft1_constraint1: let ft2instances = TS13_FT2.allInstances() in rFT1toFT2-&gt;size() = ft2instances-&gt;size()</assert>
+      <assert test="not($C) or 0 &lt; $C and $C &lt; count($D)">ts13_ft1_constraint2: att1, if not empty, must be greater 0 and less than the cardinality of att2.</assert>
+    </rule>
+  </pattern>
+</schema>

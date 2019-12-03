@@ -36,14 +36,16 @@ package de.interactive_instruments.ShapeChange.Model;
  * The interface TextConstraint handles objects, which contain a constraint,
  * other than an OCL constraint, which in the view of ShapeChange's model
  * objects is just simple text. There may be a conspiracy between the model
- * source and target code generators, which gives meaning to TextConstraints.   
+ * source and target code generators, which gives meaning to TextConstraints.
  */
 public interface TextConstraint extends Constraint {
-	
-	/** Return the 'type' of the text based constraint. Principally, types
-	 * are chosen in conspiracy between the model source and target code
-	 * generator to describe the nature of the text-based constraint contained
-	 * in the implementing object. The value of type must not be equal to 
-	 * "OCL". */
+
+	/**
+	 * @return the 'type' of the text based constraint. Principally, types are
+	 *         chosen in conspiracy between the model source and target code
+	 *         generator to describe the nature of the text-based constraint
+	 *         contained in the implementing object. The value of type must not
+	 *         be equal to "OCL".
+	 */
 	public String type();
 }

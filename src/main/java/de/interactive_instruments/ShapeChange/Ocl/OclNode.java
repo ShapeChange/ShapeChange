@@ -226,7 +226,10 @@ public abstract class OclNode {
 				MultiplicityMapping.ONE2ONE, BuiltInType.BOOLEAN ),
 		new BuiltInDescr( "oclAsType", BuiltInType.ANY, 
 				new BuiltInType[]{BuiltInType.CLASS}, 0, false,
-				MultiplicityMapping.ONE2ONE, BuiltInType.ANY, 3 )
+				MultiplicityMapping.ONE2ONE, BuiltInType.ANY, 3 ), 
+		new BuiltInDescr( "propertyMetadata", BuiltInType.ANY,
+        			null, 0, false,
+        			MultiplicityMapping.ONE2ONE, BuiltInType.UMLTYPE, 5)
 	};
 	
 	static BuiltInDescr [] operSymbDescriptors = {
@@ -388,6 +391,7 @@ public abstract class OclNode {
 		public BuiltInType builtInType = BuiltInType.VOID;
 		// UML type class linkage
 		public ClassInfo umlClass = null;
+		public ClassInfo metadataType = null;
 		
 		/**
 		 * <p>Initialize a DataType from a given UML class represented by a
@@ -396,11 +400,12 @@ public abstract class OclNode {
 		 * which are mapped to OCL built-in types or any derivatives thereof.
 		 * @param ci ClassInfo object
 		 */
-		public DataType( ClassInfo ci ) {
-			name = ci.name();
-			umlClass = ci;
+		public DataType( ClassInfo ci, ClassInfo metadataType ) {
+		    	this.name = ci.name();
+			this.umlClass = ci;
+			this.metadataType = metadataType;
 			int cat = ci.category();
-			builtInType = BuiltInType.UMLTYPE;
+			this.builtInType = BuiltInType.UMLTYPE;
 			if( cat==Options.CODELIST || cat==Options.ENUMERATION )
 				builtInType = BuiltInType.ENUMERATION;
 			BuiltInType bi = iso19103AssumedBuiltInType( umlClass );
@@ -412,10 +417,11 @@ public abstract class OclNode {
 		 * This method always represents a pure OCL type.</p>
 		 * @param bit BuiltInType enum value
 		 */
-		public DataType( BuiltInType bit ) {
-			name = bit.oclName();
-			umlClass = null;
-			builtInType = bit;
+		public DataType( BuiltInType bit, ClassInfo metadataType ) {
+		    	this.name = bit.oclName();
+			this.umlClass = null;
+			this.metadataType = metadataType;
+			this.builtInType = bit;
 		}
 		
 		/**
@@ -426,9 +432,10 @@ public abstract class OclNode {
 		 * name.</p>
 		 * @param name String Name of the type
 		 */
-		public DataType( String name ) {
+		public DataType( String name, ClassInfo metadataType ) {
 			this.name = name;
-			umlClass = null;
+			this.umlClass = null;
+			this.metadataType = metadataType;
 			for( BuiltInType bi : BuiltInType.values() ) {
 				if( bi.oclName().equals(name)) {
 					builtInType = bi;
@@ -515,7 +522,7 @@ public abstract class OclNode {
 				if( bit1==BuiltInType.INTEGER ) bit1 = BuiltInType.REAL;
 				if( bit2==BuiltInType.INTEGER ) bit2 = BuiltInType.REAL;
 				if( bit1==bit2 )
-					return new DataType( BuiltInType.REAL );
+					return new DataType( BuiltInType.REAL, null );
 				return null;
 			} else {
 				// Check the UML case ...
@@ -545,7 +552,7 @@ public abstract class OclNode {
 				if( sci==null )
 					return null;
 				// Return the common type.
-				return new DataType( sci );
+				return new DataType( sci, null );
 			}
 		}
 	}
@@ -686,7 +693,7 @@ public abstract class OclNode {
 		 * Initialize.
 		 */
 		RealLiteralExp( double value ) {
-			dataType = new DataType( BuiltInType.REAL );
+			dataType = new DataType( BuiltInType.REAL, null );
 			this.value = value;
 		}
 		
@@ -719,7 +726,7 @@ public abstract class OclNode {
 		 * Initialize.
 		 */
 		IntegerLiteralExp( long value ) {
-			dataType = new DataType( BuiltInType.INTEGER );
+			dataType = new DataType( BuiltInType.INTEGER, null);
 			this.value = value;
 		}
 		
@@ -752,7 +759,7 @@ public abstract class OclNode {
 		 * Initialize.
 		 */
 		StringLiteralExp( String value ) {
-			dataType = new DataType( BuiltInType.STRING );
+			dataType = new DataType( BuiltInType.STRING, null );
 			this.value = value;
 		}
 		
@@ -787,7 +794,7 @@ public abstract class OclNode {
 		 * Initialize.
 		 */
 		BooleanLiteralExp( boolean value ) {
-			dataType = new DataType( BuiltInType.BOOLEAN );
+			dataType = new DataType( BuiltInType.BOOLEAN, null );
 			this.value = value;
 		}
 		
@@ -822,7 +829,7 @@ public abstract class OclNode {
 		 * Initialize as 'current time'.
 		 */
 		DateTimeLiteralExp() {
-			dataType = new DataType( BuiltInType.DATE );
+			dataType = new DataType( BuiltInType.DATE, null );
 			this.current = true;
 		}
 		
@@ -830,7 +837,7 @@ public abstract class OclNode {
 		 * Initialize as given calendar time.
 		 */
 		DateTimeLiteralExp( GregorianCalendar date ) {
-			dataType = new DataType( BuiltInType.DATE );
+			dataType = new DataType( BuiltInType.DATE, null );
 			this.current = false;
 			this.dateTime = date;
 		}
@@ -865,7 +872,7 @@ public abstract class OclNode {
 		 * Initialize.
 		 */
 		OclVoidLiteralExp() {
-			dataType = new DataType( BuiltInType.OCLVOID );
+			dataType = new DataType( BuiltInType.OCLVOID, null );
 		}
 
 		/**
@@ -898,7 +905,7 @@ public abstract class OclNode {
 		 * Initialize from the model.
 		 */
 		ClassLiteralExp( ClassInfo ci ) {
-			dataType = new DataType( BuiltInType.CLASS );
+			dataType = new DataType( BuiltInType.CLASS, null );
 			umlClass = ci;
 		}
 		
@@ -938,7 +945,7 @@ public abstract class OclNode {
 		 * Initialize from the model.
 		 */
 		EnumerationLiteralExp( PropertyInfo pi ) {
-			dataType = new DataType( pi.inClass() );
+			dataType = new DataType( pi.inClass(), null );
 			umlProperty = pi;
 			this.literalName = pi.name();
 		}
@@ -949,7 +956,7 @@ public abstract class OclNode {
 		 * enumeration but is used in OCL expressions).
 		 */
 		EnumerationLiteralExp( String literalName, ClassInfo enumeration ) {
-			dataType = new DataType( enumeration );
+			dataType = new DataType( enumeration, null );
 			umlProperty = null;
 			this.literalName = literalName;
 		}
@@ -986,7 +993,7 @@ public abstract class OclNode {
 		 * Initialize from the model.
 		 */
 		PackageLiteralExp( PackageInfo pi ) {
-			dataType = new DataType( BuiltInType.PACKAGE );
+			dataType = new DataType( BuiltInType.PACKAGE, null );
 			umlPackage = pi;
 		}
 		
@@ -1298,7 +1305,8 @@ public abstract class OclNode {
 			object = o;
 			de.interactive_instruments.ShapeChange.Type t = pi.typeInfo();
 			ClassInfo ci = pi.model().classById( t.id );
-			dataType = ci!=null ? new DataType( ci ) : new DataType( t.name );
+			ClassInfo metadataType = pi.propertyMetadataType();
+			dataType = ci!=null ? new DataType( ci,metadataType ) : new DataType( t.name,metadataType );
 			selector = new PropertySelector( pi );
 			isImplicit = im;
 			if( pi.cardinality().maxOccurs<=1 )
@@ -1354,7 +1362,7 @@ public abstract class OclNode {
 				ci = oi.model().classByName( tname );
 			else
 				tname = "Void";
-			dataType = ci!=null ? new DataType( ci ) : new DataType( tname );
+			dataType = ci!=null ? new DataType( ci, null ) : new DataType( tname, null );
 			selector = new PropertySelector( oi );
 			isImplicit = im;
 			multMapping = MultiplicityMapping.ONE2ONE;

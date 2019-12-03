@@ -40,9 +40,10 @@ public class ProfilerTest extends WindowsBasicTest {
 		/*
 		 * Test the profiling functionality
 		 */
-		multiTest("src/test/resources/config/testEA_Profiling.xml",
-				new String[] { "xsd", "xml" }, "testResults/profiling/xsd",
-				"src/test/resources/reference/profiling/xsd");
+		multiTest("src/test/resources/profiling/basic/testEA_Profiling.xml",
+				new String[] { "xsd", "xml" },
+				"testResults/profiling/basic/xsd",
+				"src/test/resources/profiling/basic/reference/xsd");
 	}
 
 	@Test
@@ -51,10 +52,10 @@ public class ProfilerTest extends WindowsBasicTest {
 		 * Test the constraint validation functionality
 		 */
 		multiTest(
-				"src/test/resources/config/testEA_Profiling_withConstraintValidation.xml",
+				"src/test/resources/profiling/constraintValidation/testEA_Profiling_withConstraintValidation.xml",
 				new String[] { "xml" },
 				"testResults/profiling/constraintValidation/results",
-				"src/test/resources/reference/profiling/constraintValidation/results");
+				"src/test/resources/profiling/constraintValidation/reference/results");
 	}
 
 	@Test
@@ -64,10 +65,10 @@ public class ProfilerTest extends WindowsBasicTest {
 		 * behavior
 		 */
 		multiTest(
-				"src/test/resources/config/testEA_Profiling_explicitProfileSettings.xml",
+				"src/test/resources/profiling/explicitProfileSettings/testEA_Profiling_explicitProfileSettings.xml",
 				new String[] { "xsd", "xml" },
-				"testResults/profiling_explicitProfileSettings/xsd",
-				"src/test/resources/reference/profiling_explicitProfileSettings/xsd");
+				"testResults/profiling/explicitProfileSettings/xsd",
+				"src/test/resources/profiling/explicitProfileSettings/reference/xsd");
 	}
 
 	@Test
@@ -76,10 +77,20 @@ public class ProfilerTest extends WindowsBasicTest {
 		 * Test the profiling functionality - with profile metadata
 		 */
 		multiTest(
-				"src/test/resources/config/testEA_Profiling_withMetadata.xml",
+				"src/test/resources/profiling/withProfileMetadata/testEA_Profiling_withMetadata.xml",
 				new String[] { "xsd", "xml" },
-				"testResults/profiling_withProfileMetadata/results",
-				"src/test/resources/reference/profiling_withProfileMetadata/results");
+				"testResults/profiling/withProfileMetadata/results",
+				"src/test/resources/profiling/withProfileMetadata/reference/results");
+	}
+	
+	@Test
+	public void testProfilingProfileParameters() {
+		
+		multiTest(
+				"src/test/resources/profiling/profileParameters/test_profiling_profileParameters.xml",
+				new String[] { "xml" },
+				"testResults/profiling/profileParameters/results",
+				"src/test/resources/profiling/profileParameters/reference/results");
 	}
 
 }

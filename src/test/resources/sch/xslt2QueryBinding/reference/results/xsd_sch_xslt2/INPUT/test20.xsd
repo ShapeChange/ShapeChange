@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex20="http://example.org/shapechange/sch/xslt2QueryBinding/s20" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/xslt2QueryBinding/s20" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="TS20_CodelistNonDictionaryType">
+    <union memberTypes="ex20:TS20_CodelistNonDictionaryEnumerationType ex20:TS20_CodelistNonDictionaryOtherType"/>
+  </simpleType>
+  <simpleType name="TS20_CodelistNonDictionaryEnumerationType">
+    <restriction base="string">
+      <enumeration value="code1"/>
+      <enumeration value="code2"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="TS20_CodelistNonDictionaryOtherType">
+    <restriction base="string">
+      <pattern value="other: \w{2,}"/>
+    </restriction>
+  </simpleType>
+  <element name="TS20_Datatype" substitutionGroup="gml:AbstractObject" type="ex20:TS20_DatatypeType"/>
+  <complexType name="TS20_DatatypeType">
+    <sequence>
+      <element name="dtAtt1" type="double"/>
+      <element maxOccurs="unbounded" minOccurs="0" name="dtAtt2" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="TS20_DatatypePropertyType">
+    <sequence>
+      <element ref="ex20:TS20_Datatype"/>
+    </sequence>
+  </complexType>
+  <simpleType name="TS20_EnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="TS20_FT1" substitutionGroup="gml:AbstractFeature" type="ex20:TS20_FT1Type"/>
+  <complexType name="TS20_FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1" type="ex20:TS20_DatatypePropertyType"/>
+          <element maxOccurs="unbounded" name="att2" type="ex20:TS20_EnumerationType"/>
+          <element maxOccurs="unbounded" name="att3" type="integer"/>
+          <element maxOccurs="unbounded" name="att4" type="ex20:TS20_UnionPropertyType"/>
+          <element maxOccurs="unbounded" name="att5" type="boolean"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att6" type="gml:CodeType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att7" type="ex20:TS20_CodelistNonDictionaryType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2" type="ex20:TS20_FT2PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toType" type="ex20:TS20_TypePropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT3" type="ex20:TS20_FT3PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT4" type="ex20:TS20_FT4PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_FT2" substitutionGroup="gml:AbstractFeature" type="ex20:TS20_FT2Type"/>
+  <complexType name="TS20_FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_FT3" substitutionGroup="gml:AbstractFeature" type="ex20:TS20_FT3Type"/>
+  <complexType name="TS20_FT3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="att1" type="integer"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="att2" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_FT4" substitutionGroup="gml:AbstractFeature" type="ex20:TS20_FT4Type"/>
+  <complexType name="TS20_FT4Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="ex20:TS20_DatatypePropertyType"/>
+          <element name="att2" type="gml:CodeType"/>
+          <element name="att3" type="ex20:TS20_CodelistNonDictionaryType"/>
+          <element name="att4" type="ex20:TS20_EnumerationType"/>
+          <element minOccurs="0" name="rFT4toFT5" type="ex20:TS20_FT5PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_FT4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_FT4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_FT5" substitutionGroup="gml:AbstractFeature" type="ex20:TS20_FT5Type"/>
+  <complexType name="TS20_FT5Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_FT5PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_FT5"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_Type" substitutionGroup="gml:AbstractGML" type="ex20:TS20_TypeType"/>
+  <complexType name="TS20_TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TS20_TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex20:TS20_Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TS20_Union" substitutionGroup="gml:AbstractObject" type="ex20:TS20_UnionType"/>
+  <complexType name="TS20_UnionType">
+    <choice>
+      <element name="optA" type="string"/>
+      <element name="optB" type="string"/>
+    </choice>
+  </complexType>
+  <complexType name="TS20_UnionPropertyType">
+    <sequence>
+      <element ref="ex20:TS20_Union"/>
+    </sequence>
+  </complexType>
+</schema>

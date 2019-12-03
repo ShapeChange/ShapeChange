@@ -110,9 +110,9 @@ public class ProfilesContentHandler extends AbstractContentHandler {
 
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "ProfilesContentHandler", localName);
+			result.addDebug(null, 30800, "ProfilesContentHandler", localName);
 		}
 	}
 
@@ -161,9 +161,9 @@ public class ProfilesContentHandler extends AbstractContentHandler {
 			reader.setContentHandler(parent);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "ProfilesContentHandler", localName);
+			result.addDebug(null, 30801, "ProfilesContentHandler", localName);
 		}
 	}
 

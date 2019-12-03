@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/xsd/propertyMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/propertyMetadata" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AssociationClassX" substitutionGroup="gml:AbstractFeature" type="test:AssociationClassXType"/>
+  <complexType name="AssociationClassXType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClassXPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:AssociationClassX"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="test:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="p1">
+        <complexType>
+          <simpleContent>
+            <extension base="integer">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="p2">
+        <complexType>
+          <simpleContent>
+            <extension base="gml:CodeType">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="p3">
+        <complexType>
+          <simpleContent>
+            <extension base="test:EnumerationType">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="p4">
+        <complexType>
+          <simpleContent>
+            <extension base="test:RealNonNegativeType">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="test:DataType"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeAType"/>
+  <complexType name="FeatureTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="r1a">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1b</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:FeatureTypeB"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeB" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeBType"/>
+  <complexType name="FeatureTypeBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="r1b">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1a</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:FeatureTypeA"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeCType"/>
+  <complexType name="FeatureTypeCType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="r1">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:FeatureTypeD"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r2">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r2</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="test:FeatureTypeD"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r3">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:FeatureTypeD</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r3</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:ReferenceType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeCPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeC"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeD" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeDType"/>
+  <complexType name="FeatureTypeDType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="r1">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:FeatureTypeC"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r2">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r2</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="test:FeatureTypeC"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r3">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:FeatureTypeC</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r3</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:ReferenceType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeDPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeD"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeE" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeEType"/>
+  <complexType name="FeatureTypeEType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="r1">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:Type"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r2">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r2</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="test:Type"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r3">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:Type</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r3</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:ReferenceType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeEPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeE"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeF" substitutionGroup="test:FeatureTypeFSupertype" type="test:FeatureTypeFType"/>
+  <complexType name="FeatureTypeFType">
+    <complexContent>
+      <extension base="test:FeatureTypeFSupertypeType">
+        <sequence>
+          <element name="pmix">
+            <complexType>
+              <simpleContent>
+                <extension base="string">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p1">
+            <complexType>
+              <simpleContent>
+                <extension base="integer">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p2">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p3">
+            <complexType>
+              <simpleContent>
+                <extension base="test:EnumerationType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p4">
+            <complexType>
+              <complexContent>
+                <extension base="gml:GeometryPropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeFPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeF"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeFSupertype" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeFSupertypeType"/>
+  <complexType name="FeatureTypeFSupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="psuper">
+            <complexType>
+              <simpleContent>
+                <extension base="boolean">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeFSupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeFSupertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="MixinPropertyType">
+    <choice minOccurs="0">
+      <element ref="test:FeatureTypeF"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="RealNonNegativeType">
+    <restriction base="double"/>
+  </simpleType>
+  <element name="Type" substitutionGroup="gml:AbstractGML" type="test:TypeType"/>
+  <complexType name="TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="p1">
+            <complexType>
+              <simpleContent>
+                <extension base="integer">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p2">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="p3">
+            <complexType>
+              <simpleContent>
+                <extension base="test:EnumerationType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="r1">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r1</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="test:FeatureTypeE"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r2">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r2</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <sequence>
+                <element ref="test:FeatureTypeE"/>
+              </sequence>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="r3">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">test:FeatureTypeE</targetElement>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">test:r3</reversePropertyName>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:ReferenceType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Union" substitutionGroup="gml:AbstractObject" type="test:UnionType"/>
+  <complexType name="UnionType">
+    <choice>
+      <element name="option1">
+        <complexType>
+          <simpleContent>
+            <extension base="integer">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="option2">
+        <complexType>
+          <sequence>
+            <element ref="test:DataType"/>
+          </sequence>
+          <attribute name="metadata" type="anyURI"/>
+        </complexType>
+      </element>
+    </choice>
+  </complexType>
+  <complexType name="UnionPropertyType">
+    <sequence>
+      <element ref="test:Union"/>
+    </sequence>
+  </complexType>
+</schema>
