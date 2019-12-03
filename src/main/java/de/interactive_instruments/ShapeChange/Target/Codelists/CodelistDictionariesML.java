@@ -802,6 +802,16 @@ public class CodelistDictionariesML implements Target, MessageSource {
 	}
 	
 	@Override
+	public String getTargetIdentifier() {
+	    return "cldml";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
 	public String getTargetName() {
 		return "Code List Dictionary";
 	}

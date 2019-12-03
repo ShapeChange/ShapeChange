@@ -986,6 +986,16 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	    // nothing to do	    
 	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "proftrans";
+	}
 
 	@Override
 	public String message(int mnr) {

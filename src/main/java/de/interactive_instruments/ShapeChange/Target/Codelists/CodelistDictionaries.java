@@ -439,6 +439,16 @@ public class CodelistDictionaries implements Target, MessageSource {
 	public String getTargetName() {
 		return "Code List Dictionary";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "cld";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	@Override
 	public String message(int mnr) {

@@ -3371,6 +3371,16 @@ public class FeatureCatalogue
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	 // no rules or requirements defined for this target, thus nothing to do
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "fc";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	/**
 	 * This is the message text provision proper. It returns a message for a

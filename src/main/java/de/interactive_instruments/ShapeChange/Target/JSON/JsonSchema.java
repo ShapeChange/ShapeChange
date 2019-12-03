@@ -767,6 +767,11 @@ public class JsonSchema implements Target, MessageSource {
 		r.addExtendsEncRule("geoservices_extended", "*");
 	}
 	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "geoservices";
+	}
+	
 	/**
 	 * This is the message text provision proper. It returns a message for a number.
 	 * @param mnr Message number
@@ -820,6 +825,11 @@ public class JsonSchema implements Target, MessageSource {
 	@Override
 	public String getTargetName(){
 		return "JSON Schema";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "json";
 	}
 
 }

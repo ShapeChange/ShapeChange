@@ -4966,6 +4966,16 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		r.addRule("rule-arcgis-prop-reflexiveRelationshipAsField");
 		r.addRule("rule-arcgis-prop-scale"); // deprecated
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "arcgis";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	@Override
 	public String message(int mnr) {

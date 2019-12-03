@@ -1634,4 +1634,14 @@ public class XSLT implements Target {
 	public String getTargetName(){
 		return "KML XSLT";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "kml";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 }

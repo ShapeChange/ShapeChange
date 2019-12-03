@@ -71,6 +71,14 @@ import de.interactive_instruments.ShapeChange.Target.Target;
  * UML to RDF/OWL (based on OWS-8 encoding rule)
  */
 public class RDF implements Target, MessageSource {
+    
+    public static final String W3C_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    public static final String W3C_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
+    public static final String W3C_OWL = "http://www.w3.org/2002/07/owl#";
+    public static final String W3C_OWL2XML = "http://www.w3.org/2006/12/owl2-xml#";
+    public static final String DC = "http://purl.org/dc/elements/1.1/";
+    public static final String OGC_GEOSPARQL = "http://www.opengis.net/geosparql#";
+    public static final String W3C_SKOS = "http://www.w3.org/2004/02/skos/core#";
 
 	private HashSet<PropertyInfo> exportedRoles = new HashSet<PropertyInfo>();
 	private HashSet<PropertyInfo> exportedProperties = new HashSet<PropertyInfo>();
@@ -151,16 +159,16 @@ public class RDF implements Target, MessageSource {
 		document.appendChild(document.createComment(
 				"Created using ShapeChange - http://shapechange.net/"));
 
-		root = document.createElementNS(Options.W3C_RDF, "RDF");
+		root = document.createElementNS(W3C_RDF, "RDF");
 		document.appendChild(root);
-		addAttribute(document, root, "xmlns:rdf", Options.W3C_RDF);
-		addAttribute(document, root, "xmlns:owl", Options.W3C_OWL);
-		addAttribute(document, root, "xmlns:skos", Options.W3C_SKOS);
+		addAttribute(document, root, "xmlns:rdf", W3C_RDF);
+		addAttribute(document, root, "xmlns:owl", W3C_OWL);
+		addAttribute(document, root, "xmlns:skos", W3C_SKOS);
 
 		if (!codeListOnly) {
-			addAttribute(document, root, "xmlns:rdfs", Options.W3C_RDFS);
-			addAttribute(document, root, "xmlns:owl2xml", Options.W3C_OWL2XML);
-			addAttribute(document, root, "xmlns:dc", Options.DC);
+			addAttribute(document, root, "xmlns:rdfs", W3C_RDFS);
+			addAttribute(document, root, "xmlns:owl2xml", W3C_OWL2XML);
+			addAttribute(document, root, "xmlns:dc", DC);
 			addAttribute(document, root, "xmlns:xsd",
 					Options.W3C_XML_SCHEMA + "#");
 		}
@@ -171,98 +179,98 @@ public class RDF implements Target, MessageSource {
 		addAttribute(document, root, "xmlns:" + pi.xmlns(), ns);
 
 		if (!codeListOnly) {
-			Element e0 = document.createElementNS(Options.W3C_OWL, "Ontology");
+			Element e0 = document.createElementNS(W3C_OWL, "Ontology");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about", "");
 
-			Element e1 = document.createElementNS(Options.W3C_OWL, "imports");
-			addAttribute(document, e1, "rdf:resource", Options.OGC_GEOSPARQL);
+			Element e1 = document.createElementNS(W3C_OWL, "imports");
+			addAttribute(document, e1, "rdf:resource", OGC_GEOSPARQL);
 			e0.appendChild(e1);
 
-			e0 = document.createElementNS(Options.W3C_OWL,
+			e0 = document.createElementNS(W3C_OWL,
 					"AnnotationProperty");
 			root.appendChild(e0);
-			addAttribute(document, e0, "rdf:about", Options.DC + "source");
+			addAttribute(document, e0, "rdf:about", DC + "source");
 
-			e0 = document.createElementNS(Options.W3C_OWL,
+			e0 = document.createElementNS(W3C_OWL,
 					"AnnotationProperty");
 			root.appendChild(e0);
-			addAttribute(document, e0, "rdf:about", Options.DC + "description");
+			addAttribute(document, e0, "rdf:about", DC + "description");
 
-			e0 = document.createElementNS(Options.W3C_OWL,
-					"AnnotationProperty");
-			root.appendChild(e0);
-			addAttribute(document, e0, "rdf:about",
-					Options.W3C_SKOS + "historyNote");
-
-			e0 = document.createElementNS(Options.W3C_OWL,
+			e0 = document.createElementNS(W3C_OWL,
 					"AnnotationProperty");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.W3C_SKOS + "prefLabel");
+					W3C_SKOS + "historyNote");
 
-			e0 = document.createElementNS(Options.W3C_OWL,
+			e0 = document.createElementNS(W3C_OWL,
 					"AnnotationProperty");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.W3C_SKOS + "definition");
+					W3C_SKOS + "prefLabel");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "ObjectProperty");
+			e0 = document.createElementNS(W3C_OWL,
+					"AnnotationProperty");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "defaultGeometry");
+					W3C_SKOS + "definition");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "ObjectProperty");
+			e0 = document.createElementNS(W3C_OWL, "ObjectProperty");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.W3C_SKOS + "inScheme");
+					OGC_GEOSPARQL + "defaultGeometry");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "ObjectProperty");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "Feature");
+					W3C_SKOS + "inScheme");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "Point");
+					OGC_GEOSPARQL + "Feature");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "Curve");
+					OGC_GEOSPARQL + "Point");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "Surface");
+					OGC_GEOSPARQL + "Curve");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.OGC_GEOSPARQL + "Geometry");
+					OGC_GEOSPARQL + "Surface");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
-			root.appendChild(e0);
-			addAttribute(document, e0, "rdf:about", Options.W3C_OWL + "Thing");
-
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.W3C_OWL + "Concept");
+					OGC_GEOSPARQL + "Geometry");
 
-			e0 = document.createElementNS(Options.W3C_OWL, "Class");
+			e0 = document.createElementNS(W3C_OWL, "Class");
+			root.appendChild(e0);
+			addAttribute(document, e0, "rdf:about", W3C_OWL + "Thing");
+
+			e0 = document.createElementNS(W3C_OWL, "Class");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
-					Options.W3C_OWL + "ConceptScheme");
+					W3C_OWL + "Concept");
 
-			e0 = document.createElementNS(Options.W3C_RDF, "Description");
+			e0 = document.createElementNS(W3C_OWL, "Class");
+			root.appendChild(e0);
+			addAttribute(document, e0, "rdf:about",
+					W3C_OWL + "ConceptScheme");
+
+			e0 = document.createElementNS(W3C_RDF, "Description");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about", pi.targetNamespace());
 
 			s = documentation(pi);
 			if (s != null && s.length() > 0) {
-				e1 = document.createElementNS(Options.DC, "description");
+				e1 = document.createElementNS(DC, "description");
 				addAttribute(document, e1, "rdf:datatype",
 						Options.W3C_XML_SCHEMA + "#string");
 				e0.appendChild(e1);
@@ -366,19 +374,19 @@ public class RDF implements Target, MessageSource {
 
 		Element e0, e1;
 
-		e0 = document.createElementNS(Options.W3C_SKOS, "ConceptScheme");
+		e0 = document.createElementNS(W3C_SKOS, "ConceptScheme");
 		root.appendChild(e0);
 		addAttribute(document, e0, "rdf:about", uri(ns + ci.name()));
 
-		e1 = document.createElementNS(Options.W3C_RDF, "type");
+		e1 = document.createElementNS(W3C_RDF, "type");
 		e0.appendChild(e1);
-		addAttribute(document, e1, "rdf:resource", Options.W3C_OWL + "Thing");
+		addAttribute(document, e1, "rdf:resource", W3C_OWL + "Thing");
 
 		String s = ci.taggedValue("name");
 		if (s == null)
 			s = ci.taggedValue("title");
 		if (s != null) {
-			e1 = document.createElementNS(Options.W3C_SKOS, "prefLabel");
+			e1 = document.createElementNS(W3C_SKOS, "prefLabel");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:datatype",
 					Options.W3C_XML_SCHEMA + "#string");
@@ -388,7 +396,7 @@ public class RDF implements Target, MessageSource {
 
 		s = documentation(ci);
 		if (s != null && s.length() > 0) {
-			e1 = document.createElementNS(Options.W3C_SKOS, "definition");
+			e1 = document.createElementNS(W3C_SKOS, "definition");
 			addAttribute(document, e1, "rdf:datatype",
 					Options.W3C_XML_SCHEMA + "#string");
 			addAttribute(document, e1, "xml:lang", language);
@@ -413,17 +421,17 @@ public class RDF implements Target, MessageSource {
 				code = propi.name();
 			code = PrepareToPrint(code);
 
-			e0 = document.createElementNS(Options.W3C_SKOS, "Concept");
+			e0 = document.createElementNS(W3C_SKOS, "Concept");
 			root.appendChild(e0);
 			addAttribute(document, e0, "rdf:about",
 					uri(ns + ci.name() + "_" + code));
 
-			e1 = document.createElementNS(Options.W3C_RDF, "type");
+			e1 = document.createElementNS(W3C_RDF, "type");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:resource",
-					Options.W3C_OWL + "Thing");
+					W3C_OWL + "Thing");
 
-			e1 = document.createElementNS(Options.W3C_SKOS, "prefLabel");
+			e1 = document.createElementNS(W3C_SKOS, "prefLabel");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:datatype",
 					Options.W3C_XML_SCHEMA + "#string");
@@ -431,7 +439,7 @@ public class RDF implements Target, MessageSource {
 			e1.setTextContent(label);
 
 			if (!label.equalsIgnoreCase(code)) {
-				e1 = document.createElementNS(Options.W3C_SKOS, "hiddenLabel");
+				e1 = document.createElementNS(W3C_SKOS, "hiddenLabel");
 				e0.appendChild(e1);
 				addAttribute(document, e1, "rdf:datatype",
 						Options.W3C_XML_SCHEMA + "#string");
@@ -441,7 +449,7 @@ public class RDF implements Target, MessageSource {
 			if (taggedValueForCode != null) {
 				s = propi.taggedValue(taggedValueForCode);
 				if (s != null) {
-					e1 = document.createElementNS(Options.W3C_SKOS, "altLabel");
+					e1 = document.createElementNS(W3C_SKOS, "altLabel");
 					e0.appendChild(e1);
 					addAttribute(document, e1, "rdf:datatype",
 							Options.W3C_XML_SCHEMA + "#string");
@@ -479,7 +487,7 @@ public class RDF implements Target, MessageSource {
 									}
 									if (codep != null) {
 										e1 = document.createElementNS(
-												Options.W3C_SKOS, "broader");
+												W3C_SKOS, "broader");
 										e0.appendChild(e1);
 										String nsp = cip.pkg().targetNamespace()
 												+ "#";
@@ -497,7 +505,7 @@ public class RDF implements Target, MessageSource {
 
 			s = documentation(propi);
 			if (s != null && s.length() > 0) {
-				e1 = document.createElementNS(Options.W3C_SKOS, "definition");
+				e1 = document.createElementNS(W3C_SKOS, "definition");
 				addAttribute(document, e1, "rdf:datatype",
 						Options.W3C_XML_SCHEMA + "#string");
 				addAttribute(document, e1, "xml:lang", language);
@@ -505,7 +513,7 @@ public class RDF implements Target, MessageSource {
 				e1.setTextContent(s);
 			}
 
-			e1 = document.createElementNS(Options.W3C_SKOS, "inScheme");
+			e1 = document.createElementNS(W3C_SKOS, "inScheme");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:resource", uri(ns + ci.name()));
 		}
@@ -602,14 +610,14 @@ public class RDF implements Target, MessageSource {
 
 		Element e0, e1, e2, e3;
 
-		e0 = document.createElementNS(Options.W3C_OWL, "Class");
+		e0 = document.createElementNS(W3C_OWL, "Class");
 		root.appendChild(e0);
 		addAttribute(document, e0, "rdf:about", uri(ns + ci.name()));
 
 		boolean feature = false;
 		for (String t : ci.supertypes()) {
 			ClassInfo cix = model.classById(t);
-			e1 = document.createElementNS(Options.W3C_RDFS, "subClassOf");
+			e1 = document.createElementNS(W3C_RDFS, "subClassOf");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:resource",
 					uri(cix.pkg().targetNamespace() + "#" + cix.name()));
@@ -618,25 +626,25 @@ public class RDF implements Target, MessageSource {
 		}
 
 		if (ci.category() == Options.FEATURE && !feature) {
-			e1 = document.createElementNS(Options.W3C_RDFS, "subClassOf");
+			e1 = document.createElementNS(W3C_RDFS, "subClassOf");
 			e0.appendChild(e1);
 			addAttribute(document, e1, "rdf:resource",
-					Options.OGC_GEOSPARQL + "Feature");
+					OGC_GEOSPARQL + "Feature");
 		}
 
 		String g = DetermineDefaultGeometry(ci);
 		if (g != null) {
-			e1 = document.createElementNS(Options.W3C_RDFS, "subClassOf");
+			e1 = document.createElementNS(W3C_RDFS, "subClassOf");
 			e0.appendChild(e1);
-			e2 = document.createElementNS(Options.W3C_OWL, "Restriction");
+			e2 = document.createElementNS(W3C_OWL, "Restriction");
 			e1.appendChild(e2);
-			e3 = document.createElementNS(Options.W3C_OWL, "onProperty");
+			e3 = document.createElementNS(W3C_OWL, "onProperty");
 			addAttribute(document, e3, "rdf:resource",
-					Options.OGC_GEOSPARQL + "defaultGeometry");
+					OGC_GEOSPARQL + "defaultGeometry");
 			e2.appendChild(e3);
-			e3 = document.createElementNS(Options.W3C_OWL, "allValuesFrom");
+			e3 = document.createElementNS(W3C_OWL, "allValuesFrom");
 			addAttribute(document, e3, "rdf:resource",
-					Options.OGC_GEOSPARQL + g);
+					OGC_GEOSPARQL + g);
 			e2.appendChild(e3);
 		}
 
@@ -644,7 +652,7 @@ public class RDF implements Target, MessageSource {
 		if (taggedValueForTitle != null) {
 			s = ci.taggedValue(taggedValueForTitle);
 			if (s != null) {
-				e1 = document.createElementNS(Options.W3C_RDFS, "label");
+				e1 = document.createElementNS(W3C_RDFS, "label");
 				e0.appendChild(e1);
 				addAttribute(document, e1, "xml:lang", language);
 				e1.setTextContent(s);
@@ -653,7 +661,7 @@ public class RDF implements Target, MessageSource {
 
 		s = documentation(ci);
 		if (s != null && s.length() > 0) {
-			e1 = document.createElementNS(Options.DC, "description");
+			e1 = document.createElementNS(DC, "description");
 			addAttribute(document, e1, "rdf:datatype",
 					Options.W3C_XML_SCHEMA + "#string");
 			e0.appendChild(e1);
@@ -661,7 +669,7 @@ public class RDF implements Target, MessageSource {
 		}
 
 		/*
-		 * e1 = document.createElementNS(Options.DC,"source");
+		 * e1 = document.createElementNS(DC,"source");
 		 * addAttribute(document,e1,"rdf:datatype",Options.W3C_XML_SCHEMA+
 		 * "#anyURI"); e0.appendChild(e1); e1.setTextContent(
 		 * "TODO - add reference to concept dictionary or feature catalogue?");
@@ -710,14 +718,14 @@ public class RDF implements Target, MessageSource {
 		Element e0, e1;
 		String cn = propi.inClass().name();
 
-		e0 = document.createElementNS(Options.W3C_OWL, "DatatypeProperty");
+		e0 = document.createElementNS(W3C_OWL, "DatatypeProperty");
 		root.appendChild(e0);
 		addAttribute(document, e0, "rdf:about",
 				uri(PrepareToPrint(ns + cn + "." + propi.name())));
 
 		String s = documentation(propi);
 		if (s != null && s.length() > 0) {
-			e1 = document.createElementNS(Options.DC, "description");
+			e1 = document.createElementNS(DC, "description");
 			addAttribute(document, e1, "rdf:datatype",
 					Options.W3C_XML_SCHEMA + "#string");
 			e0.appendChild(e1);
@@ -725,7 +733,7 @@ public class RDF implements Target, MessageSource {
 		}
 
 		/*
-		 * e1 = document.createElementNS(Options.DC,"source");
+		 * e1 = document.createElementNS(DC,"source");
 		 * addAttribute(document,e1,"rdf:datatype",Options.W3C_XML_SCHEMA+
 		 * "#anyURI"); e0.appendChild(e1); e1.setTextContent(
 		 * "TODO - add reference to concept dictionary or feature catalogue?");
@@ -734,14 +742,14 @@ public class RDF implements Target, MessageSource {
 		if (taggedValueForTitle != null) {
 			s = propi.taggedValue(taggedValueForTitle);
 			if (s != null) {
-				e1 = document.createElementNS(Options.W3C_RDFS, "label");
+				e1 = document.createElementNS(W3C_RDFS, "label");
 				e0.appendChild(e1);
 				addAttribute(document, e1, "xml:lang", language);
 				e1.setTextContent(s);
 			}
 		}
 
-		e1 = document.createElementNS(Options.W3C_RDFS, "domain");
+		e1 = document.createElementNS(W3C_RDFS, "domain");
 		addAttribute(document, e1, "rdf:resource", uri(ns + cn));
 		e0.appendChild(e1);
 
@@ -750,7 +758,7 @@ public class RDF implements Target, MessageSource {
 			if (ti != null) {
 				ClassInfo cix = model.classById(ti.id);
 				if (cix != null) {
-					e1 = document.createElementNS(Options.W3C_RDFS, "range");
+					e1 = document.createElementNS(W3C_RDFS, "range");
 					addAttribute(document, e1, "rdf:resource", uri(
 							cix.pkg().targetNamespace() + "#" + cix.name()));
 					e0.appendChild(e1);
@@ -764,12 +772,12 @@ public class RDF implements Target, MessageSource {
 					switch (cat) {
 					case Options.CODELIST:
 					case Options.ENUMERATION:
-						e1 = document.createElementNS(Options.W3C_RDFS,
+						e1 = document.createElementNS(W3C_RDFS,
 								"range");
 						addAttribute(document, e1, "rdf:resource",
-								Options.W3C_SKOS + "Concept");
+								W3C_SKOS + "Concept");
 						e0.appendChild(e1);
-						e1 = document.createElementNS(Options.W3C_SKOS,
+						e1 = document.createElementNS(W3C_SKOS,
 								"definition");
 						addAttribute(document, e1, "rdf:resource",
 								uri(ns + cix.name()));
@@ -780,7 +788,7 @@ public class RDF implements Target, MessageSource {
 						if (s == null)
 							s = uri(cix.pkg().targetNamespace() + "#"
 									+ cix.name());
-						e1 = document.createElementNS(Options.W3C_RDFS,
+						e1 = document.createElementNS(W3C_RDFS,
 								"range");
 						addAttribute(document, e1, "rdf:resource", s);
 						e0.appendChild(e1);
@@ -789,7 +797,7 @@ public class RDF implements Target, MessageSource {
 				} else {
 					s = mapTypeByName(ti.name);
 					if (s != null) {
-						e1 = document.createElementNS(Options.W3C_RDFS,
+						e1 = document.createElementNS(W3C_RDFS,
 								"range");
 						addAttribute(document, e1, "rdf:resource", s);
 						e0.appendChild(e1);
@@ -875,6 +883,16 @@ public class RDF implements Target, MessageSource {
 	public void registerRulesAndRequirements(RuleRegistry r) {
 
 	   r.addRule("rule-rdf-prop-parent");
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "rdf";
 	}
 
 	/**

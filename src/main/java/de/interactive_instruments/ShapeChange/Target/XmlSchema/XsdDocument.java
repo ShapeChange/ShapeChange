@@ -90,6 +90,12 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
 public class XsdDocument implements MessageSource {
+    
+    public static final String DGIWGSP_NSABR = "gmldgiwgsp";
+    public static final String DGIWGSP_NS = "http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/";
+    
+    public static final String GMLSF_NSABR = "gmlsf";
+    public static final String GMLSF_NS = "http://www.opengis.net/gmlsf/2.0";
 
     protected Document document = null;
     protected Element root = null;
@@ -289,15 +295,15 @@ public class XsdDocument implements MessageSource {
 			&& dgiwgGMLProfileSchema != null && !dgiwgGMLProfileSchema.trim().isEmpty()) {
 		    // if (e2==null)
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-		    addAttribute(e2, "source", options.schemaLocationOfNamespace(Options.DGIWGSP_NS));
-		    Element e0 = document.createElementNS(Options.DGIWGSP_NS, "ComplianceLevel");
+		    addAttribute(e2, "source", options.schemaLocationOfNamespace(DGIWGSP_NS));
+		    Element e0 = document.createElementNS(DGIWGSP_NS, "ComplianceLevel");
 		    e2.appendChild(e0);
 		    e0.appendChild(document.createTextNode(dgiwgComplianceLevel));
-		    e0 = document.createElementNS(Options.DGIWGSP_NS, "GMLProfileSchema");
+		    e0 = document.createElementNS(DGIWGSP_NS, "GMLProfileSchema");
 		    e2.appendChild(e0);
 		    e0.appendChild(document.createTextNode(dgiwgGMLProfileSchema));
 
-		    addImport(Options.DGIWGSP_NSABR, Options.DGIWGSP_NS);
+		    addImport(DGIWGSP_NSABR, DGIWGSP_NS);
 		}
 	    }
 
@@ -308,12 +314,12 @@ public class XsdDocument implements MessageSource {
 		if (gmlsfComplianceLevel != null && !gmlsfComplianceLevel.trim().isEmpty()) {
 
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-		    addAttribute(e2, "source", options.schemaLocationOfNamespace(Options.GMLSF_NS));
-		    Element e0 = document.createElementNS(Options.GMLSF_NS, "ComplianceLevel");
+		    addAttribute(e2, "source", options.schemaLocationOfNamespace(GMLSF_NS));
+		    Element e0 = document.createElementNS(GMLSF_NS, "ComplianceLevel");
 		    e2.appendChild(e0);
 		    e0.appendChild(document.createTextNode(gmlsfComplianceLevel));
 
-		    addImport(Options.GMLSF_NSABR, Options.GMLSF_NS);
+		    addImport(GMLSF_NSABR, GMLSF_NS);
 		}
 	    }
 	}

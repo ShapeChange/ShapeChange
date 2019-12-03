@@ -1192,6 +1192,16 @@ public class FOL2Schematron implements Target, MessageSource {
 	}
 	
 	@Override
+	public String getTargetIdentifier() {
+	    return "fol2sch";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	    // no rules or requirements defined for this target, thus nothing to do	    
 	}

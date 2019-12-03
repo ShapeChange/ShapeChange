@@ -31,18 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
 
 import de.interactive_instruments.ShapeChange.Target.Target;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
 
 /**
  * For adding and finding conversion as well as encoding rules.
@@ -59,68 +52,11 @@ public class RuleRegistry {
 
     /** Hash table for encoding rule extensions */
     protected HashMap<String, String> fExtendsEncRule = new HashMap<String, String>();
+    protected TargetRegistry targetRegistry;
 
-    protected List<Class<?>> targetClasses;
+    public RuleRegistry(TargetRegistry targetRegistry) {
 
-    public RuleRegistry() {
-
-	String[] packageBlacklist = null;
-	InputStream stream = getClass().getResourceAsStream("/sc.properties");
-	if (stream != null) {
-	    Properties properties = new Properties();
-	    try {
-		properties.load(stream);
-		packageBlacklist = properties.getProperty("sc.targetScanBlacklistPackages").split(",");
-	    } catch (IOException e) {
-		System.err.println(
-			"Could not load sc.properties file and property sc.targetScanBlacklistPackages. Reverting to default package blacklist.");
-		packageBlacklist = new String[] { "java.*", "antlr*", "com.fasterxml.*", "com.github.andrewoma.*",
-			"com.github.jsonldjava.*", "com.google.*", "com.graphbuilder.*", "com.ibm.*", "com.microsoft.*",
-			"com.sun.*", "com.thedeanda*", "com.topologi.*", "io.github.classgraph*", "java_cup*",
-			"javax.*", "junit.*", "name.fraser*", "net.arnx*", "net.engio*", "net.sf.saxon*",
-			"nonapi.io.github.classgraph.*", "org.antlr.*", "org.apache.*", "org.checkerframework.*",
-			"org.codehaus.jackson*", "org.codehaus.mojo*", "org.custommonkey*", "org.docx4j*",
-			"org.eclipse.*", "org.etsi.uri.*", "org.glox4j.*", "org.hamcrest*", "org.jgrapht*",
-			"org.jheaps*", "org.json*", "org.junit*", "org.jvunit*", "org.jvnet", "org.merlin*",
-			"org.opendope.*", "org.openxmlformats.*", "org.plutext*", "org.pptx4j*", "org.slf4j*",
-			"org.sparx*", "org.w3*", "org.xlsx4j.*", "org.xml*", "schemaorg_apache_xmlbeans.*" };
-
-	    }
-	}
-
-	long scanStart = System.currentTimeMillis();
-
-	ScanResult scanResult = null;
-
-	try {
-
-	    scanResult = new ClassGraph().enableAllInfo().blacklistPackages(packageBlacklist).scan();
-
-	    /*
-	     * IMPORTANT: Keep the scanTime and following commented code for debugging
-	     * purposes!
-	     */
-	    @SuppressWarnings("unused")
-	    long scanTime = (System.currentTimeMillis() - scanStart) / 1000;
-
-//	    System.out.println(
-//			"Determination of target implementations (s): " + scanTime);
-//
-//	    PackageInfoList packages = scanResult.getPackageInfo();
-//	    List<String> packageNames = packages.getNames();
-//	    packageNames.sort(Comparator.naturalOrder());
-//	    System.out.println("Found " + packageNames.size() + " packages: " + String.join("\n", packageNames));
-
-	    ClassInfoList targetClassInfos = scanResult
-		    .getClassesImplementing("de.interactive_instruments.ShapeChange.Target.Target")
-		    .filter(classInfo -> (!(classInfo.isInterface() || classInfo.isAbstract())));
-	    targetClasses = targetClassInfos.loadClasses();
-
-	} finally {
-	    if (scanResult != null) {
-		scanResult.close();
-	    }
-	}
+	this.targetRegistry = targetRegistry;
 
 	loadRulesAndRequirements();
     }
@@ -130,7 +66,7 @@ public class RuleRegistry {
      */
     protected void loadRulesAndRequirements() {
 
-	for (Class<?> tc : targetClasses) {
+	for (Class<?> tc : targetRegistry.getTargetClasses()) {
 
 	    try {
 		Target target = (Target) tc.getConstructor().newInstance();

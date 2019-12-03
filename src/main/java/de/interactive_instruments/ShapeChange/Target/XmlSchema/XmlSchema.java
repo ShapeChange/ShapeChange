@@ -840,6 +840,11 @@ public class XmlSchema implements Target, MessageSource {
 	return "XML Schema";
     }
 
+    @Override
+    public String getTargetIdentifier() {
+	return "xsd";
+    }
+
     /**
      * Tries to identify if the object element that represents ci has simple
      * content. If ci is a code list encoded following ISO 19139:2007, the result
@@ -1233,6 +1238,11 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-all-cls-aixmDatatype");
 	// further rules of a more general nature
 	r.addRule("rule-all-prop-uomAsAttribute");
+    }
+
+    @Override
+    public String getDefaultEncodingRule() {
+	return "iso19136_2007";
     }
 
     @Override
