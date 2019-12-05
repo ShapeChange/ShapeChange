@@ -555,4 +555,9 @@ public abstract class PropertyInfoImpl extends InfoImpl
 
 		return this.profiles;
 	}
+	
+	@Override
+	public ClassInfo typeClass() {
+	    return model().classByIdOrName(typeInfo());
+	}
 }
