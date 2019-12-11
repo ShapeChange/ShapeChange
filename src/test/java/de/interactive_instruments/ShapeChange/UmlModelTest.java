@@ -31,7 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>

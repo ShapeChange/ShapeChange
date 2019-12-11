@@ -1083,8 +1083,7 @@ public class FeatureCatalogue
 	}
 
 	private String PrepareToPrint(String s) {
-		s = s.trim();
-		return s;
+	    return s == null ? "" : s.trim();
 	}
 
 	/** Add attribute to an element */

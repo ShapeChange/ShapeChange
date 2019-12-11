@@ -31,14 +31,14 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class WindowsBasicTest extends BasicTest {
 
-	@Before
+	@BeforeEach
 	public void assumeWindows() {
 		assumeTrue(SystemUtils.IS_OS_WINDOWS);
 	}
