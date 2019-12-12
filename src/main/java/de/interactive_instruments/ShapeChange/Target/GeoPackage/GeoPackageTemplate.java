@@ -251,46 +251,13 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    Element gpkgSrsDefE = gpkgSrsDefEs.get(i);
 
 	    SpatialReferenceSystem srs = new SpatialReferenceSystem();
-
-	    // parse srsName
-	    Element srsNameE = XMLUtil.getFirstElement(gpkgSrsDefE, "srsName");
-	    String srsName = srsNameE.getTextContent().trim();
-	    srs.setSrsName(srsName);
-
-	    // parse srsId
-	    Element srsIdE = XMLUtil.getFirstElement(gpkgSrsDefE, "srsId");
-	    String srsId = srsIdE.getTextContent().trim();
-	    srs.setSrsId(Integer.parseInt(srsId));
-
-	    // parse organization
-	    Element organizationE = XMLUtil.getFirstElement(gpkgSrsDefE, "organization");
-	    String organization = organizationE.getTextContent().trim();
-	    srs.setOrganization(organization);
-
-	    // parse organizationCoordSysId
-	    Element organizationCoordSysIdE = XMLUtil.getFirstElement(gpkgSrsDefE, "organizationCoordSysId");
-	    String organizationCoordSysId = organizationCoordSysIdE.getTextContent().trim();
-	    srs.setOrganizationCoordsysId(Integer.parseInt(organizationCoordSysId));
-
-	    // parse definition
-	    Element definitionE = XMLUtil.getFirstElement(gpkgSrsDefE, "definition");
-	    String definition = definitionE.getTextContent().trim();
-	    srs.setDefinition(definition);
-
-	    // parse description (optional)
-	    Element descriptionE = XMLUtil.getFirstElement(gpkgSrsDefE, "description");
-	    if (descriptionE != null) {
-		String description = descriptionE.getTextContent().trim();
-		srs.setDescription(description);
-	    }
-
-	    // parse definition_12_063 (optional)
-	    Element definition_12_063E = XMLUtil.getFirstElement(gpkgSrsDefE, "definition_12_063");
-	    if (definition_12_063E != null) {
-		String definition_12_063 = definition_12_063E.getTextContent().trim();
-		srs.setDefinition_12_063(definition_12_063);
-	    }
-
+	    srs.setSrsName(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "srsName"));
+	    srs.setSrsId(Integer.parseInt(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "srsId")));
+	    srs.setOrganization(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "organization"));
+	    srs.setOrganizationCoordsysId(Integer.parseInt(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "organizationCoordSysId")));
+	    srs.setDefinition(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition"));
+		srs.setDescription(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "description"));
+		srs.setDefinition_12_063(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition_12_063"));
 	    srsDefs.add(srs);
 	}
     }
