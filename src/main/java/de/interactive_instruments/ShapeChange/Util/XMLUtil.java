@@ -90,6 +90,18 @@ public class XMLUtil {
 	}
 
 	/**
+	 * @param parent      the element in which to look for the first child element
+	 *                    with given name
+	 * @param elementName name of the child element to look up
+	 * @return the text content, trimmed, of the first child element with given
+	 *         name; can be <code>null</code> if no such element was found
+	 */
+	public static String getTrimmedTextContentOfFirstElement(Element parent,
+			String elementName) {
+		return StringUtils.trim(getTextContentOfFirstElement(parent, elementName));
+	}
+
+	/**
 	 * @param parentElement
 	 *                          Element in which to look up the children with
 	 *                          given name
