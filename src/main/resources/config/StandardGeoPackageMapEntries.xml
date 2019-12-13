@@ -12,7 +12,6 @@
  <MapEntry type="Date" rule="*" targetType="DATE"/>
  <MapEntry type="DateTime" rule="*" targetType="DATETIME"/>
  <!-- ISO/TS 19107 -->
- <MapEntry type="DirectPosition" rule="*" targetType="POINT"/>
  <MapEntry type="GM_Point" rule="*" targetType="POINT"/>
  <MapEntry type="GM_MultiPoint" rule="*" targetType="MULTIPOINT"/>
  <MapEntry type="GM_Curve" rule="*" targetType="LINESTRING"/>
@@ -20,10 +19,6 @@
  <MapEntry type="GM_Surface" rule="*" targetType="POLYGON"/>
  <MapEntry type="GM_MultiSurface" rule="*" targetType="MULTIPOLYGON"/>
  <MapEntry type="GM_Object" rule="*" targetType="GEOMETRY"/>
- <!-- ISO 19108 -->
- <MapEntry type="TM_Instant" rule="*" targetType="DATETIME"/>
- <MapEntry type="TM_Position" rule="*" targetType="DATETIME"/>
- <MapEntry type="TM_DateAndTime" rule="*" targetType="DATETIME"/>
  <!-- ... more to be added as required -->
  <MapEntry type="Short" rule="*" targetType="INTEGER"/>
  <MapEntry type="Long" rule="*" targetType="INTEGER"/>

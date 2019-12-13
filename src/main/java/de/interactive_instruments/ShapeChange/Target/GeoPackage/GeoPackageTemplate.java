@@ -254,10 +254,11 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    srs.setSrsName(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "srsName"));
 	    srs.setSrsId(Integer.parseInt(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "srsId")));
 	    srs.setOrganization(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "organization"));
-	    srs.setOrganizationCoordsysId(Integer.parseInt(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "organizationCoordSysId")));
+	    srs.setOrganizationCoordsysId(Integer
+		    .parseInt(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "organizationCoordSysId")));
 	    srs.setDefinition(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition"));
-		srs.setDescription(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "description"));
-		srs.setDefinition_12_063(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition_12_063"));
+	    srs.setDescription(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "description"));
+	    srs.setDefinition_12_063(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition_12_063"));
 	    srsDefs.add(srs);
 	}
     }
@@ -634,9 +635,12 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	// Note: setting contents also sets table_name
 	dc.setContents(contents);
 	dc.setColumnName(normalize(pi.name()));
-	// TODO set name? Probably not, because it would have to be UNIQUE
+	// Do not set name, because it would have to be UNIQUE
 	dc.setDescription(pi.derivedDocumentation(GeoPackageTemplate.documentationTemplate,
 		GeoPackageTemplate.documentationNoValue));
+	if (pi.aliasName() != null) {
+	    dc.setTitle(pi.aliasName().trim());
+	}
 	dc.setConstraintName(normalize(pi.typeInfo().name));
 
 	DataColumnsDao dataColumnsDao = geoPackage.getDataColumnsDao();
@@ -680,7 +684,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 		dcc.setConstraintName(constraintName);
 		dcc.setConstraintType(DataColumnConstraintType.ENUM);
 		dcc.setValue(pi.name());
-		dcc.setDescription(ci.derivedDocumentation(GeoPackageTemplate.documentationTemplate,
+		dcc.setDescription(pi.derivedDocumentation(GeoPackageTemplate.documentationTemplate,
 			GeoPackageTemplate.documentationNoValue));
 		dataColumnConstraintsDao.create(dcc);
 	    }
@@ -783,8 +787,6 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     }
 
     private String normalize(String name) {
-	// TBD: replace all non-word-characters \W?
-	// TODO do we need different/additional normalization strategies?
 	return name.trim().toLowerCase().replaceAll("\\s", "_");
     }
 
