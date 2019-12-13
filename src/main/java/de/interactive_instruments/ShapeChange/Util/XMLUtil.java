@@ -52,7 +52,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,7 +59,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 
 /**
@@ -106,6 +104,17 @@ public class XMLUtil {
     public static String getTextContentOfFirstElement(Element parent, String elementName) {
 	Element e = getFirstElement(parent, elementName);
 	return e != null ? e.getTextContent() : null;
+    }
+
+    /**
+     * @param parent      the element in which to look for the first child element
+     *                    with given name
+     * @param elementName name of the child element to look up
+     * @return the text content, trimmed, of the first child element with given
+     *         name; can be <code>null</code> if no such element was found
+     */
+    public static String getTrimmedTextContentOfFirstElement(Element parent, String elementName) {
+	return StringUtils.trim(getTextContentOfFirstElement(parent, elementName));
     }
 
     /**
