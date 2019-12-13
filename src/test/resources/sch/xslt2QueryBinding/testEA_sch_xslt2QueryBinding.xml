@@ -12,6 +12,7 @@
 		<parameter name="appSchemaNameRegex" value="Test Schema .*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />
+		<parameter name="codeAbsenceInModelAllowed" value="true"/>
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation"
 				source="ea:notes" />

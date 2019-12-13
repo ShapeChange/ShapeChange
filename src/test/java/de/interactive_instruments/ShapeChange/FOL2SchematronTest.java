@@ -31,18 +31,20 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class FOL2SchematronTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class FOL2SchematronTest extends BasicTestSCXML {
 
 	@Test
 	public void testFOL2Schematron() {
 		/*
 		 * Schematron derived from SBVR (with intermediate translation to FOL)
 		 */
-		multiTest("src/test/resources/config/testEA_Sbvr.xml",
+	    multiTest("src/test/resources/aixmSchemaMerger/basic/testEA_Sbvr.xml",
 				new String[] { "xml" }, "testResults/fol/fromSbvr/sch/step3",
-				"src/test/resources/reference/sch/fromSbvr");
+				"src/test/resources/aixmSchemaMerger/basic/reference");
 	}
 
 }

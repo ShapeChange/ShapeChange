@@ -31,27 +31,25 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class OutputProcessingTest extends WindowsBasicTest {
-	
-	@Test
-	public void testOutputProcessing_multipleSchemas() {
-		
-		multiTest(
-				"src/test/resources/outputProcessing/testEA_outputProcessing_multipleSchemas.xml",
-				new String[] { "html","ttl","sql","xsd" },
-				"testResults/outputProcessing/multipleSchemas/results",
-				"src/test/resources/outputProcessing/reference/multipleSchemas");
-	}
-	
-	@Test
-	public void testOutputProcessing_singleSchema() {
-		
-		multiTest(
-				"src/test/resources/outputProcessing/testEA_outputProcessing_singleSchema.xml",
-				new String[] { "html","ttl","sql","xsd" },
-				"testResults/outputProcessing/singleSchema/results",
-				"src/test/resources/outputProcessing/reference/singleSchema");
-	}
+@Tag("SCXML")
+public class OutputProcessingTest extends BasicTestSCXML {
+
+    @Test
+    public void testOutputProcessing_multipleSchemas() {
+
+	multiTest("src/test/resources/outputProcessing/multipleSchemas/testEA_outputProcessing_multipleSchemas.xml",
+		new String[] { "html", "ttl", "sql", "xsd" }, "testResults/outputProcessing/multipleSchemas/results",
+		"src/test/resources/outputProcessing/multipleSchemas/reference");
+    }
+
+    @Test
+    public void testOutputProcessing_singleSchema() {
+
+	multiTest("src/test/resources/outputProcessing/singleSchema/testEA_outputProcessing_singleSchema.xml",
+		new String[] { "html", "ttl", "sql", "xsd" }, "testResults/outputProcessing/singleSchema/results",
+		"src/test/resources/outputProcessing/singleSchema/reference");
+    }
 }

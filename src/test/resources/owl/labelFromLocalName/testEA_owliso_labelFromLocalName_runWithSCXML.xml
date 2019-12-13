@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="original">
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/test/resources/owl/labelFromLocalName/test_owliso_labelFromLocalName.zip"/>
+		<parameter name="appSchemaName" value="AppSchema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="alias" source="sc:extract" token="Name"/>
+			<DescriptorSource descriptor="primaryCode" source="sc:extract" token="Primary code"/>
+			<DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			<DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+			<DescriptorSource descriptor="example" source="sc:extract" token="Example"/>
+			<DescriptorSource descriptor="legalBasis" source="sc:extract" token="Legal basis"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="sc:extract" token="Data capture statement"/>
+			<DescriptorSource descriptor="language" source="sc:extract" token="Language"/>
+		</descriptorSources>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/owl/labelFromLocalName/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper" id="associationClassMapper" input="original" mode="enabled"/>
+	</transformers>
+	<targets>
+		<TargetOwl class="de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150" inputs="associationClassMapper" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/owl/labelFromLocalName/owl"/>
+			
+			<targetParameter name="outputFormat" value="turtle"/>
+			<targetParameter name="defaultEncodingRule" value="MyRule"/>
+			<targetParameter name="language" value="en"/>
+			<targetParameter name="defaultTypeImplementation" value="owl:Class"/>
+
+			<targetParameter name="ontologyNameCode" value="test"/>
+			<targetParameter name="source" value="Test ontology"/>
+			<targetParameter name="URIbase" value="http://example.org/ontology"/>
+
+			<rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+  <RdfTypeMapEntry rule="*" target="xsd:string" targetType="datatype" type="CharacterString"/>
+  <RdfTypeMapEntry rule="*" target="xsd:date" targetType="datatype" type="Date"/>
+  <RdfTypeMapEntry rule="*" target="xsd:dateTime" targetType="datatype" type="DateTime"/>
+  <RdfTypeMapEntry rule="*" target="xsd:integer" targetType="datatype" type="Integer"/>
+  <RdfTypeMapEntry rule="*" target="xsd:double" targetType="datatype" type="Decimal"/>
+  <RdfTypeMapEntry rule="*" target="xsd:double" targetType="datatype" type="Real"/>
+  <RdfTypeMapEntry rule="*" target="xsd:boolean" targetType="datatype" type="Boolean"/>
+  <RdfTypeMapEntry rule="*" target="xsd:Name" targetType="datatype" type="GenericName"/>
+  <RdfTypeMapEntry rule="*" target="xsd:NCName" targetType="datatype" type="LocalName"/>
+  <RdfTypeMapEntry rule="*" target="rdfs:Resource" targetType="class" type="ScopedName"/>
+  <RdfTypeMapEntry rule="*" target="xsd:NCName" targetType="datatype" type="TypeName"/>
+  <RdfTypeMapEntry rule="*" target="xsd:Name" targetType="datatype" type="MemberName"/>
+  
+  <RdfTypeMapEntry rule="*" target="xsd:string" targetType="datatype" type="Character"/>
+  <RdfTypeMapEntry rule="*" target="xsd:double" targetType="datatype" type="Number"/>
+  <RdfTypeMapEntry rule="*" target="xsd:time" targetType="datatype" type="ClockTime"/>
+  <RdfTypeMapEntry rule="*" target="xsd:boolean" targetType="datatype" type="Bit"/>
+ 
+  <RdfTypeMapEntry rule="*" target="xsd:anyURI" targetType="datatype" type="URI"/>
+  <RdfTypeMapEntry rule="*" target="xsd:time" targetType="datatype" type="Time"/>
+  
+	
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Measure"/>
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Length"/>
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Distance"/>
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Area"/>
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Volume"/>
+  <RdfTypeMapEntry rule="*" target="sc:Measure" targetType="datatype" type="Velocity"/>
+
+  <RdfTypeMapEntry rule="*" target="owl:Class" targetType="class" type="Any"/>
+
+  
+</rdfMapEntries>
+  <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <RdfTypeMapEntry rule="*" target="sc:Sign" targetType="datatype" type="Sign"/>
+   
+</rdfMapEntries>
+  <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  
+ <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="DirectPosition"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Object"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Point"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Curve"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Surface"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Solid"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_MultiPoint"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_MultiCurve"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_MultiSurface"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_MultiSolid"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Aggregate"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_CompositePoint"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_CompositeCurve"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_CompositeSurface"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_CompositeSolid"/>
+  <RdfTypeMapEntry rule="*" target="gsp:Geometry" targetType="class" type="GM_Complex"/>
+
+  
+
+  
+</rdfMapEntries>
+  <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  
+</rdfMapEntries>
+  <rdfMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <RdfTypeMapEntry rule="*" target="gsp:Feature" targetType="class" type="GFI_Feature"/>
+ 
+</rdfMapEntries>
+  
+</rdfMapEntries>
+
+			<rdfConversionParameters>
+				<PropertyConversionParameter global="true" property="FT1::att" rule="*" schema="AppSchema"/>
+				<PropertyConversionParameter global="false" property="att" rule="*" schema="AppSchema" target="FT1::att" targetSchema="AppSchema"/>
+			</rdfConversionParameters>
+
+			<namespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<Namespace ns="http://www.w3.org/2001/XMLSchema#" nsabr="xsd"/>
+	<Namespace ns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" nsabr="rdf"/>
+	<Namespace ns="http://www.w3.org/2000/01/rdf-schema#" nsabr="rdfs"/>
+	<Namespace ns="http://www.w3.org/2002/07/owl#" nsabr="owl"/>
+	<Namespace ns="http://purl.org/dc/elements/1.1/" nsabr="dc"/>
+	<Namespace location="https://www.w3.org/ns/dcat.ttl" ns="http://www.w3.org/ns/dcat#" nsabr="dcat"/>
+	<Namespace ns="http://www.w3.org/ns/prov#" nsabr="prov"/>
+	<Namespace location="http://www.w3.org/2004/02/skos/core" ns="http://www.w3.org/2004/02/skos/core#" nsabr="skos"/>
+	<Namespace location="http://def.isotc211.org/iso19150/-2/2012/base" ns="http://def.isotc211.org/iso19150/-2/2012/base#" nsabr="iso19150-2"/>
+	<Namespace location="http://www.opengis.net/ont/geosparql" ns="http://www.opengis.net/ont/geosparql#" nsabr="gsp"/>
+	<Namespace location="http://www.opengis.net/ont/sf" ns="http://www.opengis.net/ont/sf#" nsabr="sfowl"/>
+	<Namespace location="http://www.opengis.net/ont/gml" ns="http://www.opengis.net/ont/gml#" nsabr="gmlowl"/>
+	<Namespace location="http://shapechange.net/resources/ont/base" ns="http://shapechange.net/resources/ont/base#" nsabr="sc"/>
+	<Namespace location="http://def.isotc211.org/iso19109/2013/GeneralFeatureModel" ns="http://def.isotc211.org/iso19109/2013/GeneralFeatureModel#" nsabr="gfm"/>
+	<Namespace location="https://www.w3.org/ns/locn.ttl" ns="https://www.w3.org/ns/locn#" nsabr="locn"/>
+	<Namespace location="www.w3.org/2006/time" ns="http://www.w3.org/2006/time#" nsabr="time"/>
+</namespaces>
+
+			<rules>
+				<EncodingRule extends="*" name="MyRule">
+					<rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+					<rule name="rule-owl-pkg-ontologyName-code"/>
+					<rule name="rule-owl-cls-encode-featuretypes"/>
+					<rule name="rule-owl-cls-enumerationAsCodelist"/>
+          			<rule name="rule-owl-cls-codelist-19150-2"/>
+					<rule name="rule-owl-prop-general"/>
+					<rule name="rule-owl-prop-globalScopeByConversionParameter"/>
+					<rule name="rule-owl-prop-labelFromLocalName"/>
+					<rule name="rule-owl-prop-range-global"/>
+				</EncodingRule>
+			</rules>
+		</TargetOwl>
+	</targets>
+</ShapeChangeConfiguration>

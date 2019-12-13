@@ -1,0 +1,3 @@
+NOTE: the ShapeChange configurations in this folder are not used for good reason: 
+They are only used for internal testing, since the image size depends on the settings in EA, 
+which are user dependent.

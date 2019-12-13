@@ -44,21 +44,21 @@
 <!-- 				<XsdMapEntry type="ExtEnumeration" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="string" xmlType="string" xmlTypeType="simple" xmlTypeContent="simple"/> -->
 <!-- 			</xsdMapEntries> -->
 		</TargetXmlSchema>
-		<Target
-			class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
-			inputs="trf" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/typeConversion/enumerationToCodelist/fc" />
-			<targetParameter name="outputFilename" value="test" />
-			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="inheritedProperties" value="false" />
-			<targetParameter name="outputFormat" value="FRAMEHTML" />
-			<targetParameter name="xslTransformerFactory"
-				value="net.sf.saxon.TransformerFactoryImpl" />
-			<targetParameter name="name" value="'Test application schema'" />
-			<targetParameter name="scope" value="This feature catalogue ..." />
-			<targetParameter name="versionNumber" value="n/a" />
-			<targetParameter name="versionDate" value="n/a" />
-			<targetParameter name="producer" value="interactive instruments GmbH" />
-		</Target>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
+<!-- 			inputs="trf" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/typeConversion/enumerationToCodelist/fc" /> -->
+<!-- 			<targetParameter name="outputFilename" value="test" /> -->
+<!-- 			<targetParameter name="sortedOutput" value="true" /> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false" /> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML" /> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl" /> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'" /> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..." /> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a" /> -->
+<!-- 			<targetParameter name="versionDate" value="n/a" /> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH" /> -->
+<!-- 		</Target> -->
 	</targets>
 </ShapeChangeConfiguration>

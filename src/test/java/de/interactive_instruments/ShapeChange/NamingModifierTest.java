@@ -31,19 +31,20 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class NamingModifierTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class NamingModifierTest extends BasicTestSCXML {
 
-	@Test
-	public void testRuleTrfCamelcaseToUppercase() {
-		/*
-		 * Test rule-trf-camelcase-to-uppercase of NamingModifier transformation
-		 */
-		multiTest(
-				"src/test/resources/config/testEA_namingmodifier_camelcasetouppercase.xml",
-				new String[] { "xsd" },
-				"testResults/namingModifier/camelcaseToUppercase",
-				"src/test/resources/reference/namingModifier/camelcaseToUppercase");
-	}
+    @Test
+    public void testRuleTrfCamelcaseToUppercase() {
+	/*
+	 * Test rule-trf-camelcase-to-uppercase of NamingModifier transformation
+	 */
+	multiTest(
+		"src/test/resources/namingModifier/camelCaseToUpperCase/testEA_namingmodifier_camelcasetouppercase.xml",
+		new String[] { "xsd" }, "testResults/namingModifier/camelcaseToUppercase",
+		"src/test/resources/namingModifier/camelCaseToUpperCase/reference");
+    }
 }

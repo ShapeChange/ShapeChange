@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/test/resources/modelExport/explicitProfileSettings/test_export_scxml_explicitProfileSettings.zip"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="dontConstructAssociationNames" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<descriptorSources>
+			      <DescriptorSource descriptor="alias" source="ea:alias"/>
+			      <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			      <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			      <DescriptorSource descriptor="description" source="none"/>
+			      <DescriptorSource descriptor="documentation" source="ea:notes"/>
+			      <DescriptorSource descriptor="example" source="none"/>
+			      <DescriptorSource descriptor="globalIdentifier" source="none"/>
+			      <DescriptorSource descriptor="language" source="none"/>
+			      <DescriptorSource descriptor="legalBasis" source="none"/>	
+			      <DescriptorSource descriptor="primaryCode" source="none"/>			      		      
+		    </descriptorSources>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/modelexport/explicitProfileSettings/log_export_scxml.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport" mode="enabled">
+         <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
+         <targetParameter name="outputFilename" value="export_full_omitProfilesTVs"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="export"/>
+         <rules>
+            <EncodingRule name="export">
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+            </EncodingRule>
+         </rules>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport" mode="enabled">
+         <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
+         <targetParameter name="outputFilename" value="export_restrictProfiles"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="profilesToExport" value="A,C"/>
+         <rules>
+            <EncodingRule name="export">
+            	<rule name="rule-exp-all-restrictExistingProfiles"/>
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+            </EncodingRule>
+         </rules>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport" mode="enabled">
+         <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
+         <targetParameter name="outputFilename" value="export_omitProfiles_removeProfilesTV"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="export"/>
+         <rules>
+            <EncodingRule name="export">
+            	<rule name="rule-exp-all-omitExistingProfiles"/>
+            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+            </EncodingRule>
+         </rules>
+      </Target>
+	</targets>
+</ShapeChangeConfiguration>

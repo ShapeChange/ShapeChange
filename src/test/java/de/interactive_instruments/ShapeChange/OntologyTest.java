@@ -31,75 +31,67 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class OntologyTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class OntologyTest extends BasicTestSCXML {
 
-	@Test
-	public void testSkosCodelists() {
-		/*
-		 * SKOS codelists
-		 */
-		String[] rdfskos = { "Codelists" };
-		rdfTest("src/test/resources/config/testEA_skos.xml", rdfskos,
-				"testResults/ea/skos/INPUT",
-				"src/test/resources/reference/rdf/skos");
-	}
+    @Test
+    public void testSkosCodelists() {
+	/*
+	 * SKOS codelists
+	 */
+	String[] rdfskos = { "Codelists" };
+	rdfTest("src/test/resources/rdf/skosCodelists/testEA_skos.xml", rdfskos, "testResults/rdf/skosCodelists/INPUT",
+		"src/test/resources/rdf/skosCodelists/reference");
+    }
 
-	@Test
-	public void testSingleOntologyPerSchema() {
-		/*
-		 * Ontology (based on ISO 19150-2) - single ontology per schema
-		 */
-		multiTest(
-				"src/test/resources/config/testEA_owliso_singleOntologyPerSchema.xml",
-				new String[] { "ttl" },
-				"testResults/owl/singleOntologyPerSchema/owl",
-				"src/test/resources/reference/owl/singleOntologyPerSchema/owl");
-	}
-		
-	@Test
-	public void testRuleOwlPropExternalReference() {
-		/*
-		 * Target: OWLISO19150; conversion rule: rule-owl-prop-external-reference
-		 */
-		multiTest(
-				"src/test/resources/config/testEA_owliso_propExternalReference.xml",
-				new String[] { "ttl" },
-				"testResults/owl/propExternalReference/owl",
-				"src/test/resources/reference/owl/propExternalReference/owl");
-	}
+    @Test
+    public void testSingleOntologyPerSchema() {
+	/*
+	 * Ontology (based on ISO 19150-2) - single ontology per schema
+	 */
+	multiTest("src/test/resources/owl/singleOntologyPerSchema/testEA_owliso_singleOntologyPerSchema.xml",
+		new String[] { "ttl" }, "testResults/owl/singleOntologyPerSchema",
+		"src/test/resources/owl/singleOntologyPerSchema/reference");
+    }
 
-	@Test
-	public void testMultipleOntologiesOnePerPackage() {
-		/*
-		 * Ontology (based on ISO 19150-2) - multiple ontologies - one per
-		 * package
-		 */
-		multiTest(
-				"src/test/resources/config/testEA_owliso_multipleOntologiesPerSchema.xml",
-				new String[] { "ttl" },
-				"testResults/owl/multipleOntologiesPerSchema/owl",
-				"src/test/resources/reference/owl/multipleOntologiesPerSchema/owl");
-	}
+    @Test
+    public void testRuleOwlPropExternalReference() {
+	/*
+	 * Target: OWLISO19150; conversion rule: rule-owl-prop-external-reference
+	 */
+	multiTest("src/test/resources/owl/propExternalReference/testEA_owliso_propExternalReference.xml",
+		new String[] { "ttl" }, "testResults/owl/propExternalReference/owl",
+		"src/test/resources/owl/propExternalReference/reference");
+    }
 
-	@Test
-	public void testLabelFromLocalName() {
-		
-		multiTest(
-				"src/test/resources/owl/labelFromLocalName/testEA_owliso_labelFromLocalName.xml",
-				new String[] { "ttl" },
-				"testResults/owl/labelFromLocalName/owl",
-				"src/test/resources/owl/labelFromLocalName/reference/owl");
-	}
-	
-	@Test
-	public void testPropertyGeneralizationAndEnrichment() {
-		
-		multiTest(
-				"src/test/resources/owl/propertyGeneralizationAndEnrichment/testEA_owl_propertyGeneralizationAndEnrichment.xml",
-				new String[] { "ttl" },
-				"testResults/owl/propertyGeneralizationAndEnrichment/owl",
-				"src/test/resources/owl/propertyGeneralizationAndEnrichment/reference/owl");
-	}
+    @Test
+    public void testMultipleOntologiesOnePerPackage() {
+	/*
+	 * Ontology (based on ISO 19150-2) - multiple ontologies - one per package
+	 */
+	multiTest(
+		"src/test/resources/owl/multipleOntologiesOnePerPackage/testEA_owliso_multipleOntologiesPerSchema.xml",
+		new String[] { "ttl" }, "testResults/owl/multipleOntologiesPerSchema/owl",
+		"src/test/resources/owl/multipleOntologiesOnePerPackage/reference/owl");
+    }
+
+    @Test
+    public void testLabelFromLocalName() {
+
+	multiTest("src/test/resources/owl/labelFromLocalName/testEA_owliso_labelFromLocalName.xml",
+		new String[] { "ttl" }, "testResults/owl/labelFromLocalName/owl",
+		"src/test/resources/owl/labelFromLocalName/reference/owl");
+    }
+
+    @Test
+    public void testPropertyGeneralizationAndEnrichment() {
+
+	multiTest(
+		"src/test/resources/owl/propertyGeneralizationAndEnrichment/testEA_owl_propertyGeneralizationAndEnrichment.xml",
+		new String[] { "ttl" }, "testResults/owl/propertyGeneralizationAndEnrichment/owl",
+		"src/test/resources/owl/propertyGeneralizationAndEnrichment/reference/owl");
+    }
 }

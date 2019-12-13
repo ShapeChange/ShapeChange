@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input>
+  <parameter name="inputModelType" value="SCXML"/>
+  <!-- TODO: Create real unit test model -->
+  <parameter name="inputFile" value="src/test/resources/gpkg/basic/export.zip"/>
+  <parameter name="appSchemaNameRegex" value="(LER|Dimensions|Annotations).*"/>
+  <parameter name="mainAppSchema" value="LER"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="sortedSchemaOutput" value="true"/>
+  <parameter name="extractSeparator" value="--"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="ea:alias"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="none"/>
+   <DescriptorSource descriptor="legalBasis" source="tag" tag="legalBasis"/>
+   <DescriptorSource descriptor="primaryCode" source="tag" tag="primaryCode"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+  <packages>
+   <PackageInfo packageName="LER" ns="http://data.gov.dk/schemas/LER/1" nsabr="ler" version="1.0.0" xsdDocument="ler.xsd"/>
+   <PackageInfo packageName="Annotations" ns="http://data.gov.dk/schemas/annotations/1" nsabr="ann" version="1.0.0" xsdDocument="annotations.xsd"/>
+   <PackageInfo packageName="Dimensions" ns="http://data.gov.dk/schemas/dimensions/1" nsabr="dim" version="1.0.0" xsdDocument="dimensions.xsd"/>
+  </packages>
+  <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/gpkg/basic/log.xml"/>
+ </log>
+ <targets>
+  <Target class="de.interactive_instruments.ShapeChange.Target.GeoPackage.GeoPackageTemplate" mode="enabled">
+   <advancedProcessConfigurations>
+    <GeoPackageSrsDefinitions>
+     <srsDefinition>
+      <GeoPackageSrsDefinition>
+       <srsName>DHDN / 3-degree Gauss-Kruger zone 3</srsName>
+       <srsId>31467</srsId>
+       <organization>EPSG</organization>
+       <organizationCoordSysId>31467</organizationCoordSysId>
+       <definition>PROJCRS["DHDN / 3-degree Gauss-Kruger zone 3", BASEGEODCRS["DHDN", DATUM["Deutsches Hauptdreiecksnetz", ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1.0]]]], CONVERSION["3-degree Gauss-Kruger zone 3", METHOD["Transverse Mercator",ID["EPSG",9807]], PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1.0]], PARAMETER["False easting",3500000,LENGTHUNIT["metre",1.0]], PARAMETER["False northing",0,LENGTHUNIT["metre",1.0]]], CS[cartesian,2], AXIS["northing (X)",north,ORDER[1]], AXIS["easting (Y)",east,ORDER[2]], LENGTHUNIT["metre",1.0], ID["EPSG",31467]]</definition>
+      </GeoPackageSrsDefinition>
+     </srsDefinition>
+    </GeoPackageSrsDefinitions>
+   </advancedProcessConfigurations>
+   <targetParameter name="outputDirectory" value="testResults/gpkg/basic/results"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="my_gpkg_rule"/>
+   <!--	'EPSG' ist the default value for parameter srsOrganization, thus it is not needed. -->
+   <!--		 <targetParameter name="srsOrganization" value="EPSG"/>-->
+   <targetParameter name="organizationCoordSysId" value="31467"/>
+   <rules>
+    <EncodingRule name="my_gpkg_rule" extends="geopackage">
+     <!--     <rule name="rule-gpkg-cls-identifierStereotype"/>-->
+    </EncodingRule>
+   </rules>
+   <mapEntries>
+    <!-- ISO 19103 -->
+    <MapEntry type="CharacterString" rule="*" targetType="TEXT"/>
+    <MapEntry type="URI" rule="*" targetType="TEXT"/>
+    <MapEntry type="Boolean" rule="*" targetType="BOOLEAN"/>
+    <MapEntry type="Integer" rule="*" targetType="INTEGER"/>
+    <MapEntry type="Decimal" rule="*" targetType="REAL"/>
+    <MapEntry type="Number" rule="*" targetType="REAL"/>
+    <MapEntry type="Real" rule="*" targetType="REAL"/>
+    <MapEntry type="Measure" rule="*" targetType="REAL"/>
+    <MapEntry type="Date" rule="*" targetType="DATE"/>
+    <MapEntry type="DateTime" rule="*" targetType="DATETIME"/>
+    <!-- ISO/TS 19107 -->
+    <MapEntry type="DirectPosition" rule="*" targetType="POINT"/>
+    <MapEntry type="GM_Point" rule="*" targetType="POINT"/>
+    <MapEntry type="GM_MultiPoint" rule="*" targetType="MULTIPOINT"/>
+    <MapEntry type="GM_Curve" rule="*" targetType="LINESTRING"/>
+    <MapEntry type="GM_MultiCurve" rule="*" targetType="MULTILINESTRING"/>
+    <MapEntry type="GM_Surface" rule="*" targetType="POLYGON"/>
+    <MapEntry type="GM_MultiSurface" rule="*" targetType="MULTIPOLYGON"/>
+    <MapEntry type="GM_Object" rule="*" targetType="GEOMETRY"/>
+    <!-- ISO 19108 -->
+    <MapEntry type="TM_Instant" rule="*" targetType="DATETIME"/>
+    <MapEntry type="TM_Position" rule="*" targetType="DATETIME"/>
+    <MapEntry type="TM_DateAndTime" rule="*" targetType="DATETIME"/>
+    <!-- ... more to be added as required -->
+    <MapEntry type="Short" rule="*" targetType="INTEGER"/>
+    <MapEntry type="Long" rule="*" targetType="INTEGER"/>
+   </mapEntries>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>

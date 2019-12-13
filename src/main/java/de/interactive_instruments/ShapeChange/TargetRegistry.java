@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import java.util.TreeSet;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.PackageInfoList;
 import io.github.classgraph.ScanResult;
 
 /**
@@ -103,7 +105,6 @@ public class TargetRegistry {
 
 //	    System.out.println(
 //			"Determination of target implementations (s): " + scanTime);
-//
 //	    PackageInfoList packages = scanResult.getPackageInfo();
 //	    List<String> packageNames = packages.getNames();
 //	    packageNames.sort(Comparator.naturalOrder());

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/test/resources/profileLoading/explicitProfiles/test_profileLoading_explicitProfiles.zip"/>
+		<parameter name="appSchemaNameRegex" value="Test Schema A"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="alias" source="ea:alias"/>
+			<DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			<DescriptorSource descriptor="description" source="none"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+			<DescriptorSource descriptor="globalIdentifier" source="none"/>
+		</descriptorSources>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/profileLoading/explicitProfiles/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader" id="Test1" mode="enabled">
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad" value="src/test/resources/profileLoading/explicitProfiles/models_to_load"/>
+				<ProcessParameter name="regexToFilterProfilesToLoad" value="model(1|2).xml"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test1">
+					<rule name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles"/>
+					<rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader" id="Test2" mode="enabled">
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad" value="src/test/resources/profileLoading/explicitProfiles/models_to_load"/>
+				<ProcessParameter name="regexToFilterProfilesToLoad" value="model1.xml"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test2">
+					<rule name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles"/>
+					<rule name="rule-trf-profileLoader-validateLoadedModelProfiles"/>
+					<rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader" id="Test3" mode="enabled">
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad" value="src/test/resources/profileLoading/explicitProfiles/models_to_load"/>
+				<ProcessParameter name="regexToFilterProfilesToLoad" value="model1.xml"/>
+				<ProcessParameter name="processAllSchemas" value="true"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test3">
+					<rule name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles"/>
+					<rule name="rule-trf-profileLoader-validateLoadedModelProfiles"/>
+					<rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader" id="Test4" mode="enabled">
+
+			
+			
+			
+			
+			
+			
+			
+			
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad" value="src/test/resources/profileLoading/explicitProfiles/models_to_load"/>
+				<ProcessParameter name="regexToFilterProfilesToLoad" value="model3.xml"/>
+				
+				
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test4">
+					<rule name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles"/>
+					<rule name="rule-trf-profileLoader-diffModels"/>
+					<rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader" id="Test5" mode="enabled">
+
+			
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad" value="src/test/resources/profileLoading/explicitProfiles/models_to_load"/>
+				<ProcessParameter name="regexToFilterProfilesToLoad" value="model1.xml"/>
+				<ProcessParameter name="profilesToLoad" value="C"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test5">
+					<rule name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles"/>
+					<rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport" inputs="Test1 Test2 Test3 Test4 Test5" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/profileLoading/explicitProfiles/results"/>
+			<targetParameter name="outputFilename" value="export"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="export"/>
+			<targetParameter name="exportProfilesFromWholeModel" value="true"/>
+			<rules>
+				<EncodingRule name="export">
+					<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+				</EncodingRule>
+			</rules>
+		</Target>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</targets>
+</ShapeChangeConfiguration>

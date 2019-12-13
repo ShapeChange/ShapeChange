@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class LdproxyTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class LdproxyTest extends BasicTestSCXML {
 
 	@Test
 	public void testLdproxyConfiguration() {
@@ -41,8 +43,8 @@ public class LdproxyTest extends WindowsBasicTest {
 		 * ldproxy configuration file 
 		 */
 		String[] cfgfiles = { "sid" };
-		ldproxyTest("src/test/resources/config/testEA_ldproxy.xml", cfgfiles,
-				"testResults/ea/ldproxy/INPUT/config-store/entities/services",
-				"src/test/resources/reference/ldproxy");
+		ldproxyTest("src/test/resources/ldproxy/basic/testEA_ldproxy.xml", cfgfiles,
+				"testResults/ldproxy/basic/INPUT/config-store/entities/services",
+				"src/test/resources/ldproxy/basic/reference");
 	}
 }

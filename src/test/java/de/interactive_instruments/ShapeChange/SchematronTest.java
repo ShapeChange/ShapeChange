@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class SchematronTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class SchematronTest extends BasicTestSCXML {
 
 	@Test
 	public void schematronTestCodelist2() {

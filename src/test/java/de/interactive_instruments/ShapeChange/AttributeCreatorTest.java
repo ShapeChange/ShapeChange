@@ -31,18 +31,20 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class AttributeCreatorTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class AttributeCreatorTest extends BasicTestSCXML {
 
 	@Test
 	public void testAttributeCreation() {
 		/*
 		 * Attribute creation transformer
 		 */
-		multiTest("src/test/resources/config/testEA_attributeCreation.xml",
-				new String[] { "xsd" }, "testResults/attribute_creation/xsd",
-				"src/test/resources/reference/xsd/attributeCreation");
+		multiTest("src/test/resources/attributeCreator/basic/testEA_attributeCreation.xml",
+				new String[] { "xsd" }, "testResults/attributeCreator/basic",
+				"src/test/resources/attributeCreator/basic/reference");
 	}
 
 }

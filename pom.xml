@@ -362,8 +362,8 @@
 										<include>test.eap</include>
 										<include>test.xmi</include>
 										<include>UMLX13.dtd</include>
-										<include>ea</include>
-										<include>xmi</include>
+<!-- 										<include>ea</include> -->
+<!-- 										<include>xmi</include> -->
 									</includes>
 								</resource>
 							</resources>

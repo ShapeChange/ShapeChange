@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.Test;
  *         <dot> de)
  *
  */
+@Tag("EARequired")
 public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 	@Test

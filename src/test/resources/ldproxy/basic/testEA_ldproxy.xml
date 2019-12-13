@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/ldproxy/basic/test_ldproxy.eap"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ldproxy/basic/log_ldproxy.xml"/>
+	</log>
+	<targets>	
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy.Config" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy/basic"/>
+			<targetParameter name="outputBaseFilename" value="ldproxy_config"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="serviceId" value="sid"/>
+			<targetParameter name="serviceLabel" value="label"/>
+			<targetParameter name="serviceDescription" value="..."/>
+			<targetParameter name="secured" value="true"/>
+			<targetParameter name="primaryKeyField" value="id"/>
+			<targetParameter name="foreignKeySuffix" value="_id"/>
+			<targetParameter name="fieldNameMaxLength" value="60"/>
+			<targetParameter name="geometryTableName" value="geom"/>
+			<targetParameter name="geometryFieldName" value="geom"/>
+			<targetParameter name="templateNtoMTable" value="{{class}}_2_{{property}}"/>
+			<targetParameter name="template1toNTable" value="{{class}}_{{property}}"/>
+			<targetParameter name="rootFeatureTable" value="root"/>
+			<targetParameter name="rootCollectionField" value="collection"/>
+			<targetParameter name="filterableFields" value="featuretype1.datetime,featuretype1.codelist"/>
+			<targetParameter name="trigger_onDelete" value="DELETE FROM othertable WHERE objectid={{id}};NULL"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest"/>
+			<rules>
+				<EncodingRule name="ldptest">
+					<rule name="rule-ldp-cls-non-abstract-feature-types-as-collection"/>
+					<rule name="rule-ldp-cls-table-per-feature-type"/>
+					<rule name="rule-ldp-cls-id-field"/>
+					<rule name="rule-ldp-all-names-in-lowercase"/>
+					<rule name="rule-ldp-all-names-max-length"/>
+					<rule name="rule-ldp-prop-all-datatype-relations-as-n-to-m-relations"/>
+					<rule name="rule-ldp-prop-all-featuretype-relations-as-n-to-m-relations"/>
+					<rule name="rule-ldp-prop-multiple-single-values-as-1-to-n-relations"/>
+					<rule name="rule-ldp-prop-separate-geometry-table"/>
+					<rule name="rule-ldp-prop-all-codelist-values-as-strings"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardLdproxyMapEntries.xml"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

@@ -83,30 +83,96 @@ import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 import de.interactive_instruments.ShapeChange.Util.ea.EAModelDiff;
+import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConverter;
 
 /**
  * Basic unit test for ShapeChange
  */
 public abstract class BasicTest {
 
-    String suffix_configToExportModel = "_exportModel";
-    String suffix_configRunWithExportedModel = "_runWithExportedModel";
-
     boolean testTime = false;
-    boolean exportModel = false;
-    boolean runWithExportedModel = false;
+//    boolean exportModel = false;
+//    boolean runWithExportedModel = false;
 
     /*
-     * The following two fields are primarily used during test development. They
+     * The following fields are primarily used during test development. They
      * should be set to false for actual tests.
      */
     boolean justCompareResults = false;
-    boolean skipActualTest = false;
+//    boolean skipActualTest = false;
+
+    SCXMLTestResourceConverter scxmlConverter = new SCXMLTestResourceConverter();
+
+//    protected void multiTest_SCXML(String configPath, String[] fileFormatsToCheck, String basedirResults,
+//	    String basedirReference) {
+//
+//	try {
+//	    String pathToRelevantConfig = scxmlConverter.updateSCXMLTestResources(configPath);
+//
+//	    multiTest(pathToRelevantConfig, fileFormatsToCheck, basedirResults, basedirReference);
+//	} catch (Exception e) {
+//	    fail("Exception occurred while updating SCXML test resources.", e);
+//	    e.printStackTrace();
+//	    return;
+//	}
+
+//	if ("true".equalsIgnoreCase(System.getProperty(RUN_ORIGINAL_CONFIGURATIONS_SYSTEM_PROPERTY_NAME))) {
+//
+//	    multiTest(configPath, fileFormatsToCheck, basedirResults, basedirReference);
+//
+//	} else {
+//
+//	    // load config
+//	    Document doc = null;
+//	    try {
+//		doc = XMLUtil.loadXml(configPath);
+//	    } catch (Exception e1) {
+//		fail("Exception occurred while loading ShapeChange configuration.", e1);
+//		return;
+//	    }
+//
+//	    if ("true".equalsIgnoreCase(System.getProperty(CREATE_SCXML_SYSTEM_PROPERTY_NAME))) {
+//		try {
+//		    if (creationOfScxmlIsNecessary(doc, configPath)) {
+//			if (!tmpDir.exists()) {
+//			    tmpDir.mkdir();
+//			}
+//			createScxml(doc, configPath);
+//		    } else {
+//			System.out.println("SCXML creation not necessary.");
+//		    }
+//		} catch (Exception e) {
+//		    fail("Could not create SCXML for test run. Exception message is: " + e.getMessage());
+//		    e.printStackTrace();
+//		}
+//	    }
+//
+//	    String pathToRelevantConfig = configPath;
+//
+//	    try {
+//		if (!currentScxmlBasedConfigExists(configPath) && hasModelTypeOtherThanSCXML(doc, configPath)) {
+//		    // !!! Will modify 'doc' !!!
+//		    pathToRelevantConfig = switchModelsToScxml(doc, configPath);
+//		} else {
+//		    System.out.println("Creation of SCXML based configuration not necessary.");
+//		    // Still, we need to set the path to the SCXML based configuration file
+//		    pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
+//		}
+//	    } catch (Exception e) {
+//		fail("Could not create the run configuration that uses only SCXML models. Exception message is: "
+//			+ e.getMessage());
+//		e.printStackTrace();
+//	    }
+//
+//	    multiTest(pathToRelevantConfig, fileFormatsToCheck, basedirResults, basedirReference);
+//	}
+//    }
+
 
     protected void multiTest(String config, String[] fileFormatsToCheck, String basedirResults,
 	    String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	Set<String> fileFormatsToCheckLC = null;
 
@@ -121,17 +187,17 @@ public abstract class BasicTest {
 
 	if (!justCompareResults) {
 	    long start = (new Date()).getTime();
-	    TestInstance test = new TestInstance(actualConfig);
+	    TestInstance test = new TestInstance(config);
 	    long end = (new Date()).getTime();
-	    System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	    System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	    assertTrue(test.noError(), "Test model execution failed");
 	    if (testTime)
 		assertTrue(end - start < 90000, "Execution time too long");
 	}
 
-	if (!exportModel && !skipActualTest) {
+//	if (!exportModel && !skipActualTest) {
 	    multiTestInDirs(fileFormatsToCheckLC, basedirResults, basedirReference);
-	}
+//	}
     }
 
     /**
@@ -176,47 +242,47 @@ public abstract class BasicTest {
 	assertTrue(!test.noError(), "Test model execution did not fail with an error. " + details);
     }
 
-    /**
-     * Modifies the configuration file path depending upon whether the model shall
-     * be exported or whether the test should be run with the exported model.
-     * 
-     * @param config
-     * @return
-     */
-    private String getActualConfig(String config) {
+//    /**
+//     * Modifies the configuration file path depending upon whether the model shall
+//     * be exported or whether the test should be run with the exported model.
+//     * 
+//     * @param config
+//     * @return
+//     */
+//    private String getActualConfig(String config) {
+//
+//	if (exportModel || runWithExportedModel) {
+//
+//	    String actualConfig = config;
+//
+//	    if (config.indexOf(".xml") > -1) {
+//		actualConfig = config.substring(0, config.indexOf(".xml"));
+//	    }
+//
+//	    String[] parts = actualConfig.split("config");
+//	    String base = parts[0];
+//	    String filename = parts[1];
+//
+//	    if (exportModel) {
+//
+//		actualConfig = base + "config" + suffix_configToExportModel + File.separator + filename
+//			+ suffix_configToExportModel + ".xml";
+//
+//	    } else if (runWithExportedModel) {
+//
+//		actualConfig = base + "config" + suffix_configRunWithExportedModel + File.separator + filename
+//			+ suffix_configRunWithExportedModel + ".xml";
+//	    }
+//
+//	    return actualConfig;
+//
+//	} else {
+//
+//	    return config;
+//	}
+//    }
 
-	if (exportModel || runWithExportedModel) {
-
-	    String actualConfig = config;
-
-	    if (config.indexOf(".xml") > -1) {
-		actualConfig = config.substring(0, config.indexOf(".xml"));
-	    }
-
-	    String[] parts = actualConfig.split("config");
-	    String base = parts[0];
-	    String filename = parts[1];
-
-	    if (exportModel) {
-
-		actualConfig = base + "config" + suffix_configToExportModel + File.separator + filename
-			+ suffix_configToExportModel + ".xml";
-
-	    } else if (runWithExportedModel) {
-
-		actualConfig = base + "config" + suffix_configRunWithExportedModel + File.separator + filename
-			+ suffix_configRunWithExportedModel + ".xml";
-	    }
-
-	    return actualConfig;
-
-	} else {
-
-	    return config;
-	}
-    }
-
-    protected void multiTestInDirs(Set<String> fileFormatsToCheck, String dirResults, String dirReference) {
+    private void multiTestInDirs(Set<String> fileFormatsToCheck, String dirResults, String dirReference) {
 
 	String[] extensions = fileFormatsToCheck.toArray(new String[fileFormatsToCheck.size()]);
 
@@ -432,18 +498,18 @@ public abstract class BasicTest {
     protected void xsdTest(String config, String[] xsds, String[] schs, HashMap<String, String> replacevalues,
 	    String basedirResults, String basedirReference, boolean noErrors) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig, replacevalues);
+	TestInstance test = new TestInstance(config, replacevalues);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	if (noErrors)
 	    assertTrue(test.noError(), "Test model execution failed");
 	if (testTime)
 	    assertTrue(end - start < 90000, "Execution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    if (xsds != null) {
 		for (String xsd : xsds) {
 		    similar(basedirResults + "/" + xsd + ".xsd", basedirReference + "/" + xsd + ".xsd");
@@ -455,19 +521,19 @@ public abstract class BasicTest {
 			    basedirReference + "/" + xsd + ".xsd_SchematronSchema.xml");
 		}
 	    }
-	}
+//	}
     }
 
     protected void sqlTest(String config, String[] sqls, HashMap<String, String> replacevalues, String basedirResults,
 	    String basedirReference, boolean noErrors) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig, replacevalues);
+	TestInstance test = new TestInstance(config, replacevalues);
 	long end = (new Date()).getTime();
 
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 
 	if (noErrors)
 	    assertTrue(test.noError(), "Test model execution failed");
@@ -475,29 +541,29 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Execution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    if (sqls != null) {
 		for (String sql : sqls) {
 		    similarTxt(basedirResults + "/" + sql + ".sql", basedirReference + "/" + sql + ".sql", true, true,
 			    true);
 		}
 	    }
-	}
+//	}
     }
 
     protected void ldproxyTest(String config, String[] files, String basedirResults, String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig);
+	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	assertTrue(test.noError(), "Test model execution failed");
 	if (testTime)
 	    assertTrue(end - start < 90000, "Exceution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    for (String file : files) {
 
 		String fileName = basedirResults + "/" + file;
@@ -505,22 +571,22 @@ public abstract class BasicTest {
 
 		similarJson(fileName, referenceFileName);
 	    }
-	}
+//	}
     }
-
+    
     protected void jsonTest(String config, String[] typenames, String basedirResults, String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig);
+	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	assertTrue(test.noError(), "Test model execution failed");
 	if (testTime)
 	    assertTrue(end - start < 60000, "Exceution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    for (String typename : typenames) {
 
 		String fileName = basedirResults + "/test/" + typename + ".json";
@@ -528,9 +594,9 @@ public abstract class BasicTest {
 
 		similarJson(fileName, referenceFileName);
 	    }
-	}
+//	}
     }
-
+    
     private void similarJson(String fileName, String referenceFileName) {
 
 	ObjectMapper m = new ObjectMapper();
@@ -539,8 +605,8 @@ public abstract class BasicTest {
 	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
 	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
 	    boolean equal = rootNodeResult.equals(rootNodeReference);
-	    assertTrue(equal, "JSON output differs from reference result. Result file: " + fileName + " - Reference file: "
-		    + referenceFileName);
+	    assertTrue(equal, "JSON output differs from reference result. Result file: " + fileName
+		    + " - Reference file: " + referenceFileName);
 	} catch (JsonParseException e) {
 	    fail("JSON Parse Exception: " + e.getMessage());
 	} catch (JsonMappingException e) {
@@ -568,8 +634,8 @@ public abstract class BasicTest {
 
 	    boolean similar = differ.similar(file, referenceFile);
 
-	    assertTrue(similar, "EAP output differs from reference result. Result file: " + fileName + " - Reference file: "
-		    + referenceFileName + ". Details:\n" + differ.getDiffDetails());
+	    assertTrue(similar, "EAP output differs from reference result. Result file: " + fileName
+		    + " - Reference file: " + referenceFileName + ". Details:\n" + differ.getDiffDetails());
 
 	} catch (Exception e) {
 	    fail("Exception while comparing EAP '" + fileName + "' to reference file '" + referenceFileName
@@ -580,23 +646,23 @@ public abstract class BasicTest {
 
     protected void rdfTest(String config, String[] rdfs, String basedirResults, String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig);
+	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	assertTrue(test.noError(), "Test model execution failed");
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    if (rdfs != null) {
 		for (String rdf : rdfs) {
 		    similar(basedirResults + "/" + rdf + ".rdf", basedirReference + "/" + rdf + ".rdf");
 		}
 	    }
-	}
+//	}
     }
 
     private void similarJenaModel(String fileName, String referenceFileName) {
@@ -647,26 +713,26 @@ public abstract class BasicTest {
 
     protected void htmlTest(String config, String[] htmls, String basedirResults, String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig);
+	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 
 	assertTrue(test.noError(), "Test model execution failed");
 
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    if (htmls != null) {
 		for (String htmlFileName : htmls) {
 		    similarHtml(basedirResults + "/" + htmlFileName + ".html",
 			    basedirReference + "/" + htmlFileName + ".html");
 		}
 	    }
-	}
+//	}
     }
 
     /**
@@ -702,7 +768,8 @@ public abstract class BasicTest {
 	    Document wellFormedTestHTMLDocument = htmlDocumentBuilder.parse(myTestHTML);
 
 	    Diff myDiff = new Diff(wellFormedControlHTMLDocument, wellFormedTestHTMLDocument);
-	    assertTrue(myDiff.similar(), "HTML: " + htmlFileName + " similar to " + referenceHtmlFileName + " - " + myDiff.toString());
+	    assertTrue(myDiff.similar(),
+		    "HTML: " + htmlFileName + " similar to " + referenceHtmlFileName + " - " + myDiff.toString());
 	} catch (Exception e) {
 	    fail("Could not compare " + htmlFileName + " and " + referenceHtmlFileName);
 	}
@@ -710,26 +777,26 @@ public abstract class BasicTest {
 
     protected void docxTest(String config, String[] docxs, String basedirResults, String basedirReference) {
 
-	String actualConfig = getActualConfig(config);
+//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(actualConfig);
+	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + actualConfig + ": " + (end - start) + "ms");
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 
 	assertTrue(test.noError(), "Test model execution failed");
 
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-	if (!exportModel) {
+//	if (!exportModel) {
 	    if (docxs != null) {
 		for (String docxFileName : docxs) {
 		    similarDocx(basedirResults + "/" + docxFileName + ".docx",
 			    basedirReference + "/" + docxFileName + ".docx");
 		}
 	    }
-	}
+//	}
     }
 
     /**
@@ -775,7 +842,8 @@ public abstract class BasicTest {
 	    Reader controlFileReader = new FileReader(controlDocument);
 
 	    Diff myDiff = new Diff(controlFileReader, testFileReader);
-	    assertTrue(myDiff.similar(), "DOCX: " + docxFileName + " similar to " + referenceDocxFileName + " - " + myDiff.toString());
+	    assertTrue(myDiff.similar(),
+		    "DOCX: " + docxFileName + " similar to " + referenceDocxFileName + " - " + myDiff.toString());
 
 	    // finally, delete the temporary directory
 	    // -> handled in 'finally' clause
@@ -808,7 +876,8 @@ public abstract class BasicTest {
 	}
 	try {
 	    Diff myDiff = new Diff(myControlXML, myTestXML);
-	    assertTrue(myDiff.similar(), "XML: " + xsdFileName + " similar to " + referenceXsdFileName + " - " + myDiff.toString());
+	    assertTrue(myDiff.similar(),
+		    "XML: " + xsdFileName + " similar to " + referenceXsdFileName + " - " + myDiff.toString());
 	} catch (Exception e) {
 	    fail("Could not compare " + xsdFileName + " and " + referenceXsdFileName);
 	}

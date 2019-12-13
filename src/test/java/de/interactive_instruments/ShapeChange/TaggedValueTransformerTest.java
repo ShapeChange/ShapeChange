@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class TaggedValueTransformerTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class TaggedValueTransformerTest extends BasicTestSCXML {
 
 	@Test
 	public void testTaggedValueInheritance() {
