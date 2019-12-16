@@ -941,6 +941,46 @@ public class Options {
 
 	return res;
     }
+    
+    /**
+     * @param className     Fully qualified name of the target class for which the
+     *                      value of the parameter with given name shall be
+     *                      searched; can be <code>null</code> to search for an
+     *                      input parameter
+     * @param parameterName name of the parameter to retrieve the value from
+     * @param defaultValue  value that will be returned if no valid value was found
+     *                      (i.e., if the parameter value could not be parsed to an
+     *                      int)
+     * @return Value retrieved from this parameter, or the default value if the
+     *         parameter was not set or did not contain a valid value.
+     */
+    public byte parameterAsByte(String className, String parameterName, byte defaultValue) {
+
+	byte res;
+
+	String valueByConfig = this.parameter(className, parameterName);
+
+	if (valueByConfig == null) {
+
+	    res = defaultValue;
+
+	} else {
+
+	    try {
+		res = Byte.parseByte(valueByConfig);
+
+	    } catch (NumberFormatException e) {
+
+		/*
+		 * Options does not have a ShapeChangeResult - check validity of configuration
+		 * parameters through target specific validation routine
+		 */
+		res = defaultValue;
+	    }
+	}
+
+	return res;
+    }
 
     /**
      * @param className     Fully qualified name of the target class for which the

@@ -83,7 +83,6 @@ import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 import de.interactive_instruments.ShapeChange.Util.ea.EAModelDiff;
-import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConverter;
 
 /**
  * Basic unit test for ShapeChange
@@ -91,88 +90,15 @@ import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConvert
 public abstract class BasicTest {
 
     boolean testTime = false;
-//    boolean exportModel = false;
-//    boolean runWithExportedModel = false;
 
     /*
-     * The following fields are primarily used during test development. They
-     * should be set to false for actual tests.
+     * The following fields are primarily used during test development. They should
+     * be set to false for actual tests.
      */
     boolean justCompareResults = false;
-//    boolean skipActualTest = false;
-
-    SCXMLTestResourceConverter scxmlConverter = new SCXMLTestResourceConverter();
-
-//    protected void multiTest_SCXML(String configPath, String[] fileFormatsToCheck, String basedirResults,
-//	    String basedirReference) {
-//
-//	try {
-//	    String pathToRelevantConfig = scxmlConverter.updateSCXMLTestResources(configPath);
-//
-//	    multiTest(pathToRelevantConfig, fileFormatsToCheck, basedirResults, basedirReference);
-//	} catch (Exception e) {
-//	    fail("Exception occurred while updating SCXML test resources.", e);
-//	    e.printStackTrace();
-//	    return;
-//	}
-
-//	if ("true".equalsIgnoreCase(System.getProperty(RUN_ORIGINAL_CONFIGURATIONS_SYSTEM_PROPERTY_NAME))) {
-//
-//	    multiTest(configPath, fileFormatsToCheck, basedirResults, basedirReference);
-//
-//	} else {
-//
-//	    // load config
-//	    Document doc = null;
-//	    try {
-//		doc = XMLUtil.loadXml(configPath);
-//	    } catch (Exception e1) {
-//		fail("Exception occurred while loading ShapeChange configuration.", e1);
-//		return;
-//	    }
-//
-//	    if ("true".equalsIgnoreCase(System.getProperty(CREATE_SCXML_SYSTEM_PROPERTY_NAME))) {
-//		try {
-//		    if (creationOfScxmlIsNecessary(doc, configPath)) {
-//			if (!tmpDir.exists()) {
-//			    tmpDir.mkdir();
-//			}
-//			createScxml(doc, configPath);
-//		    } else {
-//			System.out.println("SCXML creation not necessary.");
-//		    }
-//		} catch (Exception e) {
-//		    fail("Could not create SCXML for test run. Exception message is: " + e.getMessage());
-//		    e.printStackTrace();
-//		}
-//	    }
-//
-//	    String pathToRelevantConfig = configPath;
-//
-//	    try {
-//		if (!currentScxmlBasedConfigExists(configPath) && hasModelTypeOtherThanSCXML(doc, configPath)) {
-//		    // !!! Will modify 'doc' !!!
-//		    pathToRelevantConfig = switchModelsToScxml(doc, configPath);
-//		} else {
-//		    System.out.println("Creation of SCXML based configuration not necessary.");
-//		    // Still, we need to set the path to the SCXML based configuration file
-//		    pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
-//		}
-//	    } catch (Exception e) {
-//		fail("Could not create the run configuration that uses only SCXML models. Exception message is: "
-//			+ e.getMessage());
-//		e.printStackTrace();
-//	    }
-//
-//	    multiTest(pathToRelevantConfig, fileFormatsToCheck, basedirResults, basedirReference);
-//	}
-//    }
-
 
     protected void multiTest(String config, String[] fileFormatsToCheck, String basedirResults,
 	    String basedirReference) {
-
-//	String actualConfig = getActualConfig(config);
 
 	Set<String> fileFormatsToCheckLC = null;
 
@@ -195,9 +121,7 @@ public abstract class BasicTest {
 		assertTrue(end - start < 90000, "Execution time too long");
 	}
 
-//	if (!exportModel && !skipActualTest) {
-	    multiTestInDirs(fileFormatsToCheckLC, basedirResults, basedirReference);
-//	}
+	multiTestInDirs(fileFormatsToCheckLC, basedirResults, basedirReference);
     }
 
     /**
@@ -241,46 +165,6 @@ public abstract class BasicTest {
 	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 	assertTrue(!test.noError(), "Test model execution did not fail with an error. " + details);
     }
-
-//    /**
-//     * Modifies the configuration file path depending upon whether the model shall
-//     * be exported or whether the test should be run with the exported model.
-//     * 
-//     * @param config
-//     * @return
-//     */
-//    private String getActualConfig(String config) {
-//
-//	if (exportModel || runWithExportedModel) {
-//
-//	    String actualConfig = config;
-//
-//	    if (config.indexOf(".xml") > -1) {
-//		actualConfig = config.substring(0, config.indexOf(".xml"));
-//	    }
-//
-//	    String[] parts = actualConfig.split("config");
-//	    String base = parts[0];
-//	    String filename = parts[1];
-//
-//	    if (exportModel) {
-//
-//		actualConfig = base + "config" + suffix_configToExportModel + File.separator + filename
-//			+ suffix_configToExportModel + ".xml";
-//
-//	    } else if (runWithExportedModel) {
-//
-//		actualConfig = base + "config" + suffix_configRunWithExportedModel + File.separator + filename
-//			+ suffix_configRunWithExportedModel + ".xml";
-//	    }
-//
-//	    return actualConfig;
-//
-//	} else {
-//
-//	    return config;
-//	}
-//    }
 
     private void multiTestInDirs(Set<String> fileFormatsToCheck, String dirResults, String dirReference) {
 
@@ -498,8 +382,6 @@ public abstract class BasicTest {
     protected void xsdTest(String config, String[] xsds, String[] schs, HashMap<String, String> replacevalues,
 	    String basedirResults, String basedirReference, boolean noErrors) {
 
-//	String actualConfig = getActualConfig(config);
-
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config, replacevalues);
 	long end = (new Date()).getTime();
@@ -509,26 +391,22 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Execution time too long");
 
-//	if (!exportModel) {
-	    if (xsds != null) {
-		for (String xsd : xsds) {
-		    similar(basedirResults + "/" + xsd + ".xsd", basedirReference + "/" + xsd + ".xsd");
-		}
+	if (xsds != null) {
+	    for (String xsd : xsds) {
+		similar(basedirResults + "/" + xsd + ".xsd", basedirReference + "/" + xsd + ".xsd");
 	    }
-	    if (schs != null) {
-		for (String xsd : schs) {
-		    similar(basedirResults + "/" + xsd + ".xsd_SchematronSchema.xml",
-			    basedirReference + "/" + xsd + ".xsd_SchematronSchema.xml");
-		}
+	}
+	if (schs != null) {
+	    for (String xsd : schs) {
+		similar(basedirResults + "/" + xsd + ".xsd_SchematronSchema.xml",
+			basedirReference + "/" + xsd + ".xsd_SchematronSchema.xml");
 	    }
-//	}
+	}
     }
 
     protected void sqlTest(String config, String[] sqls, HashMap<String, String> replacevalues, String basedirResults,
 	    String basedirReference, boolean noErrors) {
 
-//	String actualConfig = getActualConfig(config);
-
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config, replacevalues);
 	long end = (new Date()).getTime();
@@ -541,19 +419,15 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Execution time too long");
 
-//	if (!exportModel) {
-	    if (sqls != null) {
-		for (String sql : sqls) {
-		    similarTxt(basedirResults + "/" + sql + ".sql", basedirReference + "/" + sql + ".sql", true, true,
-			    true);
-		}
+	if (sqls != null) {
+	    for (String sql : sqls) {
+		similarTxt(basedirResults + "/" + sql + ".sql", basedirReference + "/" + sql + ".sql", true, true,
+			true);
 	    }
-//	}
+	}
     }
 
     protected void ldproxyTest(String config, String[] files, String basedirResults, String basedirReference) {
-
-//	String actualConfig = getActualConfig(config);
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -563,20 +437,16 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Exceution time too long");
 
-//	if (!exportModel) {
-	    for (String file : files) {
+	for (String file : files) {
 
-		String fileName = basedirResults + "/" + file;
-		String referenceFileName = basedirReference + "/" + file;
+	    String fileName = basedirResults + "/" + file;
+	    String referenceFileName = basedirReference + "/" + file;
 
-		similarJson(fileName, referenceFileName);
-	    }
-//	}
+	    similarJson(fileName, referenceFileName);
+	}
     }
-    
-    protected void jsonTest(String config, String[] typenames, String basedirResults, String basedirReference) {
 
-//	String actualConfig = getActualConfig(config);
+    protected void jsonTest(String config, String[] typenames, String basedirResults, String basedirReference) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -586,17 +456,15 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Exceution time too long");
 
-//	if (!exportModel) {
-	    for (String typename : typenames) {
+	for (String typename : typenames) {
 
-		String fileName = basedirResults + "/test/" + typename + ".json";
-		String referenceFileName = basedirReference + "/test/" + typename + ".json";
+	    String fileName = basedirResults + "/test/" + typename + ".json";
+	    String referenceFileName = basedirReference + "/test/" + typename + ".json";
 
-		similarJson(fileName, referenceFileName);
-	    }
-//	}
+	    similarJson(fileName, referenceFileName);
+	}
     }
-    
+
     private void similarJson(String fileName, String referenceFileName) {
 
 	ObjectMapper m = new ObjectMapper();
@@ -646,8 +514,6 @@ public abstract class BasicTest {
 
     protected void rdfTest(String config, String[] rdfs, String basedirResults, String basedirReference) {
 
-//	String actualConfig = getActualConfig(config);
-
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
@@ -656,13 +522,11 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-//	if (!exportModel) {
-	    if (rdfs != null) {
-		for (String rdf : rdfs) {
-		    similar(basedirResults + "/" + rdf + ".rdf", basedirReference + "/" + rdf + ".rdf");
-		}
+	if (rdfs != null) {
+	    for (String rdf : rdfs) {
+		similar(basedirResults + "/" + rdf + ".rdf", basedirReference + "/" + rdf + ".rdf");
 	    }
-//	}
+	}
     }
 
     private void similarJenaModel(String fileName, String referenceFileName) {
@@ -713,8 +577,6 @@ public abstract class BasicTest {
 
     protected void htmlTest(String config, String[] htmls, String basedirResults, String basedirReference) {
 
-//	String actualConfig = getActualConfig(config);
-
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
@@ -725,14 +587,12 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-//	if (!exportModel) {
-	    if (htmls != null) {
-		for (String htmlFileName : htmls) {
-		    similarHtml(basedirResults + "/" + htmlFileName + ".html",
-			    basedirReference + "/" + htmlFileName + ".html");
-		}
+	if (htmls != null) {
+	    for (String htmlFileName : htmls) {
+		similarHtml(basedirResults + "/" + htmlFileName + ".html",
+			basedirReference + "/" + htmlFileName + ".html");
 	    }
-//	}
+	}
     }
 
     /**
@@ -777,8 +637,6 @@ public abstract class BasicTest {
 
     protected void docxTest(String config, String[] docxs, String basedirResults, String basedirReference) {
 
-//	String actualConfig = getActualConfig(config);
-
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
 	long end = (new Date()).getTime();
@@ -789,14 +647,12 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-//	if (!exportModel) {
-	    if (docxs != null) {
-		for (String docxFileName : docxs) {
-		    similarDocx(basedirResults + "/" + docxFileName + ".docx",
-			    basedirReference + "/" + docxFileName + ".docx");
-		}
+	if (docxs != null) {
+	    for (String docxFileName : docxs) {
+		similarDocx(basedirResults + "/" + docxFileName + ".docx",
+			basedirReference + "/" + docxFileName + ".docx");
 	    }
-//	}
+	}
     }
 
     /**

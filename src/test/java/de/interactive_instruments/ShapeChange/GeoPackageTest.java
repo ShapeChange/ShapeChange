@@ -40,7 +40,7 @@ public class GeoPackageTest extends BasicTestSCXML {
     @Test
     public void test_GeoPackage_basic() {
 
-	execute("src/test/resources/gpkg/basic/test_gpkg_basic.xml");
+	executeScxml("src/test/resources/gpkg/basic/test_gpkg_basic.xml");
 
 	/*
 	 * TODO: implement GeoPackage diff

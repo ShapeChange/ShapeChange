@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -67,6 +68,7 @@ import mil.nga.geopackage.core.contents.ContentsDataType;
 import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
 import mil.nga.geopackage.core.srs.SpatialReferenceSystemDao;
 import mil.nga.geopackage.db.GeoPackageDataType;
+import mil.nga.geopackage.extension.CrsWktExtension;
 import mil.nga.geopackage.features.columns.GeometryColumns;
 import mil.nga.geopackage.features.columns.GeometryColumnsDao;
 import mil.nga.geopackage.features.user.FeatureColumn;
@@ -115,6 +117,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     protected static String srsOrganization = "EPSG";
 
     protected static String idColumnName;
+    protected static byte gpkgM = 0;
+    protected static byte gpkgZ = 0;
 
     protected ShapeChangeResult result = null;
     protected Options options = null;
@@ -202,6 +206,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 			GeoPackageConstants.PARAM_ID_COLUMN_NAME, GeoPackageConstants.DEFAULT_ID_COLUMN_NAME, false,
 			true);
 
+		gpkgM = options.parameterAsByte(this.getClass().getName(), GeoPackageConstants.PARAM_GPKGM, (byte) 0);
+		gpkgZ = options.parameterAsByte(this.getClass().getName(), GeoPackageConstants.PARAM_GPKGZ, (byte) 0);
+
 		organizationCoordSysId = options.parameterAsInteger(this.getClass().getName(),
 			GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID, 4326);
 
@@ -219,13 +226,16 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 		 * configuration
 		 */
 		if (options.getCurrentProcessConfig().getAdvancedProcessConfigurations() != null) {
-		    parseGeoPackageSrsDefinitions(options.getCurrentProcessConfig().getAdvancedProcessConfigurations());
+		    srsDefs = parseGeoPackageSrsDefinitions(
+			    options.getCurrentProcessConfig().getAdvancedProcessConfigurations());
 		}
 	    }
 	}
     }
 
-    private void parseGeoPackageSrsDefinitions(Element apcs) {
+    public static List<SpatialReferenceSystem> parseGeoPackageSrsDefinitions(Element apcs) {
+
+	List<SpatialReferenceSystem> results = new ArrayList<>();
 
 	// identify GeoPackageSrsDefinition elements
 	List<Element> gpkgSrsDefEs = new ArrayList<Element>();
@@ -244,10 +254,6 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	for (int i = 0; i < gpkgSrsDefEs.size(); i++) {
 
-	    // TODO JE - implement validation / configuration checks via
-	    // GeoPackageTemplateConfigurationValidator
-//	    String indexForMsg = "" + (i + 1);
-
 	    Element gpkgSrsDefE = gpkgSrsDefEs.get(i);
 
 	    SpatialReferenceSystem srs = new SpatialReferenceSystem();
@@ -259,8 +265,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    srs.setDefinition(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition"));
 	    srs.setDescription(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "description"));
 	    srs.setDefinition_12_063(XMLUtil.getTrimmedTextContentOfFirstElement(gpkgSrsDefE, "definition_12_063"));
-	    srsDefs.add(srs);
+	    results.add(srs);
 	}
+
+	return results;
     }
 
     public void process(ClassInfo ci) {
@@ -379,6 +387,12 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	    // initialise SRS definitions
 	    SpatialReferenceSystemDao srsDao = geoPackage.getSpatialReferenceSystemDao();
+
+	    if (srsDefs.stream().anyMatch(srs -> StringUtils.isNotBlank(srs.getDefinition_12_063()))) {
+		CrsWktExtension wktExt = new CrsWktExtension(geoPackage);
+		wktExt.getOrCreate();
+	    }
+
 	    for (SpatialReferenceSystem srs : srsDefs) {
 		srsDao.create(srs);
 	    }
@@ -420,6 +434,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 		 */
 		int numberOfGeometryProperties = 0;
 		PropertyInfo geometryPi = null;
+		byte m = 0;
+		byte z = 0;
 		PropertyInfo identifierPi = null;
 
 		for (PropertyInfo pi : ci.propertiesAll()) {
@@ -431,6 +447,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 		    if (isGeometryTypedProperty(pi)) {
 			numberOfGeometryProperties++;
 			geometryPi = pi;
+
+			m = getMValue(pi);
+			z = getZValue(pi);
 
 			if (!geometryColumnsTableCreated) {
 			    geoPackage.createGeometryColumnsTable();
@@ -506,7 +525,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 			    if (pi != geometryPi) {
 
-				MessageContext mc = result.addError(this, 109, ci.name(), geometryPi.name(), pi.name());
+				MessageContext mc = result.addWarning(this, 109, ci.name(), geometryPi.name(),
+					pi.name());
 				if (mc != null) {
 				    mc.addDetail(this, 1, pi.fullNameInSchema());
 				}
@@ -531,8 +551,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 				gc.setSrs(srs);
 				gc.setGeometryType(gpkgType);
 				gc.setContents(contents);
-				// TODO - set M?
-				// TODO - set Z?
+				gc.setM(m);
+				gc.setZ(z);
 
 				GeometryColumnsDao geometryColumnsDao = geoPackage.getGeometryColumnsDao();
 				geometryColumnsDao.create(gc);
@@ -625,6 +645,58 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    result.addError(this, 108, e.getMessage());
 	}
 
+    }
+
+    private byte getZValue(PropertyInfo pi) {
+
+	String tv = pi.taggedValue("gpkgZ");
+
+	if (StringUtils.isBlank(tv)) {
+	    return gpkgZ;
+	} else {
+
+	    switch (tv.trim()) {
+	    case "0":
+		return 0;
+	    case "1":
+		return 1;
+	    case "2":
+		return 2;
+
+	    default:
+		MessageContext mc = result.addWarning(this, 111, pi.name(), pi.inClass().name(), tv.trim(), "" + gpkgZ);
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return gpkgZ;
+	    }
+	}
+    }
+
+    private byte getMValue(PropertyInfo pi) {
+
+	String tv = pi.taggedValue("gpkgM");
+
+	if (StringUtils.isBlank(tv)) {
+	    return gpkgM;
+	} else {
+
+	    switch (tv.trim()) {
+	    case "0":
+		return 0;
+	    case "1":
+		return 1;
+	    case "2":
+		return 2;
+
+	    default:
+		MessageContext mc = result.addWarning(this, 112, pi.name(), pi.inClass().name(), tv.trim(), "" + gpkgM);
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return gpkgM;
+	    }
+	}
     }
 
     private void createDataColumnsEntry(PropertyInfo pi, Contents contents, GeoPackage geoPackage) {
@@ -791,7 +863,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     }
 
     private boolean isGeometryTypedProperty(PropertyInfo pi) {
-	String typeName = pi.typeClass().name();
+	String typeName = pi.typeInfo().name;
 	return typeName.startsWith("GM_") || typeName.equalsIgnoreCase("DirectPosition");
     }
 
@@ -812,6 +884,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	numberOfEncodedSchemas = 0;
 
 	idColumnName = null;
+
+	gpkgM = 0;
+	gpkgZ = 0;
+
 	cisToProcess = new ArrayList<ClassInfo>();
 	srsDefs = new ArrayList<>();
 	organizationCoordSysId = 0;
@@ -875,6 +951,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    return "Class '$1$' has multiple geometric properties. Only property '$2$' will be encoded. Property '$3$' is ignored.";
 	case 110:
 	    return "Property '$1$' of class '$2$' is an identifier property with type '$3$'. It will be encoded with GeoPackage data type INTEGER.";
+	case 111:
+	    return "Property '$1$' of class '$2$' has tagged value gpkgZ with unrecognized value '$3$'. Using value defined by target parameter gpkgZ (which is '$4$').";
+	case 112:
+	    return "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

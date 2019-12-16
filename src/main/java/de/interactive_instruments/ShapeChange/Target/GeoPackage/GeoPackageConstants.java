@@ -67,6 +67,9 @@ public class GeoPackageConstants {
      */
     public static final String PARAM_ID_COLUMN_NAME = "idColumnName";
     public static final String DEFAULT_ID_COLUMN_NAME = "_id";
+    
+    public static final String PARAM_GPKGM = "gpkgM";
+    public static final String PARAM_GPKGZ = "gpkgZ";
 
     /* ------------------------ */
     /* --- Conversion rules --- */

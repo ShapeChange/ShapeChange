@@ -81,6 +81,12 @@ public class TaggedValueNormalizer {
 	    "owlDisjointProperties", "owlInverseProperties", "owlLogicalCharacteristics").collect(Collectors.toSet());
 
     /*
+     * the list of tagged values specified by the GeoPackage target
+     */
+    protected static final Set<String> gpkgTags = Stream.of("gpkgZ", "gpkgM").collect(Collectors.toSet());
+
+    
+    /*
      * the list of tagged values specified by other encoding rules
      */
     protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", 
@@ -121,6 +127,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(jsonTags);
 	allowedTags.addAll(arcgisTags);
 	allowedTags.addAll(owlTags);
+	allowedTags.addAll(gpkgTags);
 	allowedTags.addAll(shapeChangeTags);
 		
 	for (String s : options.parameter("representTaggedValues").split("\\,"))

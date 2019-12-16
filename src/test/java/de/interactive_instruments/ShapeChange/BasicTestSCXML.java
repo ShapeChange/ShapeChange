@@ -35,12 +35,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 
+import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConverter;
+
 /**
  * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
  *         de)
  *
  */
 public class BasicTestSCXML extends BasicTest {
+    
+    SCXMLTestResourceConverter scxmlConverter = new SCXMLTestResourceConverter();
 
     protected ShapeChangeResult executeScxml(String configPath) {
 
