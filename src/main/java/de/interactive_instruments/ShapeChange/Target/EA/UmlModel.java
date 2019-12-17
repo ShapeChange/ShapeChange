@@ -283,6 +283,23 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    if (!pOut.Update()) {
 		result.addError("EA-Fehler: " + pOut.GetLastError());
 	    }
+
+	    if (author != null) {
+		try {
+		    EAElementUtil.setEAAuthor(pOut.GetElement(), author);
+		} catch (EAException e) {
+		    result.addError(this, 10011);
+		}
+	    }
+
+	    if (status != null) {
+		try {
+		    EAElementUtil.setEAStatus(pOut.GetElement(), status);
+		} catch (EAException e) {
+		    result.addError(this, 10012);
+		}
+	    }
+
 	    pOut_EaPkgId = pOut.GetPackageID();
 
 	    // load stereotype mappings
@@ -877,6 +894,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    return "EA exception encountered while updating association '$1$' between classes '$2$' and '$3$'. Exception message is: $4$";
 	case 10010:
 	    return "EA exception encountered while updating generalisation relationship between classes '$1$' (subtype) and '$2$' (supertype). Exception message is: $4$";
+	case 10011:
+	    return "EA exception encountered while updating the author of the 'ShapeChangeOutput' package).";
+	case 10012:
+	    return "EA exception encountered while updating the status of the 'ShapeChangeOutput' package).";
 
 	default:
 	    return "(" + UmlModel.class.getName() + ") Unknown message with number: " + mnr;

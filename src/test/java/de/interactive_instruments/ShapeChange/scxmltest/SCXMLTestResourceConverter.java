@@ -70,6 +70,15 @@ public class SCXMLTestResourceConverter {
      */
     public static final String RUN_ORIGINAL_CONFIGURATIONS_SYSTEM_PROPERTY_NAME = "runOriginalConfigurations";
 
+    /**
+     * Name of the VM argument / system property to indicate that the model
+     * resources and ShapeChange configuration of SCXML-tagged unit tests shall be
+     * updated (by setting the value of the system property to 'true') based upon
+     * the original model and configuration files - or created, if they do not exist
+     * yet. The only exception are tests which already solely rely on SCXML models.
+     */
+    public static final String UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME = "updateOrCreateScxmlResources";
+
     String suffix_configToExportModel = "_exportModel";
     String suffix_configRunWithSCXML = "_runWithSCXML";
 
@@ -96,54 +105,37 @@ public class SCXMLTestResourceConverter {
 
 	    Document doc1 = XMLUtil.loadXml(configPath);
 
-	    if (creationOfScxmlIsNecessary(doc1, configPath)) {
+	    boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
+
+	    if ("true".equalsIgnoreCase(System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
+		    && notPureScxmlTest) {
+
+		// create SCXML based models
 		createScxml(doc1, configPath);
-	    }
-
-	    String pathToRelevantConfig;
-
-	    if (currentScxmlBasedConfigExists(configPath)) {
-		// Creation of SCXML based configuration not necessary.
-		// Still, we need to set the path to the SCXML based configuration file
-		pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
-		System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
-
-	    } else {
 
 		/*
 		 * Load original config again (it would be incorrect to use doc1, because it may
 		 * have been updated and used as export configuration).
 		 */
 		Document doc2 = XMLUtil.loadXml(configPath);
+		switchModelsToScxml(doc2, configPath);
+	    }
 
-		if (hasModelTypeOtherThanSCXML(doc2)) {
-		    pathToRelevantConfig = switchModelsToScxml(doc2, configPath);
-		    System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
-		} else {
-		    // Configuration already based only on SCXML. Use original configuration.
-		    pathToRelevantConfig = configPath;
-		    System.out.println("Unit test execution uses original (already SCXML based) configuration "
-			    + pathToRelevantConfig);
-		}
+	    String pathToRelevantConfig;
+	    if (notPureScxmlTest) {
+		pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
+		System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
+	    } else {
+		pathToRelevantConfig = configPath;
+		System.out.println(
+			"Unit test execution uses (original) SCXML based configuration " + pathToRelevantConfig);
 	    }
 
 	    return pathToRelevantConfig;
 	}
     }
 
-    private boolean currentScxmlBasedConfigExists(String configPath) {
-
-	File configFile = new File(configPath);
-	File scxmlBasedConfigFile = getFileForScxmlBasedConfiguration(configPath);
-
-	if (!scxmlBasedConfigFile.exists() || FileUtils.isFileOlder(scxmlBasedConfigFile, configFile)) {
-	    return false;
-	} else {
-	    return true;
-	}
-    }
-
-    private String switchModelsToScxml(Document configDoc, String configPath) throws Exception {
+    private void switchModelsToScxml(Document configDoc, String configPath) throws Exception {
 
 	XPath xpath = XPathFactory.newInstance().newXPath();
 
@@ -176,9 +168,6 @@ public class SCXMLTestResourceConverter {
 
 	XMLUtil.writeXml(configDoc, updatedConfig);
 	System.out.println("SCXML based config created: " + updatedConfig.getPath());
-
-	// return path to updated config
-	return updatedConfig.getPath();
     }
 
     private Node getModelFilePathNode(Node modelTypeNode) throws Exception {
@@ -196,15 +185,10 @@ public class SCXMLTestResourceConverter {
 
 	return modelPathNode;
     }
-
-    private boolean creationOfScxmlIsNecessary(Document doc, String configPath) throws Exception {
-
-	return !findRelevantNonScxmlModelOccurrences(doc, configPath).isEmpty();
-    }
-
-    private File getScxmlFileForModel(String modelFilePath) {
-	return new File(getScxmlFilePathForModel(modelFilePath));
-    }
+//
+//    private File getScxmlFileForModel(String modelFilePath) {
+//	return new File(getScxmlFilePathForModel(modelFilePath));
+//    }
 
     private File getFileForScxmlBasedConfiguration(String configPath) {
 
@@ -235,7 +219,7 @@ public class SCXMLTestResourceConverter {
 	 * key: model file path, value: model type
 	 */
 
-	SortedMap<String, String> nonScxmlModelMap = findRelevantNonScxmlModelOccurrences(doc, configPath);
+	SortedMap<String, String> nonScxmlModelMap = findNonScxmlModelOccurrences(doc);
 
 	/*
 	 * now remove the log, transformation and target elements of the configuration
@@ -338,7 +322,7 @@ public class SCXMLTestResourceConverter {
 		"/*/*[local-name() = 'input']/*[local-name() = 'parameter' and (@name = 'inputFile' or @name = 'repositoryFileNameOrConnectionString')]",
 		doc, XPathConstants.NODE);
 
-	// create SCXML for each relevant non-scxml model
+	// create SCXML for each non-scxml model
 	for (Entry<String, String> entry : nonScxmlModelMap.entrySet()) {
 
 	    String modelType = entry.getValue();
@@ -386,47 +370,48 @@ public class SCXMLTestResourceConverter {
 	return prefix == null ? name : prefix + ":" + name;
     }
 
+//    /**
+//     * @param configDoc
+//     * @return can be empty but not <code>null</code>
+//     * @throws Exception
+//     */
+//    private SortedMap<String, String> findRelevantNonScxmlModelOccurrences(Document configDoc, String configPath)
+//	    throws Exception {
+//
+//	SortedMap<String, String> result = new TreeMap<>();
+//
+//	SortedMap<String, String> modelTypeByFilePath = findNonScxmlModelOccurrences(configDoc);
+//
+//	/*
+//	 * Now determine which of these models has an SCXML file that is younger than
+//	 * both the original model AND the ShapeChange configuration (because the
+//	 * configuration influences the way that a model is loaded, and thus how the
+//	 * exported SCXML looks like).
+//	 */
+//
+//	File configFile = new File(configPath);
+//
+//	for (Entry<String, String> e : modelTypeByFilePath.entrySet()) {
+//
+//	    String modelFilePath = e.getKey();
+//	    String modelType = e.getValue();
+//
+//	    File modelFile = new File(modelFilePath);
+//	    File scxmlFile = getScxmlFileForModel(modelFilePath);
+//
+//	    if (!scxmlFile.exists() || FileUtils.isFileOlder(scxmlFile, modelFile)
+//		    || FileUtils.isFileOlder(scxmlFile, configFile)) {
+//		result.put(modelFilePath, modelType);
+//	    }
+//	}
+//
+//	return result;
+//    }
+
     /**
      * @param configDoc
-     * @return can be empty but not <code>null</code>
-     * @throws Exception
-     */
-    private SortedMap<String, String> findRelevantNonScxmlModelOccurrences(Document configDoc, String configPath)
-	    throws Exception {
-
-	SortedMap<String, String> result = new TreeMap<>();
-
-	SortedMap<String, String> modelTypeByFilePath = findNonScxmlModelOccurrences(configDoc);
-
-	/*
-	 * Now determine which of these models has an SCXML file that is younger than
-	 * both the original model AND the ShapeChange configuration (because the
-	 * configuration influences the way that a model is loaded, and thus how the
-	 * exported SCXML looks like).
-	 */
-
-	File configFile = new File(configPath);
-
-	for (Entry<String, String> e : modelTypeByFilePath.entrySet()) {
-
-	    String modelFilePath = e.getKey();
-	    String modelType = e.getValue();
-
-	    File modelFile = new File(modelFilePath);
-	    File scxmlFile = getScxmlFileForModel(modelFilePath);
-
-	    if (!scxmlFile.exists() || FileUtils.isFileOlder(scxmlFile, modelFile)
-		    || FileUtils.isFileOlder(scxmlFile, configFile)) {
-		result.put(modelFilePath, modelType);
-	    }
-	}
-
-	return result;
-    }
-
-    /**
-     * @param configDoc
-     * @return can be empty but not <code>null</code>
+     * @return map with model file path as key and model type as value; can be empty
+     *         but not <code>null</code>
      * @throws Exception
      */
     private SortedMap<String, String> findNonScxmlModelOccurrences(Document configDoc) throws Exception {

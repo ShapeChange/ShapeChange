@@ -26,8 +26,8 @@
 	<XsdMapEntry type="Volume" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false"/>
 	<XsdMapEntry type="Measure" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false"/>
 	<XsdMapEntry type="UnitOfMeasure" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="gml:UnitOfMeasureType" xmlType="gml:UnitOfMeasureType"  xmlTypeNilReason="false"/>
-	<XsdMapEntry type="Record" xsdEncodingRules="iso19136_2007 gml33" xmlType="gco:Record_Type" xmlElement="gco:Record" xmlPropertyType="_P_" />
-	<XsdMapEntry type="RecordType" xsdEncodingRules="iso19136_2007 gml33" xmlType="gco:RecordType_Type" xmlElement="gco:RecordType" xmlPropertyType="_P_" />
+	<XsdMapEntry type="Record" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType" />
+	<XsdMapEntry type="RecordType" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" />
 	<XsdMapEntry type="Sign" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeType="simple" xmlTypeContent="simple"/>
 	<XsdMapEntry type="Time" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="time" xmlType="time"  xmlTypeType="simple" xmlTypeContent="simple"/>
 	<XsdMapEntry type="Year" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="gYear" xmlType="gYear"  xmlTypeType="simple" xmlTypeContent="simple"/>
