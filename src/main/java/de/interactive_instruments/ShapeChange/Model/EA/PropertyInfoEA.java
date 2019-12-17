@@ -511,7 +511,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isAggregation() {
 		validateAggregationType();
-		if (aggregationTypeCache.equals("shared"))
+		if (aggregationTypeCache.equals("shared")
+			&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
 			return true;
 		return false;
 	} // isAggregation()
@@ -527,12 +528,11 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return this.eaAttributeId;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isComposition()
-	 */
+	@Override
 	public boolean isComposition() {
 		validateAggregationType();
-		if (aggregationTypeCache.equals("composite"))
+		if (aggregationTypeCache.equals("composite") 
+			&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
 			return true;
 		return false;
 	} // isComposition()
@@ -635,14 +635,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isOrdered() {
 		if (isOrderedCache == null) {
 			isOrderedCache = Boolean.FALSE;
-			if (isAttribute()) {
-				// Inquire from Attribute
-				isOrderedCache = eaAttribute.GetIsOrdered();
-			} else {
-				// Inquire from ConnectorEnd
-				int ordering = eaConnectorEnd.GetOrdering();
-				if (ordering != 0)
-					isOrderedCache = true;
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (isAttribute()) {
+        				// Inquire from Attribute
+        				isOrderedCache = eaAttribute.GetIsOrdered();
+        			} else {
+        				// Inquire from ConnectorEnd
+        				int ordering = eaConnectorEnd.GetOrdering();
+        				if (ordering != 0)
+        					isOrderedCache = true;
+        			}
 			}
 		}
 		return isOrderedCache;
@@ -654,14 +656,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isUnique() {
 		if (isUniqueCache == null) {
 			isUniqueCache = Boolean.TRUE;
-			if (isAttribute()) {
-				// Inquire from Attribute
-				isUniqueCache = !eaAttribute.GetAllowDuplicates();
-			} else {
-				// Inquire from ConnectorEnd
-				boolean uniqueness = !eaConnectorEnd.GetAllowDuplicates();
-				if (!uniqueness)
-					isUniqueCache = false;
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (isAttribute()) {
+        				// Inquire from Attribute
+        				isUniqueCache = !eaAttribute.GetAllowDuplicates();
+        			} else {
+        				// Inquire from ConnectorEnd
+        				boolean uniqueness = !eaConnectorEnd.GetAllowDuplicates();
+        				if (!uniqueness)
+        					isUniqueCache = false;
+        			}
 			}
 		}
 		return isUniqueCache;
@@ -671,9 +675,11 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isOwned() {
 		if (isOwnedCache == null) {
 			isOwnedCache = Boolean.FALSE;
-			if (!isAttribute()) {
-				// Inquire from ConnectorEnd
-				isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (!isAttribute()) {
+        				// Inquire from ConnectorEnd
+        				isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
+        			}
 			}
 		}
 		return isOwnedCache;

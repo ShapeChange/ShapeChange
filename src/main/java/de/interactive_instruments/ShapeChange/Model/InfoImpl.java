@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMode;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.TargetRegistry;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -714,83 +715,16 @@ public abstract class InfoImpl implements Info {
 		String s = taggedValue(platform + "EncodingRule");
 		if (s == null || s.isEmpty()
 				|| options().ignoreEncodingRuleTaggedValues()) {
-			// JE TBD: create enumeration with valid platforms for global use
-			if (platform.equalsIgnoreCase("xsd")) {
-				s = options().parameter(Options.TargetXmlSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = Options.ISO19136_2007;
-			} else if (platform.equalsIgnoreCase("json")) {
-				s = options().parameter(Options.TargetJsonSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "geoservices";
-			} else if (platform.equalsIgnoreCase("rdf")) {
-				s = options().parameter(Options.TargetRDFClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("fc")) {
-				s = options().parameter(Options.TargetFeatureCatalogueClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("sql")) {
-				s = options().parameter(Options.TargetSQLClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("owl")) {
-				s = options().parameter(Options.TargetOWLISO19150Class,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("arcgis")) {
-				s = options().parameter(Options.TargetArcGISWorkspaceClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("sch")) {
-				s = options().parameter(Options.TargetFOL2SchematronClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("rep")) {
-				s = options().parameter(Options.TargetReplicationSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("asm")) {
-				s = options().parameter(Options.TargetApplicationSchemaMetadata,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("exp")) {
-				s = options().parameter(Options.TargetModelExport,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("ptf")) {
-				s = options().parameter(Options.TargetProfileTransferEA,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("cdb")) {
-				s = options().parameter(Options.TargetCDB,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("cldml")) {
-				s = options().parameter(Options.TargetCodeListDictionariesML,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("ldp")) {
-				s = options().parameter(Options.TargetLdproxy,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			}
+		    
+		    TargetRegistry tgtreg = options().getTargetRegistry();
+		    
+		    String tgtClassName = tgtreg.targetClassName(platform);
+		    
+		    if(tgtClassName != null) {
+			s = options().parameter(tgtClassName,"defaultEncodingRule");
+			if (s == null)
+			    s = tgtreg.targetDefaultEncodingRule(platform);
+		    }
 		}
 		if (s != null)
 			s = s.toLowerCase();
@@ -802,7 +736,6 @@ public abstract class InfoImpl implements Info {
 
 	public boolean matches(String rule) {
 	    
-		String encRule = null;
 		String[] ra = rule.toLowerCase().split("-", 4);
 		/*
 		 * test if the rule has the correct format
@@ -892,46 +825,24 @@ public abstract class InfoImpl implements Info {
 		 * applies to the element
 		 */
 		if (ra[1].equals("all")) {
-			boolean res = false;
-
-			encRule = encodingRule("xsd");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("json");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("rdf");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("fc");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("sch");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("sql");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("cdb");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			encRule = encodingRule("cldml");
-			if (encRule != null)
-				res = res || options().getRuleRegistry().hasRule(rule, encRule);
-
-			return res;
+			
+			TargetRegistry tgtreg = options().getTargetRegistry();
+			
+			for(String targetIdentifier : tgtreg.getTargetIdentifiers()) {
+			    String encRule = encodingRule(targetIdentifier);
+			    if (encRule != null) {
+				if(options().getRuleRegistry().hasRule(rule, encRule)) {
+				    return true; 
+				}
+			    }
+			}
+			
+			return false;
 
 		} else {
 
 			// determine if the applicable encoding rule contains the given rule
-			encRule = encodingRule(ra[1]).toLowerCase();
+			String encRule = encodingRule(ra[1]).toLowerCase();
 
 			if (encRule != null) {
 

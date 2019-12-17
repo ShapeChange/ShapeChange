@@ -31,63 +31,59 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class ModelExportTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class ModelExportTest extends BasicTestSCXML {
 
-	@Test
-	public void testModelExport_explicitProfileSettings() {
+    @Test
+    public void testModelExport_explicitProfileSettings() {
 
-		multiTest(
-				"src/test/resources/modelExport/explicitProfileSettings/testEA_export_scxml_explicitProfileSettings.xml",
-				new String[] { "xml" },
-				"testResults/modelexport/explicitProfileSettings/scxml",
-				"src/test/resources/modelExport/explicitProfileSettings/reference/scxml");
-	}
+	multiTest(
+		"src/test/resources/modelExport/explicitProfileSettings/testEA_export_scxml_explicitProfileSettings.xml",
+		new String[] { "xml" }, "testResults/modelexport/explicitProfileSettings/scxml",
+		"src/test/resources/modelExport/explicitProfileSettings/reference/scxml");
+    }
 
-	@Test
-	public void testModelExport_profileInheritance() {
+    @Test
+    public void testModelExport_profileInheritance() {
 
-		multiTest(
-				"src/test/resources/modelExport/profileInheritance/testEA_export_scxml_profileInheritance.xml",
-				new String[] { "xml" },
-				"testResults/modelexport/profileInheritance/scxml",
-				"src/test/resources/modelExport/profileInheritance/reference/scxml");
-	}
-	
-	@Test
-	public void testModelExport_suppressMeaninglessCodeEnumCharacteristics() {
+	multiTest("src/test/resources/modelExport/profileInheritance/testEA_export_scxml_profileInheritance.xml",
+		new String[] { "xml" }, "testResults/modelexport/profileInheritance/scxml",
+		"src/test/resources/modelExport/profileInheritance/reference/scxml");
+    }
 
-		multiTest(
-				"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/testEA_export_suppressMeaninglessCodeEnumCharacteristics.xml",
-				new String[] { "xml" },
-				"testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/scxml",
-				"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/reference/scxml");
-	}
-	
-	@Test
-	public void testModelExport_addStereotypes() {
+    @Test
+    public void testModelExport_suppressMeaninglessCodeEnumCharacteristics() {
 
-		multiTest(
-				"src/test/resources/modelExport/addStereotypes/test_addStereotypes_all.xml",
-				new String[] { "xml" },
-				"testResults/modelExport/addStereotypes/results/all",
-				"src/test/resources/modelExport/addStereotypes/reference/results/all");
-		
-		multiTest(
-			"src/test/resources/modelExport/addStereotypes/test_addStereotypes_some.xml",
-			new String[] { "xml" },
-			"testResults/modelExport/addStereotypes/results/some",
-			"src/test/resources/modelExport/addStereotypes/reference/results/some");
-	}
-	
-	@Test
-	public void testModelExport_suppressIsNavigable() {
+	multiTest(
+		"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/testEA_export_suppressMeaninglessCodeEnumCharacteristics.xml",
+		new String[] { "xml" }, "testResults/modelexport/suppressMeaninglessCodeEnumCharacteristics/scxml",
+		"src/test/resources/modelExport/suppressMeaninglessCodeEnumCharacteristics/reference/scxml");
+    }
 
-		multiTest(
-				"src/test/resources/modelExport/suppressIsNavigable/test_suppressIsNavigable.xml",
-				new String[] { "xml" },
-				"testResults/modelexport/suppressIsNavigable/results",
-				"src/test/resources/modelExport/suppressIsNavigable/reference/results");
-	}
+    @Test
+    public void testModelExport_addStereotypes_all() {
+
+	multiTest("src/test/resources/modelExport/addStereotypes/all/test_addStereotypes_all.xml",
+		new String[] { "xml" }, "testResults/modelExport/addStereotypes/results/all",
+		"src/test/resources/modelExport/addStereotypes/all/reference/all");
+    }
+
+    @Test
+    public void testModelExport_addStereotypes_some() {
+
+	multiTest("src/test/resources/modelExport/addStereotypes/some/test_addStereotypes_some.xml",
+		new String[] { "xml" }, "testResults/modelExport/addStereotypes/results/some",
+		"src/test/resources/modelExport/addStereotypes/some/reference/some");
+    }
+
+    @Test
+    public void testModelExport_suppressIsNavigable() {
+
+	multiTest("src/test/resources/modelExport/suppressIsNavigable/test_suppressIsNavigable.xml",
+		new String[] { "xml" }, "testResults/modelexport/suppressIsNavigable/results",
+		"src/test/resources/modelExport/suppressIsNavigable/reference/results");
+    }
 }

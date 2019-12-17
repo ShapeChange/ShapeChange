@@ -68,6 +68,9 @@ import org.w3c.dom.Element;
 
 /** The result is xxx as an XML file. */
 public class ShapeChangeResult {
+    
+    public static final String SCRS_NS = "http://www.interactive-instruments.de/ShapeChange/Result";
+    
 	// Data
 	public Document document = null;
 	protected Element root = null;
@@ -108,7 +111,7 @@ public class ShapeChangeResult {
 			this.level = level;
 			System.err.println(level.substring(0, 1) + " "
 					+ (printDateTime ? dateTime() + " " : "") + mtext);
-			message = result.document.createElementNS(Options.SCRS_NS, level);
+			message = result.document.createElementNS(SCRS_NS, level);
 			result.messages.appendChild(message);
 			message.setAttribute("message",
 					(printDateTime ? dateTime() + " " : "") + mtext);
@@ -170,11 +173,11 @@ public class ShapeChangeResult {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			document = db.newDocument();
 
-			root = document.createElementNS(Options.SCRS_NS,
+			root = document.createElementNS(SCRS_NS,
 					"ShapeChangeResult");
 			document.appendChild(root);
 			root.setAttribute("resultCode", "0");
-			root.setAttribute("xmlns:r", Options.SCRS_NS);
+			root.setAttribute("xmlns:r", SCRS_NS);
 			root.setAttribute("start", (new Date()).toString());
 
 			String version = "[dev]";
@@ -187,10 +190,10 @@ public class ShapeChangeResult {
 			}
 			root.setAttribute("version", version);
 
-			messages = document.createElementNS(Options.SCRS_NS, "Messages");
+			messages = document.createElementNS(SCRS_NS, "Messages");
 			root.appendChild(messages);
 
-			resultFiles = document.createElementNS(Options.SCRS_NS, "Results");
+			resultFiles = document.createElementNS(SCRS_NS, "Results");
 			root.appendChild(resultFiles);
 
 		} catch (ParserConfigurationException e) {
@@ -462,7 +465,7 @@ public class ShapeChangeResult {
 		if (document == null) {
 			return;
 		}
-		Element resfile = document.createElementNS(Options.SCRS_NS, "Result");
+		Element resfile = document.createElementNS(SCRS_NS, "Result");
 		resultFiles.appendChild(resfile);
 		resfile.setAttribute("target", targetName);
 		File file = new File(dname + "/" + fname);
@@ -516,7 +519,7 @@ public class ShapeChangeResult {
 					.equals(originalFilePath)) {
 
 				Element resultElementForNewFile = document
-						.createElementNS(Options.SCRS_NS, "Result");
+			.createElementNS(SCRS_NS, "Result");
 
 				// append the new 'Result' element after resultE
 				resultFiles.insertBefore(resultElementForNewFile,

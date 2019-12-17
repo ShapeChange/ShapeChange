@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/testFlattening.EAP"/>
+		<parameter name="inputFile" value="src/test/resources/flattener/basic/testFlattening.EAP"/>
 		<parameter name="appSchemaName" value="AppSchema"/>
 		<parameter name="publicOnly" value="true"/>
 		<!-- 				<parameter name="checkingConstraints" value="disabled"/> -->
@@ -147,21 +147,21 @@
 					xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007"/>
 			</xsdMapEntries>
 		</TargetXmlSchema>
-		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
-			inputs="step1" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/flattening/basic/results/html"/>
-			<targetParameter name="outputFilename" value="test"/>
-			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="inheritedProperties" value="false"/>
-			<targetParameter name="outputFormat" value="FRAMEHTML"/>
-			<targetParameter name="xslTransformerFactory"
-				value="net.sf.saxon.TransformerFactoryImpl"/>
-			<targetParameter name="name" value="'Test application schema'"/>
-			<targetParameter name="scope" value="This feature catalogue ..."/>
-			<targetParameter name="versionNumber" value="n/a"/>
-			<targetParameter name="versionDate" value="n/a"/>
-			<targetParameter name="producer" value="interactive instruments GmbH"/>	
-			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>
-		</Target>
+<!-- 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
+<!-- 			inputs="step1" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/flattening/basic/results/html"/> -->
+<!-- 			<targetParameter name="outputFilename" value="test"/> -->
+<!-- 			<targetParameter name="sortedOutput" value="true"/> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false"/> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML"/> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl"/> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'"/> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..."/> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a"/> -->
+<!-- 			<targetParameter name="versionDate" value="n/a"/> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH"/>	 -->
+<!-- 			<targetParameter name="xsltPath" value="src/main/resources/xslt"/> -->
+<!-- 		</Target> -->
 	</targets>
 </ShapeChangeConfiguration>

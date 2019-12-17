@@ -1093,10 +1093,20 @@ public class Excel implements Target {
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	 // no rules or requirements defined for this target, thus nothing to do	    
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "excel";
+	}
 
 	@Override
 	public String getTargetName() {
 		return "Excel Mapping";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
 	}
 
 }

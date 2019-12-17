@@ -722,6 +722,16 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 		r.addRule("rule-asm-all-identifyTypeUsage");
 		r.addRule("rule-asm-all-identifyPropertiesWithSpecificTaggedValues");
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "asm";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	@Override
 	public void reset() {

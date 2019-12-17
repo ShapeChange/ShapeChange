@@ -1037,6 +1037,16 @@ public class CDB implements SingleTarget, MessageSource {
 		r.addRule("rule-cdb-all-notEncoded");
 		r.addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "cdb";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	@Override
 	public void reset() {

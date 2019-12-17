@@ -17,6 +17,7 @@
 
 # Tests
 testResults/
+scxmlTmpDir/
 /test.xsd
 /log.html
 /log.xml

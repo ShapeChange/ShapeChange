@@ -778,10 +778,10 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    printDataElement("cardinality", pi.cardinality().toString());
 	}
 
-	if(!pi.matches(ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_ISNAVIGABLE)) {
+	if (!pi.matches(ModelExportConstants.RULE_TGT_EXP_PROP_SUPPRESS_ISNAVIGABLE)) {
 	    printDataElement("isNavigable", pi.isNavigable(), true);
 	}
-	
+
 	printDataElement("sequenceNumber", pi.sequenceNumber().getString());
 
 	Type ti = pi.typeInfo();
@@ -1016,7 +1016,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    writer.dataElement(NS, elementName, elementContent, attributeName, attributeValue);
 	}
     }
-    
+
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 	r.addRule("rule-exp-all-omitDescriptors");
@@ -1024,6 +1024,16 @@ public class ModelExport implements SingleTarget, MessageSource {
 	r.addRule("rule-exp-all-restrictExistingProfiles");
 	r.addRule("rule-exp-pkg-allPackagesAreEditable");
 	r.addRule("rule-exp-prop-suppressIsNavigable");
+    }
+
+    @Override
+    public String getTargetIdentifier() {
+	return "exp";
+    }
+
+    @Override
+    public String getDefaultEncodingRule() {
+	return "*";
     }
 
     @Override

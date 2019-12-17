@@ -1004,6 +1004,16 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		r.addRule("rule-rep-cls-generate-objectidentifier");
 		r.addRule("rule-rep-prop-maxLength-from-size");
 	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "rep";
+	}
 
 	@Override
 	public String getTargetName() {

@@ -31,41 +31,41 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class JSONTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class JSONTest extends BasicTestSCXML {
 
-	@Test
-	public void testJsonWithGeoservicesEncodingRule() {
-		/*
-		 * JSON encoding with geoservices encoding rule
-		 */
-		String[] typenamesGsr = { "FeatureType1", "FeatureType2" };
-		jsonTest("src/test/resources/config/testEA_JsonGsr.xml", typenamesGsr,
-				"testResults/ea/json/geoservices/INPUT",
-				"src/test/resources/reference/json/geoservices");
-	}
+    @Test
+    public void testJsonWithGeoservicesEncodingRule() {
+	/*
+	 * JSON encoding with geoservices encoding rule
+	 */
+	String[] typenamesGsr = { "FeatureType1", "FeatureType2" };
+	jsonTest("src/test/resources/json/geoservicesEncodingRule/testEA_JsonGsr.xml", typenamesGsr,
+		"testResults/json/geoservicesEncodingRule/INPUT",
+		"src/test/resources/json/geoservicesEncodingRule/reference");
+    }
 
-	@Test
-	public void testJsonWithExtendedGeoservicesEncodingRule() {
-		/*
-		 * JSON encoding with extended geoservices encoding rule
-		 */
-		String[] typenamesGsrExtended = { "DataType", "DataType2",
-				"FeatureType1", "FeatureType2", "NilUnion", "Union" };
-		jsonTest("src/test/resources/config/testEA_JsonGsrExtended.xml",
-				typenamesGsrExtended,
-				"testResults/ea/json/geoservices_extended/INPUT",
-				"src/test/resources/reference/json/geoservices_extended");
-	}
+    @Test
+    public void testJsonWithExtendedGeoservicesEncodingRule() {
+	/*
+	 * JSON encoding with extended geoservices encoding rule
+	 */
+	String[] typenamesGsrExtended = { "DataType", "DataType2", "FeatureType1", "FeatureType2", "NilUnion",
+		"Union" };
+	jsonTest("src/test/resources/json/extendedGeoservicesEncodingRule/testEA_JsonGsrExtended.xml",
+		typenamesGsrExtended, "testResults/json/extendedGeoservicesEncodingRule/INPUT",
+		"src/test/resources/json/extendedGeoservicesEncodingRule/reference");
+    }
 
-	@Test
-	public void testJsonWithGlobalIdentifiers() {
+    @Test
+    public void testJsonWithGlobalIdentifiers() {
 
-		multiTest("src/test/resources/config/testEA_JsonGsrExtended_globalIdentifiers.xml",
-				new String[] { "json" },
-				"testResults/json/globalIdentifierInDescription",
-				"src/test/resources/reference/json/globalIdentifierInDescription");
-	}
+	multiTest("src/test/resources/json/globalIdentifiers/testEA_JsonGsrExtended_globalIdentifiers.xml",
+		new String[] { "json" }, "testResults/json/globalIdentifiers",
+		"src/test/resources/json/globalIdentifiers/reference");
+    }
 
 }

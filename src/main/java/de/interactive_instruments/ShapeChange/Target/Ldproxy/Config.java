@@ -1400,6 +1400,16 @@ public class Config implements SingleTarget, MessageSource {
 		r.addRule("rule-ldp-prop-all-codelist-values-as-strings");
 		r.addRule("rule-ldp-cls-oneo-metadata");
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "ldp";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 		
 	@Override
 	public String message(int mnr) {

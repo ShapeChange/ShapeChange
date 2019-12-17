@@ -1504,7 +1504,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	 */
 	if (options.isLoadConstraintsForSelectedSchemasOnly()) {
 	    for (GenericClassInfo genCi : this.genClassInfosById.values()) {
-		removeConstraintsOfClassAndItsProperties(genCi);
+		if (!this.isInSelectedSchemas(genCi)) {
+		    removeConstraintsOfClassAndItsProperties(genCi);
+		}
 	    }
 	}
 

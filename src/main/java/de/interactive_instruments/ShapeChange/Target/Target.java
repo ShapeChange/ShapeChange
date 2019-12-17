@@ -59,7 +59,9 @@ public interface Target {
      * always represents the core, i.e. global, encoding rule.</li>
      * <li>You can also register an encoding rule that extends another encoding rule
      * by calling {@link RuleRegistry#addExtendsEncRule(String, String)} - e.g.
-     * <code>r.addExtendsEncRule("iso19136_2007", "*");</code></li>
+     * <code>r.addExtendsEncRule("iso19136_2007", "*")</code>; NOTE: the
+     * default encoding rule (returned by {@link #getDefaultEncodingRule()}), if
+     * other than '*', must be added this way</li>
      * </ul>
      * 
      * @param r the registry to which the rules and requirements shall be added
@@ -104,5 +106,21 @@ public interface Target {
      * @return human readable name for the target, primarily used in log messages
      */
     public String getTargetName();
+
+    /**
+     * @return The identifier of the target, as used in conversion rules (e.g. 'xsd'
+     *         for the XmlSchema target, with conversion rule identifiers having the
+     *         structure 'rule-xsd-[...]'). Note: case matters ('xsD' is not equal
+     *         to 'xsd')!
+     */
+    public String getTargetIdentifier();
+
+    /**
+     * @return name of the default encoding rule to be used for this target;
+     *         typically defaults to '*' (if <code>null</code> is returned, it will
+     *         be considered equal to '*'); if not '*', then the encoding rule must
+     *         be added via {@link #registerRulesAndRequirements(RuleRegistry)}
+     */
+    public String getDefaultEncodingRule();
 
 };

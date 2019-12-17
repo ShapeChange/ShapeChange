@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/xsd/sweCommon20Encoding/sweCommon.eap"/>
+		<parameter name="appSchemaNamespaceRegex" value="^http://www\.opengis\.net/swe/2\.0"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="enabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/xsd/sweCommon20Encoding/log_swe.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/xsd/sweCommon20Encoding"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ogcSweCommon2"/>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

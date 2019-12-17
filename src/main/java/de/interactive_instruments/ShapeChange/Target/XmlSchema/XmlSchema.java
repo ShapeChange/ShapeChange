@@ -199,8 +199,22 @@ public class XmlSchema implements Target, MessageSource {
 			    vrt = defaultVoidReasonType;
 			}
 
-			if (vrt != null && vrt.category() == Options.ENUMERATION && vrt.properties().size() > 0) {
-			    addAssertionForNilReasonCheck(ci, propi, vrt, schDoc);
+			if (vrt != null) {
+
+			    if (vrt.category() == Options.ENUMERATION && vrt.properties().size() > 0) {
+				addAssertionForNilReasonCheck(ci, propi, vrt, schDoc);
+			    } else {
+				MessageContext mc = result.addWarning(this, 2009, propi.name(), vrt.name());
+				if (mc != null) {
+				    mc.addDetail(this, 0, propi.fullNameInSchema());
+				}
+			    }
+
+			} else {
+			    MessageContext mc = result.addWarning(this, 2010, propi.name());
+				if (mc != null) {
+				    mc.addDetail(this, 0, propi.fullNameInSchema());
+				}
 			}
 		    }
 		}
@@ -840,6 +854,11 @@ public class XmlSchema implements Target, MessageSource {
 	return "XML Schema";
     }
 
+    @Override
+    public String getTargetIdentifier() {
+	return "xsd";
+    }
+
     /**
      * Tries to identify if the object element that represents ci has simple
      * content. If ci is a code list encoded following ISO 19139:2007, the result
@@ -1236,6 +1255,11 @@ public class XmlSchema implements Target, MessageSource {
     }
 
     @Override
+    public String getDefaultEncodingRule() {
+	return "iso19136_2007";
+    }
+
+    @Override
     public String message(int mnr) {
 
 	switch (mnr) {
@@ -1268,7 +1292,11 @@ public class XmlSchema implements Target, MessageSource {
 	    return "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
 	case 2008:
 	    return "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
-
+	case 2009:
+	    return "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
+	case 2010:
+	    return "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
+	    
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

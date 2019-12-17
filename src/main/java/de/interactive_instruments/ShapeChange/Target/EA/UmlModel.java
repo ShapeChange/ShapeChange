@@ -149,9 +149,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    // change the default documentation template?
 	    documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
 	    documentationNoValue = options.parameter(this.getClass().getName(), "documentationNoValue");
-	    
-	    author = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_AUTHOR,null,false,true);
-	    status = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_STATUS,null,false,true);
+
+	    author = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_AUTHOR, null,
+		    false, true);
+	    status = options.parameterAsString(this.getClass().getName(), UmlModelConstants.PARAM_EA_STATUS, null,
+		    false, true);
 
 	    includeAssociationEndOwnership = options.parameterAsBoolean(this.getClass().getName(),
 		    UmlModelConstants.PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP, false);
@@ -281,6 +283,23 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    if (!pOut.Update()) {
 		result.addError("EA-Fehler: " + pOut.GetLastError());
 	    }
+
+	    if (author != null) {
+		try {
+		    EAElementUtil.setEAAuthor(pOut.GetElement(), author);
+		} catch (EAException e) {
+		    result.addError(this, 10011);
+		}
+	    }
+
+	    if (status != null) {
+		try {
+		    EAElementUtil.setEAStatus(pOut.GetElement(), status);
+		} catch (EAException e) {
+		    result.addError(this, 10012);
+		}
+	    }
+
 	    pOut_EaPkgId = pOut.GetPackageID();
 
 	    // load stereotype mappings
@@ -529,12 +548,12 @@ public class UmlModel implements SingleTarget, MessageSource {
     private void cloneStandarddItems(Element e, Info i) {
 
 	try {
-	    
-	    if(author != null) {
+
+	    if (author != null) {
 		EAElementUtil.setEAAuthor(e, author);
 	    }
-	    
-	    if(status != null) {
+
+	    if (status != null) {
 		EAElementUtil.setEAStatus(e, status);
 	    }
 
@@ -592,7 +611,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    EAConnectorEndUtil.setEARole(ce, i.name());
 
 	    if (i.isNavigable() && i.reverseProperty().isNavigable()) {
-		EAConnectorEndUtil.setEANavigable(ce, EANavigable.UNSPECIFIED); 
+		EAConnectorEndUtil.setEANavigable(ce, EANavigable.UNSPECIFIED);
 	    } else if (i.isNavigable()) {
 		EAConnectorEndUtil.setEANavigable(ce, EANavigable.NAVIGABLE);
 	    } else {
@@ -787,14 +806,24 @@ public class UmlModel implements SingleTarget, MessageSource {
 	includeAssociationEndOwnership = false;
 	mergeConstraintCommentsIntoText = false;
 	ignoreTaggedValuesPattern = null;
-	
+
 	author = null;
 	status = null;
     }
-    
+
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 	// no rules or requirements defined for this target, thus nothing to do
+    }
+
+    @Override
+    public String getTargetIdentifier() {
+	return "uml";
+    }
+
+    @Override
+    public String getDefaultEncodingRule() {
+	return "*";
     }
 
     /**
@@ -865,6 +894,10 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    return "EA exception encountered while updating association '$1$' between classes '$2$' and '$3$'. Exception message is: $4$";
 	case 10010:
 	    return "EA exception encountered while updating generalisation relationship between classes '$1$' (subtype) and '$2$' (supertype). Exception message is: $4$";
+	case 10011:
+	    return "EA exception encountered while updating the author of the 'ShapeChangeOutput' package).";
+	case 10012:
+	    return "EA exception encountered while updating the status of the 'ShapeChangeOutput' package).";
 
 	default:
 	    return "(" + UmlModel.class.getName() + ") Unknown message with number: " + mnr;

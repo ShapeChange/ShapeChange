@@ -1178,6 +1178,11 @@ public class CodelistRegister implements SingleTarget {
 	public String getTargetName() {
 		return "Codelist register";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "clreg";
+	}
 
 	public void reset() {
 		printed = false;
@@ -1271,4 +1276,11 @@ public class CodelistRegister implements SingleTarget {
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	 // no rules or requirements defined for this target, thus nothing to do
 	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	
 }

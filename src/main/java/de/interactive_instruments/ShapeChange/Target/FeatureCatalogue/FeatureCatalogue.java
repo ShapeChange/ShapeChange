@@ -1083,8 +1083,7 @@ public class FeatureCatalogue
 	}
 
 	private String PrepareToPrint(String s) {
-		s = s.trim();
-		return s;
+	    return s == null ? "" : s.trim();
 	}
 
 	/** Add attribute to an element */
@@ -3370,6 +3369,16 @@ public class FeatureCatalogue
 	@Override
 	public void registerRulesAndRequirements(RuleRegistry r) {
 	 // no rules or requirements defined for this target, thus nothing to do
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "fc";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
 	}
 
 	/**

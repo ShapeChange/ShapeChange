@@ -1284,10 +1284,79 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 		createDatabaseModel = false;
 	}
+	
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
-	 */
+	@Override
+	public String getTargetIdentifier() {
+	    return "sql";
+	}
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		/*
+		 * SQL encoding rules
+		 */
+
+		r.addRule("rule-sql-all-associativetables");
+		r.addRule("rule-sql-all-check-constraint-naming-oracle-default");
+		r.addRule("rule-sql-all-check-constraint-naming-pearsonhash");
+		r.addRule("rule-sql-all-check-constraint-naming-postgresql-default");
+		r.addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
+		r.addRule("rule-sql-all-constraintNameUsingShortName");
+		r.addRule("rule-sql-all-databaseModel");
+		r.addRule("rule-sql-all-documentationViaExplicitCommentStatements");
+		r.addRule("rule-sql-all-exclude-abstract");
+		r.addRule("rule-sql-all-foreign-key-oracle-naming-style");
+		r.addRule("rule-sql-all-foreign-key-pearsonhash-naming");
+		r.addRule("rule-sql-all-foreign-key-default-naming");
+		r.addRule("rule-sql-all-indexNameUsingShortName");
+		r.addRule("rule-sql-all-normalizing-ignore-case");
+		r.addRule("rule-sql-all-normalizing-lower-case");
+		r.addRule("rule-sql-all-normalizing-oracle");
+		r.addRule("rule-sql-all-normalizing-sqlserver");
+		r.addRule("rule-sql-all-normalizing-upper-case");
+		r.addRule("rule-sql-all-notEncoded");
+		r.addRule("rule-sql-all-precisionAndScale");
+		r.addRule("rule-sql-all-representTaggedValues");
+		r.addRule("rule-sql-all-suppressDocumentationViaInlineComments");
+		r.addRule("rule-sql-all-unique-naming-count-suffix");
+
+		r.addRule("rule-sql-cls-code-lists");
+		r.addRule("rule-sql-cls-code-lists-pods");
+		r.addRule("rule-sql-cls-data-types");
+		r.addRule("rule-sql-cls-data-types-oneToMany-oneTable");
+		r.addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
+		r.addRule("rule-sql-cls-data-types-oneToMany-severalTables");
+		r.addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
+		r.addRule("rule-sql-cls-feature-types");
+		r.addRule("rule-sql-cls-identifierStereotype");
+		r.addRule("rule-sql-cls-object-types");
+		r.addRule("rule-sql-cls-references-to-external-types");
+
+		r.addRule("rule-sql-prop-check-constraint-for-range");
+		r.addRule("rule-sql-prop-check-constraints-for-enumerations");
+		r.addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
+		r.addRule("rule-sql-prop-exclude-derived");
+		r.addRule("rule-sql-prop-uniqueConstraints");
+
+		r.addRule("rule-sql-all-replicationSchema");
+		r.addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
+		r.addRule("rule-sql-prop-replicationSchema-geometryAnnotation");
+		r.addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
+		r.addRule("rule-sql-prop-replicationSchema-nillable");
+		r.addRule("rule-sql-prop-replicationSchema-optional");
+
+		// declare rule sets
+		r.addExtendsEncRule("sql", "*");
+		r.addRule("rule-sql-cls-feature-types", "sql");
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "sql";
+	}
+
+	@Override
 	public String message(int mnr) {
 
 		switch (mnr) {
@@ -1361,65 +1430,4 @@ public class SqlDdl implements SingleTarget, MessageSource {
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
-	@Override
-	public void registerRulesAndRequirements(RuleRegistry r) {
-		/*
-		 * SQL encoding rules
-		 */
-
-		r.addRule("rule-sql-all-associativetables");
-		r.addRule("rule-sql-all-check-constraint-naming-oracle-default");
-		r.addRule("rule-sql-all-check-constraint-naming-pearsonhash");
-		r.addRule("rule-sql-all-check-constraint-naming-postgresql-default");
-		r.addRule("rule-sql-all-check-constraint-naming-sqlserver-default");
-		r.addRule("rule-sql-all-constraintNameUsingShortName");
-		r.addRule("rule-sql-all-databaseModel");
-		r.addRule("rule-sql-all-documentationViaExplicitCommentStatements");
-		r.addRule("rule-sql-all-exclude-abstract");
-		r.addRule("rule-sql-all-foreign-key-oracle-naming-style");
-		r.addRule("rule-sql-all-foreign-key-pearsonhash-naming");
-		r.addRule("rule-sql-all-foreign-key-default-naming");
-		r.addRule("rule-sql-all-indexNameUsingShortName");
-		r.addRule("rule-sql-all-normalizing-ignore-case");
-		r.addRule("rule-sql-all-normalizing-lower-case");
-		r.addRule("rule-sql-all-normalizing-oracle");
-		r.addRule("rule-sql-all-normalizing-sqlserver");
-		r.addRule("rule-sql-all-normalizing-upper-case");
-		r.addRule("rule-sql-all-notEncoded");
-		r.addRule("rule-sql-all-precisionAndScale");
-		r.addRule("rule-sql-all-representTaggedValues");
-		r.addRule("rule-sql-all-suppressDocumentationViaInlineComments");
-		r.addRule("rule-sql-all-unique-naming-count-suffix");
-
-		r.addRule("rule-sql-cls-code-lists");
-		r.addRule("rule-sql-cls-code-lists-pods");
-		r.addRule("rule-sql-cls-data-types");
-		r.addRule("rule-sql-cls-data-types-oneToMany-oneTable");
-		r.addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
-		r.addRule("rule-sql-cls-data-types-oneToMany-severalTables");
-		r.addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
-		r.addRule("rule-sql-cls-feature-types");
-		r.addRule("rule-sql-cls-identifierStereotype");
-		r.addRule("rule-sql-cls-object-types");
-		r.addRule("rule-sql-cls-references-to-external-types");
-
-		r.addRule("rule-sql-prop-check-constraint-for-range");
-		r.addRule("rule-sql-prop-check-constraints-for-enumerations");
-		r.addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
-		r.addRule("rule-sql-prop-exclude-derived");
-		r.addRule("rule-sql-prop-uniqueConstraints");
-
-		r.addRule("rule-sql-all-replicationSchema");
-		r.addRule("rule-sql-prop-replicationSchema-documentation-fieldWithUnlimitedLengthCharacterDataType");
-		r.addRule("rule-sql-prop-replicationSchema-geometryAnnotation");
-		r.addRule("rule-sql-prop-replicationSchema-maxLength-from-size");
-		r.addRule("rule-sql-prop-replicationSchema-nillable");
-		r.addRule("rule-sql-prop-replicationSchema-optional");
-
-		// declare rule sets
-		r.addExtendsEncRule("sql", "*");
-		r.addRule("rule-sql-cls-feature-types", "sql");
-	}
-
 }

@@ -44,6 +44,7 @@
 			<targetParameter name="maxNameLength" value="64" />
 			<targetParameter name="reflexiveRelationshipFieldSuffix"
 				value="_SUFFIX" />
+			<targetParameter name="eaAuthor" value="echterhoff" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 					<rule name="rule-arcgis-cls-identifierStereotype" />

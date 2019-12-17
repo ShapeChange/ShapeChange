@@ -1494,7 +1494,8 @@ abstract class TempNode {
 							// Not found
 							if (ci.matches(
 									"rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed")
-									|| !ci.model().isInSelectedSchemas(ci)) {
+									|| !ci.model().isInSelectedSchemas(ci) 
+									|| ci.options().parameterAsBoolean(null, "codeAbsenceInModelAllowed", false)) {
 								return new OclNode.EnumerationLiteralExp(name,
 										ci);
 							} else {
