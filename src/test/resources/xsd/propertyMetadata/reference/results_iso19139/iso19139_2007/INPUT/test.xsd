@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:test="http://example.org/shapechange/xsd/propertyMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/propertyMetadata" version="1.0">
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gss" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AssociationClassX" substitutionGroup="gco:AbstractObject" type="test:AssociationClassX_Type"/>
+  <complexType name="AssociationClassX_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClassX_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:AssociationClassX"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="CodeList" substitutionGroup="gco:CharacterString" type="gco:CodeListValue_Type"/>
+  <complexType name="CodeList_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:CodeList"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="DataType" substitutionGroup="gco:AbstractObject" type="test:DataType_Type"/>
+  <complexType name="DataType_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="p1">
+            <complexType>
+              <complexContent>
+                <extension base="gco:Integer_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p2">
+            <complexType>
+              <complexContent>
+                <extension base="test:CodeList_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p3">
+            <complexType>
+              <complexContent>
+                <extension base="test:Enumeration_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="DataType_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:DataType"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Enumeration" substitutionGroup="gco:CharacterString" type="test:Enumeration_Type"/>
+  <simpleType name="Enumeration_Type">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <complexType name="Enumeration_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Enumeration"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeA" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeA_Type"/>
+  <complexType name="FeatureTypeA_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="r1a">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeB_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeA_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeB" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeB_Type"/>
+  <complexType name="FeatureTypeB_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="r1b">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeA_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeB_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeC" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeC_Type"/>
+  <complexType name="FeatureTypeC_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="r1">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeD_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r2">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeD_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r3">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeD_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeC_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeC"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeD" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeD_Type"/>
+  <complexType name="FeatureTypeD_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="r1">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeC_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r2">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeC_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r3">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeC_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeD_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeD"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeE" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeE_Type"/>
+  <complexType name="FeatureTypeE_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="r1">
+            <complexType>
+              <complexContent>
+                <extension base="test:Type_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r2">
+            <complexType>
+              <complexContent>
+                <extension base="test:Type_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r3">
+            <complexType>
+              <complexContent>
+                <extension base="test:Type_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeE_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeE"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeF" substitutionGroup="test:FeatureTypeFSupertype" type="test:FeatureTypeF_Type"/>
+  <complexType name="FeatureTypeF_Type">
+    <complexContent>
+      <extension base="test:FeatureTypeFSupertype_Type">
+        <sequence>
+          <element name="pmix">
+            <complexType>
+              <complexContent>
+                <extension base="gco:CharacterString_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p1">
+            <complexType>
+              <complexContent>
+                <extension base="gco:Integer_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p2">
+            <complexType>
+              <complexContent>
+                <extension base="test:CodeList_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p3">
+            <complexType>
+              <complexContent>
+                <extension base="test:Enumeration_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p4">
+            <complexType>
+              <complexContent>
+                <extension base="gss:GM_Object_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeF_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeF"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureTypeFSupertype" substitutionGroup="gco:AbstractObject" type="test:FeatureTypeFSupertype_Type"/>
+  <complexType name="FeatureTypeFSupertype_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="psuper">
+            <complexType>
+              <complexContent>
+                <extension base="gco:Boolean_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeFSupertype_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeFSupertype"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <complexType name="AbstractMixin_PropertyType">
+    <choice minOccurs="0">
+      <element ref="test:FeatureTypeF"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Type" substitutionGroup="gco:AbstractObject" type="test:Type_Type"/>
+  <complexType name="Type_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="p1">
+            <complexType>
+              <complexContent>
+                <extension base="gco:Integer_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p2">
+            <complexType>
+              <complexContent>
+                <extension base="test:CodeList_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="p3">
+            <complexType>
+              <complexContent>
+                <extension base="test:Enumeration_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r1">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeE_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r2">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeE_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element name="r3">
+            <complexType>
+              <complexContent>
+                <extension base="test:FeatureTypeE_PropertyType">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Type_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Type"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Union" type="test:Union_Type"/>
+  <complexType name="Union_Type">
+    <choice>
+      <element name="option1">
+        <complexType>
+          <complexContent>
+            <extension base="gco:Integer_PropertyType">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </complexContent>
+        </complexType>
+      </element>
+      <element name="option2">
+        <complexType>
+          <complexContent>
+            <extension base="test:DataType_PropertyType">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </complexContent>
+        </complexType>
+      </element>
+    </choice>
+  </complexType>
+  <complexType name="Union_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:Union"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

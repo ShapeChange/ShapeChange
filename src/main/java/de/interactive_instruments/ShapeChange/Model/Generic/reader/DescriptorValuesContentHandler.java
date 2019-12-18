@@ -77,24 +77,12 @@ public class DescriptorValuesContentHandler extends AbstractContentHandler {
 
 			sb = new StringBuffer();
 			this.value = null;
-			// this.lang = null;
 
-		}
-		// else if (localName.equals("value")) {
-		//
-		// sb = new StringBuffer();
-		//
-		// }
-		// else if (localName.equals("lang")) {
-		//
-		// sb = new StringBuffer();
-		//
-		// }
-		else {
+		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "DescriptorValuesContentHandler",
+			result.addDebug(null, 30800, "DescriptorValuesContentHandler",
 					localName);
 		}
 	}
@@ -127,21 +115,11 @@ public class DescriptorValuesContentHandler extends AbstractContentHandler {
 					options.internalize(this.lang));
 			this.descriptorValues.add(dv);
 
-		}
-		// else if (localName.equals("value")) {
-		//
-		// this.value = sb.toString();
-		//
-		// } else if (localName.equals("lang")) {
-		//
-		// this.lang = sb.toString();
-		//
-		// }
-		else {
+		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "DescriptorValuesContentHandler",
+			result.addDebug(null, 30801, "DescriptorValuesContentHandler",
 					localName);
 		}
 	}

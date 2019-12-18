@@ -75,11 +75,11 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 	@Override
 	public ColumnDataType unlimitedLengthCharacterDataType() {
-		return new ColumnDataType("nvarchar(max)", null, null, null);
+		return new ColumnDataType("nvarchar(max)", null, null, null, null);
 	}
 
 	@Override
-	public ColumnDataType limitedLengthCharacterDataType(int size) {
+	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier) {
 
 		/*
 		 * Apparently there is a restriction how long a limited nvarchar can be
@@ -89,9 +89,9 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
 		if (size > 4000) {
 			// TODO: log warning?
-			return new ColumnDataType("nvarchar(max)", null, null, null);
+			return new ColumnDataType("nvarchar(max)", null, null, null, null);
 		} else {
-			return new ColumnDataType("nvarchar", null, null, size);
+			return new ColumnDataType("nvarchar", null, null, size, null);
 		}
 	}
 

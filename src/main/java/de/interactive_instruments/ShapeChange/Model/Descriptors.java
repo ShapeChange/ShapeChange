@@ -160,11 +160,27 @@ public class Descriptors {
 	}
 
 	/**
-	 * @return <code>true</code> if no descriptors are available, else
-	 *         <code>false</code>.
+	 * @return <code>true</code> if no descriptor values are available, else
+	 *         <code>false</code> (then at least one non-blank descriptor value
+	 *         is available).
 	 */
 	public boolean isEmpty() {
-		return descriptorValues.isEmpty();
+		if (descriptorValues == null || descriptorValues.isEmpty()) {
+			return true;
+		} else {
+			boolean nonBlankValueFound = false;
+			outer: for (DescriptorValue dv : descriptorValues.values()) {
+				if (dv != null && !dv.getValues().isEmpty()) {
+					for (LangString value : dv.getValues()) {
+						if (StringUtils.isNotBlank(value.getValue())) {
+							nonBlankValueFound = true;
+							break outer;
+						}
+					}
+				}
+			}			
+			return !nonBlankValueFound;
+		}
 	}
 
 	/**

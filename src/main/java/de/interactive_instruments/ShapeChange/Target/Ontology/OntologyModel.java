@@ -3082,7 +3082,6 @@ public class OntologyModel implements MessageSource {
 				if (c instanceof OclConstraint) {
 					OclConstraint oclCon = (OclConstraint) c;
 					String[] comments = oclCon.comments();
-					comments = stripOclCommentMarkup(comments);
 					text = StringUtils.join(comments, " ");
 				} else {
 					text = c.text();
@@ -3168,7 +3167,6 @@ public class OntologyModel implements MessageSource {
 
 						if (c instanceof OclConstraint) {
 							String[] s = ((OclConstraint) c).comments();
-							s = stripOclCommentMarkup(s);
 							if (s != null && s.length > 0) {
 								for (String ex : s) {
 									if (ex.trim().length() > 0) {
@@ -3249,38 +3247,6 @@ public class OntologyModel implements MessageSource {
 		}
 	}
 
-	/**
-	 * Removes any leading or trailing java comment markup; also trims the
-	 * resulting string(s).
-	 * 
-	 * @param comments
-	 * @return
-	 */
-	private String[] stripOclCommentMarkup(String[] comments) {
-
-		if (comments == null || comments.length == 0) {
-			return new String[] {};
-		} else {
-			List<String> res = new ArrayList<String>();
-			for (String c : comments) {
-				String tmp = c.trim();
-				if (tmp.startsWith("/*")) {
-					tmp = tmp.substring(2);
-				}
-				if (tmp.endsWith("*/")) {
-					tmp = tmp.substring(0, tmp.length() - 2);
-				}
-				tmp = tmp.trim();
-				res.add(tmp);
-			}
-
-			return res.toArray(new String[res.size()]);
-		}
-	}
-
-	/**
-	 * @param ci
-	 */
 	/**
 	 * @param ci
 	 */

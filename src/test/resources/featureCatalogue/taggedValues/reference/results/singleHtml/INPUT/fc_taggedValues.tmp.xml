@@ -99,9 +99,17 @@
   <Value id="_A31_31">
     <label>code1</label>
     <code>code1</code>
+    <taggedValues>
+      <taggedValue tag="code">C_C1</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
   </Value>
   <Value id="_A31_32">
     <label>code2</label>
     <code>code2</code>
+    <taggedValues>
+      <taggedValue tag="code">C_C2</taggedValue>
+    </taggedValues>
   </Value>
 </FeatureCatalogue>

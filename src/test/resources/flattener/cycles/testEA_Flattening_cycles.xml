@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/flattener/cycles/testFlattening_cycles.EAP" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="cycles_step1" mode="enabled">
+			<parameters>
+				<ProcessParameter name="ignoreReflexiveRelationshipInTypeFlattening"
+					value="true" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+				<rule name="rule-trf-prop-removeNavigabilityBasedOnIsFlatTarget" />
+					<rule name="rule-trf-cls-flatten-inheritance" />
+					<rule name="rule-trf-prop-flatten-multiplicity" />
+					<rule name="rule-trf-prop-flatten-types" />
+					<rule name="req-flattener-flattenTypes-identify-circular-dependencies" />
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry rule="rule-trf-prop-flatten-types"
+					targetType="CharacterString" type="CI_Citation" />
+				<ProcessMapEntry rule="rule-trf-prop-flatten-types"
+					targetType="Real" type="Measure" />
+
+			</mapEntries>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="cycles_step1" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/flattening/cycles" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+			<xsdMapEntries>
+				<XsdMapEntry type="URI" xmlPropertyType="anyURI"
+					xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple"
+					xsdEncodingRules="iso19136_2007" />
+			</xsdMapEntries>
+		</TargetXmlSchema>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
+<!-- 			inputs="cycles_step1" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/flattening/cycles" /> -->
+<!-- 			<targetParameter name="outputFilename" value="test" /> -->
+<!-- 			<targetParameter name="sortedOutput" value="true" /> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false" /> -->
+<!-- 			<targetParameter name="outputFormat" value="HTML" /> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl" /> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'" /> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..." /> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a" /> -->
+<!-- 			<targetParameter name="versionDate" value="n/a" /> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH" /> -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

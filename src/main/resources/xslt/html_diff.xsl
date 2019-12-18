@@ -231,7 +231,7 @@
  <xsl:template match="Package | ApplicationSchema" mode="overview">
   <xsl:variable name="package" select="."/>
   <xsl:if
-   test="/FeatureCatalogue/FeatureType/package[attribute::idref = $package/@id] | /FeatureCatalogue/Package/parent[attribute::idref = $package/@id]">
+   test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[attribute::idref = $package/@id] | /FeatureCatalogue/Package/parent[attribute::idref = $package/@id]">
    <div>
     <tr border="0">
      <td border="0">
@@ -329,7 +329,7 @@
      </td>
      <td border="0" class="package"/>
     </tr>
-    <xsl:for-each select="/FeatureCatalogue/FeatureType[package/@idref = $package/@id]">
+    <xsl:for-each select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref = $package/@id]">
      <xsl:sort select="./code"/>
      <xsl:sort select="./name"/>
      <xsl:variable name="featuretype" select="."/>
@@ -375,7 +375,7 @@
   <xsl:variable name="package" select="."/>
   <!-- TBD: for empty packages (no classes, no child packages) this results in the package being referenced from its parent but not showing up in the feature catalogue -->
   <xsl:if
-   test="/FeatureCatalogue/FeatureType/package[attribute::idref = $package/@id] | /FeatureCatalogue/Package/parent[attribute::idref = $package/@id]">
+   test="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')]/package[attribute::idref = $package/@id] | /FeatureCatalogue/Package/parent[attribute::idref = $package/@id]">
    <div>
     <xsl:call-template name="css-class">
      <xsl:with-param name="context" select="."/>
@@ -567,7 +567,7 @@
      </tr>
     </table>
     <!-- print the details of classes contained in this package -->
-    <xsl:for-each select="/FeatureCatalogue/FeatureType[package/@idref = $package/@id]">
+    <xsl:for-each select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][package/@idref = $package/@id]">
      <xsl:sort select="./code"/>
      <xsl:sort select="./name"/>
      <xsl:apply-templates mode="detail" select="."/>
@@ -651,7 +651,7 @@
        <xsl:call-template name="subtypeentry">
         <xsl:with-param name="title" select="$fc.SupertypeOf"/>
         <xsl:with-param name="types"
-         select="/FeatureCatalogue/FeatureType[subtypeOf/@idref = $featuretype/@id]"/>
+         select="/FeatureCatalogue/FeatureType[not(type = 'Code List Type' or type = 'Enumeration Type')][subtypeOf/@idref = $featuretype/@id]"/>
         <xsl:with-param name="relevantSupertypeId" select="$featuretype/@id"/>
        </xsl:call-template>
        <xsl:call-template name="entry">

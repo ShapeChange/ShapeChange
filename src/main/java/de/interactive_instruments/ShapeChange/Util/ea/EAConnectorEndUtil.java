@@ -275,16 +275,38 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 		}
 	}
 
+	public static void setEAOwnedByClassifier(ConnectorEnd conEnd,
+			boolean isOwned) throws EAException {
+
+		conEnd.SetOwnedByClassifier(isOwned);
+
+		if (!conEnd.Update()) {
+			throw new EAException(createMessage(message(113), conEnd.GetRole(),
+					conEnd.GetLastError()));
+		}
+	}
+	
 	public static void setEAAllowDuplicates(ConnectorEnd conEnd,
 			boolean allowDuplicates) throws EAException {
 
 		conEnd.SetAllowDuplicates(allowDuplicates);
 
 		if (!conEnd.Update()) {
-			throw new EAException(createMessage(message(111), conEnd.GetRole(),
+			throw new EAException(createMessage(message(110), conEnd.GetRole(),
 					conEnd.GetLastError()));
 		}
 	}
+	
+	public static void setEADerived(ConnectorEnd conEnd,
+		boolean isDerived) throws EAException {
+
+        	conEnd.SetDerived(isDerived);
+        
+        	if (!conEnd.Update()) {
+        		throw new EAException(createMessage(message(114), conEnd.GetRole(),
+        				conEnd.GetLastError()));
+        	}
+        }
 
 	public static void setEAAggregation(ConnectorEnd conEnd, EAAggregation aggregation)
 			throws EAException {
@@ -292,7 +314,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 		conEnd.SetAggregation(aggregation.getEAValue());
 
 		if (!conEnd.Update()) {
-			throw new EAException(createMessage(message(110), conEnd.GetRole(),
+			throw new EAException(createMessage(message(111), conEnd.GetRole(),
 					conEnd.GetLastError()));
 		}
 	}
@@ -562,6 +584,10 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 			return "EA error encountered while updating 'Aggregation' of EA connector end '$1$'. Error message is: $2$";
 		case 112:
 			return "EA error encountered while updating 'Stereotype' of EA connector end '$1$'. Error message is: $2$";
+		case 113:
+			return "EA error encountered while updating 'OwnedByClassifier' of EA connector end '$1$'. Error message is: $2$";
+		case 114:
+			return "EA error encountered while updating 'Derived' of EA connector end '$1$'. Error message is: $2$";
 		
 		default:
 			return "(" + EAConnectorUtil.class.getName()

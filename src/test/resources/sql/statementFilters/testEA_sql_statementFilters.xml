@@ -117,5 +117,23 @@
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-SQLServer.xml" />
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/statementFilters/ddl_sqlite" />
+			<targetParameter name="separateSpatialIndexStatements"
+				value="true" />
+			<targetParameter name="separateCodeInsertStatementsByCodelistType"
+				value="2, 3" />
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-cls-code-lists" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLite.xml" />
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

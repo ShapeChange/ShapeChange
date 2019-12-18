@@ -31,8 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
+@Tag("EARequired")
 public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 	@Test
@@ -129,5 +131,14 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 				"src/test/resources/sql/databaseModel_representTaggedValues/testEA_sql_representTaggedValues.xml",
 				new String[] { "eap" }, "testResults/sql/representTaggedValues",
 				"src/test/resources/sql/databaseModel_representTaggedValues/reference");
+	}
+	
+	@Test
+	public void testLengthQualifier() {
+
+		multiTest(
+				"src/test/resources/sql/lengthQualifier/testEA_sql_lengthQualifier.xml",
+				new String[] { "sql","eap" }, "testResults/sql/lengthQualifier",
+				"src/test/resources/sql/lengthQualifier/reference");
 	}
 }

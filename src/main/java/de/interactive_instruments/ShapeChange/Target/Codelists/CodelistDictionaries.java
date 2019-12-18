@@ -58,6 +58,7 @@ import org.w3c.dom.ProcessingInstruction;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -428,10 +429,25 @@ public class CodelistDictionaries implements Target, MessageSource {
 
 		printed = true;
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
 
 	@Override
 	public String getTargetName() {
 		return "Code List Dictionary";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "cld";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
 	}
 
 	@Override

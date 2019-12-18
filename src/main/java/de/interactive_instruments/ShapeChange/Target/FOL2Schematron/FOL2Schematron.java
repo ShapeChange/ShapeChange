@@ -61,6 +61,7 @@ import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.FOL.AndOr;
@@ -1189,6 +1190,21 @@ public class FOL2Schematron implements Target, MessageSource {
 	public String getTargetName() {
 		return "First Order Logic to Schematron";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "fol2sch";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	    // no rules or requirements defined for this target, thus nothing to do	    
+	}
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.MessageSource#message(int)
@@ -1244,5 +1260,4 @@ public class FOL2Schematron implements Target, MessageSource {
 			return this.xmlns + ":" + elementName;
 		}
 	}
-
 }

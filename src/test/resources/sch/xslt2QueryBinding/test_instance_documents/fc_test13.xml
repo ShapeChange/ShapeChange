@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test13_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex13="http://example.org/shapechange/sch/xslt2QueryBinding/s13"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s13 ../reference/results/xsd_sch_xslt2/INPUT/test13.xsd">
+ <gml:featureMember>
+  <ex13:TS13_FT1 gml:id="ft1_PASS">
+   <ex13:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex13:rFT1toFT2 xlink:href="#ft2_2"/>
+   <ex13:rFT1toFT2 xlink:href="#ft2_3"/>
+   <ex13:att1>2</ex13:att1>
+   <ex13:att2>1</ex13:att2>
+   <ex13:att2>1</ex13:att2>
+   <ex13:att2>1</ex13:att2>
+  </ex13:TS13_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex13:TS13_FT1 gml:id="ft1_FAIL">
+   <ex13:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex13:rFT1toFT2 xlink:href="#ft2_2"/>
+   <ex13:att1>3</ex13:att1>
+   <ex13:att2>1</ex13:att2>
+   <ex13:att2>1</ex13:att2>
+   <ex13:att2>1</ex13:att2>
+  </ex13:TS13_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex13:TS13_FT2 gml:id="ft2_1"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex13:TS13_FT2 gml:id="ft2_2"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex13:TS13_FT2 gml:id="ft2_3"/>
+ </gml:featureMember>
+</gml:FeatureCollection>

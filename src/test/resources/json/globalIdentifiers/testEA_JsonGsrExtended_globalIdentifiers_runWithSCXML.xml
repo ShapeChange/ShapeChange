@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/test/resources/json/globalIdentifiers/test.zip"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml"/>
+		</descriptorSources>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/json/globalIdentifiers/log_json_globalIdentifier.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/json/globalIdentifiers"/>
+			<targetParameter name="defaultEncodingRule" value="geoservices_extended"/>
+			<targetParameter name="documentationTemplate" value="[[globalIdentifier]]"/>
+			<targetParameter name="documentationNoValue" value=""/>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	<MapEntry param="" rule="*" targetType="string" type="Character"/>
+	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+	<MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+	<MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+	<MapEntry param="" rule="*" targetType="number" type="Number"/>
+	<MapEntry param="" rule="*" targetType="number" type="Real"/>
+	<MapEntry param="format:time" rule="*" targetType="string" type="Date"/>
+	<MapEntry param="format:utc-millisec" rule="geoservices" targetType="integer" type="DateTime"/>
+	<MapEntry param="format:date-time" rule="geoservices_extended" targetType="string" type="DateTime"/>
+	<MapEntry param="format:time" rule="*" targetType="string" type="Time"/>
+	<MapEntry param="" rule="*" targetType="integer" type="Year"/>
+	<MapEntry param="format:uri" rule="*" targetType="string" type="URI"/>
+	<MapEntry param="" rule="*" targetType="string" type="GenericName"/>
+	<MapEntry param="" rule="*" targetType="string" type="LocalName"/>
+	<MapEntry param="" rule="*" targetType="string" type="ScopedName"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Measure"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Measure"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Distance"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Distance"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Length"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Length"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Angle"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Angle"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Speed"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Speed"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Velocity"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Velocity"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Area"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Area"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Volume"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Volume"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Weight"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Weight"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Height"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Height"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Pressure"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Pressure"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Percentage"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Percentage"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Temperature"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Temperature"/>
+	<MapEntry param="" rule="geoservices" targetType="number" type="Bearing"/>
+	<MapEntry param="" rule="geoservices_extended" targetType="ref:http://shapechange.net/tmp/ows9/json/measure.json" type="Bearing"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/envelope.json" type="GM_Envelope"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/point.json" type="DirectPosition"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/point.json" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/multipoint.json" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/multipoint.json" type="GM_PointArray"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polyline.json" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polyline.json" type="GM_LineString"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polyline.json" type="GM_CompositeCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polyline.json" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polygon.json" type="GM_Surface"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polygon.json" type="GM_Polygon"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polygon.json" type="GM_CompositeSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/polygon.json" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/geometry.json" type="GM_Primitive"/>
+	<MapEntry param="geometry" rule="*" targetType="ref:http://schemas.opengis.net/gsr/1.0/geometry.json" type="GM_Object"/>
+	
+</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

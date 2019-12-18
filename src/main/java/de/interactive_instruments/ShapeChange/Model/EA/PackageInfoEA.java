@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
@@ -94,6 +95,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	/** The EA object id of the package object */
 	protected int eaPackageId = 0;
 
+	protected String packageId = null;
+
 	/** The EA element object possibly associated to the package */
 	protected Element eaPackageElmt = null;
 
@@ -113,7 +116,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
-	
+
 	public int getEaPackageId() {
 		return eaPackageId;
 	}
@@ -129,6 +132,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		// Store EA package object and inquire its id and name.
 		eaPackage = pack;
 		eaPackageId = eaPackage.GetPackageID();
+		// augment integer id to achieve model-wide unique IDs required by
+		// Info.id()
+		packageId = "P" + Integer.valueOf(eaPackageId).toString();
 		eaName = eaPackage.GetName().trim();
 
 		// Store the possibly associated EA element (describing the package) and
@@ -168,27 +174,20 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		return (TreeSet<PackageInfo>) childPI.clone();
 	} // containedPackages()
 
-	// Validate stereotypes cache of the package. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
 			String sts = eaPackage.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in package selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.packageStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
@@ -273,9 +272,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	// && descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// String s = eaPackage.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	//
 	// if (s == null) {
@@ -291,8 +290,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 	/** Return model-unique id of package. */
 	public String id() {
-		return Integer.valueOf(eaPackageId).toString();
-	} // id()
+		return packageId;
+	}
 
 	/** Obtain the name of the package. */
 	public String name() {
@@ -356,7 +355,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 			if (tvs != null)
 				for (TaggedValue tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -422,9 +422,9 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 
 				String s = eaPackage.GetNotes();
 
-				// Fix for EA7.5 bug
+				// Handle EA formatting
 				if (s != null) {
-					s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+					s = document.applyEAFormatting(s);
 				}
 
 				if (s != null) {
@@ -438,7 +438,7 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -458,7 +458,8 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaPackage.GetAlias();
 

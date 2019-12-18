@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cliso="http://example.org/shapechange/sch/valueOrNilReason/iso19139" xmlns:ex="http://example.org/shapechange/sch/valueOrNilReason" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/valueOrNilReason" version="1">
+  <import namespace="http://example.org/shapechange/sch/valueOrNilReason/iso19139" schemaLocation="./codeListIso19139.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gco" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gco:AbstractObject" type="ex:DataType_Type"/>
+  <complexType name="DataType_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="dtAtt" nillable="true" type="gco:Boolean_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="DataType_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:DataType"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Enumeration" substitutionGroup="gco:CharacterString" type="ex:Enumeration_Type"/>
+  <simpleType name="Enumeration_Type">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <complexType name="Enumeration_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:Enumeration"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureType1" substitutionGroup="gco:AbstractObject" type="ex:FeatureType1_Type"/>
+  <complexType name="FeatureType1_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="attribute1" nillable="true" type="cliso:CodeListIso19139_PropertyType"/>
+          <element maxOccurs="unbounded" name="attribute2" nillable="true" type="cliso:CodeListIso19139_PropertyType"/>
+          <element name="attribute3" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" name="attribute4" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="attribute5" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" name="attribute6" nillable="true">
+            <complexType>
+              <simpleContent>
+                <extension base="gml:CodeType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="rFT1toFT2" nillable="true" type="ex:FeatureType2_PropertyType"/>
+          <element maxOccurs="unbounded" name="rFT1toObjectType" nillable="true" type="ex:ObjectType_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="gco:AbstractObject" type="ex:FeatureType2_Type"/>
+  <complexType name="FeatureType2_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence>
+          <element name="propCharacterString" nillable="true" type="gco:CharacterString_PropertyType"/>
+          <element maxOccurs="unbounded" name="propDataType" nillable="true" type="ex:DataType_PropertyType"/>
+          <element name="propEnumeration" nillable="true" type="ex:Enumeration_PropertyType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="propInteger" nillable="true" type="gco:Integer_PropertyType"/>
+          <element name="propUnion" nillable="true" type="ex:Union_PropertyType"/>
+          <element minOccurs="0" name="rFT2toFT1" nillable="true" type="ex:FeatureType1_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="FeatureType3" substitutionGroup="ex:FeatureType1" type="ex:FeatureType3_Type"/>
+  <complexType name="FeatureType3_Type">
+    <complexContent>
+      <extension base="ex:FeatureType1_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType3_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType3"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="ObjectType" substitutionGroup="gco:AbstractObject" type="ex:ObjectType_Type"/>
+  <complexType name="ObjectType_Type">
+    <complexContent>
+      <extension base="gco:AbstractObject_Type">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="ObjectType_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:ObjectType"/>
+    </sequence>
+    <attributeGroup ref="gco:ObjectReference"/>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="Union" type="ex:Union_Type"/>
+  <complexType name="Union_Type">
+    <choice>
+      <element name="optionA" nillable="true" type="gco:CharacterString_PropertyType"/>
+      <element name="optionB" nillable="true" type="gco:CharacterString_PropertyType"/>
+    </choice>
+  </complexType>
+  <complexType name="Union_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:Union"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="VoidReasonA" substitutionGroup="gco:CharacterString" type="ex:VoidReasonA_Type"/>
+  <simpleType name="VoidReasonA_Type">
+    <restriction base="string">
+      <enumeration value="a"/>
+      <enumeration value="aa"/>
+      <enumeration value="bbb"/>
+      <enumeration value="unknown"/>
+    </restriction>
+  </simpleType>
+  <complexType name="VoidReasonA_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:VoidReasonA"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+  <element name="VoidReasonB" substitutionGroup="gco:CharacterString" type="ex:VoidReasonB_Type"/>
+  <simpleType name="VoidReasonB_Type">
+    <restriction base="string">
+      <enumeration value="xxx"/>
+      <enumeration value="yyy"/>
+    </restriction>
+  </simpleType>
+  <complexType name="VoidReasonB_PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:VoidReasonB"/>
+    </sequence>
+    <attribute ref="gco:nilReason"/>
+  </complexType>
+</schema>

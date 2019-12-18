@@ -57,79 +57,6 @@ public abstract class ModelImpl implements Model {
 	protected boolean postprocessed = false;
 
 	/*
-	 * the list of tagged values specified by ISO 19109 (2015)
-	 * 
-	 * note: designation is not included, it is considered to be the same as
-	 * alias
-	 */
-	protected static String[] iso19109Tags = { "language", "definition",
-			"description" };
-
-	/*
-	 * the list of tagged values specified by the GML encoding rule
-	 */
-	protected static String[] gmlTags = { "targetNamespace", "xmlns", "version",
-			"xsdDocument", "gmlProfileSchema", "sequenceNumber",
-			"noPropertyType", "byValuePropertyType", "isCollection",
-			"asDictionary", "inlineOrByReference", "isMetadata",
-			"defaultCodeSpace", "xmlSchemaType", "documentation", "resourceURI",
-			"codeList" };
-	// TODO clean-up list
-
-	/*
-	 * the list of tagged values specified by the JSON encoding rule
-	 */
-	protected static String[] jsonTags = { "jsonBaseURI", "jsonLayerTableURI",
-			"jsonDirectory" };
-
-	/*
-	 * the list of tagged values specified by the ArcGIS encoding rule
-	 */
-	protected static String[] arcgisTags = { "HasZ", "HasM", "fieldType" };
-
-	/*
-	 * the list of tagged values specified by the ontology target
-	 */
-	protected static String[] owlTags = { "owlSubPropertyOf",
-			"owlEquivalentProperties", "owlDisjointProperties",
-			"owlInverseProperties", "owlLogicalCharacteristics" };
-
-	/*
-	 * the list of tagged values specified by other encoding rules
-	 */
-	protected static String[] shapeChangeTags = { "xsdEncodingRule",
-			"xsdAsAttribute", "xsdDerivation", "gmlAsGroup", "length",
-			"maxLength", "base", "rangeMinimum", "rangeMaximum", "default",
-			"nilReasonAllowed", "gmlImplementedByNilReason", "primaryCode",
-			"secondaryCode", "oclExpressions", "schPatterns", "unitMeasure",
-			"voidable", "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
-			"suppress", "codeListValuePattern", "codeListRepresentation",
-			"uomResourceURI", "uomResourceValuePattern",
-			"uomResourceRepresentation", "physicalQuantity",
-			"recommendedMeasure", "noncomparableMeasure", "asXMLAttribute",
-			"soft-typed", "parent", "AAA:Kennung", "AAA:Datum",
-			"AAA:Organisation", "AAA:Modellart", "AAA:Profile",
-			"AAA:Grunddatenbestand", "AAA:Nutzungsart",
-			"AAA:Nutzungsartkennung", "AAA:objektbildend", "AAA:Themen",
-			"AAA:Revisionsnummer", "reverseRoleNAS", "allowedTypesNAS",
-			"gmlArrayProperty", "gmlListProperty", "example",
-			"dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL",
-			"broaderListedValue", "skosConceptSchemeSubclassName", "size",
-			"omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
-			"formrows", "formcols", "validate", "Reiter", "generationDateTime",
-			"ontologyName", "alwaysVoid", "neverVoid", "appliesTo",
-			"vocabulary", "associativeTable", "jsonEncodingRule",
-			"sqlEncodingRule", "status", "geometry",
-			"oneToManyReferenceColumnName", "dissolveAssociation", "precision",
-			"scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique",
-			"codelistType", "sqlOnUpdate", "sqlOnDelete", "shortName",
-			"codeListSource", "codeListSourceCharset",
-			"codeListSourceRepresentation", "codeListRestriction",
-			"arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
-			"arcgisSubtypeInitialValues", "codeListXML", "reportable",
-			"dissolveAssociationAttributeType" };
-
-	/*
 	 * temporary storage for validating the names of the XML Schema documents to
 	 * be created when processing the model
 	 */
@@ -141,19 +68,13 @@ public abstract class ModelImpl implements Model {
 	 */
 	HashSet<String> classNames;
 
-	/*
-	 * List of allowed tags of tagged values
-	 */
-	protected HashSet<String> allowedTags = null;
-
 	@Override
 	public void postprocessAfterLoadingAndValidate() {
 
 		if (postprocessed)
 			return;
 
-		if (options().parameter("checkingConstraints") == null || options()
-				.parameter("checkingConstraints").equalsIgnoreCase("enabled")) {
+		if (options().constraintLoadingEnabled()) {
 			postprocessFolConstraints();
 		}
 
@@ -208,7 +129,7 @@ public abstract class ModelImpl implements Model {
 						if (folCon.sourceType()
 								.equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 
-							folCon.setComments(new String[] { folCon.text() });
+							folCon.mergeComments(new String[] { folCon.text() });
 
 							FolExpression folExpr = sbvrParser.parse(folCon);
 
@@ -240,7 +161,8 @@ public abstract class ModelImpl implements Model {
 	}
 
 	@Override
-	public void loadInformationFromExternalSources() {
+	public void loadInformationFromExternalSources(
+			boolean isLoadingInputModel) {
 
 		// do not execute this once the model has been postprocessed
 		if (postprocessed)
@@ -250,24 +172,28 @@ public abstract class ModelImpl implements Model {
 		ShapeChangeResult result = result();
 
 		// ============================================================
-		// load SBVR constraint info from excel file
+		// If we are loading the input model, load SBVR constraint info from
+		// excel file
 		// NOTE: can also be done via ConstraintLoader transformation
 
-		String sbvrFileLocation = options()
-				.parameter(Options.PARAM_CONSTRAINT_EXCEL_FILE);
+		if (isLoadingInputModel) {
 
-		if (sbvrFileLocation != null) {
+			String sbvrFileLocation = options()
+					.parameter(Options.PARAM_CONSTRAINT_EXCEL_FILE);
 
-			/*
-			 * if no sbvr file is provided, the loader will simply not contain
-			 * any sbvr rules
-			 */
-			SbvrRuleLoader sbvrLoader = new SbvrRuleLoader(sbvrFileLocation,
-					options, result, this);
+			if (sbvrFileLocation != null) {
 
-			for (PackageInfo pi : selectedSchemas()) {
+				/*
+				 * if no sbvr file is provided, the loader will simply not
+				 * contain any sbvr rules
+				 */
+				SbvrRuleLoader sbvrLoader = new SbvrRuleLoader(sbvrFileLocation,
+						options, result, this);
 
-				sbvrLoader.loadSBVRRulesAsConstraints(pi);
+				for (PackageInfo pi : selectedSchemas()) {
+
+					sbvrLoader.loadSBVRRulesAsConstraints(pi);
+				}
 			}
 		}
 	}
@@ -356,6 +282,19 @@ public abstract class ModelImpl implements Model {
 
 			if (pi.fullNameInSchema().equals(fullNameInSchema)) {
 				return pi;
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
+	public ClassInfo classByFullNameInSchema(String fullNameInSchema) {
+
+		for (ClassInfo ci : classes()) {
+
+			if (ci.fullNameInSchema().equals(fullNameInSchema)) {
+				return ci;
 			}
 		}
 
@@ -455,69 +394,6 @@ public abstract class ModelImpl implements Model {
 			return;
 
 		ai.postprocessAfterLoadingAndValidate();
-	}
-
-	// Tagged values normalization. This returns the tag given or a
-	// de-deprecated tag or null.
-	public String normalizeTaggedValue(String tag) {
-
-		// If not yet done, set up the tagged values, which we allow
-		if (allowedTags == null) {
-			allowedTags = new HashSet<String>(100);
-			for (String s : iso19109Tags)
-				allowedTags.add(s);
-			for (String s : gmlTags)
-				allowedTags.add(s);
-			for (String s : jsonTags)
-				allowedTags.add(s);
-			for (String s : arcgisTags)
-				allowedTags.add(s);
-			for (String s : owlTags)
-				allowedTags.add(s);
-			for (String s : shapeChangeTags)
-				allowedTags.add(s);
-			for (String s : options().parameter("representTaggedValues")
-					.split("\\,"))
-				allowedTags.add(s.trim());
-			for (String s : options().parameter("addTaggedValues").split("\\,"))
-				allowedTags.add(s.trim());
-		}
-
-		// Note: UML tools may have their own way of naming tagged values.
-		// Therefore, tool specific mappings are included here, too. Currently
-		// specific
-		// support exists for Rational Rose and Enterprise Architect.
-		if (tag.startsWith("RationalRose$UGAS:")) {
-			tag = tag.substring(18);
-		} else if (tag.startsWith("RationalRose$ShapeChange:")) {
-			tag = tag.substring(25);
-		} else if (tag.startsWith("RationalRose$")) {
-			tag = tag.substring(13);
-		} else if (tag.contains("::")) {
-			// tagged value is qualified - remove name space
-			tag = tag.substring(tag.lastIndexOf("::") + 2);
-		}
-
-		// Now check tag aliases provided in the configuration
-		tag = options().normalizeTag(tag);
-
-		// Now allow for some deprecated stuff
-		if (tag.equals("xmlNamespace"))
-			return "targetNamespace";
-		if (tag.equals("xmlNamespaceAbbreviation"))
-			return "xmlns";
-		if (tag.equals("xsdName"))
-			return "xsdDocument";
-		if (tag.equals("asGroup"))
-			return "gmlAsGroup";
-		if (tag.equals("implementedByNilReason"))
-			return "gmlImplementedByNilReason";
-
-		if (options().allowAllTags() || allowedTags.contains(tag))
-			return tag;
-
-		// None of these, return null
-		return null;
 	}
 
 	public void initialise(ShapeChangeResult r, Options o,
@@ -663,5 +539,18 @@ public abstract class ModelImpl implements Model {
 		}
 
 		return typeInfo;
+	}
+
+	@Override
+	public String descriptorSource(Descriptor descriptor) {
+
+		String source = options().descriptorSource(descriptor.getName());
+
+		// if nothing has been configured, use tag as default
+		if (source == null) {
+			source = "tag#" + descriptor;
+		}
+
+		return source;
 	}
 }

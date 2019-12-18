@@ -43,10 +43,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -190,19 +190,20 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 
 		String fileName = outputFilename + ".txt";
 		
-		PrintWriter writer = null;
-		
-		try {
-
-			File outputDirectoryFile = new File(outputDirectory);
-			if (!outputDirectoryFile.exists()) {
-				FileUtils.forceMkdir(outputDirectoryFile);
+		File outputDirectoryFile = new File(outputDirectory);
+		if (!outputDirectoryFile.exists()) {
+			try {
+			    FileUtils.forceMkdir(outputDirectoryFile);
+			} catch (Exception e) {
+			    result.addError(this,100,e.getMessage());
+			    e.printStackTrace();
 			}
-			
-			File file = new File(outputDirectory, fileName);
-			
-			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(file), "UTF-8"),this.streamBufferSize));
+		}
+		
+		File file = new File(outputDirectory, fileName);
+				
+		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(file), "UTF-8"),this.streamBufferSize))){
 			
 			for (SchemaStatistic ss : schemaStats) {
 
@@ -255,12 +256,6 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 
 			e.printStackTrace(System.err);
 			
-		} finally {
-			
-			if(writer != null) {
-				writer.flush();
-				IOUtils.closeQuietly(writer);
-			}
 		}
 	}
 
@@ -302,6 +297,21 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 	}
 
 	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do	    
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "asstat";
+	}
+	
+	@Override
 	public void reset() {
 		initialised = false;
 		outputDirectory = null;
@@ -315,10 +325,11 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 		switch (mnr) {
 		case 0:
 			return "Context: class ApplicationSchemaStatistic";
+		case 100: 
+		    return "Could not create output directory. Exception message is: $1$";
 		default:
 			return "(" + ApplicationSchemaStatistic.class.getName()
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
 }

@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 
 public class OperationInfoEA extends OperationInfoImpl
 		implements OperationInfo {
@@ -227,9 +228,12 @@ public class OperationInfoEA extends OperationInfoImpl
 		return document.result;
 	} // result()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
@@ -237,18 +241,8 @@ public class OperationInfoEA extends OperationInfoImpl
 			sts = eaMethod.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in property selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.propertyStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
@@ -269,7 +263,8 @@ public class OperationInfoEA extends OperationInfoImpl
 				// normalize deprecated tags.
 				for (MethodTag tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -317,7 +312,7 @@ public class OperationInfoEA extends OperationInfoImpl
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -337,7 +332,8 @@ public class OperationInfoEA extends OperationInfoImpl
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaMethod.GetStyle();
 

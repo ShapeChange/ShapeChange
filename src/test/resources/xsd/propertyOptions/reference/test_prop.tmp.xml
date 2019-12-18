@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type='text/xsl' href='./html.xsl'?>
+<!--Feature catalogue created using ShapeChange-->
+<FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>'Test application schema'</name>
+  <scope>This feature catalogue ...</scope>
+  <versionNumber>n/a</versionNumber>
+  <versionDate>n/a</versionDate>
+  <producer>interactive instruments GmbH</producer>
+  <ApplicationSchema id="_P4">
+    <name>Test Schema</name>
+    <versionNumber>1.0</versionNumber>
+    <taggedValues></taggedValues>
+  </ApplicationSchema>
+  <FeatureType id="_C6">
+    <name>DataType</name>
+    <characterizedBy idref="_A6_21"></characterizedBy>
+    <characterizedBy idref="_A6_22"></characterizedBy>
+    <characterizedBy idref="_A6_23"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A6_21">
+    <name>datatype</name>
+    <definition>This is another data type.</definition>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C10" category="data type">DataType2</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A6_22">
+    <name>string</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A6_23">
+    <name>boolean</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C10">
+    <name>DataType2</name>
+    <characterizedBy idref="_A10_24"></characterizedBy>
+    <characterizedBy idref="_A10_25"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A10_24">
+    <name>string</name>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>0</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A10_25">
+    <name>integer</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C4">
+    <name>FeatureType</name>
+    <definition>This is a feature type.</definition>
+    <characterizedBy idref="_A4_1"></characterizedBy>
+    <characterizedBy idref="_A4_2"></characterizedBy>
+    <characterizedBy idref="_A4_3"></characterizedBy>
+    <characterizedBy idref="_A4_4"></characterizedBy>
+    <characterizedBy idref="_A4_5"></characterizedBy>
+    <characterizedBy idref="_A4_6"></characterizedBy>
+    <characterizedBy idref="_A4_7"></characterizedBy>
+    <characterizedBy idref="_A4_8"></characterizedBy>
+    <characterizedBy idref="_A4_9"></characterizedBy>
+    <characterizedBy idref="_A4_10"></characterizedBy>
+    <characterizedBy idref="_A4_11"></characterizedBy>
+    <characterizedBy idref="_A4_12"></characterizedBy>
+    <characterizedBy idref="_A4_13"></characterizedBy>
+    <characterizedBy idref="_A4_14"></characterizedBy>
+    <characterizedBy idref="_A4_15"></characterizedBy>
+    <characterizedBy idref="_A4_16"></characterizedBy>
+    <characterizedBy idref="_A4_17"></characterizedBy>
+    <characterizedBy idref="_A4_18"></characterizedBy>
+    <characterizedBy idref="_A4_19"></characterizedBy>
+    <characterizedBy idref="_A4_20"></characterizedBy>
+    <characterizedBy idref="_AT1"></characterizedBy>
+    <characterizedBy idref="_AT40"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A4_1">
+    <name>integer</name>
+    <definition>This is an integer.</definition>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_2">
+    <name>character</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Character</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_3">
+    <name>string</name>
+    <definition>This is a string.</definition>
+    <cardinality>1..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>0</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_4">
+    <name>real</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Real</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_5">
+    <name>decimal</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Decimal</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_6">
+    <name>number</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Number</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_7">
+    <name>boolean</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Boolean</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_8">
+    <name>uri</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>URI</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_9">
+    <name>datetime</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>DateTime</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_10">
+    <name>date</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Date</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_11">
+    <name>time</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Time</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_12">
+    <name>measure</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Measure</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_13">
+    <name>length</name>
+    <cardinality>0..1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Length</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_14">
+    <name>geometry</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>GM_Point</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_15">
+    <name>secondgeometry</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>GM_Surface</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_16">
+    <name>metadata</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>MD_Metadata</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_17">
+    <name>datatype</name>
+    <definition>This is a data type.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C6" category="data type">DataType</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_18">
+    <name>union</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C7" category="union data type">NilUnion</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_19">
+    <name>enum</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="enumeration">Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A9_29"></enumeratedBy>
+    <enumeratedBy idref="_A9_30"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A4_20">
+    <name>codelist</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="code list">CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureRelationship id="__Tas1">
+    <name>(unbestimmt)</name>
+    <roles idref="_ATas1"></roles>
+    <roles idref="_ASas1"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_ATas1">
+    <name>role2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
+    <relation idref="__Tas1"></relation>
+    <InverseRole idref="_ASas1"></InverseRole>
+  </RelationshipRole>
+  <RelationshipRole id="_ASas1">
+    <name>role1</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>0</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
+    <relation idref="__Tas1"></relation>
+    <InverseRole idref="_ATas1"></InverseRole>
+  </RelationshipRole>
+  <FeatureRelationship id="__Tas40">
+    <name>(unbestimmt)</name>
+    <roles idref="_ATas40"></roles>
+    <roles idref="_ASas40"></roles>
+  </FeatureRelationship>
+  <RelationshipRole id="_ATas40">
+    <name>role3</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>1</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C5" category="feature type">FeatureTypeProperty</FeatureTypeIncluded>
+    <relation idref="__Tas40"></relation>
+  </RelationshipRole>
+  <RelationshipRole id="_ASas40">
+    <name>role_Sas40</name>
+    <cardinality>1</cardinality>
+    <isNavigable>false</isNavigable>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType</FeatureTypeIncluded>
+    <relation idref="__Tas40"></relation>
+    <InverseRole idref="_ATas40"></InverseRole>
+  </RelationshipRole>
+  <FeatureType id="_C5">
+    <name>FeatureTypeProperty</name>
+    <characterizedBy idref="_A5_26"></characterizedBy>
+    <characterizedBy idref="_A5_31"></characterizedBy>
+    <characterizedBy idref="_AS1"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A5_26">
+    <name>codelist</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>true</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="code list">CodeList</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A5_31">
+    <name>union</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C11" category="union data type">Union</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureType id="_C7">
+    <name>NilUnion</name>
+    <characterizedBy idref="_A7_27"></characterizedBy>
+    <characterizedBy idref="_A7_28"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A7_27">
+    <name>value</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType idref="_C10" category="data type">DataType2</ValueDataType>
+    <ValueDomainType>0</ValueDomainType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A7_28">
+    <name>reason</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <FeatureType id="_C27">
+    <name>Subtype</name>
+    <subtypeOf idref="_C5">FeatureTypeProperty</subtypeOf>
+    <package idref="_P4"></package>
+    <type>Feature Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureType id="_C11">
+    <name>Union</name>
+    <characterizedBy idref="_A11_32"></characterizedBy>
+    <characterizedBy idref="_A11_33"></characterizedBy>
+    <characterizedBy idref="_A11_34"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Union Data Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A11_32">
+    <name>option1</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType category="enumeration">Enumeration</ValueDataType>
+    <ValueDomainType>1</ValueDomainType>
+    <enumeratedBy idref="_A9_29"></enumeratedBy>
+    <enumeratedBy idref="_A9_30"></enumeratedBy>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A11_33">
+    <name>option2</name>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>Integer</ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A11_34">
+    <name>option3</name>
+    <cardinality>0..*</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType>CharacterString</ValueDataType>
+  </FeatureAttribute>
+  <Value id="_A9_29">
+    <label>val1</label>
+    <code>val1</code>
+  </Value>
+  <Value id="_A9_30">
+    <label>val2</label>
+    <code>val2</code>
+  </Value>
+</FeatureCatalogue>

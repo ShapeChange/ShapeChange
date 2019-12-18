@@ -64,7 +64,6 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 	protected ClassInfo classInfo = null;
 
 	protected StructuredNumber sequenceNumber = null;
-	protected PropertyInfo reverseProperty = null;
 
 	/**
 	 * Flag used to prevent duplicate retrieval/computation of the alias of this
@@ -383,10 +382,6 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		return initialValue;
 	};
 
-	public PropertyInfo reverseProperty() {
-		return reverseProperty;
-	};
-
 	public PropertyInfoXmi10(Xmi10Document d, Element e,
 			AssociationInfoXmi10 ai) throws ShapeChangeAbortException {
 		doc = d;
@@ -448,5 +443,11 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		}
 
 		return ls;
+	}
+
+	@Override
+	public boolean isOwned() {
+		// TODO
+		return false;
 	}
 }

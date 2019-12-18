@@ -31,56 +31,28 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class VariousFunctionalityTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class VariousFunctionalityTest extends BasicTestSCXML {
 
-	@Test
-	public void testDescriptorFunctionality() {
-		/*
-		 * Test the descriptor functionality
-		 */
-		multiTest("src/test/resources/config/testEA_descriptors_fc_en.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/descriptors/fc_en/INPUT",
-				"src/test/resources/reference/html/descriptors/fc_en");
-
-		multiTest("src/test/resources/config/testEA_descriptors_fc_de.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/descriptors/fc_de/INPUT",
-				"src/test/resources/reference/html/descriptors/fc_de");
-
-		multiTest("src/test/resources/config/testEA_descriptors_inspire.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/descriptors/inspire/INPUT",
-				"src/test/resources/reference/html/descriptors/inspire");
-
-		multiTest("src/test/resources/config/testEA_descriptors_aaa.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/descriptors/aaa/INPUT",
-				"src/test/resources/reference/html/descriptors/aaa");
-
-		multiTest("src/test/resources/config/testEA_descriptors_bbr.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/descriptors/bbr/INPUT",
-				"src/test/resources/reference/html/descriptors/bbr");
-	}
-
+	
 	@Test
 	public void testNotEncoded() {
 		
-		multiTest("src/test/resources/config/testEA_notEncoded.xml",
+		multiTest("src/test/resources/variousFunctionality/notEncoded/testEA_notEncoded.xml",
 				new String[] { "xsd", "json", "sql" },
-				"testResults/notEncoded",
-				"src/test/resources/reference/notEncoded");
+				"testResults/variousFunctionality/notEncoded",
+				"src/test/resources/variousFunctionality/notEncoded/reference");
 	}
 	
 	@Test
 	public void testLoadingWithProhibitedStatusSetting() {
 		
-		multiTest("src/test/resources/config/testEA_loadingWithProhibitedStatusSetting.xml",
-				new String[] { "xsd", "xml" },
+		multiTest("src/test/resources/variousFunctionality/loadingWithProhibitedStatus/testEA_loadingWithProhibitedStatusSetting.xml",
+				new String[] { "xsd", "html" },
 				"testResults/loadingWithProhibitedStatusSetting/results",
-				"src/test/resources/reference/loadingWithProhibitedStatusSetting");
+				"src/test/resources/variousFunctionality/loadingWithProhibitedStatus/reference");
 	}
 }

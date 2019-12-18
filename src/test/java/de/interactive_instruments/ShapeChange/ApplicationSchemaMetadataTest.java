@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class ApplicationSchemaMetadataTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class ApplicationSchemaMetadataTest extends BasicTestSCXML {
 
 	@Test
 	public void testApplicationSchemaMetadata_identifyProfiles() {
@@ -53,5 +55,15 @@ public class ApplicationSchemaMetadataTest extends WindowsBasicTest {
 		multiTest("src/test/resources/appSchemaMetadata/identifyTypeUsage/testEA_appSchemaMetadata_identifyTypeUsage.xml",
 				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyTypeUsage/INPUT",
 				"src/test/resources/appSchemaMetadata/identifyTypeUsage/reference/INPUT");
+	}
+	
+	@Test
+	public void testApplicationSchemaMetadata_identifyPropertiesWithSpecificTaggedValues() {
+		/*
+		 * Test derivation of application schema metadata.
+		 */
+		multiTest("src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/testEA_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.xml",
+				new String[] { "xml" }, "testResults/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/results",
+				"src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/reference/results");
 	}
 }

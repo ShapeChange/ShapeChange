@@ -47,6 +47,7 @@ import org.sparx.RoleTag;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -58,7 +59,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 
 public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
@@ -100,7 +101,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** EA attribute object, if this is an attribute */
 	protected Attribute eaAttribute = null;
-	
+
 	protected int eaAttributeId = -1;
 
 	/** Association context and EA ConnectorEnd if this is a role */
@@ -135,6 +136,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	/** Cache for uniqueness in property */
 	protected Boolean isUniqueCache = null;
+
+	/** Cache for isOwned in property */
+	protected Boolean isOwnedCache = null;
 
 	/** Cache set for stereotypes */
 	// this map is already defined in InfoImpl
@@ -251,8 +255,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 		// Id of property. Since ConnectorEnds have no Id, we resort to the
 		// Id of the Connector and prefix a letter S or T.
-		eaPropertyId = (reversed ? "S" : "T")
-				+ Integer.valueOf(ai.eaConnectorId).toString();
+		eaPropertyId = (reversed ? "S" : "T") + ai.id();
 
 		// Name of role
 		eaName = eaCE.GetRole();
@@ -413,8 +416,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			// Normalize
 			if (initialValueCache != null) {
 				initialValueCache = initialValueCache.trim();
-				initialValueCache = StringUtils.removeStart(initialValueCache, "\"");
-				initialValueCache = StringUtils.removeEnd(initialValueCache, "\"");
+				initialValueCache = StringUtils.removeStart(initialValueCache,
+						"\"");
+				initialValueCache = StringUtils.removeEnd(initialValueCache,
+						"\"");
 				String iv = initialValueCache.toLowerCase();
 				if (iv.equals("true"))
 					initialValueCache = "true";
@@ -506,7 +511,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isAggregation() {
 		validateAggregationType();
-		if (aggregationTypeCache.equals("shared"))
+		if (aggregationTypeCache.equals("shared")
+			&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
 			return true;
 		return false;
 	} // isAggregation()
@@ -517,17 +523,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isAttribute() {
 		return eaAttribute != null;
 	} // isAttribute()
-	
+
 	public int getEAAttributeId() {
 		return this.eaAttributeId;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isComposition()
-	 */
+	@Override
 	public boolean isComposition() {
 		validateAggregationType();
-		if (aggregationTypeCache.equals("composite"))
+		if (aggregationTypeCache.equals("composite") 
+			&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
 			return true;
 		return false;
 	} // isComposition()
@@ -537,8 +542,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 */
 	public boolean isDerived() {
 		if (isDerivedCache == null) {
-			isDerivedCache = Boolean.valueOf(isAttribute()
-					? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
+			isDerivedCache = Boolean
+					.valueOf(isAttribute() ? eaAttribute.GetIsDerived()
+							: eaConnectorEnd.GetDerived());
 		}
 		return isDerivedCache;
 	} // isDerived()
@@ -547,6 +553,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isNavigable()
 	 */
 	public boolean isNavigable() {
+
 		if (isNavigableCache == null) {
 			isNavigableCache = Boolean.valueOf(true);
 			// Attributes always are.
@@ -560,23 +567,37 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				// AssociationEnds with not-known stereotypes are skipped
 				if (nav) {
-					String sn = eaConnectorEnd.GetStereotype();
-					if (sn != null)
-						sn = options().normalizeStereotype(sn);
-					if (sn != null && sn.length() > 0) {
-						boolean found = false;
-						for (String st : Options.propertyStereotypes) {
-							if (sn.equals(st)) {
+					String sts = eaConnectorEnd.GetStereotypeEx();
+					if (sts != null) {
+
+						String[] stereotypes = sts.split("\\,");
+
+						for (String stereotype : stereotypes) {
+
+							String st = options()
+									.normalizeStereotype(stereotype.trim());
+							boolean found = false;
+
+							if (st.length() == 0) {
 								found = true;
-								break;
+							} else {
+								for (String s : Options.propertyStereotypes) {
+									if (st.toLowerCase().equals(s)) {
+										found = true;
+										break;
+									}
+								}
 							}
-						}
-						if (!found) {
-							MessageContext mc = document.result.addWarning(null,
-									1005, sn, "AssociationEnd");
-							if (mc != null)
-								mc.addDetail(null, 400, "Property", fullName());
-							nav = false;
+
+							if (!found) {
+								MessageContext mc = document.result.addWarning(
+										null, 1005, stereotype,
+										"AssociationEnd");
+								if (mc != null)
+									mc.addDetail(null, 400, "Property",
+											fullName());
+								nav = false;
+							}
 						}
 					}
 				}
@@ -597,11 +618,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				// }
 
 				// navigable only with a name, but not with a default name
-				if (eaName == null
-						|| eaName
-								.substring(0, eaName.length() < 5
-										? eaName.length() : 5)
-								.compareTo("role_") == 0)
+				if (eaName == null || eaName
+						.substring(0, eaName.length() < 5 ? eaName.length() : 5)
+						.compareTo("role_") == 0)
 					nav = false;
 
 				isNavigableCache = nav;
@@ -616,14 +635,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isOrdered() {
 		if (isOrderedCache == null) {
 			isOrderedCache = Boolean.FALSE;
-			if (isAttribute()) {
-				// Inquire from Attribute
-				isOrderedCache = eaAttribute.GetIsOrdered();
-			} else {
-				// Inquire from ConnectorEnd
-				int ordering = eaConnectorEnd.GetOrdering();
-				if (ordering != 0)
-					isOrderedCache = true;
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (isAttribute()) {
+        				// Inquire from Attribute
+        				isOrderedCache = eaAttribute.GetIsOrdered();
+        			} else {
+        				// Inquire from ConnectorEnd
+        				int ordering = eaConnectorEnd.GetOrdering();
+        				if (ordering != 0)
+        					isOrderedCache = true;
+        			}
 			}
 		}
 		return isOrderedCache;
@@ -635,38 +656,46 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	public boolean isUnique() {
 		if (isUniqueCache == null) {
 			isUniqueCache = Boolean.TRUE;
-			if (isAttribute()) {
-				// Inquire from Attribute
-				isUniqueCache = !eaAttribute.GetAllowDuplicates();
-			} else {
-				// Inquire from ConnectorEnd
-				boolean uniqueness = !eaConnectorEnd.GetAllowDuplicates();
-				if (!uniqueness)
-					isUniqueCache = false;
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (isAttribute()) {
+        				// Inquire from Attribute
+        				isUniqueCache = !eaAttribute.GetAllowDuplicates();
+        			} else {
+        				// Inquire from ConnectorEnd
+        				boolean uniqueness = !eaConnectorEnd.GetAllowDuplicates();
+        				if (!uniqueness)
+        					isUniqueCache = false;
+        			}
 			}
 		}
 		return isUniqueCache;
 	} // isUnique()
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#reverseProperty()
-	 */
-	public PropertyInfo reverseProperty() {
-		// Not applicable for attributes ...
-		if (isAttribute())
-			return null;
-		// Grab 'the other' property from the association ...
-		return associationInfo.properties[reversedAssoc ? 1 : 0];
-	} // reverseProperty()
+	@Override
+	public boolean isOwned() {
+		if (isOwnedCache == null) {
+			isOwnedCache = Boolean.FALSE;
+			if(!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+        			if (!isAttribute()) {
+        				// Inquire from ConnectorEnd
+        				isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
+        			}
+			}
+		}
+		return isOwnedCache;
+	}
 
 	// Return the sequence number of the property. */
 	public StructuredNumber sequenceNumber() {
 		return sequenceNumber;
 	} // sequenceNumber()
 
-	// Validate stereotypes cache of the property. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
 			// Fetch stereotypes 'collection' ...
@@ -677,18 +706,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				sts = eaConnectorEnd.GetStereotypeEx();
 			String[] stereotypes = sts.split("\\,");
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in property selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.propertyStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 		}
 	} // validateStereotypesCache()
 
@@ -714,7 +733,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 					// normalize deprecated tags.
 					for (AttributeTag tv : tvs) {
 						String t = tv.GetName();
-						t = document.normalizeTaggedValue(t);
+						t = options().taggedValueNormalizer()
+								.normalizeTaggedValue(t);
 						if (t != null) {
 							String v = tv.GetValue();
 							if (v.equals("<memo>"))
@@ -740,7 +760,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 					for (RoleTag tv : tvs) {
 
 						String t = tv.GetTag();
-						t = document.normalizeTaggedValue(t);
+						t = options().taggedValueNormalizer()
+								.normalizeTaggedValue(t);
 
 						if (t != null) {
 
@@ -882,9 +903,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// s = eaAttribute.GetNotes();
 	// else
 	// s = eaConnectorEnd.GetRoleNote();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//
@@ -1035,8 +1056,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 			constraintsCache = new Vector<Constraint>();
 
 			// Constraints disabled?
-			String check = document.options.parameter("checkingConstraints");
-			if (check != null && check.equalsIgnoreCase("disabled"))
+			if (!document.options.constraintLoadingEnabled())
 				return;
 
 			// Constraints for properties irrelevant?
@@ -1113,16 +1133,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 				String s = null;
 
-				if (descriptorSource(Descriptor.DOCUMENTATION)
+				if (model().descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 
 					if (isAttribute())
 						s = eaAttribute.GetNotes();
 					else
 						s = eaConnectorEnd.GetRoleNote();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -1194,9 +1214,9 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				// if (descriptorSource(Descriptor.DOCUMENTATION)
 				// .equals("ea:notes")) {
 				// s = eaClassElement.GetNotes();
-				// // Fix for EA7.5 bug
+				// // Handle EA formatting
 				// if (s != null) {
-				// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+				// s = document.applyEAFormatting(s);
 				// }
 				// }
 				//
@@ -1248,7 +1268,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi;
@@ -1287,7 +1307,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a;
 					if (isAttribute())

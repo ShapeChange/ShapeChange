@@ -168,9 +168,6 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 				nav_a.setAssociation(ai_a);
 				other_a.setAssociation(ai_a);
 
-				nav_a.setReverseProperty(other_a);
-				other_a.setReverseProperty(nav_a);
-
 				if (ai_a.end1() == navigableRole) {
 					ai_a.setEnd1(nav_a);
 					ai_a.setEnd2(other_a);
@@ -217,9 +214,6 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 
 				nav_b.setAssociation(ai_b);
 				other_b.setAssociation(ai_b);
-
-				nav_b.setReverseProperty(other_b);
-				other_b.setReverseProperty(nav_b);
 
 				if (ai_b.end1() == navigableRole) {
 					ai_b.setEnd1(nav_b);

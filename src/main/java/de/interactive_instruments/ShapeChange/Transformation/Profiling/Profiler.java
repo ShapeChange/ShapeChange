@@ -85,8 +85,8 @@ import de.interactive_instruments.ShapeChange.UI.StatusBoard;
  * that do not belong to one of the profiles stated in the ShapeChange
  * configuration.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  */
 public class Profiler implements Transformer, MessageSource {
 
@@ -186,8 +186,60 @@ public class Profiler implements Transformer, MessageSource {
 	 * Profile parameter identifiers recognized by the Profiler itself (all
 	 * other profile parameters will be transformed into tagged values).
 	 */
+
+	/**
+	 * The profiler restricts the multiplicity of a property (e.g. from 0..* to
+	 * 1..*) as defined via this profile parameter. If the parameter value would
+	 * lead to an extension of the multiplicity range, a warning is issued and
+	 * the intersection of the multiplicity ranges is set as new multiplicity of
+	 * the property.
+	 */
 	public static final String PROFILE_PARAMETER_MULTIPLICITY = "multiplicity";
+	/**
+	 * If the profile parameter is 'true' and defined for the profile of a class
+	 * then that class is made abstract.
+	 */
+	public static final String PROFILE_PARAMETER_ISABSTRACT = "isAbstract";
+	/**
+	 * The profiler sets the navigability of an association role to false if
+	 * this parameter does not equal ‘true’. If the whole association would no
+	 * longer be navigable, the profiler will issue a warning – and remove the
+	 * association.
+	 */
 	public static final String PROFILE_PARAMETER_ISNAVIGABLE = "isNavigable";
+	/**
+	 * When defined on a property with max multiplicity greater than one (in the
+	 * profile, i.e. taking into account profile parameter
+	 * {@link #PROFILE_PARAMETER_MULTIPLICITY}), then the property is set to be
+	 * ordered or not ordered, according to the boolean value of this profile
+	 * parameter. A value of 'true' - ignoring case - will thereby be
+	 * interpreted as the boolean <code>true</code>, everything else as boolean
+	 * <code>false</code>.
+	 */
+	public static final String PROFILE_PARAMETER_ISORDERED = "isOrdered";
+	/**
+	 * When defined on a property with max multiplicity greater than one (in the
+	 * profile, i.e. taking into account profile parameter
+	 * {@link #PROFILE_PARAMETER_MULTIPLICITY}), then the property is set to be
+	 * unique or not unique, according to the boolean value of this profile
+	 * parameter. A value of 'true' - ignoring case - will thereby be
+	 * interpreted as the boolean <code>true</code>, everything else as boolean
+	 * <code>false</code>.
+	 */
+	public static final String PROFILE_PARAMETER_ISUNIQUE = "isUnique";
+	/**
+	 * If the geometry profile parameter is set for a feature type, the profiler
+	 * checks if the feature type has a tagged value geometry. If it does, then
+	 * the profiler checks that the profile parameter defines a subset of the
+	 * geometry types that are allowed via the tagged value. If it does not, a
+	 * warning is issued. Then, the intersection of geometry types allowed via
+	 * the tagged value and the profile parameter is stored in the tagged value.
+	 * If the feature type initially did not have a geometry tagged value, then
+	 * the value of the profile parameter is set as tagged value geometry on the
+	 * feature type. This tagged value can be used in subsequent processing
+	 * steps, for example flattening (see
+	 * rule-trf-prop-flatten-homogeneousgeometries).
+	 */
 	public static final String PROFILE_PARAMETER_GEOMETRY = "geometry";
 
 	ConstraintHandling constraintHandling = ConstraintHandling.keep;
@@ -559,6 +611,13 @@ public class Profiler implements Transformer, MessageSource {
 								}
 							}
 
+						} else if (parameterName.equalsIgnoreCase(
+								PROFILE_PARAMETER_ISABSTRACT)) {
+
+							if ("true".equalsIgnoreCase(parameterValue)) {
+								genCi.setIsAbstract(true);
+							}
+
 						} else {
 
 							/*
@@ -630,6 +689,12 @@ public class Profiler implements Transformer, MessageSource {
 
 									multPi.minOccurs = newMin;
 									multPi.maxOccurs = newMax;
+
+									if (newMax == 1) {
+										// enforce settings
+										genPi.setOrdered(false);
+										genPi.setUnique(true);
+									}
 								}
 
 							} else if (parameterName.equalsIgnoreCase(
@@ -661,6 +726,24 @@ public class Profiler implements Transformer, MessageSource {
 									}
 								}
 
+							} else if (parameterName.equalsIgnoreCase(
+									PROFILE_PARAMETER_ISORDERED)
+									|| parameterName.equalsIgnoreCase(
+											PROFILE_PARAMETER_ISUNIQUE)) {
+
+								/*
+								 * Ignore in this loop, because they depend on
+								 * the multiplicity of the property, which may
+								 * be influenced by profile parameter
+								 * 'multiplicity' - which is evaluated in this
+								 * loop. However, we also need to handle the
+								 * cases of these profile parameters here, since
+								 * otherwise ShapeChange would add these profile
+								 * parameters as tagged values (see the
+								 * else-clause). The profile parameters are
+								 * evaluated in the following loop.
+								 */
+
 							} else {
 
 								/*
@@ -673,6 +756,42 @@ public class Profiler implements Transformer, MessageSource {
 
 								genPi.setTaggedValue(newTagName, newTagValue,
 										false);
+							}
+						}
+
+						/*
+						 * Now evaluate profile parameters that depend on the
+						 * application of other profile parameters.
+						 */
+						for (Entry<String, String> parameterEntry : profileOfPi
+								.getParameter().entrySet()) {
+
+							String parameterName = parameterEntry.getKey();
+							String parameterValue = parameterEntry.getValue();
+
+							if (parameterName.equalsIgnoreCase(
+									PROFILE_PARAMETER_ISORDERED)
+									&& genPi.cardinality().maxOccurs > 1) {
+								/*
+								 * Requires that profile parameter multiplicity
+								 * has been applied.
+								 */
+								genPi.setOrdered(
+										"true".equalsIgnoreCase(parameterValue)
+												? true
+												: false);
+
+							} else if (parameterName.equalsIgnoreCase(
+									PROFILE_PARAMETER_ISUNIQUE)
+									&& genPi.cardinality().maxOccurs > 1) {
+								/*
+								 * Requires that profile parameter multiplicity
+								 * has been applied.
+								 */
+								genPi.setUnique(
+										"true".equalsIgnoreCase(parameterValue)
+												? true
+												: false);
 							}
 						}
 					}
@@ -691,7 +810,9 @@ public class Profiler implements Transformer, MessageSource {
 		// 3. Execute any postprocessing
 
 		if (rules.contains(
-				RULE_TRF_PROFILING_POSTPROCESSING_REMOVE_PROFILE_INFOS)) {
+				RULE_TRF_PROFILING_POSTPROCESSING_REMOVE_PROFILE_INFOS))
+
+		{
 
 			for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
 
@@ -978,9 +1099,8 @@ public class Profiler implements Transformer, MessageSource {
 			 * profile setting is enabled - does not belong to a profile
 			 */
 
-			return propertyProfiles.contains(
-					pi.name() + (" (property in class '" + pi.inClass().name()
-							+ "')"),
+			return propertyProfiles.contains(pi.name()
+					+ (" (property in class '" + pi.inClass().name() + "')"),
 					profilesFromConfig,
 					PROFILES_PARAMETER + "_config_parameter",
 					isExplicitProfileSettingsRuleEnabled, false, messages);
@@ -996,8 +1116,8 @@ public class Profiler implements Transformer, MessageSource {
 	 * 
 	 * @param constraints
 	 * @param owner
-	 *            Info class that the constraints belong to (PropertyInfo or
-	 *            ClassInfo)
+	 *                        Info class that the constraints belong to
+	 *                        (PropertyInfo or ClassInfo)
 	 * @param result
 	 * @param genModel
 	 * @return
@@ -1169,13 +1289,14 @@ public class Profiler implements Transformer, MessageSource {
 		case 103:
 			return "";
 
-		
-//		case 20202:
-//			return "<UNUSED_20202>";
-//		case 20203:
-//			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$";
-//		case 20204:
-//			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+		// case 20202:
+		// return "<UNUSED_20202>";
+		// case 20203:
+		// return "The profile set of class '$1$' does not contain the profile
+		// set of its subtype '$2$': $3$";
+		// case 20204:
+		// return "The profile set of class '$1$' does not contain the profile
+		// set of its property '$2$': $3$";
 		case 20205:
 			return "The application schema package '$1$' is completely empty after profiling.";
 		case 20207:
@@ -1192,15 +1313,19 @@ public class Profiler implements Transformer, MessageSource {
 			return "Unrecognized constraint context model element type: '$1$'.";
 		case 20213:
 			return "Unrecognized constraint type: '$1$'.";
-//		case 20214:
-//			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$. Because of the chosen transformation rule(s), '$1$' and all its subtypes will be removed, so that the profile mismatch between super- and subtype does not lead to model inconsistencies.";
+		// case 20214:
+		// return "The profile set of class '$1$' does not contain the profile
+		// set of its subtype '$2$': $3$. Because of the chosen transformation
+		// rule(s), '$1$' and all its subtypes will be removed, so that the
+		// profile mismatch between super- and subtype does not lead to model
+		// inconsistencies.";
 		case 20215:
 			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
 		case 20219:
 			return "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
 		case 20220:
 			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
-		
+
 		default:
 			return "(Unknown message in " + this.getClass().getName()
 					+ ". Message number was: " + mnr + ")";

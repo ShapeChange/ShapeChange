@@ -24,6 +24,8 @@
   <xsl:variable name="fc.backToToc"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.backToToc']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.backToTop"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.backToTop']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Code"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Code']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.CodelistType"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.CodelistType']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.CodelistTypes"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.CodelistTypes']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Constraint"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Constraint']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.DataCaptureStatement"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.DataCaptureStatement']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.DataType"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.DataType']/text[contains(@lang,$lang)]"/></xsl:variable>
@@ -35,6 +37,8 @@
   <xsl:variable name="fc.Diagram"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Diagram']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Diagrams"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Diagrams']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Documentation"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Documentation']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.EnumerationType"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.EnumerationType']/text[contains(@lang,$lang)]"/></xsl:variable>
+ <xsl:variable name="fc.EnumerationTypes"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.EnumerationTypes']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Example"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Example']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.Expression"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.Expression']/text[contains(@lang,$lang)]"/></xsl:variable>
   <xsl:variable name="fc.false"><xsl:value-of select="$localizationMessages/messages/message[@id='fc.false']/text[contains(@lang,$lang)]"/></xsl:variable>

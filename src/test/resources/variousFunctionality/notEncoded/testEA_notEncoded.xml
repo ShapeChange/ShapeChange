@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/variousFunctionality/notEncoded/test_notEncoded.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test.*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/variousFunctionality/notEncoded/log.xml" />
+	</log>
+	<transformers>
+		<Transformer id="F_associationClasses" input="INPUT" class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper"/>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			id="F_inheritance" input="F_associationClasses" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			id="F_multiplicity" input="F_inheritance" mode="enabled">
+			<parameters>
+				<ProcessParameter name="maxOccurs" value="3" />
+				<ProcessParameter name="flattenObjectTypes" value="false" />
+				<ProcessParameter name="maxMultiplicityThreshold"
+					value="3" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-multiplicity" />
+					<rule
+						name="rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations" />
+					<rule
+						name="rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			id="F_types" input="F_multiplicity" mode="enabled">
+			<parameters>
+				<ProcessParameter name="flattenObjectTypes" value="false" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-types" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			id="F_name" input="F_types" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-all-flatten-name" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="INPUT" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/variousFunctionality/notEncoded/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="ocl" />
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+			<rules>
+				<EncodingRule extends="gml33" name="ocl">
+			      <rule name="rule-xsd-pkg-schematron"/>
+			    </EncodingRule>
+			  </rules>
+			<xsdMapEntries>
+				<XsdMapEntry type="FeatureType2" xsdEncodingRules="iso19136_2007 gml33" xmlType="om:OM_ObservationType" xmlElement="om:OM_Observation" xmlPropertyType="om:OM_ObservationPropertyType" />
+			</xsdMapEntries>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchema" inputs="F_associationClasses" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/json"/>
+			<targetParameter name="defaultEncodingRule" value="geoservices_extended"/>
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<mapEntries>
+				<MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
+				<MapEntry type="Integer" rule="*" targetType="integer" param=""/>
+				<MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
+				<MapEntry type="FeatureType2" rule="geoservices_extended" targetType="ref:http://example.org/json/observation.json" param=""/>
+			</mapEntries>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_name" mode="enabled">			
+			<targetParameter name="defaultEncodingRule" value="replicationSchema" />
+			<targetParameter name="outputDirectory"
+				value="testResults/variousFunctionality/notEncoded/repXsd" />		
+			<targetParameter name="idColumnName" value="objectidentifier" />
+			<targetParameter name="size" value="4000" />
+			<targetParameter name="srid" value="31467" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />			
+			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
+			
+			<targetParameter name="replicationSchemaTargetNamespaceSuffix" value="/rep" />
+			<targetParameter name="replicationSchemaObjectIdentifierFieldType" value="string"/>
+			<targetParameter name="replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType" value="Test documentation for fields with unlimited length character data type."/>
+			<rules>
+				<EncodingRule name="sql2" extends="sql">	
+		            <rule name="rule-sql-cls-references-to-external-types" />
+		            <rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-exclude-abstract" />
+					<rule name="rule-sql-all-foreign-key-default-naming" />
+					<rule name="rule-sql-all-normalizing-lower-case" />
+					<rule name="rule-sql-all-unique-naming-count-suffix" />
+		        </EncodingRule>
+				<EncodingRule name="replicationSchema" extends="sql2">
+					<rule name="rule-sql-all-normalizing-ignore-case" />
+					<rule name="rule-sql-all-replicationSchema" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<mapEntries>
+			  	<MapEntry rule="*" type="CharacterString" targetType="string" param="textOrCharacterVarying"/>
+			  	<MapEntry rule="*" type="Integer" targetType="integer"/>
+			  	<MapEntry rule="*" type="FeatureType2" targetType="MappingForFeatureType2" param="table"/>
+			</mapEntries>	
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_name" mode="enabled">
+			
+			<targetParameter name="defaultEncodingRule" value="sql2" />
+			<targetParameter name="outputDirectory"
+				value="testResults/variousFunctionality/notEncoded/sql" />				
+			<targetParameter name="idColumnName" value="objectidentifier" />
+			<targetParameter name="size" value="4000" />
+			<targetParameter name="srid" value="31467" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />			
+			<targetParameter name="foreignKeyColumnSuffix" value="_FK" />
+			<rules>
+				<EncodingRule name="sql2" extends="sql">	
+		            <rule name="rule-sql-cls-references-to-external-types" />
+		            <rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-exclude-abstract" />
+					<rule name="rule-sql-all-foreign-key-default-naming" />
+					<rule name="rule-sql-all-normalizing-lower-case" />
+					<rule name="rule-sql-all-unique-naming-count-suffix" />
+		        </EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+				<mapEntries>
+			  	<MapEntry rule="*" type="CharacterString" targetType="string" param="textOrCharacterVarying"/>
+			  	<MapEntry rule="*" type="Integer" targetType="integer"/>
+			  	<MapEntry rule="*" type="FeatureType2" targetType="MappingForFeatureType2" param="table"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

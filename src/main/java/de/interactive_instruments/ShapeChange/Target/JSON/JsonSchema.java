@@ -48,6 +48,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -228,11 +229,11 @@ public class JsonSchema implements Target, MessageSource {
 			return;
 		}
 		
-		if (options.matchesEncRule(ci.encodingRule("json"),"geoservices")) {
+		if (options.getRuleRegistry().matchesEncRule(ci.encodingRule("json"),"geoservices")) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN) {
 				return;
 			}
-		} else if (options.matchesEncRule(ci.encodingRule("json"),"geoservices_extended")) {
+		} else if (options.getRuleRegistry().matchesEncRule(ci.encodingRule("json"),"geoservices_extended")) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN && 
 				cat != Options.DATATYPE && cat != Options.UNION) {
 				return;
@@ -422,19 +423,19 @@ public class JsonSchema implements Target, MessageSource {
 				// or a well-known JSON schema
 				cix = model.classById(ti.id);
 				if (cix==null) {
-					if (options.matchesEncRule(propi.encodingRule("json"),"geoservices")) {
+					if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices")) {
 						result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
 						type = "string";
-					} else if (options.matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
+					} else if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
 						result.addWarning(this, 105, propi.inClass().name(), propi.name(), ti.name);
 						type = "any";
 					}
 				} else {
 					int cat = cix.category();
 					if (cat==Options.CODELIST) {
-						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
 							type = "string";
-						} else if (options.matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
+						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
 							type = "string";
 							format = "uri";
 						}					
@@ -461,7 +462,7 @@ public class JsonSchema implements Target, MessageSource {
 						enums += "]";
 						}
 					} else if (cat==Options.FEATURE || cat==Options.OBJECT || cat==Options.MIXIN) {
-						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
 							type = "integer";
 							String lyrURI = cix.taggedValue("jsonLayerTableURI");
 							if (lyrURI!=null) {
@@ -475,18 +476,18 @@ public class JsonSchema implements Target, MessageSource {
 								ctx.links += "\t\t\t\"href\":\""+lyrURI+"/{#/attributes/"+propi.name()+"}?f=json\"\n";
 								ctx.links += "\t\t}";
 							}
-						} else if (options.matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
+						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
 							type = "string";
 							format = "uri";
 						}					
 					} else if (cat==Options.DATATYPE || cat==Options.UNION) {
 						
-						if (options.matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
 							
 							flatten = true;
 							verifyNoGeometry(cix);
 							
-						} else if (options.matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
+						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
 							
 							PackageInfo rootPackage = cix.pkg().rootPackage();
 							
@@ -510,16 +511,16 @@ public class JsonSchema implements Target, MessageSource {
 				}
 			}
 			
-			if (options.matchesEncRule(propi.encodingRule("json"),"geoservices_extended") && propi.voidable())
+			if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended") && propi.voidable())
 				nillable = true; 
 			
 			int repeat = 1;
 			boolean array = false;
 			if (type!=null || ref!=null || flatten) {
 				if (m.maxOccurs>1) {
-					if (options.matchesEncRule(propi.encodingRule("json"),"geoservices")) {
+					if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices")) {
 						repeat = 3;
-					} else if (options.matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
+					} else if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
 						array = true;
 					}
 				}
@@ -755,6 +756,22 @@ public class JsonSchema implements Target, MessageSource {
 		return prefix + "JSON Schema Target: " + mess;
 	}
 	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		/*
+		 * JSON encoding rules
+		 */
+		r.addRule("rule-json-all-notEncoded");
+
+		r.addExtendsEncRule("geoservices", "*");
+		r.addExtendsEncRule("geoservices_extended", "*");
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "geoservices";
+	}
+	
 	/**
 	 * This is the message text provision proper. It returns a message for a number.
 	 * @param mnr Message number
@@ -809,4 +826,10 @@ public class JsonSchema implements Target, MessageSource {
 	public String getTargetName(){
 		return "JSON Schema";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "json";
+	}
+
 }

@@ -113,4 +113,14 @@ public class DatabaseModelConstants {
 	 * tables) will still be created inside the tables package.
 	 */
 	public static final String PARAM_ESTABLISH_PACKAGE_HIERARCHY = "dataModelEstablishPackageHierarchy";
+	
+	  /**
+	   * Optional (default is determined by the EA process) - Value for the field 'Author' of an EA element.
+	   */
+	  public static final String PARAM_EA_AUTHOR = "eaAuthor";
+	  
+	  /**
+	   * Optional (default is determined by the EA process) - Value for the field 'Status' of an EA element.
+	   */
+	  public static final String PARAM_EA_STATUS = "eaStatus";
 }

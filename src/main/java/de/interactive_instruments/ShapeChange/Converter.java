@@ -55,7 +55,6 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
-import de.interactive_instruments.ShapeChange.Model.Transformer;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
@@ -136,7 +135,26 @@ public class Converter implements MessageSource {
 		} else {
 
 			// process model as usual
-			Model m = getModel();
+
+			String imt = options.parameter("inputModelType");
+
+			String mdl = options.parameter("inputFile");
+			String repoFileNameOrConnectionString = options
+					.parameter("repositoryFileNameOrConnectionString");
+
+			String connection = StringUtils
+					.isNotBlank(repoFileNameOrConnectionString)
+							? repoFileNameOrConnectionString
+							: mdl;
+
+			String username = options.parameter("username");
+			String password = options.parameter("password");
+
+			String transformer = options.parameter("transformer");
+
+			DefaultModelProvider mp = new DefaultModelProvider(result, options);
+			Model m = mp.getModel(imt, connection, username, password, true,
+					transformer);
 
 			convert(m);
 		}
@@ -277,15 +295,11 @@ public class Converter implements MessageSource {
 	public void convert(Model model) {
 
 		try {
+
 			if (model == null) {
 				result.addFatalError(this, 14);
 				throw new ShapeChangeAbortException();
 			}
-
-			model.loadInformationFromExternalSources();
-
-			// Prepare and check model
-			model.postprocessAfterLoadingAndValidate();
 
 			// simply return if no schema is selected for processing
 			SortedSet<? extends PackageInfo> selectedSchema = model
@@ -1035,121 +1049,6 @@ public class Converter implements MessageSource {
 		return false;
 	}
 
-	private Model getModel() throws ShapeChangeAbortException {
-
-		String imt = options.parameter("inputModelType");
-
-		String mdl = options.parameter("inputFile");
-
-		String repoFileNameOrConnectionString = options
-				.parameter("repositoryFileNameOrConnectionString");
-
-		String username = options.parameter("username");
-		String password = options.parameter("password");
-
-		String user = username == null ? "" : username;
-		String pwd = password == null ? "" : password;
-
-		// Support original model type codes
-		if (imt == null) {
-			result.addFatalError(this, 26);
-			throw new ShapeChangeAbortException();
-		} else if (imt.equalsIgnoreCase("ea7")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		} else if (imt.equalsIgnoreCase("xmi10")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		} else if (imt.equalsIgnoreCase("gsip")) {
-			imt = "org.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-		} else if (imt.equalsIgnoreCase("scxml")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
-		} else {
-			result.addInfo(this, 27, imt);
-		}
-
-		// Transformations of the model are only supported for EA models
-		if (imt.equals(
-				"de.interactive_instruments.ShapeChange.Model.EA.EADocument")) {
-			String transformer = options.parameter("transformer");
-			if (transformer != null && transformer.length() > 0) {
-
-				// TBD: at the moment the 'old' transformer only works with the
-				// inputFile parameter
-				// if (mdl == null || mdl.trim().length() == 0) {
-				// throw new
-				// ShapeChangeAbortException("Transformation with 'transformer'
-				// specified via the according input parameter is only supported
-				// for models contained in EAP file - but no inputFile was
-				// provided.");
-				// }
-
-				try {
-					Class<?> theClass = Class.forName(transformer);
-					Transformer t = (Transformer) theClass.getConstructor()
-							.newInstance();
-					t.initialise(options, result, mdl);
-					t.transform();
-					t.shutdown();
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new ShapeChangeAbortException();
-				}
-			}
-		}
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-		try {
-			theClass = Class.forName(imt);
-			if (theClass == null) {
-				result.addFatalError(null, 17, imt);
-				throw new ShapeChangeAbortException();
-			}
-			m = (Model) theClass.getConstructor().newInstance();
-			if (m != null) {
-
-				/*
-				 * we accept path to EAP file or repository connection string
-				 * via both inputFile and repositoryFileNameOrConnectionString
-				 * parameters
-				 */
-				String repoConnectionInfo;
-
-				if (repoFileNameOrConnectionString != null
-						&& repoFileNameOrConnectionString.length() > 0) {
-					repoConnectionInfo = repoFileNameOrConnectionString;
-				} else if (mdl != null && mdl.length() > 0) {
-					repoConnectionInfo = mdl;
-				} else {
-					result.addFatalError(this, 24);
-					throw new ShapeChangeAbortException();
-				}
-
-				if (user.length() == 0) {
-					m.initialise(result, options, repoConnectionInfo);
-				} else {
-					m.initialise(result, options, repoConnectionInfo, user,
-							pwd);
-				}
-			} else {
-				result.addFatalError(null, 17, imt);
-				throw new ShapeChangeAbortException();
-			}
-		} catch (ClassNotFoundException e) {
-			result.addFatalError(null, 17, imt);
-			throw new ShapeChangeAbortException();
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addFatalError(null, 19, imt);
-			throw new ShapeChangeAbortException();
-		} catch (IllegalAccessException e) {
-			result.addFatalError(null, 20, imt);
-			throw new ShapeChangeAbortException();
-		}
-		return m;
-	}
-
 	@Override
 	public String message(int mnr) {
 
@@ -1161,12 +1060,6 @@ public class Converter implements MessageSource {
 
 		case 14:
 			return "No model has been loaded to convert.";
-		case 24:
-			return "Neither 'inputFile' nor 'repositoryFileNameOrConnectionString' parameter set in configuration. Cannot connect to a repository.";
-		case 26:
-			return "Required input parameter 'inputModelType' not found in the configuration.";
-		case 27:
-			return "Value of input parameter 'inputModelType' (which defines the model implementation) is '$1$'.";
 		case 165:
 			return "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
 

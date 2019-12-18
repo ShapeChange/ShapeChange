@@ -38,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -62,6 +61,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -69,20 +69,22 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.ShapeChange.DefaultModelProvider;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
-import de.interactive_instruments.ShapeChange.ModelDiff.Differ;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.Operation;
+import de.interactive_instruments.ShapeChange.ModelDiff.Differ;
+import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 
 public class CodelistRegister implements SingleTarget {
 
@@ -231,7 +233,17 @@ public class CodelistRegister implements SingleTarget {
 			if (s != null && s.length() > 0)
 				outputDirectory = s;
 
-			refModel = getReferenceModel();
+			String imt = options.parameter(this.getClass().getName(),
+					"referenceModelType");
+			String mdl = options.parameter(this.getClass().getName(),
+					"referenceModelFile");
+
+			if (StringUtils.isNotBlank(imt) && StringUtils.isNotBlank(mdl)) {
+
+				DefaultModelProvider mp = new DefaultModelProvider(result,
+						options);
+				refModel = mp.getModel(imt, mdl, null, null, false, null);
+			}
 
 			rootDocument = createDocument();
 
@@ -354,59 +366,6 @@ public class CodelistRegister implements SingleTarget {
 				}
 			}
 		}
-	}
-
-	private Model getReferenceModel() {
-		String imt = options.parameter(this.getClass().getName(),
-				"referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(),
-				"referenceModelFile");
-
-		if (imt == null || mdl == null || imt.isEmpty() || mdl.isEmpty())
-			return null;
-
-		// Support original model type codes
-		if (imt.equalsIgnoreCase("ea7"))
-			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		else if (imt.equalsIgnoreCase("xmi10"))
-			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-		try {
-			theClass = Class.forName(imt);
-			if (theClass == null) {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-			m = (Model) theClass.getConstructor().newInstance();
-			if (m != null) {
-				m.initialise(result, options, mdl);
-			} else {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-		} catch (ClassNotFoundException e) {
-			result.addError(null, 17, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addError(null, 19, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalAccessException | SecurityException e) {
-			result.addError(null, 20, imt);
-			result.addError(null, 22, mdl);
-		} catch (ShapeChangeAbortException e) {
-			result.addError(null, 22, mdl);
-			m = null;
-		}
-		return m;
 	}
 
 	/** Add attribute to an element */
@@ -1219,6 +1178,11 @@ public class CodelistRegister implements SingleTarget {
 	public String getTargetName() {
 		return "Codelist register";
 	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "clreg";
+	}
 
 	public void reset() {
 		printed = false;
@@ -1307,4 +1271,16 @@ public class CodelistRegister implements SingleTarget {
 		}
 
 	}
+
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	
 }

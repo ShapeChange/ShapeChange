@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test1_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ex1="http://example.org/shapechange/sch/xslt2QueryBinding/s1" xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s1 ../reference/results/xsd_sch_xslt2/INPUT/test1.xsd">
+ <gml:featureMember>
+  <ex1:TS1_FeatureType gml:id="FT1_1">
+   <ex1:att1>1</ex1:att1>
+   <ex1:att1>5</ex1:att1>
+   <ex1:att2>test</ex1:att2>
+   <ex1:att3>
+    <ex1:DataType>
+     <ex1:dtAtt>test</ex1:dtAtt>
+    </ex1:DataType>
+   </ex1:att3>
+   <ex1:rFT1toFT2 xlink:href="#FT2_1"/>
+  </ex1:TS1_FeatureType>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FeatureType2 gml:id="FT2_1">
+   <ex1:attFT2>abc</ex1:attFT2>
+   <ex1:rFT2toFT1 xlink:href="#FT1_1"/>
+   <ex1:rFT2toFT3 xlink:href="#FT3_1"/>
+  </ex1:TS1_FeatureType2>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FeatureType3 gml:id="FT3_PASS">
+   <ex1:attFT3>42</ex1:attFT3>
+   <ex1:rFT3toFT2 xlink:href="#FT2_1"/>
+  </ex1:TS1_FeatureType3>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FeatureType3 gml:id="FT3_FAIL">
+   <ex1:attFT3>42</ex1:attFT3>
+   <ex1:rFT3toFT2 xlink:href="#FT2_2"/>
+  </ex1:TS1_FeatureType3>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FeatureType2 gml:id="FT2_2">
+   <ex1:attFT2>abc</ex1:attFT2>
+   <ex1:rFT2toFT1 xlink:href="#FT1_2"/>
+  </ex1:TS1_FeatureType2>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FeatureType gml:id="FT1_2">
+   <ex1:att1>1</ex1:att1>
+   <ex1:att2>test</ex1:att2>
+   <ex1:att3>
+    <ex1:DataType>
+     <ex1:dtAtt>x</ex1:dtAtt>
+    </ex1:DataType>
+   </ex1:att3>
+   <ex1:rFT1toFT2 xlink:href="#FT2_1"/>
+  </ex1:TS1_FeatureType>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_LetTest gml:id="lt_PASS">
+   <ex1:att1>6</ex1:att1>
+   <ex1:att2>2</ex1:att2>
+   <ex1:att2>1</ex1:att2>
+   <ex1:att2>3</ex1:att2>
+   <ex1:att2>4</ex1:att2>
+   <ex1:att2>5</ex1:att2>
+   <ex1:att2>6</ex1:att2>
+   <ex1:att2>7</ex1:att2>
+   <ex1:att3>
+    <ex1:TS1_LetTest_DataType>
+     <ex1:attx>7</ex1:attx>
+    </ex1:TS1_LetTest_DataType>
+   </ex1:att3>
+  </ex1:TS1_LetTest>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_LetTest gml:id="lt_FAIL">
+   <ex1:att1>3</ex1:att1>
+   <ex1:att2>3</ex1:att2>
+   <ex1:att2>4</ex1:att2>
+   <ex1:att2>3</ex1:att2>
+   <ex1:att3>
+    <ex1:TS1_LetTest_DataType>
+     <!-- Changing the value to 6 or higher would result in a violation of constraint4. -->
+     <ex1:attx>3</ex1:attx>
+    </ex1:TS1_LetTest_DataType>
+   </ex1:att3>
+  </ex1:TS1_LetTest>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_M gml:id="m_PASS"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_M gml:id="m_FAIL"/>
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex1:TS1_FTM>
+   <ex1:rFTMtoM xlink:href="#m_PASS"/>
+  </ex1:TS1_FTM>
+ </gml:featureMember>
+</gml:FeatureCollection>

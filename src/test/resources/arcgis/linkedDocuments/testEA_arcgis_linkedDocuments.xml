@@ -49,6 +49,7 @@
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
+			<targetParameter name="eaAuthor" value="echterhoff" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 					<!-- <rule name="rule-arcgis-cls-identifierStereotype" /> -->

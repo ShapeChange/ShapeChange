@@ -50,6 +50,7 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -68,7 +69,7 @@ import de.interactive_instruments.ShapeChange.Target.Target;
  */
 public class AppConfiguration implements Target, MessageSource {
 
-	public static final String PLATFORM = "appcfg";
+	public static final String TARGET_IDENTIFIER = "appcfg";
 	public static final String NS = "http://www.interactive-instruments.de/ShapeChange/AppConfiguration/0.1";
 
 	/* ------------------------------------------- */
@@ -513,10 +514,25 @@ public class AppConfiguration implements Target, MessageSource {
 
 		printed = true;
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
 
 	@Override
 	public String getTargetName() {
 		return "App Configuration";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+
+	@Override
+	public String getTargetIdentifier() {
+	    return TARGET_IDENTIFIER;
 	}
 
 	/**
@@ -544,5 +560,4 @@ public class AppConfiguration implements Target, MessageSource {
 					+ ") Unknown message with number: " + mnr;
 		}
 	}
-
 }

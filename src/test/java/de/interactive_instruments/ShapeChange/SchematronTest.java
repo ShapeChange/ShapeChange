@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class SchematronTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class SchematronTest extends BasicTestSCXML {
 
 	@Test
 	public void schematronTestCodelist2() {
@@ -89,5 +91,33 @@ public class SchematronTest extends WindowsBasicTest {
 		multiTest("src/test/resources/sch/iterator_with_byReference_property/testEA_sch_iterator_with_byReference_property.xml",
 				new String[] { "sch" }, "testResults/sch/iterator_with_byReference_property",
 				"src/test/resources/sch/iterator_with_byReference_property/reference");
-	}	
+	}
+	
+	@Test
+	public void schematronTest_oclConstraintOnProperties() {
+		multiTest("src/test/resources/sch/oclConstraintOnProperties/testEA_sch_oclConstraintOnProperties.xml",
+				new String[] { "sch", "xml" }, "testResults/sch/oclConstraintOnProperties/results",
+				"src/test/resources/sch/oclConstraintOnProperties/reference/results");
+	}
+	
+	@Test
+	public void schematronTest_oclPropertyMetadata() {
+		multiTest("src/test/resources/sch/oclPropertyMetadata/testEA_sch_oclPropertyMetadata.xml",
+				new String[] { "sch" }, "testResults/sch/oclPropertyMetadata/results",
+				"src/test/resources/sch/oclPropertyMetadata/reference/results");
+	}
+	
+	@Test
+	public void schematronTest_xslt2QueryBinding() {
+		multiTest("src/test/resources/sch/xslt2QueryBinding/testEA_sch_xslt2QueryBinding.xml",
+				new String[] { "sch" }, "testResults/sch/xslt2QueryBinding/results",
+				"src/test/resources/sch/xslt2QueryBinding/reference/results");
+	}
+	
+	@Test
+	public void schematronTest_valueOrNilReason() {
+		multiTest("src/test/resources/sch/valueOrNilReason/testEA_sch_valueOrNilReason.xml",
+				new String[] { "xsd","sch" }, "testResults/sch/valueOrNilReason",
+				"src/test/resources/sch/valueOrNilReason/reference");
+	}
 }

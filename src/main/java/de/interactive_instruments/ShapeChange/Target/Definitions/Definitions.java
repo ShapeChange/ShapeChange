@@ -53,6 +53,7 @@ import org.w3c.dom.ProcessingInstruction;
 
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Target.Target;
@@ -62,6 +63,9 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 public class Definitions implements Target {
+    
+    public static final String DEF_NS = "http://www.interactive-instruments.de/ShapeChange/Definitions/0.5";
+    
 
 	private PackageInfo pi = null;
 	private Model model = null;
@@ -123,17 +127,17 @@ public class Definitions implements Target {
 				"type='text/xsl' href='./ShapeChangeDefinitions.xsl'");
 		document.appendChild(proci);
 
-		root = document.createElementNS(Options.DEF_NS,
+		root = document.createElementNS(DEF_NS,
 				"ApplicationSchemaDefinition");
 		document.appendChild(root);
 		addAttribute(document, root, "gml:id", "_");
 		addAttribute(document, root, "xmlns:gml", options.GML_NS);
-		addAttribute(document, root, "xmlns:def", Options.DEF_NS);
+		addAttribute(document, root, "xmlns:def", DEF_NS);
 		addAttribute(document, root, "xmlns:xlink",
 				"http://www.w3.org/1999/xlink");
 		addAttribute(document, root, "xmlns:xsi",
 				"http://www.w3.org/2001/XMLSchema-instance");
-		addAttribute(document, root, "xsi:schemaLocation", Options.DEF_NS
+		addAttribute(document, root, "xsi:schemaLocation", DEF_NS
 				+ " ShapeChangeDefinitions.xsd");
 		if (instanceView)
 			addAttribute(document, root, "instanceView", "true");
@@ -235,12 +239,12 @@ public class Definitions implements Target {
 			Element ec = createTypeDefinition(pi, cDocument, ci, t);
 			cDocument.appendChild(ec);
 			addAttribute(cDocument, ec, "xmlns:gml", options.GML_NS);
-			addAttribute(cDocument, ec, "xmlns:def", Options.DEF_NS);
+			addAttribute(cDocument, ec, "xmlns:def", DEF_NS);
 			addAttribute(cDocument, ec, "xmlns:xlink",
 					"http://www.w3.org/1999/xlink");
 			addAttribute(cDocument, ec, "xmlns:xsi",
 					"http://www.w3.org/2001/XMLSchema-instance");
-			addAttribute(cDocument, ec, "xsi:schemaLocation", Options.DEF_NS
+			addAttribute(cDocument, ec, "xsi:schemaLocation", DEF_NS
 					+ " ShapeChangeDefinitions.xsd");
 
 			documentMap.put(ci.id(), cDocument);
@@ -258,7 +262,7 @@ public class Definitions implements Target {
 			ClassInfo ci, String t) {
 
 		Element e1 = lDocument
-				.createElementNS(Options.DEF_NS, "TypeDefinition");
+				.createElementNS(DEF_NS, "TypeDefinition");
 		addAttribute(lDocument, e1, "gml:id", ci.id());
 
 		Element e2;
@@ -274,13 +278,13 @@ public class Definitions implements Target {
 		e2.appendChild(lDocument.createTextNode("urn:x-shapechange:def:" + t + ":"
 				+ namingAuthority + "::" + ci.pkg().xmlns() + ":"
 				+ ci.pkg().version() + ":" + ci.name()));
-		addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS);
+		addAttribute(lDocument, e2, "codeSpace", DEF_NS);
 		e1.appendChild(e2);
 
 		s = ci.taggedValue("Title");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS + "/title");
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/title");
 			e2.appendChild(lDocument.createTextNode(s));
 			e1.appendChild(e2);
 		}
@@ -288,7 +292,7 @@ public class Definitions implements Target {
 		s = ci.taggedValue("primaryCode");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS
 					+ "/primaryCode");
 			e2.appendChild(lDocument.createTextNode(s));
 			e1.appendChild(e2);
@@ -297,14 +301,14 @@ public class Definitions implements Target {
 		s = ci.taggedValue("secondaryCode");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS
 					+ "/secondaryCode");
 			e2.appendChild(lDocument.createTextNode(s));
 			e1.appendChild(e2);
 		}
 
 		e2 = lDocument.createElementNS(options.GML_NS, "name");
-		addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS + "/name");
+		addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/name");
 		e2.appendChild(lDocument.createTextNode(ci.name()));
 		e1.appendChild(e2);
 
@@ -319,7 +323,7 @@ public class Definitions implements Target {
 			}
 		}
 		
-		e2 = lDocument.createElementNS(Options.DEF_NS, "classification");
+		e2 = lDocument.createElementNS(DEF_NS, "classification");
 		e2.appendChild(lDocument.createTextNode(t));
 		e1.appendChild(e2);
 
@@ -334,7 +338,7 @@ public class Definitions implements Target {
 					&& (cate == Options.FEATURE
 						|| cate == Options.OBJECT || cate == Options.MIXIN
 						|| cate == Options.DATATYPE || cate == Options.BASICTYPE)) {
-					e2 = lDocument.createElementNS(Options.DEF_NS,
+					e2 = lDocument.createElementNS(DEF_NS,
 							"supertypeRef");
 					String t0 = "featureType";
 					if (cate == Options.OBJECT) {
@@ -351,7 +355,7 @@ public class Definitions implements Target {
 							+ ei.pkg().xmlns() + ":" + ei.pkg().version() + ":"
 							+ ei.name());
 				} else {
-					e2 = lDocument.createElementNS(Options.DEF_NS,
+					e2 = lDocument.createElementNS(DEF_NS,
 							"supertypeName");
 					e2.appendChild(lDocument.createTextNode(ei.name()));
 				}
@@ -364,7 +368,7 @@ public class Definitions implements Target {
 			s = ci.taggedValue(tags[i].trim());
 			if (s != null && !tags[i].trim().equals("primaryCode")
 					&& !tags[i].trim().equals("secondaryCode")) {
-				e2 = lDocument.createElementNS(Options.DEF_NS, "taggedValue");
+				e2 = lDocument.createElementNS(DEF_NS, "taggedValue");
 				addAttribute(lDocument, e2, "tag", tags[i].trim());
 				e2.appendChild(lDocument.createTextNode(s));
 				e1.appendChild(e2);
@@ -383,7 +387,7 @@ public class Definitions implements Target {
 
 		Element e = lDocument.createElementNS(options.GML_NS,
 				"dictionaryEntry");
-		Element e3 = lDocument.createElementNS(Options.DEF_NS,
+		Element e3 = lDocument.createElementNS(DEF_NS,
 				"PropertyDefinition");
 		addAttribute(lDocument, e3, "gml:id", propi.id());
 		e.appendChild(e3);
@@ -403,13 +407,13 @@ public class Definitions implements Target {
 						+ namingAuthority + "::"
 						+ ci.pkg().xmlns() + ":" + ci.pkg().version()
 						+ ":" + ci.name() + ":" + propi.name()));
-		addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS);
+		addAttribute(lDocument, e2, "codeSpace", DEF_NS);
 		e3.appendChild(e2);
 
 		s = propi.taggedValue("Title");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS
 					+ "/title");
 			e2.appendChild(lDocument.createTextNode(s));
 			e3.appendChild(e2);
@@ -418,7 +422,7 @@ public class Definitions implements Target {
 		s = propi.taggedValue("primaryCode");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS
 					+ "/primaryCode");
 			e2.appendChild(lDocument.createTextNode(s));
 			e3.appendChild(e2);
@@ -427,14 +431,14 @@ public class Definitions implements Target {
 		s = propi.taggedValue("secondaryCode");
 		if (s != null) {
 			e2 = lDocument.createElementNS(options.GML_NS, "name");
-			addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+			addAttribute(lDocument, e2, "codeSpace", DEF_NS
 					+ "/secondaryCode");
 			e2.appendChild(lDocument.createTextNode(s));
 			e3.appendChild(e2);
 		}
 
 		e2 = lDocument.createElementNS(options.GML_NS, "name");
-		addAttribute(lDocument, e2, "codeSpace", Options.DEF_NS
+		addAttribute(lDocument, e2, "codeSpace", DEF_NS
 				+ "/name");
 		e2.appendChild(lDocument.createTextNode(propi.name()));
 		e3.appendChild(e2);
@@ -457,7 +461,7 @@ public class Definitions implements Target {
 						"dictionaryEntry");
 				e3.appendChild(e2);
 
-				Element e4 = lDocument.createElementNS(Options.DEF_NS,
+				Element e4 = lDocument.createElementNS(DEF_NS,
 						"ListedValueDefinition");
 				addAttribute(lDocument, e4, "gml:id", propi.id() + "_"
 						+ vi.id());
@@ -512,7 +516,7 @@ public class Definitions implements Target {
 		}
 
 		Multiplicity m = propi.cardinality();
-		e2 = lDocument.createElementNS(Options.DEF_NS, "cardinality");
+		e2 = lDocument.createElementNS(DEF_NS, "cardinality");
 		if (m.minOccurs == m.maxOccurs) {
 			e2.appendChild(lDocument.createTextNode(m.minOccurs + ""));
 		} else if (m.maxOccurs == Integer.MAX_VALUE
@@ -534,7 +538,7 @@ public class Definitions implements Target {
 						|| cate == Options.DATATYPE
 						|| cate == Options.BASICTYPE
 						|| cate == Options.UNION)) {
-			e2 = lDocument.createElementNS(Options.DEF_NS,
+			e2 = lDocument.createElementNS(DEF_NS,
 					"valueTypeRef");
 			String t0 = "featureType";
 			if (cate == Options.OBJECT) {
@@ -553,14 +557,14 @@ public class Definitions implements Target {
 					+ ei.pkg().xmlns() + ":" + ei.pkg().version() + ":"
 					+ ei.name());
 		} else {
-			e2 = lDocument.createElementNS(Options.DEF_NS,
+			e2 = lDocument.createElementNS(DEF_NS,
 					"valueTypeName");
 			e2.appendChild(lDocument
 					.createTextNode(propi.typeInfo().name));
 		}
 		e3.appendChild(e2);
 
-		e2 = lDocument.createElementNS(Options.DEF_NS, "type");
+		e2 = lDocument.createElementNS(DEF_NS, "type");
 		if (propi.isAttribute()) {
 			e2.appendChild(lDocument.createTextNode("attribute"));
 		} else {
@@ -649,5 +653,20 @@ public class Definitions implements Target {
 	@Override
 	public String getTargetName(){
 		return "Definitions";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "def";
+	}
+
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
 	}
 }

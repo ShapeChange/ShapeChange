@@ -75,6 +75,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
@@ -82,8 +83,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstra
 /**
  * Builds SQL statements for model elements.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class SqlBuilder implements MessageSource {
@@ -105,14 +106,15 @@ public class SqlBuilder implements MessageSource {
 
 	private List<Table> tables = new ArrayList<Table>();
 
-	private List<CreateTable> createTableStatements = new ArrayList<CreateTable>();
-	private List<Alter> foreignKeyConstraints = new ArrayList<Alter>();
-	private List<Alter> checkConstraints = new ArrayList<Alter>();
-	private List<Alter> uniqueConstraints = new ArrayList<Alter>();
-	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<Statement>();
-	private List<Statement> geometryIndexStatements = new ArrayList<Statement>();
-	private List<Insert> insertStatements = new ArrayList<Insert>();
-	private List<Comment> commentStatements = new ArrayList<Comment>();
+	private List<SQLitePragma> sqLitePragmas = new ArrayList<>();
+	private List<CreateTable> createTableStatements = new ArrayList<>();
+	private List<Alter> foreignKeyConstraints = new ArrayList<>();
+	private List<Alter> checkConstraints = new ArrayList<>();
+	private List<Alter> uniqueConstraints = new ArrayList<>();
+	private List<Statement> geometryMetadataUpdateStatements = new ArrayList<>();
+	private List<Statement> geometryIndexStatements = new ArrayList<>();
+	private List<Insert> insertStatements = new ArrayList<>();
+	private List<Comment> commentStatements = new ArrayList<>();
 
 	private SqlNamingScheme namingScheme;
 	private SqlDdl sqlddl;
@@ -217,7 +219,8 @@ public class SqlBuilder implements MessageSource {
 					} else {
 						fieldType = SqlDdl.databaseStrategy
 								.limitedLengthCharacterDataType(
-										SqlDdl.codeNameSize);
+										SqlDdl.codeNameSize,
+										SqlDdl.lengthQualifier);
 					}
 
 					cdPi = createColumn(table, pi, piDocumentation, piFieldName,
@@ -789,7 +792,8 @@ public class SqlBuilder implements MessageSource {
 			} else {
 
 				codeColumnType = SqlDdl.databaseStrategy
-						.limitedLengthCharacterDataType(SqlDdl.codeNameSize);
+						.limitedLengthCharacterDataType(SqlDdl.codeNameSize,
+								SqlDdl.lengthQualifier);
 			}
 
 			cd_codename = createColumn(table, null, codeNameColumnDocumentation,
@@ -811,7 +815,8 @@ public class SqlBuilder implements MessageSource {
 						.unlimitedLengthCharacterDataType();
 			} else {
 				descriptor_fieldType = SqlDdl.databaseStrategy
-						.limitedLengthCharacterDataType(descriptor.getSize());
+						.limitedLengthCharacterDataType(descriptor.getSize(),
+								SqlDdl.lengthQualifier);
 			}
 
 			String descriptorDocumentation = descriptor.getDocumentation();
@@ -844,7 +849,8 @@ public class SqlBuilder implements MessageSource {
 
 						// assume textual type
 						ColumnDataType codeStatusCLDataType = determineCharacterVaryingOrText(
-								SqlDdl.codeStatusCLLength);
+								SqlDdl.codeStatusCLLength,
+								SqlDdl.lengthQualifier);
 						cd_codeStatusCl.setDataType(codeStatusCLDataType);
 
 						// now check if the code status type is numerically
@@ -886,7 +892,7 @@ public class SqlBuilder implements MessageSource {
 						SqlDdl.codeStatusNotesColumnDocumentation,
 						SqlDdl.nameCodeStatusNotesColumn,
 						SqlDdl.databaseStrategy.limitedLengthCharacterDataType(
-								255),
+								255, SqlDdl.lengthQualifier),
 						"", false, false);
 				columns.add(cd_codeStatusNotes);
 
@@ -973,8 +979,10 @@ public class SqlBuilder implements MessageSource {
 	/**
 	 * @param column
 	 * @param propertyNameForConstraintName
-	 *            name of the property for which the check constraint is
-	 *            created; relevant for constructing the constraint name
+	 *                                          name of the property for which
+	 *                                          the check constraint is created;
+	 *                                          relevant for constructing the
+	 *                                          constraint name
 	 * @param enumCi
 	 */
 	private void alterTableAddCheckConstraintForEnumerationValueType(
@@ -1125,25 +1133,6 @@ public class SqlBuilder implements MessageSource {
 
 			this.checkConstraints.add(alter);
 		}
-	}
-
-	/**
-	 * @param pi
-	 * @return <code>true</code> if the value type of the given property is a
-	 *         geometry type - which requires a map entry for the value type
-	 *         whose param contains the {@value #ME_PARAM_GEOMETRY} parameter;
-	 *         otherwise <code>false</code> is returned.
-	 */
-	private boolean isGeometryTypedProperty(PropertyInfo pi) {
-
-		String valueTypeName = pi.typeInfo().name;
-		String piEncodingRule = pi.encodingRule("sql");
-
-		ProcessMapEntry pme = options.targetMapEntry(valueTypeName,
-				piEncodingRule);
-
-		return pme != null && SqlDdl.mapEntryParamInfos.hasParameter(
-				valueTypeName, piEncodingRule, SqlConstants.ME_PARAM_GEOMETRY);
 	}
 
 	/**
@@ -1325,9 +1314,10 @@ public class SqlBuilder implements MessageSource {
 	 *
 	 * @param pi
 	 * @param alwaysNotNull
-	 *            <code>true</code> if the column definition shall be created
-	 *            with NOT NULL, otherwise <code>false</code> (then default
-	 *            behavior applies)
+	 *                          <code>true</code> if the column definition shall
+	 *                          be created with NOT NULL, otherwise
+	 *                          <code>false</code> (then default behavior
+	 *                          applies)
 	 * @return The SQL statement with the definition of the column to represent
 	 *         the property
 	 */
@@ -1412,8 +1402,8 @@ public class SqlBuilder implements MessageSource {
 
 				if (characteristics.containsKey(
 						SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)) {
-					quoted = characteristics
-							.get(SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)
+					quoted = characteristics.get(
+							SqlConstants.ME_PARAM_DEFAULTVALUE_CHARACT_QUOTED)
 							.equalsIgnoreCase("true");
 				}
 			}
@@ -1655,7 +1645,8 @@ public class SqlBuilder implements MessageSource {
 							} else {
 								return SqlDdl.databaseStrategy
 										.limitedLengthCharacterDataType(
-												SqlDdl.codeNameSize);
+												SqlDdl.codeNameSize,
+												SqlDdl.lengthQualifier);
 							}
 
 						} else {
@@ -1713,6 +1704,7 @@ public class SqlBuilder implements MessageSource {
 		String dtName = me.getTargetType();
 
 		Integer length = null;
+		String lengthQualifier = null;
 		Integer precision = null;
 		Integer scale = null;
 
@@ -1744,6 +1736,8 @@ public class SqlBuilder implements MessageSource {
 					// result.addError(this, 30, me.getType(),
 					// me.getTargetType(), e.getMessage());
 					// }
+
+					lengthQualifier = determineLengthQualifierFromMapEntry(me);
 
 				} else if (SqlDdl.mapEntryParamInfos.hasParameter(me,
 						SqlConstants.ME_PARAM_PRECISION)) {
@@ -1782,7 +1776,8 @@ public class SqlBuilder implements MessageSource {
 			}
 		}
 
-		return new ColumnDataType(dtName, precision, scale, length);
+		return new ColumnDataType(dtName, precision, scale, length,
+				lengthQualifier);
 	}
 
 	/**
@@ -1893,15 +1888,42 @@ public class SqlBuilder implements MessageSource {
 		// keep track of the result for use by the replication schema
 		this.sizeByCharacterValuedProperty.put(pi, size);
 
-		return determineCharacterVaryingOrText(size);
+		String lengthQualifier = null;
+
+		ProcessMapEntry me = options.targetMapEntry(pi.typeInfo().name,
+				pi.encodingRule("sql"));
+
+		if (me != null) {
+			lengthQualifier = determineLengthQualifierFromMapEntry(me);
+		} else {
+			lengthQualifier = SqlDdl.lengthQualifier;
+		}
+
+		return determineCharacterVaryingOrText(size, lengthQualifier);
 	}
 
-	private ColumnDataType determineCharacterVaryingOrText(int size) {
+	private String determineLengthQualifierFromMapEntry(ProcessMapEntry me) {
+		String statedLengthQualifier = SqlDdl.mapEntryParamInfos
+				.getCharacteristic(me.getType(), me.getRule(),
+						SqlConstants.ME_PARAM_LENGTH,
+						SqlConstants.ME_PARAM_LENGTH_CHARACT_LENGTH_QUALIFIER);
+		String lengthQualifier;
+		if ("NONE".equalsIgnoreCase(statedLengthQualifier)) {
+			lengthQualifier = null;
+		} else {
+			lengthQualifier = statedLengthQualifier;
+		}
+		return lengthQualifier;
+	}
+
+	private ColumnDataType determineCharacterVaryingOrText(int size,
+			String lengthQualifier) {
 
 		if (size < 1) {
 			return SqlDdl.databaseStrategy.unlimitedLengthCharacterDataType();
 		} else {
-			return SqlDdl.databaseStrategy.limitedLengthCharacterDataType(size);
+			return SqlDdl.databaseStrategy.limitedLengthCharacterDataType(size,
+					lengthQualifier);
 		}
 	}
 
@@ -1945,7 +1967,7 @@ public class SqlBuilder implements MessageSource {
 	 * @param tableWithColumn
 	 * @param columnForProperty
 	 * @param pi
-	 *            property represented by the column
+	 *                              property represented by the column
 	 * @return
 	 */
 	private Statement generateGeometryIndex(Table tableWithColumn,
@@ -2172,7 +2194,8 @@ public class SqlBuilder implements MessageSource {
 							 */
 							col.setDataType(new ColumnDataType(
 									refColdt.getName(), refColdt.getPrecision(),
-									refColdt.getScale(), refColdt.getLength()));
+									refColdt.getScale(), refColdt.getLength(),
+									refColdt.getLengthQualifier()));
 						}
 					}
 				}
@@ -2219,7 +2242,7 @@ public class SqlBuilder implements MessageSource {
 					if (pi.matches(
 							SqlConstants.RULE_TGT_SQL_PROP_CHECK_CONSTRAINT_FOR_RANGE)) {
 
-						Double lowerBoundaryValue = Double.valueOf(-1000000000);						
+						Double lowerBoundaryValue = Double.valueOf(-1000000000);
 						Double upperBoundaryValue = Double.valueOf(1000000000);
 
 						boolean foundLowerBoundary = false;
@@ -2319,6 +2342,8 @@ public class SqlBuilder implements MessageSource {
 		// which may adjust constraint names to make them unique
 		if (SqlDdl.createReferences) {
 
+			boolean foreignKeyConstraintCreated = false;
+
 			// Process in order of table and column names
 			List<CreateTable> cts = new ArrayList<CreateTable>(
 					this.createTableStatements);
@@ -2349,8 +2374,17 @@ public class SqlBuilder implements MessageSource {
 								cd, cd.getReferencedTable());
 
 						foreignKeyConstraints.add(alter);
+
+						foreignKeyConstraintCreated = true;
 					}
 				}
+			}
+
+			if (foreignKeyConstraintCreated
+					&& SqlDdl.databaseStrategy instanceof SQLiteStrategy) {
+				
+				SQLitePragma pragma = new SQLitePragma("foreign_keys", "ON");
+				sqLitePragmas.add(pragma);
 			}
 		}
 
@@ -2368,7 +2402,7 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi != null) {
 
-					if (isGeometryTypedProperty(pi)) {
+					if (SqlUtil.isGeometryTypedProperty(pi)) {
 
 						Statement stmt = SqlDdl.databaseStrategy
 								.geometryMetadataUpdateStatement(t, col,
@@ -2396,7 +2430,7 @@ public class SqlBuilder implements MessageSource {
 
 				if (pi != null) {
 
-					if (isGeometryTypedProperty(pi)) {
+					if (SqlUtil.isGeometryTypedProperty(pi)) {
 
 						Statement stmt = this.generateGeometryIndex(t, col, pi);
 
@@ -2670,6 +2704,7 @@ public class SqlBuilder implements MessageSource {
 
 		List<Statement> stmts = new ArrayList<Statement>();
 
+		stmts.addAll(this.sqLitePragmas);
 		stmts.addAll(this.createTableStatements);
 		stmts.addAll(this.checkConstraints);
 		stmts.addAll(this.foreignKeyConstraints);
@@ -2730,19 +2765,21 @@ public class SqlBuilder implements MessageSource {
 
 	/**
 	 * @param isOnDelete
-	 *            <code>true</code> if the option is for the 'ON DELETE' clause,
-	 *            <code>false</code> if it is for the 'ON UPDATE' clause.
+	 *                         <code>true</code> if the option is for the 'ON
+	 *                         DELETE' clause, <code>false</code> if it is for
+	 *                         the 'ON UPDATE' clause.
 	 * @param optionValue
-	 *            String value for the option; can be <code>null</code> (then
-	 *            this method has no effect)
+	 *                         String value for the option; can be
+	 *                         <code>null</code> (then this method has no
+	 *                         effect)
 	 * @param fkc
-	 *            the constraint on which the option would be set
+	 *                         the constraint on which the option would be set
 	 * @param column
-	 *            the column to which the constraint applies, relevant for
-	 *            validity checks on the option
+	 *                         the column to which the constraint applies,
+	 *                         relevant for validity checks on the option
 	 * @param relevantInfo
-	 *            the model element that defines the option via tagged value,
-	 *            relevant for log messages
+	 *                         the model element that defines the option via
+	 *                         tagged value, relevant for log messages
 	 */
 	private void setForeignKeyOption(boolean isOnDelete, String optionValue,
 			ForeignKeyConstraint fkc, Column column, Info relevantInfo) {
@@ -2817,7 +2854,7 @@ public class SqlBuilder implements MessageSource {
 
 	/**
 	 * @param pi
-	 *            property, may be <code>null</code>
+	 *               property, may be <code>null</code>
 	 * @return the size that is applicable for the property - or
 	 *         <code>null</code> if the property is not character valued or has
 	 *         no specific size set
@@ -2835,7 +2872,8 @@ public class SqlBuilder implements MessageSource {
 	 * is created (this is logged on debug level) and returned.
 	 * 
 	 * @param tableName
-	 *            name of the table to look up, must not be <code>null</code>
+	 *                      name of the table to look up, must not be
+	 *                      <code>null</code>
 	 * @return
 	 */
 	private Table map(String tableName) {

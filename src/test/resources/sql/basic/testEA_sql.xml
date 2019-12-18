@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="addTaggedValues" value="code" />
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile" value="src/test/resources/sql/basic/test_sql.EAP" />
+		<parameter name="appSchemaNameRegex" value="Test$" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/sql/basic/log_sql.xml"/>
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="step1" mode="enabled">
+			<parameters>
+				<ProcessParameter name="targetNamespaceSuffix"
+					value="/flat" />
+				<ProcessParameter name="maxOccurs" value="3" />
+				<ProcessParameter name="flattenObjectTypes" value="false" />
+				<ProcessParameter name="codeByTaggedValue" value="code" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+					<rule name="rule-trf-prop-flatten-multiplicity" />
+					<rule name="rule-trf-prop-flatten-types" />
+					<rule name="rule-trf-all-flatten-name" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Naming.NamingModifier"
+			input="step1" id="step2" mode="enabled">
+			<parameters>
+				<ProcessParameter name="suffix" value="_SUFFIX" />
+				<ProcessParameter name="modelElementNamesToAddSuffixRegex"
+					value="Feature(2|3)|F(2|3)" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="rules">
+					<rule name="rule-trf-add-suffix" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="INPUT step1" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/sql/basic/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="xsd_rule" />
+			<rules>
+				<EncodingRule name="xsd_rule" extends="gml33">
+					<rule name="req-xsd-cls-mixin-supertypes" />
+					<rule name="rule-xsd-cls-mixin-classes" />
+					<rule name="rule-xsd-prop-initialValue" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
+<!-- 			inputs="step1" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/sql/basic/fc" /> -->
+<!-- 			<targetParameter name="outputFilename" value="test" /> -->
+<!-- 			<targetParameter name="sortedOutput" value="true" /> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false" /> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML,DOCX" /> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl" /> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'" /> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..." /> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a" /> -->
+<!-- 			<targetParameter name="versionDate" value="n/a" /> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH" /> -->
+<!-- 		</Target> -->
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="step2" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sql" />
+			<targetParameter name="outputDirectory" value="testResults/sql/basic/ddl/postgres" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="31467" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<xi:include href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="step2" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sql" />
+			<targetParameter name="databaseSystem" value="SQLServer"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/basic/ddl/sqlserver" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="31467" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<xi:include href="src/main/resources/config/StandardSqlMapEntries-SQLServer.xml" />
+		</Target>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.ShapeChange.Target.AppConfiguration.AppConfiguration" -->
+<!-- 			inputs="step2" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/sql/basic/appconfig" /> -->
+<!-- 			<targetParameter name="size" value="100" /> -->
+<!-- 			<xi:include -->
+<!-- 				href="src/main/resources/config/StandardAppConfigurationMapEntries.xml" /> -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

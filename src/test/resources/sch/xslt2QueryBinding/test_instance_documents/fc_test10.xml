@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/results/xsd_sch_xslt2/INPUT/test10_SchematronSchema.sch"?>
+<gml:FeatureCollection xmlns:gml="http://www.opengis.net/gml/3.2"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:ex10="http://example.org/shapechange/sch/xslt2QueryBinding/s10"
+ xmlns:ext="http://example.org/shapechange/sch/xslt2QueryBinding/externalSchema"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/xslt2QueryBinding/s10 ../reference/results/xsd_sch_xslt2/INPUT/test10.xsd">
+ <gml:featureMember>
+  <ex10:TS10_FT1 gml:id="ft1_PASS">
+   <ex10:att>test</ex10:att>
+   <ex10:att>test</ex10:att>
+   <ex10:rFT1toFT2 xlink:href="#ft2_1"/>
+   <ex10:rFT1toFT2 xlink:href="#ft2_2"/>
+  </ex10:TS10_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT2 gml:id="ft2_1">
+   <ex10:att>5</ex10:att>
+   <ex10:rFT2toFT3 xlink:href="#ft3_3"/>
+  </ex10:TS10_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT2 gml:id="ft2_2">
+   <ex10:att>5</ex10:att>
+   <ex10:rFT2toFT3 xlink:href="#ft3_1"/>
+   <ex10:rFT2toFT3 xlink:href="#ft3_2"/>
+  </ex10:TS10_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT3 gml:id="ft3_1">
+   <ex10:att>true</ex10:att>
+  </ex10:TS10_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT3 gml:id="ft3_2">
+   <ex10:att>true</ex10:att>
+  </ex10:TS10_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT3 gml:id="ft3_3">
+   <ex10:att>true</ex10:att>
+  </ex10:TS10_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT1 gml:id="ft1_FAIL">
+   <ex10:att>foo</ex10:att>
+   <ex10:att>test</ex10:att>
+   <ex10:rFT1toFT2 xlink:href="#ft2_3"/>
+   <ex10:rFT1toFT2 xlink:href="#ft2_4"/>
+  </ex10:TS10_FT1>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT2 gml:id="ft2_3">
+   <ex10:att>2</ex10:att>
+   <ex10:rFT2toFT3 xlink:href="#ft3_4"/>
+  </ex10:TS10_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT2 gml:id="ft2_4">
+   <ex10:att>5</ex10:att>
+   <ex10:rFT2toFT3 xlink:href="#ft3_5"/>
+  </ex10:TS10_FT2>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT3 gml:id="ft3_4">
+   <ex10:att>true</ex10:att>
+  </ex10:TS10_FT3>  
+ </gml:featureMember>
+ <gml:featureMember>
+  <ex10:TS10_FT3 gml:id="ft3_5">
+   <ex10:att>false</ex10:att>
+  </ex10:TS10_FT3>  
+ </gml:featureMember>
+</gml:FeatureCollection>

@@ -69,6 +69,7 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -1029,6 +1030,22 @@ public class CDB implements SingleTarget, MessageSource {
 
 			result.addError(this, 3, outFileName, ioe.getMessage());
 		}
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-cdb-all-notEncoded");
+		r.addRule("rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet");
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "cdb";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
 	}
 
 	@Override

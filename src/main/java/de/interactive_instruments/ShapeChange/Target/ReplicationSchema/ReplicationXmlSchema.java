@@ -61,6 +61,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
@@ -994,6 +995,24 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 			}
 			anchor = importElement;
 		}
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+		r.addRule("rule-rep-prop-optional");
+		r.addRule("rule-rep-prop-exclude-derived");
+		r.addRule("rule-rep-cls-generate-objectidentifier");
+		r.addRule("rule-rep-prop-maxLength-from-size");
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "rep";
 	}
 
 	@Override

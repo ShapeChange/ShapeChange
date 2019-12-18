@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import java.util.List;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public interface StatementVisitor {
@@ -51,6 +51,10 @@ public interface StatementVisitor {
 	public void visit(Comment comment);
 
 	public void visit(List<Statement> stmts);
+
+	public void visit(Select select);
+
+	public void visit(SQLitePragma sqLitePragma);
 
 	/**
 	 * Signals the visitor that all statements have been visited, so that any

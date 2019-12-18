@@ -57,11 +57,13 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.LangString;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 
 public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
@@ -110,7 +112,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	protected PackageInfoEA packageInfo;
 
 	/** Baseclasses */
-	protected ClassInfoEA baseclassInfo = null;
 	protected TreeSet<ClassInfoEA> baseclassInfoSet = null;
 
 	/** Subclasses */
@@ -170,11 +171,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		// Determine some class flags
 		isAbstract = eaClassElement.GetAbstract().equals("1");
 		isLeaf = eaClassElement.GetIsLeaf();
+		
 		// Determine class category
-		if (elmt.GetType().equalsIgnoreCase("enumeration"))
+		establishCategory();
+		if (category == Options.UNKNOWN
+				&& elmt.GetType().equalsIgnoreCase("enumeration")) {
 			category = Options.ENUMERATION;
-		else
-			establishCategory();
+		}
 
 		// Cache if realisations should not be treated as generalisations
 		/*
@@ -218,7 +221,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			 * found are registered as base classes. In the base classes
 			 * register this class as subclass.
 			 */
-			int nbcl = 0;
 			int clientid, bclid, cat;
 			String conntype;
 			boolean gen, rea;
@@ -256,21 +258,12 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 						if (cat != Options.MIXIN)
 							continue;
 					}
-					/*
-					 * Establish as base class. Since most classes indeed
-					 * possess at most one base class, this case will be treated
-					 * somewhat storage-optimized.
-					 */
-					if (++nbcl == 1) {
-						baseclassInfo = baseCI;
-					} else {
-						if (baseclassInfoSet == null) {
-							baseclassInfoSet = new TreeSet<ClassInfoEA>();
-							baseclassInfoSet.add(baseclassInfo);
-							baseclassInfo = null;
-						}
-						baseclassInfoSet.add(baseCI);
+
+					if (baseclassInfoSet == null) {
+						baseclassInfoSet = new TreeSet<ClassInfoEA>();
 					}
+					baseclassInfoSet.add(baseCI);
+
 					// Register with the subclasses of the base class.
 					baseCI.subclassInfoSet.add(this);
 				}
@@ -335,20 +328,32 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				// First find out whether the association has already been
 				// processed from its other end. If so, discard.
 				id = conn.GetConnectorID();
-				connid = Integer.valueOf(id).toString();
+				connid = createAssociationId(Integer.valueOf(id).toString());
 				known = document.fAssociationById.containsKey(connid);
 				if (known)
 					continue;
 				// First encounter: Create AssociationInfo wrapper and
 				// properties linkage.
 				AssociationInfoEA ai = new AssociationInfoEA(document, conn,
-						id);
+						connid);
 				// Register with global associations map, if relevant class
 				// association
 				if (ai.relevant)
 					document.fAssociationById.put(connid, ai);
 			}
 		}
+	}
+
+	/**
+	 * In EA, the association and the class of an association class construct
+	 * may have the same ID. That is not allowed by ShapeChange. See
+	 * {@link Info#id()}. Therefore, this method augments the base ID of an
+	 * association connector.
+	 * 
+	 * @param baseId
+	 */
+	private String createAssociationId(String baseId) {
+		return "as" + baseId;
 	}
 
 	// Establish the roles attached to the class. This auxiliary initializing
@@ -382,110 +387,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return document.result;
 	} // result()
 
-	@Override
-	public ClassInfo baseClass() {
-		// Initialize
-		int stsize = 0; // # of proper base candidates
-		ClassInfo cir = null; // the base result
-		int cat = category(); // category of this class
-		// Check if the class has one of the acknowledged categories. If not
-		// no bases classes will be reported.
-		if (cat == Options.FEATURE || cat == Options.OBJECT
-				|| cat == Options.DATATYPE || cat == Options.MIXIN
-				|| cat == Options.UNION) {
-			// Get hold of the available base classes
-			TreeSet<ClassInfoEA> baseCIs = null;
-			if (baseclassInfoSet != null)
-				baseCIs = baseclassInfoSet;
-			else if (baseclassInfo != null) {
-				baseCIs = new TreeSet<ClassInfoEA>();
-				baseCIs.add(baseclassInfo);
-			}
-			// Loop over base classes and select the GML-relevant one
-			if (baseCIs != null) {
-				for (ClassInfoEA baseCI : baseCIs) {
-					// Get base class category
-					int bcat = baseCI.category();
-					// Needs to compatible and not a mixin. If not so,
-					// we have an error
-					if ((cat == bcat || bcat == Options.UNKNOWN)
-							&& bcat != Options.MIXIN) {
-						// Compatible select and count
-						stsize++;
-						cir = baseCI;
-					} else if (bcat != Options.MIXIN) {
-
-						// Ignore, if we accept supertypes that are not mixins
-						// and we are a mixin
-						if (cat == Options.MIXIN && matches(
-								"rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
-
-							// do nothing and ignore
-
-							/*
-							 * FIXME 2017-09-12 JE: Method baseClass() should be
-							 * in ClassInfoImpl(). However, that we are matching
-							 * on a specific target rule here is an issue.
-							 * Everything in the XxxImpl classes should not
-							 * depend on specific target rules, since
-							 * transformations can produce models for multiple
-							 * targets. Rules such as the one above should be
-							 * general rules that apply for the whole processing
-							 * chain.
-							 */
-
-						} else if (this.model().isInSelectedSchemas(this)) {
-							// Not compatible and not mixin: An error
-							MessageContext mc = document.result.addError(null,
-									108, name());
-							if (mc != null)
-								mc.addDetail(null, 400, "Package",
-										pkg().fullName());
-							document.result.addDebug(null, 10003, name(),
-									"" + cat, "!FALSE");
-							document.result.addDebug(null, 10003, name(),
-									"" + bcat, "!TRUE");
-						} else {
-							/*
-							 * 2015-07-17 JE: So this is a class that violates
-							 * multiple inheritance rules. However, it is
-							 * outside the selected schemas. We could log a
-							 * debug, info, or even warning message. However, we
-							 * should not raise an error because creation of a
-							 * complete GenericModel that also copies ISO
-							 * classes would raise an error which would cause a
-							 * unit test to fail.
-							 */
-						}
-					}
-				}
-			}
-			// Did we find more than one suitable base class? Which is
-			// an error.
-			if (stsize > 1) {
-
-				if (this.model().isInSelectedSchemas(this)) {
-					MessageContext mc = document.result.addError(null, 109,
-							name());
-					if (mc != null)
-						mc.addDetail(null, 400, "Package", pkg().fullName());
-				} else {
-					/*
-					 * 2015-07-17 JE: So this is a class that violates multiple
-					 * inheritance rules. However, it is outside the selected
-					 * schemas. We could log a debug, info, or even warning
-					 * message. However, we should not raise an error because
-					 * creation of a complete GenericModel that also copies ISO
-					 * classes would raise an error which would cause a unit
-					 * test to fail.
-					 */
-				}
-			}
-		}
-		// Return, what we found
-		return cir;
-	} // baseClass()
-
 	/**
 	 * This is supposed to find out, whether the given category 'cat' applied in
 	 * 'this' class complies to the categories of all its base classes. If at
@@ -497,9 +398,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public boolean checkSupertypes(int cat) {
 		// Prepare set of base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		// Consider all baseclasses in turn, break as soon as a first non-
 		// compliancy is detected.
@@ -558,9 +457,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		}
 		// Go and search in base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		for (ClassInfoEA bci : bcis) {
 			PropertyInfo pi = bci.property(name);
@@ -570,9 +467,12 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return null;
 	} // property()
 
-	// Validate stereotypes cache of the class. The stereotypes found are 1.
-	// restricted to those defined within ShapeChange and 2. deprecated ones
-	// are normalized to the lastest definitions.
+	/**
+	 * The stereotypes added to the cache are the well-known equivalents of the
+	 * stereotypes defined in the EA model, if mapped in the configuration.
+	 * 
+	 * @see de.interactive_instruments.ShapeChange.Model.Info#validateStereotypesCache()
+	 */
 	public void validateStereotypesCache() {
 
 		if (stereotypesCache == null) {
@@ -582,18 +482,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			String[] stereotypes = sts.split("\\,");
 
 			// Allocate cache
-			stereotypesCache = options().stereotypesFactory();
-			// Copy stereotypes found in class selecting those defined in
-			// ShapeChange and normalizing deprecated ones.
-			for (String stereotype : stereotypes) {
-				String st = document.options
-						.normalizeStereotype(stereotype.trim());
-				if (st != null)
-					for (String s : Options.classStereotypes) {
-						if (st.toLowerCase().equals(s))
-							stereotypesCache.add(s);
-					}
-			}
+			stereotypesCache = StereotypeNormalizer
+					.normalizeAndMapToWellKnownStereotype(stereotypes, this);
 
 			/*
 			 * 2017-03-23 JE: Apparently when calling
@@ -610,10 +500,23 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			 * established based upon the stereotype (and potentially existing
 			 * XML Schema conversion rules) when importing an SCXML model.
 			 */
-			if (!stereotypesCache.contains("enumeration") && eaClassElement
+			if (stereotypesCache.isEmpty() && eaClassElement
 					.GetType().equalsIgnoreCase("enumeration")) {
 				stereotypesCache.add("enumeration");
+				document.result.addDebug(null, 52, this.name(), "enumeration");
 			}
+			/*
+			 * The same reasoning applies for data types, which are not classes 
+			 * according to the UML spec, but another type of classifier.
+			 */
+			if (stereotypesCache.isEmpty() && eaClassElement
+					.GetType().equalsIgnoreCase("datatype")) {
+				stereotypesCache.add("datatype");
+				document.result.addDebug(null, 52, this.name(), "datatype");
+			}
+			document.result.addDebug(null, 55, this.name(),
+					Integer.toString(stereotypesCache.size()),
+					stereotypesCache.toString());
 		}
 	} // validateStereotypesCache()
 
@@ -632,9 +535,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	public SortedSet<String> supertypes() {
 		// Convert base class object set to base class id set.
 		SortedSet<String> baseids = new TreeSet<String>();
-		if (baseclassInfo != null)
-			baseids.add(baseclassInfo.id());
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			for (ClassInfoEA bci : baseclassInfoSet)
 				baseids.add(bci.id());
 		return baseids;
@@ -656,12 +557,12 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				String s = null;
 
 				// Try EA notes if ea:notes is the source
-				if (descriptorSource(Descriptor.DOCUMENTATION)
+				if (model().descriptorSource(Descriptor.DOCUMENTATION)
 						.equals("ea:notes")) {
 					s = eaClassElement.GetNotes();
-					// Fix for EA7.5 bug
+					// Handle EA formatting
 					if (s != null) {
-						s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+						s = document.applyEAFormatting(s);
 					}
 				}
 
@@ -713,7 +614,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				globalIdentifierAccessed = true;
 
 				// obtain from EA model directly
-				if (descriptorSource(Descriptor.GLOBALIDENTIFIER)
+				if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER)
 						.equals("ea:guidtoxml")) {
 
 					String gi = document.repository.GetProjectInterface()
@@ -733,7 +634,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				 * obtain from EA model directly if ea:alias is identified as
 				 * the source
 				 */
-				if (descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
+				if (model().descriptorSource(Descriptor.ALIAS)
+						.equals("ea:alias")) {
 
 					String a = eaClassElement.GetAlias();
 
@@ -776,9 +678,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	// if (descriptorSource(Descriptor.DOCUMENTATION)
 	// .equals("ea:notes")) {
 	// s = eaClassElement.GetNotes();
-	// // Fix for EA7.5 bug
+	// // Handle EA formatting
 	// if (s != null) {
-	// s = EADocument.removeSpuriousEA75EntitiesFromStrings(s);
+	// s = document.applyEAFormatting(s);
 	// }
 	// }
 	//
@@ -899,7 +801,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 				// normalize deprecated tags.
 				for (TaggedValue tv : tvs) {
 					String t = tv.GetName();
-					t = document.normalizeTaggedValue(t);
+					t = options().taggedValueNormalizer()
+							.normalizeTaggedValue(t);
 					if (t != null) {
 						String v = tv.GetValue();
 						if (v.equals("<memo>"))
@@ -950,8 +853,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			// Allocate cache
 			constraintsCache = new Vector<Constraint>();
 			// Constraints disabled?
-			String check = document.options.parameter("checkingConstraints");
-			if (check != null && check.equalsIgnoreCase("disabled"))
+			if (!document.options.constraintLoadingEnabled())
 				return;
 
 			// Constraints for this class category irrelevant?
@@ -1070,9 +972,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	private HashSet<ClassInfoEA> supertypesAsClassInfoEA() {
 		// Create base class object set
 		HashSet<ClassInfoEA> baseClasses = new HashSet<ClassInfoEA>(1);
-		if (baseclassInfo != null)
-			baseClasses.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			for (ClassInfoEA bci : baseclassInfoSet)
 				baseClasses.add(bci);
 		return baseClasses;
@@ -1204,9 +1104,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		}
 		// Go and search in base classes
 		TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
-		if (baseclassInfo != null)
-			bcis.add(baseclassInfo);
-		else if (baseclassInfoSet != null)
+		if (baseclassInfoSet != null)
 			bcis = baseclassInfoSet;
 		for (ClassInfoEA bci : bcis) {
 			OperationInfo oi = bci.operation(name, types);
@@ -1226,7 +1124,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 			if (eaClassElement.GetSubtype() == 17
 					&& !eaClassElement.MiscData(3).isEmpty()) {
 				assoc = document.fAssociationById
-						.get(eaClassElement.MiscData(3));
+						.get(createAssociationId(eaClassElement.MiscData(3)));
 			}
 		}
 		return assoc;

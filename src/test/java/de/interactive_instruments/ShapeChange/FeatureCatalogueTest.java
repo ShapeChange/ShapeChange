@@ -31,144 +31,161 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class FeatureCatalogueTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class FeatureCatalogueTest extends BasicTestSCXML {
 
+    // 2018-11-09 JE: NOTE: the following test is commented out on purpose: It
+    // is only used for internal testing, since the image size depends
+    // on the settings in EA, which are user dependent.
+
+//	 @Test
+//	 public void testUMLDiagrams() {
+//	 /*
+//	 * A simple model to test the creation of a docx feature catalogue that
+//	 * includes UML diagrams
+//	 */
+//	
+//	 docxTest("src/test/resources/featureCatalogue/umlDiagrams/testEA_Docx_FC_with_images.xml",
+//	 new String[] { "test_featurecatalog_with_images" },
+//	 "testResults/featureCatalogue/umlDiagrams/myInputId",
+//	 "src/test/resources/featureCatalogue/umlDiagrams/reference");
+//	 }
+
+    @Test
+    public void testSingleFileHtmlFeatureCatalogue() {
 	/*
-	 * A simple model to test the creation of a docx feature catalogue that
-	 * includes UML diagrams
+	 * A simple model to test the creation of a single-file html feature catalogue
 	 */
-	// TODO image file names and sizes not stable
-	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-	// new String[]{"test_featurecatalog_with_images"},
-	// "testResults/docx_with_images/myInputId",
-	// "src/test/resources/reference/docx");
+	multiTest("src/test/resources/featureCatalogue/singleFileHtmlFeatureCatalogue/testEA_Html.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/singleFileHtmlFeatureCatalogue/INPUT",
+		"src/test/resources/featureCatalogue/singleFileHtmlFeatureCatalogue/reference");
+    }
 
-	@Test
-	public void testSingleFileHtmlFeatureCatalogue() {
-		/*
-		 * A simple model to test the creation of a single-file html feature
-		 * catalogue
-		 */
-		htmlTest("src/test/resources/config/testEA_Html.xml",
-				new String[] { "test" }, "testResults/html/INPUT",
-				"src/test/resources/reference/html");
-	}
-
-	@Test
-	public void testLocalizationFunctionality() {
-		/*
-		 * A simple model to test the localization functionality
-		 */
-		htmlTest("src/test/resources/config/testEA_HtmlLocalization.xml",
-				new String[] { "test" }, "testResults/html/localization/INPUT",
-				"src/test/resources/reference/html/localization");
-	}
-
-	@Test
-	public void testDocxFeatureCatalogue() {
-		/*
-		 * A simple model to test the creation of a docx feature catalogue
-		 */
-		docxTest("src/test/resources/config/testEA_Docx.xml",
-				new String[] { "test" }, "testResults/docx/myInputId",
-				"src/test/resources/reference/docx");
-	}
-
-	// 2018-11-09 JE: NOTE: the following test is commented out on purpose: It
-	// is only used for internal testing, since the image size depends
-	// on the settings in EA, which are user dependent.
-
-	// @Test
-	// public void testDocxFeatureCatalogue_with_images() {
-	// /*
-	// * A simple model to test the creation of a docx feature catalogue
-	// *
-	// *
-	// */
-	// docxTest("src/test/resources/config/testEA_Docx_FC_with_images.xml",
-	// new String[] { "test" }, "testResults/docx_with_images/myInputId",
-	// "src/test/resources/reference/docx");
-	// }
-
-	@Test
-	public void testInheritedPropertiesAndNoAlphabeticSortingForProperties() {
-		/*
-		 * Test creation of an HTML feature catalogue with
-		 * inheritedProperties=true and noAlphabeticSortingForProperties = true
-		 */
-		multiTest("src/test/resources/config/testEA_fc_inheritedProperties.xml",
-				new String[] { "xml", "html" },
-				"testResults/html/inheritedProperties/INPUT",
-				"src/test/resources/reference/html/inheritedProperties/INPUT");
-	}
-
-	@Test
-	public void testDerivationOfApplicationSchemaDifferences() {
-		/*
-		 * Test derivation of application schema differences (output as single
-		 * page HTML feature catalogue).
-		 */
-		multiTest("src/test/resources/config/testEA_model_diff.xml",
-				new String[] { "xml", "html" }, "testResults/html/diff/INPUT",
-				"src/test/resources/reference/html/diff/INPUT");
-	}
-
-	@Test
-	public void testTaggedValues() {
-
-		multiTest(
-				"src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
-				new String[] { "xml", "html", "docx" },
-				"testResults/featureCatalogue/taggedValues/results",
-				"src/test/resources/featureCatalogue/taggedValues/reference/results");
-	}
-
-	@Test
-	public void testInheritedConstraints() {
-
-		multiTest(
-				"src/test/resources/featureCatalogue/inheritedConstraints/testEA_featureCatalogue_inheritedConstraints.xml",
-				new String[] { "xml", "html", "docx" },
-				"testResults/featureCatalogue/inheritedConstraints/results",
-				"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
-	}
-
-	@Test
-	public void testLogo() {
-
-		multiTest(
-				"src/test/resources/featureCatalogue/logo/testEA_featureCatalogue_logo.xml",
-				new String[] { "xml", "html", "docx" },
-				"testResults/featureCatalogue/logo/results",
-				"src/test/resources/featureCatalogue/logo/reference/results");
-	}
-
-	@Test
-	public void testDocxStyle_custom1() {
-
-		multiTest(
-				"src/test/resources/featureCatalogue/docxStyle_custom1/test_featureCatalogue_docxStyle_custom1.xml",
-				new String[] { "docx" },
-				"testResults/featureCatalogue/docxStyle_custom1/results",
-				"src/test/resources/featureCatalogue/docxStyle_custom1/reference/results");
-	}
-
+    @Test
+    public void testLocalizationFunctionality() {
 	/*
-	 * Test is disabled because the path to the external JRE is user specific.
-	 * Thus the test is not portable. However, it is useful for local testing of
-	 * this functionality. The target parameter 'pathToJavaExecutable' may need
-	 * to be updated in the ShapeChange configuration, to reflect paths of a
-	 * given user.
+	 * A simple model to test the localization functionality
 	 */
-	// @Test
-	// public void testExternalJRE() {
-	//
-	// multiTest(
-	// "src/test/resources/featureCatalogue/externalJRE/testEA_featureCatalogue_externalJRE.xml",
-	// new String[] { "html" },
-	// "testResults/featureCatalogue/externalJRE/results",
-	// "src/test/resources/featureCatalogue/externalJRE/reference/results");
-	// }
+	multiTest("src/test/resources/featureCatalogue/localizationFunctionality/testEA_HtmlLocalization.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/localizationFunctionality/INPUT",
+		"src/test/resources/featureCatalogue/localizationFunctionality/reference");
+    }
+
+    @Test
+    public void testDocxFeatureCatalogue() {
+	/*
+	 * A simple model to test the creation of a docx feature catalogue
+	 */
+	multiTest("src/test/resources/featureCatalogue/docxFeatureCatalogue/testEA_Docx.xml", new String[] { "docx" },
+		"testResults/featureCatalogue/docxFeatureCatalogue/myInputId",
+		"src/test/resources/featureCatalogue/docxFeatureCatalogue/reference");
+    }
+
+    @Test
+    public void testInheritedPropertiesAndNoAlphabeticSortingForProperties() {
+	/*
+	 * Test creation of an HTML feature catalogue with inheritedProperties=true and
+	 * noAlphabeticSortingForProperties = true
+	 */
+	multiTest(
+		"src/test/resources/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties/testEA_fc_inheritedProperties.xml",
+		new String[] { "html" },
+		"testResults/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties/INPUT",
+		"src/test/resources/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties/reference/INPUT");
+    }
+
+    @Test
+    public void testDerivationOfApplicationSchemaDifferences() {
+	/*
+	 * Test derivation of application schema differences (output as single page HTML
+	 * feature catalogue).
+	 */
+	multiTest("src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/testEA_model_diff.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/derivationOfApplicationSchemaDifferences/INPUT",
+		"src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/reference/INPUT");
+    }
+
+    @Test
+    public void testTaggedValues() {
+
+	multiTest("src/test/resources/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
+		new String[] { "html", "docx" }, "testResults/featureCatalogue/taggedValues/results",
+		"src/test/resources/featureCatalogue/taggedValues/reference/results");
+    }
+
+    @Test
+    public void testInheritedConstraints() {
+
+	multiTest(
+		"src/test/resources/featureCatalogue/inheritedConstraints/testEA_featureCatalogue_inheritedConstraints.xml",
+		new String[] { "html", "docx" }, "testResults/featureCatalogue/inheritedConstraints/results",
+		"src/test/resources/featureCatalogue/inheritedConstraints/reference/results");
+    }
+
+    @Test
+    public void testLogo() {
+
+	multiTest("src/test/resources/featureCatalogue/logo/testEA_featureCatalogue_logo.xml",
+		new String[] { "html", "docx" }, "testResults/featureCatalogue/logo/results",
+		"src/test/resources/featureCatalogue/logo/reference/results");
+    }
+
+    @Test
+    public void testDocxStyle_custom1() {
+
+	multiTest("src/test/resources/featureCatalogue/docxStyle_custom1/test_featureCatalogue_docxStyle_custom1.xml",
+		new String[] { "docx" }, "testResults/featureCatalogue/docxStyle_custom1/results",
+		"src/test/resources/featureCatalogue/docxStyle_custom1/reference/results");
+    }
+
+    @Test
+    public void testEATextFormatting() {
+
+	multiTest("src/test/resources/featureCatalogue/eaTextFormatting/testEA_featureCatalogue_eaTextFormatting.xml",
+		new String[] { "docx", "html" }, "testResults/featureCatalogue/eaTextFormatting/results",
+		"src/test/resources/featureCatalogue/eaTextFormatting/reference/results");
+    }
+
+    @Test
+    public void testDescriptorFunctionality_fc_en() {
+
+	multiTest("src/test/resources/featureCatalogue/descriptors_fc_en/testEA_descriptors_fc_en.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/descriptors_fc_en/fc/INPUT",
+		"src/test/resources/featureCatalogue/descriptors_fc_en/reference");
+    }
+
+    @Test
+    public void testDescriptorFunctionality_fc_de() {
+
+	multiTest("src/test/resources/featureCatalogue/descriptors_fc_de/testEA_descriptors_fc_de.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/descriptors_fc_de/fc/INPUT",
+		"src/test/resources/featureCatalogue/descriptors_fc_de/reference");
+    }
+
+    @Test
+    public void testDescriptorFunctionality_inspire() {
+
+	multiTest("src/test/resources/featureCatalogue/descriptors_inspire/testEA_descriptors_inspire.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/descriptors_inspire/fc/INPUT",
+		"src/test/resources/featureCatalogue/descriptors_inspire/reference");
+    }
+
+    @Test
+    public void testDescriptorFunctionality_aaa() {
+
+	multiTest("src/test/resources/featureCatalogue/descriptors_aaa/testEA_descriptors_aaa.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/descriptors_aaa/fc/INPUT",
+		"src/test/resources/featureCatalogue/descriptors_aaa/reference");
+    }
+
+    @Test
+    public void testDescriptorFunctionality_bbr() {
+
+	multiTest("src/test/resources/featureCatalogue/descriptors_bbr/testEA_descriptors_bbr.xml",
+		new String[] { "html" }, "testResults/featureCatalogue/descriptors_bbr/fc/INPUT",
+		"src/test/resources/featureCatalogue/descriptors_bbr/reference");
+    }
 }

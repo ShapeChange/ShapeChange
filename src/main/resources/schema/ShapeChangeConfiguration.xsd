@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
- xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
- xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
- attributeFormDefault="unqualified" version="1.1.0b1">
+<schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.0b1">
  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
+ <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
  <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
  <complexType name="ShapeChangeConfigurationType">
   <choice minOccurs="0" maxOccurs="unbounded">
@@ -16,6 +13,7 @@
    <element ref="sc:targets"/>
    <element ref="xi:include"/>
   </choice>
+  <attribute ref="xml:base"/>
  </complexType>
  <element name="input">
   <complexType>
@@ -25,7 +23,6 @@
     <element ref="sc:tagAliases"/>
     <element ref="sc:descriptorSources"/>
     <element ref="sc:packages"/>
-    <element ref="sc:language"/>
     <element ref="xi:include"/>
    </choice>
    <attribute name="id" type="ID"/>
@@ -37,16 +34,12 @@
    <attribute name="value" type="string" use="required"/>
   </complexType>
  </element>
- <element name="language">
-  <complexType>
-   <attribute name="default" type="string" use="required"/>
-  </complexType>
- </element>
  <element name="stereotypeAliases">
   <complexType>
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element ref="sc:StereotypeAlias"/>
    </sequence>
+   <attribute ref="xml:base"/>
   </complexType>
  </element>
  <element name="StereotypeAlias" type="sc:StereotypeAliasType"/>
@@ -86,7 +79,8 @@
      <enumeration value="Union"/>
      <enumeration value="valueConcept"/>
      <enumeration value="version"/>
-     <enumeration value="voidable"/>     
+     <enumeration value="voidable"/>
+     <enumeration value="propertyMetadata"/>
     </restriction>
    </simpleType>
   </attribute>
@@ -97,6 +91,7 @@
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element ref="sc:TagAlias"/>
    </sequence>
+   <attribute ref="xml:base"/>
   </complexType>
  </element>
  <element name="TagAlias" type="sc:TagAliasType"/>
@@ -331,6 +326,7 @@
     <element ref="sc:XmlNamespace"/>
     <element ref="sc:xmlNamespaces"/>
    </choice>
+   <attribute ref="xml:base"/>
   </complexType>
  </element>
  <element name="XmlNamespace" type="sc:XmlNamespaceType"/>
@@ -348,6 +344,7 @@
     <element ref="sc:XsdPropertyMapEntry"/>
     <element ref="sc:xsdMapEntries"/>
    </choice>
+   <attribute ref="xml:base"/>
   </complexType>
  </element>
  <element name="XsdMapEntry" type="sc:XsdMapEntryType"/>
@@ -408,6 +405,7 @@
    <sequence minOccurs="0" maxOccurs="unbounded">
     <element name="EncodingRule" type="sc:EncodingRuleType"/>
    </sequence>
+   <attribute ref="xml:base"/>
   </complexType>
  </element>
  <complexType name="RuleRefType">
@@ -452,8 +450,7 @@
   <attribute name="value" type="string"/>
   <attributeGroup ref="sc:modelElementSelectionGroup"/>
  </complexType>
- <element name="DescriptorValue" substitutionGroup="sc:AdvancedProcessConfigurationElement"
-  type="sc:DescriptorValueType"/>
+ <element name="DescriptorValue" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:DescriptorValueType"/>
  <complexType name="DescriptorValueType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -555,11 +552,9 @@
    </choice>
   </complexType>
  </element>
- <element abstract="true" name="AdvancedProcessConfigurationElement"
-  type="sc:AdvancedProcessConfigurationType"/>
+ <element abstract="true" name="AdvancedProcessConfigurationElement" type="sc:AdvancedProcessConfigurationType"/>
  <complexType name="AdvancedProcessConfigurationType"/>
- <element name="AttributeDefinition" type="sc:AttributeDefinitionType"
-  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
+ <element name="AttributeDefinition" type="sc:AttributeDefinitionType" substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="AttributeDefinitionType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -584,6 +579,7 @@
      <element default="false" minOccurs="0" name="isDerived" type="boolean"/>
      <element default="false" minOccurs="0" name="isOrdered" type="boolean"/>
      <element default="false" minOccurs="0" name="isReadOnly" type="boolean"/>
+     <element default="false" minOccurs="0" name="isOwned" type="boolean"/>
      <element name="name" type="string"/>
      <element default="1" minOccurs="0" name="multiplicity" type="string"/>
      <element minOccurs="0" name="stereotypes">
@@ -610,8 +606,7 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType"
-  substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
+ <element name="CDBUnitDefinition" type="sc:CDBUnitDefinitionType" substitutionGroup="sc:AdvancedProcessConfigurationElement"/>
  <complexType name="CDBUnitDefinitionType">
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
@@ -624,6 +619,67 @@
     <attribute name="symbol" type="token" use="required"/>
    </extension>
   </complexContent>
+ </complexType>
+ <element name="GeoPackageSrsDefinitions" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:GeoPackageSrsDefinitionsType">
+  <unique name="uniqueSrsIds">
+   <selector xpath=".//sc:srsId"/>
+   <field xpath="."/>
+  </unique>
+ </element>
+ <complexType name="GeoPackageSrsDefinitionsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element name="srsDefinition">
+      <complexType>
+       <sequence>
+        <element ref="sc:GeoPackageSrsDefinition"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="GeoPackageSrsDefinition" type="sc:GeoPackageSrsDefinitionType"/>
+ <complexType name="GeoPackageSrsDefinitionType">
+  <sequence>
+   <element name="srsName" type="string">
+    <annotation>
+     <documentation>Human readable name of the SRS</documentation>
+    </annotation>
+   </element>
+   <element name="srsId" type="positiveInteger">
+    <annotation>
+     <documentation>Unique identifier for each Spatial Reference System within the GeoPackage</documentation>
+    </annotation>
+   </element>
+   <element name="organization" type="string">
+    <annotation>
+     <documentation>Case-insensitive name of the defining organization, e.g. EPSG or epsg</documentation>
+    </annotation>
+   </element>
+   <element name="organizationCoordSysId" type="positiveInteger">
+    <annotation>
+     <documentation>Numeric ID of the Spatial Reference System assigned by the organization; can be equal to the value of srsId</documentation>
+    </annotation>
+   </element>
+   <element name="definition" type="string">
+    <annotation>
+     <documentation>Well-known Text representation of the Spatial Reference System following the WKT format defined by http://portal.opengeospatial.org/files/?artifact_id=999</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="description" type="string">
+    <annotation>
+     <documentation>Human readable description of the SRS</documentation>
+    </annotation>
+   </element>
+   <element minOccurs="0" name="definition_12_063" type="string">
+    <annotation>
+     <documentation>Well-known Text representation of the Spatial Reference System, following the WKT format defined by http://docs.opengeospatial.org/is/12-063r5/12-063r5.html</documentation>
+    </annotation>
+   </element>
+  </sequence>
  </complexType>
  <element name="PackageSelector">
   <complexType>
@@ -1012,8 +1068,7 @@
    </element>
   </sequence>
  </complexType>
- <element name="GeneralObjectProperty" substitutionGroup="sc:AbstractRdfGeneralProperty"
-  type="sc:GeneralObjectPropertyType"/>
+ <element name="GeneralObjectProperty" substitutionGroup="sc:AbstractRdfGeneralProperty" type="sc:GeneralObjectPropertyType"/>
  <complexType name="GeneralObjectPropertyType">
   <complexContent>
    <extension base="sc:AbstractRdfGeneralPropertyType">
@@ -1023,8 +1078,7 @@
        <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is inverse. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
       </annotation>
      </element>
-     <element default="" minOccurs="0" name="propertyCharacteristicAxioms"
-      type="sc:ObjectPropertyCharacteristicAxiomList">
+     <element default="" minOccurs="0" name="propertyCharacteristicAxioms" type="sc:ObjectPropertyCharacteristicAxiomList">
       <annotation>
        <documentation>List of characteristic axioms that apply to the general object property.</documentation>
       </annotation>
@@ -1033,8 +1087,7 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="GeneralDataProperty" substitutionGroup="sc:AbstractRdfGeneralProperty"
-  type="sc:GeneralDataPropertyType"/>
+ <element name="GeneralDataProperty" substitutionGroup="sc:AbstractRdfGeneralProperty" type="sc:GeneralDataPropertyType"/>
  <complexType name="GeneralDataPropertyType">
   <complexContent>
    <extension base="sc:AbstractRdfGeneralPropertyType">

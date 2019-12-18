@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -49,9 +48,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,8 +91,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.interactive_instruments.ShapeChange.DefaultModelProvider;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
@@ -111,6 +110,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
+import de.interactive_instruments.ShapeChange.Model.TextConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
@@ -198,6 +198,14 @@ public class FeatureCatalogue
 	 * source document.
 	 */
 	public static final String PARAM_JAVA_OPTIONS = "javaOptions";
+	
+	/**
+	 * Suffix to add to the 'id' attribute of a Value element that represents an enum, and 
+	 * to the 'idref' attribute of an enumeratedBy element that refers to that Value. Necessary
+	 * in order to avoid same 'id' attributes for enums that are encoded both as FeatureAttribute
+	 * (if target parameter {@link #includeCodelistsAndEnumerations} is true) and as Value elements.  
+	 */
+	private static final String VALUE_ID_SUFFIX = "_VALUE";
 
 	private static boolean initialised = false;
 	private static XMLWriter writer = null;
@@ -254,6 +262,7 @@ public class FeatureCatalogue
 	private static String lang = "en";
 	private static String featureTerm = "Feature";
 	private static String noAlphabeticSortingForProperties = "false";
+	private static String includeCodelistsAndEnumerations = "false";
 	private static boolean includeVoidable = true;
 	private static boolean includeTitle = true;
 	private static boolean includeCodelistURI = true;
@@ -263,7 +272,7 @@ public class FeatureCatalogue
 	private static boolean includeDiagrams = false;
 	private static int imgIntegerIdCounter = 0;
 	private static int imgIntegerIdStepwidth = 2;
-	private static Set<ImageMetadata> imageSet = new HashSet<ImageMetadata>();
+	private static List<ImageMetadata> imageList = new ArrayList<ImageMetadata>();
 
 	private static boolean dontTransform = false;
 
@@ -342,6 +351,7 @@ public class FeatureCatalogue
 		xslTransformerFactory = null;
 		lang = "en";
 		noAlphabeticSortingForProperties = "false";
+		includeCodelistsAndEnumerations = "false";
 		hrefMappings = new TreeMap<String, URI>();
 		featureTerm = "Feature";
 		includeVoidable = true;
@@ -356,6 +366,11 @@ public class FeatureCatalogue
 		diffs = new TreeMap<Info, SortedSet<DiffElement>>();
 		differ = null;
 		inputSchemaClassesByFullNameInSchema = null;
+		
+		includeDiagrams = false;
+		imgIntegerIdCounter = 0;
+		imgIntegerIdStepwidth = 2;
+		imageList = new ArrayList<ImageMetadata>();
 	}
 
 	// FIXME New diagnostics-only flag is to be considered
@@ -378,7 +393,21 @@ public class FeatureCatalogue
 
 				String s = null;
 
-				Model refModel_tmp = getReferenceModel();
+				Model refModel_tmp = null;
+
+				String imt = options.parameter(this.getClass().getName(),
+						"referenceModelType");
+				String mdl = options.parameter(this.getClass().getName(),
+						"referenceModelFileNameOrConnectionString");
+
+				if (StringUtils.isNotBlank(imt)
+						&& StringUtils.isNotBlank(mdl)) {
+
+					DefaultModelProvider mp = new DefaultModelProvider(result,
+							options);
+					refModel_tmp = mp.getModel(imt, mdl, null, null, false,
+							null);
+				}
 
 				if (refModel_tmp != null) {
 
@@ -555,7 +584,7 @@ public class FeatureCatalogue
 				}
 			}
 
-			writer.startElement("ApplicationSchema", "id", "_P" + pi.id());
+			writer.startElement("ApplicationSchema", "id", packageId(pi));
 
 			/*
 			 * Determine if app schema with same name has been encountered
@@ -648,6 +677,14 @@ public class FeatureCatalogue
 		}
 	}
 
+	private String packageId(PackageInfo pkg) {
+		return pkg.id().startsWith("P") ? "_" + pkg.id() : "_P" + pkg.id();
+	}
+
+	private String packageId(String pkgId) {
+		return pkgId.startsWith("P") ? "_" + pkgId : "_P" + pkgId;
+	}
+
 	private void printDeletedClasses(PackageInfo pix) {
 
 		if (hasDiff(pix, ElementType.CLASS, Operation.DELETE)) {
@@ -687,14 +724,6 @@ public class FeatureCatalogue
 			return;
 		}
 
-		Collections.sort(images, new Comparator<ImageMetadata>() {
-
-			@Override
-			public int compare(ImageMetadata o1, ImageMetadata o2) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		});
-
 		writer.startElement("images");
 
 		for (ImageMetadata img : images) {
@@ -715,72 +744,10 @@ public class FeatureCatalogue
 			writer.emptyElement("image", atts);
 
 			// also keep track of the image metadata for later use
-			imageSet.add(img);
+			imageList.add(img);
 		}
 
 		writer.endElement("images");
-	}
-
-	private Model getReferenceModel() {
-
-		String imt = options.parameter(this.getClass().getName(),
-				"referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(),
-				"referenceModelFileNameOrConnectionString");
-
-		if (imt == null || imt.isEmpty())
-			return null;
-
-		if (mdl == null || mdl.isEmpty())
-			return null;
-
-		// Support original model type codes
-		if (imt.equalsIgnoreCase("ea7"))
-			imt = "de.interactive_instruments.ShapeChange.Model.EA.EADocument";
-		else if (imt.equalsIgnoreCase("xmi10"))
-			imt = "de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document";
-		else if (imt.equalsIgnoreCase("gsip"))
-			imt = "us.mitre.ShapeChange.Model.GSIP.GSIPDocument";
-		else if (imt.equalsIgnoreCase("scxml")) {
-			imt = "de.interactive_instruments.ShapeChange.Model.Generic.GenericModel";
-		} else {
-			result.addInfo(this, 29, imt);
-		}
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-		try {
-			theClass = Class.forName(imt);
-			if (theClass == null) {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-			m = (Model) theClass.getConstructor().newInstance();
-			if (m != null) {
-				m.initialise(result, options, mdl);
-			} else {
-				result.addError(null, 17, imt);
-				result.addError(null, 22, mdl);
-				return null;
-			}
-		} catch (ClassNotFoundException e) {
-			result.addError(null, 17, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addError(null, 19, imt);
-			result.addError(null, 22, mdl);
-		} catch (IllegalAccessException | SecurityException e) {
-			result.addError(null, 20, imt);
-			result.addError(null, 22, mdl);
-		} catch (ShapeChangeAbortException e) {
-			result.addError(null, 22, mdl);
-			m = null;
-		}
-		return m;
 	}
 
 	private void PrintDescriptors(Info i, boolean isClass, Operation op)
@@ -963,7 +930,7 @@ public class FeatureCatalogue
 
 		if (packageInPackage(pix)) {
 
-			writer.startElement("Package", "id", "_P" + pix.id(), op);
+			writer.startElement("Package", "id", packageId(pix), op);
 
 			PrintDescriptors(pix, false, op);
 
@@ -979,7 +946,7 @@ public class FeatureCatalogue
 				pixOwnerId = ownerOfInputModel.id();
 			}
 
-			writer.emptyElement("parent", "idref", "_P" + pixOwnerId);
+			writer.emptyElement("parent", "idref", packageId(pixOwnerId));
 
 			if (pix.getDiagrams() != null) {
 				appendImageInfo(pix.getDiagrams());
@@ -1114,8 +1081,7 @@ public class FeatureCatalogue
 	}
 
 	private String PrepareToPrint(String s) {
-		s = s.trim();
-		return s;
+	    return s == null ? "" : s.trim();
 	}
 
 	/** Add attribute to an element */
@@ -1211,6 +1177,8 @@ public class FeatureCatalogue
 		case Options.DATATYPE:
 		case Options.UNION:
 		case Options.BASICTYPE:
+		case Options.CODELIST:
+		case Options.ENUMERATION:
 			PrintClass(ci, true, op, ci.pkg());
 			for (String t : ci.supertypes()) {
 				ClassInfo cix = model.classById(t);
@@ -1218,18 +1186,14 @@ public class FeatureCatalogue
 					additionalClasses.add(cix);
 				}
 			}
-			break;
-		case Options.CODELIST:
-		case Options.ENUMERATION:
-			// PrintValues(ci);
-			break;
+			break;		
 		}
 	}
 
 	private void PrintValue(PropertyInfo propi, Operation op)
 			throws SAXException {
 
-		String propiid = "_A" + propi.id();
+		String propiid = "_A" + propi.id() + VALUE_ID_SUFFIX;
 		propiid = options.internalize(propiid);
 
 		writer.startElement("Value", "id", propiid, op);
@@ -1262,17 +1226,14 @@ public class FeatureCatalogue
 		}
 
 		/*
-		 * 2018-02-16 JE: since code lists and their codes are only partially
+		 * 2019-05-14 JE - NOTE: code lists and their codes are only partially
 		 * represented in the feature catalogues by ShapeChange (typically a
-		 * table of the codes), we do not add the tagged values of codes to the
-		 * temporary XML.
+		 * table of the codes).
 		 */
-		// if (representTaggedValues != null) {
-		// writer.startElement("taggedValues");
-		// // TBD diff tagged values
-		// PrintTaggedValues(propi, representTaggedValues, null);
-		// writer.endElement("taggedValues");
-		// }
+		if (representTaggedValues != null) {
+			// TBD diff tagged values
+			PrintTaggedValues(propi, representTaggedValues, null, true);
+		}
 
 		writer.endElement("Value");
 	}
@@ -1420,7 +1381,7 @@ public class FeatureCatalogue
 				 * TODO PrintOperations true;
 				 */
 
-				writer.emptyElement("package", "idref", "_P" + pix.id());
+				writer.emptyElement("package", "idref", packageId(pix));
 
 				switch (ci.category()) {
 				case Options.FEATURE:
@@ -1442,6 +1403,12 @@ public class FeatureCatalogue
 				case Options.UNION:
 					writer.dataElement("type", "Union Data Type", op);
 					break;
+				case Options.CODELIST:
+				    writer.dataElement("type", "Code List Type", op);
+					break;
+				case Options.ENUMERATION:
+					writer.dataElement("type", "Enumeration Type", op);
+					break;
 				}
 
 				String s;
@@ -1460,10 +1427,14 @@ public class FeatureCatalogue
 					s = constraint.text();
 					String description = null;
 					String expression = null;
-					if (s != null && s.contains("/*") && s.contains("*/")) {
+					if(constraint instanceof TextConstraint) {
+						expression = s;
+					} else if (s != null && s.contains("/*") && s.contains("*/")) {
 						String[] sa = s.split("\\*/");
 						description = sa[0].replaceFirst("/\\*", "").trim();
-						expression = sa[1].trim();
+						if (sa.length > 1) {
+							expression = sa[1].trim();
+						}
 					} else {
 						expression = s;
 					}
@@ -1511,7 +1482,7 @@ public class FeatureCatalogue
 
 				if (representTaggedValues != null) {
 					// TODO diff tagged values
-					PrintTaggedValues(ci, representTaggedValues, null);
+					PrintTaggedValues(ci, representTaggedValues, null, false);
 				}
 
 				writer.endElement("taggedValues");
@@ -1563,12 +1534,32 @@ public class FeatureCatalogue
 		return false;
 	}
 
-	private void PrintTaggedValues(Info i, String taglist, Operation op)
-			throws SAXException {
+	/**
+	 * @param i
+	 * @param taglist
+	 * @param op
+	 * @param printTaggedValuesElement
+	 *                                     <code>true</code>, if the surrounding
+	 *                                     &lt;taggedValues&gt; element shall be
+	 *                                     added, if the Info object has at
+	 *                                     least one value for the tags from the
+	 *                                     list; else <code>false</code> (in
+	 *                                     that case, the &lt;taggedValues&gt;
+	 *                                     element will never be added and is
+	 *                                     assumed to be set outside of the
+	 *                                     method)
+	 * @throws SAXException
+	 */
+	private void PrintTaggedValues(Info i, String taglist, Operation op,
+			boolean printTaggedValuesElement) throws SAXException {
 
 		TaggedValues taggedValues = i.taggedValuesForTagList(taglist);
 
 		if (!taggedValues.isEmpty()) {
+
+			if (printTaggedValuesElement) {
+				writer.startElement("taggedValues");
+			}
 
 			// sort results alphabetically by tag name for consistent output
 			TreeSet<String> tags = new TreeSet<String>(taggedValues.keySet());
@@ -1584,6 +1575,10 @@ public class FeatureCatalogue
 						// writer.dataElement(tag, PrepareToPrint(v));
 					}
 				}
+			}
+
+			if (printTaggedValuesElement) {
+				writer.endElement("taggedValues");
 			}
 		}
 	}
@@ -1825,7 +1820,7 @@ public class FeatureCatalogue
 		}
 
 		if (representTaggedValues != null) {
-			PrintTaggedValues(propi, representTaggedValues, null);
+			PrintTaggedValues(propi, representTaggedValues, null, false);
 		}
 
 		writer.endElement("taggedValues");
@@ -1933,7 +1928,7 @@ public class FeatureCatalogue
 							for (PropertyInfo ei : cix.properties().values()) {
 								if (ei != null && ExportValue(ei)) {
 
-									String eiid = "_A" + ei.id();
+									String eiid = "_A" + ei.id() + VALUE_ID_SUFFIX;
 									eiid = options.internalize(eiid);
 
 									writer.emptyElement("enumeratedBy", "idref",
@@ -1949,7 +1944,7 @@ public class FeatureCatalogue
 										writer.emptyElement("enumeratedBy",
 												"idref",
 												"_A" + ((PropertyInfo) diff.subElement)
-														.id());
+														.id()  + VALUE_ID_SUFFIX);
 									}
 								}
 							}
@@ -2451,7 +2446,7 @@ public class FeatureCatalogue
 			this.xsltWrite(indocumentxmlFile, xsldocxfileName,
 					outdocumentxmlFile);
 
-			if (includeDiagrams && !imageSet.isEmpty()) {
+			if (includeDiagrams && !imageList.isEmpty()) {
 				/*
 				 * === Process image information ===
 				 */
@@ -2478,16 +2473,6 @@ public class FeatureCatalogue
 
 				addAttribute(imgInfoDoc, imgInfoRoot, "xmlns:xsi",
 						"http://www.w3.org/2001/XMLSchema-instance");
-
-				List<ImageMetadata> imageList = new ArrayList<ImageMetadata>(
-						imageSet);
-				Collections.sort(imageList, new Comparator<ImageMetadata>() {
-
-					@Override
-					public int compare(ImageMetadata o1, ImageMetadata o2) {
-						return o1.getId().compareTo(o2.getId());
-					}
-				});
 
 				for (ImageMetadata im : imageList) {
 
@@ -2816,6 +2801,13 @@ public class FeatureCatalogue
 
 		xsltWrite(transformationSourceFile, xsltfileName,
 				transformationTargetFile);
+
+		if (transformationTargetFile.exists()
+				&& transformationTargetFile.length() == 0) {
+			FileUtils.deleteQuietly(transformationTargetFile);
+			result.addDebug(this, 32,
+					transformationTargetFile.getAbsolutePath());
+		}
 	}
 
 	public void xsltWrite(File transformationSource, String xsltfileName,
@@ -3080,6 +3072,8 @@ public class FeatureCatalogue
 		this.transformationParameters.put("lang", lang);
 		this.transformationParameters.put("noAlphabeticSortingForProperties",
 				noAlphabeticSortingForProperties);
+		this.transformationParameters.put("includeCodelistsAndEnumerations",
+			includeCodelistsAndEnumerations);
 	}
 
 	private void initialiseFromOptions() {
@@ -3245,7 +3239,12 @@ public class FeatureCatalogue
 				"noAlphabeticSortingForProperties");
 		if (s != null && s.equalsIgnoreCase("true"))
 			noAlphabeticSortingForProperties = "true";
-
+		
+		s = options.parameter(this.getClass().getName(),
+			"includeCodelistsAndEnumerations");
+		if (s != null && s.equalsIgnoreCase("true"))
+		    includeCodelistsAndEnumerations = "true";
+		
 		s = options.parameter(this.getClass().getName(), "xslLocalizationUri");
 		if (s != null && s.length() > 0) {
 
@@ -3316,6 +3315,21 @@ public class FeatureCatalogue
 			}
 		}
 	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	 // no rules or requirements defined for this target, thus nothing to do
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "fc";
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
 
 	/**
 	 * This is the message text provision proper. It returns a message for a
@@ -3361,12 +3375,12 @@ public class FeatureCatalogue
 			return "Message from external java executable: $1$";
 		case 28:
 			return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
-		case 29:
-			return "Value of parameter 'referenceModelType' is '$1$'.";
 		case 30:
 			return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
 		case 31:
 			return "Directory '$1$' could not be created.";
+		case 32:
+			return "Removed empty XSLT transformation target file at $1$.";
 		}
 		return null;
 	}

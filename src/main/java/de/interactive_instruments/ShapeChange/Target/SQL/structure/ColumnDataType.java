@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ColumnDataType {
@@ -42,6 +44,7 @@ public class ColumnDataType {
 	private Integer precision = null;
 	private Integer scale = null;
 	private Integer length = null;
+	private String lengthQualifier = null;
 
 	public ColumnDataType(String name) {
 		this.name = name;
@@ -49,20 +52,23 @@ public class ColumnDataType {
 
 	/**
 	 * @param name
-	 *            should not be <code>null</code>
+	 *                            should not be <code>null</code>
 	 * @param precision
-	 *            can be <code>null</code>
+	 *                            can be <code>null</code>
 	 * @param scale
-	 *            can be <code>null</code>
+	 *                            can be <code>null</code>
 	 * @param length
-	 *            can be <code>null</code>
+	 *                            can be <code>null</code>
+	 * @param lengthQualifier
+	 *                            can be <code>null</code>
 	 */
 	public ColumnDataType(String name, Integer precision, Integer scale,
-			Integer length) {
+			Integer length, String lengthQualifier) {
 		this.name = name;
 		this.precision = precision;
 		this.scale = scale;
 		this.length = length;
+		this.lengthQualifier = lengthQualifier;
 	}
 
 	/**
@@ -111,5 +117,21 @@ public class ColumnDataType {
 
 	public boolean hasLength() {
 		return this.length != null;
+	}
+
+	public void setLengthQualifier(String lengthQualifier) {
+		this.lengthQualifier = lengthQualifier;
+	}
+
+	public boolean hasLengthQualifier() {
+		return StringUtils.isNotBlank(this.lengthQualifier);
+	}
+
+	/**
+	 * @return stripped lengthQualifier defined for this data type; can be
+	 *         <code>null</code>
+	 */
+	public String getLengthQualifier() {
+		return StringUtils.strip(this.lengthQualifier);
 	}
 }

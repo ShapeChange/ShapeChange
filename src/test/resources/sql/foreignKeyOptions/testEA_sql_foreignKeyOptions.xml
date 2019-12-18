@@ -48,6 +48,7 @@
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -72,6 +73,7 @@
 			<targetParameter name="dbOwner" value="dbo" />
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -98,6 +100,7 @@
 			<targetParameter name="dbOwner" value="dbo" />
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -106,6 +109,31 @@
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-Oracle.xml" />
+		</Target>
+		
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite" />
+			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/foreignKeyOptions/sqlite" />
+			<targetParameter name="outputFilename" value="database_model_sqlite" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+<!-- 			<targetParameter name="dbOwner" value="public" /> -->
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<targetParameter name="dataModelPatternPath" value="src/main/resources/dataModelPatterns"/>
+			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<rules>
+				<EncodingRule name="customRule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLite.xml" />
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

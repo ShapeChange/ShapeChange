@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/uml/mergeConstraintCommentsIntoText/test_uml_mergeConstraintCommentsIntoText.xml" end="Thu Jun 27 17:07:11 CEST 2019" resultCode="0" start="Thu Jun 27 17:06:59 CEST 2019" version="2.8.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="--- SCXML IS VALID ---"/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/uml/constraintDescriptor'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.EA.UmlModel' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

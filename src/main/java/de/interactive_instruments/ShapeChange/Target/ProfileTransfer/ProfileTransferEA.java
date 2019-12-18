@@ -49,6 +49,7 @@ import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -979,6 +980,21 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 		processAllSchemas = false;
 		deleteExistingProfiles = false;
 		profilesToTransfer = null;
+	}
+	
+	@Override
+	public void registerRulesAndRequirements(RuleRegistry r) {
+	    // nothing to do	    
+	}
+	
+	@Override
+	public String getDefaultEncodingRule() {
+		return "*";
+	}
+	
+	@Override
+	public String getTargetIdentifier() {
+	    return "proftrans";
 	}
 
 	@Override

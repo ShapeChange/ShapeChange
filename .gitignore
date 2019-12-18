@@ -2,6 +2,7 @@
 .classpath
 .project
 .settings/
+.eclipse-pmd
 
 # Intellij
 .idea/
@@ -16,6 +17,7 @@
 
 # Tests
 testResults/
+scxmlTmpDir/
 /test.xsd
 /log.html
 /log.xml

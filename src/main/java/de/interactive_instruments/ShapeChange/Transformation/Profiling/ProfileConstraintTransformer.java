@@ -735,7 +735,6 @@ public class ProfileConstraintTransformer
 			// finally, set model links and register the class
 			subtype.setPkg(profileSchema);
 
-			subtype.setBaseClass(baseClass);
 			subtype.addSupertype(baseClass.id());
 			baseClass.addSubtype(subtype.id());
 

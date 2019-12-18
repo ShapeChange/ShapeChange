@@ -52,16 +52,16 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	public GenericOclConstraint() {
 		super();
 	}
-	
+
 	/**
-	 * Creates a new OCL constraint from the given constraint (with same
-	 * context, but having parsed the OCL anew from the text of the given
+	 * Creates a new OCL constraint from the given constraint (with same context
+	 * and comments, but having parsed the OCL anew from the text of the given
 	 * constraint).
 	 * 
 	 * @param ci
-	 *            context of the constraint
+	 *                   context of the constraint
 	 * @param constr
-	 *            original constraint from which to create a copy
+	 *                   original constraint from which to create a copy
 	 */
 	public GenericOclConstraint(GenericClassInfo ci, OclConstraint constr) {
 
@@ -70,6 +70,13 @@ public class GenericOclConstraint extends OclConstraintImpl {
 		contextClass = ci;
 		contextModelElmtType = ModelElmtContextType.CLASS;
 		contextModelElmt = ci;
+
+		/*
+		 * Initialise comments with that from the given constraint. During the
+		 * following initialization, they may be merged with those parsed from
+		 * the constraint text.
+		 */
+		comments = constr.comments();
 
 		this.initializeNonContextFields(constr.name(), constr.status(),
 				constr.text(), contextModelElmt);
@@ -80,12 +87,12 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	 * parsed from the given text.
 	 * 
 	 * @param ci
-	 *            context of the constraint
+	 *                         context of the constraint
 	 * @param constrName
 	 * @param constrStatus
-	 *            see {@link Constraint#status()}
+	 *                         see {@link Constraint#status()}
 	 * @param constrText
-	 *            OCL to be parsed
+	 *                         OCL to be parsed
 	 */
 	public GenericOclConstraint(GenericClassInfo ci, String constrName,
 			String constrStatus, String constrText) {
@@ -115,9 +122,9 @@ public class GenericOclConstraint extends OclConstraintImpl {
 
 		if (syntaxTree != null)
 			conditionType = syntaxTree.expressionType;
-
-		comments = parse.getComments();
-
+		
+		mergeComments(parse.getComments());
+		
 		// Output error messages as a warning, if there are ones
 		if (parse.getNumberOfMessages() > 0) {
 
@@ -131,8 +138,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 			}
 
 			ShapeChangeResult.MessageContext messctx = contextModelElement
-					.result()
-					.addInfo(null, 133, ctx, constraintName, ctxType);
+					.result().addInfo(null, 133, ctx, constraintName, ctxType);
 
 			if (messctx != null) {
 				MessageCollection messages = parse.getMessageCollection();
@@ -153,15 +159,15 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	}
 
 	/**
-	 * Creates a new OCL constraint from the given constraint (with same
-	 * context, but having parsed the OCL anew from the text of the given
+	 * Creates a new OCL constraint from the given constraint (with same context
+	 * and comments, but having parsed the OCL anew from the text of the given
 	 * constraint).
 	 * 
 	 * @param pi
-	 *            context model element of the constraint (its inClass() defines
-	 *            the context class)
+	 *                   context model element of the constraint (its inClass()
+	 *                   defines the context class)
 	 * @param constr
-	 *            original constraint from which to create a copy
+	 *                   original constraint from which to create a copy
 	 */
 	public GenericOclConstraint(GenericPropertyInfo pi, OclConstraint constr) {
 
@@ -170,6 +176,13 @@ public class GenericOclConstraint extends OclConstraintImpl {
 		contextClass = pi.inClass();
 		contextModelElmtType = ModelElmtContextType.ATTRIBUTE;
 		contextModelElmt = pi;
+
+		/*
+		 * Initialise comments with that from the given constraint. During the
+		 * following initialization, they may be merged with those parsed from
+		 * the constraint text.
+		 */
+		comments = constr.comments();
 
 		this.initializeNonContextFields(constr.name(), constr.status(),
 				constr.text(), contextModelElmt);
@@ -180,12 +193,12 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	 * parsed from the given text.
 	 * 
 	 * @param pi
-	 *            context of the constraint
+	 *                         context of the constraint
 	 * @param constrName
 	 * @param constrStatus
-	 *            see {@link Constraint#status()}
+	 *                         see {@link Constraint#status()}
 	 * @param constrText
-	 *            OCL to be parsed
+	 *                         OCL to be parsed
 	 */
 	public GenericOclConstraint(PropertyInfo pi, String constrName,
 			String constrStatus, String constrText) {
@@ -253,7 +266,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 			// TODO debug info
 		}
 	}
-	
+
 	public void setContextModelElmt(Info contextModelElmt) {
 		this.contextModelElmt = contextModelElmt;
 	}
@@ -273,5 +286,5 @@ public class GenericOclConstraint extends OclConstraintImpl {
 
 	public void setText(String text) {
 		constraintText = text;
-	}	
+	}
 }

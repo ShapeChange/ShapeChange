@@ -31,8 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Model.Generic.reader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.xml.sax.Attributes;
@@ -42,30 +44,31 @@ import org.xml.sax.XMLReader;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
-import de.interactive_instruments.ShapeChange.Model.Constraint.ModelElmtContextType;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericFolConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public class ConstraintContentHandler extends AbstractContentHandler {
 
 	private static final Set<String> CONSTRAINT_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "name", "status", "text", "type",
-					"sourceType", "contextModelElementId",
+					"sourceType", "description" }));
+
+	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
+			Arrays.asList(new String[] { "contextModelElementId",
 					"contextModelElementType" }));
 
 	private String name = null;
 	private String status = null;
 	private String text = null;
+	private List<String> descriptions = new ArrayList<>();
 	private String type = null;
 	private String sourceType = null;
-	private String contextModelElementId = null;
-	private String contextModelElementType = null;
 
 	private Constraint constraint = null;
 
@@ -83,11 +86,15 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			sb = new StringBuffer();
 
+		} else if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
 		} else {
 
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30800, "ConstraintContentHandler",
+			result.addDebug(null, 30800, "ConstraintContentHandler",
 					localName);
 		}
 	}
@@ -96,7 +103,11 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		if (localName.equals("name")) {
+		if (DEPRECATED_FIELDS.contains(localName)) {
+
+			// ignore
+
+		} else if (localName.equals("name")) {
 
 			this.name = sb.toString();
 
@@ -108,6 +119,10 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			this.text = sb.toString();
 
+		} else if (localName.equals("description")) {
+
+			this.descriptions.add(sb.toString());
+
 		} else if (localName.equals("type")) {
 
 			this.type = sb.toString();
@@ -116,14 +131,6 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			this.sourceType = sb.toString();
 
-		} else if (localName.equals("contextModelElementId")) {
-
-			this.contextModelElementId = sb.toString();
-
-		} else if (localName.equals("contextModelElementType")) {
-
-			this.contextModelElementType = sb.toString();
-
 		} else if (localName.equals("FolConstraint")) {
 
 			GenericFolConstraint con = new GenericFolConstraint();
@@ -131,16 +138,14 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			con.setName(name);
 			con.setStatus(status);
-			con.setText(text);
-			con.setSourceType(sourceType);
-			if (this.contextModelElementType != null
-					&& this.contextModelElementType
-							.equalsIgnoreCase("ATTRIBUTE")) {
-				con.setContextModelElmtType(ModelElmtContextType.ATTRIBUTE);
-			} else {
-				con.setContextModelElmtType(ModelElmtContextType.CLASS);
+
+			if (!descriptions.isEmpty()) {
+				con.setComments(descriptions.toArray(new String[0]));
 			}
 
+			con.setText(text);
+			con.setSourceType(sourceType);
+			
 			returnToParent(uri, localName, qName);
 
 		} else if (localName.equals("OclConstraint")) {
@@ -150,15 +155,13 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 			con.setName(name);
 			con.setStatus(status);
-			con.setText(text);
-			if (this.contextModelElementType != null
-					&& this.contextModelElementType
-							.equalsIgnoreCase("ATTRIBUTE")) {
-				con.setContextModelElmtType(ModelElmtContextType.ATTRIBUTE);
-			} else {
-				con.setContextModelElmtType(ModelElmtContextType.CLASS);
+
+			if (!descriptions.isEmpty()) {
+				con.setComments(descriptions.toArray(new String[0]));
 			}
 
+			con.setText(text);
+			
 			returnToParent(uri, localName, qName);
 
 		} else if (localName.equals("TextConstraint")) {
@@ -170,20 +173,13 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 			con.setStatus(status);
 			con.setText(text);
 			con.setType(type);
-			if (this.contextModelElementType != null
-					&& this.contextModelElementType
-							.equalsIgnoreCase("ATTRIBUTE")) {
-				con.setContextModelElmtType(ModelElmtContextType.ATTRIBUTE);
-			} else {
-				con.setContextModelElmtType(ModelElmtContextType.CLASS);
-			}
-
+			
 			returnToParent(uri, localName, qName);
 
 		} else {
-			// do not throw an exception, just log a warning - the schema could
+			// do not throw an exception, just log a message - the schema could
 			// have been extended
-			result.addWarning(null, 30801, "ConstraintContentHandler",
+			result.addDebug(null, 30801, "ConstraintContentHandler",
 					localName);
 		}
 	}
@@ -197,13 +193,6 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
 		// Switch handler back to parent
 		reader.setContentHandler(parent);
-	}
-
-	/**
-	 * @return the contextModelElementId
-	 */
-	public String getContextModelElementId() {
-		return contextModelElementId;
 	}
 
 	/**

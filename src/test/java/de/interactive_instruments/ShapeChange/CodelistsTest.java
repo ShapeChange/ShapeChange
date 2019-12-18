@@ -31,9 +31,11 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class CodelistsTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class CodelistsTest extends BasicTestSCXML {
 
 	@Test
 	public void testCodeListDictionariesML() {

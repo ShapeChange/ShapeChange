@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/test/resources/sql/statementFilters/test_sql_statementFilters.zip"/>
+		<parameter name="appSchemaNameRegex" value="Test Schema"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="alias" source="ea:alias"/>
+			<DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			<DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+			<DescriptorSource descriptor="globalIdentifier" source="none"/>
+		</descriptorSources>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/sql/statementFilters/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="F_inheritance" input="INPUT" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="F_multiplicity" input="F_inheritance" mode="enabled">
+			<parameters>
+				<ProcessParameter name="maxOccurs" value="3"/>
+				<ProcessParameter name="flattenObjectTypes" value="false"/>
+				<ProcessParameter name="maxMultiplicityThreshold" value="3"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-multiplicity"/>
+					<rule name="rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="customRule"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/statementFilters/ddl_postgresql"/>
+			<targetParameter name="separateSpatialIndexStatements" value="true"/>
+			<targetParameter name="separateCodeInsertStatementsByCodelistType" value="2, 3"/>
+			<rules>
+				<EncodingRule extends="sql" name="customRule">
+					<rule name="rule-sql-cls-code-lists"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="CharacterString"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="URI"/>
+	<MapEntry param="defaultValue{true=TRUE;false=FALSE}" rule="*" targetType="boolean" type="Boolean"/>
+	<MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Decimal"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Number"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Real"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Measure"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="date" type="Date"/>
+	<MapEntry param="" rule="*" targetType="timestamp with time zone" type="DateTime"/>
+	
+	<MapEntry param="geometry" rule="*" targetType="POINT" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOINT" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="LINESTRING" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTILINESTRING" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="POLYGON" type="GM_Surface"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOLYGON" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="GEOMETRY" type="GM_Object"/>
+	
+	<MapEntry param="" rule="*" targetType="smallint" type="Short"/>
+	<MapEntry param="" rule="*" targetType="bigint" type="Long"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="varchar" type="character varying"/>
+</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="databaseSystem" value="Oracle"/>
+			<targetParameter name="defaultEncodingRule" value="customRule"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/statementFilters/ddl_oracle"/>
+			<targetParameter name="idColumnName" value="id"/>
+			<targetParameter name="separateSpatialIndexStatements" value="true"/>
+			<targetParameter name="separateCodeInsertStatementsByCodelistType" value="2, 3"/>
+			<targetParameter name="sdoDimElements" value="(dim1,-1,1,1.1)(dim2,-2,2.2,2)(dim3,-3.3,3,3)"/>
+			<rules>
+				<EncodingRule extends="sql" name="customRule">
+					<rule name="rule-sql-cls-code-lists"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	
+	<MapEntry param="defaultValue{true=1;false=0}" rule="*" targetType="INTEGER" type="Boolean"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="CharacterString"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="DATE" type="Date"/>
+	<MapEntry param="" rule="*" targetType="TIMESTAMP" type="DateTime"/>
+	<MapEntry param="" rule="*" targetType="INTEGER" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="NUMBER" type="Real"/>
+	<MapEntry param="" rule="*" targetType="NUMBER" type="Number"/>
+	<MapEntry param="" rule="*" targetType="INTEGER" type="Scale"/>
+	
+	
+	<MapEntry param="geometry{layer_gtype=line}" rule="*" targetType="SDO_GEOMETRY" type="GM_Curve"/>
+	<MapEntry param="geometry{layer_gtype=multiline}" rule="*" targetType="SDO_GEOMETRY" type="GM_MultiCurve"/>
+	<MapEntry param="geometry{layer_gtype=multipoint}" rule="*" targetType="SDO_GEOMETRY" type="GM_MultiPoint"/>
+	<MapEntry param="geometry{layer_gtype=multipolygon}" rule="*" targetType="SDO_GEOMETRY" type="GM_MultiSurface"/>
+	<MapEntry param="geometry{layer_gtype=collection}" rule="*" targetType="SDO_GEOMETRY" type="GM_Object"/>
+	<MapEntry param="geometry{layer_gtype=point}" rule="*" targetType="SDO_GEOMETRY" type="GM_Point"/>
+	<MapEntry param="geometry{layer_gtype=polygon}" rule="*" targetType="SDO_GEOMETRY" type="GM_Surface"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="SHORTINTEGER" type="Short"/>
+	<MapEntry param="" rule="*" targetType="LONGINTEGER" type="Long"/>
+	
+	
+	<MapEntry param="length" rule="*" targetType="VARCHAR2(3)" type="CountryCode"/>
+	<MapEntry param="" rule="*" targetType="NUMBER" type="Area"/>
+	<MapEntry param="" rule="*" targetType="NUMBER" type="Length"/>
+	<MapEntry param="length" rule="*" targetType="VARCHAR2(20)" type="TM_PeriodDuration"/>
+	<MapEntry rule="*" targetType="cond:textOrCharacterVarying" type="URI"/>
+</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLServer"/>
+			<targetParameter name="defaultEncodingRule" value="customRule"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/statementFilters/ddl_sqlserver"/>
+			<targetParameter name="separateSpatialIndexStatements" value="true"/>
+			<targetParameter name="separateCodeInsertStatementsByCodelistType" value="2, 3"/>
+			<rules>
+				<EncodingRule extends="sql" name="customRule">
+					<rule name="rule-sql-cls-code-lists"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	
+	<MapEntry param="defaultValue{true=1;false=0}" rule="*" targetType="bit" type="Boolean"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="CharacterString"/>
+	<MapEntry param="" rule="*" targetType="datetime2" type="DateTime"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="date" type="Date"/>
+	<MapEntry param="" rule="*" targetType="int" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Real"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Number"/>
+	
+	
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_Object"/>
+	<MapEntry param="geometry{USING=GEOMETRY_AUTO_GRID;BOUNDING_BOX=(-1000,-1000,1000,1000)}" rule="*" targetType="geometry" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="geometry" type="GM_Surface"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="nvarchar(max)" type="CI_Citation"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="smallint" type="Short"/>
+	<MapEntry param="" rule="*" targetType="bigint" type="Long"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="date" type="Date"/>
+</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_multiplicity" mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite"/>
+			<targetParameter name="defaultEncodingRule" value="customRule"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/statementFilters/ddl_sqlite"/>
+			<targetParameter name="separateSpatialIndexStatements" value="true"/>
+			<targetParameter name="separateCodeInsertStatementsByCodelistType" value="2, 3"/>
+			<rules>
+				<EncodingRule extends="sql" name="customRule">
+					<rule name="rule-sql-cls-code-lists"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="TEXT" type="CharacterString"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="TEXT" type="URI"/>
+	<MapEntry param="defaultValue{true=1;false=0}" rule="*" targetType="INTEGER" type="Boolean"/>
+	<MapEntry param="" rule="*" targetType="INTEGER" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="REAL" type="Decimal"/>
+	<MapEntry param="" rule="*" targetType="REAL" type="Number"/>
+	<MapEntry param="" rule="*" targetType="REAL" type="Real"/>
+	<MapEntry param="" rule="*" targetType="REAL" type="Measure"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="TEXT" type="Date"/>
+	<MapEntry param="" rule="*" targetType="TEXT" type="DateTime"/>
+	
+	<MapEntry param="geometry" rule="*" targetType="POINT" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOINT" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="LINESTRING" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTILINESTRING" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="POLYGON" type="GM_Surface"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOLYGON" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="GEOMETRY" type="GM_Object"/>
+	
+	<MapEntry param="" rule="*" targetType="INTEGER" type="Short"/>
+	<MapEntry param="" rule="*" targetType="INTEGER" type="Long"/>	
+</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

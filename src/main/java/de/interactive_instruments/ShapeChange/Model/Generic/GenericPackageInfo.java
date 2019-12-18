@@ -58,12 +58,8 @@ public class GenericPackageInfo extends PackageInfoImpl
 	protected String id = null;
 	protected String name = null;
 
-	protected String targetNamespace = null;
-	protected String xmlns = null;
-	protected String xsdDocument = null;
-	protected String version = null;
 	protected GenericPackageInfo owner = null;
-//	protected boolean isSchema = false;
+	// protected boolean isSchema = false;
 	protected SortedSet<GenericPackageInfo> childPi = null;
 	protected SortedSet<String> supplierIds = null;
 
@@ -131,10 +127,10 @@ public class GenericPackageInfo extends PackageInfoImpl
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#isSchema()
 	 */
-//	@Override
-//	public boolean isSchema() {
-//		return isSchema;
-//	}
+	// @Override
+	// public boolean isSchema() {
+	// return isSchema;
+	// }
 
 	/**
 	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
@@ -302,8 +298,8 @@ public class GenericPackageInfo extends PackageInfoImpl
 	/**
 	 * @param taggedValues
 	 * @param updateFields
-	 *            true if class fields should be updated based upon information
-	 *            from given tagged values, else false
+	 *                         true if class fields should be updated based upon
+	 *                         information from given tagged values, else false
 	 */
 	public void setTaggedValues(TaggedValues taggedValues,
 			boolean updateFields) {
@@ -317,7 +313,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 
 		if (updateFields && !taggedValuesCache.isEmpty()) {
 
-			for (String key : taggedValuesCache.keySet()) {
+//			for (String key : taggedValuesCache.keySet()) {
 
 				// TODO setting application) schema tagged values can have
 				// additional side effects for Options.java (update information
@@ -325,24 +321,12 @@ public class GenericPackageInfo extends PackageInfoImpl
 				// changes would be removed when the fields within Options.java
 				// are reset when the next process (Transformer or Target) is
 				// executed
-				if (key.equalsIgnoreCase("targetNamespace")) {
 
-					this.setTargetNamespace(
-							taggedValuesCache.getFirstValue(key));
-
-				} else if (key.equalsIgnoreCase("version")) {
-
-					this.setVersion(taggedValuesCache.getFirstValue(key));
-
-				} else if (key.equalsIgnoreCase("xmlns")) {
-
-					this.setXmlns(taggedValuesCache.getFirstValue(key));
-
-				} else if (key.equalsIgnoreCase("xsdDocument")) {
-
-					this.setXsdDocument(taggedValuesCache.getFirstValue(key));
-
-				}
+				/*
+				 * We don't set targetNamespace, version, xmlns, and xsdDocument
+				 * explicitly. This information should be stored in tagged
+				 * values.
+				 */
 
 				/*
 				 * TBD: Descriptors should not be modified right away, since the
@@ -375,59 +359,58 @@ public class GenericPackageInfo extends PackageInfoImpl
 				// }
 				// this.descriptors.put(Descriptor.DOCUMENTATION, val);
 				// }
-			}
+//			}
 		}
 	}
 
 	/**
-	 * Explicitly sets the target namespace for this package and all child
-	 * packages that are not application schema.
+	 * Sets the target namespace for this package (by setting the according
+	 * tagged value).
 	 * 
 	 * @param targetNamespace
 	 */
 	public void setTargetNamespace(String targetNamespace) {
 
-		this.targetNamespace = targetNamespace;
-
-		// also set the target namespace for all children, recursively
-		if (childPi != null) {
-
-			for (PackageInfo child : childPi) {
-
-				if (!child.isAppSchema()) {
-
-					if (child instanceof GenericPackageInfo) {
-						((GenericPackageInfo) child)
-								.setTargetNamespace(targetNamespace);
-					} else {
-						result.addError(null, 30500, child.name(), name(),
-								child.name());
-					}
-				}
-			}
-		}
+		TaggedValues tmp = this.taggedValuesAll();
+		tmp.put("targetNamespace", targetNamespace);
+		this.setTaggedValues(tmp, false);
 	}
 
 	/**
+	 * Sets the version for this package (by setting the according
+	 * tagged value).
+	 * 
 	 * @param version
 	 */
 	public void setVersion(String version) {
-		this.version = version;
+		
+		TaggedValues tmp = this.taggedValuesAll();
+		tmp.put("version", version);
+		this.setTaggedValues(tmp, false);
 	}
 
 	/**
+	 * Sets the xmlns for this package (by setting the according
+	 * tagged value).
 	 * @param xmlns
 	 */
 	public void setXmlns(String xmlns) {
-		this.xmlns = xmlns;
 
+		TaggedValues tmp = this.taggedValuesAll();
+		tmp.put("xmlns", xmlns);
+		this.setTaggedValues(tmp, false);
 	}
 
 	/**
+	 * Sets the xsdDocument for this package (by setting the according
+	 * tagged value).
 	 * @param xsdDocument
 	 */
 	public void setXsdDocument(String xsdDocument) {
-		this.xsdDocument = xsdDocument;
+
+		TaggedValues tmp = this.taggedValuesAll();
+		tmp.put("xsdDocument", xsdDocument);
+		this.setTaggedValues(tmp, false);
 	}
 
 	/**
@@ -485,68 +468,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 			}
 		}
 	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#targetNamespace()
-	 */
-	@Override
-	public String targetNamespace() {
-		if (targetNamespace != null) {
-			return targetNamespace;
-		} else {
-			PackageInfo o = owner();
-			if (o != null) {
-				String tgtns = owner().targetNamespace();
-				if(tgtns != null) {
-					return tgtns;
-				}
-			} 
-			/*
-			 * if the target namespace was not set explicitly - on this class or
-			 * its owner, use the default implementation to determine the target
-			 * namespace
-			 */
-			return super.targetNamespace();
-		}
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#version()
-	 */
-	@Override
-	public String version() {
-		if (version != null) {
-			return version;
-		} else {
-			PackageInfo o = owner();
-			if (o != null) {
-				return owner().version();
-			} else {
-				return null;
-			}
-		}
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#xmlns()
-	 */
-	@Override
-	public String xmlns() {
-		if (xmlns != null) {
-			return xmlns;
-		} else {
-			return super.xmlns();
-		}
-	}
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#xsdDocument()
-	 */
-	@Override
-	public String xsdDocument() {
-		return xsdDocument;
-	}
-
+	
 	public String toString(String indent) {
 
 		StringBuffer sb = new StringBuffer();

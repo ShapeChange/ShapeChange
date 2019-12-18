@@ -62,6 +62,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.StatementVisitor;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
@@ -655,10 +657,20 @@ public class ReplicationSchemaVisitor
 			de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment comment) {
 		// ignore
 	}
+	
+	@Override
+	public void visit(SQLitePragma sqLitePragma) {
+		// ignore
+	}
 
 	@Override
 	public void postprocess() {
 		// ignore
+	}
+	
+	@Override
+	public void visit(Select select) {
+		// ignore		
 	}
 
 	@Override

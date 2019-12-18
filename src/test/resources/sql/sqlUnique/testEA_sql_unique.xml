@@ -37,6 +37,7 @@
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="sqlrule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -46,6 +47,22 @@
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_inheritance" mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLite" />
+			<targetParameter name="defaultEncodingRule" value="sqlrule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/sqlUnique/sqlite" />
+			<targetParameter name="createReferences" value="true" />
+			<rules>
+				<EncodingRule name="sqlrule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-prop-uniqueConstraints" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-SQLite.xml" />
 		</Target>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
@@ -60,6 +77,7 @@
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
+			<targetParameter name="eaAuthor" value="echterhoff"/>
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 <!-- 					<rule name="rule-arcgis-cls-hasZ" /> -->

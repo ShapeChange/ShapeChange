@@ -32,8 +32,12 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class AssociationInfoImpl extends InfoImpl
 		implements AssociationInfo {
+
+	protected String name = null;
 
 	/**
 	 * Return the encoding rule relevant on the association, given the platform
@@ -80,28 +84,45 @@ public abstract class AssociationInfoImpl extends InfoImpl
 		return null;
 	}
 
-	/*
-	 * Full qualified UML name
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullName()
-	 */
+	@Override
+	public String name() {
+		/*
+		 * 2016-07-26 JE: The association name should not always automatically
+		 * be constructed. For rule-owl-prop-iso191502Aggregation we would get
+		 * association names that are not in the model. I've added a new input
+		 * parameter to control the behavior.
+		 */
+		if (StringUtils.isBlank(name)) {
+			if (options().dontConstructAssociationNames()) {
+				name = "";
+			} else {
+				if (end2() != null && end2().inClass() != null)
+					name = end2().inClass().name() + "_";
+				else
+					name = "end2_";
+				// name = "roles[0]_";
+				if (end1() != null && end1().inClass() != null)
+					name = name + end1().inClass().name();
+				else
+					name = name + "end1";
+				// name = name + "roles[1]";
+			}
+		}
+
+		return name;
+	}
+
+	@Override
 	public String fullName() {
 		return name();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#fullNameInSchema()
-	 */
+	@Override
 	public String fullNameInSchema() {
 		return name();
 	}
 
-	/*
-	 * Validate the association against all applicable requirements and
-	 * recommendations
-	 */
+	@Override
 	public void postprocessAfterLoadingAndValidate() {
 		if (postprocessed)
 			return;

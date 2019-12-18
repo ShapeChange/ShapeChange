@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen SCHSchema="../reference/xsd/test_schema_gml33/INPUT/test_SchematronSchema.sch"?>
+<ex:FeatureType2 xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gco="http://www.isotc211.org/2005/gco"
+ xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gts="http://www.isotc211.org/2005/gts"
+ xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:gsr="http://www.isotc211.org/2005/gsr"
+ xmlns:clisox="http://example.org/shapechange/sch/valueOrNilReason/iso19139" xmlns:gmx="http://www.isotc211.org/2005/gmx"
+ xmlns:ex="http://example.org/shapechange/sch/valueOrNilReason"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://example.org/shapechange/sch/valueOrNilReason ../reference/xsd/test_schema_gml33/INPUT/test.xsd"
+ gml:id="ID000">
+ 
+ <ex:propCharacterString xsi:nil="true" nilReason="xxx"/> 
+<!-- <ex:propCharacterString>s</ex:propCharacterString> -->
+<!-- <ex:propDataType>
+  <ex:DataType>
+   <ex:dtAtt>false</ex:dtAtt>
+  </ex:DataType>
+ </ex:propDataType> 
+ <ex:propDataType>
+  <ex:DataType>
+   <ex:dtAtt xsi:nil="true" nilReason="withheld"/>
+  </ex:DataType>
+ </ex:propDataType>-->
+ <ex:propDataType nilReason="a" xsi:nil="true"/>
+ <ex:propEnumeration xsi:nil="true" nilReason="foo"/>
+<!-- <ex:propEnumeration>enum1</ex:propEnumeration> -->
+ <ex:propInteger>4</ex:propInteger>
+ <ex:propInteger>3</ex:propInteger>
+ <ex:propUnion nilReason="unknown" xsi:nil="true"/>
+ <!--<ex:propUnion>
+  <ex:Union>
+   <ex:optionA xsi:nil="true" nilReason="unknown"/>
+  </ex:Union>
+ </ex:propUnion>-->
+ <ex:rFT2toFT1 xlink:href="instance_for_gml32_test_FeatureType1.xml"/>
+<!-- <ex:rFT2toFT1 xsi:nil="true" nilReason="unknown"/>-->
+</ex:FeatureType2>

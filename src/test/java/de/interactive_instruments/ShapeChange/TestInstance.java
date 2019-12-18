@@ -32,7 +32,7 @@
 
 package de.interactive_instruments.ShapeChange;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.Runtime.Version;
 import java.util.HashMap;

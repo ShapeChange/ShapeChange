@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/oclConstraintOnProperties" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/oclConstraintOnProperties" version="1">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataType" substitutionGroup="gml:AbstractObject" type="ex:DataTypeType"/>
+  <complexType name="DataTypeType">
+    <sequence>
+      <element name="dtAtt" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypePropertyType">
+    <sequence>
+      <element ref="ex:DataType"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="ex:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" name="att1">
+            <complexType>
+              <simpleContent>
+                <extension base="integer">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="att2">
+            <complexType>
+              <simpleContent>
+                <extension base="string">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element name="att3" type="ex:DataTypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MetadataType" substitutionGroup="gml:AbstractFeature" type="ex:MetadataTypeType"/>
+  <complexType name="MetadataTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MetadataTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:MetadataType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -51,7 +51,9 @@ public interface FolConstraint extends TextConstraint {
 	public boolean hasComments();
 	
 	public void setComments(String[] comments);
-
+	
+	public void mergeComments(String[] additionalComments);
+	
 	/**
 	 * @return the first order logic expression represented by this constraint;
 	 *         can be <code>null</code> if parsing the constraint text did not
@@ -59,6 +61,9 @@ public interface FolConstraint extends TextConstraint {
 	 */
 	public FolExpression folExpression();
 
+	/**
+	 * @return the type of the source from which the constraint was created (e.g. 'SBVR')
+	 */
 	public String sourceType();
 
 	/**

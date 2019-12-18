@@ -31,18 +31,19 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public class ReplicationXMLSchemaTest extends WindowsBasicTest {
+@Tag("SCXML")
+public class ReplicationXMLSchemaTest extends BasicTestSCXML {
 
-	@Test
-	public void testReplicationSchema() {
-		/*
-		 * Replication schema target
-		 */
-		multiTest("src/test/resources/config/testEA_repSchema.xml",
-				new String[] { "xsd" }, "testResults/repSchema/repXsd",
-				"src/test/resources/reference/xsd/replicationSchema");
-	}
+    @Test
+    public void testReplicationSchema() {
+	/*
+	 * Replication schema target
+	 */
+	multiTest("src/test/resources/replicationSchema/basic/testEA_repSchema.xml", new String[] { "xsd" },
+		"testResults/replicationSchema/basic/repXsd", "src/test/resources/replicationSchema/basic/reference");
+    }
 
 }

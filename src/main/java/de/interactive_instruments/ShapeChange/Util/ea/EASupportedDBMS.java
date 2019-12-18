@@ -32,15 +32,16 @@
 package de.interactive_instruments.ShapeChange.Util.ea;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
 public enum EASupportedDBMS {
 
 	ORACLE("Oracle", "dm_oracle.xml", "Oracle"), POSTGRESQL("PostgreSQL",
 			"dm_postgresql.xml", "PostgreSQL"), SQLSERVER2012("SQL Server 2012",
-					"dm_sqlserver2012.xml", "SQLServer2012");
+					"dm_sqlserver2012.xml", "SQLServer2012"), SQLITE("SQLite",
+							"dm_sqlite.xml", "SQLite");
 
 	private String gentype;
 	private String dmPatternFileName;

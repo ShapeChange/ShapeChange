@@ -31,15 +31,17 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ *         de)
  *
  */
+@Tag("EARequired")
 public class UmlModelTest extends WindowsBasicTest {
-
+    
 	@Test
 	public void testBasicFunctionality() {
 
@@ -47,12 +49,43 @@ public class UmlModelTest extends WindowsBasicTest {
 				new String[] { "eap" }, "testResults/uml/basic",
 				"src/test/resources/uml/basic/reference");
 	}
-	
+
 	@Test
 	public void testLinkedDocuments() {
 
-		multiTest("src/test/resources/uml/linkedDocument/testEA_uml_linkedDocument.xml",
+		multiTest(
+				"src/test/resources/uml/linkedDocument/testEA_uml_linkedDocument.xml",
 				new String[] { "eap" }, "testResults/uml/linkedDocument",
 				"src/test/resources/uml/linkedDocument/reference");
+	}
+
+	@Test
+	public void testConnectorEndOwnedByClassifier() {
+
+		multiTest(
+				"src/test/resources/uml/connectorEndOwnedByClassifier/test_uml_connectorEndOwnedByClassifier.xml",
+				new String[] { "eap", "xml" },
+				"testResults/uml/connectorEndOwnedByClassifier/results",
+				"src/test/resources/uml/connectorEndOwnedByClassifier/reference/results");
+	}
+		
+	@Test
+	public void testMergeConstraintCommentsIntoText() {
+
+		multiTest(
+				"src/test/resources/uml/mergeConstraintCommentsIntoText/test_uml_mergeConstraintCommentsIntoText.xml",
+				new String[] { "eap" },
+				"testResults/uml/mergeConstraintCommentsIntoText/results",
+				"src/test/resources/uml/mergeConstraintCommentsIntoText/reference/results");
+	}
+	
+	@Test
+	public void testAuthorAndStatus() {
+
+		multiTest(
+				"src/test/resources/uml/authorAndStatus/test_uml_authorAndStatus.xml",
+				new String[] { "eap" },
+				"testResults/uml/authorAndStatus/results",
+				"src/test/resources/uml/authorAndStatus/reference/results");
 	}
 }

@@ -217,14 +217,6 @@ public class CityGMLTransformer implements MessageSource, Transformer {
 			// now establish inheritance relationship to target type
 			targetType.addSubtype(genCi.id());
 			genCi.addSupertype(targetType.id());
-
-			/*
-			 * TBD What to do with base class? Ideally, the base class should
-			 * automatically be computed from the supertypes in ClassInfoImpl.
-			 * However, there's an issue (see comment in
-			 * ClassInfoEA#baseClass()).
-			 */
-			genCi.setBaseClass(targetType);
 		}
 
 	}

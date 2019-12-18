@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/flattener/homogeneousGeometries_core/testFlattening_homogeneousGeometry.EAP"/>
+		<parameter name="appSchemaName" value="AppSchema"/>
+		<parameter name="publicOnly" value="true"/>
+		<!-- 				<parameter name="checkingConstraints" value="disabled"/> -->
+		<parameter name="checkingConstraints" value="enabled"/>
+		<parameter name="classTypesToCreateConstraintsFor" value="featuretype,type"/>
+		<parameter name="constraintCreationForProperties" value="false"/>
+		<parameter name="oclConstraintTypeRegex" value=""/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>	
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="step1" mode="enabled">
+			<parameters>
+				<ProcessParameter name="targetNamespaceSuffix" value="/flat"/>
+				<ProcessParameter name="flattenObjectTypes" value="false" />
+				<ProcessParameter name="flattenInheritanceIncludeRegex"
+					value=".*GeometryInfo" />
+				<ProcessParameter name="flattenObjectTypesIncludeRegex"
+					value=".*GeometryInfo" />
+				<ProcessParameter name="applyHomogeneousGeometriesOnSubtypes"
+					value="true" />
+					
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-ONINAs"/>
+					<rule name="rule-trf-cls-flatten-inheritance"/>
+					<rule name="rule-trf-prop-flatten-types"/>
+					<rule name="rule-trf-prop-flatten-homogeneousgeometries"/>
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="Real" type="Measure"/>
+				<ProcessMapEntry param="_P"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Point"
+					type="GM_Point" />
+				<ProcessMapEntry param="_MP"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_MultiPoint"
+					type="GM_MultiPoint" />
+				<ProcessMapEntry param="_C"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Curve"
+					type="GM_Curve" />
+				<ProcessMapEntry rule="rule-trf-prop-flatten-homogeneousgeometries"
+					type="GM_MultiCurve" />
+				<ProcessMapEntry param="_S"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Surface"
+					type="GM_Surface" />
+				<!-- Omit GM_MultiSurface to avoid ambiguous results -->
+				<ProcessMapEntry rule="rule-trf-prop-flatten-homogeneousgeometries"
+					type="GM_MultiSurface" />
+				<ProcessMapEntry param="_So"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Solid"
+					type="GM_Solid" />
+				<ProcessMapEntry param="_MSo"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_MultiSolid"
+					type="GM_MultiSolid" />
+			</mapEntries>
+		</Transformer>	
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+		  inputs="step1" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/flattening/homogeneousGeometry_core/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="extended-encoding-rule"/>
+			<rules>
+				<EncodingRule name="extended-encoding-rule" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes"/>
+				</EncodingRule>
+			</rules>			
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+			<xsdMapEntries>
+				<XsdMapEntry type="URI" xmlPropertyType="anyURI" xmlType="anyURI"
+					xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007"/>
+			</xsdMapEntries>
+		</TargetXmlSchema>
+<!-- 		<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" -->
+<!-- 			inputs="step1" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/flattening/homogeneousGeometry_core/html"/> -->
+<!-- 			<targetParameter name="outputFilename" value="test"/> -->
+<!-- 			<targetParameter name="sortedOutput" value="true"/> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false"/> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML"/> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl"/> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'"/> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..."/> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a"/> -->
+<!-- 			<targetParameter name="versionDate" value="n/a"/> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH"/> -->
+<!-- 			<targetParameter name="xsltPath" value="src/main/resources/xslt"/>	 -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

@@ -258,7 +258,7 @@ public class DefaultDialog extends JFrame
 				else if (mdl.toLowerCase().endsWith(".eap"))
 					options.setParameter("inputModelType", "EA7");
 				else if (mdl.toLowerCase().endsWith(".mdb"))
-					options.setParameter("inputModelType", "GSIP");
+					options.setParameter("inputModelType", "GCSR");
 				
 				options.setParameter("outputDirectory", outField.getText());
 				options.setParameter("logFile", outField.getText()+"/log.xml");

@@ -43,9 +43,7 @@ import java.util.regex.Pattern;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMode;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.Model.EA.EADocument;
-import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
-import de.interactive_instruments.ShapeChange.Model.Xmi10.Xmi10Document;
+import de.interactive_instruments.ShapeChange.TargetRegistry;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -148,17 +146,17 @@ public abstract class InfoImpl implements Info {
 
 	private void addContextDetails(MessageContext mc) {
 
-		if(mc != null) {
+		if (mc != null) {
 			/*
 			 * we want to provide as much information as possible to locate the
 			 * element in the model
 			 */
 			if (this instanceof PropertyInfo) {
-	
+
 				PropertyInfo pi = (PropertyInfo) this;
-	
+
 				mc.addDetail(null, 791, pi.name(), pi.inClass().name());
-	
+
 			} else {
 				mc.addDetail(null, 790, this.toString(), this.name());
 			}
@@ -253,55 +251,6 @@ public abstract class InfoImpl implements Info {
 		return result;
 	}
 
-	protected String descriptorSource(Descriptor descriptor) {
-		String source = null;
-
-		if (model() instanceof GenericModel) {
-			/*
-			 * special treatment for generic models, which always store the
-			 * descriptor values directly
-			 */
-			source = "sc:internal";
-		} else {
-			source = options().descriptorSource(descriptor.getName());
-
-			// if nothing has been configured, use defaults
-			if (source == null) {
-				if (model() instanceof EADocument) {
-					if (descriptor == Descriptor.DOCUMENTATION)
-						source = "ea:notes";
-					else if (descriptor == Descriptor.ALIAS)
-						source = "ea:alias";
-					else if (descriptor == Descriptor.GLOBALIDENTIFIER)
-						source = "none";
-					else if (descriptor == Descriptor.DEFINITION)
-						source = "sc:extract#PROLOG";
-					else if (descriptor == Descriptor.DESCRIPTION)
-						source = "none";
-					else
-						source = "tag#" + descriptor;
-				} else if (model() instanceof Xmi10Document) {
-					if (descriptor == Descriptor.DOCUMENTATION)
-						source = "tag#documentation;description";
-					else if (descriptor == Descriptor.ALIAS)
-						source = "tag#alias";
-					else if (descriptor == Descriptor.GLOBALIDENTIFIER)
-						source = "tag#globalIdentifier";
-					else if (descriptor == Descriptor.DEFINITION)
-						source = "sc:extract#PROLOG";
-					else if (descriptor == Descriptor.DESCRIPTION)
-						source = "none";
-					else
-						source = "tag#" + descriptor;
-				} else {
-					source = "tag#" + descriptor;
-				}
-			}
-		}
-
-		return source;
-	}
-
 	public Descriptors descriptors() {
 
 		validateDescriptorsCache();
@@ -309,6 +258,12 @@ public abstract class InfoImpl implements Info {
 		return this.descriptors;
 	}
 
+	/**
+	 * @param descriptors
+	 *                        the new Descriptors to set; can be
+	 *                        <code>null</code> in order to load them (when
+	 *                        accessed) from configured descriptor sources
+	 */
 	public void setDescriptors(Descriptors descriptors) {
 
 		this.descriptors = descriptors;
@@ -348,12 +303,12 @@ public abstract class InfoImpl implements Info {
 			List<LangString> result = new ArrayList<LangString>();
 			this.descriptors.put(descriptor, result);
 
-			String source = descriptorSource(descriptor);
+			String source = model().descriptorSource(descriptor);
 			if (source.startsWith("tag#")) {
 
 				/*
 				 * NOTE: the default source for the descriptor 'documentation'
-				 * in XMI10 and GSIP is: tag#documentation;description, that is
+				 * in XMI10 and GCSR is: tag#documentation;description, that is
 				 * why we split here and look at multiple tags in the subsequent
 				 * for-loop. If a value is found in one iteration, we can break.
 				 */
@@ -367,15 +322,6 @@ public abstract class InfoImpl implements Info {
 					}
 				}
 
-			} else if (source.equals("ea:alias")
-					&& model() instanceof EADocument) {
-				// do nothing now, this happens in the EA classes
-			} else if (source.equals("ea:notes")
-					&& model() instanceof EADocument) {
-				// do nothing now, this happens in the EA classes
-			} else if (source.equals("ea:guidtoxml")
-					&& model() instanceof EADocument) {
-				// do nothing now, this happens in the EA classes
 			} else if (source.startsWith("sc:extract#")) {
 				String token = source.replace("sc:extract#", "");
 				String doc = documentation();
@@ -406,6 +352,12 @@ public abstract class InfoImpl implements Info {
 					}
 				}
 			}
+
+			/*
+			 * NOTE: Model type specific sources (e.g. ea:alias, ea:notes, and
+			 * ea:guidtoxml) must be handled in model type specific Info
+			 * implementations that override this method.
+			 */
 
 			/*
 			 * NOTE: Backwards compatibility for the descriptors DOCUMENTATION
@@ -462,9 +414,11 @@ public abstract class InfoImpl implements Info {
 	@Override
 	public String derivedDocumentation(String template, String novalue) {
 		String tmp = (template == null
-				? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE : template);
+				? Options.DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE
+				: template);
 		String nov = (novalue == null
-				? Options.DERIVED_DOCUMENTATION_DEFAULT_NOVALUE : novalue);
+				? Options.DERIVED_DOCUMENTATION_DEFAULT_NOVALUE
+				: novalue);
 		String doc = tmp;
 
 		Pattern pattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
@@ -761,95 +715,27 @@ public abstract class InfoImpl implements Info {
 		String s = taggedValue(platform + "EncodingRule");
 		if (s == null || s.isEmpty()
 				|| options().ignoreEncodingRuleTaggedValues()) {
-			// JE TBD: create enumeration with valid platforms for global use
-			if (platform.equalsIgnoreCase("xsd")) {
-				s = options().parameter(Options.TargetXmlSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = Options.ISO19136_2007;
-			} else if (platform.equalsIgnoreCase("json")) {
-				s = options().parameter(Options.TargetJsonSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "geoservices";
-			} else if (platform.equalsIgnoreCase("rdf")) {
-				s = options().parameter(Options.TargetRDFClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("fc")) {
-				s = options().parameter(Options.TargetFeatureCatalogueClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("sql")) {
-				s = options().parameter(Options.TargetSQLClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("owl")) {
-				s = options().parameter(Options.TargetOWLISO19150Class,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("arcgis")) {
-				s = options().parameter(Options.TargetArcGISWorkspaceClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("sch")) {
-				s = options().parameter(Options.TargetFOL2SchematronClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("rep")) {
-				s = options().parameter(Options.TargetReplicationSchemaClass,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("asm")) {
-				s = options().parameter(Options.TargetApplicationSchemaMetadata,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("exp")) {
-				s = options().parameter(Options.TargetModelExport,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("ptf")) {
-				s = options().parameter(Options.TargetProfileTransferEA,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("cdb")) {
-				s = options().parameter(Options.TargetCDB,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("cldml")) {
-				s = options().parameter(Options.TargetCodeListDictionariesML,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			} else if (platform.equalsIgnoreCase("ldp")) {
-				s = options().parameter(Options.TargetLdproxy,
-						"defaultEncodingRule");
-				if (s == null)
-					s = "*";
-			}
+		    
+		    TargetRegistry tgtreg = options().getTargetRegistry();
+		    
+		    String tgtClassName = tgtreg.targetClassName(platform);
+		    
+		    if(tgtClassName != null) {
+			s = options().parameter(tgtClassName,"defaultEncodingRule");
+			if (s == null)
+			    s = tgtreg.targetDefaultEncodingRule(platform);
+		    }
 		}
 		if (s != null)
 			s = s.toLowerCase();
-		if (!options().encRuleExists(s)) {
+		if (!options().getRuleRegistry().encRuleExists(s)) {
 			result().addError(null, 181, s, platform);
 		}
 		return s;
 	}
 
 	public boolean matches(String rule) {
-
-		String encRule = null;
+	    
 		String[] ra = rule.toLowerCase().split("-", 4);
 		/*
 		 * test if the rule has the correct format
@@ -861,7 +747,7 @@ public abstract class InfoImpl implements Info {
 		/*
 		 * test if the rule is known, if not it cannot match
 		 */
-		if (!options().hasRule(rule)) {
+		if (!options().getRuleRegistry().hasRule(rule)) {
 			result().addError(null, 164, rule);
 			return false;
 		}
@@ -939,50 +825,28 @@ public abstract class InfoImpl implements Info {
 		 * applies to the element
 		 */
 		if (ra[1].equals("all")) {
-			boolean res = false;
-
-			encRule = encodingRule("xsd");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			encRule = encodingRule("json");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			encRule = encodingRule("rdf");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			encRule = encodingRule("fc");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			encRule = encodingRule("sch");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			encRule = encodingRule("sql");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
 			
-			encRule = encodingRule("cdb");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
+			TargetRegistry tgtreg = options().getTargetRegistry();
 			
-			encRule = encodingRule("cldml");
-			if (encRule != null)
-				res = res || options().hasRule(rule, encRule);
-
-			return res;
+			for(String targetIdentifier : tgtreg.getTargetIdentifiers()) {
+			    String encRule = encodingRule(targetIdentifier);
+			    if (encRule != null) {
+				if(options().getRuleRegistry().hasRule(rule, encRule)) {
+				    return true; 
+				}
+			    }
+			}
+			
+			return false;
 
 		} else {
 
 			// determine if the applicable encoding rule contains the given rule
-			encRule = encodingRule(ra[1]).toLowerCase();
+			String encRule = encodingRule(ra[1]).toLowerCase();
 
 			if (encRule != null) {
 
-				boolean encRuleHasRule = options().hasRule(rule, encRule);
+				boolean encRuleHasRule = options().getRuleRegistry().hasRule(rule, encRule);
 
 				if (encRuleHasRule) {
 
@@ -1032,8 +896,9 @@ public abstract class InfoImpl implements Info {
 	}
 
 	/**
-	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
-	 *             <code>taggedValuesAll(String tagOrTaglist)</code> instead.
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per
+	 *             tag. Use <code>taggedValuesAll(String tagOrTaglist)</code>
+	 *             instead.
 	 */
 	@Deprecated
 	public Map<String, String> taggedValues(String tagList) {
@@ -1060,8 +925,8 @@ public abstract class InfoImpl implements Info {
 	}
 
 	/**
-	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per tag. Use
-	 *             <code>taggedValuesAll()</code> instead.
+	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per
+	 *             tag. Use <code>taggedValuesAll()</code> instead.
 	 */
 	@Deprecated
 	public Map<String, String> taggedValues() {
