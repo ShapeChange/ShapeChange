@@ -685,7 +685,11 @@ public class ShapeChangeResult {
 		case 16:
 			return "The XMI file is not associated with a DTD. The DTD is required for validating and processing the XMI file.";
 		case 18:
-			return "Unsupported Java version: '$1$'. Java 1.8 or higher required.";
+			return "Unsupported Java version: '$1$'. Java 11 or higher required.";
+		case 19:
+			return "Model object could not be instantiated: '$1$'.";
+		case 20:
+			return "Model object could not be accessed: '$1$'.";
 		case 21:
 			return "??Rule name '$1$' is not valid. The rule is ignored.";
 		case 22:

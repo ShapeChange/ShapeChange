@@ -40,11 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -133,6 +134,10 @@ public class SbvrRuleLoader implements MessageSource {
 
 					Workbook sbvrXls = WorkbookFactory.create(sbvrFile);
 					sbvrRules = parseSBVRRuleInfos(sbvrXls);
+
+				} catch (EncryptedDocumentException e) {
+
+					result.addError(this, 1, e.getMessage());
 
 				} catch (IOException e) {
 

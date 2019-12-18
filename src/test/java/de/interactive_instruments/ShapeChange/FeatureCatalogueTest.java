@@ -188,5 +188,4 @@ public class FeatureCatalogueTest extends BasicTestSCXML {
 		new String[] { "html" }, "testResults/featureCatalogue/descriptors_bbr/fc/INPUT",
 		"src/test/resources/featureCatalogue/descriptors_bbr/reference");
     }
-
 }
