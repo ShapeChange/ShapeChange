@@ -42,11 +42,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteA
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.AlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;

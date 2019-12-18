@@ -41,7 +41,7 @@
 				value="testResults/sql/checkConstraintForRange/ddl_postgresql" />
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="dbOwner" value="public" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
 				<EncodingRule name="customRule" extends="sql">

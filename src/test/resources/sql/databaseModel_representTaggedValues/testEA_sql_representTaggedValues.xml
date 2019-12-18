@@ -49,7 +49,7 @@
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />

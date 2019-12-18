@@ -37,7 +37,7 @@
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="sqlrule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -77,7 +77,7 @@
 			<targetParameter name="documentationTemplate" value="[[definition]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 <!-- 					<rule name="rule-arcgis-cls-hasZ" /> -->

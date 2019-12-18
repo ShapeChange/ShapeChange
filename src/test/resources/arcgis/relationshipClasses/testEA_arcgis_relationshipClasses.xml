@@ -43,7 +43,7 @@
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="maxNameLength" value="64" />
 			<targetParameter name="foreignKeySuffix" value="_FK" />
-			<targetParameter name="eaAuthor" value="echterhoff" />
+			<targetParameter name="eaAuthor" value="Test Author" />
 			<rules>
 				<EncodingRule name="MyArcGISRule">
 					<rule name="rule-arcgis-cls-identifierStereotype" />

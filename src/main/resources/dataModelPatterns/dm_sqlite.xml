@@ -32,7 +32,7 @@
 						<UML:TaggedValue tag="batchload" value="0"/>
 						<UML:TaggedValue tag="phase" value="1.0"/>
 						<UML:TaggedValue tag="status" value="Proposed"/>
-						<UML:TaggedValue tag="author" value="echterhoff"/>
+						<UML:TaggedValue tag="author" value="EA"/>
 						<UML:TaggedValue tag="complexity" value="1"/>
 						<UML:TaggedValue tag="stereotype" value="DataModel"/>
 						<UML:TaggedValue tag="ea_stype" value="Public"/>
@@ -58,7 +58,7 @@
 										<UML:TaggedValue tag="package2" value="EAID_80034874_5D66_464d_8850_3CD4DBC2B175"/>
 										<UML:TaggedValue tag="package_name" value="SQLite"/>
 										<UML:TaggedValue tag="phase" value="1.0"/>
-										<UML:TaggedValue tag="author" value="echterhoff"/>
+										<UML:TaggedValue tag="author" value="EA"/>
 										<UML:TaggedValue tag="complexity" value="1"/>
 										<UML:TaggedValue tag="status" value="Proposed"/>
 										<UML:TaggedValue tag="tpos" value="1"/>
@@ -86,7 +86,7 @@
 										<UML:TaggedValue tag="package2" value="EAID_D4862871_D43B_4cf2_BE00_7C232FAC90DF"/>
 										<UML:TaggedValue tag="package_name" value="SQLite"/>
 										<UML:TaggedValue tag="phase" value="1.0"/>
-										<UML:TaggedValue tag="author" value="echterhoff"/>
+										<UML:TaggedValue tag="author" value="EA"/>
 										<UML:TaggedValue tag="complexity" value="1"/>
 										<UML:TaggedValue tag="status" value="Proposed"/>
 										<UML:TaggedValue tag="stereotype" value="Database"/>
@@ -117,7 +117,7 @@
 								<UML:TaggedValue tag="tagged" value="0"/>
 								<UML:TaggedValue tag="package_name" value="SQLite"/>
 								<UML:TaggedValue tag="phase" value="1.0"/>
-								<UML:TaggedValue tag="author" value="echterhoff"/>
+								<UML:TaggedValue tag="author" value="EA"/>
 								<UML:TaggedValue tag="complexity" value="1"/>
 								<UML:TaggedValue tag="status" value="Proposed"/>
 								<UML:TaggedValue tag="stereotype" value="EAReportSpecification"/>
@@ -145,7 +145,7 @@
 								<UML:TaggedValue tag="batchload" value="0"/>
 								<UML:TaggedValue tag="phase" value="1.0"/>
 								<UML:TaggedValue tag="status" value="Proposed"/>
-								<UML:TaggedValue tag="author" value="echterhoff"/>
+								<UML:TaggedValue tag="author" value="EA"/>
 								<UML:TaggedValue tag="complexity" value="1"/>
 								<UML:TaggedValue tag="ea_stype" value="Public"/>
 							</UML:ModelElement.taggedValue>
@@ -171,7 +171,7 @@
 								<UML:TaggedValue tag="batchload" value="0"/>
 								<UML:TaggedValue tag="phase" value="1.0"/>
 								<UML:TaggedValue tag="status" value="Proposed"/>
-								<UML:TaggedValue tag="author" value="echterhoff"/>
+								<UML:TaggedValue tag="author" value="EA"/>
 								<UML:TaggedValue tag="complexity" value="1"/>
 								<UML:TaggedValue tag="stereotype" value="Database"/>
 								<UML:TaggedValue tag="ea_stype" value="Public"/>
@@ -195,7 +195,7 @@
 												<UML:TaggedValue tag="package2" value="EAID_448AD8B9_2D29_4fd8_9D42_E5A386D92841"/>
 												<UML:TaggedValue tag="package_name" value="SQLite"/>
 												<UML:TaggedValue tag="phase" value="1.0"/>
-												<UML:TaggedValue tag="author" value="echterhoff"/>
+												<UML:TaggedValue tag="author" value="EA"/>
 												<UML:TaggedValue tag="complexity" value="1"/>
 												<UML:TaggedValue tag="status" value="Proposed"/>
 												<UML:TaggedValue tag="tpos" value="5"/>
@@ -220,7 +220,7 @@
 												<UML:TaggedValue tag="package2" value="EAID_D7041B2F_280D_4705_90AA_3F7E56A05F73"/>
 												<UML:TaggedValue tag="package_name" value="SQLite"/>
 												<UML:TaggedValue tag="phase" value="1.0"/>
-												<UML:TaggedValue tag="author" value="echterhoff"/>
+												<UML:TaggedValue tag="author" value="EA"/>
 												<UML:TaggedValue tag="complexity" value="1"/>
 												<UML:TaggedValue tag="status" value="Proposed"/>
 												<UML:TaggedValue tag="tpos" value="7"/>
@@ -245,7 +245,7 @@
 												<UML:TaggedValue tag="package2" value="EAID_EA16D500_B159_4b54_B327_6F35E304839E"/>
 												<UML:TaggedValue tag="package_name" value="SQLite"/>
 												<UML:TaggedValue tag="phase" value="1.0"/>
-												<UML:TaggedValue tag="author" value="echterhoff"/>
+												<UML:TaggedValue tag="author" value="EA"/>
 												<UML:TaggedValue tag="complexity" value="1"/>
 												<UML:TaggedValue tag="status" value="Proposed"/>
 												<UML:TaggedValue tag="tpos" value="0"/>
@@ -273,7 +273,7 @@
 										<UML:TaggedValue tag="batchload" value="0"/>
 										<UML:TaggedValue tag="phase" value="1.0"/>
 										<UML:TaggedValue tag="status" value="Proposed"/>
-										<UML:TaggedValue tag="author" value="echterhoff"/>
+										<UML:TaggedValue tag="author" value="EA"/>
 										<UML:TaggedValue tag="complexity" value="1"/>
 										<UML:TaggedValue tag="ea_stype" value="Public"/>
 									</UML:ModelElement.taggedValue>
@@ -296,7 +296,7 @@
 										<UML:TaggedValue tag="batchload" value="0"/>
 										<UML:TaggedValue tag="phase" value="1.0"/>
 										<UML:TaggedValue tag="status" value="Proposed"/>
-										<UML:TaggedValue tag="author" value="echterhoff"/>
+										<UML:TaggedValue tag="author" value="EA"/>
 										<UML:TaggedValue tag="complexity" value="1"/>
 										<UML:TaggedValue tag="ea_stype" value="Public"/>
 									</UML:ModelElement.taggedValue>
@@ -319,7 +319,7 @@
 										<UML:TaggedValue tag="batchload" value="0"/>
 										<UML:TaggedValue tag="phase" value="1.0"/>
 										<UML:TaggedValue tag="status" value="Proposed"/>
-										<UML:TaggedValue tag="author" value="echterhoff"/>
+										<UML:TaggedValue tag="author" value="EA"/>
 										<UML:TaggedValue tag="complexity" value="1"/>
 										<UML:TaggedValue tag="ea_stype" value="Public"/>
 									</UML:ModelElement.taggedValue>
@@ -342,7 +342,7 @@
 		<UML:Diagram name="SQLite" xmi.id="EAID_CBD15836_F135_489b_A4B4_42DE3568202F" diagramType="ClassDiagram" owner="EAPK_1F2278A6_8A1C_4beb_9C2F_BE25F4132BF0" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:47:42"/>
 				<UML:TaggedValue tag="package" value="EAPK_1F2278A6_8A1C_4beb_9C2F_BE25F4132BF0"/>
@@ -362,7 +362,7 @@
 		<UML:Diagram name="Logical Model" xmi.id="EAID_9CBD9FCA_D06A_4a9e_939C_4F52558EF582" diagramType="ClassDiagram" owner="EAPK_80034874_5D66_464d_8850_3CD4DBC2B175" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="package" value="EAPK_80034874_5D66_464d_8850_3CD4DBC2B175"/>
@@ -377,7 +377,7 @@
 		<UML:Diagram name="SQLite" xmi.id="EAID_D4E21ABB_87B4_4b9d_9BFD_A598D7A4E33D" diagramType="ClassDiagram" owner="EAPK_D4862871_D43B_4cf2_BE00_7C232FAC90DF" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:48:09"/>
 				<UML:TaggedValue tag="package" value="EAPK_D4862871_D43B_4cf2_BE00_7C232FAC90DF"/>
@@ -392,7 +392,7 @@
 		<UML:Diagram name="Queries" xmi.id="EAID_7FB17A9F_18EC_4a8e_A6B6_9A7F7F31FA9B" diagramType="ClassDiagram" owner="EAPK_EA16D500_B159_4b54_B327_6F35E304839E" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="package" value="EAPK_EA16D500_B159_4b54_B327_6F35E304839E"/>
@@ -407,7 +407,7 @@
 		<UML:Diagram name="Tables" xmi.id="EAID_33D4EF06_E53A_4381_87F9_DF35E21DE75A" diagramType="ClassDiagram" owner="EAPK_448AD8B9_2D29_4fd8_9D42_E5A386D92841" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="package" value="EAPK_448AD8B9_2D29_4fd8_9D42_E5A386D92841"/>
@@ -422,7 +422,7 @@
 		<UML:Diagram name="Views" xmi.id="EAID_4BB07AF0_9982_49a0_A93D_954B4C752DFC" diagramType="ClassDiagram" owner="EAPK_D7041B2F_280D_4705_90AA_3F7E56A05F73" toolName="Enterprise Architect 2.5">
 			<UML:ModelElement.taggedValue>
 				<UML:TaggedValue tag="version" value="1.0"/>
-				<UML:TaggedValue tag="author" value="echterhoff"/>
+				<UML:TaggedValue tag="author" value="EA"/>
 				<UML:TaggedValue tag="created_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="modified_date" value="2019-07-10 14:45:36"/>
 				<UML:TaggedValue tag="package" value="EAPK_D7041B2F_280D_4705_90AA_3F7E56A05F73"/>

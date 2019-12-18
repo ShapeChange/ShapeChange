@@ -32,18 +32,13 @@
 
 package de.interactive_instruments.ShapeChange.Target.XmlSchema;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,7 +49,6 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode.AttributeCallExp;
-import de.interactive_instruments.ShapeChange.Ocl.OclNode.Declaration;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode.MultiplicityMapping;
 
 /**

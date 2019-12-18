@@ -79,7 +79,7 @@
 			<!-- value="C:/Program Files (x86)/Sparx Systems/EA/ModelPatterns" /> -->
 			<targetParameter name="dbOwner" value="public" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -121,7 +121,7 @@
 			value="src/main/resources/dataModelPatterns" />
 <!-- 			<targetParameter name="dbOwner" value="public" /> -->
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -158,7 +158,7 @@
 			<targetParameter name="codeNameColumnName" value="code" />
 			<targetParameter name="dbOwner" value="dbo" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
@@ -202,7 +202,7 @@
 			<targetParameter name="codeNameColumnDocumentation" value="An alphanumeric value that is used to ..." />
 			<targetParameter name="dbOwner" value="dbo" />
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />

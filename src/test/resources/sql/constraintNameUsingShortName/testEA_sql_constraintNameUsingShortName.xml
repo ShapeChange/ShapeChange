@@ -51,7 +51,7 @@
 				value="true" />
 			<targetParameter name="shortNameByTaggedValue"
 				value="shortName" />
-			<targetParameter name="eaAuthor" value="echterhoff"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
