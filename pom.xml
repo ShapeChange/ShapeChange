@@ -231,6 +231,16 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M4</version>
+				<configuration>
+					<systemPropertyVariables>
+						<scunittesting>true</scunittesting>						
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.1.0</version>
 				<configuration>
@@ -327,8 +337,8 @@
 										<include>test.eap</include>
 										<include>test.xmi</include>
 										<include>UMLX13.dtd</include>
-<!-- 										<include>ea</include> -->
-<!-- 										<include>xmi</include> -->
+										<!-- <include>ea</include> -->
+										<!-- <include>xmi</include> -->
 									</includes>
 								</resource>
 							</resources>

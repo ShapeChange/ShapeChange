@@ -70,8 +70,8 @@ import org.custommonkey.xmlunit.HTMLDocumentBuilder;
 import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.jaxp13.Validator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
 
@@ -782,22 +782,22 @@ public abstract class BasicTest {
 	}
     }
 
-    @BeforeEach
-    public void initialise() {
+    @BeforeAll
+    public static void initialise() {
 	System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 		"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 	System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
 	System.setProperty("javax.xml.transform.TransformerFactory",
 		"org.apache.xalan.processor.TransformerFactoryImpl");
 
-	System.setProperty("sc.unittesting", "true");
+	System.setProperty("scunittesting", "true");
 
 	XMLUnit.setIgnoreComments(true);
 	XMLUnit.setNormalizeWhitespace(true);
     }
 
-    @AfterEach
-    public void tearDown() {
-	System.setProperty("sc.unittesting", "");
+    @AfterAll
+    public static void tearDown() {
+	System.setProperty("scunittesting", "");
     }
 }

@@ -336,7 +336,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    atts.addAttribute("", "encoding", "", "string", model.characterEncoding());
 
 	    String scversion = "[dev]";
-	    String scunittesting = System.getProperty("sc.unittesting");
+	    String scunittesting = System.getProperty("scunittesting");
 	    if ("true".equalsIgnoreCase(scunittesting)) {
 		scversion = "unittest";
 	    } else {
