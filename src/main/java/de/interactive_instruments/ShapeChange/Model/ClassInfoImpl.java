@@ -179,6 +179,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * WARNING: This method is intended to be "final", but not actually declared
 	 * as such. A depending project can thus extend the method, if absolutely
 	 * necessary.
+	 * @return  tbd
 	 */
 	public String nsabr() {
 		PackageInfo pi = pkg();
@@ -191,6 +192,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * WARNING: This method is intended to be "final", but not actually declared
 	 * as such. A depending project can thus extend the method, if absolutely
 	 * necessary.
+	 * @return  tbd
 	 */
 	public String ns() {
 		PackageInfo pi = pkg();
@@ -383,6 +385,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	 * WARNING: This method is intended to be "final", but not actually declared
 	 * as such. A depending project can thus extend the method, if absolutely
 	 * necessary.
+	 * @throws ShapeChangeAbortException  tbd
 	 */
 	public void establishCategory() throws ShapeChangeAbortException {
 		if (stereotype("codelist")) {

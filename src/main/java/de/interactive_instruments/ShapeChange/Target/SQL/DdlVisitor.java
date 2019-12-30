@@ -59,7 +59,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  * NOTE: Database system specific visitors should be added as needed, to take
  * into account any database system specific syntax.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

@@ -44,7 +44,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Cache for descriptors.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -61,8 +61,8 @@ public class Descriptors {
 	 * The optimization can significantly reduce memory consumption when
 	 * processing large models.
 	 * 
-	 * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
-	 *         <dot> de)
+	 * @author Johannes Echterhoff (echterhoff at interactive-instruments
+	 *         dot de)
 	 *
 	 */
 	private class DescriptorValue {
@@ -133,8 +133,6 @@ public class Descriptors {
 	/**
 	 * Constructor for empty object (to avoid having to deal with
 	 * <code>null</code>).
-	 * 
-	 * @param options
 	 */
 	public Descriptors() {
 	}
@@ -144,7 +142,7 @@ public class Descriptors {
 	}
 
 	/**
-	 * @param descriptor
+	 * @param descriptor tbd
 	 * @return List with values for the descriptor; can be empty but not null;
 	 */
 	public List<LangString> values(Descriptor descriptor) {
@@ -184,7 +182,7 @@ public class Descriptors {
 	}
 
 	/**
-	 * @param descriptor
+	 * @param descriptor tbd
 	 * @param lang
 	 *                       Identifier for the language to search values for.
 	 *                       Can be <code>null</code>, to search for the values
@@ -218,7 +216,7 @@ public class Descriptors {
 	}
 
 	/**
-	 * @param descriptor
+	 * @param descriptor tbd
 	 * @return the value for this descriptor, or <code>null</code> if no value
 	 *         is available.
 	 */
@@ -328,7 +326,7 @@ public class Descriptors {
 	}
 
 	/**
-	 * @param descriptor
+	 * @param descriptor tbd
 	 * @return a deep copy of the values stored for the given descriptor; can be
 	 *         empty but not <code>null</code>
 	 */
@@ -354,6 +352,7 @@ public class Descriptors {
 	 *                                           key: Descriptor; value: pair of
 	 *                                           first the separator to use,
 	 *                                           then the suffix
+	 * @param addDescriptorIfMissing tbd 
 	 */
 	public void appendSuffix(
 			EnumMap<Descriptor, Pair<String, String>> separatorAndSuffixByDescriptor,

@@ -39,7 +39,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

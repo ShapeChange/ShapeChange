@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange.Target.SQL.naming;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DefaultSQLServerUniqueConstraintNamingStrategy

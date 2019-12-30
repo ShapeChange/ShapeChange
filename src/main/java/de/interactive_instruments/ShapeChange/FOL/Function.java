@@ -36,6 +36,7 @@ import java.util.List;
 
 /**
  * @author Johannes Echterhoff
+ * @param <T>  tbd
  */
 public class Function<T> extends Expression {
 

@@ -70,8 +70,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  * <li>error messages are printed to System.err</li>
  * </ul>
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class XsltWriter {
@@ -130,12 +130,12 @@ public class XsltWriter {
 	 * provided if the default implementation shall be used.</li>
 	 * <li>Parameter {@value #PARAM_hrefMappings}: list of key-value pairs
 	 * defining href mappings, structured using URL query syntax (i.e. using '='
-	 * to separate the key from the value, using '&' to separate pairs, and with
+	 * to separate the key from the value, using '&amp;' to separate pairs, and with
 	 * URL-encoded value (with UTF-8 character encoding); NOTE: this parameter
 	 * may not be provided if href mappings are not needed.</li>
 	 * <li>Parameter {@value #PARAM_transformationParameters}: list of key-value
 	 * pairs defining the transformation parameters, structured using URL query
-	 * syntax (i.e. using '=' to separate the key from the value, using '&' to
+	 * syntax (i.e. using '=' to separate the key from the value, using '&amp;' to
 	 * separate pairs, and with URL-encoded value (with UTF-8 character
 	 * encoding); NOTE: this parameter may not be provided if transformation
 	 * parameters are not needed.</li>
@@ -148,6 +148,7 @@ public class XsltWriter {
 	 * transformation target file (may be a relative path); NOTE: this is a
 	 * required parameter.</li>
 	 * </ul>
+	 * @param args  tbd
 	 */
 	public static void main(String[] args) {
 

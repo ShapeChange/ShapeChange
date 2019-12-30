@@ -54,9 +54,10 @@ public class GenericFolConstraint extends FolConstraintImpl {
 	 *            construction this constraint has the reference to the given
 	 *            Info object as-is; it must be updated to reference the correct
 	 *            generic Info object during GenericModel construction
-	 * @param name
-	 * @param status
-	 * @param text
+	 * @param name tbd
+	 * @param status tbd
+	 * @param sourceType  tbd
+	 * @param text tbd
 	 */
 	public GenericFolConstraint(ClassInfo ci, String name, String status,
 			String sourceType, String text) {

@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

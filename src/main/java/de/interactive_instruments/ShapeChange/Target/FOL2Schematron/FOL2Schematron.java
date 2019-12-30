@@ -332,9 +332,9 @@ public class FOL2Schematron implements Target, MessageSource {
 	}
 
 	/**
-	 * Add another constraint and translate it into a Schematron &lt;assert>,
+	 * Add another constraint and translate it into a Schematron &lt;assert&gt;,
 	 * which is subsequently appended to the Schematron document within the
-	 * proper &lt;rule> context.
+	 * proper &lt;rule&gt; context.
 	 * 
 	 * @param ci
 	 *            ClassInfo object, which is context to the constraint.
@@ -412,8 +412,8 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	/**
 	 * Add an assertion statement embodied in an XpathFragment object and output
-	 * it as a Schematron &lt;assert> element, which is contained in a proper
-	 * &lt;rule> context. &lt;let> elements are searched for identities and are
+	 * it as a Schematron &lt;assert&gt; element, which is contained in a proper
+	 * &lt;rule&gt; context. &lt;let&gt; elements are searched for identities and are
 	 * merged including the necessary name corrections in the text.
 	 * 
 	 * @param ci
@@ -422,8 +422,7 @@ public class FOL2Schematron implements Target, MessageSource {
 	 *            Assertion embodied in an XpathFragment object.
 	 * @param text
 	 *            Explanatory text concerning the assertion
-	 * @param id
-	 * @param
+	 * @param id tbd
 	 */
 	protected void addAssertion(ClassInfo ci,
 			FolSchematronNode.XpathFragment xpath, String text, String id) {
@@ -507,7 +506,7 @@ public class FOL2Schematron implements Target, MessageSource {
 	/**
 	 * Auxiliary method to find out the full, namespace adorned name of a
 	 * property from the model. As a side effect the method makes the namespace
-	 * also known to the Schematron schema, appending another &lt;ns> element if
+	 * also known to the Schematron schema, appending another &lt;ns&gt; element if
 	 * necessary.
 	 * 
 	 * @param pi
@@ -544,18 +543,16 @@ public class FOL2Schematron implements Target, MessageSource {
 	}
 
 	/**
-	 * <p>
 	 * Auxiliary method to find out the full, namespace adorned name of a class
 	 * from the the mapping or the model. As a side effect the method makes the
-	 * namespace also known to the Schematron schema, appending another &lt;ns>
+	 * namespace also known to the Schematron schema, appending another &lt;ns&gt;
 	 * element if necessary.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * The method considers the mapping in first priority. If the class turns
 	 * out to map to a basic type, <i>null</i> is returned instead of a name.
-	 * </p>
 	 * 
-	 * @param pi
+	 * 
+	 * @param ci
 	 *            ClassInfo object
 	 * @return Element name of class
 	 */
@@ -638,7 +635,7 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	/**
 	 * This auxiliary method registers a namespace (prefix and namespace proper)
-	 * with the Schematron schema. It adds another &lt;ns> element when the
+	 * with the Schematron schema. It adds another &lt;ns&gt; element when the
 	 * namespace occurs the first time.
 	 * 
 	 * @param xmlns
@@ -660,7 +657,7 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	/**
 	 * This auxiliary method registers a namespace prefix with the Schematron
-	 * schema. It adds another &lt;ns> element when the namespace occurs the
+	 * schema. It adds another &lt;ns&gt; element when the namespace occurs the
 	 * first time
 	 * 
 	 * @param xmlns
@@ -698,12 +695,12 @@ public class FOL2Schematron implements Target, MessageSource {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This function recursively descends into an FolConstraint following the
 	 * FOL expression structure. In doing so it generates an equivalent syntax
 	 * tree which is more in line with Xpath syntax and its use in the
 	 * Schematron schema.
-	 * </p>
+	 * 
 	 * 
 	 * @param folExpr
 	 *            FolExpression of some level

@@ -69,7 +69,7 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

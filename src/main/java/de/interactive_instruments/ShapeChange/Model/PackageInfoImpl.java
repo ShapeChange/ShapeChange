@@ -134,7 +134,9 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return s;
 	}
 
-	/** Derive a file name from the package name. */
+	/** Derive a file name from the package name. 
+	 * @param s  tbd
+	 * @return tbd */
 	protected String mapPackageNameToFilename(String s) {
 		StringBuffer str = new StringBuffer();
 		int len = s != null ? s.length() : 0;

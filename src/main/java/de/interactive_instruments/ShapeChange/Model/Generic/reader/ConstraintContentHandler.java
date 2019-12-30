@@ -49,7 +49,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericOclConstraint
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

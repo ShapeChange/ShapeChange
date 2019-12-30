@@ -32,88 +32,84 @@
 package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class Comment implements Statement {
 
-	private Table table = null;
-	private Column column = null;
-	private String text;
+    private Table table = null;
+    private Column column = null;
+    private String text;
 
-	/**
-	 * @param table
-	 * @param text
-	 *            - shall not contain single quotes that have been escaped with
-	 *            an additional single quote
-	 */
-	public Comment(Table table, String text) {
-		super();
+    /**
+     * @param table tbd
+     * @param text  shall not contain single quotes that have been escaped with an
+     *              additional single quote
+     */
+    public Comment(Table table, String text) {
+	super();
 
-		this.table = table;
-		this.text = text;
+	this.table = table;
+	this.text = text;
+    }
+
+    /**
+     * @param column tbd
+     * @param text   shall not contain single quotes that have been escaped with an
+     *               additional single quote
+     */
+    public Comment(Column column, String text) {
+	super();
+
+	this.column = column;
+	this.text = text;
+    }
+
+    @Override
+    public void accept(StatementVisitor visitor) {
+	visitor.visit(this);
+    }
+
+    /**
+     * @return the table
+     */
+    public Table getTable() {
+	return table;
+    }
+
+    /**
+     * @return the column
+     */
+    public Column getColumn() {
+	return column;
+    }
+
+    /**
+     * @return the text
+     */
+    public String getText() {
+	return text;
+    }
+
+    public String computeTargetName() {
+	if (column == null) {
+	    return this.table.getName();
+	} else {
+	    return this.column.getInTable().getName() + "." + this.column.getName();
 	}
+    }
 
-	/**
-	 * @param column
-	 * @param text
-	 *            - shall not contain single quotes that have been escaped with
-	 *            an additional single quote
-	 */
-	public Comment(Column column, String text) {
-		super();
+    public String toString() {
 
-		this.column = column;
-		this.text = text;
-	}
+	StringBuilder sb = new StringBuilder();
 
-	@Override
-	public void accept(StatementVisitor visitor) {
-		visitor.visit(this);
-	}
+	sb.append("COMMENT ON ");
+	sb.append(column == null ? "TABLE " : "COLUMN ");
+	sb.append(computeTargetName());
+	sb.append(" IS '");
+	sb.append(text.replaceAll("'", "''"));
+	sb.append("'");
 
-	/**
-	 * @return the table
-	 */
-	public Table getTable() {
-		return table;
-	}
-
-	/**
-	 * @return the column
-	 */
-	public Column getColumn() {
-		return column;
-	}
-
-	/**
-	 * @return the text
-	 */
-	public String getText() {
-		return text;
-	}
-
-	public String computeTargetName() {
-		if (column == null) {
-			return this.table.getName();
-		} else {
-			return this.column.getInTable().getName() + "."
-					+ this.column.getName();
-		}
-	}
-
-	public String toString() {
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("COMMENT ON ");
-		sb.append(column == null ? "TABLE " : "COLUMN ");
-		sb.append(computeTargetName());
-		sb.append(" IS '");
-		sb.append(text.replaceAll("'", "''"));
-		sb.append("'");
-
-		return sb.toString();
-	}
+	return sb.toString();
+    }
 }

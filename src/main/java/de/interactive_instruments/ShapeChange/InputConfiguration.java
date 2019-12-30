@@ -36,8 +36,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class InputConfiguration {
 
@@ -62,16 +62,16 @@ public class InputConfiguration {
 	private Map<String, PackageInfoConfiguration> packageInfosByName;
 
 	/**
-	 * @param id
-	 * @param parametersByName
+	 * @param id tbd
+	 * @param parametersByName tbd
 	 * @param stereotypeAliasesByAlias
 	 *            map with stereotype alias (in lower case) as key, and with
 	 *            wellknown stereotype (in lower case) as value
-	 * @param descriptorSources, can be <code>null</code> or empty
-	 * @param tagAliases
+	 * @param descriptorSources can be <code>null</code> or empty
+	 * @param tagAliasesByAlias
 	 *            map with tag alias (in lower case) as key, and with wellknown
 	 *            tag (in lower case) as value
-	 * @param packageInfosByName
+	 * @param packageInfosByName tbd
 	 */
 	public InputConfiguration(String id, Map<String, String> parametersByName,
 			Map<String, String> stereotypeAliasesByAlias,

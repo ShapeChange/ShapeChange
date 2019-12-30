@@ -36,8 +36,8 @@ package de.interactive_instruments.ShapeChange;
  * transformation or target is valid. The validator can check parameters, rules,
  * map entries, etc.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public interface ConfigurationValidator {
@@ -54,9 +54,9 @@ public interface ConfigurationValidator {
 	 * wrong target configuration. Simply rely on the given
 	 * ProcessConfiguration. That also leads to more readable code.
 	 * 
-	 * @param pConfig
-	 * @param o
-	 * @param r
+	 * @param pConfig tbd
+	 * @param o tbd
+	 * @param r tbd
 	 * @return <code>true</code> if the configuration is valid, else
 	 *         <code>false</code>
 	 */

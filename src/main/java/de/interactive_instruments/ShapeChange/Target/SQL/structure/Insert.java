@@ -37,8 +37,8 @@ import java.util.List;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ExpressionList;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class Insert implements Statement {

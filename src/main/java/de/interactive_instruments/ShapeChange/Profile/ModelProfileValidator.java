@@ -55,8 +55,8 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ModelProfileValidator implements MessageSource {
@@ -99,6 +99,7 @@ public class ModelProfileValidator implements MessageSource {
 	 * <li>Mandatory properties belong to the profiles of the class they are in,
 	 * except in case of enumerations and code lists (in future maybe unions as
 	 * well).</li>
+	 * </ul>
 	 * 
 	 * Furthermore, the consistency of the following profile parameters is
 	 * checked: geometry and multiplicity.
@@ -108,7 +109,7 @@ public class ModelProfileValidator implements MessageSource {
 	 * @param isExplicitProfileSettings
 	 *            <code>true</code> if the profile definitions in the model are
 	 *            explicit, else <code>false</code>
-	 * @param warnIfSupertypeProfilesDoNotContainSubtypeProfiles
+	 * @param warnIfSupertypeProfilesDoNotContainSubtypeProfiles tbd
 	 * @param onlyProcessSelectedSchemas
 	 *            <code>true</code> if checks shall only be performed on classes
 	 *            and properties from selected schemas (thereby ignoring all

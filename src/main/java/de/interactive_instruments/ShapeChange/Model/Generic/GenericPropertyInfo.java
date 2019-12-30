@@ -52,7 +52,8 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /**
- * 
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
  */
 public class GenericPropertyInfo extends PropertyInfoImpl
 		implements MessageSource {
@@ -435,7 +436,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * <code>null</code>). The typeInfo value of this object thus does not
 	 * reference the given Type object (which could cause trouble).
 	 * 
-	 * @param typeInfo
+	 * @param typeInfo tbd
 	 */
 	public void copyTypeInfo(Type typeInfo) {
 
@@ -479,40 +480,25 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		return result;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setId(String id) {
 
 		this.id = options.internalize(id);
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(GenericModel model) {
 		this.model = model;
 
 	}
 
-	/**
-	 * @param name
-	 */
 	public void setName(String name) {
 
 		this.name = options.internalize(name);
 	}
 
-	/**
-	 * @param options
-	 */
 	public void setOptions(Options options) {
 		this.options = options;
 	}
 
-	/**
-	 * @param result
-	 */
 	public void setResult(ShapeChangeResult result) {
 		this.result = result;
 
@@ -529,9 +515,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 
 	} // validateStereotypesCache
 
-	/**
-	 * @param stereotypeSet
-	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -543,9 +526,6 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 		}
 	}
 
-	/**
-	 * @param stereotype
-	 */
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -565,7 +545,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	/**
-	 * @param taggedValues
+	 * @param taggedValues tbd
 	 * @param updateFields
 	 *                         true if class fields should be updated based upon
 	 *                         information from given tagged values, else false
@@ -668,8 +648,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	}
 
 	/**
-	 * @param tvName
-	 * @param tvValue
+	 * @param tvName tbd
+	 * @param tvValue tbd
 	 * @param updateFields
 	 *                         true if property fields should be updated based
 	 *                         upon information from given tagged value, else
@@ -692,8 +672,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * a named tagged value. Updates 'nilReasonAllowed', 'inlineOrByReference',
 	 * and 'sequenceNumber'.
 	 * 
-	 * @param taggedValueName
-	 * @param taggedValueValue
+	 * @param tvName tbd
+	 * @param tvValue tbd
 	 */
 	protected void updateFieldsForTaggedValue(String tvName, String tvValue) {
 
@@ -778,7 +758,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl
 	 * IDs used in a reference model are unique to that model and do not get
 	 * mixed up with the IDs of the input model.
 	 * 
-	 * @param prefix
+	 * @param prefix tbd
 	 */
 	public void addPrefixToModelElementIDs(String prefix) {
 

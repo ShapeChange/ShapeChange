@@ -43,8 +43,8 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ClassSelector {
@@ -62,7 +62,7 @@ public class ClassSelector {
 	}
 
 	/**
-	 * @param m
+	 * @param m tbd
 	 * @param owners
 	 *            can be <code>null</code> in case that being owned by specific
 	 *            packages (from the set of all selected schemas with their
@@ -114,7 +114,7 @@ public class ClassSelector {
 	/**
 	 * 
 	 * @param p
-	 * @param pis
+	 * @param ci
 	 * @return a new set with all PackageInfos that have at least one stereotype
 	 *         matching the given pattern - or with all PackageInfos in case
 	 *         that the pattern is <code>null</code>

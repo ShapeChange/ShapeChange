@@ -498,8 +498,8 @@ public class ShapeChangeResult {
 	 * 'href' attribute, and sets the URI of the given new file as 'href' and
 	 * text content of these copies. 'scope' and 'target' will be kept as-is.
 	 * 
-	 * @param originalFile
-	 * @param newFile
+	 * @param originalFile tbd
+	 * @param newFile tbd
 	 */
 	public void copyResultAndUpdateFileReference(File originalFile,
 			File newFile) {

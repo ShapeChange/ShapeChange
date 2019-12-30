@@ -62,7 +62,7 @@ import org.xml.sax.SAXException;
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -165,7 +165,7 @@ public class XMLUtil {
     }
 
     /**
-     * @param s
+     * @param s tbd
      * @return <code>true</code> if the given string equals '1' or equals, ignoring
      *         case, 'true'; else <code>false</code>
      */

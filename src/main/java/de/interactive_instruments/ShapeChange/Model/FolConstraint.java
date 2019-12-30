@@ -45,6 +45,7 @@ public interface FolConstraint extends TextConstraint {
 
 	/**
 	 * Get comments regarding the logic expression
+	 * @return  tbd
 	 * */
 	public String[] comments();
 	
@@ -71,7 +72,7 @@ public interface FolConstraint extends TextConstraint {
 	 * consecutive whitespace characters with a single space character (thus
 	 * removing tabs and line breaks to construct a single line with text).
 	 * 
-	 * @param text
+	 * @param text tbd
 	 */
 	public void setText(String text);
 

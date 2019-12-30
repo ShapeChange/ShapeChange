@@ -413,7 +413,7 @@ public class XmlSchema implements Target, MessageSource {
 
     /**
      * @param cibase class that owns the property
-     * @param pi     the property
+     * @param propi     the property
      * @param schDoc
      */
     private void addAssertionForNilReasonCheck(ClassInfo cibase, PropertyInfo propi, ClassInfo voidReasonType,
@@ -743,7 +743,11 @@ public class XmlSchema implements Target, MessageSource {
 	printed = true;
     }
 
-    /** Create XML Schema documents */
+    /** Create XML Schema documents 
+     * @param pi  tbd
+     * @param xsdcurr  tbd
+     * @return  tbd
+     * @throws ShapeChangeAbortException tbd */
     protected boolean createXSDs(PackageInfo pi, XsdDocument xsdcurr) throws ShapeChangeAbortException {
 	boolean res = false;
 
@@ -815,7 +819,9 @@ public class XmlSchema implements Target, MessageSource {
 	return res;
     }
 
-    /** Process dependency relationships with other packages */
+    /** Process dependency relationships with other packages 
+     * @param pi  tbd
+     * @throws ShapeChangeAbortException tbd */
     protected void processDependecies(PackageInfo pi) throws ShapeChangeAbortException {
 	XsdDocument xsd1 = xsdMap.get(pi.id());
 	for (String pid : pi.supplierIds()) {
@@ -868,7 +874,7 @@ public class XmlSchema implements Target, MessageSource {
      * map entry exists, or the map entry does not contain the attribute, the result
      * will be undetermined (i.e., <code>null</code>).
      * 
-     * @param ci
+     * @param ci tbd
      * @return A Boolean object that indicates if the object element that represents
      *         ci has simple content. If the result is <code>null</code>, that
      *         information is undetermined.

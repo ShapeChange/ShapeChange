@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange;
 import java.util.Set;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class PropertyConversionParameter {
@@ -48,15 +48,6 @@ public class PropertyConversionParameter {
 	private String targetSchema;
 	private String rule;
 
-	/**
-	 * @param property
-	 * @param schema
-	 * @param global
-	 * @param subPropertyOf
-	 * @param target
-	 * @param targetSchema
-	 * @param rule
-	 */
 	public PropertyConversionParameter(String property, String schema,
 			boolean global, Set<String> subPropertyOf, String target,
 			String targetSchema, String rule) {

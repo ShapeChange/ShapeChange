@@ -61,8 +61,8 @@ public class SbvrUtil {
 	 * element referenced by the schema call, or the variable context - but sets
 	 * them to the same reference as in the original schema call.
 	 * 
-	 * @param sc
-	 * @return
+	 * @param sc tbd
+	 * @return tbd
 	 */
 	public static SchemaCall copy(SchemaCall sc) {
 
@@ -119,7 +119,7 @@ public class SbvrUtil {
 	 * <li>featureMetadata</li>
 	 * </ul>
 	 * 
-	 * @param m
+	 * @param m tbd
 	 * @return verbs contained in the selected schemas (including 'has' and
 	 *         'have')
 	 */
@@ -178,7 +178,7 @@ public class SbvrUtil {
 	 * selected schemas. Each association name is considered to be a verb. In
 	 * addition, 'has' and 'have' are always recongized as verbs.
 	 * 
-	 * @param m
+	 * @param m tbd
 	 * @return verbs contained in the selected schemas (including 'has' and
 	 *         'have')
 	 */
@@ -229,7 +229,7 @@ public class SbvrUtil {
 	}
 
 	/**
-	 * @param m
+	 * @param m tbd
 	 * @return a parser helper with nouns and verbs initialized with information
 	 *         identified from the given model (using
 	 *         {@link #identifyNouns(Model)} and {@link #identifyVerbs(Model)}).

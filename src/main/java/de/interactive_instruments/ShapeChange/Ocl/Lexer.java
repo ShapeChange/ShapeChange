@@ -42,8 +42,6 @@ import java.util.regex.Pattern;
  * of Token objects, which correspond to low level constructs of OCL (actually, 
  * a subset of OCL). For the definition of Token objects see class Token.</p>
  *
- * @see Token 
- * 
  * @version 0.1
  * @author Reinhard Erstling (c) interactive instruments GmbH, Bonn, Germany
  */
@@ -337,7 +335,7 @@ public class Lexer {
 	/**
 	 * <p>This method releases the checkpoint once captured by means of method
 	 * captureState().</p>
-	 * @param chp
+	 * @param chp tbd
 	 */
 	public void releaseState( Checkpoint chp ) {
 		// Control checkpoint nesting ...

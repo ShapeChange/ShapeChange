@@ -45,9 +45,9 @@ import java.util.SortedSet;
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class TaggedValuesCacheMap extends TaggedValuesImpl {

@@ -42,8 +42,8 @@ import org.sparx.Collection;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EAAttributeUtil extends AbstractEAUtil {
@@ -59,8 +59,9 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 * 
 	 * @param att
 	 *            the attribute to which the tagged values shall be added
-	 * @param tvs
+	 * @param tv
 	 *            collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValue(Attribute att, EATaggedValue tv)
 			throws EAException {
@@ -112,6 +113,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            the attribute to which the tagged values shall be added
 	 * @param tvs
 	 *            collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(Attribute att, List<EATaggedValue> tvs)
 			throws EAException {
@@ -168,6 +170,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            the attribute to which the tagged values shall be added
 	 * @param tvs
 	 *            collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(Attribute att, TaggedValues tvs)
 			throws EAException {
@@ -294,6 +297,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            the attribute in which the tagged value shall be set
 	 * @param tv
 	 *            tagged value to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(Attribute att, EATaggedValue tv)
 			throws EAException {
@@ -313,6 +317,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            name of the tagged value to set, must not be <code>null</code>
 	 * @param value
 	 *            value of the tagged value to set, can be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(Attribute att, String name, String value)
 			throws EAException {
@@ -332,6 +337,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            the attribute in which the tagged values shall be set
 	 * @param tvs
 	 *            tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(Attribute att, List<EATaggedValue> tvs)
 			throws EAException {
@@ -351,6 +357,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 *            the attribute in which the tagged values shall be set
 	 * @param tvs
 	 *            tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(Attribute att, TaggedValues tvs)
 			throws EAException {
@@ -400,7 +407,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * @param att
+	 * @param att tbd
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */
@@ -444,7 +451,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	}
 	
 	/**
-	 * @param att
+	 * @param att tbd
 	 * @return sorted map of the tagged values (key: {tag name}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */
@@ -496,7 +503,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	 * @param text
 	 *            Text of the new constraint
 	 * @return The new constraint
-	 * @throws EAException
+	 * @throws EAException tbd
 	 */
 	public static org.sparx.AttributeConstraint addConstraint(Attribute att,
 			String name, String type, String text) throws EAException {

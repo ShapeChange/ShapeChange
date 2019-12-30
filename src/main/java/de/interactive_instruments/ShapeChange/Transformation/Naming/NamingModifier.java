@@ -59,8 +59,8 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  * Encapsulates the logic for execution of rules that modify the naming of
  * application schema elements.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  * 
  */
 public class NamingModifier implements Transformer, MessageSource {
@@ -131,41 +131,41 @@ public class NamingModifier implements Transformer, MessageSource {
 	 * </ul>
 	 * This rule can be useful when Oracle DB naming conventions play a role,
 	 * and when the name transformation shall be reversible.
-	 * <p/>
+	 * <br><br>
 	 * NOTE1: This rule does not modify the names of enums and codes (i.e. the
 	 * properties of enumeration and codelist classes). If these names shall be
 	 * modified as well, add
 	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_ENUMS} and
 	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_CODES}.
-	 * <p/>
+	 * <br><br>
 	 * NOTE2: The rule only processes tagged values of included classes and
 	 * properties if
 	 * {@value #RULE_TRF_CAMEL_CASE_TO_UPPER_CASE_INCLUDE_TAGGED_VALUES} is
 	 * enabled. The tags to modify are identified via the configuration
 	 * parameter {@value #PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES}.
-	 * <p/>
+	 * <br><br>
 	 * Examples:
 	 * <ul>
-	 * <li>abcDefGhi (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) ->
+	 * <li>abcDefGhi (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) -&gt;
 	 * ABC_DEF_GHI</li>
 	 * <li>abc_DefGhi (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set)
-	 * -> ABC__DEF_GHI</li>
-	 * <li>ABCDefGhi (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) ->
+	 * -&gt; ABC__DEF_GHI</li>
+	 * <li>ABCDefGhi (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) -&gt;
 	 * A_B_C_DEF_GHI</li>
-	 * <li>AbcDEfGHI (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) ->
+	 * <li>AbcDEfGHI (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set) -&gt;
 	 * ABC_D_EF_G_H_I</li>
 	 * <li>AbcDefGhiID (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' set to
-	 * 'ID') -> ABC_DEF_GHI_ID</li>
+	 * 'ID') -&gt; ABC_DEF_GHI_ID</li>
 	 * <li>AbcDefGHIID (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' set to
-	 * 'ID') -> ABC_DEF_G_H_I_ID</li>
+	 * 'ID') -&gt; ABC_DEF_G_H_I_ID</li>
 	 * <li>AbcDefGHIID (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' set to
-	 * 'ID, GHIID') -> ABC_DEF_GHIID</li>
+	 * 'ID, GHIID') -&gt; ABC_DEF_GHIID</li>
 	 * <li>AbcDefGhiCL (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' set to
-	 * 'CL') -> ABC_DEF_GHI_CL</li>
+	 * 'CL') -&gt; ABC_DEF_GHI_CL</li>
 	 * <li>abcDefGhi_CL (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' set to
-	 * 'CL') -> ABC_DEF_GHI__CL</li>
+	 * 'CL') -&gt; ABC_DEF_GHI__CL</li>
 	 * <li>Abc1D1efG2HI (parameter '{@value #PARAM_SUFFIXES_TO_IGNORE}' not set)
-	 * -> ABC1_D1EF_G2_H_I</li>
+	 * -&gt; ABC1_D1EF_G2_H_I</li>
 	 * </ul>
 	 */
 	public static final String RULE_TRF_CAMEL_CASE_TO_UPPER_CASE = "rule-trf-camelcase-to-uppercase";

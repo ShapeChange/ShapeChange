@@ -85,7 +85,7 @@ import de.interactive_instruments.ShapeChange.UI.StatusBoard;
  * that do not belong to one of the profiles stated in the ShapeChange
  * configuration.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public class Profiler implements Transformer, MessageSource {
@@ -1226,6 +1226,7 @@ public class Profiler implements Transformer, MessageSource {
 	}
 
 	/**
+	 * @param genCi  tbd
 	 * @return Set with all direct and indirect subtypes of the given class (if
 	 *         they are contained in the generic model and instance of
 	 *         GenericClassInfo)

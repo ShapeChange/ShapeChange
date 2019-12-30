@@ -70,8 +70,8 @@ import de.interactive_instruments.ShapeChange.Target.Target;
 
 /**
  * @author Stefan Olk
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CodelistDictionaries implements Target, MessageSource {
@@ -127,6 +127,10 @@ public class CodelistDictionaries implements Target, MessageSource {
 
 	/**
 	 * Add attribute to an element
+	 * @param document  tbd
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value  tbd
 	 */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {

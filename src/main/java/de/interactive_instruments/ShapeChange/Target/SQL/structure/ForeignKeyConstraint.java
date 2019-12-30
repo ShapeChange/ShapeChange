@@ -39,8 +39,8 @@ import org.apache.commons.lang3.StringUtils;
 import de.interactive_instruments.ShapeChange.Target.SQL.SqlUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ForeignKeyConstraint extends SqlConstraint {

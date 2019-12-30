@@ -63,7 +63,7 @@ public interface PropertyInfo extends Info {
      * {@value #GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ATTRIBUTES}. Each call of
      * this method increments the returned value by 1.
      * 
-     * @return
+     * @return tbd
      */
     public int getNextNumberForAttributeWithoutExplicitSequenceNumber();
 
@@ -74,17 +74,21 @@ public interface PropertyInfo extends Info {
      * {@value #GLOBAL_SEQUENCE_NUMBER_START_VALUE_FOR_ASSOCIATIONROLES}. Each call
      * of this method increments the returned value by 1.
      * 
-     * @return
+     * @return tbd
      */
     public int getNextNumberForAssociationRoleWithoutExplicitSequenceNumber();
 
     /**
      * Find out whether this property is a derived one.
+     * 
+     * @return tbd
      */
     public boolean isDerived();
 
     /**
      * Indicate whether this property is an attribute (and not a role)
+     * 
+     * @return tbd
      */
     public boolean isAttribute();
 
@@ -100,18 +104,24 @@ public interface PropertyInfo extends Info {
     /**
      * Indicate whether the property is navigable. An attribute is always navigable,
      * while an association role may not be navigable.
+     * 
+     * @return tbd
      */
     public boolean isNavigable();
 
     /**
      * Find out if the property represents an ordered collection. Default is false
      * in UML 2.4.1.
+     * 
+     * @return tbd
      */
     public boolean isOrdered();
 
     /**
      * Find out if the property allows duplicates in the values or if only unique
      * values are allowed. Default is true in UML 2.4.1.
+     * 
+     * @return tbd
      */
     public boolean isUnique();
 
@@ -123,11 +133,15 @@ public interface PropertyInfo extends Info {
 
     /**
      * Find out whether this property is a composition.
+     * 
+     * @return tbd
      */
     public boolean isComposition();
 
     /**
      * Find out whether this property is an aggregation.
+     * 
+     * @return tbd
      */
     public boolean isAggregation();
 

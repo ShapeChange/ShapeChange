@@ -61,8 +61,8 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.Propert
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
@@ -105,34 +105,18 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.category = category;
 	}
 
-	/**
-	 * @param pkg
-	 *            the pkg to set
-	 */
 	public void setPkg(PackageInfo pkg) {
 		this.pkg = pkg;
 	}
 
-	/**
-	 * @param isAbstract
-	 *            the isAbstract to set
-	 */
 	public void setIsAbstract(boolean isAbstract) {
 		this.isAbstract = isAbstract;
 	}
 
-	/**
-	 * @param isLeaf
-	 *            the isLeaf to set
-	 */
 	public void setIsLeaf(boolean isLeaf) {
 		this.isLeaf = isLeaf;
 	}
 
-	/**
-	 * @param isAssocClass
-	 *            the isAssocClass to set
-	 */
 	public void setAssocInfo(AssociationInfo assocClass) {
 		this.assocClass = assocClass;
 	}
@@ -154,10 +138,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.subtypes = subtypes;
 	}
 
-	/**
-	 * @param properties
-	 *            the properties to set
-	 */
 	public void setProperties(
 			SortedMap<StructuredNumber, PropertyInfo> properties) {
 		this.properties = properties;
@@ -171,9 +151,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		this.constraints = list;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#fullName()
-	 */
 	@Override
 	public String fullName() {
 		if (pkg != null && name != null)
@@ -182,75 +159,45 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			return null;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
-	 */
 	public String id() {
 		return id;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
-	 */
 	public GenericModel model() {
 		return model;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
-	 */
 	public String name() {
 		return name;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#options()
-	 */
 	public Options options() {
 		return options;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#result()
-	 */
 	public ShapeChangeResult result() {
 		return result;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setId(String id) {
 		this.id = id;
 
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(GenericModel model) {
 		this.model = model;
 
 	}
 
-	/**
-	 * @param name
-	 */
 	public void setName(String name) {
 		this.name = name;
 
 	}
 
-	/**
-	 * @param options
-	 */
 	public void setOptions(Options options) {
 		this.options = options;
 	}
 
-	/**
-	 * @param result
-	 */
 	public void setResult(ShapeChangeResult result) {
 		this.result = result;
 
@@ -267,9 +214,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	}
 
-	/**
-	 * @param stereotypeSet
-	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -281,9 +225,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * @param stereotype
-	 */
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -303,7 +244,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * @param taggedValues
+	 * @param taggedValues tbd
 	 * @param updateFields
 	 *            true if class fields should be updated based upon information
 	 *            from given tagged values, else false
@@ -329,8 +270,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * Encapsulates the logic to update class fields based upon the value of a
 	 * named tagged value.
 	 * 
-	 * @param tvName
-	 * @param tvValue
+	 * @param tvName tbd
+	 * @param tvValue tbd
 	 */
 	private void updateFieldsForTaggedValue(String tvName, String tvValue) {
 
@@ -369,30 +310,18 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		// }
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#pkg()
-	 */
 	public PackageInfo pkg() {
 		return pkg;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#isAbstract()
-	 */
 	public boolean isAbstract() {
 		return isAbstract;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#isLeaf()
-	 */
 	public boolean isLeaf() {
 		return isLeaf;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#isAssocClass()
-	 */
 	public AssociationInfo isAssocClass() {
 		return assocClass;
 	}
@@ -447,10 +376,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#properties()
-	 */
 	@Override
 	public SortedMap<StructuredNumber, PropertyInfo> properties() {
 		if (properties == null) {
@@ -496,9 +421,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * NOTE: Operations are currently not supported
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#operation(java
-	 *      .lang.String, java.lang.String[])
 	 */
 	public OperationInfo operation(String name, String[] types) {
 		// currently not supported
@@ -528,9 +450,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	}
 
-	/**
-	 * @param category
-	 */
 	public void setCategory(int category) {
 		this.category = category;
 	}
@@ -542,7 +461,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * @param subtypeId
+	 * @param subtypeId tbd
 	 * @return <code>true</code> if the specified subtype was not already
 	 *         contained in the set of subtypes
 	 */
@@ -557,7 +476,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * Removes the supertype with given ID from the list of supertypes defined
 	 * for this class.
 	 * 
-	 * @param supertypeId
+	 * @param supertypeId tbd
 	 */
 	public void removeSupertype(String supertypeId) {
 		if (supertypes == null || supertypes.size() == 0 || supertypeId == null)
@@ -567,7 +486,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	}
 
 	/**
-	 * @param supertypeId
+	 * @param supertypeId tbd
 	 * @return <code>true</code> if the specified supertypeId was not already
 	 *         contained in the set of supertypes
 	 */
@@ -593,8 +512,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * properties and many properties to be added this can take a significant
 	 * amount of time. In that case, better use the addProperties(...) method.
 	 * 
-	 * @param newProperty
-	 * @param duplicateHandling
+	 * @param newProperty tbd
+	 * @param duplicateHandling tbd
 	 */
 	public void addProperty(GenericPropertyInfo newProperty,
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
@@ -728,12 +647,6 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		}
 	}
 
-	/**
-	 * NOTE: does not update baseclass info
-	 * 
-	 * @param currentId
-	 * @param newId
-	 */
 	public void updateSupertypeId(String currentId, String newId) {
 		if (supertypes != null && supertypes.contains(currentId)) {
 			supertypes.remove(currentId);
@@ -744,13 +657,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	/**
 	 * WARNING: creates copies of attributes, but NOT of association roles
 	 * 
-	 * @param copyId
-	 * @param copyName
-	 * @param copyCategory
-	 * @param useProxies
-	 *            <code>true</code> if copies of attributes shall be created as
-	 *            GenericPropertyInfoProxy instances, else <code>false</code>.
-	 * @return
+	 * @param copyId tbd
+	 * @param copyName tbd
+	 * @param copyCategory tbd
+	 * @return tbd
 	 */
 	@SuppressWarnings("unchecked")
 	public GenericClassInfo createCopy(String copyId, String copyName,
@@ -828,7 +738,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * Removes the property from this class where
 	 * <code>property.sequenceNumber().equals(sn)</code>.
 	 * 
-	 * @param sn
+	 * @param sn tbd
 	 */
 	public void removeByStructuredNumber(StructuredNumber sn) {
 		StructuredNumber keyFound = null;
@@ -853,8 +763,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
 	 * 
-	 * @param newProps
-	 * @param duplicateHandling
+	 * @param newProps tbd
+	 * @param duplicateHandling tbd
 	 */
 	public void addPropertiesAtTop(List<GenericPropertyInfo> newProps,
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
@@ -938,7 +848,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	/**
 	 * 
-	 * @param sn
+	 * @param sn tbd
 	 * @return The property with the given sequence number, or <code>null</code>
 	 *         if no such property exists.
 	 */
@@ -977,8 +887,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
 	 * 
-	 * @param newProps
-	 * @param duplicateHandling
+	 * @param newProps tbd
+	 * @param duplicateHandling tbd
 	 */
 	public void addPropertiesInSequence(List<GenericPropertyInfo> newProps,
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
@@ -1112,8 +1022,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
 	 * 
-	 * @param newProps
-	 * @param duplicateHandling
+	 * @param newProp tbd
+	 * @param duplicateHandling tbd
 	 */
 	public void addPropertyAtBottom(GenericPropertyInfo newProp,
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
@@ -1133,8 +1043,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * The behavior for adding a property that has the same name as an existing
 	 * one is determined by a parameter.
 	 * 
-	 * @param newProps
-	 * @param duplicateHandling
+	 * @param newProps tbd
+	 * @param duplicateHandling tbd
 	 */
 	public void addPropertiesAtBottom(List<GenericPropertyInfo> newProps,
 			PropertyCopyDuplicatBehaviorIndicator duplicateHandling) {
@@ -1208,8 +1118,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * Puts the given tagged value into the existing tagged values cache,
 	 * updating fields if requested via parameter.
 	 * 
-	 * @param tvName
-	 * @param tvValue
+	 * @param tvName tbd
+	 * @param tvValue tbd
 	 * @param updateFields
 	 *            true if class fields should be updated based upon information
 	 *            from given tagged value, else false
@@ -1235,7 +1145,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * IDs used in a reference model are unique to that model and do not get
 	 * mixed up with the IDs of the input model.
 	 * 
-	 * @param prefix
+	 * @param prefix tbd
 	 */
 	public void addPrefixToModelElementIDs(String prefix) {
 

@@ -46,14 +46,14 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ProfileUtil {
 
 	/**
-	 * @param model
+	 * @param model tbd
 	 * @param searchInWholeModel
 	 *            <code>true</code> if profiles shall be looked up in the whole
 	 *            model, <code>false</code> if the lookup shall only be
@@ -91,7 +91,7 @@ public class ProfileUtil {
 	}
 
 	/**
-	 * @param model
+	 * @param genModel
 	 *            The model whose profile definitions are not explicit (i.e.
 	 *            classes without profile definitions belong to all profiles,
 	 *            and properties without profile definitions inherit the
@@ -170,7 +170,7 @@ public class ProfileUtil {
 	 * Removes the profiles in all classes and properties of the given model.
 	 * Also removes the tagged value 'profiles' on these model elements.
 	 * 
-	 * @param genModel
+	 * @param genModel tbd
 	 */
 	public static void removeProfiles(GenericModel genModel) {
 

@@ -46,8 +46,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public abstract class AbstractNameNormalizer implements NameNormalizer {
@@ -58,7 +58,7 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 	 * Instruct the name normalizer whether to change the case of a name while
 	 * normalizing it.
 	 * 
-	 * @param isIgnoreCaseWhenNormalizing
+	 * @param isIgnoreCaseWhenNormalizing tbd
 	 */
 	public void setIgnoreCaseWhenNormalizing(
 			boolean isIgnoreCaseWhenNormalizing) {

@@ -42,8 +42,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
  * Creates the DDL representation for the set of visited SQL statements for a
  * PostgreSQL DB.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class PostgreSQLDdlVisitor extends DdlVisitor {

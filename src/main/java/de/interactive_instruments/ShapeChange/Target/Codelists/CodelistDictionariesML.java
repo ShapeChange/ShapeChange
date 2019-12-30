@@ -155,6 +155,10 @@ public class CodelistDictionariesML implements Target, MessageSource {
 
 	/**
 	 * Add attribute to an element
+	 * @param document  tbd
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value  tbd
 	 */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
@@ -430,8 +434,8 @@ public class CodelistDictionariesML implements Target, MessageSource {
 	}
 
 	/**
-	 * @param i
-	 * @param lang
+	 * @param i tbd
+	 * @param lang tbd
 	 * @return documentation of the info object in the given language, if
 	 *         available, otherwise the documentation modelled without language
 	 *         identifier; can be <code>null</code> if no documentation was
@@ -511,9 +515,9 @@ public class CodelistDictionariesML implements Target, MessageSource {
 
 	/**
 	 * 
-	 * @param lDocument
-	 * @param ci
-	 * @param propi
+	 * @param lDocument tbd
+	 * @param ci tbd
+	 * @param propi tbd
 	 * @return HashSet of alternative language elements, if no alt. lang.
 	 *         exists: null
 	 */

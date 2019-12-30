@@ -86,7 +86,7 @@ import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -1006,7 +1006,7 @@ public class ModelExport implements SingleTarget, MessageSource {
      * @param elementName
      * @param elementContent
      * @param attributeName
-     * @param attributeContent
+     * @param attributeValue
      * @throws SAXException
      */
     private void printDataElement(String elementName, String elementContent, String attributeName,

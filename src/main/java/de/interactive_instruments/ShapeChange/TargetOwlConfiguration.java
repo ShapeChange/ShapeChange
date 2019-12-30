@@ -54,7 +54,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -109,14 +109,14 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 *                                           of the process;
 	 *                                           <code>null</code> if it is not
 	 *                                           set there
-	 * @param rdfTypeMapEntries
-	 * @param rdfPropertyMapEntries
-	 * @param stereotypeConversionParameters
-	 * @param typeConversionParameters
-	 * @param propertyConversionParameters
-	 * @param descriptorTargets
-	 * @param constraintMappings
-	 * @param generalProperties
+	 * @param rdfTypeMapEntries tbd
+	 * @param rdfPropertyMapEntries tbd
+	 * @param stereotypeConversionParameters tbd
+	 * @param typeConversionParameters tbd
+	 * @param propertyConversionParameters tbd
+	 * @param descriptorTargets tbd
+	 * @param constraintMappings tbd
+	 * @param generalProperties tbd
 	 */
 	public TargetOwlConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
@@ -180,7 +180,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	}
 
 	/**
-	 * @param ci
+	 * @param ci tbd
 	 * @return the map entry that applies to this class; <code>null</code> if
 	 *         none is applicable
 	 */
@@ -202,7 +202,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	}
 
 	/**
-	 * @param pi
+	 * @param pi tbd
 	 * @return the map entry that applies to the type of the property;
 	 *         <code>null</code> if none is applicable
 	 */
@@ -238,7 +238,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * <li>Otherwise none of the elements in RTME applies to T.</li>
 	 * </ul>
 	 * 
-	 * @param typeName
+	 * @param typeName tbd
 	 * @param schemaName
 	 *                       name of the schema to which the type belongs, may
 	 *                       be <code>null</code> to only look for generic
@@ -286,7 +286,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * <li>Otherwise, if a map entry does not define any schema, but has the
 	 * same combination of class name and property name, then it is chosen
 	 * (because it is a slightly more specific mapping for P compared to the
-	 * generic mapping).</li> *
+	 * generic mapping).</li>
 	 * <li>Otherwise, if a map entry does not define any schema, but has the
 	 * same property name and is not scoped to a specific class, then it is
 	 * chosen (because it is a generic mapping for P).</li>
@@ -373,7 +373,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * <li>Otherwise none of the elements in TCP applies to T.</li>
 	 * </ul>
 	 * 
-	 * @param typeName
+	 * @param typeName tbd
 	 * @param schemaName
 	 *                       name of the schema to which the type belongs, may
 	 *                       be <code>null</code> to only look for generic
@@ -425,7 +425,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 * <li>Otherwise, if a conversion parameter does not define any schema, but
 	 * has the same combination of class name and property name, then it is
 	 * chosen (because it is a slightly more specific conversion for P compared
-	 * to the generic one).</li> *
+	 * to the generic one).</li>
 	 * <li>Otherwise, if a conversion parameter does not define any schema, but
 	 * has the same property name and is not scoped to a specific class, then it
 	 * is chosen (because it is a generic conversion for P).</li>
@@ -503,6 +503,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	}
 
 	/**
+	 * @param type  tbd
 	 * @return mapping for the given constraint type; can be <code>null</code>
 	 */
 	public ConstraintMapping getConstraintMapping(
@@ -511,7 +512,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	}
 
 	/**
-	 * @param type
+	 * @param type tbd
 	 * @return <code>true</code> if the configuration contains a mapping for the
 	 *         given constraint type, else <code>false</code>
 	 */

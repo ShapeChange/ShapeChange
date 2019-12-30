@@ -127,8 +127,8 @@ import io.github.classgraph.ClassGraph;
 import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Clemens Portele (portele at interactive-instruments dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  * 
  */
@@ -1084,7 +1084,11 @@ public class FeatureCatalogue
 	    return s == null ? "" : s.trim();
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param document  tbd
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
 		Attr att = document.createAttribute(name);

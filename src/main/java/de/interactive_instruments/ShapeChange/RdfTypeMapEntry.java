@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class RdfTypeMapEntry {
@@ -48,13 +48,6 @@ public class RdfTypeMapEntry {
 	private TargetType targetType;
 	private String rule;
 
-	/**
-	 * @param type
-	 * @param schema
-	 * @param target
-	 * @param targetType
-	 * @param rule
-	 */
 	public RdfTypeMapEntry(String type, String schema, String target,
 			TargetType targetType, String rule) {
 		super();

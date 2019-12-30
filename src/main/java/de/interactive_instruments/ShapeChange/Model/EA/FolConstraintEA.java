@@ -59,7 +59,6 @@ public class FolConstraintEA extends FolConstraintImpl {
 	protected org.sparx.Constraint eaConstraint;
 	protected AttributeConstraint eaConstraintAttribute;
 
-	/** Ctor from class context */
 	public FolConstraintEA(EADocument doc, ClassInfoEA ci,
 			org.sparx.Constraint constr) {
 
@@ -90,7 +89,6 @@ public class FolConstraintEA extends FolConstraintImpl {
 		sourceType = constr.GetType();
 	}
 
-	/** Ctor from attribute context */
 	public FolConstraintEA(EADocument doc, PropertyInfoEA pi,
 			AttributeConstraint constr) {
 

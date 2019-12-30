@@ -719,7 +719,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * each sub package that is in the same target namespace as the given package.
      * 
      * @param pi
-     * @param result set of all descendant packages that are in the same target
+     * @return set of all descendant packages that are in the same target
      *               namespace as pi
      */
     private SortedSet<PackageInfo> subPackagesInSameTNS(PackageInfo pi) {
@@ -769,7 +769,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
     /**
      * @param ci a code list or enumeration
-     * @return
+     * @return tbd
      */
     public OntologyModel computeRelevantOntologyForIndividuals(ClassInfo ci) {
 
@@ -817,7 +817,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     }
 
     /**
-     * @param nsabr
+     * @param prefix tbd
      * @return the ontology document that has the given prefix, or <code>null</code>
      *         if no such ontology could be found
      */
@@ -837,7 +837,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * this is the ontology that represents the package the class is in, but that
      * also depends upon the configured rules.
      * 
-     * @param ci
+     * @param ci tbd
      * @return the ontology document for the class, or <code>null</code> if no
      *         ontology could be found for the class
      */
@@ -946,7 +946,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * Searches for the ontology that contains the property that is identified by
      * the 'target' and 'targetSchema' fields of the given conversion parameter.
      * 
-     * @param pcp
+     * @param pcp tbd
      * @return the ontology that contains the global property to which the
      *         conversion parameter maps; can be <code>null</code> if no applicable
      *         ontology was found
@@ -1264,8 +1264,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * <li>otherwise "FIXME" is returned</li>
      * </ul>
      * 
-     * @param i
-     * @return
+     * @param i tbd
+     * @return tbd
      */
     public String computeSource(Info i) {
 
@@ -1300,7 +1300,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     }
 
     /**
-     * @param rdfns
+     * @param rdfns tbd
      * @return the abbreviation/prefix belonging to the given rdf namespace, or
      *         <code>null</code> if no such prefix was found.
      */
@@ -1464,7 +1464,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
     /**
      * 
-     * @param propertyURI
+     * @param propertyURI tbd
      * @return A map with the direct and indirect sub properties registered for the
      *         property with given URI, sorted by their URI; can be empty but not
      *         <code>null</code>.

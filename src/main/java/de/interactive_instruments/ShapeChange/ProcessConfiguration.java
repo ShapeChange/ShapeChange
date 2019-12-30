@@ -118,6 +118,7 @@ public class ProcessConfiguration {
 	 *                        The map entries for the process. Can be
 	 *                        <code>null</code> if no map entries were declared
 	 *                        in the configuration.
+	 * @param advancedProcessConfigurations tbd
 	 */
 	public ProcessConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
@@ -550,7 +551,7 @@ public class ProcessConfiguration {
 	 * @param type
 	 *                 the map entry with the given type, or <code>null</code>
 	 *                 if none was found.
-	 * @return
+	 * @return tbd
 	 */
 	public ProcessMapEntry getMapEntry(String type) {
 		return this.mapEntryByType.get(type);

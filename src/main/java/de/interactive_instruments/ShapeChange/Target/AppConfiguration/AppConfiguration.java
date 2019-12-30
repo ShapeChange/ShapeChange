@@ -63,8 +63,8 @@ import de.interactive_instruments.ShapeChange.Target.Target;
 /**
  * Creates an application configuration file.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  * 
  */
 public class AppConfiguration implements Target, MessageSource {
@@ -409,7 +409,11 @@ public class AppConfiguration implements Target, MessageSource {
 		return "unknown";
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param document tbd 
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
 		Attr att = document.createAttribute(name);

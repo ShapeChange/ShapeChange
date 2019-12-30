@@ -44,8 +44,8 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public abstract class AbstractContentHandler implements ContentHandler {
@@ -133,7 +133,7 @@ public abstract class AbstractContentHandler implements ContentHandler {
 	}
 
 	/**
-	 * @param sb
+	 * @param sb tbd
 	 * @return <code>true</code> if the value of the StringBuffer is 'true' or
 	 *         '1', else <code>false</code>.
 	 */

@@ -42,8 +42,8 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class PackageSelector {
@@ -64,7 +64,7 @@ public class PackageSelector {
 	}
 
 	/**
-	 * @param m
+	 * @param m tbd
 	 * @return A set containing all selected schema packages that satisfy the
 	 *         schemaName selection criterion (if provided), as well as all
 	 *         child packages of these schemas that themselves satisfy the name

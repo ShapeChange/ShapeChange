@@ -63,7 +63,6 @@ public class OclConstraintEA
 	protected org.sparx.Constraint eaConstraintClass;
 	protected AttributeConstraint eaConstraintAttribute; 
 	
-	/** Ctor from class context */
 	public OclConstraintEA(EADocument doc, ClassInfoEA ci,
 		org.sparx.Constraint constr) {
 		
@@ -136,7 +135,6 @@ public class OclConstraintEA
 		}
 	}
 
-	/** Ctor from attribute context */
 	public OclConstraintEA(EADocument doc, PropertyInfoEA pi,
 		AttributeConstraint constr) {
 		

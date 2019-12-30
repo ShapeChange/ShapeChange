@@ -32,15 +32,15 @@
 package de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
 public class ArcGISWorkspaceConstants {
 
     /**
-     * If this rule is enabled, the initial value for a <<DomainCodedValue>>, which
-     * is an attribute of a <<CodedValueDomain>> that results from conversion of
+     * If this rule is enabled, the initial value for a &lt;&lt;DomainCodedValue&gt;&gt;, which
+     * is an attribute of a &lt;&lt;CodedValueDomain&gt;&gt; that results from conversion of
      * enumerations and code lists from the application schema, is taken from the
      * alias of the respective enums and codes, rather than from the initial value
      * defined in the application schema.
@@ -48,13 +48,13 @@ public class ArcGISWorkspaceConstants {
     public static final String RULE_ENUM_INITIAL_VALUE_BY_ALIAS = "rule-arcgis-prop-initialValueByAlias";
 
     /**
-     * Enables use of stereotype &lt;&lt;identifier>> on class attributes. If an
+     * Enables use of stereotype &lt;&lt;identifier&gt;&gt; on class attributes. If an
      * attribute with that stereotype belongs to a class, then it will be used as
      * primary key (the OBJECTID field will still be generated).
      * 
-     * NOTE: Multiple <<identifier>> attributes per class are not supported. In such
+     * NOTE: Multiple &lt;&lt;identifier&gt;&gt; attributes per class are not supported. In such
      * a case, ShapeChange will log a warning and use only one of them as primary
-     * key. If the maximum multiplicity of an <<identifier>> attribute is greater
+     * key. If the maximum multiplicity of an &lt;&lt;identifier&gt;&gt; attribute is greater
      * than 1, ShapeChange will log an error.
      */
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-arcgis-cls-identifierStereotype";
@@ -93,7 +93,7 @@ public class ArcGISWorkspaceConstants {
      * esriFieldTypeString. If the value is 0 or empty, unlimited length is assumed
      * - unless an OCL constraint exists that restricts the length for the property.
      * That also means that this rule has precedence over an OCL constraint: if the
-     * tagged value 'size' has an integer value > 1, then this value will be used as
+     * tagged value 'size' has an integer value &gt; 1, then this value will be used as
      * the length in the &lt;&lt;field&gt;&gt;.
      */
     public static final String RULE_PROP_LENGTH_FROM_TAGGED_VALUE = "rule-arcgis-prop-lengthFromTaggedValue";
@@ -166,7 +166,7 @@ public class ArcGISWorkspaceConstants {
     /* --- parameters required for / available in default behavior --- */
     /**
      * Optional (defaults to 255) - Default length to set in the 'length' tagged
-     * value of <<field>>s that have a textual value, in case that there is no OCL
+     * value of &lt;&lt;field&gt;&gt;s that have a textual value, in case that there is no OCL
      * constraint that defines the length.
      */
     public static final String PARAM_LENGTH_TAGGED_VALUE_DEFAULT = "defaultLength";

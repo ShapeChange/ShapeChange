@@ -67,22 +67,22 @@ public interface DatabaseStrategy {
 	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier);
 
 	/**
-	 * @param indexName
-	 * @param table
-	 * @param column
+	 * @param indexName tbd
+	 * @param table tbd
+	 * @param column tbd
 	 * @param geometryCharacteristics
 	 *            additional geometry specific characteristics - can be
 	 *            <code>null</code>
-	 * @return
+	 * @return tbd
 	 */
 	public Statement geometryIndexColumnPart(String indexName, Table table,
 			Column column, Map<String, String> geometryCharacteristics);
 
 	/**
 	 *
-	 * @param tableWithColumn
-	 * @param columForGeometryTypedProperty
-	 * @param srid
+	 * @param tableWithColumn tbd
+	 * @param columForGeometryTypedProperty tbd
+	 * @param srid tbd
 	 * @return update statement; may be <code>null</code> if this operation is
 	 *         not applicable to the actual database strategy
 	 */
@@ -94,8 +94,8 @@ public interface DatabaseStrategy {
 	 * characteristics) defined by the map entries declared for the SQL DDL
 	 * target.
 	 * 
-	 * @param mapEntryByType
-	 * @param mepp
+	 * @param mapEntryByType tbd
+	 * @param mepp tbd
 	 * @return <code>true</code> if the parameters are valid, else
 	 *         <code>false</code>
 	 */
@@ -112,7 +112,7 @@ public interface DatabaseStrategy {
 	 * type of the database field is Oracle DATE (which stores both date and
 	 * time).
 	 * 
-	 * @param column
+	 * @param column tbd
 	 * @return the expression to restrict time of date, or <code>null</code> if
 	 *         this is not necessary (or not implemented; check the actual
 	 *         database strategies for details)
@@ -124,7 +124,7 @@ public interface DatabaseStrategy {
 	 * Determine if the database system supports the given 'ON DELETE' option
 	 * for foreign keys.
 	 * 
-	 * @param o
+	 * @param o tbd
 	 * @return <code>true</code> if the option is supported, else
 	 *         <code>false</code>
 	 */
@@ -135,7 +135,7 @@ public interface DatabaseStrategy {
 	 * Determine if the database system supports the given 'ON UPDATE' option
 	 * for foreign keys.
 	 * 
-	 * @param o
+	 * @param o tbd
 	 * @return <code>true</code> if the option is supported, else
 	 *         <code>false</code>
 	 */

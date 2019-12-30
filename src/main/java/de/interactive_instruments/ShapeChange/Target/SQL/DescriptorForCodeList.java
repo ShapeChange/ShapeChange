@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DescriptorForCodeList {
@@ -43,12 +43,6 @@ public class DescriptorForCodeList {
 	private String documentation;
 	private Integer size;
 
-	/**
-	 * @param descriptorName
-	 * @param columnName
-	 * @param documentation
-	 * @param size
-	 */
 	public DescriptorForCodeList(String descriptorName, String columnName,
 			String documentation, Integer size) {
 		super();

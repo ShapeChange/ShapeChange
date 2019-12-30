@@ -104,8 +104,6 @@ public abstract class SchemaCall extends Expression {
 	 * Returns a string that starts with the nameInSbvr of this SchemaCall,
 	 * followed by the toString() representation of the nextElement if it exists
 	 * (separated by a '.'). The variableContext is not represented.
-	 * 
-	 * @see de.interactive_instruments.antlr.ShapeChangeAntlr.SBVR.FOL.Expression#toString()
 	 */
 	@Override
 	public String toString() {

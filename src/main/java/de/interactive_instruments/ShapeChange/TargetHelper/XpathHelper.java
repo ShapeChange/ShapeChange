@@ -154,14 +154,15 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>Auxiliary method to find out the full, namespace adorned name of a 
+	 * Auxiliary method to find out the full, namespace adorned name of a 
 	 * class from the the mapping or the model. As a side effect the method 
 	 * makes the namespace also known to the Schematron schema, appending 
-	 * another &lt;ns> element if necessary.</p>
-	 * <p>The method considers the mapping in first priority. If the class
+	 * another &lt;ns&gt; element if necessary.
+	 * <br><br>
+	 * The method considers the mapping in first priority. If the class
 	 * turns out to map to a basic type, <i>null</i> is returned instead of
-	 * a name.</p>
-	 * @param pi ClassInfo object
+	 * a name.
+	 * @param ci ClassInfo object
 	 * @return Element name of class
 	 */
 	public String getAndRegisterXmlName( ClassInfo ci ) {
@@ -207,6 +208,7 @@ public class XpathHelper implements MessageSource {
 	 * Take an OCL constraint and translate it into an Xpath expression
 	 * @param ci ClassInfo object, which is context to the constraint.
 	 * @param c OCL constraint. Must be invariant.
+	 * @return  tbd
 	 */
 	public XpathConstraintNode.XpathFragment translateConstraintToXpath(ClassInfo ci, OclConstraint c) {
 		if (c == null)
@@ -246,10 +248,10 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>This function recursively descends into an OclConstraint following
+	 * This function recursively descends into an OclConstraint following
 	 * the OclNode structure. In doing so it generates an equivalent syntax
 	 * tree which is more in line with Xpath syntax and its use in the 
-	 * Schematron schema.</p>
+	 * Schematron schema.
 	 * @param ocl OclNode of some level, initially called with 
 	 * OclNode.Expression
 	 * @param enclosing Enclosing target construct, may be null
@@ -318,9 +320,9 @@ public class XpathHelper implements MessageSource {
 	}	
 
 	/**
-	 * <p>This function treats the implemented IterationCallExp objects in an
+	 * This function treats the implemented IterationCallExp objects in an
 	 * OCL expression. Doing so it generates intermediate code which is better
-	 * suited for Schematron generation than the original OCL constructs.</p>
+	 * suited for Schematron generation than the original OCL constructs.
 	 * @param iter The IterationCallExp node to be processed
 	 * @param enclosing Enclosing target construct
 	 * @param negate Flag to indicate that a logical negation is to be pushed
@@ -394,12 +396,13 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>This function treats the implemented OperationCallExp objects in an
+	 * This function treats the implemented OperationCallExp objects in an
 	 * OCL expression. Doing so it generates intermediate code which is better
-	 * suited for Schematron generation than the original OCL constructs.</p>
-	 * <p>Particularly, all logical operations are collected in Logic objects
+	 * suited for Schematron generation than the original OCL constructs.
+	 * <br><br>
+	 * Particularly, all logical operations are collected in Logic objects
 	 * of the three flavors AND, OR and XOR, where AND and OR have as many as 
-	 * possible children. NOT is pushed downwards by using De Morgan's rule.</p> 
+	 * possible children. NOT is pushed downwards by using De Morgan's rule. 
 	 * @param oper The OperationCallExp node to be processed
 	 * @param enclosing Enclosing target construct
 	 * @param negate Flag to indicate that a logical negation is to be pushed
@@ -746,9 +749,9 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>This method converts AttibuteCallExp objects into intermediary
+	 * This method converts AttibuteCallExp objects into intermediary
 	 * SchematronConstraintsNodes in a first step to realize these in Xpath 
-	 * code.</p>
+	 * code.
 	 * @param attr The AttibuteCallExp object
 	 * @param enclosing If an enclosing Logic object is passed, the attribute
 	 * must be of type Boolean. Otherwise an error is generated.
@@ -838,8 +841,8 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>This method is supposed to transform the OclNode Literals to an
-	 * intermediary node structure which is suited for PL/SQL generation.</p>
+	 * This method is supposed to transform the OclNode Literals to an
+	 * intermediary node structure which is suited for PL/SQL generation.
 	 * @param lit The OclNode.Literal object
 	 * @param enclosing If an enclosing Logic object is passed, the literal
 	 * must be of type Boolean. 
@@ -860,8 +863,8 @@ public class XpathHelper implements MessageSource {
 	}
 	
 	/**
-	 * <p>This method will transform an OclNode.IfExp to an intermediary node
-	 * structure suited for Schematron code generation.</p>
+	 * This method will transform an OclNode.IfExp to an intermediary node
+	 * structure suited for Schematron code generation.
 	 * @param ifex The OclNode.IfExp object
 	 * @param enclosing If an enclosing Logic object is passed, the type of
 	 * the IfExp must be Boolean. 
@@ -933,10 +936,10 @@ public class XpathHelper implements MessageSource {
 	}
 
 	/** 
-	 * <p>This method returns messages belonging to the XpathHelper object.
+	 * This method returns messages belonging to the XpathHelper object.
 	 * The messages are retrieved by 
 	 * their message number. The organization corresponds to the logic in module 
-	 * ShapeChangeResult.</p>
+	 * ShapeChangeResult.
 	 * @param mnr Message number
 	 * @return Message text, including $x$ substitution points.
 	 */

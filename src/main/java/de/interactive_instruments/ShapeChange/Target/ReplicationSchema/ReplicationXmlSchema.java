@@ -76,8 +76,8 @@ import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ReplicationXmlSchema implements Target, MessageSource {
@@ -152,8 +152,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 * entry must identify the value type in its 'type' attribute and have a
 	 * 'param' attribute with value 'maxLengthFromSize'. Whenever a property has
 	 * an according value type its maxLength is determined by the setting of the
-	 * {@value TV_SIZE} tagged value on the property or the global target
-	 * parameter {@value PARAM_SIZE}. The tagged value takes precedence over the
+	 * {@value ReplicationXmlSchema#TV_SIZE} tagged value on the property or the global target
+	 * parameter {@value ReplicationXmlSchema#PARAM_SIZE}. The tagged value takes precedence over the
 	 * target parameter. If neither tagged value nor target parameter are set,
 	 * no maxLength restriction is created.
 	 */
@@ -367,7 +367,10 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		}
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Element e, String name, String value) {
 		Attr att = document.createAttribute(name);
 		att.setValue(value);
@@ -424,6 +427,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	/**
 	 * Process all properties that are added in this class.
+	 * @param ci  tbd
+	 * @param sequenceOrChoice  tbd
 	 */
 	public void processLocalProperties(ClassInfo ci, Element sequenceOrChoice) {
 
@@ -460,7 +465,6 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 *            property to process
 	 * @param sequenceOrChoice
 	 *            element to which the property element shall be appended
-	 * @return
 	 */
 	public void processLocalProperty(PropertyInfo pi,
 			Element sequenceOrChoice) {
@@ -481,7 +485,9 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		}
 	}
 
-	/** Process a single property. */
+	/** Process a single property. 
+	 * @param pi  tbd
+	 * @return tbd */
 	protected Element addProperty(PropertyInfo pi) {
 
 		ClassInfo inClass = pi.inClass();
@@ -737,6 +743,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	/**
 	 * Map a base type of a class to a predefined representation.
+	 * @param ci  tbd
+	 * @return  tbd
 	 */
 	protected String mapBaseType(ClassInfo ci) {
 
@@ -800,6 +808,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	/**
 	 * Create global element for a feature / object type
+	 * @param ci  tbd
 	 */
 	public void pObjectElement(ClassInfo ci) {
 
@@ -845,6 +854,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 * <li>the global identifier (if it exists) for feature and object types as
 	 * well as properties</li>
 	 * </ul>
+	 * @param e  tbd
+	 * @param info  tbd
 	 */
 	protected void addGlobalIdentifierAnnotation(Element e, Info info) {
 

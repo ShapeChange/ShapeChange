@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DescriptorTarget {
@@ -63,16 +63,6 @@ public class DescriptorTarget {
 	private MultiValueBehavior multiValueBehavior;
 	private String multiValueConnectorToken;
 
-	/**
-	 * @param appliesTo
-	 * @param target
-	 * @param template
-	 * @param format
-	 * @param noValueBehavior
-	 * @param noValueText
-	 * @param multiValueBehavior
-	 * @param multiValueConnectorToken
-	 */
 	public DescriptorTarget(AppliesTo appliesTo, String target, String template,
 			Format format, NoValueBehavior noValueBehavior, String noValueText,
 			MultiValueBehavior multiValueBehavior,

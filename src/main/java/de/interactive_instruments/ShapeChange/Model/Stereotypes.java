@@ -49,7 +49,7 @@ public interface Stereotypes {
 	public boolean isEmpty();
 
 	/**
-	 * @param stereotype
+	 * @param stereotype tbd
 	 * @return <code>true</code> if this collection of stereotypes contains the
 	 *         given stereotype, else <code>false</code>
 	 */
@@ -72,14 +72,14 @@ public interface Stereotypes {
 	 * 
 	 * NOTE: Also internalizes the given String.
 	 * 
-	 * @param stereotype
+	 * @param stereotype tbd
 	 */
 	public void add(String stereotype);
 
 	/**
 	 * Removes the given stereotype from this collection of stereotypes.
 	 * 
-	 * @param stereotype
+	 * @param stereotype tbd
 	 */
 	public void remove(String stereotype);
 

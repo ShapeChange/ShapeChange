@@ -50,7 +50,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -62,8 +62,8 @@ public class SQLiteDdlFixer {
 	 * geometry typed columns are transformed into SELECT AddGeometryColumn(...)
 	 * statements.
 	 * 
-	 * @param stmtsIn
-	 * @return
+	 * @param stmtsIn tbd
+	 * @return tbd
 	 */
 	public static List<Statement> fixDdl(List<Statement> stmtsIn) {
 

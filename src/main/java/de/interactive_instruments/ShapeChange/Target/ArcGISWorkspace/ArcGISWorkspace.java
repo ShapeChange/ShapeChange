@@ -91,7 +91,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -2024,14 +2024,14 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
      * computed based upon the first occurrence of a property whose type name starts
      * with 'GM_'. The geometry type is then determined as follows:
      * <ul>
-     * <li>GM_Point -&gt; {@link ArcGISGeometryType.point}</li>
-     * <li>GM_MultiPoint -&gt; {@link ArcGISGeometryType.multipoint}</li>
-     * <li>GM_Curve or GM_MultiCurve -&gt; {@link ArcGISGeometryType.polyline}</li>
+     * <li>GM_Point -&gt; {@link ArcGISGeometryType#POINT}</li>
+     * <li>GM_MultiPoint -&gt; {@link ArcGISGeometryType#MULTIPOINT}</li>
+     * <li>GM_Curve or GM_MultiCurve -&gt; {@link ArcGISGeometryType#POLYLINE}</li>
      * <li>GM_Surface or GM_MultiSurface -&gt;
-     * {@link ArcGISGeometryType.polygon}</li>
-     * <li>other geometry type -&gt; {@link ArcGISGeometryType.unknown}</li>
+     * {@link ArcGISGeometryType#POLYGON}</li>
+     * <li>other geometry type -&gt; {@link ArcGISGeometryType#UNKNOWN}</li>
      * </ul>
-     * If no geometry type is found, {@link ArcGISGeometryType.none} is returned.
+     * If no geometry type is found, {@link ArcGISGeometryType#NONE} is returned.
      * 
      * @param ci
      * @return
@@ -2457,7 +2457,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
      * 
      * @param ci
      * @return the GUID of an attribute with stereotype 'identifier' - if
-     *         {@value #RULE_CLS_IDENTIFIER_STEREOTYPE} is enabled and such an
+     *         {@value ArcGISWorkspaceConstants#RULE_CLS_IDENTIFIER_STEREOTYPE} is enabled and such an
      *         attribute exists - or the GUID of the OBJECTID system field.
      */
     private String determinePrimaryKeyGUID(ClassInfo ci) {
@@ -4049,7 +4049,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
     }
 
     /**
-     * @param arcgisSubtypeInitialValues, can be <code>null</code>
+     * @param arcgisSubtypeInitialValues can be <code>null</code>
      * @return map with subtype name as key and initial value as value; can be empty
      *         but not null;
      */

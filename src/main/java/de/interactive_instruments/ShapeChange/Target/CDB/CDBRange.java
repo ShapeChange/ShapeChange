@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.CDB;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDBRange {
@@ -46,11 +46,6 @@ public class CDBRange {
 	protected String min;
 	protected String max;
 
-	/**
-	 * @param interval
-	 * @param min
-	 * @param max
-	 */
 	public CDBRange(Interval interval, String min, String max) {
 		super();
 		this.interval = interval;

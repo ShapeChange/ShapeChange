@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Target;
 
+import de.interactive_instruments.ShapeChange.Converter;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -82,7 +83,7 @@ public interface Target {
      * @param o        the options object for this configuration
      * @param r        the results object to report log messages
      * @param diagOnly a flag to request a dry run only, no output will be created
-     * @throws ShapeChangeAbortException
+     * @throws ShapeChangeAbortException tbd
      * @see Model#selectedSchemas()
      * @see PackageInfo#isSchema()
      */
@@ -96,7 +97,7 @@ public interface Target {
      * NOTE: will be called not only for the classes directly contained in the
      * package, but also all sub-packages belonging to the same targetNamespace!
      * 
-     * @param ci
+     * @param ci tbd
      */
     public void process(ClassInfo ci);
 

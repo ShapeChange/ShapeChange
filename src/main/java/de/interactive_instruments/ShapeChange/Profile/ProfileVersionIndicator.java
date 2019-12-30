@@ -39,8 +39,8 @@ import org.apache.commons.lang3.StringUtils;
 import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class ProfileVersionIndicator {
 
@@ -70,12 +70,12 @@ public class ProfileVersionIndicator {
 	}
 
 	/**
-	 * @param versionInformation
+	 * @param versionInformation tbd
 	 * @param identifierName
 	 *            name of the profile identifier this version indicator belongs
 	 *            to
-	 * @return
-	 * @throws MalformedProfileIdentifierException
+	 * @return tbd
+	 * @throws MalformedProfileIdentifierException tbd
 	 */
 	public static ProfileVersionIndicator parse(String versionInformation,
 			String identifierName) throws MalformedProfileIdentifierException {
@@ -199,12 +199,12 @@ public class ProfileVersionIndicator {
 	}
 
 	/**
-	 * @param other
+	 * @param other tbd
 	 * @param sb
 	 *            the comma separated list of version ranges from the other
 	 *            indicator that are not contained in this indicator will be
 	 *            added to this buffer (unless the buffer is null)
-	 * @return
+	 * @return tbd
 	 */
 	public boolean contains(ProfileVersionIndicator other, StringBuffer sb) {
 

@@ -67,7 +67,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
  * Manages the transformation of a model, executing common pre- and
  * postprocessing tasks (e.g. setting of tagged values).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public class TransformationManager implements MessageSource {

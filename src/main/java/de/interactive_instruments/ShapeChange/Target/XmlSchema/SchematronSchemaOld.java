@@ -52,7 +52,7 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode;
  * {@link SchematronSchemaXslt2} instead.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -164,7 +164,7 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
     /**
      * Add an assertion statement - that will result by translating the given OCL
      * constraint, which is defined for a property, to an XpathFragment object - and
-     * output it as a Schematron &lt;assert> element. Does not add an assertion to
+     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion to
      * abstract or suppressed classes.
      *
      * <p>
@@ -173,7 +173,7 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
      * the property: b:subtype/a:property instead of a:owner/a:property.
      *
      * <p>
-     * &lt;let> elements are searched for identities and are merged including the
+     * &lt;let&gt; elements are searched for identities and are merged including the
      * necessary name corrections in the text.
      *
      * @param c                              OCL constraint that shall be translated

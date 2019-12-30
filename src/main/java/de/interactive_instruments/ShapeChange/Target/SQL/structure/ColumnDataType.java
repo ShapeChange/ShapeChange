@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

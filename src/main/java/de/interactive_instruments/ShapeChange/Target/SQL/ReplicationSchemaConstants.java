@@ -32,7 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -105,7 +105,7 @@ public class ReplicationSchemaConstants {
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_OPTIONAL = "rule-sql-prop-replicationSchema-optional";
 
 	/**
-	 * If this rule is enabled then the length of properties with a size > 0 is
+	 * If this rule is enabled then the length of properties with a size &gt; 0 is
 	 * restricted using a maxLength restriction.
 	 */
 	public static final String RULE_TGT_SQL_PROP_REPSCHEMA_MAXLENGTHFROMSIZE = "rule-sql-prop-replicationSchema-maxLength-from-size";

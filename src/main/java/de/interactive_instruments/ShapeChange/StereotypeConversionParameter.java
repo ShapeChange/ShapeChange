@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange;
 import java.util.Set;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class StereotypeConversionParameter {
@@ -44,11 +44,6 @@ public class StereotypeConversionParameter {
 	private Set<String> subClassOf;
 	private String rule;
 
-	/**
-	 * @param wellknown
-	 * @param subClassOf
-	 * @param rule
-	 */
 	public StereotypeConversionParameter(String wellknown,
 			Set<String> subClassOf, String rule) {
 		super();

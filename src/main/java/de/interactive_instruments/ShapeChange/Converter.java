@@ -291,7 +291,6 @@ public class Converter implements MessageSource {
 		}
 	}
 
-	/** Convert the application schema. */
 	public void convert(Model model) {
 
 		try {

@@ -36,8 +36,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class SdoDimArrayExpression implements Expression {

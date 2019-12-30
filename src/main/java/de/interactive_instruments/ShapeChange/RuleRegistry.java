@@ -40,7 +40,7 @@ import de.interactive_instruments.ShapeChange.Target.Target;
 /**
  * For adding and finding conversion as well as encoding rules.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -114,8 +114,8 @@ public class RuleRegistry {
      * Identify if the given encRule is or extends (directly or indirectly) the
      * given baseRule. When comparing encoding rule names, case is ignored.
      * 
-     * @param encRule
-     * @param baseRule
+     * @param encRule tbd
+     * @param baseRule tbd
      * @return <code>true</code> if encRule is or extends (directly or indirectly)
      *         baseRule, else <code>false</code>
      */

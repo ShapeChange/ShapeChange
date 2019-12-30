@@ -32,7 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.GeoPackage;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -57,7 +57,7 @@ public class GeoPackageConstants {
     public static final String PARAM_ORGANIZATION_COORD_SYS_ID = "organizationCoordSysId";
     /**
      * Name of the organization that assigned the ID of the spatial reference system
-     * (see parameter {@link #PARAM_SRS_ID}); default is 'EPSG'.
+     * (see parameter {@link #PARAM_ORGANIZATION_COORD_SYS_ID}); default is 'EPSG'.
      */
     public static final String PARAM_SRS_ORGANIZATION = "srsOrganization";
 

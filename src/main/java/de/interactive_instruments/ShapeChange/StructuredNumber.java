@@ -148,8 +148,8 @@ public class StructuredNumber implements Comparable<StructuredNumber> {
 	 * Checks if this StructuredNumber is equal to the given one. This is true
 	 * if the StructuredNumbers have the same components (length and content).
 	 * 
-	 * @param sn
-	 * @return
+	 * @param sn tbd
+	 * @return tbd
 	 */
 	public boolean equals(StructuredNumber sn) {
 		if (sn == null)

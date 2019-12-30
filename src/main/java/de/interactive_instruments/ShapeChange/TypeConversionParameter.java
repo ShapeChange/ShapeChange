@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange;
 import java.util.Set;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class TypeConversionParameter {
@@ -45,12 +45,6 @@ public class TypeConversionParameter {
 	private Set<String> subClassOf;
 	private String rule;
 
-	/**
-	 * @param type
-	 * @param schema
-	 * @param subClassOf
-	 * @param rule
-	 */
 	public TypeConversionParameter(String type, String schema,
 			Set<String> subClassOf, String rule) {
 		super();

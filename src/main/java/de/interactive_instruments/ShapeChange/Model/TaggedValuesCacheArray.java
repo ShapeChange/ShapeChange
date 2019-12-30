@@ -54,9 +54,9 @@ import de.interactive_instruments.ShapeChange.Options;
  * The optimization can significantly reduce memory consumption when processing
  * large models.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
  *
  * 
  */

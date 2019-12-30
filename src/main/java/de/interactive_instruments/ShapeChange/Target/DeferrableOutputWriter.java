@@ -15,7 +15,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  * them as defined via the configuration, and call the writeOutput method of
  * this interface.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  * 
  */
@@ -24,8 +24,8 @@ public interface DeferrableOutputWriter {
 	/**
 	 * Perform any initialization required to perform the deferred write.
 	 * 
-	 * @param o
-	 * @param r
+	 * @param o tbd
+	 * @param r tbd
 	 */
 	public void initialise(Options o, ShapeChangeResult r);
 

@@ -65,8 +65,8 @@ import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ProfileTransferEA implements SingleTarget, MessageSource {

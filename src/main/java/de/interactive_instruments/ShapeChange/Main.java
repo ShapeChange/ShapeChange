@@ -41,11 +41,6 @@ import de.interactive_instruments.ShapeChange.UI.DefaultDialog;
 
 public class Main {
 
-    //
-    // MAIN
-    //
-
-    /** Main ShapeChange entry point. */
     public static void main(String argv[]) {
 
 	try {

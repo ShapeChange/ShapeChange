@@ -35,8 +35,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDBSubcategory {
@@ -45,10 +45,6 @@ public class CDBSubcategory {
 	protected String label = null;
 	protected SortedMap<String, CDBFeature> featuresByCode = new TreeMap<String, CDBFeature>();
 
-	/**
-	 * @param code
-	 * @param label
-	 */
 	public CDBSubcategory(String code, String label) {
 		super();
 		this.code = code;
@@ -99,7 +95,7 @@ public class CDBSubcategory {
 	/**
 	 * Adds the given feature to this subcategory
 	 * 
-	 * @param feature
+	 * @param feature tbd
 	 */
 	public void add(CDBFeature feature) {
 		this.featuresByCode.put(feature.getCode(), feature);

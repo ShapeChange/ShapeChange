@@ -61,7 +61,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -74,12 +74,6 @@ public class EAModelDiff {
 		private String status;
 		private String notes;
 
-		/**
-		 * @param name
-		 * @param type
-		 * @param status
-		 * @param notes
-		 */
 		public EAConstraintInfo(String name, String type, String status,
 				String notes) {
 			super();
@@ -124,11 +118,6 @@ public class EAModelDiff {
 		private Integer id;
 		private String modelPath;
 
-		/**
-		 * @param name
-		 * @param id
-		 * @param modelPath
-		 */
 		public EAModelElementInfo(String name, Integer id, String modelPath) {
 			super();
 			this.name = name;
@@ -163,11 +152,10 @@ public class EAModelDiff {
 		private EAModelElementInfo element;
 
 		/**
-		 * @param name
-		 * @param id
-		 * @param modelPath
-		 * @param element
-		 *                      - can be <code>null</code> (e.g. in case of a
+		 * @param name tbd
+		 * @param id tbd
+		 * @param modelPath tbd
+		 * @param element  can be <code>null</code> (e.g. in case of a
 		 *                      model package)
 		 */
 		public EAPackageInfo(String name, Integer id, String modelPath,
@@ -189,12 +177,6 @@ public class EAModelDiff {
 
 		private String key;
 
-		/**
-		 * @param name
-		 * @param id
-		 * @param modelPath
-		 * @param key
-		 */
 		public EAConnectorInfo(String name, Integer id, String modelPath,
 				String key) {
 			super(name, id, modelPath);
@@ -223,9 +205,9 @@ public class EAModelDiff {
 	 * Compares the two EA repositories represented by the given File objects.
 	 * NOTE: Not each and every details is checked.
 	 * 
-	 * @param file
-	 * @param refFile
-	 * @return
+	 * @param file tbd
+	 * @param refFile tbd
+	 * @return tbd
 	 */
 	public boolean similar(File file, File refFile) {
 
@@ -873,7 +855,7 @@ public class EAModelDiff {
 	 * @param repOfConns
 	 *                          the repository to which the connectors belong
 	 * @return multimap of connectors infos, with connector keys as defined by
-	 *         {@link #getKey(Connector, ConnectorEnd, ConnectorEnd)} as sorted
+	 *         {@link EAModelDiff#getKey(Connector, ConnectorEnd, ConnectorEnd, Repository)} as sorted
 	 *         keys, and connectors stored in an array list
 	 */
 	private ListMultimap<String, EAConnectorInfo> parseEAConnectors(

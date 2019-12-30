@@ -205,14 +205,19 @@ public class XsdDocument implements MessageSource {
 	}
     };
 
-    /** Add attribute to an element */
+    /** Add attribute to an element 
+     * @param e  tbd
+     * @param name tbd 
+     * @param value tbd */
     protected void addAttribute(Element e, String name, String value) {
 	Attr att = document.createAttribute(name);
 	att.setValue(value);
 	e.setAttributeNode(att);
     }
 
-    /** Add a comment */
+    /** Add a comment 
+     * @param e  tbd
+     * @return tbd */
     protected Comment addCreationComment(Element e) {
 	Comment e1 = document.createComment("XML Schema document created by ShapeChange - http://shapechange.net/");
 	e.appendChild(e1);
@@ -221,6 +226,8 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Add documentation and annotation to an element
+     * @param e  tbd
+     * @param info tbd 
      * 
      * @return the annotation element, if one was created, else <code>null</code>
      */
@@ -532,6 +539,8 @@ public class XsdDocument implements MessageSource {
     /**
      * Map a base type of a class to a predefined representation in GML, ISO/TS
      * 19139, etc.
+     * @param ci  tbd
+     * @return  tbd
      */
     protected String mapBaseType(ClassInfo ci) {
 	String s = null;
@@ -552,6 +561,8 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Map an element to a predefined representation in GML, ISO/TS 19139, etc.
+     * @param ci tbd 
+     * @return tbd 
      */
     protected String mapElement(ClassInfo ci) {
 	if (ci == null)
@@ -736,6 +747,8 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Create global element for an object / data type instance
+     * @param ci  tbd
+     * @param cibase  tbd
      */
     public void pObjectElement(ClassInfo ci, ClassInfo cibase) {
 
@@ -772,7 +785,11 @@ public class XsdDocument implements MessageSource {
     };
 
     /**
-     * <complexType name='[ci.name()+"Type"]' abstract='[ci.isAbstract()]'>
+     * complexType name='[ci.name()+"Type"]' abstract='[ci.isAbstract()]'
+     * @param ci  tbd
+     * @param cibase  tbd
+     * @param schDoc  tbd
+     * @return  tbd
      */
     public Element pComplexType(ClassInfo ci, ClassInfo cibase, SchematronSchema schDoc) {
 
@@ -979,7 +996,10 @@ public class XsdDocument implements MessageSource {
     };
 
     /**
-     * <group name='[ci.name()+"Group"]'>
+     * group name='[ci.name()+"Group"]'
+     * @param ci  tbd
+     * @param cibase  tbd
+     * @return  tbd
      */
     public Element pGroup(ClassInfo ci, ClassInfo cibase) {
 	Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "group");
@@ -1588,10 +1608,6 @@ public class XsdDocument implements MessageSource {
 	return false;
     }
 
-    /**
-     * 
-     * @param ci
-     */
     public void pGlobalBasicType(ClassInfo ci) {
 	Element e1 = pAnonymousBasicType(ci);
 	if (e1 != null) {
@@ -1740,6 +1756,12 @@ public class XsdDocument implements MessageSource {
     /**
      * Process a class property. "true" is returned, if the property is an
      * aggregation/composition, "false" otherwise
+     * @param ci  tbd
+     * @param pi  tbd
+     * @param sequenceOrChoice  tbd
+     * @param m  tbd
+     * @param schDoc  tbd
+     * @return  tbd
      */
     public boolean processLocalProperty(ClassInfo ci, PropertyInfo pi, Element sequenceOrChoice, Multiplicity m,
 	    SchematronSchema schDoc) {
@@ -1759,6 +1781,10 @@ public class XsdDocument implements MessageSource {
     /**
      * Process all properties that are added in this class. "true" is returned if a
      * single property is an aggregation/composition, "false" otherwise
+     * @param ci  tbd
+     * @param sequenceOrChoice  tbd
+     * @param schDoc  tbd
+     * @return  tbd
      */
     public boolean processLocalProperties(ClassInfo ci, Element sequenceOrChoice, SchematronSchema schDoc) {
 
@@ -1828,8 +1854,8 @@ public class XsdDocument implements MessageSource {
      * @param cibase a class
      * @param pi     property of cibase
      * @param m      multiplicity of the property, can be <code>null</code>
-     * @param schDoc
-     * @return
+     * @param schDoc tbd
+     * @return tbd
      */
     protected Element addProperty(ClassInfo cibase, PropertyInfo pi, Multiplicity m, SchematronSchema schDoc) {
 
@@ -4056,7 +4082,9 @@ public class XsdDocument implements MessageSource {
 	}
     }
 
-    /** Dump XML Schema file */
+    /** Dump XML Schema file 
+     * @param outputFormat  tbd
+     * @throws Exception tbd */
     public void printFile(Properties outputFormat) throws Exception {
 	if (printed) {
 	    return;
@@ -4138,12 +4166,10 @@ public class XsdDocument implements MessageSource {
     }
 
     /**
-     * <p>
      * This method returns messages belonging to the XML Schema target by their
      * message number. The organization corresponds to the logic in module
      * ShapeChangeResult. All functions in that class, which require an message
      * number can be redirected to the function at hand.
-     * </p>
      * 
      * @param mnr Message number
      * @return Message text, including $x$ substitution points.

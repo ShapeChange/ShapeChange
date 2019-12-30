@@ -62,7 +62,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
  * Common class for Schematron Schema creation.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -239,7 +239,11 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	root.appendChild(pattern);
     }
 
-    /** Add attribute to an element */
+    /** Add attribute to an element 
+     * @param document  tbd
+     * @param e  tbd
+     * @param name  tbd
+     * @param value tbd */
     protected void addAttribute(Document document, Element e, String name, String value) {
 	Attr att = document.createAttribute(name);
 	att.setValue(value);
@@ -548,7 +552,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
      * schema. Serialization takes place only if at least one rule has been
      * generated.
      *
-     * @param outputDirectory
+     * @param outputDirectory tbd
      */
     public void write(String outputDirectory) {
 

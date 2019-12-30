@@ -49,8 +49,8 @@ import org.apache.commons.lang3.StringUtils;
 import de.interactive_instruments.ShapeChange.Model.MalformedProfileIdentifierException;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class Profiles {
 
@@ -169,19 +169,16 @@ public class Profiles {
 	}
 
 	/**
-	 * @param profilesString
+	 * @param profilesString tbd
 	 * @param isProfilesFromConfig
 	 *            <code>true</code> if the profilesString is from the
 	 *            configuration, <code>false</code> if it is from the tagged
 	 *            value 'profiles
-	 * @param ownerName
-	 *            name of the model element that owns the profilesString
-	 * @return
-	 * @throws MalformedProfileIdentifierException
+	 * @return tbd
+	 * @throws MalformedProfileIdentifierException tbd
 	 */
 	public static Profiles parse(String profilesString,
 			boolean isProfilesFromConfig
-	// , String ownerName
 	) throws MalformedProfileIdentifierException {
 
 		Pattern validationPattern = isProfilesFromConfig
@@ -318,12 +315,12 @@ public class Profiles {
 	// }
 
 	/**
-	 * @param other,
+	 * @param other
 	 *            shall not be <code>null</code>
 	 * @param messages
 	 *            List to store the reason(s) why this map does not contain the
 	 *            other map; can be null
-	 * @return
+	 * @return tbd
 	 */
 	public boolean contains(Profiles other, List<String> messages) {
 
@@ -563,7 +560,7 @@ public class Profiles {
 	}
 
 	/**
-	 * @param profileName
+	 * @param profileName tbd
 	 * @return the profile identifier with given name stored in this set of
 	 *         profiles; can be <code>null</code> if no profile with that name
 	 *         exists in this set
@@ -577,7 +574,7 @@ public class Profiles {
 	}
 
 	/**
-	 * @param profileName
+	 * @param profileName tbd
 	 * @return <code>true</code> if a profile identifier with given name is
 	 *         stored in this set of profiles, else <code>false</code>
 	 */
@@ -590,7 +587,7 @@ public class Profiles {
 	}
 
 	/**
-	 * @param profileNames
+	 * @param profileNames tbd
 	 * @return the set of profile identifiers whose names are contained in the
 	 *         given set; can be empty (especially if the given set is
 	 *         <code>null</code> or empty) but not <code>null</code>
@@ -614,8 +611,8 @@ public class Profiles {
 	}
 
 	/**
-	 * @param profileName
-	 * @param parameterName
+	 * @param profileName tbd
+	 * @param parameterName tbd
 	 * @return the value of the profile parameter with given name, stored for
 	 *         the profile with given name; can be <code>null</code> if the
 	 *         profile does not exist, or the profile does not have any

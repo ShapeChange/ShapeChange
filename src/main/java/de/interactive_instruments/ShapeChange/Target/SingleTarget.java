@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Target;
 
+import de.interactive_instruments.ShapeChange.Converter;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 public interface SingleTarget extends Target {
@@ -42,7 +43,7 @@ public interface SingleTarget extends Target {
 	 * Will be called by the {@link Converter} after initialization and
 	 * processing for all of the selected schema has been performed.
 	 * 
-	 * @param r
+	 * @param r tbd
 	 * @see de.interactive_instruments.ShapeChange.Model.Model#selectedSchemas()
 	 */
 	public void writeAll(ShapeChangeResult r);

@@ -109,7 +109,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 /**
  * Creates SQL DDL for an application schema.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

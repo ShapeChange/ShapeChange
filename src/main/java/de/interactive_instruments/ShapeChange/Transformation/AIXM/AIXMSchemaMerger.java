@@ -526,7 +526,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 	 * If the type of pi is the inClass of pi, the type will be changed to be
 	 * genCi.
 	 * 
-	 * @param genPi
+	 * @param pi
 	 * @param genCi
 	 */
 	private void copyExtensionOrSupertypeProperty(PropertyInfo pi,

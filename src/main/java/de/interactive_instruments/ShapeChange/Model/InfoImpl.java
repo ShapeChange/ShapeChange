@@ -277,7 +277,7 @@ public abstract class InfoImpl implements Info {
 	 * compatibility reasons, the empty string will be returned for the
 	 * descriptors DOCUMENTATION and DEFINITION if no values were found.
 	 * 
-	 * @param descriptor
+	 * @param descriptor tbd
 	 * @return values for the descriptor, can be empty but not null;
 	 */
 	protected List<LangString> descriptorValues(Descriptor descriptor) {
@@ -646,7 +646,6 @@ public abstract class InfoImpl implements Info {
 	 * valued - any additional match will be logged as a warning.
 	 * 
 	 * @param descriptor
-	 * @param values
 	 * @return array of values that apply to the descriptor; can be empty but
 	 *         not <code>null</code>
 	 */

@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -609,7 +609,7 @@ public class SqlConstants {
 
 	/**
 	 * <pre>
-	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?<=\\)[,;\)])+)*\))?
+	 * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)*\))?
 	 * </pre>
 	 */
 	public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)(;(columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)*\\))?";

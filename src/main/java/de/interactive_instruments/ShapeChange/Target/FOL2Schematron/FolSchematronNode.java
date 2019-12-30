@@ -100,15 +100,13 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * Method to inquire whether the the node inquired is a Logic node AND this
 	 * logic node has the same <i>isAnd</i> polarity as specified in the
-	 * parameter.
-	 * <p>
-	 * <p>
+	 * parameter.<br><br>
 	 * This implementation installs the default for all derivations except
 	 * Logic.
-	 * </p>
+	 * 
 	 * 
 	 * @param isAnd
 	 *            Flag: Are we an AND? (not an OR)?
@@ -119,14 +117,13 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This method determines whether the given expression depends on the
 	 * Variable passed as argument.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * This implementation defines the default behavior: Descend down and try to
 	 * find the variable somewhere.
-	 * </p>
+	 * 
 	 * 
 	 * @param vardecl
 	 *            The Variable of the variable
@@ -262,14 +259,13 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This method determines whether the given expression is a Variable or an
 	 * Attribute based on a Variable, which is identical to the one passed as
 	 * argument.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * This implementation defines the default behavior.
-	 * </p>
+	 * 
 	 * 
 	 * @param vardecl
 	 *            The Variable of the variable
@@ -280,11 +276,11 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * By means of this function you can inquire which Attribute node is
 	 * generating the objects represented by this node. Note that invocation is
 	 * only sensible for iterators and attributes.
-	 * </p>
+	 * 
 	 * 
 	 * @return The retrieved Attribute node if there is such a thing
 	 */
@@ -293,12 +289,11 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This predicate finds out whether the given node may produce a set.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * This is the default implementation providing the value false.
-	 * </p>
+	 * 
 	 * 
 	 * @return Flag indicating whether the node can return multiple values
 	 */
@@ -307,10 +302,10 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This predicate finds out whether the given node is realized by means of a
 	 * simple XML schema type.
-	 * </p>
+	 * 
 	 * 
 	 * @return Flag indicating whether the node has a simple type
 	 */
@@ -335,10 +330,10 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This predicate finds out whether the given node is realized by means of a
 	 * class, which conceptually has identity.
-	 * </p>
+	 * 
 	 * 
 	 * @return Flag indicating whether the node is an identity carrying type
 	 */
@@ -361,10 +356,10 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * Find out whether this construct contains a node of type
 	 * SchematronNode.Error. In this case the whole tree is in error.
-	 * </p>
+	 * 
 	 * 
 	 * @return Error flag
 	 */
@@ -378,17 +373,15 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
 	 * The primary information stored in this class is whether there is
 	 * currently a nodeset context at all - NONE if the expression is not a
 	 * nodeset - and if the context is currently identical to current() -
 	 * ATCURRENT. All other contexts are combined in OTHER.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * The vars part comes into living as soon as variables are encountered.
 	 * They are tracked together with the information how far they are up the
 	 * stack.
-	 * </p>
+	 * 
 	 */
 	public static class BindingContext {
 		public enum CtxState {
@@ -438,12 +431,12 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This auxiliary class encapsulates an Xpath expression, which can be
-	 * formulated using variables defined using &lt;let> expressions of a
-	 * Schematron &lt;rule>. Additionally there is a number indicating the XPath
+	 * formulated using variables defined using &lt;let&gt; expressions of a
+	 * Schematron &lt;rule&gt;. Additionally there is a number indicating the XPath
 	 * operator precedence of that fragment. Priorities are as follows:
-	 * </p>
+	 * 
 	 * <ol>
 	 * <li>or
 	 * <li>and
@@ -498,9 +491,9 @@ public abstract class FolSchematronNode {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This abstract method compiles a node to an XPath expression fragment.
-	 * </p>
+	 * 
 	 * 
 	 * @param ctx
 	 *            BindingContext this node shall be compiled in
@@ -510,10 +503,10 @@ public abstract class FolSchematronNode {
 
 	/**
 	 * ************************************************************************
-	 * <p>
+	 * 
 	 * This class stands for logical operations AND, OR, XOR and EQV. Which of
 	 * these is is coded in the state member logic.
-	 * </p>
+	 * 
 	 */
 	public static class Logic extends FolSchematronNode {
 
@@ -528,7 +521,7 @@ public abstract class FolSchematronNode {
 		 * 
 		 * @param schemaObject
 		 *            The schema object
-		 * @param isAnd
+		 * @param logic
 		 *            Flag to make this an AND (true) or an OR (false)
 		 */
 		public Logic(FOL2Schematron schemaObject, LogicType logic) {
@@ -537,11 +530,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * Method to inquire whether the node inquired is a Logic node and this
 		 * logic node has the same <i>isAnd</i> polarity as specified in the
 		 * parameter. XORs and EQVs are ignored and yield false.
-		 * <p>
+		 * 
 		 * 
 		 * @param isAnd
 		 *            Flag: Are we an AND? (not an OR)?
@@ -555,15 +548,14 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles the node and its children to an Xpath predicate, which
-		 * can be inserted into a &lt;rule>.
-		 * </p>
-		 * <p>
+		 * can be inserted into a &lt;rule&gt;.
+		 * <br><br>
 		 * AND and OR are translated into their Xpath counterparts <i>and</i>
 		 * and <i>or</i>. XOR will be realized as a != operator, EQV by an =
 		 * operator.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -637,10 +629,10 @@ public abstract class FolSchematronNode {
 
 	/**
 	 * ************************************************************************
-	 * <p>
+	 * 
 	 * This class stands for comparisons. The operator is given as a String,
-	 * which can take the values: =, <>, <, <=, >, >=.
-	 * </p>
+	 * which can take the values: =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;=.
+	 * 
 	 */
 	public static class ComparisonNode extends FolSchematronNode {
 
@@ -653,7 +645,7 @@ public abstract class FolSchematronNode {
 		 * @param schemaObject
 		 *            The schema object
 		 * @param name
-		 *            One of =, <>, <, <=, >, >=
+		 *            One of =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;=
 		 */
 		public ComparisonNode(FOL2Schematron schemaObject, String name) {
 			this.schemaObject = schemaObject;
@@ -661,10 +653,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles the node and its children to Xpath. Xpath can express
 		 * all required comparison operators.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -718,11 +710,11 @@ public abstract class FolSchematronNode {
 
 	/**
 	 * ************************************************************************
-	 * <p>
+	 * 
 	 * This one stands for the OCL <i>isEmpty()</i> and <i>notEmpty()</i>
 	 * predicate operations. Which of these is meant is expressed in the state
 	 * variable <i>negated</i>.
-	 * </p>
+	 * 
 	 */
 	public static class Empty extends FolSchematronNode {
 
@@ -739,13 +731,13 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles the node and its children to an Xpath fragment. The
 		 * translation is essentially the nodeset derived from the object part
 		 * of the expression, because notEmpty() is fulfilled for a nodeset,
 		 * which converts to a boolean true. isEmpty() requires an additional
 		 * not().
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -771,8 +763,8 @@ public abstract class FolSchematronNode {
 
 	/**
 	 * ************************************************************************
-	 * <p>
-	 * </p>
+	 * 
+	 * 
 	 */
 	public static class NotNode extends FolSchematronNode {
 
@@ -889,11 +881,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles the FOL IsTypeOf predicate to an equivalent Xpath
 		 * expression fragment. It is translated to a predicate which compares
 		 * the element name against all concrete subtypes of the given type.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -985,10 +977,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * Matches operations are translated to an appropriate extension
 		 * function (XPath 1.0) or directly to Xpath 2.0.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -1053,10 +1045,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles a node to an Xpath expression, which realizes the given
 		 * arithmetic operation. OCL and Xpath are very similar here.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -1124,7 +1116,7 @@ public abstract class FolSchematronNode {
 		 * 
 		 * @param schemaObject
 		 *            The schema object
-		 * @param vardecl
+		 * @param var
 		 *            Variable object
 		 */
 		public VariableNode(FOL2Schematron schemaObject, Variable var) {
@@ -1142,10 +1134,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This method determines whether this variable is identical to the one
 		 * passed as argument.
-		 * </p>
+		 * 
 		 * 
 		 * @param vardecl
 		 *            The Variable of the variable
@@ -1156,10 +1148,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This method determines whether this variable is identical to the one
 		 * passed as argument.
-		 * </p>
+		 * 
 		 * 
 		 * @param vardecl
 		 *            The Variable of the variable
@@ -1170,11 +1162,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * Finds the generating attribute of the variable (searching in outer
 		 * scopes if necessary) - it may be null if the variable is purely based
 		 * on other variables without actual value (also in case it is 'self').
-		 * </p>
+		 * 
 		 * 
 		 * @return The retrieved Attribute node if there is such a thing
 		 */
@@ -1202,10 +1194,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Variable results in a simple XML
 		 * schema type.
-		 * </p>
+		 * 
 		 * 
 		 * @return Flag indicating whether the node has a simple type
 		 */
@@ -1245,10 +1237,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Variable results in an instance,
 		 * which conceptually has identity.
-		 * </p>
+		 * 
 		 * 
 		 * @return Flag indicating whether the node is an identity carrying type
 		 */
@@ -1287,29 +1279,26 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles a node to an Xpath expression, which stands for the
 		 * given variable.
-		 * </p>
-		 * <p>
+		 * <br><br>
 		 * If the variable is defined in a surrounding 'let' construct, a proper
 		 * translation for the use of the variable can always be achieved, given
 		 * that the initial value of the variable translates properly. If the
 		 * use of the variable is in ISCURRENT context, the variable definition
 		 * will be mapped into a Schematron &lt;let&gt; definition. Otherwise
 		 * the initial value is substituted in place of the variable.
-		 * </p>
-		 * <p>
+		 * <br><br>
 		 * Other variable references are treated as follows.
-		 * </p>
-		 * <p>
+		 * <br><br>
 		 * The only variable which can be properly translated in all cases is
 		 * <i>self</i>, which will be mapped to <i>current()</i> or to '.', if
 		 * compiled in a ISCURRENT context. Variable definitions from iterators
 		 * require to be on the context stack of the expression, which is widely
 		 * dependent on how the expression environment could be represented in
 		 * Xpath.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -1341,11 +1330,11 @@ public abstract class FolSchematronNode {
 
 	/**
 	 * ************************************************************************
-	 * <p>
+	 * 
 	 * This class represents a chain of attribute selectors based on some value
 	 * source such as a variable. The value source is the sole child of the
 	 * Attribute object.
-	 * </p>
+	 * 
 	 */
 	public static class AttributeNode extends FolSchematronNode {
 
@@ -1374,7 +1363,7 @@ public abstract class FolSchematronNode {
 		 * 
 		 * @param schemaObject
 		 *            The schema object
-		 * @param attr
+		 * @param pc
 		 *            The (possibly first) PropertyCall object
 		 */
 		public AttributeNode(FOL2Schematron schemaObject, PropertyCall pc) {
@@ -1407,12 +1396,12 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * Append another PropertyCall and associated layout info as an
 		 * additional qualification.
-		 * </p>
 		 * 
-		 * @param aex
+		 * 
+		 * @param pc
 		 *            The PropertyCall to be appended be null)
 		 */
 		public void appendAttribute(PropertyCall pc) {
@@ -1428,12 +1417,12 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * Append another AttrComp and associated layout info as an additional
 		 * qualification.
-		 * </p>
 		 * 
-		 * @param aex
+		 * 
+		 * @param atc
 		 *            The AttrComp object to be appended be null)
 		 */
 		public void appendAttribute(AttrComp atc) {
@@ -1503,16 +1492,15 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This Attribute predicate finds out if the last attribute component in
 		 * the object is implemented as a group and is therefore absorbing its
 		 * properties. If there is already a property absorbed on the attribute,
 		 * the absorbed property will be asked.
-		 * </p>
-		 * <p>
+		 * <br><br>
 		 * Note that this is a necessary condition for applying GML's nilReason
 		 * pattern.
-		 * </p>
+		 * 
 		 * 
 		 * @return The required flag indicating that properties are absorbed
 		 */
@@ -1545,10 +1533,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This method determines whether this Attribute is dependent on the
 		 * Variable passed as argument.
-		 * </p>
+		 * 
 		 * 
 		 * @param vardecl
 		 *            The Variable of the variable
@@ -1559,10 +1547,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This inquires the Attribute node this Attribute is generated by.
 		 * Alas, it's this Attribute!
-		 * </p>
+		 * 
 		 * 
 		 * @return The retrieved Attribute node
 		 */
@@ -1571,10 +1559,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This method returns true if any of the PropertyCall objects it is
 		 * made of has a maximum cardinality greater than 1.
-		 * </p>
+		 * 
 		 */
 		public boolean isMultiple() {
 
@@ -1590,11 +1578,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Attribute as a whole results in
 		 * a simple XML schema type. Note that for convenience reasons this also
 		 * includes the GML's xsi:nil construct.
-		 * </p>
+		 * 
 		 * 
 		 * @return Flag indicating whether the Attribute has a simple type
 		 */
@@ -1636,11 +1624,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Attribute component at the given
 		 * index <i>idx</i> results in a simple XML schema type. Note that for
 		 * convenience reasons this also includes the GML's xsi:nil construct.
-		 * </p>
+		 * 
 		 * 
 		 * @param idx
 		 *            Index of the attribute component
@@ -1667,10 +1655,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Attribute as a whole results in
 		 * instances, which conceptually have identity.
-		 * </p>
+		 * 
 		 * 
 		 * @return Flag indicating whether the node is an identity carrying type
 		 */
@@ -1680,12 +1668,12 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This predicate finds out whether the Attribute component at the given
 		 * index <i>idx</i> results in a schema type that carries identity. Note
 		 * that for convenience reasons this also includes GML's xsi:nil
 		 * construct.
-		 * </p>
+		 * 
 		 * 
 		 * @param idx
 		 *            Index of the attribute component
@@ -1716,10 +1704,10 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This function translates the Attribute to an Xpath fragment accessing
 		 * that attribute.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -2116,9 +2104,9 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This function translates the Literal to equivalent Xpath code.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -2176,6 +2164,7 @@ public abstract class FolSchematronNode {
 		 * 
 		 * @param schemaObject
 		 *            The schema object
+		 * @param q  tbd
 		 */
 		public QuantificationNode(FOL2Schematron schemaObject,
 				Quantification q) {
@@ -2184,9 +2173,9 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This compiles the construct to an equivalent Xpath expression.
-		 * </p>
+		 * 
 		 * 
 		 * @param ctx
 		 *            BindingContext this node shall be compiled in
@@ -2303,6 +2292,7 @@ public abstract class FolSchematronNode {
 		 * 
 		 * @param schemaObject
 		 *            The schema object
+		 * @param name  tbd
 		 */
 		public MessageComment(FOL2Schematron schemaObject, String name) {
 			this.schemaObject = schemaObject;
@@ -2319,11 +2309,11 @@ public abstract class FolSchematronNode {
 		}
 
 		/**
-		 * <p>
+		 * 
 		 * This method returns a vector or Schematron SQL value expressions in
 		 * interpretation of a MessageComment object. The latter is created from
 		 * the message text comment syntax contained in the constraints.
-		 * </p>
+		 * 
 		 * 
 		 * @return Array of message arguments in FME value syntax
 		 */

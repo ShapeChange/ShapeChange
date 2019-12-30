@@ -36,8 +36,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class XsdMapEntry {
 

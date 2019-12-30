@@ -84,7 +84,7 @@ import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -642,7 +642,10 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 		appSchemaElement.appendChild(e_m);
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Element e, String name, String value) {
 		Attr att = document.createAttribute(name);
 		att.setValue(value);

@@ -61,9 +61,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return options;
 	}
 
-	/**
-	 * @param options
-	 */
 	public void setOptions(Options options) {
 		this.options = options;
 	}
@@ -73,9 +70,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return result;
 	}
 
-	/**
-	 * @param result
-	 */
 	public void setResult(ShapeChangeResult result) {
 		this.result = result;
 
@@ -86,9 +80,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return model;
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(GenericModel model) {
 		this.model = model;
 
@@ -99,25 +90,11 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return id;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setId(String id) {
 		this.id = id;
 
 	}
 
-//	/**
-//	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
-//	 */
-//	@Override
-//	public String name() {
-//		return name;
-//	}
-
-	/**
-	 * @param name
-	 */
 	public void setName(String name) {
 		this.name = name;
 
@@ -128,10 +105,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return end1;
 	}
 
-	/**
-	 * @param end1
-	 *                 the end1 to set
-	 */
 	public void setEnd1(PropertyInfo end1) {
 		this.end1 = end1;
 	}
@@ -141,10 +114,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return end2;
 	}
 
-	/**
-	 * @param end2
-	 *                 the end2 to set
-	 */
 	public void setEnd2(PropertyInfo end2) {
 		this.end2 = end2;
 	}
@@ -154,10 +123,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		return assocClass;
 	}
 
-	/**
-	 * @param assocClass
-	 *                       the assocClass to set
-	 */
 	public void setAssocClass(ClassInfo assocClass) {
 		this.assocClass = assocClass;
 	}
@@ -173,9 +138,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 
 	}
 
-	/**
-	 * @param stereotypeSet
-	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -187,9 +149,6 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 		}
 	}
 
-	/**
-	 * @param stereotype
-	 */
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -209,7 +168,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	}
 
 	/**
-	 * @param taggedValues
+	 * @param taggedValues tbd
 	 * @param updateFields
 	 *                         true if class fields should be updated based upon
 	 *                         information from given tagged values, else false
@@ -235,8 +194,8 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	 * Encapsulates the logic to update class fields based upon the value of a
 	 * named tagged value.
 	 * 
-	 * @param tvName
-	 * @param tvValue
+	 * @param tvName tbd
+	 * @param tvValue tbd
 	 */
 	private void updateFieldsForTaggedValue(String tvName, String tvValue) {
 
@@ -251,7 +210,7 @@ public class GenericAssociationInfo extends AssociationInfoImpl {
 	 * IDs used in a reference model are unique to that model and do not get
 	 * mixed up with the IDs of the input model.
 	 * 
-	 * @param prefix
+	 * @param prefix tbd
 	 */
 	public void addPrefixToModelElementIDs(String prefix) {
 

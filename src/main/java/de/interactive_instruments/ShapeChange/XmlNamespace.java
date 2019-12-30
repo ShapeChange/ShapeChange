@@ -32,7 +32,7 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public class XmlNamespace {

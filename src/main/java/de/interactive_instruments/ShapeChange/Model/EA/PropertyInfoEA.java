@@ -149,7 +149,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	/** Cache set of constraints */
 	protected Vector<Constraint> constraintsCache = null;
 
-	/** Create a PropertyInfo object given an EA Attribute. */
 	public PropertyInfoEA(EADocument doc, ClassInfoEA ci, Attribute attr) {
 
 		// Record references ...
@@ -240,9 +239,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		document.result.addDebug(null, 10013, "property", id(), name());
 	}
 
-	/**
-	 * Create a PropertyInfo object given an AssociationInfo and a ConnectorEnd.
-	 */
 	public PropertyInfoEA(EADocument doc, ClassInfoEA ci, AssociationInfoEA ai,
 			boolean reversed, ConnectorEnd eaCE, ClassInfoEA tci) {
 
@@ -820,7 +816,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		}
 	} // validateTaggedValuesCache()
 
-	/** Set the tagged value for the tag given. */
 	public void taggedValue(String tag, String value) {
 		if (isAttribute()) {
 			boolean upd = false;

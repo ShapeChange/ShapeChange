@@ -153,8 +153,8 @@ public class SbvrErrorInfo {
 	}
 
 	/**
-	 * @param offendingTextStartIndex
-	 *            the offendingTextStartIndex to set
+	 * @param offendingTokenStartIndex
+	 *            the offendingTokenStartIndex to set
 	 */
 	public void setOffendingTextStartIndex(int offendingTokenStartIndex) {
 		this.offendingTextStartIndex = offendingTokenStartIndex;
@@ -168,8 +168,8 @@ public class SbvrErrorInfo {
 	}
 
 	/**
-	 * @param offendingTextStopIndex
-	 *            the offendingTextStopIndex to set
+	 * @param offendingTokenStopIndex
+	 *            the offendingTokenStopIndex to set
 	 */
 	public void setOffendingTextStopIndex(int offendingTokenStopIndex) {
 		this.offendingTextStopIndex = offendingTokenStopIndex;

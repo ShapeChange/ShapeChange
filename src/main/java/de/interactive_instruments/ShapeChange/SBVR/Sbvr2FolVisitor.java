@@ -908,14 +908,14 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	/**
 	 * @param quantifier
 	 * @param noun
-	 * @param context
-	 *            provides the context for evaluation of the noun; can be
+	 * @param verbContext
+	 *            provides the context for evaluation of the verb; can be
 	 *            <code>null</code>; if not <code>null</code> the context can be
 	 *            a list of SchemaCalls and a copy of it will be prepended as-is
 	 *            (so without checks for validity in context) to the SchemaCall
-	 *            represented by the noun - the result is the value of the
+	 *            represented by the verb - the result is the value of the
 	 *            variable
-	 * @param predicateExprCtx
+	 * @param relativeClauseExprCtx
 	 * @return
 	 */
 	private Quantification parseQuantification(Quantifier quantifier,
@@ -1251,8 +1251,8 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	}
 
 	/**
-	 * @param pathSegmentName
-	 * @param classContext
+	 * @param className
+	 * @param ci
 	 * @return <code>true</code> if the given className is the name of ci or one
 	 *         of its subtypes in the complete subtype hierarchy; else
 	 *         <code>false</code>

@@ -45,7 +45,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public class TargetXmlSchemaConfiguration extends TargetConfiguration {
@@ -87,7 +87,7 @@ public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 	 * @param xsdMapEntries
 	 *                                          The xsd map entries for the
 	 *                                          target, can be <code>null</code>
-	 * @param xsdPropertyMapEntries
+	 * @param xsdPropertyMapEntries tbd
 	 * @param xmlNamespaces
 	 *                                          Xml namespaces defined for this
 	 *                                          target, can be <code>null</code>
@@ -279,7 +279,7 @@ public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 	 * {@link de.interactive_instruments.ShapeChange.Model.PropertyInfo#qname()}
 	 * is returned.
 	 * 
-	 * @param pi
+	 * @param pi tbd
 	 * @return the QName of the given property, cannot be <code>null</code>
 	 *         target element (QName like string) of the property map entry that
 	 *         applies to the given property, if one is defined in the

@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 /**
  * Stores a string value and optional language identifier.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -70,7 +70,7 @@ public class LangString implements Comparable<LangString> {
 	}
 
 	/**
-	 * @param strings
+	 * @param strings tbd
 	 * @return list of parsed language tagged strings, can be empty but not
 	 *         <code>null</code>
 	 */

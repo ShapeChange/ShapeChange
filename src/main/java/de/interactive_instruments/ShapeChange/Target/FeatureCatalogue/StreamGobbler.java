@@ -40,8 +40,8 @@ import java.io.InputStreamReader;
  * Used to read and store the content from an input stream. Once no more content
  * is provided by the stream, the whole result can be retrieved.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class StreamGobbler extends Thread {

@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 
 /**
  * This class encapsulates an Xpath expression, which can be formulated using
- * variables defined using &lt;let> expressions of a Schematron &lt;rule>.
+ * variables defined using &lt;let&gt; expressions of a Schematron &lt;rule&gt;.
  *
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class XpathFragment {
@@ -21,13 +21,14 @@ public class XpathFragment {
      * XPath 1.0 and 2.0 have different sets of operators. The following two tables
      * define operator precedence for both XPath 1.0 and 2.0.
      *
-     * <p>
+     * <br><br>
      * XPath 2.0 operator precedence order is defined at:
      * https://www.w3.org/TR/xpath20/#id-precedence-order
      *
-     * <p>
+     * <br><br>
      *
      * <table border="1">
+     * <caption>tbd</caption>
      * <tbody>
      * <tr>
      * <th># of precedence (from lowest to highest)</th>
@@ -41,7 +42,7 @@ public class XpathFragment {
      * </tr>
      * <tr>
      * <td>3</td>
-     * <td>for, some, every, if</a></td>
+     * <td>for, some, every, if</td>
      * <td>left-to-right</td>
      * </tr>
      * <tr>
@@ -135,12 +136,13 @@ public class XpathFragment {
      * </tbody>
      * </table>
      *
-     * <p>
+     * <br><br>
      * XPath 1.0 operator precedence order is defined as (from lowest to highest):
      *
-     * <p>
+     * <br><br>
      *
      * <table border="1">
+     * <caption>tbd</caption>
      * <tbody>
      * <tr>
      * <th># of precedence (from lowest to highest)</th>
@@ -229,6 +231,7 @@ public class XpathFragment {
     /**
      * Add another fragment performing let variable merging. The argument fragment
      * is destroyed. If binding contexts are given they are also merged.
+     * @param xf  tbd
      *
      * @return the merged fragment string
      */
@@ -259,7 +262,9 @@ public class XpathFragment {
 	return xf.fragment;
     }
 
-    /** Function to find or add a variable given the expression */
+    /** Function to find or add a variable given the expression 
+     * @param ex  tbd
+     * @return tbd */
     public String findOrAdd(String ex) {
 
 	if (lets == null) {

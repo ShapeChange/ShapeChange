@@ -48,7 +48,7 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -65,6 +65,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * 
      * @param e  the element to which the tagged value shall be added
      * @param tv tagged value to add
+     * @throws EAException  tbd
      */
     public static void addTaggedValue(Element e, EATaggedValue tv) throws EAException {
 
@@ -106,8 +107,9 @@ public class EAElementUtil extends AbstractEAUtil {
      * the same tagged values would lead to duplicates. If duplicates shall be
      * prevented, set the tagged value instead of adding it.
      * 
-     * @param e
+     * @param e tbd
      * @param tvs collection of tagged values to set
+     * @throws EAException  tbd
      */
     public static void addTaggedValues(Element e, List<EATaggedValue> tvs) throws EAException {
 
@@ -160,6 +162,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * 
      * @param e   the element to which the tagged values shall be added
      * @param tvs collection of tagged values to add
+     * @throws EAException  tbd
      */
     public static void addTaggedValues(Element e, TaggedValues tvs) throws EAException {
 
@@ -198,8 +201,8 @@ public class EAElementUtil extends AbstractEAUtil {
      * Deletes all tagged values whose name equals (ignoring case) the given name in
      * the given element.
      * 
-     * @param e
-     * @param nameOfTVToDelete
+     * @param e tbd
+     * @param nameOfTVToDelete tbd
      */
     public static void deleteTaggedValue(Element e, String nameOfTVToDelete) {
 
@@ -247,8 +250,8 @@ public class EAElementUtil extends AbstractEAUtil {
     /**
      * Sets attribute GenType on the given EA element.
      * 
-     * @param e
-     * @param gentype
+     * @param e tbd
+     * @param gentype tbd
      * @throws EAException If updating the element did not succeed, this exception
      *                     contains the error message.
      */
@@ -291,8 +294,8 @@ public class EAElementUtil extends AbstractEAUtil {
     /**
      * Sets attribute Stereotype on the given EA element.
      * 
-     * @param e
-     * @param stereotype
+     * @param e tbd
+     * @param stereotype tbd
      * @throws EAException If updating the element did not succeed, this exception
      *                     contains the error message.
      */
@@ -308,8 +311,8 @@ public class EAElementUtil extends AbstractEAUtil {
     /**
      * Sets attribute StereotypeEx on the given EA element.
      * 
-     * @param e
-     * @param stereotypeEx
+     * @param e tbd
+     * @param stereotypeEx tbd
      * @throws EAException If updating the element did not succeed, this exception
      *                     contains the error message.
      */
@@ -329,6 +332,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * 
      * @param e  the element in which the tagged value shall be set
      * @param tv tagged value to set, must not be <code>null</code>
+     * @throws EAException  tbd
      */
     public static void setTaggedValue(Element e, EATaggedValue tv) throws EAException {
 
@@ -344,6 +348,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * @param e     the element in which the tagged value shall be set
      * @param name  name of the tagged value to set, must not be <code>null</code>
      * @param value value of the tagged value to set, can be <code>null</code>
+     * @throws EAException  tbd
      */
     public static void setTaggedValue(Element e, String name, String value) throws EAException {
 
@@ -360,6 +365,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * 
      * @param e   the element in which the tagged values shall be set
      * @param tvs tagged values to set, must not be <code>null</code>
+     * @throws EAException  tbd
      */
     public static void setTaggedValues(Element e, List<EATaggedValue> tvs) throws EAException {
 
@@ -376,6 +382,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * 
      * @param e   the element in which the tagged values shall be set
      * @param tvs tagged values to set, must not be <code>null</code>
+     * @throws EAException  tbd
      */
     public static void setTaggedValues(Element e, TaggedValues tvs) throws EAException {
 
@@ -489,7 +496,7 @@ public class EAElementUtil extends AbstractEAUtil {
     /**
      * Create a new attribute for the given element.
      * 
-     * @param e
+     * @param e tbd
      * @param name            EA attribute name, must not be <code>null</code>.
      * @param alias           EA alias, can be <code>null</code>.
      * @param documentation   EA notes, can be <code>null</code>.
@@ -501,6 +508,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * @param allowDuplicates EA allowDuplicates (the opposite of ShapeChange
      *                        isUnique)
      * @param initialValue    EA default/initialValue, can be <code>null</code>.
+     * @param isReadOnly  tbd
      * @param m               Multiplicity of the attribute, can be
      *                        <code>null</code>.
      * @param type            EA type, can be <code>null</code>.
@@ -594,8 +602,8 @@ public class EAElementUtil extends AbstractEAUtil {
     }
 
     /**
-     * @param e
-     * @param stereotype
+     * @param e tbd
+     * @param stereotype tbd
      * @return the (first encountered) method whose 'StereotypeEx' contains the
      *         given stereotype, or <code>null</code> if no such method was found
      */
@@ -640,7 +648,7 @@ public class EAElementUtil extends AbstractEAUtil {
     }
 
     /**
-     * @param elmt
+     * @param elmt tbd
      * @return sorted map of the tagged values (key: {name '#' fqName}; value:
      *         according EATaggedValue); can be empty but not <code>null</code>
      */
@@ -689,7 +697,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * @param text   Text of the new constraint
      * @param status Status of the new constraint
      * @return The new constraint
-     * @throws EAException
+     * @throws EAException tbd
      */
     public static org.sparx.Constraint addConstraint(Element e, String name, String type, String text, String status)
 	    throws EAException {
@@ -719,7 +727,7 @@ public class EAElementUtil extends AbstractEAUtil {
      * @param type Type of the new constraint
      * @param text Text of the new constraint
      * @return The new constraint
-     * @throws EAException
+     * @throws EAException tbd
      */
     public static org.sparx.Constraint addConstraint(Element e, String name, String type, String text)
 	    throws EAException {

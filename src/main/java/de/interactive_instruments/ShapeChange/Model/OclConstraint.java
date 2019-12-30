@@ -58,10 +58,12 @@ public interface OclConstraint extends Constraint {
 		DERIVE
 	}
 
-	/** Inquire context class - i.e. 'self' */
+	/** Inquire context class - i.e. 'self' 
+	 * @return  tbd*/
 	public ClassInfo contextClass();
 
-	/** Inquire condition type */
+	/** Inquire condition type 
+	 * @return  tbd*/
 	public ConditionType conditionType();
 
 	/**

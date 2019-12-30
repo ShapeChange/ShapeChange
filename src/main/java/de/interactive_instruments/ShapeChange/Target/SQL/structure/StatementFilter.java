@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import java.util.List;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public interface StatementFilter {

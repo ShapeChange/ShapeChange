@@ -1,25 +1,33 @@
 /**
  * ShapeChange - processing application schemas for geographic information
  *
- * <p>This file is part of ShapeChange. ShapeChange takes a ISO 19109 Application Schema from a UML
- * model and translates it into a GML Application Schema or other implementation representations.
+ * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
+ * Application Schema from a UML model and translates it into a 
+ * GML Application Schema or other implementation representations.
  *
- * <p>Additional information about the software can be found at http://shapechange.net/
+ * Additional information about the software can be found at
+ * http://shapechange.net/
  *
- * <p>(c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2019 interactive instruments GmbH, Bonn, Germany
  *
- * <p>This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * <p>You should have received a copy of the GNU General Public License along with this program. If
- * not, see <http://www.gnu.org/licenses/>.
- *
- * <p>Contact: interactive instruments GmbH Trierer Strasse 70-72 53115 Bonn Germany
+ * Contact:
+ * interactive instruments GmbH
+ * Trierer Strasse 70-72
+ * 53115 Bonn
+ * Germany
  */
 package de.interactive_instruments.ShapeChange.Target.XmlSchema;
 
@@ -48,8 +56,7 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.MultiplicityMapping;
  * representation of OCL contents, which are close to the capabilities of
  * Schematron and the logic that can be realized within Schematron rules, based
  * on the xslt2 query binding.
- *
- * <p>
+ *<br><br>
  * There are two basic patterns of use of these classes:
  *
  * <ul>
@@ -59,7 +66,7 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.MultiplicityMapping;
  * method <i>translate</i>.
  * </ul>
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  * @author Reinhard Erstling
  * 
@@ -92,10 +99,7 @@ public abstract class SchematronConstraintNodeXslt2 {
     /**
      * Method to inquire whether the the node inquired is a Logic node AND this
      * logic node has the same <i>isAnd</i> polarity as specified in the parameter.
-     *
-     * <p>
-     *
-     * <p>
+     *<br><br>
      * This implementation installs the default for all derivations except Logic.
      *
      * @param isAnd Flag: Are we an AND? (not an OR)?
@@ -108,8 +112,7 @@ public abstract class SchematronConstraintNodeXslt2 {
     /**
      * This method determines whether the given expression depends on the Variable
      * passed as argument.
-     *
-     * <p>
+     *<br><br>
      * This implementation defines the default behavior: Descend down and try to
      * find the variable somewhere.
      *
@@ -139,8 +142,7 @@ public abstract class SchematronConstraintNodeXslt2 {
      * This method determines whether the given expression is a Variable or an
      * Attribute based on a Variable, which is identical to the one passed as
      * argument.
-     *
-     * <p>
+     *<br><br>
      * This implementation defines the default behavior.
      *
      * @param vardecl The Declaration of the variable
@@ -163,8 +165,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
     /**
      * This predicate finds out whether the given node may produce a set.
-     *
-     * <p>
+     *<br><br>
      * This is the default implementation providing the value false.
      *
      * @return Flag indicating whether the node can return multiple values
@@ -269,7 +270,6 @@ public abstract class SchematronConstraintNodeXslt2 {
      * elements based upon the combination of local-names and namespace-uris of the
      * given classes. We differentiate three cases:
      *
-     * <p>
      *
      * <ul>
      * <li>Case multiple classes: (local-name()='localName_ci_1' and
@@ -396,7 +396,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * Ctor
 	 *
 	 * @param schemaObject The schema object
-	 * @param isAnd        Flag to make this an AND (true) or an OR (false)
+	 * @param logic        Flag to make this an AND (true) or an OR (false)
 	 */
 	public Logic(AbstractSchematronSchema schemaObject, LogicType logic) {
 	    this.schemaObject = schemaObject;
@@ -408,7 +408,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * node has the same <i>isAnd</i> polarity as specified in the parameter. XORs
 	 * and EQVs are ignored and yield false.
 	 *
-	 * <p>
+	 * 
 	 *
 	 * @param isAnd Flag: Are we an AND? (not an OR)?
 	 * @return True if this is Logic with the same AND/OR polarity
@@ -422,9 +422,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	/**
 	 * This compiles the node and its children to an Xpath predicate, which can be
-	 * inserted into a &lt;rule>.
-	 *
-	 * <p>
+	 * inserted into a &lt;rule&gt;.
+	 *<br><br>
 	 * AND and OR are translated into their Xpath counterparts <i>and</i> and
 	 * <i>or</i>. XOR will be realized as a != operator, EQV by an = operator.
 	 *
@@ -498,7 +497,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
     /**
      * This class stands for comparisons. The operator is given as a String, which
-     * can take the values: =, <>, <, <=, >, >=.
+     * can take the values: =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;=.
      */
     public static class Comparison extends SchematronConstraintNodeXslt2 {
 
@@ -509,7 +508,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * Ctor
 	 *
 	 * @param schemaObject The schema object
-	 * @param name         One of =, <>, <, <=, >, >=
+	 * @param name         One of =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;=
 	 */
 	public Comparison(AbstractSchematronSchema schemaObject, String name) {
 	    this.schemaObject = schemaObject;
@@ -814,8 +813,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	/**
 	 * This compiles the node and its children to an Xpath expression fragment.
-	 *
-	 * <p>
+	 *<br><br>
 	 * The object is translated in the given context. If negated an additional not()
 	 * is applied.
 	 *
@@ -1092,8 +1090,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	/**
 	 * This compiles the Select node and its children to an Xpath expression
 	 * fragment.
-	 *
-	 * <p>
+	 *<br><br>
 	 * The object is translated in the given context and its ending position,
 	 * supplemented by the binding variable, defines the context for the compilation
 	 * of the body, which is appended as a predicate bracket.
@@ -1190,8 +1187,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	/**
 	 * allInstances() is translated to a search for the given type. The result is a
 	 * nodeset containing all the given features.
-	 *
-	 * <p>
+	 *<br><br>
 	 * In compiling x.allInstances() we create an expression that selects all
 	 * elements based upon a predicate which uses a combination of local-names and
 	 * namespace-uris of the type and its subtypes (if they are instantiable, i.e.
@@ -1249,6 +1245,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * Ctor
 	 *
 	 * @param schemaObject The schema object
+	 * @param metadataType  tbd
+	 * @param negated  tbd
 	 */
 	public PropertyMetadata(AbstractSchematronSchema schemaObject, ClassInfo metadataType, boolean negated) {
 	    this.schemaObject = schemaObject;
@@ -1505,8 +1503,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	/**
 	 * This compiles the Cast to an Xpath fragment.
-	 *
-	 * <p>
+	 *<br><br>
 	 * We realize this by making sure the current element is of the requested type
 	 * or any of its concrete subtypes.
 	 *
@@ -1630,7 +1627,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
     /**
      * This class represents an OCL invocation of the size operation. Size can be
-     * applied to anything with a -> and returns the number of elements of the
+     * applied to anything with a -&gt; and returns the number of elements of the
      * object interpreted as a collection. If applied to a String it determines its
      * length.
      */
@@ -2043,19 +2040,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	/**
 	 * This compiles a node to an Xpath expression, which stands for the given
 	 * variable.
-	 *
-	 * <p>
+	 *<br><br>
 	 * If the variable is defined in a surrounding 'let' construct, a proper
 	 * translation for the use of the variable can always be achieved, given that
 	 * the initial value of the variable translates properly. If the use of the
 	 * variable is in ISCURRENT context, the variable definition will be mapped into
 	 * a Schematron &lt;let&gt; definition. Otherwise the initial value is
 	 * substituted in place of the variable.
-	 *
-	 * <p>
+	 *<br><br>
 	 * Other variable references are treated as follows.
-	 *
-	 * <p>
+	 *<br><br>
 	 * The only variable which can be properly translated in all cases is
 	 * <i>self</i>, which will be mapped to <i>current()</i> or to '.', if compiled
 	 * in a ISCURRENT context. Variable definitions from iterators require to be on
@@ -2220,7 +2214,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * Append another AttrComp and associated layout info as an additional
 	 * qualification.
 	 *
-	 * @param aex The AttrComp object to be appended be null)
+	 * @param atc The AttrComp object to be appended be null)
 	 */
 	public void appendAttribute(AttrComp atc) {
 	    AttrComp[] attribs = new AttrComp[attributes.length + 1];
@@ -2284,8 +2278,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * the object is implemented as a group and is therefore absorbing its
 	 * properties. If there is already a property absorbed on the attribute, the
 	 * absorbed property will be asked.
-	 *
-	 * <p>
+	 *<br><br>
 	 * Note that this is a necessary condition for appying GML's nilReason pattern.
 	 *
 	 * @return The required flag indicating that properties are absorbed
@@ -3139,7 +3132,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * Ctor
 	 *
 	 * @param schemaObject The schema object
-	 * @param vardecl      OclNode.Declaration object
+	 * @param vardecls     OclNode.Declaration object
 	 */
 	public Let(AbstractSchematronSchema schemaObject, OclNode.Declaration[] vardecls) {
 	    this.schemaObject = schemaObject;
@@ -3165,8 +3158,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	/**
 	 * This compiles the node and its children to an Xpath expression fragment.
-	 *
-	 * <p>
+	 *<br><br>
 	 * The object is translated in the given context and its ending position,
 	 * supplemented by the defined binding variables bearing values given by
 	 * expressions. The variables define the context for the compilation of the
@@ -3214,11 +3206,6 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	protected String name = null;
 
-	/**
-	 * Ctor
-	 *
-	 * @param schemaObject The schema object
-	 */
 	public MessageComment(AbstractSchematronSchema schemaObject, String name) {
 	    this.schemaObject = schemaObject;
 	    this.name = name;

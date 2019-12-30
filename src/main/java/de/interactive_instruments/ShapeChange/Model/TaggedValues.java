@@ -44,7 +44,7 @@ import de.interactive_instruments.ShapeChange.Options;
  * for both the tag name and the value(s) while storing a tagged value in the
  * internal data structures (see {@link Options#internalize(String)}).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -62,14 +62,14 @@ public interface TaggedValues {
 	public boolean isEmpty();
 
 	/**
-	 * @param tag
+	 * @param tag tbd
 	 * @return <code>true</code> if this collection contains value(s) for the
 	 *         given tag, else <code>false</code>
 	 */
 	public boolean containsKey(String tag);
 
 	/**
-	 * @param tag
+	 * @param tag tbd
 	 * @return An array with the values for the given tag, can be empty (but not
 	 *         <code>null</code>) if this collection does not contain values for
 	 *         the tag.
@@ -77,10 +77,8 @@ public interface TaggedValues {
 	public String[] get(String tag);
 
 	/**
-	 * NOTE: Implements deprecated access to tagged values. Use
-	 * {@link Info#taggedValuesMult(String tagList)} instead.
 	 * 
-	 * @param tag
+	 * @param tag tbd
 	 * @return The first of the list of values of the given tag that is stored
 	 *         in this collection, <code>null</code> if this collection does not
 	 *         contain value(s) for the given tag. Note that, in principle, the
@@ -121,7 +119,7 @@ public interface TaggedValues {
 	 * Puts the given tag and its value into this collection. Any value(s)
 	 * previously stored for this tag will be replaced by the given value.
 	 * 
-	 * @param tag
+	 * @param tag tbd
 	 * @param value
 	 *                  The value for the tag. NOTE: A <code>null</code> value
 	 *                  is automatically converted to the empty string
@@ -132,7 +130,7 @@ public interface TaggedValues {
 	 * Puts the given tag and its values into this collection. Any value(s)
 	 * previously stored for this tag will be replaced by the given values.
 	 * 
-	 * @param tag
+	 * @param tag tbd
 	 * @param values
 	 *                   The values for the tag. NOTE: A <code>null</code> value
 	 *                   is automatically converted to the empty string
@@ -146,7 +144,7 @@ public interface TaggedValues {
 	 * are stored in lists only for convenience, especially for reproducible
 	 * results in Unit Tests.
 	 * 
-	 * @param tag
+	 * @param tag tbd
 	 * @param values
 	 *                   The values for the tag. NOTE: A <code>null</code> value
 	 *                   is automatically converted to the empty string
@@ -167,7 +165,7 @@ public interface TaggedValues {
 	 * already contains values for this tag, the new value is added at the end
 	 * of the list of existing values.
 	 * 
-	 * @param tag
+	 * @param tag tbd
 	 * @param value
 	 *                  The value for the tag. NOTE: A <code>null</code> value
 	 *                  is automatically converted to the empty string
@@ -175,8 +173,6 @@ public interface TaggedValues {
 	public void add(String tag, String value);
 
 	/**
-	 * NOTE: Implements deprecated access to tagged values. Use
-	 * {@link Info#taggedValuesMult()} instead.
 	 * 
 	 * @return A map with the first of the list of values for each tag stored in
 	 *         this collection. The resulting map can be empty (if this
@@ -189,8 +185,6 @@ public interface TaggedValues {
 	public SortedMap<String, String> getFirstValues();
 
 	/**
-	 * NOTE: Implements deprecated access to tagged values. Use
-	 * {@link Info#taggedValuesMult(String tagList)} instead.
 	 * 
 	 * @param tagList
 	 *                    comma-separated list of tags
@@ -208,14 +202,14 @@ public interface TaggedValues {
 	/**
 	 * Removes the tagged value with given name from this collection.
 	 * 
-	 * @param tvName
+	 * @param tvName tbd
 	 */
 	public void remove(String tvName);
 
 	/**
 	 * Removes the set of tagged values with given names from this collection.
 	 * 
-	 * @param tvNames
+	 * @param tvNames tbd
 	 */
 	public void remove(Set<String> tvNames);
 

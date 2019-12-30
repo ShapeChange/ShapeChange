@@ -48,8 +48,7 @@ import java.util.regex.Matcher;
  * attach a severity code and source references to a Message. The default 
  * severity code is MessageCollection.Severity.ERROR.</p>
  * <p>The state of MessageCollections can be captured and restored by means
- * of a pair of methods - <i>captureState()</i> and <i>restoreState()</i>.</p>
- * <p></p> 
+ * of a pair of methods - <i>captureState()</i> and <i>restoreState()</i>.</p> 
  * 
  * @version 0.1
  * @author Reinhard Erstling (c) interactive instruments GmbH, Bonn, Germany

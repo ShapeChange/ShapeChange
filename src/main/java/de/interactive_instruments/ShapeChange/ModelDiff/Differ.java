@@ -138,8 +138,8 @@ public class Differ {
 	/**
 	 * Adds the content from diff2 to diffs.
 	 * 
-	 * @param diffs
-	 * @param diffs2
+	 * @param diffs tbd
+	 * @param diffs2 tbd
 	 */
 	public void merge(SortedMap<Info, SortedSet<DiffElement>> diffs,
 			SortedMap<Info, SortedSet<DiffElement>> diffs2) {
@@ -154,8 +154,8 @@ public class Differ {
 	}
 
 	/**
-	 * @param curr
-	 * @param ref
+	 * @param curr tbd
+	 * @param ref tbd
 	 * @return map with set of diff elements per Info object; can be empty but
 	 *         not <code>null</code>
 	 */
@@ -524,8 +524,8 @@ public class Differ {
 	}
 
 	/**
-	 * @param curr
-	 * @param ref
+	 * @param curr tbd
+	 * @param ref tbd
 	 * @return map with set of diff elements per Info object; can be empty but
 	 *         not <code>null</code>
 	 */

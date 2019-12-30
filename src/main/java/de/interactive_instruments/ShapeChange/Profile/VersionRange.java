@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Profile;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class VersionRange {
 
@@ -47,9 +47,9 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): Before - self.end.position < other.begin.position
+	 * periods): Before - self.end.position &lt; other.begin.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is before the other, else false
 	 */
 	public boolean before(VersionRange other) {
@@ -60,7 +60,7 @@ public class VersionRange {
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
 	 * periods): Meets - self.end.position = other.begin.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range meets the other, else false
 	 */
 	public boolean meets(VersionRange other) {
@@ -69,11 +69,11 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): Overlaps - self.begin.position < other.begin.position AND
-	 * self.end.position > other.begin.position AND self.end.position <
+	 * periods): Overlaps - self.begin.position &lt; other.begin.position AND
+	 * self.end.position &gt; other.begin.position AND self.end.position &lt;
 	 * other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range overlaps the other, else false
 	 */
 	public boolean overlaps(VersionRange other) {
@@ -85,9 +85,9 @@ public class VersionRange {
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
 	 * periods): Begins - self.begin.position = other.begin.position AND
-	 * self.end.position < other.end.position
+	 * self.end.position &lt; other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range begins the other, else false
 	 */
 	public boolean begins(VersionRange other) {
@@ -98,9 +98,9 @@ public class VersionRange {
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
 	 * periods): BegunBy - self.begin.position = other.begin.position AND
-	 * self.end.position > other.end.position
+	 * self.end.position &gt; other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is begun by the other, else false
 	 */
 	public boolean begunBy(VersionRange other) {
@@ -110,10 +110,10 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): During - self.begin.position > other.begin.position AND
-	 * self.end.position < other.end.position
+	 * periods): During - self.begin.position &gt; other.begin.position AND
+	 * self.end.position &lt; other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is during the other, else false
 	 */
 	public boolean during(VersionRange other) {
@@ -123,10 +123,10 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): Contains - self.begin.position < other.begin.position AND
-	 * self.end.position > other.end.position
+	 * periods): Contains - self.begin.position &lt; other.begin.position AND
+	 * self.end.position &gt; other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range contains the other, else false
 	 */
 	public boolean contains(VersionRange other) {
@@ -136,9 +136,9 @@ public class VersionRange {
 
 	/**
 	 * OR-combination of begunBy, contains, equals, endedBy: self.begin.position
-	 * <= other.begin.position AND self.end.position >= other.end.position
+	 * &lt;= other.begin.position AND self.end.position &gt;= other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range contains the other (in a non-strict
 	 *         way, see method description), else false
 	 */
@@ -152,7 +152,7 @@ public class VersionRange {
 	 * periods): Equals - self.begin.position = other.begin.position AND
 	 * self.end.position = other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range equals the other, else false
 	 */
 	public boolean equals(VersionRange other) {
@@ -162,11 +162,11 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): OverlappedBy - self.begin.position > other.begin.position AND
-	 * self.begin.position < other.end.position AND self.end.position >
+	 * periods): OverlappedBy - self.begin.position &gt; other.begin.position AND
+	 * self.begin.position &lt; other.end.position AND self.end.position &gt;
 	 * other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is overlapped by the other, else false
 	 */
 	public boolean overlappedBy(VersionRange other) {
@@ -177,10 +177,10 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): Ends - self.begin.position > other.begin.position AND
+	 * periods): Ends - self.begin.position &gt; other.begin.position AND
 	 * self.end.position = other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range ends the other, else false
 	 */
 	public boolean ends(VersionRange other) {
@@ -190,10 +190,10 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): EndedBy - self.begin.position < other.begin.position AND
+	 * periods): EndedBy - self.begin.position &lt; other.begin.position AND
 	 * self.end.position = other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is ended by the other, else false
 	 */
 	public boolean endedBy(VersionRange other) {
@@ -205,7 +205,7 @@ public class VersionRange {
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
 	 * periods): MetBy - self.begin.position = other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is met by the other, else false
 	 */
 	public boolean metBy(VersionRange other) {
@@ -214,9 +214,9 @@ public class VersionRange {
 
 	/**
 	 * Uses the same expression as ISO 19108 (see TM_RelativePosition for time
-	 * periods): After - self.begin.position > other.end.position
+	 * periods): After - self.begin.position &gt; other.end.position
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return true if this version range is after the other, else false
 	 */
 	public boolean after(VersionRange other) {
@@ -227,7 +227,7 @@ public class VersionRange {
 	 * Creates a new VersionRange that is the union of both this range and the
 	 * other, iff this range is not before and not after the other.
 	 * 
-	 * @param other
+	 * @param other tbd
 	 * @return the union of this and the other range or null if one is before
 	 *         the other
 	 */

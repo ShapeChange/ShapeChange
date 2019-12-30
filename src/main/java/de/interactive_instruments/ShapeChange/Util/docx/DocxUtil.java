@@ -56,8 +56,8 @@ import org.docx4j.wml.R;
 import org.docx4j.wml.Text;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DocxUtil {
@@ -67,11 +67,11 @@ public class DocxUtil {
 	/**
 	 * Merge two docx files.
 	 * 
-	 * @param topPackage
-	 * @param bottomFile
-	 * @param outputFile
-	 * @return
-	 * @throws Exception
+	 * @param topPackage tbd
+	 * @param bottomFile tbd
+	 * @param outputFile tbd
+	 * @return tbd
+	 * @throws Exception tbd
 	 */
 	public static File merge(WordprocessingMLPackage topPackage,
 			File bottomFile, File outputFile) throws Exception {
@@ -91,12 +91,11 @@ public class DocxUtil {
 	/**
 	 * Merge two docx files using an approach that is based on CTAltChunk.
 	 * 
-	 * @param separatorTexts
-	 * @param topFile
-	 * @param bottomFile
-	 * @param outputFile
-	 * @return
-	 * @throws Exception
+	 * @param topPackage tbd
+	 * @param bottomFile tbd
+	 * @param outputFile tbd
+	 * @return tbd
+	 * @throws Exception tbd
 	 */
 	protected static File mergeUsingCTAltChunk(
 			WordprocessingMLPackage topPackage, File bottomFile,

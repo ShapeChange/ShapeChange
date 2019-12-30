@@ -230,7 +230,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return xmlCharacterEncoding;
 	} // characterEncoding()
 
-	/** get value of text child node */
+	/** get value of text child node 
+	 * @param n tbd 
+	 * @return tbd */
 	protected String textValue(Node n) {
 		NodeList nl = n.getChildNodes();
 		Node n2;
@@ -243,7 +245,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return null;
 	}
 
-	/** Verify XMI version */
+	/** Verify XMI version 
+	 * @throws ShapeChangeAbortException tbd */
 	protected void verify() throws ShapeChangeAbortException {
 		if (document.getDoctype() == null) {
 			result.addFatalError(null, 16);
@@ -285,7 +288,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 
 	/**
 	 * Delete parts of the DOM not relevant for the conversion, i.e. the
-	 * <XMI.extensions> and the <XMI.difference> elements.
+	 * &lt;XMI.extensions&gt; and the &lt;XMI.difference&gt; elements.
 	 */
 	protected void cleanupDOM() {
 		if (options.eaIncludeExtentsions) {
@@ -322,7 +325,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 	} // CleanupDOM(document)
 
-	/** get value of idref reference */
+	/** get value of idref reference 
+	 * @param n tbd 
+	 * @return tbd */
 	protected String idrefValue(Node n) {
 		NodeList nl = n.getChildNodes();
 		Node n2;
@@ -335,12 +340,18 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return "";
 	}
 
-	/** Get element representing a property. */
+	/** Get element representing a property. 
+	 * @param id tbd 
+	 * @return tbd */
 	protected Element getElementById(String id) {
 		return document.getElementById(id);
 	}
 
-	/** Get id (or idref) of an element. */
+	/** Get id (or idref) of an element. 
+	 * @param elmt tbd 
+	 * @param child tbd 
+	 * @return tbd
+	 *  */
 	protected String idOfProperty(Element elmt, String child) {
 
 		NodeList nl1 = elmt.getChildNodes();
@@ -367,7 +378,10 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return "";
 	}
 
-	/** Get element representing a property. */
+	/** Get element representing a property. 
+	 * @param elmt tbd 
+	 * @param child tbd 
+	 * @return tbd */
 	protected Element elementOfProperty(Element elmt, String child) {
 		NodeList nl1 = elmt.getChildNodes();
 		for (int j = 0; j < nl1.getLength(); j++) {
@@ -394,7 +408,10 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return null;
 	}
 
-	/** Get ids (or idrefs) of an element. */
+	/** Get ids (or idrefs) of an element. 
+	 * @param elmt tbd 
+	 * @param child tbd 
+	 * @return tbd */
 	protected Vector<String> idsOfProperty(Element elmt, String child) {
 		Vector<String> ids = new Vector<String>();
 		NodeList nl1 = elmt.getChildNodes();
@@ -433,7 +450,10 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return ids;
 	}
 
-	/** Get value of text node. */
+	/** Get value of text node. 
+	 * @param e tbd 
+	 * @param property tbd 
+	 * @return tbd */
 	protected String textOfProperty(Element e, String property) {
 		Node n1;
 		Node n2;
@@ -461,7 +481,11 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return null;
 	}
 
-	/** Get value of attribute node. */
+	/** Get value of attribute node. 
+	 * @param elmt  tbd
+	 * @param child  tbd
+	 * @param att  tbd
+	 * @return tbd */
 	protected String attributeOfProperty(Element elmt, String child,
 			String att) {
 		NodeList nl1 = elmt.getChildNodes();
@@ -487,7 +511,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return "";
 	}
 
-	/** Get first child element. */
+	/** Get first child element. 
+	 * @param elmt  tbd
+	 * @return tbd */
 	protected Element firstChildElement(Element elmt) {
 		NodeList nl1 = elmt.getChildNodes();
 		for (int j = 0; j < nl1.getLength(); j++) {
@@ -500,7 +526,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return null;
 	}
 
-	/** Check visibility of an UML model element for the mapping. */
+	/** Check visibility of an UML model element for the mapping. 
+	 * @param e  tbd
+	 * @return tbd */
 	protected boolean visible(Element e) {
 		if (e == null) {
 			return false;
@@ -521,7 +549,6 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return true;
 	}
 
-	/** Find tagged value for a node */
 	public String taggedValue(String idref, String tag) {
 		String res = null;
 		TaggedValues tvs = fTaggedValues.get(idref);
@@ -566,7 +593,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return tvs;
 	}
 
-	/** Some applications use ownedElement to attach stereotypes */
+	/** Some applications use ownedElement to attach stereotypes 
+	 * @param e tbd 
+	 * @return tbd */
 	protected Vector<String> getOwnerId(Element e) {
 		Element owner = (Element) e.getParentNode().getParentNode();
 		String id = owner.getAttribute("xmi.id");
@@ -577,7 +606,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return v;
 	}
 
-	/** Get the id of the containing package of a class */
+	/** Get the id of the containing package of a class 
+	 * @param e  tbd
+	 * @return tbd */
 	protected String getOwnerIdAsString(Element e) {
 		Element owner = (Element) e.getParentNode().getParentNode();
 		String id = owner.getAttribute("xmi.id");
@@ -590,6 +621,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 	/**
 	 * Verify that an element is a model element and not just a reference to
 	 * one.
+	 * @param e  tbd
+	 * @return tbd 
 	 */
 	protected boolean notAReference(Element e) {
 		if (e.getAttribute("xmi.id").equals("")) {
@@ -598,7 +631,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 		return true;
 	}
 
-	/** Needed for MagicDraw XMI 1.0 / UML 1.4 export */
+	/** Needed for MagicDraw XMI 1.0 / UML 1.4 export 
+	 * @param elmt  tbd
+	 * @return tbd */
 	protected boolean isOwnerOfEnumeration(Element elmt) {
 		Node n1 = elmt.getFirstChild();
 		String name1 = n1.getNodeName();
@@ -878,7 +913,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 	}
 
-	/** Initialize map of types */
+	/** Initialize map of types 
+	 * @throws ShapeChangeAbortException  tbd */
 	protected void initTypesMap() throws ShapeChangeAbortException {
 		String tname;
 		Element e;
@@ -900,7 +936,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 	}
 
-	/** Initialize map of asscoiations */
+	/** Initialize map of asscoiations 
+	 * @throws ShapeChangeAbortException  tbd */
 	protected void initAssociations() throws ShapeChangeAbortException {
 		NodeList nl1 = document
 				.getElementsByTagName("Foundation.Core.Association");
@@ -925,7 +962,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 	}
 
-	/** Process all packages in the application schema */
+	/** Process all packages in the application schema 
+	 * @throws ShapeChangeAbortException tbd */
 	protected void initPackages() throws ShapeChangeAbortException {
 		Element root = document.getDocumentElement();
 		addPackageElements(root.getElementsByTagName("Model_Management.Model"));
@@ -977,7 +1015,8 @@ public class Xmi10Document extends ModelImpl implements Model {
 		}
 	}
 
-	/** Process all classes and generate the XML Schema "code" */
+	/** Process all classes and generate the XML Schema "code" 
+	 * @throws ShapeChangeAbortException tbd */
 	protected void initClasses() throws ShapeChangeAbortException {
 		result.addDebug("Processing Classes...");
 

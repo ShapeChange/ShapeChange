@@ -60,7 +60,7 @@ public class SbvrParsingResult {
 	}
 
 	/**
-	 * @param errors
+	 * @param errorsByCategory
 	 *            the errors to set
 	 */
 	public void setErrors(TreeMap<String, List<SbvrErrorInfo>> errorsByCategory) {

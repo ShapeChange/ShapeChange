@@ -82,8 +82,8 @@ import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDB implements SingleTarget, MessageSource {
@@ -417,6 +417,9 @@ public class CDB implements SingleTarget, MessageSource {
 
 	/**
 	 * Add attribute to an element
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value  tbd
 	 */
 	protected void addAttribute(Element e, String name, String value) {
 

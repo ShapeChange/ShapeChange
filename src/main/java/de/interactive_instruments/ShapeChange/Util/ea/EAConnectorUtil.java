@@ -44,7 +44,7 @@ import org.sparx.Element;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -63,6 +63,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector to which the tagged value shall be added
 	 * @param tv
 	 *                tagged value to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValue(Connector con, EATaggedValue tv)
 			throws EAException {
@@ -110,6 +111,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector to which the tagged values shall be added
 	 * @param tvs
 	 *                collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(Connector con, List<EATaggedValue> tvs)
 			throws EAException {
@@ -166,6 +168,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector to which the tagged values shall be added
 	 * @param tvs
 	 *                collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(Connector con, TaggedValues tvs)
 			throws EAException {
@@ -228,9 +231,9 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	/**
 	 * NOTE: only works with EA 12 Java API, not the previous API.
 	 * 
-	 * @param con
-	 * @param classElement
-	 * @throws EAException
+	 * @param con tbd
+	 * @param classElement tbd
+	 * @throws EAException tbd
 	 */
 	public static void setEAAssociationClass(Connector con,
 			Element classElement) throws EAException {
@@ -350,6 +353,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector in which the tagged values shall be set
 	 * @param tvs
 	 *                tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(Connector con, List<EATaggedValue> tvs)
 			throws EAException {
@@ -369,6 +373,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector in which the tagged value shall be set
 	 * @param tv
 	 *                tagged value to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(Connector con, EATaggedValue tv)
 			throws EAException {
@@ -386,6 +391,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 *                the connector in which the tagged values shall be set
 	 * @param tvs
 	 *                tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(Connector con, TaggedValues tvs)
 			throws EAException {
@@ -397,7 +403,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * @param elmt
+	 * @param conn tbd
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */
@@ -507,7 +513,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	 * class. That is the case if its subtype is 'class' and MiscData(0) is not
 	 * empty.
 	 * 
-	 * @param con
+	 * @param con tbd
 	 * @return <code>true</code>, if the given connector is the association of
 	 *         an association class, else <code>false</code>.
 	 */

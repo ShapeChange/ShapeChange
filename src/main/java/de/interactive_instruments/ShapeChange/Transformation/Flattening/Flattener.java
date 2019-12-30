@@ -109,8 +109,8 @@ import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
  * Encapsulates the logic for flattening/simplifying complex constructs within
  * an application schema.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class Flattener implements Transformer, MessageSource {
@@ -201,7 +201,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * belong to the union after it has been flattened - just by looking at the
 	 * tagged values. Properties from a union that are copied into another union
 	 * will not be tracked. Also, tracking information will be removed / not
-	 * created if union options replace a property with max multiplicity > 1
+	 * created if union options replace a property with max multiplicity &gt; 1
 	 * (because then the union semantics will become irrelevant, as that
 	 * property can have values from more than one union option).
 	 */
@@ -241,7 +241,7 @@ public class Flattener implements Transformer, MessageSource {
 	public static final String PARAM_IGNORE_FEATURE_OR_OBJECT_TYPED_PROPERTIES = "ignoreFeatureOrObjectTypedProperties";
 	public static final String PARAM_IGNORE_FEATURE_TYPED_PROPERTIES = "ignoreFeatureTypedProperties";
 	/**
-	 * Integer > 1
+	 * Integer &gt; 1
 	 */
 	public static final String PARAM_MAX_MULTIPLICITY_THRESHOLD = "maxMultiplicityThreshold";
 
@@ -2496,7 +2496,7 @@ public class Flattener implements Transformer, MessageSource {
 	 *            set to keep track of the subtype classes that have been copied
 	 *            and thus shall be removed from the model at the end of
 	 *            processing
-	 * @param classCopiesByOriginalClass
+	 * @param classCopiesByGeometryTypeByOriginalClass
 	 *            used to keep track of the copies created for a specific class
 	 * @param geometryTypeSuffixSeparatorByDescriptor
 	 *            map with separators to append the geometry type suffix, that
@@ -4449,9 +4449,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * Associations with at least one end having cardinality >1 are dissolved.
 	 *
 	 * @param genModel
-	 * @param options
 	 * @param trfConfig
-	 * @param result
 	 */
 	private void applyRuleMultiplicity(GenericModel genModel,
 			TransformerConfiguration trfConfig) {
@@ -6494,10 +6492,8 @@ public class Flattener implements Transformer, MessageSource {
 	 * Applies all necessary model modifications for the rule
 	 * "rule-trf-prop-flatten-ONINAs".
 	 *
-	 * @param genModel
-	 * @param result
+	 * @param model
 	 * @param trfConfig
-	 * @param options
 	 */
 	private void applyRuleONINAs(GenericModel model,
 			TransformerConfiguration trfConfig) {
@@ -6878,11 +6874,6 @@ public class Flattener implements Transformer, MessageSource {
 		}
 	}
 
-	/**
-	 * @see #RULE_TRF_NAV_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY
-	 * @param genModel
-	 * @param trfConfig
-	 */
 	private void applyRuleRemoveObjectToFeatureTypeNavigability(
 			GenericModel genModel, TransformerConfiguration trfConfig) {
 
@@ -7129,9 +7120,9 @@ public class Flattener implements Transformer, MessageSource {
 	 * returned by the iterator. If order of the set is important, ensure that
 	 * an ordered set is used (e.g. TreeSet).
 	 *
-	 * @param parts
-	 * @param delimiter
-	 * @return
+	 * @param parts tbd
+	 * @param delimiter tbd
+	 * @return tbd
 	 */
 	protected String join(Set<String> parts, String delimiter) {
 

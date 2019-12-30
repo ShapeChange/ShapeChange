@@ -41,8 +41,8 @@ import org.sparx.MethodTag;
 import org.sparx.Parameter;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EAMethodUtil extends AbstractEAUtil {
@@ -50,8 +50,8 @@ public class EAMethodUtil extends AbstractEAUtil {
 	/**
 	 * Sets 'StereotypeEx' on the given EA method.
 	 * 
-	 * @param m
-	 * @param stereotype
+	 * @param m tbd
+	 * @param stereotype tbd
 	 * @throws EAException
 	 *             If updating the method did not succeed, this exception
 	 *             contains the error message.
@@ -70,8 +70,8 @@ public class EAMethodUtil extends AbstractEAUtil {
 	/**
 	 * Sets 'Code' on the given EA method.
 	 * 
-	 * @param m
-	 * @param stereotype
+	 * @param m tbd
+	 * @param code tbd
 	 * @throws EAException
 	 *             If updating the method did not succeed, this exception
 	 *             contains the error message.
@@ -90,8 +90,8 @@ public class EAMethodUtil extends AbstractEAUtil {
 	 * Deletes all tagged values whose name equals (ignoring case) the given
 	 * name in the given method.
 	 * 
-	 * @param m
-	 * @param nameOfTVToDelete
+	 * @param m tbd
+	 * @param nameOfTVToDelete tbd
 	 */
 	public static void deleteTaggedValue(Method m, String nameOfTVToDelete) {
 
@@ -117,6 +117,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 	 *            the method in which the tagged values shall be set
 	 * @param tvs
 	 *            tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(Method m, List<EATaggedValue> tvs)
 			throws EAException {
@@ -136,9 +137,10 @@ public class EAMethodUtil extends AbstractEAUtil {
 	 * the same tagged values would lead to duplicates. If duplicates shall be
 	 * prevented, set the tagged value instead of adding it.
 	 * 
-	 * @param m
+	 * @param m tbd
 	 * @param tvs
 	 *            collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(Method m, List<EATaggedValue> tvs)
 			throws EAException {
@@ -184,8 +186,8 @@ public class EAMethodUtil extends AbstractEAUtil {
 	/**
 	 * Sets 'Pos' on the given EA method.
 	 * 
-	 * @param m
-	 * @param pos
+	 * @param m tbd
+	 * @param pos tbd
 	 * @throws EAException
 	 *             If updating the method did not succeed, this exception
 	 *             contains the error message.
@@ -218,7 +220,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * @param m
+	 * @param m tbd
 	 * @return the first parameter defined for this method, or <code>null</code>
 	 *         if no such parameter exists
 	 */
@@ -236,7 +238,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 	}
 	
 	/**
-	 * @param elmt
+	 * @param meth tbd
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */

@@ -1388,8 +1388,6 @@ abstract class TempNode {
 		 *            created.
 		 * @param name
 		 *            Name of the Identifier
-		 * @param qualification
-		 *            Identifier node containing the qualification, may be null.
 		 */
 		Identifier(TempNode qualification, String name) {
 			// Constituents
@@ -1803,8 +1801,6 @@ abstract class TempNode {
 		 *            The UML model object
 		 * @param varctx
 		 *            Variable declaration context
-		 * @param type
-		 *            The type for the variable
 		 * @return OclNode.Declaration or null
 		 */
 		OclNode connectToModel(OclParser p, Model model,

@@ -39,8 +39,8 @@ import org.sparx.Element;
 import org.sparx.Package;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EAPackageUtil extends AbstractEAUtil {
@@ -56,6 +56,7 @@ public class EAPackageUtil extends AbstractEAUtil {
 	 *            name of the tagged value to set, must not be <code>null</code>
 	 * @param value
 	 *            value of the tagged value to set, can be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(Package pkg, String name, String value)
 			throws EAException {

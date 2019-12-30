@@ -38,7 +38,7 @@ import java.util.HashMap;
 import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConverter;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

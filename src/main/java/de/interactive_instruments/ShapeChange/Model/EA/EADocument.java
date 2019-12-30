@@ -807,6 +807,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
     /**
      * Return repository object (for applications using only the EA model option)
+     * @return  tbd
      */
     public Repository repository() {
 	return repository;

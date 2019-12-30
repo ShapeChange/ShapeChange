@@ -43,7 +43,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteC
  * Identifies statements related to spatial indexes (creation, but also
  * insertion of geometry metadata).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

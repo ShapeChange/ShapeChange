@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -141,7 +141,7 @@ public class TaggedValueNormalizer {
      * upon mapping as defined by a TagAlias configuration element, a de-deprecated
      * tag, or null.
      * 
-     * @param tag
+     * @param tag tbd
      * @return the normalized tag name; can be <code>null</code>
      */
     public String normalizeTaggedValue(String tag) {

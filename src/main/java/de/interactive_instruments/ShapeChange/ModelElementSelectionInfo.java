@@ -47,7 +47,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -192,7 +192,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      * Determines if the given info type matches the filter criteria defined by this
      * object.
      * 
-     * @param infoType
+     * @param infoType tbd
      * @return <code>true</code> if the info type matches the filter criteria,
      *         otherwise <code>false</code>.
      */

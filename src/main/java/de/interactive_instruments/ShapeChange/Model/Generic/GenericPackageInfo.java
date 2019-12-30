@@ -86,8 +86,8 @@ public class GenericPackageInfo extends PackageInfoImpl
 	 * Provides the set of all packages in the package tree where this package
 	 * is the head. This package is also added to the set.
 	 * 
-	 * @param set
-	 * @return
+	 * @param set tbd
+	 * @return tbd
 	 */
 	public Set<GenericPackageInfo> getAllPackages(Set<GenericPackageInfo> set) {
 
@@ -110,60 +110,30 @@ public class GenericPackageInfo extends PackageInfoImpl
 		return set;
 	}
 
-	/**
-	 * @return
-	 */
 	public SortedSet<GenericClassInfo> getClasses() {
 		return classes;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#id()
-	 */
 	public String id() {
 		return id;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfoImpl#isSchema()
-	 */
-	// @Override
-	// public boolean isSchema() {
-	// return isSchema;
-	// }
-
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#model()
-	 */
 	public Model model() {
 		return model;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#name()
-	 */
 	public String name() {
 		return name;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#options()
-	 */
 	public Options options() {
 		return options;
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#owner()
-	 */
 	public PackageInfo owner() {
 		return owner;
 	}
 
-	/**
-	 * @see de.interactive_instruments.ShapeChange.Model.Info#result()
-	 */
 	public ShapeChangeResult result() {
 		return result;
 	}
@@ -172,63 +142,34 @@ public class GenericPackageInfo extends PackageInfoImpl
 		this.classes = genericClassInfos;
 	}
 
-	/**
-	 * @param childPi
-	 */
 	public void setContainedPackages(SortedSet<GenericPackageInfo> childPi) {
 		this.childPi = childPi;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setId(String id) {
 		this.id = id;
 
 	}
 
-	// /**
-	// * @param isSchema
-	// */
-	// public void setIsSchema(boolean isSchema) {
-	// this.isSchema = isSchema;
-	//
-	// }
-
-	/**
-	 * @param model
-	 */
 	public void setModel(GenericModel model) {
 		this.model = model;
 
 	}
 
-	/**
-	 * @param name
-	 */
 	public void setName(String name) {
 		this.name = name;
 
 	}
 
-	/**
-	 * @param options
-	 */
 	public void setOptions(Options options) {
 		this.options = options;
 	}
 
-	/**
-	 * @param owner
-	 */
 	public void setOwner(GenericPackageInfo owner) {
 		this.owner = owner;
 
 	}
 
-	/**
-	 * @param result
-	 */
 	public void setResult(ShapeChangeResult result) {
 		this.result = result;
 
@@ -245,9 +186,6 @@ public class GenericPackageInfo extends PackageInfoImpl
 
 	} // validateStereotypesCache
 
-	/**
-	 * @param stereotypeSet
-	 */
 	public void setStereotypes(Stereotypes stereotypeSet) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -259,9 +197,6 @@ public class GenericPackageInfo extends PackageInfoImpl
 		}
 	}
 
-	/**
-	 * @param stereotype
-	 */
 	public void setStereotype(String stereotype) {
 		// reset cache
 		stereotypesCache = options().stereotypesFactory();
@@ -271,9 +206,6 @@ public class GenericPackageInfo extends PackageInfoImpl
 		}
 	}
 
-	/**
-	 * @param supplierIds
-	 */
 	public void setSupplierIds(SortedSet<String> supplierIds) {
 		if (supplierIds == null || supplierIds.isEmpty()) {
 			this.supplierIds = null;
@@ -296,7 +228,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	}
 
 	/**
-	 * @param taggedValues
+	 * @param taggedValues tbd
 	 * @param updateFields
 	 *                         true if class fields should be updated based upon
 	 *                         information from given tagged values, else false
@@ -367,7 +299,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	 * Sets the target namespace for this package (by setting the according
 	 * tagged value).
 	 * 
-	 * @param targetNamespace
+	 * @param targetNamespace tbd
 	 */
 	public void setTargetNamespace(String targetNamespace) {
 
@@ -380,7 +312,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	 * Sets the version for this package (by setting the according
 	 * tagged value).
 	 * 
-	 * @param version
+	 * @param version tbd
 	 */
 	public void setVersion(String version) {
 		
@@ -392,7 +324,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	/**
 	 * Sets the xmlns for this package (by setting the according
 	 * tagged value).
-	 * @param xmlns
+	 * @param xmlns tbd
 	 */
 	public void setXmlns(String xmlns) {
 
@@ -404,7 +336,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	/**
 	 * Sets the xsdDocument for this package (by setting the according
 	 * tagged value).
-	 * @param xsdDocument
+	 * @param xsdDocument tbd
 	 */
 	public void setXsdDocument(String xsdDocument) {
 
@@ -413,10 +345,6 @@ public class GenericPackageInfo extends PackageInfoImpl
 		this.setTaggedValues(tmp, false);
 	}
 
-	/**
-	 * 
-	 * @see de.interactive_instruments.ShapeChange.Model.PackageInfo#supplierIds()
-	 */
 	public SortedSet<String> supplierIds() {
 		if (this.supplierIds == null) {
 			return new TreeSet<String>();
@@ -537,7 +465,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	 * IDs used in a reference model are unique to that model and do not get
 	 * mixed up with the IDs of the input model.
 	 * 
-	 * @param prefix
+	 * @param prefix tbd
 	 */
 	public void addPrefixToModelElementIDs(String prefix) {
 

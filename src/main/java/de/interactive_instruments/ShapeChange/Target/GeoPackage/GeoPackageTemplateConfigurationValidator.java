@@ -47,7 +47,7 @@ import de.interactive_instruments.ShapeChange.TargetConfiguration;
 import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

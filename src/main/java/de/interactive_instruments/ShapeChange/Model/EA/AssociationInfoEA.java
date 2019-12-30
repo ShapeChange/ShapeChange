@@ -62,7 +62,7 @@ public class AssociationInfoEA extends AssociationInfoImpl
 
 	protected String connectorId = null;
 
-	/** Navigability 0=both, +1=source->target, -1=target->source */
+	/** Navigability 0=both, +1=source-&gt;target, -1=target-&gt;source */
 	protected int navigability = 0;
 
 	/** Relevant part of model? */
@@ -88,12 +88,6 @@ public class AssociationInfoEA extends AssociationInfoImpl
 	 * identifier of this property.
 	 */
 	protected boolean globalIdentifierAccessed = false;
-
-	/** Cache map for tagged values */
-	// this map is already defined in InfoImpl
-
-	/** Cache set for stereotypes */
-	// this map is already defined in InfoImpl
 
 	/** AssociationInfoEA Ctor */
 	AssociationInfoEA(EADocument doc, Connector conn, String id) {

@@ -43,15 +43,15 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
  * Parses information from the 'param' attribute of a map entry and provides
  * access to the resulting information.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class MapEntryParamInfos implements MessageSource {
 
 	/**
 	 * Regular expression
-	 * ((\w+)(\{(([^;=\}]+)=?((?<==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match
+	 * ((\w+)(\{(([^;=\}]+)=?((?&lt;==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match
 	 * valid values of the 'param' attribute in a map entry.
 	 * 
 	 * Parameters are separated by comma, characteristics are separated by semicolon.
@@ -68,7 +68,7 @@ public class MapEntryParamInfos implements MessageSource {
 	public static final String PARAM_VALIDATION_PATTERN = "((\\w+)(\\{(([^;=\\}]+)=?((?<==)[^;=\\}]+)?[\\s;]*)+\\})?[\\s,]*)+";
 
 	/**
-	 * Regular expression (\w+)\{?((?<=\{)[^\}]+(?=\}))?\}?[\s;]* to find
+	 * Regular expression (\w+)\{?((?&lt;=\{)[^\}]+(?=\}))?\}?[\s;]* to find
 	 * individual parameters contained in the value of the 'param' attribute in
 	 * a map entry, together with their characteristics (given inside curly
 	 * braces: {&lt;characteristics&gt;}).
@@ -80,7 +80,7 @@ public class MapEntryParamInfos implements MessageSource {
 	public static final String PARAMETER_IDENTIFICATION_PATTERN = "(\\w+)\\{?((?<=\\{)[^\\}]+(?=\\}))?\\}?[\\s;]*";
 
 	/**
-	 * Regular expression ([^;=]+)=?((?<==)[^;=]+)?[\s;]* to parse the
+	 * Regular expression ([^;=]+)=?((?&lt;==)[^;=]+)?[\s;]* to parse the
 	 * individual characteristics of a parameter. Characteristics are separated
 	 * by semicolon, and consist of an identifier and an optional value
 	 * (separated by '=').
@@ -255,8 +255,9 @@ public class MapEntryParamInfos implements MessageSource {
 	}
 
 	/**
-	 * @param typeName
-	 * @param parameter
+	 * @param typeName tbd
+	 * @param encodingRule  tbd
+	 * @param parameter tbd
 	 * @return A map with the characteristics defined for the parameter in the
 	 *         map entry that applies to the named type under the given encoding
 	 *         rule, or <code>null</code> if they don't exist.
@@ -325,9 +326,10 @@ public class MapEntryParamInfos implements MessageSource {
 	}
 
 	/**
-	 * @param typeName
-	 * @param parameter
-	 * @param characteristic
+	 * @param typeName tbd
+	 * @param encodingRule  tbd
+	 * @param parameter tbd
+	 * @param characteristic tbd
 	 * @return The value of the characteristic of the parameter in the map entry
 	 *         for the named type, can be <code>null</code> if no value was
 	 *         provided or if the characteristic was not specified for the

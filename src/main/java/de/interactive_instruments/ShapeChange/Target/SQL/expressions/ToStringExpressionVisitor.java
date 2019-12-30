@@ -41,8 +41,8 @@ import org.apache.commons.lang3.StringUtils;
  * resulting string can for example be used in comparisons, when sorting Insert
  * statements.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ToStringExpressionVisitor implements ExpressionVisitor {

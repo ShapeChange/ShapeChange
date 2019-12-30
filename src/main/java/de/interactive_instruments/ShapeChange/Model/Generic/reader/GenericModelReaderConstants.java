@@ -36,8 +36,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class GenericModelReaderConstants {

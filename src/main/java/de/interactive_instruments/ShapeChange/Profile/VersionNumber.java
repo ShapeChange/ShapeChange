@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange.Profile;
 import java.util.Arrays;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class VersionNumber {
 

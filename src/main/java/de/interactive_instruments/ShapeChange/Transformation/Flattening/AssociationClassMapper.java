@@ -56,8 +56,8 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  * Maps an association class into a semantically equivalent class and set of
  * associations, as defined by the OGC GML 3.3 standard.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class AssociationClassMapper implements Transformer, MessageSource {

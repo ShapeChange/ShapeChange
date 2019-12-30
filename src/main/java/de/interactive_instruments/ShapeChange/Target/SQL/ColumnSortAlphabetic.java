@@ -36,8 +36,8 @@ import java.util.Comparator;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ColumnSortAlphabetic implements Comparator<Column> {

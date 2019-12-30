@@ -71,7 +71,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -601,7 +601,10 @@ public class ReplicationSchemaVisitor
 		}
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Element e, String name, String value) {
 		Attr att = document.createAttribute(name);
 		att.setValue(value);

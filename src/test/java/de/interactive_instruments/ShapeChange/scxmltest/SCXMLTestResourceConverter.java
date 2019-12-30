@@ -57,7 +57,7 @@ import de.interactive_instruments.ShapeChange.TestInstance;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

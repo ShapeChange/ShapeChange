@@ -52,7 +52,7 @@ public class GenericTextConstraint extends TextConstraintImpl {
 	/**
 	 * Creates a generic TextConstraint implementation from a given one.
 	 * 
-	 * @param constraint
+	 * @param constraint tbd
 	 */
 	public GenericTextConstraint(TextConstraint constraint) {
 		super();

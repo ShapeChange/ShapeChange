@@ -47,7 +47,7 @@ import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -156,7 +156,7 @@ public class TargetRegistry {
     }
 
     /**
-     * @param targetIdentifier
+     * @param targetIdentifier tbd
      * @return the fully qualified class name of the target with the given
      *         identifier; can be <code>null</code> if no such target was found
      */
@@ -165,7 +165,7 @@ public class TargetRegistry {
     }
 
     /**
-     * @param targetIdentifier
+     * @param targetIdentifier tbd
      * @return the default encoding rule defined for the target with the given
      *         identifier; can be <code>null</code> if no such target was found
      */

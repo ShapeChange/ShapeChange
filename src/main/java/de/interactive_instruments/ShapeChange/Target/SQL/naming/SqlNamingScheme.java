@@ -32,39 +32,40 @@
 package de.interactive_instruments.ShapeChange.Target.SQL.naming;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public interface SqlNamingScheme {
 
-	/**
-	 *
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a check constraint
-	 */
-	public String nameForCheckConstraint(String tableName, String columnName);
+    /**
+     *
+     * @param tableName  tbd
+     * @param columnName tbd
+     * @return name for a check constraint
+     */
+    public String nameForCheckConstraint(String tableName, String columnName);
 
-	/**
-	 * @return name for a foreign key
-	 */
-	public String nameForForeignKeyConstraint(String tableName,
-			String columnName, String targetTableName);
+    /**
+     * @param tableName       tbd
+     * @param columnName      tbd
+     * @param targetTableName tbd
+     * @return name for a foreign key
+     */
+    public String nameForForeignKeyConstraint(String tableName, String columnName, String targetTableName);
 
-	public NameNormalizer getNameNormalizer();
+    public NameNormalizer getNameNormalizer();
 
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a unique constraint
-	 */
-	public String nameForUniqueConstraint(String tableName, String columnName);
+    /**
+     * @param tableName  tbd
+     * @param columnName tbd
+     * @return name for a unique constraint
+     */
+    public String nameForUniqueConstraint(String tableName, String columnName);
 
-	/**
-	 * @param tableName
-	 * @param columnName
-	 * @return name for a geometry index
-	 */
-	public String nameForGeometryIndex(String tableName, String columnName);
+    /**
+     * @param tableName  tbd
+     * @param columnName tbd
+     * @return name for a geometry index
+     */
+    public String nameForGeometryIndex(String tableName, String columnName);
 }

@@ -95,7 +95,6 @@ public class OperationInfoEA extends OperationInfoImpl
 	/** Cache map for Parameters */
 	protected Collection<Parameter> eaParametersCache = null;
 
-	/** Create an OperationInfo object given an EA Method. */
 	public OperationInfoEA(EADocument doc, ClassInfoEA ci, Method meth) {
 
 		// Record references ...

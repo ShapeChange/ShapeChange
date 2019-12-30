@@ -58,8 +58,8 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DescriptorTransformer implements MessageSource, Transformer {

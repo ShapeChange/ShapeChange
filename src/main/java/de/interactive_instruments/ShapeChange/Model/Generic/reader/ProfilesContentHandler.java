@@ -49,8 +49,8 @@ import de.interactive_instruments.ShapeChange.Profile.VersionNumber;
 import de.interactive_instruments.ShapeChange.Profile.VersionRange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ProfilesContentHandler extends AbstractContentHandler {

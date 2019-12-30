@@ -39,8 +39,8 @@ import org.sparx.ParamTag;
 import org.sparx.Parameter;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EAParameterUtil extends AbstractEAUtil {
@@ -56,7 +56,7 @@ public class EAParameterUtil extends AbstractEAUtil {
 	}
 	
 	/**
-	 * @param att
+	 * @param att tbd
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */

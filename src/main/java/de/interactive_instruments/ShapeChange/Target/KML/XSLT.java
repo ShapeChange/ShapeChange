@@ -355,7 +355,11 @@ public class XSLT implements Target {
 	}
 
 	/** Create folder structure 
-	 * @throws Exception */
+	 * @param pix  tbd
+	 * @param e  tbd
+	 * @param level  tbd
+	 * @return  tbd
+	 * @throws Exception tbd */
 	protected boolean createFolders(PackageInfo pix, Element e, int level) throws Exception {
 		String sss = pix.name();
 		result.addDebug("!!! "+sss+" - "+level);
@@ -509,7 +513,11 @@ public class XSLT implements Target {
 		folderMapFeatureTypes.put(pix, "");		
 	}
 	
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param document  tbd
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value tbd */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
 		Attr att = document.createAttribute(name);

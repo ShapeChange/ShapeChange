@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class RdfPropertyMapEntry {
@@ -44,13 +44,6 @@ public class RdfPropertyMapEntry {
 	private String range;
 	private String rule;
 
-	/**
-	 * @param property
-	 * @param schema
-	 * @param target
-	 * @param range
-	 * @param rule
-	 */
 	public RdfPropertyMapEntry(String property, String schema, String target,
 			String range, String rule) {
 		super();

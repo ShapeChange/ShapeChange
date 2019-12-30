@@ -34,8 +34,8 @@ package de.interactive_instruments.ShapeChange.Util.ea;
 import java.util.Set;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public abstract class AbstractEAUtil {
@@ -70,7 +70,7 @@ public abstract class AbstractEAUtil {
 	}
 
 	/**
-	 * @param stereotypes
+	 * @param stereotypes tbd
 	 * @return comma separated list of the set of given stereotypes
 	 */
 	public static String stereotypesCSV(Set<String> stereotypes) {

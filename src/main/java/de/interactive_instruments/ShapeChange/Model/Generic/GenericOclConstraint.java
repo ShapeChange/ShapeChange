@@ -88,7 +88,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	 * 
 	 * @param ci
 	 *                         context of the constraint
-	 * @param constrName
+	 * @param constrName tbd
 	 * @param constrStatus
 	 *                         see {@link Constraint#status()}
 	 * @param constrText
@@ -194,7 +194,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 	 * 
 	 * @param pi
 	 *                         context of the constraint
-	 * @param constrName
+	 * @param constrName tbd
 	 * @param constrStatus
 	 *                         see {@link Constraint#status()}
 	 * @param constrText

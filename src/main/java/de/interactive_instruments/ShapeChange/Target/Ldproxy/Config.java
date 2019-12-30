@@ -84,7 +84,7 @@ import de.interactive_instruments.ShapeChange.Target.SingleTarget;
  * of options are supported for the mapping from the application schema to
  * the SQL DDL in the database.
  * 
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
  * @see <a href="https://shapechange.net/targets/ldproxy/">Documentation on shapechange.net</a>
  * @see <a href="https://interactive-instruments.github.io/ldproxy/">ldproxy</a>
  * @see <a href="https://cdn.rawgit.com/opengeospatial/WFS_FES/3.0.0-draft.1/docs/17-069.html">WFS 3.0, Core (Draft)</a>
@@ -953,10 +953,10 @@ public class Config implements SingleTarget, MessageSource {
 	 * non-abstract feature types. The second approach is to have a separate table per feature
 	 * type, including abstract supertypes (see {@link ConfigConstants#RULE_TGT_LDP_CLS_TABLE_PER_FT}). 
 	 * @param ci	the non-abstract feature type 
-	 * @param superci	the supertype of {@link ci} that will be processed
-	 * @param featuretype	the JSON object in the mappings section for {@link ci}
+	 * @param superci	the supertype of ci that will be processed
+	 * @param featuretype	the JSON object in the mappings section for ci
 	 * @param basepath	the mapping for each property is described by a path in the database; 
-	 * the path starts at the table of {@link ci} and mainly includes joins; this parameter
+	 * the path starts at the table of ci and mainly includes joins; this parameter
 	 * includes the path to the current position and will be extended with additional path
 	 * elements for the properties 
 	 */

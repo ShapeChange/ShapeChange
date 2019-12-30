@@ -37,8 +37,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDBUnit {
@@ -49,13 +49,6 @@ public class CDBUnit {
 	protected Set<String> aliasNames = new HashSet<String>();
 	protected String description;
 
-	/**
-	 * @param code
-	 * @param code
-	 * @param symbol
-	 * @param name
-	 * @param description
-	 */
 	public CDBUnit(Integer code, String symbol, String name,
 			Set<String> aliasNames, String description) {
 		super();

@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SQLitePragma implements Statement {
@@ -43,7 +43,7 @@ public class SQLitePragma implements Statement {
 	protected String value;
 
 	/**
-	 * @param name
+	 * @param name tbd
 	 * @param value may be <code>null</code>
 	 */
 	public SQLitePragma(String name, String value) {

@@ -172,7 +172,7 @@ public class TransformerConfiguration extends ProcessConfiguration {
 	 * @param type
 	 *            Value of the type in a ProcessMapEntry
 	 * 
-	 * @return
+	 * @return tbd
 	 */
 	public boolean hasMappingForType(String rule, String type) {
 

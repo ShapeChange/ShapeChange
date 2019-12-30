@@ -518,7 +518,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * Puts the given class info into the genClassInfosById and genClassInfosByName
      * maps.
      * 
-     * @param genCi
+     * @param genCi tbd
      */
     public void register(GenericClassInfo genCi) {
 	this.genClassInfosById.put(genCi.id, genCi);
@@ -878,11 +878,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    return aIn;
     }
 
-    /**
-     * @param model
-     * @param appSchemaPackage
-     * @return
-     */
     private GenericPackageInfo createGenericPackageInfo(PackageInfo pi, GenericModel model) {
 
 	// check if generic representation of given PackageInfo already exists
@@ -981,25 +976,14 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
     }
 
-    /**
-     * @see de.interactive_instruments.ShapeChange.Model.Model#options()
-     */
     public Options options() {
 	return options;
     }
 
-    /**
-     * @see de.interactive_instruments.ShapeChange.Model.Model#result()
-     */
     public ShapeChangeResult result() {
 	return result;
     }
 
-    /**
-     * @see de.interactive_instruments.ShapeChange.Model.Model#initialise(de.
-     *      interactive_instruments.ShapeChange.ShapeChangeResult,
-     *      de.interactive_instruments.ShapeChange.Options, java.lang.String)
-     */
     public void initialise(ShapeChangeResult r, Options o, String repositoryFileName) throws ShapeChangeAbortException {
 
 	this.result = r;
@@ -1439,9 +1423,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * packages, which do not belong to an app schema different to the one of the
      * given package. The target namespace of classes is not checked, only of
      * packages.
-     * 
-     * @see de.interactive_instruments.ShapeChange.Model.Model#classes(de.
-     *      interactive_instruments.ShapeChange.Model.PackageInfo)
      */
     @Override
     public SortedSet<ClassInfo> classes(PackageInfo pi) {
@@ -1491,10 +1472,6 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	return res;
     }
 
-    /**
-     * @see de.interactive_instruments.ShapeChange.Model.Model#
-     *      postprocessAfterLoadingAndValidate()
-     */
     public void postprocessAfterLoadingAndValidate() {
 
 	/*
@@ -1623,18 +1600,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	return genClassInfosByName.get(name);
     }
 
-    /**
-     * 
-     * @see de.interactive_instruments.ShapeChange.Model.Model#shutdown()
-     */
     public void shutdown() {
 	// nothing to do here
     }
 
-    /**
-     * 
-     * @see de.interactive_instruments.ShapeChange.Model.Model#characterEncoding()
-     */
     public String characterEncoding() {
 	return characterEncoding;
     }
@@ -1688,8 +1657,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * {@link #add(GenericPropertyInfo, ClassInfo, PropertyCopyDuplicatBehaviorIndicator)}
      * to control this behavior.
      * 
-     * @param newProperty
-     * @param classToAddProperty
+     * @param newProperty        tbd
+     * @param classToAddProperty tbd
      */
     public void add(GenericPropertyInfo newProperty, ClassInfo classToAddProperty) {
 
@@ -1703,9 +1672,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * The behavior how to handle the case that the new property has the same name
      * as an already existing one is controlled by the behavior parameter.
      * 
-     * @param newProperty
-     * @param classToAddProperty
-     * @param behavior
+     * @param newProperty        tbd
+     * @param classToAddProperty tbd
+     * @param behavior           tbd
      */
     public void add(GenericPropertyInfo newProperty, ClassInfo classToAddProperty,
 	    PropertyCopyDuplicatBehaviorIndicator behavior) {
@@ -1716,8 +1685,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
     /**
      * Adds the given properties to their inClasses
      * 
-     * @param newProperty
-     * @param behavior
+     * @param newProperties tbd
+     * @param behavior      tbd
      */
     public void add(List<GenericPropertyInfo> newProperties, PropertyCopyDuplicatBehaviorIndicator behavior) {
 
@@ -1757,9 +1726,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * add the property (top, bottom, or in-sequence of existing properties) is also
      * determined via parameter.
      * 
-     * @param newProperty
-     * @param classToAddProperty
-     * @param behavior
+     * @param newProperty           tbd
+     * @param classToAddProperty    tbd
+     * @param copyPositionIndicator tbd
+     * @param duplicateHandling     tbd
      */
     public void add(GenericPropertyInfo newProperty, GenericClassInfo classToAddProperty,
 	    PropertyCopyPositionIndicator copyPositionIndicator,
@@ -1799,7 +1769,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * <li>Removing the relationships to super- and subtypes of the class.</li>
      * </ul>
      * 
-     * @param ciToRemove
+     * @param ciToRemove tbd
      */
     public void remove(GenericClassInfo ciToRemove) {
 	remove(ciToRemove, false);
@@ -2021,7 +1991,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * Removes the given classes from the model. Internally calls the
      * remove(GenericClassInfo) method.
      * 
-     * @param cisToRemove
+     * @param cisToRemove tbd
      */
     public void remove(Collection<GenericClassInfo> cisToRemove) {
 
@@ -2223,10 +2193,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * <li>dependencies</li>
      * </ul>
      * 
-     * @param fromClass
-     * @param toClass
-     * @param copyPositionIndicator
-     * @param duplicateHandling
+     * @param fromClass             tbd
+     * @param toClass               tbd
+     * @param copyPositionIndicator tbd
+     * @param duplicateHandling     tbd
      */
     public void copyClassContent(GenericClassInfo fromClass, GenericClassInfo toClass,
 	    PropertyCopyPositionIndicator copyPositionIndicator,
@@ -2316,9 +2286,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * tagged values, but does not update the objects (e.g. association ends or
      * class; they need to be set separately).
      * 
-     * @param ai
-     * @param copyId
-     * @return
+     * @param ai     tbd
+     * @param copyId tbd
+     * @return tbd
      */
     public GenericAssociationInfo createCopy(AssociationInfo ai, String copyId) {
 
@@ -2353,9 +2323,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * 
      * Does not register the class copy in the model.
      * 
-     * @param ci
-     * @param copyId
-     * @return
+     * @param ci     tbd
+     * @param copyId tbd
+     * @return tbd
      */
     public GenericClassInfo createCopy(ClassInfo ci, String copyId) {
 
@@ -2397,9 +2367,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * inClass or model) - they are used as-is and in order to be changed they need
      * to be set separately.
      * 
-     * @param pi
-     * @param copyId
-     * @return
+     * @param pi     tbd
+     * @param copyId tbd
+     * @return tbd
      */
     public GenericPropertyInfo createCopy(PropertyInfo pi, String copyId) {
 
@@ -2450,7 +2420,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * contained in these packages. Also recursively removes all child packages of
      * the given packages.
      * 
-     * @param packagesToRemove
+     * @param packagesToRemove tbd
      */
     public void remove(Set<PackageInfo> packagesToRemove) {
 
@@ -2514,7 +2484,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * WARNING: a possibly existing association class is also removed from the
      * model, with all its properties and links to other model elements!
      * 
-     * @param genAI
+     * @param genAI tbd
      */
     public void dissolveAssociation(GenericAssociationInfo genAI) {
 
@@ -2564,7 +2534,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * update in the model as well (superclasses, subtypes, model, and property type
      * info).
      * 
-     * @param newName
+     * @param genCi   tbd
+     * 
+     * @param newName tbd
      */
     public void updateClassName(GenericClassInfo genCi, String newName) {
 
@@ -2612,7 +2584,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * At the moment simply puts the association info into the map with all
      * GenericAssociationInfos
      * 
-     * @param ai
+     * @param ai tbd
      */
     public void addAssociation(GenericAssociationInfo ai) {
 	this.genAssociationInfosById.put(ai.id(), ai);
@@ -2754,7 +2726,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * used in a reference model are unique to that model and do not get mixed up
      * with the IDs of the input model.
      * 
-     * @param prefix
+     * @param prefix tbd
      */
     public void addPrefixToModelElementIDs(String prefix) {
 
@@ -2991,6 +2963,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * @param con   constraint to validate
      * 
      * @param genCi context of the constraint
+     * @return tbd 
      * 
      */
     protected Constraint parse(OclConstraint con, GenericClassInfo genCi) {

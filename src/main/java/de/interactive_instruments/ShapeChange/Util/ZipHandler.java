@@ -45,8 +45,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  * 
  */
 public class ZipHandler {
@@ -54,9 +54,9 @@ public class ZipHandler {
 	/**
 	 * Unzips the contents of a zip file to a given directory.
 	 * 
-	 * @param zipfile
-	 * @param directory
-	 * @throws Exception
+	 * @param zipfile tbd
+	 * @param directory tbd
+	 * @throws Exception tbd
 	 */
 	public void unzip(File zipfile, File directory) throws Exception {
 		ZipFile zipFile = new ZipFile(zipfile);
@@ -74,7 +74,7 @@ public class ZipHandler {
 	 *            Directory that shall be zipped.
 	 * @param toFile
 	 *            File to zip to.
-	 * @throws IOException
+	 * @throws Exception tbd
 	 */
 	public void zip(File directoryToZip, File toFile) throws Exception {
 
@@ -94,7 +94,7 @@ public class ZipHandler {
 	 *            File that shall be zipped.
 	 * @param toFile
 	 *            File to zip to.
-	 * @throws IOException
+	 * @throws IOException tbd
 	 */
 	public static void zipFile(File fileToZip, File toFile) throws IOException {
 

@@ -39,8 +39,8 @@ import java.util.Set;
 import org.w3c.dom.Element;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class TargetConfiguration extends ProcessConfiguration {
 
@@ -143,7 +143,7 @@ public class TargetConfiguration extends ProcessConfiguration {
 	}
 
 	/**
-	 * @param namespace
+	 * @param namespace tbd
 	 * @return The abbreviation for the given namespace, or <code>null</code> if
 	 *         the namespace is unknown.
 	 */
@@ -157,7 +157,7 @@ public class TargetConfiguration extends ProcessConfiguration {
 	}
 
 	/**
-	 * @param abbreviation
+	 * @param abbreviation tbd
 	 * @return the namespace for the given abbreviation, or <code>null</code> if
 	 *         the abbreviation is unknown
 	 */
@@ -175,7 +175,7 @@ public class TargetConfiguration extends ProcessConfiguration {
 	}
 
 	/**
-	 * @param namespace
+	 * @param namespace tbd
 	 * @return the location defined for the namespace (in the configuration) -
 	 *         or <code>null</code> if either the namespace or the location is
 	 *         not defined in the configuration

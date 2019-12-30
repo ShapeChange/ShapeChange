@@ -43,7 +43,7 @@ import de.interactive_instruments.ShapeChange.Model.Transformer;
  * Default implementation for loading models. Recognized model types are EA7,
  * XMI, and SCXML (as well as GCSR, for backwards compatibility).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

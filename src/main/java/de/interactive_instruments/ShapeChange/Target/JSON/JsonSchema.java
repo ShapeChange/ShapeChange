@@ -95,7 +95,7 @@ public class JsonSchema implements Target, MessageSource {
 
 	/**
 	 * <p>Initialize target generation for the JSON Schema output.</p> 
-	 * @param pi UML Package represented by PackageInfo interface
+	 * @param p UML Package represented by PackageInfo interface
 	 * @param m Model represented by Model interface
 	 * @param r Result class for diagnostics output
 	 * @param diagOnly Flag requesting to suppress any output

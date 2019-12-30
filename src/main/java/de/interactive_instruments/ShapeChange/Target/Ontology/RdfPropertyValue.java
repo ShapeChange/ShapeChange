@@ -32,51 +32,48 @@
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class RdfPropertyValue {
 
-	private String value;
-	private String lang;
-	private boolean isIRI;
+    private String value;
+    private String lang;
+    private boolean isIRI;
 
-	/**
-	 * @param value
-	 * @param lang
-	 *                  - optional
-	 * @param isIRI
-	 *                  - (default is: false)
-	 */
-	public RdfPropertyValue(String value, String lang, boolean isIRI) {
-		this.value = value;
-		this.lang = lang;
-		this.isIRI = isIRI;
-	}
+    /**
+     * @param value tbd
+     * @param lang  optional
+     * @param isIRI (default is: false)
+     */
+    public RdfPropertyValue(String value, String lang, boolean isIRI) {
+	this.value = value;
+	this.lang = lang;
+	this.isIRI = isIRI;
+    }
 
-	/**
-	 * @return the value; can be empty but not <code>null</code>
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * @return the value; can be empty but not <code>null</code>
+     */
+    public String getValue() {
+	return value;
+    }
 
-	/**
-	 * @return the lang; can be <code>null</code>
-	 */
-	public String getLang() {
-		return lang;
-	}
+    /**
+     * @return the lang; can be <code>null</code>
+     */
+    public String getLang() {
+	return lang;
+    }
 
-	/**
-	 * @return the isIRI
-	 */
-	public boolean isIRI() {
-		return isIRI;
-	}
+    /**
+     * @return the isIRI
+     */
+    public boolean isIRI() {
+	return isIRI;
+    }
 
-	public boolean hasLang() {
-		return this.lang != null;
-	}
+    public boolean hasLang() {
+	return this.lang != null;
+    }
 }

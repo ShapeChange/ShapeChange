@@ -40,7 +40,7 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
  *
  */
 public class ConfigConfigurationValidator

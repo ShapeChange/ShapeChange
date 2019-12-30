@@ -374,16 +374,16 @@ public class OntologyModel implements MessageSource {
 	 * (individuals, maybe also classes). Note that the namespace separator in
 	 * this case is always '/'.
 	 * 
-	 * @param m
-	 * @param o
-	 * @param r
-	 * @param prefix
-	 * @param rdfns
-	 * @param name
-	 * @param path
-	 * @param fileName
-	 * @param owliso19150
-	 * @throws ShapeChangeAbortException
+	 * @param m tbd
+	 * @param o tbd
+	 * @param r tbd
+	 * @param prefix tbd
+	 * @param rdfns tbd
+	 * @param name tbd
+	 * @param path tbd
+	 * @param fileName tbd
+	 * @param owliso19150 tbd
+	 * @throws ShapeChangeAbortException tbd
 	 */
 	public OntologyModel(Model m, Options o, ShapeChangeResult r, String prefix,
 			String rdfns, String name, String path, String fileName,
@@ -458,8 +458,8 @@ public class OntologyModel implements MessageSource {
 	 * package that has the same target namespace as the given one. Each segment
 	 * of the path is preceded by "/", followed by the normalized package name.
 	 * 
-	 * @param pi
-	 * @return
+	 * @param pi tbd
+	 * @return tbd
 	 * @see #normalizedName(PackageInfo)
 	 */
 	public static String computePath(PackageInfo pi) {
@@ -511,8 +511,8 @@ public class OntologyModel implements MessageSource {
 	 * Normalizes the name of a package according to the rules in ISO
 	 * 19150-2package:name and 19150-2package:ontologyName.
 	 * 
-	 * @param pi
-	 * @return
+	 * @param pi tbd
+	 * @return tbd
 	 */
 	public static String normalizedName(PackageInfo pi) {
 
@@ -861,7 +861,7 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
-	 * @param pcp
+	 * @param pcp tbd
 	 * @return the PropertyInfo that matches the 'target' and 'targetSchema'
 	 *         specification from the given PropertyConversionParameter, or
 	 *         <code>null</code> if no such property could be found
@@ -1002,10 +1002,11 @@ public class OntologyModel implements MessageSource {
 	 * <p>
 	 * If the class is a 'union' then all properties belong to one set.
 	 * Otherwise, all properties with the same value for the tag
-	 * {@value OWLISO19150#UNION_SET_TAG_NAME} are members of a set. This can
+	 * {@value OWLISO19150#TV_UNION_SET} are members of a set. This can
 	 * lead to multiple sets.
 	 * 
-	 * @param ci
+	 * @param ci tbd
+	 * @param c  tbd
 	 */
 	protected void addUnionSemantics(ClassInfo ci, OntClass c) {
 
@@ -1669,7 +1670,7 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
-	 * @param gp
+	 * @param pi
 	 * @param op
 	 * @param axiom
 	 *                  SUBPROPERTYOF, EQUIVALENT, DISJOINT, or INVERSE
@@ -2600,8 +2601,6 @@ public class OntologyModel implements MessageSource {
 	 * @param pi1
 	 *                      property 1 (that is usually mapped to or implemented
 	 *                      by pi2)
-	 * @param propAbout
-	 *                      ontology name of pi1
 	 * @param pi2
 	 *                      property 2
 	 */
@@ -2831,7 +2830,7 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
-	 * @param propertyURI
+	 * @param propertyURI tbd
 	 * @return the property ("normal" or general) with the given URI, or
 	 *         <code>null</code> if no such property is defined in the ontology
 	 *         model
@@ -2857,8 +2856,7 @@ public class OntologyModel implements MessageSource {
 	 * entry exists and the class is not part of the schemas selected for
 	 * processing, an error will be logged and <code>null</code> returned.
 	 * 
-	 * @param ci
-	 * @param processMapEntry
+	 * @param ci tbd
 	 * @return the resource that implements the class, or <code>null</code>
 	 *         (then no RdfTypeMapEntry is defined for the class and the class
 	 *         is not part of the schemas selected for processing)
@@ -2906,8 +2904,8 @@ public class OntologyModel implements MessageSource {
 	 * Returns a class representing the type of the property.
 	 * RdfPropertyMapEntries are not considered.
 	 * 
-	 * @param pi
-	 * @return
+	 * @param pi tbd
+	 * @return tbd
 	 */
 	protected Resource mapType(PropertyInfo pi) {
 
@@ -2951,7 +2949,7 @@ public class OntologyModel implements MessageSource {
 	/**
 	 * NOTE: also imports the namespace of a mapped property
 	 * 
-	 * @param pi
+	 * @param pi tbd
 	 * @return The RDF/OWL property implementation to which the given
 	 *         PropertyInfo is mapped, or <code>null</code> if there is no
 	 *         mapping. The mapping can be defined via an RdfPropertyMapEntry or
@@ -3248,7 +3246,7 @@ public class OntologyModel implements MessageSource {
 	}
 
 	/**
-	 * @param ci
+	 * @param ci tbd
 	 */
 	public void addCodelist(ClassInfo ci) {
 

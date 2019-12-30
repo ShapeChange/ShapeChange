@@ -41,7 +41,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 /**
  * Defines the operation(s) common to all actual transformers.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public interface Transformer {
@@ -56,10 +56,10 @@ public interface Transformer {
 	 *            The model to process.
 	 * @param o
 	 *            Options to control the process execution.
+	 * @param trfConfig  tbd
 	 * @param r
 	 *            Logging target.
-	 * @return The processed model.
-	 * @throws ShapeChangeAbortException
+	 * @throws ShapeChangeAbortException tbd
 	 */
 	public void process(GenericModel m, Options o,
 			TransformerConfiguration trfConfig, ShapeChangeResult r)

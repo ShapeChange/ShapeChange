@@ -40,7 +40,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  * 
  */

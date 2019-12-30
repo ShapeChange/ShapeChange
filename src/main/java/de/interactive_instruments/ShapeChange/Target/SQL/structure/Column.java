@@ -43,8 +43,8 @@ import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class Column {
@@ -194,7 +194,7 @@ public class Column {
 	 *         key, otherwise <code>false</code> NOTE: Even if this object does
 	 *         not reference a specific table, it may still be intended to be
 	 *         used as foreign key (to one or more tables, see
-	 *         {@link SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}
+	 *         {@link SqlConstants#RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}
 	 *         . That a column is a foreign key is of interest when creating a
 	 *         replication schema.
 	 */

@@ -83,7 +83,6 @@ public class BindingContext {
 	this.state = state;
     }
 
-    /** Push a new variable declaration */
     public void pushDeclaration(Declaration vd) {
 	if (vars == null)
 	    vars = new ArrayList<CtxElmt>();
@@ -105,7 +104,6 @@ public class BindingContext {
 	vars.remove(vars.size() - 1);
     }
 
-    /** Merge another context */
     public void merge(BindingContext ctx) {
 	if (ctx == null)
 	    return;

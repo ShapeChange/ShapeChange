@@ -53,7 +53,6 @@ public class TextConstraintEA extends TextConstraintImpl implements
 	protected org.sparx.Constraint eaConstraint;
 	protected AttributeConstraint eaConstraintAttribute; 
 	
-	/** Ctor from class context */
 	public TextConstraintEA(EADocument doc, ClassInfoEA ci,
 		org.sparx.Constraint constr) {
 		
@@ -78,7 +77,6 @@ public class TextConstraintEA extends TextConstraintImpl implements
 						constraintText);
 	}
 
-	/** Ctor from attribute context */
 	public TextConstraintEA(EADocument doc, PropertyInfoEA pi,
 		AttributeConstraint constr) {
 		

@@ -47,7 +47,7 @@ import com.google.common.base.Joiner;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -57,8 +57,8 @@ public class BasicConfigurationValidator implements MessageSource {
 	 * Validates the 'input'-section of the ShapeChange configuration. Any
 	 * invalidity is directly logged in the ShapeChangeResult.
 	 * 
-	 * @param options
-	 * @param result
+	 * @param options tbd
+	 * @param result tbd
 	 * @return <code>true</code> if the configuration is valid, else
 	 *         <code>false</code>
 	 */

@@ -65,8 +65,8 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ProfileConstraintTransformer

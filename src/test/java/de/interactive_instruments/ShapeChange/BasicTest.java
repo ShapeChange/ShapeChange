@@ -132,7 +132,7 @@ public abstract class BasicTest {
      * precondition for execution of another configuration (that may require the
      * output of the first process as input).
      * 
-     * @param config
+     * @param config tbd
      * @return result of ShapeChange, can be used to inspect e.g. the options object
      *         in it
      */
@@ -152,7 +152,8 @@ public abstract class BasicTest {
      * Simply processes the given configuration and ensure that an error was
      * reported.
      * 
-     * @param config
+     * @param config tbd
+     * @param detailsOnExpectedError  tbd
      */
     protected void executeAndError(String config, String detailsOnExpectedError) {
 

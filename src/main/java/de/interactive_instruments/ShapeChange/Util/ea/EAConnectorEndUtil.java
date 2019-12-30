@@ -43,8 +43,8 @@ import org.sparx.RoleTag;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EAConnectorEndUtil extends AbstractEAUtil {
@@ -62,6 +62,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 *            the connector end to which the tagged value shall be added
 	 * @param tv
 	 *            tagged value to add, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValue(ConnectorEnd end, EATaggedValue tv)
 			throws EAException {
@@ -121,10 +122,11 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 * adding the same tagged values would lead to duplicates. If duplicates
 	 * shall be prevented, set the tagged value instead of adding it.
 	 * 
-	 * @param e
+	 * @param end
 	 *            the connector end to which the tagged values shall be added
 	 * @param tvs
 	 *            collection of tagged values to add
+	 * @throws EAException  tbd
 	 */
 	public static void addTaggedValues(ConnectorEnd end, TaggedValues tvs)
 			throws EAException {
@@ -334,10 +336,10 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 * Indicates whether the connector end is navigable from the opposite
 	 * classifier - Navigable, Non-Navigable or Unspecified.
 	 * 
-	 * @param conEnd
+	 * @param conEnd tbd
 	 * @param navigable
 	 *            'Navigable', 'Non-Navigable' or 'Unspecified'
-	 * @throws EAException
+	 * @throws EAException tbd
 	 */
 	public static void setEANavigable(ConnectorEnd conEnd,
 			EANavigable navigable) throws EAException {
@@ -359,6 +361,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 *            the connector end in which the tagged value shall be set
 	 * @param tv
 	 *            tagged value to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(ConnectorEnd ce, EATaggedValue tv)
 			throws EAException {
@@ -378,6 +381,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 *            name of the tagged value to set, must not be <code>null</code>
 	 * @param value
 	 *            value of the tagged value to set, can be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValue(ConnectorEnd end, String name,
 			String value) throws EAException {
@@ -389,15 +393,15 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * Retrieves the first tagged value with given name of the given attribute.
+	 * Retrieves the first tagged value with given name of the given connector end.
 	 * Does not apply normalization of tags, i.e. comparison is performed using
 	 * string equality. With UML 2, there may be multiple values per tag. This
 	 * method does NOT issue a warning if more than one value exists for the
 	 * tag. I.e., use this method only for cases, where only one value per tag
 	 * may be provided.
 	 * 
-	 * @param att
-	 *            attribute that contains the tagged values to search
+	 * @param end
+	 *            connector end that contains the tagged values to search
 	 * @param tvName
 	 *            name of the tagged value to retrieve
 	 * @return The tagged value for the tag with given name or <code>null</code>
@@ -471,6 +475,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	 *            the connector end in which the tagged values shall be set
 	 * @param tvs
 	 *            tagged values to set, must not be <code>null</code>
+	 * @throws EAException  tbd
 	 */
 	public static void setTaggedValues(ConnectorEnd ce, TaggedValues tvs)
 			throws EAException {
@@ -482,7 +487,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	}
 
 	/**
-	 * @param elmt
+	 * @param elmt tbd
 	 * @return sorted map of the tagged values (key: {name '#' fqName}; value:
 	 *         according EATaggedValue); can be empty but not <code>null</code>
 	 */

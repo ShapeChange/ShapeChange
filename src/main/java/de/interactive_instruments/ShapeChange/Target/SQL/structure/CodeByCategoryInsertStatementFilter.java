@@ -41,8 +41,8 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
  * to which data inserted has tagged value 'codelistType' with a value that is
  * equal to the category with which this statement filter is constructed.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CodeByCategoryInsertStatementFilter implements StatementFilter {

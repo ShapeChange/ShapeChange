@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ontology;
 import java.util.Locale;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

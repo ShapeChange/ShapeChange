@@ -43,12 +43,6 @@ public class NumericRangeConstraintMetadata {
 	private boolean lowerBoundaryInclusive;
 	private boolean upperBoundaryInclusive;
 
-	/**
-	 * @param lowerBoundaryValue
-	 * @param upperBoundaryValue
-	 * @param lowerBoundaryInclusive
-	 * @param upperBoundaryInclusive
-	 */
 	public NumericRangeConstraintMetadata(Double lowerBoundaryValue,
 			Double upperBoundaryValue, boolean lowerBoundaryInclusive,
 			boolean upperBoundaryInclusive) {

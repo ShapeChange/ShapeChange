@@ -43,9 +43,9 @@ import de.interactive_instruments.ShapeChange.Options;
  * collection has a single or no member. This can save a significant amount of
  * memory when processing large models.
  * 
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class StereotypesCacheSet extends StereotypesImpl {

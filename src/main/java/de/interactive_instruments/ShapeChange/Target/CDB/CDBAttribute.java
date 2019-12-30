@@ -42,8 +42,8 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDBAttribute {
@@ -67,13 +67,6 @@ public class CDBAttribute {
 	protected CDBUnit unit = null;
 	protected PropertyInfo propertyInfo;
 
-	/**
-	 * @param code
-	 * @param symbol
-	 * @param name
-	 * @param description
-	 * @param unit
-	 */
 	public CDBAttribute(PropertyInfo pi,
 			MapEntryParamInfos mapEntryParamInfos) {
 		super();

@@ -60,7 +60,6 @@ public class OclConstraintXmi10 extends OclConstraintImpl implements
 	/** The model object */
 	protected Xmi10Document document = null;
 	
-	/** Ctor from class context */
 	public OclConstraintXmi10(Xmi10Document doc, ClassInfoXmi10 ci,
 		String constraintText ) {
 		

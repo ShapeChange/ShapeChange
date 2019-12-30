@@ -23,7 +23,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.EA;
 
-/** @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot> de) */
+/** @author Johannes Echterhoff (echterhoff at interactive-instruments dot de) */
 public class UmlModelConstants {
 
   /**
@@ -146,8 +146,8 @@ public class UmlModelConstants {
    * <p>Explanation: Set this parameter to true, to merge any comment defined for an OCL constraint
    * into the constraint text. ShapeChange supports comments in OCL constraints within java-like
    * comment delimiters: \/* and *\/. Comments may be added to or defined for an OCL constraint via
-   * an external source, such as a model transformation or in SCXML via the <description> element of
-   * an <OclConstraint> element. Merging means that any comment which is not already contained in
+   * an external source, such as a model transformation or in SCXML via the &lt;description&gt; element of
+   * an &lt;OclConstraint&gt; element. Merging means that any comment which is not already contained in
    * the text of the OCL constraint will be prepended to the constraint text, within java-like
    * comment delimiters.
    *

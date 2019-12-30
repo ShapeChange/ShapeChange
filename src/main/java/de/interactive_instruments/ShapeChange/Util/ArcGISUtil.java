@@ -38,14 +38,14 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ArcGISUtil {
 
 	/**
-	 * @param ci
+	 * @param ci tbd
 	 * @return <code>true</code> if one of the attributes of the given class has
 	 *         tagged value 'arcgisDefaultSubtype' with non-empty value, else
 	 *         <code>false</code>.
@@ -63,7 +63,7 @@ public class ArcGISUtil {
 	}
 
 	/**
-	 * @param ci
+	 * @param ci tbd
 	 * @return <code>true</code> if one of the supertypes of the given class has
 	 *         a property with non-empty tagged value 'arcgisDefaultSubtype';
 	 *         else <code>false</code>.
@@ -86,7 +86,7 @@ public class ArcGISUtil {
 	}
 
 	/**
-	 * @param ci
+	 * @param ci tbd
 	 * @return <code>true</code> if the class has a subtype that represents an
 	 *         ArcGIS subtype (i.e., one of its supertypes has a property with
 	 *         non-empty tagged value 'arcgisDefaultSubtype').

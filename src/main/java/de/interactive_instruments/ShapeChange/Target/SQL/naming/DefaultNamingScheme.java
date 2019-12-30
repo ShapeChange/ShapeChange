@@ -40,8 +40,8 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  * constraint name, 2) normalize the name, and 3) ensure that the name is unique
  * within this naming scheme.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {

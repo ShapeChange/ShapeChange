@@ -32,7 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 
 /**
- * @author Clemens Portele (portele <at> interactive-instruments <dot> de)
+ * @author Clemens Portele (portele at interactive-instruments dot de)
  *
  */
 public class ConfigConstants {
@@ -461,10 +461,12 @@ public class ConfigConstants {
 	
 	/**
 	 * Add oNeo metadata fields in feature tables. This assumes the following fields in each feature table:
-	 * <li> erstelltvon character varying(255)
-	 * <li> erstelltam timestamp without time zone
-	 * <li> geaendertvon character varying(255)
-	 * <li> geaendertam timestamp without time zone
+	 * <ul>
+	 * <li> erstelltvon character varying(255)</li>
+	 * <li> erstelltam timestamp without time zone</li>
+	 * <li> geaendertvon character varying(255)</li>
+	 * <li> geaendertam timestamp without time zone</li>
+	 * </ul>
 	 */
 	public static final String RULE_TGT_LDP_CLS_ONEO_METADATA = "rule-ldp-cls-oneo-metadata";
 

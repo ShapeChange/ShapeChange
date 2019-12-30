@@ -94,7 +94,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
  * @author Clemens Portele
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

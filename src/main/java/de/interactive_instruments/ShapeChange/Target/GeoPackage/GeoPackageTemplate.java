@@ -84,7 +84,7 @@ import mil.nga.sf.GeometryType;
 /**
  * Creates a GeoPackage template for a set of application schemas.
  *
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */

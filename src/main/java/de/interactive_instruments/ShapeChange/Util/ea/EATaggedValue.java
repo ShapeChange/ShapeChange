@@ -54,7 +54,7 @@ public class EATaggedValue {
 	protected boolean createAsMemoField = false;
 
 	/**
-	 * @param name
+	 * @param name tbd
 	 * @param value
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)
@@ -65,8 +65,8 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @param name
-	 * @param fqName
+	 * @param name tbd
+	 * @param fqName tbd
 	 * @param value
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)
@@ -77,7 +77,7 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @param name
+	 * @param name tbd
 	 * @param value
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)
@@ -91,8 +91,8 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @param name
-	 * @param fqName
+	 * @param name tbd
+	 * @param fqName tbd
 	 * @param value
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)
@@ -117,7 +117,7 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @param name
+	 * @param name tbd
 	 * @param values
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)
@@ -128,8 +128,8 @@ public class EATaggedValue {
 	}
 
 	/**
-	 * @param name
-	 * @param fqName
+	 * @param name tbd
+	 * @param fqName tbd
 	 * @param values
 	 *            can be <code>null</code> (then the list of values would be
 	 *            empty)

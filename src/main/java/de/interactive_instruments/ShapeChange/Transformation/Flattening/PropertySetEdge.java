@@ -37,13 +37,9 @@ import org.jgrapht.graph.DefaultEdge;
 
 /**
  * @author Johannes Echterhoff
- *
- * @param <V>
  */
 public class PropertySetEdge extends DefaultEdge {
-	/**
-		 * 
-		 */
+
 	private static final long serialVersionUID = 1L;
 
 	private String source;
@@ -81,9 +77,9 @@ public class PropertySetEdge extends DefaultEdge {
 	 * returned by the iterator. If order of the set is important, ensure that
 	 * an ordered set is used (e.g. TreeSet).
 	 * 
-	 * @param parts
-	 * @param delimiter
-	 * @return
+	 * @param parts tbd
+	 * @param delimiter tbd
+	 * @return tbd
 	 */
 	public static String join(Set<String> parts, String delimiter) {
 

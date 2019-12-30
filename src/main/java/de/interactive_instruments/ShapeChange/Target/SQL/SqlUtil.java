@@ -46,17 +46,17 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
 public class SqlUtil {
 
 	/**
-	 * @param pi
+	 * @param pi tbd
 	 * @return <code>true</code> if the value type of the given property is a
 	 *         geometry type - which requires a map entry for the value type
-	 *         whose param contains the {@value #ME_PARAM_GEOMETRY} parameter;
+	 *         whose param contains the {@value SqlConstants#ME_PARAM_GEOMETRY} parameter;
 	 *         otherwise <code>false</code> is returned.
 	 */
 	public static boolean isGeometryTypedProperty(PropertyInfo pi) {
@@ -154,11 +154,11 @@ public class SqlUtil {
 	 * an association, or a property) has a tagged value with the short name,
 	 * and that tagged value is not blank, then the short name is returned.
 	 * 
-	 * @param col
+	 * @param table tbd
 	 * @param useShortName
 	 *                         <code>true</code> if the short name should be
 	 *                         used, if available
-	 * @return
+	 * @return tbd
 	 */
 	public static String determineName(Table table, boolean useShortName) {
 
@@ -195,11 +195,11 @@ public class SqlUtil {
 	 * value with the short name, and that tagged value is not blank, then the
 	 * short name is returned.
 	 * 
-	 * @param col
+	 * @param col tbd
 	 * @param useShortName
 	 *                         <code>true</code> if the short name should be
 	 *                         used, if available
-	 * @return
+	 * @return tbd
 	 */
 	public static String determineName(Column col, boolean useShortName) {
 

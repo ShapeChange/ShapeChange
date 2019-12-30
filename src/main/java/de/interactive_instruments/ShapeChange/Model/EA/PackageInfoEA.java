@@ -106,13 +106,6 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	/** Name of the Package */
 	protected String eaName = null;
 
-	/** Cache map for tagged values */
-	// this map is already defined in InfoImpl
-
-	/** Cache set for stereotypes */
-	// this map is already defined in InfoImpl
-
-	/** Inquire wrapped EA object */
 	public org.sparx.Package getEaPackageObj() {
 		return eaPackage;
 	}
@@ -124,7 +117,6 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 	/** Cache for the IDs of the suppliers of this class */
 	protected TreeSet<String> supplierIds = null;
 
-	/** Create new PackageInfo object. */
 	public PackageInfoEA(EADocument doc, PackageInfoEA ppi,
 			org.sparx.Package pack, Element packelmt) {
 		// Memorize document object
@@ -367,7 +359,6 @@ public class PackageInfoEA extends PackageInfoImpl implements PackageInfo {
 		}
 	} // loadTaggedValuesCache()
 
-	/** Set the tagged value for the tag given. */
 	public void taggedValue(String tag, String value) {
 		Collection<TaggedValue> cTV = eaPackageElmt.GetTaggedValues();
 		TaggedValue tv = cTV.GetByName(tag);

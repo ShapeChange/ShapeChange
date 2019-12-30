@@ -87,7 +87,7 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -324,7 +324,6 @@ public class Options {
      * <p>
      * Value: boolean value of XsdMapEntry/@xmlReferenceable, or <code>null</code>
      * if that XML attribute was not set
-     * </ul>
      */
     protected Map<String, Boolean> fXmlReferenceableMap = new HashMap<>();
 
@@ -333,7 +332,6 @@ public class Options {
      * <p>
      * Value: boolean value of XsdMapEntry/@xmlElementHasSimpleContent, or
      * <code>null</code> if that XML attribute was not set
-     * </ul>
      */
     protected Map<String, Boolean> fXmlElementHasSimpleContentMap = new HashMap<>();
 
@@ -375,7 +373,7 @@ public class Options {
     /**
      * Hash table for packages
      * <p>
-     * key: package name <br/>
+     * key: package name <br>
      * value: MapEntry with:
      * <ul>
      * <li>rule: namespace URL of the schema (value of XML attribute 'ns' of
@@ -578,7 +576,6 @@ public class Options {
 	    return this.classTypesToCreateConstraintsFor.contains(Integer.valueOf(classCategory));
     }
 
-    /** A map entry. */
     protected void addTypeMapEntry(String k1, String k2, String s1, String s2) {
 	fTypeMap.put(k1 + "#" + k2, new MapEntry(s1, s2));
     }
@@ -769,7 +766,7 @@ public class Options {
     }
 
     /**
-     * @param k1
+     * @param k1 tbd
      * @return the value of the parameter with the given name, or <code>null</code>
      *         if the parameter does not exist
      */
@@ -1011,7 +1008,11 @@ public class Options {
 	return res;
     }
 
-    /** This returns the names of all parms whose names match a regex pattern */
+    /** This returns the names of all parms whose names match a regex pattern 
+     * @param t  tbd
+     * @param regex  tbd
+     * @return  tbd
+     * */
     public String[] parameterNamesByRegex(String t, String regex) {
 	HashSet<String> pnames = new HashSet<String>();
 	int lt2 = t.length() + 2;
@@ -1216,8 +1217,8 @@ public class Options {
      * via the configuration, or <code>null</code> if the configuration does not
      * contain information about the namespace.
      *
-     * @param ns
-     * @return
+     * @param ns tbd
+     * @return tbd
      */
     public String nsabrForNamespace(String ns) {
 
@@ -1788,8 +1789,8 @@ public class Options {
     }
 
     /**
-     * @param type
-     * @param xsdEncodingRule
+     * @param type tbd
+     * @param xsdEncodingRule tbd
      * @return the boolean value of XsdMapEntry/@xmlElementHasSimpleContent, for the
      *         map entry with the given type and encoding rule (or one of the rules
      *         it extends); can be <code>null</code> if that attribute was not set
@@ -1809,11 +1810,7 @@ public class Options {
     /**
      * @param type
      * @param xsdEncodingRule
-     * @return the boolean value of XsdMapEntry/@xmlReferenceable, for the map entry
-     *         with the given type and encoding rule (or one of the rules it
-     *         extends); can be <code>null</code> if that attribute was not set in
-     *         the map entry or no map entry exists for the type in the given
-     *         encoding rule (or one of the rules it extends)
+     * @param xmlReferenceable
      */
     private void addXmlReferenceableMapEntry(String type, String xsdEncodingRule, Boolean xmlReferenceable) {
 
@@ -2995,7 +2992,6 @@ public class Options {
      *
      * @param processElement A Transformer or Target element from the
      *                       ShapeChangeConfiguration
-     * @param string
      * @return map of the map entries contained in the process element (key:
      *         ProcessMapEntry type)
      */
@@ -3260,6 +3256,7 @@ public class Options {
 
     /**
      * Normalize a stereotype fetched from the model.
+     * @param stereotype  tbd
      * 
      * @return The well-known stereotype, for which the given stereotype is defined
      *         as an alias (via stereotype alias configuration elements), or the
@@ -3275,6 +3272,7 @@ public class Options {
 
     /**
      * Normalize a tag fetched from the model.
+     * @param tag  tbd
      * 
      * @return the mapping for the tag, or the given tag itself if no mapping is
      *         configured
@@ -3526,7 +3524,7 @@ public class Options {
     /**
      * Store AIXM schema infos for global use.
      *
-     * @param schemaInfos
+     * @param schemaInfos tbd
      */
     public void setAIXMSchemaInfos(Map<String, AIXMSchemaInfo> schemaInfos) {
 	this.schemaInfos = schemaInfos;
@@ -3578,8 +3576,8 @@ public class Options {
      * processing, this method interns the given string. <code>null</code> is simply
      * returned.
      *
-     * @param string
-     * @return
+     * @param string tbd
+     * @return tbd
      */
     public String internalize(String string) {
 
@@ -3596,8 +3594,8 @@ public class Options {
      * Depending upon whether or not string interning shall be used during
      * processing, this method interns the given string array or an internized copy.
      *
-     * @param array
-     * @return
+     * @param array tbd
+     * @return tbd
      */
     public String[] internalize(String[] array) {
 	if (useStringInterning) {
@@ -3642,8 +3640,8 @@ public class Options {
     }
 
     /**
-     * @param original
-     * @param tagList
+     * @param original tbd
+     * @param tagList tbd
      * @return can be empty but not <code>null</code>
      */
     public TaggedValues taggedValueFactory(TaggedValues original, String tagList) {
@@ -3666,7 +3664,7 @@ public class Options {
     }
 
     /**
-     * @param original
+     * @param original tbd
      * @return can be empty but not <code>null</code>
      */
     public TaggedValues taggedValueFactory(TaggedValues original) {

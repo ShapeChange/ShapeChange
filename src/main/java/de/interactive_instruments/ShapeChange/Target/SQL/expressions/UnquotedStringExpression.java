@@ -35,8 +35,8 @@ package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
  * Used to convey a string that shall not be quoted, for example some default
  * values.
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class UnquotedStringExpression implements Expression {

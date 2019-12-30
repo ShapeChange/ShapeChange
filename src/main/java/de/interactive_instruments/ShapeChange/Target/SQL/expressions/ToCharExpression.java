@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ToCharExpression implements Expression {
@@ -48,19 +48,10 @@ public class ToCharExpression implements Expression {
 	private Expression expression;
 	private String format;
 	
-	/**
-	 * @param expression
-	 * @param format
-	 */
 	public ToCharExpression(Expression expression, String format) {
 		this(expression, format, null);
 	}
 
-	/**
-	 * @param expression
-	 * @param format
-	 * @param nlsParameters
-	 */
 	public ToCharExpression(Expression expression, String format,
 			String nlsParameters) {
 		super();

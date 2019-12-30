@@ -43,7 +43,7 @@ import de.interactive_instruments.ShapeChange.Transformation.Transformer;
  * multiple targets and/or transformers on an input model, where model access
  * may be expensive (e.g. if such access requires a database lookup).
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
 public class IdentityTransform implements Transformer {

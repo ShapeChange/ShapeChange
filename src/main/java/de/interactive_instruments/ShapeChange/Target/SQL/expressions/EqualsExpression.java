@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class EqualsExpression extends BinaryExpression {

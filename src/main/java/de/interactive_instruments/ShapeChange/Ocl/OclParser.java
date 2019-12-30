@@ -49,14 +49,12 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Ocl.OclNode.Declaration;
 
 /**
- * <p>
  * The OclParser object implements a parser and intermediate code generator for
  * a subset of OCL. The latter is roughly characterized by the following traits
- * </p>
  * <ul>
  * <li>Full support of OCL built-in datatypes except Collections and Tuples.
  * <li>Sets are only implicitly supported as sets of built-in or UML class types
- * via the -> operator.
+ * via the -&gt; operator.
  * <li>Only a small set of built-in operations and iterators is provided:
  * <i>allInstances(), size(), isEmpty(), notEmpty(), substring(), concat(),
  * oclIsKindOf(), exists()</i>
@@ -70,7 +68,6 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.Declaration;
  * <li>Supported condition types are <i>inv:</i>, <i>derive:</i>, <i>init:</i>.
  * Both latter need a Property context.
  * </ul>
- * <p>
  * The OclParser object is created by means of a no-argument constructor and can
  * then repeatedly be used to translate OCL expressions by invoking the
  * <i>parseOcl()</i> function. In case of a successful parse the resulting
@@ -78,15 +75,12 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.Declaration;
  * not successful. Various methods allow to inquire the number of generated
  * diagnostics, the diagnostics themselves, the contents of all OCL comments
  * detected, and debug output representing syntax tree representations.
- * </p>
- * <p>
+ * <br><br>
  * The set of built-in operations recognized by the OclParser can be extended by
  * means of the method pair <i>addOperation(...)</i> and
  * <i>removeOperation(...).</i>
- * </p>
- * <p>
+ * <br><br>
  * The OclParser works in two phases:
- * </p>
  * <ul>
  * <li>In the first phase a syntax tree of so-called TempNodes is created which
  * reflects the OCL-defined operator binding hierarchy. Access to the model is
@@ -97,14 +91,12 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode.Declaration;
  * implied by the OCL semantics. See the documentation of OclNode for further
  * explanations.
  * </ul>
- * <p>
+ * 
  * The output of the second phase is used in ShapeChange Targets to generate OCL
  * equivalents in various target bindings.
- * </p>
- * <p>
+ * <br><br>
  * OclParser objects are not designed for concurrent use. Each thread will
  * require its own OclParser object.
- * </p>
  * 
  * @version 0.1
  * @author Reinhard Erstling (c) interactive instruments GmbH, Bonn, Germany
@@ -196,14 +188,12 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
 	 * Perform a full parse of an OCL expression addressed by a Readable. The
 	 * output is returned as an OclNode.OclExpression.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * Parsing starts at the condition type keyword, such as <i>inv:</i>,
 	 * <i>derive:</i>, etc.
-	 * </p>
+	 * 
 	 * 
 	 * @param inOcl
 	 *                  Readable to fetch the OCL input from.
@@ -235,15 +225,13 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
 	 * Perform a full parse of an OCL expression addressed by a Readable. The
 	 * output is returned as an OclNode.OclExpression.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * This alternate version of the function starts parsing directly at the
 	 * pure OCL statement. Condition type and name of the constraint have to be
 	 * passed along as parameters.
-	 * </p>
+	 * 
 	 * 
 	 * @param inOcl
 	 *                  Readable to fetch the OCL input from.
@@ -334,10 +322,10 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * Obtain a syntactical representation of the TempNode intermediate for
 	 * debugging purposes.
-	 * </p>
+	 * 
 	 * 
 	 * @return String with syntactical structure
 	 */
@@ -352,7 +340,7 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * Obtain a syntactical representation of the OclNode result for debugging
 	 * purposes.
 	 * 
@@ -369,17 +357,15 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
-	 * This method adds a new variable declaration to the set of so-called
+	 * s method adds a new variable declaration to the set of so-called
 	 * environment variables. An environment variable is another variable
 	 * declaration in addition to <i>self</i> which is automatically set up from
 	 * the context of an expression.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * This is an extension to OCL, which is sometimes useful to add predefined
 	 * references to a set of constraints. It works like a big <i>let</i>, which
 	 * surrounds the expression.
-	 * </p>
+	 * 
 	 * 
 	 * @param name
 	 *                      Name of the variable to be declared
@@ -403,9 +389,9 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This one removes an environment variable by name.
-	 * </p>
+	 * 
 	 * 
 	 * @param name
 	 *                 The name of the environment variable
@@ -419,12 +405,12 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This method adds an operation to the set of operations the parser
 	 * recognizes as valid OCL operations. The operation is identified by its
 	 * name, the number of parameters and the type of object it can be applied
 	 * to.
-	 * </p>
+	 * 
 	 * 
 	 * @param name
 	 *                     Name of operation
@@ -454,12 +440,12 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * By this method you can remove operations from the set of operations the
 	 * parser recognizes as valid OCL operations. The operations to be removed
 	 * are identified by by their names, the number of parameters and the type
 	 * of object it can be applied to.
-	 * </p>
+	 * 
 	 * 
 	 * @param name
 	 *                     The name of the operations to be removed
@@ -602,7 +588,7 @@ public class OclParser {
 	 * <li>+ | -
 	 * <li>* | /
 	 * <li>prefix operations (not handled by this function)
-	 * <li>. | ->
+	 * <li>. | -&gt;
 	 * </ul>
 	 * 
 	 * @param itype
@@ -799,7 +785,7 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This function is responsible for parsing simple literals, which in this
 	 * stage are integers, floats, strings, booleans. Note that enumerations in
 	 * this stage are indistinguishable from properties, because this can only
@@ -866,10 +852,10 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This is an incomplete parser for complex literals. In its final state
 	 * this function shall deal with all flavors of Collections and Tuples.
-	 * </p>
+	 * 
 	 * 
 	 * @return TempNode representing the complex literal
 	 */
@@ -904,10 +890,10 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This is a parser for the special literal type Date. Date literals are
 	 * recognized as follows:
-	 * </p>
+	 * 
 	 * <ul>
 	 * <li><i>Date()</i>, which represents the current date at the time of using
 	 * the constraint, and
@@ -1109,18 +1095,16 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * The parsePathName method analyzes sequences of identifiers which are
 	 * separated by :: symbols. If a scoping operator :: is indeed present it
 	 * indicates a path in the UML model from packages towards classes and
 	 * possibly enum values. If no :: is present, the identifier can mean
 	 * anything, including an OCL variable.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * PathNames are evaluated left-associative. So, a PathName node consists of
 	 * a context (which is null or a Identifier) and an identifier name.
-	 * </p>
-	 * <p>
+	 * <br><br>
 	 * In excess to the syntax described above, the implementation at hand also
 	 * gives support to syntactical variations in the last step of the path. In
 	 * this position, besides well-formed identifiers, also tokens of the text
@@ -1128,7 +1112,7 @@ public class OclParser {
 	 * these tokens forms the name of that identifier. The reason for this
 	 * extended syntax is the support for enumeration references, which refer to
 	 * integer numbers or any sort of character.
-	 * </p>
+	 * 
 	 * 
 	 * @return TempNode representing the scoped identifier
 	 */
@@ -1225,12 +1209,12 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * parseIf analyzes the OCL if ... then ... else ... endif construct. We
 	 * permit arbitrary expressions in each ... part of the phrase. If the
 	 * proper reserved words of the sequence are not seen in their correct
 	 * places the Invalid is returned.
-	 * </p>
+	 * 
 	 * 
 	 * @return TempNode representing the if-construct.
 	 */
@@ -1298,11 +1282,11 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This method parses the OCL let-construct. The result is a TempNode of
 	 * type LetClause, which contains the declarations and the expression these
 	 * declaration apply to.
-	 * </p>
+	 * 
 	 * 
 	 * @return TempNode representing the let construct.
 	 */
@@ -1367,7 +1351,7 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
+	 * 
 	 * This method analyzes all sorts of argument lists, which in the general
 	 * case consist of a bracketed construct containing an optional prefix part
 	 * of variable declarations (aimed at iterator constructs) followed by a '|'
@@ -1481,18 +1465,15 @@ public class OclParser {
 	}
 
 	/**
-	 * <p>
 	 * This method parses a variable declaration and initialization. The syntax
 	 * recognized is:
-	 * </p>
-	 * <p style="text-indent:1cm">
-	 * string [ <i>:</i> pathname ] [ <i>=</i> expression ]
-	 * </p>
-	 * <p>
+	 * 
+	 * <code>string [ <i>:</i> pathname ] [ <i>=</i> expression ]</code>
+	 * 
 	 * where the mandatory string is the identifier name, the optional pathname
 	 * designates a type (full OCL provides more syntactic possibilities here)
 	 * and the optional assignment provides the initial value.
-	 * </p>
+	 * 
 	 * 
 	 * @return TempNode representing the variable declaration, may be null.
 	 */

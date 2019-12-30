@@ -41,8 +41,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  */
 public class ProfileIdentifier implements Comparable<ProfileIdentifier> {
 
@@ -61,13 +61,12 @@ public class ProfileIdentifier implements Comparable<ProfileIdentifier> {
 	private SortedMap<String, String> parameters;
 
 	/**
-	 * @param name
-	 * @param versionIndicator;
+	 * @param name tbd
+	 * @param versionIndicator
 	 *            can be <code>null</code>
 	 * @param parameters
 	 *            parameters defined for the profile; can be <code>null</code>
 	 *            if no parameters are defined
-	 * @param ownerName
 	 */
 	public ProfileIdentifier(String name,
 			ProfileVersionIndicator versionIndicator,
@@ -143,11 +142,11 @@ public class ProfileIdentifier implements Comparable<ProfileIdentifier> {
 	}
 
 	/**
-	 * @param other
+	 * @param other tbd
 	 * @param messages
 	 *            List to store the reason(s) why this identifier does not
 	 *            contain the other identifier; can be null
-	 * @return
+	 * @return tbd
 	 */
 	public boolean contains(ProfileIdentifier other, List<String> messages) {
 

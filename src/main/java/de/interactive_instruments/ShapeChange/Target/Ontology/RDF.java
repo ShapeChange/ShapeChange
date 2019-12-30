@@ -298,7 +298,11 @@ public class RDF implements Target, MessageSource {
 		return s;
 	}
 
-	/** Add attribute to an element */
+	/** Add attribute to an element 
+	 * @param document  tbd
+	 * @param e  tbd
+	 * @param name  tbd
+	 * @param value  tbd */
 	protected void addAttribute(Document document, Element e, String name,
 			String value) {
 		Attr att = document.createAttribute(name);

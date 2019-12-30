@@ -36,8 +36,8 @@ import java.util.TreeMap;
 
 /**
  * 
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class CDBCategory {
@@ -51,10 +51,6 @@ public class CDBCategory {
 		super();
 	}
 
-	/**
-	 * @param code
-	 * @param label
-	 */
 	public CDBCategory(String code, String label) {
 		super();
 		this.code = code;
@@ -109,7 +105,7 @@ public class CDBCategory {
 	}
 
 	/**
-	 * @param subcatcode
+	 * @param subcatcode tbd
 	 * @return <code>true</code> if a subcategory with the given code exists,
 	 *         else <code>false</code>
 	 */
@@ -118,7 +114,7 @@ public class CDBCategory {
 	}
 
 	/**
-	 * @param subcatcode
+	 * @param subcatcode tbd
 	 * @return the subcategory with the given code; can be <code>null</code> if
 	 *         no such subcategory exists
 	 */
@@ -129,7 +125,7 @@ public class CDBCategory {
 	/**
 	 * Adds the given subcategory to this category
 	 * 
-	 * @param subcat
+	 * @param subcat tbd
 	 */
 	public void add(CDBSubcategory subcat) {
 		this.subcategoriesByCode.put(subcat.getCode(), subcat);

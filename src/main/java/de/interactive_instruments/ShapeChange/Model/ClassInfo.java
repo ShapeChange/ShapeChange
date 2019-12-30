@@ -52,6 +52,7 @@ public interface ClassInfo extends Info {
 	/**
 	 * Determine whether a standard property type shall be included in the
 	 * schema. This applies for classes that are object or data types.
+	 * @return  tbd
 	 */
 	public boolean includePropertyType();
 
@@ -59,35 +60,40 @@ public interface ClassInfo extends Info {
 	 * Determine whether a property type shall be included in the schema for the
 	 * object type that does not support Xlinks but requires encoding the
 	 * property value inline.
+	 * @return  tbd
 	 */
 	public boolean includeByValuePropertyType();
 
 	/**
 	 * This predicate determines if the class is a collection. This is done by
 	 * inspecting the associated tagged value.
+	 * @return  tbd
 	 */
 	public boolean isCollection();
 
 	/**
 	 * Find out if this class has to be output as a dictionary.
+	 * @return  tbd
 	 */
 	public boolean asDictionary();
 
 	/**
-	 * If a <<Union>> class has a tagged value "asGroup" with a value "true"
+	 * If a &lt;&lt;Union&gt;&gt; class has a tagged value "asGroup" with a value "true"
 	 * then it is encoded as a global group which is referenced wherever a
 	 * property is defined that has the union class as its value. Note that this
 	 * is only valid, if it is clear from the context how to map the individual
 	 * values to the conceptual model.
+	 * @return  tbd
 	 */
 	public boolean asGroup();
 
 	/**
-	 * If a <<Union>> class has a tagged value "gmlAsCharacterString" with a
+	 * If a &lt;&lt;Union&gt;&gt; class has a tagged value "gmlAsCharacterString" with a
 	 * value "true" it will be translated into an xsd:string simple type
 	 * regardless of how it is actually built. <br>
 	 * Note: This is experimental code which is prone to being removed as soon
 	 * as a better solution for the problem at hand is found.
+	 * @return  tbd
 	 */
 	public boolean asCharacterString();
 
@@ -109,6 +115,7 @@ public interface ClassInfo extends Info {
 
 	/**
 	 * Determine whether the class is tagged as being a leaf class
+	 * @return  tbd
 	 */
 	public boolean isLeaf();
 
@@ -162,6 +169,8 @@ public interface ClassInfo extends Info {
 	/**
 	 * Check whether the class and the package pi are part of the same schema (=
 	 * XML namespace).
+	 * @param pi  tbd
+	 * @return  tbd
 	 */
 	public boolean inSchema(PackageInfo pi);
 
@@ -171,6 +180,7 @@ public interface ClassInfo extends Info {
 	 * acknowledged stereotypes are considered. A base class is selected if it
 	 * has the same category as this class or category unknown. However mixin
 	 * classes are always ignored.
+	 * @return  tbd
 	 */
 	public ClassInfo baseClass();
 
@@ -178,11 +188,13 @@ public interface ClassInfo extends Info {
 	 * Return the namespace-prefixed class name. The namespace prefix is fetched
 	 * from the package the class belongs to. If no prefix is found, the class
 	 * name alone is returned.
+	 * @return  tbd
 	 */
 	public String qname();
 
 	/**
 	 * Return the category of the class.
+	 * @return  tbd
 	 */
 	public int category();
 
@@ -190,6 +202,8 @@ public interface ClassInfo extends Info {
 	 * This is supposed to find out, whether the given category 'cat' applied in
 	 * 'this' class complies to the categories of all its base classes. If at
 	 * least one base class does not comply, 'false' is returned.
+	 * @param cat  tbd
+	 * @return  tbd
 	 */
 	public boolean checkSupertypes(int cat);
 
@@ -226,6 +240,8 @@ public interface ClassInfo extends Info {
 	/**
 	 * Find out whether this class owns a constraint of the given name. More
 	 * efficient overwrites should be added in the various models.
+	 * @param name  tbd
+	 * @return  tbd
 	 */
 	public boolean hasConstraint(String name);
 
@@ -236,7 +252,7 @@ public interface ClassInfo extends Info {
 	 * Note: a ClassInfo does not keep track of non-navigable properties. Such
 	 * properties occur in directed associations and are only referenced there.
 	 * 
-	 * @param name
+	 * @param name tbd
 	 * @return a property with that name (from the class or one of its
 	 *         supertypes), or <code>null</code> if no property was found
 	 */
@@ -246,7 +262,7 @@ public interface ClassInfo extends Info {
 	 * Look up the property with the given name in the properties owned by this
 	 * class. The search does not extend to supertypes of the class.
 	 * 
-	 * @param name
+	 * @param name tbd
 	 * @return The property with the given name, or <code>null</code> if no such
 	 *         property exists.
 	 */
@@ -257,6 +273,8 @@ public interface ClassInfo extends Info {
 	/**
 	 * Determine whether this type is a direct or indirect subtype of the
 	 * argument type.
+	 * @param ci  tbd
+	 * @return  tbd
 	 */
 	public boolean isSubtype(ClassInfo ci);
 
@@ -264,8 +282,8 @@ public interface ClassInfo extends Info {
 	 * Determine if this type is of the given kind, i.e. if one of its (direct
 	 * or indirect) supertypes has a name that equals the given one.
 	 * 
-	 * @param supertypeName
-	 * @return
+	 * @param supertypeName tbd
+	 * @return tbd
 	 */
 	public boolean isKindOf(String supertypeName);
 
@@ -273,6 +291,7 @@ public interface ClassInfo extends Info {
 	 * Determine whether this is a 'suppressed' class. A suppressed class is for
 	 * attaching constraints to its next direct or indirect unsuppressed
 	 * superclass.
+	 * @return  tbd
 	 */
 	public boolean suppressed();
 
@@ -286,20 +305,23 @@ public interface ClassInfo extends Info {
 	 * If no such class can be found <i>null</i> is returned. If the class where
 	 * we start (this class) is already found unsuppressed, then this class is
 	 * returned.
+	 * @param permitAbstract  tbd
+	 * @return  tbd
 	 */
 	public ClassInfo unsuppressedSupertype(boolean permitAbstract);
 
 	/**
 	 * Find out if this class has to be output as a dictionary.
+	 * @return  tbd
 	 */
 	public boolean asDictionaryGml33();
 
 	/**
-	 * Special case of a &lt;&lt;union>> with two properties (value and reasons) that
+	 * Special case of a &lt;&lt;union&gt;&gt; with two properties (value and reasons) that
 	 * can be mapped to a native nil/void/null mechanism in some implementation
 	 * environments, e.g. XML Schema
 	 * 
-	 * @return
+	 * @return tbd
 	 */
 	boolean isUnionDirect();
 

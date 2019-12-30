@@ -51,7 +51,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments <dot>
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  *
  */
@@ -83,8 +83,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * is complete. This can result in 10- to 20-fold improvement in adding new
      * elements in bulk.</i>
      * 
-     * @param rep
-     * @param batchAppend
+     * @param rep tbd
+     * @param batchAppend tbd
      */
     public static void setEABatchAppend(Repository rep, boolean batchAppend) {
 
@@ -97,8 +97,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * of elements to a Package. To reveal changes to the user, call
      * 'Repository.RefreshModelView()'.</i>
      * 
-     * @param rep
-     * @param batchAppend
+     * @param rep tbd
+     * @param enableUIUpdates tbd
      */
     public static void setEAEnableUIUpdates(Repository rep, boolean enableUIUpdates) {
 
@@ -218,12 +218,13 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * Create a generalization relationship between class 1 (subtype) and class 2
      * (supertype).
      * 
-     * @param rep
-     * @param c1ElementId
-     * @param c1Name
-     * @param c2ElementId
-     * @param c2Name
-     * @throws EAException
+     * @param rep tbd
+     * @param c1ElementId tbd
+     * @param c1Name tbd
+     * @param c2ElementId tbd
+     * @param c2Name tbd
+     * @return  tbd
+     * @throws EAException tbd
      */
     public static Connector createEAGeneralization(Repository rep, int c1ElementId, String c1Name, int c2ElementId,
 	    String c2Name) throws EAException {
@@ -249,10 +250,11 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * Create a generalization relationship between class 1 (subtype) and class 2
      * (supertype).
      * 
-     * @param rep
-     * @param c1
-     * @param c2
-     * @throws EAException
+     * @param rep tbd
+     * @param c1 tbd
+     * @param c2 tbd
+     * @return  tbd
+     * @throws EAException tbd
      */
     public static Connector createEAGeneralization(Repository rep, Element c1, Element c2) throws EAException {
 
@@ -275,7 +277,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * SetEnableUIUpdates=true, RefreshModelView(0), SetEnableCache=false,
      * SetBatchAppend=false, CloseFile(), Exit();
      * 
-     * @param rep
+     * @param rep tbd
      */
     public static void closeRepository(Repository rep) {
 
@@ -288,12 +290,12 @@ public class EARepositoryUtil extends AbstractEAUtil {
     }
 
     /**
-     * @param repfileIn
+     * @param repfileIn tbd
      * @param createIfNotExisting If <code>true</code>, create the EAP file if it
      *                            does not exist yet, including the required
      *                            directory structure.
-     * @return
-     * @throws EAException
+     * @return tbd
+     * @throws EAException tbd
      */
     public static Repository openRepository(File repfileIn, boolean createIfNotExisting) throws EAException {
 
@@ -367,7 +369,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * child of the given EA parent package. Properties such as stereotype and
      * tagged values are not set by this method and thus need to be added later on.
      * 
-     * @param rep
+     * @param rep tbd
      * @param pi            package to create in EA
      * @param eaParentPkgId The PackageID of the EA Package element that is the
      *                      parent of the EA Package to create for pi
@@ -415,7 +417,9 @@ public class EARepositoryUtil extends AbstractEAUtil {
      *                                             package}
      * @param rep                                  The EA repository that contains
      *                                             the container package.
-     * @param numberOfSchemasSelectedForProcessing
+     * @param numberOfSchemasSelectedForProcessing tbd
+     * @param author  tbd
+     * @param status  tbd
      * @return The PackageID of the EA package that corresponds to the package which
      *         owns the given class (see parameter ci).
      * @throws EAException If an exception occurred while interacting with the EA

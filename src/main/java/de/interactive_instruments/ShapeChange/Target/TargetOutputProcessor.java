@@ -78,8 +78,8 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Util.XsltWriter;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class TargetOutputProcessor implements MessageSource {
@@ -144,12 +144,12 @@ public class TargetOutputProcessor implements MessageSource {
 	 * If set to "true", a comment will be added to output files (with one of
 	 * the following file extensions: xml, xsd, rdf, owl, sch, trix, sql, ddl,
 	 * ttl, nt, trig, nq). The comment is given via parameter
-	 * {@value #PARAM_GENERATION_COMMENT}.
+	 * {@value #PARAM_COMMENT}.
 	 */
 	public static final String PARAM_ADD_COMMENT = "processOutput_addComment";
 	/**
 	 * Comment to add to the content of output files (see parameter
-	 * {@value #PARAM_ADD_GENERATION_COMMENT}). If no value is provided for this
+	 * {@value #PARAM_ADD_COMMENT}). If no value is provided for this
 	 * parameter, the default value applies (i.e., the comment will be
 	 * auto-generated). The default value is generated as follows: last modified
 	 * date of the output file, formatted according to yyyyMMdd, followed by the
@@ -196,7 +196,7 @@ public class TargetOutputProcessor implements MessageSource {
 	 *            the tmp.xml from the feature catalogue target)
 	 * @param tgt
 	 *            configuration of the target that created the output
-	 * @param pi
+	 * @param schema
 	 *            schema from which the output has been derived; may be
 	 *            <code>null</code> if the output has been derived from multiple
 	 *            schemas, or if the target is a deferrable output writer

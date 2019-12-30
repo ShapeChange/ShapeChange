@@ -32,8 +32,8 @@
 package de.interactive_instruments.ShapeChange;
 
 /**
- * @author Johannes Echterhoff (echterhoff <at> interactive-instruments
- *         <dot> de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments
+ *         dot de)
  *
  */
 public class ConstraintMapping {
@@ -53,13 +53,6 @@ public class ConstraintMapping {
 	private String noValue;
 	private String multiValueConnectorToken;
 
-	/**
-	 * @param constraintType
-	 * @param target
-	 * @param template
-	 * @param noValue
-	 * @param multiValueConnectorToken
-	 */
 	public ConstraintMapping(ConstraintType constraintType, String target,
 			String template, String noValue, String multiValueConnectorToken,
 			Format format) {

@@ -43,14 +43,6 @@ public class ImageMetadata {
 	private int width;
 	private int height;
 
-	/**
-	 * @param id
-	 * @param name
-	 * @param file
-	 * @param relPathToFile
-	 * @param width
-	 * @param height
-	 */
 	public ImageMetadata(String id, String name, File file,
 			String relPathToFile, int width, int height) {
 		super();
@@ -70,7 +62,7 @@ public class ImageMetadata {
 	}
 
 	/**
-	 * @param imgId
+	 * @param id
 	 *            the imgId to set
 	 */
 	public void setId(String id) {
@@ -85,7 +77,7 @@ public class ImageMetadata {
 	}
 
 	/**
-	 * @param imgName
+	 * @param name
 	 *            the imgName to set
 	 */
 	public void setName(String name) {
