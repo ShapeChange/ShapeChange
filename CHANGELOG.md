@@ -1,6 +1,64 @@
-# Change Log
+# Changelog
+
+## [2.9.0](https://github.com/ShapeChange/ShapeChange/tree/2.9.0) (2019-12-30)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.8.0...2.9.0)
+
+**Implemented enhancements:**
+
+- General - improve performance of unit tests that do not write to EA repositories [\#222](https://github.com/ShapeChange/ShapeChange/issues/222)
+- General - create new target that supports conversion to a GeoPackage template [\#221](https://github.com/ShapeChange/ShapeChange/issues/221)
+- General - support custom Model interface implementations [\#219](https://github.com/ShapeChange/ShapeChange/issues/219)
+- XmlSchema target / Schematron - support generation of value or nil reason checks, and content checks for nil reason [\#218](https://github.com/ShapeChange/ShapeChange/issues/218)
+- General - Improve ShapeChange extensibility by introducing a mechanism for ShapeChange Target implementations to register conversion and encoding rules as well as requirements [\#217](https://github.com/ShapeChange/ShapeChange/issues/217)
+- General - introduce alias constraintLoading for input parameter checkingConstraints [\#216](https://github.com/ShapeChange/ShapeChange/issues/216)
+- UmlModel, SqlDdl, and ArcGIS targets - support setting EA element author and status [\#215](https://github.com/ShapeChange/ShapeChange/issues/215)
+- ModelExport target - new rule to suppress isNavigable, and remove default from isNavigable [\#214](https://github.com/ShapeChange/ShapeChange/issues/214)
+- General - support additional stereotypes defined by input parameter [\#213](https://github.com/ShapeChange/ShapeChange/issues/213)
+- XmlSchema target / Schematron - Support xslt2 query binding [\#209](https://github.com/ShapeChange/ShapeChange/issues/209)
+- TypeConverter transformation - dissolve association - provide a way to control inlineOrByReference setting of resulting attribute [\#207](https://github.com/ShapeChange/ShapeChange/issues/207)
+- Feature Catalogue target - Support code lists and enumerations in frame-based HTML catalog [\#204](https://github.com/ShapeChange/ShapeChange/issues/204)
+- EA model - Ensure plain text formatting for model element notes [\#203](https://github.com/ShapeChange/ShapeChange/issues/203)
+- ldproxy target - support for readable tag [\#202](https://github.com/ShapeChange/ShapeChange/issues/202)
+- SQL DDL target - Support SQLite/SpatiaLite [\#200](https://github.com/ShapeChange/ShapeChange/issues/200)
+- General - Support property metadata [\#199](https://github.com/ShapeChange/ShapeChange/issues/199)
+- ModelExport target - new rule to omit descriptors [\#197](https://github.com/ShapeChange/ShapeChange/issues/197)
+- SCXML - Add ability to explicitly encode descriptive information / comments for constraints [\#196](https://github.com/ShapeChange/ShapeChange/issues/196)
+- Application Schema Metadata target - new rule to identify properties with specific tagged values [\#195](https://github.com/ShapeChange/ShapeChange/issues/195)
+- ModelExport target - Suppress code and enum characteristics without semantic meaning [\#194](https://github.com/ShapeChange/ShapeChange/issues/194)
+- General - Add an input parameter to specify an XML Schema with which to validate SCXML [\#193](https://github.com/ShapeChange/ShapeChange/issues/193)
+- General - Extend property content model with ownership information [\#192](https://github.com/ShapeChange/ShapeChange/issues/192)
+- SQL DDL target - Oracle: Support length qualifier for data types [\#191](https://github.com/ShapeChange/ShapeChange/issues/191)
+- General - Support code lists modelled as EA elements of type enumeration [\#189](https://github.com/ShapeChange/ShapeChange/issues/189)
+- FeatureCatalogue target - Represent tagged values of codes and enums in temporary XML [\#188](https://github.com/ShapeChange/ShapeChange/issues/188)
+- Loading SCXML: input configuration parameters and elements should be taken into account  [\#162](https://github.com/ShapeChange/ShapeChange/issues/162)
+
+**Fixed bugs:**
+
+- XmlSchema target - OCL constraints defined for properties not encoded in Schematron [\#205](https://github.com/ShapeChange/ShapeChange/issues/205)
+- FeatureCatalogue target - Keep sorting of diagrams specified while loading the input model [\#190](https://github.com/ShapeChange/ShapeChange/issues/190)
+- General - Explicit target namespaces in generic model and SCXML cause unexpected behavior [\#181](https://github.com/ShapeChange/ShapeChange/issues/181)
+
+**Closed issues:**
+
+- The semantic validation of the ShapeChange configuration detected one or more errors [\#206](https://github.com/ShapeChange/ShapeChange/issues/206)
+- Ontology target : different behaviors for UML tagged values as template for DescriptorTarget [\#165](https://github.com/ShapeChange/ShapeChange/issues/165)
+
+**Merged pull requests:**
+
+- Java11 [\#225](https://github.com/ShapeChange/ShapeChange/pull/225) ([jechterhoff](https://github.com/jechterhoff))
+- Geopackage [\#224](https://github.com/ShapeChange/ShapeChange/pull/224) ([jechterhoff](https://github.com/jechterhoff))
+- Refactor setting SRSs [\#223](https://github.com/ShapeChange/ShapeChange/pull/223) ([jechterhoff](https://github.com/jechterhoff))
+- Ugas [\#220](https://github.com/ShapeChange/ShapeChange/pull/220) ([jechterhoff](https://github.com/jechterhoff))
+- Merge PODS SL branch into master [\#212](https://github.com/ShapeChange/ShapeChange/pull/212) ([jechterhoff](https://github.com/jechterhoff))
+- validateStereotypesCache\(\) for EA models [\#211](https://github.com/ShapeChange/ShapeChange/pull/211) ([heidivanparys](https://github.com/heidivanparys))
+-  Add support for data types modeled as UML data type classifier [\#210](https://github.com/ShapeChange/ShapeChange/pull/210) ([heidivanparys](https://github.com/heidivanparys))
+- Ea txt [\#208](https://github.com/ShapeChange/ShapeChange/pull/208) ([jechterhoff](https://github.com/jechterhoff))
+- Sdfe [\#201](https://github.com/ShapeChange/ShapeChange/pull/201) ([jechterhoff](https://github.com/jechterhoff))
+- Change behaviour length qualifier [\#198](https://github.com/ShapeChange/ShapeChange/pull/198) ([heidivanparys](https://github.com/heidivanparys))
 
 ## [2.8.0](https://github.com/ShapeChange/ShapeChange/tree/2.8.0) (2019-03-28)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.7.0...2.8.0)
 
 **Implemented enhancements:**
@@ -20,6 +78,7 @@
 - Pods [\#182](https://github.com/ShapeChange/ShapeChange/pull/182) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [2.7.0](https://github.com/ShapeChange/ShapeChange/tree/2.7.0) (2018-12-10)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.6.0...2.7.0)
 
 **Implemented enhancements:**
@@ -52,6 +111,7 @@
 - Owl [\#171](https://github.com/ShapeChange/ShapeChange/pull/171) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [2.6.0](https://github.com/ShapeChange/ShapeChange/tree/2.6.0) (2018-09-11)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.5.1...2.6.0)
 
 **Implemented enhancements:**
@@ -100,6 +160,7 @@
 - Sql and arc gis [\#147](https://github.com/ShapeChange/ShapeChange/pull/147) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [2.5.1](https://github.com/ShapeChange/ShapeChange/tree/2.5.1) (2018-02-23)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.5.0...2.5.1)
 
 **Implemented enhancements:**
@@ -125,6 +186,7 @@
 - add \<\<retired\>\> to known stereotypes [\#121](https://github.com/ShapeChange/ShapeChange/pull/121) ([cportele](https://github.com/cportele))
 
 ## [ShapeChange-2.5.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.5.0) (2018-01-16)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.4.0...ShapeChange-2.5.0)
 
 **Implemented enhancements:**
@@ -154,6 +216,7 @@
 - Extend SQL target to create database UML model, fixes and extensions to UML and ArcGIS targets [\#120](https://github.com/ShapeChange/ShapeChange/pull/120) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [ShapeChange-2.4.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.4.0) (2017-11-22)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.3.0...ShapeChange-2.4.0)
 
 **Implemented enhancements:**
@@ -190,7 +253,6 @@
 
 **Fixed bugs:**
 
-- SQL DDL target - Improve handling of default values [\#65](https://github.com/ShapeChange/ShapeChange/issues/65)
 - XML Schema target - facet on basic type [\#53](https://github.com/ShapeChange/ShapeChange/issues/53)
 
 **Closed issues:**
@@ -225,6 +287,7 @@
 - improves facet detection, adds documentation to derivedDocumentation\(\) [\#56](https://github.com/ShapeChange/ShapeChange/pull/56) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [ShapeChange-2.3.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.3.0) (2017-01-16)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.2.0...ShapeChange-2.3.0)
 
 **Implemented enhancements:**
@@ -256,6 +319,7 @@
 - Split class BasicTest into multiple test classes [\#48](https://github.com/ShapeChange/ShapeChange/pull/48) ([heidivanparys](https://github.com/heidivanparys))
 
 ## [ShapeChange-2.2.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.2.0) (2016-11-09)
+
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/ShapeChange-2.1.0...ShapeChange-2.2.0)
 
 **Implemented enhancements:**
@@ -289,5 +353,8 @@
 
 ## [ShapeChange-2.1.0](https://github.com/ShapeChange/ShapeChange/tree/ShapeChange-2.1.0) (2016-03-02)
 
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/3957619d6dec94cb2e8f20ccd3985967bcff8d95...ShapeChange-2.1.0)
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
