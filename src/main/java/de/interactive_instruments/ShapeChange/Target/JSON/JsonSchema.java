@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +32,21 @@
 
 package de.interactive_instruments.ShapeChange.Target.JSON;
 
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeMap;
 
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -53,25 +57,25 @@ import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
-import de.interactive_instruments.ShapeChange.Target.Target;
-import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
+import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Target;
 
 public class JsonSchema implements Target, MessageSource {
 
 	// TODO convert to more fine-grained info.matches() logic
 	
 	public static final String PARAM_SKIP_NOT_IMPLEMENTED_CHECK = "skipNotImplementedCheck";
-	private static final String JSON_SCHEMA_URI_DRAFT_03 = "http://json-schema.org/draft-03/schema#";
-	private static final String JSON_SCHEMA_URI_DRAFT_04 = "http://json-schema.org/draft-04/schema#";
+	private static final String JSON_SCHEMA_URI_DRAFT_2019_09 = "https://json-schema.org/draft/2019-09/schema";
 
 	private class Context {
-		protected String links = null;
-		protected boolean first = true;
-		protected BufferedWriter writer = null;
+		protected ArrayList<Object> links = new ArrayList<>();
+		protected TreeMap<String,Object> object = new TreeMap<>();
+		protected File file = null;
+		protected boolean addDefsLink = false;
 	}
 	
 	// geometry type per feature type
@@ -92,6 +96,7 @@ public class JsonSchema implements Target, MessageSource {
 	private boolean skipNotImplementedCheck = false;
 	private String documentationTemplate = null;
 	private String documentationNoValue = null;
+	private Gson gson = null;
 
 	/**
 	 * <p>Initialize target generation for the JSON Schema output.</p> 
@@ -122,15 +127,21 @@ public class JsonSchema implements Target, MessageSource {
 		if (s!=null && s.equalsIgnoreCase("false"))
 			includeDocumentation = false;
 		
+		s = options.parameter(this.getClass().getName(),"prettyPrint");
+		if (s!=null && s.equalsIgnoreCase("false"))
+			gson = new Gson();
+		else
+			gson = new GsonBuilder().setPrettyPrinting().create();
+
 		schemaURI = options.parameter(this.getClass().getName(),"jsonSchemaURI");
 		if (schemaURI==null)
-			schemaURI = JSON_SCHEMA_URI_DRAFT_03;
+			schemaURI = JSON_SCHEMA_URI_DRAFT_2019_09;
 
 		baseURI = pi.taggedValue("jsonBaseURI");
 		if (baseURI==null)
 			baseURI = options.parameter(this.getClass().getName(),"jsonBaseURI");
 		if (baseURI==null)
-			baseURI = "FIXME";
+			baseURI = "http://example.com/FIXME";
 		
 		String skipNotImplemented_tmp = options.parameter(this.getClass().getName(),PARAM_SKIP_NOT_IMPLEMENTED_CHECK);
 		if(skipNotImplemented_tmp != null && skipNotImplemented_tmp.trim().equalsIgnoreCase("true")) {
@@ -229,11 +240,16 @@ public class JsonSchema implements Target, MessageSource {
 			return;
 		}
 		
-		if (options.getRuleRegistry().matchesEncRule(ci.encodingRule("json"),"geoservices")) {
+		if (encRuleIsGeoservices(ci)) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN) {
 				return;
 			}
-		} else if (options.getRuleRegistry().matchesEncRule(ci.encodingRule("json"),"geoservices_extended")) {
+		} else if (encRuleIsGeoservicesExtended(ci)) {
+			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN && 
+				cat != Options.DATATYPE && cat != Options.UNION) {
+				return;
+			}
+		} else if (encRuleIsGeoJson(ci)) {
 			if (cat != Options.FEATURE && cat != Options.OBJECT && cat != Options.MIXIN && 
 				cat != Options.DATATYPE && cat != Options.UNION) {
 				return;
@@ -243,66 +259,107 @@ public class JsonSchema implements Target, MessageSource {
 		Context ctx = new Context();
 		try {
 			
-			if (!diagnosticsOnly)
-				ctx.writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(subDirectoryFile, ci.name()+".json")), "UTF-8"));
+			if (!diagnosticsOnly) {
+				ctx.file = new File(subDirectoryFile, ci.name()+".json");
+			}
 			
-			write(ctx,"{");
-			newLine(ctx);
-			write(ctx,"\t"+"\"$schema\":\""+schemaURI+"\",");
-			newLine(ctx);
-			write(ctx,"\t"+"\"id\":\""+baseURI+"/"+subdir+"/"+ci.name()+".json\",");
-			newLine(ctx);
+			ctx.object.put("$schema", schemaURI);
+			ctx.object.put("$id", baseURI+"/"+subdir+"/"+ci.name()+".json");
+			ctx.object.put("type", "object");
 			String s = ci.aliasName();
-			write(ctx,"\t"+"\"title\":\""+(s==null||s.isEmpty()?ci.name():s)+"\",");
-			newLine(ctx);
+			ctx.object.put("title", (s==null||s.isEmpty()?ci.name():s));
 			String s2 = ci.derivedDocumentation(documentationTemplate, documentationNoValue);
 			if (includeDocumentation && !s2.isEmpty()) {
-				write(ctx,"\t"+"\"description\":\""+escape(s2).trim()+"\",");
-				newLine(ctx);				
+				ctx.object.put("description", s2.trim());
 			}
-			write(ctx,"\t"+"\"type\":\"object\",");
-			newLine(ctx);
-			
-			write(ctx,"\t"+"\"properties\":{");
-			newLine(ctx);
 
-			// add entityType for features and objects
+			TreeMap<String,Object> properties = new TreeMap<>();
+			ctx.object.put("properties", properties);
+			
+			ArrayList<String> required = new ArrayList<>();
+			ctx.object.put("required", required);
+			
+			// add general properties for features and objects
 			if (cat==Options.FEATURE || cat==Options.OBJECT) {
-				write(ctx,"\t\t"+"\"entityType\":{");
-				newLine(ctx);
-				write(ctx,"\t\t\t"+"\"title\":\"feature/object type\",");
-				newLine(ctx);
-				write(ctx,"\t\t\t"+"\"type\":\"string\",");
-				newLine(ctx);
-				write(ctx,"\t\t\t"+"\"default\":\""+(s==null||s.isEmpty()?ci.name():s)+"\"");
-				newLine(ctx);
-				write(ctx,"\t\t},");
-				newLine(ctx);
+				if (encRuleIsGeoJson(ci)) {
+					TreeMap<String,Object> type = new TreeMap<>();
+					type.put("type", "string");
+					ArrayList<String> enumArray = new ArrayList<>();
+					enumArray.add("Feature");
+					type.put("enum", enumArray);
+					properties.put("type", type);
+					required.add("type");
+					ArrayList<String> stringOrNumberArray = new ArrayList<>();
+					stringOrNumberArray.add("string");
+					stringOrNumberArray.add("number");
+					TreeMap<String,Object> stringOrNumber = new TreeMap<>();
+					stringOrNumber.put("type", stringOrNumberArray);
+					properties.put("id", stringOrNumber);
+				} else if (encRuleIsGeoservices(ci) || encRuleIsGeoservicesExtended(ci)) {
+					TreeMap<String,Object> entityType = new TreeMap<>();
+					entityType.put("type", "string");
+					entityType.put("default", (s==null||s.isEmpty()?ci.name():s));
+					properties.put("entityType", entityType);
+				}
 			}
 
 			// add geometry for features and objects
 			if (cat==Options.FEATURE || cat==Options.OBJECT) {
+				TreeMap<String,Object> geometry = new TreeMap<>();
 				String geomType = determineGeometryType(ci);
 				if (geomType!=null) {
-					write(ctx,"\t\t"+"\"geometry\":{");
-					newLine(ctx);
-					write(ctx,"\t\t\t"+"\"$ref\":\""+geomType+"\"");
-					newLine(ctx);
-					write(ctx,"\t\t},");
-					newLine(ctx);
+					ArrayList<Object> oneOf = new ArrayList<>(); 
+					TreeMap<String,Object> typeNull = new TreeMap<>();
+					typeNull.put("type", "null");
+					oneOf.add(typeNull);
+					TreeMap<String,Object> ref = new TreeMap<>();
+					ref.put("$ref", geomType);
+					oneOf.add(ref);
+					geometry.put("oneOf", oneOf);
+				} else {
+					geometry.put("type", "null");					
 				}
+				properties.put("geometry", geometry);
+				required.add("geometry");
 			} else if (cat==Options.DATATYPE || cat==Options.UNION) {
 				verifyNoGeometry(ci);
 			}
 			
-			write(ctx,"\t\t"+"\"attributes\":{");
-			newLine(ctx);
-			write(ctx,"\t\t\t"+"\"title\":\"feature attributes\",");
-			newLine(ctx);
-			write(ctx,"\t\t\t"+"\"type\":\"object\",");
-			newLine(ctx);
-			write(ctx,"\t\t\t"+"\"properties\":{");
-			newLine(ctx);
+			TreeMap<String,Object> featureProperties = new TreeMap<>();
+			ArrayList<String> featurePropertiesRequired = new ArrayList<>();
+			TreeMap<String,Object> featurePropertiesMap = new TreeMap<>();
+			if (encRuleIsGeoJson(ci)) {
+				if (cat==Options.FEATURE || cat==Options.OBJECT) {
+					TreeMap<String,Object> oneOf = new TreeMap<>();
+					properties.put("properties", oneOf);
+					ArrayList<Object> typeArray = new ArrayList<>(); 
+					oneOf.put("oneOf", typeArray);
+					TreeMap<String,Object> typeNull = new TreeMap<>();
+					typeNull.put("type", "null");
+					typeArray.add(typeNull);
+					typeArray.add(featureProperties);
+					required.add("properties");
+					featureProperties.put("title", "feature properties");
+					featureProperties.put("type", "object");
+					featureProperties.put("required", featurePropertiesRequired);
+					featureProperties.put("properties", featurePropertiesMap);
+				} else if (cat==Options.DATATYPE || cat==Options.UNION) {
+					featurePropertiesRequired = required;
+					featurePropertiesMap = properties;
+				}
+			} else if (encRuleIsGeoservices(ci) || encRuleIsGeoservicesExtended(ci)) {
+				if (cat==Options.FEATURE || cat==Options.OBJECT) {
+					featureProperties.put("title", "feature attributes");
+					featureProperties.put("type", "object");
+					featureProperties.put("properties", featureProperties);
+					properties.put("attributes", featureProperties);
+					featureProperties.put("required", featurePropertiesRequired);
+					featureProperties.put("properties", featurePropertiesMap);
+				} else if ((cat==Options.DATATYPE || cat==Options.UNION) && encRuleIsGeoservicesExtended(ci)) {
+					featurePropertiesRequired = required;
+					featurePropertiesMap = properties;
+				}
+			}
 			
 			SortedSet<String> st = ci.supertypes();
 			if (st != null) {
@@ -314,41 +371,45 @@ public class JsonSchema implements Target, MessageSource {
 						if (!skipNotImplementedCheck && notImplemented(cn))
 							result.addWarning(this, 104, ci.name(), cn);
 						else
-							ctx = ProcessProperties(ctx, cix);
+							ctx = ProcessProperties(ctx, cix, featurePropertiesMap, featurePropertiesRequired);
 					}
 				}
 			}
 			
-			ctx = ProcessProperties(ctx, ci);
+			ctx = ProcessProperties(ctx, ci, featurePropertiesMap, featurePropertiesRequired);
 			
-			newLine(ctx);
-			write(ctx,"\t\t\t}");
-			if (JSON_SCHEMA_URI_DRAFT_04.equals(schemaURI)) {
-				// TODO add required keyword: way of defining required properties is different for JSON Schema draft v04
-			}
-			newLine(ctx);
-			write(ctx,"\t\t}");
-			
-	        newLine(ctx);
-			write(ctx,"\t}");
-			
-			if (ctx.links!=null) {
-				write(ctx,",");
-				newLine(ctx);
-				String[] lines = ctx.links.split("\n");
-				for (int i=0; i<lines.length; i++) {
-					write(ctx,lines[i]);
-					newLine(ctx);
-				}
-				write(ctx,"\t]");
+			if (!ctx.links.isEmpty()) {
+				ctx.object.put("links", ctx.links);
 			}
 			
-			newLine(ctx);
-			write(ctx,"}");
-			newLine(ctx);			
+			if (ctx.addDefsLink) {
+				TreeMap<String,Object> defs = new TreeMap<>();
+				ctx.object.put("$defs", defs);
+
+				TreeMap<String,Object> link = new TreeMap<>();
+				link.put("type", "object");
+				ArrayList<String> linkRequired = new ArrayList<>();
+				linkRequired.add("href");
+				linkRequired.add("title");
+				link.put("required", linkRequired);
+				TreeMap<String,Object> linkProperties = new TreeMap<>();
+				link.put("properties", linkProperties);
+				TreeMap<String,Object> typeString = new TreeMap<>();
+				typeString.put("type", "string");
+				linkProperties.put("href", typeString);
+				linkProperties.put("title", typeString);
+				linkProperties.put("rel", typeString);
+				linkProperties.put("hreflang", typeString);
+				linkProperties.put("type", typeString);
+				defs.put("link", link);
+			}
 			
-			if (ctx.writer!=null) {
-				ctx.writer.close();
+			if (ctx.file!=null) {
+
+				OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(ctx.file)), StandardCharsets.UTF_8);
+				writer.write(gson.toJson(ctx.object));
+				writer.flush();
+				writer.close();
 				result.addResult(getTargetName(), subDirectoryFile.getPath(), ci.name()+".json", ci.qname());
 			}
 			
@@ -359,23 +420,23 @@ public class JsonSchema implements Target, MessageSource {
 		}
 	}
 	
-	private void write(Context ctx, String text) throws IOException {
-		if (!diagnosticsOnly && ctx!=null && ctx.writer!=null) {
-			ctx.writer.write(text);
-		}		
+	private boolean encRuleIsGeoservices(Info i) {
+		return options.getRuleRegistry().matchesEncRule(i.encodingRule("json"),"geoservices");
 	}
 
-	private void newLine(Context ctx) throws IOException {
-		if (!diagnosticsOnly && ctx!=null && ctx.writer!=null) {
-			ctx.writer.newLine();
-		}		
+	private boolean encRuleIsGeoservicesExtended(Info i) {
+		return options.getRuleRegistry().matchesEncRule(i.encodingRule("json"),"geoservices_extended");
 	}
 
-	private Context ProcessProperties(Context ctx, ClassInfo ci) throws IOException {
-		return ProcessProperties(ctx, ci, null, ci.category()!=Options.UNION);
+	private boolean encRuleIsGeoJson(Info i) {
+		return options.getRuleRegistry().matchesEncRule(i.encodingRule("json"),"geojson");
+	}
+
+	private Context ProcessProperties(Context ctx, ClassInfo ci, TreeMap<String,Object> propertiesMap, ArrayList<String> propertiesRequired) throws IOException {
+		return ProcessProperties(ctx, ci, null, ci.category()!=Options.UNION, propertiesMap, propertiesRequired);
 	}
 	
-	private Context ProcessProperties(Context ctx, ClassInfo ci, String propertyPrefix, boolean required) throws IOException {
+	private Context ProcessProperties(Context ctx, ClassInfo ci, String propertyPrefix, boolean required, TreeMap<String,Object> propertiesMap, ArrayList<String> propertiesRequired) throws IOException {
 		
 		for (PropertyInfo propi : ci.properties().values()) {
 			
@@ -399,7 +460,7 @@ public class JsonSchema implements Target, MessageSource {
 			String type = null;
 			String format = null;
 			String ref = null;
-			String enums = null;
+			List<String> enums = new ArrayList<>();
 			boolean nillable = false;
 			boolean flatten = false;
 			// First handle well-known ones
@@ -423,72 +484,58 @@ public class JsonSchema implements Target, MessageSource {
 				// or a well-known JSON schema
 				cix = model.classById(ti.id);
 				if (cix==null) {
-					if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices")) {
+					if (encRuleIsGeoservices(propi)) {
 						result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
 						type = "string";
-					} else if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
+					} else if (encRuleIsGeoservicesExtended(propi) || encRuleIsGeoJson(propi)) {
 						result.addWarning(this, 105, propi.inClass().name(), propi.name(), ti.name);
 						type = "any";
 					}
 				} else {
 					int cat = cix.category();
 					if (cat==Options.CODELIST) {
-						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+						if (encRuleIsGeoservices(propi)) {
 							type = "string";
-						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
+						} else if (encRuleIsGeoservicesExtended(propi)) {
 							type = "string";
 							format = "uri";
+						} else if (encRuleIsGeoJson(propi)) {
+							ctx.addDefsLink = true;
+							ref = "#/$defs/link";
 						}					
 					} else if (cat==Options.ENUMERATION) {
 						type = "string";
 						if (cix.properties().isEmpty()) {
 							result.addWarning(this, 107, cix.name());
 						} else {
-						enums = "[";
-						boolean fst = true;
-						for (PropertyInfo propix : cix.properties().values()) {
-							
-							if(!isEncoded(propix)) {
-								continue;
+							for (PropertyInfo propix : cix.properties().values()) {
+								if(isEncoded(propix)) {
+									enums.add(propix.name());
+								}
 							}
-							
-							if (fst)
-								fst = false;
-							else
-								enums += ",";
-							enums += "\""+propix.name()+"\"";
-						}
-						
-						enums += "]";
 						}
 					} else if (cat==Options.FEATURE || cat==Options.OBJECT || cat==Options.MIXIN) {
-						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
+						if (encRuleIsGeoservices(propi)) {
 							type = "integer";
 							String lyrURI = cix.taggedValue("jsonLayerTableURI");
 							if (lyrURI!=null) {
-								if (ctx.links==null) {
-									ctx.links = "\t\"links\":[\n";
-								} else {
-									ctx.links += ",\n";
-								}
-								ctx.links += "\t\t{\n";
-								ctx.links += "\t\t\t\"rel\":\"related\",\n";
-								ctx.links += "\t\t\t\"href\":\""+lyrURI+"/{#/attributes/"+propi.name()+"}?f=json\"\n";
-								ctx.links += "\t\t}";
+								TreeMap<String,Object> link = new TreeMap<>();
+								link.put("href", lyrURI+"/{#/attributes/"+propi.name()+"}?f=json");
+								link.put("rel", "related");
+								ctx.links.add(link);
 							}
-						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
+						} else if (encRuleIsGeoservicesExtended(propi)) {
 							type = "string";
 							format = "uri";
+						} else if (encRuleIsGeoJson(propi)) {
+							ctx.addDefsLink = true;
+							ref = "#/$defs/link";
 						}					
-					} else if (cat==Options.DATATYPE || cat==Options.UNION) {
-						
-						if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices")) {
-							
+					} else if (cat==Options.DATATYPE || cat==Options.UNION) {						
+						if (encRuleIsGeoservices(propi)) {
 							flatten = true;
-							verifyNoGeometry(cix);
-							
-						} else if (options.getRuleRegistry().matchesEncRule(cix.encodingRule("json"),"geoservices_extended")) {
-							
+							verifyNoGeometry(cix);							
+						} else if (encRuleIsGeoservicesExtended(propi) || encRuleIsGeoJson(propi)) {
 							PackageInfo rootPackage = cix.pkg().rootPackage();
 							
 							String refBaseURI = null;
@@ -511,127 +558,111 @@ public class JsonSchema implements Target, MessageSource {
 				}
 			}
 			
-			if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended") && propi.voidable())
+			if ((encRuleIsGeoservicesExtended(propi) || encRuleIsGeoJson(propi)) && propi.voidable())
 				nillable = true; 
 			
 			int repeat = 1;
 			boolean array = false;
-			if (type!=null || ref!=null || flatten) {
-				if (m.maxOccurs>1) {
-					if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices")) {
-						repeat = 3;
-					} else if (options.getRuleRegistry().matchesEncRule(propi.encodingRule("json"),"geoservices_extended")) {
-						array = true;
-					}
+			if (m.maxOccurs>1) {
+				if (encRuleIsGeoservices(propi)) {
+					repeat = 3;
+				} else if (encRuleIsGeoservicesExtended(propi) || encRuleIsGeoJson(propi)) {
+					array = true;
 				}
-				
-				// TODO support for pattern
-				
-				if (flatten && cix!=null) {
-					for (int i = 1; i <= repeat; i++) {
-						String n = nam;
-						if (repeat>1)
-							n = n+"-"+i;
-						ProcessProperties(ctx, cix, n, required && m.minOccurs>0 && cix.category()!=Options.UNION);
-					}
-				} else {
-					for (int i = 1; i <= repeat; i++) {
-						if (!ctx.first) {
-							write(ctx,",");
-							newLine(ctx);
-						} else
-							ctx.first = false;
-						String n = nam;
-						if (repeat>1)
-							n = n+"-"+i;
-						write(ctx,"\t\t\t\t"+"\""+n+"\":{");
-						newLine(ctx);
-						String s = propi.aliasName();
-						write(ctx,"\t\t\t\t\t"+"\"title\":\""+(s==null||s.isEmpty()?propi.name():s)+"\",");
-						newLine(ctx);
-						String s2 = propi.derivedDocumentation(documentationTemplate, documentationNoValue);
-						if (includeDocumentation && !s2.isEmpty()) {
-							write(ctx,"\t\t\t\t\t"+"\"description\":\""+escape(s2).trim()+"\",");
-							newLine(ctx);				
-						}
-						if (array) {
-							if (nillable && i==1)
-								write(ctx,"\t\t\t\t\t"+"\"type\":[\"array\",\"null\"],");
-							else
-								write(ctx,"\t\t\t\t\t"+"\"type\":\"array\",");
-							newLine(ctx);
-							write(ctx,"\t\t\t\t\t"+"\"items\":{");
-							newLine(ctx);
-							if (ref!=null) {
-								write(ctx,"\t\t\t\t\t\t"+"\"$ref\":\""+ref+"\"");
-								newLine(ctx);							
-							} else {
-								write(ctx,"\t\t\t\t\t\t"+"\"type\":\""+type+"\"");
-								if (format!=null) {
-									write(ctx,",");
-									newLine(ctx);							
-									write(ctx,"\t\t\t\t\t\t"+"\"format\":\""+format+"\"");
-								}
-								if (enums!=null) {
-									write(ctx,",");
-									newLine(ctx);							
-									write(ctx,"\t\t\t\t\t\t"+"\"enum\":"+enums+"");
-								}
-							}
-							newLine(ctx);
-							write(ctx,"\t\t\t\t\t}");
-								if (m.minOccurs>0 && required) {
-									write(ctx,",");
-									newLine(ctx);																							
-								write(ctx,"\t\t\t\t\t"+"\"minItems\":"+m.minOccurs);
-								}
-								newLine(ctx);		
-							
-						} else {
-							if (ref!=null) {
-								write(ctx,"\t\t\t\t\t"+"\"$ref\":\""+ref+"\"");
-								newLine(ctx);							
-							} else {
-								if (nillable && i==1)
-									write(ctx,"\t\t\t\t\t"+"\"type\":[\""+type+"\",\"null\"]");
-								else
-									write(ctx,"\t\t\t\t\t"+"\"type\":\""+type+"\"");
-								if (format!=null) {
-									write(ctx,",");
-									newLine(ctx);							
-									write(ctx,"\t\t\t\t\t"+"\"format\":\""+format+"\"");
-								}
-								if (enums!=null) {
-									write(ctx,",");
-									newLine(ctx);							
-									write(ctx,"\t\t\t\t\t"+"\"enum\":"+enums+"");
-								}
-								if (JSON_SCHEMA_URI_DRAFT_03.equals(schemaURI) && m.minOccurs>0 && i==1 && required) {
-									write(ctx,",");
-									newLine(ctx);																							
-									write(ctx,"\t\t\t\t\t"+"\"required\":true");
-								}
-								newLine(ctx);															
-							}						
-						}
-						write(ctx,"\t\t\t\t}");
-						
-						if (nillable && i==1) {
-							write(ctx,",");
-							newLine(ctx);
-							write(ctx,"\t\t\t\t"+"\""+n+"_nullReason\":{");
-							newLine(ctx);
-							write(ctx,"\t\t\t\t\t"+"\"title\":\"Reason for null value in property "+(s==null||s.isEmpty()?propi.name():s)+"\",");
-							newLine(ctx);
-							write(ctx,"\t\t\t\t\t"+"\"type\":\"string\"");
-							newLine(ctx);															
-							write(ctx,"\t\t\t\t}");
-						}
-					}				
+			}
+			
+			// TODO support for pattern
+			
+			if (flatten && cix!=null) {
+				for (int i = 1; i <= repeat; i++) {
+					String n = nam;
+					if (repeat>1)
+						n = n+"_"+i;
+					ProcessProperties(ctx, cix, n, required && m.minOccurs>0 && cix.category()!=Options.UNION, propertiesMap, propertiesRequired);
 				}
 			} else {
-				// TODO 2016-09-26: is the message misleading? The property is not encoded at all.
-				result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
+				for (int i = 1; i <= repeat; i++) {
+					String n = nam;
+					if (repeat>1)
+						n = n+"-"+i;
+					TreeMap<String,Object> property = new TreeMap<>();
+					propertiesMap.put(n, property);
+					String s = propi.aliasName();
+					property.put("title", (s==null||s.isEmpty()?propi.name():s));
+					String s2 = propi.derivedDocumentation(documentationTemplate, documentationNoValue);
+					if (includeDocumentation && !s2.isEmpty()) {
+						property.put("description", s2.trim());
+					}
+					if (array) {
+						if (nillable && i==1) {
+							ArrayList<String> types = new ArrayList<>();
+							types.add("null");
+							types.add("array");
+							property.put("type", types);
+						} else
+							property.put("type", "array");
+						TreeMap<String,Object> items = new TreeMap<>();
+						property.put("items", items);
+						if (ref!=null) {
+							items.put("$ref", ref);
+						} else {
+							items.put("type", type);
+							if (format!=null) {
+								items.put("format", format);
+							}
+							if (!enums.isEmpty()) {
+								ArrayList<String> enumArray = new ArrayList<>();
+								enumArray.addAll(enums);
+								items.put("enum", enumArray);
+							}
+						}
+						if (m.minOccurs>0 && required) {
+							items.put("minItems", m.minOccurs);
+							propertiesRequired.add(n);
+						}
+						if (m.maxOccurs<Integer.MAX_VALUE) {
+							items.put("maxItems", m.maxOccurs);
+						}							
+					} else {
+						if (ref!=null) {
+							property.put("$ref", ref);
+							if (m.minOccurs>0 && i==1 && required) {
+								propertiesRequired.add(n);
+							}
+						} else {
+							if (nillable && i==1) {
+								ArrayList<String> types = new ArrayList<>();
+								types.add("null");
+								types.add(type);
+								property.put("type", types);
+							} else {
+								if (type==null) {
+									type = "string";
+									result.addWarning(this, 103, propi.inClass().name(), propi.name(), ti.name);
+								}
+								property.put("type", type);
+							}
+							if (format!=null) {
+								property.put("format", format);
+							}
+							if (!enums.isEmpty()) {
+								ArrayList<String> enumArray = new ArrayList<>();
+								enumArray.addAll(enums);
+								property.put("enum", enumArray);
+							}
+							if (m.minOccurs>0 && i==1 && required) {
+								propertiesRequired.add(n);
+							}
+						}						
+					}
+					
+					if (nillable && i==1 && encRuleIsGeoservicesExtended(propi)) {
+						TreeMap<String,Object> nullReason = new TreeMap<>();
+						propertiesMap.put(n+"_nullReason", nullReason);
+						nullReason.put("title", "Reason for null value in property "+(s==null||s.isEmpty()?propi.name():s));
+						nullReason.put("type", "string");
+					}
+				}				
 			}
 		}
 		return ctx;
@@ -725,14 +756,6 @@ public class JsonSchema implements Target, MessageSource {
 		}
 	}	
 	
-	/**
-	 * <p>See https://tools.ietf.org/html/rfc7159: characters that must be escaped quotation mark, reverse solidus, and the control characters (U+0000 through U+001F)</p>
-	 * <p>Control characters that are likely to occur in EA models, especially when using memo tagged values: \n, \r and \t.</p>
-	 */
-	private String escape(String s2) {
-		return StringUtils.replaceEach(s2, new String[]{"\"", "\\", "\n", "\r", "\t"} , new String[]{"\\\"", "\\\\", CharUtils.unicodeEscaped('\n'),  CharUtils.unicodeEscaped('\r'), CharUtils.unicodeEscaped('\t')});
-	}
-
 	public void write() {
 	}
 
@@ -765,11 +788,12 @@ public class JsonSchema implements Target, MessageSource {
 
 		r.addExtendsEncRule("geoservices", "*");
 		r.addExtendsEncRule("geoservices_extended", "*");
+		r.addExtendsEncRule("geojson", "*");
 	}
 	
 	@Override
 	public String getDefaultEncodingRule() {
-		return "geoservices";
+		return "geojson";
 	}
 	
 	/**
@@ -803,7 +827,7 @@ public class JsonSchema implements Target, MessageSource {
 		case 104:
 			return "??No JSON representation known for type '$2$' which is a supertype of '$1$'. The supertype is ignored.";
 		case 105:
-			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'any' will be used.";
+			return "??No JSON representation known for type '$3$' of property '$2$' in class '$1$'; 'string'/'object' will be used.";
 		case 106: 
 			return "??A geometry property is specified for data type '$2$', but data types may not have geometry properties. The geometry property '$1$' will be ignored.";
 		case 107:
