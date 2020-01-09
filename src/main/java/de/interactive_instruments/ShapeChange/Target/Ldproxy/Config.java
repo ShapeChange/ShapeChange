@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,18 +40,20 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -210,31 +212,31 @@ public class Config implements SingleTarget, MessageSource {
 	/**
 	 * The JSON object representing the main configuration file.
 	 */
-	private static JSONObject cfgobj = null;
+	private static TreeMap<String,Object> cfgobj = null;
 	
 	/**
 	 * The JSON object representing the GeoJSON configuration file.
 	 */
-	private static JSONObject cfgobjGeojson = null;
+	private static TreeMap<String,Object> cfgobjGeojson = null;
 	
 	/**
 	 * The JSON object representing the GML configuration file.
 	 */
-	private static JSONObject cfgobjGml = null;
+	private static TreeMap<String,Object> cfgobjGml = null;
 	
 	/**
 	 * The "featureTypes" object in {@link #cfgobj}. We need this
 	 * as a variable as we add information for each feature type
 	 * that is processed.
 	 */
-	private static JSONObject collections = null;
+	private static TreeMap<String,Object> collections = null;
 	
 	/**
 	 * The "featureProvider.mappings" object in {@link #cfgobj}.
 	 * We need this as a variable as we add information for each 
 	 * feature type that is processed.
 	 */
-	private static JSONObject mappings = null;
+	private static TreeMap<String,Object> mappings = null;
 	
 	/**
 	 * The writer to export the main configuration file.
@@ -254,7 +256,7 @@ public class Config implements SingleTarget, MessageSource {
 	/**
 	 * The writers to export the codelist files.
 	 */
-	private static Map<String,JSONObject> mapCL = null;
+	private static Map<String,TreeMap<String,Object>> mapCL = null;
 
 	/**
 	 * The model that is processed.
@@ -275,8 +277,7 @@ public class Config implements SingleTarget, MessageSource {
 	 * The relative sort priority of a property in a feature type mapping
 	 */
 	private int priority = 0;
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public void initialise(PackageInfo p, Model m, Options o,
 			ShapeChangeResult r, boolean diagOnly)
@@ -501,7 +502,7 @@ public class Config implements SingleTarget, MessageSource {
 				}
 				
 				// Initialize the JSON object that will become the main configuration
-				cfgobj = new JSONObject();		
+				cfgobj = new TreeMap<>();		
 				
 				// Populate with metadata from the configuration or the model
 				cfgobj.put("id", srvid);
@@ -522,16 +523,16 @@ public class Config implements SingleTarget, MessageSource {
 				cfgobj.put("lastModified", now);
 
 				// Create a collections object. This will be populated when the feature types are processed.
-				collections = new JSONObject();
+				collections = new TreeMap<>();
 				cfgobj.put("featureTypes", collections);
 				
 				// Create a feature provider object. Currently only PostgreSQL/PostGIS is supported, so 
 				// this information is pre-configured. The database information and the credentials 
 				// need to be updated manually. 
-				JSONObject featureProvider = new JSONObject();
+				TreeMap<String,Object> featureProvider = new TreeMap<>();
 				cfgobj.put("featureProvider", featureProvider);				
 				featureProvider.put("providerType", "PGIS");
-				JSONObject connectionInfo = new JSONObject();
+				TreeMap<String,Object> connectionInfo = new TreeMap<>();
 				featureProvider.put("connectionInfo", connectionInfo);
 				connectionInfo.put("host", "FIXME");
 				connectionInfo.put("database", "FIXME");
@@ -540,9 +541,9 @@ public class Config implements SingleTarget, MessageSource {
 				
 				// Add onDelete trigger
 				if (!trigger_onDelete.isEmpty()) {
-					JSONObject trigger = new JSONObject();
+					TreeMap<String,Object> trigger = new TreeMap<>();
 					featureProvider.put("trigger", trigger);
-					JSONArray onDelete = new JSONArray(); 
+					ArrayList<String> onDelete = new ArrayList<>(); 
 					for (String trg: trigger_onDelete) {
 						onDelete.add(trg);
 					}
@@ -550,22 +551,22 @@ public class Config implements SingleTarget, MessageSource {
 				}
 
 				// Create a mappings object, which will be populated when the feature types are processed.
-				mappings = new JSONObject();
+				mappings = new TreeMap<>();
 				featureProvider.put("mappings", mappings);			
 				
 				// Generate the (fixed) JSON object that will become the GeoJSON configuration.
 				// We do not flatten nested data structures or multiplicity.
-				cfgobjGeojson = new JSONObject();		
+				cfgobjGeojson = new TreeMap<>();		
 				cfgobjGeojson.put("nestedObjects", "NEST");
 				cfgobjGeojson.put("multiplicity", "ARRAY");
 
 				// Generate the (fixed) JSON object that will become the GML configuration.
 				// We disable GML support.
-				cfgobjGml = new JSONObject();
+				cfgobjGml = new TreeMap<>();
 				cfgobjGml.put("enabled", false);
 				
 				// empty map for any code lists that are processed
-				mapCL = new HashMap<String,JSONObject>();
+				mapCL = new HashMap<String,TreeMap<String,Object>>();
 			}
 
 		} catch (Exception e) {
@@ -616,7 +617,6 @@ public class Config implements SingleTarget, MessageSource {
 		mappings = null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void process(ClassInfo ci) {
 		
@@ -651,7 +651,7 @@ public class Config implements SingleTarget, MessageSource {
 			!ci.isAbstract()) {
 
 			// Set the collection name
-			JSONObject featuretype = new JSONObject();
+			TreeMap<String,Object> featuretype = new TreeMap<>();
 			collections.put(colname, featuretype);
 			
 			// Add descriptors. The id must be the same as the JSON property above
@@ -661,15 +661,15 @@ public class Config implements SingleTarget, MessageSource {
 			
 			// We do not know the spatial or temporal extents of the dataset, so we use
 			// default values. These need to be changed manually. 
-			JSONObject extent = new JSONObject();
+			TreeMap<String,Object> extent = new TreeMap<>();
 			featuretype.put("extent", extent);
-			JSONObject spatial = new JSONObject();
+			TreeMap<String,Object> spatial = new TreeMap<>();
 			extent.put("spatial", spatial);
 			spatial.put("xmin", -180);
 			spatial.put("xmax", 180);
 			spatial.put("ymin", -90);
 			spatial.put("ymax", 90);
-			JSONObject temporal = new JSONObject();
+			TreeMap<String,Object> temporal = new TreeMap<>();
 			extent.put("temporal", temporal);
 			temporal.put("start", null);
 			temporal.put("end", null);
@@ -684,21 +684,21 @@ public class Config implements SingleTarget, MessageSource {
 		// feature types, object types or data types are not considered 
 		// here as the mappings are organised per published feature type.
 		if (!ci.isAbstract()) {
-			JSONObject featuretype = new JSONObject();
+			TreeMap<String,Object> featuretype = new TreeMap<>();
 			mappings.put(colname, featuretype);
-			JSONObject path = new JSONObject();
+			TreeMap<String,Object> path = new TreeMap<>();
 			
 			// The mapping path starts with the feature table.
 			String basepath = "/"+tabname;
 			featuretype.put(basepath, path);
 
-			JSONObject general = new JSONObject();
+			TreeMap<String,Object> general = new TreeMap<>();
 			path.put("general", general);
 			general.put("mappingType", "GENERIC_PROPERTY");
 			general.put("enabled", true);
 			
 			// Add default schema.org mapping in HTML
-			JSONObject html = new JSONObject();
+			TreeMap<String,Object> html = new TreeMap<>();
 			path.put("text/html", html);
 			String name = primaryKeyField;
 			for (String f : htmlLabelFields) {
@@ -742,11 +742,10 @@ public class Config implements SingleTarget, MessageSource {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private JSONObject additionalProperty(String fieldname, String label, String type, String htmltype, String category) {
-		JSONObject path = new JSONObject();
+	private TreeMap<String,Object> additionalProperty(String fieldname, String label, String type, String htmltype, String category) {
+		TreeMap<String,Object> path = new TreeMap<>();
 		
-		JSONObject general = new JSONObject();
+		TreeMap<String,Object> general = new TreeMap<>();
 		path.put("general", general);
 		general.put("mappingType", "GENERIC_PROPERTY");
 		general.put("name", fieldname);
@@ -765,7 +764,7 @@ public class Config implements SingleTarget, MessageSource {
 		general.put("type", category);
 		
 		// Add default schema.org mapping in HTML
-		JSONObject html = new JSONObject();
+		TreeMap<String,Object> html = new TreeMap<>();
 		path.put("text/html", html);
 		html.put("mappingType", "MICRODATA_PROPERTY");
 		html.put("name", label);
@@ -775,7 +774,7 @@ public class Config implements SingleTarget, MessageSource {
 			html.put("format", "dd.MM.yyyy[', 'HH:mm:ss[' 'z]]");
 		
 		// Add default GeoJSON mapping
-		JSONObject json = new JSONObject();
+		TreeMap<String,Object> json = new TreeMap<>();
 		path.put("application/geo+json", json);
 		json.put("mappingType", "GEO_JSON_PROPERTY");
 		json.put("type", type);				
@@ -802,30 +801,37 @@ public class Config implements SingleTarget, MessageSource {
 		OutputStreamWriter writerCL = null;
 		
 		try {
+			
+			Gson gson;
+			String s = options.parameter(this.getClass().getName(),"prettyPrint");
+			if (s!=null && s.equalsIgnoreCase("false"))
+				gson = new Gson();
+			else
+				gson = new GsonBuilder().setPrettyPrinting().create();
 
 			// If diagOnly was selected, the writers will be 'null'
 			if (writer!=null) {
-				writer.write(cfgobj.toJSONString());
+				writer.write(gson.toJson(cfgobj));
 				writer.flush();
 				writer.close();
 			}
 
 			if (writerGeojson!=null) {
-				writerGeojson.write(cfgobjGeojson.toJSONString());
+				writerGeojson.write(gson.toJson(cfgobjGeojson));
 				writerGeojson.flush();
 				writerGeojson.close();
 			}
 			
 			if (writerGml!=null) {
-				writerGml.write(cfgobjGml.toJSONString());
+				writerGml.write(gson.toJson(cfgobjGml));
 				writerGml.flush();
 				writerGml.close();
 			}
 			
 			if (mapCL != null) {
-				for (Map.Entry<String,JSONObject> entry : mapCL.entrySet()) {
+				for (Map.Entry<String,TreeMap<String,Object>> entry : mapCL.entrySet()) {
 					writerCL = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(directoryCL + "/" + entry.getKey())), StandardCharsets.UTF_8);
-					writerCL.write(entry.getValue().toJSONString());
+					writerCL.write(gson.toJson(entry.getValue()));
 					writerCL.flush();
 					writerCL.close();
 					writerCL = null;
@@ -960,7 +966,7 @@ public class Config implements SingleTarget, MessageSource {
 	 * includes the path to the current position and will be extended with additional path
 	 * elements for the properties 
 	 */
-	private void processSupertypeProperties(ClassInfo ci, ClassInfo superci, JSONObject featuretype, String basepath) {
+	private void processSupertypeProperties(ClassInfo ci, ClassInfo superci, TreeMap<String,Object> featuretype, String basepath) {
 		if (superci==null)
 			return;
 
@@ -1003,12 +1009,11 @@ public class Config implements SingleTarget, MessageSource {
 	 * path elements for the primary key field
 	 * @see ConfigConstants#PARAM_PRIMARY_KEY_FIELD
 	 */
-	@SuppressWarnings("unchecked")
-	private void createIdProperty(ClassInfo ci, JSONObject featuretype, String basepath) {
+	private void createIdProperty(ClassInfo ci, TreeMap<String,Object> featuretype, String basepath) {
 
 		String fieldname = primaryKeyField;
 		
-		JSONObject path = new JSONObject();
+		TreeMap<String,Object> path = new TreeMap<>();
 		String proppath;
 		if (ci.matches(ConfigConstants.RULE_TGT_LDP_CLS_TABLE_PER_FT)) {
 			proppath = basepath + "/[" + primaryKeyField + "=" + primaryKeyField + "]" + rootFeatureTable + "/" + fieldname;
@@ -1018,7 +1023,7 @@ public class Config implements SingleTarget, MessageSource {
 		
 		featuretype.put(proppath, path);
 		
-		JSONObject general = new JSONObject();
+		TreeMap<String,Object> general = new TreeMap<>();
 		path.put("general", general);
 		general.put("mappingType", "GENERIC_PROPERTY");
 		general.put("name", fieldname);
@@ -1028,7 +1033,7 @@ public class Config implements SingleTarget, MessageSource {
 		general.put("type", "ID");
 		
 		// Add default schema.org mapping in HTML
-		JSONObject html = new JSONObject();
+		TreeMap<String,Object> html = new TreeMap<>();
 		path.put("text/html", html);
 		html.put("mappingType", "MICRODATA_PROPERTY");
 		html.put("name", "id");
@@ -1036,7 +1041,7 @@ public class Config implements SingleTarget, MessageSource {
 		html.put("showInCollection", true);
 		
 		// Add default GeoJSON mapping for the id
-		JSONObject json = new JSONObject();
+		TreeMap<String,Object> json = new TreeMap<>();
 		path.put("application/geo+json", json);
 		json.put("mappingType", "GEO_JSON_PROPERTY");
 		json.put("type", "ID");
@@ -1064,8 +1069,7 @@ public class Config implements SingleTarget, MessageSource {
 	 * feature type, this is the table of the feature type; otherwise it is a table along the
 	 * joins in the basepath
 	 */
-	@SuppressWarnings("unchecked")
-	private void processProperty(PropertyInfo pi, JSONObject featuretype, String basepath, String basename, String baselabel, String tabname) {
+	private void processProperty(PropertyInfo pi, TreeMap<String,Object> featuretype, String basepath, String basename, String baselabel, String tabname) {
 
 		// The default name of a field for the property is the property name in 
 		// lower case characters.
@@ -1224,13 +1228,13 @@ public class Config implements SingleTarget, MessageSource {
 													continue;
 												}
 	
-												JSONObject cl = new JSONObject();
+												TreeMap<String,Object> cl = new TreeMap<>();
 												cl.put("id", cix.name());
 												cl.put("label", cix.definition());
 												cl.put("sourceUrl", surl);
 												cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
 												
-												JSONObject entries = new JSONObject();
+												TreeMap<String,Object> entries = new TreeMap<>();
 												cl.put("entries", entries);
 												
 												// parse input element specific content
@@ -1292,7 +1296,7 @@ public class Config implements SingleTarget, MessageSource {
 			}
 		}
 		
-		JSONObject path = new JSONObject();
+		TreeMap<String,Object> path = new TreeMap<>();
 		String proppath = basepath+"/"+field;
 		String fieldname = (basename!=null ? basename+"."+pi.name() : pi.name());
 
@@ -1319,7 +1323,7 @@ public class Config implements SingleTarget, MessageSource {
 
 		featuretype.put(proppath, path);
 			
-		JSONObject general = new JSONObject();
+		TreeMap<String,Object> general = new TreeMap<>();
 		path.put("general", general);
 		String mappingType = "GENERIC_PROPERTY";
 		general.put("mappingType", mappingType);
@@ -1358,7 +1362,7 @@ public class Config implements SingleTarget, MessageSource {
 			general.put("codelist", codelist);
 				
 		// Add default schema.org mapping in HTML
-		JSONObject html = new JSONObject();
+		TreeMap<String,Object> html = new TreeMap<>();
 		path.put("text/html", html);
 		mappingType = "MICRODATA_PROPERTY";
 		if (category.equalsIgnoreCase("SPATIAL"))
@@ -1373,7 +1377,7 @@ public class Config implements SingleTarget, MessageSource {
 		html.put("showInCollection", (htmltype.equalsIgnoreCase("GEOMETRY") ? false : true));
 		
 		// Add default GeoJSON mapping for the id
-		JSONObject json = new JSONObject();
+		TreeMap<String,Object> json = new TreeMap<>();
 		path.put("application/geo+json", json);
 		mappingType = "GEO_JSON_PROPERTY";
 		if (category.equalsIgnoreCase("SPATIAL"))
