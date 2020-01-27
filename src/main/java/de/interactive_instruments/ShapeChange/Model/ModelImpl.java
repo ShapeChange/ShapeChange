@@ -159,6 +159,22 @@ public abstract class ModelImpl implements Model {
 			}
 		}
 	}
+	
+	@Override
+	public SortedSet<AssociationInfo> associations() {
+	    
+	    SortedSet<AssociationInfo> result = new TreeSet<>();
+	    
+	    for(ClassInfo cls : this.classes()) {
+		for(PropertyInfo pi : cls.properties().values()) {
+		    if(pi.association() != null) {
+			result.add(pi.association());
+		    }
+		}
+	    }
+	    
+	    return result;
+	}
 
 	@Override
 	public void loadInformationFromExternalSources(
