@@ -569,4 +569,19 @@ public abstract class ModelImpl implements Model {
 
 		return source;
 	}
+	
+	@Override
+	public PropertyInfo lookupNonNavigableAssociationRole(ClassInfo classAtOneEnd, String roleName) {
+	    
+	    for(AssociationInfo ai : this.associations()) {
+		
+		if(roleName.equals(ai.end1().name()) && classAtOneEnd == ai.end1().inClass()) {
+		    return ai.end1();
+		} else if(roleName.equals(ai.end2().name()) && classAtOneEnd == ai.end2().inClass()) {
+		    return ai.end2();
+		}
+	    }
+	    
+	    return null;
+	}
 }

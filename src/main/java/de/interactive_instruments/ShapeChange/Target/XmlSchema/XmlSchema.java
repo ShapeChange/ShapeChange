@@ -36,12 +36,16 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -70,11 +74,14 @@ public class XmlSchema implements Target, MessageSource {
     private Options options = null;
     private boolean printed = false;
     private final HashMap<String, XsdDocument> xsdMap = new HashMap<String, XsdDocument>();
-    protected SchematronSchema schDoc = null;
+//    protected SchematronSchema schDoc = null;
+    protected SchematronSchema commonSchDoc = null;
     private boolean diagnosticsOnly = false;
     private String outputDirectory;
     protected ClassInfo defaultVoidReasonType = null;
     private TargetXmlSchemaConfiguration config;
+    protected String explicitSchematronQueryBinding;
+    protected boolean schematronSegmentation = false;
 
     public void initialise(PackageInfo p, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -103,14 +110,22 @@ public class XmlSchema implements Target, MessageSource {
 	defaultVoidReasonType = voidReasonType == null ? null
 		: findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
 
-	String explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(),
-		"schematronQueryBinding", null, false, true);
+	explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(), "schematronQueryBinding",
+		null, false, true);
 
-	if (pi.matches("rule-xsd-pkg-schematron")) {
+	schematronSegmentation = options.parameterAsBoolean(this.getClass().getName(), "segmentSchematron", false);
+
+	if (pi.matches("rule-xsd-pkg-schematron") && !schematronSegmentation) {
+
+	    String schemaXsdDocument = pi.xsdDocument();
+	    String schemaXsdBaseName = FilenameUtils.getBaseName(schemaXsdDocument);
+
 	    if ("xslt2".equalsIgnoreCase(explicitSchematronQueryBinding)) {
-		schDoc = new SchematronSchemaXslt2(model, options, result, pi);
+		commonSchDoc = new SchematronSchemaXslt2(model, options, result, pi, schemaXsdBaseName,
+			schematronSegmentation);
 	    } else {
-		schDoc = new SchematronSchemaOld(model, options, result, pi);
+		commonSchDoc = new SchematronSchemaOld(model, options, result, pi, schemaXsdBaseName,
+			schematronSegmentation);
 	    }
 	}
 
@@ -119,6 +134,19 @@ public class XmlSchema implements Target, MessageSource {
 
 	if (pi.matches("rule-xsd-pkg-dependencies")) {
 	    processDependecies(pi);
+	}
+
+	if (StringUtils.isNotBlank(pi.taggedValue("xsdForcedImports"))) {
+	    String[] nsabrForcedImports = pi.taggedValue("xsdForcedImports").split("\\s*,\\s*");
+	    XsdDocument xsd = xsdMap.get(pi.id());
+	    for (String nsabr : nsabrForcedImports) {
+		String ns = options.fullNamespace(nsabr);
+		if (StringUtils.isBlank(ns)) {
+		    result.addError(this, 1001, nsabr, pi.name());
+		} else {
+		    xsd.addImport(nsabr, ns);
+		}
+	    }
 	}
 
 	// create output directory, if necessary
@@ -159,6 +187,7 @@ public class XmlSchema implements Target, MessageSource {
 	    cibase = null;
 	}
 
+	SchematronSchema schDoc = xsd.getSchematronDocument();
 	if (schDoc != null) {
 
 	    List<Constraint> cs = ci.constraints();
@@ -212,9 +241,9 @@ public class XmlSchema implements Target, MessageSource {
 
 			} else {
 			    MessageContext mc = result.addWarning(this, 2010, propi.name());
-				if (mc != null) {
-				    mc.addDetail(this, 0, propi.fullNameInSchema());
-				}
+			    if (mc != null) {
+				mc.addDetail(this, 0, propi.fullNameInSchema());
+			    }
 			}
 		    }
 		}
@@ -407,13 +436,13 @@ public class XmlSchema implements Target, MessageSource {
 	    return model.classByFullNameInSchema(className);
 	} else {
 	    return model.classes(pi).stream().filter(schemaCi -> schemaCi.name().equalsIgnoreCase(className))
-		    .findFirst().get();
+		    .findFirst().orElse(null);
 	}
     }
 
     /**
      * @param cibase class that owns the property
-     * @param propi     the property
+     * @param propi  the property
      * @param schDoc
      */
     private void addAssertionForNilReasonCheck(ClassInfo cibase, PropertyInfo propi, ClassInfo voidReasonType,
@@ -699,6 +728,7 @@ public class XmlSchema implements Target, MessageSource {
     }
 
     public void write() {
+
 	if (printed) {
 	    return;
 	}
@@ -737,17 +767,43 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	}
 
-	if (schDoc != null)
-	    schDoc.write(outputDirectory);
+	/*
+	 * Now on to writing Schematron. Gather all unique SchematronSchema instances.
+	 * Note that multiple XsdDocuments may share a common SchematronSchema, if
+	 * Schematron segmentation is not enabled. That is why we first create a set of
+	 * the SchematronSchemas referenced by the XsdDocuments.
+	 */
+	Set<SchematronSchema> schDocs = new HashSet<>();
+
+	for (XsdDocument xsd : xsdMap.values()) {
+	    if (xsd.getSchematronDocument() != null) {
+		schDocs.add(xsd.getSchematronDocument());
+	    }
+	}
+
+	for (SchematronSchema schDoc : schDocs) {
+
+	    /*
+	     * Only if the SchematronSchema contains rules will we write it to disc.
+	     */
+	    if (schDoc.hasRules()) {
+		schDoc.write(outputDirectory);
+	    } else {
+		result.addDebug(this,2011,schDoc.getFileName());
+	    }
+	}
 
 	printed = true;
     }
 
-    /** Create XML Schema documents 
-     * @param pi  tbd
-     * @param xsdcurr  tbd
-     * @return  tbd
-     * @throws ShapeChangeAbortException tbd */
+    /**
+     * Create XML Schema documents
+     * 
+     * @param pi      tbd
+     * @param xsdcurr tbd
+     * @return tbd
+     * @throws ShapeChangeAbortException tbd
+     */
     protected boolean createXSDs(PackageInfo pi, XsdDocument xsdcurr) throws ShapeChangeAbortException {
 	boolean res = false;
 
@@ -756,10 +812,13 @@ public class XmlSchema implements Target, MessageSource {
 	 */
 	XsdDocument xsd;
 	String xsdDocument = pi.xsdDocument();
+
 	if (xsdDocument != null && xsdDocument.length() > 0) {
 	    try {
 		result.addDebug(null, 10017, xsdDocument, pi.name());
-		xsd = new XsdDocument(pi, model, options, result, config, xsdDocument);
+
+		xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
+			determineSchematronSchemaForXsdDocument(xsdDocument));
 		res = true;
 	    } catch (ParserConfigurationException e) {
 		result.addFatalError(null, 2);
@@ -772,7 +831,8 @@ public class XmlSchema implements Target, MessageSource {
 		result.addWarning(null, 15, pi.name(), xsdDocument);
 		try {
 		    result.addDebug(null, 10017, xsdDocument, pi.name());
-		    xsd = new XsdDocument(pi, model, options, result, config, xsdDocument);
+		    xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
+			    determineSchematronSchemaForXsdDocument(xsdDocument));
 		    res = true;
 		} catch (ParserConfigurationException e) {
 		    result.addFatalError(null, 2);
@@ -819,9 +879,49 @@ public class XmlSchema implements Target, MessageSource {
 	return res;
     }
 
-    /** Process dependency relationships with other packages 
-     * @param pi  tbd
-     * @throws ShapeChangeAbortException tbd */
+    /**
+     * Determines - and thereby maybe creates - the SchematronSchema that applies to
+     * the XsdDocument whose filename is given via parameter. If Schematron creation
+     * is enabled (via rule-xsd-pkg-schematron) but segmentation of Schematron
+     * corresponding to segmentation of xsdDocument is not enabled, the result will
+     * be the common SchematronSchema (created during initialization of the target).
+     * If Schematron creation as well as segmentation is enabled, a new
+     * SchematronSchema object will be created and returned, using the given
+     * filename as basis for the Schematron file. If Schematron creation is not
+     * enabled, this method will return null.
+     * 
+     * @param xsdDocumentFilename the file name of the XsdDocument for which the
+     *                            SchematronSchema object shall be determined; must
+     *                            not be <code>null</code>; can include the file
+     *                            extension (.xsd)
+     * @return the SchematronSchema to use for the XsdDocument with given filename
+     */
+    private SchematronSchema determineSchematronSchemaForXsdDocument(String xsdDocumentFilename) {
+
+	// NOTE: Will be null if Schematron creation is not enabled.
+	SchematronSchema schDoc = commonSchDoc;
+
+	if (pi.matches("rule-xsd-pkg-schematron") && schematronSegmentation) {
+
+	    String schemaXsdBaseName = FilenameUtils.getBaseName(xsdDocumentFilename);
+
+	    if ("xslt2".equalsIgnoreCase(explicitSchematronQueryBinding)) {
+		schDoc = new SchematronSchemaXslt2(model, options, result, pi, schemaXsdBaseName,
+			schematronSegmentation);
+	    } else {
+		schDoc = new SchematronSchemaOld(model, options, result, pi, schemaXsdBaseName, schematronSegmentation);
+	    }
+	}
+
+	return schDoc;
+    }
+
+    /**
+     * Process dependency relationships with other packages
+     * 
+     * @param pi tbd
+     * @throws ShapeChangeAbortException tbd
+     */
     protected void processDependecies(PackageInfo pi) throws ShapeChangeAbortException {
 	XsdDocument xsd1 = xsdMap.get(pi.id());
 	for (String pid : pi.supplierIds()) {
@@ -1280,6 +1380,8 @@ public class XmlSchema implements Target, MessageSource {
 
 	case 1000:
 	    return "Skipping XML Schema output, as configured.";
+	case 1001:
+	    return "No namespace was found for namespace abbreviation '$1$', configured via tagged value 'xsdForcedImports' on schema package '$2$'. No import will be created for this namespace abbreviation.";
 
 	/*
 	 * 2000 - 2999: Schematron assertions (for value or nilReason etc.)
@@ -1302,7 +1404,8 @@ public class XmlSchema implements Target, MessageSource {
 	    return "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
 	case 2010:
 	    return "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
-	    
+	case 2011:
+	    return "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

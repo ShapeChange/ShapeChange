@@ -90,10 +90,10 @@ import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 
 public class XsdDocument implements MessageSource {
-    
+
     public static final String DGIWGSP_NSABR = "gmldgiwgsp";
     public static final String DGIWGSP_NS = "http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/";
-    
+
     public static final String GMLSF_NSABR = "gmlsf";
     public static final String GMLSF_NS = "http://www.opengis.net/gmlsf/2.0";
 
@@ -119,14 +119,16 @@ public class XsdDocument implements MessageSource {
     protected String okstra;
     protected String codeListRepresentationTVFallback;
     protected EnumSet<Descriptor> descriptorsToRepresent = EnumSet.noneOf(Descriptor.class);
+    protected SchematronSchema schDoc;
 
     public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r, TargetXmlSchemaConfiguration c,
-	    String n) throws ShapeChangeAbortException, ParserConfigurationException {
+	    String n, SchematronSchema schDoc) throws ShapeChangeAbortException, ParserConfigurationException {
 	options = o;
 	result = r;
 	model = m;
 	config = c;
 	name = n;
+	this.schDoc = schDoc;
 
 	outputDirectory = options.parameter(Options.TargetXmlSchemaClass, "outputDirectory");
 	if (outputDirectory == null)
@@ -203,21 +205,36 @@ public class XsdDocument implements MessageSource {
 		true) == null) {
 	    addCreationComment(root);
 	}
-    };
+    }
 
-    /** Add attribute to an element 
-     * @param e  tbd
-     * @param name tbd 
-     * @param value tbd */
+    /**
+     * @return the Schematron document that applies to this XSD document; can be
+     *         <code>null</code> and can be the common Schematron document (if
+     *         Schematron segmentation was not configured)
+     */
+    public SchematronSchema getSchematronDocument() {
+	return this.schDoc;
+    }
+
+    /**
+     * Add attribute to an element
+     * 
+     * @param e     tbd
+     * @param name  tbd
+     * @param value tbd
+     */
     protected void addAttribute(Element e, String name, String value) {
 	Attr att = document.createAttribute(name);
 	att.setValue(value);
 	e.setAttributeNode(att);
     }
 
-    /** Add a comment 
-     * @param e  tbd
-     * @return tbd */
+    /**
+     * Add a comment
+     * 
+     * @param e tbd
+     * @return tbd
+     */
     protected Comment addCreationComment(Element e) {
 	Comment e1 = document.createComment("XML Schema document created by ShapeChange - http://shapechange.net/");
 	e.appendChild(e1);
@@ -226,8 +243,9 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Add documentation and annotation to an element
-     * @param e  tbd
-     * @param info tbd 
+     * 
+     * @param e    tbd
+     * @param info tbd
      * 
      * @return the annotation element, if one was created, else <code>null</code>
      */
@@ -539,8 +557,9 @@ public class XsdDocument implements MessageSource {
     /**
      * Map a base type of a class to a predefined representation in GML, ISO/TS
      * 19139, etc.
-     * @param ci  tbd
-     * @return  tbd
+     * 
+     * @param ci tbd
+     * @return tbd
      */
     protected String mapBaseType(ClassInfo ci) {
 	String s = null;
@@ -561,8 +580,9 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Map an element to a predefined representation in GML, ISO/TS 19139, etc.
-     * @param ci tbd 
-     * @return tbd 
+     * 
+     * @param ci tbd
+     * @return tbd
      */
     protected String mapElement(ClassInfo ci) {
 	if (ci == null)
@@ -747,8 +767,9 @@ public class XsdDocument implements MessageSource {
 
     /**
      * Create global element for an object / data type instance
-     * @param ci  tbd
-     * @param cibase  tbd
+     * 
+     * @param ci     tbd
+     * @param cibase tbd
      */
     public void pObjectElement(ClassInfo ci, ClassInfo cibase) {
 
@@ -786,10 +807,11 @@ public class XsdDocument implements MessageSource {
 
     /**
      * complexType name='[ci.name()+"Type"]' abstract='[ci.isAbstract()]'
-     * @param ci  tbd
-     * @param cibase  tbd
-     * @param schDoc  tbd
-     * @return  tbd
+     * 
+     * @param ci     tbd
+     * @param cibase tbd
+     * @param schDoc tbd
+     * @return tbd
      */
     public Element pComplexType(ClassInfo ci, ClassInfo cibase, SchematronSchema schDoc) {
 
@@ -997,9 +1019,10 @@ public class XsdDocument implements MessageSource {
 
     /**
      * group name='[ci.name()+"Group"]'
-     * @param ci  tbd
-     * @param cibase  tbd
-     * @return  tbd
+     * 
+     * @param ci     tbd
+     * @param cibase tbd
+     * @return tbd
      */
     public Element pGroup(ClassInfo ci, ClassInfo cibase) {
 	Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "group");
@@ -1114,6 +1137,8 @@ public class XsdDocument implements MessageSource {
     /**
      * Walk down the subtype tree to find the first instantiable types for any mixin
      * subtype
+     * 
+     * @return can be empty but not <code>null</code>
      */
     private HashSet<ClassInfo> subtypesOfMixins(ClassInfo ci, boolean inMixin) {
 	HashSet<ClassInfo> res = new HashSet<ClassInfo>();
@@ -1126,6 +1151,8 @@ public class XsdDocument implements MessageSource {
 		} else {
 		    if (inMixin)
 			res.add(cix);
+		    else
+			res.addAll(subtypesOfMixins(cix,false));
 		}
 	    }
 	}
@@ -1756,12 +1783,13 @@ public class XsdDocument implements MessageSource {
     /**
      * Process a class property. "true" is returned, if the property is an
      * aggregation/composition, "false" otherwise
-     * @param ci  tbd
-     * @param pi  tbd
-     * @param sequenceOrChoice  tbd
-     * @param m  tbd
-     * @param schDoc  tbd
-     * @return  tbd
+     * 
+     * @param ci               tbd
+     * @param pi               tbd
+     * @param sequenceOrChoice tbd
+     * @param m                tbd
+     * @param schDoc           tbd
+     * @return tbd
      */
     public boolean processLocalProperty(ClassInfo ci, PropertyInfo pi, Element sequenceOrChoice, Multiplicity m,
 	    SchematronSchema schDoc) {
@@ -1781,10 +1809,11 @@ public class XsdDocument implements MessageSource {
     /**
      * Process all properties that are added in this class. "true" is returned if a
      * single property is an aggregation/composition, "false" otherwise
-     * @param ci  tbd
-     * @param sequenceOrChoice  tbd
-     * @param schDoc  tbd
-     * @return  tbd
+     * 
+     * @param ci               tbd
+     * @param sequenceOrChoice tbd
+     * @param schDoc           tbd
+     * @return tbd
      */
     public boolean processLocalProperties(ClassInfo ci, Element sequenceOrChoice, SchematronSchema schDoc) {
 
@@ -3181,10 +3210,6 @@ public class XsdDocument implements MessageSource {
 	return result;
     }
 
-
-
-
-
     /**
      * @param cibase class that owns the property
      * @param propi  the property
@@ -3913,10 +3938,29 @@ public class XsdDocument implements MessageSource {
 	    typeOrExtension = type;
 	}
 
+	HashSet<ClassInfo> instatiableMixinSubclasses = null;
+	ClassInfo typeCi = model.classByIdOrName(propi.typeInfo());
+	if (typeCi != null && typeCi.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+	    instatiableMixinSubclasses = subtypesOfMixins(typeCi, false);
+	}
+
 	Element sequenceOrChoice;
 	if (propi.matches("rule-xsd-prop-inlineOrByReference") && propi.inlineOrByReference().equals("byreference")) {
 	    sequenceOrChoice = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
 	    typeOrExtension.appendChild(sequenceOrChoice);
+
+	} else if (instatiableMixinSubclasses != null && !instatiableMixinSubclasses.isEmpty()) {
+
+	    sequenceOrChoice = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
+	    typeOrExtension.appendChild(sequenceOrChoice);
+
+	    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
+	    sequenceOrChoice.appendChild(e5);
+	    String s = elementName(typeCi, true);
+	    if (s != null) {
+		addAttribute(e5, "ref", s);
+	    }
+	    addElements(sequenceOrChoice, instatiableMixinSubclasses);
 
 	} else if (types != null) {
 	    sequenceOrChoice = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
@@ -4082,9 +4126,12 @@ public class XsdDocument implements MessageSource {
 	}
     }
 
-    /** Dump XML Schema file 
-     * @param outputFormat  tbd
-     * @throws Exception tbd */
+    /**
+     * Dump XML Schema file
+     * 
+     * @param outputFormat tbd
+     * @throws Exception tbd
+     */
     public void printFile(Properties outputFormat) throws Exception {
 	if (printed) {
 	    return;
@@ -4205,8 +4252,7 @@ public class XsdDocument implements MessageSource {
 	    return "Directory named '$1$' does not exist or is not accessible.";
 
 	/*
-	 * 1000 - 1999: Schematron assertions (for code lists,
-	 * etc.)
+	 * 1000 - 1999: Schematron assertions (for code lists, etc.)
 	 */
 	case 1000:
 	    return "??Representation '$1$' of code list '$2$' is not recognized. No representation specific schematron assertions will be created for this code list.";

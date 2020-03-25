@@ -48,78 +48,84 @@ import org.w3c.dom.NodeList;
  */
 public class TestInstance {
 
-	Options options = null;
-	ShapeChangeResult result = null;
+    Options options = null;
+    ShapeChangeResult result = null;
 
-	/**
-	 * Create and execute the ShapeChange instance
-	 * 
-	 * @param config
-	 *            URI/Path of the configuration file
-	 */
-	public TestInstance(String config) {
-		init(config, null);
-	}
+    /**
+     * Create and execute the ShapeChange instance
+     * 
+     * @param config URI/Path of the configuration file
+     */
+    public TestInstance(String config) {
+	init(config, null);
+    }
 
-	public TestInstance(String config, HashMap<String, String> replacevalues) {
-		init(config, replacevalues);
-	}
+    public TestInstance(String config, HashMap<String, String> replacevalues) {
+	init(config, replacevalues);
+    }
 
-	private void init(String config, HashMap<String, String> replacevalues) {
-		try {
-			options = new Options();
-			result = new ShapeChangeResult(options);
+    private void init(String config, HashMap<String, String> replacevalues) {
+	try {
+	    options = new Options();
+	    result = new ShapeChangeResult(options);
 
-			Version javaVersion = Runtime.version();
-			if (javaVersion.feature() < 11) {
-				result.addError(null, 18, javaVersion.toString());
-				System.exit(1);
-			}
+	    Version javaVersion = Runtime.version();
+	    if (javaVersion.feature() < 11) {
+		result.addError(null, 18, javaVersion.toString());
+		System.exit(1);
+	    }
 
-			if (replacevalues != null)
-				for (Entry<String, String> me : replacevalues.entrySet()) {
-					options.setReplaceValue(me.getKey(), me.getValue());
-				}
-
-			Converter converter = new Converter(options, result);
-			options.configFile = config;
-			options.loadConfiguration();
-			converter.convert();
-		} catch (ShapeChangeAbortException e) {
-			result.addFatalError(e.getMessage());
-			fail("ShapeChange encountered an abort error.");
-		} catch (Exception e) {
-			if(e.getMessage() != null) {
-				result.addFatalError(e.getMessage());
-			}
-			e.printStackTrace();
-			fail("ShapeChange encountered an unknown error.");
-		}
-	}
-
-	/**
-	 * Checks, if errors were reported during execution
-	 * 
-	 * @return true, if no error was logged in the log file
-	 */
-	protected boolean noError() {
-
-		// if there is no result file, there is an error
-		if (result == null)
-			return false;
-
-		try {
-			NodeList nodes = XPathAPI.selectNodeList(result.document,
-					"//r:Error|//r:FatalError",
-					result.document.getDocumentElement());
-			if (nodes.getLength() > 0)
-				return false;
-		} catch (TransformerException e) {
-			fail("An error occured processing an Xpath expression on the log file.");
-			e.printStackTrace();
-			return false;
+	    if (replacevalues != null)
+		for (Entry<String, String> me : replacevalues.entrySet()) {
+		    options.setReplaceValue(me.getKey(), me.getValue());
 		}
 
-		return true;
+	    Converter converter = new Converter(options, result);
+	    options.configFile = config;
+	    options.loadConfiguration();
+	    converter.convert();
+	} catch (ShapeChangeAbortException e) {
+	    if (result != null) {
+		result.addFatalError(e.getMessage());
+	    } else {
+		System.err.println(e.getMessage());
+	    }
+	    fail("ShapeChange encountered an abort error.");
+	} catch (Exception e) {
+	    if (e.getMessage() != null) {
+		if (result != null) {
+		    result.addFatalError(e.getMessage());
+		} else {
+		    System.err.println(e.getMessage());
+		}
+	    }
+	    e.printStackTrace();
+	    fail("ShapeChange encountered an unknown error.");
 	}
+    }
+
+    /**
+     * Checks, if errors were reported during execution
+     * 
+     * @return true, if no error was logged in the log file
+     */
+    protected boolean noError() {
+
+	// if there is no result file, there is an error
+	if (result == null)
+	    return false;
+
+	try {
+	    NodeList nodes = XPathAPI.selectNodeList(result.document, "//r:Error|//r:FatalError",
+		    result.document.getDocumentElement());
+	    if (nodes.getLength() > 0)
+		return false;
+	} catch (TransformerException e) {
+	    fail("An error occured processing an Xpath expression on the log file.");
+	    e.printStackTrace();
+	    return false;
+	}
+
+	return true;
+    }
 }

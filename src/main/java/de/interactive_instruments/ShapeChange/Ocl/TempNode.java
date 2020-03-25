@@ -987,16 +987,24 @@ abstract class TempNode {
 			// operation, take cases accordingly
 			if (arguments == null) {
 				// Must be attribute/role in this class or some base class
-				PropertyInfo pi = ci.property(name());
-				if (pi != null)
+				PropertyInfo pi = ci.property(name());	
+				
+				if(pi == null && ci.options().isNavigatingNonNavigableAssociationsWhenParsingOcl()) {
+				    // Check non-navigable association roles within the model
+				    pi = ci.model().lookupNonNavigableAssociationRole(ci,name());
+				}
+				
+				if (pi != null) {
 					return new OclNode.AttributeCallExp(object, pi, false);
-				// So, we missed it. Say so ...
-				if (!quiet) {
-					MessageCollection.Message mess = p
-							.getMessageCollection().new Message(26);
-					mess.substitute(1, name());
-					mess.substitute(2, ci.name());
-					mess.addSourceReferences(id.sourceReferences);
+				} else {				
+        				// So, we missed it. Say so ...
+        				if (!quiet) {
+        					MessageCollection.Message mess = p
+        							.getMessageCollection().new Message(26);
+        					mess.substitute(1, name());
+        					mess.substitute(2, ci.name());
+        					mess.addSourceReferences(id.sourceReferences);
+        				}
 				}
 			} else {
 				// Must be operation

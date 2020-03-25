@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/segmentation" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/segmentation" version="1">
+  <include schemaLocation="bundleA.xsd"/>
+  <include schemaLocation="leafB1.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT_BundleB" substitutionGroup="gml:AbstractFeature" type="ex:FT_BundleBType"/>
+  <complexType name="FT_BundleBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_BundleBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_BundleB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT_LeafB2" substitutionGroup="gml:AbstractFeature" type="ex:FT_LeafB2Type"/>
+  <complexType name="FT_LeafB2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_LeafB2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_LeafB2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT_TestSchema" substitutionGroup="gml:AbstractFeature" type="ex:FT_TestSchemaType"/>
+  <complexType name="FT_TestSchemaType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_TestSchemaPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_TestSchema"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

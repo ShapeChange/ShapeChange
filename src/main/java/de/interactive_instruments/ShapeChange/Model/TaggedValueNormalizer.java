@@ -39,8 +39,7 @@ import java.util.stream.Stream;
 import de.interactive_instruments.ShapeChange.Options;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class TaggedValueNormalizer {
@@ -66,7 +65,8 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the JSON encoding rule
      */
-    protected static final Set<String> jsonTags = Stream.of("jsonBaseURI", "jsonLayerTableURI", "jsonDirectory")
+    protected static final Set<String> jsonTags = Stream
+	    .of("jsonDocument", "jsonBaseURI", "jsonBaseUri", "jsonLayerTableURI", "jsonDirectory", "defaultGeometry")
 	    .collect(Collectors.toSet());
 
     /*
@@ -85,30 +85,28 @@ public class TaggedValueNormalizer {
      */
     protected static final Set<String> gpkgTags = Stream.of("gpkgZ", "gpkgM").collect(Collectors.toSet());
 
-    
     /*
      * the list of tagged values specified by other encoding rules
      */
-    protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", 
-	    "gmlAsGroup", "length", "maxLength", "base", "rangeMinimum", "rangeMaximum", "nilReasonAllowed",
-	    "gmlImplementedByNilReason", "implementedByNilReason", "primaryCode", "oclExpressions",
-	    "alias", "gmlAsCharacterString", "gmlMixin", "nillable",
-	    "suppress", "codeListValuePattern", "codeListRepresentation", "uomResourceURI", "uomResourceValuePattern",
-	    "uomResourceRepresentation", "physicalQuantity", "recommendedMeasure", "noncomparableMeasure",
-	    "asXMLAttribute", "soft-typed", "parent", "AAA:Kennung", "AAA:Datum", "AAA:Organisation", "AAA:Modellart",
-	    "AAA:Profile", "AAA:Grunddatenbestand", "AAA:Nutzungsart", "AAA:Nutzungsartkennung", "AAA:objektbildend",
-	    "AAA:Themen", "AAA:Revisionsnummer", "AAA:Version", "AAA:AAAVersion", "reverseRoleNAS", "allowedTypesNAS",
-	    "gmlArrayProperty", "gmlListProperty", "example", "dataCaptureStatement", "legalBasis", "profiles", "name",
-	    "infoURL", "broaderListedValue", "skosConceptSchemeSubclassName", "size", "omitWhenFlattened", "maxOccurs",
-	    "isFlatTarget", "Title", "formrows", "formcols", "validate", "Reiter", "generationDateTime", "ontologyName",
-	    "alwaysVoid", "neverVoid", "appliesTo", "vocabulary", "associativeTable", "jsonEncodingRule",
-	    "sqlEncodingRule", "status", "geometry", "oneToManyReferenceColumnName", "dissolveAssociation", "precision",
-	    "scale", "numericType", "toFeatureType", "toCodelist", "sqlUnique", "codelistType", "sqlOnUpdate",
-	    "sqlOnDelete", "shortName", "codeListSource", "codeListSourceCharset", "codeListSourceRepresentation",
-	    "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes",
-	    "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
-	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType")
-	    .collect(Collectors.toSet());
+    protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", "gmlAsGroup",
+	    "length", "maxLength", "base", "rangeMinimum", "rangeMaximum", "nilReasonAllowed",
+	    "gmlImplementedByNilReason", "implementedByNilReason", "primaryCode", "oclExpressions", "alias",
+	    "gmlAsCharacterString", "gmlMixin", "nillable", "suppress", "codeListValuePattern",
+	    "codeListRepresentation", "uomResourceURI", "uomResourceValuePattern", "uomResourceRepresentation",
+	    "physicalQuantity", "recommendedMeasure", "noncomparableMeasure", "asXMLAttribute", "soft-typed", "parent",
+	    "AAA:Kennung", "AAA:Datum", "AAA:Organisation", "AAA:Modellart", "AAA:Profile", "AAA:Grunddatenbestand",
+	    "AAA:Nutzungsart", "AAA:Nutzungsartkennung", "AAA:objektbildend", "AAA:Themen", "AAA:Revisionsnummer",
+	    "AAA:Version", "AAA:AAAVersion", "reverseRoleNAS", "allowedTypesNAS", "gmlArrayProperty", "gmlListProperty",
+	    "example", "dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL", "broaderListedValue",
+	    "skosConceptSchemeSubclassName", "size", "omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
+	    "formrows", "formcols", "validate", "Reiter", "generationDateTime", "ontologyName", "alwaysVoid",
+	    "neverVoid", "appliesTo", "vocabulary", "associativeTable", "jsonEncodingRule", "sqlEncodingRule", "status",
+	    "geometry", "oneToManyReferenceColumnName", "dissolveAssociation", "precision", "scale", "numericType",
+	    "toFeatureType", "toCodelist", "sqlUnique", "codelistType", "sqlOnUpdate", "sqlOnDelete", "shortName",
+	    "codeListSource", "codeListSourceCharset", "codeListSourceRepresentation", "codeListRestriction",
+	    "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues",
+	    "reportable", "dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference", "extensibility",
+	    "obligation", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values
@@ -121,7 +119,7 @@ public class TaggedValueNormalizer {
 	this.options = options;
 
 	allowedTags = new HashSet<String>(100);
-	
+
 	allowedTags.addAll(iso19109Tags);
 	allowedTags.addAll(gmlTags);
 	allowedTags.addAll(jsonTags);
@@ -129,7 +127,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(owlTags);
 	allowedTags.addAll(gpkgTags);
 	allowedTags.addAll(shapeChangeTags);
-		
+
 	for (String s : options.parameter("representTaggedValues").split("\\,"))
 	    allowedTags.add(s.trim());
 	for (String s : options.parameter("addTaggedValues").split("\\,"))

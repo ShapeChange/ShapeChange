@@ -43,6 +43,15 @@ public class Type {
 
 	public String id = null;
 	public String name = null;
+	
+	public Type() {
+	    
+	}
+	
+	public Type(String id, String name) {
+	    this.id = id;
+	    this.name = name;
+	}
 
 	public Type createCopy() {
 

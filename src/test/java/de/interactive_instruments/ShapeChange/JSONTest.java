@@ -38,6 +38,14 @@ import org.junit.jupiter.api.Test;
 public class JSONTest extends BasicTestSCXML {
 
     @Test
+    public void testJson_basic() {
+	
+	multiTest("src/test/resources/json/basic/test_json_schema_basic.xml",
+		new String[] { "json" }, "testResults/json/basic",
+		"src/test/resources/json/basic/reference");
+    }
+    
+    @Test
     public void testJsonWithGeoservicesEncodingRule() {
 	/*
 	 * JSON encoding with geoservices encoding rule

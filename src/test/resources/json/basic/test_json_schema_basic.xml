@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/test/resources/json/basic/test_json_schema_basic.eap"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <parameter name="extractSeparator" value="--"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="ea:alias"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="none"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+  <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/json/basic/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="model" input="input" mode="enabled"/>
+
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter" id="constraintconverter" input="model" mode="enabled">
+   <parameters>
+    <ProcessParameter name="valueTypeRepresentationTypes" value="PlaceSpecification{PointPositionSpecification, CurvePositionSpecification, SurfacePositionSpecification, LocationSpecification}"/>
+    <ProcessParameter name="valueTypeRepresentationConstraintRegex" value=".*Place Representations Disallowed.*"/>
+   </parameters>
+   <rules>
+    <ProcessRuleSet name="trf">
+     <rule name="rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion"/>
+    </ProcessRuleSet>
+   </rules>
+  </Transformer>
+
+ </transformers>
+ <targets>
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas"/>
+   <targetParameter name="sortedOutput" value="true"/>
+<!--   <targetParameter name="jsonSchemaVersion" value="draft-07"/>-->
+   
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
+<!--   <targetParameter name="baseJsonSchemaDefinitionForDataTypes" value="https://geojson.org/schema/Feature.json"/>-->
+   
+   <!--		 <targetParameter name="entityTypeName" value="@type"/>-->
+
+   <!--		 <targetParameter name="objectIdentifierName" value="@id"/>-->
+   <!--   		 <targetParameter name="objectIdentifierType" value="string, number"/>-->
+   <!--		 <targetParameter name="objectIdentifierRequired" value="true"/>-->
+
+   <targetParameter name="defaultEncodingRule" value="myjson"/>
+
+   <rules>
+    <EncodingRule name="myjson_basic">
+     <rule name="rule-exp-pkg-allPackagesAreEditable"/>
+     <rule name="rule-json-all-documentation"/>
+     <rule name="rule-json-all-notEncoded"/>
+     
+     <rule name="rule-json-cls-basictype"/>
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-generalization"/>
+     <rule name="rule-json-cls-specialization"/>
+
+     <!--     <rule name="rule-json-cls-identifierForTypeWithIdentity" />-->
+     <rule name="rule-json-cls-identifierStereotype"/>
+     <!--     <rule name="rule-json-cls-ignoreIdentifier"/>-->
+
+     <rule name="rule-json-cls-virtualGeneralization"/>
+     <!--     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>-->
+     <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+     <rule name="rule-json-cls-nestedProperties"/>
+     <rule name="rule-json-cls-codelist-uri-format"/>
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+
+     <rule name="rule-json-cls-valueTypeOptions"/>
+
+    </EncodingRule>
+
+    <EncodingRule name="myjson" extends="myjson_basic">
+     <rule name="rule-json-cls-union-propertyCount"/>
+
+    </EncodingRule>
+
+    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="myjson_basic">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    </EncodingRule>
+   </rules>
+
+
+
+
+   <mapEntries>
+    <MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
+    <MapEntry type="URI" rule="*" targetType="string" param="formatted{format=uri}"/>
+    <MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
+    <MapEntry type="Integer" rule="*" targetType="integer" param=""/>
+    <MapEntry type="Decimal" rule="*" targetType="number" param=""/>
+    <MapEntry type="Number" rule="*" targetType="number" param=""/>
+    <MapEntry type="Real" rule="*" targetType="number" param=""/>
+    <MapEntry type="Measure" rule="*" targetType="number" param=""/>
+    <MapEntry type="Date" rule="*" targetType="string" param="formatted{format=date}"/>
+    <MapEntry type="DateTime" rule="*" targetType="string" param="formatted{format=date-time}"/>
+
+    <!-- ISO/TS 19107 -->
+    <MapEntry type="GM_Curve" rule="*" targetType="https://geojson.org/schema/LineString.json" param="geometry"/>
+    <MapEntry type="GM_MultiCurve" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" param="geometry"/>
+    <MapEntry type="GM_MultiPoint" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" param="geometry"/>
+    <MapEntry type="GM_MultiSurface" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" param="geometry"/>
+    <MapEntry type="GM_Object" rule="*" targetType="https://geojson.org/schema/Geometry.json" param="geometry"/>
+    <MapEntry type="GM_Point" rule="*" targetType="https://geojson.org/schema/Point.json" param="geometry"/>
+    <MapEntry type="GM_Surface" rule="*" targetType="https://geojson.org/schema/Polygon.json" param="geometry"/>
+
+
+    <MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param=""/>
+    <MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param=""/>
+
+   </mapEntries>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>

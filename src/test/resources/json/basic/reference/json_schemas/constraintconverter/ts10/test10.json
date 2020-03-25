@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
+  "$defs": {
+    "CurvePositionSpecification": {
+      "$anchor": "CurvePositionSpecification",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "LocationSpecification": {
+      "$anchor": "LocationSpecification",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PlaceSpecification": {
+      "$anchor": "PlaceSpecification",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "entityType"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "PointPositionSpecification": {
+      "$anchor": "PointPositionSpecification",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PositionSpecification": {
+      "$anchor": "PositionSpecification",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "SurfacePositionSpecification": {
+      "$anchor": "SurfacePositionSpecification",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS10_FT1": {
+      "$anchor": "TS10_FT1",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                },
+                "place": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "$ref": "https://example.org/jsonschema/byreference.json"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#LocationSpecification"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "entityType",
+                "place"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "TS10_FT2": {
+      "$anchor": "TS10_FT2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#TS10_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "place": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "$ref": "https://example.org/jsonschema/byreference.json"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

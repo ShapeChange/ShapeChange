@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex1="https://example.org/forcedImports/schema1" xmlns:ex2="https://example.org/forcedImports/schema2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/xsd/forcedImports" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/forcedImports" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="https://example.org/forcedImports/schema1" schemaLocation="https://example.org/forcedImports/schema1.xsd"/>
+  <import namespace="https://example.org/forcedImports/schema2"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeType"/>
+  <complexType name="FeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

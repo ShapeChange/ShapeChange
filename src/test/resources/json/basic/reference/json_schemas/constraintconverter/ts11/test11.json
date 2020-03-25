@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts11/ts11/test11.json",
+  "$defs": {
+    "TS11_MyBoolean": {
+      "$anchor": "TS11_MyBoolean",
+      "type": "boolean"
+    },
+    "TS11_MyCharacterString": {
+      "$anchor": "TS11_MyCharacterString",
+      "type": "string"
+    },
+    "TS11_MyNumber": {
+      "$anchor": "TS11_MyNumber",
+      "type": "number"
+    },
+    "TS11_Number0to360": {
+      "$anchor": "TS11_Number0to360",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_NumberNonNegative"
+        },
+        {
+          "maximum": 360.0
+        }
+      ]
+    },
+    "TS11_NumberMinus180toPlus180": {
+      "$anchor": "TS11_NumberMinus180toPlus180",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyNumber"
+        },
+        {
+          "minimum": -180.0,
+          "maximum": 180.0
+        }
+      ]
+    },
+    "TS11_NumberNonNegative": {
+      "$anchor": "TS11_NumberNonNegative",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_NumberOther"
+        },
+        {
+          "minimum": 0.0
+        }
+      ]
+    },
+    "TS11_NumberOther": {
+      "$anchor": "TS11_NumberOther",
+      "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyNumber"
+    },
+    "TS11_String10": {
+      "$anchor": "TS11_String10",
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "maxLength": 10
+        }
+      ]
+    },
+    "TS11_StringPattern": {
+      "$anchor": "TS11_StringPattern",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyCharacterString"
+        },
+        {
+          "pattern": "^[abc]{3}$"
+        }
+      ]
+    }
+  }
+}

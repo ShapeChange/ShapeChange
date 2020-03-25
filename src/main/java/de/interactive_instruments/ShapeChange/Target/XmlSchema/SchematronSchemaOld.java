@@ -52,8 +52,7 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode;
  * {@link SchematronSchemaXslt2} instead.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SchematronSchemaOld extends AbstractSchematronSchema implements MessageSource {
@@ -61,13 +60,19 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
     /**
      * Ctor
      *
-     * @param mdl Model object
-     * @param o   Options object
-     * @param r   Result object
-     * @param p   PackageInfo object
+     * @param mdl               Model object
+     * @param o                 Options object
+     * @param r                 Result object
+     * @param schemaPackage     the package that represents the schema that is being
+     *                          encoded by the XmlSchema target
+     * @param schemaXsdBaseName the name of the XSD document, for which this
+     *                          Schematron schema will contain assertions
+     * @param segmentation      true if schematron segmentation is enabled, else
+     *                          false
      */
-    public SchematronSchemaOld(Model mdl, Options o, ShapeChangeResult r, PackageInfo p) {
-	super(mdl, o, r, p);
+    public SchematronSchemaOld(Model mdl, Options o, ShapeChangeResult r, PackageInfo schemaPackage,
+	    String schemaXsdBaseName, boolean segmentation) {
+	super(mdl, o, r, schemaPackage, schemaXsdBaseName, segmentation);
     }
 
     @Override
@@ -164,8 +169,8 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
     /**
      * Add an assertion statement - that will result by translating the given OCL
      * constraint, which is defined for a property, to an XpathFragment object - and
-     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion to
-     * abstract or suppressed classes.
+     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion
+     * to abstract or suppressed classes.
      *
      * <p>
      * The rule context is a class, which is determined by parameter cib. This

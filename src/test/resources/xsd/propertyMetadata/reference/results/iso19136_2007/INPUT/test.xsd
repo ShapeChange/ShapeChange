@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/xsd/propertyMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/propertyMetadata" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://example.org/shapechange/external" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:test="http://example.org/shapechange/xsd/propertyMetadata" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/propertyMetadata" version="1.0">
+  <import namespace="http://example.org/shapechange/external"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="AssociationClassX" substitutionGroup="gml:AbstractFeature" type="test:AssociationClassXType"/>
@@ -12,6 +13,23 @@
   <complexType name="AssociationClassXPropertyType">
     <sequence minOccurs="0">
       <element ref="test:AssociationClassX"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="CurvePositionSpecification" substitutionGroup="gml:Curve" type="test:CurvePositionSpecificationType"/>
+  <complexType name="CurvePositionSpecificationType">
+    <complexContent>
+      <extension base="gml:CurveType">
+        <sequence>
+          <group ref="test:PositionSpecificationGroup"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CurvePositionSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:CurvePositionSpecification"/>
     </sequence>
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
@@ -315,15 +333,7 @@
     <complexContent>
       <extension base="test:FeatureTypeFSupertypeType">
         <sequence>
-          <element name="pmix">
-            <complexType>
-              <simpleContent>
-                <extension base="string">
-                  <attribute name="metadata" type="anyURI"/>
-                </extension>
-              </simpleContent>
-            </complexType>
-          </element>
+          <group ref="test:MixinGroup"/>
           <element name="p1">
             <complexType>
               <simpleContent>
@@ -396,6 +406,60 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
+  <element name="FeatureTypeG" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeGType"/>
+  <complexType name="FeatureTypeGType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="place">
+            <complexType>
+              <choice minOccurs="0">
+                <element ref="test:PlaceSpecification"/>
+                <element ref="test:CurvePositionSpecification"/>
+                <element ref="test:PointPositionSpecification"/>
+                <element ref="test:SurfacePositionSpecification"/>
+              </choice>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeGPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeatureTypeG"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="LocationSpecification" substitutionGroup="test:PlaceSpecification" type="test:LocationSpecificationType"/>
+  <complexType name="LocationSpecificationType">
+    <complexContent>
+      <extension base="test:PlaceSpecificationType">
+        <sequence>
+          <element minOccurs="0" name="locationIdentifier">
+            <complexType>
+              <simpleContent>
+                <extension base="string">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="LocationSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:LocationSpecification"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
   <complexType name="MixinPropertyType">
     <choice minOccurs="0">
       <element ref="test:FeatureTypeF"/>
@@ -403,9 +467,142 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
+  <group name="MixinGroup">
+    <sequence>
+      <element name="pmix">
+        <complexType>
+          <simpleContent>
+            <extension base="string">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+  </group>
+  <element abstract="true" name="NonMixinSupertype" substitutionGroup="gml:AbstractGML" type="test:NonMixinSupertypeType"/>
+  <complexType abstract="true" name="NonMixinSupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="p" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="NonMixinSupertypePropertyType">
+    <choice minOccurs="0">
+      <element ref="test:NonMixinSupertype"/>
+      <element ref="test:CurvePositionSpecification"/>
+      <element ref="test:PointPositionSpecification"/>
+      <element ref="test:SurfacePositionSpecification"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="PhysicalAddressSpecification" substitutionGroup="test:PlaceSpecification" type="test:PhysicalAddressSpecificationType"/>
+  <complexType name="PhysicalAddressSpecificationType">
+    <complexContent>
+      <extension base="test:PlaceSpecificationType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PhysicalAddressSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:PhysicalAddressSpecification"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="PlaceSpecification" substitutionGroup="test:NonMixinSupertype" type="test:PlaceSpecificationType"/>
+  <complexType abstract="true" name="PlaceSpecificationType">
+    <complexContent>
+      <extension base="test:NonMixinSupertypeType">
+        <sequence>
+          <element minOccurs="0" name="placeProp">
+            <complexType>
+              <simpleContent>
+                <extension base="double">
+                  <attribute name="metadata" type="anyURI"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PlaceSpecificationPropertyType">
+    <choice minOccurs="0">
+      <element ref="test:PlaceSpecification"/>
+      <element ref="test:CurvePositionSpecification"/>
+      <element ref="test:PointPositionSpecification"/>
+      <element ref="test:SurfacePositionSpecification"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="PointPositionSpecification" substitutionGroup="gml:Point" type="test:PointPositionSpecificationType"/>
+  <complexType name="PointPositionSpecificationType">
+    <complexContent>
+      <extension base="gml:PointType">
+        <sequence>
+          <group ref="test:PositionSpecificationGroup"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PointPositionSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:PointPositionSpecification"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <complexType name="PositionSpecificationPropertyType">
+    <choice minOccurs="0">
+      <element ref="test:CurvePositionSpecification"/>
+      <element ref="test:PointPositionSpecification"/>
+      <element ref="test:SurfacePositionSpecification"/>
+    </choice>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <group name="PositionSpecificationGroup">
+    <sequence>
+      <element minOccurs="0" name="placeProp">
+        <complexType>
+          <simpleContent>
+            <extension base="double">
+              <attribute name="metadata" type="anyURI"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element name="p" type="string"/>
+    </sequence>
+  </group>
   <simpleType name="RealNonNegativeType">
     <restriction base="double"/>
   </simpleType>
+  <element name="SurfacePositionSpecification" substitutionGroup="gml:Surface" type="test:SurfacePositionSpecificationType"/>
+  <complexType name="SurfacePositionSpecificationType">
+    <complexContent>
+      <extension base="gml:SurfaceType">
+        <sequence>
+          <group ref="test:PositionSpecificationGroup"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SurfacePositionSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:SurfacePositionSpecification"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
   <element name="Type" substitutionGroup="gml:AbstractGML" type="test:TypeType"/>
   <complexType name="TypeType">
     <complexContent>
@@ -489,6 +686,21 @@
   <complexType name="TypePropertyType">
     <sequence minOccurs="0">
       <element ref="test:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="USAddressSpecification" substitutionGroup="test:PhysicalAddressSpecification" type="test:USAddressSpecificationType"/>
+  <complexType name="USAddressSpecificationType">
+    <complexContent>
+      <extension base="test:PhysicalAddressSpecificationType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="USAddressSpecificationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:USAddressSpecification"/>
     </sequence>
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>

@@ -87,8 +87,7 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class Options {
@@ -104,7 +103,7 @@ public class Options {
     /* Target Java Classes */
     public static final String TargetXmlSchemaClass = "de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema";
     public static final String TargetFOL2SchematronClass = "de.interactive_instruments.ShapeChange.Target.FOL2Schematron.FOL2Schematron";
-    
+
     /** Well known stereotypes */
     public static final Set<String> classStereotypes = Stream.of("codelist", "enumeration", "datatype", "featuretype",
 	    "type", "basictype", "interface", "union", "abstract", "fachid", "schluesseltabelle", "adeelement",
@@ -228,6 +227,14 @@ public class Options {
      * log.
      */
     public static final String PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY = "loadConstraintsForSelectedSchemasOnly";
+
+    /**
+     * This parameter controls whether non-navigable association roles are allowed
+     * in paths within OCL expressions. The default value is <code>false</code>. The
+     * parameter can be used in the input configuration and the configuration of
+     * transformers.
+     */
+    public static final String PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC = "navigatingNonNavigableAssociationsWhenParsingOcl";
 
     // Application schema defaults (namespace and version)
     public String xmlNamespaceDefault = "FIXME";
@@ -543,6 +550,16 @@ public class Options {
 
 	return this.parameter(PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY) != null
 		&& this.parameter(PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY).equalsIgnoreCase("true");
+    }
+
+    public boolean isNavigatingNonNavigableAssociationsWhenParsingOcl() {
+
+	if(this.currentProcessConfig != null) {
+	    return currentProcessConfig.parameterAsBoolean(PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC, false);
+	} else {
+	    // check the input configuration
+	    return "true".equalsIgnoreCase(this.parameter(PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC));
+	}
     }
 
     /**
@@ -938,7 +955,7 @@ public class Options {
 
 	return res;
     }
-    
+
     /**
      * @param className     Fully qualified name of the target class for which the
      *                      value of the parameter with given name shall be
@@ -1008,11 +1025,13 @@ public class Options {
 	return res;
     }
 
-    /** This returns the names of all parms whose names match a regex pattern 
-     * @param t  tbd
-     * @param regex  tbd
-     * @return  tbd
-     * */
+    /**
+     * This returns the names of all parms whose names match a regex pattern
+     * 
+     * @param t     tbd
+     * @param regex tbd
+     * @return tbd
+     */
     public String[] parameterNamesByRegex(String t, String regex) {
 	HashSet<String> pnames = new HashSet<String>();
 	int lt2 = t.length() + 2;
@@ -1789,7 +1808,7 @@ public class Options {
     }
 
     /**
-     * @param type tbd
+     * @param type            tbd
      * @param xsdEncodingRule tbd
      * @return the boolean value of XsdMapEntry/@xmlElementHasSimpleContent, for the
      *         map entry with the given type and encoding rule (or one of the rules
@@ -3256,7 +3275,8 @@ public class Options {
 
     /**
      * Normalize a stereotype fetched from the model.
-     * @param stereotype  tbd
+     * 
+     * @param stereotype tbd
      * 
      * @return The well-known stereotype, for which the given stereotype is defined
      *         as an alias (via stereotype alias configuration elements), or the
@@ -3272,7 +3292,8 @@ public class Options {
 
     /**
      * Normalize a tag fetched from the model.
-     * @param tag  tbd
+     * 
+     * @param tag tbd
      * 
      * @return the mapping for the tag, or the given tag itself if no mapping is
      *         configured
@@ -3641,7 +3662,7 @@ public class Options {
 
     /**
      * @param original tbd
-     * @param tagList tbd
+     * @param tagList  tbd
      * @return can be empty but not <code>null</code>
      */
     public TaggedValues taggedValueFactory(TaggedValues original, String tagList) {

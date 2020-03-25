@@ -71,4 +71,13 @@ public class TypeConverterTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/typeConversion/targetElementByReference",
 		"src/test/resources/typeConverter/targetElementByReference/reference");
     }
+    
+    @Test
+    public void testRuleTrfPropertyMetadataStereotypeToMetadataProperty() {
+
+	multiTest(
+		"src/test/resources/typeConverter/propertyMetadataStereotype/test_propertyMetadataStereotype.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/propertyMetadataStereotype",
+		"src/test/resources/typeConverter/propertyMetadataStereotype/reference");
+    }
 }

@@ -134,26 +134,6 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return s;
 	}
 
-	/** Derive a file name from the package name. 
-	 * @param s  tbd
-	 * @return tbd */
-	protected String mapPackageNameToFilename(String s) {
-		StringBuffer str = new StringBuffer();
-		int len = s != null ? s.length() : 0;
-		for (int i = 0; i < len; i++) {
-			char ch = s.charAt(i);
-			switch (ch) {
-			case ' ': {
-				break;
-			}
-			default: {
-				str.append(ch);
-			}
-			}
-		}
-		return str.toString() + ".xsd";
-	}
-
 	@Override
 	public String xsdDocument() {
 		String s = options().xsdOfPackage(name());
@@ -166,8 +146,25 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = taggedValue("xsdName");
 		}
 		if (s == null) {
+		    
 			if (isAppSchema()) {
-				s = mapPackageNameToFilename(name());
+			    
+			    String name = name();
+			    StringBuffer str = new StringBuffer();
+				int len = name != null ? name.length() : 0;
+				for (int i = 0; i < len; i++) {
+					char ch = name.charAt(i);
+					switch (ch) {
+					case ' ': {
+						break;
+					}
+					default: {
+						str.append(ch);
+					}
+					}
+				}
+				s = str.toString() + ".xsd";
+				
 				result().addWarning(null, 101, name(), id(), s);
 			}
 		}

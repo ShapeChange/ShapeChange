@@ -64,7 +64,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
 
-public class JsonSchema implements Target, MessageSource {
+public class OldJsonSchemaTarget implements Target, MessageSource {
 
 	// TODO convert to more fine-grained info.matches() logic
 	
@@ -848,12 +848,12 @@ public class JsonSchema implements Target, MessageSource {
 	
 	@Override
 	public String getTargetName(){
-		return "JSON Schema";
+		return "Old JSON Schema";
 	}
 	
 	@Override
 	public String getTargetIdentifier() {
-	    return "json";
+	    return "oldjson";
 	}
 
 }

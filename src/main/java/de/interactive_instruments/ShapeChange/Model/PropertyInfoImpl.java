@@ -94,7 +94,7 @@ public abstract class PropertyInfoImpl extends InfoImpl
 	}
 
 	/**
-	 * Return the encoding rule relevant on the operation, given the platform
+	 * Return the encoding rule relevant on the property, given the platform
 	 */
 	public String encodingRule(String platform) {
 		String s = taggedValue(platform + "EncodingRule");

@@ -483,7 +483,7 @@
    </element>
    <element minOccurs="0" name="properties">
     <annotation>
-     <documentation>The navigable, direct (i.e. not inherited) properties of the class. In other words, the combination of all attributes of the class and the navigable association roles.</documentation>
+     <documentation>The navigable, direct (i.e. not inherited) properties of the class. In other words, the combination of all attributes of the class and the navigable association roles. NOTE: Non-navigable association ends are specified by either sc:Association/sc:end1/sc:Property or sc:Association/sc:end2/sc:Property, at least one of which must be navigable.</documentation>
     </annotation>
     <complexType>
      <all>

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts8/ts8/test8.json",
+  "$defs": {
+    "TS8_FT1": {
+      "$anchor": "TS8_FT1",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://geojson.org/schema/Point.json"
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "entityType"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "TS8_FT2": {
+      "$anchor": "TS8_FT2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts8/ts8/test8.json#TS8_FT1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS8_Type1": {
+      "$anchor": "TS8_Type1",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                },
+                "propGeomCurve": {
+                  "$ref": "https://geojson.org/schema/LineString.json"
+                },
+                "propGeomSurface": {
+                  "$ref": "https://geojson.org/schema/Polygon.json"
+                }
+              },
+              "required": [
+                "entityType",
+                "propGeomCurve",
+                "propGeomSurface"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "TS8_Type2": {
+      "$anchor": "TS8_Type2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts8/ts8/test8.json#TS8_Type1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://geojson.org/schema/Point.json"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

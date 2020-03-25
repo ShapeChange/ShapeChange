@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/segmentation" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/segmentation" version="1">
+  <include schemaLocation="test.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT_LeafB1" substitutionGroup="gml:AbstractFeature" type="ex:FT_LeafB1Type"/>
+  <complexType name="FT_LeafB1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_LeafB1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_LeafB1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

@@ -329,4 +329,14 @@ public class XMLSchemaTest extends BasicTestSCXML {
 				"testResults/xsd/propertyMetadata/results_iso19139",
 				"src/test/resources/xsd/propertyMetadata/reference/results_iso19139");
 	}
+	
+	@Test
+	public void test_forcedImports() {
+		
+		multiTest(
+				"src/test/resources/xsd/forcedImports/testEA_xsd_forcedImports.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/forcedImports",
+				"src/test/resources/xsd/forcedImports/reference");
+	}
 }

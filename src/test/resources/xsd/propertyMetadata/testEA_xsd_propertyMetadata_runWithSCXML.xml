@@ -51,8 +51,11 @@
 			<rules>
 				<EncodingRule extends="gml33" name="myrule">
 					<rule name="rule-xsd-prop-metadata"/>
-					<rule name="rule-xsd-cls-mixin-classes"/>
 					<rule name="rule-xsd-cls-basictype"/>
+					<rule name="rule-xsd-cls-mixin-classes-as-group"/>
+            		<rule name="rule-xsd-cls-mixin-classes"/>
+            		<rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes"/>
+            		<rule name="req-xsd-cls-mixin-supertypes-overrule"/>
 				</EncodingRule>
 			</rules>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -208,8 +211,8 @@
 	<XsdMapEntry type="Volume" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="UnitOfMeasure" xmlPropertyType="gml:UnitOfMeasureType" xmlType="gml:UnitOfMeasureType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="_P_" xmlType="gco:Record_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="_P_" xmlType="gco:RecordType_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Sign" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Time" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Year" xmlPropertyType="gYear" xmlType="gYear" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
@@ -611,8 +614,11 @@
 			<rules>
 				<EncodingRule extends="iso19136_2007" name="myrule">
 					<rule name="rule-xsd-prop-metadata"/>
-					<rule name="rule-xsd-cls-mixin-classes"/>
 					<rule name="rule-xsd-cls-basictype"/>
+					<rule name="rule-xsd-cls-mixin-classes-as-group"/>
+            		<rule name="rule-xsd-cls-mixin-classes"/>
+            		<rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes"/>
+            		<rule name="req-xsd-cls-mixin-supertypes-overrule"/>
 				</EncodingRule>
 			</rules>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -768,8 +774,8 @@
 	<XsdMapEntry type="Volume" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="UnitOfMeasure" xmlPropertyType="gml:UnitOfMeasureType" xmlType="gml:UnitOfMeasureType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="_P_" xmlType="gco:Record_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="_P_" xmlType="gco:RecordType_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Sign" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Time" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Year" xmlPropertyType="gYear" xmlType="gYear" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>

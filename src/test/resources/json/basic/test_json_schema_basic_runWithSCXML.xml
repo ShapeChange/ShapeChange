@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="SCXML"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/test/resources/json/basic/test_json_schema_basic.zip"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <parameter name="extractSeparator" value="--"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="ea:alias"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="none"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+  <stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/json/basic/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="model" input="input" mode="enabled"/>
+
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter" id="constraintconverter" input="model" mode="enabled">
+   <parameters>
+    <ProcessParameter name="valueTypeRepresentationTypes" value="PlaceSpecification{PointPositionSpecification, CurvePositionSpecification, SurfacePositionSpecification, LocationSpecification}"/>
+    <ProcessParameter name="valueTypeRepresentationConstraintRegex" value=".*Place Representations Disallowed.*"/>
+   </parameters>
+   <rules>
+    <ProcessRuleSet name="trf">
+     <rule name="rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion"/>
+    </ProcessRuleSet>
+   </rules>
+  </Transformer>
+
+ </transformers>
+ <targets>
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas"/>
+   <targetParameter name="sortedOutput" value="true"/>
+
+   
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
+
+   
+   
+
+   
+   
+   
+
+   <targetParameter name="defaultEncodingRule" value="myjson"/>
+
+   <rules>
+    <EncodingRule name="myjson_basic">
+     <rule name="rule-exp-pkg-allPackagesAreEditable"/>
+     <rule name="rule-json-all-documentation"/>
+     <rule name="rule-json-all-notEncoded"/>
+     
+     <rule name="rule-json-cls-basictype"/>
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-generalization"/>
+     <rule name="rule-json-cls-specialization"/>
+
+     
+     <rule name="rule-json-cls-identifierStereotype"/>
+     
+
+     <rule name="rule-json-cls-virtualGeneralization"/>
+     
+     <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+     <rule name="rule-json-cls-nestedProperties"/>
+     <rule name="rule-json-cls-codelist-uri-format"/>
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+
+     <rule name="rule-json-cls-valueTypeOptions"/>
+
+    </EncodingRule>
+
+    <EncodingRule extends="myjson_basic" name="myjson">
+     <rule name="rule-json-cls-union-propertyCount"/>
+
+    </EncodingRule>
+
+    <EncodingRule extends="myjson_basic" name="myjsonUnionTypeDiscriminator">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    </EncodingRule>
+   </rules>
+
+
+
+
+   <mapEntries>
+    <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+    <MapEntry param="" rule="*" targetType="number" type="Number"/>
+    <MapEntry param="" rule="*" targetType="number" type="Real"/>
+    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+
+    
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
+
+
+    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
+    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" type="External_Supertype"/>
+
+   </mapEntries>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>

@@ -23,18 +23,7 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="place">
-            <complexType>
-              <choice minOccurs="0">
-                <element ref="gti:CurvePositionInfo"/>
-                <element ref="gti:LocationInfo"/>
-                <element ref="gti:PointPositionInfo"/>
-                <element ref="gti:SurfacePositionInfo"/>
-              </choice>
-              <attributeGroup ref="gml:AssociationAttributeGroup"/>
-              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
-            </complexType>
-          </element>
+          <element name="place" type="gti:PlaceInfoPropertyType"/>
         </sequence>
       </extension>
     </complexContent>
@@ -46,10 +35,10 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
-  <element name="LocationInfo" substitutionGroup="gml:AbstractGML" type="gti:LocationInfoType"/>
+  <element name="LocationInfo" substitutionGroup="gti:PlaceInfo" type="gti:LocationInfoType"/>
   <complexType name="LocationInfoType">
     <complexContent>
-      <extension base="gml:AbstractGMLType">
+      <extension base="gti:PlaceInfoType">
         <sequence/>
       </extension>
     </complexContent>
@@ -61,10 +50,18 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
+  <element abstract="true" name="PlaceInfo" substitutionGroup="gml:AbstractGML" type="gti:PlaceInfoType"/>
+  <complexType abstract="true" name="PlaceInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
   <complexType name="PlaceInfoPropertyType">
     <choice minOccurs="0">
+      <element ref="gti:PlaceInfo"/>
       <element ref="gti:CurvePositionInfo"/>
-      <element ref="gti:LocationInfo"/>
       <element ref="gti:PointPositionInfo"/>
       <element ref="gti:SurfacePositionInfo"/>
     </choice>

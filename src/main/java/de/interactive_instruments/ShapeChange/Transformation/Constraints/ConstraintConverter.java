@@ -36,12 +36,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Joiner;
 
@@ -61,411 +67,552 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ConstraintConverter implements Transformer, MessageSource {
 
-	private static final Joiner commaJoiner = Joiner.on(",").skipNulls();
+    private static final Joiner commaJoiner = Joiner.on(",").skipNulls();
 
-	/* ------------------------------------------- */
-	/* --- configuration parameter identifiers --- */
-	/* ------------------------------------------- */
+    /* ------------------------------------------- */
+    /* --- configuration parameter identifiers --- */
+    /* ------------------------------------------- */
 
-	/**
-	 *
-	 */
-	public static final String PARAM_GEOM_REP_CONSTRAINT_REGEX = "geometryRepresentationConstraintRegex";
+    /**
+     * Alias for {@value #PARAM_VALUETYPE_REP_CONSTRAINT_REGEX}
+     */
+    public static final String PARAM_GEOM_REP_CONSTRAINT_REGEX = "geometryRepresentationConstraintRegex";
 
-	/**
-	 * 
-	 */
-	public static final String PARAM_GEOM_REP_TYPES = "geometryRepresentationTypes";
+    public static final String PARAM_VALUETYPE_REP_CONSTRAINT_REGEX = "valueTypeRepresentationConstraintRegex";
 
-	/**
-	 *
-	 */
-	public static final String PARAM_GEOM_REP_VALUE_TYPE_REGEX = "geometryRepresentationValueTypeRegex";
+    public static final String PARAM_GEOM_REP_TYPES = "geometryRepresentationTypes";
 
-	/* ------------------------ */
-	/* --- rule identifiers --- */
-	/* ------------------------ */
+    public static final String PARAM_VALUETYPE_REP_TYPES = "valueTypeRepresentationTypes";
 
-	/**
-	 * 
-	 */
-	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-inclusion";
+    public static final String PARAM_GEOM_REP_VALUE_TYPE_REGEX = "geometryRepresentationValueTypeRegex";
 
-	/**
-	 * 
-	 */
-	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion";
+    public static final String VALUE_TYPE_OPTIONS_TV_NAME = "valueTypeOptions";
 
-	public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch";
+    /* ------------------------ */
+    /* --- rule identifiers --- */
+    /* ------------------------ */
 
-	public static final String RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV = "rule-trf-cls-constraints-codeListRestrictionToTV";
+    public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-inclusion";
 
-	private Options options = null;
-	private ShapeChangeResult result = null;
+    public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion";
 
-	@Override
-	public void process(GenericModel genModel, Options options,
-			TransformerConfiguration trfConfig, ShapeChangeResult result)
-			throws ShapeChangeAbortException {
+    public static final String RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL = "rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion";
 
-		this.options = options;
-		this.result = result;
+    public static final String RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE = "rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch";
 
-		Map<String, ProcessRuleSet> ruleSets = trfConfig.getRuleSets();
+    public static final String RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV = "rule-trf-cls-constraints-codeListRestrictionToTV";
 
-		// get the set of all rules defined for the transformation
-		Set<String> rules = new HashSet<String>();
-		if (!ruleSets.isEmpty()) {
-			for (ProcessRuleSet ruleSet : ruleSets.values()) {
-				if (ruleSet.getAdditionalRules() != null) {
-					rules.addAll(ruleSet.getAdditionalRules());
-				}
-			}
+    private Options options = null;
+    private ShapeChangeResult result = null;
+
+    @Override
+    public void process(GenericModel genModel, Options options, TransformerConfiguration trfConfig,
+	    ShapeChangeResult result) throws ShapeChangeAbortException {
+
+	this.options = options;
+	this.result = result;
+
+	Map<String, ProcessRuleSet> ruleSets = trfConfig.getRuleSets();
+
+	// get the set of all rules defined for the transformation
+	Set<String> rules = new HashSet<String>();
+	if (!ruleSets.isEmpty()) {
+	    for (ProcessRuleSet ruleSet : ruleSets.values()) {
+		if (ruleSet.getAdditionalRules() != null) {
+		    rules.addAll(ruleSet.getAdditionalRules());
 		}
-
-		/*
-		 * because there are no mandatory - in other words default - rules for
-		 * this transformer simply return the model if no rules are defined in
-		 * the rule sets (which the schema allows)
-		 */
-		if (rules.isEmpty())
-			return;
-
-		// apply pre-processing (nothing to do right now)
-
-		// execute rules
-
-		if (rules.contains(
-				RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL)) {
-
-			result.addInfo(null, 20103,
-					RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL);
-			applyRuleGeometryRestrictionToGeometryTaggedValue(genModel,
-					trfConfig, rules, true);
-
-		} else if (rules.contains(
-				RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL)) {
-
-			result.addInfo(null, 20103,
-					RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
-			applyRuleGeometryRestrictionToGeometryTaggedValue(genModel,
-					trfConfig, rules, false);
-
-		} else if (rules.contains(
-				RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV)) {
-
-			result.addInfo(null, 20103,
-					RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV);
-			applyRuleCodeListRestrictionToTaggedValue(genModel, trfConfig,
-					rules);
-		}
-
-		// apply post-processing (nothing to do right now)
+	    }
 	}
 
-	private void applyRuleCodeListRestrictionToTaggedValue(
-			GenericModel genModel, TransformerConfiguration trfConfig,
-			Set<String> rules) {
+	/*
+	 * because there are no mandatory - in other words default - rules for this
+	 * transformer simply return the model if no rules are defined in the rule sets
+	 * (which the schema allows)
+	 */
+	if (rules.isEmpty())
+	    return;
 
-		/*
-		 * Regular expression for property with max mult = 1:
-		 * (?s).*inv:\s*(?:(?:self\.)?(?:\w+)->notEmpty\(\)
-		 * implies)?\s*(?:self\.)?(\w+)\.oclIsTypeOf\((\w+)\)\s*
-		 * 
-		 * The expression supports optional "self." in the expression, as well
-		 * as a check that the property is not empty.
-		 * 
-		 * group 1: property name
-		 * 
-		 * group 2: type name
-		 */
-		Pattern regex1 = Pattern.compile(
-				"(?s).*inv:\\s*(?:(?:self\\.)?(?:\\w+)->notEmpty\\(\\) implies)?\\s*(?:self\\.)?(\\w+)\\.oclIsTypeOf\\((\\w+)\\)\\s*");
+	// apply pre-processing (nothing to do right now)
 
-		/*
-		 * Regular expression that covers the case of a property with max mult >
-		 * 1:
-		 * 
-		 * (?s).*inv:\s*(?:(?:self\.)?\w+->notEmpty\(\) implies
-		 * )?(?:self\.)?(\w+)->forAll\(\w+\|\w+\.oclIsTypeOf\((\w+)\)\)\s*
-		 * 
-		 * group 1: property name
-		 * 
-		 * group 2: type name
-		 */
-		Pattern regex2 = Pattern.compile(
-				"(?s).*inv:\\s*(?:(?:self\\.)?\\w+->notEmpty\\(\\) implies )?(?:self\\.)?(\\w+)->forAll\\(\\w+\\|\\w+\\.oclIsTypeOf\\((\\w+)\\)\\)\\s*");
+	// execute rules
 
-		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+	if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL)) {
 
-			// ignore enumerations, code lists, and basic types
-			if (genCi.category() == Options.ENUMERATION
-					|| genCi.category() == Options.CODELIST
-					|| genCi.category() == Options.BASICTYPE) {
-				continue;
-			}
+	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL);
+	    applyRuleGeometryRestrictionToGeometryTaggedValue(genModel, trfConfig, rules, true);
 
-			for (Constraint con : genCi.constraints()) {
+	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL)) {
 
-				// use regex to identify the property name and type restriction
-				Matcher matcher = null;
-				Matcher matcher1 = regex1.matcher(con.text());
-				Matcher matcher2 = regex2.matcher(con.text());
+	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
+	    applyRuleGeometryRestrictionToGeometryTaggedValue(genModel, trfConfig, rules, false);
 
-				if (matcher1.matches()) {
-					matcher = matcher1;
-				} else if (matcher2.matches()) {
-					matcher = matcher2;
-				}
+	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV)) {
 
-				if (matcher != null) {
+	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV);
+	    applyRuleCodeListRestrictionToTaggedValue(genModel, trfConfig, rules);
 
-					String propName = matcher.group(1);
-					String typeName = matcher.group(2);
+	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL)) {
 
-					// check if type defined by restriction is a code list, and
-					// type of the property is CharacterString
-
-					PropertyInfo pi = genCi.property(propName);
-
-					if (pi == null) {
-						result.addError(this, 200, con.name(), genCi.name(),
-								propName);
-						continue;
-					}
-
-					ClassInfo ci = genModel.classByName(typeName);
-
-					if (ci == null) {
-						result.addError(this, 201, con.name(), genCi.name(),
-								typeName);
-						continue;
-					}
-
-					if (pi.typeInfo().name.equalsIgnoreCase("CharacterString")
-							&& ci.category() == Options.CODELIST) {
-
-						result.addInfo(this, 202, con.name(), genCi.name(),
-								propName, typeName);
-
-						/*
-						 * Add name of code list in TV 'codeListRestriction' on
-						 * the property.
-						 * 
-						 * NOTE: This will NOT result in a subtype specific
-						 * restriction. The TV is defined on the property
-						 * itself, which may belong to a supertype of genCi,
-						 * i.e. the class for which the constraint is defined.
-						 * That should be sufficient for the case of a metadata
-						 * profile, where a property from ISO 19115 (with type
-						 * CharacterString) is restricted (via OCL constraint,
-						 * typically in a subtype) to a code list.
-						 */
-
-						((GenericPropertyInfo) pi).setTaggedValue(
-								"codeListRestriction", typeName, false);
-					}
-				}
-			}
-		}
+	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL);
+	    applyRuleValueTypeRestrictionToPropertyTaggedValue(genModel, trfConfig, rules);
 	}
 
-	private void applyRuleGeometryRestrictionToGeometryTaggedValue(
-			GenericModel genModel, TransformerConfiguration config,
-			Set<String> rules, boolean isInclusion) {
+	// apply post-processing (nothing to do right now)
+    }
 
-		String geomRepConstrRegex = config.parameterAsString(
-				PARAM_GEOM_REP_CONSTRAINT_REGEX, null, false, false);
-		Pattern geomRepConstrPattern = null;
+    /**
+     * @param genModel
+     * @param config
+     * @param rules
+     */
+    private void applyRuleValueTypeRestrictionToPropertyTaggedValue(GenericModel genModel,
+	    TransformerConfiguration config, Set<String> rules) {
 
-		if (geomRepConstrRegex != null) {
-			// parse regex
-			try {
-				geomRepConstrPattern = Pattern.compile(geomRepConstrRegex);
-			} catch (PatternSyntaxException e) {
-				// reported via configuration validator
+	String valueTypeRepConstrRegex = config.parameterAsString(PARAM_VALUETYPE_REP_CONSTRAINT_REGEX, null, false,
+		false);
+	Pattern valueTypeRepConstrPattern = null;
+
+	if (valueTypeRepConstrRegex != null) {
+	    // parse regex
+	    try {
+		valueTypeRepConstrPattern = Pattern.compile(valueTypeRepConstrRegex);
+	    } catch (PatternSyntaxException e) {
+		// reported via configuration validator
+	    }
+	}
+
+	List<String> valueTypesRepTypesIn = config.parameterAsStringList(ConstraintConverter.PARAM_VALUETYPE_REP_TYPES,
+		null, true, true, ";");
+
+	/*
+	 * key: Supertype name; value: map with key: name of type within inheritance
+	 * hierarchy (can include the supertype and abstract types), value: an optional
+	 * with a string representing the name to which the type name shall be mapped
+	 * (can be empty if the type name shall be used as-is)
+	 */
+	SortedMap<String, SortedMap<String, Optional<String>>> valueTypeRepTypes = new TreeMap<>();
+	boolean foundInvalidValueTypeRepTypeValue = false;
+
+	if (valueTypesRepTypesIn != null && !valueTypesRepTypesIn.isEmpty()) {
+
+	    Pattern valueTypeRepTypesDetectionPattern = Pattern.compile("^\\s*(\\w+)\\s*\\{(.*)\\}\\s*$");
+
+	    for (String s : valueTypesRepTypesIn) {
+
+		// example for s: supertype {t1, t2=x}
+		Matcher m = valueTypeRepTypesDetectionPattern.matcher(s);
+
+		if (m.matches()) {
+
+		    String supertypeName = m.group(1);
+		    String suptertypeDefinitions = m.group(2);
+
+		    String[] mappings = StringUtils.split(suptertypeDefinitions, ",");
+		    SortedMap<String, Optional<String>> typeMap = new TreeMap<>();
+
+		    for (String mapping : mappings) {
+
+			String[] map = StringUtils.split(mapping, "=");
+
+			if (map.length > 2 || map[0].trim().isEmpty()) {
+
+			    foundInvalidValueTypeRepTypeValue = true;
+			    break;
+			    // details are reported via configuration validator
+
+			} else {
+
+			    String typeMapKey = map[0].trim();
+			    String typeMapValue = map.length == 2 ? map[1].trim() : null;
+
+			    typeMap.put(typeMapKey, Optional.ofNullable(typeMapValue));
 			}
+		    }
+
+		    valueTypeRepTypes.put(supertypeName, typeMap);
+
+		} else {
+		    // reported by configuration validator TODO
+		}
+	    }
+	}
+
+	if (foundInvalidValueTypeRepTypeValue || valueTypeRepConstrPattern == null || valueTypeRepTypes.size() == 0) {
+
+	    result.addError(this, 300);
+
+	} else {
+
+	    Pattern propertyNameDetectionPattern = Pattern.compile("^.*inv: (self\\.)?(\\w+).*$");
+
+	    for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+		if (genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST) {
+		    continue;
 		}
 
-		String geomRepValueTypeRegex = config.parameterAsString(
-				PARAM_GEOM_REP_VALUE_TYPE_REGEX, null, false, false);
-		Pattern geomRepValueTypePattern = null;
+		SortedMap<String, String> allowedTypesByPropertyName = new TreeMap<>();
 
-		if (geomRepValueTypeRegex != null && rules.contains(
-				RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE)) {
-			// parse regex
-			try {
-				geomRepValueTypePattern = Pattern
-						.compile(geomRepValueTypeRegex);
-			} catch (PatternSyntaxException e) {
-				// reported via configuration validator
-			}
-		}
+		for (Constraint con : genCi.constraints()) {
 
-		List<String> geomRepTypesIn = config.parameterAsStringList(
-				ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true, true,
-				";");
+		    Matcher matcherOnConstraintName = valueTypeRepConstrPattern.matcher(con.name());
 
-		Map<String, String> geomRepTypes = new HashMap<String, String>();
-		boolean foundInvalidGeomRepTypeValue = false;
+		    if (matcherOnConstraintName.matches()) {
 
-		if (geomRepTypesIn != null && !geomRepTypesIn.isEmpty()) {
+			// First, identify the property name (can be from a supertype)
+			Matcher matcherOnPropertyName = propertyNameDetectionPattern.matcher(con.text());
 
-			for (String s : geomRepTypesIn) {
+			if (matcherOnPropertyName.matches()) {
 
-				String[] map = s.split("=");
+			    String propertyName = matcherOnPropertyName.group(2);
 
-				if (map.length != 2 || map[0].trim().isEmpty()
-						|| map[1].trim().isEmpty()) {
+			    /*
+			     * The class must have a property of that name, otherwise OCL parsing would not
+			     * have succeeded. So no need to check that the property exists. However, we
+			     * need to check if the value type of the property is one of the supertypes for
+			     * which a type restriction is defined.
+			     */
+			    String propertyValueTypeName = genCi.property(propertyName).typeInfo().name;
 
-					foundInvalidGeomRepTypeValue = true;
-					break;
-					// details are reported via configuration validator
+			    if (valueTypeRepTypes.containsKey(propertyValueTypeName)) {
 
-				} else {
+				SortedMap<String, Optional<String>> typeMap = valueTypeRepTypes
+					.get(propertyValueTypeName);
 
-					geomRepTypes.put(map[0].trim(), map[1].trim());
+				/*
+				 * now identify the types from the supertype hierarchy that are allowed for the
+				 * property
+				 */
+				SortedSet<String> allowedTypeNames = new TreeSet<>();
+
+				for (Entry<String, Optional<String>> valueType : typeMap.entrySet()) {
+
+				    String vtName = valueType.getKey();
+				    // can be null
+				    Optional<String> vtTargetName = valueType.getValue();
+
+				    if (!con.text().contains(vtName)) {
+
+					if (vtTargetName.isEmpty()) {
+					    allowedTypeNames.add(vtName);
+					} else {
+					    allowedTypeNames.add(vtTargetName.get());
+					}
+				    }
 				}
+
+				if (allowedTypeNames.size() > 0) {
+				    String join = commaJoiner.join(allowedTypeNames);
+				    allowedTypesByPropertyName.put(propertyName, join);
+				}
+			    }
 			}
+		    }
 		}
 
-		if (foundInvalidGeomRepTypeValue || geomRepConstrPattern == null
-				|| geomRepTypes.size() == 0) {
+		if (!allowedTypesByPropertyName.isEmpty()) {
 
-			result.addError(this, 100);
+		    // create tag value
+		    String newValue = allowedTypesByPropertyName.entrySet().stream()
+			    .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(";"));
+
+		    // check overwrite - warn if a value already exists for the tag
+		    String oldValue = genCi.taggedValue(VALUE_TYPE_OPTIONS_TV_NAME);
+
+		    if (StringUtils.isNotBlank(oldValue)) {
+			MessageContext mc = result.addWarning(this, 301, genCi.name(), oldValue, newValue);
+			if (mc != null) {
+			    mc.addDetail(this, 1, genCi.fullName());
+			}
+		    }
+
+		    // finally, set new tag value
+		    genCi.setTaggedValue(VALUE_TYPE_OPTIONS_TV_NAME, newValue, false);
+		}
+	    }
+	}
+    }
+
+    private void applyRuleCodeListRestrictionToTaggedValue(GenericModel genModel, TransformerConfiguration trfConfig,
+	    Set<String> rules) {
+
+	/*
+	 * Regular expression for property with max mult = 1:
+	 * (?s).*inv:\s*(?:(?:self\.)?(?:\w+)->notEmpty\(\)
+	 * implies)?\s*(?:self\.)?(\w+)\.oclIsTypeOf\((\w+)\)\s*
+	 * 
+	 * The expression supports optional "self." in the expression, as well as a
+	 * check that the property is not empty.
+	 * 
+	 * group 1: property name
+	 * 
+	 * group 2: type name
+	 */
+	Pattern regex1 = Pattern.compile(
+		"(?s).*inv:\\s*(?:(?:self\\.)?(?:\\w+)->notEmpty\\(\\) implies)?\\s*(?:self\\.)?(\\w+)\\.oclIsTypeOf\\((\\w+)\\)\\s*");
+
+	/*
+	 * Regular expression that covers the case of a property with max mult > 1:
+	 * 
+	 * (?s).*inv:\s*(?:(?:self\.)?\w+->notEmpty\(\) implies
+	 * )?(?:self\.)?(\w+)->forAll\(\w+\|\w+\.oclIsTypeOf\((\w+)\)\)\s*
+	 * 
+	 * group 1: property name
+	 * 
+	 * group 2: type name
+	 */
+	Pattern regex2 = Pattern.compile(
+		"(?s).*inv:\\s*(?:(?:self\\.)?\\w+->notEmpty\\(\\) implies )?(?:self\\.)?(\\w+)->forAll\\(\\w+\\|\\w+\\.oclIsTypeOf\\((\\w+)\\)\\)\\s*");
+
+	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+	    // ignore enumerations, code lists, and basic types
+	    if (genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST
+		    || genCi.category() == Options.BASICTYPE) {
+		continue;
+	    }
+
+	    for (Constraint con : genCi.constraints()) {
+
+		// use regex to identify the property name and type restriction
+		Matcher matcher = null;
+		Matcher matcher1 = regex1.matcher(con.text());
+		Matcher matcher2 = regex2.matcher(con.text());
+
+		if (matcher1.matches()) {
+		    matcher = matcher1;
+		} else if (matcher2.matches()) {
+		    matcher = matcher2;
+		}
+
+		if (matcher != null) {
+
+		    String propName = matcher.group(1);
+		    String typeName = matcher.group(2);
+
+		    // check if type defined by restriction is a code list, and
+		    // type of the property is CharacterString
+
+		    PropertyInfo pi = genCi.property(propName);
+
+		    if (pi == null) {
+			result.addError(this, 200, con.name(), genCi.name(), propName);
+			continue;
+		    }
+
+		    ClassInfo ci = genModel.classByName(typeName);
+
+		    if (ci == null) {
+			result.addError(this, 201, con.name(), genCi.name(), typeName);
+			continue;
+		    }
+
+		    if (pi.typeInfo().name.equalsIgnoreCase("CharacterString") && ci.category() == Options.CODELIST) {
+
+			result.addInfo(this, 202, con.name(), genCi.name(), propName, typeName);
+
+			/*
+			 * Add name of code list in TV 'codeListRestriction' on the property.
+			 * 
+			 * NOTE: This will NOT result in a subtype specific restriction. The TV is
+			 * defined on the property itself, which may belong to a supertype of genCi,
+			 * i.e. the class for which the constraint is defined. That should be sufficient
+			 * for the case of a metadata profile, where a property from ISO 19115 (with
+			 * type CharacterString) is restricted (via OCL constraint, typically in a
+			 * subtype) to a code list.
+			 */
+
+			((GenericPropertyInfo) pi).setTaggedValue("codeListRestriction", typeName, false);
+		    }
+		}
+	    }
+	}
+    }
+
+    private void applyRuleGeometryRestrictionToGeometryTaggedValue(GenericModel genModel,
+	    TransformerConfiguration config, Set<String> rules, boolean isInclusion) {
+
+	String geomRepConstrRegex = config.parameterAsString(PARAM_GEOM_REP_CONSTRAINT_REGEX, null, false, false);
+	Pattern geomRepConstrPattern = null;
+
+	if (geomRepConstrRegex != null) {
+	    // parse regex
+	    try {
+		geomRepConstrPattern = Pattern.compile(geomRepConstrRegex);
+	    } catch (PatternSyntaxException e) {
+		// reported via configuration validator
+	    }
+	}
+
+	String geomRepValueTypeRegex = config.parameterAsString(PARAM_GEOM_REP_VALUE_TYPE_REGEX, null, false, false);
+	Pattern geomRepValueTypePattern = null;
+
+	if (geomRepValueTypeRegex != null
+		&& rules.contains(RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_NORESTRICTION_BYVALUETYPE)) {
+	    // parse regex
+	    try {
+		geomRepValueTypePattern = Pattern.compile(geomRepValueTypeRegex);
+	    } catch (PatternSyntaxException e) {
+		// reported via configuration validator
+	    }
+	}
+
+	List<String> geomRepTypesIn = config.parameterAsStringList(ConstraintConverter.PARAM_GEOM_REP_TYPES, null, true,
+		true, ";");
+
+	Map<String, String> geomRepTypes = new HashMap<String, String>();
+	boolean foundInvalidGeomRepTypeValue = false;
+
+	if (geomRepTypesIn != null && !geomRepTypesIn.isEmpty()) {
+
+	    for (String s : geomRepTypesIn) {
+
+		String[] map = s.split("=");
+
+		if (map.length != 2 || map[0].trim().isEmpty() || map[1].trim().isEmpty()) {
+
+		    foundInvalidGeomRepTypeValue = true;
+		    break;
+		    // details are reported via configuration validator
 
 		} else {
 
-			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+		    geomRepTypes.put(map[0].trim(), map[1].trim());
+		}
+	    }
+	}
 
-				if (genCi.category() == Options.ENUMERATION
-						|| genCi.category() == Options.CODELIST) {
-					continue;
+	if (foundInvalidGeomRepTypeValue || geomRepConstrPattern == null || geomRepTypes.size() == 0) {
+
+	    result.addError(this, 100);
+
+	} else {
+
+	    for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+		if (genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST) {
+		    continue;
+		}
+
+		SortedSet<String> geometryTVValues = new TreeSet<String>();
+
+		int countGeomRepConstrFound = 0;
+
+		for (Constraint con : genCi.constraints()) {
+
+		    Matcher matcherOnConstraintName = geomRepConstrPattern.matcher(con.name());
+
+		    if (matcherOnConstraintName.matches()) {
+
+			countGeomRepConstrFound++;
+
+			if (countGeomRepConstrFound == 1) {
+
+			    for (Entry<String, String> geomRepType : geomRepTypes.entrySet()) {
+
+				String geomTypeName = geomRepType.getKey();
+				String geomTypeAbbrev = geomRepType.getValue();
+
+				if ((isInclusion && con.text().contains(geomTypeName))
+					|| (!isInclusion && !con.text().contains(geomTypeName))) {
+
+				    geometryTVValues.add(geomTypeAbbrev);
 				}
-
-				SortedSet<String> geometryTVValues = new TreeSet<String>();
-
-				int countGeomRepConstrFound = 0;
-
-				for (Constraint con : genCi.constraints()) {
-
-					Matcher matcherOnConstraintName = geomRepConstrPattern
-							.matcher(con.name());
-
-					if (matcherOnConstraintName.matches()) {
-
-						countGeomRepConstrFound++;
-
-						if (countGeomRepConstrFound == 1) {
-
-							for (Entry<String, String> geomRepType : geomRepTypes
-									.entrySet()) {
-
-								String geomTypeName = geomRepType.getKey();
-								String geomTypeAbbrev = geomRepType.getValue();
-
-								if ((isInclusion
-										&& con.text().contains(geomTypeName))
-										|| (!isInclusion && !con.text()
-												.contains(geomTypeName))) {
-
-									geometryTVValues.add(geomTypeAbbrev);
-								}
-							}
-						}
-					}
-				}
-
-				if (countGeomRepConstrFound > 1) {
-
-					MessageContext mc = result.addError(this, 101,
-							"" + countGeomRepConstrFound, genCi.name());
-					if (mc != null) {
-						mc.addDetail(this, 1, genCi.fullName());
-					}
-
-				} else if (countGeomRepConstrFound == 0
-						&& geomRepValueTypePattern != null) {
-
-					for (PropertyInfo pi : genCi.propertiesAll()) {
-
-						Matcher matcherOnPiTypeName = geomRepValueTypePattern
-								.matcher(pi.typeInfo().name);
-
-						if (matcherOnPiTypeName.matches()) {
-
-							for (String geomTypeAbbrev : geomRepTypes
-									.values()) {
-
-								geometryTVValues.add(geomTypeAbbrev);
-							}
-
-							break;
-						}
-					}
-				}
-
-				if (geometryTVValues.size() > 0) {
-
-					String join = commaJoiner.join(geometryTVValues);
-
-					String geometryTV = genCi.taggedValue("geometry");
-					if (geometryTV != null) {
-						MessageContext mc = result.addWarning(this, 102,
-								genCi.name(), geometryTV, join);
-						if (mc != null) {
-							mc.addDetail(this, 1, genCi.fullName());
-						}
-					}
-
-					genCi.setTaggedValue("geometry", join, false);
-				}
+			    }
 			}
+		    }
 		}
 
-	}
+		if (countGeomRepConstrFound > 1) {
 
-	@Override
-	public String message(int mnr) {
+		    MessageContext mc = result.addError(this, 101, "" + countGeomRepConstrFound, genCi.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, genCi.fullName());
+		    }
 
-		switch (mnr) {
-		case 0:
-			return "Context: property '$1$'.";
-		case 1:
-			return "Context: class '$1$'.";
-		case 2:
-			return "Context: association class '$1$'.";
-		case 3:
-			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+		} else if (countGeomRepConstrFound == 0 && geomRepValueTypePattern != null) {
 
-		// Messages for RULE_
-		case 100:
-			return "Invalid value(s) for configuration parameters '"
-					+ PARAM_GEOM_REP_CONSTRAINT_REGEX + "' and/or '"
-					+ PARAM_GEOM_REP_TYPES
-					+ "'. For further details, check the configuration validator log messages.";
-		case 101:
-			return "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
-		case 102:
-			return "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
+		    for (PropertyInfo pi : genCi.propertiesAll()) {
 
-		// Messages for RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV
-		case 200:
-			return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Property '$3$' identified by the type restriction was not found for the class. The constraint will be ignored.";
-		case 201:
-			return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Type '$3$' identified by the type restriction was not found in the model. The constraint will be ignored.";
-		case 202:
-			return "Code list restriction identified for type restriction constraint '$1$' of class '$2$'. Property '$3$' is restricted to code list '$4$'.";
+			Matcher matcherOnPiTypeName = geomRepValueTypePattern.matcher(pi.typeInfo().name);
 
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
+			if (matcherOnPiTypeName.matches()) {
+
+			    for (String geomTypeAbbrev : geomRepTypes.values()) {
+
+				geometryTVValues.add(geomTypeAbbrev);
+			    }
+
+			    break;
+			}
+		    }
 		}
+
+		if (geometryTVValues.size() > 0) {
+
+		    String join = commaJoiner.join(geometryTVValues);
+
+		    String geometryTV = genCi.taggedValue("geometry");
+		    if (geometryTV != null) {
+			MessageContext mc = result.addWarning(this, 102, genCi.name(), geometryTV, join);
+			if (mc != null) {
+			    mc.addDetail(this, 1, genCi.fullName());
+			}
+		    }
+
+		    genCi.setTaggedValue("geometry", join, false);
+		}
+	    }
 	}
+
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "Context: class '$1$'.";
+	case 2:
+	    return "Context: association class '$1$'.";
+	case 3:
+	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
+	// Messages for RULE_
+	case 100:
+	    return "Invalid value(s) for configuration parameters '" + PARAM_GEOM_REP_CONSTRAINT_REGEX + "' and/or '"
+		    + PARAM_GEOM_REP_TYPES + "'. For further details, check the configuration validator log messages.";
+	case 101:
+	    return "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
+	case 102:
+	    return "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
+
+	// Messages for RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV
+	case 200:
+	    return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Property '$3$' identified by the type restriction was not found for the class. The constraint will be ignored.";
+	case 201:
+	    return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Type '$3$' identified by the type restriction was not found in the model. The constraint will be ignored.";
+	case 202:
+	    return "Code list restriction identified for type restriction constraint '$1$' of class '$2$'. Property '$3$' is restricted to code list '$4$'.";
+
+	// Messages for RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOPROPTV_EXCL
+	case 300:
+	    return "Invalid value(s) for configuration parameters '" + PARAM_VALUETYPE_REP_CONSTRAINT_REGEX
+		    + "' and/or '" + PARAM_VALUETYPE_REP_TYPES
+		    + "'. For further details, check the configuration validator log messages.";
+	case 301:
+	    return "Overwriting tagged value '" + VALUE_TYPE_OPTIONS_TV_NAME
+		    + "' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

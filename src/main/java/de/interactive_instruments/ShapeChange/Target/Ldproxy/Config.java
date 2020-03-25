@@ -802,13 +802,15 @@ public class Config implements SingleTarget, MessageSource {
 		
 		try {
 			
-			Gson gson;
 			String s = options.parameter(this.getClass().getName(),"prettyPrint");
-			if (s!=null && s.equalsIgnoreCase("false"))
-				gson = new Gson();
-			else
-				gson = new GsonBuilder().setPrettyPrinting().create();
+			
+			GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
+			if ("false".equalsIgnoreCase(s)) {
+			    gsonBuilder.setPrettyPrinting();
+			}
 
+			Gson gson = gsonBuilder.create();
+			
 			// If diagOnly was selected, the writers will be 'null'
 			if (writer!=null) {
 				writer.write(gson.toJson(cfgobj));
