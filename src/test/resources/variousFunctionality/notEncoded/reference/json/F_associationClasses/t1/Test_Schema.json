@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.org/shapechange/schema/json/t1/Test_Schema.json",
+  "$defs": {
+    "AssociationClass": {
+      "type": "object",
+      "properties": {
+        "pOfAssociationClass": {
+          "type": "boolean"
+        },
+        "roleFT4toFT3": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/FeatureType3"
+            }
+          ]
+        }
+      },
+      "required": [
+        "pOfAssociationClass",
+        "roleFT4toFT3"
+      ]
+    },
+    "FeatureType1": {
+      "type": "object",
+      "properties": {
+        "roleFT1toFT2": {
+          "type": "array",
+          "items": [
+            {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "$ref": "http://example.org/json/observation.json"
+                }
+              ]
+            }
+          ],
+          "uniqueItems": true
+        },
+        "roleFT1toFT3": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/FeatureType3"
+            }
+          ]
+        }
+      },
+      "required": [
+        "roleFT1toFT3"
+      ]
+    },
+    "FeatureType3": {
+      "type": "object",
+      "properties": {
+        "pFT3": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pFT3"
+      ]
+    },
+    "FeatureType4": {
+      "type": "object",
+      "properties": {
+        "pWithUnmappedValueType": {},
+        "roleFT4toFT5": {},
+        "roleFT4toFT3": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/AssociationClass"
+            }
+          ]
+        }
+      },
+      "required": [
+        "pWithUnmappedValueType",
+        "roleFT4toFT3",
+        "roleFT4toFT5"
+      ]
+    }
+  }
+}

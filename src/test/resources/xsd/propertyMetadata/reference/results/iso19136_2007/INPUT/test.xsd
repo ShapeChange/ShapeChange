@@ -86,6 +86,23 @@
       <enumeration value="enum2"/>
     </restriction>
   </simpleType>
+  <element name="FeaturePlaceRelationship" substitutionGroup="gml:AbstractFeature" type="test:FeaturePlaceRelationshipType"/>
+  <complexType name="FeaturePlaceRelationshipType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="assocProp" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeaturePlaceRelationshipPropertyType">
+    <sequence minOccurs="0">
+      <element ref="test:FeaturePlaceRelationship"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
   <element name="FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeAType"/>
   <complexType name="FeatureTypeAType">
     <complexContent>
@@ -412,6 +429,19 @@
       <extension base="gml:AbstractFeatureType">
         <sequence>
           <element name="place">
+            <complexType>
+              <choice minOccurs="0">
+                <element ref="test:PlaceSpecification"/>
+                <element ref="test:CurvePositionSpecification"/>
+                <element ref="test:PointPositionSpecification"/>
+                <element ref="test:SurfacePositionSpecification"/>
+              </choice>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+              <attribute name="metadata" type="anyURI"/>
+            </complexType>
+          </element>
+          <element name="placeAssocCase">
             <complexType>
               <choice minOccurs="0">
                 <element ref="test:PlaceSpecification"/>

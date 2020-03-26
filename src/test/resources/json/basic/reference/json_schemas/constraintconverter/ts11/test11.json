@@ -63,6 +63,17 @@
         }
       ]
     },
+    "TS11_StringFormat": {
+      "$anchor": "TS11_StringFormat",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyCharacterString"
+        },
+        {
+          "format": "email"
+        }
+      ]
+    },
     "TS11_StringPattern": {
       "$anchor": "TS11_StringPattern",
       "allOf": [

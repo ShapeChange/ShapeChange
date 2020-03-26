@@ -66,7 +66,7 @@ public class TaggedValueNormalizer {
      * the list of tagged values specified by the JSON encoding rule
      */
     protected static final Set<String> jsonTags = Stream
-	    .of("jsonDocument", "jsonBaseURI", "jsonBaseUri", "jsonLayerTableURI", "jsonDirectory", "defaultGeometry")
+	    .of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri", "jsonLayerTableURI", "jsonDirectory", "defaultGeometry")
 	    .collect(Collectors.toSet());
 
     /*

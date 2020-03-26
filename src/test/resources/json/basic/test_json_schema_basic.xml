@@ -44,6 +44,7 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas"/>
    <targetParameter name="sortedOutput" value="true"/>
+   
 <!--   <targetParameter name="jsonSchemaVersion" value="draft-07"/>-->
    
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
@@ -63,7 +64,6 @@
 
    <rules>
     <EncodingRule name="myjson_basic">
-     <rule name="rule-exp-pkg-allPackagesAreEditable"/>
      <rule name="rule-json-all-documentation"/>
      <rule name="rule-json-all-notEncoded"/>
      

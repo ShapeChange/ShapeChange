@@ -790,8 +790,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Schema '$1$' is not encoded.";
 	case 8:
 	    return "Class '$1$' is not encoded.";
-	case 9:
-	    return "Property '$1$' is not encoded.";
+
 
 	case 10:
 	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";

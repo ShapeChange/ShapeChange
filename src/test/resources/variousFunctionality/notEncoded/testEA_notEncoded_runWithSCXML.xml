@@ -228,8 +228,8 @@
 	<XsdMapEntry type="Volume" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="UnitOfMeasure" xmlPropertyType="gml:UnitOfMeasureType" xmlType="gml:UnitOfMeasureType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="_P_" xmlType="gco:Record_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
-	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="_P_" xmlType="gco:RecordType_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Record" xmlElement="gco:Record" xmlPropertyType="gco:Record_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="RecordType" xmlElement="gco:RecordType" xmlPropertyType="gco:RecordType_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Sign" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Time" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
 	<XsdMapEntry type="Year" xmlPropertyType="gYear" xmlType="gYear" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
@@ -625,23 +625,25 @@
 </xsdMapEntries>
 			<rules>
 				<EncodingRule extends="gml33" name="ocl">
-			      <rule name="rule-xsd-pkg-schematron"/>
-			    </EncodingRule>
-			  </rules>
+					<rule name="rule-xsd-pkg-schematron"/>
+				</EncodingRule>
+			</rules>
 			<xsdMapEntries>
 				<XsdMapEntry type="FeatureType2" xmlElement="om:OM_Observation" xmlPropertyType="om:OM_ObservationPropertyType" xmlType="om:OM_ObservationType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
 			</xsdMapEntries>
 		</TargetXmlSchema>
-		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchema" inputs="F_associationClasses" mode="enabled">
+		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="F_associationClasses" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/json"/>
-			<targetParameter name="defaultEncodingRule" value="geoservices_extended"/>
-			<targetParameter name="documentationTemplate" value="[[definition]]"/>
-			<targetParameter name="documentationNoValue" value=""/>
+			<targetParameter name="defaultEncodingRule" value="myjson"/>
+			<rules>
+				<EncodingRule name="myjson">
+				</EncodingRule>
+			</rules>
 			<mapEntries>
 				<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
 				<MapEntry param="" rule="*" targetType="integer" type="Integer"/>
 				<MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-				<MapEntry param="" rule="geoservices_extended" targetType="ref:http://example.org/json/observation.json" type="FeatureType2"/>
+				<MapEntry param="" rule="*" targetType="http://example.org/json/observation.json" type="FeatureType2"/>
 			</mapEntries>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
@@ -731,30 +733,30 @@
 	</EncodingRule>
 </rules>
 		</Target>
-		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_name" mode="enabled">			
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_name" mode="enabled">
 			<targetParameter name="defaultEncodingRule" value="replicationSchema"/>
-			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/repXsd"/>		
+			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/repXsd"/>
 			<targetParameter name="idColumnName" value="objectidentifier"/>
 			<targetParameter name="size" value="4000"/>
 			<targetParameter name="srid" value="31467"/>
 			<targetParameter name="createReferences" value="true"/>
-			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="createDocumentation" value="true"/>
 			<targetParameter name="documentationTemplate" value="[[definition]]"/>
-			<targetParameter name="documentationNoValue" value=""/>			
+			<targetParameter name="documentationNoValue" value=""/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK"/>
-			
+
 			<targetParameter name="replicationSchemaTargetNamespaceSuffix" value="/rep"/>
 			<targetParameter name="replicationSchemaObjectIdentifierFieldType" value="string"/>
 			<targetParameter name="replicationSchemaDocumentationForFieldWithUnlimitedLengthCharacterDataType" value="Test documentation for fields with unlimited length character data type."/>
 			<rules>
-				<EncodingRule extends="sql" name="sql2">	
-		            <rule name="rule-sql-cls-references-to-external-types"/>
-		            <rule name="rule-sql-all-associativetables"/>
+				<EncodingRule extends="sql" name="sql2">
+					<rule name="rule-sql-cls-references-to-external-types"/>
+					<rule name="rule-sql-all-associativetables"/>
 					<rule name="rule-sql-all-exclude-abstract"/>
 					<rule name="rule-sql-all-foreign-key-default-naming"/>
 					<rule name="rule-sql-all-normalizing-lower-case"/>
 					<rule name="rule-sql-all-unique-naming-count-suffix"/>
-		        </EncodingRule>
+				</EncodingRule>
 				<EncodingRule extends="sql2" name="replicationSchema">
 					<rule name="rule-sql-all-normalizing-ignore-case"/>
 					<rule name="rule-sql-all-replicationSchema"/>
@@ -848,32 +850,32 @@
 	</EncodingRule>
 </rules>
 			<mapEntries>
-			  	<MapEntry param="textOrCharacterVarying" rule="*" targetType="string" type="CharacterString"/>
-			  	<MapEntry rule="*" targetType="integer" type="Integer"/>
-			  	<MapEntry param="table" rule="*" targetType="MappingForFeatureType2" type="FeatureType2"/>
-			</mapEntries>	
+				<MapEntry param="textOrCharacterVarying" rule="*" targetType="string" type="CharacterString"/>
+				<MapEntry rule="*" targetType="integer" type="Integer"/>
+				<MapEntry param="table" rule="*" targetType="MappingForFeatureType2" type="FeatureType2"/>
+			</mapEntries>
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_name" mode="enabled">
-			
+
 			<targetParameter name="defaultEncodingRule" value="sql2"/>
-			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/sql"/>				
+			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/notEncoded/sql"/>
 			<targetParameter name="idColumnName" value="objectidentifier"/>
 			<targetParameter name="size" value="4000"/>
 			<targetParameter name="srid" value="31467"/>
 			<targetParameter name="createReferences" value="true"/>
-			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="createDocumentation" value="true"/>
 			<targetParameter name="documentationTemplate" value="[[definition]]"/>
-			<targetParameter name="documentationNoValue" value=""/>			
+			<targetParameter name="documentationNoValue" value=""/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_FK"/>
 			<rules>
-				<EncodingRule extends="sql" name="sql2">	
-		            <rule name="rule-sql-cls-references-to-external-types"/>
-		            <rule name="rule-sql-all-associativetables"/>
+				<EncodingRule extends="sql" name="sql2">
+					<rule name="rule-sql-cls-references-to-external-types"/>
+					<rule name="rule-sql-all-associativetables"/>
 					<rule name="rule-sql-all-exclude-abstract"/>
 					<rule name="rule-sql-all-foreign-key-default-naming"/>
 					<rule name="rule-sql-all-normalizing-lower-case"/>
 					<rule name="rule-sql-all-unique-naming-count-suffix"/>
-		        </EncodingRule>
+				</EncodingRule>
 			</rules>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
@@ -962,10 +964,10 @@
 		<rule name="rule-xsd-cls-standard-gml-property-types"/>
 	</EncodingRule>
 </rules>
-				<mapEntries>
-			  	<MapEntry param="textOrCharacterVarying" rule="*" targetType="string" type="CharacterString"/>
-			  	<MapEntry rule="*" targetType="integer" type="Integer"/>
-			  	<MapEntry param="table" rule="*" targetType="MappingForFeatureType2" type="FeatureType2"/>
+			<mapEntries>
+				<MapEntry param="textOrCharacterVarying" rule="*" targetType="string" type="CharacterString"/>
+				<MapEntry rule="*" targetType="integer" type="Integer"/>
+				<MapEntry param="table" rule="*" targetType="MappingForFeatureType2" type="FeatureType2"/>
 			</mapEntries>
 		</Target>
 	</targets>

@@ -991,7 +991,9 @@ abstract class TempNode {
 				
 				if(pi == null && ci.options().isNavigatingNonNavigableAssociationsWhenParsingOcl()) {
 				    // Check non-navigable association roles within the model
-				    pi = ci.model().lookupNonNavigableAssociationRole(ci,name());
+				    SortedSet<ClassInfo> ciAndAllSupertypes = ci.supertypesInCompleteHierarchy();
+				    ciAndAllSupertypes.add(ci);
+				    pi = ci.model().lookupNonNavigableAssociationRole(ciAndAllSupertypes,name());
 				}
 				
 				if (pi != null) {

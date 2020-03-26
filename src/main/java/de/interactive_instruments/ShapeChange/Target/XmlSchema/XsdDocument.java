@@ -1152,7 +1152,7 @@ public class XsdDocument implements MessageSource {
 		    if (inMixin)
 			res.add(cix);
 		    else
-			res.addAll(subtypesOfMixins(cix,false));
+			res.addAll(subtypesOfMixins(cix, false));
 		}
 	    }
 	}
@@ -2598,7 +2598,8 @@ public class XsdDocument implements MessageSource {
 		    /*
 		     * We need to construct an anonymous array property type
 		     */
-		    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, asArrayTargetElement, null, false);
+		    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, null, asArrayTargetElement, null,
+			    false);
 
 		    // if 0..? also allow that the property element is missing
 		    multiplicityAlreadySet = true;
@@ -2644,10 +2645,10 @@ public class XsdDocument implements MessageSource {
 		}
 
 	    } else if (me.rule.equals("propertyType")) {
-		multiplicityAlreadySet = addAnonymousPropertyType(e, propi, me.p1, null, false);
+		multiplicityAlreadySet = addAnonymousPropertyType(e, propi, null, me.p1, null, false);
 
 	    } else if (me.rule.equals("metadataPropertyType")) {
-		multiplicityAlreadySet = addAnonymousPropertyType(e, propi, me.p1, null, true);
+		multiplicityAlreadySet = addAnonymousPropertyType(e, propi, null, me.p1, null, true);
 	    }
 	    return multiplicityAlreadySet;
 	}
@@ -2669,13 +2670,13 @@ public class XsdDocument implements MessageSource {
 	    }
 	}
 
+	ClassInfo associationClass = null;
 	if (!propi.isAttribute() && !inAssocClass) {
 	    AssociationInfo ai = propi.association();
-	    ClassInfo aci = null;
 	    if (ai != null && ai.matches("rule-xsd-rel-association-classes"))
-		aci = ai.assocClass();
-	    if (aci != null)
-		ci = aci;
+		associationClass = ai.assocClass();
+	    if (associationClass != null)
+		ci = associationClass;
 	}
 
 	if (ci == null) {
@@ -2954,7 +2955,8 @@ public class XsdDocument implements MessageSource {
 		}
 
 		if (embedPropertyType)
-		    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, ci.qname(), null, false);
+		    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, associationClass, ci.qname(), null,
+			    false);
 
 		if (asArray) {
 		    // if 0..? also allow that the property element is missing
@@ -2971,7 +2973,7 @@ public class XsdDocument implements MessageSource {
 	} else if ((ci.matches("rule-xsd-cls-mixin-classes") && ci.category() == Options.MIXIN)
 		|| (ci.matches("rule-xsd-cls-no-abstract-classes") && ci.isAbstract())) {
 
-	    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, null, subtypes(ci), false);
+	    multiplicityAlreadySet = addAnonymousPropertyType(e, propi, null, null, subtypes(ci), false);
 
 	} else if (ci.matches("rule-xsd-cls-standard-gml-property-types")
 		|| ci.matches("rule-xsd-cls-standard-swe-property-types")) {
@@ -3773,8 +3775,8 @@ public class XsdDocument implements MessageSource {
     }
 
     /** Create a embedded property type */
-    private boolean addAnonymousPropertyType(Element e, PropertyInfo propi, String targetElement,
-	    HashSet<ClassInfo> types, boolean valueIsMetadata) {
+    private boolean addAnonymousPropertyType(Element e, PropertyInfo propi, ClassInfo targetAssociationClass,
+	    String targetElement, HashSet<ClassInfo> types, boolean valueIsMetadata) {
 
 	ClassInfo cibase = propi.inClass();
 	if (cibase == null) {
@@ -3939,9 +3941,11 @@ public class XsdDocument implements MessageSource {
 	}
 
 	HashSet<ClassInfo> instatiableMixinSubclasses = null;
-	ClassInfo typeCi = model.classByIdOrName(propi.typeInfo());
-	if (typeCi != null && typeCi.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
-	    instatiableMixinSubclasses = subtypesOfMixins(typeCi, false);
+	ClassInfo instantiableMixinSubclassesTypeCi = targetAssociationClass != null ? targetAssociationClass
+		: model.classByIdOrName(propi.typeInfo());
+	if (instantiableMixinSubclassesTypeCi != null
+		&& instantiableMixinSubclassesTypeCi.matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+	    instatiableMixinSubclasses = subtypesOfMixins(instantiableMixinSubclassesTypeCi, false);
 	}
 
 	Element sequenceOrChoice;
@@ -3956,7 +3960,7 @@ public class XsdDocument implements MessageSource {
 
 	    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    sequenceOrChoice.appendChild(e5);
-	    String s = elementName(typeCi, true);
+	    String s = elementName(instantiableMixinSubclassesTypeCi, true);
 	    if (s != null) {
 		addAttribute(e5, "ref", s);
 	    }

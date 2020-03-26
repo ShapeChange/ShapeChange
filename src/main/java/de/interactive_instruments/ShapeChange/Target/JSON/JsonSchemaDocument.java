@@ -198,10 +198,11 @@ public class JsonSchemaDocument implements MessageSource {
 
     private JsonSchema jsonSchemaForBasicType(ClassInfo ci) {
 
-	// treat generalization normally
-	// add restricting facets based on tagged values defined for ci (and if
-	// applicable for the simple JSON Schema type as which ci ultimately is
-	// implemented)
+	/*
+	 * Add restricting facets based on tagged values defined for ci (and if
+	 * applicable for the simple JSON Schema type as which ci ultimately is
+	 * implemented).
+	 */
 
 	JsonSchema jsClass = new JsonSchema();
 
@@ -264,7 +265,8 @@ public class JsonSchemaDocument implements MessageSource {
 		restrictingFacetSchema.pattern(pattern);
 	    }
 
-	} else if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.NUMBER) {
+	} else if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.NUMBER
+		|| jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.INTEGER) {
 
 	    String min = ci.taggedValue("rangeMinimum");
 
@@ -288,12 +290,19 @@ public class JsonSchemaDocument implements MessageSource {
 	    // must be JsonSchemaType.BOOLEAN - nothing to do
 	}
 
-	// TBD - should format be defined via tagged value?
+	if (jsImplementationTypeInfo.getSimpleType() != JsonSchemaType.BOOLEAN) {
 
-	// TODO only create "allOf" if ci defines a relevant restricting facet (check if
-	// schema is empty) -
-	// otherwise just refer to the schema definition from the supertype
+	    String format = ci.taggedValue("jsonFormat");
 
+	    if (StringUtils.isNotBlank(format)) {
+		restrictingFacetSchema.format(format);
+	    }
+	}
+
+	/*
+	 * Only create "allOf" if ci defines a relevant restricting facet - otherwise
+	 * just refer to the schema definition from the supertype
+	 */
 	if (restrictingFacetSchema.isEmpty()) {
 	    jsClass.addAll(allOfMembers.get(0));
 	} else {
@@ -301,17 +310,6 @@ public class JsonSchemaDocument implements MessageSource {
 	    // create the "allOf"
 	    jsClass.allOf(allOfMembers.toArray(new JsonSchema[allOfMembers.size()]));
 	}
-
-//	if (!allOfMembers.isEmpty()) {
-//
-//	    // prepare the contents schema for ci
-//	    jsClassContents = new JsonSchema();
-//
-//	    allOfMembers.add(jsClassContents);
-//
-//	    // create the "allOf"
-//	    jsClass.allOf(allOfMembers.toArray(new JsonSchema[allOfMembers.size()]));
-//	}
 
 	return jsClass;
     }
@@ -359,52 +357,59 @@ public class JsonSchemaDocument implements MessageSource {
 
 	addCommonSchemaMembers(jsClass, ci);
 
+	// identify and set the JSON Schema type as which the enumeration is implemented
+	JsonSchemaType enumerationJsType;
 	if (StringUtils.isNotBlank(ci.taggedValue("numericType"))) {
-
 	    if ("integer".equalsIgnoreCase(ci.taggedValue("numericType"))) {
-
-		jsClass.type(JsonSchemaType.INTEGER);
-
-		for (PropertyInfo pi : ci.properties().values()) {
-		    String stringValue = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
-
-		    try {
-			int intValue = Integer.parseInt(stringValue);
-			jsClass.enum_(new JsonInteger(intValue));
-		    } catch (NumberFormatException e) {
-			MessageContext mc = result.addError(this, 109, stringValue, pi.name(), ci.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullName());
-			}
-		    }
-		}
-
+		enumerationJsType = JsonSchemaType.INTEGER;
 	    } else {
+		enumerationJsType = JsonSchemaType.NUMBER;
+	    }
+	} else {
+	    enumerationJsType = JsonSchemaType.STRING;
+	}
 
-		jsClass.type(JsonSchemaType.NUMBER);
+	jsClass.type(enumerationJsType);
 
-		for (PropertyInfo pi : ci.properties().values()) {
-		    String stringValue = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
+	for (PropertyInfo pi : ci.properties().values()) {
 
-		    try {
-			double doubleValue = Double.parseDouble(stringValue);
-			jsClass.enum_(new JsonNumber(doubleValue));
-		    } catch (NumberFormatException e) {
-			MessageContext mc = result.addError(this, 110, stringValue, pi.name(), ci.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullName());
-			}
-		    }
-		}
+	    if (!JsonSchemaTarget.isEncoded(pi)) {
+		result.addInfo(this, 9, pi.name(), pi.inClass().name());
+		continue;
 	    }
 
-	} else {
+	    if (enumerationJsType == JsonSchemaType.INTEGER) {
 
-	    jsClass.type(JsonSchemaType.STRING);
+		String stringValue = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
 
-	    for (PropertyInfo pi : ci.properties().values()) {
+		try {
+		    int intValue = Integer.parseInt(stringValue);
+		    jsClass.enum_(new JsonInteger(intValue));
+		} catch (NumberFormatException e) {
+		    MessageContext mc = result.addError(this, 109, stringValue, pi.name(), ci.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullName());
+		    }
+		}
+
+	    } else if (enumerationJsType == JsonSchemaType.NUMBER) {
+
+		String stringValue = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
+
+		try {
+		    double doubleValue = Double.parseDouble(stringValue);
+		    jsClass.enum_(new JsonNumber(doubleValue));
+		} catch (NumberFormatException e) {
+		    MessageContext mc = result.addError(this, 110, stringValue, pi.name(), ci.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullName());
+		    }
+		}
+	    } else {
+
 		String value = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
 		jsClass.enum_(new JsonString(value));
+
 	    }
 	}
 
@@ -422,6 +427,11 @@ public class JsonSchemaDocument implements MessageSource {
 	Set<String> encounteredTypes = new HashSet<>();
 
 	for (PropertyInfo pi : ci.properties().values()) {
+
+	    if (!JsonSchemaTarget.isEncoded(pi)) {
+		result.addInfo(this, 9, pi.name(), pi.inClass().name());
+		continue;
+	    }
 
 	    Type t = pi.typeInfo();
 	    String typeKey = StringUtils.stripToEmpty(t.name) + "#" + StringUtils.stripToEmpty(t.id);
@@ -452,7 +462,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09) {
 		jsClass.anchor(ci.name());
 	    } else {
-		jsClass.id("#"+ci.name());
+		jsClass.id("#" + ci.name());
 	    }
 	}
     }
@@ -533,6 +543,11 @@ public class JsonSchemaDocument implements MessageSource {
 	    Set<PropertyInfo> directProperties = new HashSet<>(ci.properties().values());
 
 	    for (PropertyInfo pi : ci.propertiesAll()) {
+
+		if (!JsonSchemaTarget.isEncoded(pi)) {
+		    result.addInfo(this, 9, pi.name(), pi.inClass().name());
+		    continue;
+		}
 
 		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
 
@@ -666,6 +681,11 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	for (PropertyInfo pi : ci.properties().values()) {
+
+	    if (!JsonSchemaTarget.isEncoded(pi)) {
+		result.addInfo(this, 9, pi.name(), pi.inClass().name());
+		continue;
+	    }
 
 	    if (pi == defaultGeometryPi) {
 		continue;
@@ -1243,14 +1263,18 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (valueType == null) {
 
 		// The value type was not found in the model
-		result.addError(this, 114, typeName);
+		result.addWarning(this, 114, typeName);
+
+		jsTypeInfo = null;
+
+	    } else if (!JsonSchemaTarget.isEncoded(valueType)) {
 
 		jsTypeInfo = null;
 
 	    } else if (!model.isInSelectedSchemas(valueType)) {
 
 		// The value type is not contained in the schemas selected for processing
-		result.addError(this, 115, typeName);
+		result.addWarning(this, 115, typeName);
 
 		jsTypeInfo = null;
 
@@ -1260,8 +1284,10 @@ public class JsonSchemaDocument implements MessageSource {
 
 		if (jsdopt.isEmpty()) {
 
+		    // TODO - since we now check up front if the value type is not encoded, we
+		    // should update the check here
 		    // only explanation is that the value type is not encoded
-		    result.addError(this, 116, typeName);
+		    result.addWarning(this, 116, typeName);
 
 		    jsTypeInfo = null;
 
@@ -1333,6 +1359,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Context: class '$1$'";
 	case 1:
 	    return "Context: property '$1$'";
+	case 9:
+	    return "??Property '$1$' of class '$2$' is not encoded.";
 
 	case 100:
 	    return "Exception occurred while writing JSON Schema to file: $1$. Exception message is: $2$.";
