@@ -107,8 +107,14 @@ public class XmlSchema implements Target, MessageSource {
 
 	String voidReasonType = options.parameterAsString(this.getClass().getName(), "defaultVoidReasonType", null,
 		false, true);
-	defaultVoidReasonType = voidReasonType == null ? null
-		: findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
+	if (StringUtils.isBlank(voidReasonType)) {
+	    defaultVoidReasonType = null;
+	} else {
+	    defaultVoidReasonType = findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
+	    if (defaultVoidReasonType == null) {
+		result.addInfo(this, 2012, voidReasonType);
+	    }
+	}
 
 	explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(), "schematronQueryBinding",
 		null, false, true);
@@ -220,8 +226,19 @@ public class XmlSchema implements Target, MessageSource {
 		    if (propi.matches("rule-xsd-prop-nilReason-constraints")) {
 
 			String voidReasonType = propi.taggedValue("voidReasonType");
-			ClassInfo directVoidReasonType = voidReasonType == null ? null
-				: findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
+			ClassInfo directVoidReasonType;
+			if (StringUtils.isBlank(voidReasonType)) {
+			    directVoidReasonType = null;
+			} else {
+			    directVoidReasonType = findClassByFullNameInSchemaInModelOrByNameInSchema(voidReasonType);
+			    if (directVoidReasonType == null) {
+				MessageContext mc = result.addInfo(this, 2013, propi.name(), propi.inClass().name(),
+					voidReasonType);
+				if (mc != null) {
+				    mc.addDetail(this, 0, propi.fullName());
+				}
+			    }
+			}
 
 			ClassInfo vrt = directVoidReasonType;
 			if (vrt == null) {
@@ -789,7 +806,7 @@ public class XmlSchema implements Target, MessageSource {
 	    if (schDoc.hasRules()) {
 		schDoc.write(outputDirectory);
 	    } else {
-		result.addDebug(this,2011,schDoc.getFileName());
+		result.addDebug(this, 2011, schDoc.getFileName());
 	    }
 	}
 
@@ -1406,6 +1423,10 @@ public class XmlSchema implements Target, MessageSource {
 	    return "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
 	case 2011:
 	    return "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
+	case 2012:
+	    return "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
+	case 2013:
+	    return "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
