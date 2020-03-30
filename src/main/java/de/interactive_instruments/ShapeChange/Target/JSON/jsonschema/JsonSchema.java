@@ -475,6 +475,11 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	this.add(new UniqueItemsKeyword(unique));
 	return this;
     }
+    
+    public JsonSchema nullable(boolean nullable) {
+	this.add(new NullableKeyword(nullable));
+	return this;
+    }
 
     public Optional<JsonSchema> additionalProperties() {
 	return this.stream().filter(keyword -> keyword instanceof AdditionalPropertiesKeyword)
@@ -654,6 +659,11 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
     public Optional<Boolean> uniqueItems() {
 	return this.stream().filter(keyword -> keyword instanceof UniqueItemsKeyword)
 		.map(keyword -> ((UniqueItemsKeyword) keyword).value()).findFirst();
+    }
+    
+    public Optional<Boolean> nullable() {
+	return this.stream().filter(keyword -> keyword instanceof NullableKeyword)
+		.map(keyword -> ((NullableKeyword) keyword).value()).findFirst();
     }
 
     @Override

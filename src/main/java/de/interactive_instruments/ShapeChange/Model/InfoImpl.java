@@ -136,7 +136,7 @@ public abstract class InfoImpl implements Info {
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
-				MessageContext mc = model().result().addWarning(null, 701, tag,
+				MessageContext mc = result().addWarning(null, 701, tag,
 						values[0], values[i]);
 				addContextDetails(mc);
 			}

@@ -31,50 +31,35 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON.jsonschema;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonArray;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonBoolean;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
 
 /**
+ * Nullable is used in OpenAPI 3.0 specific JSON Schema definitions.
+ * 
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class EnumKeyword extends ArrayList<JsonValue> implements JsonSchemaKeyword {
+public class NullableKeyword implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2950497991632003427L;
+    private boolean value;
 
-    public EnumKeyword() {
-	super();
-    }
-
-    public EnumKeyword(List<JsonValue> values) {
-	super();
-	this.addAll(values);
+    public NullableKeyword(boolean value) {
+	this.value = value;
     }
 
     @Override
     public String name() {
-	return "enum";
+	return "nullable";
+    }
+
+    public boolean value() {
+	return this.value;
     }
 
     @Override
     public JsonValue toJson(JsonSerializationContext context) {
-
-	if (this.size() == 1) {
-	    return this.get(0);
-	} else {
-
-	    JsonArray arr = new JsonArray();
-
-	    arr.addAll(this);
-
-	    return arr;
-	}
+	return new JsonBoolean(value);
     }
 
 }

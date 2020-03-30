@@ -9,7 +9,7 @@
 		<parameter name="repositoryFileNameOrConnectionString"
 			value="src/test/resources/modelExport/addStereotypes/some/test_addStereotypes.eap" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
-		<parameter name="addStereotypes" value="Test2, ps2 " />
+		<parameter name="addStereotypes" value="Test2, ps2, ModelElement " />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
 		<parameter name="dontConstructAssociationNames" value="true" />

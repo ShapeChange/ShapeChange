@@ -231,6 +231,10 @@
 					<systemPropertyVariables>
 						<scunittesting>true</scunittesting>
 					</systemPropertyVariables>
+					<!-- The following can be used to exclude Saxon when performing unit tests. -->
+<!-- 					<classpathDependencyExcludes> -->
+<!--         <classpathDependencyExclude>net.sf.saxon:Saxon-HE</classpathDependencyExclude> -->
+<!--       </classpathDependencyExcludes> -->
 				</configuration>
 			</plugin>
 			<plugin>

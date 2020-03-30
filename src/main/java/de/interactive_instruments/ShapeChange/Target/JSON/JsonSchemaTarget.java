@@ -92,6 +92,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static String entityTypeName = null;
 
     protected static String inlineOrByRefDefault = null;
+    
+    protected static String linkObjectUri = null;
 
     protected static String byReferenceJsonSchemaDefinition = null;
 
@@ -169,6 +171,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    inlineOrByRefDefault = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, "byreference", false, true);
 
+	    linkObjectUri = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, "", false, true);
+	    // TODO: set useful default for linkObjectUri
+	    
 	    byReferenceJsonSchemaDefinition = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION, null, false, true);
 
@@ -455,6 +461,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public String getInlineOrByRefDefault() {
 	return inlineOrByRefDefault;
     }
+    
+    public String getLinkObjectUri() {
+	return linkObjectUri;
+    }
 
     public boolean objectIdentifierRequired() {
 	return objectIdentifierRequired;
@@ -710,6 +720,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	jsonSchemaVersion = null;
 	entityTypeName = null;
 	inlineOrByRefDefault = null;
+	linkObjectUri = null;
 	byReferenceJsonSchemaDefinition = null;
 
 	baseJsonSchemaDefinitionForFeatureTypes = null;
@@ -751,6 +762,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-union-propertyCount");
 	r.addRule("rule-json-cls-union-typeDiscriminator");
 	r.addRule("rule-json-cls-codelist-uri-format");
+	r.addRule("rule-json-cls-codelist-link");
 	r.addRule("rule-json-prop-voidable");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-derivedAsReadOnly");
@@ -758,13 +770,12 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	r.addRule("rule-json-cls-valueTypeOptions");
 
-//	r.addExtendsEncRule("geoservices", "*");
-//	r.addExtendsEncRule("geoservices_extended", "*");
 //	r.addExtendsEncRule("geojson", "*");
     }
 
     @Override
     public String getDefaultEncodingRule() {
+	// TODO
 	return "geojson";
     }
 

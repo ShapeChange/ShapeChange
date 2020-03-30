@@ -41,13 +41,15 @@
 
  </transformers>
  <targets>
+  <!-- =============================== -->
+  <!-- ====== 2019-09 - GeoJSON ====== -->
+  <!-- =============================== -->
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas"/>
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
-   
-<!--   <targetParameter name="jsonSchemaVersion" value="draft-07"/>-->
-   
+      
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
 
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
@@ -63,14 +65,19 @@
    <targetParameter name="defaultEncodingRule" value="myjson"/>
 
    <rules>
-    <EncodingRule name="myjson_basic">
-     <rule name="rule-json-all-documentation"/>
-     <rule name="rule-json-all-notEncoded"/>
+    
+    <EncodingRule name="json_basic" extends="*">
+     <!-- these rules should be used by every json encoding rule -->
+     <rule name="rule-json-cls-generalization"/>  
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <rule name="rule-json-all-documentation"/>  
+    </EncodingRule>
+    
+    <EncodingRule name="myjson" extends="json_basic">
      
      <rule name="rule-json-cls-basictype"/>
-     <rule name="rule-json-cls-name-as-anchor"/>
+     
      <rule name="rule-json-cls-name-as-entityType"/>
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-specialization"/>
 
      <!--     <rule name="rule-json-cls-identifierForTypeWithIdentity" />-->
@@ -81,7 +88,8 @@
      <!--     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>-->
      <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
      <rule name="rule-json-cls-nestedProperties"/>
-     <rule name="rule-json-cls-codelist-uri-format"/>
+     <rule name="rule-json-cls-union-propertyCount"/>    
+     
      <rule name="rule-json-prop-voidable"/>
      <rule name="rule-json-prop-readOnly"/>
      <rule name="rule-json-prop-derivedAsReadOnly"/>
@@ -91,44 +99,105 @@
 
     </EncodingRule>
 
-    <EncodingRule name="myjson" extends="myjson_basic">
-     <rule name="rule-json-cls-union-propertyCount"/>
-
+    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="json_basic">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>     
     </EncodingRule>
-
-    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="myjson_basic">
-     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    
+    <EncodingRule name="myjsonCodelistUriFormat" extends="json_basic">
+     <rule name="rule-json-cls-codelist-uri-format"/>
+    </EncodingRule>    
+    <EncodingRule name="myjsonCodelistLinkObject" extends="json_basic">
+     <rule name="rule-json-cls-codelist-link"/>
     </EncodingRule>
    </rules>
 
-
-
-
-   <mapEntries>
-    <MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
-    <MapEntry type="URI" rule="*" targetType="string" param="formatted{format=uri}"/>
-    <MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
-    <MapEntry type="Integer" rule="*" targetType="integer" param=""/>
-    <MapEntry type="Decimal" rule="*" targetType="number" param=""/>
-    <MapEntry type="Number" rule="*" targetType="number" param=""/>
-    <MapEntry type="Real" rule="*" targetType="number" param=""/>
-    <MapEntry type="Measure" rule="*" targetType="number" param=""/>
-    <MapEntry type="Date" rule="*" targetType="string" param="formatted{format=date}"/>
-    <MapEntry type="DateTime" rule="*" targetType="string" param="formatted{format=date-time}"/>
-
-    <!-- ISO/TS 19107 -->
-    <MapEntry type="GM_Curve" rule="*" targetType="https://geojson.org/schema/LineString.json" param="geometry"/>
-    <MapEntry type="GM_MultiCurve" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" param="geometry"/>
-    <MapEntry type="GM_MultiPoint" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" param="geometry"/>
-    <MapEntry type="GM_MultiSurface" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" param="geometry"/>
-    <MapEntry type="GM_Object" rule="*" targetType="https://geojson.org/schema/Geometry.json" param="geometry"/>
-    <MapEntry type="GM_Point" rule="*" targetType="https://geojson.org/schema/Point.json" param="geometry"/>
-    <MapEntry type="GM_Surface" rule="*" targetType="https://geojson.org/schema/Polygon.json" param="geometry"/>
-
-
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>    
     <MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param=""/>
     <MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param=""/>
-
+   </mapEntries>
+  </Target>
+  <!-- =================================== -->
+  <!-- ====== OpenApi 3.0 - GeoJSON ====== -->
+  <!-- =================================== -->
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
+   <!-- NOTE: Restriction of application schemas that are converted! -->
+   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|10).*"/>
+   
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/geojson"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>
+   
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
+   <!--   <targetParameter name="baseJsonSchemaDefinitionForDataTypes" value="https://geojson.org/schema/Feature.json"/>-->
+   
+   <!--		 <targetParameter name="entityTypeName" value="@type"/>-->
+   
+   <!--		 <targetParameter name="objectIdentifierName" value="@id"/>-->
+   <!--   		 <targetParameter name="objectIdentifierType" value="string, number"/>-->
+   <!--		 <targetParameter name="objectIdentifierRequired" value="true"/>-->
+   
+   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   
+   <rules>
+    
+    <EncodingRule name="json_basic" extends="*">
+     <!-- these rules should be used by every json encoding rule -->
+     <rule name="rule-json-cls-generalization"/>     
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <rule name="rule-json-all-documentation"/>  
+    </EncodingRule>
+    
+    <EncodingRule name="myjson" extends="json_basic">
+          
+     <rule name="rule-json-cls-basictype"/>
+     
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-specialization"/>
+     
+     <!--     <rule name="rule-json-cls-identifierForTypeWithIdentity" />-->
+     <rule name="rule-json-cls-identifierStereotype"/>
+     <!--     <rule name="rule-json-cls-ignoreIdentifier"/>-->
+     
+     <rule name="rule-json-cls-virtualGeneralization"/>
+     <!--     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>-->
+     <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+     <rule name="rule-json-cls-nestedProperties"/>     
+     
+     <rule name="rule-json-cls-union-propertyCount"/>    
+     
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+     
+     <rule name="rule-json-cls-valueTypeOptions"/>
+     
+    </EncodingRule>
+    
+    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="json_basic">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>     
+    </EncodingRule>
+        
+    <EncodingRule name="myjsonCodelistUriFormat" extends="json_basic">
+     <rule name="rule-json-cls-codelist-uri-format"/>
+    </EncodingRule>    
+    <EncodingRule name="myjsonCodelistLinkObject" extends="json_basic">
+     <rule name="rule-json-cls-codelist-link"/>
+    </EncodingRule>
+    
+   </rules>
+      
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>    
+    <MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param=""/>
+    <MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param=""/>
    </mapEntries>
   </Target>
  </targets>

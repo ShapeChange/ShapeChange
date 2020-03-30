@@ -63,14 +63,19 @@ public class ItemsKeyword extends ArrayList<JsonSchema> implements JsonSchemaKey
 
     @Override
     public JsonValue toJson(JsonSerializationContext context) {
-	
-	JsonArray arr = new JsonArray();
 
-	for (JsonSchema schema : this) {
-	    arr.add(schema.toJson(context));
+	if (this.size() == 1) {
+	    return this.get(0).toJson(context);
+	} else {
+
+	    JsonArray arr = new JsonArray();
+
+	    for (JsonSchema schema : this) {
+		arr.add(schema.toJson(context));
+	    }
+
+	    return arr;
 	}
-
-	return arr;
     }
 
 }

@@ -122,8 +122,10 @@ public class JsonSchemaDocument implements MessageSource {
 
 	jsonSchemaVersion = jsonSchemaTarget.getJsonSchemaVersion();
 
-	// add JSON Schema version
-	rootSchema.schema(jsonSchemaVersion.getSchemaUri());
+	// add JSON Schema version, if a URI is defined for the schema version
+	if (jsonSchemaVersion.getSchemaUri().isPresent()) {
+	    rootSchema.schema(jsonSchemaVersion.getSchemaUri().get());
+	}
 
 	// add schema identifier
 	rootSchema.id(rootSchemaId);
@@ -336,12 +338,17 @@ public class JsonSchemaDocument implements MessageSource {
 	addCommonSchemaMembers(jsClass, ci);
 
 	if (ci.matches(JsonSchemaConstants.RULE_CLS_CODELIST_URI_FORMAT)) {
+	    
 	    jsClass.type(JsonSchemaType.STRING);
 	    jsClass.format("uri");
 
+	} else if (ci.matches(JsonSchemaConstants.RULE_CLS_CODELIST_LINK)) {
+	    
+	    jsClass.ref(jsonSchemaTarget.getLinkObjectUri());
+
 	} else {
 
-	    if ("true".equalsIgnoreCase(ci.taggedValue("numericType"))) {
+	    if ("Number".equalsIgnoreCase(ci.taggedValue("numericType"))) {
 		jsClass.type(JsonSchemaType.NUMBER);
 	    } else {
 		jsClass.type(JsonSchemaType.STRING);
@@ -450,14 +457,15 @@ public class JsonSchemaDocument implements MessageSource {
     }
 
     /**
-     * Applies {@value JsonSchemaConstants#RULE_CLS_NAME_AS_ANCHOR}
+     * Currently, only applies {@value JsonSchemaConstants#RULE_CLS_NAME_AS_ANCHOR}
      * 
      * @param jsClass
      * @param ci
      */
     private void addCommonSchemaMembers(JsonSchema jsClass, ClassInfo ci) {
 
-	if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
+	if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
+		&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
 
 	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09) {
 		jsClass.anchor(ci.name());
@@ -470,10 +478,6 @@ public class JsonSchemaDocument implements MessageSource {
     private JsonSchema jsonSchema(ClassInfo ci) {
 
 	JsonSchema jsClass = new JsonSchema();
-
-	// TODO handle basic type - or identify if ci directly or indirectly inherits
-	// from a type that is mapped to a simple JSON Schema type; if so, use that type
-	// as JSON Schema definition
 
 	addCommonSchemaMembers(jsClass, ci);
 
@@ -742,12 +746,6 @@ public class JsonSchemaDocument implements MessageSource {
 	    // Create a JSON Schema to restrict the type of the supertype property
 	    JsonSchema supertypePropertyTypeRestrictionSchema = new JsonSchema();
 
-	    // Take into account voidable
-	    if (supertypePi.voidable() && supertypePi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
-		JsonSchemaTypeInfo nullInfo = new JsonSchemaTypeInfo();
-		nullInfo.setSimpleType(JsonSchemaType.NULL);
-		supertypePropertyTypeInfos.add(nullInfo);
-	    }
 	    // Take into account inline/inlineOrByReference (byReference has already been
 	    // ruled out before)
 	    if ((supertypePi.categoryOfValue() == Options.FEATURE || supertypePi.categoryOfValue() == Options.OBJECT)
@@ -764,13 +762,46 @@ public class JsonSchemaDocument implements MessageSource {
 		    supertypePropertyTypeInfos.add(jstdOpt.get());
 		}
 	    }
-	    // Take into account multiplicity of the supertype property
+	    // Take into account multiplicity and voidable of the supertype property
 	    JsonSchema parentForTypeSchema = supertypePropertyTypeRestrictionSchema;
+
+	    // Take into account voidable
+	    if (supertypePi.voidable() && supertypePi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
+
+		// if maxOccurs == 1, simply add null
+		if (supertypePi.cardinality().maxOccurs == 1) {
+
+		    JsonSchemaTypeInfo nullTypeInfo = new JsonSchemaTypeInfo();
+		    nullTypeInfo.setSimpleType(JsonSchemaType.NULL);
+		    supertypePropertyTypeInfos.add(nullTypeInfo);
+
+		} else {
+
+		    // otherwise, we need to create a real choice between a single null value, and
+		    // the usual type definition
+		    if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+
+			parentForTypeSchema.nullable(true);
+
+		    } else {
+
+			JsonSchema nullTypeSchemaDef = new JsonSchema();
+			nullTypeSchemaDef.type(JsonSchemaType.NULL);
+
+			JsonSchema nonNullTypeSchemaDef = new JsonSchema();
+
+			parentForTypeSchema.oneOf(nullTypeSchemaDef, nonNullTypeSchemaDef);
+
+			parentForTypeSchema = nonNullTypeSchemaDef;
+		    }
+		}
+	    }
+
 	    if (supertypePi.cardinality().maxOccurs > 1) {
-		supertypePropertyTypeRestrictionSchema.type(JsonSchemaType.ARRAY);
+		parentForTypeSchema.type(JsonSchemaType.ARRAY);
 		JsonSchema itemsSchema = new JsonSchema();
+		parentForTypeSchema.items(itemsSchema);
 		parentForTypeSchema = itemsSchema;
-		supertypePropertyTypeRestrictionSchema.items(itemsSchema);
 		// "required" and "minItems"/"maxItems" are defined by the supertype schema
 	    }
 	    // create the actual type restriction schema
@@ -822,22 +853,6 @@ public class JsonSchemaDocument implements MessageSource {
 
 	return jsClass;
     }
-//
-//    /**
-//     * @param ci   class to check
-//     * @param rule id of a conversion rule
-//     * @return <code>true</code>, if the rule matches for at least one of the direct
-//     *         supertypes of ci, else <code>false</code>
-//     */
-//    private boolean conversionRuleAppliesToSupertype(ClassInfo ci, String rule) {
-//
-//	for (ClassInfo supertype : ci.supertypeClasses()) {
-//	    if (supertype.matches(rule)) {
-//		return true;
-//	    }
-//	}
-//	return false;
-//    }
 
     private void handleVirtualGeneralization(ClassInfo ci, SortedSet<ClassInfo> supertypes,
 	    List<JsonSchema> allOfMembers) {
@@ -906,13 +921,6 @@ public class JsonSchemaDocument implements MessageSource {
 	// First, identify the JSON Schema type infos for all allowed types
 	List<JsonSchemaTypeInfo> typeOptions = new ArrayList<>();
 
-	if (pi.voidable() && pi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
-
-	    JsonSchemaTypeInfo nullInfo = new JsonSchemaTypeInfo();
-	    nullInfo.setSimpleType(JsonSchemaType.NULL);
-	    typeOptions.add(nullInfo);
-	}
-
 	Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
 
 	if (typeInfoOpt.isPresent()) {
@@ -967,27 +975,66 @@ public class JsonSchemaDocument implements MessageSource {
 
 	JsonSchema parentForTypeSchema = jsProp;
 
-	// convert multiplicity
-	if (pi.cardinality().maxOccurs > 1) {
+	// Take into account voidable
+	if (pi.voidable() && pi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
 
-	    jsProp.type(JsonSchemaType.ARRAY);
+	    // if maxOccurs == 1 simply add null
+	    if (pi.cardinality().maxOccurs == 1) {
+
+		JsonSchemaTypeInfo nullTypeInfo = new JsonSchemaTypeInfo();
+		nullTypeInfo.setSimpleType(JsonSchemaType.NULL);
+		typeOptions.add(nullTypeInfo);
+
+	    } else {
+
+		// otherwise, we need to create a real choice between a single null value, and
+		// the usual type definition
+
+		if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+
+		    parentForTypeSchema.nullable(true);
+
+		} else {
+
+		    JsonSchema nullTypeSchemaDef = new JsonSchema();
+		    nullTypeSchemaDef.type(JsonSchemaType.NULL);
+
+		    JsonSchema nonNullTypeSchemaDef = new JsonSchema();
+
+		    jsProp.oneOf(nullTypeSchemaDef, nonNullTypeSchemaDef);
+
+		    parentForTypeSchema = nonNullTypeSchemaDef;
+		}
+	    }
+	}
+
+	// convert multiplicity
+	if (pi.cardinality().maxOccurs > 1)
+
+	{
+
+	    parentForTypeSchema.type(JsonSchemaType.ARRAY);
 
 	    if (pi.cardinality().minOccurs > 0) {
-		jsProp.minItems(pi.cardinality().minOccurs);
+		parentForTypeSchema.minItems(pi.cardinality().minOccurs);
 	    }
 
 	    if (pi.cardinality().maxOccurs < Integer.MAX_VALUE) {
-		jsProp.maxItems(pi.cardinality().maxOccurs);
+		parentForTypeSchema.maxItems(pi.cardinality().maxOccurs);
 	    }
 
+	    JsonSchema itemsSchema = null;
 	    if (!typeOptions.isEmpty()) {
-		JsonSchema itemsSchema = new JsonSchema();
-		parentForTypeSchema = itemsSchema;
-		jsProp.items(itemsSchema);
+		itemsSchema = new JsonSchema();
+		parentForTypeSchema.items(itemsSchema);
 	    }
 
 	    if (pi.isUnique()) {
-		jsProp.uniqueItems(true);
+		parentForTypeSchema.uniqueItems(true);
+	    }
+
+	    if (itemsSchema != null) {
+		parentForTypeSchema = itemsSchema;
 	    }
 	}
 
@@ -1080,15 +1127,43 @@ public class JsonSchemaDocument implements MessageSource {
     private void createTypeDefinition(List<JsonSchemaTypeInfo> typeInfos, JsonSchema parentForTypeSchema) {
 
 	List<JsonSchemaTypeInfo> simpleTypeOptions = typeInfos.stream()
-		.filter(opt -> opt.isSimpleType() && !opt.hasFormat()).collect(Collectors.toList());
+		.filter(opt -> opt.isSimpleType() && !opt.hasFormat())
+		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
+		.collect(Collectors.toList());
 
 	JsonSchema simpleTypeSchema = new JsonSchema();
-	simpleTypeSchema
-		.type(simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
 
 	// identify other type options
 	List<JsonSchemaTypeInfo> otherTypeOptions = typeInfos.stream()
 		.filter(opt -> !opt.isSimpleType() || opt.hasFormat()).collect(Collectors.toList());
+
+	if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30 && !simpleTypeOptions.isEmpty()) {
+
+	    Optional<JsonSchemaTypeInfo> nullTypeInfoOpt = simpleTypeOptions.stream()
+		    .filter(opt -> opt.getSimpleType() == JsonSchemaType.NULL).findFirst();
+
+	    if (nullTypeInfoOpt.isPresent()) {
+		simpleTypeOptions.remove(nullTypeInfoOpt.get());
+		if (otherTypeOptions.stream().anyMatch(opt -> opt.getRef() != null)) {
+		    result.addWarning(this, 118);
+		} else {
+		    parentForTypeSchema.nullable(true);
+		}
+	    }
+
+	    if (simpleTypeOptions.size() > 1) {
+		otherTypeOptions.addAll(simpleTypeOptions);
+		simpleTypeOptions = new ArrayList<JsonSchemaTypeInfo>();
+	    } else {
+		simpleTypeSchema.type(
+			simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
+	    }
+
+	} else {
+
+	    simpleTypeSchema
+		    .type(simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
+	}
 
 	List<JsonSchema> otherTypeSchemas = new ArrayList<>();
 	for (JsonSchemaTypeInfo otherTypeOption : otherTypeOptions) {
@@ -1109,7 +1184,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    /*
 	     * TODO - is "oneOf" ok here? What if two schemas match for an instance, then
 	     * this would return false. An alternative could be to use an if-then-else for
-	     * actual JSON object definitions, using the entityType as condition.
+	     * actual JSON object definitions, using the entityType as condition. Or use
+	     * anyOf, but that could lead to an incomplete validation.
 	     */
 
 	    // create a "oneOf" with everything else and maybe the simple type def
@@ -1213,7 +1289,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 		    String schemaId = jsd.getSchemaId();
 
-		    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
+		    if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
+			    && ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
 
 			// the encoding of the supertype contains an anchor - use it
 			jsTypeInfo.setRef(schemaId + "#" + typeName);
@@ -1297,7 +1374,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 		    String schemaId = jsd.getSchemaId();
 
-		    if (valueType.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
+		    if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
+			    && valueType.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
 
 			// the encoding of the value type contains an anchor - use it
 			jsTypeInfo.setRef(schemaId + "#" + typeName);
@@ -1399,6 +1477,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not encoded. No type restriction is created for properties with this type as value type.";
 	case 117:
 	    return "Property '$1$' of type '$2$' has been identified as default geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	case 118:
+	    return "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
 
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;

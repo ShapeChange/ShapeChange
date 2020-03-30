@@ -1,0 +1,148 @@
+{
+  "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
+  "definitions": {
+    "CurvePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "LocationSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PlaceSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "entityType"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "PointPositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "SurfacePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS10_FT1": {
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "entityType": {
+                  "type": "string"
+                },
+                "place": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://example.org/jsonschema/byreference.json"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "entityType",
+                "place"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "TS10_FT2": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "place": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://example.org/jsonschema/byreference.json"
+                    },
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

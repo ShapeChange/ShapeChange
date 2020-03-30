@@ -81,14 +81,19 @@
    <targetParameter name="defaultEncodingRule" value="myjson"/>
 
    <rules>
-    <EncodingRule name="myjson_basic">
+    
+    <EncodingRule name="json">
+     
+     <rule name="rule-json-cls-generalization"/>     
+    </EncodingRule>
+    
+    <EncodingRule extends="json" name="myjson_basic">
      <rule name="rule-json-all-documentation"/>
      <rule name="rule-json-all-notEncoded"/>
      
      <rule name="rule-json-cls-basictype"/>
      <rule name="rule-json-cls-name-as-anchor"/>
      <rule name="rule-json-cls-name-as-entityType"/>
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-specialization"/>
 
      

@@ -1,9 +1,7 @@
 {
-  "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri/ts5/ts5/test5.json",
-  "$defs": {
+  "definitions": {
     "TS5_Union": {
-      "$anchor": "TS5_Union",
       "type": "object",
       "properties": {
         "option1": {
@@ -18,29 +16,26 @@
       "maxProperties": 1
     },
     "TS5_Union_TypeDiscriminator": {
-      "$anchor": "TS5_Union_TypeDiscriminator",
       "oneOf": [
-        {
-          "type": [
-            "string",
-            "integer"
-          ]
-        },
         {
           "$ref": "https://geojson.org/schema/Point.json"
         },
         {
           "type": "string",
           "format": "date"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
         }
       ]
     },
     "TS5_Union_TypeDiscriminator_OtherType": {
-      "$anchor": "TS5_Union_TypeDiscriminator_OtherType",
       "$ref": "https://geojson.org/schema/Point.json"
     },
     "TS5_Union_TypeDiscriminator_OtherTypes": {
-      "$anchor": "TS5_Union_TypeDiscriminator_OtherTypes",
       "oneOf": [
         {
           "$ref": "https://geojson.org/schema/LineString.json"
@@ -51,10 +46,13 @@
       ]
     },
     "TS5_Union_TypeDiscriminator_SimpleTypes": {
-      "$anchor": "TS5_Union_TypeDiscriminator_SimpleTypes",
-      "type": [
-        "string",
-        "integer"
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
       ]
     }
   }
