@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/typeConverter/propertyMetadataStereotype/test_propertyMetadataStereotype.EAP" />
+	 <parameter name="inputFile" value="src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/test_nilReasonPropertyForNillableProperty.EAP" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
@@ -14,20 +14,19 @@
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/typeConversion/propertyMetadataStereotype/log.xml" />
+		 value="testResults/typeConversion/nilReasonPropertyForNillableProperty/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
 			class="de.interactive_instruments.ShapeChange.Transformation.TypeConversion.TypeConverter"
 			input="INPUT" id="trf" mode="enabled">
-<!--			<parameters>-->
-<!--				<ProcessParameter name="defaultMetadataType" value="MetadataTypeA" />-->
-<!--				<ProcessParameter name="metadataPropertyNameSuffix" value="_meta" />-->
-<!--				<ProcessParameter name="metadataPropertyInlineOrByReference" value="byReference" />-->
-			<!--</parameters>-->		
+			<parameters>
+		 				<ProcessParameter name="defaultVoidReasonType" value="External::ExtVoidReasonTypeC" />
+		 				<ProcessParameter name="nilReasonPropertyNameSuffix" value="_myNilReason" />
+			</parameters>		
 			<rules>
 				<ProcessRuleSet name="convert">
-					<rule name="rule-trf-propertyMetadata-stereotype-to-metadata-property" />
+				 <rule name="rule-trf-nilReason-property-for-nillable-property" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
@@ -36,9 +35,9 @@
 		<TargetXmlSchema
 			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
 			inputs="trf" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/typeConversion/propertyMetadataStereotype/xsd" />
+		 <targetParameter name="outputDirectory" value="testResults/typeConversion/nilReasonPropertyForNillableProperty/xsd" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="gml33" />			
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />			
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
 			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
 		 <xmlNamespaces>
@@ -46,9 +45,8 @@
 		 </xmlNamespaces>
 			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
 			<xsdMapEntries>
-			 <XsdMapEntry type="ExtMetadataTypeC" xsdEncodingRules="*" xmlElement="ext:ExtMetadataTypeC" xmlType="ext:ExtMetadataTypeC_Type" xmlPropertyType="_P_"/>
-			 <XsdMapEntry type="ExtMetadataTypeD" xsdEncodingRules="*" xmlElement="ext:ExtMetadataTypeD" xmlType="ext:ExtMetadataTypeD_Type" xmlPropertyType="_P_"/>
-				<XsdMapEntry type="ExtEnumeration" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="string" xmlType="string" xmlTypeType="simple" xmlTypeContent="simple"/>
+			 <XsdMapEntry type="ExtVoidReasonTypeC" xsdEncodingRules="*" xmlElement="ext:ExtVoidReasonTypeC" xmlType="ext:ExtVoidReasonTypeC_Type" xmlPropertyType="_P_"/>
+			 <XsdMapEntry type="ExtVoidReasonTypeD" xsdEncodingRules="*" xmlElement="ext:ExtVoidReasonTypeD" xmlType="ext:ExtVoidReasonTypeD_Type" xmlPropertyType="_P_"/>
 			</xsdMapEntries>
 		</TargetXmlSchema>
 	</targets>

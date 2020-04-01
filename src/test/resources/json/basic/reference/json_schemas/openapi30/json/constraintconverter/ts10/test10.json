@@ -1,0 +1,127 @@
+{
+  "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
+  "definitions": {
+    "CurvePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "LocationSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PlaceSpecification": {
+      "type": "object",
+      "properties": {
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@id"
+      ]
+    },
+    "PointPositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "SurfacePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS10_FT1": {
+      "type": "object",
+      "properties": {
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "place": {
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+            },
+            {
+              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@id",
+        "place"
+      ]
+    },
+    "TS10_FT2": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                },
+                {
+                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

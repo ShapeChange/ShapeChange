@@ -1,0 +1,31 @@
+{
+  "$id": "https://example.org/baseuri/ts9/ts9/test9.json",
+  "definitions": {
+    "TS9_FT1": {
+      "type": "object",
+      "properties": {
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "propIdentifier": {
+          "type": "number"
+        },
+        "propA": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "@id",
+        "propA",
+        "propIdentifier"
+      ]
+    }
+  }
+}

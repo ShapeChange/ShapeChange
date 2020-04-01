@@ -80,4 +80,13 @@ public class TypeConverterTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/typeConversion/propertyMetadataStereotype",
 		"src/test/resources/typeConverter/propertyMetadataStereotype/reference");
     }
+    
+    @Test
+    public void testRuleTrfNilReasonPropertyForNillableProperty() {
+
+	multiTest(
+		"src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/test_nilReasonPropertyForNillableProperty.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/nilReasonPropertyForNillableProperty",
+		"src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/reference");
+    }
 }

@@ -547,36 +547,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		// if present in both directions.
 		if (!nav)
 		    nav = associationInfo.navigability == 0;
-
-		/*
-		 * AssociationEnds with stereotypes that are not well-known, mapped to the empty
-		 * stereotype, or not allowed (via input parameter addStereotypes) are skipped
-		 */
-		if (nav) {
-
-		    String sts = eaConnectorEnd.GetStereotypeEx();
-		    if (sts != null) {
-
-			validateStereotypesCache();
-
-			String[] stereotypes = sts.split("\\,");
-
-			for (String stereotype : stereotypes) {
-
-			    String st = options().normalizeStereotype(stereotype.trim());
-
-			    if (st.length() != 0 && !stereotypes().contains(st)) {
-
-				MessageContext mc = document.result.addWarning(null, 1005, stereotype,
-					"AssociationEnd");
-				if (mc != null)
-				    mc.addDetail(null, 400, "Property", fullName());
-				nav = false;
-			    }
-			}
-		    }
-		}
-
+		
 		// AssociationEnds with Tagged Value "xsdEncodingRule" ==
 		// "notEncoded" are skipped
 

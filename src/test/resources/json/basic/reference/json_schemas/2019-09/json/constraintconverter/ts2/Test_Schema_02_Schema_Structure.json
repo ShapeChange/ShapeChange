@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri_from_config/ts2/Test_Schema_02_Schema_Structure.json",
+  "$defs": {
+    "TS2_FT1": {
+      "$anchor": "TS2_FT1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    }
+  }
+}

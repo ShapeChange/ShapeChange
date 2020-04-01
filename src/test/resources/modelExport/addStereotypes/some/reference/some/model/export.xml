@@ -100,9 +100,6 @@
                     <sc:Property>
                       <sc:name>role</sc:name>
                       <sc:id>Tas85</sc:id>
-                      <sc:stereotypes>
-                        <sc:Stereotype>ModelElement</sc:Stereotype>
-                      </sc:stereotypes>
                       <sc:taggedValues>
                         <sc:TaggedValue>
                           <sc:name>sequenceNumber</sc:name>

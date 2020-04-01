@@ -53,6 +53,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericAssociationInfo;
@@ -189,47 +190,14 @@ public class TypeConverter implements Transformer, MessageSource {
      */
     public static final String RULE_DISSOLVE_ASSOCIATIONS_KEEP_TYPE = "rule-trf-dissolveAssociations-keepType";
 
-    /**
-     * Convert the &lt;&lt;propertyMetadata&gt;&gt; stereotype to an additional
-     * property, as follows: First, identify the metadata type that applies to the
-     * property with that stereotype. Consult the tagged value 'metadataType' of the
-     * property (see {@link PropertyInfo#propertyMetadataType()}). If no metadata
-     * type could be identified, use the type defined by configuration parameter
-     * {@value #PARAM_METADATA_TYPE}. If that also failed, log an error message and
-     * remove the stereotype from the property. Otherwise, if the metadata type is a
-     * type with identity (feature or object type) then create a directed
-     * association to the metadata type - else create an attribute with the metadata
-     * type as value type. The name of the new association role or attribute is the
-     * property name plus suffix defined by configuration parameter
-     * {@value #PARAM_METADATA_PROPERTY_NAME_SUFFIX}. If a new association role was
-     * created, set tagged value inlineOrByReference to the value defined by
-     * configuration parameter
-     * {@value #PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE}.
-     */
     public static final String RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY = "rule-trf-propertyMetadata-stereotype-to-metadata-property";
-    /**
-     * Name of the type from the conceptual model, which shall be used as metadata
-     * type for all properties with stereotype &lt;&lt;propertyMetadata&gt;&gt; that
-     * do not define a metadata type via tagged value 'metadataType'. The value can
-     * be the pure type name, if it is unique within the conceptual model.
-     * Otherwise, identify the correct type by providing its full name (omitting
-     * packages that are outside of the schema the class belongs to). The default
-     * value for this parameter is 'MD_Metadata' (which typically refers to the type
-     * defined by ISO 19115).
-     */
-    public static final String PARAM_METADATA_TYPE = "metadataType";
-    /**
-     * Defines the suffix that shall be added to the name of a new property created
-     * by {@value #RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY}. Default is
-     * '_metadata'.
-     */
+    public static final String PARAM_DEFAULT_METADATA_TYPE = "defaultMetadataType";
     public static final String PARAM_METADATA_PROPERTY_NAME_SUFFIX = "metadataPropertyNameSuffix";
-    /**
-     * Defines the value for tag 'inlineOrByReference' of a new association role
-     * created by {@value #RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY}. Default is
-     * 'inlineOrByReference'. Other allowed values are 'byReference' and 'inline'.
-     */
     public static final String PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE = "metadataPropertyInlineOrByReference";
+
+    public static final String RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY = "rule-trf-nilReason-property-for-nillable-property";
+    public static final String PARAM_NILREASON_PROPERTY_NAME_SUFFIX = "nilReasonPropertyNameSuffix";
+    public static final String PARAM_DEFAULT_VOID_REASON_TYPE = "defaultVoidReasonType";
 
     private GenericModel genModel = null;
     private Options options = null;
@@ -291,12 +259,125 @@ public class TypeConverter implements Transformer, MessageSource {
 	    applyRulePropertyMetadataStereotypeToProperty();
 	}
 
+	if (rules.contains(RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY)) {
+	    applyRuleNilReasonPropertyForNillableProperty();
+	}
+
 	// apply post-processing (nothing to do right now)
+    }
+
+    private void applyRuleNilReasonPropertyForNillableProperty() {
+
+	String paramDefaultVoidReasonType = trfConfig.parameterAsString(PARAM_DEFAULT_VOID_REASON_TYPE, null, false,
+		true);
+	ClassInfo defaultVoidReasonType = null;
+
+	if (paramDefaultVoidReasonType == null) {
+	    // no log message in this case, because the parameter is optional
+	} else {
+
+	    /*
+	     * Does the default void reason type name contain a semicolon? If so, search by
+	     * fully qualified name. Otherwise, search by name only.
+	     */
+	    if (paramDefaultVoidReasonType.contains(":")) {
+		defaultVoidReasonType = genModel.classByFullNameInSchema(paramDefaultVoidReasonType);
+	    } else {
+		defaultVoidReasonType = genModel.classByName(paramDefaultVoidReasonType);
+	    }
+
+	    if (defaultVoidReasonType == null) {
+		result.addWarning(this, 300, paramDefaultVoidReasonType);
+	    }
+	}
+
+	// identify type info for CharacterString
+	Type characterStringType = new Type();
+	characterStringType.name = "CharacterString";
+	ClassInfo characterString = genModel.classByName("CharacterString");
+	characterStringType.id = characterString != null ? characterString.id() : "UNKNOWN";
+
+	String nameSuffix = trfConfig.parameterAsString(PARAM_NILREASON_PROPERTY_NAME_SUFFIX, "_nilReason", false,
+		true);
+
+	SortedSet<GenericClassInfo> selCis = genModel.selectedSchemaClasses();
+
+	for (GenericClassInfo genCi : selCis) {
+
+	    /*
+	     * create copy of class property collection, to prevent concurrent modification
+	     * exception when new properties are added to the class
+	     */
+	    List<PropertyInfo> classPis = new ArrayList<>(genCi.properties().values());
+	    for (PropertyInfo pi : classPis) {
+
+		if (pi.voidable()) {
+
+		    ClassInfo voidReasonType = null;
+		    String vrtTv = pi.taggedValue("voidReasonType");
+
+		    if (StringUtils.isNotBlank(vrtTv)) {
+
+			String className = vrtTv.trim();
+			/*
+			 * Does the void reason type name contain a semicolon? If so, search by fully
+			 * qualified name (in schema). Otherwise, search in the schema to which the
+			 * class that owns this property belongs.
+			 */
+			if (className.contains(":")) {
+			    voidReasonType = genModel.classByFullNameInSchema(className);
+			} else {
+
+			    PackageInfo schemaPkg = genModel.schemaPackage(genCi);
+			    if (schemaPkg != null) {
+				voidReasonType = genModel.classes(schemaPkg).stream()
+					.filter(ci -> ci.name().equals(className)).findFirst().orElse(null);
+			    }
+			}
+		    }
+
+		    if (voidReasonType == null) {
+			voidReasonType = defaultVoidReasonType;
+		    }
+
+		    Type nilReasonPropValueType;
+
+		    if (voidReasonType == null) {
+
+			MessageContext mc = result.addError(this, 301, pi.name(), genCi.name());
+			if (mc != null) {
+			    mc.addDetail(this, 0, pi.fullNameInSchema());
+			}
+
+			/*
+			 * It is IMPORTANT to create a copy of the CharacterString type info here (so
+			 * that PropertyInfos do not share the same Type object)
+			 */
+			nilReasonPropValueType = characterStringType.createCopy();
+
+		    } else {
+
+			nilReasonPropValueType = new Type(voidReasonType.id(), voidReasonType.name());
+		    }
+
+		    GenericPropertyInfo vrtPi = new GenericPropertyInfo(genModel, pi.id() + "_nilReasonProperty",
+			    pi.name() + nameSuffix);
+		    vrtPi.setCardinality(new Multiplicity(0, 1));
+		    vrtPi.setTypeInfo(nilReasonPropValueType);
+		    vrtPi.setInClass(genCi);
+		    vrtPi.setTaggedValue("inlineOrByReference", "inline", true);
+		    vrtPi.setSequenceNumber(pi.sequenceNumber().createCopyWithSuffix(1), true);
+
+		    genCi.addProperty(vrtPi, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+
+		}
+	    }
+	}
     }
 
     private void applyRulePropertyMetadataStereotypeToProperty() {
 
-	String paramMetadataType = trfConfig.parameterAsString(PARAM_METADATA_TYPE, "MD_Metadata", false, true);
+	String paramMetadataType = trfConfig.parameterAsString(PARAM_DEFAULT_METADATA_TYPE, "MD_Metadata", false, true);
 	ClassInfo defaultMetadataType = null;
 
 	/*
@@ -320,7 +401,7 @@ public class TypeConverter implements Transformer, MessageSource {
 	SortedSet<GenericClassInfo> selCis = genModel.selectedSchemaClasses();
 
 	for (GenericClassInfo genCi : selCis) {
-	    
+
 	    /*
 	     * create copy of class property collection, to prevent concurrent modification
 	     * exception when new properties are added to the class
@@ -367,7 +448,7 @@ public class TypeConverter implements Transformer, MessageSource {
 			    GenericPropertyInfo otherRole = new GenericPropertyInfo(genModel, otherRoleIdAndName,
 				    otherRoleIdAndName);
 			    otherRole.setNavigable(false);
-			    otherRole.setAttribute(false);			    
+			    otherRole.setAttribute(false);
 			    otherRole.setCardinality(new Multiplicity("0..*"));
 			    otherRole.setTypeInfo(new Type(genCi.id(), genCi.name()));
 			    otherRole.setInClass(mdt);
@@ -660,9 +741,21 @@ public class TypeConverter implements Transformer, MessageSource {
 
 	// Messages for RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY
 	case 200:
-	    return "Metadata type '$1$' identified by configuration parameter " + PARAM_METADATA_TYPE
+	    return "Metadata type '$1$' identified by configuration parameter " + PARAM_DEFAULT_METADATA_TYPE
 		    + " was not found in the model. This is ok if all <<propertyMetadata>> properties have their metadata type correctly defined via tagged value 'metadataType'. Otherwise, i.e. the tagged value is not set correctly on such a property, a new metadata property will not be created for the property.";
+	case 201:
+	    return "Property '$1$' of class '$2$' has the property metadata stereotype. However, no metadata type was defined for the property (by tagged value 'metadataType' or via configuration parameter '"
+		    + PARAM_DEFAULT_METADATA_TYPE
+		    + "'), or the type could not be found in the model (using the defined identification process). A new metadata property will NOT be created for property '$1$'.";
 
+	// Messages for RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY
+	case 300:
+	    return "Void reason type '$1$' identified by configuration parameter " + PARAM_DEFAULT_VOID_REASON_TYPE
+		    + " was not found in the model. This is ok if all nillable properties have their void reason type correctly defined via tagged value 'voidReasonType'. Otherwise, i.e. the tagged value is not set correctly on such a property, a new nil reason property will not be created for the property.";
+	case 301:
+	    return "Property '$1$' of class '$2$' is nillable. However, no void reason type was defined for the property (by tagged value 'voidReasonType' or via configuration parameter '"
+		    + PARAM_DEFAULT_VOID_REASON_TYPE
+		    + "'), or the type could not be found in the model (using the defined identification process). A new nil reason property will be created for property '$1$', with value type 'CharacterString'.";
 	default:
 	    return "(" + TypeConverter.class.getName() + ") Unknown message with number: " + mnr;
 	}

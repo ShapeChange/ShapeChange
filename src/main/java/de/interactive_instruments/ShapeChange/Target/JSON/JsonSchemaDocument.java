@@ -662,9 +662,12 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    if (!supertypeMatch) {
-		jsProperties.property(jsonSchemaTarget.objectIdentifierName(),
-			new JsonSchema().type(jsonSchemaTarget.objectIdentifierType()));
-
+//		jsProperties.property(jsonSchemaTarget.objectIdentifierName(),
+//			new JsonSchema().type(jsonSchemaTarget.objectIdentifierType()));
+		JsonSchema objectIdentifierTypeSchema = new JsonSchema();
+		createTypeDefinition(jsonSchemaTarget.objectIdentifierType(),objectIdentifierTypeSchema);
+		jsProperties.property(jsonSchemaTarget.objectIdentifierName(),objectIdentifierTypeSchema);
+		
 		if (jsonSchemaTarget.objectIdentifierRequired()) {
 		    jsProperties.required(jsonSchemaTarget.objectIdentifierName());
 		}
@@ -1107,6 +1110,16 @@ public class JsonSchemaDocument implements MessageSource {
     private void createTypeDefinition(JsonSchemaTypeInfo typeInfo, JsonSchema parentForTypeSchema) {
 	List<JsonSchemaTypeInfo> list = new ArrayList<>();
 	list.add(typeInfo);
+	createTypeDefinition(list, parentForTypeSchema);
+    }
+    
+    private void createTypeDefinition(JsonSchemaType[] types, JsonSchema parentForTypeSchema) {
+	List<JsonSchemaTypeInfo> list = new ArrayList<>();
+	for(JsonSchemaType jst : types) {
+	    JsonSchemaTypeInfo jsti = new JsonSchemaTypeInfo();
+	    jsti.setSimpleType(jst);
+	    list.add(jsti);
+	}
 	createTypeDefinition(list, parentForTypeSchema);
     }
 

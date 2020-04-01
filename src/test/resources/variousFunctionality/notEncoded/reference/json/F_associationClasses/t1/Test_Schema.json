@@ -30,8 +30,7 @@
       "properties": {
         "roleFT1toFT2": {
           "type": "array",
-          "items": [
-            {
+          "items": {
               "oneOf": [
                 {
                   "type": "string",
@@ -41,8 +40,7 @@
                   "$ref": "http://example.org/json/observation.json"
                 }
               ]
-            }
-          ],
+          },
           "uniqueItems": true
         },
         "roleFT1toFT3": {

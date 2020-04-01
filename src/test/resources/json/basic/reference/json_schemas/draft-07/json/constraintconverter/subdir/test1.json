@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.org/baseuri/ts1/subdir/test1.json",
+  "definitions": {
+    "FT1": {
+      "$id": "#FT1",
+      "type": "object",
+      "properties": {
+        "rFT1toFT2": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "rFT1toFT2"
+      ]
+    },
+    "FT2": {
+      "$id": "#FT2",
+      "type": "object"
+    }
+  }
+}

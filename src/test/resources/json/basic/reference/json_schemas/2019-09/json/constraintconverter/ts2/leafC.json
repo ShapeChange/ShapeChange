@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri_from_config/ts2/leafC.json",
+  "$defs": {
+    "TS2_FT4": {
+      "$anchor": "TS2_FT4",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    }
+  }
+}

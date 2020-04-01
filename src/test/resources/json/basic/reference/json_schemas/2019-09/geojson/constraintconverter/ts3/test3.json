@@ -14,9 +14,6 @@
             "properties": {
               "type": "object",
               "properties": {
-                "entityType": {
-                  "type": "string"
-                },
                 "prop1": {
                   "type": "array",
                   "items": {
@@ -104,7 +101,6 @@
                 }
               },
               "required": [
-                "entityType",
                 "prop10",
                 "prop11",
                 "prop12",
@@ -138,15 +134,11 @@
             "properties": {
               "type": "object",
               "properties": {
-                "entityType": {
-                  "type": "string"
-                },
                 "ts3FT2toExtFT": {
                   "$ref": "https://example.org/external/schema/definitions.json#External_FT"
                 }
               },
               "required": [
-                "entityType",
                 "ts3FT2toExtFT"
               ]
             }

@@ -14,20 +14,12 @@
             "properties": {
               "type": "object",
               "properties": {
-                "entityType": {
-                  "type": "string"
-                },
-                "propIdentifier": {
-                  "type": "number"
-                },
                 "propA": {
                   "type": "integer"
                 }
               },
               "required": [
-                "entityType",
-                "propA",
-                "propIdentifier"
+                "propA"
               ]
             }
           },

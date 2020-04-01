@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts1/subdir/test1.json",
+  "$defs": {
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "rFT1toFT2": {
+          "$ref": "https://example.org/jsonschema/byreference.json"
+        }
+      },
+      "required": [
+        "@type",
+        "rFT1toFT2"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    }
+  }
+}

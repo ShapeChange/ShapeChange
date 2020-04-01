@@ -4,23 +4,17 @@
   "$defs": {
     "TS4_FT1": {
       "$anchor": "TS4_FT1",
-      "allOf": [
-        {
-          "$ref": "https://geojson.org/schema/Feature.json"
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propFT1": {
-                  "type": "string"
-                }
-              }
-            }
-          }
+        "propFT1": {
+          "type": "string"
         }
+      },
+      "required": [
+        "@type"
       ]
     },
     "TS4_FT2": {
@@ -32,13 +26,8 @@
         {
           "type": "object",
           "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propFT2": {
-                  "type": "string"
-                }
-              }
+            "propFT2": {
+              "type": "string"
             }
           }
         }
@@ -53,13 +42,8 @@
         {
           "type": "object",
           "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propFT3": {
-                  "type": "string"
-                }
-              }
+            "propFT3": {
+              "type": "string"
             }
           }
         }
@@ -77,13 +61,8 @@
         {
           "type": "object",
           "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propFT4": {
-                  "type": "string"
-                }
-              }
+            "propFT4": {
+              "type": "string"
             }
           }
         }
@@ -98,13 +77,8 @@
         {
           "type": "object",
           "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propFT5": {
-                  "type": "string"
-                }
-              }
+            "propFT5": {
+              "type": "string"
             }
           }
         }
@@ -112,23 +86,17 @@
     },
     "TS4_Mixin": {
       "$anchor": "TS4_Mixin",
-      "allOf": [
-        {
-          "$ref": "https://geojson.org/schema/Feature.json"
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "properties": {
-            "properties": {
-              "type": "object",
-              "properties": {
-                "propMixin": {
-                  "type": "string"
-                }
-              }
-            }
-          }
+        "propMixin": {
+          "type": "string"
         }
+      },
+      "required": [
+        "@type"
       ]
     }
   }
