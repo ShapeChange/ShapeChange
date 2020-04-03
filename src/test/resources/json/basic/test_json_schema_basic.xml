@@ -57,26 +57,12 @@
    <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
    <!--   <targetParameter name="baseJsonSchemaDefinitionForDataTypes" value="https://geojson.org/schema/Feature.json"/>-->
 
-   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
    
+   <xi:include href="src/main/resources/config/StandardRules.xml"/>
    <rules>
-
-    <EncodingRule name="json_basic" extends="*">
-     <rule name="rule-json-cls-generalization"/>
-     <rule name="rule-json-cls-name-as-anchor"/>
-     <!--     <rule name="rule-json-all-documentation"/>  -->
-    </EncodingRule>
-
-    <EncodingRule name="myjson" extends="json_basic">
+    <EncodingRule name="myGeoJson" extends="defaultGeoJson">
      <rule name="rule-json-cls-identifierStereotype"/>
-     <rule name="rule-json-cls-ignoreIdentifier"/>
-     <rule name="rule-json-cls-virtualGeneralization"/>
-     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>
-     <rule name="rule-json-cls-nestedProperties"/>
-     <rule name="rule-json-prop-voidable"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
     </EncodingRule>
    </rules>
 

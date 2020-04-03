@@ -338,24 +338,45 @@ public class JsonSchemaDocument implements MessageSource {
 	addCommonSchemaMembers(jsClass, ci);
 
 	if (ci.matches(JsonSchemaConstants.RULE_CLS_CODELIST_URI_FORMAT)) {
-	    
+
 	    jsClass.type(JsonSchemaType.STRING);
 	    jsClass.format("uri");
 
 	} else if (ci.matches(JsonSchemaConstants.RULE_CLS_CODELIST_LINK)) {
-	    
+
 	    jsClass.ref(jsonSchemaTarget.getLinkObjectUri());
 
 	} else {
 
-	    if ("Number".equalsIgnoreCase(ci.taggedValue("numericType"))) {
-		jsClass.type(JsonSchemaType.NUMBER);
-	    } else {
-		jsClass.type(JsonSchemaType.STRING);
-	    }
+	    JsonSchemaTypeInfo jsti = identifyLiteralEncodingType(ci);
+	    createTypeDefinition(jsti, jsClass);
 	}
 
 	return jsClass;
+    }
+
+    private JsonSchemaTypeInfo identifyLiteralEncodingType(ClassInfo ci) {
+
+	String literalEncodingType = "CharacterString";
+	if (StringUtils.isNotBlank(ci.taggedValue("literalEncodingType"))) {
+	    literalEncodingType = ci.taggedValue("literalEncodingType").trim();
+	}
+
+	String jsonEncodingRuleForCi = ci.encodingRule(JsonSchemaConstants.PLATFORM);
+
+	Optional<JsonSchemaTypeInfo> jstiOpt = identifyJsonSchemaType(literalEncodingType, null, jsonEncodingRuleForCi);
+
+	if (jstiOpt.isPresent()) {
+	    return jstiOpt.get();
+	} else {
+	    MessageContext mc = result.addError(this, 119, ci.name(), literalEncodingType);
+	    if (mc != null) {
+		result.addInfo(this, 0, ci.fullNameInSchema());
+	    }
+	    JsonSchemaTypeInfo jsti = new JsonSchemaTypeInfo();
+	    jsti.setSimpleType(JsonSchemaType.STRING);
+	    return jsti;
+	}
     }
 
     private JsonSchema jsonSchemaForEnumeration(ClassInfo ci) {
@@ -365,18 +386,18 @@ public class JsonSchemaDocument implements MessageSource {
 	addCommonSchemaMembers(jsClass, ci);
 
 	// identify and set the JSON Schema type as which the enumeration is implemented
-	JsonSchemaType enumerationJsType;
-	if (StringUtils.isNotBlank(ci.taggedValue("numericType"))) {
-	    if ("integer".equalsIgnoreCase(ci.taggedValue("numericType"))) {
-		enumerationJsType = JsonSchemaType.INTEGER;
-	    } else {
-		enumerationJsType = JsonSchemaType.NUMBER;
+	JsonSchemaTypeInfo jsti = identifyLiteralEncodingType(ci);
+	createTypeDefinition(jsti, jsClass);
+
+	JsonSchemaType enumerationJsType = jsti.getSimpleType();
+
+	if (enumerationJsType == null) {
+	    MessageContext mc = result.addWarning(this, 120, ci.name(), jsti.getRef());
+	    if (mc != null) {
+		mc.addDetail(this, 0, ci.fullNameInSchema());
 	    }
-	} else {
 	    enumerationJsType = JsonSchemaType.STRING;
 	}
-
-	jsClass.type(enumerationJsType);
 
 	for (PropertyInfo pi : ci.properties().values()) {
 
@@ -412,6 +433,16 @@ public class JsonSchemaDocument implements MessageSource {
 			mc.addDetail(this, 1, pi.fullName());
 		    }
 		}
+	    } else if (enumerationJsType == JsonSchemaType.BOOLEAN) {
+
+		String stringValue = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
+
+		if ("true".equalsIgnoreCase(stringValue.trim()) || "1".equals(stringValue.trim())) {
+		    jsClass.enum_(new JsonBoolean(true));
+		} else {
+		    jsClass.enum_(new JsonBoolean(false));
+		}
+
 	    } else {
 
 		String value = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue() : pi.name();
@@ -662,12 +693,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    if (!supertypeMatch) {
-//		jsProperties.property(jsonSchemaTarget.objectIdentifierName(),
-//			new JsonSchema().type(jsonSchemaTarget.objectIdentifierType()));
 		JsonSchema objectIdentifierTypeSchema = new JsonSchema();
-		createTypeDefinition(jsonSchemaTarget.objectIdentifierType(),objectIdentifierTypeSchema);
-		jsProperties.property(jsonSchemaTarget.objectIdentifierName(),objectIdentifierTypeSchema);
-		
+		createTypeDefinition(jsonSchemaTarget.objectIdentifierType(), objectIdentifierTypeSchema);
+		jsProperties.property(jsonSchemaTarget.objectIdentifierName(), objectIdentifierTypeSchema);
+
 		if (jsonSchemaTarget.objectIdentifierRequired()) {
 		    jsProperties.required(jsonSchemaTarget.objectIdentifierName());
 		}
@@ -1112,10 +1141,10 @@ public class JsonSchemaDocument implements MessageSource {
 	list.add(typeInfo);
 	createTypeDefinition(list, parentForTypeSchema);
     }
-    
+
     private void createTypeDefinition(JsonSchemaType[] types, JsonSchema parentForTypeSchema) {
 	List<JsonSchemaTypeInfo> list = new ArrayList<>();
-	for(JsonSchemaType jst : types) {
+	for (JsonSchemaType jst : types) {
 	    JsonSchemaTypeInfo jsti = new JsonSchemaTypeInfo();
 	    jsti.setSimpleType(jst);
 	    list.add(jsti);
@@ -1492,7 +1521,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Property '$1$' of type '$2$' has been identified as default geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
 	case 118:
 	    return "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
-
+	case 119:
+	    return "Literal encoding type for class '$1$' determined to be '$2$'. No JSON Schema type could be identified for that encoding type. Using JSON Schema type 'string'.";
+	case 120:
+	    return "Literal encoding type for enumeration '$1$' must be a simple JSON Schema type. A schema reference was found: '$2$'. Assuming that the referenced JSON Schema contains a type definition for JSON Schema simple type 'string'. This will affect how the enums are encoded.";
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}

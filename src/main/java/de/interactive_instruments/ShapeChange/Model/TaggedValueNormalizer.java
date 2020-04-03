@@ -65,9 +65,8 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the JSON encoding rule
      */
-    protected static final Set<String> jsonTags = Stream
-	    .of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri", "jsonLayerTableURI", "jsonDirectory", "defaultGeometry")
-	    .collect(Collectors.toSet());
+    protected static final Set<String> jsonTags = Stream.of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
+	    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry").collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the ArcGIS encoding rule
@@ -106,7 +105,8 @@ public class TaggedValueNormalizer {
 	    "codeListSource", "codeListSourceCharset", "codeListSourceRepresentation", "codeListRestriction",
 	    "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues",
 	    "reportable", "dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference", "extensibility",
-	    "obligation", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern").collect(Collectors.toSet());
+	    "obligation", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
+	    "literalEncodingType").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values
