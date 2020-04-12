@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -508,7 +509,8 @@ public class Differ {
 			if (!ocl.name().equalsIgnoreCase("alle"))
 				doc += ocl.name() + " ";
 			doc += "-==-\n";
-			String[] sa = ocl.text().split("/\\*");
+			String txt = ocl.text();
+			String[] sa = Objects.nonNull(txt) ? txt.split("/\\*") : new String[0];
 			for (String sc : sa) {
 				sc = sc.trim();
 				if (sc.isEmpty())
