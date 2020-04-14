@@ -2431,16 +2431,16 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		GenericPackageInfo genPi = genPackageInfosById.get(pi.id());
 
 		// remove any classes this package may contain
-		SortedSet<GenericClassInfo> genPiClasses = genPi.getClasses();
+		Object[] genPiClasses = genPi.getClasses().stream().toArray();
 
-		if (genPiClasses != null && !genPiClasses.isEmpty()) {
-		    for (GenericClassInfo ci : genPiClasses) {
+		if (genPiClasses != null && genPiClasses.length > 0) {
+		    for (Object ci : genPiClasses) {
 
 			/*
 			 * NOTE for cast: the cast should be safe, because ci belongs to a
 			 * GenericPackageInfo
 			 */
-			this.remove(ci);
+			this.remove((GenericClassInfo)ci);
 		    }
 		}
 
