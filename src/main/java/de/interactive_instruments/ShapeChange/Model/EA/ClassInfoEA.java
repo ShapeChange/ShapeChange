@@ -484,7 +484,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	     * established based upon the stereotype (and potentially existing XML Schema
 	     * conversion rules) when importing an SCXML model.
 	     */
-	    if (stereotypesCache.isEmpty() && eaClassElement.GetType().equalsIgnoreCase("enumeration")) {
+	    if (!stereotypesCache.contains("enumeration") && eaClassElement.GetType().equalsIgnoreCase("enumeration")) {
 		stereotypesCache.add("enumeration");
 		document.result.addDebug(null, 52, this.name(), "enumeration");
 	    }
@@ -492,7 +492,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	     * The same reasoning applies for data types, which are not classes according to
 	     * the UML spec, but another type of classifier.
 	     */
-	    if (stereotypesCache.isEmpty() && eaClassElement.GetType().equalsIgnoreCase("datatype")) {
+	    if (!stereotypesCache.contains("datatype") && eaClassElement.GetType().equalsIgnoreCase("datatype")) {
 		stereotypesCache.add("datatype");
 		document.result.addDebug(null, 52, this.name(), "datatype");
 	    }
