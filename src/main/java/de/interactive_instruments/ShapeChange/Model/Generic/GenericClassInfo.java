@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -91,6 +92,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	 * May be null
 	 */
 	protected Vector<Constraint> constraints = null;
+	protected boolean includesConstraintsFromSupertypes = false;
 
 	public GenericClassInfo() {
 
@@ -390,26 +392,41 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	@Override
 	public List<Constraint> constraints() {
 		
-		if (constraints == null && supertypes == null) {
+		if (!includesConstraintsFromSupertypes) {
+			// constraints() is expected to return also all constraints of the supertypes 
+			// that are not overloaded by a constraint with the same name in this class.
+			// The list of constraints is updated the first time the list of constraints 
+			// is requested.
+		    Set<String> namefilter = Objects.isNull(constraints) ? 
+		    		new HashSet<String>() : 
+			    	constraints.stream()
+		    			.map(Constraint::name)
+		    			.filter(name -> Objects.nonNull(name) && !name.isEmpty())
+		    			.collect(Collectors.toSet());
+			
+			Vector<Constraint> supertypeConstraints = supertypes.stream()
+					.map(name -> model.classById(name))
+					.filter(ci -> Objects.nonNull(ci)) // ignore any supertypes where we only have the name
+					.map(ClassInfo::constraints) // get the constraints of the supertypes
+					.flatMap(List::stream)
+					.filter(constr -> Objects.nonNull(constr)) // skip cases with no constraint
+					.filter(constr -> Objects.isNull(constr.name()) || constr.name().isEmpty() || !namefilter.contains(constr.name())) // remove any constraints from supertypes that are overloaded by this class
+			        .collect(Collectors.toCollection(Vector::new));
+			
+			if (constraints == null) {
+				if (!supertypeConstraints.isEmpty())
+					constraints = supertypeConstraints;
+			} else {
+				if (!supertypeConstraints.isEmpty())
+					constraints.addAll(supertypeConstraints);				
+			}
+			includesConstraintsFromSupertypes = true;
+		}
+		
+		if (constraints == null) {
 			return new Vector<Constraint>(1);
-		} else if (supertypes == null) {
-			return constraints;
-		} else if (constraints == null) {
-			return supertypes.stream()
-					.map(name -> model.classById(name))
-					.filter(ci -> Objects.nonNull(ci))
-					.map(ci -> ci.constraints())
-					.flatMap(List::stream)
-			        .collect(Collectors.toList());
 		} else {
-			List<Constraint> supertypeConstraints = supertypes.stream()
-					.map(name -> model.classById(name))
-					.filter(ci -> Objects.nonNull(ci))
-					.map(ci -> ci.constraints())
-					.flatMap(List::stream)
-			        .collect(Collectors.toList());
-			supertypeConstraints.addAll(constraints);
-			return supertypeConstraints;
+			return constraints;
 		}
 	}
 
