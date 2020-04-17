@@ -89,7 +89,6 @@
    <rules>
 
     <EncodingRule name="json_basic" extends="*">
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-name-as-anchor"/>
      <!--     <rule name="rule-json-all-documentation"/>  -->
     </EncodingRule>
@@ -165,7 +164,6 @@
    <rules>
 
     <EncodingRule name="json_basic" extends="*">
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-name-as-anchor"/>
      <!--     <rule name="rule-json-all-documentation"/>  -->
     </EncodingRule>

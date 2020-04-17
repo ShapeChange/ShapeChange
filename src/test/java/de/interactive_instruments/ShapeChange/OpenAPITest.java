@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("SCXML")
-public class JSONTest extends BasicTestSCXML {
+public class OpenAPITest extends BasicTestSCXML {
 
     @Test
     public void testJson_basic() {
 	
-	multiTest("src/test/resources/json/basic/test_json_schema_basic.xml",
-		new String[] { "json" }, "testResults/json/basic",
-		"src/test/resources/json/basic/reference");
+	multiTest("src/test/resources/openapi/basic/test_openapi_basic.xml",
+		new String[] { "json" }, "testResults/openapi/basic",
+		"src/test/resources/openapi/basic/reference");
     }
 }

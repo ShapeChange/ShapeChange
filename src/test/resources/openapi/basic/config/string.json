@@ -1,0 +1,28 @@
+{
+  "paths": {
+    "/collections/FeatureType2/items": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/string"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "string": {
+        "name": "string",
+        "in": "query",
+        "description": "Only return features where the property of the same name has the provided value. Default = return all features.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "style": "form",
+        "explode": false
+      }
+    }
+  }
+}

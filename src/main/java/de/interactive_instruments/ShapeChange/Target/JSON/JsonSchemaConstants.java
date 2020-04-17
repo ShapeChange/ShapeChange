@@ -87,7 +87,7 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_BASIC_TYPE = "rule-json-cls-basictype";
     public static final String RULE_CLS_NAME_AS_ANCHOR = "rule-json-cls-name-as-anchor";
     public static final String RULE_CLS_NAME_AS_ENTITYTYPE = "rule-json-cls-name-as-entityType";
-    public static final String RULE_CLS_GENERALIZATION = "rule-json-cls-generalization";
+    public static final String RULE_CLS_NAME_AS_ENTITYTYPE_UNION = "rule-json-cls-name-as-entityType-union";
     // Specialization not implemented yet; need for it unclear at the moment
 //    public static final String RULE_CLS_SPECIALIZATION = "rule-json-cls-specialization";
     public static final String RULE_CLS_IDENTIFIER_FOR_TYPE_WITH_IDENTITY = "rule-json-cls-identifierForTypeWithIdentity";

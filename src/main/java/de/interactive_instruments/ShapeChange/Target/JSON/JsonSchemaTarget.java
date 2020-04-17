@@ -279,16 +279,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    jsonBaseUri = jsonBaseUri.trim();
 	}
 
-	String jsonSubdirectory = schema.taggedValue("jsonDirectory");
-	if (StringUtils.isBlank(jsonSubdirectory)) {
-	    jsonSubdirectory = schema.xmlns();
-	}
-	if (StringUtils.isBlank(jsonSubdirectory)) {
-	    jsonSubdirectory = "default";
-	} else {
-	    jsonSubdirectory = jsonSubdirectory.trim();
-	}
-
+	String jsonSubdirectory = identifyJsonDirectory(schema);
+		
 	File outputDirectoryFile = new File(outputDirectory);
 	File subDirectoryFile = new File(outputDirectoryFile, jsonSubdirectory);
 
@@ -329,7 +321,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 		String appSchemaName = pi.name();
 
-		s = appSchemaName.replace("/", "_").replace(" ", "_") + ".json";
+		s = normalizedJsonDocumentName(pi);
 
 		result.addWarning(this, 101, appSchemaName, s);
 
@@ -392,7 +384,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	} else {
 	    jsd = jsdcurr;
 	    if (jsd == null) {
-		jsDoc = pi.name().replace("/", "_").replace(" ", "_") + ".json";
+		jsDoc = normalizedJsonDocumentName(pi);
 		result.addWarning(this, 103, pi.name(), jsDoc);
 
 		result.addDebug(this, 102, jsDoc, pi.name());
@@ -702,6 +694,25 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    }
 	}
     }
+    
+    public static String normalizedJsonDocumentName(PackageInfo pi) {
+	return pi.name().replace("/", "_").replace(" ", "_") + ".json";
+    }
+    
+    public static String identifyJsonDirectory(PackageInfo pi) {
+
+	String jsonDirectory = pi.taggedValue("jsonDirectory");
+	if (StringUtils.isBlank(jsonDirectory)) {
+	    jsonDirectory = pi.xmlns();
+	}
+	if (StringUtils.isBlank(jsonDirectory)) {
+	    jsonDirectory = "default";
+	} else {
+	    jsonDirectory = jsonDirectory.trim();
+	}
+	
+	return jsonDirectory;
+    }
 
     @Override
     public void reset() {
@@ -735,48 +746,58 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();
-
-	// TODO - Was fehlt hier noch?
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
-	/*
-	 * JSON encoding rules
-	 */
+		
 	r.addRule("rule-json-all-documentation");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
-	r.addRule("rule-json-cls-name-as-anchor");
-	r.addRule("rule-json-cls-name-as-entityType");
-	r.addRule("rule-json-cls-name-as-entityType-union");
-	r.addRule("rule-json-cls-generalization");
-	r.addRule("rule-json-cls-specialization");
+	r.addRule("rule-json-cls-codelist-link");
+	r.addRule("rule-json-cls-codelist-uri-format");
+	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty");
+	r.addRule("rule-json-cls-defaultGeometry-multipleGeometryProperties");
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
 	r.addRule("rule-json-cls-identifierStereotype");
 	r.addRule("rule-json-cls-ignoreIdentifier");
-	r.addRule("rule-json-cls-virtualGeneralization");
-	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty");
-	r.addRule("rule-json-cls-defaultGeometry-multipleGeometryProperties");
+	r.addRule("rule-json-cls-name-as-anchor");
+	r.addRule("rule-json-cls-name-as-entityType");
+	r.addRule("rule-json-cls-name-as-entityType-union");
 	r.addRule("rule-json-cls-nestedProperties");
 	r.addRule("rule-json-cls-union-propertyCount");
 	r.addRule("rule-json-cls-union-typeDiscriminator");
-	r.addRule("rule-json-cls-codelist-uri-format");
-	r.addRule("rule-json-cls-codelist-link");
-	r.addRule("rule-json-prop-voidable");
-	r.addRule("rule-json-prop-readOnly");
+	r.addRule("rule-json-cls-valueTypeOptions");
+	r.addRule("rule-json-cls-virtualGeneralization");
 	r.addRule("rule-json-prop-derivedAsReadOnly");
 	r.addRule("rule-json-prop-initialValueAsDefault");
+	r.addRule("rule-json-prop-readOnly");
+	r.addRule("rule-json-prop-voidable");
 
-	r.addRule("rule-json-cls-valueTypeOptions");
-
-//	r.addExtendsEncRule("geojson", "*");
+	r.addExtendsEncRule("defaultGeoJson", "*");
+	
+	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty","defaultGeoJson");
+	r.addRule("rule-json-cls-ignoreIdentifier","defaultGeoJson");
+	r.addRule("rule-json-cls-name-as-anchor","defaultGeoJson");
+	r.addRule("rule-json-cls-nestedProperties","defaultGeoJson");
+	r.addRule("rule-json-cls-virtualGeneralization","defaultGeoJson");
+	r.addRule("rule-json-prop-derivedAsReadOnly","defaultGeoJson");
+	r.addRule("rule-json-prop-initialValueAsDefault","defaultGeoJson");
+	r.addRule("rule-json-prop-readOnly","defaultGeoJson");
+	r.addRule("rule-json-prop-voidable","defaultGeoJson");
+	
+	r.addExtendsEncRule("defaultPlainJson", "*");
+	
+	r.addRule("rule-json-cls-name-as-anchor","defaultPlainJson");
+	r.addRule("rule-json-prop-derivedAsReadOnly","defaultPlainJson");
+	r.addRule("rule-json-prop-initialValueAsDefault","defaultPlainJson");
+	r.addRule("rule-json-prop-readOnly","defaultPlainJson");
+	r.addRule("rule-json-prop-voidable","defaultPlainJson");	
     }
 
     @Override
     public String getDefaultEncodingRule() {
-	// TODO
-	return "geojson";
+	return "*";
     }
 
     @Override
@@ -862,4 +883,5 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	return jsonSchemaVersion;
     }
 
+    
 }

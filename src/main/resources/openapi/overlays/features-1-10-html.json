@@ -1,0 +1,92 @@
+{
+  "components": {
+    "schemas": {
+      "htmlPage": {
+      	"type": "string"
+      }
+    },
+    "responses": {
+      "LandingPage": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "ConformanceDeclaration": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "Collections": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "Collection": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "Features": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "Feature": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "InvalidParameter": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "content": {
+          "text/html": {
+            "schema": {
+              "$ref": "#/components/schemas/htmlPage"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -62,8 +62,7 @@ import org.xml.sax.SAXException;
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class XMLUtil {
@@ -272,5 +271,26 @@ public class XMLUtil {
 	} catch (Exception e) {
 	    throw new Exception("Error while writing XML file. Exception message is: " + e.getMessage(), e);
 	}
+    }
+
+    /**
+     * @param nl must not be null
+     * @return a list of element nodes contained in the given node list; can be
+     *         empty but not <code>null</code>
+     */
+    public static List<Element> getElementNodes(NodeList nl) {
+
+	List<Element> result = new ArrayList<Element>();
+
+	if (nl != null && nl.getLength() != 0) {
+	    for (int k = 0; k < nl.getLength(); k++) {
+		Node n = nl.item(k);
+		if (n.getNodeType() == Node.ELEMENT_NODE) {
+		    result.add((Element) n);
+		}
+	    }
+	}
+
+	return result;
     }
 }

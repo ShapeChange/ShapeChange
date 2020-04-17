@@ -89,16 +89,4 @@
 		<rule name="rule-xsd-cls-global-enumeration"/>
 		<rule name="rule-xsd-cls-standard-gml-property-types"/>
 	</EncodingRule>
-	<EncodingRule name="defaultGeoJson" extends="*">
-     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>
-     <rule name="rule-json-cls-generalization"/>
-     <rule name="rule-json-cls-ignoreIdentifier"/>
-     <rule name="rule-json-cls-name-as-anchor"/>
-     <rule name="rule-json-cls-nestedProperties"/>
-     <rule name="rule-json-cls-virtualGeneralization"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-voidable"/>
-    </EncodingRule>
 </rules>

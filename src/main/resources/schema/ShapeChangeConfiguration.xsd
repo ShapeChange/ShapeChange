@@ -1115,4 +1115,103 @@
    <enumeration value="Transitive"/>
   </restriction>
  </simpleType>
+<!-- <element name="JsonSchemaAnnotation" abstract="true" type="sc:JsonSchemaAnnotationType"> </element>
+ <complexType abstract="false" name="JsonSchemaAnnotationType">
+  <attribute name="annotation" type="string" use="required"/>
+  <attribute default="ignore" name="noValueBehavior">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="ignore"/>
+     <enumeration value="populateOnce"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute name="noValueValue" type="string"/>
+  <attribute default="false" name="arrayValue" type="boolean"/>
+ </complexType>
+ <element abstract="true" name="JsonSchemaSimpleAnnotation" substitutionGroup="sc:JsonSchemaAnnotation" type="sc:JsonSchemaSimpleAnnotationType"/>
+ <complexType name="JsonSchemaSimpleAnnotationType">
+  <complexContent>
+   <extension base="sc:JsonSchemaAnnotationType">
+    <attribute name="descriptorOrTaggedValue" type="string" use="required"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="JsonSchemaTemplateAnnotation" substitutionGroup="sc:JsonSchemaAnnotation" type="sc:JsonSchemaTemplateAnnotationType"/>
+ <complexType name="JsonSchemaTemplateAnnotationType">
+  <complexContent>
+   <extension base="sc:JsonSchemaAnnotationType">
+    <attribute name="valueTemplate" type="string" use="required"/>
+    <attribute default="connectInSingleAnnotationValue" name="multiValueBehavior">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="connectInSingleAnnotationValue"/>
+       <enumeration value="createMultipleAnnotationValues"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+    <attribute default=" " name="multiValueConnectorToken" type="string"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="JsonSchemaNumberAnnotation" substitutionGroup="sc:JsonSchemaSimpleAnnotation" type="sc:JsonSchemaNumberAnnotationType"/>
+ <complexType name="JsonSchemaNumberAnnotationType">
+  <complexContent>
+   <extension base="sc:JsonSchemaSimpleAnnotationType"/>
+  </complexContent>
+ </complexType>
+ <element name="JsonSchemaBooleanAnnotation" substitutionGroup="sc:JsonSchemaSimpleAnnotation" type="sc:JsonSchemaBooleanAnnotationType"/>
+ <complexType name="JsonSchemaBooleanAnnotationType">
+  <complexContent>
+   <extension base="sc:JsonSchemaSimpleAnnotationType"/>
+  </complexContent>
+ </complexType>
+ <element name="JsonSchemaStringAnnotation" substitutionGroup="sc:JsonSchemaSimpleAnnotation" type="sc:JsonSchemaStringAnnotationType"/>
+ <complexType name="JsonSchemaStringAnnotationType">
+  <complexContent>
+   <extension base="sc:JsonSchemaSimpleAnnotationType"/>
+  </complexContent>
+ </complexType>-->
+ <element name="OpenApiConfigItems" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:OpenApiConfigItemsType"/>
+ <complexType name="OpenApiConfigItemsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element name="conformanceClasses">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" name="ConformanceClass">
+         <complexType>
+          <attribute name="uri" type="anyURI" use="required"/>
+          <attribute name="overlay" type="string" use="required"/>
+          <attribute name="param" type="string"/>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+     <element minOccurs="0" name="queryParameters">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" name="QueryParameter">
+         <complexType>
+          <attribute name="name" type="string" use="required"/>
+          <attribute name="overlay" type="string" use="required"/>
+          <attribute default="finalization" name="appliesToPhase" use="optional">
+           <simpleType>
+            <restriction base="string">
+             <enumeration value="pre-feature-identification"/>
+             <enumeration value="finalization"/>
+            </restriction>
+           </simpleType>
+          </attribute>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
 </schema>

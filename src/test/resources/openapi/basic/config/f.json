@@ -1,0 +1,102 @@
+{
+  "paths": {
+    "/": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidParameter"
+          }
+        }
+      }
+    },
+    "/conformance": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidParameter"
+          }
+        }
+      }
+    },
+    "/collections": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidParameter"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidParameter"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}/items": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ]
+      }
+    },
+    "/collections/{collectionId}/items/{featureId}": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/f"
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidParameter"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "f": {
+        "name": "f",
+        "in": "query",
+        "description": "The format of the response. If no value is provided, the standard http rules apply, i.e., the accept header will be used to determine the format. Allowed values are 'json' and 'html'.",
+        "required": "false",
+        "style": "form",
+        "explode": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "json",
+            "html"
+          ]
+        }
+      }
+    }
+  }
+}

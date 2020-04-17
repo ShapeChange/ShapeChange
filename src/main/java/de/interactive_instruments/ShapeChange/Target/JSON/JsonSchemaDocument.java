@@ -164,14 +164,6 @@ public class JsonSchemaDocument implements MessageSource {
 
 	for (ClassInfo ci : this.classesByName.values()) {
 
-	    if (!ci.supertypes().isEmpty() && !ci.matches(JsonSchemaConstants.RULE_CLS_GENERALIZATION)) {
-		// warn that generalization is not encoded for the type
-		MessageContext mc = result.addWarning(this, 111, ci.name());
-		if (mc != null) {
-		    mc.addDetail(this, 0, ci.fullName());
-		}
-	    }
-
 	    JsonSchema js;
 
 	    if (basicTypeInfoByClass.containsKey(ci)) {
@@ -522,8 +514,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 	handleVirtualGeneralization(ci, supertypes, allOfMembers);
 
-	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.DATATYPE
-		|| ci.category() == Options.MIXIN) && ci.matches(JsonSchemaConstants.RULE_CLS_GENERALIZATION)) {
+	if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.DATATYPE
+		|| ci.category() == Options.MIXIN) {
 
 	    // convert generalization
 	    if (!supertypes.isEmpty()) {
@@ -612,7 +604,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    new JsonSchema().ref(typeInfoByGeometryPi.get(directGeometryPi).getRef()));
 
 		    if (directGeometryPi.cardinality().maxOccurs > 1) {
-			MessageContext mc = result.addError(this, 117, directGeometryPi.name(), ci.name());
+			MessageContext mc = result.addWarning(this, 117, directGeometryPi.name(), ci.name());
 			if (mc != null) {
 			    mc.addDetail(this, 1, directGeometryPi.fullName());
 			}
@@ -652,17 +644,17 @@ public class JsonSchemaDocument implements MessageSource {
 	    jsClassContents.property("properties", jsProperties).required("properties");
 	}
 
-	if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && !(ci.category() == Options.UNION)) {
+	if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
+		|| ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
 
 	    // check if supertype matches
 	    boolean supertypeMatch = false;
-	    if (ci.matches(JsonSchemaConstants.RULE_CLS_GENERALIZATION)) {
-		for (ClassInfo supertype : ci.supertypeClasses()) {
-		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
-			    && !(supertype.category() == Options.UNION)) {
-			supertypeMatch = true;
-			break;
-		    }
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+		if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
+			&& (supertype.category() != Options.UNION
+				|| supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+		    supertypeMatch = true;
+		    break;
 		}
 	    }
 
@@ -680,15 +672,13 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    // check if supertype matches
 	    boolean supertypeMatch = false;
-	    if (ci.matches(JsonSchemaConstants.RULE_CLS_GENERALIZATION)) {
-		for (ClassInfo supertype : ci.supertypeClasses()) {
-		    if ((supertype.category() == Options.FEATURE || supertype.category() == Options.OBJECT)
-			    && supertype.matches(JsonSchemaConstants.RULE_CLS_IDENTIFIER_FOR_TYPE_WITH_IDENTITY)
-			    && !(supertype.matches(JsonSchemaConstants.RULE_CLS_IGNORE_IDENTIFIER)
-				    || supertype.matches(JsonSchemaConstants.RULE_CLS_IDENTIFIER_STEREOTYPE))) {
-			supertypeMatch = true;
-			break;
-		    }
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+		if ((supertype.category() == Options.FEATURE || supertype.category() == Options.OBJECT)
+			&& supertype.matches(JsonSchemaConstants.RULE_CLS_IDENTIFIER_FOR_TYPE_WITH_IDENTITY)
+			&& !(supertype.matches(JsonSchemaConstants.RULE_CLS_IGNORE_IDENTIFIER)
+				|| supertype.matches(JsonSchemaConstants.RULE_CLS_IDENTIFIER_STEREOTYPE))) {
+		    supertypeMatch = true;
+		    break;
 		}
 	    }
 
@@ -850,8 +840,16 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (ci.matches(JsonSchemaConstants.RULE_CLS_UNION_PROPERTY_COUNT)) {
 
 		jsClassContents.additionalProperties(JsonSchema.FALSE);
-		jsClassContents.minProperties(1);
-		jsClassContents.maxProperties(1);
+
+		int exactPropCount = 1;
+
+		if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
+			&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION)) {
+		    exactPropCount = 2;
+		}
+
+		jsClassContents.minProperties(exactPropCount);
+		jsClassContents.maxProperties(exactPropCount);
 	    }
 	}
 
@@ -905,7 +903,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 		boolean applyVirtualGeneralization = true;
 
-		if (!supertypes.isEmpty() && ci.matches(JsonSchemaConstants.RULE_CLS_GENERALIZATION)) {
+		if (!supertypes.isEmpty()) {
 		    for (ClassInfo supertype : supertypes) {
 			if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)) {
 			    applyVirtualGeneralization = false;
@@ -1041,9 +1039,7 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	// convert multiplicity
-	if (pi.cardinality().maxOccurs > 1)
-
-	{
+	if (pi.cardinality().maxOccurs > 1) {
 
 	    parentForTypeSchema.type(JsonSchemaType.ARRAY);
 
@@ -1505,8 +1501,7 @@ public class JsonSchemaDocument implements MessageSource {
 	case 110:
 	    return "(Initial) value '$1$' of enum '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for enumeration '$3$' is 'number'. The enum will not be encoded.";
 	case 111:
-	    return JsonSchemaConstants.RULE_CLS_GENERALIZATION
-		    + " does not apply to type '$1$'. The type has at least one supertype. No generalization relationship will be encoded for '$1$'.";
+	    return "";
 	case 112:
 	    return "Class '$1$' has multiple default geometry properties ($2$). None of them will be encoded as 'geometry' member. They will be encoded as usual properties.";
 	case 113:

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,19 +29,62 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange;
+package de.interactive_instruments.ShapeChange.Target.OpenApi;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import java.util.Optional;
 
-@Tag("SCXML")
-public class JSONTest extends BasicTestSCXML {
+import jakarta.json.JsonObject;
 
-    @Test
-    public void testJson_basic() {
-	
-	multiTest("src/test/resources/json/basic/test_json_schema_basic.xml",
-		new String[] { "json" }, "testResults/json/basic",
-		"src/test/resources/json/basic/reference");
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
+public class ConformanceClass {
+
+    protected String uri = null;
+    protected JsonObject overlay = null;
+    protected Optional<String> param = null;
+
+    /**
+     * @param uri the uri to set
+     */
+    public void setUri(String uri) {
+	this.uri = uri;
     }
+
+    /**
+     * @param overlay the overlay to set
+     */
+    public void setOverlay(JsonObject overlay) {
+	this.overlay = overlay;
+    }
+
+    /**
+     * @param param the param to set
+     */
+    public void setParam(Optional<String> param) {
+	this.param = param;
+    }
+
+    /**
+     * @return the uri
+     */
+    public String getUri() {
+	return uri;
+    }
+
+    /**
+     * @return the overlay
+     */
+    public JsonObject getOverlay() {
+	return overlay;
+    }
+
+    /**
+     * @return the param
+     */
+    public Optional<String> getParam() {
+	return param;
+    }
+
 }
