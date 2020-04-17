@@ -37,12 +37,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -387,10 +389,27 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 
 	@Override
 	public List<Constraint> constraints() {
-		if (constraints == null) {
+		
+		if (constraints == null && supertypes == null) {
 			return new Vector<Constraint>(1);
-		} else {
+		} else if (supertypes == null) {
 			return constraints;
+		} else if (constraints == null) {
+			return supertypes.stream()
+					.map(name -> model.classById(name))
+					.filter(ci -> Objects.nonNull(ci))
+					.map(ci -> ci.constraints())
+					.flatMap(List::stream)
+			        .collect(Collectors.toList());
+		} else {
+			List<Constraint> supertypeConstraints = supertypes.stream()
+					.map(name -> model.classById(name))
+					.filter(ci -> Objects.nonNull(ci))
+					.map(ci -> ci.constraints())
+					.flatMap(List::stream)
+			        .collect(Collectors.toList());
+			supertypeConstraints.addAll(constraints);
+			return supertypeConstraints;
 		}
 	}
 

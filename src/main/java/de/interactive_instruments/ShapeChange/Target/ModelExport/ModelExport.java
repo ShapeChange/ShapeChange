@@ -48,6 +48,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
@@ -604,7 +605,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    writer.endElement(NS, "subtypes");
 	}
 
-	printConstraints(ci.constraints());
+	// Ignore constraints on supertypes
+	printConstraints(ci.constraints().stream().filter(constraint -> constraint.contextModelElmt().id().equals(ci.id())).collect(Collectors.toList()));
 
 	if (!ci.properties().isEmpty()
 		&& ci.properties().values().stream().anyMatch(property -> property.isNavigable())) {
