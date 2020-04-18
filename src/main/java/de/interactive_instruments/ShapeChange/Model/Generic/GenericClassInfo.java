@@ -397,28 +397,30 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 			// that are not overloaded by a constraint with the same name in this class.
 			// The list of constraints is updated the first time the list of constraints 
 			// is requested.
-		    Set<String> namefilter = Objects.isNull(constraints) ? 
-		    		new HashSet<String>() : 
-			    	constraints.stream()
-		    			.map(Constraint::name)
-		    			.filter(name -> Objects.nonNull(name) && !name.isEmpty())
-		    			.collect(Collectors.toSet());
-			
-			Vector<Constraint> supertypeConstraints = supertypes.stream()
-					.map(name -> model.classById(name))
-					.filter(ci -> Objects.nonNull(ci)) // ignore any supertypes where we only have the name
-					.map(ClassInfo::constraints) // get the constraints of the supertypes
-					.flatMap(List::stream)
-					.filter(constr -> Objects.nonNull(constr)) // skip cases with no constraint
-					.filter(constr -> Objects.isNull(constr.name()) || constr.name().isEmpty() || !namefilter.contains(constr.name())) // remove any constraints from supertypes that are overloaded by this class
-			        .collect(Collectors.toCollection(Vector::new));
-			
-			if (constraints == null) {
-				if (!supertypeConstraints.isEmpty())
-					constraints = supertypeConstraints;
-			} else {
-				if (!supertypeConstraints.isEmpty())
-					constraints.addAll(supertypeConstraints);				
+			if (Objects.nonNull(supertypes)) {
+			    Set<String> namefilter = Objects.isNull(constraints) ? 
+			    		new HashSet<String>() : 
+				    	constraints.stream()
+			    			.map(Constraint::name)
+			    			.filter(name -> Objects.nonNull(name) && !name.isEmpty())
+			    			.collect(Collectors.toSet());
+				
+				Vector<Constraint> supertypeConstraints = supertypes.stream()
+						.map(name -> model.classById(name))
+						.filter(ci -> Objects.nonNull(ci)) // ignore any supertypes where we only have the name
+						.map(ClassInfo::constraints) // get the constraints of the supertypes
+						.flatMap(List::stream)
+						.filter(constr -> Objects.nonNull(constr)) // skip cases with no constraint
+						.filter(constr -> Objects.isNull(constr.name()) || constr.name().isEmpty() || !namefilter.contains(constr.name())) // remove any constraints from supertypes that are overloaded by this class
+				        .collect(Collectors.toCollection(Vector::new));
+				
+				if (Objects.nonNull(constraints)) {
+					if (!supertypeConstraints.isEmpty())
+						constraints = supertypeConstraints;
+				} else {
+					if (!supertypeConstraints.isEmpty())
+						constraints.addAll(supertypeConstraints);				
+				}
 			}
 			includesConstraintsFromSupertypes = true;
 		}
