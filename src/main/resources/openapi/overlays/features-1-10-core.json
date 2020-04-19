@@ -12,12 +12,6 @@
           "200": {
             "$ref": "#/components/responses/LandingPage"
           },
-          "405": {
-            "$ref": "#/components/responses/NotAllowed"
-          },
-          "406": {
-            "$ref": "#/components/responses/NotSupported"
-          },
           "500": {
             "$ref": "#/components/responses/ServerError"
           }

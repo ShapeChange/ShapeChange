@@ -43,12 +43,6 @@
                     "200": {
                         "$ref": "#/components/responses/LandingPage"
                     },
-                    "405": {
-                        "$ref": "#/components/responses/NotAllowed"
-                    },
-                    "406": {
-                        "$ref": "#/components/responses/NotSupported"
-                    },
                     "500": {
                         "$ref": "#/components/responses/ServerError"
                     },
@@ -794,7 +788,7 @@
                 "name": "f",
                 "in": "query",
                 "description": "The format of the response. If no value is provided, the standard http rules apply, i.e., the accept header will be used to determine the format. Allowed values are 'json' and 'html'.",
-                "required": "false",
+                "required": false,
                 "style": "form",
                 "explode": false,
                 "schema": {
