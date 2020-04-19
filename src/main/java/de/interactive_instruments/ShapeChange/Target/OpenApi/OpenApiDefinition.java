@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
@@ -52,7 +53,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -78,6 +78,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonPointer;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonWriter;
 import jakarta.json.JsonWriterFactory;
@@ -110,7 +111,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
     /*
      * Non-static fields
      */
-    
+
     protected ShapeChangeResult result = null;
     protected Options options = null;
 
@@ -310,7 +311,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    /*
 	     * logging on debug level, because this target is expected to ignore everything
 	     * that is not a feature type
-	     */ 
+	     */
 	    result.addDebug(this, 17, ci.name());
 	}
     }
@@ -378,8 +379,6 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	if (!diagnosticsOnly) {
 
 	    // produce the OpenAPI definition file
-
-	    // TODO: default template in src/main/resources and on shapechange.net/resources
 
 	    // core must be defined
 	    Optional<ConformanceClass> coreCcOpt = oapiConfig
@@ -512,7 +511,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    try (JsonWriter writer = factory.createWriter(
 		    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")))) {
-		writer.write(res5);		
+		writer.write(res5);
 		result.addResult(this.getTargetName(), outputFile.getParent(), outputFile.getName(), null);
 	    } catch (Exception e) {
 		result.addError(this, 100, outputFile.getAbsolutePath(), e.getMessage());
@@ -545,8 +544,13 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    JsonObject modified1 = (JsonObject) replaceParameter(collectionsCollectionIdTemplate, "\\{collectionId\\}",
 		    featureType);
 
-	    JsonPointer jp1add = Json.createPointer("/paths/~1collections~1" + featureType);
+	    String collectionsFeatureTypeBaseJsonPointer = "/paths/~1collections~1" + featureType;
+
+	    JsonPointer jp1add = Json.createPointer(collectionsFeatureTypeBaseJsonPointer);
 	    overlay = jp1add.add(overlay, modified1);
+
+	    // remove parameter "$ref": "#/components/parameters/collectionId"
+	    overlay = removeCollectionIdParameter(overlay, collectionsFeatureTypeBaseJsonPointer);
 
 	    /*
 	     * Create a copy of the path "/collections/{collectionId}/items", change the
@@ -567,8 +571,12 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    JsonObject modified2 = (JsonObject) replaceParameter(collectionsCollectionIdItemsTemplate,
 		    "\\{collectionId\\}", featureType);
 
-	    JsonPointer jp2add = Json.createPointer("/paths/~1collections~1" + featureType + "~1items");
+	    String collectionsFeatureTypeItemsBaseJsonPointer = "/paths/~1collections~1" + featureType + "~1items";
+	    JsonPointer jp2add = Json.createPointer(collectionsFeatureTypeItemsBaseJsonPointer);
 	    overlay = jp2add.add(overlay, modified2);
+
+	    // remove parameter "$ref": "#/components/parameters/collectionId"
+	    overlay = removeCollectionIdParameter(overlay, collectionsFeatureTypeItemsBaseJsonPointer);
 
 	    /*
 	     * Create a copy of the path "/collections/{collectionId}/items/{featureId}",
@@ -591,8 +599,13 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    JsonObject modified3 = (JsonObject) replaceParameter(collectionsCollectionIdItemsFeatureIdTemplate,
 		    "\\{collectionId\\}", featureType);
 
-	    JsonPointer jp3add = Json.createPointer("/paths/~1collections~1" + featureType + "~1items~1{featureId}");
+	    String collectionsFeatureTypeItemsFeatureIdBaseJsonPointer = "/paths/~1collections~1" + featureType
+		    + "~1items~1{featureId}";
+	    JsonPointer jp3add = Json.createPointer(collectionsFeatureTypeItemsFeatureIdBaseJsonPointer);
 	    overlay = jp3add.add(overlay, modified3);
+
+	    // remove parameter "$ref": "#/components/parameters/collectionId"
+	    overlay = removeCollectionIdParameter(overlay, collectionsFeatureTypeItemsFeatureIdBaseJsonPointer);
 
 	    {/*
 	      * Create a copy of the response "Features" and rename it to
@@ -650,6 +663,9 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 		JsonPointer jp5 = Json.createPointer(responsesFeatureTemplatePath);
 		JsonObject responsesFeatureTemplate = (JsonObject) jp5.getValue(source);
 
+		responsesFeatureTemplate = (JsonObject) replaceParameter(responsesFeatureTemplate, "\\{collectionId\\}",
+			featureType);
+
 		if (isGeojsonApplicable) {
 
 		    /*
@@ -684,6 +700,39 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	JsonMergePatch mergePatch = Json.createMergePatch(overlay);
 	JsonObject result = (JsonObject) mergePatch.apply(source);
+
+	return result;
+    }
+
+    private JsonObject removeCollectionIdParameter(JsonObject overlay, String baseJsonPointerPath) {
+
+	JsonObject result = overlay;
+
+	JsonPointer basePathPointer = Json.createPointer(baseJsonPointerPath);
+
+	JsonObject pathObject = (JsonObject) basePathPointer.getValue(overlay);
+	Set<String> httpMethods = pathObject.keySet();
+	for (String httpMethod : httpMethods) {
+	    String parametersBaseJsonPointerPath = baseJsonPointerPath + "/" + httpMethod + "/parameters";
+	    JsonPointer jpParameters = Json.createPointer(parametersBaseJsonPointerPath);
+	    try {
+		JsonStructure tmp = (JsonStructure) jpParameters.getValue(overlay);
+		if (tmp instanceof JsonArray) {
+		    JsonArray array = (JsonArray) tmp;
+		    for (int i = 0; i < array.size(); i++) {
+			JsonObject p = (JsonObject) array.get(i);
+			if (p.containsValue(Json.createValue("#/components/parameters/collectionId"))) {
+			    JsonPointer jpRemoveCollIdParam = Json
+				    .createPointer(parametersBaseJsonPointerPath + "/" + i);
+			    result = jpRemoveCollIdParam.remove(overlay);
+			    break;
+			}
+		    }
+		}
+	    } catch (JsonException e) {
+		// parameters does not exist in overlay, so nothing to do
+	    }
+	}
 
 	return result;
     }
@@ -819,7 +868,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	/*
 	 * OpenAPI encoding rules
 	 */
-		
+
 	r.addRule("rule-openapi-all-explicit-collections");
 	r.addRule("rule-openapi-all-notEncoded");
 	r.addRule("rule-openapi-cls-instantiable-feature-types");

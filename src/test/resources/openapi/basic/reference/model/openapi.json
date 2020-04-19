@@ -119,9 +119,6 @@
                 "operationId": "getCollection_FeatureType1",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/f"
                     }
                 ],
@@ -150,9 +147,6 @@
                 "description": "Fetch features in the feature collection 'FeatureType1'. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size. The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or date-time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too. The `limit` parameter may be used to control the maximum number of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as a link to support paging (link relation type `next`).",
                 "operationId": "getFeatures_FeatureType1",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/limit"
                     },
@@ -198,9 +192,6 @@
                 "operationId": "getFeature_FeatureType1",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/featureId"
                     },
                     {
@@ -236,9 +227,6 @@
                 "operationId": "getCollection_TS2_FT2",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/f"
                     }
                 ],
@@ -267,9 +255,6 @@
                 "description": "Fetch features in the feature collection 'TS2_FT2'. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size. The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or date-time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too. The `limit` parameter may be used to control the maximum number of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as a link to support paging (link relation type `next`).",
                 "operationId": "getFeatures_TS2_FT2",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/limit"
                     },
@@ -315,9 +300,6 @@
                 "operationId": "getFeature_TS2_FT2",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/featureId"
                     },
                     {
@@ -353,9 +335,6 @@
                 "operationId": "getCollection_TS2_FT3",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/f"
                     }
                 ],
@@ -384,9 +363,6 @@
                 "description": "Fetch features in the feature collection 'TS2_FT3'. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size. The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or date-time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too. The `limit` parameter may be used to control the maximum number of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as a link to support paging (link relation type `next`).",
                 "operationId": "getFeatures_TS2_FT3",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/limit"
                     },
@@ -432,9 +408,6 @@
                 "operationId": "getFeature_TS2_FT3",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/featureId"
                     },
                     {
@@ -470,9 +443,6 @@
                 "operationId": "getCollection_TS2_FT4",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/f"
                     }
                 ],
@@ -501,9 +471,6 @@
                 "description": "Fetch features in the feature collection 'TS2_FT4'. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size. The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or date-time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too. The `limit` parameter may be used to control the maximum number of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as a link to support paging (link relation type `next`).",
                 "operationId": "getFeatures_TS2_FT4",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/limit"
                     },
@@ -549,9 +516,6 @@
                 "operationId": "getFeature_TS2_FT4",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/featureId"
                     },
                     {
@@ -587,9 +551,6 @@
                 "operationId": "getCollection_FeatureType2",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
-                    {
                         "$ref": "#/components/parameters/f"
                     }
                 ],
@@ -618,9 +579,6 @@
                 "description": "Fetch features in the feature collection 'FeatureType2'. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size. The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or date-time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too. The `limit` parameter may be used to control the maximum number of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as a link to support paging (link relation type `next`).",
                 "operationId": "getFeatures_FeatureType2",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/limit"
                     },
@@ -668,9 +626,6 @@
                 "description": "Fetch the feature with id `featureId`.",
                 "operationId": "getFeature_FeatureType2",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/collectionId"
-                    },
                     {
                         "$ref": "#/components/parameters/featureId"
                     },
@@ -858,7 +813,7 @@
                 }
             },
             "Collection": {
-                "description": "The feature collection with id `{collectionId}`.",
+                "description": "A feature collection.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -933,7 +888,7 @@
                 }
             },
             "Feature_FeatureType1": {
-                "description": "The feature with id `{featureId}` in the feature collection with id `{collectionId}`",
+                "description": "The feature with id `{featureId}` in the feature collection with id `FeatureType1`",
                 "content": {
                     "application/geo+json": {
                         "schema": {
@@ -963,7 +918,7 @@
                 }
             },
             "Feature_TS2_FT2": {
-                "description": "The feature with id `{featureId}` in the feature collection with id `{collectionId}`",
+                "description": "The feature with id `{featureId}` in the feature collection with id `TS2_FT2`",
                 "content": {
                     "application/geo+json": {
                         "schema": {
@@ -993,7 +948,7 @@
                 }
             },
             "Feature_TS2_FT3": {
-                "description": "The feature with id `{featureId}` in the feature collection with id `{collectionId}`",
+                "description": "The feature with id `{featureId}` in the feature collection with id `TS2_FT3`",
                 "content": {
                     "application/geo+json": {
                         "schema": {
@@ -1023,7 +978,7 @@
                 }
             },
             "Feature_TS2_FT4": {
-                "description": "The feature with id `{featureId}` in the feature collection with id `{collectionId}`",
+                "description": "The feature with id `{featureId}` in the feature collection with id `TS2_FT4`",
                 "content": {
                     "application/geo+json": {
                         "schema": {
@@ -1053,7 +1008,7 @@
                 }
             },
             "Feature_FeatureType2": {
-                "description": "The feature with id `{featureId}` in the feature collection with id `{collectionId}`",
+                "description": "The feature with id `{featureId}` in the feature collection with id `FeatureType2`",
                 "content": {
                     "application/geo+json": {
                         "schema": {

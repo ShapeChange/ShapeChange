@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class OpenAPITest extends BasicTestSCXML {
 
     @Test
-    public void testJson_basic() {
+    public void test_basic() {
 	
 	multiTest("src/test/resources/openapi/basic/test_openapi_basic.xml",
 		new String[] { "json" }, "testResults/openapi/basic",
