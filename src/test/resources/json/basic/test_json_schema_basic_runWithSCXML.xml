@@ -163,18 +163,6 @@
 		<rule name="rule-xsd-cls-global-enumeration"/>
 		<rule name="rule-xsd-cls-standard-gml-property-types"/>
 	</EncodingRule>
-	<EncodingRule extends="*" name="defaultGeoJson">
-     <rule name="rule-json-cls-defaultGeometry-singleGeometryProperty"/>
-     <rule name="rule-json-cls-generalization"/>
-     <rule name="rule-json-cls-ignoreIdentifier"/>
-     <rule name="rule-json-cls-name-as-anchor"/>
-     <rule name="rule-json-cls-nestedProperties"/>
-     <rule name="rule-json-cls-virtualGeneralization"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-voidable"/>
-    </EncodingRule>
 </rules>
    <rules>
     <EncodingRule extends="defaultGeoJson" name="myGeoJson">
@@ -184,6 +172,7 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="" rule="*" targetType="string" type="Character"/>
     <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
@@ -191,8 +180,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Number"/>
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
     <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
     <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
 
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
@@ -225,7 +216,6 @@
    <rules>
 
     <EncodingRule extends="*" name="json_basic">
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-name-as-anchor"/>
      
     </EncodingRule>
@@ -256,6 +246,7 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="" rule="*" targetType="string" type="Character"/>
     <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
@@ -263,8 +254,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Number"/>
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
     <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
     <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
 
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
@@ -297,6 +290,7 @@
    </rules>
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="" rule="*" targetType="string" type="Character"/>
     <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
@@ -304,8 +298,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Number"/>
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
     <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
     <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
 
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
@@ -341,7 +337,6 @@
    <rules>
 
     <EncodingRule extends="*" name="json_basic">
-     <rule name="rule-json-cls-generalization"/>
      <rule name="rule-json-cls-name-as-anchor"/>
      
     </EncodingRule>
@@ -371,6 +366,7 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="" rule="*" targetType="string" type="Character"/>
     <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
@@ -378,8 +374,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Number"/>
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
     <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
     <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
 
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>

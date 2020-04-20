@@ -253,7 +253,7 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    String pattern = ci.taggedValue("pattern");
+	    String pattern = ci.taggedValue("jsonPattern");
 
 	    if (StringUtils.isNotBlank(pattern)) {
 		restrictingFacetSchema.pattern(pattern);
