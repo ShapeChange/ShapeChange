@@ -67,7 +67,9 @@ import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaConstants;
 import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
@@ -103,6 +105,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
     protected static JsonObject baseTemplate = null;
     protected static String jsonSchemasBaseLocation = null;
     protected static String jsonSchemasPathSeparator = null;
+    protected static JsonSchemaVersion jsonSchemaVersion = null;
 
     protected static SortedSet<String> collections = new TreeSet<>();
     protected static SortedMap<ClassInfo, String> jsonSchemaPathByFeatureType = new TreeMap<>();
@@ -163,7 +166,8 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    }
 
 	    String baseTemplateValue = options.parameterAsString(this.getClass().getName(),
-		    OpenApiConstants.PARAM_BASE_TEMPLATE, null, false, true);
+		    OpenApiConstants.PARAM_BASE_TEMPLATE,
+		    "https://shapechange.net/resources/openapi/overlays/default-template.json", false, true);
 
 	    try {
 		baseTemplate = loadJson(baseTemplateValue);
@@ -188,6 +192,17 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    if (!jsonSchemasBaseLocation.endsWith(jsonSchemasPathSeparator)) {
 		jsonSchemasBaseLocation = jsonSchemasBaseLocation + jsonSchemasPathSeparator;
+	    }
+
+	    String jsVersionParamValue = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, "2019-09", false, true);
+	    Optional<JsonSchemaVersion> jsVersion = JsonSchemaVersion.fromString(jsVersionParamValue);
+
+	    if (jsVersion.isPresent()) {
+		jsonSchemaVersion = jsVersion.get();
+	    } else {
+		result.addWarning(this, 10, OpenApiConstants.PARAM_JSON_SCHEMA_VERSION, jsVersionParamValue, "2019-09");
+		jsonSchemaVersion = JsonSchemaVersion.DRAFT_2019_09;
 	    }
 
 	    File outputDirectoryFile = new File(outputDirectory);
@@ -324,8 +339,11 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	String fileName = identifyJsonDocumentName(ci.pkg());
 
+	String definitionsReference = jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09 ? "#/$defs/"
+		: "#/definitions/";
+
 	String jsonSchemaDefinitionPath = jsonSchemasBaseLocation + jsonDirectory + jsonSchemasPathSeparator + fileName
-		+ "#/definitions/" + ci.name();
+		+ definitionsReference + ci.name();
 
 	jsonSchemaPathByFeatureType.put(ci, jsonSchemaDefinitionPath);
     }
@@ -857,6 +875,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	baseTemplate = null;
 	jsonSchemasBaseLocation = null;
 	jsonSchemasPathSeparator = null;
+	jsonSchemaVersion = null;
 
 	collections = new TreeSet<>();
 	jsonSchemaPathByFeatureType = new TreeMap<>();

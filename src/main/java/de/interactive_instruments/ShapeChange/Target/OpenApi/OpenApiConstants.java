@@ -48,7 +48,8 @@ public class OpenApiConstants {
     public static final String PARAM_BASE_TEMPLATE = "baseTemplate";
     public static final String PARAM_COLLECTIONS = "collections";
     public static final String PARAM_JSON_SCHEMAS_BASE_LOCATION = "jsonSchemasBaseLocation";
-
+    public static final String PARAM_JSON_SCHEMA_VERSION = "jsonSchemaVersion";
+    
     public static final String RULE_ALL_EXPLICIT_COLLECTIONS = "rule-openapi-all-explicit-collections";
     public static final String RULE_CLS_INSTANTIABLE_FEATURE_TYPES = "rule-openapi-cls-instantiable-feature-types";
     public static final String RULE_CLS_TOP_LEVEL_FEATURE_TYPES = "rule-openapi-cls-top-level-feature-types";

@@ -42,6 +42,8 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaConstants;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -100,12 +102,13 @@ public class OpenApiDefinitionConfigurationValidator implements ConfigurationVal
 	    }
 	}
 
-	// ensure that baseTemplate is configured and is accessible
+	// ensure that baseTemplate is accessible
 	String baseTemplateValue = options.parameterAsString(OpenApiDefinition.class.getName(),
-		OpenApiConstants.PARAM_BASE_TEMPLATE, null, false, true);
+		OpenApiConstants.PARAM_BASE_TEMPLATE,
+		"https://shapechange.net/resources/openapi/overlays/default-template.json", false, true);
 	if (StringUtils.isBlank(baseTemplateValue)) {
 	    isValid = false;
-	    result.addError(this, 4, OpenApiConstants.PARAM_BASE_TEMPLATE);
+	    result.addError(this, 8, OpenApiConstants.PARAM_BASE_TEMPLATE, baseTemplateValue);
 	} else {
 	    try {
 		OpenApiDefinition.loadJson(baseTemplateValue);
@@ -121,6 +124,16 @@ public class OpenApiDefinitionConfigurationValidator implements ConfigurationVal
 	if (StringUtils.isBlank(jsonSchemasBaseLocation)) {
 	    isValid = false;
 	    result.addError(this, 4, OpenApiConstants.PARAM_JSON_SCHEMAS_BASE_LOCATION);
+	}
+
+	// ensure that jsonSchemaVersion has a valid value
+	String jsVersionParamValue = options.parameterAsString(OpenApiDefinition.class.getName(),
+		OpenApiConstants.PARAM_JSON_SCHEMA_VERSION, "2019-09", false, true);
+	Optional<JsonSchemaVersion> jsVersion = JsonSchemaVersion.fromString(jsVersionParamValue);
+
+	if (!jsVersion.isPresent()) {
+	    isValid = false;
+	    result.addError(this, 8, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, jsVersionParamValue);
 	}
 
 	// check if 'collections' parameter is set, and if so, that it is not empty
@@ -153,6 +166,8 @@ public class OpenApiDefinitionConfigurationValidator implements ConfigurationVal
 	    return "Target parameter '$1$' is set in the configuration, but does not have an actual value.";
 	case 7:
 	    return "Target parameter 'baseTemplate' has value: '$1$'. Could not load JSON from that location. Exception message is: $2$";
+	case 8:
+	    return "Configuration parameter '$1$' has invalid value '$2$'";
 
 	default:
 	    return "(OpenApiDefinitionConfigurationValidator.java) Unknown message with number: " + mnr;

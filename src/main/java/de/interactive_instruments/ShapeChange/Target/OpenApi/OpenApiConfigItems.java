@@ -80,8 +80,19 @@ public class OpenApiConfigItems implements MessageSource {
 	    // parse overlay
 	    String overlay = ccE.getAttribute("overlay").trim();
 	    if (overlay.length() == 0) {
-		result.addError(this, 11, "overlay", indexForMsg);
-		continue;
+
+		if (uri.equalsIgnoreCase(OpenApiConstants.CC_OGCAPI_FEATURES_1_1_CORE)) {
+		    overlay = "https://shapechange.net/resources/openapi/overlays/features-1-10-core.json";
+		} else if (uri.equalsIgnoreCase(OpenApiConstants.CC_OGCAPI_FEATURES_1_1_GEOJSON)) {
+		    overlay = "https://shapechange.net/resources/openapi/overlays/features-1-10-geojson.json";
+		} else if (uri.equalsIgnoreCase(OpenApiConstants.CC_OGCAPI_FEATURES_1_1_HTML)) {
+		    overlay = "https://shapechange.net/resources/openapi/overlays/features-1-10-html.json";
+		} else if (uri.equalsIgnoreCase(OpenApiConstants.CC_OGCAPI_FEATURES_2_1_CRS)) {
+		    overlay = "https://shapechange.net/resources/openapi/overlays/features-2-10-crs.json";
+		} else {
+		    result.addError(this, 10, "overlay", indexForMsg);
+		    continue;
+		}
 	    }
 	    try {
 		JsonObject overlayJson = OpenApiDefinition.loadJson(overlay);
@@ -198,6 +209,8 @@ public class OpenApiConfigItems implements MessageSource {
 
 	switch (mnr) {
 
+	case 10:
+	    return "'$1$' attribute of $2$ ConformanceClass element is empty, with no default being defined for the conformance class. ConformanceClass will be ignored.";
 	case 11:
 	    return "'$1$' attribute of $2$ ConformanceClass element is empty which is not allowed. ConformanceClass will be ignored.";
 	case 12:

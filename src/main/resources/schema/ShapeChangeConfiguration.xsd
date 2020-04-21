@@ -1115,7 +1115,7 @@
    <enumeration value="Transitive"/>
   </restriction>
  </simpleType>
-<!-- <element name="JsonSchemaAnnotation" abstract="true" type="sc:JsonSchemaAnnotationType"> </element>
+ <!-- <element name="JsonSchemaAnnotation" abstract="true" type="sc:JsonSchemaAnnotationType"> </element>
  <complexType abstract="false" name="JsonSchemaAnnotationType">
   <attribute name="annotation" type="string" use="required"/>
   <attribute default="ignore" name="noValueBehavior">
@@ -1183,7 +1183,7 @@
         <element maxOccurs="unbounded" name="ConformanceClass">
          <complexType>
           <attribute name="uri" type="anyURI" use="required"/>
-          <attribute name="overlay" type="string" use="required"/>
+          <attribute name="overlay" type="string" use="optional"/>
           <attribute name="param" type="string"/>
          </complexType>
         </element>
