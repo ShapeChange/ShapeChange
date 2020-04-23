@@ -94,8 +94,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
  * @author Clemens Portele
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class UmlModel implements SingleTarget, MessageSource {
@@ -109,6 +108,7 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static boolean includeAssociationEndOwnership = false;
     private static boolean mergeConstraintCommentsIntoText = false;
     private static Pattern ignoreTaggedValuesPattern = null;
+    private static boolean synchronizeStereotypes = true;
 
     private static Repository rep = null;
     private static Integer pOut_EaPkgId = null;
@@ -160,6 +160,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    mergeConstraintCommentsIntoText = options.parameterAsBoolean(this.getClass().getName(),
 		    UmlModelConstants.PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, false);
+
+	    synchronizeStereotypes = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_SYNCH_STEREOTYPES, true);
 
 	    try {
 		String itvpParam = options.parameterAsString(UmlModel.class.getName(),
@@ -561,7 +564,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAElementUtil.setEANotes(e, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAElementUtil.setEAStereotype(e, mapStereotypes(i.stereotypes()).toString());
+	    EAElementUtil.setEAStereotypeEx(e, mapStereotypes(i.stereotypes()).toString());
 
 	    EAElementUtil.setTaggedValues(e, filterTaggedValues(i.taggedValuesAll()));
 
@@ -581,7 +584,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAConnectorUtil.setEANotes(con, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAConnectorUtil.setEAStereotype(con, mapStereotypes(i.stereotypes()).toString());
+	    EAConnectorUtil.setEAStereotypeEx(con, mapStereotypes(i.stereotypes()).toString());
 
 	    EAConnectorUtil.setTaggedValues(con, filterTaggedValues(i.taggedValuesAll()));
 
@@ -620,7 +623,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAConnectorEndUtil.setEARoleNote(ce, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAConnectorEndUtil.setEAStereotype(ce, mapStereotypes(i.stereotypes()).toString());
+	    EAConnectorEndUtil.setEAStereotypeEx(ce, mapStereotypes(i.stereotypes()).toString());
 
 	    EAConnectorEndUtil.setEAOrdering(ce, i.isOrdered());
 
@@ -783,6 +786,19 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    }
 	}
 
+	if (synchronizeStereotypes) {
+	    for (String stType : stereotypeMappings.keySet()) {
+		String stTargetType = stereotypeMappings.get(stType);
+
+		if (stTargetType.contains("::")) {
+		    String[] components = stTargetType.split("::");
+		    rep.SynchProfile(components[0], components[1]);
+		}
+	    }
+	    
+	    
+	}
+
 	EARepositoryUtil.closeRepository(rep);
 
 	// release resources from static fields
@@ -806,6 +822,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	includeAssociationEndOwnership = false;
 	mergeConstraintCommentsIntoText = false;
 	ignoreTaggedValuesPattern = null;
+	synchronizeStereotypes = true;
 
 	author = null;
 	status = null;

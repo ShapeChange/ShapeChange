@@ -92,7 +92,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static String entityTypeName = null;
 
     protected static String inlineOrByRefDefault = null;
-    
+
     protected static String linkObjectUri = null;
 
     protected static String byReferenceJsonSchemaDefinition = null;
@@ -174,7 +174,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    linkObjectUri = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, "", false, true);
 	    // TODO: set useful default for linkObjectUri
-	    
+
 	    byReferenceJsonSchemaDefinition = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION, null, false, true);
 
@@ -280,7 +280,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	String jsonSubdirectory = identifyJsonDirectory(schema);
-		
+
 	File outputDirectoryFile = new File(outputDirectory);
 	File subDirectoryFile = new File(outputDirectoryFile, jsonSubdirectory);
 
@@ -407,7 +407,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public static boolean isEncoded(Info i) {
 
-	if (i.matches("rule-json-all-notEncoded") && i.encodingRule("json").equalsIgnoreCase("notencoded")) {
+	if (i.matches(JsonSchemaConstants.RULE_ALL_NOT_ENCODED)
+		&& i.encodingRule("json").equalsIgnoreCase("notencoded")) {
 
 	    return false;
 
@@ -453,7 +454,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public String getInlineOrByRefDefault() {
 	return inlineOrByRefDefault;
     }
-    
+
     public String getLinkObjectUri() {
 	return linkObjectUri;
     }
@@ -498,8 +499,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	/*
 	 * Check if ci inherits (directly or indirectly) from a type that is mapped to a
-	 * simple JSON Schema type (string, number, integer, or boolean); if so, ci is a basic
-	 * type.
+	 * simple JSON Schema type (string, number, integer, or boolean); if so, ci is a
+	 * basic type.
 	 */
 	JsonSchemaTypeInfo simpleJsTypeInfo = determineIfImplementedBySimpleJsonSchemaType(ci);
 
@@ -694,11 +695,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    }
 	}
     }
-    
+
     public static String normalizedJsonDocumentName(PackageInfo pi) {
 	return pi.name().replace("/", "_").replace(" ", "_") + ".json";
     }
-    
+
     public static String identifyJsonDirectory(PackageInfo pi) {
 
 	String jsonDirectory = pi.taggedValue("jsonDirectory");
@@ -710,7 +711,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	} else {
 	    jsonDirectory = jsonDirectory.trim();
 	}
-	
+
 	return jsonDirectory;
     }
 
@@ -750,7 +751,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
-		
+
 	r.addRule("rule-json-all-documentation");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
@@ -775,24 +776,24 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-prop-voidable");
 
 	r.addExtendsEncRule("defaultGeoJson", "*");
-	
-	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty","defaultGeoJson");
-	r.addRule("rule-json-cls-ignoreIdentifier","defaultGeoJson");
-	r.addRule("rule-json-cls-name-as-anchor","defaultGeoJson");
-	r.addRule("rule-json-cls-nestedProperties","defaultGeoJson");
-	r.addRule("rule-json-cls-virtualGeneralization","defaultGeoJson");
-	r.addRule("rule-json-prop-derivedAsReadOnly","defaultGeoJson");
-	r.addRule("rule-json-prop-initialValueAsDefault","defaultGeoJson");
-	r.addRule("rule-json-prop-readOnly","defaultGeoJson");
-	r.addRule("rule-json-prop-voidable","defaultGeoJson");
-	
+
+	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty", "defaultGeoJson");
+	r.addRule("rule-json-cls-ignoreIdentifier", "defaultGeoJson");
+	r.addRule("rule-json-cls-name-as-anchor", "defaultGeoJson");
+	r.addRule("rule-json-cls-nestedProperties", "defaultGeoJson");
+	r.addRule("rule-json-cls-virtualGeneralization", "defaultGeoJson");
+	r.addRule("rule-json-prop-derivedAsReadOnly", "defaultGeoJson");
+	r.addRule("rule-json-prop-initialValueAsDefault", "defaultGeoJson");
+	r.addRule("rule-json-prop-readOnly", "defaultGeoJson");
+	r.addRule("rule-json-prop-voidable", "defaultGeoJson");
+
 	r.addExtendsEncRule("defaultPlainJson", "*");
-	
-	r.addRule("rule-json-cls-name-as-anchor","defaultPlainJson");
-	r.addRule("rule-json-prop-derivedAsReadOnly","defaultPlainJson");
-	r.addRule("rule-json-prop-initialValueAsDefault","defaultPlainJson");
-	r.addRule("rule-json-prop-readOnly","defaultPlainJson");
-	r.addRule("rule-json-prop-voidable","defaultPlainJson");	
+
+	r.addRule("rule-json-cls-name-as-anchor", "defaultPlainJson");
+	r.addRule("rule-json-prop-derivedAsReadOnly", "defaultPlainJson");
+	r.addRule("rule-json-prop-initialValueAsDefault", "defaultPlainJson");
+	r.addRule("rule-json-prop-readOnly", "defaultPlainJson");
+	r.addRule("rule-json-prop-voidable", "defaultPlainJson");
     }
 
     @Override
@@ -822,7 +823,6 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Schema '$1$' is not encoded.";
 	case 8:
 	    return "Class '$1$' is not encoded.";
-
 
 	case 10:
 	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
@@ -883,5 +883,4 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	return jsonSchemaVersion;
     }
 
-    
 }

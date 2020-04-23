@@ -23,136 +23,195 @@
  */
 package de.interactive_instruments.ShapeChange.Target.EA;
 
-/** @author Johannes Echterhoff (echterhoff at interactive-instruments dot de) */
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ */
 public class UmlModelConstants {
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: String (with regular expression)
-   *
-   * <p>Default Value: none
-   *
-   * <p>Explanation: A tagged value that matches the regular expression defined by this parameter
-   * will not be written to the EA repository.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_IGNORE_TAGGED_VALUES_REGEX = "ignoreTaggedValuesRegex";
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: String (with regular expression)
+     *
+     * <p>
+     * Default Value: none
+     *
+     * <p>
+     * Explanation: A tagged value that matches the regular expression defined by
+     * this parameter will not be written to the EA repository.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_IGNORE_TAGGED_VALUES_REGEX = "ignoreTaggedValuesRegex";
 
-  /**
-   * Optional (default is the current run directory) - The path to the folder in which the resulting
-   * UML model will be created.
-   */
-  public static final String PARAM_OUTPUT_DIR = "outputDirectory";
-  
-  /**
-   * Optional (default is determined by the EA process) - Value for the field 'Author' of an EA element.
-   */
-  public static final String PARAM_EA_AUTHOR = "eaAuthor";
-  
-  /**
-   * Optional (default is determined by the EA process) - Value for the field 'Status' of an EA element.
-   */
-  public static final String PARAM_EA_STATUS = "eaStatus";
+    /**
+     * Optional (default is the current run directory) - The path to the folder in
+     * which the resulting UML model will be created.
+     */
+    public static final String PARAM_OUTPUT_DIR = "outputDirectory";
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: String
-   *
-   * <p>Default Value: ShapeChangeExport.eap
-   *
-   * <p>Explanation: The Enterprise architect EAP file to which the application schema(s) are
-   * written.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_MODEL_FILENAME = "modelFilename";
+    /**
+     * Optional (default is determined by the EA process) - Value for the field
+     * 'Author' of an EA element.
+     */
+    public static final String PARAM_EA_AUTHOR = "eaAuthor";
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: Boolean
-   *
-   * <p>Default Value: false
-   *
-   * <p>Explanation: Can be used to prevent the addition of the timestamp to the new class view
-   * package that is added to the model by ShapeChange.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
+    /**
+     * Optional (default is determined by the EA process) - Value for the field
+     * 'Status' of an EA element.
+     */
+    public static final String PARAM_EA_STATUS = "eaStatus";
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: String
-   *
-   * <p>Default Value: none
-   *
-   * <p>Explanation: Path to the EAP template file (can be local or an online resource).
-   *
-   * <p>If the output file (location and name are defined by the parameters outputDirectory and
-   * modelFilename) does not exist, the default behavior of this target is to create a new EA
-   * repository.
-   *
-   * <p>However, if writing the model requires a specific UML Profile / MDG to be available, this
-   * would fail if it is not configured in the EA environment where ShapeChange is executed. In that
-   * situation, you would want the UML Profile / MDG loaded into the EA repository to which the
-   * model is written. Such a repository can be provided as a template, and configured to be used by
-   * ShapeChange via the parameter eapTemplate.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: String
+     *
+     * <p>
+     * Default Value: ShapeChangeExport.eap
+     *
+     * <p>
+     * Explanation: The Enterprise architect EAP file to which the application
+     * schema(s) are written.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_MODEL_FILENAME = "modelFilename";
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: Boolean
-   *
-   * <p>Default Value: false
-   *
-   * <p>Explanation: If set to true, then ownership of an association role will be encoded. A role
-   * is either owned by the association or by a class (the class at the other end of the
-   * association). In a UML class diagram, ownership by the class is depicted by small filled dot at
-   * the association role.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP =
-      "includeAssociationEndOwnership";
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: false
+     *
+     * <p>
+     * Explanation: Can be used to prevent the addition of the timestamp to the new
+     * class view package that is added to the model by ShapeChange.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_OMIT_OUTPUT_PACKAGE_DATETIME = "omitOutputPackageDateTime";
 
-  /**
-   * Alias: none
-   *
-   * <p>Required / Optional: optional
-   *
-   * <p>Type: Boolean
-   *
-   * <p>Default Value: false
-   *
-   * <p>Explanation: Set this parameter to true, to merge any comment defined for an OCL constraint
-   * into the constraint text. ShapeChange supports comments in OCL constraints within java-like
-   * comment delimiters: \/* and *\/. Comments may be added to or defined for an OCL constraint via
-   * an external source, such as a model transformation or in SCXML via the &lt;description&gt; element of
-   * an &lt;OclConstraint&gt; element. Merging means that any comment which is not already contained in
-   * the text of the OCL constraint will be prepended to the constraint text, within java-like
-   * comment delimiters.
-   *
-   * <p>Applies to Rule(s): none – default behavior
-   */
-  public static final String PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT =
-      "mergeConstraintCommentsIntoText";
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: String
+     *
+     * <p>
+     * Default Value: none
+     *
+     * <p>
+     * Explanation: Path to the EAP template file (can be local or an online
+     * resource).
+     *
+     * <p>
+     * If the output file (location and name are defined by the parameters
+     * outputDirectory and modelFilename) does not exist, the default behavior of
+     * this target is to create a new EA repository.
+     *
+     * <p>
+     * However, if writing the model requires a specific UML Profile / MDG to be
+     * available, this would fail if it is not configured in the EA environment
+     * where ShapeChange is executed. In that situation, you would want the UML
+     * Profile / MDG loaded into the EA repository to which the model is written.
+     * Such a repository can be provided as a template, and configured to be used by
+     * ShapeChange via the parameter eapTemplate.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
+
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: false
+     *
+     * <p>
+     * Explanation: If set to true, then ownership of an association role will be
+     * encoded. A role is either owned by the association or by a class (the class
+     * at the other end of the association). In a UML class diagram, ownership by
+     * the class is depicted by small filled dot at the association role.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP = "includeAssociationEndOwnership";
+
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: false
+     *
+     * <p>
+     * Explanation: Set this parameter to true, to merge any comment defined for an
+     * OCL constraint into the constraint text. ShapeChange supports comments in OCL
+     * constraints within java-like comment delimiters: \/* and *\/. Comments may be
+     * added to or defined for an OCL constraint via an external source, such as a
+     * model transformation or in SCXML via the &lt;description&gt; element of an
+     * &lt;OclConstraint&gt; element. Merging means that any comment which is not
+     * already contained in the text of the OCL constraint will be prepended to the
+     * constraint text, within java-like comment delimiters.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT = "mergeConstraintCommentsIntoText";
+
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: true
+     *
+     * <p>
+     * Explanation: true, if stereotypes from UML profiles (defined using stereotype
+     * map entries) shall automatically be synchronized at the end of processing,
+     * else false
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_SYNCH_STEREOTYPES = "synchronizeStereotypes";
 }
