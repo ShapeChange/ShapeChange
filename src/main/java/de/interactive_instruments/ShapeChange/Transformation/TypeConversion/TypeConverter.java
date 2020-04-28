@@ -309,6 +309,9 @@ public class TypeConverter implements Transformer, MessageSource {
 	     * exception when new properties are added to the class
 	     */
 	    List<PropertyInfo> classPis = new ArrayList<>(genCi.properties().values());
+
+	    List<GenericPropertyInfo> newPisToAdd = new ArrayList<>();
+
 	    for (PropertyInfo pi : classPis) {
 
 		if (pi.voidable()) {
@@ -368,10 +371,11 @@ public class TypeConverter implements Transformer, MessageSource {
 		    vrtPi.setTaggedValue("inlineOrByReference", "inline", true);
 		    vrtPi.setSequenceNumber(pi.sequenceNumber().createCopyWithSuffix(1), true);
 
-		    genCi.addProperty(vrtPi, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
-
+		    newPisToAdd.add(vrtPi);
 		}
 	    }
+
+	    genCi.addPropertiesInSequence(newPisToAdd, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 	}
     }
 
@@ -407,6 +411,9 @@ public class TypeConverter implements Transformer, MessageSource {
 	     * exception when new properties are added to the class
 	     */
 	    List<PropertyInfo> classPis = new ArrayList<>(genCi.properties().values());
+	    
+	    List<GenericPropertyInfo> newPisToAdd = new ArrayList<>();
+	    
 	    for (PropertyInfo pi : classPis) {
 
 		if (pi.propertyMetadata()) {
@@ -436,7 +443,8 @@ public class TypeConverter implements Transformer, MessageSource {
 			mdPi.setInClass(genCi);
 
 			mdPi.setSequenceNumber(pi.sequenceNumber().createCopyWithSuffix(1), true);
-			genCi.addProperty(mdPi, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+			
+			newPisToAdd.add(mdPi);
 
 			if (mdt.category() == Options.FEATURE || mdt.category() == Options.OBJECT) {
 
@@ -474,6 +482,8 @@ public class TypeConverter implements Transformer, MessageSource {
 		    }
 		}
 	    }
+	    
+	    genCi.addPropertiesInSequence(newPisToAdd, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 	}
     }
 
