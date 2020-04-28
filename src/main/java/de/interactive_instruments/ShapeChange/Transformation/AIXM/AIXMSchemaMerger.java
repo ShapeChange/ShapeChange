@@ -640,7 +640,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				assocCopy.setIsLeaf(assocCi.isLeaf());
 				assocCopy.setSupertypes(model.copy(assocCi.supertypes()));
 				assocCopy.setSubtypes(model.copy(assocCi.subtypes()));
-				assocCopy.setConstraints(model.copy(assocCi.constraints()));
+				assocCopy.setDirectConstraints(model.copy(assocCi.directConstraints()));
 
 				// now to the interesting part
 

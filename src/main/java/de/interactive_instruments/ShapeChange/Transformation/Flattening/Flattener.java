@@ -792,9 +792,9 @@ public class Flattener implements Transformer, MessageSource {
 
 			for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-				if (genCi.hasConstraints()) {
+				if (genCi.hasDirectConstraints()) {
 
-					List<Constraint> classConstraints = genCi.constraints();
+					List<Constraint> classConstraints = genCi.directConstraints();
 					Vector<Constraint> newConstraints = new Vector<Constraint>(
 							classConstraints.size());
 
@@ -807,7 +807,7 @@ public class Flattener implements Transformer, MessageSource {
 						}
 					}
 
-					genCi.setConstraints(newConstraints);
+					genCi.setDirectConstraints(newConstraints);
 				}
 
 				// create copies of constraints in all app schema properties
@@ -2707,9 +2707,9 @@ public class Flattener implements Transformer, MessageSource {
 		// create copies of constraints in all app schema classes
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-			if (genCi.hasConstraints()) {
+			if (genCi.hasDirectConstraints()) {
 
-				List<Constraint> classConstraints = genCi.constraints();
+				List<Constraint> classConstraints = genCi.directConstraints();
 				Vector<Constraint> newConstraints = new Vector<Constraint>();
 
 				for (Constraint origCon : classConstraints) {
@@ -2727,7 +2727,7 @@ public class Flattener implements Transformer, MessageSource {
 						newConstraints.add(genCon);
 					}
 				}
-				genCi.setConstraints(newConstraints);
+				genCi.setDirectConstraints(newConstraints);
 			}
 		}
 
@@ -2774,7 +2774,7 @@ public class Flattener implements Transformer, MessageSource {
 			TransformerConfiguration trfConfig) {
 
 		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-			genCi.setConstraints(null);
+			genCi.setDirectConstraints(null);
 		}
 
 		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
@@ -6638,7 +6638,7 @@ public class Flattener implements Transformer, MessageSource {
 						booleanWithOninaCi.setProperties(properties);
 
 						booleanWithOninaCi
-								.setConstraints(new Vector<Constraint>());
+								.setDirectConstraints(new Vector<Constraint>());
 
 						model.addClass(booleanWithOninaCi);
 

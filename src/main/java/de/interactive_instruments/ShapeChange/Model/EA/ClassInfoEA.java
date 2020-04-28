@@ -32,7 +32,6 @@
 
 package de.interactive_instruments.ShapeChange.Model.EA;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.SortedMap;
@@ -475,24 +474,27 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	     * 2017-03-23 JE: Apparently when calling eaClassElement.GetStereotypeEx() the
 	     * EA API does not return the stereotype of a class that has been created in EA
 	     * as an element with type enumeration (which is different than a normal class).
-	     * We explicitly add the stereotype "enumeration" for such elements. That will
-	     * also help in case that the UML profile of an application schema did not
-	     * define a stereotype for enumerations but still used EA elements of type
-	     * enumeration (with the intent to treat them as enumerations). The
-	     * "enumeration" stereotype is necessary when exporting a model without also
-	     * exporting the category of a class, since then the class category must be
-	     * established based upon the stereotype (and potentially existing XML Schema
-	     * conversion rules) when importing an SCXML model.
+	     * We explicitly add the stereotype "enumeration" for such elements - unless the
+	     * element has stereotype codelist. That will also help in case that the UML
+	     * profile of an application schema did not define a stereotype for enumerations
+	     * but still used EA elements of type enumeration (with the intent to treat them
+	     * as enumerations). The "enumeration" stereotype is necessary when exporting a
+	     * model without also exporting the category of a class, since then the class
+	     * category must be established based upon the stereotype (and potentially
+	     * existing XML Schema conversion rules) when importing an SCXML model.
 	     */
-	    if (!stereotypesCache.contains("enumeration") && eaClassElement.GetType().equalsIgnoreCase("enumeration")) {
+	    if (!(stereotypesCache.contains("enumeration") || stereotypesCache.contains("codelist"))
+		    && eaClassElement.GetType().equalsIgnoreCase("enumeration")) {
 		stereotypesCache.add("enumeration");
 		document.result.addDebug(null, 52, this.name(), "enumeration");
 	    }
 	    /*
 	     * The same reasoning applies for data types, which are not classes according to
-	     * the UML spec, but another type of classifier.
+	     * the UML spec, but another type of classifier. However, if a union is modelled
+	     * as an EA datatype element, do not add the stereotype datatype.
 	     */
-	    if (!stereotypesCache.contains("datatype") && eaClassElement.GetType().equalsIgnoreCase("datatype")) {
+	    if (!(stereotypesCache.contains("datatype") || stereotypesCache.contains("union"))
+		    && eaClassElement.GetType().equalsIgnoreCase("datatype")) {
 		stereotypesCache.add("datatype");
 		document.result.addDebug(null, 52, this.name(), "datatype");
 	    }
@@ -820,10 +822,13 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	return isLeaf;
     } // isLeaf()
 
-    // Validate constraints cache. This makes sure the constraints cache
-    // contains all constraints ordered by their appearance in the class.
-    // If constraints are disabled the cache is empty.
+    /**
+     * Validate constraints cache. This makes sure the constraints cache contains
+     * all constraints ordered by their appearance in the class. If constraints are
+     * disabled the cache is empty.
+     */
     private void validateConstraintsCache() {
+
 	if (constraintsCache == null) {
 	    // Allocate cache
 	    constraintsCache = new Vector<Constraint>();
@@ -840,8 +845,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		return;
 	    }
 
-	    // Filter map for inheritance and overriding by name
-	    HashMap<String, Constraint> namefilter = new HashMap<String, Constraint>();
 	    // Access EA constraints data
 	    Collection<org.sparx.Constraint> constrs = eaClassElement.GetConstraints();
 	    // Determine constraint types to be parsed as OCL
@@ -879,58 +882,6 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		    }
 		    // Collect in cache
 		    constraintsCache.add(oc);
-		    // If the constraint has a name, add it to the filter which
-		    // blocks inheritance of constraints
-		    String conam = oc.name();
-		    if (conam != null && conam.length() > 0)
-			namefilter.put(conam, oc);
-		}
-	    }
-
-	    /*
-	     * Fetch constraints from super-classes. Override by name.
-	     */
-
-	    /*
-	     * JE: replaced this code with code (see below) that directly accesses the
-	     * supertype objects, instead of first getting all their IDs and then looking
-	     * the objects up in the model.
-	     */
-
-	    // HashSet<String> stids = supertypes();
-	    // if (stids != null) {
-	    // for (String stid : stids) {
-	    // ClassInfo stci = model().classById(stid);
-	    // Vector<Constraint> stcos = null;
-	    // if (stci != null)
-	    // stcos = stci.constraints();
-	    // if (stcos != null) {
-	    // for (Constraint stco : stcos) {
-	    // String nam = stco == null ? null : stco.name();
-	    // if(nam!=null && nam.length()>0 && namefilter.containsKey(nam))
-	    // continue;
-	    // constraintsCache.add(stco);
-	    // }
-	    // }
-	    // }
-	    // }
-	    HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
-	    if (sts != null) {
-		for (ClassInfoEA stci : sts) {
-		    Vector<Constraint> stcos = null;
-		    if (stci != null)
-			stcos = stci.constraints();
-		    if (stcos != null) {
-			for (Constraint stco : stcos) {
-			    String nam = stco == null ? null : stco.name();
-			    if (nam != null && nam.length() > 0 && namefilter.containsKey(nam))
-				continue;
-
-			    // Is the context of stco still the supertype, or
-			    // should it not be this (ClassInfoEA)?
-			    constraintsCache.add(stco);
-			}
-		    }
 		}
 	    }
 	}
@@ -945,10 +896,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	return baseClasses;
     }
 
-    /**
-     * @see de.interactive_instruments.ShapeChange.Model.ClassInfo#constraints()
-     */
-    public Vector<Constraint> constraints() {
+    @Override
+    public Vector<Constraint> directConstraints() {
 	validateConstraintsCache();
 	return constraintsCache;
     }

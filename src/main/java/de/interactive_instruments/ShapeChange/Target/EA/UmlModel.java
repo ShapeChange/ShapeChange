@@ -375,7 +375,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	if (ci.isAbstract()) {
 	    EAElementUtil.setEAAbstract(e, true);
 	}
-	for (Constraint constr : ci.constraints()) {
+	for (Constraint constr : ci.directConstraints()) {
 	    String type = determineConstraintType(constr);
 	    String text = determineConstraintText(constr);
 	    EAElementUtil.addConstraint(e, constr.name(), type, text);

@@ -437,8 +437,8 @@ public class Profiler implements Transformer, MessageSource {
 
 			if (constraintHandling.equals(ConstraintHandling.remove)) {
 
-				if (!genCi.constraints().isEmpty()) {
-					genCi.setConstraints(new Vector<Constraint>());
+				if (genCi.hasDirectConstraints()) {
+					genCi.setDirectConstraints(new Vector<Constraint>());
 				}
 
 			} else if (constraintHandling.equals(
@@ -461,8 +461,8 @@ public class Profiler implements Transformer, MessageSource {
 
 			if (constraintHandling.equals(ConstraintHandling.remove)) {
 
-				if (!genCi.constraints().isEmpty()) {
-					genCi.setConstraints(new Vector<Constraint>());
+				if (genCi.hasDirectConstraints()) {
+					genCi.setDirectConstraints(new Vector<Constraint>());
 				}
 
 			} else {
@@ -478,8 +478,8 @@ public class Profiler implements Transformer, MessageSource {
 				 * Check that context model element of constraints exists.
 				 */
 
-				genCi.setConstraints(this.validateConstraintContext(
-						genCi.constraints(), genCi, result, genModel));
+				genCi.setDirectConstraints(this.validateConstraintContext(
+						genCi.directConstraints(), genCi, result, genModel));
 
 				if (genCi.properties() != null) {
 
@@ -504,11 +504,11 @@ public class Profiler implements Transformer, MessageSource {
 					 * TBD - for now we try to identify such constraints by
 					 * their name suffix '_Type'
 					 */
-					if (!genCi.constraints().isEmpty()) {
+					if (genCi.hasDirectConstraints()) {
 
 						Vector<Constraint> newConstraints = new Vector<Constraint>();
 
-						for (Constraint con : genCi.constraints()) {
+						for (Constraint con : genCi.directConstraints()) {
 
 							if (con.name().endsWith("_Type")) {
 								String targetPropertyName = con.name()
@@ -528,7 +528,7 @@ public class Profiler implements Transformer, MessageSource {
 							}
 						}
 
-						genCi.setConstraints(newConstraints);
+						genCi.setDirectConstraints(newConstraints);
 					}
 
 				} else {
@@ -918,8 +918,8 @@ public class Profiler implements Transformer, MessageSource {
 			GenericClassInfo genCi, String propertyName,
 			GenericModel genModel) {
 
-		if (!genCi.constraints().isEmpty()) {
-			List<Constraint> constraints = genCi.constraints();
+		if (genCi.hasDirectConstraints()) {
+			List<Constraint> constraints = genCi.directConstraints();
 			for (int i = 0; i < constraints.size(); i++) {
 				if (constraints.get(i).name()
 						.contains(propertyName + "_Type")) {
