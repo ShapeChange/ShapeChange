@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.9.1](https://github.com/ShapeChange/ShapeChange/tree/2.9.1) (2020-04-29)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.9.0...2.9.1)
+
+**Fixed bugs:**
+
+- General - Prevent constraints with a null value from causing exceptions [\#240](https://github.com/ShapeChange/ShapeChange/issues/240)
+- EA class loading - automatic assignment of enumeration and data type stereotypes [\#239](https://github.com/ShapeChange/ShapeChange/issues/239)
+- GenericModel - ConcurrentModificationException [\#237](https://github.com/ShapeChange/ShapeChange/issues/237)
+- General - handling of enumeration/dataType stereotypes in EA models [\#235](https://github.com/ShapeChange/ShapeChange/issues/235)
+
+**Merged pull requests:**
+
+- Fix differences in constraint handling [\#238](https://github.com/ShapeChange/ShapeChange/pull/238) ([cportele](https://github.com/cportele))
+- report enumeration/dataType for classifiers with additional stereotypes [\#236](https://github.com/ShapeChange/ShapeChange/pull/236) ([cportele](https://github.com/cportele))
+
 ## [2.9.0](https://github.com/ShapeChange/ShapeChange/tree/2.9.0) (2019-12-30)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.8.0...2.9.0)
