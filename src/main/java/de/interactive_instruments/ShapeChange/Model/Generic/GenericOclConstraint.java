@@ -133,7 +133,7 @@ public class GenericOclConstraint extends OclConstraintImpl {
 				ctx = contextModelElement.name();
 				ctxType = "class";
 			} else {
-				ctx = contextClass.name() + contextModelElement.name();
+				ctx = contextClass.name() + "." + contextModelElement.name();
 				ctxType = "property";
 			}
 

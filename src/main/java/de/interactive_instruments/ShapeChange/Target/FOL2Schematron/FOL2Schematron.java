@@ -274,7 +274,7 @@ public class FOL2Schematron implements Target, MessageSource {
 
 		List<Constraint> cons = ci.constraints();
 
-		if (cons != null && !cons.isEmpty()) {
+		if (!cons.isEmpty()) {
 
 			/*
 			 * Ignore AIXM <<extension>> types that have constraints (inherited

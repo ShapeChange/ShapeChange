@@ -45,8 +45,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import name.fraser.neil.plaintext.diff_match_patch;
-import name.fraser.neil.plaintext.diff_match_patch.Diff;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Constraint;
@@ -56,6 +54,8 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.Operation;
+import name.fraser.neil.plaintext.diff_match_patch;
+import name.fraser.neil.plaintext.diff_match_patch.Diff;
 
 public class Differ {
 
@@ -499,11 +499,8 @@ public class Differ {
 	}
 
 	private String addConstraints(ClassInfo ci, String doc) {
-		for (Constraint ocl : ci.constraints()) {
-
-			// Ignore constraints on supertypes
-			if (!ocl.contextModelElmt().id().equals(ci.id()))
-				continue;
+	    
+		for (Constraint ocl : ci.directConstraints()) {
 
 			doc += "\n\n-==- Konsistenzbedingung ";
 			if (!ocl.name().equalsIgnoreCase("alle"))

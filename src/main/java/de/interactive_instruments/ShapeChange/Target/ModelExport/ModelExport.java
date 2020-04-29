@@ -41,8 +41,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -86,8 +86,7 @@ import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ModelExport implements SingleTarget, MessageSource {
@@ -604,7 +603,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    writer.endElement(NS, "subtypes");
 	}
 
-	printConstraints(ci.constraints());
+	printConstraints(ci.directConstraints());
 
 	if (!ci.properties().isEmpty()
 		&& ci.properties().values().stream().anyMatch(property -> property.isNavigable())) {
