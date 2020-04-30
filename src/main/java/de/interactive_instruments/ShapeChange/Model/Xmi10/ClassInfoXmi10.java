@@ -34,7 +34,6 @@ package de.interactive_instruments.ShapeChange.Model.Xmi10;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -324,7 +323,8 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 
 	private final Vector<Constraint> constraints = new Vector<Constraint>();
 
-	public Vector<Constraint> constraints() {
+	public Vector<Constraint> directConstraints() {
+	    
 		if (createdConstraints) {
 			return constraints;
 		}
@@ -371,27 +371,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 				} while (i1 != tv.length());
 			}
 		}
-		// Fetch constraints from super-classes. Override by name.
-		SortedSet<String> stids = supertypes();
-		if (stids != null) {
-			for (String stid : stids) {
-				ClassInfo stci = model().classById(stid);
-				List<Constraint> stcos = null;
-				if (stci != null)
-					stcos = stci.constraints();
-				if (stcos != null) {
-					for (Constraint stco : stcos) {
-						String nam = stco == null ? null : stco.name();
-						if (nam != null && nam.length() > 0
-								&& namefilter.containsKey(nam))
-							continue;
-						// Is the context of stco still the supertype, or should
-						// it not be this (ClassInfoXmi)?
-						constraints.add(stco);
-					}
-				}
-			}
-		}
+		
 		createdConstraints = true;
 		return constraints;
 	}

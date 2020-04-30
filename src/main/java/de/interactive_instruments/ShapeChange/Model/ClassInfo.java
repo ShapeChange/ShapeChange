@@ -240,16 +240,29 @@ public interface ClassInfo extends Info {
     public SortedSet<PropertyInfo> propertiesAll();
 
     /**
-     * This method returns the constraints associated with the class.
+     * This method returns the constraints associated with the class, i.e. the
+     * constraints that are directly defined for the class, as well as constraints
+     * from supertypes - except for those constraints from a supertype that are
+     * overridden by subtypes.
      * 
-     * @return the constraints associated with the class; can be empty but not
-     *         <code>null</code>
+     * @return a new list with the constraints associated with the class (direct
+     *         constraints as well as those from supertypes, minus overridden ones);
+     *         can be empty but not <code>null</code>; note that the list is
+     *         computed from the direct constraints of the class and its supertypes;
+     *         modifying the list has no impact on the direct constraints
      */
     public List<Constraint> constraints();
 
     /**
-     * Find out whether this class owns a constraint of the given name. More
-     * efficient overwrites should be added in the various models.
+     * @return the constraints directly defined for the class; can be empty but not
+     *         <code>null</code>
+     */
+    public List<Constraint> directConstraints();
+
+    /**
+     * Find out if the class is associated with a constraint of the given name.
+     * Reviews all constraints of the class (direct constraints, and those of
+     * supertypes). More efficient overwrites should be added in the various models.
      * 
      * @param name tbd
      * @return tbd

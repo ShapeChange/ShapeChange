@@ -140,7 +140,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
     /**
      * @param list the constraints to set, may be <code>null</code>
      */
-    public void setConstraints(Vector<Constraint> list) {
+    public void setDirectConstraints(Vector<Constraint> list) {
 	this.constraints = list;
     }
 
@@ -355,7 +355,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	    return false;
     }
 
-    public boolean hasConstraints() {
+    public boolean hasDirectConstraints() {
 	if (this.constraints == null || this.constraints.isEmpty()) {
 	    return false;
 	} else {
@@ -373,7 +373,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
     }
 
     @Override
-    public List<Constraint> constraints() {
+    public List<Constraint> directConstraints() {
+
 	if (constraints == null) {
 	    return new Vector<Constraint>(1);
 	} else {
@@ -587,6 +588,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
      * duplicates (references to same constraint object).
      * 
      * @param list constraints to add; can be empty or <code>null</code>
+     * NOTE: This may also add constraints defined for a different context element, 
+     * e.g. when flattening types.
      */
     public void addConstraints(List<Constraint> list) {
 	if (list == null || list.isEmpty())
@@ -701,9 +704,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	copy.setProperties(copyProperties);
 
 	if (this.constraints == null) {
-	    copy.setConstraints(null);
+	    copy.setDirectConstraints(null);
 	} else {
-	    copy.setConstraints((Vector<Constraint>) constraints.clone());
+	    copy.setDirectConstraints((Vector<Constraint>) constraints.clone());
 	}
 
 	return copy;

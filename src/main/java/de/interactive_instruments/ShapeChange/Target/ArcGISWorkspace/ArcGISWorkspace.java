@@ -91,8 +91,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ArcGISWorkspace implements SingleTarget, MessageSource {
@@ -874,126 +873,123 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
     private void parseNumericRangeConstraints(ClassInfo ci) {
 
-	if (ci.constraints() != null) {
+	for (Constraint cons : ci.constraints()) {
 
-	    for (Constraint cons : ci.constraints()) {
+	    String ocl = cons.text();
 
-		String ocl = cons.text();
+	    boolean lowerBoundaryInclusive = true;
+	    boolean upperBoundaryInclusive = true;
+	    Double lowerBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
+	    Double upperBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
 
-		boolean lowerBoundaryInclusive = true;
-		boolean upperBoundaryInclusive = true;
-		Double lowerBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MIN_LOWER_BOUNDARY;
-		Double upperBoundaryValue = ArcGISWorkspaceConstants.DEFAULT_NUM_RANGE_MAX_UPPER_BOUNDARY;
+	    Matcher matcher = numRangeConstraintLowerBoundaryPattern.matcher(ocl);
 
-		Matcher matcher = numRangeConstraintLowerBoundaryPattern.matcher(ocl);
+	    boolean foundLowerBoundary = matcher.find();
 
-		boolean foundLowerBoundary = matcher.find();
+	    if (foundLowerBoundary) {
 
-		if (foundLowerBoundary) {
+		String lbOperator = matcher.group(1);
+		String lbValue = matcher.group(2);
 
-		    String lbOperator = matcher.group(1);
-		    String lbValue = matcher.group(2);
-
-		    if (lbOperator.equals(">")) {
-			lowerBoundaryInclusive = false;
-		    }
-
-		    try {
-			lowerBoundaryValue = Double.parseDouble(lbValue);
-		    } catch (NumberFormatException e) {
-			result.addWarning(this, 231, lbValue, ci.name(), cons.name(), ocl);
-		    }
-
-		} else {
-		    // no problem - OCL constraint can be of other
-		    // constraint type
+		if (lbOperator.equals(">")) {
+		    lowerBoundaryInclusive = false;
 		}
 
-		matcher = numRangeConstraintUpperBoundaryPattern.matcher(ocl);
-
-		boolean foundUpperBoundary = matcher.find();
-
-		if (foundUpperBoundary) {
-
-		    String ubOperator = matcher.group(1);
-		    String ubValue = matcher.group(2);
-
-		    if (ubOperator.equals("<")) {
-			upperBoundaryInclusive = false;
-		    }
-
-		    try {
-			upperBoundaryValue = Double.parseDouble(ubValue);
-		    } catch (NumberFormatException e) {
-			result.addWarning(this, 232, ubValue, ci.name(), cons.name(), ocl);
-		    }
-
-		} else {
-		    // no problem - OCL constraint can be of other
-		    // constraint type
+		try {
+		    lowerBoundaryValue = Double.parseDouble(lbValue);
+		} catch (NumberFormatException e) {
+		    result.addWarning(this, 231, lbValue, ci.name(), cons.name(), ocl);
 		}
 
-		if (foundLowerBoundary || foundUpperBoundary) {
+	    } else {
+		// no problem - OCL constraint can be of other
+		// constraint type
+	    }
 
-		    matcher = numRangeConstraintPropertyNamePattern.matcher(ocl);
+	    matcher = numRangeConstraintUpperBoundaryPattern.matcher(ocl);
 
-		    boolean foundPropertyName = matcher.find();
+	    boolean foundUpperBoundary = matcher.find();
 
-		    if (foundPropertyName) {
+	    if (foundUpperBoundary) {
 
-			String propertyName = matcher.group(1);
+		String ubOperator = matcher.group(1);
+		String ubValue = matcher.group(2);
 
-			// check that detected property actually exists in the
-			// class; NOTE: because flattening can have modified the
-			// property names (merging them with other names, or
-			// replacing them with the alias) we must use a specific
-			// search
+		if (ubOperator.equals("<")) {
+		    upperBoundaryInclusive = false;
+		}
 
-			boolean propertyFound = false;
+		try {
+		    upperBoundaryValue = Double.parseDouble(ubValue);
+		} catch (NumberFormatException e) {
+		    result.addWarning(this, 232, ubValue, ci.name(), cons.name(), ocl);
+		}
 
-			for (PropertyInfo pi : ci.properties().values()) {
+	    } else {
+		// no problem - OCL constraint can be of other
+		// constraint type
+	    }
 
-			    if (pi.name().startsWith(propertyName)
-				    || (pi.aliasName() != null && pi.aliasName().startsWith(propertyName))) {
-				propertyFound = true;
-				break;
-			    }
+	    if (foundLowerBoundary || foundUpperBoundary) {
+
+		matcher = numRangeConstraintPropertyNamePattern.matcher(ocl);
+
+		boolean foundPropertyName = matcher.find();
+
+		if (foundPropertyName) {
+
+		    String propertyName = matcher.group(1);
+
+		    // check that detected property actually exists in the
+		    // class; NOTE: because flattening can have modified the
+		    // property names (merging them with other names, or
+		    // replacing them with the alias) we must use a specific
+		    // search
+
+		    boolean propertyFound = false;
+
+		    for (PropertyInfo pi : ci.properties().values()) {
+
+			if (pi.name().startsWith(propertyName)
+				|| (pi.aliasName() != null && pi.aliasName().startsWith(propertyName))) {
+			    propertyFound = true;
+			    break;
 			}
+		    }
 
-			if (!propertyFound) {
-			    result.addWarning(this, 229, propertyName, ci.name(), ocl);
-			}
+		    if (!propertyFound) {
+			result.addWarning(this, 229, propertyName, ci.name(), ocl);
+		    }
 
-			// keep track of the numeric range information
+		    // keep track of the numeric range information
 
-			NumericRangeConstraintMetadata nrcm = new NumericRangeConstraintMetadata(lowerBoundaryValue,
-				upperBoundaryValue, lowerBoundaryInclusive, upperBoundaryInclusive);
+		    NumericRangeConstraintMetadata nrcm = new NumericRangeConstraintMetadata(lowerBoundaryValue,
+			    upperBoundaryValue, lowerBoundaryInclusive, upperBoundaryInclusive);
 
-			SortedMap<String, NumericRangeConstraintMetadata> map;
+		    SortedMap<String, NumericRangeConstraintMetadata> map;
 
-			if (numericRangeConstraintByPropNameByClassName.containsKey(ci)) {
-			    // fine, we don't need to initialize the map for the
-			    // class
-			    map = numericRangeConstraintByPropNameByClassName.get(ci);
-			} else {
-
-			    map = new TreeMap<String, NumericRangeConstraintMetadata>();
-
-			    numericRangeConstraintByPropNameByClassName.put(ci, map);
-			}
-
-			map.put(propertyName, nrcm);
-
+		    if (numericRangeConstraintByPropNameByClassName.containsKey(ci)) {
+			// fine, we don't need to initialize the map for the
+			// class
+			map = numericRangeConstraintByPropNameByClassName.get(ci);
 		    } else {
 
-			/*
-			 * this is unexpected, as we expect to be able to determine the property name
-			 * for a numeric range constraint (which we appear to have detected, because the
-			 * regular expression to detect lower/upper boundary found something
-			 */
+			map = new TreeMap<String, NumericRangeConstraintMetadata>();
 
-			result.addWarning(this, 228, ci.name(), ocl);
+			numericRangeConstraintByPropNameByClassName.put(ci, map);
 		    }
+
+		    map.put(propertyName, nrcm);
+
+		} else {
+
+		    /*
+		     * this is unexpected, as we expect to be able to determine the property name
+		     * for a numeric range constraint (which we appear to have detected, because the
+		     * regular expression to detect lower/upper boundary found something
+		     */
+
+		    result.addWarning(this, 228, ci.name(), ocl);
 		}
 	    }
 	}
@@ -1064,8 +1060,8 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
     private void parseLengthInfoFromOCLConstraints(ClassInfo ci) {
 
-	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.GMLOBJECT)
-		&& ci.constraints() != null) {
+	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT
+		|| ci.category() == Options.GMLOBJECT)) {
 
 	    for (Constraint cons : ci.constraints()) {
 
@@ -2457,8 +2453,9 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
      * 
      * @param ci
      * @return the GUID of an attribute with stereotype 'identifier' - if
-     *         {@value ArcGISWorkspaceConstants#RULE_CLS_IDENTIFIER_STEREOTYPE} is enabled and such an
-     *         attribute exists - or the GUID of the OBJECTID system field.
+     *         {@value ArcGISWorkspaceConstants#RULE_CLS_IDENTIFIER_STEREOTYPE} is
+     *         enabled and such an attribute exists - or the GUID of the OBJECTID
+     *         system field.
      */
     private String determinePrimaryKeyGUID(ClassInfo ci) {
 

@@ -334,8 +334,6 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	if (options.constraintLoadingEnabled()) {
 	    StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_READCONSTARINTS);
 
-	    // TODO The following may be removed when constraints have been
-	    // tested.
 	    /** In a third go collect all constraints */
 	    for (ClassInfoEA ci : fClassById.values()) {
 		ci.constraints();

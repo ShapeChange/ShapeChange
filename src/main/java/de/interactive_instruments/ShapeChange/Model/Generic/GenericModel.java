@@ -263,7 +263,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		genCi.setSupertypes(copy(ci.supertypes()));
 		genCi.setSubtypes(copy(ci.subtypes()));
 		genCi.setProperties(ci.properties());
-		genCi.setConstraints(copy(ci.constraints()));
+		genCi.setDirectConstraints(copy(ci.directConstraints()));
 
 		genCi.setDiagrams(ci.getDiagrams());
 		genCi.setLinkedDocument(ci.getLinkedDocument());
@@ -471,8 +471,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    }
 	    gci.setProperties(propertiesC);
 
-	    List<Constraint> constraints = gci.constraints();
-	    gci.setConstraints(updateContext(constraints, gci));
+	    List<Constraint> constraints = gci.directConstraints();
+	    gci.setDirectConstraints(updateContext(constraints, gci));
 
 	    // modification of operations is not supported right now
 	}
@@ -1516,6 +1516,12 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
 
 	/*
+	 * Remove duplicates of constraints in subtypes (relevant for SCXML format pre
+	 * ShapeChange v2.9.1).
+	 */
+	this.removeDuplicateConstraintsInSubtypes();
+
+	/*
 	 * validate the constraints (includes parsing, taking into account the current
 	 * model)
 	 */
@@ -1571,10 +1577,57 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
     }
 
+    private void removeDuplicateConstraintsInSubtypes() {
+
+	for (ClassInfo cls : selectedSchemaClasses()) {
+
+	    GenericClassInfo genCi = (GenericClassInfo) cls;
+
+	    if (genCi.supertypes().isEmpty()) {
+		continue;
+	    }
+
+	    SortedSet<ClassInfo> sts = genCi.supertypeClasses();
+
+	    List<Constraint> ciDirectCons = genCi.directConstraints();
+
+	    Vector<Constraint> newClassConstraints = new Vector<Constraint>();
+
+	    for (Constraint con : ciDirectCons) {
+
+		/*
+		 * If name and expression of the constraint are the same as that of a constraint
+		 * associated with a supertype, ignore the constraint.
+		 */
+
+		boolean foundInSupertype = false;
+
+		outer: for (ClassInfo st : sts) {
+
+		    for (Constraint stCon : st.constraints()) {
+			if (StringUtils.defaultIfBlank(stCon.name(), "").trim()
+				.equals(StringUtils.defaultIfBlank(con.name(), "").trim())
+				&& StringUtils.defaultIfBlank(stCon.text(), "").trim()
+					.equals(StringUtils.defaultIfBlank(con.text(), "").trim())) {
+			    foundInSupertype = true;
+			    break outer;
+			}
+		    }
+		}
+
+		if (!foundInSupertype) {
+		    newClassConstraints.add(con);
+		}
+	    }
+
+	    genCi.setDirectConstraints(newClassConstraints);
+	}
+    }
+
     private void removeConstraintsOfClassAndItsProperties(GenericClassInfo genCi) {
 
-	if (genCi.hasConstraints()) {
-	    genCi.setConstraints(null);
+	if (genCi.hasDirectConstraints()) {
+	    genCi.setDirectConstraints(null);
 	}
 
 	for (PropertyInfo pi : genCi.properties().values()) {
@@ -2352,7 +2405,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	genCi.setProperties(ci.properties());
 
-	genCi.setConstraints(copy(ci.constraints()));
+	genCi.setDirectConstraints(copy(ci.directConstraints()));
 
 	genCi.setDiagrams(ci.getDiagrams());
 	genCi.setLinkedDocument(ci.getLinkedDocument());
@@ -2440,7 +2493,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			 * NOTE for cast: the cast should be safe, because ci belongs to a
 			 * GenericPackageInfo
 			 */
-			this.remove((GenericClassInfo)ci);
+			this.remove((GenericClassInfo) ci);
 		    }
 		}
 
@@ -2796,122 +2849,115 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		    continue;
 		}
 
-		List<Constraint> ciCons = genCi.constraints();
+		List<Constraint> ciCons = genCi.directConstraints();
 
-		if (ciCons != null) {
+		// sort the constraints by name
+		Collections.sort(ciCons, ConstraintComparators.NAME);
 
-		    // sort the constraints by name
-		    Collections.sort(ciCons, ConstraintComparators.NAME);
+		Vector<Constraint> newClassConstraints = new Vector<Constraint>();
 
-		    Vector<Constraint> newConstraints = new Vector<Constraint>();
+		for (Constraint con : ciCons) {
 
-		    for (Constraint con : ciCons) {
+		    if (con instanceof OclConstraint) {
 
-			if (con instanceof OclConstraint) {
+			OclConstraint oclCon = (OclConstraint) con;
 
-			    OclConstraint oclCon = (OclConstraint) con;
+			Constraint parsedConstraint = parse(oclCon, genCi);
 
-			    Constraint parsedConstraint = parse(oclCon, genCi);
-
-			    if (parsedConstraint instanceof TextConstraint) {
-				invalidConstraintsEncountered = true;
-			    }
-
-			    newConstraints.add(parsedConstraint);
-
-			} else if (con instanceof FolConstraint) {
-
-			    FolConstraint folCon = (FolConstraint) con;
-
-			    Constraint parsedConstraint = parse(folCon, sbvrParser, genCi);
-
-			    if (parsedConstraint instanceof TextConstraint) {
-				invalidConstraintsEncountered = true;
-			    }
-
-			    newConstraints.add(parsedConstraint);
-
-			} else if (con instanceof TextConstraint) {
-
-			    /*
-			     * this can be ignored, because TextConstraint is not validated
-			     */
-			    newConstraints.add(con);
-
-			} else {
-
-			    /*
-			     * for all other cases, simply add the constraint
-			     */
-
-			    result.addInfo(this, 20111, con.name(), genCi.fullNameInSchema());
-
-			    newConstraints.add(con);
+			if (parsedConstraint instanceof TextConstraint) {
+			    invalidConstraintsEncountered = true;
 			}
-		    }
 
-		    genCi.setConstraints(newConstraints);
+			newClassConstraints.add(parsedConstraint);
 
-		}
+		    } else if (con instanceof FolConstraint) {
 
-		// check constraints on properties
-		if (genCi.properties() != null) {
+			FolConstraint folCon = (FolConstraint) con;
 
-		    for (PropertyInfo pi : genCi.properties().values()) {
+			Constraint parsedConstraint = parse(folCon, sbvrParser, genCi);
+
+			if (parsedConstraint instanceof TextConstraint) {
+			    invalidConstraintsEncountered = true;
+			}
+
+			newClassConstraints.add(parsedConstraint);
+
+		    } else if (con instanceof TextConstraint) {
 
 			/*
-			 * Cast should be safe, because all properties of 'genCi' are
-			 * GenericPropertyInfos.
+			 * this can be ignored, because TextConstraint is not validated
 			 */
-			GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+			newClassConstraints.add(con);
 
-			List<Constraint> piCons = genPi.constraints();
+		    } else {
 
-			if (piCons != null) {
+			/*
+			 * for all other cases, simply add the constraint
+			 */
 
-			    // sort the constraints by name
-			    Collections.sort(piCons, ConstraintComparators.NAME);
+			result.addInfo(this, 20111, con.name(), genCi.fullNameInSchema());
 
-			    Vector<Constraint> newConstraints = new Vector<Constraint>();
+			newClassConstraints.add(con);
+		    }
+		}
 
-			    for (Constraint con : piCons) {
+		genCi.setDirectConstraints(newClassConstraints);
 
-				if (con instanceof OclConstraint) {
+		// check constraints on properties
+		for (PropertyInfo pi : genCi.properties().values()) {
 
-				    OclConstraint oclCon = (OclConstraint) con;
+		    /*
+		     * Cast should be safe, because all properties of 'genCi' are
+		     * GenericPropertyInfos.
+		     */
+		    GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
 
-				    Constraint parsedConstraint = parse(oclCon, genPi);
+		    List<Constraint> piCons = genPi.constraints();
 
-				    if (parsedConstraint instanceof TextConstraint) {
-					invalidConstraintsEncountered = true;
-				    }
+		    if (piCons != null) {
 
-				    newConstraints.add(parsedConstraint);
+			// sort the constraints by name
+			Collections.sort(piCons, ConstraintComparators.NAME);
 
-				} else if (con instanceof TextConstraint) {
+			Vector<Constraint> newPropertyConstraints = new Vector<Constraint>();
 
-				    /*
-				     * this can be ignored, because TextConstraint is not validated
-				     */
-				    newConstraints.add(con);
+			for (Constraint con : piCons) {
 
-				} else {
+			    if (con instanceof OclConstraint) {
 
-				    /*
-				     * For all other cases, simply add the constraint.
-				     * 
-				     * 2016-07-12 JE: at the moment, FolConstraints are only created with classes as
-				     * context element. Therefore there is no need to handle FolConstraints here.
-				     */
+				OclConstraint oclCon = (OclConstraint) con;
 
-				    result.addInfo(this, 20111, con.name(), genPi.fullNameInSchema());
+				Constraint parsedConstraint = parse(oclCon, genPi);
 
-				    newConstraints.add(con);
+				if (parsedConstraint instanceof TextConstraint) {
+				    invalidConstraintsEncountered = true;
 				}
-			    }
 
-			    genPi.setConstraints(newConstraints);
+				newPropertyConstraints.add(parsedConstraint);
+
+			    } else if (con instanceof TextConstraint) {
+
+				/*
+				 * this can be ignored, because TextConstraint is not validated
+				 */
+				newPropertyConstraints.add(con);
+
+			    } else {
+
+				/*
+				 * For all other cases, simply add the constraint.
+				 * 
+				 * 2016-07-12 JE: at the moment, FolConstraints are only created with classes as
+				 * context element. Therefore there is no need to handle FolConstraints here.
+				 */
+
+				result.addInfo(this, 20111, con.name(), genPi.fullNameInSchema());
+
+				newPropertyConstraints.add(con);
+			    }
 			}
+
+			genPi.setConstraints(newPropertyConstraints);
 		    }
 		}
 	    }
@@ -2963,7 +3009,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * @param con   constraint to validate
      * 
      * @param genCi context of the constraint
-     * @return tbd 
+     * @return tbd
      * 
      */
     protected Constraint parse(OclConstraint con, GenericClassInfo genCi) {

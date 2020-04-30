@@ -976,10 +976,12 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     // return super.aliasName;
     // }
 
-    // Validate constraints cache. This makes sure the constraints cache
-    // contains all constraints ordered by their appearance in the property.
-    // Note that only constraints on attributes are considered currently.
-    // If constraints are disabled the cache is empty.
+    /**
+     * Validate constraints cache. This makes sure the constraints cache contains
+     * all constraints ordered by their appearance in the property. Note that only
+     * constraints on attributes are considered currently. If constraints are
+     * disabled the cache is empty.
+     */
     private void validateConstraintsCache() {
 	if (constraintsCache == null) {
 	    // Allocate cache
@@ -1034,12 +1036,13 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	}
     }
 
-    /** This method returns the constraints associated with the class. */
+    @Override
     public Vector<Constraint> constraints() {
 	validateConstraintsCache();
 	return constraintsCache;
     }
 
+    @Override
     public AssociationInfo association() {
 	return associationInfo;
     }

@@ -107,9 +107,7 @@ public abstract class ModelImpl implements Model {
 
 	    for (ClassInfo ci : this.classes(pi)) {
 
-		List<Constraint> cons = ci.constraints();
-
-		if (cons != null) {
+		List<Constraint> cons = ci.directConstraints();
 
 		    // sort the constraints by name
 		    Collections.sort(cons, new Comparator<Constraint>() {
@@ -118,7 +116,6 @@ public abstract class ModelImpl implements Model {
 			    return o1.name().compareTo(o2.name());
 			}
 		    });
-		}
 
 		for (Constraint con : cons) {
 

@@ -33,13 +33,17 @@
 package de.interactive_instruments.ShapeChange.Model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.utils.XMLChar;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
@@ -690,6 +694,38 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		return true;
 	}
 	return false;
+    }
+
+    @Override
+    public final List<Constraint> constraints() {
+
+	List<Constraint> result = new ArrayList<>();
+	result.addAll(this.directConstraints());
+
+	Set<String> namefilter = this.directConstraints().stream().filter(con -> StringUtils.isNotBlank(con.name()))
+		.map(con -> con.name()).collect(Collectors.toSet());
+
+	SortedSet<ClassInfo> sts = supertypeClasses();
+
+	for (ClassInfo stci : sts) {
+
+	    List<Constraint> stCons = stci.constraints();
+
+	    for (Constraint stCon : stCons) {
+
+		String nam = stCon.name();
+
+		if (!(StringUtils.isNotBlank(nam) && namefilter.contains(nam))) {
+		    /*
+		     * NOTE: The context of stCon is still the supertype. It shall not become "this"
+		     * ClassInfo object.
+		     */
+		    result.add(stCon);
+		}
+	    }
+	}
+
+	return result;
     }
 
     @Override

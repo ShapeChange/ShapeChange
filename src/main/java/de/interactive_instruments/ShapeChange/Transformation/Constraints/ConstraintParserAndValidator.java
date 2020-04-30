@@ -137,7 +137,7 @@ public class ConstraintParserAndValidator implements Transformer {
 					continue;
 				}
 
-				List<Constraint> ciCons = genCi.constraints();
+				List<Constraint> ciCons = genCi.directConstraints();
 
 				if (ciCons != null) {
 
@@ -167,7 +167,7 @@ public class ConstraintParserAndValidator implements Transformer {
 						}
 					}
 
-					genCi.setConstraints(newConstraints);
+					genCi.setDirectConstraints(newConstraints);
 
 				}
 
