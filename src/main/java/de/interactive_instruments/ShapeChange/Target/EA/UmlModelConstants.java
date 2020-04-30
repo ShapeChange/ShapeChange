@@ -116,6 +116,27 @@ public class UmlModelConstants {
      * Required / Optional: optional
      *
      * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: false
+     *
+     * <p>
+     * Explanation: If set to true, the package hierarchy within schemas selected
+     * for processing, and also above such schemas, is preserved.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_PRESERVE_PACKAGE_HIERARCHY = "preservePackageHierarchy";
+
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
      * Type: String
      *
      * <p>

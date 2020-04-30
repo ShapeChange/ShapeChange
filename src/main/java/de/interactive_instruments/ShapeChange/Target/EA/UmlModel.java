@@ -38,12 +38,15 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -109,6 +112,7 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static boolean mergeConstraintCommentsIntoText = false;
     private static Pattern ignoreTaggedValuesPattern = null;
     private static boolean synchronizeStereotypes = true;
+    private static boolean preservePackageHierarchy = false;
 
     private static Repository rep = null;
     private static Integer pOut_EaPkgId = null;
@@ -163,6 +167,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    synchronizeStereotypes = options.parameterAsBoolean(this.getClass().getName(),
 		    UmlModelConstants.PARAM_SYNCH_STEREOTYPES, true);
+
+	    preservePackageHierarchy = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_PRESERVE_PACKAGE_HIERARCHY, false);
 
 	    try {
 		String itvpParam = options.parameterAsString(UmlModel.class.getName(),
@@ -326,10 +333,59 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	// export app schema package
 	try {
-	    clonePackage(pi, pOut_EaPkgId);
+	    if (preservePackageHierarchy) {
+		int ownerPkgEaPkgId = createPackageHierarchy(pi);
+		clonePackage(pi, ownerPkgEaPkgId);
+	    } else {
+		clonePackage(pi, pOut_EaPkgId);
+	    }
 	} catch (EAException e) {
 	    result.addError(this, 100007, pi.name(), e.getMessage());
 	}
+    }
+
+    /**
+     * Creates the ancestor packages of the given package (unless they already
+     * exist).
+     * 
+     * @param pi The package whose ancestors shall be created
+     * @return The EA ID of the owner for the given package; if the package has no
+     *         owner, the value of {@link #pOut_EaPkgId} will be returned
+     * @throws EAException If a package could not be created.
+     */
+    private int createPackageHierarchy(PackageInfo pi) throws EAException {
+
+	int result = pOut_EaPkgId;
+
+	// create LIFO queue of owning packages
+	Queue<PackageInfo> hierarchy = Collections.asLifoQueue(new LinkedList<>());
+	PackageInfo currentPackage = pi;
+	while (currentPackage.owner() != null) {
+	    hierarchy.add(currentPackage.owner());
+	    currentPackage = currentPackage.owner();
+	}
+
+	/*
+	 * create the package hierarchy - do not create packages that have already been
+	 * created
+	 */
+	while (!hierarchy.isEmpty()) {
+	    PackageInfo pkg = hierarchy.poll();
+	    if (eaPkgIdByPackageInfo.containsKey(pkg)) {
+		result = eaPkgIdByPackageInfo.get(pkg);
+	    } else {
+		int newPkgId = EARepositoryUtil.createEAPackage(rep, pkg, result);
+		result = newPkgId;
+
+		Package eaPkg = rep.GetPackageByID(newPkgId);
+
+		cloneStandarddItems(eaPkg.GetElement(), pkg);
+
+		eaPkgIdByPackageInfo.put(pkg, newPkgId);
+	    }
+	}
+
+	return result;
     }
 
     private void clonePackage(PackageInfo pSource, Integer containerEaPkgId) throws EAException {
@@ -795,8 +851,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 		    rep.SynchProfile(components[0], components[1]);
 		}
 	    }
-	    
-	    
+
 	}
 
 	EARepositoryUtil.closeRepository(rep);
@@ -823,6 +878,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	mergeConstraintCommentsIntoText = false;
 	ignoreTaggedValuesPattern = null;
 	synchronizeStereotypes = true;
+	preservePackageHierarchy = false;
 
 	author = null;
 	status = null;
