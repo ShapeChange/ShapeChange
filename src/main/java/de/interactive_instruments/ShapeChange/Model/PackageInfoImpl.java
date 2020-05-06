@@ -273,7 +273,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		return false;
 	} // isSchema()
 
-	/** Return the id of the rootPackage, "(null)" on failure. */
+	@Override
 	public String schemaId() {
 		if (isSchema()) {
 			return id();

@@ -215,10 +215,10 @@ public class TargetOutputProcessor implements MessageSource {
 			return;
 		} else if (outputFiles == null || outputFiles.isEmpty()) {
 			// no output files
-			result.addInfo(this, 105);
+			result.addProcessFlowInfo(this, 105);
 		}
 
-		result.addInfo(this, 100);
+		result.addProcessFlowInfo(this, 100);
 
 		// TBD: add parameter from which date format is parsed?
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -227,7 +227,7 @@ public class TargetOutputProcessor implements MessageSource {
 
 		if (modifyFileName) {
 
-			result.addInfo(this, 102);
+			result.addProcessFlowInfo(this, 102);
 
 			List<File> modifiedFiles = new ArrayList<File>();
 
@@ -265,7 +265,7 @@ public class TargetOutputProcessor implements MessageSource {
 					result.updateResult(from.toFile(), to.toFile());
 
 				} catch (IOException e) {
-					result.addError(this, 10, from.toAbsolutePath().toString(),
+					result.addProcessFlowError(this, 10, from.toAbsolutePath().toString(),
 							to.toAbsolutePath().toString(), e.getMessage());
 					modifiedFiles.add(file);
 				}
@@ -276,7 +276,7 @@ public class TargetOutputProcessor implements MessageSource {
 
 		if (addComment) {
 
-			result.addInfo(this, 103);
+			result.addProcessFlowInfo(this, 103);
 
 			for (File file : filesToProcess) {
 
@@ -314,7 +314,7 @@ public class TargetOutputProcessor implements MessageSource {
 
 		if (applyXslt) {
 
-			result.addInfo(this, 104);
+			result.addProcessFlowInfo(this, 104);
 
 			for (File file : filesToProcess) {
 
@@ -369,7 +369,7 @@ public class TargetOutputProcessor implements MessageSource {
 						if (xsl.exists()) {
 							xsltMainFileUri = xsl.toURI();
 						} else {
-							result.addError(this, 18, xsl.getAbsolutePath());
+							result.addProcessFlowError(this, 18, xsl.getAbsolutePath());
 						}
 					}
 
@@ -403,13 +403,13 @@ public class TargetOutputProcessor implements MessageSource {
 				} catch (Exception e) {
 					String m = e.getMessage();
 					if (m != null) {
-						result.addError(m);
+						result.addProcessFlowError(m);
 					}
 				}
 			}
 		}
 
-		result.addInfo(this, 101);
+		result.addProcessFlowInfo(this, 101);
 	}
 
 	public void addCommentToTextFile(File txtFile, String comment) {
@@ -432,7 +432,7 @@ public class TargetOutputProcessor implements MessageSource {
 			}
 
 		} catch (IOException e) {
-			result.addError(this, 15, txtFile.getAbsolutePath(),
+			result.addProcessFlowError(this, 15, txtFile.getAbsolutePath(),
 					e.getMessage());
 		}
 
@@ -442,7 +442,7 @@ public class TargetOutputProcessor implements MessageSource {
 				Files.move(tmpFile.toPath(), txtFile.toPath(),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				result.addError(this, 10, tmpFile.getAbsolutePath(),
+				result.addProcessFlowError(this, 10, tmpFile.getAbsolutePath(),
 						txtFile.getAbsolutePath(), e.getMessage());
 			}
 		}
@@ -487,7 +487,7 @@ public class TargetOutputProcessor implements MessageSource {
 		} catch (ParserConfigurationException | SAXException | IOException
 				| TransformerFactoryConfigurationError
 				| TransformerException e) {
-			result.addError(this, 20, xmlFile.getAbsolutePath(),
+			result.addProcessFlowError(this, 20, xmlFile.getAbsolutePath(),
 					e.getMessage());
 		}
 
@@ -498,7 +498,7 @@ public class TargetOutputProcessor implements MessageSource {
 				Files.move(tmpFile.toPath(), xmlFile.toPath(),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				result.addError(this, 10, tmpFile.getAbsolutePath(),
+				result.addProcessFlowError(this, 10, tmpFile.getAbsolutePath(),
 						xmlFile.getAbsolutePath(), e.getMessage());
 			}
 		}

@@ -56,6 +56,8 @@ public class JsonSchemaConstants {
      * else false.
      */
     public static final String PARAM_PRETTY_PRINT = "prettyPrint";
+    
+    public static final String PARAM_WRITE_MAP_ENTRIES = "writeMapEntries";
 
     /**
      * Define the version of the JSON Schema documents that shall be created by the

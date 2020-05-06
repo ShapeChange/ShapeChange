@@ -279,6 +279,7 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/draft-07/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonSchemaVersion" value="draft-07"/>
    
    <targetParameter name="appSchemaNameRegex" value="Test Schema (01).*"/>

@@ -47,7 +47,6 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    <!-- NOTE: Restriction of application schemas that are converted! -->
    <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
 
@@ -78,7 +77,6 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/json"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
    <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
@@ -129,6 +127,7 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/draft-07/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonSchemaVersion" value="draft-07"/>
    <!-- NOTE: Restriction of application schemas that are converted! -->
    <targetParameter name="appSchemaNameRegex" value="Test Schema (01).*"/>
@@ -149,7 +148,6 @@
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    <targetParameter name="jsonSchemaVersion" value="openapi30"/>
 
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>

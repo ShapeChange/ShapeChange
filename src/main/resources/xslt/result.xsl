@@ -3,7 +3,7 @@
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result">
   <!-- (c) 2012 interactive instruments GmbH, Bonn -->
  <!-- NOTE: Use XML attribute 'encoding' to change the output encoding. Example: encoding="iso-8859-1" -->
-  <xsl:output method="html" indent="no"/>
+  <xsl:output method="html" indent="yes"/>
   <xsl:template match="/">
     <html>
       <head>
@@ -131,24 +131,46 @@ return true;
       <h2>Messages</h2>
     </a>
     <xsl:choose>
-    <xsl:when test="//r:FatalError|//r:Error|//r:Warning|//r:Info|//r:Debug">
+     <xsl:when test="//r:FatalError|//r:Error|//r:Warning|//r:Info|//r:Debug|//r:ProcessFlowFatalError|//r:ProcessFlowError|//r:ProcessFlowWarning|//r:ProcessFlowInfo|//r:ProcessFlowDebug">
 		<div id="menu">
-			<p align="center">
-				<a onclick="return toggleMe('Debug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a><xsl:text> | </xsl:text>
-				<a onclick="return toggleMe('Info')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a><xsl:text> | </xsl:text>
-				<a onclick="return toggleMe('Warning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a><xsl:text> | </xsl:text>
-				<a onclick="return toggleMe('Error')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a><xsl:text> | </xsl:text>
-				<a onclick="return toggleMe('FatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a>
-			</p>
+		 <p align="center">Click on the following buttons to toggle log messages of the according category.</p>
+		 <table>
+		  <tbody>
+		   <tr>
+		    <th>Process</th>
+		    <th>Process Flow</th>
+		   </tr>
+		   <tr>
+		    <td><a onclick="return toggleMe('Debug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a></td>
+		    <td><a onclick="return toggleMe('ProcessFlowDebug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a></td>
+		   </tr>
+		   <tr>
+		    <td><a onclick="return toggleMe('Info')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a></td>
+		    <td><a onclick="return toggleMe('ProcessFlowInfo')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a></td>
+		   </tr>
+		   <tr>
+		    <td><a onclick="return toggleMe('Warning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a></td>
+		    <td><a onclick="return toggleMe('ProcessFlowWarning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a></td>
+		   </tr>
+		   <tr>
+		    <td><a onclick="return toggleMe('Error')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a></td>
+		    <td><a onclick="return toggleMe('ProcessFlowError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a></td>
+		   </tr>
+		   <tr>
+		    <td><a onclick="return toggleMe('FatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a></td>
+		    <td><a onclick="return toggleMe('ProcessFlowFatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a></td>
+		   </tr>
+		  </tbody>
+		 </table>
 			<br/>
 		</div>
 	    <table border="0">
 		  <tr>
 	  		<th><p>Severity</p></th>
 		  	<th><p>Message</p></th>
-			<th><p>Source</p></th>
+<!--			<th><p>Source</p></th>-->
 		  </tr>    
-	      <xsl:for-each select="//r:FatalError|//r:Error|//r:Warning|//r:Info|//r:Debug">
+	     <xsl:for-each select="//r:FatalError|//r:Error|//r:Warning|//r:Info|//r:Debug|//r:ProcessFlowFatalError|//r:ProcessFlowError|//r:ProcessFlowWarning|//r:ProcessFlowInfo|//r:ProcessFlowDebug">
 	        <xsl:apply-templates select="."/>
 	      </xsl:for-each>
 	    </table>
@@ -187,11 +209,11 @@ return true;
   </body>
 </html>
 </xsl:template>
-<xsl:template match="r:FatalError|r:Error|r:Warning|r:Info|r:Debug">
+ <xsl:template match="r:FatalError|r:Error|r:Warning|r:Info|r:Debug|//r:ProcessFlowFatalError|//r:ProcessFlowError|//r:ProcessFlowWarning|//r:ProcessFlowInfo|//r:ProcessFlowDebug">
   <tr class="{name(.)}" style="display:table-row">
   	<td><p><xsl:value-of select="name(.)"/></p></td>
   	<td><p><xsl:value-of select="@message"/></p><xsl:for-each select="*/@message"><p><small><xsl:call-template name="replace_ins"><xsl:with-param name="string" select="."/></xsl:call-template></small></p></xsl:for-each></td>
-	<td><p><xsl:value-of select="@source"/></p></td>
+<!--	<td><p><xsl:value-of select="@source"/></p></td>-->
   </tr>
  </xsl:template>
 <xsl:template match="r:Result">

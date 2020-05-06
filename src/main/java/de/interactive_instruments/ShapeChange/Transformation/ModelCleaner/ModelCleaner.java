@@ -138,7 +138,7 @@ public class ModelCleaner implements Transformer, MessageSource {
 
 		if (rules.contains(RULE_TRF_CLEANER_FIX_UNION_DIRECT)) {
 
-			result.addInfo(null, 20103, RULE_TRF_CLEANER_FIX_UNION_DIRECT);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_CLEANER_FIX_UNION_DIRECT);
 			applyRuleFixUnionDirect(m, trfConfig);
 		}
 

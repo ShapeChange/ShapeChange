@@ -50,7 +50,7 @@ public class Main {
 
 	    Version javaVersion = Runtime.version();
 	    if (javaVersion.feature() < 11) {
-		result.addError(null, 18, javaVersion.toString());
+		result.addProcessFlowError(null, 18, javaVersion.toString());
 		System.exit(1);
 	    }
 
@@ -70,7 +70,7 @@ public class Main {
 		    }
 		    if (option.equals("c")) {
 			if (++i == argv.length) {
-			    result.addError(null, 111, "-c");
+			    result.addProcessFlowError(null, 111, "-c");
 			} else
 			    options.configFile = argv[i];
 			continue;
@@ -78,11 +78,11 @@ public class Main {
 		    if (option.equals("x")) {
 			String x1 = null, x2 = null;
 			if (++i == argv.length)
-			    result.addError(null, 111, "-x");
+			    result.addProcessFlowError(null, 111, "-x");
 			else {
 			    x1 = argv[i];
 			    if (++i == argv.length)
-				result.addError(null, 111, "-x");
+				result.addProcessFlowError(null, 111, "-x");
 			    else
 				x2 = argv[i];
 			}

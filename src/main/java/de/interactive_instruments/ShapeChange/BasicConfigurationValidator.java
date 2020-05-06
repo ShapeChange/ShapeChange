@@ -69,7 +69,7 @@ public class BasicConfigurationValidator implements MessageSource {
 		String imt = options.parameter("inputModelType");
 
 		if (imt == null) {
-			result.addError(null, 26);
+			result.addProcessFlowError(null, 26);
 			isValid = false;
 		}
 
@@ -92,10 +92,10 @@ public class BasicConfigurationValidator implements MessageSource {
 			String osArch = SystemUtils.OS_ARCH;
 
 			if (!isWindows) {
-				result.addError(this, 1);
+				result.addProcessFlowError(this, 1);
 				isValid = false;
 			} else if (!osArch.equalsIgnoreCase("x86")) {
-				result.addError(this, 2, osArch);
+				result.addProcessFlowError(this, 2, osArch);
 				isValid = false;
 			}
 		}
@@ -122,7 +122,7 @@ public class BasicConfigurationValidator implements MessageSource {
 
 				if (xsltFileName == null) {
 
-					result.addError(this, 102, conf.getClassName(),
+					result.addProcessFlowError(this, 102, conf.getClassName(),
 							joiner.join(conf.getInputIds()));
 					isValid = false;
 
@@ -134,7 +134,7 @@ public class BasicConfigurationValidator implements MessageSource {
 						URL url = new URL(urlString);
 						url.toURI();
 					} catch (URISyntaxException | MalformedURLException e) {
-						result.addError(this, 100, conf.getClassName(),
+						result.addProcessFlowError(this, 100, conf.getClassName(),
 								joiner.join(conf.getInputIds()), urlString,
 								e.getMessage());
 						isValid = false;
@@ -145,7 +145,7 @@ public class BasicConfigurationValidator implements MessageSource {
 					File xsl = new File(
 							pathToXsltDirectory + "/" + xsltFileName);
 					if (!xsl.exists()) {
-						result.addError(this, 101, conf.getClassName(),
+						result.addProcessFlowError(this, 101, conf.getClassName(),
 								joiner.join(conf.getInputIds()),
 								xsl.getAbsolutePath());
 						isValid = false;
@@ -167,13 +167,13 @@ public class BasicConfigurationValidator implements MessageSource {
 			if (components[0].equalsIgnoreCase("sc:extract")
 					&& components[1].length() == 0) {
 
-				result.addError(this, 200, entry.getKey());
+				result.addProcessFlowError(this, 200, entry.getKey());
 				isValid = false;
 
 			} else if (components[0].equalsIgnoreCase("tag")
 					&& components[1].length() == 0) {
 
-				result.addError(this, 201, entry.getKey());
+				result.addProcessFlowError(this, 201, entry.getKey());
 				isValid = false;
 			}
 		}
@@ -193,7 +193,7 @@ public class BasicConfigurationValidator implements MessageSource {
 
 					if (xsdme.getXmlElementHasSimpleContent() != null
 							&& !xsdme.hasXmlElement()) {
-						result.addError(this, 300, xsdme.getType(),
+						result.addProcessFlowError(this, 300, xsdme.getType(),
 								String.join(" ", xsdme.getEncodingRules()));
 						isValid = false;
 					}
@@ -212,14 +212,14 @@ public class BasicConfigurationValidator implements MessageSource {
 
 						if (StringUtils.countMatches(targetElement, ":") != 1) {
 
-							result.addError(this, 301, xpme.toString());
+							result.addProcessFlowError(this, 301, xpme.toString());
 							isValid = false;
 
 						} else {
 
 							String nsabr = targetElement.split(":")[0];
 							if (options.fullNamespace(nsabr) == null) {
-								result.addError(this, 302, xpme.toString(),
+								result.addProcessFlowError(this, 302, xpme.toString(),
 										nsabr);
 								isValid = false;
 							}

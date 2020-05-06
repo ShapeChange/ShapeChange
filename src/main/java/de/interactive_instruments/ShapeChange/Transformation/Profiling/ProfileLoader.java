@@ -418,14 +418,14 @@ public class ProfileLoader implements Transformer, MessageSource {
 				/*
 				 * 0.2 Validate profile definitions of input model
 				 */
-				result.addInfo(this, 111);
+				result.addProcessFlowInfo(this, 111);
 
 				ModelProfileValidator mpv = new ModelProfileValidator(
 						inputModel, result);
 				mpv.validateModelConsistency(inputModelExplicitProfiles, true,
 						!processAllSchemas);
 
-				result.addInfo(this, 115);
+				result.addProcessFlowInfo(this, 115);
 			}
 
 			if (!inputModelExplicitProfiles) {
@@ -536,14 +536,14 @@ public class ProfileLoader implements Transformer, MessageSource {
 						/*
 						 * 2.1 Validate profile definitions in loaded model
 						 */
-						result.addInfo(this, 110, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 110, loadedProfileFileLocation);
 
 						ModelProfileValidator mpv = new ModelProfileValidator(
 								loadedModel, result);
 						mpv.validateModelConsistency(true, true,
 								!processAllSchemas);
 
-						result.addInfo(this, 116, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 116, loadedProfileFileLocation);
 					}
 
 					if (rules.contains(RULE_DIFF_MODELS)) {
@@ -557,7 +557,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 						 * example for re-use in common transformation that
 						 * performs model diffs?
 						 */
-						result.addInfo(this, 105, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 105, loadedProfileFileLocation);
 
 						SortedSet<? extends PackageInfo> schemasToDiff = processAllSchemas
 								? inputModel.schemas(null)
@@ -641,7 +641,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 							}
 						}
 
-						result.addInfo(this, 106, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 106, loadedProfileFileLocation);
 					}
 
 					/*

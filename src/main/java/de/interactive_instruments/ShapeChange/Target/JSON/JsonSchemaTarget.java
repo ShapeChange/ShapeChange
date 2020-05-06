@@ -33,11 +33,13 @@
 package de.interactive_instruments.ShapeChange.Target.JSON;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
@@ -57,6 +59,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Target.MapEntries;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
@@ -110,6 +113,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
      * defined for this target.
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
+    protected static SortedMap<PackageInfo, List<ProcessMapEntry>> mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
 
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
@@ -689,9 +693,31 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	if (!diagnosticsOnly) {
+
 	    // Write the JSON Schema definitions to files
 	    for (JsonSchemaDocument jsdoc : jsdocs) {
 		jsdoc.write();
+	    }
+
+	    // if configured, write map entries file(s)
+	    if (options.parameterAsBoolean(this.getClass().getName(), JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES,
+		    false)) {
+
+		File outputDirectoryFile = new File(outputDirectory);
+
+		for (Entry<PackageInfo, List<ProcessMapEntry>> e : mapEntriesForEncodedTypesBySchemaPackage
+			.entrySet()) {
+
+		    PackageInfo schemaPi = e.getKey();
+		    List<ProcessMapEntry> mapEntriesList = e.getValue();
+
+		    String mapEntriesFileName = schemaPi.name().trim().replaceAll("\\W", "_") + "_mapEntries.xml";
+		    File mapEntriesFile = new File(outputDirectoryFile, mapEntriesFileName);
+		    MapEntries mapEntries = new MapEntries();
+		    mapEntries.add(mapEntriesList);
+		    mapEntries.toXml(mapEntriesFile, result);
+		}
+
 	    }
 	}
     }
@@ -713,6 +739,20 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	return jsonDirectory;
+    }
+
+    public void addMapEntry(PackageInfo schemaPackage, ProcessMapEntry me) {
+
+	List<ProcessMapEntry> mapEntries;
+
+	if (mapEntriesForEncodedTypesBySchemaPackage.containsKey(schemaPackage)) {
+	    mapEntries = mapEntriesForEncodedTypesBySchemaPackage.get(schemaPackage);
+	} else {
+	    mapEntries = new ArrayList<>();
+	    mapEntriesForEncodedTypesBySchemaPackage.put(schemaPackage, mapEntries);
+	}
+
+	mapEntries.add(me);
     }
 
     @Override
@@ -744,6 +784,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	objectIdentifierRequired = false;
 
 	mapEntryParamInfos = null;
+	mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();

@@ -182,10 +182,51 @@ public class JsonSchemaDocument implements MessageSource {
 		js = jsonSchema(ci);
 	    }
 
+	    // add schema definition to root schema
+	    /*
+	     * Also compute the URL to the schema definition, ignoring the anchor capability
+	     * (because it would not be supported in an OpenAPI 3.0 schema).
+	     */
+	    String jsDefinitionReference;
 	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09) {
 		rootSchema.def(ci.name(), js);
+		jsDefinitionReference = rootSchemaId + "#/$defs/" + ci.name();
 	    } else {
 		rootSchema.definition(ci.name(), js);
+		jsDefinitionReference = rootSchemaId + "#/definitions/" + ci.name();
+	    }
+
+	    // create map entry
+	    PackageInfo schemaPi = ci.pkg().rootPackage();
+	    String rule = "*";
+	    ProcessMapEntry pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference);
+	    jsonSchemaTarget.addMapEntry(schemaPi, pme);
+	}
+    }
+
+    /**
+     * @param jsd The JSON Schema document in which the class is encoded
+     * @param ci  the class for which to get the reference of its JSON Schema
+     *            definition
+     * @return the reference to the JSON Schema definition of the given class
+     */
+    private String jsonSchemaDefinitionReference(JsonSchemaDocument jsd, ClassInfo ci) {
+
+	String schemaId = jsd.getSchemaId();
+
+	if (jsd.getSchemaVersion() != JsonSchemaVersion.OPENAPI_30
+		&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
+
+	    // the encoding of the class contains an anchor - use it
+	    return schemaId + "#" + ci.name();
+
+	} else {
+
+	    // use a JSON Pointer to reference the definition of the class
+	    if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_2019_09) {
+		return schemaId + "#/$defs/" + ci.name();
+	    } else {
+		return schemaId + "#/definitions/" + ci.name();
 	    }
 	}
     }
@@ -1325,23 +1366,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 		    JsonSchemaDocument jsd = jsdopt.get();
 
-		    String schemaId = jsd.getSchemaId();
-
-		    if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
-			    && ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
-
-			// the encoding of the supertype contains an anchor - use it
-			jsTypeInfo.setRef(schemaId + "#" + typeName);
-
-		    } else {
-
-			// use a JSON Pointer to reference the definition of the supertype
-			if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_2019_09) {
-			    jsTypeInfo.setRef(schemaId + "#/$defs/" + typeName);
-			} else {
-			    jsTypeInfo.setRef(schemaId + "#/definitions/" + typeName);
-			}
-		    }
+		    jsTypeInfo.setRef(jsonSchemaDefinitionReference(jsd, ci));
 		}
 	    }
 	}

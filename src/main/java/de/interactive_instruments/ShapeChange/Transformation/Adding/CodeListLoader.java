@@ -143,7 +143,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 
 		if (rules.contains(RULE_LOAD_CODES)) {
 
-			result.addInfo(null, 20103, RULE_LOAD_CODES);
+			result.addProcessFlowInfo(null, 20103, RULE_LOAD_CODES);
 			applyRuleLoadCodes();
 		}
 	}

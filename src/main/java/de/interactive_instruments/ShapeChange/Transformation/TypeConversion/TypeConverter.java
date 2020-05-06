@@ -240,26 +240,32 @@ public class TypeConverter implements Transformer, MessageSource {
 	// execute rules
 
 	if (rules.contains(RULE_ENUMERATION_TO_CODELIST)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_ENUMERATION_TO_CODELIST);
 	    applyRuleEnumerationToCodelist(genModel, trfConfig);
 	}
 
 	if (rules.contains(RULE_DISSOLVE_ASSOCIATIONS)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_DISSOLVE_ASSOCIATIONS);
 	    applyRuleDissolveAssociations(genModel, trfConfig);
 	}
 
 	if (rules.contains(RULE_TO_FEATURETYPE)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_TO_FEATURETYPE);
 	    applyRuleToFeatureType(genModel, trfConfig);
 	}
 
 	if (rules.contains(RULE_OBJECTTYPES_TO_FEATURETYPES)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_OBJECTTYPES_TO_FEATURETYPES);
 	    applyRuleObjectTypesToFeatureTypes();
 	}
 
 	if (rules.contains(RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY);
 	    applyRulePropertyMetadataStereotypeToProperty();
 	}
 
 	if (rules.contains(RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY);
 	    applyRuleNilReasonPropertyForNillableProperty();
 	}
 

@@ -140,7 +140,7 @@ public class TransformationManager implements MessageSource {
 		if (rules.contains(
 				REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS);
 
 			identifyFeatureAndObjectAssociations(genModel, trfConfig);
@@ -349,7 +349,7 @@ public class TransformationManager implements MessageSource {
 		if (!trfConfig.getAllRules()
 				.contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
 
-			result.addInfo(this, 20109);
+			result.addProcessFlowInfo(this, 20109);
 
 			genModel.validateConstraints();
 

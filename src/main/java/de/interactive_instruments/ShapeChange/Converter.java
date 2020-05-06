@@ -108,7 +108,7 @@ public class Converter implements MessageSource {
 
 		if (skipSemanticValidation) {
 
-			result.addInfo(this, 512);
+			result.addProcessFlowInfo(this, 512);
 
 		} else {
 
@@ -117,11 +117,11 @@ public class Converter implements MessageSource {
 			 * call with a try-catch to catch any Exception that might be
 			 * thrown? That could create a warning or error message in the log.
 			 */
-			result.addInfo(this, 510);
+			result.addProcessFlowInfo(this, 510);
 			boolean isValidConfig = validateConfiguration();
-			result.addInfo(this, 511);
+			result.addProcessFlowInfo(this, 511);
 			if (!isValidConfig) {
-				MessageContext mc = result.addError(this, 509);
+				MessageContext mc = result.addProcessFlowError(this, 509);
 				if (mc != null)
 					mc.addDetail(this, 513);
 				return;
@@ -219,7 +219,7 @@ public class Converter implements MessageSource {
 					if (pConfig instanceof TransformerConfiguration) {
 
 						TransformerConfiguration tconfig = (TransformerConfiguration) pConfig;
-						result.addInfo(this, 514, tconfig.getId());
+						result.addProcessFlowInfo(this, 514, tconfig.getId());
 
 					} else {
 
@@ -235,7 +235,7 @@ public class Converter implements MessageSource {
 						// */
 
 						TargetConfiguration tconfig = (TargetConfiguration) pConfig;
-						result.addInfo(this, 515, tconfig.getClassName(),
+						result.addProcessFlowInfo(this, 515, tconfig.getClassName(),
 								StringUtils.join(tconfig.getInputIds(), " "));
 					}
 
@@ -249,7 +249,7 @@ public class Converter implements MessageSource {
 
 				} catch (Exception e) {
 
-					result.addWarning(this, 508, pConfig.getClassName(),
+					result.addProcessFlowWarning(this, 508, pConfig.getClassName(),
 							e.getMessage());
 				}
 			}
@@ -274,7 +274,7 @@ public class Converter implements MessageSource {
 		} catch (Exception e) {
 			String m = e.getMessage();
 			if (m != null) {
-				result.addError(m);
+				result.addProcessFlowError(m);
 			}
 			Exception se = e;
 			if (e instanceof SAXException) {
@@ -296,7 +296,7 @@ public class Converter implements MessageSource {
 		try {
 
 			if (model == null) {
-				result.addFatalError(this, 14);
+				result.addProcessFlowFatalError(this, 14);
 				throw new ShapeChangeAbortException();
 			}
 
@@ -306,7 +306,7 @@ public class Converter implements MessageSource {
 
 			if (selectedSchema == null || selectedSchema.isEmpty()) {
 
-				result.addWarning(this, 507);
+				result.addProcessFlowWarning(this, 507);
 				release(model);
 
 			} else {
@@ -335,7 +335,7 @@ public class Converter implements MessageSource {
 		} catch (Exception e) {
 			String m = e.getMessage();
 			if (m != null) {
-				result.addError(m);
+				result.addProcessFlowError(m);
 			}
 			Exception se = e;
 			if (e instanceof SAXException) {
@@ -455,7 +455,7 @@ public class Converter implements MessageSource {
 					}
 				}
 
-				result.addInfo(this, 500, tgt.getClassName(), modelProviderId);
+				result.addProcessFlowInfo(this, 500, tgt.getClassName(), modelProviderId);
 			}
 		}
 	}
@@ -480,7 +480,7 @@ public class Converter implements MessageSource {
 			try {
 				FileUtils.forceMkdir(outputDirectoryFile);
 			} catch (IOException e) {
-				result.addError(this, 516, outputDir);
+				result.addProcessFlowError(this, 516, outputDir);
 				return null;
 			}
 		}
@@ -496,7 +496,7 @@ public class Converter implements MessageSource {
 
 		} catch (Exception e) {
 
-			result.addError(this, 517, outputDir);
+			result.addProcessFlowError(this, 517, outputDir);
 			return null;
 		}
 	}
@@ -546,7 +546,7 @@ public class Converter implements MessageSource {
 				 */
 				processIdsToIgnore.add(trf.getId());
 
-				result.addInfo(this, 506, trf.getId());
+				result.addProcessFlowInfo(this, 506, trf.getId());
 
 			} else if (processIdsToIgnore.contains(trf.getInputId())) {
 				/*
@@ -572,16 +572,16 @@ public class Converter implements MessageSource {
 
 				// process the model
 				try {
-					result.addInfo(this, 501, trf.getId(), trf.getInputId());
+					result.addProcessFlowInfo(this, 501, trf.getId(), trf.getInputId());
 
 					GenericModel modelInput;
 					if (modelCopyRequired) {
-						result.addDebug("Creating GenericModel...");
+						result.addProcessFlowDebug("Creating GenericModel...");
 						// create generic model from model
 						modelInput = new GenericModel(model);
-						result.addDebug("...done.");
+						result.addProcessFlowDebug("...done.");
 					} else {
-						result.addDebug(
+						result.addProcessFlowDebug(
 								"Creation of GenericModel is not required.");
 						modelInput = (GenericModel) model;
 					}
@@ -624,26 +624,26 @@ public class Converter implements MessageSource {
 					 */
 					if (modelCopyRequired
 							&& trf.getId().equals(idOfLastEnabledTransformer)) {
-						result.addDebug(
+						result.addProcessFlowDebug(
 								"Releasing model created by processing step: "
 										+ trf.getInputId());
 						this.release(model);
 					}
 
-					result.addInfo(this, 502, trf.getId(), trf.getInputId());
+					result.addProcessFlowInfo(this, 502, trf.getId(), trf.getInputId());
 
 				} catch (ClassCastException e) {
 
 					processIdsToIgnore.add(trf.getId());
 
-					result.addError(this, 505, e.getMessage(), trf.getId());
+					result.addProcessFlowError(this, 505, e.getMessage(), trf.getId());
 
 					StackTraceElement[] stes = e.getStackTrace();
 
 					if (stes != null) {
 
 						for (StackTraceElement ste : stes) {
-							result.addDebug(ste.toString());
+							result.addProcessFlowDebug(ste.toString());
 						}
 					}
 				}
@@ -743,7 +743,7 @@ public class Converter implements MessageSource {
 				if (ns == null) {
 					ns = "(no namespace)";
 				}
-				result.addInfo(this, 1012, name, ns);
+				result.addProcessFlowInfo(this, 1012, name, ns);
 
 				if (tmode.equals(ProcessMode.disabled))
 					continue;
@@ -754,7 +754,7 @@ public class Converter implements MessageSource {
 
 					targetCalled = true;
 
-					result.addInfo(this, 503, target.getTargetName(),
+					result.addProcessFlowInfo(this, 503, target.getTargetName(),
 							modelProviderId);
 
 					StatusBoard.getStatusBoard()
@@ -815,7 +815,7 @@ public class Converter implements MessageSource {
 						try {
 							outputObserver.initialize();
 						} catch (Exception e) {
-							result.addError(this, 517, outputDirectory);
+							result.addProcessFlowError(this, 517, outputDirectory);
 						}
 					}
 				}
@@ -878,7 +878,7 @@ public class Converter implements MessageSource {
 								try {
 									outputObserver.initialize();
 								} catch (Exception e) {
-									result.addError(this, 517, outputDirectory);
+									result.addProcessFlowError(this, 517, outputDirectory);
 								}
 							}
 						}
@@ -899,7 +899,7 @@ public class Converter implements MessageSource {
 				}
 			}
 
-			result.addInfo(this, 504, tgt.getClassName(), modelProviderId);
+			result.addProcessFlowInfo(this, 504, tgt.getClassName(), modelProviderId);
 		}
 	}
 
@@ -950,7 +950,7 @@ public class Converter implements MessageSource {
 			try {
 				ClassInfo.class.getMethod(compField, (Class[]) paramTypes);
 			} catch (NoSuchMethodException e) {
-				result.addError(this, 165, sortedOpt,
+				result.addProcessFlowError(this, 165, sortedOpt,
 						target.getClass().getName());
 				return classArr;
 			}
@@ -980,7 +980,7 @@ public class Converter implements MessageSource {
 					} catch (Exception e) {
 						String m = e.getMessage();
 						if (m != null)
-							result.addError(m);
+							result.addProcessFlowError(m);
 					}
 					return 0;
 				}

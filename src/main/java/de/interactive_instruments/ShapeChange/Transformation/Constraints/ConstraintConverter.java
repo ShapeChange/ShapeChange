@@ -143,22 +143,22 @@ public class ConstraintConverter implements Transformer, MessageSource {
 
 	if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL)) {
 
-	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL);
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_INCL);
 	    applyRuleGeometryRestrictionToGeometryTaggedValue(genModel, trfConfig, rules, true);
 
 	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL)) {
 
-	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_GEOMRESTRICTIONTOGEOMTV_EXCL);
 	    applyRuleGeometryRestrictionToGeometryTaggedValue(genModel, trfConfig, rules, false);
 
 	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV)) {
 
-	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV);
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV);
 	    applyRuleCodeListRestrictionToTaggedValue(genModel, trfConfig, rules);
 
 	} else if (rules.contains(RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL)) {
 
-	    result.addInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL);
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOTV_EXCL);
 	    applyRuleValueTypeRestrictionToPropertyTaggedValue(genModel, trfConfig, rules);
 	}
 

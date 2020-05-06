@@ -509,7 +509,7 @@ public class Flattener implements Transformer, MessageSource {
 		if (rules.isEmpty())
 			return;
 
-		result.addInfo(this, 20317, "processing");
+		result.addProcessFlowInfo(this, 20317, "processing");
 
 		// apply overall processing defined for transformer
 
@@ -641,20 +641,20 @@ public class Flattener implements Transformer, MessageSource {
 
 		if (rules.contains(RULE_TRF_ALL_REMOVETYPE)) {
 
-			result.addInfo(null, 20103, RULE_TRF_ALL_REMOVETYPE);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_ALL_REMOVETYPE);
 			applyRuleRemoveType(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_DISSOLVE_MIXINS)) {
 
-			result.addInfo(null, 20103, RULE_TRF_CLS_DISSOLVE_MIXINS);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_DISSOLVE_MIXINS);
 			applyRuleDissolveMixins(genModel, trfConfig);
 		}
 
 		if (rules.contains(
 				RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY);
 
 			applyRuleRemoveObjectToFeatureTypeNavigability(genModel, trfConfig);
@@ -662,7 +662,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		if (rules.contains(RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS);
 			applyRuleRemoveFeatureTypeRelationships(genModel, trfConfig);
 		}
@@ -670,7 +670,7 @@ public class Flattener implements Transformer, MessageSource {
 		if (rules.contains(
 				RULE_TRF_PROP_REMOVE_NAVIGABILITY_BASEDON_ISFLATTARGET)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_PROP_REMOVE_NAVIGABILITY_BASEDON_ISFLATTARGET);
 			applyRuleRemoveNavigabilityBasedOnFlatTargetSetting(genModel,
 					trfConfig);
@@ -679,39 +679,39 @@ public class Flattener implements Transformer, MessageSource {
 		// ====================================
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CONSTRAINTS)) {
-			result.addInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CONSTRAINTS);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CONSTRAINTS);
 			applyRuleClsFlattenConstraints(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_ALL_FLATTEN_REMOVE_CONSTRAINTS);
 			applyRuleClsFlattenRemoveConstraints(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CODELISTS)) {
-			result.addInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CODELISTS);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_ALL_FLATTEN_CODELISTS);
 			applyRuleFlattenCodeLists(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_ONINAS)) {
-			result.addInfo(null, 20103, RULE_TRF_PROP_FLATTEN_ONINAS);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_ONINAS);
 			applyRuleONINAs(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_OPTIONALITY)) {
-			result.addInfo(null, 20103, RULE_TRF_PROP_OPTIONALITY);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_OPTIONALITY);
 			applyRuleOptionality(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_PROP_FLATTEN_TYPE_MAP_TO_SIMPLEBASETYPE);
 			applyRuleBasicTypeToSimpleBaseType(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_FLATTEN_INHERITANCE)) {
-			result.addInfo(null, 20103, RULE_TRF_CLS_FLATTEN_INHERITANCE);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_FLATTEN_INHERITANCE);
 			applyRuleInheritance(genModel, trfConfig);
 		}
 
@@ -724,28 +724,28 @@ public class Flattener implements Transformer, MessageSource {
 			identifyCircularDependencies(
 					computeTypesToProcessForFlattenTypes(genModel, trfConfig));
 
-			result.addInfo(REQ_FLATTEN_TYPES_IDENTIFY_CIRCULAR_DEPENDENCIES
+			result.addProcessFlowInfo(REQ_FLATTEN_TYPES_IDENTIFY_CIRCULAR_DEPENDENCIES
 					+ " completed.");
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_MULTIPLICITY)) {
-			result.addInfo(null, 20103, RULE_TRF_PROP_FLATTEN_MULTIPLICITY);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_MULTIPLICITY);
 			applyRuleMultiplicity(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES);
 			applyRuleUnionReplace(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_TYPES)) {
-			result.addInfo(null, 20103, RULE_TRF_PROP_FLATTEN_TYPES);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_TYPES);
 			applyRuleFlattenTypes(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_NAME)) {
-			result.addInfo(null, 20103, RULE_TRF_ALL_FLATTEN_NAME);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_ALL_FLATTEN_NAME);
 			applyRuleAllFlattenName(genModel, trfConfig);
 		}
 
@@ -754,37 +754,37 @@ public class Flattener implements Transformer, MessageSource {
 		if (rules.contains(RULE_TRF_PROP_REMOVE_NAME_AND_CODE_COMPONENT)
 				|| rules.contains(
 						RULE_TRF_PROP_REMOVE_NAME_AND_ALIAS_COMPONENT)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_PROP_REMOVE_NAME_AND_CODE_COMPONENT + "/"
 							+ RULE_TRF_PROP_REMOVE_NAME_AND_ALIAS_COMPONENT);
 			applyRulePropFlattenRemoveNameAndCodeComponent(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES);
 			applyRulePropFlattenHomogeneousGeometries(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_PROP_UNION_DIRECT_OPTIONALITY)) {
-			result.addInfo(null, 20103, RULE_TRF_PROP_UNION_DIRECT_OPTIONALITY);
+			result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_UNION_DIRECT_OPTIONALITY);
 			applyRulePropUnionDirectOptionality(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_CLS_REMOVE_INHERITANCE_RELATIONSHIP);
 			applyRuleRemoveInheritanceRelationship(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE)) {
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_CLS_FLATTEN_GEOMETRY_TYPE_INHERITANCE);
 			applyRuleFlattenGeometryTypeInheritance(genModel, trfConfig);
 		}
 
 		// postprocessing
-		result.addInfo(this, 20317, "postprocessing");
+		result.addProcessFlowInfo(this, 20317, "postprocessing");
 
 		if (rules.contains(RULE_TRF_ALL_FLATTEN_CONSTRAINTS)) {
 

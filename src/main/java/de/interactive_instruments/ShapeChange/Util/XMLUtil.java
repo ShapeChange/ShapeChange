@@ -53,6 +53,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -292,5 +293,19 @@ public class XMLUtil {
 	}
 
 	return result;
+    }
+
+    /**
+     * Adds an attribute to the given element.
+     * 
+     * @param document The document to which the element belongs
+     * @param e        The element to which the attribute shall be added
+     * @param attName  name of the new attribute
+     * @param attValue value of the new attribute
+     */
+    public static void addAttribute(Document document, Element e, String attName, String attValue) {
+	Attr att = document.createAttribute(attName);
+	att.setValue(attValue);
+	e.setAttributeNode(att);
     }
 }

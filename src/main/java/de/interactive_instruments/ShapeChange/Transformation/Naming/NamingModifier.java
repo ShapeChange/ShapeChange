@@ -247,10 +247,12 @@ public class NamingModifier implements Transformer, MessageSource {
 		// execute rules
 
 		if (rules.contains(RULE_TRF_ADD_SUFFIX)) {
+		    	result.addProcessFlowInfo(null, 20103, RULE_TRF_ADD_SUFFIX);
 			applyRuleAddSuffix(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TRF_CAMEL_CASE_TO_UPPER_CASE)) {
+		    	result.addProcessFlowInfo(null, 20103, RULE_TRF_CAMEL_CASE_TO_UPPER_CASE);
 			applyRuleCamelCaseToUpperCase(genModel, trfConfig);
 		}
 
