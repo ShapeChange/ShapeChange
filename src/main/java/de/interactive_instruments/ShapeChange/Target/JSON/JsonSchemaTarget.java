@@ -491,8 +491,16 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	Optional<ProcessMapEntry> pme = mapEntry(ci);
 
-	if (pme.isPresent()) {
-	    result.addInfo(this, 22, ci.name(), pme.get().getTargetType());
+	if (pme.isPresent() && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme.get(), ci.id())) {
+	    if (mapEntryParamInfos.hasCharacteristic(ci.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
+		    JsonSchemaConstants.ME_PARAM_FORMATTED, JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT)) {
+		result.addInfo(this, 23, ci.name(), pme.get().getTargetType(),
+			mapEntryParamInfos.getCharacteristic(ci.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
+				JsonSchemaConstants.ME_PARAM_FORMATTED,
+				JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT));
+	    } else {
+		result.addInfo(this, 22, ci.name(), pme.get().getTargetType());
+	    }
 	    return;
 	}
 
@@ -549,6 +557,37 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     }
 
     /**
+     * @param pme    map entry that would apply for the type with given ID
+     * @param typeId ID of the type to check
+     * @return <code>true</code>, if the map entry shall be ignored for the type
+     *         with given id because the map entry has parameter
+     *         {@value JsonSchemaConstants#ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA}
+     *         and the type is encoded and owned by one of the schemas selected for
+     *         processing; else <code>false</code>
+     */
+    public boolean ignoreMapEntryForTypeFromSchemaSelectedForProcessing(ProcessMapEntry pme, String typeId) {
+
+	if (StringUtils.isBlank(typeId)) {
+
+	    return false;
+
+	} else {
+
+	    ClassInfo type = model.classById(typeId);
+
+	    if (type == null || !JsonSchemaTarget.isEncoded(type) || !model.isInSelectedSchemas(type)) {
+		return false;
+	    } else {
+		if (mapEntryParamInfos.hasParameter(pme,
+			JsonSchemaConstants.ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA)) {
+		    return true;
+		} else
+		    return false;
+	    }
+	}
+    }
+
+    /**
      * Search for the simple JSON Schema type with which the given class - or one of
      * its supertypes - is implemented. NOTE: a tagged value 'base' that may be
      * defined on the supertype (typically containing the name of an XML Schema data
@@ -566,7 +605,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	// First, check if the class itself is mapped to a simple JSON Schema type
 	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-	if (pme != null) {
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, ci.id())) {
 	    JsonSchemaTypeInfo jsTypeInfo = identifyJsonSchemaType(pme, typeName, encodingRule);
 	    if (jsTypeInfo.isSimpleType()) {
 		return jsTypeInfo;
@@ -885,6 +924,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type. However, that JSON Schema type is not one of 'string', 'number', or 'boolean'. The JSON Schema type is '$2$' - which does not make sense for a basic type. Type '$1$' will be ignored.";
 	case 22:
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+	case 23:
+	    return "Type '$1$' has been mapped to '$2$' with format '$3$', as defined by the configuration.";
 
 	case 101:
 	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";

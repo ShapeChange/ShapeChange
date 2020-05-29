@@ -1825,17 +1825,27 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * @param ciToRemove tbd
      */
     public void remove(GenericClassInfo ciToRemove) {
-	remove(ciToRemove, false);
+	remove(ciToRemove, false, false);
     }
 
     /**
      * @param ciToRemove
-     * @param keepAssociationProperties true if navigable properties of the
-     *                                  association that the given class may be an
-     *                                  association class for shall not be removed
-     *                                  from the model, else false
+     * @param keepAssociationProperties            true if navigable properties of
+     *                                             the association that the given
+     *                                             class may be an association class
+     *                                             for shall not be removed from the
+     *                                             model, else false
+     * @param keepPropertiesWithTheTypeAsValueType <code>true</code>, if properties
+     *                                             that have that type as value type
+     *                                             shall be kept, just with type
+     *                                             info id set to REMOVED, else
+     *                                             <code>false</code>; if the
+     *                                             property is a navigable
+     *                                             association role, it will be
+     *                                             turned into an attribute
      */
-    private void remove(GenericClassInfo ciToRemove, boolean keepAssociationProperties) {
+    private void remove(GenericClassInfo ciToRemove, boolean keepAssociationProperties,
+	    boolean keepPropertiesWithTheTypeAsValueType) {
 
 	/*
 	 * Ensure that the class is only removed if it is still registered in the model
@@ -1878,17 +1888,41 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	    if (piToRemove.typeInfo().id.equals(ciToRemove.id())) {
 
-		propsToRemove.add(piToRemove);
+		if (keepPropertiesWithTheTypeAsValueType) {
+		    piToRemove.typeInfo().id = "REMOVED";
+		} else {
+		    propsToRemove.add(piToRemove);
+		}
 
 		// also check for associations where the class is the type of a
 		// non-navigable association end
 		AssociationInfo association = piToRemove.association();
 		if (association != null) {
 		    if (association.end1() != null) {
-			propsToRemove.add(association.end1());
+			if (keepPropertiesWithTheTypeAsValueType && association.end1().isNavigable()
+				&& association.end1().typeInfo().id.equals(ciToRemove.id())) {
+			    association.end1().typeInfo().id = "REMOVED";
+			    GenericPropertyInfo genEnd1 = (GenericPropertyInfo) association.end1();
+			    genEnd1.setAssociation(null);
+			    genEnd1.setComposition(true);
+			    genEnd1.setAggregation(false);
+			    genEnd1.setAttribute(true);
+			} else {
+			    propsToRemove.add(association.end1());
+			}
 		    }
 		    if (association.end2() != null) {
-			propsToRemove.add(association.end2());
+			if (keepPropertiesWithTheTypeAsValueType && association.end2().isNavigable()
+				&& association.end2().typeInfo().id.equals(ciToRemove.id())) {
+			    association.end2().typeInfo().id = "REMOVED";
+			    GenericPropertyInfo genEnd2 = (GenericPropertyInfo) association.end2();
+			    genEnd2.setAssociation(null);
+			    genEnd2.setComposition(true);
+			    genEnd2.setAggregation(false);
+			    genEnd2.setAttribute(true);
+			} else {
+			    propsToRemove.add(association.end2());
+			}
 		    }
 		    associationsToRemove.add(association);
 		}
@@ -2493,7 +2527,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 			 * NOTE for cast: the cast should be safe, because ci belongs to a
 			 * GenericPackageInfo
 			 */
-			this.remove((GenericClassInfo) ci);
+			this.remove((GenericClassInfo) ci, false, true);
 		    }
 		}
 
@@ -2570,7 +2604,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	    if (genAI.assocClass() instanceof GenericClassInfo) {
 
-		this.remove((GenericClassInfo) genAI.assocClass(), true);
+		this.remove((GenericClassInfo) genAI.assocClass(), true, false);
 
 	    } else {
 

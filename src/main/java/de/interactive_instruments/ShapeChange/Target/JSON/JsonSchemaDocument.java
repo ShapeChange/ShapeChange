@@ -1304,7 +1304,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
-	if (pme != null) {
+	if (pme != null && !jsonSchemaTarget.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, ci.id())) {
 
 	    // check if the target type is one of the simple types defined by JSON Schema
 	    Optional<JsonSchemaType> simpleType = JsonSchemaType.fromString(pme.getTargetType());
@@ -1385,9 +1385,14 @@ public class JsonSchemaDocument implements MessageSource {
 
 	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
-	if (pme != null) {
+	if (pme != null && !jsonSchemaTarget.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
 
-	    jsTypeInfo = jsonSchemaTarget.identifyJsonSchemaType(pme, typeName, encodingRule);
+	    if (pme.hasTargetType()) {
+		jsTypeInfo = jsonSchemaTarget.identifyJsonSchemaType(pme, typeName, encodingRule);
+	    } else {
+		result.addInfo(this, 121, typeName);
+		jsTypeInfo = null;
+	    }
 
 	} else {
 
@@ -1458,7 +1463,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	return Optional.ofNullable(jsTypeInfo);
     }
-
+    
     public void write() {
 
 	JsonSerializationContext context = new JsonSerializationContext();
@@ -1545,6 +1550,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Literal encoding type for class '$1$' determined to be '$2$'. No JSON Schema type could be identified for that encoding type. Using JSON Schema type 'string'.";
 	case 120:
 	    return "Literal encoding type for enumeration '$1$' must be a simple JSON Schema type. A schema reference was found: '$2$'. Assuming that the referenced JSON Schema contains a type definition for JSON Schema simple type 'string'. This will affect how the enums are encoded.";
+	case 121:
+	    return "??No target type is defined in map entry for type '$1$'. This is valid if, in the JSON encoding, the type does not require a specific type restriction.";
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}

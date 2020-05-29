@@ -45,71 +45,86 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaT
  *
  */
 public class JsonSchemaTypeInfo {
-    
+
     protected String ref = null;
     protected JsonSchemaType simpleType = null;
     protected String format = null;
     protected boolean isGeometry = false;
-    
+
     /**
      * @return the ref
      */
     public String getRef() {
-        return ref;
+	return ref;
     }
+
     /**
      * @param ref the ref to set
      */
     public void setRef(String ref) {
-        this.ref = ref;
+	this.ref = ref;
     }
+
     /**
      * @return the simpleType
      */
     public JsonSchemaType getSimpleType() {
-        return simpleType;
+	return simpleType;
     }
+
     /**
      * @param simpleType the simpleType to set
      */
     public void setSimpleType(JsonSchemaType simpleType) {
-        this.simpleType = simpleType;
+	this.simpleType = simpleType;
     }
-    
+
     public boolean isReference() {
 	return this.ref != null;
     }
-    
+
     public boolean isSimpleType() {
 	return this.simpleType != null;
     }
+
     /**
      * @return the format
      */
     public String getFormat() {
-        return format;
+	return format;
     }
+
     /**
      * @param format the format to set
      */
     public void setFormat(String format) {
-        this.format = format;
+	this.format = format;
     }
-    
+
     public boolean hasFormat() {
 	return StringUtils.isNotBlank(this.format);
     }
+
     /**
      * @return the isGeometry
      */
     public boolean isGeometry() {
-        return isGeometry;
+	return isGeometry;
     }
+
     /**
      * @param isGeometry the isGeometry to set
      */
     public void setGeometry(boolean isGeometry) {
-        this.isGeometry = isGeometry;
+	this.isGeometry = isGeometry;
+    }
+
+    /**
+     * @return <code>true</code>, if the type represents a reference with a
+     *         non-empty value, else <code>false</code>
+     */
+    public boolean hasRef() {
+	return StringUtils.isNotBlank(this.ref);
     }
 
 }
