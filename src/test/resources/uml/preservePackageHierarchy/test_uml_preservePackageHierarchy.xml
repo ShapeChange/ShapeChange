@@ -43,7 +43,7 @@
 			<targetParameter name="outputDirectory" value="testResults/uml/preservePackageHierarchy/eap" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
 			<targetParameter name="documentationTemplate" value="[[documentation]]" />
-			<targetParameter name="omitOutputPackageDateTime"
+			<targetParameter name="omitOutputPackage"
 				value="true" />
 			<targetParameter name="preservePackageHierarchy"
 				value="true" />

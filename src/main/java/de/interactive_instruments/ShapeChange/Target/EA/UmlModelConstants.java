@@ -122,6 +122,51 @@ public class UmlModelConstants {
      * Default Value: false
      *
      * <p>
+     * Explanation: Can be used to prevent the addition of a new
+     * class view package as child of the root model (package). That new package is typically 
+     * added by ShapeChange to store the output of the target execution.
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_OMIT_OUTPUT_PACKAGE = "omitOutputPackage";
+
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: String
+     *
+     * <p>
+     * Default Value: ShapeChangeOutput
+     *
+     * <p>
+     * Explanation: Define the name of the output package that will be added by ShapeChange 
+     * as child of the root model package (unless parameter {@value #PARAM_OMIT_OUTPUT_PACKAGE} is set to true). 
+     * The current date and time will be added to that name (unless parameter {@value #PARAM_OMIT_OUTPUT_PACKAGE_DATETIME} is set to true).
+     *
+     * <p>
+     * Applies to Rule(s): none – default behavior
+     */
+    public static final String PARAM_OUTPUT_PACKAGE_NAME = "outputPackageName";
+
+    
+    /**
+     * Alias: none
+     *
+     * <p>
+     * Required / Optional: optional
+     *
+     * <p>
+     * Type: Boolean
+     *
+     * <p>
+     * Default Value: false
+     *
+     * <p>
      * Explanation: If set to true, the package hierarchy within schemas selected
      * for processing, and also above such schemas, is preserved.
      *

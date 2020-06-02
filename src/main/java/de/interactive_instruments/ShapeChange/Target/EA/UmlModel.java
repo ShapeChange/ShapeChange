@@ -108,6 +108,7 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static String documentationNoValue = null;
     private static String author = null;
     private static String status = null;
+    private static String outputPackageName = null;
     private static boolean includeAssociationEndOwnership = false;
     private static boolean mergeConstraintCommentsIntoText = false;
     private static Pattern ignoreTaggedValuesPattern = null;
@@ -116,6 +117,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
     private static Repository rep = null;
     private static Integer pOut_EaPkgId = null;
+    private static String pOut_EaPkgName = null;
     private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
     private static Map<ClassInfo, Integer> elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
     /**
@@ -149,6 +151,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    outputFilename = options.parameterAsString(this.getClass().getName(),
 		    UmlModelConstants.PARAM_MODEL_FILENAME, "ShapeChangeExport.eap", false, true);
+
+	    outputPackageName = options.parameterAsString(this.getClass().getName(),
+		    UmlModelConstants.PARAM_OUTPUT_PACKAGE_NAME, "ShapeChangeOutput", false, true);
 
 	    // change the default documentation template?
 	    documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
@@ -277,40 +282,50 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    Collection<Package> c = rep.GetModels();
 	    Package root = c.GetAt((short) 0);
 
-	    String outputPackageName = "ShapeChangeOutput";
+	    boolean omitOutputPackage = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE, false);
 
-	    boolean omitOutputPackageDateTime = options.parameterAsBoolean(this.getClass().getName(),
-		    UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
+	    if (!omitOutputPackage) {
 
-	    if (!omitOutputPackageDateTime) {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-		df.setTimeZone(tz);
-		outputPackageName += "-" + df.format(new Date());
-	    }
+		boolean omitOutputPackageDateTime = options.parameterAsBoolean(this.getClass().getName(),
+			UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
 
-	    Package pOut = root.GetPackages().AddNew(outputPackageName, "Class View");
-	    if (!pOut.Update()) {
-		result.addError("EA-Fehler: " + pOut.GetLastError());
-	    }
-
-	    if (author != null) {
-		try {
-		    EAElementUtil.setEAAuthor(pOut.GetElement(), author);
-		} catch (EAException e) {
-		    result.addError(this, 10011);
+		if (!omitOutputPackageDateTime) {
+		    TimeZone tz = TimeZone.getTimeZone("UTC");
+		    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+		    df.setTimeZone(tz);
+		    outputPackageName += "-" + df.format(new Date());
 		}
-	    }
 
-	    if (status != null) {
-		try {
-		    EAElementUtil.setEAStatus(pOut.GetElement(), status);
-		} catch (EAException e) {
-		    result.addError(this, 10012);
+		Package pOut = root.GetPackages().AddNew(outputPackageName, "Class View");
+		if (!pOut.Update()) {
+		    result.addError("EA-Fehler: " + pOut.GetLastError());
 		}
-	    }
 
-	    pOut_EaPkgId = pOut.GetPackageID();
+		if (author != null) {
+		    try {
+			EAElementUtil.setEAAuthor(pOut.GetElement(), author);
+		    } catch (EAException e) {
+			result.addError(this, 10011);
+		    }
+		}
+
+		if (status != null) {
+		    try {
+			EAElementUtil.setEAStatus(pOut.GetElement(), status);
+		    } catch (EAException e) {
+			result.addError(this, 10012);
+		    }
+		}
+
+		pOut_EaPkgId = pOut.GetPackageID();
+		pOut_EaPkgName = outputPackageName;
+
+	    } else {
+
+		pOut_EaPkgId = root.GetPackageID();
+		pOut_EaPkgName = root.GetName();
+	    }
 
 	    // load stereotype mappings
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
@@ -370,9 +385,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 	 * created
 	 */
 	while (!hierarchy.isEmpty()) {
+
 	    PackageInfo pkg = hierarchy.poll();
+
 	    if (eaPkgIdByPackageInfo.containsKey(pkg)) {
 		result = eaPkgIdByPackageInfo.get(pkg);
+	    } else if (pkg.name().equals(pOut_EaPkgName)) {
+		eaPkgIdByPackageInfo.put(pkg, pOut_EaPkgId);
+		result = pOut_EaPkgId;
 	    } else {
 		int newPkgId = EARepositoryUtil.createEAPackage(rep, pkg, result);
 		result = newPkgId;
@@ -866,6 +886,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	outputFilename = null;
 	rep = null;
 	pOut_EaPkgId = null;
+	pOut_EaPkgName = null;
 
 	associations = new HashSet<>();
 	elementIdByClassInfo = new HashMap<>();
@@ -882,6 +903,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	author = null;
 	status = null;
+	outputPackageName = null;
     }
 
     @Override
