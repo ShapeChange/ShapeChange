@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.sparx</groupId>
 			<artifactId>eaapi</artifactId>
-			<version>14.1.1428</version>
+			<version>15.1.1529</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

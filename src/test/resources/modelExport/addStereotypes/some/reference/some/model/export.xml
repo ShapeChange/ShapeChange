@@ -244,8 +244,16 @@
         <sc:Property>
           <sc:name>role_Sas85</sc:name>
           <sc:id>Sas85</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>1</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>1</sc:sequenceNumber>
           <sc:typeId>163</sc:typeId>
           <sc:typeName>Class1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
