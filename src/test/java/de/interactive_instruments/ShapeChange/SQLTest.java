@@ -206,4 +206,12 @@ public class SQLTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/sql/repSchemaGeometryAnnotation",
 		"src/test/resources/sql/repSchemaGeometryAnnotation/reference");
     }
+    
+    @Test
+    public void testReflexiveRelationshipFieldSuffix() {
+
+	multiTest("src/test/resources/sql/reflexiveRelationshipFieldSuffix/testEA_sql_reflexiveRelationshipFieldSuffix.xml",
+		new String[] { "sql" }, "testResults/sql/reflexiveRelationshipFieldSuffix",
+		"src/test/resources/sql/reflexiveRelationshipFieldSuffix/reference");
+    }
 }
