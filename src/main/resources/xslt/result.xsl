@@ -137,28 +137,28 @@ return true;
 		 <table>
 		  <tbody>
 		   <tr>
-		    <th>Process</th>
 		    <th>Process Flow</th>
+		    <th>Process Execution</th>		    
 		   </tr>
 		   <tr>
-		    <td><a onclick="return toggleMe('Debug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a></td>
 		    <td><a onclick="return toggleMe('ProcessFlowDebug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a></td>
+		    <td><a onclick="return toggleMe('Debug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Debug</a></td>
 		   </tr>
 		   <tr>
-		    <td><a onclick="return toggleMe('Info')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a></td>
 		    <td><a onclick="return toggleMe('ProcessFlowInfo')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a></td>
-		   </tr>
+		    <td><a onclick="return toggleMe('Info')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Info</a></td>
+		    </tr>
 		   <tr>
-		    <td><a onclick="return toggleMe('Warning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a></td>
 		    <td><a onclick="return toggleMe('ProcessFlowWarning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a></td>
+		    <td><a onclick="return toggleMe('Warning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Warning</a></td>
 		   </tr>
 		   <tr>
-		    <td><a onclick="return toggleMe('Error')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a></td>
 		    <td><a onclick="return toggleMe('ProcessFlowError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a></td>
+		    <td><a onclick="return toggleMe('Error')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Error</a></td>
 		   </tr>
 		   <tr>
-		    <td><a onclick="return toggleMe('FatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a></td>
 		    <td><a onclick="return toggleMe('ProcessFlowFatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a></td>
+		    <td><a onclick="return toggleMe('FatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""/><xsl:text> </xsl:text>Fatal Error</a></td>
 		   </tr>
 		  </tbody>
 		 </table>

@@ -93,6 +93,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     public static final String PREFIX_ISO_19150_2 = "iso19150-2";
 
     public static final String NS_XMLNS = "http://www.w3.org/2000/xmlns/";
+    public static final String NS_QNAME_ERROR = "http://example.org/qname/error/";
+    public static final String NS_QNAME_ERROR_PREFIX = "qnerr";
 
     /**
      * NOTE: this tagged value is usually set by ShapeChange internally; if it is
@@ -1305,10 +1307,14 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      *         <code>null</code> if no such prefix was found.
      */
     public String computePrefixForRdfNamespace(String rdfns) {
+	
+	if(NS_QNAME_ERROR.equals(rdfns)) {
+	    return NS_QNAME_ERROR_PREFIX;
+	}
 
 	// try to identify via namespace configuration info
 	String nsabr = config.nsabrForNamespace(rdfns);
-
+	
 	if (nsabr == null) {
 
 	    // try to find namespace via local ontologies
