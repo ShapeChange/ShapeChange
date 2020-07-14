@@ -1048,17 +1048,17 @@ public class Options {
     public void setParameter(String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
-	    fParameters.put(k1, s);
+	    fParameters.put(k1.trim(), s);
 	else
-	    fParameters.put(k1, s1);
+	    fParameters.put(k1.trim(), s1);
     }
 
     public void setParameter(String t, String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
-	    fParameters.put(t + "::" + k1, s);
+	    fParameters.put(t + "::" + k1.trim(), s);
 	else
-	    fParameters.put(t + "::" + k1, s1);
+	    fParameters.put(t + "::" + k1.trim(), s1);
     }
 
     public String replaceValue(String k1) {
