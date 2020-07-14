@@ -350,7 +350,13 @@ public class UmlModel implements SingleTarget, MessageSource {
 	try {
 	    if (preservePackageHierarchy) {
 		int ownerPkgEaPkgId = createPackageHierarchy(pi);
-		clonePackage(pi, ownerPkgEaPkgId);
+		/*
+		 * Take into account that the package may have already been created while
+		 * creating the package hierarchy
+		 */
+		if (!eaPkgIdByPackageInfo.containsKey(pi)) {
+		    clonePackage(pi, ownerPkgEaPkgId);
+		}		
 	    } else {
 		clonePackage(pi, pOut_EaPkgId);
 	    }
