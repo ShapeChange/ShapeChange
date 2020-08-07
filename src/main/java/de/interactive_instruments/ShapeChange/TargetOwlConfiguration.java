@@ -120,7 +120,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	 */
 	public TargetOwlConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
-			Map<String, ProcessRuleSet> ruleSets, Set<String> inputIds,
+			Map<String, ProcessRuleSet> ruleSets, SortedSet<String> inputIds,
 			List<Namespace> namespaces, Element advancedProcessConfigurations,
 			Map<String, List<RdfTypeMapEntry>> rdfTypeMapEntries,
 			Map<String, List<RdfPropertyMapEntry>> rdfPropertyMapEntries,

@@ -45,7 +45,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,6 +64,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -250,13 +250,16 @@ public class ConstraintConverter implements Transformer, MessageSource {
 
 	    Pattern propertyNameDetectionPattern = Pattern.compile("^.*inv: (self\\.)?(\\w+).*$");
 
+	    Pattern disallowedKindDetectionPattern = Pattern.compile("oclIsKindOf\\((\\w+)");
+	    Pattern disallowedTypeDetectionPattern = Pattern.compile("oclIsTypeOf\\((\\w+)");
+
 	    for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
 		if (genCi.category() == Options.ENUMERATION || genCi.category() == Options.CODELIST) {
 		    continue;
 		}
 
-		SortedMap<String, String> allowedTypesByPropertyName = new TreeMap<>();
+		ValueTypeOptions vto = new ValueTypeOptions();
 
 		for (Constraint con : genCi.constraints()) {
 
@@ -277,12 +280,62 @@ public class ConstraintConverter implements Transformer, MessageSource {
 			     * need to check if the value type of the property is one of the supertypes for
 			     * which a type restriction is defined.
 			     */
-			    String propertyValueTypeName = genCi.property(propertyName).typeInfo().name;
+			    PropertyInfo genPi = genCi.property(propertyName);
+			    String propertyValueTypeName = genPi.typeInfo().name;
 
 			    if (valueTypeRepTypes.containsKey(propertyValueTypeName)) {
 
+				/*
+				 * We need to identify which types are disallowed by the constraint (taking into
+				 * account the difference between oclIsTypeOf and oclIsKindOf)
+				 */
+				Set<String> disallowedTypes = new HashSet<>();
+
+				Matcher matcherOnOclIsKindOf = disallowedKindDetectionPattern.matcher(con.text());
+				while (matcherOnOclIsKindOf.find()) {
+				    String type = matcherOnOclIsKindOf.group(1);
+				    disallowedTypes.add(type);
+				    // identify all subtypes
+				    ClassInfo typeCi = genModel.classByName(type);
+				    if (typeCi != null) {
+					SortedSet<ClassInfo> allSubtypes = typeCi.subtypesInCompleteHierarchy();
+					for (ClassInfo subtype : allSubtypes) {
+					    disallowedTypes.add(subtype.name());
+					}
+				    }
+				}
+
+				Matcher matcherOnOclIsTypeOf = disallowedTypeDetectionPattern.matcher(con.text());
+				while (matcherOnOclIsTypeOf.find()) {
+				    String type = matcherOnOclIsTypeOf.group(1);
+				    disallowedTypes.add(type);
+				}
+
+				/*
+				 * Now we need to identify which types are generally allowed, taking into
+				 * account that transformation parameter 'valueTypeRepresentationTypes' may
+				 * contain the name of a supertype but not the names of its subtypes.
+				 */
+
 				SortedMap<String, Optional<String>> typeMap = valueTypeRepTypes
 					.get(propertyValueTypeName);
+
+				SortedMap<String, Optional<String>> generallyAllowedTypeMap = new TreeMap<>();
+				for (Entry<String, Optional<String>> e : typeMap.entrySet()) {
+				    String generallyAllowedTypeName = e.getKey();
+				    // can be null
+				    Optional<String> vtTargetName = e.getValue();
+
+				    generallyAllowedTypeMap.put(generallyAllowedTypeName, vtTargetName);
+
+				    ClassInfo typeCi = genModel.classByName(generallyAllowedTypeName);
+				    if (typeCi != null) {
+					SortedSet<ClassInfo> allSubtypes = typeCi.subtypesInCompleteHierarchy();
+					for (ClassInfo subtype : allSubtypes) {
+					    generallyAllowedTypeMap.put(subtype.name(), typeMap.get(subtype.name()));
+					}
+				    }
+				}
 
 				/*
 				 * now identify the types from the supertype hierarchy that are allowed for the
@@ -290,15 +343,15 @@ public class ConstraintConverter implements Transformer, MessageSource {
 				 */
 				SortedSet<String> allowedTypeNames = new TreeSet<>();
 
-				for (Entry<String, Optional<String>> valueType : typeMap.entrySet()) {
+				for (Entry<String, Optional<String>> valueType : generallyAllowedTypeMap.entrySet()) {
 
 				    String vtName = valueType.getKey();
 				    // can be null
 				    Optional<String> vtTargetName = valueType.getValue();
 
-				    if (!con.text().contains(vtName)) {
+				    if (!disallowedTypes.contains(vtName)) {
 
-					if (vtTargetName.isEmpty()) {
+					if (vtTargetName == null || vtTargetName.isEmpty()) {
 					    allowedTypeNames.add(vtName);
 					} else {
 					    allowedTypeNames.add(vtTargetName.get());
@@ -307,32 +360,31 @@ public class ConstraintConverter implements Transformer, MessageSource {
 				}
 
 				if (allowedTypeNames.size() > 0) {
-				    String join = commaJoiner.join(allowedTypeNames);
-				    allowedTypesByPropertyName.put(propertyName, join);
+				    vto.add(propertyName,
+					    (!genPi.isAttribute() && genPi.association().assocClass() != null),
+					    allowedTypeNames);
 				}
 			    }
 			}
 		    }
 		}
 
-		if (!allowedTypesByPropertyName.isEmpty()) {
+		if (!vto.isEmpty()) {
 
 		    // create tag value
-		    String newValue = allowedTypesByPropertyName.entrySet().stream()
-			    .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(";"));
 
 		    // check overwrite - warn if a value already exists for the tag
 		    String oldValue = genCi.taggedValue(VALUE_TYPE_OPTIONS_TV_NAME);
 
 		    if (StringUtils.isNotBlank(oldValue)) {
-			MessageContext mc = result.addWarning(this, 301, genCi.name(), oldValue, newValue);
+			MessageContext mc = result.addWarning(this, 301, genCi.name(), oldValue, vto.toString());
 			if (mc != null) {
 			    mc.addDetail(this, 1, genCi.fullName());
 			}
 		    }
 
 		    // finally, set new tag value
-		    genCi.setTaggedValue(VALUE_TYPE_OPTIONS_TV_NAME, newValue, false);
+		    genCi.setTaggedValue(VALUE_TYPE_OPTIONS_TV_NAME, vto.toString(), false);
 		}
 	    }
 	}

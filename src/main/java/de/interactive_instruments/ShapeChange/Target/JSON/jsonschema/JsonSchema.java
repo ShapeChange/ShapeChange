@@ -300,6 +300,12 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 
 	return this;
     }
+    
+    public JsonSchema minLength(int minLength) {
+	this.add(new MinLengthKeyword(minLength));
+
+	return this;
+    }
 
     public JsonSchema maxProperties(int count) {
 	this.add(new MaxPropertiesKeyword(count));
@@ -313,6 +319,11 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 
     public JsonSchema minimum(double minimum) {
 	this.add(new MinimumKeyword(minimum));
+	return this;
+    }
+    
+    public JsonSchema multipleOf(double multipleOf) {
+	this.add(new MultipleOfKeyword(multipleOf));
 	return this;
     }
 
@@ -585,6 +596,11 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this.stream().filter(keyword -> keyword instanceof MaxLengthKeyword)
 		.map(keyword -> ((MaxLengthKeyword) keyword).value()).findFirst();
     }
+    
+    public Optional<Integer> minLength() {
+	return this.stream().filter(keyword -> keyword instanceof MinLengthKeyword)
+		.map(keyword -> ((MinLengthKeyword) keyword).value()).findFirst();
+    }
 
     public Optional<Integer> maxItems() {
 	return this.stream().filter(keyword -> keyword instanceof MaxItemsKeyword)
@@ -600,6 +616,11 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this.stream().filter(keyword -> keyword instanceof MinimumKeyword)
 		.map(keyword -> ((MinimumKeyword) keyword).value()).findFirst();
     }
+    
+    public Optional<Double> multipleOf() {
+   	return this.stream().filter(keyword -> keyword instanceof MultipleOfKeyword)
+   		.map(keyword -> ((MultipleOfKeyword) keyword).value()).findFirst();
+       }
 
     public Optional<Integer> minItems() {
 	return this.stream().filter(keyword -> keyword instanceof MinItemsKeyword)

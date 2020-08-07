@@ -31,8 +31,13 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON;
 
+import java.util.Collection;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 
 /**
@@ -48,7 +53,7 @@ public class JsonSchemaTypeInfo {
 
     protected String ref = null;
     protected JsonSchemaType simpleType = null;
-    protected String format = null;
+    protected SortedMap<String,JsonSchemaKeyword> jsonSchemaKeywordsByName = new TreeMap<>();
     protected boolean isGeometry = false;
 
     /**
@@ -88,21 +93,21 @@ public class JsonSchemaTypeInfo {
     }
 
     /**
-     * @return the format
+     * @return the JSON Schema keywords defined for the type
      */
-    public String getFormat() {
-	return format;
+    public Collection<JsonSchemaKeyword> getKeywords() {
+	return this.jsonSchemaKeywordsByName.values();
     }
 
     /**
-     * @param format the format to set
+     * @param keyword to set
      */
-    public void setFormat(String format) {
-	this.format = format;
+    public void setKeyword(JsonSchemaKeyword keyword) {
+	this.jsonSchemaKeywordsByName.put(keyword.name(), keyword);
     }
 
-    public boolean hasFormat() {
-	return StringUtils.isNotBlank(this.format);
+    public boolean hasKeywords() {
+	return !this.jsonSchemaKeywordsByName.isEmpty();
     }
 
     /**

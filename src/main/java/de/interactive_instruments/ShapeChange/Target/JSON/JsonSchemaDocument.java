@@ -36,19 +36,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -73,10 +70,12 @@ import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonInteger;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.FormatKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchema;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSerializationContext;
+import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -515,7 +514,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
-	createTypeDefinition(typeInfos, jsClass);
+	createTypeDefinition(typeInfos, null, jsClass);
 
 	return jsClass;
     }
@@ -735,16 +734,11 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	String valueTypeOptionsTV = ci.taggedValue("valueTypeOptions");
-	Map<String, SortedSet<String>> valueTypeOptionsByPropName = new HashMap<>();
+	ValueTypeOptions vto;
 	if (StringUtils.isNotBlank(valueTypeOptionsTV) && ci.matches(JsonSchemaConstants.RULE_CLS_VALUE_TYPE_OPTIONS)) {
-	    String[] propValueTypeOptions = StringUtils.split(valueTypeOptionsTV, ";");
-	    for (String propValueTypeOption : propValueTypeOptions) {
-		String[] optionFacets = StringUtils.split(propValueTypeOption, "=");
-		String propertyName = optionFacets[0].trim();
-		SortedSet<String> valueTypes = Arrays.stream(optionFacets[1].split(",")).map(s -> s.trim())
-			.collect(Collectors.toCollection(TreeSet::new));
-		valueTypeOptionsByPropName.put(propertyName, valueTypes);
-	    }
+	    vto = new ValueTypeOptions(valueTypeOptionsTV);
+	} else {
+	    vto = new ValueTypeOptions();
 	}
 
 	for (PropertyInfo pi : ci.properties().values()) {
@@ -770,12 +764,9 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    Optional<SortedSet<String>> valueTypeOptions = Optional
-		    .ofNullable(valueTypeOptionsByPropName.get(pi.name()));
+	    jsProperties.property(pi.name(), jsonSchema(pi, vto));
 
-	    jsProperties.property(pi.name(), jsonSchema(pi, valueTypeOptions));
-
-	    valueTypeOptionsByPropName.remove(pi.name());
+	    vto.remove(pi.name());
 
 	    if (ci.category() != Options.UNION) {
 		// if the property is not optional, add it to the required properties
@@ -787,9 +778,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 	// create property definitions for valueTypeOptions that target properties from
 	// supertypes
-	for (Entry<String, SortedSet<String>> e : valueTypeOptionsByPropName.entrySet()) {
+	for (String supertypePropertyName : vto.getPropertiesWithValueTypeOptions()) {
 
-	    String supertypePropertyName = e.getKey();
 	    PropertyInfo supertypePi = ci.property(supertypePropertyName);
 
 	    if (supertypePi == null || ((supertypePi.categoryOfValue() == Options.FEATURE
@@ -802,29 +792,36 @@ public class JsonSchemaDocument implements MessageSource {
 		continue;
 	    }
 
-	    SortedSet<String> supertypePropertyTypeOptions = e.getValue();
+	    SortedSet<String> supertypePropertyTypeOptions = vto.getValueTypeOptions(supertypePropertyName);
 
 	    List<JsonSchemaTypeInfo> supertypePropertyTypeInfos = new ArrayList<>();
 
 	    // Create a JSON Schema to restrict the type of the supertype property
 	    JsonSchema supertypePropertyTypeRestrictionSchema = new JsonSchema();
 
-	    // Take into account inline/inlineOrByReference (byReference has already been
-	    // ruled out before)
-	    if ((supertypePi.categoryOfValue() == Options.FEATURE || supertypePi.categoryOfValue() == Options.OBJECT)
-		    && !"inline".equalsIgnoreCase(inlineOrByReference(supertypePi))) {
-
-		supertypePropertyTypeInfos.add(createJsonSchemaTypeInfoForReference());
-	    }
-	    // Now add the actual type restrictions
+	    boolean isAssociationClassRole = vto.isAssociationClassRole(supertypePropertyName);
+	    SortedMap<String, JsonSchemaTypeInfo> valueTypeOptionsByTypeName = new TreeMap<>();
 	    for (String supertypePropertyTypeOption : supertypePropertyTypeOptions) {
-
 		Optional<JsonSchemaTypeInfo> jstdOpt = identifyJsonSchemaType(supertypePropertyTypeOption, null,
 			ci.encodingRule(JsonSchemaConstants.PLATFORM));
 		if (jstdOpt.isPresent()) {
-		    supertypePropertyTypeInfos.add(jstdOpt.get());
+		    valueTypeOptionsByTypeName.put(supertypePropertyTypeOption, jstdOpt.get());
 		}
 	    }
+
+	    // Take into account inline/inlineOrByReference (byReference has already been
+	    // ruled out before)
+	    boolean byReferenceAllowedForSupertypeProperty = false;
+
+	    if ((supertypePi.categoryOfValue() == Options.FEATURE || supertypePi.categoryOfValue() == Options.OBJECT)
+		    && !"inline".equalsIgnoreCase(inlineOrByReference(supertypePi))) {
+
+		byReferenceAllowedForSupertypeProperty = true;
+		supertypePropertyTypeInfos.add(createJsonSchemaTypeInfoForReference());
+	    }
+
+	    // Now add the actual type restrictions
+
 	    // Take into account multiplicity and voidable of the supertype property
 	    JsonSchema parentForTypeSchema = supertypePropertyTypeRestrictionSchema;
 
@@ -867,8 +864,19 @@ public class JsonSchemaDocument implements MessageSource {
 		parentForTypeSchema = itemsSchema;
 		// "required" and "minItems"/"maxItems" are defined by the supertype schema
 	    }
+
 	    // create the actual type restriction schema
-	    createTypeDefinition(supertypePropertyTypeInfos, parentForTypeSchema);
+	    if (valueTypeOptionsByTypeName.isEmpty()) {
+		createTypeDefinition(supertypePropertyTypeInfos, null, parentForTypeSchema);
+	    } else {
+		if (isAssociationClassRole) {
+		    createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(valueTypeOptionsByTypeName,
+			    supertypePropertyTypeInfos, identifyJsonSchemaType(supertypePi), supertypePi.name(),
+			    byReferenceAllowedForSupertypeProperty, parentForTypeSchema);
+		} else {
+		    createTypeDefinition(valueTypeOptionsByTypeName, supertypePropertyTypeInfos, parentForTypeSchema);
+		}
+	    }
 	    /*
 	     * Finally, add another member to the "properties", to represent the type
 	     * restriction of the supertype property
@@ -979,20 +987,31 @@ public class JsonSchemaDocument implements MessageSource {
 	    byRefInfo.setRef(jsonSchemaTarget.byReferenceJsonSchemaDefinition().get());
 	} else {
 	    byRefInfo.setSimpleType(JsonSchemaType.STRING);
-	    byRefInfo.setFormat("uri");
+	    byRefInfo.setKeyword(new FormatKeyword("uri"));
 	}
 
 	return byRefInfo;
     }
 
-    private JsonSchema jsonSchema(PropertyInfo pi, Optional<SortedSet<String>> valueTypeOptions) {
+    /**
+     * @param pi               the property for which to generate a JSON Schema
+     * @param valueTypeOptions can be <code>null</code>, and not contain any options
+     *                         for the property
+     * @return JSON Schema that defines the property
+     */
+    private JsonSchema jsonSchema(PropertyInfo pi, ValueTypeOptions valueTypeOptions) {
 
 	// convert value type, voidable, and inlineOrByReference
 
 	// First, identify the JSON Schema type infos for all allowed types
 	List<JsonSchemaTypeInfo> typeOptions = new ArrayList<>();
+	JsonSchema associationClassRoleWithTypeValueOptionsSchema = null;
 
 	Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
+
+	boolean isAssociationClassRole = valueTypeOptions.isAssociationClassRole(pi.name());
+	SortedMap<String, JsonSchemaTypeInfo> valueTypeOptionsByTypeName = new TreeMap<>();
+	boolean byReferenceAllowed = false;
 
 	if (typeInfoOpt.isPresent()) {
 
@@ -1010,6 +1029,7 @@ public class JsonSchemaDocument implements MessageSource {
 		    addByReferenceOption = true;
 		} else if (!"inline".equalsIgnoreCase(inlineOrByReference(pi))) {
 		    addByReferenceOption = true;
+		    byReferenceAllowed = true;
 		}
 
 		if (addByReferenceOption) {
@@ -1019,14 +1039,17 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    if (!byReferenceOnly) {
 
-		if (valueTypeOptions.isPresent()) {
+		if (valueTypeOptions != null && valueTypeOptions.hasValueTypeOptions(pi.name())) {
 
-		    for (String piValueTypeOption : valueTypeOptions.get()) {
+		    SortedSet<String> options = valueTypeOptions.getValueTypeOptions(pi.name());
+
+		    for (String piValueTypeOption : options) {
 
 			Optional<JsonSchemaTypeInfo> jstdOpt = identifyJsonSchemaType(piValueTypeOption, null,
 				pi.encodingRule(JsonSchemaConstants.PLATFORM));
+
 			if (jstdOpt.isPresent()) {
-			    typeOptions.add(jstdOpt.get());
+			    valueTypeOptionsByTypeName.put(piValueTypeOption, jstdOpt.get());
 			}
 		    }
 
@@ -1093,7 +1116,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    JsonSchema itemsSchema = null;
-	    if (!typeOptions.isEmpty()) {
+	    if (!typeOptions.isEmpty() || associationClassRoleWithTypeValueOptionsSchema != null) {
 		itemsSchema = new JsonSchema();
 		parentForTypeSchema.items(itemsSchema);
 	    }
@@ -1108,7 +1131,16 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	// --- Create "type" member ---
-	createTypeDefinition(typeOptions, parentForTypeSchema);
+	if (valueTypeOptionsByTypeName.isEmpty()) {
+	    createTypeDefinition(typeOptions, null, parentForTypeSchema);
+	} else {
+	    if (isAssociationClassRole) {
+		createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(valueTypeOptionsByTypeName, typeOptions,
+			typeInfoOpt, pi.name(), byReferenceAllowed, parentForTypeSchema);
+	    } else {
+		createTypeDefinition(valueTypeOptionsByTypeName, typeOptions, parentForTypeSchema);
+	    }
+	}
 
 	// --- convert initial value
 	if (typeInfoOpt.isPresent()) {
@@ -1176,7 +1208,7 @@ public class JsonSchemaDocument implements MessageSource {
     private void createTypeDefinition(JsonSchemaTypeInfo typeInfo, JsonSchema parentForTypeSchema) {
 	List<JsonSchemaTypeInfo> list = new ArrayList<>();
 	list.add(typeInfo);
-	createTypeDefinition(list, parentForTypeSchema);
+	createTypeDefinition(list, null, parentForTypeSchema);
     }
 
     private void createTypeDefinition(JsonSchemaType[] types, JsonSchema parentForTypeSchema) {
@@ -1186,7 +1218,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    jsti.setSimpleType(jst);
 	    list.add(jsti);
 	}
-	createTypeDefinition(list, parentForTypeSchema);
+	createTypeDefinition(list, null, parentForTypeSchema);
     }
 
     /**
@@ -1203,10 +1235,11 @@ public class JsonSchemaDocument implements MessageSource {
      * @param parentForTypeSchema The JSON Schema definition to which the type
      *                            schema definition shall be added
      */
-    private void createTypeDefinition(List<JsonSchemaTypeInfo> typeInfos, JsonSchema parentForTypeSchema) {
+    private void createTypeDefinition(List<JsonSchemaTypeInfo> typeInfos, JsonSchema specificTypeSchema,
+	    JsonSchema parentForTypeSchema) {
 
 	List<JsonSchemaTypeInfo> simpleTypeOptions = typeInfos.stream()
-		.filter(opt -> opt.isSimpleType() && !opt.hasFormat())
+		.filter(opt -> opt.isSimpleType() && !opt.hasKeywords())
 		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
 		.collect(Collectors.toList());
 
@@ -1214,34 +1247,37 @@ public class JsonSchemaDocument implements MessageSource {
 
 	// identify other type options
 	List<JsonSchemaTypeInfo> otherTypeOptions = typeInfos.stream()
-		.filter(opt -> !opt.isSimpleType() || opt.hasFormat()).collect(Collectors.toList());
+		.filter(opt -> !opt.isSimpleType() || opt.hasKeywords()).collect(Collectors.toList());
 
-	if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30 && !simpleTypeOptions.isEmpty()) {
+	if (!simpleTypeOptions.isEmpty()) {
 
-	    Optional<JsonSchemaTypeInfo> nullTypeInfoOpt = simpleTypeOptions.stream()
-		    .filter(opt -> opt.getSimpleType() == JsonSchemaType.NULL).findFirst();
+	    if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
 
-	    if (nullTypeInfoOpt.isPresent()) {
-		simpleTypeOptions.remove(nullTypeInfoOpt.get());
-		if (otherTypeOptions.stream().anyMatch(opt -> opt.getRef() != null)) {
-		    result.addWarning(this, 118);
-		} else {
-		    parentForTypeSchema.nullable(true);
+		Optional<JsonSchemaTypeInfo> nullTypeInfoOpt = simpleTypeOptions.stream()
+			.filter(opt -> opt.getSimpleType() == JsonSchemaType.NULL).findFirst();
+
+		if (nullTypeInfoOpt.isPresent()) {
+		    simpleTypeOptions.remove(nullTypeInfoOpt.get());
+		    if (otherTypeOptions.stream().anyMatch(opt -> opt.getRef() != null)) {
+			result.addWarning(this, 118);
+		    } else {
+			parentForTypeSchema.nullable(true);
+		    }
 		}
-	    }
 
-	    if (simpleTypeOptions.size() > 1) {
-		otherTypeOptions.addAll(simpleTypeOptions);
-		simpleTypeOptions = new ArrayList<JsonSchemaTypeInfo>();
+		if (simpleTypeOptions.size() > 1) {
+		    otherTypeOptions.addAll(simpleTypeOptions);
+		    simpleTypeOptions = new ArrayList<JsonSchemaTypeInfo>();
+		} else if (!simpleTypeOptions.isEmpty()) {
+		    simpleTypeSchema.type(
+			    simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
+		}
+
 	    } else {
+
 		simpleTypeSchema.type(
 			simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
 	    }
-
-	} else {
-
-	    simpleTypeSchema
-		    .type(simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
 	}
 
 	List<JsonSchema> otherTypeSchemas = new ArrayList<>();
@@ -1251,40 +1287,230 @@ public class JsonSchemaDocument implements MessageSource {
 		otherTypeSchema.ref(otherTypeOption.getRef());
 	    } else {
 		otherTypeSchema.type(otherTypeOption.getSimpleType());
-		if (otherTypeOption.hasFormat()) {
-		    otherTypeSchema.format(otherTypeOption.getFormat());
+		if (otherTypeOption.hasKeywords()) {
+		    otherTypeSchema.addAll(otherTypeOption.getKeywords());
 		}
 	    }
 	    otherTypeSchemas.add(otherTypeSchema);
 	}
 
-	if (!simpleTypeOptions.isEmpty() && !otherTypeOptions.isEmpty()) {
+	if (specificTypeSchema != null && !specificTypeSchema.isEmpty()) {
+	    otherTypeSchemas.add(specificTypeSchema);
+	}
+
+	if (!simpleTypeSchema.isEmpty() && !otherTypeSchemas.isEmpty()) {
 
 	    /*
 	     * TODO - is "oneOf" ok here? What if two schemas match for an instance, then
 	     * this would return false. An alternative could be to use an if-then-else for
-	     * actual JSON object definitions, using the entityType as condition. Or use
-	     * anyOf, but that could lead to an incomplete validation.
+	     * actual JSON object definitions (see other createTypeDefinition methods on how
+	     * to do that), using the entityType as condition. Or use anyOf, but that could
+	     * lead to an incomplete validation.
 	     */
 
 	    // create a "oneOf" with everything else and maybe the simple type def
 	    parentForTypeSchema.oneOf(simpleTypeSchema);
 	    parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
 
-	} else if (simpleTypeOptions.isEmpty() && !otherTypeOptions.isEmpty()) {
+	} else if (simpleTypeSchema.isEmpty() && !otherTypeSchemas.isEmpty()) {
 
-	    if (otherTypeOptions.size() > 1) {
+	    if (otherTypeSchemas.size() > 1) {
 		parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
 	    } else {
 		parentForTypeSchema.addAll(otherTypeSchemas.get(0));
 	    }
 
-	} else if (!simpleTypeOptions.isEmpty() && otherTypeOptions.isEmpty()) {
+	} else if (!simpleTypeSchema.isEmpty() && otherTypeSchemas.isEmpty()) {
 	    parentForTypeSchema.addAll(simpleTypeSchema);
 	} else {
 	    // both simpleTypeOptions and otherTypeOptions are empty
 	    // possible if value type of a property was not found (error would be logged)
 	}
+    }
+
+    private void createTypeDefinition(SortedMap<String, JsonSchemaTypeInfo> typeSpecificJsonTypeInfos,
+	    List<JsonSchemaTypeInfo> additionalJsonTypes, JsonSchema parentForTypeSchema) {
+
+	List<JsonSchemaTypeInfo> simpleTypeOptions = new ArrayList<>();
+
+	List<JsonSchemaTypeInfo> simpleTypeOptionsFromAdditionalSimpleJsonTypes = additionalJsonTypes.stream()
+		.filter(opt -> opt.isSimpleType() && !opt.hasKeywords())
+		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
+		.collect(Collectors.toList());
+	simpleTypeOptions.addAll(simpleTypeOptionsFromAdditionalSimpleJsonTypes);
+
+	List<JsonSchemaTypeInfo> simpleTypeOptionsFromTypeSpecificJsonTypeInfos = typeSpecificJsonTypeInfos.values()
+		.stream().filter(opt -> opt.isSimpleType() && !opt.hasKeywords())
+		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
+		.collect(Collectors.toList());
+	simpleTypeOptions.addAll(simpleTypeOptionsFromTypeSpecificJsonTypeInfos);
+
+	JsonSchema simpleTypeSchema = new JsonSchema();
+
+	// identify other type options
+	List<JsonSchemaTypeInfo> otherTypeOptions = new ArrayList<>();
+
+	List<JsonSchemaTypeInfo> otherTypeOptionsFromAdditionalSimpleJsonTypes = additionalJsonTypes.stream()
+		.filter(opt -> !opt.isSimpleType() || opt.hasKeywords()).collect(Collectors.toList());
+	otherTypeOptions.addAll(otherTypeOptionsFromAdditionalSimpleJsonTypes);
+
+	List<JsonSchemaTypeInfo> otherTypeOptionsFromTypeSpecificJsonTypeInfos = typeSpecificJsonTypeInfos.values()
+		.stream().filter(opt -> opt.isSimpleType() && opt.hasKeywords()).collect(Collectors.toList());
+	otherTypeOptions.addAll(otherTypeOptionsFromTypeSpecificJsonTypeInfos);
+
+	// identify type specific JSON type options that are schema references
+	SortedMap<String, String> remainingSpecificTypeOptions = new TreeMap<>();
+
+	for (String typeName : typeSpecificJsonTypeInfos.keySet()) {
+	    JsonSchemaTypeInfo jsti = typeSpecificJsonTypeInfos.get(typeName);
+	    if (jsti.hasRef()) {
+		remainingSpecificTypeOptions.put(typeName, jsti.getRef());
+	    }
+	}
+
+	if (!simpleTypeOptions.isEmpty()) {
+
+	    if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+
+		Optional<JsonSchemaTypeInfo> nullTypeInfoOpt = simpleTypeOptions.stream()
+			.filter(opt -> opt.getSimpleType() == JsonSchemaType.NULL).findFirst();
+
+		if (nullTypeInfoOpt.isPresent()) {
+		    simpleTypeOptions.remove(nullTypeInfoOpt.get());
+		    if (otherTypeOptions.stream().anyMatch(opt -> opt.getRef() != null)) {
+			result.addWarning(this, 118);
+		    } else {
+			parentForTypeSchema.nullable(true);
+		    }
+		}
+
+		if (simpleTypeOptions.size() > 1) {
+		    otherTypeOptions.addAll(simpleTypeOptions);
+		    simpleTypeOptions = new ArrayList<JsonSchemaTypeInfo>();
+		} else if (!simpleTypeOptions.isEmpty()) {
+		    simpleTypeSchema.type(
+			    simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
+		}
+
+	    } else {
+
+		simpleTypeSchema.type(
+			simpleTypeOptions.stream().map(sto -> sto.getSimpleType()).toArray(JsonSchemaType[]::new));
+	    }
+	}
+
+	List<JsonSchema> otherTypeSchemas = new ArrayList<>();
+	for (JsonSchemaTypeInfo otherTypeOption : otherTypeOptions) {
+	    JsonSchema otherTypeSchema = new JsonSchema();
+	    if (otherTypeOption.isReference()) {
+		otherTypeSchema.ref(otherTypeOption.getRef());
+	    } else {
+		otherTypeSchema.type(otherTypeOption.getSimpleType());
+		if (otherTypeOption.hasKeywords()) {
+		    otherTypeSchema.addAll(otherTypeOption.getKeywords());
+		}
+	    }
+	    otherTypeSchemas.add(otherTypeSchema);
+	}
+
+	JsonSchema typeSpecificSchema = new JsonSchema();
+	if (!remainingSpecificTypeOptions.isEmpty()) {
+	    JsonSchema parentSchema = typeSpecificSchema;
+	    JsonSchema ifSchema, thenSchema, elseSchema;
+
+	    for (String typeName : remainingSpecificTypeOptions.keySet()) {
+
+		String ref = remainingSpecificTypeOptions.get(typeName);
+
+		ifSchema = new JsonSchema();
+		// TODO get target type specific entity type member name from map entry
+		ifSchema.property(jsonSchemaTarget.getEntityTypeName(),
+			(new JsonSchema()).const_(new JsonString(typeName)));
+		parentSchema.if_(ifSchema);
+
+		thenSchema = new JsonSchema();
+		thenSchema.ref(ref);
+		parentSchema.then(thenSchema);
+
+		if (remainingSpecificTypeOptions.lastKey().equals(typeName)) {
+		    // this is the last type specific option
+		    elseSchema = JsonSchema.FALSE;
+		    parentSchema.else_(elseSchema);
+		} else {
+		    elseSchema = new JsonSchema();
+		    parentSchema.else_(elseSchema);
+		    parentSchema = elseSchema;
+		}
+	    }
+	}
+
+	if (!typeSpecificSchema.isEmpty()) {
+	    otherTypeSchemas.add(typeSpecificSchema);
+	}
+
+	if (!simpleTypeSchema.isEmpty() && !otherTypeSchemas.isEmpty()) {
+
+	    parentForTypeSchema.oneOf(simpleTypeSchema);
+	    parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
+
+	} else if (simpleTypeSchema.isEmpty() && !otherTypeSchemas.isEmpty()) {
+
+	    if (otherTypeSchemas.size() > 1) {
+		parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
+	    } else {
+		parentForTypeSchema.addAll(otherTypeSchemas.get(0));
+	    }
+
+	} else if (!simpleTypeSchema.isEmpty() && otherTypeSchemas.isEmpty()) {
+	    parentForTypeSchema.addAll(simpleTypeSchema);
+	} else {
+	    // both simpleTypeOptions and otherTypeOptions are empty
+	    // possible if value type of a property was not found (error would be logged)
+	}
+    }
+
+    private void createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(
+	    SortedMap<String, JsonSchemaTypeInfo> valueTypeOptionsByTypeName,
+	    List<JsonSchemaTypeInfo> additionalJsonTypeInfosForAssociationRole,
+	    Optional<JsonSchemaTypeInfo> jsonTypeInfoForAssociationRoleValueType, String associationRoleName,
+	    boolean byReferenceAllowedForAssociationRole, JsonSchema parentForTypeSchema) {
+
+	// create schema to restrict association role copy)
+	JsonSchema associationClassRoleCopyRestrictionSchema = new JsonSchema();
+	associationClassRoleCopyRestrictionSchema.type(JsonSchemaType.OBJECT);
+
+	JsonSchema roleCopyRestrictionSchema = new JsonSchema();
+	roleCopyRestrictionSchema.type(JsonSchemaType.OBJECT);
+
+	JsonSchema roleCopyTypeRestrictionSchema = new JsonSchema();
+	List<JsonSchemaTypeInfo> additionalJsonTypes = new ArrayList<>();
+	if (byReferenceAllowedForAssociationRole) {
+	    additionalJsonTypes.add(createJsonSchemaTypeInfoForReference());
+	}
+
+	// TODO determine name of entity type property per target JSON Schema type
+	createTypeDefinition(valueTypeOptionsByTypeName, additionalJsonTypes, roleCopyTypeRestrictionSchema);
+
+	associationClassRoleCopyRestrictionSchema.property(associationRoleName, roleCopyTypeRestrictionSchema);
+
+	if (jsonTypeInfoForAssociationRoleValueType.isPresent()) {
+
+	    JsonSchema result = new JsonSchema();
+
+	    // create and add first schema (association class schema ref)
+	    JsonSchema typeSchema = new JsonSchema();
+	    typeSchema.ref(jsonTypeInfoForAssociationRoleValueType.get().getRef());
+	    result.allOf(typeSchema);
+
+	    // add second schema (restriction of association role copy)
+	    result.allOf(associationClassRoleCopyRestrictionSchema);
+
+	    associationClassRoleCopyRestrictionSchema = result;
+
+	}
+
+	createTypeDefinition(additionalJsonTypeInfosForAssociationRole, associationClassRoleCopyRestrictionSchema,
+		parentForTypeSchema);
     }
 
     /**
@@ -1306,33 +1532,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	if (pme != null && !jsonSchemaTarget.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, ci.id())) {
 
-	    // check if the target type is one of the simple types defined by JSON Schema
-	    Optional<JsonSchemaType> simpleType = JsonSchemaType.fromString(pme.getTargetType());
-
-	    if (simpleType.isPresent()) {
-
-		jsTypeInfo.setSimpleType(simpleType.get());
-
-		if (mapEntryParamInfos.hasCharacteristic(typeName, encodingRule, JsonSchemaConstants.ME_PARAM_FORMATTED,
-			JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT)) {
-		    jsTypeInfo.setFormat(mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
-			    JsonSchemaConstants.ME_PARAM_FORMATTED,
-			    JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT));
-		}
-
-	    } else {
-
-		/*
-		 * since the target type is not a simple type, it must be a reference to a JSON
-		 * Schema
-		 */
-		jsTypeInfo.setRef(pme.getTargetType());
-	    }
-
-	    // check if the type is a geometry type
-	    if (mapEntryParamInfos.hasParameter(pme, JsonSchemaConstants.ME_PARAM_GEOMETRY)) {
-		jsTypeInfo.setGeometry(true);
-	    }
+	    jsTypeInfo = jsonSchemaTarget.identifyJsonSchemaType(pme, typeName, encodingRule);
 
 	} else {
 
@@ -1429,9 +1629,6 @@ public class JsonSchemaDocument implements MessageSource {
 
 		if (jsdopt.isEmpty()) {
 
-		    // TODO - since we now check up front if the value type is not encoded, we
-		    // should update the check here
-		    // only explanation is that the value type is not encoded
 		    result.addWarning(this, 116, typeName);
 
 		    jsTypeInfo = null;
@@ -1463,7 +1660,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	return Optional.ofNullable(jsTypeInfo);
     }
-    
+
     public void write() {
 
 	JsonSerializationContext context = new JsonSerializationContext();

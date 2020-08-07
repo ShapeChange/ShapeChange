@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,25 +29,35 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange;
+package de.interactive_instruments.ShapeChange.Target.JSON.jsonschema;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
 
-@Tag("SCXML")
-public class JSONTest extends BasicTestSCXML {
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
+public class MultipleOfKeyword implements JsonSchemaKeyword {
+    
+    private double value;
+    
+    public MultipleOfKeyword(double value) {
+	this.value = value;
+    }
 
-    @Test
-    public void testJson_basic() {
-
-	multiTest("src/test/resources/json/basic/test_json_schema_basic.xml", new String[] { "json", "xml" },
-		"testResults/json/basic/json_schemas", "src/test/resources/json/basic/reference/json_schemas");
+    @Override
+    public String name() {
+	return "multipleOf";
     }
     
-    @Test
-    public void testJson_valueTypeOptions() {
-
-	multiTest("src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.xml", new String[] { "json", "xml" },
-		"testResults/json/valueTypeOptions/json_schemas", "src/test/resources/json/valueTypeOptions/reference/json_schemas");
+    public double value() {
+	return this.value;
     }
+
+    @Override
+    public JsonValue toJson(JsonSerializationContext context) {
+	return new JsonNumber(value);
+    }
+
 }

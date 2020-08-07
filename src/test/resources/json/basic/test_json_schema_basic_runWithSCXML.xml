@@ -65,7 +65,6 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    
    <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
 
@@ -172,8 +171,8 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
     <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -181,10 +180,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
     <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
-
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
@@ -205,7 +204,6 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/json"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
    <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
@@ -246,8 +244,8 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
     <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -255,10 +253,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
     <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
-
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
@@ -271,6 +269,10 @@
    <mapEntries>
     <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
     <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" type="External_Supertype"/>
+    
+    <MapEntry param="keywords{patternBase64=XlxkezR9KC0oMFsxLTldfDFbMC0yXSkoLSgwWzEtOV18WzEyXVswLTldfDNbMDFdKShUKFswMV1bMC05XXwyWzAtM10pOihbMC01XVswLTldKTooWzAtNV1bMC05XXw2MCkoXC5bMC05XSspPyhafChcK3wtKShbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSkpKT8pPyk/fG5vdyQ=}" rule="*" targetType="string" type="TM_Instant"/>
+    
+    <MapEntry param="keywords{patternBase64=XihcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdylcLyhcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdykk}" rule="*" targetType="string" type="TM_Period"/>
    </mapEntries>
   </Target>
   
@@ -291,8 +293,8 @@
    </rules>
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
     <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -300,10 +302,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
     <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
-
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
@@ -323,7 +325,6 @@
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
-
    <targetParameter name="jsonSchemaVersion" value="openapi30"/>
 
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
@@ -367,8 +368,8 @@
 
    <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="formatted{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
     <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -376,10 +377,10 @@
     <MapEntry param="" rule="*" targetType="number" type="Real"/>
     <MapEntry param="" rule="*" targetType="number" type="Measure"/>
     <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="formatted{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="formatted{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="formatted{format=time}" rule="*" targetType="string" type="Time"/>
-
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
     
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>

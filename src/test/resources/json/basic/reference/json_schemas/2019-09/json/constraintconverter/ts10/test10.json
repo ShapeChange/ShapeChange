@@ -85,10 +85,29 @@
               "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#LocationSpecification"
-            },
-            {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+              "if": {
+                "properties": {
+                  "@type": {
+                    "const": "LocationSpecification"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#LocationSpecification"
+              },
+              "else": {
+                "if": {
+                  "properties": {
+                    "@type": {
+                      "const": "PointPositionSpecification"
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                },
+                "else": false
+              }
             }
           ]
         }
@@ -116,7 +135,17 @@
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 },
                 {
-                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                  "if": {
+                    "properties": {
+                      "@type": {
+                        "const": "PointPositionSpecification"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                  },
+                  "else": false
                 }
               ]
             }

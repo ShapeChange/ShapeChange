@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
-    <MapEntry type="Character" rule="*" targetType="string" param=""/>
-    <MapEntry type="URI" rule="*" targetType="string" param="formatted{format=uri}"/>
+    <MapEntry type="Character" rule="*" targetType="string" param="keywords{minLength=1;maxLength=1}"/>
+    <MapEntry type="URI" rule="*" targetType="string" param="keywords{format=uri}"/>
     <MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
     <MapEntry type="Integer" rule="*" targetType="integer" param=""/>
     <MapEntry type="Decimal" rule="*" targetType="number" param=""/>
@@ -10,10 +10,10 @@
     <MapEntry type="Real" rule="*" targetType="number" param=""/>
     <MapEntry type="Measure" rule="*" targetType="number" param=""/>
     <MapEntry type="Length" rule="*" targetType="number" param=""/>
-    <MapEntry type="Date" rule="*" targetType="string" param="formatted{format=date}"/>
-    <MapEntry type="DateTime" rule="*" targetType="string" param="formatted{format=date-time}"/>
-	<MapEntry type="Time" rule="*" targetType="string" param="formatted{format=time}"/>
-
+    <MapEntry type="Date" rule="*" targetType="string" param="keywords{format=date}"/>
+    <MapEntry type="DateTime" rule="*" targetType="string" param="keywords{format=date-time}"/>
+	<MapEntry type="Time" rule="*" targetType="string" param="keywords{format=time}"/>
+<MapEntry type="Any" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" param=""/>
     <!-- ISO/TS 19107 -->
     <MapEntry type="GM_Curve" rule="*" targetType="https://geojson.org/schema/LineString.json" param="geometry"/>
     <MapEntry type="GM_MultiCurve" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" param="geometry"/>

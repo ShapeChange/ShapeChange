@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.org/baseuri/ts/subdir/test.json",
+  "definitions": {
+    "AssociationClass": {
+      "$id": "#AssociationClass",
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "acProp": {
+          "type": "integer"
+        },
+        "rFT1toFT2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "https://example.org/baseuri/ts/subdir/test.json#FT2"
+            }
+          ]
+        }
+      },
+      "required": [
+        "acProp",
+        "entityType",
+        "rFT1toFT2"
+      ]
+    },
+    "FT1": {
+      "$id": "#FT1",
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "rFT1toFT2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "https://example.org/baseuri/ts/subdir/test.json#AssociationClass"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "rFT1toFT2": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "entityType": {
+                                "const": "FTSub2"
+                              }
+                            }
+                          },
+                          "then": {
+                            "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub2"
+                          },
+                          "else": {
+                            "if": {
+                              "properties": {
+                                "entityType": {
+                                  "const": "FTSub3"
+                                }
+                              }
+                            },
+                            "then": {
+                              "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub3"
+                            },
+                            "else": false
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "entityType",
+        "rFT1toFT2"
+      ]
+    },
+    "FT2": {
+      "$id": "#FT2",
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityType"
+      ]
+    },
+    "FT3": {
+      "$id": "#FT3",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "rFT1toFT2": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "https://example.org/baseuri/ts/subdir/test.json#AssociationClass"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "rFT1toFT2": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "entityType": {
+                                    "const": "FTSub2"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub2"
+                              },
+                              "else": false
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "FT4": {
+      "$id": "#FT4",
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "rFT4toFT2": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "if": {
+                  "properties": {
+                    "entityType": {
+                      "const": "FTSub2"
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub2"
+                },
+                "else": {
+                  "if": {
+                    "properties": {
+                      "entityType": {
+                        "const": "FTSub3"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub3"
+                  },
+                  "else": false
+                }
+              }
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "entityType"
+      ]
+    },
+    "FT5": {
+      "$id": "#FT5",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FT4"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "rFT4toFT2": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "entityType": {
+                          "const": "FTSub2"
+                        }
+                      }
+                    },
+                    "then": {
+                      "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub2"
+                    },
+                    "else": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FTSub1": {
+      "$id": "#FTSub1",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attSub1": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "attSub1"
+          ]
+        }
+      ]
+    },
+    "FTSub1_1": {
+      "$id": "#FTSub1_1",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FTSub2": {
+      "$id": "#FTSub2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attSub2": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "attSub2"
+          ]
+        }
+      ]
+    },
+    "FTSub3": {
+      "$id": "#FTSub3",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts/subdir/test.json#FTSub2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attSub3": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "attSub3"
+          ]
+        }
+      ]
+    }
+  }
+}

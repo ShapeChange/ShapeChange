@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -108,7 +108,7 @@ public class TargetXmlSchemaConfiguration extends TargetConfiguration {
 			Map<String, ProcessRuleSet> ruleSets,
 			List<ProcessMapEntry> mapEntries, List<XsdMapEntry> xsdMapEntries,
 			Map<String, List<XsdPropertyMapEntry>> xsdPropertyMapEntries,
-			List<XmlNamespace> xmlNamespaces, Set<String> inputIds,
+			List<XmlNamespace> xmlNamespaces, SortedSet<String> inputIds,
 			Element advancedProcessConfigurations) {
 		super(className, processMode, parameters, ruleSets, null, inputIds,
 				null, advancedProcessConfigurations);

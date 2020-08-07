@@ -40,8 +40,7 @@ public class JsonSchemaConstants {
 
     public static final String PLATFORM = "json";
 
-    public static final String ME_PARAM_FORMATTED = "formatted";
-    public static final String ME_PARAM_FORMATTED_CHAR_FORMAT = "format";
+    public static final String ME_PARAM_KEYWORDS = "keywords";
     public static final String ME_PARAM_GEOMETRY = "geometry";
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
 

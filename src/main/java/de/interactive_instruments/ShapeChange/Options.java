@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -2204,12 +2205,12 @@ public class Options {
 
 		    // get the target inputs - can be null, then set it to
 		    // global input element
-		    Set<String> tgtConfigInputs;
+		    SortedSet<String> tgtConfigInputs;
 		    if (tgtE.hasAttribute("inputs")) {
 			String[] inputs = tgtE.getAttribute("inputs").split("\\s");
-			tgtConfigInputs = new HashSet<String>(Arrays.asList(inputs));
+			tgtConfigInputs = new TreeSet<String>(Arrays.asList(inputs));
 		    } else {
-			tgtConfigInputs = new HashSet<String>();
+			tgtConfigInputs = new TreeSet<String>();
 			tgtConfigInputs.add(getInputId());
 		    }
 

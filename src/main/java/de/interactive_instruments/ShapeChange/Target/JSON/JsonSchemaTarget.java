@@ -34,6 +34,8 @@ package de.interactive_instruments.ShapeChange.Target.JSON;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,8 +63,22 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.MapEntries;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.ConstKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.EnumKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.ExclusiveMaximumKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.ExclusiveMinimumKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.FormatKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MaxLengthKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MaximumKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinLengthKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinimumKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MultipleOfKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PatternKeyword;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -492,12 +508,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	Optional<ProcessMapEntry> pme = mapEntry(ci);
 
 	if (pme.isPresent() && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme.get(), ci.id())) {
-	    if (mapEntryParamInfos.hasCharacteristic(ci.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
-		    JsonSchemaConstants.ME_PARAM_FORMATTED, JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT)) {
-		result.addInfo(this, 23, ci.name(), pme.get().getTargetType(),
-			mapEntryParamInfos.getCharacteristic(ci.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
-				JsonSchemaConstants.ME_PARAM_FORMATTED,
-				JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT));
+	    if (mapEntryParamInfos.hasParameter(ci.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
+		    JsonSchemaConstants.ME_PARAM_KEYWORDS)) {
+		result.addInfo(this, 23, ci.name(), pme.get().getTargetType());
 	    } else {
 		result.addInfo(this, 22, ci.name(), pme.get().getTargetType());
 	    }
@@ -641,12 +654,142 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	if (simpleType.isPresent()) {
 
-	    jsTypeInfo.setSimpleType(simpleType.get());
+	    JsonSchemaType jsType = simpleType.get();
+	    jsTypeInfo.setSimpleType(jsType);
 
-	    if (mapEntryParamInfos.hasCharacteristic(typeName, encodingRule, JsonSchemaConstants.ME_PARAM_FORMATTED,
-		    JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT)) {
-		jsTypeInfo.setFormat(mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
-			JsonSchemaConstants.ME_PARAM_FORMATTED, JsonSchemaConstants.ME_PARAM_FORMATTED_CHAR_FORMAT));
+	    if (mapEntryParamInfos.hasParameter(typeName, encodingRule, JsonSchemaConstants.ME_PARAM_KEYWORDS)) {
+
+		Map<String, String> characteristics = mapEntryParamInfos.getCharacteristics(typeName, encodingRule,
+			JsonSchemaConstants.ME_PARAM_KEYWORDS);
+
+		for (String characteristic : characteristics.keySet()) {
+
+		    String value = characteristics.get(characteristic);
+
+		    if (StringUtils.isBlank(value)) {
+
+			// will be detected and reported by the JSON Schema target configuration
+			// validator
+
+		    } else if (characteristic.equalsIgnoreCase("format")) {
+
+			jsTypeInfo.setKeyword(new FormatKeyword(value));
+
+		    } else if (jsType == JsonSchemaType.INTEGER || jsType == JsonSchemaType.NUMBER) {
+
+			if (characteristic.equalsIgnoreCase("enum")) {
+
+			    String[] values = value.split("\\s*,\\s*");
+			    double[] doubleValues = new double[values.length];
+
+			    for (int i = 0; i < values.length; i++) {
+				try {
+				    double d = Double.parseDouble(values[i]);
+				    doubleValues[i] = d;
+				} catch (NumberFormatException e) {
+				    // will be detected and reported by the JSON Schema target configuration
+				    // validator
+				}
+			    }
+
+			    List<JsonValue> enums = new ArrayList<>();
+			    for (double d : doubleValues) {
+				enums.add(new JsonNumber(d));
+			    }
+
+			    jsTypeInfo.setKeyword(new EnumKeyword(enums));
+
+			} else {
+
+			    try {
+
+				double d = Double.parseDouble(value);
+
+				if (characteristic.equalsIgnoreCase("multipleOf")) {
+
+				    // error if <= 0 - will be detected and reported by the JSON Schema target
+				    // configuration validator
+				    jsTypeInfo.setKeyword(new MultipleOfKeyword(d));
+				} else if (characteristic.equalsIgnoreCase("maximum")) {
+				    jsTypeInfo.setKeyword(new MaximumKeyword(d));
+				} else if (characteristic.equalsIgnoreCase("minimum")) {
+				    jsTypeInfo.setKeyword(new MinimumKeyword(d));
+				} else if (characteristic.equalsIgnoreCase("exclusiveMinimum")) {
+				    jsTypeInfo.setKeyword(new ExclusiveMinimumKeyword(d));
+				} else if (characteristic.equalsIgnoreCase("exclusiveMaximum")) {
+				    jsTypeInfo.setKeyword(new ExclusiveMaximumKeyword(d));
+				} else if (characteristic.equalsIgnoreCase("const")) {
+				    jsTypeInfo.setKeyword(new ConstKeyword(new JsonNumber(d)));
+				} else {
+				    // unsupported keyword - will be detected and reported by the JSON Schema target
+				    // configuration validator
+				}
+
+			    } catch (NumberFormatException e) {
+				// will be detected and reported by the JSON Schema target configuration
+				// validator
+			    }
+			}
+
+		    } else if (jsType == JsonSchemaType.STRING) {
+
+			if (characteristic.equalsIgnoreCase("enum")) {
+
+			    String[] values = value.split("\\s*,\\s*");
+			    List<JsonValue> enums = new ArrayList<>();
+			    for (String v : values) {
+				enums.add(new JsonString(v));
+			    }
+			    jsTypeInfo.setKeyword(new EnumKeyword(enums));
+
+			} else if (characteristic.equalsIgnoreCase("const")) {
+
+			    jsTypeInfo.setKeyword(new ConstKeyword(new JsonString(value)));
+
+			} else if (characteristic.equalsIgnoreCase("pattern")) {
+
+			    jsTypeInfo.setKeyword(new PatternKeyword(value));
+
+			} else if (characteristic.equalsIgnoreCase("patternBase64")) {
+			    
+			    Decoder decoder = Base64.getDecoder();
+			    String decodedValue = new String(decoder.decode(value));
+
+			    jsTypeInfo.setKeyword(new PatternKeyword(decodedValue));
+
+			} else if (characteristic.equalsIgnoreCase("maxLength")
+				|| characteristic.equalsIgnoreCase("minLength")) {
+
+			    try {
+
+				int i = Integer.parseInt(value);
+
+				// error if <= 0 - will be detected and reported by the JSON Schema target
+				// configuration validator
+
+				if (characteristic.equalsIgnoreCase("maxLength")) {
+				    jsTypeInfo.setKeyword(new MaxLengthKeyword(i));
+				} else {
+				    jsTypeInfo.setKeyword(new MinLengthKeyword(i));
+				}
+
+			    } catch (NumberFormatException e) {
+				// will be detected and reported by the JSON Schema target configuration
+				// validator
+			    }
+
+			} else {
+
+			    // unsupported keyword - will be detected and reported by the JSON Schema target
+			    // configuration validator
+			}
+
+		    } else {
+
+			// unsupported targetType/keyword - will be detected and reported by the JSON
+			// Schema target configuration validator
+		    }
+		}
 	    }
 
 	} else {
@@ -925,7 +1068,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	case 22:
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
-	    return "Type '$1$' has been mapped to '$2$' with format '$3$', as defined by the configuration.";
+	    return "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
 
 	case 101:
 	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";

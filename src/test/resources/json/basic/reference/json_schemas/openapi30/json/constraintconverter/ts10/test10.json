@@ -88,10 +88,29 @@
               "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
-            },
-            {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+              "if": {
+                "properties": {
+                  "entityType": {
+                    "const": "LocationSpecification"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+              },
+              "else": {
+                "if": {
+                  "properties": {
+                    "entityType": {
+                      "const": "PointPositionSpecification"
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                },
+                "else": false
+              }
             }
           ]
         }
@@ -115,7 +134,17 @@
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 },
                 {
-                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                  "if": {
+                    "properties": {
+                      "entityType": {
+                        "const": "PointPositionSpecification"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                  },
+                  "else": false
                 }
               ]
             }

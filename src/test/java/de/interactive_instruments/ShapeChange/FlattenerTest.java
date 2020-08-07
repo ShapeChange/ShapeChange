@@ -134,4 +134,13 @@ public class FlattenerTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/flattening/flattenTypes_propertyCopyDuplicateBehavior",
 		"src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/reference");
     }
+    
+    @Test
+    public void test_measureTypedProperties() {
+	multiTest(
+		"src/test/resources/flattener/measureTypedProperties/testEA_flatten_measureTypedProperties.xml",
+		new String[] { "xsd" }, "testResults/flattening/measureTypedProperties",
+		"src/test/resources/flattener/measureTypedProperties/reference");
+    }
+    
 }

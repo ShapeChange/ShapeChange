@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.xml" end="Thu Aug 06 12:20:03 CEST 2020" resultCode="0" start="Thu Aug 06 12:19:57 CEST 2020" version="2.9.2-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <ProcessFlowInfo message="--- Validating transformer with @id 'constraintconverter' ..."/>
+    <ProcessFlowInfo message="--- Validating transformer with @id 'flattenconstraints' ..."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' and @inputs 'trf_last' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
+    <ProcessFlowInfo message="Now processing transformation 'model' for input ID: 'input'."/>
+    <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <ProcessFlowInfo message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Now processing transformation 'constraintconverter' for input ID: 'model'."/>
+    <ProcessFlowInfo message="---------- now processing: rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion ----------"/>
+    <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <ProcessFlowInfo message="Performed transformation for transformer ID 'constraintconverter' for input ID: 'model'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Now processing transformation 'flattenconstraints' for input ID: 'constraintconverter'."/>
+    <ProcessFlowInfo message="========== processing phase =========="/>
+    <ProcessFlowInfo message="---------- now processing: rule-trf-all-flatten-constraints ----------"/>
+    <ProcessFlowInfo message="========== postprocessing phase =========="/>
+    <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <ProcessFlowInfo message="Performed transformation for transformer ID 'flattenconstraints' for input ID: 'constraintconverter'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Now processing transformation 'trf_last' for input ID: 'flattenconstraints'."/>
+    <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <ProcessFlowInfo message="Performed transformation for transformer ID 'trf_last' for input ID: 'flattenconstraints'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/json/schema1'"/>
+    <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'trf_last'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' for input ID: 'trf_last'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/valueTypeOptions/json_schemas/draft-07/json/trf_last/subdir/test.json" target="JSON Schema">test.json</Result>
+  </Results>
+</ShapeChangeResult>
