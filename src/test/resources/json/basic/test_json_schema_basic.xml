@@ -27,7 +27,7 @@
  <transformers>
   <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="model" input="input" mode="enabled"/>
 
-  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter" id="constraintconverter" input="model" mode="enabled">
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter" id="constraintconverterReal" input="model" mode="enabled">
    <parameters>
     <ProcessParameter name="valueTypeRepresentationTypes" value="PlaceSpecification{PointPositionSpecification, CurvePositionSpecification, SurfacePositionSpecification, LocationSpecification}"/>
     <ProcessParameter name="valueTypeRepresentationConstraintRegex" value=".*Place Representations Disallowed.*"/>
@@ -38,7 +38,8 @@
     </ProcessRuleSet>
    </rules>
   </Transformer>
-
+<Transformer input="constraintconverterReal" id="constraintconverter"
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper" />
  </transformers>
  <targets>
   <!-- =============================== -->
