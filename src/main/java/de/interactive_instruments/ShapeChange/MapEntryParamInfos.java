@@ -95,7 +95,7 @@ public class MapEntryParamInfos implements MessageSource {
     private Pattern charactIdentPattern;
 
     /**
-     * key: {map entry type name}#{map entry rule name}
+     * key: {map entry type name}#{map entry rule name} (in lower case)
      * 
      * value: sub-map with key: parameter name, value: subsub-map with key:
      * identifier of characteristic, value: value of characteristic (can be
@@ -131,7 +131,7 @@ public class MapEntryParamInfos implements MessageSource {
 		if (pme.hasParam()) {
 
 		    String param = pme.getParam();
-		    String pmeKey = pme.getType() + "#" + pme.getRule();
+		    String pmeKey = pme.getType() + "#" + pme.getRule().toLowerCase();
 
 		    /*
 		     * validate the param value - continue parsing only if a match was detected
@@ -211,7 +211,7 @@ public class MapEntryParamInfos implements MessageSource {
 	if (pme == null) {
 	    return false;
 	} else {
-	    String pmeKey = pme.getType() + "#" + pme.getRule();
+	    String pmeKey = pme.getType() + "#" + pme.getRule().toLowerCase();
 	    if (paramCache.containsKey(pmeKey) && paramCache.get(pmeKey).containsKey(parameterName)) {
 		return true;
 	    } else {
@@ -262,7 +262,7 @@ public class MapEntryParamInfos implements MessageSource {
 
 	} else {
 
-	    String pmeKey = typeName + "#" + relevantMapEntry.rule;
+	    String pmeKey = typeName + "#" + relevantMapEntry.rule.toLowerCase();
 
 	    if (!paramCache.containsKey(pmeKey)) {
 

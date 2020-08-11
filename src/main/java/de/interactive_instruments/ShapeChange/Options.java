@@ -618,7 +618,7 @@ public class Options {
 
     public void addTargetTypeMapEntry(ProcessMapEntry pme) {
 
-	targetMapEntryByTypeRuleKey.put(pme.getType() + "#" + pme.getRule(), pme);
+	targetMapEntryByTypeRuleKey.put(pme.getType() + "#" + pme.getRule().toLowerCase(), pme);
     }
 
     public ProcessMapEntry targetMapEntry(String type, String rule) {
@@ -626,7 +626,7 @@ public class Options {
 	ProcessMapEntry pme = null;
 
 	while (pme == null && rule != null) {
-	    pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule);
+	    pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule.toLowerCase());
 	    rule = ruleRegistry.extendsEncRule(rule);
 	}
 
