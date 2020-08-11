@@ -70,10 +70,9 @@
 		
 		
 		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="trf_last" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/json/valueTypeOptions/json_schemas/draft-07/json"/>
+			<targetParameter name="outputDirectory" value="testResults/json/valueTypeOptions/json_schemas/plain_json"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="writeMapEntries" value="false"/>
-			<targetParameter name="jsonSchemaVersion" value="draft-07"/>
+			<targetParameter name="writeMapEntries" value="true"/>
 			
 			<targetParameter name="appSchemaNameRegex" value="Test Schema.*"/>
 			<targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
@@ -87,7 +86,7 @@
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{maxLength=1;minLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
     <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
     <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
     <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
@@ -109,6 +108,64 @@
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
     <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
 </mapEntries>
+			<mapEntries>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FT2" type="FT2"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1" type="FTSub1"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1_1" type="FTSub1_1"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub2" type="FTSub2"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" type="FTSub3"/>
+		   	</mapEntries>
+		</Target>
+		
+		
+		
+		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="trf_last" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/json/valueTypeOptions/json_schemas/nested_json"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="writeMapEntries" value="true"/>
+			
+			<targetParameter name="appSchemaNameRegex" value="Test Schema.*"/>
+			<targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
+			<targetParameter name="defaultEncodingRule" value="myjson"/>
+			<rules>
+				<EncodingRule name="myjson">
+					<rule name="rule-json-cls-nestedProperties"/>
+					<rule name="rule-json-cls-name-as-anchor"/>
+					<rule name="rule-json-cls-name-as-entityType"/>
+					<rule name="rule-json-cls-valueTypeOptions"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+    <MapEntry param="" rule="*" targetType="number" type="Number"/>
+    <MapEntry param="" rule="*" targetType="number" type="Real"/>
+    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
+    
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
+</mapEntries>
+			<mapEntries>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FT2" type="FT2"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1" type="FTSub1"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1_1" type="FTSub1_1"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub2" type="FTSub2"/>
+		    	<MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type}" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" type="FTSub3"/>
+		   	</mapEntries>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

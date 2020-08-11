@@ -22,8 +22,8 @@
       "oneOf": [
         {
           "type": [
-            "integer",
-            "string"
+            "string",
+            "integer"
           ]
         },
         {
@@ -53,8 +53,8 @@
     "TS5_Union_TypeDiscriminator_SimpleTypes": {
       "$anchor": "TS5_Union_TypeDiscriminator_SimpleTypes",
       "type": [
-        "integer",
-        "string"
+        "string",
+        "integer"
       ]
     }
   }

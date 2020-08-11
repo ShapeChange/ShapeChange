@@ -43,7 +43,10 @@ public class JsonSchemaConstants {
     public static final String ME_PARAM_KEYWORDS = "keywords";
     public static final String ME_PARAM_GEOMETRY = "geometry";
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
-
+    public static final String ME_PARAM_ENCODING_INFOS = "encodingInfos";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH = "entityTypeMemberPath";
+    
+    
     /**
      * Optional changes to the default documentation template and the default
      * strings for descriptors without value

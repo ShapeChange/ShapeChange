@@ -31,8 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON.jsonschema;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonArray;
@@ -42,7 +42,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class TypeKeyword extends ArrayList<JsonSchemaType> implements JsonSchemaKeyword {
+public class TypeKeyword extends TreeSet<JsonSchemaType> implements JsonSchemaKeyword {
 
     private static final long serialVersionUID = -4863298373229680536L;
 
@@ -66,7 +66,7 @@ public class TypeKeyword extends ArrayList<JsonSchemaType> implements JsonSchema
     public JsonValue toJson(JsonSerializationContext context) {
 
 	if (this.size() == 1) {
-	    return this.get(0).toJson();
+	    return this.first().toJson();
 	} else {
 	    JsonArray array = new JsonArray();
 	    array.addAll(this.stream().map(v -> v.toJson()).collect(Collectors.toList()));

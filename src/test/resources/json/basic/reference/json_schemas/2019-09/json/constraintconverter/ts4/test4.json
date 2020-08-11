@@ -77,10 +77,16 @@
         {
           "type": "object",
           "properties": {
+            "@type": {
+              "type": "string"
+            },
             "propFT5": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "@type"
+          ]
         }
       ]
     },

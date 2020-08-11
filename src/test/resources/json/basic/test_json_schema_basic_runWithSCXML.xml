@@ -321,7 +321,7 @@
   
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    
-   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09|10).*"/>
+   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09).*"/>
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
@@ -344,6 +344,85 @@
     </EncodingRule>
 
     <EncodingRule extends="json_basic" name="myjson">
+     <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
+     <rule name="rule-json-cls-union-propertyCount"/>
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+     <rule name="rule-json-cls-valueTypeOptions"/>
+    </EncodingRule>
+
+    <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    </EncodingRule>
+
+    <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
+     <rule name="rule-json-cls-codelist-uri-format"/>
+    </EncodingRule>
+    <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
+     <rule name="rule-json-cls-codelist-link"/>
+    </EncodingRule>
+
+   </rules>
+
+   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
+    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
+    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+    <MapEntry param="" rule="*" targetType="number" type="Number"/>
+    <MapEntry param="" rule="*" targetType="number" type="Real"/>
+    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+    <MapEntry param="" rule="*" targetType="number" type="Length"/>
+    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
+    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
+	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
+<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
+    
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
+    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
+</mapEntries>
+   <mapEntries>
+    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
+   </mapEntries>
+  </Target>
+  
+  
+  
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
+   
+   <targetParameter name="appSchemaNameRegex" value="Test Schema 10.*"/>
+
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>
+
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+
+   <targetParameter name="objectIdentifierName" value="@id"/>
+   <targetParameter name="objectIdentifierType" value="string, number"/>
+   <targetParameter name="objectIdentifierRequired" value="true"/>
+
+   <targetParameter name="defaultEncodingRule" value="myjson"/>
+
+   <rules>
+
+    <EncodingRule extends="*" name="json_basic">
+     <rule name="rule-json-cls-name-as-anchor"/>
+     
+    </EncodingRule>
+
+    <EncodingRule extends="json_basic" name="myjson">
+     <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>

@@ -76,17 +76,15 @@
 	</transformers>
 	<targets>
 		<!-- =============================== -->
-		<!-- ====== draft 07 - JSON ======== -->
+		<!-- ====== Plain JSON ======== -->
 		<!-- =============================== -->
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
 			mode="enabled" inputs="trf_last">
 			<targetParameter name="outputDirectory"
-				value="testResults/json/valueTypeOptions/json_schemas/draft-07/json" />
+				value="testResults/json/valueTypeOptions/json_schemas/plain_json" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="writeMapEntries" value="false" />
-			<targetParameter name="jsonSchemaVersion"
-				value="draft-07" />
+			<targetParameter name="writeMapEntries" value="true" />
 			<!-- NOTE: Restriction of application schemas that are converted! -->
 			<targetParameter name="appSchemaNameRegex"
 				value="Test Schema.*" />
@@ -103,6 +101,48 @@
 			</rules>
 			<xi:include
 				href="src/main/resources/config/StandardMapEntries_JSON.xml" />
+			<mapEntries>
+		    	<MapEntry type="FT2" rule="*" targetType="https://example.org/external/schema/definitions.json#FT2" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="FTSub1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="FTSub1_1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1_1" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="FTSub2" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub2" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="FTSub3" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		   	</mapEntries>
+		</Target>
+		<!-- =============================== -->
+		<!-- ====== Nested JSON ======== -->
+		<!-- =============================== -->
+		<Target
+			class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+			mode="enabled" inputs="trf_last">
+			<targetParameter name="outputDirectory"
+				value="testResults/json/valueTypeOptions/json_schemas/nested_json" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="writeMapEntries" value="true" />
+			<!-- NOTE: Restriction of application schemas that are converted! -->
+			<targetParameter name="appSchemaNameRegex"
+				value="Test Schema.*" />
+			<targetParameter name="inlineOrByReferenceDefault"
+				value="inlineOrByReference" />
+			<targetParameter name="defaultEncodingRule"
+				value="myjson" />
+			<rules>
+				<EncodingRule name="myjson">
+					<rule name="rule-json-cls-nestedProperties" />
+					<rule name="rule-json-cls-name-as-anchor" />
+					<rule name="rule-json-cls-name-as-entityType" />
+					<rule name="rule-json-cls-valueTypeOptions" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries_JSON.xml" />
+			<mapEntries>
+		    	<MapEntry type="FT2" rule="*" targetType="https://example.org/external/schema/definitions.json#FT2" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="FTSub1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="FTSub1_1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub1_1" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="FTSub2" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub2" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="FTSub3" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		   	</mapEntries>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

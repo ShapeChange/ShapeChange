@@ -198,7 +198,22 @@ public class JsonSchemaDocument implements MessageSource {
 	    // create map entry
 	    PackageInfo schemaPi = ci.pkg().rootPackage();
 	    String rule = "*";
-	    ProcessMapEntry pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference);
+	    ProcessMapEntry pme;
+
+	    /*
+	     * Determine if the map entry must have a parameter - e.g. to convey the entity
+	     * type member path.
+	     */
+	    if (JsonSchemaTarget.entityTypeMemberPathByCi.containsKey(ci)) {
+		String entityTypeMemberPath = JsonSchemaTarget.entityTypeMemberPathByCi.get(ci);
+		String paramValue = JsonSchemaConstants.ME_PARAM_ENCODING_INFOS + "{"
+			+ JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH + "="
+			+ entityTypeMemberPath + "}";
+		pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference, paramValue);
+	    } else {
+		pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference);
+	    }
+
 	    jsonSchemaTarget.addMapEntry(schemaPi, pme);
 	}
     }
@@ -684,25 +699,37 @@ public class JsonSchemaDocument implements MessageSource {
 	    jsClassContents.property("properties", jsProperties).required("properties");
 	}
 
-	if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
-		|| ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+	/*
+	 * Check if an entity type member is available in the encodings of ci's
+	 * supertypes. If so, simply keep track of it (for map entry creation, and
+	 * potentially also type specific checks). Otherwise, check if such a member
+	 * shall be added to the encoding of ci. If so, do it, and also keep track of
+	 * the member path.
+	 */
+	String entityTypeMemberPathFromSupertypes = identifyEntityTypeMemberPathFromSupertypes(ci);
+	String entityTypeMemberPath = null;
 
-	    // check if supertype matches
-	    boolean supertypeMatch = false;
-	    for (ClassInfo supertype : ci.supertypeClasses()) {
-		if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
-			&& (supertype.category() != Options.UNION
-				|| supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
-		    supertypeMatch = true;
-		    break;
-		}
-	    }
+	if (entityTypeMemberPathFromSupertypes == null) {
 
-	    if (!supertypeMatch) {
-		jsProperties
-			.property(jsonSchemaTarget.getEntityTypeName(), new JsonSchema().type(JsonSchemaType.STRING))
-			.required(jsonSchemaTarget.getEntityTypeName());
+	    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
+		    || ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+
+		String entityTypeMemberName = jsonSchemaTarget.getEntityTypeName();
+		jsProperties.property(entityTypeMemberName, new JsonSchema().type(JsonSchemaType.STRING))
+			.required(entityTypeMemberName);
+
+		entityTypeMemberPath = (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
+			+ entityTypeMemberName;
 	    }
+	} else {
+	    entityTypeMemberPath = entityTypeMemberPathFromSupertypes;
+	}
+
+	if (entityTypeMemberPath != null) {
+	    /*
+	     * keep track of new entity type member path for creation of map entry for ci
+	     */
+	    JsonSchemaTarget.entityTypeMemberPathByCi.put(ci, entityTypeMemberPath);
 	}
 
 	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT)
@@ -931,6 +958,113 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return jsClass;
+    }
+
+    /**
+     * @param ci the class for which to identify the entity type member path
+     * @return the path of the JSON member that is used to encode the type of the
+     *         class; can be <code>null</code> if no such member is available
+     */
+    private String identifyEntityTypeMemberPath(ClassInfo ci) {
+
+	if (JsonSchemaTarget.entityTypeMemberPathByCi.containsKey(ci)) {
+	    return JsonSchemaTarget.entityTypeMemberPathByCi.get(ci);
+	} else {
+
+	    // check supertypes
+	    String entityTypeMemberPathFromSupertypes = identifyEntityTypeMemberPathFromSupertypes(ci);
+	    if (entityTypeMemberPathFromSupertypes != null) {
+		return entityTypeMemberPathFromSupertypes;
+	    } else {
+
+		// check if the entity type member is added to the type itself
+		if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
+			|| ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+		    return (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
+			    + jsonSchemaTarget.getEntityTypeName();
+		} else {
+		    return null;
+		}
+	    }
+	}
+    }
+
+    /**
+     * @param ci the class for which to search an entity type member in its
+     *           supertype encodings
+     * @return the path of the JSON member available in one of the supertype
+     *         encodings of ci, that is used to encode the type of the class; can be
+     *         <code>null</code> if no such member is available in the supertypes
+     *         (especially, of course, if ci does not have any superclass)
+     */
+    private String identifyEntityTypeMemberPathFromSupertypes(ClassInfo ci) {
+
+	/*
+	 * If an entity type member path is defined in the map entry of a supertype, use
+	 * that path. Otherwise, if an entity type member path can be determined for a
+	 * supertype of one of the supertypes, use that path. If that also did not
+	 * succeed, check if the supertype itself would receive an entity type member,
+	 * and if so, use the path of that member.
+	 */
+	String resultFromMapEntries = null;
+	String resultFromSuperSupertypes = null;
+	String resultFromSupertypes = null;
+
+	for (ClassInfo supertype : ci.supertypeClasses()) {
+
+	    // check for map entry first
+	    Optional<ProcessMapEntry> supertypePmeOpt = jsonSchemaTarget.mapEntry(supertype);
+	    if (supertypePmeOpt.isPresent()) {
+		/*
+		 * So a map entry is defined for the supertype; it is the definitive source of
+		 * information for the entity type member path.
+		 */
+		if (mapEntryParamInfos.hasCharacteristic(supertype.name(),
+			supertype.encodingRule(JsonSchemaConstants.PLATFORM),
+			JsonSchemaConstants.ME_PARAM_ENCODING_INFOS,
+			JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH)) {
+
+		    resultFromMapEntries = mapEntryParamInfos.getCharacteristic(supertype.name(),
+			    supertype.encodingRule(JsonSchemaConstants.PLATFORM),
+			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS,
+			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH);
+
+		    /*
+		     * since member path from map entry has highest priority, we can skip the
+		     * supertype checks now
+		     */
+		    break;
+
+		}
+	    } else {
+
+		String entityMemberPathFromSupertypesOfSupertype = identifyEntityTypeMemberPathFromSupertypes(
+			supertype);
+		if (entityMemberPathFromSupertypesOfSupertype != null) {
+		    resultFromSuperSupertypes = entityMemberPathFromSupertypesOfSupertype;
+		} else {
+
+		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
+			    && (supertype.category() != Options.UNION
+				    || supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+
+			resultFromSupertypes = (supertype.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)
+				? "properties/"
+				: "") + jsonSchemaTarget.getEntityTypeName();
+		    }
+		}
+	    }
+	}
+
+	if (resultFromMapEntries != null) {
+	    return resultFromMapEntries;
+	} else if (resultFromSuperSupertypes != null) {
+	    return resultFromSuperSupertypes;
+	} else if (resultFromSupertypes != null) {
+	    return resultFromSupertypes;
+	} else {
+	    return null;
+	}
     }
 
     private void handleVirtualGeneralization(ClassInfo ci, SortedSet<ClassInfo> supertypes,
@@ -1344,6 +1478,9 @@ public class JsonSchemaDocument implements MessageSource {
 		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
 		.collect(Collectors.toList());
 	simpleTypeOptions.addAll(simpleTypeOptionsFromTypeSpecificJsonTypeInfos);
+	simpleTypeOptions = simpleTypeOptions.stream()
+		.sorted((o1, o2) -> o1.getSimpleType().getName().compareTo(o2.getSimpleType().getName()))
+		.collect(Collectors.toList());
 
 	JsonSchema simpleTypeSchema = new JsonSchema();
 
@@ -1423,9 +1560,29 @@ public class JsonSchemaDocument implements MessageSource {
 		String ref = remainingSpecificTypeOptions.get(typeName);
 
 		ifSchema = new JsonSchema();
-		// TODO get target type specific entity type member name from map entry
-		ifSchema.property(jsonSchemaTarget.getEntityTypeName(),
+		// get type specific entity type member name
+		String entityTypeMemberPath = null;
+		ClassInfo typeCi = model.classByName(typeName);
+		if (typeCi != null) {
+		    entityTypeMemberPath = identifyEntityTypeMemberPath(typeCi);
+		}
+		if (StringUtils.isBlank(entityTypeMemberPath)) {
+		    entityTypeMemberPath = jsonSchemaTarget.getEntityTypeName();
+		    result.addError(this, 122, typeName, entityTypeMemberPath);
+		}
+
+		String[] entityTypeMemberPathComponents = entityTypeMemberPath.split("/");
+		JsonSchema entityTypeMemberPropertySchema = ifSchema;
+		for (int i = 0; i < entityTypeMemberPathComponents.length - 1; i++) {
+		    JsonSchema newEntityTypeMemberPropertySchema = new JsonSchema();
+		    entityTypeMemberPropertySchema.property(entityTypeMemberPathComponents[i],
+			    newEntityTypeMemberPropertySchema);
+		    entityTypeMemberPropertySchema = newEntityTypeMemberPropertySchema;
+		}
+		entityTypeMemberPropertySchema.property(
+			entityTypeMemberPathComponents[entityTypeMemberPathComponents.length - 1],
 			(new JsonSchema()).const_(new JsonString(typeName)));
+
 		parentSchema.if_(ifSchema);
 
 		thenSchema = new JsonSchema();
@@ -1488,7 +1645,6 @@ public class JsonSchemaDocument implements MessageSource {
 	    additionalJsonTypes.add(createJsonSchemaTypeInfoForReference());
 	}
 
-	// TODO determine name of entity type property per target JSON Schema type
 	createTypeDefinition(valueTypeOptionsByTypeName, additionalJsonTypes, roleCopyTypeRestrictionSchema);
 
 	associationClassRoleCopyRestrictionSchema.property(associationRoleName, roleCopyTypeRestrictionSchema);
@@ -1749,6 +1905,9 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Literal encoding type for enumeration '$1$' must be a simple JSON Schema type. A schema reference was found: '$2$'. Assuming that the referenced JSON Schema contains a type definition for JSON Schema simple type 'string'. This will affect how the enums are encoded.";
 	case 121:
 	    return "??No target type is defined in map entry for type '$1$'. This is valid if, in the JSON encoding, the type does not require a specific type restriction.";
+	case 122:
+	    return "??No entity type member path found for specific type option '$1$'. Using '$2$' instead.";
+
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}

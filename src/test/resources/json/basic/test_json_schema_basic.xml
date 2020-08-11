@@ -149,7 +149,7 @@
   <!-- =================================== -->
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <!-- NOTE: Restriction of application schemas that are converted! -->
-   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09|10).*"/>
+   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09).*"/>
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
@@ -172,6 +172,62 @@
     </EncodingRule>
 
     <EncodingRule name="myjson" extends="json_basic">
+     <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
+     <rule name="rule-json-cls-union-propertyCount"/>
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+     <rule name="rule-json-cls-valueTypeOptions"/>
+    </EncodingRule>
+
+    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="json_basic">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    </EncodingRule>
+
+    <EncodingRule name="myjsonCodelistUriFormat" extends="json_basic">
+     <rule name="rule-json-cls-codelist-uri-format"/>
+    </EncodingRule>
+    <EncodingRule name="myjsonCodelistLinkObject" extends="json_basic">
+     <rule name="rule-json-cls-codelist-link"/>
+    </EncodingRule>
+
+   </rules>
+
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param=""/>
+   </mapEntries>
+  </Target>
+  <!-- =================================== -->
+  <!-- ====== OpenApi 3.0 - JSON ====== -->
+  <!-- =================================== -->
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
+   <!-- NOTE: Restriction of application schemas that are converted! -->
+   <targetParameter name="appSchemaNameRegex" value="Test Schema 10.*"/>
+
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>
+
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+
+   <targetParameter name="objectIdentifierName" value="@id"/>
+   <targetParameter name="objectIdentifierType" value="string, number"/>
+   <targetParameter name="objectIdentifierRequired" value="true"/>
+
+   <targetParameter name="defaultEncodingRule" value="myjson"/>
+
+   <rules>
+
+    <EncodingRule name="json_basic" extends="*">
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <!--     <rule name="rule-json-all-documentation"/>  -->
+    </EncodingRule>
+
+    <EncodingRule name="myjson" extends="json_basic">
+     <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>

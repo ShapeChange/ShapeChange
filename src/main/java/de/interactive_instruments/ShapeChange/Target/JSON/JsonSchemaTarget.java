@@ -130,7 +130,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
     protected static SortedMap<PackageInfo, List<ProcessMapEntry>> mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-
+    protected static Map<ClassInfo,String> entityTypeMemberPathByCi = new HashMap<>();
+    
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
 
@@ -967,6 +968,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	mapEntryParamInfos = null;
 	mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
+	entityTypeMemberPathByCi = new HashMap<>();
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();

@@ -14,6 +14,9 @@
     "FeaturePlaceRelationship": {
       "type": "object",
       "properties": {
+        "entityType": {
+          "type": "string"
+        },
         "@id": {
           "oneOf": [
             {
@@ -37,6 +40,7 @@
       },
       "required": [
         "@id",
+        "entityType",
         "place"
       ]
     },
@@ -53,6 +57,9 @@
     "PlaceSpecification": {
       "type": "object",
       "properties": {
+        "entityType": {
+          "type": "string"
+        },
         "@id": {
           "oneOf": [
             {
@@ -65,7 +72,8 @@
         }
       },
       "required": [
-        "@id"
+        "@id",
+        "entityType"
       ]
     },
     "PointPositionSpecification": {
@@ -101,6 +109,9 @@
     "TS10_FT1": {
       "type": "object",
       "properties": {
+        "entityType": {
+          "type": "string"
+        },
         "@id": {
           "oneOf": [
             {
@@ -165,6 +176,7 @@
       },
       "required": [
         "@id",
+        "entityType",
         "place"
       ]
     },

@@ -72,8 +72,8 @@
                 },
                 "prop11": {
                   "type": [
-                    "null",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "prop12": {
