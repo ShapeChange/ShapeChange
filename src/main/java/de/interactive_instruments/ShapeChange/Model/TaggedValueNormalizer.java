@@ -106,7 +106,7 @@ public class TaggedValueNormalizer {
 	    "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues",
 	    "reportable", "dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference", "extensibility",
 	    "obligation", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
-	    "literalEncodingType").collect(Collectors.toSet());
+	    "literalEncodingType","timeIntervalBoundaryType").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values

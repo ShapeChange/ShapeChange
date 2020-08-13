@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/sc/flattener/measureTypedProperties" elementFormDefault="qualified" targetNamespace="http://example.org/sc/flattener/measureTypedProperties" version="1.0">
+  <annotation>
+    <documentation>Alias: applicationSchema</documentation>
+  </annotation>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Feature" substitutionGroup="gml:AbstractFeature" type="t:FeatureType">
+    <annotation>
+      <documentation>Alias: FT</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="time1" type="gml:TimePositionType">
+            <annotation>
+              <documentation>Alias: t1</documentation>
+            </annotation>
+          </element>
+          <element name="time2Start" type="date">
+            <annotation>
+              <documentation>Alias: t2Start</documentation>
+            </annotation>
+          </element>
+          <element name="time2End" type="date">
+            <annotation>
+              <documentation>Alias: t2End</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time3Start" type="dateTime">
+            <annotation>
+              <documentation>Alias: t3Start</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time3End" type="dateTime">
+            <annotation>
+              <documentation>Alias: t3End</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeaturePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Feature"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

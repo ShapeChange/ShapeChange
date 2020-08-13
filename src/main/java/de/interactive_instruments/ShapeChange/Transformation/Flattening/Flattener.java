@@ -56,6 +56,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -286,6 +287,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String RULE_TRF_PROP_FLATTEN_ONINAS = "rule-trf-prop-flatten-ONINAs";
     public static final String RULE_TRF_PROP_FLATTEN_ONINAS_ONLY_REMOVE_REASONS = "rule-trf-prop-flatten-ONINAs-onlyRemoveReasons";
     public static final String RULE_TRF_PROP_FLATTEN_TYPES = "rule-trf-prop-flatten-types";
+    public static final String RULE_TRF_PROP_FLATTEN_EXPLICIT_TIME_INTERVAL = "rule-trf-prop-flatten-explicit-time-interval";
 
     /**
      * Identify types in the schemas selected for processing that have one of the
@@ -750,6 +752,11 @@ public class Flattener implements Transformer, MessageSource {
 	    applyRuleFlattenMeasureTypedProperties(genModel, trfConfig);
 	}
 
+	if (rules.contains(RULE_TRF_PROP_FLATTEN_EXPLICIT_TIME_INTERVAL)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_EXPLICIT_TIME_INTERVAL);
+	    applyRuleFlattenExplicitTimeIntervals(genModel, trfConfig);
+	}
+
 	// postprocessing
 	result.addProcessFlowInfo(this, 20317, "postprocessing");
 
@@ -797,6 +804,45 @@ public class Flattener implements Transformer, MessageSource {
 
 			genPi.setConstraints(newConstraints);
 		    }
+		}
+	    }
+	}
+    }
+
+    private void applyRuleFlattenExplicitTimeIntervals(GenericModel genModel, TransformerConfiguration trfConfig) {
+
+	String endPropNameSuffix = "End";
+	String startPropNameSuffix = "Start";
+
+	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+	    
+	    if(!genPi.isAttribute()) {
+		continue;
+	    }
+
+	    String timeIntervalBoundaryTypeName = genPi.taggedValue("timeIntervalBoundaryType");
+
+	    if (StringUtils.isNotBlank(timeIntervalBoundaryTypeName)) {
+
+		ClassInfo tibCi = genModel.classByName(timeIntervalBoundaryTypeName.trim());
+		Type tibType = new Type();
+		tibType.id = (tibCi != null) ? tibCi.id() : "unknown";
+		tibType.name = timeIntervalBoundaryTypeName.trim();
+		
+		genPi.setTypeInfo(tibType);
+
+		GenericPropertyInfo endPi = genPi.createCopy(genPi.id() + endPropNameSuffix);
+		endPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1), false);
+		endPi.setName(genPi.name() + endPropNameSuffix);
+		if (hasCode(endPi)) {
+		    setCode(endPi, getCode(endPi) + endPropNameSuffix);
+		}
+		GenericClassInfo genCi = (GenericClassInfo) genPi.inClass();
+		genCi.addProperty(endPi, PropertyCopyDuplicatBehaviorIndicator.ADD);
+				
+		genPi.setName(genPi.name() + startPropNameSuffix);
+		if (hasCode(genPi)) {
+		    setCode(genPi, getCode(genPi) + startPropNameSuffix);
 		}
 	    }
 	}

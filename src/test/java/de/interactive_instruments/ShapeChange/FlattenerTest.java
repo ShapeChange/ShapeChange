@@ -143,4 +143,11 @@ public class FlattenerTest extends BasicTestSCXML {
 		"src/test/resources/flattener/measureTypedProperties/reference");
     }
     
+    @Test
+    public void test_explicitTimeInterval() {
+	multiTest(
+		"src/test/resources/flattener/explicitTimeInterval/testEA_flatten_explicitTimeInterval.xml",
+		new String[] { "xsd" }, "testResults/flattening/explicitTimeInterval",
+		"src/test/resources/flattener/explicitTimeInterval/reference");
+    }
 }
