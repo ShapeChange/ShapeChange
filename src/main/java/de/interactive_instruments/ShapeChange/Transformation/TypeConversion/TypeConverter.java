@@ -46,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -146,6 +147,14 @@ public class TypeConverter implements Transformer, MessageSource {
      * types. All subtypes of these types are also converted to feature types.
      */
     public static final String RULE_OBJECTTYPES_TO_FEATURETYPES = "rule-trf-objectTypesToFeatureTypes";
+
+    /**
+     * For any property (attribute or association role) with a type for which a map
+     * entry is defined, switch the value type to the target type defined by that
+     * map entry. For an association role, that means that the whole association is
+     * "moved" (as if dragging the association end to the new value type).
+     */
+    public static final String RULE_SWITCH_VALUE_TYPES = "rule-trf-switchValueTypes";
 
     /**
      * Dissolves associations that are navigable from types in the schemas selected
@@ -269,7 +278,72 @@ public class TypeConverter implements Transformer, MessageSource {
 	    applyRuleNilReasonPropertyForNillableProperty();
 	}
 
+	if (rules.contains(RULE_SWITCH_VALUE_TYPES)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_SWITCH_VALUE_TYPES);
+	    applyRuleSwitchValueTypes();
+	}
+
 	// apply post-processing (nothing to do right now)
+    }
+
+    private void applyRuleSwitchValueTypes() {
+
+	List<ProcessMapEntry> mapEntries = trfConfig.getMapEntries();
+
+	for (ProcessMapEntry pme : mapEntries) {
+
+	    String type = pme.getType();
+	    String target = pme.getTargetType();
+	    Type targetType = genModel.typeByName(target);
+
+	    for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+		if (!genPi.typeInfo().name.equals(type)) {
+		    continue;
+		}
+
+		genPi.copyTypeInfo(targetType);
+
+		if (!genPi.isAttribute()) {
+
+		    // now we need to "move" the association
+
+		    GenericClassInfo targetCi = (GenericClassInfo) genModel.classById(targetType.id);
+
+		    if (targetCi == null) {
+			MessageContext mc = result.addError(this, 400, target);
+			if (mc != null) {
+			    mc.addDetail(this, 0, genPi.fullName());
+			}
+		    } else {
+
+			GenericAssociationInfo ai = (GenericAssociationInfo) genPi.association();
+			
+			GenericPropertyInfo otherEnd;
+			if (ai.end1() == genPi) {
+			    otherEnd = (GenericPropertyInfo) ai.end2();
+			} else {
+			    otherEnd = (GenericPropertyInfo) ai.end1();
+			}
+
+			/*
+			 * inClass of the relevant end will be kept as-is, because only its type
+			 * changes. The inClass of the other end, if set, needs to change, though.
+			 */
+
+			GenericClassInfo otherEndInClass = (GenericClassInfo) otherEnd.inClass();
+			if (otherEndInClass != null) {
+			    otherEnd.setInClass(targetCi);
+			}
+
+			if (otherEnd.isNavigable()) {
+			    otherEndInClass.removePropertyById(otherEnd.id());
+			    targetCi.addPropertyAtBottom(otherEnd, PropertyCopyDuplicatBehaviorIndicator.ADD);
+			}
+		    }
+		}
+	    }
+	}
     }
 
     private void applyRuleNilReasonPropertyForNillableProperty() {
@@ -417,9 +491,9 @@ public class TypeConverter implements Transformer, MessageSource {
 	     * exception when new properties are added to the class
 	     */
 	    List<PropertyInfo> classPis = new ArrayList<>(genCi.properties().values());
-	    
+
 	    List<GenericPropertyInfo> newPisToAdd = new ArrayList<>();
-	    
+
 	    for (PropertyInfo pi : classPis) {
 
 		if (pi.propertyMetadata()) {
@@ -449,7 +523,7 @@ public class TypeConverter implements Transformer, MessageSource {
 			mdPi.setInClass(genCi);
 
 			mdPi.setSequenceNumber(pi.sequenceNumber().createCopyWithSuffix(1), true);
-			
+
 			newPisToAdd.add(mdPi);
 
 			if (mdt.category() == Options.FEATURE || mdt.category() == Options.OBJECT) {
@@ -488,7 +562,7 @@ public class TypeConverter implements Transformer, MessageSource {
 		    }
 		}
 	    }
-	    
+
 	    genCi.addPropertiesInSequence(newPisToAdd, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 	}
     }
@@ -772,6 +846,11 @@ public class TypeConverter implements Transformer, MessageSource {
 	    return "Property '$1$' of class '$2$' is nillable. However, no void reason type was defined for the property (by tagged value 'voidReasonType' or via configuration parameter '"
 		    + PARAM_DEFAULT_VOID_REASON_TYPE
 		    + "'), or the type could not be found in the model (using the defined identification process). A new nil reason property will be created for property '$1$', with value type 'CharacterString'.";
+
+	// Messages for RULE_SWITCH_VALUE_TYPE
+	case 400:
+	    return "Value type '$1$' of association role '$2$' was not found in the model. Cannot move the association.";
+
 	default:
 	    return "(" + TypeConverter.class.getName() + ") Unknown message with number: " + mnr;
 	}
