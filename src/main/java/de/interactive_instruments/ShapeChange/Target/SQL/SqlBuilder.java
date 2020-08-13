@@ -1317,6 +1317,8 @@ public class SqlBuilder implements MessageSource {
     }
 
     private String identifyForeignKeyColumnSuffix(PropertyInfo pi) {
+	
+	boolean isReflexiveProperty = pi.inClass().id().equals(pi.typeInfo().id);
 
 	String typeName = pi.typeInfo().name;
 	String piEncodingRule = pi.encodingRule("sql");
@@ -1334,7 +1336,8 @@ public class SqlBuilder implements MessageSource {
 	    } else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
 		return SqlDdl.foreignKeyColumnSuffixCodelist;
 	    } else {
-		return SqlDdl.foreignKeyColumnSuffix;
+		return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
+		    SqlDdl.foreignKeyColumnSuffix;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.DATATYPE) {
@@ -1342,7 +1345,8 @@ public class SqlBuilder implements MessageSource {
 	} else if (pi.categoryOfValue() == Options.CODELIST) {
 	    return SqlDdl.foreignKeyColumnSuffixCodelist;
 	} else {
-	    return SqlDdl.foreignKeyColumnSuffix;
+	    return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
+		    SqlDdl.foreignKeyColumnSuffix;
 	}
     }
 
