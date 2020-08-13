@@ -2,37 +2,73 @@
 <ShapeChangeConfiguration
 	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
 	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
-	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
-		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/flattener/measureTypedProperties/test_flatten_measureTypedProperties.EAP"/>
-		<parameter name="appSchemaName" value="Test Schema"/>
-		<parameter name="publicOnly" value="true"/>
-		<parameter name="checkingConstraints" value="disabled"/>
-		<parameter name="sortedSchemaOutput" value="true"/>
-		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
-	</input>	
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/flattener/measureTypedProperties/test_flatten_measureTypedProperties.EAP" />
+		<parameter name="appSchemaName" value="Test Schema" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include
+			href="src/main/resources/config/StandardAliases.xml" />
+	</input>
 	<transformers>
 		<Transformer
 			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
-			input="INPUT" id="trf_last" mode="enabled">
+			input="INPUT" id="trf_noSubrule" mode="enabled">
 			<rules>
 				<ProcessRuleSet name="flattener">
-					<rule name="rule-trf-prop-flatten-measure-typed-properties"/>
+					<rule name="rule-trf-prop-flatten-measure-typed-properties" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="trf_withUomProperty" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-measure-typed-properties" />
+					<rule
+						name="rule-trf-prop-flatten-measure-typed-properties-add-uom-property" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="trf_fixedUomSuffix" mode="enabled">
+			<parameters>
+			<ProcessParameter name="fixedUomPropertyDefinitions"
+	value="Feature1.angle = _deg, length=_m, NonExisting.xxx = _ft " />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-measure-typed-properties" />
+					<rule
+						name="rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix" />
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
 	</transformers>
 	<targets>
-		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
-		  inputs="trf_last" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/flattening/measureTypedProperties/xsd"/>
-			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
-			<xi:include href="src/main/resources/config/StandardRules.xml"/>
-			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
-			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="trf_withUomProperty trf_noSubrule trf_fixedUomSuffix" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/flattening/measureTypedProperties/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule"
+				value="iso19136_2007" />
+			<targetParameter name="documentationTemplate" value="Alias: [[alias]]"/>
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries.xml" />
 		</TargetXmlSchema>
 	</targets>
 </ShapeChangeConfiguration>

@@ -244,6 +244,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String PARAM_MEASURE_TYPES = "measureTypes";
     public static final String[] DEFAULT_MEASURE_TYPES = new String[] { "Measure", "Area", "Length", "Distance",
 	    "Angle", "Scale", "TimeMeasure", "Volume", "Speed", "AngularSpeed", "Weight", "Currency" };
+    public static final String PARAM_FIXED_UOM_PROPERTY_DEFINITIONS = "fixedUomPropertyDefinitions";
 
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
@@ -277,6 +278,8 @@ public class Flattener implements Transformer, MessageSource {
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
     public static final String RULE_TRF_PROP_FLATTEN_HOMOGENEOUSGEOMETRIES = "rule-trf-prop-flatten-homogeneousgeometries";
     public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES = "rule-trf-prop-flatten-measure-typed-properties";
+    public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY = "rule-trf-prop-flatten-measure-typed-properties-add-uom-property";
+    public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX = "rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
@@ -804,19 +807,35 @@ public class Flattener implements Transformer, MessageSource {
 	SortedSet<String> measureTypes = new TreeSet<>(
 		trfConfig.parameterAsStringList(PARAM_MEASURE_TYPES, DEFAULT_MEASURE_TYPES, true, true));
 
-	ClassInfo numberCi = genModel.classByName("Number");
-	Type numberType = new Type();
-	numberType.id = (numberCi != null) ? numberCi.id() : "unknown";
-	numberType.name = "Number";
+	ClassInfo realCi = genModel.classByName("Real");
+	Type realType = new Type();
+	realType.id = (realCi != null) ? realCi.id() : "unknown";
+	realType.name = "Real";
 
+	// used by RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY
 	ClassInfo characterStringCi = genModel.classByName("CharacterString");
 	Type characterStringType = new Type();
 	characterStringType.id = (characterStringCi != null) ? characterStringCi.id() : "unknown";
 	characterStringType.name = "CharacterString";
 
+	// used by RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX
+	/*
+	 * key: {inClassName}.{propertyName} - if feature type specific uom, or
+	 * {propertyName} - if applicable to all properties of that name.
+	 */
+	Map<String, String> uomSuffixByPropertyKey = new HashMap<>();
+	List<String> fixedUomPropDefinitions = trfConfig.parameterAsStringList(PARAM_FIXED_UOM_PROPERTY_DEFINITIONS,
+		null, true, true);
+	for (String def : fixedUomPropDefinitions) {
+	    String[] parts = def.split("=");
+	    String propKey = parts[0].trim();
+	    String uomSuffix = parts[1].trim();
+	    uomSuffixByPropertyKey.put(propKey, uomSuffix);
+	}
+
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
-	    List<GenericPropertyInfo> uomPis = new ArrayList<>();
+	    List<GenericPropertyInfo> newPis = new ArrayList<>();
 
 	    for (PropertyInfo pi : genCi.properties().values()) {
 
@@ -824,22 +843,49 @@ public class Flattener implements Transformer, MessageSource {
 		    continue;
 
 		GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
-		genPi.setTypeInfo(numberType);
-		
-		GenericPropertyInfo uomPi = new GenericPropertyInfo(genModel,genPi.id()+"_uom",genPi.name()+"_uom");
-		uomPi.setCardinality(new Multiplicity(0,1));
-		uomPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1), false);
-		uomPi.setInlineOrByReference("inline");
-		uomPi.setTypeInfo(characterStringType);
-		uomPi.setInClass(genCi);
-		
-		uomPis.add(uomPi);
+		genPi.setTypeInfo(realType);
+
+		if (trfConfig.hasRule(RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX)) {
+
+		    String uomSuffix = uomSuffixByPropertyKey.get(genPi.name());
+		    if (uomSuffix == null) {
+			uomSuffix = uomSuffixByPropertyKey.get(genPi.inClass().name() + "." + genPi.name());
+		    }
+
+		    if (uomSuffix != null) {
+			genPi.setName(genPi.name() + uomSuffix);
+			// also handle the code, if defined for the property
+			if (hasCode(genPi)) {
+			    String code = getCode(genPi);
+			    setCode(genPi, code + uomSuffix);
+			}
+		    }
+		}
+
+		if (trfConfig.hasRule(RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY)) {
+		    GenericPropertyInfo uomPi = new GenericPropertyInfo(genModel, genPi.id() + "_uom",
+			    genPi.name() + "_uom");
+		    uomPi.setCardinality(new Multiplicity(0, 1));
+		    uomPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1), false);
+		    uomPi.setInlineOrByReference("inline");
+		    uomPi.setTypeInfo(characterStringType);
+		    uomPi.setInClass(genCi);
+
+		    // also handle the code, if defined for the property
+		    if (hasCode(genPi)) {
+			String code = getCode(genPi);
+			setCode(uomPi, code + "_uom");
+		    }
+
+		    newPis.add(uomPi);
+		}
 	    }
 
-	    if (!uomPis.isEmpty()) {
-		genCi.addPropertiesInSequence(uomPis, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+	    if (!newPis.isEmpty()) {
+		genCi.addPropertiesInSequence(newPis, PropertyCopyDuplicatBehaviorIndicator.IGNORE);
 	    }
 	}
+
     }
 
     private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel, TransformerConfiguration trfConfig) {

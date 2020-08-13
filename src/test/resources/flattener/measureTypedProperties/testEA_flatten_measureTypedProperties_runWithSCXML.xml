@@ -26,21 +26,41 @@
 	<StereotypeAlias alias="property" wellknown=""/>
 	<StereotypeAlias alias="enum" wellknown=""/>
 </stereotypeAliases>
-	</input>	
+	</input>
 	<transformers>
-		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="trf_last" input="INPUT" mode="enabled">
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="trf_noSubrule" input="INPUT" mode="enabled">
 			<rules>
 				<ProcessRuleSet name="flattener">
 					<rule name="rule-trf-prop-flatten-measure-typed-properties"/>
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="trf_withUomProperty" input="INPUT" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-measure-typed-properties"/>
+					<rule name="rule-trf-prop-flatten-measure-typed-properties-add-uom-property"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="trf_fixedUomSuffix" input="INPUT" mode="enabled">
+			<parameters>
+			<ProcessParameter name="fixedUomPropertyDefinitions" value="Feature1.angle = _deg, length=_m, NonExisting.xxx = _ft "/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-measure-typed-properties"/>
+					<rule name="rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
 	</transformers>
 	<targets>
-		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="trf_last" mode="enabled">
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="trf_withUomProperty trf_noSubrule trf_fixedUomSuffix" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/flattening/measureTypedProperties/xsd"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+			<targetParameter name="documentationTemplate" value="Alias: [[alias]]"/>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
 		<rule name="req-all-all-documentation"/>
