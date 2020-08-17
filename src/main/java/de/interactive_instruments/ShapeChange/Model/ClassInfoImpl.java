@@ -1155,6 +1155,21 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 	return result;
     }
+    
+    @Override
+    public SortedSet<ClassInfo> subtypeClasses() {
+
+	SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+	for (String subtypeId : this.subtypes()) {
+
+	    ClassInfo subtype = model().classById(subtypeId);
+
+	    result.add(subtype);
+	}
+
+	return result;
+    }
 
     /**
      * {@inheritDoc}

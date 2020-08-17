@@ -32,6 +32,8 @@
 
 package de.interactive_instruments.ShapeChange;
 
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+
 /**
  * Helper class to store type information (the internal id within the model and
  * the local, unqualified name)
@@ -41,24 +43,33 @@ package de.interactive_instruments.ShapeChange;
  */
 public class Type {
 
-	public String id = null;
-	public String name = null;
-	
-	public Type() {
-	    
-	}
-	
-	public Type(String id, String name) {
-	    this.id = id;
-	    this.name = name;
-	}
+    public String id = null;
+    public String name = null;
 
-	public Type createCopy() {
+    public Type() {
 
-		Type copy = new Type();
-		copy.name = this.name;
-		copy.id = this.id;
+    }
 
-		return copy;
-	}
+    public Type(String id, String name) {
+	this.id = id;
+	this.name = name;
+    }
+
+    public Type createCopy() {
+
+	Type copy = new Type();
+	copy.name = this.name;
+	copy.id = this.id;
+
+	return copy;
+    }
+
+    public static Type from(ClassInfo ci) {
+
+	Type t = new Type();
+	t.name = ci.name();
+	t.id = ci.id();
+
+	return t;
+    }
 }

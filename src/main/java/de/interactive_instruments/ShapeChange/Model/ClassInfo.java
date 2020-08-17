@@ -169,6 +169,14 @@ public interface ClassInfo extends Info {
      *         the class itself). Can be empty but not <code>null</code>
      */
     public SortedSet<ClassInfo> supertypeClasses();
+    
+    /**
+     * @return Set with all direct subtypes of this class (WARNING: this can be a
+     *         shallow copy or derived set, thus it is not safe to assume that
+     *         modifications to this set will update the subtype information in
+     *         the class itself). Can be empty but not <code>null</code>
+     */
+    public SortedSet<ClassInfo> subtypeClasses();
 
     /**
      * Check whether the class and the package pi are part of the same schema (= XML

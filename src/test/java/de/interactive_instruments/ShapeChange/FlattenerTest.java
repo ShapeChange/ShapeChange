@@ -150,4 +150,12 @@ public class FlattenerTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/flattening/explicitTimeInterval",
 		"src/test/resources/flattener/explicitTimeInterval/reference");
     }
+    
+    @Test
+    public void test_reverseInheritance() {
+	multiTest(
+		"src/test/resources/flattener/reverseInheritance/test_flattener_reverseInheritance.xml",
+		new String[] { "xsd" }, "testResults/flattening/reverseInheritance",
+		"src/test/resources/flattener/reverseInheritance/reference");
+    }
 }

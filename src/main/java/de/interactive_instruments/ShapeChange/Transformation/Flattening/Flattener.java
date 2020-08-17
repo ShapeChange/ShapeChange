@@ -258,6 +258,13 @@ public class Flattener implements Transformer, MessageSource {
     public static final String PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR = "descriptorModification_geometryTypeSuffixSeparator";
     public static final String PARAM_DESCRIPTOR_MOD_GEOM_TYPE_ALIAS = "descriptorModification_geometryTypeAlias";
 
+    public static final String PARAM_BASIC_TYPE_SUPERTYPE_NAMES = "basicTypeSupertypeNames";
+    public static final String[] DEFAULT_BASIC_TYPE_SUPERTYPE_NAMES = new String[] { "Character", "CharacterString",
+	    "Number", "Real", "Integer", "Decimal", "Date", "DateTime", "Boolean", "Measure", "Length", "Distance",
+	    "Area", "Velocity", "Volume" };
+    public static final String PARAM_TYPE_SUFFIX_SEPARATOR = "typeSuffixSeparator";
+    public static final String PARAM_TYPE_ENUMERATION_PROPERTY_NAME = "typeEnumerationPropertyName";
+
     // =============================
     /* Flattener rule identifiers */
     // =============================
@@ -272,6 +279,7 @@ public class Flattener implements Transformer, MessageSource {
      * property also is a feature type.
      */
     public static final String RULE_TRF_ALL_REMOVE_FEATURETYPE_RELATIONSHIPS = "rule-trf-all-removeFeatureTypeRelationships";
+    public static final String RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE = "rule-trf-cls-flatten-reverse-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES = "rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes";
@@ -757,6 +765,11 @@ public class Flattener implements Transformer, MessageSource {
 	    applyRuleFlattenExplicitTimeIntervals(genModel, trfConfig);
 	}
 
+	if (rules.contains(RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE);
+	    applyRuleReverseInheritance(genModel, trfConfig);
+	}
+
 	// postprocessing
 	result.addProcessFlowInfo(this, 20317, "postprocessing");
 
@@ -815,8 +828,8 @@ public class Flattener implements Transformer, MessageSource {
 	String startPropNameSuffix = "Start";
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
-	    
-	    if(!genPi.isAttribute()) {
+
+	    if (!genPi.isAttribute()) {
 		continue;
 	    }
 
@@ -828,7 +841,7 @@ public class Flattener implements Transformer, MessageSource {
 		Type tibType = new Type();
 		tibType.id = (tibCi != null) ? tibCi.id() : "unknown";
 		tibType.name = timeIntervalBoundaryTypeName.trim();
-		
+
 		genPi.setTypeInfo(tibType);
 
 		GenericPropertyInfo endPi = genPi.createCopy(genPi.id() + endPropNameSuffix);
@@ -839,7 +852,7 @@ public class Flattener implements Transformer, MessageSource {
 		}
 		GenericClassInfo genCi = (GenericClassInfo) genPi.inClass();
 		genCi.addProperty(endPi, PropertyCopyDuplicatBehaviorIndicator.ADD);
-				
+
 		genPi.setName(genPi.name() + startPropNameSuffix);
 		if (hasCode(genPi)) {
 		    setCode(genPi, getCode(genPi) + startPropNameSuffix);
@@ -1037,17 +1050,67 @@ public class Flattener implements Transformer, MessageSource {
 
 	Set<GenericClassInfo> mixinsToRemove = new HashSet<GenericClassInfo>();
 
+	// identify mixins
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-
 	    if (genCi.category() == Options.MIXIN) {
-
-		this.copyContentToSubtypes(genModel, genCi);
 		mixinsToRemove.add(genCi);
 	    }
 	}
 
-	for (GenericClassInfo mixin : mixinsToRemove) {
+	SortedSet<String> idsOfUnprocessedMixins = new TreeSet<>();
 
+	for (GenericClassInfo mixin : mixinsToRemove) {
+	    idsOfUnprocessedMixins.add(mixin.id());
+	}
+
+	/*
+	 * Check if a mixin is used at any association end... these associations are
+	 * currently not handled. Thus we need to warn.
+	 */
+	for (AssociationInfo ai : genModel.associations()) {
+	    ClassInfo mixin = null;
+	    if (ai.end1() != null && idsOfUnprocessedMixins.contains(ai.end1().inClass().id())) {
+		mixin = ai.end1().inClass();
+	    } else if (ai.end2() != null && idsOfUnprocessedMixins.contains(ai.end2().inClass().id())) {
+		mixin = ai.end2().inClass();
+	    }
+	    if (mixin != null) {
+		result.addWarning(this, 20349, mixin.name());
+	    }
+	}
+
+	/*
+	 * we need to ensure that in a mixin inheritance tree, the attributes are
+	 * correctly copied down
+	 */
+	while (!idsOfUnprocessedMixins.isEmpty()) {
+
+	    outer: for (GenericClassInfo mixin : mixinsToRemove) {
+
+		/* We do not want to process the same mixin twice. */
+		if (!idsOfUnprocessedMixins.contains(mixin.id())) {
+		    continue;
+		}
+
+		/*
+		 * process the mixin only if it does not have another mixin as supertype that
+		 * has not been processed
+		 */
+		for (ClassInfo stCi : mixin.supertypeClasses()) {
+		    if (stCi.category() == Options.MIXIN && idsOfUnprocessedMixins.contains(stCi.id())) {
+			continue outer;
+		    }
+		}
+
+		// alright, this mixin shall now be processed
+		idsOfUnprocessedMixins.remove(mixin.id());
+
+		// copy mixin content to subtypes
+		this.copyContentToSubtypes(genModel, mixin);
+	    }
+	}
+
+	for (GenericClassInfo mixin : mixinsToRemove) {
 	    genModel.remove(mixin);
 	}
     }
@@ -4511,6 +4574,368 @@ public class Flattener implements Transformer, MessageSource {
 
     /**
      *
+     * @param genModel
+     * @param trfConfig
+     */
+    private void applyRuleReverseInheritance(GenericModel genModel, TransformerConfiguration trfConfig) {
+
+	/*
+	 * We do not want to apply the transformation to types that essentially are
+	 * basic types. We identify these types by looking for a supertype with a name
+	 * from one of the (ISO 19103) types that are typically used as base for a basic
+	 * type.
+	 */
+	SortedSet<String> basicTypeSupertypeNames = new TreeSet<>(trfConfig.parameterAsStringList(
+		PARAM_BASIC_TYPE_SUPERTYPE_NAMES, DEFAULT_BASIC_TYPE_SUPERTYPE_NAMES, true, true));
+
+	String typeSuffixSeparator = trfConfig.parameterAsString(PARAM_TYPE_SUFFIX_SEPARATOR, "_", true, true);
+
+	String typeEnumerationPropertyName = trfConfig.parameterAsString(PARAM_TYPE_ENUMERATION_PROPERTY_NAME, "_type",
+		false, true);
+
+	// key: class id, value: class
+	Map<String, GenericClassInfo> genSuperclassesById = new HashMap<String, GenericClassInfo>();
+	Map<String, GenericClassInfo> genRootclassesById = new HashMap<String, GenericClassInfo>();
+
+	/*
+	 * Identify supertypes that are in selected schemas or have a supertype in
+	 * selected schemas. Identify which of these supertypes are "roots" in the
+	 * selected schemas (i.e. they do not have a supertype from the selected
+	 * schemas, but may have a supertype from outside the selected schemas).
+	 */
+	for (ClassInfo cls : genModel.classes()) {
+
+	    if (!cls.subtypes().isEmpty()) {
+
+		/*
+		 * if one of the direct or indirect supertypes of the class is in selected
+		 * schemas, add the class, too
+		 */
+		boolean hasSupertypeInSelectedSchemas = false;
+		boolean isBasicType = false;
+		boolean isInSelectedSchemas = genModel.isInSelectedSchemas(cls);
+
+		for (ClassInfo clsSupertype : cls.supertypesInCompleteHierarchy()) {
+		    if (genModel.isInSelectedSchemas(clsSupertype)) {
+			hasSupertypeInSelectedSchemas = true;
+		    }
+		    if (basicTypeSupertypeNames.contains(clsSupertype.name())) {
+			isBasicType = true;
+		    }
+		}
+
+		if (basicTypeSupertypeNames.contains(cls.name())) {
+		    isBasicType = true;
+		}
+
+		if (!isBasicType) {
+
+		    if (isInSelectedSchemas || hasSupertypeInSelectedSchemas) {
+			genSuperclassesById.put(cls.id(), (GenericClassInfo) cls);
+		    }
+
+		    if (isInSelectedSchemas && !hasSupertypeInSelectedSchemas) {
+			genRootclassesById.put(cls.id(), (GenericClassInfo) cls);
+		    }
+		}
+	    }
+	}
+
+	/*
+	 * Create type enumerations for each root class, with enums for each
+	 * non-abstract subtype (and the root class, if it is not abstract).
+	 */
+	for (GenericClassInfo genRootclass : genRootclassesById.values()) {
+
+	    GenericClassInfo genEnumeration = new GenericClassInfo(genModel, genRootclass.id() + "_typeEnumeration",
+		    genRootclass.name() + "Type", Options.ENUMERATION);
+
+	    if (hasCode(genRootclass)) {
+		setCode(genEnumeration, getCode(genRootclass) + "_TE");
+	    } else {
+		setCode(genEnumeration, genRootclass.name() + "TypeEnumeration");
+	    }
+
+	    genEnumeration.setStereotype("enumeration");
+	    genEnumeration.setPkg(genRootclass.pkg());
+
+	    ((GenericPackageInfo) genRootclass.pkg()).addClass(genEnumeration);
+
+	    SortedMap<String, ClassInfo> nonAbstractTypesByName = new TreeMap<>();
+	    if (!genRootclass.isAbstract()) {
+		nonAbstractTypesByName.put(genRootclass.name(), genRootclass);
+	    }
+	    for (ClassInfo subtype : genRootclass.subtypesInCompleteHierarchy()) {
+		if (!subtype.isAbstract()) {
+		    nonAbstractTypesByName.put(subtype.name(), subtype);
+		}
+	    }
+
+	    int seqNumIndex = 1;
+	    List<GenericPropertyInfo> enums = new ArrayList<>();
+
+	    for (ClassInfo nonAbstractType : nonAbstractTypesByName.values()) {
+
+		GenericPropertyInfo enumProp = createEnumerationProperty(genModel, nonAbstractType.name(),
+			nonAbstractType.aliasName(), genEnumeration, new StructuredNumber(seqNumIndex));
+
+		if (hasCode(nonAbstractType)) {
+		    setCode(enumProp, getCode(nonAbstractType));
+		}
+
+		enums.add(enumProp);
+
+		seqNumIndex++;
+	    }
+
+	    genEnumeration.addPropertiesInSequence(enums, PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+	    genModel.register(genEnumeration);
+
+	    // add a type property to the root class
+	    GenericPropertyInfo newTypeProp = new GenericPropertyInfo(genModel,
+		    genRootclass.id() + typeEnumerationPropertyName, typeEnumerationPropertyName);
+
+	    newTypeProp.setStereotype("");
+
+	    Type propType = new Type();
+	    propType.id = genEnumeration.id();
+	    propType.name = genEnumeration.name();
+	    newTypeProp.setTypeInfo(propType);
+
+	    TaggedValues taggedValues = options.taggedValueFactory();
+	    taggedValues.add("inlineOrByReference", "inlineOrByReference");
+	    taggedValues.add("isMetadata", "false");
+	    newTypeProp.setTaggedValues(taggedValues, false);
+
+	    newTypeProp.setInClass(genRootclass);
+	    newTypeProp.setSequenceNumber(new StructuredNumber(0), false);
+
+	    genRootclass.addPropertiesAtTop(List.of(newTypeProp), PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+	    setCode(newTypeProp, typeEnumerationPropertyName);
+	}
+
+	/*
+	 * Set abstract root classes to non-abstract
+	 */
+	for (GenericClassInfo genRootclass : genRootclassesById.values()) {
+	    if (genRootclass.isAbstract()) {
+		genRootclass.setIsAbstract(false);
+	    }
+	}
+
+	/*
+	 * Establish mappings of subtypes from root classes to their root class, so that
+	 * property value types in the model can be updated later on.
+	 * 
+	 * NOTE: Mixins must have been dissolved before this transformation rule is
+	 * called!
+	 */
+	Map<ClassInfo, GenericClassInfo> rootClassBySubtype = new HashMap<>();
+	for (GenericClassInfo genRootclass : genRootclassesById.values()) {
+
+	    for (ClassInfo subtype : genRootclass.subtypesInCompleteHierarchy()) {
+
+		if (rootClassBySubtype.containsKey(subtype)) {
+		    MessageContext mc = result.addError(this, 20500, subtype.name(), genRootclass.name(),
+			    rootClassBySubtype.get(subtype).name());
+		    if (mc != null) {
+			mc.addDetail(this, 2, subtype.fullName());
+		    }
+		} else {
+		    rootClassBySubtype.put(subtype, genRootclass);
+		}
+	    }
+	}
+
+	Set<String> idsOfUnprocessedSupertypes = new HashSet<String>();
+	for (String superclassId : genSuperclassesById.keySet()) {
+	    idsOfUnprocessedSupertypes.add(superclassId);
+	}
+
+	/*
+	 * We want to copy the content of subtypes up to their supertypes, starting at
+	 * the bottom of the inheritance tree.
+	 * 
+	 * We also keep track of the subtypes that can be removed at the end of
+	 * processing.
+	 */
+	Set<GenericClassInfo> subtypesToRemove = new HashSet<>();
+
+	while (!idsOfUnprocessedSupertypes.isEmpty()) {
+
+	    /*
+	     * We need to iterate through a separate collection because we remove elements
+	     * from idsOfUnprocessedSupertypes, which would otherwise cause an issue with
+	     * the iterator.
+	     */
+	    for (String idOfgenSuperclass : genSuperclassesById.keySet()) {
+
+		/* We do not want to process the same superclass twice. */
+		if (!idsOfUnprocessedSupertypes.contains(idOfgenSuperclass)) {
+		    continue;
+		}
+
+		GenericClassInfo superclass = genSuperclassesById.get(idOfgenSuperclass);
+
+		// process the superclass only if it has one level of subtypes
+		if (superclass.subtypes().size() != superclass.subtypesInCompleteHierarchy().size()) {
+		    continue;
+		}
+
+		// alright, this superclass shall now be processed
+		idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
+
+		// move properties of the subtypes up into the supertype
+		SortedSet<ClassInfo> subtypes = superclass.subtypeClasses();
+
+		List<GenericPropertyInfo> newPropsFromSubtypesToBeUsedAsIs = new ArrayList<>();
+		List<GenericPropertyInfo> newPropsFromSubtypesToTypeSuffix = new ArrayList<>();
+
+		for (ClassInfo subtype : subtypes) {
+
+		    GenericClassInfo genSubtype = (GenericClassInfo) subtype;
+
+		    for (PropertyInfo subPi : genSubtype.properties().values()) {
+
+			if (superclass.property(subPi.name()) != null) {
+			    /*
+			     * The supertype or one of its supertypes has a property of this name; ignore
+			     * the subtype property.
+			     */
+			} else {
+
+			    /*
+			     * Determine if another subtype has a property of that name
+			     */
+			    boolean otherSubtypeWithSameName = false;
+			    for (ClassInfo subtypeB : subtypes) {
+				if (subtypeB != subtype && subtypeB.property(subPi.name()) != null) {
+				    otherSubtypeWithSameName = true;
+				    break;
+				}
+			    }
+
+			    GenericPropertyInfo genSubPi = (GenericPropertyInfo) subPi;
+
+			    if (otherSubtypeWithSameName) {
+				newPropsFromSubtypesToTypeSuffix.add(genSubPi);
+			    } else {
+				newPropsFromSubtypesToBeUsedAsIs.add(genSubPi);
+			    }
+			}
+		    }
+		}
+
+		/*
+		 * Now that we know which properties from subtypes shall be moved to the
+		 * supertype as-is and which properties from subtypes need to be suffixed, we
+		 * can do so (we needed unchanged property names before because otherwise name
+		 * comparisons of properties from subtypes would not have been correct).
+		 */
+		SortedMap<String, GenericPropertyInfo> newPropsFromSubtypesByName = new TreeMap<>();
+
+		for (GenericPropertyInfo genPi : newPropsFromSubtypesToBeUsedAsIs) {
+		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
+		}
+
+		for (GenericPropertyInfo genPi : newPropsFromSubtypesToTypeSuffix) {
+		    ClassInfo subtype = genPi.inClass();
+		    genPi.setName(genPi.name() + typeSuffixSeparator + subtype.name());
+		    if (hasCode(genPi) && hasCode(subtype)) {
+			setCode(genPi, getCode(genPi) + typeSuffixSeparator + getCode(subtype));
+		    }
+		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
+		}
+
+		for (PropertyInfo pi : newPropsFromSubtypesByName.values()) {
+		    GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+		    genPi.setInClass(superclass);
+		    genPi.cardinality().minOccurs = 0;
+		}
+
+		/*
+		 * assign sequence numbers to new properties according to their order, taking
+		 * into account the highest sequence number in the superclass
+		 */
+		int majorComponentSuperclassHighestSequenceNumber = superclass.properties().isEmpty() ? 0
+			: superclass.properties().lastKey().components[0];
+		int counter = 1;
+		for (GenericPropertyInfo newProp : newPropsFromSubtypesByName.values()) {
+		    StructuredNumber newSn = new StructuredNumber(
+			    majorComponentSuperclassHighestSequenceNumber + counter);
+		    counter++;
+		    newProp.setSequenceNumber(newSn, true);
+		}
+
+		superclass.addPropertiesAtBottom(
+			new ArrayList<GenericPropertyInfo>(newPropsFromSubtypesByName.values()),
+			PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+		/*
+		 * Dissolve inheritance relationship between the supertype and its subtypes.
+		 * Also keep track of subtypes so that they can be removed at the end of
+		 * processing.
+		 */
+		for (ClassInfo subtype : subtypes) {
+		    superclass.removeSubtype(subtype.id());
+		    GenericClassInfo genSubtype = (GenericClassInfo) subtype;
+		    genSubtype.removeSupertype(superclass.id());
+
+		    subtypesToRemove.add((GenericClassInfo) subtype);
+
+		    // NOTE: we already noted before to which root class a subtype maps
+		}
+	    }
+	}
+
+	/*
+	 * Change the type of all attributes and association roles from one of the
+	 * dissolved subtypes to the appropriate root class (may apply to one or both
+	 * ends of an association)
+	 */
+	for (PropertyInfo pi : genModel.properties()) {
+
+	    GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+
+	    Type type = genPi.typeInfo();
+
+	    ClassInfo typeCi = genModel.classByIdOrName(type);
+
+	    if (rootClassBySubtype.containsKey(typeCi)) {
+
+		ClassInfo rootClass = rootClassBySubtype.get(typeCi);
+		genPi.setTypeInfo(Type.from(rootClass));
+	    }
+	}
+
+	// remove all dissolved subtypes from the model
+	for (GenericClassInfo genCi : subtypesToRemove) {
+
+	    /*
+	     * Remove all properties in subtypes marked for removal that have been moved
+	     * (inClass is not the subtype). We do NOT want to delete these properties
+	     * (because the same object is now in the root class properties) - which would
+	     * happen if such a property was still referenced by the class when the model
+	     * removes that class.
+	     */
+	    List<PropertyInfo> movedProps = new ArrayList<>();
+	    for (PropertyInfo pi : genCi.properties().values()) {
+		if (pi.inClass() != genCi) {
+		    movedProps.add(pi);
+		}
+	    }
+	    for (PropertyInfo pi : movedProps) {
+		genCi.removePropertyById(pi.id());
+	    }
+
+	    genModel.remove(genCi);
+	}
+    }
+
+    /**
+     *
      * TODO: realize flattening of inheritance structures from external packages
      *
      * @param genModel
@@ -6601,11 +7026,16 @@ public class Flattener implements Transformer, MessageSource {
 	    return "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
 	case 20348:
 	    return "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
+	case 20349:
+	    return "??Dissolving mixins will not take into account associations that reference mixin '$1$'.";
 
 	case 20400:
 	    return "Exception occurred while loading linked document of type '$1$'. Exception message is: $2$";
 	case 20401:
 	    return "Exception occurred while merging linked documents of supertype '$1$' and its subtype '$2$'. Exception message is: $3$";
+
+	case 20500:
+	    return "Subtype '$1$' is already mapped to root class '$2$'. Ignoring a mapping to root class '$3$'.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
