@@ -93,9 +93,9 @@ public class Comment implements Statement {
 
     public String computeTargetName() {
 	if (column == null) {
-	    return this.table.getName();
+	    return this.table.getFullName();
 	} else {
-	    return this.column.getInTable().getName() + "." + this.column.getName();
+	    return this.column.getInTable().getFullName() + "." + this.column.getName();
 	}
     }
 

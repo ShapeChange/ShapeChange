@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -68,7 +69,8 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	public static final String GEOM_PARAM_LAYER_GTYPE_VALIDATION_REGEX = "(?i:(POINT|LINE|POLYGON|COLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON))";
 
 	private ShapeChangeResult result;
-	private Table userSdoGeomMetadataTable = new Table(
+	// TBD: use "MDSYS" as schema name?
+	private Table userSdoGeomMetadataTable = new Table(null,
 			"USER_SDO_GEOM_METADATA");
 
 	public OracleStrategy(ShapeChangeResult result) {
@@ -142,6 +144,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 				"TABLE_NAME", "COLUMN_NAME", "DIMINFO", "SRID"));
 
 		List<Expression> items = new ArrayList<Expression>();
+		// TBD: use Table.getFullName()?
 		items.addAll(SqlUtil.toStringValueList(tableWithColumn.getName(),
 				columnForGeometryTypedProperty.getName()));
 
@@ -254,6 +257,12 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 			ForeignKeyConstraint.Option o) {
 		// https://docs.oracle.com/cd/B28359_01/server.111/b28286/clauses002.htm
 		return false;
+	}
+	
+	@Override
+	public List<Statement> schemaInitializationStatements(SortedSet<String> schemaNames) {
+	    // database schema creation currently not supported for Oracle db strategy
+	    return new ArrayList<>();
 	}
 
 	@Override

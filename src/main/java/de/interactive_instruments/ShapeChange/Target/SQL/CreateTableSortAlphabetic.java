@@ -44,8 +44,7 @@ public class CreateTableSortAlphabetic implements Comparator<CreateTable> {
 
 	@Override
 	public int compare(CreateTable o1, CreateTable o2) {
-
-		return o1.getTable().getName().compareTo(o2.getTable().getName());
+	    return o1.getTable().getFullName().compareTo(o2.getTable().getFullName());
 	}
 
 }

@@ -1000,7 +1000,7 @@ public class Converter implements MessageSource {
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 		Vector<String> targets = options.targets();
-		for (Iterator<String> j = targets.iterator(); j.hasNext();) {
+		for (Iterator<String> j = targets.iterator(); j.hasNext();) {		    
 			String classname = j.next();
 			Class<?> theClass = Class.forName(classname);
 			target = (Target) theClass.getConstructor().newInstance();

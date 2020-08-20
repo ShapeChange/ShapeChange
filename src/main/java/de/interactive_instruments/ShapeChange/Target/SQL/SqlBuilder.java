@@ -37,6 +37,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,7 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.BetweenExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
@@ -83,8 +86,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstra
 /**
  * Builds SQL statements for model elements.
  *
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SqlBuilder implements MessageSource {
@@ -113,6 +115,7 @@ public class SqlBuilder implements MessageSource {
     private List<Statement> geometryIndexStatements = new ArrayList<>();
     private List<Insert> insertStatements = new ArrayList<>();
     private List<Comment> commentStatements = new ArrayList<>();
+    private List<Statement> schemaInitializationStatements = new ArrayList<>();
 
     private SqlNamingScheme namingScheme;
     private SqlDdl sqlddl;
@@ -152,7 +155,7 @@ public class SqlBuilder implements MessageSource {
 	CreateTable createTable = new CreateTable();
 	this.createTableStatements.add(createTable);
 
-	Table table = map(tableName);
+	Table table = map(determineSchemaNameForType(pi.inClass()), tableName);
 	createTable.setTable(table);
 
 	table.setAssociativeTable(true);
@@ -240,8 +243,9 @@ public class SqlBuilder implements MessageSource {
     private Table map(PropertyInfo pi) {
 
 	String tableName = determineTableNameForValueType(pi);
+	String schemaName = determineSchemaNameForValueType(pi);
 
-	return map(tableName);
+	return map(schemaName, tableName);
     }
 
     /**
@@ -251,7 +255,7 @@ public class SqlBuilder implements MessageSource {
      * @param ci
      */
     private Table createTables(ClassInfo ci) {
-	return createTables(ci, ci.name());
+	return createTables(ci, determineSchemaNameForType(ci), ci.name());
     }
 
     /**
@@ -260,7 +264,7 @@ public class SqlBuilder implements MessageSource {
      * 
      * @param ci
      */
-    private Table createTables(ClassInfo ci, String tableName) {
+    private Table createTables(ClassInfo ci, String schemaName, String tableName) {
 
 	/*
 	 * Identify all properties that will be converted to columns. Create associative
@@ -464,7 +468,7 @@ public class SqlBuilder implements MessageSource {
 	CreateTable createTable = new CreateTable();
 	createTableStatements.add(createTable);
 
-	Table table = map(tableName);
+	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setRepresentedClass(ci);
@@ -574,6 +578,7 @@ public class SqlBuilder implements MessageSource {
 
 	// identify table name - using tagged value or default name
 	String tableName = ai.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+	String schemaName = null;
 
 	String tableNameEnd1InClass = determineTableNameForType(ai.end1().inClass());
 	String tableNameEnd2InClass = determineTableNameForType(ai.end2().inClass());
@@ -605,10 +610,36 @@ public class SqlBuilder implements MessageSource {
 		    ai.end2().inClass().name() + " (context property '" + ai.end2().name() + "')", tableName);
 	}
 
+	if (ai.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+
+	    schemaName = ai.taggedValuesAll().getFirstValue(SqlConstants.TV_SQLSCHEMA);
+
+	    if (StringUtils.isBlank(schemaName)) {
+
+		if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
+
+		    // choose name based on alphabetical order of represented tables
+		    if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+			schemaName = determineSchemaNameForType(ai.end1().inClass());
+		    } else {
+			schemaName = determineSchemaNameForType(ai.end2().inClass());
+		    }
+		} else if (ai.end1().isNavigable()) {
+		    schemaName = determineSchemaNameForType(ai.end1().inClass());
+		} else {
+		    // ai.end2 is navigable
+		    schemaName = determineSchemaNameForType(ai.end2().inClass());
+		}
+
+		result.addInfo(this, 39, ai.end1().inClass().name() + " (context property '" + ai.end1().name() + "')",
+			ai.end2().inClass().name() + " (context property '" + ai.end2().name() + "')", schemaName);
+	    }
+	}
+
 	CreateTable createTable = new CreateTable();
 	this.createTableStatements.add(createTable);
 
-	Table table = map(tableName);
+	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setAssociativeTable(true);
@@ -668,8 +699,9 @@ public class SqlBuilder implements MessageSource {
     private Table map(ClassInfo ci) {
 
 	String tableName = determineTableNameForType(ci);
+	String schemaName = determineSchemaNameForType(ci);
 
-	return map(tableName);
+	return map(schemaName, tableName);
     }
 
     /**
@@ -790,7 +822,7 @@ public class SqlBuilder implements MessageSource {
 				cd_codeStatusCl.setDataType(mappedType);
 			    } else {
 				result.addError(this, 31, codeStatusCLType.name(), SqlDdl.nameCodeStatusCLColumn,
-					table.getName());
+					table.getFullName());
 			    }
 			}
 
@@ -801,11 +833,11 @@ public class SqlBuilder implements MessageSource {
 
 		    } else {
 			result.addError(this, 30, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn,
-				table.getName());
+				table.getFullName());
 		    }
 
 		} else {
-		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn, table.getName());
+		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn, table.getFullName());
 		}
 
 		columns.add(cd_codeStatusCl);
@@ -833,10 +865,10 @@ public class SqlBuilder implements MessageSource {
 
     /**
      * @param ci
-     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is defined for
-     *         the given class, the targetType defined by the map entry is returned.
-     *         Else if a table has already been created for the class, its name is
-     *         returned. Otherwise the name of the class is returned.
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the given class, the targetType defined by the map entry
+     *         is returned. Else if a table has already been created for the class,
+     *         its name is returned. Otherwise the name of the class is returned.
      */
     private String determineTableNameForType(ClassInfo ci) {
 
@@ -855,6 +887,46 @@ public class SqlBuilder implements MessageSource {
 	    }
 
 	    return ci.name();
+	}
+    }
+
+    /**
+     * @param ci
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the given class, the schema name encoded in the
+     *         targetType defined by the map entry is returned. Else if a table has
+     *         already been created for the class, its schema name is returned.
+     *         Otherwise, the schema package to which the class belongs is analyzed:
+     *         if TV 'sqlSchema' has a non-empty value, use it; otherwise, if TV
+     *         'xmlns' has non-empty value, use it; otherwise, use value 'fixme'.
+     */
+    private String determineSchemaNameForType(ClassInfo ci) {
+
+	/*
+	 * Look up the conceptual schema to which ci belongs, and use TV sqlName defined
+	 * there
+	 */
+
+	if (!ci.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+	    return null;
+	} else {
+
+	    ProcessMapEntry pme = options.targetMapEntry(ci.name(), ci.encodingRule("sql"));
+
+	    if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(pme, SqlConstants.ME_PARAM_TABLE)) {
+
+		return sqlSchemaName(pme);
+
+	    } else {
+
+		for (CreateTable ct : this.createTableStatements) {
+		    if (ct.getTable() != null && ct.getTable().representsClass(ci)) {
+			return ct.getTable().getSchemaName();
+		    }
+		}
+
+		return sqlSchemaName(ci);
+	    }
 	}
     }
 
@@ -1068,6 +1140,87 @@ public class SqlBuilder implements MessageSource {
 
 	    return pi.typeInfo().name;
 	}
+    }
+
+    /**
+     * @param pi
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the value type of the property, the schema name encoded
+     *         in the targetType defined by the map entry is returned. Else if a
+     *         table has already been created for the value type, its schema name is
+     *         returned. Otherwise, the schema package to which the value type
+     *         belongs is analyzed: if TV 'sqlSchema' has a non-empty value, use it;
+     *         otherwise, if TV 'xmlns' has non-empty value, use it; otherwise, use
+     *         value 'fixme'.
+     */
+    private String determineSchemaNameForValueType(PropertyInfo pi) {
+
+	if (!pi.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+	    return null;
+	} else {
+
+	    String valueTypeName = pi.typeInfo().name;
+	    String piEncodingRule = pi.encodingRule("sql");
+
+	    ProcessMapEntry pme = options.targetMapEntry(valueTypeName, piEncodingRule);
+
+	    if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName, piEncodingRule,
+		    SqlConstants.ME_PARAM_TABLE)) {
+
+		return sqlSchemaName(pme);
+
+	    } else {
+
+		/*
+		 * If no map entry with table parameter was found for the value type, try
+		 * looking up the table that represents the value type first
+		 */
+
+		ClassInfo valueType = model.classById(pi.typeInfo().id);
+		if (valueType == null) {
+		    valueType = model.classByName(pi.typeInfo().name);
+		}
+
+		if (valueType != null) {
+		    for (CreateTable ct : this.createTableStatements) {
+			if (ct.getTable().representsClass(valueType)) {
+			    return ct.getTable().getSchemaName();
+			}
+		    }
+		}
+
+		return sqlSchemaName(valueType);
+	    }
+	}
+    }
+
+    private String sqlSchemaName(ProcessMapEntry pme) {
+
+	String targetType = pme.getTargetType();
+
+	int numberOfDots = StringUtils.countMatches(targetType, ".");
+	if (numberOfDots == 0) {
+	    return null;
+	} else if (numberOfDots == 1) {
+	    return targetType.split("\\.")[0];
+	} else {
+	    // should be of the form database.schema.table
+	    return targetType.split("\\.")[1];
+	}
+    }
+
+    private String sqlSchemaName(ClassInfo ci) {
+
+	PackageInfo schemaPkg = model.schemaPackage(ci);
+
+	String schemaName = schemaPkg.taggedValue(SqlConstants.TV_SQLSCHEMA);
+	if (StringUtils.isBlank(schemaName)) {
+	    schemaName = schemaPkg.taggedValue("xmlns");
+	}
+	if (StringUtils.isBlank(schemaName)) {
+	    schemaName = "fixme";
+	}
+	return schemaName;
     }
 
     /**
@@ -1317,7 +1470,7 @@ public class SqlBuilder implements MessageSource {
     }
 
     private String identifyForeignKeyColumnSuffix(PropertyInfo pi) {
-	
+
 	boolean isReflexiveProperty = pi.inClass().id().equals(pi.typeInfo().id);
 
 	String typeName = pi.typeInfo().name;
@@ -1336,8 +1489,9 @@ public class SqlBuilder implements MessageSource {
 	    } else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
 		return SqlDdl.foreignKeyColumnSuffixCodelist;
 	    } else {
-		return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
-		    SqlDdl.foreignKeyColumnSuffix;
+		return (isReflexiveProperty && SqlDdl.reflexiveRelationshipFieldSuffix != null)
+			? SqlDdl.reflexiveRelationshipFieldSuffix
+			: SqlDdl.foreignKeyColumnSuffix;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.DATATYPE) {
@@ -1345,8 +1499,9 @@ public class SqlBuilder implements MessageSource {
 	} else if (pi.categoryOfValue() == Options.CODELIST) {
 	    return SqlDdl.foreignKeyColumnSuffixCodelist;
 	} else {
-	    return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
-		    SqlDdl.foreignKeyColumnSuffix;
+	    return (isReflexiveProperty && SqlDdl.reflexiveRelationshipFieldSuffix != null)
+		    ? SqlDdl.reflexiveRelationshipFieldSuffix
+		    : SqlDdl.foreignKeyColumnSuffix;
 	}
     }
 
@@ -1357,8 +1512,8 @@ public class SqlBuilder implements MessageSource {
      * there is no direct standard mapping, then conditional mappings based upon the
      * category/stereotype of the type is performed: enumeration, codelist and
      * object types are mapped to 'text' or 'character varying'. If the type is a
-     * feature, 'bigserial' is returned. If all else fails,
-     * 'unknown' is returned as type.
+     * feature, 'bigserial' is returned. If all else fails, 'unknown' is returned as
+     * type.
      *
      * @param pi
      * @return the type to use in the SQL definition of the property
@@ -1899,7 +2054,7 @@ public class SqlBuilder implements MessageSource {
 
 				    String tableName = ci_other.name() + "_" + pi_other.name();
 
-				    Table table = createTables(ci, tableName);
+				    Table table = createTables(ci, determineSchemaNameForType(ci_other), tableName);
 				    table.setRepresentedProperty(pi_other);
 
 				    /*
@@ -1976,11 +2131,19 @@ public class SqlBuilder implements MessageSource {
 
 			    ColumnDataType refColdt = refCol.getDataType();
 
-			    /*
-			     * e.g. for reference to numerically valued code list
-			     */
-			    col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
-				    refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+			    if (refColdt.getName().equals(SqlDdl.databaseStrategy.primaryKeyDataType().getName())) {
+				/*
+				 * We can keep the datatype of col as currently set (e.g. bigint - via
+				 * configuration parameter foreignKeyColumnDatatype).
+				 */
+			    } else {
+
+				/*
+				 * e.g. for reference to numerically valued code list
+				 */
+				col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
+					refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+			    }
 			}
 		    }
 		}
@@ -2088,7 +2251,7 @@ public class SqlBuilder implements MessageSource {
 			    && "true".equalsIgnoreCase(pi.taggedValue("sqlUnique"))) {
 
 			if (pi.cardinality().maxOccurs > 1) {
-			    result.addWarning(this, 33, col.getName(), table.getName());
+			    result.addWarning(this, 33, col.getName(), table.getFullName());
 			} else {
 
 			    String constraintName = namingScheme.nameForUniqueConstraint(
@@ -2324,15 +2487,37 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 
+	// ----------------------------------------
+	// Create schema initialization statements
+	// ----------------------------------------
+
+	SortedSet<String> schemaNames = new TreeSet<>();
+	for (CreateTable ct : this.createTableStatements) {
+
+	    Table t = ct.getTable();
+	    if (StringUtils.isNotBlank(t.getSchemaName())) {
+		schemaNames.add(t.getSchemaName().trim());
+	    }
+	}
+	this.schemaInitializationStatements = SqlDdl.databaseStrategy.schemaInitializationStatements(schemaNames);
+
 	// -------------
 	// Build result
 	// -------------
-	List<Statement> result = this.statements();
+	List<Statement> result_tmp = this.statements();
 
 	// normalize names
-	this.namingScheme.getNameNormalizer().visit(result);
+	this.namingScheme.getNameNormalizer().visit(result_tmp);
 
-	Collections.sort(result, STATEMENT_COMPARATOR);
+	Collections.sort(result_tmp, STATEMENT_COMPARATOR);
+
+	/*
+	 * ensure that some statements - like the schema initialization statements - are
+	 * added at the top, no matter what
+	 */
+	List<Statement> result = new ArrayList<>();
+	result.addAll(schemaInitializationStatements);
+	result.addAll(result_tmp);
 
 	return result;
     }
@@ -2548,7 +2733,7 @@ public class SqlBuilder implements MessageSource {
 
 			MessageContext mc = result.addWarning(this, 37, column.getName());
 			if (relevantInfo != null && mc != null) {
-			    mc.addDetail(this, 102, table.getName(), column.getName());
+			    mc.addDetail(this, 102, table.getFullName(), column.getName());
 			    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 			}
 		    }
@@ -2565,7 +2750,7 @@ public class SqlBuilder implements MessageSource {
 		    MessageContext mc = result.addInfo(this, 35, o.toString(),
 			    isOnDelete ? "sqlOnDelete" : "sqlOnUpdate", isOnDelete ? "ON DELETE" : "ON UPDATE");
 		    if (mc != null) {
-			mc.addDetail(this, 102, table.getName(), column.getName());
+			mc.addDetail(this, 102, table.getFullName(), column.getName());
 			mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 		    }
 		}
@@ -2573,7 +2758,7 @@ public class SqlBuilder implements MessageSource {
 	    } catch (IllegalArgumentException e) {
 		MessageContext mc = result.addError(this, 34, optionValue, isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
 		if (mc != null) {
-		    mc.addDetail(this, 102, table.getName(), column.getName());
+		    mc.addDetail(this, 102, table.getFullName(), column.getName());
 		    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 		}
 	    }
@@ -2595,22 +2780,25 @@ public class SqlBuilder implements MessageSource {
     }
 
     /**
-     * Look up the table with the given name. If no such table exists, a new one is
-     * created (this is logged on debug level) and returned.
+     * Look up the table with the given name and, optionally, schema. If no such
+     * table exists, a new one is created (this is logged on debug level) and
+     * returned.
      * 
-     * @param tableName name of the table to look up, must not be <code>null</code>
+     * @param schemaName name of the schema to which the table belongs, can be
+     *                   <code>null</code>
+     * @param tableName  name of the table to look up, must not be <code>null</code>
      * @return
      */
-    private Table map(String tableName) {
+    private Table map(String schemaName, String tableName) {
 
 	for (Table t : this.tables) {
-	    if (tableName.equals(t.getName())) {
+	    if (StringUtils.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName())) {
 		return t;
 	    }
 	}
 
-	result.addDebug(this, 23, tableName);
-	Table t = new Table(tableName);
+	result.addDebug(this, 23, StringUtils.isBlank(schemaName) ? tableName : schemaName + "." + tableName);
+	Table t = new Table(schemaName, tableName);
 	this.tables.add(t);
 	return t;
     }
@@ -2713,6 +2901,10 @@ public class SqlBuilder implements MessageSource {
 	    return "Foreign key option is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key option is ignored.";
 	case 38:
 	    return "Model element that defines the option: '$1$'";
+	case 39:
+	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
+		    + SqlConstants.TV_SQLSCHEMA
+		    + "' not set on this association, thus using default naming pattern, which leads to database schema name: '$3$'.";
 
 	case 100:
 	    return "Context: property '$1$'.";

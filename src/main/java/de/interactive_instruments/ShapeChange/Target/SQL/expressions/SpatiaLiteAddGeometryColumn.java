@@ -93,7 +93,7 @@ public class SpatiaLiteAddGeometryColumn implements Expression {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("AddGeometryColumn('");
-		sb.append(this.table.getName());
+		sb.append(this.table.getFullName());
 		sb.append("', '");
 		sb.append(this.column.getName());
 		sb.append("', ");

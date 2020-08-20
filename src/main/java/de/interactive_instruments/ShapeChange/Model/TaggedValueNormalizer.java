@@ -85,6 +85,12 @@ public class TaggedValueNormalizer {
     protected static final Set<String> gpkgTags = Stream.of("gpkgZ", "gpkgM").collect(Collectors.toSet());
 
     /*
+     * the list of tagged values specified by the SqlDdl target
+     */
+    protected static final Set<String> sqlTags = Stream
+	    .of("sqlEncodingRule", "sqlUnique", "sqlOnUpdate", "sqlOnDelete", "sqlSchema").collect(Collectors.toSet());
+
+    /*
      * the list of tagged values specified by other encoding rules
      */
     protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", "gmlAsGroup",
@@ -99,14 +105,14 @@ public class TaggedValueNormalizer {
 	    "example", "dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL", "broaderListedValue",
 	    "skosConceptSchemeSubclassName", "size", "omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
 	    "formrows", "formcols", "validate", "Reiter", "generationDateTime", "ontologyName", "alwaysVoid",
-	    "neverVoid", "appliesTo", "vocabulary", "associativeTable", "jsonEncodingRule", "sqlEncodingRule", "status",
-	    "geometry", "oneToManyReferenceColumnName", "dissolveAssociation", "precision", "scale", "numericType",
-	    "toFeatureType", "toCodelist", "sqlUnique", "codelistType", "sqlOnUpdate", "sqlOnDelete", "shortName",
-	    "codeListSource", "codeListSourceCharset", "codeListSourceRepresentation", "codeListRestriction",
-	    "arcgisDefaultSubtype", "arcgisSubtypeCode", "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues",
-	    "reportable", "dissolveAssociationAttributeType", "dissolveAssociationInlineOrByReference", "extensibility",
-	    "obligation", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
-	    "literalEncodingType","timeIntervalBoundaryType").collect(Collectors.toSet());
+	    "neverVoid", "appliesTo", "vocabulary", "associativeTable", "jsonEncodingRule", "status", "geometry",
+	    "oneToManyReferenceColumnName", "dissolveAssociation", "precision", "scale", "numericType", "toFeatureType",
+	    "toCodelist", "codelistType", "shortName", "codeListSource", "codeListSourceCharset",
+	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
+	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
+	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType",
+	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType")
+	    .collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values
@@ -126,6 +132,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(arcgisTags);
 	allowedTags.addAll(owlTags);
 	allowedTags.addAll(gpkgTags);
+	allowedTags.addAll(sqlTags);
 	allowedTags.addAll(shapeChangeTags);
 
 	for (String s : options.parameter("representTaggedValues").split("\\,"))

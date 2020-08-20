@@ -31,7 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -190,6 +193,12 @@ public class SQLiteStrategy implements DatabaseStrategy, MessageSource {
 		// all options are supported:
 		// https://www.sqlite.org/syntax/foreign-key-clause.html
 		return true;
+	}
+	
+	@Override
+	public List<Statement> schemaInitializationStatements(SortedSet<String> schemaNames) {
+	    // database schema creation currently not supported for SQLite db strategy
+	    return new ArrayList<>();
 	}
 
 	@Override

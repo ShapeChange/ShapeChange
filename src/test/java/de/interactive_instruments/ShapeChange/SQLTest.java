@@ -214,4 +214,12 @@ public class SQLTest extends BasicTestSCXML {
 		new String[] { "sql" }, "testResults/sql/reflexiveRelationshipFieldSuffix",
 		"src/test/resources/sql/reflexiveRelationshipFieldSuffix/reference");
     }
+    
+    @Test
+    public void testDatabaseSchemas() {
+
+	multiTest("src/test/resources/sql/databaseSchemas/test_sql_databaseSchemas.xml",
+		new String[] { "sql" }, "testResults/sql/databaseSchemas",
+		"src/test/resources/sql/databaseSchemas/reference");
+    }
 }

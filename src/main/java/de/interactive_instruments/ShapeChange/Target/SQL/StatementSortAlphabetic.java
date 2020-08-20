@@ -85,10 +85,9 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			return p1Name.compareTo(p2Name);
 
 		} else if (o1 instanceof CreateTable) {
-
-			String tableName_o1 = ((CreateTable) o1).getTable().getName();
-			String tableName_o2 = ((CreateTable) o2).getTable().getName();
-
+		    
+			String tableName_o1 = ((CreateTable) o1).getTable().getFullName();
+			String tableName_o2 = ((CreateTable) o2).getTable().getFullName();
 			return tableName_o1.compareTo(tableName_o2);
 
 		} else if (o1 instanceof Select) {
@@ -111,8 +110,8 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 						&& e2 instanceof SpatiaLiteCreateSpatialIndexExpression) {
 					SpatiaLiteCreateSpatialIndexExpression csie1 = (SpatiaLiteCreateSpatialIndexExpression) e1;
 					SpatiaLiteCreateSpatialIndexExpression csie2 = (SpatiaLiteCreateSpatialIndexExpression) e2;
-					int tableNameComp = csie1.getTable().getName()
-							.compareTo(csie2.getTable().getName());
+					int tableNameComp = csie1.getTable().getFullName()
+							.compareTo(csie2.getTable().getFullName());
 					if (tableNameComp == 0) {
 						return csie1.getColumn().getName()
 								.compareTo(csie2.getColumn().getName());
@@ -123,8 +122,8 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 						&& e2 instanceof SpatiaLiteAddGeometryColumn) {
 					SpatiaLiteAddGeometryColumn agc1 = (SpatiaLiteAddGeometryColumn) e1;
 					SpatiaLiteAddGeometryColumn agc2 = (SpatiaLiteAddGeometryColumn) e2;
-					int tableNameComp = agc1.getTable().getName()
-							.compareTo(agc2.getTable().getName());
+					int tableNameComp = agc1.getTable().getFullName()
+							.compareTo(agc2.getTable().getFullName());
 					if (tableNameComp == 0) {
 						return agc1.getColumn().getName()
 								.compareTo(agc2.getColumn().getName());
@@ -145,9 +144,9 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 			Alter a1 = (Alter) o1;
 			Alter a2 = (Alter) o2;
 
-			String tableName_o1 = a1.getTable().getName();
-			String tableName_o2 = a2.getTable().getName();
-
+			String tableName_o1 = ((Alter) o1).getTable().getFullName();
+			String tableName_o2 = ((Alter) o2).getTable().getFullName();
+			
 			int compareTableName = tableName_o1.compareTo(tableName_o2);
 
 			if (compareTableName != 0) {
@@ -198,8 +197,8 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 			} else {
 
-				String tableName_o1 = ci1.getTable().getName();
-				String tableName_o2 = ci2.getTable().getName();
+				String tableName_o1 = ((CreateTable) o1).getTable().getFullName();
+				String tableName_o2 = ((CreateTable) o2).getTable().getFullName();
 
 				return tableName_o1.compareTo(tableName_o2);
 			}
@@ -222,8 +221,8 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 				return 1;
 			}
 
-			String tableName_o1 = tins1.getName();
-			String tableName_o2 = tins2.getName();
+			String tableName_o1 = tins1.getFullName();
+			String tableName_o2 = tins2.getFullName();
 
 			int compareTableName = tableName_o1.compareTo(tableName_o2);
 

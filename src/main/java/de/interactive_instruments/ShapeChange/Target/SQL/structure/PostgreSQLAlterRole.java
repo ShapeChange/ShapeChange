@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2019 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,51 +29,47 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
-
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class SpatiaLiteCreateSpatialIndexExpression implements Expression {
+public class PostgreSQLAlterRole implements Statement {
 
-	protected Table table;
-	protected Column column;
+    private String roleSpecificationOrALL = null;
+    private String spec = null;
 
-	public SpatiaLiteCreateSpatialIndexExpression(Table table, Column column) {
+    /**
+     * @return the roleSpecificationOrALL
+     */
+    public String getRoleSpecificationOrALL() {
+	return roleSpecificationOrALL;
+    }
 
-		this.table = table;
-		this.column = column;
-	}
+    /**
+     * @param roleSpecificationOrALL the roleSpecificationOrALL to set
+     */
+    public void setRoleSpecificationOrALL(String roleSpecificationOrALL) {
+	this.roleSpecificationOrALL = roleSpecificationOrALL;
+    }
 
-	@Override
-	public void accept(ExpressionVisitor expressionVisitor) {
-		expressionVisitor.visit(this);
-	}
-	
-	public Table getTable() {
-		return this.table;
-	}
-	
-	public Column getColumn() {
-		return this.column;
-	}
+    /**
+     * @return the spec
+     */
+    public String getSpec() {
+	return spec;
+    }
 
-	public String toString() {
+    /**
+     * @param spec the spec to set
+     */
+    public void setSpec(String spec) {
+	this.spec = spec;
+    }
 
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("CreateSpatialIndex('");
-		sb.append(this.table.getFullName());
-		sb.append("', '");
-		sb.append(this.column.getName());
-		sb.append("')");
-
-		return sb.toString();
-	}
-
+    @Override
+    public void accept(StatementVisitor visitor) {
+	visitor.visit(this);
+    }
 }

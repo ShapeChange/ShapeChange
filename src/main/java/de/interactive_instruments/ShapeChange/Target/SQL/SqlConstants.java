@@ -45,6 +45,8 @@ public class SqlConstants {
     /* --- Parameters --- */
     /* ------------------ */
 
+    public static final String PARAM_POSTGRESQL_ROLE = "postgreSqlRole";
+    
     /**
      * Optional (default is determined by the EA process) - Value for the field
      * 'Author' of an EA element.
@@ -157,6 +159,7 @@ public class SqlConstants {
      * database strategy.
      */
     public static final String PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE = "foreignKeyColumnDataType";
+    public static final String PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE_ALIAS = "foreignKeyColumnDatatype";
 
     /**
      * NOTE: This parameter applies to the Oracle database system only. Set of
@@ -567,6 +570,22 @@ public class SqlConstants {
     public static final String RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION = "rule-sql-all-suppressDocumentationViaInlineComments";
 
     /**
+     * Create database objects in specific database schemas. The name of such a
+     * schema is given by the tagged value 'sqlSchema' of the conceptual schema to
+     * which the model element that is being converted belongs (for n:m associative
+     * tables, that is determined by one of the roles of the represented
+     * association). If that tagged value is not set, then the tagged value 'xmlns'
+     * of the conceptual schema is used (and if that does not have a value either,
+     * 'fixme' is used).
+     * 
+     * NOTE: Map entries that represent tables are expected to include the schema
+     * name in XML attribute targetType.
+     * 
+     * NOTE: Currently only supported for the PostgreSQL database system
+     */
+    public static final String RULE_TGT_SQL_ALL_SCHEMAS = "rule-sql-all-schemas";
+
+    /**
      * Creates COMMENT statements to document tables and columns that represent
      * application schema elements.
      */
@@ -593,6 +612,8 @@ public class SqlConstants {
      * the SQL data type.
      */
     public static final String TV_NUMERIC_TYPE = "numericType";
+    
+    public static final String TV_SQLSCHEMA = "sqlSchema";
 
     /* -------------------- */
     /* --- other fields --- */

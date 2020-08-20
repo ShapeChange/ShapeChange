@@ -77,11 +77,14 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataTyp
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.DropSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.Option;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.PostgreSQLAlterRole;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
@@ -729,6 +732,16 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	    }
 	}
     }
+    
+    @Override
+    public void visit(CreateSchema createSchema) {
+	// ignore
+    }
+
+    @Override
+    public void visit(DropSchema dropSchema) {
+	// ignore
+	}
 
     @Override
     public void postprocess() {
@@ -847,6 +860,11 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
     @Override
     public void visit(SQLitePragma sqLitePragma) {
 	// ignore
+    }
+    
+    @Override
+    public void visit(PostgreSQLAlterRole postgreSQLAlterRole) {
+	// ignore	
     }
 
     @Override

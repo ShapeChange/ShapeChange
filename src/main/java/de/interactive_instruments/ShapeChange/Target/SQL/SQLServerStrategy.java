@@ -31,7 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.SQL;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -179,6 +182,12 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 		} else {
 			return false;
 		}
+	}
+	
+	@Override
+	public List<Statement> schemaInitializationStatements(SortedSet<String> schemaNames) {
+	    // database schema creation currently not supported for SQLServer db strategy
+	    return new ArrayList<>();
 	}
 
 	@Override

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2019 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,51 +29,56 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.SQL.expressions;
-
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class SpatiaLiteCreateSpatialIndexExpression implements Expression {
+public class CreateSchema implements Statement {
 
-	protected Table table;
-	protected Column column;
+    private boolean ifNotExists = false;
+    private String schemaName = null;
 
-	public SpatiaLiteCreateSpatialIndexExpression(Table table, Column column) {
+    public CreateSchema() {
 
-		this.table = table;
-		this.column = column;
-	}
+    }
 
-	@Override
-	public void accept(ExpressionVisitor expressionVisitor) {
-		expressionVisitor.visit(this);
-	}
-	
-	public Table getTable() {
-		return this.table;
-	}
-	
-	public Column getColumn() {
-		return this.column;
-	}
+    public CreateSchema(String schemaName) {
+	this.schemaName = schemaName;
+    }
 
-	public String toString() {
+    /**
+     * @return the schemaName
+     */
+    public String getSchemaName() {
+	return schemaName;
+    }
 
-		StringBuffer sb = new StringBuffer();
+    /**
+     * @param schemaName the schemaName to set
+     */
+    public void setSchemaName(String schemaName) {
+	this.schemaName = schemaName;
+    }
 
-		sb.append("CreateSpatialIndex('");
-		sb.append(this.table.getFullName());
-		sb.append("', '");
-		sb.append(this.column.getName());
-		sb.append("')");
+    @Override
+    public void accept(StatementVisitor visitor) {
+	visitor.visit(this);
+    }
 
-		return sb.toString();
-	}
+    /**
+     * @return the ifNotExists
+     */
+    public boolean isIfNotExists() {
+        return ifNotExists;
+    }
+
+    /**
+     * @param ifNotExists the ifNotExists to set
+     */
+    public void setIfNotExists(boolean ifNotExists) {
+        this.ifNotExists = ifNotExists;
+    }
 
 }

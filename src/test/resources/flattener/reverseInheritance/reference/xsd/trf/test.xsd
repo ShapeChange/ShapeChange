@@ -198,7 +198,7 @@
             <annotation>
               <documentation>Alias: rft3efts2</documentation>
               <appinfo>
-                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleExtFTSubtypeToFT3_ExtFTSubtype2</reversePropertyName>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleExtFTSubtypeToFT3</reversePropertyName>
               </appinfo>
             </annotation>
           </element>
@@ -206,7 +206,7 @@
             <annotation>
               <documentation>Alias: rft3efts3</documentation>
               <appinfo>
-                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleExtFTSubtypeToFT3_ExtFTSubtype3</reversePropertyName>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ext:roleExtFTSubtypeToFT3</reversePropertyName>
               </appinfo>
             </annotation>
           </element>
@@ -308,19 +308,11 @@
               <documentation>Alias: am2</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="roleExtFTSubtypeToFT3_ExtFTSubtype2" type="t:FT3PropertyType">
+          <element minOccurs="0" name="roleExtFTSubtypeToFT3" type="t:FT3PropertyType">
             <annotation>
-              <documentation>Alias: reftsft3_EFTS2</documentation>
+              <documentation>Alias: reftsft3</documentation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFT3toExtFTSubtype2</reversePropertyName>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="roleExtFTSubtypeToFT3_ExtFTSubtype3" type="t:FT3PropertyType">
-            <annotation>
-              <documentation>Alias: reftsft3_EFTS3</documentation>
-              <appinfo>
-                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFT3toExtFTSubtype3</reversePropertyName>
               </appinfo>
             </annotation>
           </element>

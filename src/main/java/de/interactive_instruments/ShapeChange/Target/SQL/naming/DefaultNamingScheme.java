@@ -52,6 +52,8 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 	private UniqueConstraintNamingStrategy ukNaming;
 	private ShapeChangeResult result;
 	private UniqueNamingStrategy uniqueNaming;
+	
+	// if necessary, add naming strategy for schema names
 
 	public DefaultNamingScheme(ShapeChangeResult result,
 			NameNormalizer normalizer, ForeignKeyNamingStrategy fkNaming,
