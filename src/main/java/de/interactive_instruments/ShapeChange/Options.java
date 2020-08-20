@@ -555,7 +555,7 @@ public class Options {
 
     public boolean isNavigatingNonNavigableAssociationsWhenParsingOcl() {
 
-	if(this.currentProcessConfig != null) {
+	if (this.currentProcessConfig != null) {
 	    return currentProcessConfig.parameterAsBoolean(PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC, false);
 	} else {
 	    // check the input configuration
@@ -1613,15 +1613,15 @@ public class Options {
 			    }
 			}
 		    }
-		}
 
-		/*
-		 * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
-		 * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
-		 * WONT WORK!!!
-		 */
-		for (String paramName : tgtConfig.getParameters().keySet()) {
-		    setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
+		    /*
+		     * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
+		     * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
+		     * WONT WORK!!!
+		     */
+		    for (String paramName : tgtConfig.getParameters().keySet()) {
+			setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
+		    }
 		}
 
 		// in order for the input model load not to produce warnings,

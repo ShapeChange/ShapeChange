@@ -28,9 +28,9 @@
               <documentation>Alias: sca</documentation>
             </annotation>
           </element>
-          <element name="length_m" type="double">
+          <element name="length_cm" type="double">
             <annotation>
-              <documentation>Alias: len_m</documentation>
+              <documentation>Alias: len_cm</documentation>
             </annotation>
           </element>
         </sequence>

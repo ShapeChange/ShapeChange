@@ -160,6 +160,10 @@ public class Flattener implements Transformer, MessageSource {
      * parameter is required if this rule is in effect.
      */
     public static final String PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX = "removeObjectToFeatureNavRegex";
+
+    public static final String PARAM_GEOMETRY_TYPE_REGEX = "geometryTypeRegex";
+    public static final String DEFAULT_GEOMETRY_TYPE_REGEX = "^GM_.*";
+
     /**
      * If this parameter is set to <code>true</code> then execution of
      * {@value #RULE_TRF_PROP_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY} will also
@@ -246,6 +250,8 @@ public class Flattener implements Transformer, MessageSource {
     public static final String[] DEFAULT_MEASURE_TYPES = new String[] { "Measure", "Area", "Length", "Distance",
 	    "Angle", "Scale", "TimeMeasure", "Volume", "Speed", "AngularSpeed", "Weight", "Currency" };
     public static final String PARAM_FIXED_UOM_PROPERTY_DEFINITIONS = "fixedUomPropertyDefinitions";
+    public static final String PARAM_MEASURE_UOM_TV = "measureUomTaggedValue";
+    public static final String PARAM_UOM_SUFFIX_SEPARATOR = "uomSuffixSeparator";
 
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
@@ -378,6 +384,8 @@ public class Flattener implements Transformer, MessageSource {
      * longer used by properties of the selected schemas are removed from the model.
      */
     public static final String RULE_TRF_CLS_REPLACE_WITH_UNION_PROPERTIES = "rule-trf-cls-replace-with-union-properties";
+
+    public static final String RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE = "rule-trf-cls-non-default-geometry-to-feature-type";
 
     /**
      * Behavior: For each type that has a supertype whose name starts with "GM_",
@@ -770,6 +778,11 @@ public class Flattener implements Transformer, MessageSource {
 	    applyRuleReverseInheritance(genModel, trfConfig);
 	}
 
+	if (rules.contains(RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE)) {
+	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE);
+	    applyRuleNonDefaultGeometryToFeatureType(genModel, trfConfig);
+	}
+
 	// postprocessing
 	result.addProcessFlowInfo(this, 20317, "postprocessing");
 
@@ -818,6 +831,93 @@ public class Flattener implements Transformer, MessageSource {
 			genPi.setConstraints(newConstraints);
 		    }
 		}
+	    }
+	}
+    }
+
+    private void applyRuleNonDefaultGeometryToFeatureType(GenericModel genModel, TransformerConfiguration trfConfig) {
+
+	// TODO configurable?
+	String separator = "_";
+
+	Pattern geometryTypePattern = trfConfig.parameterAsRegexPattern(PARAM_GEOMETRY_TYPE_REGEX,
+		DEFAULT_GEOMETRY_TYPE_REGEX);
+
+	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+	    List<GenericPropertyInfo> nonDefaultGeomProps = new ArrayList<>();
+
+	    // Identify non-default geometry properties that belong to this class.
+	    for (PropertyInfo pi : genCi.properties().values()) {
+		if (geometryTypePattern.matcher(pi.typeInfo().name).matches()
+			&& !"true".equalsIgnoreCase(pi.taggedValue("defaultGeometry"))) {
+		    nonDefaultGeomProps.add((GenericPropertyInfo) pi);
+		}
+	    }
+
+	    for (GenericPropertyInfo genPi : nonDefaultGeomProps) {
+
+		// create new feature type (name/code of genCi + separator + genPi.name())
+		GenericClassInfo geomCi = new GenericClassInfo(genModel, genCi.id() + "_geomTypeFor_" + genPi.name(),
+			genCi.name() + separator + genPi.name(), Options.FEATURE);
+
+		geomCi.setStereotype("featuretype");
+		if (hasCode(genCi) && hasCode(genPi)) {
+		    setCode(geomCi, getCode(genCi) + separator + getCode(genPi));
+		}
+		geomCi.setPkg(genCi.pkg());
+
+		// register new feature type in package and model
+		((GenericPackageInfo) genCi.pkg()).addClass(geomCi);
+		genModel.register(geomCi);
+
+		// create another "geometry" property and add it to new feature type
+		// value type is same as genPi, multiplicity is 1
+		GenericPropertyInfo geomPi = new GenericPropertyInfo(genModel, geomCi.id() + "_geometry", "geometry");
+		geomPi.setSequenceNumber(new StructuredNumber(1), true);
+		geomPi.setCardinality(new Multiplicity(1, 1));
+		geomPi.setInClass(geomCi);
+		geomCi.addProperty(geomPi, PropertyCopyDuplicatBehaviorIndicator.ADD);
+		geomPi.setTypeInfo(genPi.typeInfo().createCopy());
+
+		// create directed association to new feature type (and register in model)
+		GenericAssociationInfo genAi = new GenericAssociationInfo();
+
+		// copy of genPi at navigable end, same multiplicity, but value type changed to
+		// new feature type
+		GenericPropertyInfo genPiCopy = genPi.createCopy(genPi.id() + "_copyForGeomCi");
+		genPiCopy.setTypeInfo(Type.from(geomCi));
+		genPiCopy.setAttribute(false);
+		genPiCopy.setAssociation(genAi);
+		genAi.setOptions(options);
+		genAi.setResult(result);
+		genAi.setModel(genModel);
+		genAi.setId("association_" + genCi.name() + "_to_" + geomCi.name() + "_for_" + genPiCopy.name());
+		genAi.setEnd2(genPiCopy);
+
+		// remove genPi in model and genCi
+		genModel.remove(genPi, false);
+		// add copy of genPi to genCi (and thus also the model)
+		genCi.addProperty(genPiCopy, PropertyCopyDuplicatBehaviorIndicator.ADD);
+
+		// new non-navigable property at other association end, with name of genCi as
+		// name (first character in lower case), and multiplicity 1
+		GenericPropertyInfo nonNavPi = new GenericPropertyInfo(genModel,
+			geomCi.id() + "_nonNavEnd_for_" + genPi.name(), StringUtils.uncapitalize(genCi.name()));
+		nonNavPi.setCardinality(new Multiplicity(1, 1));
+		nonNavPi.setInClass(geomCi);
+		StructuredNumber lastGeomCiProp = geomCi.properties().lastKey();
+		StructuredNumber nonNavPiSeqNbr = lastGeomCiProp.createCopy();
+		nonNavPiSeqNbr.components[0] = nonNavPiSeqNbr.components[0] + 1;
+		nonNavPi.setSequenceNumber(nonNavPiSeqNbr, true);
+		nonNavPi.setTypeInfo(Type.from(genCi));
+		nonNavPi.setAttribute(false);
+		nonNavPi.setAssociation(genAi);
+		genAi.setEnd1(nonNavPi);
+		genModel.register(nonNavPi);
+		nonNavPi.setNavigable(false);
+
+		genModel.addAssociation(genAi);
 	    }
 	}
     }
@@ -891,6 +991,8 @@ public class Flattener implements Transformer, MessageSource {
 	    String uomSuffix = parts[1].trim();
 	    uomSuffixByPropertyKey.put(propKey, uomSuffix);
 	}
+	String uomSuffixTv = trfConfig.parameterAsString(PARAM_MEASURE_UOM_TV, null, false, true);
+	String uomSuffixSeparator = trfConfig.parameterAsString(PARAM_UOM_SUFFIX_SEPARATOR, "_", true, true);
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
@@ -906,17 +1008,26 @@ public class Flattener implements Transformer, MessageSource {
 
 		if (trfConfig.hasRule(RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX)) {
 
-		    String uomSuffix = uomSuffixByPropertyKey.get(genPi.name());
-		    if (uomSuffix == null) {
+		    String uomSuffix = null;
+
+		    // try tagged value first
+		    if (uomSuffixTv != null) {
+			uomSuffix = genPi.taggedValue(uomSuffixTv);
+		    }
+		    // then try parameter (first global option, then feature type specific option)
+		    if (StringUtils.isBlank(uomSuffix)) {
+			uomSuffix = uomSuffixByPropertyKey.get(genPi.name());
+		    }
+		    if (StringUtils.isBlank(uomSuffix)) {
 			uomSuffix = uomSuffixByPropertyKey.get(genPi.inClass().name() + "." + genPi.name());
 		    }
 
-		    if (uomSuffix != null) {
-			genPi.setName(genPi.name() + uomSuffix);
+		    if (StringUtils.isNotBlank(uomSuffix)) {
+			genPi.setName(genPi.name() + uomSuffixSeparator + uomSuffix);
 			// also handle the code, if defined for the property
 			if (hasCode(genPi)) {
 			    String code = getCode(genPi);
-			    setCode(genPi, code + uomSuffix);
+			    setCode(genPi, code + uomSuffixSeparator + uomSuffix);
 			}
 		    }
 		}
@@ -4792,6 +4903,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		List<GenericPropertyInfo> newPropsFromSubtypesToBeUsedAsIs = new ArrayList<>();
 		List<GenericPropertyInfo> newPropsFromSubtypesToTypeSuffix = new ArrayList<>();
+		Map<String, GenericPropertyInfo> newPropsFromSubtypesWithSameNameTypeAndMultiplicity = new HashMap<>();
 
 		for (ClassInfo subtype : subtypes) {
 
@@ -4806,21 +4918,50 @@ public class Flattener implements Transformer, MessageSource {
 			     */
 			} else {
 
+			    String subPiKey = subPi.name() + "#" + subPi.typeInfo().name + "#"
+				    + subPi.cardinality().toString();
+
 			    /*
-			     * Determine if another subtype has a property of that name
+			     * Determine if another subtype has a property of that name; if so, check if all
+			     * of these properties have same value type and multiplicity - if that is the
+			     * case, then one of these properties shall be moved up, the others are ignored,
+			     * and no type suffix is added
 			     */
 			    boolean otherSubtypeWithSameName = false;
+			    boolean onlySubtypePropsWithSameKey = true;
 			    for (ClassInfo subtypeB : subtypes) {
 				if (subtypeB != subtype && subtypeB.property(subPi.name()) != null) {
+
 				    otherSubtypeWithSameName = true;
-				    break;
+				    PropertyInfo otherSubPi = subtypeB.property(subPi.name());
+				    String otherSubPiKey = otherSubPi.name() + "#" + otherSubPi.typeInfo().name + "#"
+					    + otherSubPi.cardinality().toString();
+				    if (!otherSubPiKey.equals(subPiKey)) {
+					onlySubtypePropsWithSameKey = false;
+					break;
+				    }
 				}
 			    }
 
 			    GenericPropertyInfo genSubPi = (GenericPropertyInfo) subPi;
 
 			    if (otherSubtypeWithSameName) {
-				newPropsFromSubtypesToTypeSuffix.add(genSubPi);
+				if (onlySubtypePropsWithSameKey) {
+				    /*
+				     * Only one of the properties with same name, value type, and multiplicity shall
+				     * be moved; the rest will be ignored
+				     */
+				    if (!newPropsFromSubtypesWithSameNameTypeAndMultiplicity.containsKey(subPiKey)) {
+					newPropsFromSubtypesWithSameNameTypeAndMultiplicity.put(subPiKey,
+						(GenericPropertyInfo) subPi);
+				    }
+				} else {
+				    /*
+				     * Alright, not all of the subtype props with same name also have same value
+				     * type and multiplicity. So we type suffix them all.
+				     */
+				    newPropsFromSubtypesToTypeSuffix.add(genSubPi);
+				}
 			    } else {
 				newPropsFromSubtypesToBeUsedAsIs.add(genSubPi);
 			    }
@@ -4836,6 +4977,10 @@ public class Flattener implements Transformer, MessageSource {
 		 */
 		SortedMap<String, GenericPropertyInfo> newPropsFromSubtypesByName = new TreeMap<>();
 
+		for (GenericPropertyInfo genPi : newPropsFromSubtypesWithSameNameTypeAndMultiplicity.values()) {
+		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
+		    result.addInfo(this, 20501, genPi.name(),superclass.name());
+		}
 		for (GenericPropertyInfo genPi : newPropsFromSubtypesToBeUsedAsIs) {
 		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
 		}
@@ -7036,6 +7181,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	case 20500:
 	    return "Subtype '$1$' is already mapped to root class '$2$'. Ignoring a mapping to root class '$3$'.";
+	case 20501:
+	    return "Multiple properties with same name '$1$', value type, and multiplicity detected in subtypes of type '$2$'.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

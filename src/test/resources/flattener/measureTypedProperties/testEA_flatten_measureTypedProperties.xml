@@ -41,8 +41,10 @@
 			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
 			input="INPUT" id="trf_fixedUomSuffix" mode="enabled">
 			<parameters>
+			<ProcessParameter name="measureUomTaggedValue" value="recommendedMeasure" />
+			<ProcessParameter name="uomSuffixSeparator" value="_" />
 			<ProcessParameter name="fixedUomPropertyDefinitions"
-	value="Feature1.angle = _deg, length=_m, NonExisting.xxx = _ft " />
+	value="Feature1.angle = deg, length=m, NonExisting.xxx = ft " />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">

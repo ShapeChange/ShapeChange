@@ -158,4 +158,12 @@ public class FlattenerTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/flattening/reverseInheritance",
 		"src/test/resources/flattener/reverseInheritance/reference");
     }
+    
+    @Test
+    public void test_nonDefaultGeometryToFeatureType() {
+	multiTest(
+		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/test_flattener_nonDefaultGeometryToFeatureType.xml",
+		new String[] { "xsd" }, "testResults/flattening/nonDefaultGeometryToFeatureType",
+		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/reference");
+    }    
 }
