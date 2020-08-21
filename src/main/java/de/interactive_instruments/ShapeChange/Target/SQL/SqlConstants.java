@@ -45,6 +45,8 @@ public class SqlConstants {
     /* --- Parameters --- */
     /* ------------------ */
 
+    public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
+    
     public static final String PARAM_POSTGRESQL_ROLE = "postgreSqlRole";
     
     /**

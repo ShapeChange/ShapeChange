@@ -89,6 +89,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultSQLServer
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.DefaultSQLServerUniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.ForeignKeyNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.LowerCaseNameNormalizer;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.LowerCaseNameWithLimitedLengthNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.NameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.OracleNameNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.OracleStyleForeignKeyNamingStrategy;
@@ -99,6 +100,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.SqlNamingScheme;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueConstraintNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UniqueNamingStrategy;
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNormalizer;
+import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameWithLimitedLengthNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
@@ -323,11 +325,22 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    UniqueConstraintNamingStrategy ukNaming = null;
 	    UniqueNamingStrategy uniqueNaming = new CountSuffixUniqueNamingStrategy(result);
 
+	    int maxNameLength = options.parameterAsInteger(this.getClass().getName(),
+		    SqlConstants.PARAM_MAX_NAME_LENGTH, -1);
+
 	    // identify normalizer strategy
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_LOWER_CASE)) {
-		normalizer = new LowerCaseNameNormalizer();
+		if (maxNameLength > 0) {
+		    normalizer = new LowerCaseNameWithLimitedLengthNormalizer(result, maxNameLength);
+		} else {
+		    normalizer = new LowerCaseNameNormalizer();
+		}
 	    } else if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_UPPER_CASE)) {
-		normalizer = new UpperCaseNameNormalizer();
+		if (maxNameLength > 0) {
+		    normalizer = new UpperCaseNameWithLimitedLengthNormalizer(result, maxNameLength);
+		} else {
+		    normalizer = new UpperCaseNameNormalizer();
+		}		
 	    } else if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_ORACLE)) {
 		normalizer = new OracleNameNormalizer(result);
 	    } else if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER)) {
@@ -400,7 +413,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		}
 		databaseStrategy = new PostgreSQLStrategy();
 		if (normalizer == null) {
-		    normalizer = new LowerCaseNameNormalizer();
+		    normalizer = new LowerCaseNameWithLimitedLengthNormalizer(result, 63);
 		}
 		if (ckNaming == null) {
 		    ckNaming = new DefaultPostgreSQLCheckConstraintNamingStrategy();
