@@ -324,6 +324,16 @@
               </appinfo>
             </annotation>
           </element>
+          <element minOccurs="0" name="roleFTSubtype1toFTSubtype2_FTSubtype1A" type="t:FTRoot2PropertyType">
+            <annotation>
+              <documentation>Alias: rfts1fts2_FTS1A</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="roleFTSubtype1toFTSubtype2_FTSubtype1B" type="t:FTRoot2PropertyType">
+            <annotation>
+              <documentation>Alias: rfts1fts2_FTS1B</documentation>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
