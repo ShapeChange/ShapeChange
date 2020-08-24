@@ -40,6 +40,11 @@ import de.interactive_instruments.ShapeChange.Options;
  *
  */
 public class SqlConstants {
+    
+    /**
+     * Only used for debugging
+     */
+    public static final boolean STATEMENT_SORT_USES_SCHEMA_NAME = true;
 
     /* ------------------ */
     /* --- Parameters --- */
@@ -414,15 +419,16 @@ public class SqlConstants {
      */
     public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES = "rule-sql-cls-data-types-oneToMany-severalTables";
 
-    /**
-     * Extends {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES} to avoid
-     * the creation of the general table for a data type, if that table is not used.
-     * More specifically, check if no attribute in the schemas selected for
-     * processing with the data type as type has max cardinality = 1. In that case,
-     * the table that represents the data type, and that supports such a case, would
-     * not be used - and is thus not needed in the resulting DDL schema.
-     */
-    public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED = "rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused";
+    // removed in v2.10.0 because since v2.10.0, the main rule produces usage specific tables even in a 1:1 relationship
+//    /**
+//     * Extends {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES} to avoid
+//     * the creation of the general table for a data type, if that table is not used.
+//     * More specifically, check if no attribute in the schemas selected for
+//     * processing with the data type as type has max cardinality = 1. In that case,
+//     * the table that represents the data type, and that supports such a case, would
+//     * not be used - and is thus not needed in the resulting DDL schema.
+//     */
+//    public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED = "rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused";
 
     /**
      * Tables are generated for code lists. Insert statements are created for the

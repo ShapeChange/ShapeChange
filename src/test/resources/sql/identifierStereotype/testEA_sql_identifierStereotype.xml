@@ -36,6 +36,7 @@
 				value="testResults/sql/identifierStereotype/ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
 			<rules>
 				<EncodingRule name="sqlrule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />

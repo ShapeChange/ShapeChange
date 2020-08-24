@@ -37,12 +37,20 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jgrapht.alg.cycle.DirectedSimpleCycles;
+import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
+import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
+import org.jgrapht.alg.cycle.TarjanSimpleCycles;
+import org.jgrapht.alg.cycle.TiernanSimpleCycles;
+import org.jgrapht.graph.DirectedMultigraph;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -82,6 +90,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
+import de.interactive_instruments.ShapeChange.Transformation.Flattening.PropertySetEdge;
 
 /**
  * Builds SQL statements for model elements.
@@ -118,44 +127,52 @@ public class SqlBuilder implements MessageSource {
     private List<Statement> schemaInitializationStatements = new ArrayList<>();
 
     private SqlNamingScheme namingScheme;
-    private SqlDdl sqlddl;
 
-    public SqlBuilder(SqlDdl sqlddl, ShapeChangeResult result, Options options, Model model,
-	    SqlNamingScheme namingScheme) {
+    public SqlBuilder(ShapeChangeResult result, Options options) {
 
-	this.sqlddl = sqlddl;
 	this.result = result;
 	this.options = options;
 
-	this.model = model;
-	this.namingScheme = namingScheme;
+	this.model = SqlDdl.model;
+	this.namingScheme = SqlDdl.namingScheme;
     }
 
     /**
      * NOTE: only works for attributes, NOT association roles
      *
      * @param pi
+     * @param referencedTable
      */
-    private Table createAssociativeTableForAttribute(PropertyInfo pi) {
+    private Table createAssociativeTableForAttribute(PropertyInfo pi, Table referencedTable) {
 
 	if (!pi.isAttribute()) {
 	    return null;
 	}
 
-	// identify table name - using tagged value or default name
-	String tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+	String schemaName = referencedTable.getSchemaName();
+	String tableName;
 
-	if (tableName == null || tableName.trim().length() == 0) {
+	if (map(pi.inClass()) != referencedTable) {
 
-	    tableName = pi.inClass().name() + "_" + pi.name();
+	    tableName = referencedTable.getName() + "_" + pi.name();
+	    result.addInfo(this, 40, pi.name(), pi.inClass().name(), referencedTable.getName(), tableName);
 
-	    result.addInfo(this, 12, pi.name(), pi.inClass().name(), tableName);
+	} else {
+	    // identify table name - using tagged value or default name
+	    tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+
+	    if (tableName == null || tableName.trim().length() == 0) {
+
+		tableName = pi.inClass().name() + "_" + pi.name();
+
+		result.addInfo(this, 12, pi.name(), pi.inClass().name(), tableName);
+	    }
 	}
 
 	CreateTable createTable = new CreateTable();
 	this.createTableStatements.add(createTable);
 
-	Table table = map(determineSchemaNameForType(pi.inClass()), tableName);
+	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setAssociativeTable(true);
@@ -166,14 +183,15 @@ public class SqlBuilder implements MessageSource {
 	table.setColumns(columns);
 
 	/*
-	 * Add field to reference pi.inClass
+	 * Add field to reference pi.inClass (referenced table may be datatype usage
+	 * specific)
 	 * 
 	 * NOTE: the primary key for the table will be defined later
 	 */
 	String classReferenceFieldName = pi.inClass().name() + SqlDdl.idColumnName;
 	Column cdInClassReference = createColumn(table, null, null, classReferenceFieldName,
 		SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
-	cdInClassReference.setReferencedTable(map(pi.inClass()));
+	cdInClassReference.setReferencedTable(referencedTable);
 	columns.add(cdInClassReference);
 
 	Column cdPi = null;
@@ -266,6 +284,8 @@ public class SqlBuilder implements MessageSource {
      */
     private Table createTables(ClassInfo ci, String schemaName, String tableName) {
 
+	Table table = map(schemaName, tableName);
+
 	/*
 	 * Identify all properties that will be converted to columns. Create associative
 	 * tables as necessary.
@@ -329,9 +349,11 @@ public class SqlBuilder implements MessageSource {
 			    && options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql")) == null
 			    && typeCi != null && typeCi.category() == Options.DATATYPE
 			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
-			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
-			    && typeCi.matches(
-				    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
+			    && ((typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
+				    && typeCi.matches(
+					    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE))
+				    || (typeCi.matches(
+					    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)))) {
 			/*
 			 * Ignore the attribute. Either the property type is mapped to a database
 			 * specific type, or the table that will be created for the (data) type of the
@@ -358,7 +380,7 @@ public class SqlBuilder implements MessageSource {
 			 */
 
 		    } else {
-			createAssociativeTableForAttribute(pi);
+			createAssociativeTableForAttribute(pi, table);
 		    }
 
 		} else {
@@ -468,7 +490,6 @@ public class SqlBuilder implements MessageSource {
 	CreateTable createTable = new CreateTable();
 	createTableStatements.add(createTable);
 
-	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setRepresentedClass(ci);
@@ -837,7 +858,8 @@ public class SqlBuilder implements MessageSource {
 		    }
 
 		} else {
-		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn, table.getFullName());
+		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn,
+			    table.getFullName());
 		}
 
 		columns.add(cd_codeStatusCl);
@@ -1132,7 +1154,8 @@ public class SqlBuilder implements MessageSource {
 
 	    if (valueType != null) {
 		for (CreateTable ct : this.createTableStatements) {
-		    if (ct.getTable().representsClass(valueType)) {
+		    Table t = ct.getTable();
+		    if (t.representsClass(valueType) && !t.isUsageSpecificTable()) {
 			return ct.getTable().getName();
 		    }
 		}
@@ -1183,7 +1206,8 @@ public class SqlBuilder implements MessageSource {
 
 		if (valueType != null) {
 		    for (CreateTable ct : this.createTableStatements) {
-			if (ct.getTable().representsClass(valueType)) {
+			Table t = ct.getTable();
+			if (t.representsClass(valueType) && !t.isUsageSpecificTable()) {
 			    return ct.getTable().getSchemaName();
 			}
 		    }
@@ -1957,9 +1981,15 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
-    public List<Statement> process(List<ClassInfo> cisToProcess) {
+    public List<Statement> process(List<ClassInfo> cisToProcess) throws Exception {
 
 	checkRequirements(cisToProcess);
+
+	// ----------------------------------------
+	// Apply rule-sql-cls-data-types-oneToMany-severalTables
+	// Create usage specific tables for datatypes
+	// ----------------------------------------
+	identifyTablesFor_DataTypesOneToManySeveralTables(cisToProcess);
 
 	// ----------------------------------------
 	// Create tables ("normal" and associative)
@@ -1977,41 +2007,11 @@ public class SqlBuilder implements MessageSource {
 		 * created.
 		 */
 
-		/*
-		 * Check if we have a data type that matches both
-		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES and
-		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED.
-		 * Do not create a table for it, unless an attribute in the classes selected for
-		 * processing exists that has the data type as type, and max cardinality 1.
-		 */
 		if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
-			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES) && ci.matches(
-				SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED)) {
+			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
 
-		    boolean singleValuedCaseExists = false;
-
-		    /*
-		     * Screen all cisToProcess to identify properties that have ci as value type (in
-		     * a one-to-one relationship).
-		     */
-		    outer: for (ClassInfo ci_other : cisToProcess) {
-
-			if (ci_other != ci) {
-
-			    for (PropertyInfo pi_other : ci_other.properties().values()) {
-
-				if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs == 1
-					&& ci.id().equals(pi_other.typeInfo().id)) {
-				    singleValuedCaseExists = true;
-				    break outer;
-				}
-			    }
-			}
-		    }
-
-		    if (singleValuedCaseExists) {
-			createTables(ci);
-		    }
+		    // nothing to do - has been handled before
+		    // see identifyTablesFor_DataTypesOneToManySeveralTables(cisToProcess);
 
 		} else {
 
@@ -2033,48 +2033,12 @@ public class SqlBuilder implements MessageSource {
 
 		/*
 		 * NOTE: rule-sql-cls-data-types-oneToMany-severalTables has higher priority
-		 * than rule-sql-cls-data-types-oneToMany-oneTable
+		 * than rule-sql-cls-data-types-oneToMany-oneTable, so if the former applies, do
+		 * not execute the latter.
 		 */
 
-		if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
-
-		    /*
-		     * Screen all cisToProcess to identify properties that have ci as value type (in
-		     * a one-to-many relationship); then a specific table must be created for each
-		     * such case.
-		     */
-		    for (ClassInfo ci_other : cisToProcess) {
-
-			if (ci_other != ci) {
-
-			    for (PropertyInfo pi_other : ci_other.properties().values()) {
-
-				if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs > 1
-					&& ci.id().equals(pi_other.typeInfo().id)) {
-
-				    String tableName = ci_other.name() + "_" + pi_other.name();
-
-				    Table table = createTables(ci, determineSchemaNameForType(ci_other), tableName);
-				    table.setRepresentedProperty(pi_other);
-
-				    /*
-				     * Add the column that supports referencing the owner of the data type.
-				     */
-
-				    String columnName = ci_other.name() + SqlDdl.idColumnName;
-
-				    Column dtOwner_cd = createColumn(table, null, null, columnName,
-					    SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false,
-					    true);
-				    dtOwner_cd.setReferencedTable(map(ci_other));
-
-				    table.addColumn(dtOwner_cd);
-				}
-			    }
-			}
-		    }
-
-		} else if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)) {
+		if (!ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)
+			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)) {
 
 		    /*
 		     * Get the table that has already been created for the data type and add the
@@ -2522,6 +2486,130 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
+    private void identifyTablesFor_DataTypesOneToManySeveralTables(List<ClassInfo> cisToProcess) {
+
+	/*
+	 * 2020-08-24 JE: The commented code sections are in support of
+	 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED,
+	 * which has been removed since v2.10.0.
+	 */
+//	// first, handle single valued cases
+//
+//	Set<ClassInfo> dataTypesWithSingleValuedUse = new HashSet<>();
+//
+//	for (ClassInfo ci : cisToProcess) {
+//
+//	    if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+//		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
+//
+//		boolean singleValuedCaseExists = false;
+//
+//		/*
+//		 * Screen all cisToProcess to identify properties that have ci as value type (in
+//		 * a one-to-one relationship).
+//		 */
+//		outer: for (ClassInfo ci_other : cisToProcess) {
+//
+//		    for (PropertyInfo pi_other : ci_other.properties().values()) {
+//
+//			if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs == 1
+//				&& ci.id().equals(pi_other.typeInfo().id)) {
+//			    singleValuedCaseExists = true;
+//			    dataTypesWithSingleValuedUse.add(ci);
+//			    break outer;
+//			}
+//		    }
+//		}
+//
+//		/*
+//		 * If ci matches
+//		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED,
+//		 * only create a table if single valued use applies.
+//		 */
+//		if (ci.matches(
+//			SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED)) {
+//
+//		    if (singleValuedCaseExists) {
+//			createTables(ci);
+//		    }
+//
+//		} else {
+//		    createTables(ci);
+//		}
+//	    }
+//	}
+
+	// NOTE: Circles would have already been detected in the requirements check
+
+	/*
+	 * Create usage specific tables
+	 */
+	for (ClassInfo ci : cisToProcess) {
+	    /*
+	     * Start processing at level of feature or object types
+	     */
+	    if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT) {
+		createDataTypeUseSpecificTables(ci, map(ci));
+	    }
+
+//	    /*
+//	     * Handle cases where a datatype d1 references another datatype d2 with max mult
+//	     * > 1, and d1 is referenced by a property with max mult 1. Then d2 must also be
+//	     * usage specific for the table that represents d1 non-usage-specific
+//	     */
+//
+//	    if (ci.category() == Options.DATATYPE && dataTypesWithSingleValuedUse.contains(ci)) {
+//		createDataTypeUseSpecificTables(ci, map(ci));
+//	    }
+	}
+    }
+
+    private void createDataTypeUseSpecificTables(ClassInfo ci, Table parentTable) {
+
+	/*
+	 * parentTable is a (!) table representation of ci ... in case of a datatype,
+	 * multiple such tables may have been created
+	 */
+
+	for (PropertyInfo pi : ci.properties().values()) {
+
+//	    if (pi.isAttribute() && pi.cardinality().maxOccurs > 1 && pi.categoryOfValue() == Options.DATATYPE) {
+	    if (pi.categoryOfValue() == Options.DATATYPE) {
+
+		ClassInfo typeCi = model.classByIdOrName(pi.typeInfo());
+
+		if (typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+			&& typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)
+			&& model.isInSelectedSchemas(typeCi)) {
+
+		    // create usage specific table for the data type (value type of pi)
+		    String tableName = parentTable.getName() + "_" + pi.name();
+
+		    Table table = createTables(typeCi, parentTable.getSchemaName(), tableName);
+		    table.setRepresentedProperty(pi);
+		    table.setUsageSpecificTable(true);
+
+		    /*
+		     * Add the column that supports referencing the owner of the usage specific data
+		     * type.
+		     */
+
+		    String columnName = ci.name() + SqlDdl.idColumnName;
+
+		    Column dtOwner_cd = createColumn(table, null, null, columnName, SqlDdl.foreignKeyColumnDataType,
+			    SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+
+		    // the referenced table must be usage specific
+		    dtOwner_cd.setReferencedTable(parentTable);
+
+		    table.addColumn(dtOwner_cd);
+
+		    createDataTypeUseSpecificTables(typeCi, table);
+		}
+	    }
+	}
+    }
+
     private void alterTableAddCheckConstraintForRange(Column column, Double lowerBound, Double upperBound) {
 
 	Table tableWithColumn = column.getInTable();
@@ -2589,10 +2677,10 @@ public class SqlBuilder implements MessageSource {
 	return alter;
     }
 
-    private void checkRequirements(List<ClassInfo> cisToProcess) {
+    private void checkRequirements(List<ClassInfo> cisToProcess) throws Exception {
 
 	/*
-	 * TODO Checking requirements on an input model should be a common
+	 * TBD Checking requirements on an input model should be a common
 	 * pre-processing routine for targets and transformations
 	 */
 
@@ -2631,6 +2719,199 @@ public class SqlBuilder implements MessageSource {
 		}
 	    }
 	}
+
+	// determine if circle of datatypes used in attributes with max mult > 1 exists
+	Map<String, ClassInfo> dataTypesToProcessById = new HashMap<>();
+	for (ClassInfo ci : cisToProcess) {
+	    if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
+		dataTypesToProcessById.put(ci.id(), ci);
+	    }
+	}
+	if (hasCircularDependencies(dataTypesToProcessById)) {
+	    throw new Exception("Circular dependencies in datatypes detected.");
+	}
+    }
+
+    private boolean hasCircularDependencies(Map<String, ClassInfo> dataTypesToProcessById) {
+
+	if (dataTypesToProcessById == null || dataTypesToProcessById.isEmpty()) {
+	    return false;
+	}
+
+	boolean outcome = false;
+
+	result.addInfo(this, 1001);
+
+	DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
+		PropertySetEdge.class);
+
+	// establish graph vertices
+	for (ClassInfo typeToProcess : dataTypesToProcessById.values()) {
+	    graph.addVertex(typeToProcess.pkg().name() + "::" + typeToProcess.name());
+	}
+
+	// establish edges
+
+	/*
+	 * key: name of data type with reflexive relationship(s); value: properties that
+	 * cause the reflexive relationship(s)
+	 */
+	Map<String, Set<String>> refTypeInfo = new TreeMap<String, Set<String>>();
+
+	for (ClassInfo typeToProcess : dataTypesToProcessById.values()) {
+
+	    String typeToProcessKey = typeToProcess.pkg().name() + "::" + typeToProcess.name();
+
+	    /*
+	     * key: {value type package name}::{value type name}, value: names of properties
+	     * of typeToProcess that have that value type
+	     */
+	    Map<String, Set<String>> propertiesByValueTypeName = new HashMap<String, Set<String>>();
+
+	    for (PropertyInfo pi : typeToProcess.properties().values()) {
+
+		/*
+		 * skip the property if it is not navigable, or if its value type is not in the
+		 * collection of data types to process
+		 */
+		if (!pi.isNavigable() || !dataTypesToProcessById.containsKey(pi.typeInfo().id)) {
+		    continue;
+		}
+
+		ClassInfo targetType = dataTypesToProcessById.get(pi.typeInfo().id);
+
+		String key = targetType.pkg().name() + "::" + targetType.name();
+		Set<String> props;
+		if (propertiesByValueTypeName.containsKey(key)) {
+		    props = propertiesByValueTypeName.get(key);
+		} else {
+		    props = new TreeSet<String>();
+		    propertiesByValueTypeName.put(key, props);
+		}
+		props.add(pi.name());
+	    }
+
+	    /*
+	     * create directed edges and thereby identify reflexive relationships
+	     */
+	    for (String targetKey : propertiesByValueTypeName.keySet()) {
+
+		Set<String> props = propertiesByValueTypeName.get(targetKey);
+
+		if (typeToProcessKey.equals(targetKey)) {
+		    /*
+		     * loops are not supported in cycle detection of JGraphT, thus log infos to
+		     * create an error later on
+		     */
+		    refTypeInfo.put(typeToProcessKey, props);
+
+		} else {
+
+		    graph.addEdge(typeToProcessKey, targetKey, new PropertySetEdge(typeToProcessKey, targetKey, props));
+		}
+	    }
+	}
+
+	/*
+	 * Log occurrence of reflexive relationships.
+	 */
+	if (refTypeInfo.isEmpty()) {
+	    result.addInfo(this, 1003);
+	} else {
+	    outcome = true;
+	    for (String key : refTypeInfo.keySet()) {
+		result.addError(this, 1002, key, StringUtils.join(refTypeInfo.get(key), ","));
+	    }
+	}
+
+	/*
+	 * 2015-01-19 JE: these are alternative algorithms for cycle detection; not sure
+	 * which one is the best, so I just picked one.
+	 */
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// JohnsonSimpleCycles<String, PropertySetEdge<String>>(
+	// graph);
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// SzwarcfiterLauerSimpleCycles<String, PropertySetEdge<String>>(
+	// graph);
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// TarjanSimpleCycles<String, PropertySetEdge<String>>(graph);
+
+	DirectedSimpleCycles<String, PropertySetEdge> alg = new TiernanSimpleCycles<String, PropertySetEdge>(graph);
+
+	List<List<String>> cycles = alg.findSimpleCycles();
+
+	if (cycles != null && cycles.size() > 0) {
+
+	    for (List<String> cycle : cycles) {
+
+		outcome = true;
+		result.addInfo(this, 1004);
+
+		for (int i = 0; i < cycle.size(); i++) {
+
+		    String source, target;
+
+		    if (alg instanceof JohnsonSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == 0) {
+			    target = cycle.get(cycle.size() - 1);
+			} else {
+			    target = cycle.get(i - 1);
+			}
+
+		    } else if (alg instanceof SzwarcfiterLauerSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+
+		    } else if (alg instanceof TarjanSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+
+		    } else {
+
+			// alg instanceof TiernanSimpleCycles
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+		    }
+
+		    PropertySetEdge edge = graph.getEdge(source, target);
+
+		    result.addInfo(this, 1005, source, target, edge.toString());
+		}
+	    }
+	} else {
+	    result.addInfo(this, 1006);
+	}
+
+	alg = null;
+	graph = null;
+
+	return outcome;
     }
 
     private List<Statement> statements() {
@@ -2905,6 +3186,10 @@ public class SqlBuilder implements MessageSource {
 	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
 		    + SqlConstants.TV_SQLSCHEMA
 		    + "' not set on this association, thus using default naming pattern, which leads to database schema name: '$3$'.";
+	case 40:
+	    return "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
+		    + SqlConstants.TV_ASSOCIATIVETABLE
+		    + "' is ignored on this attribute, because a usage specific table must be created, which leads to table name: '$4$'.";
 
 	case 100:
 	    return "Context: property '$1$'.";
@@ -2912,6 +3197,20 @@ public class SqlBuilder implements MessageSource {
 	    return "Context: class '$1$'.";
 	case 102:
 	    return "Context: table '$1$', column '$2$'.";
+
+	case 1001:
+	    return "---------- Checking for reflexive relationships and cyles in data types ----------";
+	case 1002:
+	    return "--- Reflexive relationship detected for data type '$1$' (via properties: $2$).";
+	case 1003:
+	    return "--- No reflexive relationships detected.";
+	case 1004:
+	    return "--- Found cycle:";
+	case 1005:
+	    return "   Class '$1$' -> class '$2$' (via properties: $3$)";
+	case 1006:
+	    return "--- No cycles found.";
+
 	default:
 	    return "(" + SqlBuilder.class.getName() + ") Unknown message with number: " + mnr;
 	}

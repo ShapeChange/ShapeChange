@@ -157,7 +157,7 @@ public interface Model {
 
     /**
      * 
-     * @return all {@link PropertyInfo} objects contained in the model; can be empty
+     * @return all navigable {@link PropertyInfo} objects contained in the model; can be empty
      *         but not <code>null</code>.
      */
     public SortedSet<PropertyInfo> properties();

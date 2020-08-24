@@ -846,8 +846,15 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	}
 
 	// Build SQL statements
-	SqlBuilder builder = new SqlBuilder(this, result, options, model, namingScheme);
-	List<Statement> stmts = builder.process(cisToProcess);
+	SqlBuilder builder = new SqlBuilder(result, options);
+	List<Statement> stmts;
+	try {
+	    stmts = builder.process(cisToProcess);
+	} catch (Exception e) {
+	    result.addError(this,32);
+	    return;
+	}
+	
 	stmts = Collections.unmodifiableList(stmts);
 
 	/*
@@ -1200,7 +1207,6 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-cls-data-types-oneToMany-oneTable");
 	r.addRule("rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase");
 	r.addRule("rule-sql-cls-data-types-oneToMany-severalTables");
-	r.addRule("rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused");
 	r.addRule("rule-sql-cls-feature-types");
 	r.addRule("rule-sql-cls-identifierStereotype");
 	r.addRule("rule-sql-cls-object-types");
@@ -1290,6 +1296,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    return "Copied EAP file for creation of the data model from URL '$1$' to '$2$'.";
 	case 31:
 	    return "Using local EAP file '$1$' for creation of the data model.";
+	case 32:
+	    return "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

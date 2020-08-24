@@ -58,6 +58,7 @@ public class Table {
     private AssociationInfo representedAssociation = null;
     private PropertyInfo representedProperty = null;
     private boolean representsCodeStatusCLType = false;
+    private boolean isUsageSpecific = false;
 
     public Table(String schemaName, String tableName) {
 	this.schemaName = schemaName;
@@ -270,5 +271,26 @@ public class Table {
 	} else {
 	    return name;
 	}
+    }
+
+    /**
+     * @return <code>true</code> if this table has been created to encode the value
+     *         type of a specific property, <code>false</code> if this table has
+     *         been created to encode the value type in general (so can be used as
+     *         target of a 1:1 relationship)
+     */
+    public boolean isUsageSpecificTable() {
+	return this.isUsageSpecific;
+    }
+
+    /**
+     * @param isUsageSpecific <code>true</code> if this table has been created to
+     *                        encode the value type of a specific property,
+     *                        <code>false</code> if this table has been created to
+     *                        encode the value type in general (so can be used as
+     *                        target of a 1:1 relationship)
+     */
+    public void setUsageSpecificTable(boolean isUsageSpecific) {
+	this.isUsageSpecific = isUsageSpecific;
     }
 }

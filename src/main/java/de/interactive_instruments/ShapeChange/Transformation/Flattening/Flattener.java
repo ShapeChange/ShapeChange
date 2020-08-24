@@ -4979,7 +4979,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		for (GenericPropertyInfo genPi : newPropsFromSubtypesWithSameNameTypeAndMultiplicity.values()) {
 		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
-		    result.addInfo(this, 20501, genPi.name(),superclass.name());
+		    result.addInfo(this, 20501, genPi.name(), superclass.name());
 		}
 		for (GenericPropertyInfo genPi : newPropsFromSubtypesToBeUsedAsIs) {
 		    newPropsFromSubtypesByName.put(genPi.name(), genPi);
@@ -5036,9 +5036,9 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	/*
-	 * Change the type of all attributes and association roles from one of the
-	 * dissolved subtypes to the appropriate root class (may apply to one or both
-	 * ends of an association)
+	 * Change the type of all attributes and navigable association roles from one of
+	 * the dissolved subtypes to the appropriate root class (may apply to one or
+	 * both ends of an association)
 	 */
 	for (PropertyInfo pi : genModel.properties()) {
 
@@ -5052,6 +5052,25 @@ public class Flattener implements Transformer, MessageSource {
 
 		ClassInfo rootClass = rootClassBySubtype.get(typeCi);
 		genPi.setTypeInfo(Type.from(rootClass));
+	    }
+	}
+
+	/*
+	 * If a navigable association role has been moved from a subtype to a root type,
+	 * ensure that the other association end is correctly moved as well, in case
+	 * that it is not navigable.
+	 */
+	for (GenericClassInfo genCi : subtypesToRemove) {
+
+	    for (PropertyInfo pi : genCi.properties().values()) {
+		if (!pi.isAttribute() && genRootclassesById.containsKey(pi.inClass().id())) {
+		    GenericPropertyInfo revPi = (GenericPropertyInfo) pi.reverseProperty();
+		    if (!revPi.isNavigable() && subtypesToRemove.contains(revPi.inClass())) {
+			GenericClassInfo rootClass = rootClassBySubtype.get(revPi.inClass());
+			revPi.setInClass(rootClass);
+			revPi.setTypeInfo(Type.from(rootClass));
+		    }
+		}
 	    }
 	}
 
