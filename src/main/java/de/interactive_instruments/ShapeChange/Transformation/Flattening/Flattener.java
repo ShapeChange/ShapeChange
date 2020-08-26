@@ -874,6 +874,7 @@ public class Flattener implements Transformer, MessageSource {
 		// create another "geometry" property and add it to new feature type
 		// value type is same as genPi, multiplicity is 1
 		GenericPropertyInfo geomPi = new GenericPropertyInfo(genModel, geomCi.id() + "_geometry", "geometry");
+		geomPi.setStereotype("property");
 		geomPi.setSequenceNumber(new StructuredNumber(1), true);
 		geomPi.setCardinality(new Multiplicity(1, 1));
 		geomPi.setInClass(geomCi);
@@ -4807,7 +4808,7 @@ public class Flattener implements Transformer, MessageSource {
 	    GenericPropertyInfo newTypeProp = new GenericPropertyInfo(genModel,
 		    genRootclass.id() + typeEnumerationPropertyName, typeEnumerationPropertyName);
 
-	    newTypeProp.setStereotype("");
+	    newTypeProp.setStereotype("property");
 
 	    Type propType = new Type();
 	    propType.id = genEnumeration.id();
