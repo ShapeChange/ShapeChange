@@ -775,7 +775,7 @@ public class Flattener implements Transformer, MessageSource {
 
 	if (rules.contains(RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE)) {
 	    result.addProcessFlowInfo(null, 20103, RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE);
-	    applyRuleReverseInheritance(genModel, trfConfig);
+	    applyRule_cls_flatten_reverseInheritance(genModel, trfConfig);
 	}
 
 	if (rules.contains(RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE)) {
@@ -4689,7 +4689,7 @@ public class Flattener implements Transformer, MessageSource {
      * @param genModel
      * @param trfConfig
      */
-    private void applyRuleReverseInheritance(GenericModel genModel, TransformerConfiguration trfConfig) {
+    private void applyRule_cls_flatten_reverseInheritance(GenericModel genModel, TransformerConfiguration trfConfig) {
 
 	/*
 	 * We do not want to apply the transformation to types that essentially are
@@ -4794,6 +4794,10 @@ public class Flattener implements Transformer, MessageSource {
 		if (hasCode(nonAbstractType)) {
 		    setCode(enumProp, getCode(nonAbstractType));
 		}
+		
+		enumProp.setStereotype("enum");
+		enumProp.typeInfo().name = "";
+		enumProp.typeInfo().id = "none";
 
 		enums.add(enumProp);
 
