@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.sparx</groupId>
 			<artifactId>eaapi</artifactId>
-			<version>15.1.1529</version>
+			<version>15.2.1554</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
-			<version>9.9.1-6</version>
+			<version>10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
