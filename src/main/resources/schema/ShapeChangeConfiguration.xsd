@@ -630,7 +630,7 @@
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
     <sequence>
-     <element name="srsDefinition">
+     <element maxOccurs="unbounded" name="srsDefinition">
       <complexType>
        <sequence>
         <element ref="sc:GeoPackageSrsDefinition"/>
