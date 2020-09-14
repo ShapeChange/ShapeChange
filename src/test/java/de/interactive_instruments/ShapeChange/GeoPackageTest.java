@@ -48,5 +48,12 @@ public class GeoPackageTest extends BasicTestSCXML {
 //	multiTest("src/test/resources/gpkg/basic/test_gpkg_basic.xml", new String[] { "gpkg" },
 //		"testResults/gpkg/basic/results", "src/test/resources/gpkg/basic/reference/results");
     }
+    
+    @Test
+    public void test_GeoPackage_basic_2srs() {
+
+	executeScxml("src/test/resources/gpkg/basic/test_gpkg_basic_2srs.xml");
+
+    }
 
 }
