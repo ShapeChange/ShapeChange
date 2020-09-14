@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input>
+  <parameter name="inputModelType" value="SCXML"/>
+  <parameter name="inputFile" value="src/test/resources/gpkg/basic/test.zip"/>
+  <parameter name="appSchemaNameRegex" value=".*"/>
+  <parameter name="mainAppSchema" value="Test Schema"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="sortedSchemaOutput" value="true"/>
+
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/gpkg/basic_2srs/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="flattener" mode="enabled">
+   <parameters>
+    <ProcessParameter name="maxOccurs" value="2"/>
+    <ProcessParameter name="separatorForPropertyFromNonUnion" value="_"/>
+    <ProcessParameter name="ignoreFeatureTypedProperties" value="true"/>
+   </parameters>
+   <rules>
+    <ProcessRuleSet name="flattenrulesdb">
+     <rule name="rule-trf-cls-flatten-inheritance"/>
+     <rule name="rule-trf-prop-flatten-types"/>
+     <rule name="rule-trf-prop-flatten-multiplicity"/>
+    </ProcessRuleSet>
+   </rules>
+   <mapEntries>
+    <ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="Real" type="Measure"/>
+    <ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="Real" type="Length"/>
+   </mapEntries>
+  </Transformer>
+ </transformers>
+ <targets>
+  <Target class="de.interactive_instruments.ShapeChange.Target.GeoPackage.GeoPackageTemplate" inputs="flattener" mode="enabled">
+   <advancedProcessConfigurations>
+    <GeoPackageSrsDefinitions>
+     <srsDefinition>
+      <GeoPackageSrsDefinition>
+       <srsName>DHDN / 3-degree Gauss-Kruger zone 3</srsName>
+       <srsId>31467</srsId>
+       <organization>EPSG</organization>
+       <organizationCoordSysId>31467</organizationCoordSysId>
+       <definition>PROJCRS["DHDN / 3-degree Gauss-Kruger zone 3", BASEGEODCRS["DHDN", DATUM["Deutsches Hauptdreiecksnetz", ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1.0]]]], CONVERSION["3-degree Gauss-Kruger zone 3", METHOD["Transverse Mercator",ID["EPSG",9807]], PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1.0]], PARAMETER["False easting",3500000,LENGTHUNIT["metre",1.0]], PARAMETER["False northing",0,LENGTHUNIT["metre",1.0]]], CS[cartesian,2], AXIS["northing (X)",north,ORDER[1]], AXIS["easting (Y)",east,ORDER[2]], LENGTHUNIT["metre",1.0], ID["EPSG",31467]]</definition>
+       <definition_12_063>PROJCRS["ETRS89 / UTM zone 32N", BASEGEODCRS["ETRS89", DATUM["European Terrestrial Reference System 1989", ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1.0]]]], CONVERSION["UTM zone 32N", METHOD["Transverse Mercator",ID["EPSG",9807]], PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.01745329252]], PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1.0]], PARAMETER["False easting",500000,LENGTHUNIT["metre",1.0]], PARAMETER["False northing",0,LENGTHUNIT["metre",1.0]]], CS[cartesian,2], AXIS["easting (E)",east,ORDER[1]], AXIS["northing (N)",north,ORDER[2]], LENGTHUNIT["metre",1.0], ID["EPSG",25832]]</definition_12_063>
+      </GeoPackageSrsDefinition>
+     </srsDefinition>
+     <srsDefinition>
+      <GeoPackageSrsDefinition>
+       <srsName>ETRS89 / UTM zone 32N (N-E)</srsName>
+       <srsId>3044</srsId>
+       <organization>EPSG</organization>
+       <organizationCoordSysId>3044</organizationCoordSysId>
+       <definition>PROJCS["ETRS89 / UTM zone 32N (N-E)",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","3044"]]</definition>
+       <definition_12_063>PROJCRS["ETRS89 / UTM zone 32N (N-E)",BASEGEOGCRS["ETRS89",DATUM["European Terrestrial Reference System 1989",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4258]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["northing (N)",north,ORDER[1],LENGTHUNIT["metre",1]],AXIS["easting (E)",east,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Europe - 6°E to 12°E and ETRS89 by country"],BBOX[38.76,6,83.92,12]],ID["EPSG",3044]]</definition_12_063>
+      </GeoPackageSrsDefinition>
+     </srsDefinition>
+    </GeoPackageSrsDefinitions>
+   </advancedProcessConfigurations>
+   <targetParameter name="outputDirectory" value="testResults/gpkg/basic_2srs/results"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="my_gpkg_rule"/>
+   
+   
+   <targetParameter name="organizationCoordSysId" value="31467"/>
+   <targetParameter name="gpkgM" value="1"/>
+   <targetParameter name="gpkgZ" value="1"/>
+   <rules>
+    <EncodingRule extends="geopackage" name="my_gpkg_rule">
+     
+    </EncodingRule>
+   </rules>
+   <mapEntries>
+    
+    <MapEntry rule="*" targetType="TEXT" type="CharacterString"/>
+    <MapEntry rule="*" targetType="TEXT" type="URI"/>
+    <MapEntry rule="*" targetType="BOOLEAN" type="Boolean"/>
+    <MapEntry rule="*" targetType="INTEGER" type="Integer"/>
+    <MapEntry rule="*" targetType="REAL" type="Decimal"/>
+    <MapEntry rule="*" targetType="REAL" type="Number"/>
+    <MapEntry rule="*" targetType="REAL" type="Real"/>
+    <MapEntry rule="*" targetType="REAL" type="Measure"/>
+    <MapEntry rule="*" targetType="DATE" type="Date"/>
+    <MapEntry rule="*" targetType="DATETIME" type="DateTime"/>
+    
+    <MapEntry rule="*" targetType="POINT" type="DirectPosition"/>
+    <MapEntry rule="*" targetType="POINT" type="GM_Point"/>
+    <MapEntry rule="*" targetType="MULTIPOINT" type="GM_MultiPoint"/>
+    <MapEntry rule="*" targetType="LINESTRING" type="GM_Curve"/>
+    <MapEntry rule="*" targetType="MULTILINESTRING" type="GM_MultiCurve"/>
+    <MapEntry rule="*" targetType="POLYGON" type="GM_Surface"/>
+    <MapEntry rule="*" targetType="MULTIPOLYGON" type="GM_MultiSurface"/>
+    <MapEntry rule="*" targetType="GEOMETRY" type="GM_Object"/>
+    
+    <MapEntry rule="*" targetType="DATETIME" type="TM_Instant"/>
+    <MapEntry rule="*" targetType="DATETIME" type="TM_Position"/>
+    <MapEntry rule="*" targetType="DATETIME" type="TM_DateAndTime"/>
+    
+    <MapEntry rule="*" targetType="INTEGER" type="Short"/>
+    <MapEntry rule="*" targetType="INTEGER" type="Long"/>
+   </mapEntries>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>
