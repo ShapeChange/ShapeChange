@@ -287,6 +287,9 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (length == null) {
 		length = ci.taggedValue("maxLength");
 	    }
+	    if (length == null) {
+		length = ci.taggedValue("size");
+	    }
 
 	    if (StringUtils.isNotBlank(length)) {
 
@@ -1864,9 +1867,9 @@ public class JsonSchemaDocument implements MessageSource {
 	case 100:
 	    return "Exception occurred while writing JSON Schema to file: $1$. Exception message is: $2$.";
 	case 101:
-	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength') could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
+	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength' or 'size') could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
 	case 102:
-	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength') has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
+	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength' or 'size') has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
 	case 103:
 	    return "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as a double. Found value: $2$. The facet will be ignored.";
 	case 104:

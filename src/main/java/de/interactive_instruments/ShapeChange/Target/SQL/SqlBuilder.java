@@ -3141,7 +3141,7 @@ public class SqlBuilder implements MessageSource {
 	case 20:
 	    return "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
 	case 21:
-	    return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
+	    return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries, or conversion of the category of classes to which the type belongs is generally not supported by the target. It will be mapped to 'unknown'.";
 	case 22:
 	    return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
 	case 23:
