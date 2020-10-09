@@ -66,7 +66,7 @@ public class GeoPackageConstants {
      * optional. The default is {@value #DEFAULT_ID_COLUMN_NAME}.
      */
     public static final String PARAM_ID_COLUMN_NAME = "idColumnName";
-    public static final String DEFAULT_ID_COLUMN_NAME = "_id";
+    public static final String DEFAULT_ID_COLUMN_NAME = "id";
     
     public static final String PARAM_GPKGM = "gpkgM";
     public static final String PARAM_GPKGZ = "gpkgZ";
