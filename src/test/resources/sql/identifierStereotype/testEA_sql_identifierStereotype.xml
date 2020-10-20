@@ -43,6 +43,7 @@
 					<rule name="rule-sql-cls-data-types" />
 					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
 					<rule name="rule-sql-cls-identifierStereotype"/>
+					<rule name="rule-sql-cls-code-lists" />
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -63,6 +64,7 @@
 					<rule name="rule-sql-cls-data-types" />
 					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
 					<rule name="rule-sql-cls-identifierStereotype"/>
+					<rule name="rule-sql-cls-code-lists" />
 				</EncodingRule>
 			</rules>
 			<xi:include

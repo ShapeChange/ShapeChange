@@ -1,7 +1,14 @@
+CREATE TABLE codelist (
+
+   name text NOT NULL PRIMARY KEY,
+   documentation text
+);
+
 CREATE TABLE featuretype1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
-   p3 text NOT NULL
+   p3 text NOT NULL,
+   p4 text NOT NULL
 );
 
 CREATE TABLE featuretype1_p1 (
@@ -32,7 +39,12 @@ CREATE TABLE featuretype2 (
    ignoredidentifier text NOT NULL
 );
 
+
+ALTER TABLE featuretype1 ADD CONSTRAINT fk_featuretype1_p4 FOREIGN KEY (p4) REFERENCES codelist;
 ALTER TABLE featuretype1_p1 ADD CONSTRAINT fk_featuretype1_p1_featuretype1_id FOREIGN KEY (featuretype1_id) REFERENCES featuretype1;
 ALTER TABLE featuretype1_p2 ADD CONSTRAINT fk_featuretype1_p2_featuretype1_id FOREIGN KEY (featuretype1_id) REFERENCES featuretype1;
 ALTER TABLE featuretype1_roleft1toft2 ADD CONSTRAINT fk_featuretype1_roleft1toft2_featuretype1_id FOREIGN KEY (featuretype1_id) REFERENCES featuretype1;
 ALTER TABLE featuretype1_roleft1toft2 ADD CONSTRAINT fk_featuretype1_roleft1toft2_featuretype2_id FOREIGN KEY (featuretype2_id) REFERENCES featuretype2;
+
+INSERT INTO codelist (name, documentation) VALUES ('codeA', '');
+INSERT INTO codelist (name, documentation) VALUES ('codeB', '');

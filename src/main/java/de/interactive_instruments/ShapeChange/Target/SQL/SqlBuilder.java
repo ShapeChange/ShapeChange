@@ -767,7 +767,7 @@ public class SqlBuilder implements MessageSource {
 	table.setColumns(columns);
 
 	// create required column to store the code name
-	String name = SqlDdl.codeNameColumnName;
+	String name = SqlDdl.codeNameColumnName + SqlDdl.identifierColumnSuffix;
 	String codeNameColumnDocumentation = SqlDdl.codeNameColumnDocumentation;
 
 	Column cd_codename = null;

@@ -51,6 +51,7 @@
 					<rule name="rule-sql-cls-data-types"/>
 					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 					<rule name="rule-sql-cls-identifierStereotype"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -96,6 +97,7 @@
 					<rule name="rule-sql-cls-data-types"/>
 					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 					<rule name="rule-sql-cls-identifierStereotype"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
