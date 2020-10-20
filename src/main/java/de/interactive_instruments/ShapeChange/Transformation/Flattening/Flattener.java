@@ -2937,7 +2937,7 @@ public class Flattener implements Transformer, MessageSource {
 		 * replace the name with the code
 		 */
 
-		// finally, udpate the name in the property itself
+		// finally, update the name in the property itself
 		String name = genPi.name();
 
 		if (lowerCaseCodeForProperties) {
@@ -2953,8 +2953,8 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	/*
-	 * TODO: update code of app schema packages; update code of association infos
-	 * (association property names are updated)
+	 * TODO: update code of app schema packages; update code of association info objects
+	 * (names of association roles are updated)
 	 */
     }
 

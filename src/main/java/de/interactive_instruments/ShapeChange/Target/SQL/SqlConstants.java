@@ -251,6 +251,13 @@ public class SqlConstants {
      * The default is PostgreSQL.
      */
     public static final String PARAM_DATABASE_SYSTEM = "databaseSystem";
+    
+    /**
+     * If set to true (default value is false), the values of the foreignKeyColumnSuffix.. parameters 
+     * will be used (instead of the value of target parameter idColumnName) as suffix for fields in 
+     * associative tables that reference other tables.
+     */
+    public static final String PARAM_APPLY_FOREIGN_KEY_SUFFIXES_IN_ASSOCIATIVE_TABLES = "applyForeignKeyColumnSuffixesInAssociativeTables";
 
     /**
      * Optional changes to the default documentation template and the default

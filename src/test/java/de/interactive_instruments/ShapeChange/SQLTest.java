@@ -222,4 +222,12 @@ public class SQLTest extends BasicTestSCXML {
 		new String[] { "sql" }, "testResults/sql/databaseSchemas",
 		"src/test/resources/sql/databaseSchemas/reference");
     }
+    
+    @Test
+    public void testApplyForeignKeyColumnSuffixesInAssociativeTables() {
+
+	multiTest("src/test/resources/sql/applyForeignKeyColumnSuffixesInAssociativeTables/test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.xml",
+		new String[] { "sql" }, "testResults/sql/applyForeignKeyColumnSuffixesInAssociativeTables",
+		"src/test/resources/sql/applyForeignKeyColumnSuffixesInAssociativeTables/reference");
+    }
 }

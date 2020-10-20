@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/applyForeignKeyColumnSuffixesInAssociativeTables/test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.xml" end="Tue Oct 20 12:02:01 CEST 2020" resultCode="0" start="Tue Oct 20 12:01:55 CEST 2020" version="2.9.2-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'PostgreSQL'."/>
+    <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+    <Info message="--- No reflexive relationships detected."/>
+    <Info message="--- No cycles found."/>
+    <Info message="Creating associative table to represent attribute 'attCLMulti' in class 'FeatureTypeA'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureTypeA_attCLMulti'."/>
+    <Info message="Creating associative table to represent attribute 'attEMulti' in class 'FeatureTypeA'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureTypeA_attEMulti'."/>
+    <Info message="Creating associative table to represent association between FeatureTypeB (context property 'ftBtoftA') and FeatureTypeA (context property 'ftAtoftB'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureTypeA_ftAtoftB'."/>
+    <Info message="Creating associative table to represent association between FeatureTypeD (context property 'ftDMultiSource') and FeatureTypeD (context property 'ftDMultiTarget'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureTypeD_ftDMultiSource'."/>
+    <Warning message="Name 'fk_featuretyped_ftdmultisource_featuretyped_ftdmultisource_reflexive' for foreign key constraint is truncated to 'fk_featuretyped_ftdmultisource_featuretyped_ftdmultisource_refl'"/>
+    <Warning message="Name 'fk_featuretyped_ftdmultisource_featuretyped_ftdmultitarget_reflexive' for foreign key constraint is truncated to 'fk_featuretyped_ftdmultisource_featuretyped_ftdmultitarget_refl'"/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/applyForeignKeyColumnSuffixesInAssociativeTables/ddl/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+  </Results>
+</ShapeChangeResult>

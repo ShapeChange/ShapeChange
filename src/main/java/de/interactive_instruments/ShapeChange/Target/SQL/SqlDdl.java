@@ -178,6 +178,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static boolean representTaggedValues = false;
     protected static SortedSet<String> taggedValuesToRepresent = null;
     protected static String postgreSqlRole = null;
+    protected static boolean applyForeignKeyColumnSuffixesInAssociativeTables = false;
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -534,7 +535,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    createReferences = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_CREATE_REFERENCES, SqlConstants.DEFAULT_CREATE_REFERNCES);
-
+	    
+	    applyForeignKeyColumnSuffixesInAssociativeTables = options.parameterAsBoolean(this.getClass().getName(),
+		    SqlConstants.PARAM_APPLY_FOREIGN_KEY_SUFFIXES_IN_ASSOCIATIVE_TABLES, false);
+	        
 	    createDocumentation = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_CREATE_DOCUMENTATION, SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
 
@@ -1145,6 +1149,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	taggedValuesToRepresent = null;
 	representTaggedValues = false;
 	postgreSqlRole = null;
+	applyForeignKeyColumnSuffixesInAssociativeTables = false;
 
 	mapEntryParamInfos = null;
 	databaseStrategy = null;
