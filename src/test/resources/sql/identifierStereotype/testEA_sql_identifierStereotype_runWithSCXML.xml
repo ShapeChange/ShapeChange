@@ -83,5 +83,50 @@
 	<MapEntry param="" rule="*" targetType="varchar" type="character varying"/>
 </mapEntries>
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_inheritance" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sqlrule"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/identifierStereotype/ddl/pksuffix"/>
+			<targetParameter name="size" value="-1"/>
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
+			<targetParameter name="identifierColumnSuffix" value="_pk"/>
+			<rules>
+				<EncodingRule extends="sql" name="sqlrule">
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-sql-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="CharacterString"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="URI"/>
+	<MapEntry param="defaultValue{true=TRUE;false=FALSE}" rule="*" targetType="boolean" type="Boolean"/>
+	<MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Decimal"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Number"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Real"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Measure"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="date" type="Date"/>
+	<MapEntry param="" rule="*" targetType="timestamp with time zone" type="DateTime"/>
+	
+	<MapEntry param="geometry" rule="*" targetType="POINT" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOINT" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="LINESTRING" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTILINESTRING" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="POLYGON" type="GM_Surface"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOLYGON" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="GEOMETRY" type="GM_Object"/>
+	
+	<MapEntry param="" rule="*" targetType="smallint" type="Short"/>
+	<MapEntry param="" rule="*" targetType="bigint" type="Long"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="varchar" type="character varying"/>
+</mapEntries>
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

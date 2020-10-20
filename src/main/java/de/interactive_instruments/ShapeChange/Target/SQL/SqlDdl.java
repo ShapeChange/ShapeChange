@@ -179,6 +179,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static SortedSet<String> taggedValuesToRepresent = null;
     protected static String postgreSqlRole = null;
     protected static boolean applyForeignKeyColumnSuffixesInAssociativeTables = false;
+    protected static String identifierColumnSuffix = "";
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -341,7 +342,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		    normalizer = new UpperCaseNameWithLimitedLengthNormalizer(result, maxNameLength);
 		} else {
 		    normalizer = new UpperCaseNameNormalizer();
-		}		
+		}
 	    } else if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_ORACLE)) {
 		normalizer = new OracleNameNormalizer(result);
 	    } else if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_NORMALIZING_SQLSERVER)) {
@@ -517,6 +518,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    codeSupercedesColumnDocumentation = options.parameterAsString(this.getClass().getName(),
 		    SqlConstants.PARAM_CODE_SUPERSEDES_COLUMN_DOCUMENTATION, null, false, true);
 
+	    identifierColumnSuffix = options.parameterAsString(this.getClass().getName(),
+		    SqlConstants.PARAM_IDENTIFIER_COLUMN_SUFFIX, "", false, true);
+
 	    String sdoDimElement_value = options.parameterAsString(this.getClass().getName(),
 		    SqlConstants.PARAM_SDO_DIM_ELEMENTS, null, false, true);
 	    parseSdoDimElementValue(sdoDimElement_value);
@@ -535,10 +539,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    createReferences = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_CREATE_REFERENCES, SqlConstants.DEFAULT_CREATE_REFERNCES);
-	    
+
 	    applyForeignKeyColumnSuffixesInAssociativeTables = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_APPLY_FOREIGN_KEY_SUFFIXES_IN_ASSOCIATIVE_TABLES, false);
-	        
+
 	    createDocumentation = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_CREATE_DOCUMENTATION, SqlConstants.DEFAULT_CREATE_DOCUMENTATION);
 
@@ -855,10 +859,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	try {
 	    stmts = builder.process(cisToProcess);
 	} catch (Exception e) {
-	    result.addError(this,32);
+	    result.addError(this, 32);
 	    return;
 	}
-	
+
 	stmts = Collections.unmodifiableList(stmts);
 
 	/*
@@ -1150,6 +1154,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	representTaggedValues = false;
 	postgreSqlRole = null;
 	applyForeignKeyColumnSuffixesInAssociativeTables = false;
+	identifierColumnSuffix = "";
 
 	mapEntryParamInfos = null;
 	databaseStrategy = null;

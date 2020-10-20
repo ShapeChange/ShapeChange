@@ -258,14 +258,15 @@ public class SqlBuilder implements MessageSource {
 	return table;
     }
 
-    private String determineForeignKeyColumnSuffix(PropertyInfo pi) {	
+    private String determineForeignKeyColumnSuffix(PropertyInfo pi) {
 	if (SqlDdl.applyForeignKeyColumnSuffixesInAssociativeTables) {
 	    return identifyForeignKeyColumnSuffix(pi);
 	} else {
 	    return SqlDdl.idColumnName;
 	}
     }
-    private String determineForeignKeyColumnSuffix(ClassInfo ci) {	
+
+    private String determineForeignKeyColumnSuffix(ClassInfo ci) {
 	if (SqlDdl.applyForeignKeyColumnSuffixesInAssociativeTables) {
 	    return identifyForeignKeyColumnSuffix(ci);
 	} else {
@@ -527,7 +528,7 @@ public class SqlBuilder implements MessageSource {
 
 	if (countIdentifierAttributes == 0) {
 
-	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName,
+	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName + SqlDdl.identifierColumnSuffix,
 		    SqlDdl.databaseStrategy.primaryKeyDataType(), SqlDdl.primaryKeySpec, true, false);
 	    columns.add(id_cd);
 	    id_cd.setObjectIdentifierColumn(true);
@@ -553,6 +554,7 @@ public class SqlBuilder implements MessageSource {
 	    if (!identifierSet && pi.isAttribute() && pi.stereotype("identifier")
 		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
 
+		cd.setName(cd.getName() + SqlDdl.identifierColumnSuffix);
 		cd.removeSpecification(SqlConstants.NOT_NULL_COLUMN_SPEC);
 		cd.addSpecification(SqlDdl.primaryKeySpec);
 		identifierSet = true;
@@ -710,7 +712,8 @@ public class SqlBuilder implements MessageSource {
 	 */
 
 	// add field for first reference
-	String name_1 = determineTableNameForType(pi1.inClass()) + (reflexive ? "_" + pi1.name() : "") + determineForeignKeyColumnSuffix(pi1);
+	String name_1 = determineTableNameForType(pi1.inClass()) + (reflexive ? "_" + pi1.name() : "")
+		+ determineForeignKeyColumnSuffix(pi1);
 	String documentation_1 = pi2.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 	Column cd1 = createColumn(table, pi2, documentation_1, name_1, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
@@ -718,7 +721,8 @@ public class SqlBuilder implements MessageSource {
 	columns.add(cd1);
 
 	// add field for second reference
-	String name_2 = determineTableNameForType(pi2.inClass()) + (reflexive ? "_" + pi2.name() : "") + determineForeignKeyColumnSuffix(pi2);
+	String name_2 = determineTableNameForType(pi2.inClass()) + (reflexive ? "_" + pi2.name() : "")
+		+ determineForeignKeyColumnSuffix(pi2);
 	String documentation_2 = pi1.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 	Column cd2 = createColumn(table, pi1, documentation_2, name_2, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
@@ -2110,8 +2114,9 @@ public class SqlBuilder implements MessageSource {
 			dtOwnerRef_columnSpec = SqlConstants.NOT_NULL_COLUMN_SPEC;
 		    }
 
-		    Column dtOwnerRef_cd = createColumn(table, null, null, columnName + determineForeignKeyColumnSuffix(ci),
-			    SqlDdl.foreignKeyColumnDataType, dtOwnerRef_columnSpec, false, true);
+		    Column dtOwnerRef_cd = createColumn(table, null, null,
+			    columnName + determineForeignKeyColumnSuffix(ci), SqlDdl.foreignKeyColumnDataType,
+			    dtOwnerRef_columnSpec, false, true);
 
 		    table.addColumn(dtOwnerRef_cd);
 		}

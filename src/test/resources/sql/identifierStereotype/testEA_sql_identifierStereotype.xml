@@ -48,5 +48,25 @@
 			<xi:include
 				href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+			inputs="F_inheritance" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sqlrule" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/identifierStereotype/ddl/pksuffix" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
+			<targetParameter name="identifierColumnSuffix" value="_pk"/>
+			<rules>
+				<EncodingRule name="sqlrule" extends="sql">
+					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-cls-data-types" />
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
+					<rule name="rule-sql-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>
