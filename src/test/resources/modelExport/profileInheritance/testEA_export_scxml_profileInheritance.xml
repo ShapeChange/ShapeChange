@@ -68,8 +68,6 @@
 				value="false" />
 			<targetParameter
 				name="profilesForClassesWithoutExplicitProfileAssignments" value="A,C" />
-			<targetParameter name="convertToExplicitProfileDefinition_schemaNameRegex"
-				value="Test.*" />
 			<targetParameter name="profilesToExport" value="A,C" />
 			<rules>
 				<EncodingRule name="export">

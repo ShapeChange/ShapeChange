@@ -50,6 +50,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.PackageSelector;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -64,7 +65,6 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
-import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 

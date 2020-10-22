@@ -356,7 +356,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 		 */
 		if (!eaPkgIdByPackageInfo.containsKey(pi)) {
 		    clonePackage(pi, ownerPkgEaPkgId);
-		}		
+		}
 	    } else {
 		clonePackage(pi, pOut_EaPkgId);
 	    }

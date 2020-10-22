@@ -141,10 +141,10 @@ public class XsdDocument implements MessageSource {
 	documentationNoValue = options.parameter(Options.TargetXmlSchemaClass, "documentationNoValue");
 
 	codeListRepresentationTVFallback = options.parameterAsString(XmlSchema.class.getName(),
-		"defaultCodeListRepresentation", null, false, true);
+		XmlSchemaConstants.PARAM_DEFAULT_CODELIST_REPRESENTATION, null, false, true);
 
 	List<String> namesOfDescriptorsToRepresent = options.parameterAsStringList(Options.TargetXmlSchemaClass,
-		"representDescriptors", null, true, true);
+		XmlSchemaConstants.PARAM_REPRESENT_DESCRIPTORS, null, true, true);
 
 	for (String descriptorName : namesOfDescriptorsToRepresent) {
 	    /*
@@ -155,19 +155,19 @@ public class XsdDocument implements MessageSource {
 	    descriptorsToRepresent.add(desc);
 	}
 
-	String s = options.parameter(Options.TargetXmlSchemaClass, "okstraKeyValuePropertyType");
+	String s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE);
 	if (s != null)
 	    okstraKeyValuePropertyType = s;
 	else
 	    okstraKeyValuePropertyType = "okstra-basis:KeyValuePropertyType";
 
-	s = options.parameter(Options.TargetXmlSchemaClass, "okstraKeyValueBaseType");
+	s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_BASE_TYPE);
 	if (s != null)
 	    okstraKeyValueBaseType = s;
 	else
 	    okstraKeyValueBaseType = "gml:AbstractFeatureType";
 
-	s = options.parameter(Options.TargetXmlSchemaClass, "okstraObjectRefType");
+	s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA_OBJECT_REF_TYPE);
 	if (s != null)
 	    okstraObjectRefType = s;
 	else
@@ -175,7 +175,7 @@ public class XsdDocument implements MessageSource {
 
 	okstraPrefix = (okstraKeyValuePropertyType.split(":"))[0];
 
-	s = options.parameter(Options.TargetXmlSchemaClass, "okstra");
+	s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA);
 	if (s != null)
 	    okstra = s;
 	else

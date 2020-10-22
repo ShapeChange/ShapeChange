@@ -55,7 +55,6 @@
 		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries" inputs="TRF_CL_LOADER" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/codeLists/CodeListLoader/results/singleLanguage"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="infoURL" value="http://example.org/info"/>
 			<targetParameter name="gmlid" value="name"/>
 			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
   <XmlNamespace location="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>

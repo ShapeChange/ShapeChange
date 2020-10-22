@@ -130,8 +130,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
     protected static SortedMap<PackageInfo, List<ProcessMapEntry>> mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-    protected static Map<ClassInfo,String> entityTypeMemberPathByCi = new HashMap<>();
-    
+    protected static Map<ClassInfo, String> entityTypeMemberPathByCi = new HashMap<>();
+
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
 
@@ -752,7 +752,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			    jsTypeInfo.setKeyword(new PatternKeyword(value));
 
 			} else if (characteristic.equalsIgnoreCase("patternBase64")) {
-			    
+
 			    Decoder decoder = Base64.getDecoder();
 			    String decodedValue = new String(decoder.decode(value));
 
@@ -1109,5 +1109,4 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public JsonSchemaVersion getJsonSchemaVersion() {
 	return jsonSchemaVersion;
     }
-
 }

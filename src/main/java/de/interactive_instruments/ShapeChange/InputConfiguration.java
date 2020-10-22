@@ -33,192 +33,202 @@ package de.interactive_instruments.ShapeChange;
 
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class InputConfiguration {
 
-	/**
-	 * Default defined in ShapeChangeConfiguration XSD
-	 */
-	private String id;
-	/**
-	 * key: name, value: value
-	 */
-	private Map<String, String> parametersByName;
-	/**
-	 * key: alias (lower case), value: wellknown (lower case)
-	 */
-	private Map<String, String> stereotypeAliasesByAlias;
-	private Map<String, String> tagAliasesByAlias;
-	private SortedMap<String, String> descriptorSources = new TreeMap<String, String>();
+    public static final SortedSet<String> inputParameters = new TreeSet<>(Stream.of("addTaggedValues", "addStereotypes",
+	    "applyDescriptorSourcesWhenLoadingScxml", "appSchemaName", "appSchemaNameRegex", "appSchemaNamespaceRegex",
+	    "checkingConstraints", "constraintLoading", "classTypesToCreateConstraintsFor", "codeAbsenceInModelAllowed",
+	    "constraintCreationForProperties", "constraintExcelFile", "dontConstructAssociationNames",
+	    "excludedPackages", "extractSeparator", "folConstraintTypeRegex", "id", "ignoreEncodingRuleTaggedValues",
+	    "inputFile", "inputModelType", "isAIXM", "kmlReferenceType", "language",
+	    "loadConstraintsForSelectedSchemasOnly", "loadLinkedDocuments", "mainAppSchema",
+	    "navigatingNonNavigableAssociationsWhenParsingOcl", "oclConstraintTypeRegex", "onlyDeferrableOutputWrite",
+	    "prohibitLoadingClassesWithStatusTaggedValue", "publicOnly", "representTaggedValues",
+	    "repositoryFileNameOrConnectionString", "scxmlXsdLocation",
+	    "skipSemanticValidationOfShapeChangeConfiguration", "sortedOutput", "sortedSchemaOutput",
+	    "taggedValueImplementation", "tmpDirectory", "transformer", "username and password", "useStringInterning",
+	    "loadDiagrams", "sortDiagramsByName", "packageDiagramRegex", "classDiagramRegex")
+	    .collect(Collectors.toSet()));
 
-	/**
-	 * key: packageName, value: package info
-	 */
-	private Map<String, PackageInfoConfiguration> packageInfosByName;
+    /**
+     * Default defined in ShapeChangeConfiguration XSD
+     */
+    private String id;
+    /**
+     * key: name, value: value
+     */
+    private Map<String, String> parametersByName;
+    /**
+     * key: alias (lower case), value: wellknown (lower case)
+     */
+    private Map<String, String> stereotypeAliasesByAlias;
+    private Map<String, String> tagAliasesByAlias;
+    private SortedMap<String, String> descriptorSources = new TreeMap<String, String>();
 
-	/**
-	 * @param id tbd
-	 * @param parametersByName tbd
-	 * @param stereotypeAliasesByAlias
-	 *            map with stereotype alias (in lower case) as key, and with
-	 *            wellknown stereotype (in lower case) as value
-	 * @param descriptorSources can be <code>null</code> or empty
-	 * @param tagAliasesByAlias
-	 *            map with tag alias (in lower case) as key, and with wellknown
-	 *            tag (in lower case) as value
-	 * @param packageInfosByName tbd
-	 */
-	public InputConfiguration(String id, Map<String, String> parametersByName,
-			Map<String, String> stereotypeAliasesByAlias,
-			Map<String, String> tagAliasesByAlias,
-			Map<String, String> descriptorSources,
-			Map<String, PackageInfoConfiguration> packageInfosByName) {
-		super();
-		this.id = id;
-		this.parametersByName = parametersByName;
-		this.stereotypeAliasesByAlias = stereotypeAliasesByAlias;
-		this.tagAliasesByAlias = tagAliasesByAlias;
-		if(descriptorSources != null) {
-			this.descriptorSources.putAll(descriptorSources);
-		}
-		this.packageInfosByName = packageInfosByName;
+    /**
+     * key: packageName, value: package info
+     */
+    private Map<String, PackageInfoConfiguration> packageInfosByName;
+
+    /**
+     * @param id                       tbd
+     * @param parametersByName         tbd
+     * @param stereotypeAliasesByAlias map with stereotype alias (in lower case) as
+     *                                 key, and with wellknown stereotype (in lower
+     *                                 case) as value
+     * @param descriptorSources        can be <code>null</code> or empty
+     * @param tagAliasesByAlias        map with tag alias (in lower case) as key,
+     *                                 and with wellknown tag (in lower case) as
+     *                                 value
+     * @param packageInfosByName       tbd
+     */
+    public InputConfiguration(String id, Map<String, String> parametersByName,
+	    Map<String, String> stereotypeAliasesByAlias, Map<String, String> tagAliasesByAlias,
+	    Map<String, String> descriptorSources, Map<String, PackageInfoConfiguration> packageInfosByName) {
+	super();
+	this.id = id;
+	this.parametersByName = parametersByName;
+	this.stereotypeAliasesByAlias = stereotypeAliasesByAlias;
+	this.tagAliasesByAlias = tagAliasesByAlias;
+	if (descriptorSources != null) {
+	    this.descriptorSources.putAll(descriptorSources);
 	}
+	this.packageInfosByName = packageInfosByName;
+    }
 
-	public String getId() {
-		return id;
+    public String getId() {
+	return id;
+    }
+
+    public Map<String, String> getParameters() {
+	return parametersByName;
+    }
+
+    public boolean hasParameter(String paramName) {
+	if (parametersByName != null && parametersByName.containsKey(paramName)) {
+	    return true;
+	} else {
+	    return false;
 	}
+    }
 
-	public Map<String, String> getParameters() {
-		return parametersByName;
-	}
+    /**
+     * @return map with key: alias (lower case), value: wellknown (lower case)
+     */
+    public Map<String, String> getStereotypeAliases() {
+	return stereotypeAliasesByAlias;
+    }
 
-	public boolean hasParameter(String paramName) {
-		if (parametersByName != null
-				&& parametersByName.containsKey(paramName)) {
-			return true;
+    /**
+     * @return map with key: alias (lower case), value: wellknown (lower case)
+     */
+    public Map<String, String> getTagAliases() {
+	return tagAliasesByAlias;
+    }
+
+    /**
+     * @return map (can be empty but not <code>null</code>) with key: descriptor
+     *         (lower case), value: source (lower case)
+     */
+    public SortedMap<String, String> getDescriptorSources() {
+	return descriptorSources;
+    }
+
+    public Map<String, PackageInfoConfiguration> getPackageInfos() {
+	return packageInfosByName;
+    }
+
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer();
+
+	sb.append("InputConfiguration:\r\n");
+
+	sb.append("\tid: " + this.id + "\r\n");
+
+	sb.append("\tpackage infos: ");
+	if (this.packageInfosByName == null || packageInfosByName.isEmpty()) {
+	    sb.append("none\r\n");
+	} else {
+	    sb.append("\r\n");
+	    for (String key : packageInfosByName.keySet()) {
+		PackageInfoConfiguration pi = packageInfosByName.get(key);
+		sb.append("\t\tPackageInfo (" + key);
+		if (pi.getNsabr() != null) {
+		    sb.append(pi.getNsabr() + "|");
 		} else {
-			return false;
+		    sb.append("no nsabr|");
 		}
-	}
-
-	/**
-	 * @return map with key: alias (lower case), value: wellknown (lower case)
-	 */
-	public Map<String, String> getStereotypeAliases() {
-		return stereotypeAliasesByAlias;
-	}
-
-	/**
-	 * @return map with key: alias (lower case), value: wellknown (lower case)
-	 */
-	public Map<String, String> getTagAliases() {
-		return tagAliasesByAlias;
-	}
-
-	/**
-	 * @return map (can be empty but not <code>null</code>) with key: descriptor
-	 *         (lower case), value: source (lower case)
-	 */
-	public SortedMap<String, String> getDescriptorSources() {
-		return descriptorSources;
-	}
-
-	public Map<String, PackageInfoConfiguration> getPackageInfos() {
-		return packageInfosByName;
-	}
-
-	public String toString() {
-
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("InputConfiguration:\r\n");
-
-		sb.append("\tid: " + this.id + "\r\n");
-
-		sb.append("\tpackage infos: ");
-		if (this.packageInfosByName == null || packageInfosByName.isEmpty()) {
-			sb.append("none\r\n");
+		if (pi.getNs() != null) {
+		    sb.append(pi.getNs() + "|");
 		} else {
-			sb.append("\r\n");
-			for (String key : packageInfosByName.keySet()) {
-				PackageInfoConfiguration pi = packageInfosByName.get(key);
-				sb.append("\t\tPackageInfo (" + key);
-				if (pi.getNsabr() != null) {
-					sb.append(pi.getNsabr() + "|");
-				} else {
-					sb.append("no nsabr|");
-				}
-				if (pi.getNs() != null) {
-					sb.append(pi.getNs() + "|");
-				} else {
-					sb.append("no ns|");
-				}
-				if (pi.getXsdDocument() != null) {
-					sb.append(pi.getXsdDocument() + "|");
-				} else {
-					sb.append("no xsdDocument|");
-				}
-				if (pi.getVersion() != null) {
-					sb.append(pi.getVersion());
-				} else {
-					sb.append("no version");
-				}
-				sb.append(")\r\n");
-
-			}
+		    sb.append("no ns|");
 		}
-
-		sb.append("\tparameters: ");
-		if (this.parametersByName == null || parametersByName.isEmpty()) {
-			sb.append("none\r\n");
+		if (pi.getXsdDocument() != null) {
+		    sb.append(pi.getXsdDocument() + "|");
 		} else {
-			sb.append("\r\n");
-			for (String key : parametersByName.keySet()) {
-				sb.append("\t\t(" + key + " | " + parametersByName.get(key)
-						+ ")\r\n");
-			}
+		    sb.append("no xsdDocument|");
 		}
-
-		sb.append("\tstereotypealiases: ");
-		if (this.stereotypeAliasesByAlias == null
-				|| stereotypeAliasesByAlias.isEmpty()) {
-			sb.append("none\r\n");
+		if (pi.getVersion() != null) {
+		    sb.append(pi.getVersion());
 		} else {
-			sb.append("\r\n");
-			for (String key : stereotypeAliasesByAlias.keySet()) {
-				sb.append("\t\t(" + key + " | "
-						+ stereotypeAliasesByAlias.get(key) + ")\r\n");
-			}
+		    sb.append("no version");
 		}
+		sb.append(")\r\n");
 
-		sb.append("\ttagaliases: ");
-		if (this.tagAliasesByAlias == null || tagAliasesByAlias.isEmpty()) {
-			sb.append("none\r\n");
-		} else {
-			sb.append("\r\n");
-			for (String key : tagAliasesByAlias.keySet()) {
-				sb.append("\t\t(" + key + " | " + tagAliasesByAlias.get(key)
-						+ ")\r\n");
-			}
-		}
-
-		sb.append("\tdescriptorsources: ");
-		if (this.descriptorSources.isEmpty()) {
-			sb.append("none\r\n");
-		} else {
-			sb.append("\r\n");
-			for (String key : descriptorSources.keySet()) {
-				sb.append("\t\t(" + key + " | " + descriptorSources.get(key)
-						+ ")\r\n");
-			}
-		}
-
-		return sb.toString();
+	    }
 	}
+
+	sb.append("\tparameters: ");
+	if (this.parametersByName == null || parametersByName.isEmpty()) {
+	    sb.append("none\r\n");
+	} else {
+	    sb.append("\r\n");
+	    for (String key : parametersByName.keySet()) {
+		sb.append("\t\t(" + key + " | " + parametersByName.get(key) + ")\r\n");
+	    }
+	}
+
+	sb.append("\tstereotypealiases: ");
+	if (this.stereotypeAliasesByAlias == null || stereotypeAliasesByAlias.isEmpty()) {
+	    sb.append("none\r\n");
+	} else {
+	    sb.append("\r\n");
+	    for (String key : stereotypeAliasesByAlias.keySet()) {
+		sb.append("\t\t(" + key + " | " + stereotypeAliasesByAlias.get(key) + ")\r\n");
+	    }
+	}
+
+	sb.append("\ttagaliases: ");
+	if (this.tagAliasesByAlias == null || tagAliasesByAlias.isEmpty()) {
+	    sb.append("none\r\n");
+	} else {
+	    sb.append("\r\n");
+	    for (String key : tagAliasesByAlias.keySet()) {
+		sb.append("\t\t(" + key + " | " + tagAliasesByAlias.get(key) + ")\r\n");
+	    }
+	}
+
+	sb.append("\tdescriptorsources: ");
+	if (this.descriptorSources.isEmpty()) {
+	    sb.append("none\r\n");
+	} else {
+	    sb.append("\r\n");
+	    for (String key : descriptorSources.keySet()) {
+		sb.append("\t\t(" + key + " | " + descriptorSources.get(key) + ")\r\n");
+	    }
+	}
+
+	return sb.toString();
+    }
 
 }

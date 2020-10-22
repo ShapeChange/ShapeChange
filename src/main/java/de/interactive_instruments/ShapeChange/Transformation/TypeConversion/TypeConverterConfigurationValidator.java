@@ -31,8 +31,13 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.TypeConversion;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -42,7 +47,18 @@ import de.interactive_instruments.ShapeChange.TransformerConfiguration;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class TypeConverterConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class TypeConverterConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(TypeConverter.PARAM_DEFAULT_METADATA_TYPE, TypeConverter.PARAM_DEFAULT_VOID_REASON_TYPE,
+		    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_NAME_SUFFIX,
+		    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE,
+		    TypeConverter.PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX,
+		    TypeConverter.PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE,
+		    TypeConverter.PARAM_METADATA_PROPERTY_NAME_SUFFIX,
+		    TypeConverter.PARAM_NILREASON_PROPERTY_NAME_SUFFIX, TypeConverter.PARAM_TO_FEATURE_TYPE_NAME_REGEX,
+		    TypeConverter.PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
@@ -50,6 +66,10 @@ public class TypeConverterConfigurationValidator implements ConfigurationValidat
 	TransformerConfiguration trfConfig = (TransformerConfiguration) config;
 
 	boolean isValid = true;
+
+	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
 	if (trfConfig.hasParameter(TypeConverter.PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE)) {
 

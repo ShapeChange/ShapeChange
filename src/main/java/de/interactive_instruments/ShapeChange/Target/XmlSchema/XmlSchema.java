@@ -1,5 +1,5 @@
 /**
- * ShapeChange - processing application schemas for geographic information
+a * ShapeChange - processing application schemas for geographic information
  *
  * This file is part of ShapeChange. ShapeChange takes a ISO 19109 
  * Application Schema from a UML model and translates it into a 
@@ -105,8 +105,8 @@ public class XmlSchema implements Target, MessageSource {
 	if (outputDirectory == null)
 	    outputDirectory = options.parameter(".");
 
-	String voidReasonType = options.parameterAsString(this.getClass().getName(), "defaultVoidReasonType", null,
-		false, true);
+	String voidReasonType = options.parameterAsString(this.getClass().getName(),
+		XmlSchemaConstants.PARAM_DEFAULT_VOID_REASON_TYPE, null, false, true);
 	if (StringUtils.isBlank(voidReasonType)) {
 	    defaultVoidReasonType = null;
 	} else {
@@ -116,10 +116,11 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	}
 
-	explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(), "schematronQueryBinding",
-		null, false, true);
+	explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(),
+		XmlSchemaConstants.PARAM_SCH_QUERY_BINDING, null, false, true);
 
-	schematronSegmentation = options.parameterAsBoolean(this.getClass().getName(), "segmentSchematron", false);
+	schematronSegmentation = options.parameterAsBoolean(this.getClass().getName(),
+		XmlSchemaConstants.PARAM_SEGMENT_SCH, false);
 
 	if (pi.matches("rule-xsd-pkg-schematron") && !schematronSegmentation) {
 
@@ -753,8 +754,8 @@ public class XmlSchema implements Target, MessageSource {
 	    return;
 	}
 
-	boolean skipXmlSchemaOutput = options.parameterAsBoolean(this.getClass().getName(), "skipXmlSchemaOutput",
-		false);
+	boolean skipXmlSchemaOutput = options.parameterAsBoolean(this.getClass().getName(),
+		XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, false);
 
 	if (skipXmlSchemaOutput) {
 

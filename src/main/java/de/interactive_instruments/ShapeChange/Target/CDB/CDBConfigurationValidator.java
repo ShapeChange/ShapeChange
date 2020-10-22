@@ -32,72 +32,78 @@
 package de.interactive_instruments.ShapeChange.Target.CDB;
 
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class CDBConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class CDBConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(CDB.PARAM_UNITS_TO_IGNORE, CDB.PARAM_VERSION).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		SortedMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
+	boolean isValid = true;
 
-		for (ProcessMapEntry pme : config.getMapEntries()) {
-			mapEntryByType.put(pme.getType(), pme);
-		}
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
-		// general validation of map entry parameters
-		MapEntryParamInfos mepis = new MapEntryParamInfos(result,
-				mapEntryByType.values());
+	SortedMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
 
-		isValid = isValid && mepis.isValid();
-
-		/*
-		 * check that all map entries have a targetType and that it is either
-		 * 'Text', 'Numeric', or 'Boolean'
-		 */
-		for (ProcessMapEntry pme : mapEntryByType.values()) {
-
-			if (!(pme.hasTargetType()
-					|| pme.getTargetType().equalsIgnoreCase("Text")
-					|| pme.getTargetType().equalsIgnoreCase("Numeric")
-					|| pme.getTargetType().equalsIgnoreCase("Boolean"))) {
-				result.addError(this, 100, pme.getType(), pme.getRule());
-				isValid = false;
-			}
-		}
-
-		return isValid;
+	for (ProcessMapEntry pme : config.getMapEntries()) {
+	    mapEntryByType.put(pme.getType(), pme);
 	}
 
-	@Override
-	public String message(int mnr) {
+	// general validation of map entry parameters
+	MapEntryParamInfos mepis = new MapEntryParamInfos(result, mapEntryByType.values());
 
-		switch (mnr) {
+	isValid = isValid && mepis.isValid();
 
-		// 100-199 messages related to map entries
-		case 100:
-			return "The target type of map entry with type '$1$' and rule '$2$' is invalid. It must be one of (ignoring case): Text, Numeric, Boolean.";
+	/*
+	 * check that all map entries have a targetType and that it is either 'Text',
+	 * 'Numeric', or 'Boolean'
+	 */
+	for (ProcessMapEntry pme : mapEntryByType.values()) {
 
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
-		}
+	    if (!(pme.hasTargetType() || pme.getTargetType().equalsIgnoreCase("Text")
+		    || pme.getTargetType().equalsIgnoreCase("Numeric")
+		    || pme.getTargetType().equalsIgnoreCase("Boolean"))) {
+		result.addError(this, 100, pme.getType(), pme.getRule());
+		isValid = false;
+	    }
 	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	// 100-199 messages related to map entries
+	case 100:
+	    return "The target type of map entry with type '$1$' and rule '$2$' is invalid. It must be one of (ignoring case): Text, Numeric, Boolean.";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

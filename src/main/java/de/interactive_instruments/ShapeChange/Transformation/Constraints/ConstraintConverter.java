@@ -623,7 +623,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 	}
 
     }
-
+    
     @Override
     public String message(int mnr) {
 

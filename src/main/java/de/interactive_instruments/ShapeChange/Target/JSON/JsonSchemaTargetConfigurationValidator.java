@@ -36,13 +36,17 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -55,7 +59,21 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaT
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class JsonSchemaTargetConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class JsonSchemaTargetConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES,
+		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES,
+		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES,
+		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION,
+		    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
+		    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT,
+		    JsonSchemaConstants.PARAM_JSON_BASE_URI, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION,
+		    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME,
+		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
+		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE, JsonSchemaConstants.PARAM_PRETTY_PRINT,
+		    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration targetConfig = null;
@@ -75,6 +93,10 @@ public class JsonSchemaTargetConfigurationValidator implements ConfigurationVali
 	this.result = result;
 
 	boolean isValid = true;
+
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
 	SortedMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
 
@@ -311,7 +333,7 @@ public class JsonSchemaTargetConfigurationValidator implements ConfigurationVali
 	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
 	case 108:
 	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as integer (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
-	
+
 	default:
 	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
 		    + mnr;

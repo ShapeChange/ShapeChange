@@ -33,101 +33,100 @@ package de.interactive_instruments.ShapeChange.Target.Metadata;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ApplicationSchemaMetadataConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class ApplicationSchemaMetadataConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(ApplicationSchemaMetadata.PARAM_INHERITED_PROPERTIES,
+		    ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX, ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX,
+		    ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		if (config.getAllRules().contains(
-				ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE)) {
+	boolean isValid = true;
 
-			Set<String> typesForTypeUsage = new HashSet<>(
-					options.parameterAsStringList(
-							ApplicationSchemaMetadata.class.getName(),
-							ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION,
-							null, true, true));
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
-			if (typesForTypeUsage.isEmpty()) {
+	if (config.getAllRules().contains(ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE)) {
 
-				isValid = false;
+	    Set<String> typesForTypeUsage = new HashSet<>(
+		    options.parameterAsStringList(ApplicationSchemaMetadata.class.getName(),
+			    ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION, null, true, true));
 
-				result.addError(this, 3,
-						ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE,
-						ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION);
-			}
-		}
+	    if (typesForTypeUsage.isEmpty()) {
 
-		if (config.getAllRules().contains(
-				ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
+		isValid = false;
 
-			// check required parameter PARAM_TAG_NAME_REGEX
-			try {
-				Pattern tagNamePattern = config.parameterAsRegexPattern(
-						ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX, null);
-				if (tagNamePattern == null) {
-					isValid = false;
-					result.addError(this, 100,
-							ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
-							ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
-				}
-			} catch (PatternSyntaxException e) {
-				isValid = false;
-				result.addError(this, 1,
-						ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
-						e.getMessage());
-			}
-
-			// check optional parameter PARAM_TAG_VALUE_REGEX
-			try {
-				config.parameterAsRegexPattern(
-						ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX, null);
-			} catch (PatternSyntaxException e) {
-				isValid = false;
-				result.addError(this, 1,
-						ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX,
-						e.getMessage());
-			}
-		}
-
-		return isValid;
+		result.addError(this, 3, ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_TYPE_USAGE,
+			ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION);
+	    }
 	}
 
-	@Override
-	public String message(int mnr) {
+	if (config.getAllRules()
+		.contains(ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
 
-		switch (mnr) {
-
-		case 1:
-			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-		case 2:
-			return "Output directory '$1$' does not exist or is not accessible.";
-		case 3:
-			return "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
-		case 100:
-			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-
-		default:
-			return "(ApplicationSchemaMetadata.java) Unknown message with number: "
-					+ mnr;
+	    // check required parameter PARAM_TAG_NAME_REGEX
+	    try {
+		Pattern tagNamePattern = config.parameterAsRegexPattern(ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
+			null);
+		if (tagNamePattern == null) {
+		    isValid = false;
+		    result.addError(this, 100, ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX,
+			    ApplicationSchemaMetadata.RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
 		}
+	    } catch (PatternSyntaxException e) {
+		isValid = false;
+		result.addError(this, 1, ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX, e.getMessage());
+	    }
+
+	    // check optional parameter PARAM_TAG_VALUE_REGEX
+	    try {
+		config.parameterAsRegexPattern(ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX, null);
+	    } catch (PatternSyntaxException e) {
+		isValid = false;
+		result.addError(this, 1, ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX, e.getMessage());
+	    }
 	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	case 1:
+	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2:
+	    return "Output directory '$1$' does not exist or is not accessible.";
+	case 3:
+	    return "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
+	case 100:
+	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+
+	default:
+	    return "(ApplicationSchemaMetadata.java) Unknown message with number: " + mnr;
+	}
+    }
 
 }

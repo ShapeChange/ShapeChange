@@ -196,6 +196,39 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      */
     public static final String PARAM_JAVA_OPTIONS = "javaOptions";
 
+    public static final String PARAM_REFERENCE_MODEL_TYPE = "referenceModelType";
+    public static final String PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING = "referenceModelFileNameOrConnectionString";
+    public static final String PARAM_NAME = "name";
+    public static final String PARAM_SCOPE = "scope";
+    public static final String PARAM_VERSION_NUMBER = "versionNumber";
+    public static final String PARAM_VERSION_DATE = "versionDate";
+    public static final String PARAM_PRODUCER = "producer";
+    public static final String PARAM_XSL_HTML_FILE = "xslhtmlFile";
+    public static final String PARAM_LOGO_FILE_PATH = "logoFilePath";
+    public static final String PARAM_INHERITED_CONSTRAINTS = "inheritedConstraints";
+    public static final String PARAM_INHERITED_PROPERTIES = "inheritedProperties";
+    public static final String PARAM_DELETE_XML_FILE = "deleteXmlfile";
+    public static final String PARAM_DOCX_TEMPLATE_FILE_PATH = "docxTemplateFilePath";
+    public static final String PARAM_PACKAGE = "package";
+    public static final String PARAM_FEATURE_TERM = "featureTerm";
+    public static final String PARAM_INCLUDE_DIAGRAMS = "includeDiagrams";
+    public static final String PARAM_INCLUDE_VOIDABLE = "includeVoidable";
+    public static final String PARAM_INCLUDE_ALIAS = "includeAlias";
+    public static final String PARAM_INCLUDE_TITLE = "includeTitle";
+    public static final String PARAM_XSL_FRAME_HTML_FILENAME = "xslframeHtmlFileName";
+    public static final String PARAM_XSL_FO_FILE = "xslfoFile";
+    public static final String PARAM_XSL_RTF_FILE = "xslrtfFile";
+    public static final String PARAM_XSL_DOCX_FILE = "xsldocxFile";
+    public static final String PARAM_XSL_XML_FILE = "xslxmlFile";
+    public static final String PARAM_XSLT_PFAD = "xsltPfad";
+    public static final String PARAM_XSLT_PATH = "xsltPath";
+    public static final String PARAM_CSS_PATH = "cssPath";
+    public static final String PARAM_LANG = "lang";
+    public static final String PARAM_NO_ALPHABETIC_SORT_OF_PROPS = "noAlphabeticSortingForProperties";
+    public static final String PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS = "includeCodelistsAndEnumerations";
+    public static final String PARAM_XSL_LOCALIZATION_URI = "xslLocalizationUri";
+    public static final String PARAM_LOCALIZATION_MESSAGES_URI = "localizationMessagesUri";
+
     /**
      * Suffix to add to the 'id' attribute of a Value element that represents an
      * enum, and to the 'idref' attribute of an enumeratedBy element that refers to
@@ -395,8 +428,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		Model refModel_tmp = null;
 
-		String imt = options.parameter(this.getClass().getName(), "referenceModelType");
-		String mdl = options.parameter(this.getClass().getName(), "referenceModelFileNameOrConnectionString");
+		String imt = options.parameter(this.getClass().getName(), PARAM_REFERENCE_MODEL_TYPE);
+		String mdl = options.parameter(this.getClass().getName(), PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING);
 
 		if (StringUtils.isNotBlank(imt) && StringUtils.isNotBlank(mdl)) {
 
@@ -461,13 +494,13 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			"xsi:noNamespaceSchemaLocation", "CDATA", "FC.xsd");
 		writer.startElement("", "FeatureCatalogue", "", atts);
 
-		s = options.parameter(this.getClass().getName(), "name");
+		s = options.parameter(this.getClass().getName(), PARAM_NAME);
 		if (s != null && s.length() > 0)
 		    writer.dataElement("name", s);
 		else
 		    writer.dataElement("name", "unknown");
 
-		s = options.parameter(this.getClass().getName(), "scope");
+		s = options.parameter(this.getClass().getName(), PARAM_SCOPE);
 
 		if (s != null && s.length() > 0)
 		    PrintLineByLine(s, "scope", null);
@@ -475,13 +508,13 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		    writer.dataElement("scope", "unknown");
 		}
 
-		s = options.parameter(this.getClass().getName(), "versionNumber");
+		s = options.parameter(this.getClass().getName(), PARAM_VERSION_NUMBER);
 		if (s != null && s.length() > 0)
 		    writer.dataElement("versionNumber", s);
 		else
 		    writer.dataElement("versionNumber", "unknown");
 
-		s = options.parameter(this.getClass().getName(), "versionDate");
+		s = options.parameter(this.getClass().getName(), PARAM_VERSION_DATE);
 		if (StringUtils.isNotBlank(s)) {
 
 		    if (s.trim().equalsIgnoreCase("now")) {
@@ -494,7 +527,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		    writer.dataElement("versionDate", "unknown");
 		}
 
-		s = options.parameter(this.getClass().getName(), "producer");
+		s = options.parameter(this.getClass().getName(), PARAM_PRODUCER);
 		if (s != null && s.length() > 0)
 		    writer.dataElement("producer", s);
 		else
@@ -551,7 +584,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		     * switch to default xslt for html diff - unless the configuration explicitly
 		     * names an XSLT file to use
 		     */
-		    if (options.parameter(this.getClass().getName(), "xslhtmlFile") == null) {
+		    if (options.parameter(this.getClass().getName(), PARAM_XSL_HTML_FILE) == null) {
 			xslhtmlfileName = DEFAULT_XSL_HTML_DIFF_FILE_NAME;
 		    }
 
@@ -2894,7 +2927,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	if (outputFilename == null)
 	    outputFilename = "FeatureCatalogue";
 
-	docxTemplateFilePath = options.parameter(this.getClass().getName(), "docxTemplateFilePath");
+	docxTemplateFilePath = options.parameter(this.getClass().getName(), PARAM_DOCX_TEMPLATE_FILE_PATH);
 	if (docxTemplateFilePath == null)
 	    docxTemplateFilePath = options.parameter("docxTemplateFilePath");
 	// if no path is provided, use the directory of the default template
@@ -2910,21 +2943,21 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    docxStyle = docxStyleParamValue;
 	}
 
-	logoFilePath = options.parameter(this.getClass().getName(), "logoFilePath");
+	logoFilePath = options.parameter(this.getClass().getName(), PARAM_LOGO_FILE_PATH);
 
-	String s = options.parameter(this.getClass().getName(), "inheritedConstraints");
+	String s = options.parameter(this.getClass().getName(), PARAM_INHERITED_CONSTRAINTS);
 	if (s != null && s.equalsIgnoreCase("false"))
 	    inheritedConstraints = false;
 
-	s = options.parameter(this.getClass().getName(), "inheritedProperties");
+	s = options.parameter(this.getClass().getName(), PARAM_INHERITED_PROPERTIES);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    inheritedProperties = true;
 
-	s = options.parameter(this.getClass().getName(), "deleteXmlfile");
+	s = options.parameter(this.getClass().getName(), PARAM_DELETE_XML_FILE);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    deleteXmlFile = true;
 
-	s = options.parameter(this.getClass().getName(), "package");
+	s = options.parameter(this.getClass().getName(), PARAM_PACKAGE);
 	if (s != null && s.length() > 0)
 	    Package = s;
 	else
@@ -2936,11 +2969,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	else
 	    OutputFormat = "";
 
-	s = options.parameter(this.getClass().getName(), "featureTerm");
+	s = options.parameter(this.getClass().getName(), PARAM_FEATURE_TERM);
 	if (s != null && s.length() > 0)
 	    featureTerm = s;
 
-	s = options.parameter(this.getClass().getName(), "includeDiagrams");
+	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_DIAGRAMS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    includeDiagrams = true;
 
@@ -2957,17 +2990,17 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	// TBD: one could check that input has actually loaded the diagrams;
 	// however, in future a transformation could create images as well
 
-	s = options.parameter(this.getClass().getName(), "includeVoidable");
+	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_VOIDABLE);
 	if (s != null && s.equalsIgnoreCase("false"))
 	    includeVoidable = false;
 
-	s = options.parameter(this.getClass().getName(), "includeAlias");
+	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_ALIAS);
 	if (s != null) {
 	    if (s.equalsIgnoreCase("false"))
 		includeTitle = false;
 	} else {
 	    // support for old, somewhat misleading, name for this parameter
-	    s = options.parameter(this.getClass().getName(), "includeTitle");
+	    s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_TITLE);
 	    if (s != null && s.equalsIgnoreCase("false"))
 		includeTitle = false;
 	}
@@ -2980,27 +3013,27 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	if (s != null && s.length() > 0)
 	    xslTransformerFactory = s;
 
-	s = options.parameter(this.getClass().getName(), "xslhtmlFile");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_HTML_FILE);
 	if (s != null && s.length() > 0)
 	    xslhtmlfileName = s;
 
-	s = options.parameter(this.getClass().getName(), "xslframeHtmlFileName");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_FRAME_HTML_FILENAME);
 	if (s != null && s.length() > 0)
 	    xslframeHtmlFileName = s;
 
-	s = options.parameter(this.getClass().getName(), "xslfoFile");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_FO_FILE);
 	if (s != null && s.length() > 0)
 	    xslfofileName = s;
 
-	s = options.parameter(this.getClass().getName(), "xslrtfFile");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_RTF_FILE);
 	if (s != null && s.length() > 0)
 	    xslrtffileName = s;
 
-	s = options.parameter(this.getClass().getName(), "xsldocxFile");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_DOCX_FILE);
 	if (s != null && s.length() > 0)
 	    xsldocxfileName = s;
 
-	s = options.parameter(this.getClass().getName(), "xslxmlFile");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_XML_FILE);
 	if (s != null && s.length() > 0)
 	    xslxmlfileName = s;
 
@@ -3008,11 +3041,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 * first check the xslt path setting(s), then anything that depends on it for
 	 * example the css path defaults to the xslt path
 	 */
-	s = options.parameter(this.getClass().getName(), "xsltPfad");
+	s = options.parameter(this.getClass().getName(), PARAM_XSLT_PFAD);
 	if (s != null && s.length() > 0)
 	    xsltPath = s;
 
-	s = options.parameter(this.getClass().getName(), "xsltPath");
+	s = options.parameter(this.getClass().getName(), PARAM_XSLT_PATH);
 	if (s != null && s.length() > 0)
 	    xsltPath = s;
 
@@ -3020,26 +3053,26 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 * check cssPath only after xslt path has been checked if no value is provided
 	 * for cssPath it defaults to the xslt path
 	 */
-	s = options.parameter(this.getClass().getName(), "cssPath");
+	s = options.parameter(this.getClass().getName(), PARAM_CSS_PATH);
 	if (s != null && s.length() > 0) {
 	    cssPath = s;
 	} else {
 	    cssPath = xsltPath;
 	}
 
-	s = options.parameter(this.getClass().getName(), "lang");
+	s = options.parameter(this.getClass().getName(), PARAM_LANG);
 	if (s != null && s.length() > 0)
 	    lang = s;
 
-	s = options.parameter(this.getClass().getName(), "noAlphabeticSortingForProperties");
+	s = options.parameter(this.getClass().getName(), PARAM_NO_ALPHABETIC_SORT_OF_PROPS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    noAlphabeticSortingForProperties = "true";
 
-	s = options.parameter(this.getClass().getName(), "includeCodelistsAndEnumerations");
+	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    includeCodelistsAndEnumerations = "true";
 
-	s = options.parameter(this.getClass().getName(), "xslLocalizationUri");
+	s = options.parameter(this.getClass().getName(), PARAM_XSL_LOCALIZATION_URI);
 	if (s != null && s.length() > 0) {
 
 	    try {
@@ -3064,7 +3097,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	}
 
-	s = options.parameter(this.getClass().getName(), "localizationMessagesUri");
+	s = options.parameter(this.getClass().getName(), PARAM_LOCALIZATION_MESSAGES_URI);
 	if (s != null && s.length() > 0) {
 
 	    try {

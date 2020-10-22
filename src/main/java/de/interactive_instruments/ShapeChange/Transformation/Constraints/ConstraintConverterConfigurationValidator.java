@@ -35,12 +35,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
@@ -50,12 +53,23 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ConstraintConverterConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class ConstraintConverterConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(ConstraintConverter.PARAM_GEOM_REP_CONSTRAINT_REGEX, ConstraintConverter.PARAM_GEOM_REP_TYPES,
+		    ConstraintConverter.PARAM_GEOM_REP_VALUE_TYPE_REGEX,
+		    ConstraintConverter.PARAM_VALUETYPE_REP_CONSTRAINT_REGEX,
+		    ConstraintConverter.PARAM_VALUETYPE_REP_TYPES).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
 	boolean isValid = true;
+
+	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
 	Map<String, ProcessRuleSet> ruleSets = config.getRuleSets();
 

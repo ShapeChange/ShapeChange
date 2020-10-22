@@ -84,717 +84,680 @@ import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
-	public static final String NS = "http://shapechange.net/targets/ApplicationSchemaMetadata";
+    public static final String NS = "http://shapechange.net/targets/ApplicationSchemaMetadata";
 
-	public static int STATUS_RULE_ALL_IDENTIFY_PROFILES = 301500;
-	public static int STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE = 301501;
-	public static int STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = 301502;
+    public static int STATUS_RULE_ALL_IDENTIFY_PROFILES = 301500;
+    public static int STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE = 301501;
+    public static int STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = 301502;
 
-	/* ------------------------------------------- */
-	/* --- configuration parameter identifiers --- */
-	/* ------------------------------------------- */
+    /* ------------------------------------------- */
+    /* --- configuration parameter identifiers --- */
+    /* ------------------------------------------- */
 
-	/**
-	 * Required parameter for rule {@value #RULE_ALL_IDENTIFY_TYPE_USAGE}.
-	 * Multiple (union or data) type names are separated by commas.
-	 */
-	public static final String PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION = "typesForTypeUsageIdentification";
+    /**
+     * Required parameter for rule {@value #RULE_ALL_IDENTIFY_TYPE_USAGE}. Multiple
+     * (union or data) type names are separated by commas.
+     */
+    public static final String PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION = "typesForTypeUsageIdentification";
 
-	/* ------------------------ */
-	/* --- rule identifiers --- */
-	/* ------------------------ */
+    /* ------------------------ */
+    /* --- rule identifiers --- */
+    /* ------------------------ */
 
-	/**
-	 * This rule identifies the names of all the profiles to which elements
-	 * (classes and properties) in selected schemas belong. Identified profiles
-	 * are listed within ProfilesMetadata/containedProfile elements.
-	 */
-	public static final String RULE_ALL_IDENTIFY_PROFILES = "rule-asm-all-identify-profiles";
+    /**
+     * This rule identifies the names of all the profiles to which elements (classes
+     * and properties) in selected schemas belong. Identified profiles are listed
+     * within ProfilesMetadata/containedProfile elements.
+     */
+    public static final String RULE_ALL_IDENTIFY_PROFILES = "rule-asm-all-identify-profiles";
 
-	/**
-	 * This rule identifies which feature and object types directly or
-	 * indirectly make use (as property value type) of one or more of the union
-	 * or data types defined by target parameter
-	 * {@value #PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION}.
-	 */
-	public static final String RULE_ALL_IDENTIFY_TYPE_USAGE = "rule-asm-all-identifyTypeUsage";
+    /**
+     * This rule identifies which feature and object types directly or indirectly
+     * make use (as property value type) of one or more of the union or data types
+     * defined by target parameter
+     * {@value #PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION}.
+     */
+    public static final String RULE_ALL_IDENTIFY_TYPE_USAGE = "rule-asm-all-identifyTypeUsage";
 
-	/**
-	 * This rule identifies all properties (maybe including inherited ones, if
-	 * {@link #PARAM_INHERITED_PROPERTIES} is true) of a class that have tagged
-	 * values whose name matches a regular expression defined by
-	 * {@link #PARAM_TAG_NAME_REGEX}. The optional parameter
-	 * {@link #PARAM_TAG_VALUE_REGEX} can be used to restrict the tags to only
-	 * those whose values match the regular expression defined by that
-	 * parameter.
-	 */
-	public static final String RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = "rule-asm-all-identifyPropertiesWithSpecificTaggedValues";
-	/**
-	 * If true, then the output per class will not only contain the direct
-	 * properties of the class but also the inherited properties. Default is
-	 * false. Applis to
-	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
-	 */
-	public static final String PARAM_INHERITED_PROPERTIES = "inheritedProperties";
-	/**
-	 * Regular expression to match the name of tagged values that shall be
-	 * reported by
-	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}. The
-	 * parameter is required by that rule.
-	 */
-	public static final String PARAM_TAG_NAME_REGEX = "tagNameRegex";
-	/**
-	 * If set, then all values of a tag whose name matches
-	 * {@link #PARAM_TAG_NAME_REGEX} must match this regular expression, in
-	 * order for the tagged value to be reported by
-	 * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
-	 */
-	public static final String PARAM_TAG_VALUE_REGEX = "tagValueRegex";
+    /**
+     * This rule identifies all properties (maybe including inherited ones, if
+     * {@link #PARAM_INHERITED_PROPERTIES} is true) of a class that have tagged
+     * values whose name matches a regular expression defined by
+     * {@link #PARAM_TAG_NAME_REGEX}. The optional parameter
+     * {@link #PARAM_TAG_VALUE_REGEX} can be used to restrict the tags to only those
+     * whose values match the regular expression defined by that parameter.
+     */
+    public static final String RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES = "rule-asm-all-identifyPropertiesWithSpecificTaggedValues";
+    /**
+     * If true, then the output per class will not only contain the direct
+     * properties of the class but also the inherited properties. Default is false.
+     * Applis to {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
+     */
+    public static final String PARAM_INHERITED_PROPERTIES = "inheritedProperties";
+    /**
+     * Regular expression to match the name of tagged values that shall be reported
+     * by {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}. The
+     * parameter is required by that rule.
+     */
+    public static final String PARAM_TAG_NAME_REGEX = "tagNameRegex";
+    /**
+     * If set, then all values of a tag whose name matches
+     * {@link #PARAM_TAG_NAME_REGEX} must match this regular expression, in order
+     * for the tagged value to be reported by
+     * {@link #RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES}.
+     */
+    public static final String PARAM_TAG_VALUE_REGEX = "tagValueRegex";
 
-	/* --------------------- */
-	/* --- tagged values --- */
-	/* --------------------- */
+    /* --------------------- */
+    /* --- tagged values --- */
+    /* --------------------- */
 
-	// none at present
+    // none at present
 
-	/* -------------------- */
-	/* --- other fields --- */
-	/* -------------------- */
+    /* -------------------- */
+    /* --- other fields --- */
+    /* -------------------- */
 
-	private static boolean initialised = false;
+    private static boolean initialised = false;
 
-	protected static Document document = null;
-	protected static Element root = null;
-	protected static Map<String, ProcessMapEntry> mapEntryByType = new HashMap<String, ProcessMapEntry>();
+    protected static Document document = null;
+    protected static Element root = null;
+    protected static Map<String, ProcessMapEntry> mapEntryByType = new HashMap<String, ProcessMapEntry>();
 
-	private static File outputDirectoryFile;
-	private static String outputDirectory;
-	private static String outputFilename;
+    private static File outputDirectoryFile;
+    private static String outputDirectory;
+    private static String outputFilename;
 
-	private static boolean printed = false;
-	private static boolean diagnosticsOnly = false;
+    private static boolean printed = false;
+    private static boolean diagnosticsOnly = false;
 
-	private static String schemaTargetNamespace = null;
+    private static String schemaTargetNamespace = null;
 
-	private ShapeChangeResult result = null;
-	private PackageInfo schemaPi = null;
-	private Model model = null;
-	private Options options = null;
+    private ShapeChangeResult result = null;
+    private PackageInfo schemaPi = null;
+    private Model model = null;
+    private Options options = null;
 
-	@Override
-	public void initialise(PackageInfo p, Model m, Options o,
-			ShapeChangeResult r, boolean diagOnly)
-			throws ShapeChangeAbortException {
+    @Override
+    public void initialise(PackageInfo p, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
+	    throws ShapeChangeAbortException {
 
-		schemaPi = p;
-		schemaTargetNamespace = p.targetNamespace();
+	schemaPi = p;
+	schemaTargetNamespace = p.targetNamespace();
 
-		model = m;
-		options = o;
-		result = r;
-		diagnosticsOnly = diagOnly;
+	model = m;
+	options = o;
+	result = r;
+	diagnosticsOnly = diagOnly;
 
-		result.addDebug(this, 1, schemaPi.name());
+	result.addDebug(this, 1, schemaPi.name());
 
-		if (!initialised) {
-			initialised = true;
+	if (!initialised) {
+	    initialised = true;
 
-			outputDirectory = options.parameter(this.getClass().getName(),
-					"outputDirectory");
-			if (outputDirectory == null)
-				outputDirectory = options.parameter("outputDirectory");
-			if (outputDirectory == null)
-				outputDirectory = options.parameter(".");
+	    outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
+	    if (outputDirectory == null)
+		outputDirectory = options.parameter("outputDirectory");
+	    if (outputDirectory == null)
+		outputDirectory = options.parameter(".");
 
-			outputFilename = "schema_metadata.xml";
+	    outputFilename = "schema_metadata.xml";
 
-			// Check if we can use the output directory; create it if it
-			// does not exist
-			outputDirectoryFile = new File(outputDirectory);
-			boolean exi = outputDirectoryFile.exists();
-			if (!exi) {
-				try {
-					FileUtils.forceMkdir(outputDirectoryFile);
-				} catch (IOException e) {
-					result.addError(null, 600, e.getMessage());
-					e.printStackTrace(System.err);
-				}
-				exi = outputDirectoryFile.exists();
-			}
-			boolean dir = outputDirectoryFile.isDirectory();
-			boolean wrt = outputDirectoryFile.canWrite();
-			boolean rea = outputDirectoryFile.canRead();
-			if (!exi || !dir || !wrt || !rea) {
-				result.addFatalError(null, 601, outputDirectory);
-				throw new ShapeChangeAbortException();
-			}
-
-			File outputFile = new File(outputDirectoryFile, outputFilename);
-
-			// check if output file already exists - if so, attempt to delete it
-			exi = outputFile.exists();
-			if (exi) {
-
-				result.addInfo(this, 3, outputFilename, outputDirectory);
-
-				try {
-					FileUtils.forceDelete(outputFile);
-					result.addInfo(this, 4);
-				} catch (IOException e) {
-					result.addInfo(null, 600, e.getMessage());
-					e.printStackTrace(System.err);
-				}
-			}
-
-			// identify map entries defined in the target configuration
-			List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig()
-					.getMapEntries();
-
-			for (ProcessMapEntry pme : mapEntries) {
-				mapEntryByType.put(pme.getType(), pme);
-			}
-
-			// ======================================
-			// Parse configuration parameters
-			// ======================================
-
-			// nothing to do at present
-
-			// ======================================
-			// Set up the document and create root
-			// ======================================
-
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
-			dbf.setValidating(true);
-			dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE,
-					Options.W3C_XML_SCHEMA);
-			DocumentBuilder db;
-			try {
-				db = dbf.newDocumentBuilder();
-			} catch (ParserConfigurationException e) {
-				result.addFatalError(null, 2);
-				throw new ShapeChangeAbortException();
-			}
-			document = db.newDocument();
-
-			root = document.createElementNS(NS, "ApplicationSchemaMetadata");
-			document.appendChild(root);
-
-			addAttribute(root, "xmlns", NS);
-
-			if (options.getCurrentProcessConfig().parameterAsString(
-					TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
-					true) == null) {
-				Comment generationComment = document.createComment(
-						"Created by ShapeChange - http://shapechange.net/");
-				root.appendChild(generationComment);
-			}
-		}
-
-		// create elements documenting the application schema
-		Element e_name = document.createElement("name");
-		e_name.setTextContent(schemaPi.name());
-		Element e_tns = document.createElement("targetNamespace");
-		e_tns.setTextContent(schemaPi.targetNamespace());
-
-		Element e_as = document.createElement("ApplicationSchema");
-		e_as.appendChild(e_name);
-		e_as.appendChild(e_tns);
-
-		Element e_schema = document.createElement("schema");
-		e_schema.appendChild(e_as);
-
-		root.appendChild(e_schema);
-
-		/*
-		 * Now compute relevant metadata.
-		 */
-		processMetadata(e_as);
-	}
-
-	protected void processMetadata(Element appSchemaElement) {
-
-		if (schemaPi != null) {
-
-			if (schemaPi.matches(RULE_ALL_IDENTIFY_PROFILES)) {
-
-				StatusBoard.getStatusBoard()
-						.statusChanged(STATUS_RULE_ALL_IDENTIFY_PROFILES);
-
-				processProfilesMetadata(appSchemaElement);
-			}
-
-			if (schemaPi.matches(RULE_ALL_IDENTIFY_TYPE_USAGE)) {
-				StatusBoard.getStatusBoard()
-						.statusChanged(STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE);
-
-				identifyTypeUsage(appSchemaElement);
-			}
-
-			if (schemaPi.matches(
-					RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
-				StatusBoard.getStatusBoard().statusChanged(
-						STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
-
-				identifyPropertiesWithSpecificTaggedValues(appSchemaElement);
-			}
-
-			// add additional rules to compute metadata here
-		}
-
-	}
-
-	private void identifyPropertiesWithSpecificTaggedValues(
-			Element appSchemaElement) {
-
-		ProcessConfiguration config = options.getCurrentProcessConfig();
-
-		Pattern tagNamePattern = null;
+	    // Check if we can use the output directory; create it if it
+	    // does not exist
+	    outputDirectoryFile = new File(outputDirectory);
+	    boolean exi = outputDirectoryFile.exists();
+	    if (!exi) {
 		try {
-			tagNamePattern = config
-					.parameterAsRegexPattern(PARAM_TAG_NAME_REGEX, null);
-			if (tagNamePattern == null) {
-				result.addError(this, 10, PARAM_TAG_NAME_REGEX,
-						RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
-				return;
-			}
-		} catch (PatternSyntaxException e) {
-			result.addError(this, 9, PARAM_TAG_NAME_REGEX, e.getMessage());
+		    FileUtils.forceMkdir(outputDirectoryFile);
+		} catch (IOException e) {
+		    result.addError(null, 600, e.getMessage());
+		    e.printStackTrace(System.err);
 		}
+		exi = outputDirectoryFile.exists();
+	    }
+	    boolean dir = outputDirectoryFile.isDirectory();
+	    boolean wrt = outputDirectoryFile.canWrite();
+	    boolean rea = outputDirectoryFile.canRead();
+	    if (!exi || !dir || !wrt || !rea) {
+		result.addFatalError(null, 601, outputDirectory);
+		throw new ShapeChangeAbortException();
+	    }
 
-		Pattern tagValuePattern = null;
+	    File outputFile = new File(outputDirectoryFile, outputFilename);
+
+	    // check if output file already exists - if so, attempt to delete it
+	    exi = outputFile.exists();
+	    if (exi) {
+
+		result.addInfo(this, 3, outputFilename, outputDirectory);
+
 		try {
-			tagValuePattern = config
-					.parameterAsRegexPattern(PARAM_TAG_VALUE_REGEX, null);
-		} catch (PatternSyntaxException e) {
-			result.addError(this, 9, PARAM_TAG_VALUE_REGEX, e.getMessage());
+		    FileUtils.forceDelete(outputFile);
+		    result.addInfo(this, 4);
+		} catch (IOException e) {
+		    result.addInfo(null, 600, e.getMessage());
+		    e.printStackTrace(System.err);
 		}
+	    }
 
-		boolean inheritedProperties = config
-				.parameterAsBoolean(PARAM_INHERITED_PROPERTIES, false);
+	    // identify map entries defined in the target configuration
+	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
 
-		Element e_pwstv = document
-				.createElement("PropertiesWithSpecificTaggedValues");
-		appSchemaElement.appendChild(e_pwstv);
+	    for (ProcessMapEntry pme : mapEntries) {
+		mapEntryByType.put(pme.getType(), pme);
+	    }
 
-		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+	    // ======================================
+	    // Parse configuration parameters
+	    // ======================================
 
-		for (ClassInfo ci : schemaClasses) {
+	    // nothing to do at present
 
-			Element e_class = document.createElement("Class");
-			e_class.setAttribute("name", ci.name());
+	    // ======================================
+	    // Set up the document and create root
+	    // ======================================
 
-			e_pwstv.appendChild(e_class);
+	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	    dbf.setNamespaceAware(true);
+	    dbf.setValidating(true);
+	    dbf.setAttribute(Options.JAXP_SCHEMA_LANGUAGE, Options.W3C_XML_SCHEMA);
+	    DocumentBuilder db;
+	    try {
+		db = dbf.newDocumentBuilder();
+	    } catch (ParserConfigurationException e) {
+		result.addFatalError(null, 2);
+		throw new ShapeChangeAbortException();
+	    }
+	    document = db.newDocument();
 
-			Collection<PropertyInfo> properties = inheritedProperties
-					? (Collection<PropertyInfo>) ci.propertiesAll()
-					: ci.properties().values();
-			for (PropertyInfo pi : properties) {
+	    root = document.createElementNS(NS, "ApplicationSchemaMetadata");
+	    document.appendChild(root);
 
-				SortedMap<String, List<String>> tvs = pi.taggedValuesAll()
-						.asMap();
-				SortedMap<String, List<String>> matchingTvs = new TreeMap<>();
+	    addAttribute(root, "xmlns", NS);
 
-				for (String tag : tvs.keySet()) {
-
-					if (tagNamePattern.matcher(tag).matches()) {
-
-						List<String> values = tvs.get(tag);
-
-						boolean relevantTag = true;
-
-						if (tagValuePattern != null) {
-
-							if (values == null || values.isEmpty()) {
-								relevantTag = false;
-							} else {
-								boolean valuesOk = true;
-								for (String value : values) {
-									if (!tagValuePattern.matcher(value)
-											.matches()) {
-										valuesOk = false;
-										break;
-									}
-								}
-								relevantTag = valuesOk;
-							}
-						}
-
-						if (relevantTag) {
-							matchingTvs.put(tag, values);
-						}
-					}
-				}
-
-				if (!matchingTvs.isEmpty()) {
-
-					Element e_prop = document.createElement("Property");
-					e_prop.setAttribute("name", pi.name());
-
-					e_class.appendChild(e_prop);
-
-					for (Entry<String, List<String>> entry : matchingTvs
-							.entrySet()) {
-
-						String tag = entry.getKey();
-						List<String> values = entry.getValue();
-
-						Element e_tag = document.createElement("Tag");
-						e_tag.setAttribute("name", tag);
-
-						e_prop.appendChild(e_tag);
-
-						if (values != null && !values.isEmpty()) {
-
-							for (String value : values) {
-								Element e_val = document.createElement("Value");
-								e_val.setTextContent(value);
-
-								e_tag.appendChild(e_val);
-							}
-						}
-					}
-				}
-			}
-		}
+	    if (options.getCurrentProcessConfig().parameterAsString(TargetOutputProcessor.PARAM_ADD_COMMENT, null,
+		    false, true) == null) {
+		Comment generationComment = document.createComment("Created by ShapeChange - http://shapechange.net/");
+		root.appendChild(generationComment);
+	    }
 	}
 
-	private void identifyTypeUsage(Element appSchemaElement) {
+	// create elements documenting the application schema
+	Element e_name = document.createElement("name");
+	e_name.setTextContent(schemaPi.name());
+	Element e_tns = document.createElement("targetNamespace");
+	e_tns.setTextContent(schemaPi.targetNamespace());
 
-		/*
-		 * 
-		 */
+	Element e_as = document.createElement("ApplicationSchema");
+	e_as.appendChild(e_name);
+	e_as.appendChild(e_tns);
 
-		SortedSet<String> typesForTypeUsage = new TreeSet<>(
-				options.parameterAsStringList(this.getClass().getName(),
-						PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION, null, true,
-						true));
+	Element e_schema = document.createElement("schema");
+	e_schema.appendChild(e_as);
 
-		// NOTE: parameter value checked by configuration validator
+	root.appendChild(e_schema);
 
-		// identify all classes and properties that belong to the schema
-		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+	/*
+	 * Now compute relevant metadata.
+	 */
+	processMetadata(e_as);
+    }
 
-		if (schemaClasses != null) {
+    protected void processMetadata(Element appSchemaElement) {
 
-			/*
-			 * For a given feature or object type, get all direct and indirect
-			 * properties - ignoring model routes that lead through feature or
-			 * object types; also ignore enumerations and code lists. Keep track
-			 * of visited types (to avoid an endless loop). Check if one of
-			 * these properties has a type from the parameter.
-			 */
+	if (schemaPi != null) {
 
-			SortedMap<ClassInfo, Set<String>> resultMap = new TreeMap<>();
+	    if (schemaPi.matches(RULE_ALL_IDENTIFY_PROFILES)) {
 
-			for (ClassInfo ci : schemaClasses) {
+		StatusBoard.getStatusBoard().statusChanged(STATUS_RULE_ALL_IDENTIFY_PROFILES);
 
-				if (ci.category() == Options.FEATURE
-						|| ci.category() == Options.OBJECT) {
+		processProfilesMetadata(appSchemaElement);
+	    }
 
-					SortedSet<ClassInfo> foundDataOrUnionTypes = new TreeSet<>();
+	    if (schemaPi.matches(RULE_ALL_IDENTIFY_TYPE_USAGE)) {
+		StatusBoard.getStatusBoard().statusChanged(STATUS_RULE_ALL_IDENTIFY_TYPE_USAGE);
 
-					searchTypeUses(ci, foundDataOrUnionTypes);
+		identifyTypeUsage(appSchemaElement);
+	    }
 
-					Set<String> namesOfFoundDataOrUnionTypes = foundDataOrUnionTypes
-							.stream().map(type -> type.name())
-							.filter(type -> typesForTypeUsage.contains(type))
-							.collect(Collectors.toSet());
+	    if (schemaPi.matches(RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES)) {
+		StatusBoard.getStatusBoard()
+			.statusChanged(STATUS_RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
 
-					if (!namesOfFoundDataOrUnionTypes.isEmpty()) {
+		identifyPropertiesWithSpecificTaggedValues(appSchemaElement);
+	    }
 
-						resultMap.put(ci, namesOfFoundDataOrUnionTypes);
-					}
-				}
-			}
-
-			// now create the ProfilesMetadata XML element
-			Element e_tum = document.createElement("TypesUsageMetadata");
-
-			if (resultMap.isEmpty()) {
-
-				result.addInfo(this, 200, String.join(", ", typesForTypeUsage));
-
-			} else {
-
-				result.addInfo(this, 201, String.join(", ", typesForTypeUsage));
-
-				for (String type : typesForTypeUsage) {
-
-					SortedSet<String> classesUsingType = new TreeSet<>();
-
-					for (Entry<ClassInfo, Set<String>> e : resultMap
-							.entrySet()) {
-
-						if (e.getValue().contains(type)) {
-							classesUsingType.add(e.getKey().name());
-						}
-					}
-
-					if (!classesUsingType.isEmpty()) {
-
-						String classes = String.join(", ", classesUsingType);
-						result.addInfo(this, 202, type, classes);
-						Element e_tu = document.createElement("typeUsage");
-						e_tu.setAttribute("type", type);
-						e_tu.setAttribute("directlyOrIndirectlyUsedBy",
-								classes);
-						e_tum.appendChild(e_tu);
-					}
-				}
-			}
-
-			Element e_m = document.createElement("metadata");
-
-			e_m.appendChild(e_tum);
-
-			appSchemaElement.appendChild(e_m);
-		}
+	    // add additional rules to compute metadata here
 	}
 
-	private void searchTypeUses(ClassInfo ci,
-			SortedSet<ClassInfo> foundDataOrUnionTypes) {
+    }
+
+    private void identifyPropertiesWithSpecificTaggedValues(Element appSchemaElement) {
+
+	ProcessConfiguration config = options.getCurrentProcessConfig();
+
+	Pattern tagNamePattern = null;
+	try {
+	    tagNamePattern = config.parameterAsRegexPattern(PARAM_TAG_NAME_REGEX, null);
+	    if (tagNamePattern == null) {
+		result.addError(this, 10, PARAM_TAG_NAME_REGEX,
+			RULE_ALL_IDENTIFY_PROPERTIES_WITH_SPECIFIC_TAGGED_VALUES);
+		return;
+	    }
+	} catch (PatternSyntaxException e) {
+	    result.addError(this, 9, PARAM_TAG_NAME_REGEX, e.getMessage());
+	}
+
+	Pattern tagValuePattern = null;
+	try {
+	    tagValuePattern = config.parameterAsRegexPattern(PARAM_TAG_VALUE_REGEX, null);
+	} catch (PatternSyntaxException e) {
+	    result.addError(this, 9, PARAM_TAG_VALUE_REGEX, e.getMessage());
+	}
+
+	boolean inheritedProperties = config.parameterAsBoolean(PARAM_INHERITED_PROPERTIES, false);
+
+	Element e_pwstv = document.createElement("PropertiesWithSpecificTaggedValues");
+	appSchemaElement.appendChild(e_pwstv);
+
+	SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+
+	for (ClassInfo ci : schemaClasses) {
+
+	    Element e_class = document.createElement("Class");
+	    e_class.setAttribute("name", ci.name());
+
+	    e_pwstv.appendChild(e_class);
+
+	    Collection<PropertyInfo> properties = inheritedProperties ? (Collection<PropertyInfo>) ci.propertiesAll()
+		    : ci.properties().values();
+	    for (PropertyInfo pi : properties) {
+
+		SortedMap<String, List<String>> tvs = pi.taggedValuesAll().asMap();
+		SortedMap<String, List<String>> matchingTvs = new TreeMap<>();
+
+		for (String tag : tvs.keySet()) {
+
+		    if (tagNamePattern.matcher(tag).matches()) {
+
+			List<String> values = tvs.get(tag);
+
+			boolean relevantTag = true;
+
+			if (tagValuePattern != null) {
+
+			    if (values == null || values.isEmpty()) {
+				relevantTag = false;
+			    } else {
+				boolean valuesOk = true;
+				for (String value : values) {
+				    if (!tagValuePattern.matcher(value).matches()) {
+					valuesOk = false;
+					break;
+				    }
+				}
+				relevantTag = valuesOk;
+			    }
+			}
+
+			if (relevantTag) {
+			    matchingTvs.put(tag, values);
+			}
+		    }
+		}
+
+		if (!matchingTvs.isEmpty()) {
+
+		    Element e_prop = document.createElement("Property");
+		    e_prop.setAttribute("name", pi.name());
+
+		    e_class.appendChild(e_prop);
+
+		    for (Entry<String, List<String>> entry : matchingTvs.entrySet()) {
+
+			String tag = entry.getKey();
+			List<String> values = entry.getValue();
+
+			Element e_tag = document.createElement("Tag");
+			e_tag.setAttribute("name", tag);
+
+			e_prop.appendChild(e_tag);
+
+			if (values != null && !values.isEmpty()) {
+
+			    for (String value : values) {
+				Element e_val = document.createElement("Value");
+				e_val.setTextContent(value);
+
+				e_tag.appendChild(e_val);
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+    private void identifyTypeUsage(Element appSchemaElement) {
+
+	/*
+	 * 
+	 */
+
+	SortedSet<String> typesForTypeUsage = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION, null, true, true));
+
+	// NOTE: parameter value checked by configuration validator
+
+	// identify all classes and properties that belong to the schema
+	SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+
+	if (schemaClasses != null) {
+
+	    /*
+	     * For a given feature or object type, get all direct and indirect properties -
+	     * ignoring model routes that lead through feature or object types; also ignore
+	     * enumerations and code lists. Keep track of visited types (to avoid an endless
+	     * loop). Check if one of these properties has a type from the parameter.
+	     */
+
+	    SortedMap<ClassInfo, Set<String>> resultMap = new TreeMap<>();
+
+	    for (ClassInfo ci : schemaClasses) {
+
+		if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT) {
+
+		    SortedSet<ClassInfo> foundDataOrUnionTypes = new TreeSet<>();
+
+		    searchTypeUses(ci, foundDataOrUnionTypes);
+
+		    Set<String> namesOfFoundDataOrUnionTypes = foundDataOrUnionTypes.stream().map(type -> type.name())
+			    .filter(type -> typesForTypeUsage.contains(type)).collect(Collectors.toSet());
+
+		    if (!namesOfFoundDataOrUnionTypes.isEmpty()) {
+
+			resultMap.put(ci, namesOfFoundDataOrUnionTypes);
+		    }
+		}
+	    }
+
+	    // now create the ProfilesMetadata XML element
+	    Element e_tum = document.createElement("TypesUsageMetadata");
+
+	    if (resultMap.isEmpty()) {
+
+		result.addInfo(this, 200, String.join(", ", typesForTypeUsage));
+
+	    } else {
+
+		result.addInfo(this, 201, String.join(", ", typesForTypeUsage));
+
+		for (String type : typesForTypeUsage) {
+
+		    SortedSet<String> classesUsingType = new TreeSet<>();
+
+		    for (Entry<ClassInfo, Set<String>> e : resultMap.entrySet()) {
+
+			if (e.getValue().contains(type)) {
+			    classesUsingType.add(e.getKey().name());
+			}
+		    }
+
+		    if (!classesUsingType.isEmpty()) {
+
+			String classes = String.join(", ", classesUsingType);
+			result.addInfo(this, 202, type, classes);
+			Element e_tu = document.createElement("typeUsage");
+			e_tu.setAttribute("type", type);
+			e_tu.setAttribute("directlyOrIndirectlyUsedBy", classes);
+			e_tum.appendChild(e_tu);
+		    }
+		}
+	    }
+
+	    Element e_m = document.createElement("metadata");
+
+	    e_m.appendChild(e_tum);
+
+	    appSchemaElement.appendChild(e_m);
+	}
+    }
+
+    private void searchTypeUses(ClassInfo ci, SortedSet<ClassInfo> foundDataOrUnionTypes) {
+
+	for (PropertyInfo pi : ci.properties().values()) {
+
+	    ClassInfo type = model.classByIdOrName(pi.typeInfo());
+
+	    if (type != null && !foundDataOrUnionTypes.contains(type)) {
+
+		foundDataOrUnionTypes.add(type);
+
+		if (type.category() == Options.DATATYPE || type.category() == Options.UNION) {
+		    searchTypeUses(type, foundDataOrUnionTypes);
+		}
+	    }
+	}
+    }
+
+    protected void processProfilesMetadata(Element appSchemaElement) {
+
+	Set<Info> schemaElements = new TreeSet<Info>();
+
+	// identify all classes and properties that belong to the schema
+	SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
+
+	if (schemaClasses != null) {
+
+	    for (ClassInfo ci : schemaClasses) {
+		schemaElements.add(ci);
 
 		for (PropertyInfo pi : ci.properties().values()) {
+		    schemaElements.add(pi);
+		}
+	    }
+	}
 
-			ClassInfo type = model.classByIdOrName(pi.typeInfo());
+	// identify the profiles of all relevant schema elements
+	SortedSet<String> profileNames = new TreeSet<String>();
 
-			if (type != null && !foundDataOrUnionTypes.contains(type)) {
+	for (Info i : schemaElements) {
 
-				foundDataOrUnionTypes.add(type);
+	    String[] profilesTVs = i.taggedValuesForTag("profiles");
 
-				if (type.category() == Options.DATATYPE
-						|| type.category() == Options.UNION) {
-					searchTypeUses(type, foundDataOrUnionTypes);
-				}
+	    for (String profilesTV : profilesTVs) {
+
+		if (profilesTV.trim().length() > 0) {
+
+		    try {
+
+			Profiles piMap = Profiles.parse(profilesTV, false);
+
+			profileNames.addAll(piMap.getProfileIdentifiersByName().keySet());
+
+		    } catch (MalformedProfileIdentifierException e) {
+			MessageContext mc = result.addWarning(null, 20201);
+			if (mc != null) {
+			    mc.addDetail(null, 20216, i.fullNameInSchema());
+			    mc.addDetail(null, 20217, e.getMessage());
+			    mc.addDetail(null, 20218, profilesTV);
 			}
+		    }
 		}
+	    }
 	}
 
-	protected void processProfilesMetadata(Element appSchemaElement) {
+	// now create the ProfilesMetadata XML element
+	Element e_pm = document.createElement("ProfilesMetadata");
 
-		Set<Info> schemaElements = new TreeSet<Info>();
-
-		// identify all classes and properties that belong to the schema
-		SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
-
-		if (schemaClasses != null) {
-
-			for (ClassInfo ci : schemaClasses) {
-				schemaElements.add(ci);
-
-				for (PropertyInfo pi : ci.properties().values()) {
-					schemaElements.add(pi);
-				}
-			}
-		}
-
-		// identify the profiles of all relevant schema elements
-		SortedSet<String> profileNames = new TreeSet<String>();
-
-		for (Info i : schemaElements) {
-
-			String[] profilesTVs = i.taggedValuesForTag("profiles");
-
-			for (String profilesTV : profilesTVs) {
-
-				if (profilesTV.trim().length() > 0) {
-
-					try {
-
-						Profiles piMap = Profiles.parse(profilesTV, false);
-
-						profileNames.addAll(
-								piMap.getProfileIdentifiersByName().keySet());
-
-					} catch (MalformedProfileIdentifierException e) {
-						MessageContext mc = result.addWarning(null, 20201);
-						if (mc != null) {
-							mc.addDetail(null, 20216, i.fullNameInSchema());
-							mc.addDetail(null, 20217, e.getMessage());
-							mc.addDetail(null, 20218, profilesTV);
-						}
-					}
-				}
-			}
-		}
-
-		// now create the ProfilesMetadata XML element
-		Element e_pm = document.createElement("ProfilesMetadata");
-
-		for (String name : profileNames) {
-			Element e_cp = document.createElement("containedProfile");
-			e_cp.setTextContent(name);
-			e_pm.appendChild(e_cp);
-		}
-
-		Element e_m = document.createElement("metadata");
-
-		e_m.appendChild(e_pm);
-
-		appSchemaElement.appendChild(e_m);
+	for (String name : profileNames) {
+	    Element e_cp = document.createElement("containedProfile");
+	    e_cp.setTextContent(name);
+	    e_pm.appendChild(e_cp);
 	}
 
-	/** Add attribute to an element 
-	 * @param e  tbd
-	 * @param name  tbd
-	 * @param value tbd */
-	protected void addAttribute(Element e, String name, String value) {
-		Attr att = document.createAttribute(name);
-		att.setValue(value);
-		e.setAttributeNode(att);
+	Element e_m = document.createElement("metadata");
+
+	e_m.appendChild(e_pm);
+
+	appSchemaElement.appendChild(e_m);
+    }
+
+    /**
+     * Add attribute to an element
+     * 
+     * @param e     tbd
+     * @param name  tbd
+     * @param value tbd
+     */
+    protected void addAttribute(Element e, String name, String value) {
+	Attr att = document.createAttribute(name);
+	att.setValue(value);
+	e.setAttributeNode(att);
+    }
+
+    @Override
+    public void process(ClassInfo ci) {
+
+	/*
+	 * This target gathers metadata about an application schema as-is. As such, it
+	 * can do so directly with the package provided by the initialize method.
+	 * Ordering of classes is handled directly by this class.
+	 * 
+	 * NOTE: the Converter.STATUS_TARGET_PROCESS can therefore be ignored for this
+	 * target.
+	 */
+    }
+
+    @Override
+    public void write() {
+
+	// nothing to do here
+    }
+
+    @Override
+    public String getTargetName() {
+	return "Application Schema Metadata";
+    }
+
+    @Override
+    public void writeAll(ShapeChangeResult r) {
+
+	if (printed || diagnosticsOnly) {
+	    return;
 	}
 
-	@Override
-	public void process(ClassInfo ci) {
+	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
+	outputFormat.setProperty("indent", "yes");
+	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
+	outputFormat.setProperty("encoding", "UTF-8");
 
-		/*
-		 * This target gathers metadata about an application schema as-is. As
-		 * such, it can do so directly with the package provided by the
-		 * initialize method. Ordering of classes is handled directly by this
-		 * class.
-		 * 
-		 * NOTE: the Converter.STATUS_TARGET_PROCESS can therefore be ignored
-		 * for this target.
-		 */
+	/*
+	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
+	 * doc in Serializer.setWriter and FileWriter)
+	 */
+	try {
+	    File repXsd = new File(outputDirectoryFile, outputFilename);
+
+	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(repXsd), "UTF-8"));
+
+	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
+	    serializer.setWriter(writer);
+	    serializer.asDOMSerializer().serialize(document);
+
+	    writer.close();
+
+	    r.addResult(getTargetName(), outputDirectory, outputFilename, schemaTargetNamespace);
+
+	} catch (IOException ioe) {
+
+	    r.addError(this, 3, outputFilename, ioe.getMessage());
 	}
 
-	@Override
-	public void write() {
+	printed = true;
+    }
 
-		// nothing to do here
+    @Override
+    public void registerRulesAndRequirements(RuleRegistry r) {
+	r.addRule("rule-asm-all-identify-profiles");
+	r.addRule("rule-asm-all-identifyTypeUsage");
+	r.addRule("rule-asm-all-identifyPropertiesWithSpecificTaggedValues");
+    }
+
+    @Override
+    public String getTargetIdentifier() {
+	return "asm";
+    }
+
+    @Override
+    public String getDefaultEncodingRule() {
+	return "*";
+    }
+
+    @Override
+    public void reset() {
+
+	initialised = false;
+
+	schemaTargetNamespace = null;
+
+	outputDirectoryFile = null;
+	outputDirectory = null;
+	outputFilename = null;
+
+	printed = false;
+	diagnosticsOnly = false;
+
+	document = null;
+	root = null;
+	mapEntryByType = new HashMap<String, ProcessMapEntry>();
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+	case 0:
+	    return "Context: class ApplicationSchemaMetadata";
+	case 1:
+	    return "Retrieving metadata for application schema '$1$'.";
+	case 2:
+	    return "XML Schema document with name '$1$' could not be created, invalid filename.";
+	case 3:
+	    return "Could not write output to file '$1$'. Exception message is: $2$.";
+	case 4:
+	    return "File has been deleted.";
+	case 5:
+	    return ""; // unused (moved to ShapeChangeResult)
+	case 6:
+	    return "Processing class '$1$'.";
+	case 7:
+	    return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
+	case 8:
+	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+	case 9:
+	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 10:
+	    return "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
+
+	case 100:
+	    return "Context: property '$1$' in class '$2$'.";
+
+	case 200:
+	    return "No classes with direct or indirect use of the type(s) $1$.";
+	case 201:
+	    return "One or more classes with direct or indirect use of the type(s) $1$ was found.";
+	case 202:
+	    return "Type '$1$' directly or indirectly used by the following class(es): $2$";
+
+	default:
+	    return "(" + ApplicationSchemaMetadata.class.getName() + ") Unknown message with number: " + mnr;
 	}
-
-	@Override
-	public String getTargetName() {
-		return "Application Schema Metadata";
-	}
-
-	@Override
-	public void writeAll(ShapeChangeResult r) {
-
-		if (printed || diagnosticsOnly) {
-			return;
-		}
-
-		Properties outputFormat = OutputPropertiesFactory
-				.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount",
-				"2");
-		outputFormat.setProperty("encoding", "UTF-8");
-
-		/*
-		 * Uses OutputStreamWriter instead of FileWriter to set character
-		 * encoding (see doc in Serializer.setWriter and FileWriter)
-		 */
-		try {
-			File repXsd = new File(outputDirectoryFile, outputFilename);
-
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(repXsd), "UTF-8"));
-
-			Serializer serializer = SerializerFactory
-					.getSerializer(outputFormat);
-			serializer.setWriter(writer);
-			serializer.asDOMSerializer().serialize(document);
-
-			writer.close();
-
-			r.addResult(getTargetName(), outputDirectory, outputFilename,
-					schemaTargetNamespace);
-
-		} catch (IOException ioe) {
-
-			r.addError(this, 3, outputFilename, ioe.getMessage());
-		}
-
-		printed = true;
-	}
-	
-	@Override
-	public void registerRulesAndRequirements(RuleRegistry r) {
-		r.addRule("rule-asm-all-identify-profiles");
-		r.addRule("rule-asm-all-identifyTypeUsage");
-		r.addRule("rule-asm-all-identifyPropertiesWithSpecificTaggedValues");
-	}
-	
-	@Override
-	public String getTargetIdentifier() {
-	    return "asm";
-	}
-	
-	@Override
-	public String getDefaultEncodingRule() {
-		return "*";
-	}
-
-	@Override
-	public void reset() {
-
-		initialised = false;
-
-		schemaTargetNamespace = null;
-
-		outputDirectoryFile = null;
-		outputDirectory = null;
-		outputFilename = null;
-
-		printed = false;
-		diagnosticsOnly = false;
-
-		document = null;
-		root = null;
-		mapEntryByType = new HashMap<String, ProcessMapEntry>();
-	}
-
-	@Override
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 0:
-			return "Context: class ApplicationSchemaMetadata";
-		case 1:
-			return "Retrieving metadata for application schema '$1$'.";
-		case 2:
-			return "XML Schema document with name '$1$' could not be created, invalid filename.";
-		case 3:
-			return "Could not write output to file '$1$'. Exception message is: $2$.";
-		case 4:
-			return "File has been deleted.";
-		case 5:
-			return ""; // unused (moved to ShapeChangeResult)
-		case 6:
-			return "Processing class '$1$'.";
-		case 7:
-			return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
-		case 8:
-			return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
-		case 9:
-			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-		case 10:
-			return "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
-
-		case 100:
-			return "Context: property '$1$' in class '$2$'.";
-
-		case 200:
-			return "No classes with direct or indirect use of the type(s) $1$.";
-		case 201:
-			return "One or more classes with direct or indirect use of the type(s) $1$ was found.";
-		case 202:
-			return "Type '$1$' directly or indirectly used by the following class(es): $2$";
-
-		default:
-			return "(" + ApplicationSchemaMetadata.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
+    }
 }

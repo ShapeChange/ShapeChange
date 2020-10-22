@@ -747,7 +747,7 @@ public class ProfileConstraintTransformer
 			return subtype;
 		}
 	}
-
+	    
 	@Override
 	public String message(int mnr) {
 

@@ -149,15 +149,15 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	config = (TargetXmlSchemaConfiguration) options.getCurrentProcessConfig();
 
 	// Get prefix and postfix of xlink:href references
-	String s = options.parameter(classname, "schematronXlinkHrefPrefix");
+	String s = options.parameter(classname, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX);
 	if (s != null)
 	    alpha = s;
-	s = options.parameter(classname, "schematronXlinkHrefPostfix");
+	s = options.parameter(classname, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_POSTFIX);
 	if (s != null)
 	    beta = s;
 
 	// Get option value for interpretation of "suppressed types"
-	s = options.parameter(classname, "suppressedTypeInterpretation");
+	s = options.parameter(classname, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION);
 	if (s != null) {
 	    if (s.equals("strictUML"))
 		trojanSuppressedType = false;
@@ -169,7 +169,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	// identify file name
 	String schematronFilenameTemplate = options.parameterAsString(XmlSchema.class.getName(),
-		"schematronFileNameTemplate", "[[SCHEMA_XSD_BASENAME]].xsd_SchematronSchema.xml", false, true);
+		XmlSchemaConstants.PARAM_SCH_FILENAME_TEMPLATE, "[[SCHEMA_XSD_BASENAME]].xsd_SchematronSchema.xml", false, true);
 	schematronFilename = schematronFilenameTemplate.replaceAll("\\[\\[SCHEMA_XSD_BASENAME\\]\\]",
 		schemaXsdBaseName);
 
@@ -553,7 +553,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	if (StringUtils.isBlank(vp)) {
 
-	    vp = options.parameterAsString(XmlSchema.class.getName(), "defaultCodeListValuePattern", defaultPattern,
+	    vp = options.parameterAsString(XmlSchema.class.getName(), XmlSchemaConstants.PARAM_DEFAULT_CODELIST_VALUE_PATTERN, defaultPattern,
 		    false, true);
 	}
 

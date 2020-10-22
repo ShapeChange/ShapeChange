@@ -3273,7 +3273,7 @@ public class Options {
     public RuleRegistry getRuleRegistry() {
 	return this.ruleRegistry;
     }
-
+    
     /**
      * Normalize a stereotype fetched from the model.
      * 
@@ -3396,7 +3396,7 @@ public class Options {
     public Options() throws ShapeChangeAbortException {
 	this.targetRegistry = new TargetRegistry();
 	this.ruleRegistry = new RuleRegistry(this.targetRegistry);
-	setStandardParameters();
+	setStandardParameters();	
     }
 
     /**

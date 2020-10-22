@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 import com.google.common.base.Joiner;
 
@@ -50,21 +49,32 @@ import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class BasicConfigurationValidator implements MessageSource {
+public class BasicConfigurationValidator extends AbstractConfigurationValidator {
 
     /**
      * Validates the 'input'-section of the ShapeChange configuration. Any
      * invalidity is directly logged in the ShapeChangeResult.
      * 
+     * @param pConfig will be ignored by this class, can therefore be
+     *                <code>null</code>
      * @param options tbd
      * @param result  tbd
      * @return <code>true</code> if the configuration is valid, else
      *         <code>false</code>
      */
-    public boolean isValid(Options options, ShapeChangeResult result) {
+    @Override
+    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
 
 	boolean isValid = true;
 
+	/*
+	 * ====== Check input parameters ======
+	 */
+	result.addInfo(this, 3);
+	isValid = validateParameters(InputConfiguration.inputParameters, null,
+		options.inputConfig.getParameters().keySet(), result) && isValid;
+	result.addInfo(this, 4);
+	
 	String imt = options.parameter("inputModelType");
 
 	if (imt == null) {
@@ -226,7 +236,11 @@ public class BasicConfigurationValidator implements MessageSource {
 	    return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS. ShapeChange detected that it is run in a different OS.";
 	case 2:
 	    return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
-
+	case 3:
+	    return "Validating input parameters.";
+	case 4:
+	    return "Validation of input parameters completed.";
+	    
 	// 100-199: Validation of output processing parameters
 	case 100:
 	    return "XSL transformation of output files is requested via configuration parameter '"

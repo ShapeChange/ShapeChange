@@ -122,33 +122,33 @@ public class Flattener implements Transformer, MessageSource {
     /* --- configuration parameter identifiers --- */
     /* ------------------------------------------- */
 
-    public static final String TRANSFORMER_NAMESPACE_SUFFIX_PARAMETER = "targetNamespaceSuffix";
+    public static final String PARAM_NAMESPACE_SUFFIX_PARAMETER = "targetNamespaceSuffix";
     public static final String PARAM_REMOVE_TYPE = "removeType";
 
     // lower case alias for properties is kept for backward compatibility
-    public static final String TRANSFORMER_LOWER_CASE_ALIAS_FOR_PROPERTIES = "lowerCaseAliasForProperties";
-    public static final String TRANSFORMER_LOWER_CASE_CODE_FOR_PROPERTIES = "lowerCaseCodeForProperties";
+    public static final String PARAM_LOWER_CASE_ALIAS_FOR_PROPERTIES = "lowerCaseAliasForProperties";
+    public static final String PARAM_LOWER_CASE_CODE_FOR_PROPERTIES = "lowerCaseCodeForProperties";
 
     // alias for enumeration values is kept for backward compatibility
-    public static final String TRANSFORMER_ALIAS_FOR_ENUMERATION_VALUES = "aliasForEnumerationValues";
-    public static final String TRANSFORMER_CODE_FOR_ENUMERATION_VALUES = "codeForEnumerationValues";
+    public static final String PARAM_ALIAS_FOR_ENUMERATION_VALUES = "aliasForEnumerationValues";
+    public static final String PARAM_CODE_FOR_ENUMERATION_VALUES = "codeForEnumerationValues";
 
-    public static final String TRANSFORMER_ENFORCE_OPTIONALITY = "enforceOptionality";
-
-    // alias is kept for backward compatibility
-    public static final String TRANSFORMER_KEEP_ORIGINAL_NAME_AS_ALIAS = "keepOriginalNameAsAlias";
-    public static final String TRANSFORMER_KEEP_ORIGINAL_NAME_AS_CODE = "keepOriginalNameAsCode";
-
-    public static final String TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_UNION = "separatorForPropertyFromUnion";
-    public static final String TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION = "separatorForPropertyFromNonUnion";
-    public static final String TRANSFORMER_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER = "separatorForPropertyIndexNumber";
-    public static final String TRANSFORMER_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX = "separatorForGeometryTypeSuffix";
+    public static final String PARAM_ENFORCE_OPTIONALITY = "enforceOptionality";
 
     // alias is kept for backward compatibility
-    public static final String TRANSFORMER_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT = "removePropertyNameAndAliasComponent";
-    public static final String TRANSFORMER_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT = "removePropertyNameAndCodeComponent";
+    public static final String PARAM_KEEP_ORIGINAL_NAME_AS_ALIAS = "keepOriginalNameAsAlias";
+    public static final String PARAM_KEEP_ORIGINAL_NAME_AS_CODE = "keepOriginalNameAsCode";
 
-    public static final String TRANSFORMER_CODEBY_TAGGEDVALUE = "codeByTaggedValue";
+    public static final String PARAM_SEPARATOR_FOR_PROPERTY_FROM_UNION = "separatorForPropertyFromUnion";
+    public static final String PARAM_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION = "separatorForPropertyFromNonUnion";
+    public static final String PARAM_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER = "separatorForPropertyIndexNumber";
+    public static final String PARAM_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX = "separatorForGeometryTypeSuffix";
+
+    // alias is kept for backward compatibility
+    public static final String PARAM_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT = "removePropertyNameAndAliasComponent";
+    public static final String PARAM_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT = "removePropertyNameAndCodeComponent";
+
+    public static final String PARAM_CODEBY_TAGGEDVALUE = "codeByTaggedValue";
 
     /**
      * Regular expression; if the name of an object type matches this expression,
@@ -451,21 +451,21 @@ public class Flattener implements Transformer, MessageSource {
     /**
      * Separator to use for name/code concatenation when flattening properties from
      * a union type. The default value ("-") can be changed via the parameter
-     * {@value #TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_UNION}. A separator of
+     * {@value #PARAM_SEPARATOR_FOR_PROPERTY_FROM_UNION}. A separator of
      * length 0 is not allowed.
      */
     private String separatorForPropertyFromUnion = "-";
     /**
      * Separator to use for name/code concatenation when flattening properties from
      * a NON union type. The default value (".") can be changed via the parameter
-     * {@value #TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION}. A separator of
+     * {@value #PARAM_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION}. A separator of
      * length 0 is not allowed.
      */
     private String separatorForPropertyFromNonUnion = ".";
     /**
      * Separator to use for concatenating the name/code of a property with an index
      * number while flattening multiplicity. The default value ("_") can be changed
-     * via the parameter {@value #TRANSFORMER_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER}.
+     * via the parameter {@value #PARAM_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER}.
      * A separator of length 0 is allowed.
      */
     private String separatorForPropertyIndexNumber = "_";
@@ -525,8 +525,8 @@ public class Flattener implements Transformer, MessageSource {
 	// apply overall processing defined for transformer
 
 	// determine if a namespace suffix shall be added
-	if (trfConfig.hasParameter(TRANSFORMER_NAMESPACE_SUFFIX_PARAMETER)) {
-	    String targetNamespaceSuffix = trfConfig.getParameterValue(TRANSFORMER_NAMESPACE_SUFFIX_PARAMETER);
+	if (trfConfig.hasParameter(PARAM_NAMESPACE_SUFFIX_PARAMETER)) {
+	    String targetNamespaceSuffix = trfConfig.getParameterValue(PARAM_NAMESPACE_SUFFIX_PARAMETER);
 
 	    if (targetNamespaceSuffix == null || targetNamespaceSuffix.trim().length() == 0) {
 		// nothing to do
@@ -565,18 +565,18 @@ public class Flattener implements Transformer, MessageSource {
 	 * value?
 	 */
 
-	if (trfConfig.hasParameter(TRANSFORMER_CODEBY_TAGGEDVALUE)) {
+	if (trfConfig.hasParameter(PARAM_CODEBY_TAGGEDVALUE)) {
 
-	    tvNameForCodeValue = trfConfig.getParameterValue(TRANSFORMER_CODEBY_TAGGEDVALUE);
+	    tvNameForCodeValue = trfConfig.getParameterValue(PARAM_CODEBY_TAGGEDVALUE);
 
 	    if (tvNameForCodeValue == null || tvNameForCodeValue.trim().length() == 0) {
-		result.addError(this, 20309, TRANSFORMER_CODEBY_TAGGEDVALUE);
+		result.addError(this, 20309, PARAM_CODEBY_TAGGEDVALUE);
 		return;
 	    }
 	}
 
 	String separatorForPropertyFromUnionParam = trfConfig
-		.getParameterValue(TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_UNION);
+		.getParameterValue(PARAM_SEPARATOR_FOR_PROPERTY_FROM_UNION);
 	if (separatorForPropertyFromUnionParam != null && separatorForPropertyFromUnionParam.trim().length() > 0) {
 
 	    // Note that a length of 0 is not allowed because we want to be able
@@ -585,7 +585,7 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	String separatorForPropertyFromNonUnionParam = trfConfig
-		.getParameterValue(TRANSFORMER_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION);
+		.getParameterValue(PARAM_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION);
 	if (separatorForPropertyFromNonUnionParam != null
 		&& separatorForPropertyFromNonUnionParam.trim().length() > 0) {
 
@@ -1343,11 +1343,11 @@ public class Flattener implements Transformer, MessageSource {
 	    TransformerConfiguration trfConfig) {
 
 	String[] propNameCodeComponentsToRemove = trfConfig
-		.getListParameterValue(TRANSFORMER_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT);
+		.getListParameterValue(PARAM_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT);
 
 	if (propNameCodeComponentsToRemove == null) {
 	    propNameCodeComponentsToRemove = trfConfig
-		    .getListParameterValue(TRANSFORMER_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT);
+		    .getListParameterValue(PARAM_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT);
 	}
 
 	if (propNameCodeComponentsToRemove == null || propNameCodeComponentsToRemove.length == 0)
@@ -1483,7 +1483,7 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	String separatorForGeometryTypeSuffix = trfConfig
-		.parameterAsString(TRANSFORMER_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX, "", true, false);
+		.parameterAsString(PARAM_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX, "", true, false);
 
 	EnumMap<Descriptor, String> geometryTypeSuffixSeparatorByDescriptor = parseDescriptorModificationParameterUsingBasicPattern(
 		PARAM_DESCRIPTOR_MOD_GEOMETRY_TYPE_SUFFIX_SEPARATOR, trfConfig);
@@ -2818,12 +2818,12 @@ public class Flattener implements Transformer, MessageSource {
 	 * compatibility
 	 */
 	boolean lowerCaseCodeForProperties = false;
-	if (trfConfig.hasParameter(TRANSFORMER_LOWER_CASE_ALIAS_FOR_PROPERTIES)
-		|| trfConfig.hasParameter(TRANSFORMER_LOWER_CASE_CODE_FOR_PROPERTIES)) {
+	if (trfConfig.hasParameter(PARAM_LOWER_CASE_ALIAS_FOR_PROPERTIES)
+		|| trfConfig.hasParameter(PARAM_LOWER_CASE_CODE_FOR_PROPERTIES)) {
 
-	    String paramValue_alias = trfConfig.getParameterValue(TRANSFORMER_LOWER_CASE_ALIAS_FOR_PROPERTIES);
+	    String paramValue_alias = trfConfig.getParameterValue(PARAM_LOWER_CASE_ALIAS_FOR_PROPERTIES);
 
-	    String paramValue_code = trfConfig.getParameterValue(TRANSFORMER_LOWER_CASE_CODE_FOR_PROPERTIES);
+	    String paramValue_code = trfConfig.getParameterValue(PARAM_LOWER_CASE_CODE_FOR_PROPERTIES);
 
 	    if (paramValue_alias != null) {
 		lowerCaseCodeForProperties |= Boolean.parseBoolean(paramValue_alias);
@@ -2837,12 +2837,12 @@ public class Flattener implements Transformer, MessageSource {
 	 * TRANSFORMER_ALIAS_FOR_ENUMERATION_VALUES is kept for backward compatibility
 	 */
 	boolean codeForEnumerationValues = true;
-	if (trfConfig.hasParameter(TRANSFORMER_ALIAS_FOR_ENUMERATION_VALUES)
-		|| trfConfig.hasParameter(TRANSFORMER_CODE_FOR_ENUMERATION_VALUES)) {
+	if (trfConfig.hasParameter(PARAM_ALIAS_FOR_ENUMERATION_VALUES)
+		|| trfConfig.hasParameter(PARAM_CODE_FOR_ENUMERATION_VALUES)) {
 
-	    String paramValue_alias = trfConfig.getParameterValue(TRANSFORMER_ALIAS_FOR_ENUMERATION_VALUES);
+	    String paramValue_alias = trfConfig.getParameterValue(PARAM_ALIAS_FOR_ENUMERATION_VALUES);
 
-	    String paramValue_code = trfConfig.getParameterValue(TRANSFORMER_CODE_FOR_ENUMERATION_VALUES);
+	    String paramValue_code = trfConfig.getParameterValue(PARAM_CODE_FOR_ENUMERATION_VALUES);
 
 	    if (paramValue_alias != null) {
 		codeForEnumerationValues &= Boolean.parseBoolean(paramValue_alias);
@@ -2858,12 +2858,12 @@ public class Flattener implements Transformer, MessageSource {
 	 */
 	boolean keepOriginalNameAsCode = true;
 
-	if (trfConfig.hasParameter(TRANSFORMER_KEEP_ORIGINAL_NAME_AS_ALIAS)
-		|| trfConfig.hasParameter(TRANSFORMER_KEEP_ORIGINAL_NAME_AS_CODE)) {
+	if (trfConfig.hasParameter(PARAM_KEEP_ORIGINAL_NAME_AS_ALIAS)
+		|| trfConfig.hasParameter(PARAM_KEEP_ORIGINAL_NAME_AS_CODE)) {
 
-	    String paramValue_alias = trfConfig.getParameterValue(TRANSFORMER_KEEP_ORIGINAL_NAME_AS_ALIAS);
+	    String paramValue_alias = trfConfig.getParameterValue(PARAM_KEEP_ORIGINAL_NAME_AS_ALIAS);
 
-	    String paramValue_code = trfConfig.getParameterValue(TRANSFORMER_KEEP_ORIGINAL_NAME_AS_CODE);
+	    String paramValue_code = trfConfig.getParameterValue(PARAM_KEEP_ORIGINAL_NAME_AS_CODE);
 
 	    if (paramValue_alias != null) {
 		keepOriginalNameAsCode &= Boolean.parseBoolean(paramValue_alias);
@@ -4365,7 +4365,7 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	String separatorForPropertyIndexNumberParam = trfConfig
-		.getParameterValue(TRANSFORMER_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER);
+		.getParameterValue(PARAM_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER);
 	if (separatorForPropertyIndexNumberParam != null) {
 
 	    // Note that a length of 0 IS allowed
@@ -6372,7 +6372,7 @@ public class Flattener implements Transformer, MessageSource {
 	ShapeChangeResult result = genModel.result();
 
 	// first, get the list of type names from parameter enforceOptionality
-	String[] typesToEnforceOptionality = trfConfig.getListParameterValue(TRANSFORMER_ENFORCE_OPTIONALITY);
+	String[] typesToEnforceOptionality = trfConfig.getListParameterValue(PARAM_ENFORCE_OPTIONALITY);
 
 	// if no type names are given via the enforceOptionality parameter,
 	// return

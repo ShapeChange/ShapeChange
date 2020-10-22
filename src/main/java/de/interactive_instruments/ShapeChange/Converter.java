@@ -185,7 +185,7 @@ public class Converter implements MessageSource {
 		// perform basic validation, especially input parameters and
 		// configuration elements
 		BasicConfigurationValidator bcv = new BasicConfigurationValidator();
-		boolean isValid = bcv.isValid(options, result);
+		boolean isValid = bcv.isValid(null, options, result);
 
 		// validate enabled transformer and target configurations
 		List<ProcessConfiguration> processConfigs = new ArrayList<ProcessConfiguration>();

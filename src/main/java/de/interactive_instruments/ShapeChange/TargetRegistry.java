@@ -31,24 +31,18 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.interactive_instruments.ShapeChange.Target.Target;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
+import de.interactive_instruments.ShapeChange.Util.ShapeChangeClassFinder;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class TargetRegistry {
@@ -61,92 +55,37 @@ public class TargetRegistry {
 
     public TargetRegistry() throws ShapeChangeAbortException {
 
-	String[] packageBlacklist = null;
-	InputStream stream = getClass().getResourceAsStream("/sc.properties");
-	if (stream != null) {
-	    Properties properties = new Properties();
+	targetClasses = ShapeChangeClassFinder
+		.findClassesImplementing("de.interactive_instruments.ShapeChange.Target.Target");
+
+	for (Class<?> tc : targetClasses) {
+
 	    try {
-		properties.load(stream);
-		packageBlacklist = properties.getProperty("sc.targetScanBlacklistPackages").split(",");
-	    } catch (IOException e) {
-		System.err.println(
-			"Could not load sc.properties file and property sc.targetScanBlacklistPackages. Reverting to default package blacklist.");
-		packageBlacklist = new String[] { "java.*", "antlr*", "com.fasterxml.*", "com.github.andrewoma.*",
-			"com.github.jsonldjava.*", "com.google.*", "com.graphbuilder.*", "com.ibm.*", "com.microsoft.*",
-			"com.sun.*", "com.thedeanda*", "com.topologi.*", "io.github.classgraph*", "java_cup*",
-			"javax.*", "junit.*", "name.fraser*", "net.arnx*", "net.engio*", "net.sf.saxon*",
-			"nonapi.io.github.classgraph.*", "org.antlr.*", "org.apache.*", "org.checkerframework.*",
-			"org.codehaus.jackson*", "org.codehaus.mojo*", "org.custommonkey*", "org.docx4j*",
-			"org.eclipse.*", "org.etsi.uri.*", "org.glox4j.*", "org.hamcrest*", "org.jgrapht*",
-			"org.jheaps*", "org.json*", "org.junit*", "org.jvunit*", "org.jvnet", "org.merlin*",
-			"org.opendope.*", "org.openxmlformats.*", "org.plutext*", "org.pptx4j*", "org.slf4j*",
-			"org.sparx*", "org.w3*", "org.xlsx4j.*", "org.xml*", "schemaorg_apache_xmlbeans.*" };
+		Target target = (Target) tc.getConstructor().newInstance();
 
-	    }
-
-	}
-
-	long scanStart = System.currentTimeMillis();
-
-	ScanResult scanResult = null;
-
-	try {
-
-	    scanResult = new ClassGraph().enableAllInfo().blacklistPackages(packageBlacklist).scan();
-
-	    /*
-	     * IMPORTANT: Keep the scanTime and following commented code for debugging
-	     * purposes!
-	     */
-	    @SuppressWarnings("unused")
-	    long scanTime = (System.currentTimeMillis() - scanStart) / 1000;
-
-//	    System.out.println(
-//			"Determination of target implementations (s): " + scanTime);
-//	    PackageInfoList packages = scanResult.getPackageInfo();
-//	    List<String> packageNames = packages.getNames();
-//	    packageNames.sort(Comparator.naturalOrder());
-//	    System.out.println("Found " + packageNames.size() + " packages: " + String.join("\n", packageNames));
-
-	    ClassInfoList targetClassInfos = scanResult
-		    .getClassesImplementing("de.interactive_instruments.ShapeChange.Target.Target")
-		    .filter(classInfo -> (!(classInfo.isInterface() || classInfo.isAbstract())));
-	    targetClasses = targetClassInfos.loadClasses();
-
-	    for (Class<?> tc : targetClasses) {
-
-		try {
-		    Target target = (Target) tc.getConstructor().newInstance();
-
-		    // gather target identifiers
-		    String targetIdentifier = target.getTargetIdentifier();
-		    if (targetClassNameByIdentifier.containsKey(targetIdentifier)) {
-			throw new ShapeChangeAbortException("Duplicate target identifier '" + targetIdentifier
-				+ "'. Found for targets " + targetClassNameByIdentifier.get(targetIdentifier)
-				+ " and target " + tc.getName()
-				+ ". The latter would overwrite the former in the target registry, which can lead to unexpected results. "
-				+ "Execution will stop. Contact the target implementers to ensure that "
-				+ "the identifiers of the targets are unique.");
-		    }
-		    targetIdentifiers.add(targetIdentifier);
-		    targetClassNameByIdentifier.put(targetIdentifier, tc.getName());
-		    String targetDefaultEncodingRule = target.getDefaultEncodingRule();
-		    if (targetDefaultEncodingRule == null) {
-			targetDefaultEncodingRule = "*";
-		    }
-		    targetDefaultEncodingRuleByIdentifier.put(targetIdentifier, targetDefaultEncodingRule);
-
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-			| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-		    System.err.println("Exception occurred while loading target class " + tc.getName()
-			    + " and attempting to gather target identifiers.");
-		    e.printStackTrace();
+		// gather target identifiers
+		String targetIdentifier = target.getTargetIdentifier();
+		if (targetClassNameByIdentifier.containsKey(targetIdentifier)) {
+		    throw new ShapeChangeAbortException("Duplicate target identifier '" + targetIdentifier
+			    + "'. Found for targets " + targetClassNameByIdentifier.get(targetIdentifier)
+			    + " and target " + tc.getName()
+			    + ". The latter would overwrite the former in the target registry, which can lead to unexpected results. "
+			    + "Execution will stop. Contact the target implementers to ensure that "
+			    + "the identifiers of the targets are unique.");
 		}
-	    }
+		targetIdentifiers.add(targetIdentifier);
+		targetClassNameByIdentifier.put(targetIdentifier, tc.getName());
+		String targetDefaultEncodingRule = target.getDefaultEncodingRule();
+		if (targetDefaultEncodingRule == null) {
+		    targetDefaultEncodingRule = "*";
+		}
+		targetDefaultEncodingRuleByIdentifier.put(targetIdentifier, targetDefaultEncodingRule);
 
-	} finally {
-	    if (scanResult != null) {
-		scanResult.close();
+	    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+		    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		System.err.println("Exception occurred while loading target class " + tc.getName()
+			+ " and attempting to gather target identifiers.");
+		e.printStackTrace();
 	    }
 	}
     }

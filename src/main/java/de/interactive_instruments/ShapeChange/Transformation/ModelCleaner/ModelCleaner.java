@@ -46,13 +46,13 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**

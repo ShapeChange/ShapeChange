@@ -168,7 +168,7 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 			}
 		}
 	}
-
+	    
 	@Override
 	public String message(int mnr) {
 

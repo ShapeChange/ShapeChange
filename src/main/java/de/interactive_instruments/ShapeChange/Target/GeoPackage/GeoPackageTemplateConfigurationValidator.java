@@ -34,11 +34,15 @@ package de.interactive_instruments.ShapeChange.Target.GeoPackage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -47,11 +51,17 @@ import de.interactive_instruments.ShapeChange.TargetConfiguration;
 import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class GeoPackageTemplateConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(GeoPackageConstants.PARAM_DOCUMENTATION_NOVALUE, GeoPackageConstants.PARAM_DOCUMENTATION_TEMPLATE,
+		    GeoPackageConstants.PARAM_GPKGM, GeoPackageConstants.PARAM_GPKGZ,
+		    GeoPackageConstants.PARAM_ID_COLUMN_NAME, GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID,
+		    GeoPackageConstants.PARAM_SRS_ORGANIZATION).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration config = null;
@@ -69,6 +79,10 @@ public class GeoPackageTemplateConfigurationValidator implements ConfigurationVa
 	inputs = StringUtils.join(config.getInputIds(), ", ");
 
 	boolean isValid = true;
+	
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
 	// ensure that output directory exists
 	String outputDirectory = pConfig.getParameterValue("outputDirectory");

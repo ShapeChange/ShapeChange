@@ -34,11 +34,15 @@ package de.interactive_instruments.ShapeChange.Target.OpenApi;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -49,12 +53,22 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaV
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class OpenApiDefinitionConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
+	    .of(OpenApiConstants.PARAM_BASE_TEMPLATE, OpenApiConstants.PARAM_COLLECTIONS,
+		    OpenApiConstants.PARAM_JSON_SCHEMA_VERSION, OpenApiConstants.PARAM_JSON_SCHEMAS_BASE_LOCATION)
+	    .collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
 
 	boolean isValid = true;
+
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		pConfig.getParameters().keySet(), result) && isValid;
 
 	// ensure that output directory exists
 	String outputDirectory = pConfig.getParameterValue("outputDirectory");

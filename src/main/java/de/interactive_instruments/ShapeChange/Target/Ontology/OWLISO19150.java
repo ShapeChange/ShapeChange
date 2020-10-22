@@ -721,8 +721,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * each sub package that is in the same target namespace as the given package.
      * 
      * @param pi
-     * @return set of all descendant packages that are in the same target
-     *               namespace as pi
+     * @return set of all descendant packages that are in the same target namespace
+     *         as pi
      */
     private SortedSet<PackageInfo> subPackagesInSameTNS(PackageInfo pi) {
 
@@ -1307,14 +1307,14 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      *         <code>null</code> if no such prefix was found.
      */
     public String computePrefixForRdfNamespace(String rdfns) {
-	
-	if(NS_QNAME_ERROR.equals(rdfns)) {
+
+	if (NS_QNAME_ERROR.equals(rdfns)) {
 	    return NS_QNAME_ERROR_PREFIX;
 	}
 
 	// try to identify via namespace configuration info
 	String nsabr = config.nsabrForNamespace(rdfns);
-	
+
 	if (nsabr == null) {
 
 	    // try to find namespace via local ontologies

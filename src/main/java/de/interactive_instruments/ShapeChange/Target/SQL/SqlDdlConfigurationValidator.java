@@ -40,12 +40,14 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
@@ -55,7 +57,44 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
-public class SqlDdlConfigurationValidator implements ConfigurationValidator, MessageSource {
+public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator {
+
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH, DatabaseModelConstants.PARAM_DB_OWNER,
+	    DatabaseModelConstants.PARAM_DB_VERSION, DatabaseModelConstants.PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE,
+	    DatabaseModelConstants.PARAM_DM_PATTERN_PATH, DatabaseModelConstants.PARAM_EA_AUTHOR,
+	    DatabaseModelConstants.PARAM_EA_STATUS, DatabaseModelConstants.PARAM_ESTABLISH_PACKAGE_HIERARCHY,
+	    DatabaseModelConstants.PARAM_TABLESPACE,
+	    ReplicationSchemaConstants.PARAM_DOCUMENTATION_UNLIMITEDLENGTHCHARACTERDATATYPE,
+	    ReplicationSchemaConstants.PARAM_FOREIGN_KEY_FIELD_TYPE,
+	    ReplicationSchemaConstants.PARAM_OBJECT_IDENTIFIER_FIELD_TYPE,
+	    ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE, ReplicationSchemaConstants.PARAM_TARGET_NAMESPACE_SUFFIX,
+	    ReplicationSchemaConstants.PARAM_TARGET_VERSION, ReplicationSchemaConstants.PARAM_TARGET_XMLNS,
+	    SqlConstants.PARAM_APPLY_FOREIGN_KEY_SUFFIXES_IN_ASSOCIATIVE_TABLES, SqlConstants.PARAM_AUTHOR,
+	    SqlConstants.PARAM_CODE_NAME_COLUMN_DOCUMENTATION, SqlConstants.PARAM_CODE_NAME_COLUMN_NAME,
+	    SqlConstants.PARAM_CODE_NAME_SIZE, SqlConstants.PARAM_CODE_SUPERSEDES_COLUMN_DOCUMENTATION,
+	    SqlConstants.PARAM_CODESTATUS_CL_COLUMN_DOCUMENTATION,
+	    SqlConstants.PARAM_CODESTATUS_NOTES_COLUMN_DOCUMENTATION, SqlConstants.PARAM_CODESTATUSCL_LENGTH,
+	    SqlConstants.PARAM_CODESTATUSCL_TYPE, SqlConstants.PARAM_CREATE_DOCUMENTATION,
+	    SqlConstants.PARAM_CREATE_REFERENCES, SqlConstants.PARAM_DATABASE_SYSTEM,
+	    SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST, SqlConstants.PARAM_DOCUMENTATION_NOVALUE,
+	    SqlConstants.PARAM_DOCUMENTATION_TEMPLATE, SqlConstants.PARAM_FILE_DDL_BOTTOM,
+	    SqlConstants.PARAM_FILE_DDL_TOP, SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
+	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE_ALIAS, SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
+	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST,
+	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE, SqlConstants.PARAM_GEOMETRY_DIMENSION,
+	    SqlConstants.PARAM_ID_COLUMN_NAME, SqlConstants.PARAM_IDENTIFIER_COLUMN_SUFFIX,
+	    SqlConstants.PARAM_LENGTH_QUALIFIER, SqlConstants.PARAM_MAX_NAME_LENGTH,
+	    SqlConstants.PARAM_NAME_CODESTATUS_CL_COLUMN, SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
+	    SqlConstants.PARAM_NAME_CODESUPERCEDES_COLUMN, SqlConstants.PARAM_ONE_TO_MANY_REF_COLUMN_NAME,
+	    SqlConstants.PARAM_POSTGRESQL_ROLE, SqlConstants.PARAM_PRIMARYKEY_SPEC,
+	    SqlConstants.PARAM_PRIMARYKEY_SPEC_CODELIST, SqlConstants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
+	    SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, SqlConstants.PARAM_SDO_DIM_ELEMENTS,
+	    SqlConstants.PARAM_SEPARATE_CODE_INSERT_STATEMENTS_BY_CODELIST_TYPE,
+	    SqlConstants.PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS, SqlConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE,
+	    SqlConstants.PARAM_SIZE, SqlConstants.PARAM_SRID, SqlConstants.PARAM_STATUS, SqlConstants.PARAM_TVS_TO_KEEP)
+	    .collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private ProcessConfiguration config = null;
@@ -70,6 +109,10 @@ public class SqlDdlConfigurationValidator implements ConfigurationValidator, Mes
 	this.result = result;
 
 	boolean isValid = true;
+
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
 	SortedMap<String, ProcessMapEntry> mapEntryByType = new TreeMap<String, ProcessMapEntry>();
 

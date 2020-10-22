@@ -33,79 +33,92 @@ package de.interactive_instruments.ShapeChange.Target.ModelExport;
 
 import java.io.File;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ModelExportConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class ModelExportConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration pConfig, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(ModelExportConstants.PARAM_EXPORT_PROFILES_FROM_WHOLE_MODEL,
+		    ModelExportConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
+		    ModelExportConstants.PARAM_INCLUDE_CONSTRAINT_DESCRIPTIONS,
+		    ModelExportConstants.PARAM_MODEL_EXPLICIT_PROFILES,
+		    ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES,
+		    ModelExportConstants.PARAM_PROFILES_TO_EXPORT, ModelExportConstants.PARAM_SCHEMA_LOCATION,
+		    ModelExportConstants.PARAM_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS,
+		    ModelExportConstants.PARAM_ZIP_OUTPUT).collect(Collectors.toSet()));
+    protected Pattern regexForAllowedParametersWithDynamicNames = null;
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
 
-		// ensure that output directory exists
-		String outputDirectory = pConfig.getParameterValue("outputDirectory");
-		if (outputDirectory == null)
-			outputDirectory = options.parameter("outputDirectory");
-		if (outputDirectory == null)
-			outputDirectory = ".";
+	boolean isValid = true;
 
-		File outputDirectoryFile = new File(outputDirectory);
-		boolean exi = outputDirectoryFile.exists();
-		if (!exi) {
-			outputDirectoryFile.mkdirs();
-			exi = outputDirectoryFile.exists();
-		}
-		boolean dir = outputDirectoryFile.isDirectory();
-		boolean wrt = outputDirectoryFile.canWrite();
-		boolean rea = outputDirectoryFile.canRead();
-		if (!exi || !dir || !wrt || !rea) {
-			isValid = false;
-			result.addError(this, 2, outputDirectory);
-		}
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		pConfig.getParameters().keySet(), result) && isValid;
 
-		// validate PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES
-		if (pConfig.hasParameter(
-				ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
+	// ensure that output directory exists
+	String outputDirectory = pConfig.getParameterValue("outputDirectory");
+	if (outputDirectory == null)
+	    outputDirectory = options.parameter("outputDirectory");
+	if (outputDirectory == null)
+	    outputDirectory = ".";
 
-			List<String> profilesForClassesWithoutExplicitProfiles = options
-					.parameterAsStringList(ModelExport.class.getName(),
-							ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES,
-							null, true, true);
-
-			if (profilesForClassesWithoutExplicitProfiles.isEmpty()) {
-				result.addWarning(this, 1,
-						ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES);
-			}
-		}
-
-		return isValid;
+	File outputDirectoryFile = new File(outputDirectory);
+	boolean exi = outputDirectoryFile.exists();
+	if (!exi) {
+	    outputDirectoryFile.mkdirs();
+	    exi = outputDirectoryFile.exists();
+	}
+	boolean dir = outputDirectoryFile.isDirectory();
+	boolean wrt = outputDirectoryFile.canWrite();
+	boolean rea = outputDirectoryFile.canRead();
+	if (!exi || !dir || !wrt || !rea) {
+	    isValid = false;
+	    result.addError(this, 2, outputDirectory);
 	}
 
-	@Override
-	public String message(int mnr) {
+	// validate PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES
+	if (pConfig.hasParameter(ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
 
-		switch (mnr) {
+	    List<String> profilesForClassesWithoutExplicitProfiles = options.parameterAsStringList(
+		    ModelExport.class.getName(),
+		    ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES, null, true, true);
 
-		case 1:
-			return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-		case 2:
-			return "Output directory '$1$' does not exist or is not accessible.";
-		case 3:
-			return "Target parameter '$1$' is set in the configuration. However, it does not define any profiles, and thus will be ignored. To avoid this warning, set at least one profile via the parameter, or remove it from the configuration.";
-		default:
-			return "(ModelExport.java) Unknown message with number: " + mnr;
-		}
+	    if (profilesForClassesWithoutExplicitProfiles.isEmpty()) {
+		result.addWarning(this, 1, ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES);
+	    }
 	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	case 1:
+	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2:
+	    return "Output directory '$1$' does not exist or is not accessible.";
+	case 3:
+	    return "Target parameter '$1$' is set in the configuration. However, it does not define any profiles, and thus will be ignored. To avoid this warning, set at least one profile via the parameter, or remove it from the configuration.";
+	default:
+	    return "(ModelExport.java) Unknown message with number: " + mnr;
+	}
+    }
 }

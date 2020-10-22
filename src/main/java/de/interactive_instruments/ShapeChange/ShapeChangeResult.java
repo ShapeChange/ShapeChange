@@ -1217,6 +1217,11 @@ public class ShapeChangeResult {
 	case 30804:
 	    return "(Generic model element reader) SCXML producer: $1$, version: $2$";
 
+	case 1000000:
+	    return "Unknown parameter found: '$1$'. The parameter will be ignored. Did you mean '$2$'?";
+	case 1000001:
+	    return "Unknown parameter found: '$1$'. The parameter will be ignored.";
+	    
 	default:
 	    return "(" + ShapeChangeResult.class.getName() + ") Unknown message with number: " + mnr;
 	}

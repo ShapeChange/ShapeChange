@@ -62,5 +62,4 @@ public class IdentityTransform implements Transformer {
 			throws ShapeChangeAbortException {
 		// nothing to do
 	}
-
 }
