@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Naming;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class NamingModifierConfigurationValidator extends AbstractConfigurationV
 	    .of(NamingModifier.PARAM_CAMEL_CASE_TO_UPPER_CASE_TAGGED_VALUES, NamingModifier.PARAM_SUFFIX,
 		    NamingModifier.PARAM_SUFFIX_REGEX, NamingModifier.PARAM_SUFFIXES_TO_IGNORE)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

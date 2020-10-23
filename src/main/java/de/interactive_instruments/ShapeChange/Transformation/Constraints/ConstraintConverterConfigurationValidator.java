@@ -60,7 +60,7 @@ public class ConstraintConverterConfigurationValidator extends AbstractConfigura
 		    ConstraintConverter.PARAM_GEOM_REP_VALUE_TYPE_REGEX,
 		    ConstraintConverter.PARAM_VALUETYPE_REP_CONSTRAINT_REGEX,
 		    ConstraintConverter.PARAM_VALUETYPE_REP_TYPES).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

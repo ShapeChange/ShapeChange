@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Flattening;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
@@ -83,7 +84,7 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	    Flattener.PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION, Flattener.PARAM_SIMPLE_BASE_TYPES,
 	    Flattener.PARAM_TYPE_ENUMERATION_PROPERTY_NAME, Flattener.PARAM_TYPE_SUFFIX_SEPARATOR,
 	    Flattener.PARAM_UOM_SUFFIX_SEPARATOR).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {

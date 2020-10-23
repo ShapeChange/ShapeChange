@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ontology;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class RDFConfigurationValidator extends AbstractConfigurationValidator {
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(RDF.PARAM_CODELIST_ONLY, RDF.PARAM_ID_REPLACE_CHAR, RDF.PARAM_ID_REPLACE_PATTERN,
 		    RDF.PARAM_LANGUAGE, RDF.PARAM_TV_FOR_CODE, RDF.PARAM_TV_FOR_TITLE).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

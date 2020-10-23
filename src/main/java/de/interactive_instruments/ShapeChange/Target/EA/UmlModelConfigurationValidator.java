@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.EA;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -57,7 +58,7 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 		    UmlModelConstants.PARAM_OUTPUT_DIR, UmlModelConstants.PARAM_OUTPUT_PACKAGE_NAME,
 		    UmlModelConstants.PARAM_PRESERVE_PACKAGE_HIERARCHY, UmlModelConstants.PARAM_SYNCH_STEREOTYPES)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

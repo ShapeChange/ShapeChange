@@ -69,7 +69,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 		FeatureCatalogue.PARAM_XSL_FRAME_HTML_FILENAME, FeatureCatalogue.PARAM_XSL_HTML_FILE, FeatureCatalogue.PARAM_XSL_LOCALIZATION_URI, FeatureCatalogue.PARAM_XSL_RTF_FILE,
 		FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY, FeatureCatalogue.PARAM_XSL_XML_FILE, FeatureCatalogue.PARAM_XSLT_PATH, FeatureCatalogue.PARAM_XSLT_PFAD)
 		.collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
     
     private TargetConfiguration tgtConfig = null;
     private Options options = null;

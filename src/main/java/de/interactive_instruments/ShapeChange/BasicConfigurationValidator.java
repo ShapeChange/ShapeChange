@@ -70,10 +70,22 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	/*
 	 * ====== Check input parameters ======
 	 */
-	result.addInfo(this, 3);
-	isValid = validateParameters(InputConfiguration.inputParameters, null,
+	result.addInfo(this, 3, "input");
+	isValid = validateParameters(
+		options.getInputAndLogParameterRegistry().getAllowedInputParametersWithStaticNames(),
+		options.getInputAndLogParameterRegistry().getRegexesForAllowedInputParametersWithDynamicNames(),
 		options.inputConfig.getParameters().keySet(), result) && isValid;
-	result.addInfo(this, 4);
+	result.addInfo(this, 4, "input");
+
+	/*
+	 * ====== Check log parameters ======
+	 */
+	result.addInfo(this, 3, "log");
+	isValid = validateParameters(options.getInputAndLogParameterRegistry().getAllowedLogParametersWithStaticNames(),
+		options.getInputAndLogParameterRegistry().getRegexesForAllowedLogParametersWithDynamicNames(),
+		options.logParameters.keySet(), result) && isValid;
+	result.addInfo(this, 4, "log");
+
 	
 	String imt = options.parameter("inputModelType");
 
@@ -237,10 +249,10 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	case 2:
 	    return "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
 	case 3:
-	    return "Validating input parameters.";
+	    return "Validating $1$ parameters.";
 	case 4:
-	    return "Validation of input parameters completed.";
-	    
+	    return "Validation of $1$ parameters completed.";
+
 	// 100-199: Validation of output processing parameters
 	case 100:
 	    return "XSL transformation of output files is requested via configuration parameter '"

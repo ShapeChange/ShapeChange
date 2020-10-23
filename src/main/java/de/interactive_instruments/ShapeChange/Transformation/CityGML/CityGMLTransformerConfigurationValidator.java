@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.CityGML;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -47,7 +48,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 public class CityGMLTransformerConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>();
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

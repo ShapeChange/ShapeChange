@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Codelists;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -54,7 +56,8 @@ public class CodelistDictionariesMLConfigurationValidator extends AbstractConfig
 	    Stream.of(CodelistDictionariesML.PARAM_DEFAULT_LANG, CodelistDictionariesML.PARAM_LANGUAGES,
 		    CodelistDictionariesML.PARAM_NO_NEWLINE_OMIT, CodelistDictionariesML.PARAM_CLPACKAGENAME,
 		    CodelistDictionariesML.PARAM_INFOURL).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = Pattern.compile("localeRef_.*");
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream.of(Pattern.compile("localeRef_.*"))
+	    .collect(Collectors.toList());
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

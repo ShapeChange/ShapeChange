@@ -280,6 +280,8 @@ public class Options {
     public static final String DEFAULT_TMP_DIR_PATH = "temp";
     public static final String TMP_DIR_PATH_PARAM = "tmpDirectory";
     protected File tmpDir = null;
+    
+    private boolean reportUnrecognizedParametersAsWarnings = false;
 
     /**
      * Map of targets to generate from the input model. Keys are the names of the
@@ -405,6 +407,7 @@ public class Options {
 
     protected TargetRegistry targetRegistry;
     protected RuleRegistry ruleRegistry;
+    protected InputAndLogParameterRegistry inputAndLogParameterRegistry;
 
     /** documentation separators */
     protected String extractSeparator = null;
@@ -470,6 +473,10 @@ public class Options {
 	return getDescriptorsFromDependency;
     }
 
+    public boolean reportUnrecognizedParametersAsWarnings() {
+	return this.reportUnrecognizedParametersAsWarnings;
+    }
+
     // /**
     // * List of transformer configurations that directly reference the input
     // * element.
@@ -509,7 +516,7 @@ public class Options {
 
     protected InputConfiguration inputConfig = null;
     protected Map<String, String> dialogParameters = null;
-    protected Map<String, String> logParameters = null;
+    protected Map<String, String> logParameters = new HashMap<>();
     protected ProcessConfiguration currentProcessConfig = null;
     protected List<TargetConfiguration> inputTargetConfigs = new ArrayList<TargetConfiguration>();
     protected List<TransformerConfiguration> inputTransformerConfigs = new ArrayList<TransformerConfiguration>();
@@ -1560,6 +1567,11 @@ public class Options {
 		    if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element logElement = (Element) node;
 			this.logParameters = parseParameters(logElement, "parameter");
+			if (this.logParameters.containsKey("reportUnrecognizedParametersAsWarnings")
+				&& this.logParameters.get("reportUnrecognizedParametersAsWarnings")
+					.equalsIgnoreCase("true")) {
+			    this.reportUnrecognizedParametersAsWarnings = true;
+			}
 		    }
 		}
 	    }
@@ -1911,10 +1923,8 @@ public class Options {
 	}
 
 	// add all log parameters
-	if (logParameters != null) {
-	    for (String key : logParameters.keySet()) {
-		setParameter(key, logParameters.get(key));
-	    }
+	for (String key : logParameters.keySet()) {
+	    setParameter(key, logParameters.get(key));
 	}
 
 	/*
@@ -3273,7 +3283,7 @@ public class Options {
     public RuleRegistry getRuleRegistry() {
 	return this.ruleRegistry;
     }
-    
+
     /**
      * Normalize a stereotype fetched from the model.
      * 
@@ -3393,10 +3403,15 @@ public class Options {
 	return this.targetRegistry;
     }
 
+    public InputAndLogParameterRegistry getInputAndLogParameterRegistry() {
+	return inputAndLogParameterRegistry;
+    }
+
     public Options() throws ShapeChangeAbortException {
 	this.targetRegistry = new TargetRegistry();
 	this.ruleRegistry = new RuleRegistry(this.targetRegistry);
-	setStandardParameters();	
+	setStandardParameters();
+	this.inputAndLogParameterRegistry = new InputAndLogParameterRegistry();
     }
 
     /**

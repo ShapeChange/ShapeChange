@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -66,7 +67,7 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
 	    ArcGISWorkspaceConstants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
 	    ArcGISWorkspaceConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE, ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA,
 	    ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

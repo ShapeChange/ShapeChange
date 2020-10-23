@@ -29,45 +29,42 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Transformation.Descriptors;
+package de.interactive_instruments.ShapeChange;
 
 import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
-
-import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
-import de.interactive_instruments.ShapeChange.Options;
-import de.interactive_instruments.ShapeChange.ProcessConfiguration;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class DescriptorTransformerConfigurationValidator extends AbstractConfigurationValidator {
+public interface InputAndLogParameterProvider {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>();
-    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
+    /**
+     * @return names of (additional) allowed input parameters; can be
+     *         <code>null</code>
+     */
+    public SortedSet<String> allowedInputParametersWithStaticNames();
 
-    @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    /**
+     * @return Regular expressions for (additional) allowed input parameters with
+     *         dynamic names (if one of the regexes matches a parameter name, that
+     *         parameter is allowed); can be <code>null</code>
+     */
+    public List<Pattern> regexesForAllowedInputParametersWithDynamicNames();
 
-	boolean isValid = true;
+    /**
+     * @return names of (additional) allowed log parameters; can be
+     *         <code>null</code>
+     */
+    public SortedSet<String> allowedLogParametersWithStaticNames();
 
-	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
-	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
-		config.getParameters().keySet(), result) && isValid;
+    /**
+     * @return Regular expressions for (additional) allowed log parameters with
+     *         dynamic names (if one of the regexes matches a parameter name, that
+     *         parameter is allowed); can be <code>null</code>
+     */
+    public List<Pattern> regexesForAllowedLogParametersWithDynamicNames();
 
-	return isValid;
-    }
-
-    @Override
-    public String message(int mnr) {
-	switch (mnr) {
-
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
-    }
 }

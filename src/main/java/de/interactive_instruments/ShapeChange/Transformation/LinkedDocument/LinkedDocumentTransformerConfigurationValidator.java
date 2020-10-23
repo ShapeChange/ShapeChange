@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.LinkedDocument;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class LinkedDocumentTransformerConfigurationValidator extends AbstractCon
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(LinkedDocumentTransformer.PARAM_PREPEND_TEXT_HORIZONTALLINE,
 		    LinkedDocumentTransformer.PARAM_PREPEND_TEXT_VALUE).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

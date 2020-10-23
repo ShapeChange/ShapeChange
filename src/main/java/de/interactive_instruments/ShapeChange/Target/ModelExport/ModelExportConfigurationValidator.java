@@ -59,7 +59,7 @@ public class ModelExportConfigurationValidator extends AbstractConfigurationVali
 		    ModelExportConstants.PARAM_PROFILES_TO_EXPORT, ModelExportConstants.PARAM_SCHEMA_LOCATION,
 		    ModelExportConstants.PARAM_SUPPRESS_MEANINGLESS_CODE_ENUM_CHARACTERISTICS,
 		    ModelExportConstants.PARAM_ZIP_OUTPUT).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {

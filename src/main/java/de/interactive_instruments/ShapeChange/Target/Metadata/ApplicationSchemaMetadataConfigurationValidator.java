@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.Metadata;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -55,7 +56,7 @@ public class ApplicationSchemaMetadataConfigurationValidator extends AbstractCon
 	    Stream.of(ApplicationSchemaMetadata.PARAM_INHERITED_PROPERTIES,
 		    ApplicationSchemaMetadata.PARAM_TAG_NAME_REGEX, ApplicationSchemaMetadata.PARAM_TAG_VALUE_REGEX,
 		    ApplicationSchemaMetadata.PARAM_TYPES_FOR_TYPE_USAGE_IDENTIFICATION).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

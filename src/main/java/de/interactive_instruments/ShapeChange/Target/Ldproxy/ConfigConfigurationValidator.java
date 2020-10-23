@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.Ldproxy;
 
 import java.io.File;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -62,7 +63,7 @@ public class ConfigConfigurationValidator extends AbstractConfigurationValidator
 		    ConfigConstants.PARAM_SERVICE_LABEL, ConfigConstants.PARAM_SERVICE_VERSION,
 		    ConfigConstants.PARAM_TRIGGER_ONDELETE, ConfigConstants.PARAM_UNITTEST_OVERRIDE)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {

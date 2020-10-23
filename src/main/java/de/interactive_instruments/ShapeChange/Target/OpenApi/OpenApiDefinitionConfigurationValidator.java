@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.OpenApi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,7 +60,7 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
 	    .of(OpenApiConstants.PARAM_BASE_TEMPLATE, OpenApiConstants.PARAM_COLLECTIONS,
 		    OpenApiConstants.PARAM_JSON_SCHEMA_VERSION, OpenApiConstants.PARAM_JSON_SCHEMAS_BASE_LOCATION)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {

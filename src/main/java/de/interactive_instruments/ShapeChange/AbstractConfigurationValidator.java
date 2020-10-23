@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -49,28 +50,37 @@ import de.interactive_instruments.ShapeChange.Transformation.TransformationManag
 public abstract class AbstractConfigurationValidator implements ConfigurationValidator, MessageSource {
 
     protected LevenshteinDistance levDistance = new LevenshteinDistance(3);
-    protected boolean reportInvalidParameterAsError = false;
 
     /**
      * Checks if all relevant parameters from the ShapeChange configuration belong
      * to allowed parameters.
      * 
-     * @param allowedParametersWithStaticNames          names of allowed process
-     *                                                  specific parameters; can be
-     *                                                  <code>null</code>
-     * @param regexForAllowedParametersWithDynamicNames can be <code>null</code>
-     * @param actualParameters                          names of parameters
-     *                                                  contained in the
-     *                                                  configuration, to be
-     *                                                  validated; can be
-     *                                                  <code>null</code>
-     * @param result                                    for reporting any parameter
-     *                                                  that is not allowed
+     * @param allowedParametersWithStaticNames            names of allowed process
+     *                                                    specific parameters; can
+     *                                                    be <code>null</code>
+     * @param regexesForAllowedParametersWithDynamicNames Regular expressions for
+     *                                                    allowed parameters with
+     *                                                    dynamic names (if one of
+     *                                                    the regexes matches a
+     *                                                    parameter name, that
+     *                                                    parameter is allowed); can
+     *                                                    be <code>null</code>
+     * @param actualParameters                            names of parameters
+     *                                                    contained in the
+     *                                                    configuration, to be
+     *                                                    validated; can be
+     *                                                    <code>null</code>
+     * @param result                                      for reporting any
+     *                                                    parameter that is not
+     *                                                    allowed
      * @return <code>true</code> if all actual parameters belong to allowed
      *         parameters, else <code>false</code>
      */
     public boolean validateParameters(SortedSet<String> allowedParametersWithStaticNames,
-	    Pattern regexForAllowedParametersWithDynamicNames, Set<String> actualParameters, ShapeChangeResult result) {
+	    List<Pattern> regexesForAllowedParametersWithDynamicNames, Set<String> actualParameters,
+	    ShapeChangeResult result) {
+
+	boolean reportUnrecognizedParametersAsWarnings = result.options().reportUnrecognizedParametersAsWarnings();
 
 	boolean allParametersValid = true;
 
@@ -84,8 +94,13 @@ public abstract class AbstractConfigurationValidator implements ConfigurationVal
 		    isAllowed = allowedParametersWithStaticNames.contains(parameter);
 		}
 
-		if (!isAllowed && regexForAllowedParametersWithDynamicNames != null) {
-		    isAllowed = regexForAllowedParametersWithDynamicNames.matcher(parameter).matches();
+		if (!isAllowed && regexesForAllowedParametersWithDynamicNames != null) {
+		    for (Pattern regex : regexesForAllowedParametersWithDynamicNames) {
+			if (regex.matcher(parameter).matches()) {
+			    isAllowed = true;
+			    break;
+			}
+		    }
 		}
 
 		if (!isAllowed) {
@@ -110,16 +125,16 @@ public abstract class AbstractConfigurationValidator implements ConfigurationVal
 		    }
 
 		    if (allowedParameterWithNearStringDistance != null) {
-			if (reportInvalidParameterAsError) {
-			    result.addError(null, 1000000, parameter, allowedParameterWithNearStringDistance);
-			} else {
+			if (reportUnrecognizedParametersAsWarnings) {
 			    result.addWarning(null, 1000000, parameter, allowedParameterWithNearStringDistance);
+			} else {
+			    result.addError(null, 1000000, parameter, allowedParameterWithNearStringDistance);
 			}
 		    } else {
-			if (reportInvalidParameterAsError) {
-			    result.addError(null, 1000001, parameter);
-			} else {
+			if (reportUnrecognizedParametersAsWarnings) {
 			    result.addWarning(null, 1000001, parameter);
+			} else {
+			    result.addError(null, 1000001, parameter);
 			}
 		    }
 
@@ -127,7 +142,7 @@ public abstract class AbstractConfigurationValidator implements ConfigurationVal
 	    }
 	}
 
-	return !reportInvalidParameterAsError || allParametersValid;
+	return reportUnrecognizedParametersAsWarnings || allParametersValid;
     }
 
     public SortedSet<String> getCommonTransformerParameters() {

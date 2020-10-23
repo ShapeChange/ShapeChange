@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
 		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE, JsonSchemaConstants.PARAM_PRETTY_PRINT,
 		    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration targetConfig = null;

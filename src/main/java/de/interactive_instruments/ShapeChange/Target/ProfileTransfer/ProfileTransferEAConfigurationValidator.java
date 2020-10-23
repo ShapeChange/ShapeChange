@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Target.ProfileTransfer;
 
 import java.io.File;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -56,7 +57,7 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
 		    ProfileTransferEA.PARAM_PROFILES_TO_TRANSFER, ProfileTransferEA.PARAM_PWD,
 		    ProfileTransferEA.PARAM_REPO_CONNECTION_STRING, ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY,
 		    ProfileTransferEA.PARAM_USER).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

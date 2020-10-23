@@ -62,7 +62,7 @@ public class ProfileLoaderConfigurationValidator extends AbstractConfigurationVa
 	    ProfileLoader.PARAM_LOAD_MODEL_DIRECTORY, ProfileLoader.PARAM_LOAD_MODEL_FILE_REGEX,
 	    ProfileLoader.PARAM_PROCESS_ALL_SCHEMAS, ProfileLoader.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES,
 	    ProfileLoader.PARAM_PROFILES_TO_LOAD).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

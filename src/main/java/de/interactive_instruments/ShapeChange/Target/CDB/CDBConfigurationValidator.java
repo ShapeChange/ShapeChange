@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.CDB;
 
+import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -54,7 +55,7 @@ public class CDBConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(CDB.PARAM_UNITS_TO_IGNORE, CDB.PARAM_VERSION).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

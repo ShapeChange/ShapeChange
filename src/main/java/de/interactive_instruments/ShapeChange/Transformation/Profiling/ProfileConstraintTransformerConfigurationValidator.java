@@ -32,6 +32,7 @@
 package de.interactive_instruments.ShapeChange.Transformation.Profiling;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -61,7 +62,7 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
 	    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX,
 	    ProfileConstraintTransformer.PARAM_PROFILE_NAME, ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
 	    ProfileConstraintTransformer.PARAM_SUBTYPE_NAME_PREFIX).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

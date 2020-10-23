@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.FOL2Schematron;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class FOL2SchematronConfigurationValidator extends AbstractConfigurationV
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(FOL2Schematron.PARAM_SCH_XLINK_HREF_PREFIX, FOL2Schematron.PARAM_SCH_XLINK_HREF_POSTFIX)
 		    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

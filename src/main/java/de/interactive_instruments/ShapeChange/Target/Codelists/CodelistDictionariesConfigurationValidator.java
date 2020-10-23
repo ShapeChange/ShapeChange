@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Codelists;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class CodelistDictionariesConfigurationValidator extends AbstractConfigur
 	    .of(CodelistDictionaries.PARAM_ENUMERATIONS, CodelistDictionaries.PARAM_GMLID,
 		    CodelistDictionaries.PARAM_IDENTIFIER, CodelistDictionaries.PARAM_NAMES)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

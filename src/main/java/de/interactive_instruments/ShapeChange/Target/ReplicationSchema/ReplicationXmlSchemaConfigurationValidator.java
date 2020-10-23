@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.ReplicationSchema;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -53,7 +54,7 @@ public class ReplicationXmlSchemaConfigurationValidator extends AbstractConfigur
 		    ReplicationXmlSchema.PARAM_SUFFIX_FOR_PROPERTIES_WITH_FEATURE_VALUE_TYPE,
 		    ReplicationXmlSchema.PARAM_SUFFIX_FOR_PROPERTIES_WITH_OBJECT_VALUE_TYPE,
 		    ReplicationXmlSchema.PARAM_TARGET_NAMESPACE_SUFFIX).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

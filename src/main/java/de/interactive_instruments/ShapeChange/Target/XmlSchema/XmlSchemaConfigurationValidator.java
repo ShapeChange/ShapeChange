@@ -65,7 +65,9 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	    XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX, XmlSchemaConstants.PARAM_SEGMENT_SCH,
 	    XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream
+	    .of(Pattern.compile("^schematronExtension\\.(\\w+?)\\.function|schematronExtension\\.(\\w+?)\\.namespace$"))
+	    .collect(Collectors.toList());
 
     // these fields will be initialized when isValid(...) is called
     private ProcessConfiguration config = null;
@@ -84,6 +86,46 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;
+
+	// more detailed check of schematron extension parameters
+	if (config.getParameters().keySet() != null) {
+
+	    // first, identify the names of all extension functions
+	    String schExtFunctRegex = "^schematronExtension\\.(\\w+?)\\.function";
+	    Pattern schExtFunctPattern = Pattern.compile(schExtFunctRegex);
+	    Set<String> schExtFunctionNames = new HashSet<>();
+	    for (String parameter : config.getParameters().keySet()) {
+		Matcher mat = schExtFunctPattern.matcher(parameter);
+		if (mat.matches()) {
+		    schExtFunctionNames.add(mat.group(1));
+		}
+	    }
+
+	    // then check defined extension namespaces (they need to match one of the
+	    // defined extension functions)
+	    String schExtNsRegex = "^schematronExtension\\.(\\w+?)\\.namespace";
+	    Pattern schExtNsPattern = Pattern.compile(schExtNsRegex);
+
+	    for (String parameter : config.getParameters().keySet()) {
+
+		// check if the parameter defines a schematron extension namespace
+		Matcher mat = schExtNsPattern.matcher(parameter);
+		if (mat.matches()) {
+
+		    /*
+		     * now check if the function has actually been defined (by another parameter
+		     * whose name matches the schExtFunctRegex)
+		     */
+		    String functName = mat.group(1);
+		    if (schExtFunctionNames.contains(functName)) {
+			// fine
+		    } else {
+			isValid = false;
+			result.addError(this, 200, parameter, functName);
+		    }
+		}
+	    }
+	}
 
 	// check parameter: schematronQueryBinding
 	String explicitSchematronQueryBinding = options.parameterAsString(this.getClass().getName(),
@@ -121,109 +163,6 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	}
 
 	return isValid;
-    }
-
-    @Override
-    public boolean validateParameters(SortedSet<String> allowedParametersWithStaticNames,
-	    Pattern regexForAllowedParametersWithDynamicNames, Set<String> actualParameters, ShapeChangeResult result) {
-
-	boolean allParametersValid = true;
-
-	if (actualParameters != null) {
-
-	    String schExtFunctRegex = "^schematronExtension\\.(\\w+?)\\.function";
-	    Pattern schExtFunctPattern = Pattern.compile(schExtFunctRegex);
-	    Set<String> schExtFunctionParameters = new HashSet<>();
-	    Set<String> schExtFunctionNames = new HashSet<>();
-	    for (String parameter : config.getParameters().keySet()) {
-		Matcher mat = schExtFunctPattern.matcher(parameter);
-		if (mat.matches()) {
-		    schExtFunctionParameters.add(parameter);
-		    schExtFunctionNames.add(mat.group(1));
-		}
-	    }
-
-	    String schExtNsRegex = "^schematronExtension\\.(\\w+?)\\.namespace";
-	    Pattern schExtNsPattern = Pattern.compile(schExtNsRegex);
-
-	    for (String parameter : actualParameters) {
-
-		boolean isAllowed = false;
-
-		if (allowedParametersWithStaticNames != null) {
-		    isAllowed = allowedParametersWithStaticNames.contains(parameter);
-		}
-
-		if (!isAllowed && regexForAllowedParametersWithDynamicNames != null) {
-		    isAllowed = regexForAllowedParametersWithDynamicNames.matcher(parameter).matches();
-		}
-
-		// Check if the parameter defines a schematron extension function
-		if (schExtFunctionParameters.contains(parameter)) {
-		    isAllowed = true;
-		}
-
-		if (!isAllowed) {
-
-		    // check if the parameter defines a schematron extension namespace
-		    Matcher mat = schExtNsPattern.matcher(parameter);
-		    if (mat.matches()) {
-			
-			/*
-			 * now check if the function has actually been defined (by another parameter
-			 * whose name matches the schExtFunctRegex)
-			 */
-			String functName = mat.group(1);
-			if (schExtFunctionNames.contains(functName)) {
-			    // fine
-			} else {
-			    allParametersValid = false;
-			    if (reportInvalidParameterAsError) {
-				result.addError(this, 200, parameter, functName);
-			    } else {
-				result.addWarning(this, 200, parameter, functName);
-			    }
-			}
-		    } else {
-
-			allParametersValid = false;
-
-			// report the invalid parameter
-
-			/*
-			 * check if the string distance of the parameter is near to one of the allowed
-			 * parameters
-			 */
-			String allowedParameterWithNearStringDistance = null;
-
-			if (allowedParametersWithStaticNames != null) {
-			    for (String allowedParameter : allowedParametersWithStaticNames) {
-				if (levDistance.apply(parameter, allowedParameter) != -1) {
-				    allowedParameterWithNearStringDistance = allowedParameter;
-				    break;
-				}
-			    }
-			}
-
-			if (allowedParameterWithNearStringDistance != null) {
-			    if (reportInvalidParameterAsError) {
-				result.addError(null, 1000000, parameter, allowedParameterWithNearStringDistance);
-			    } else {
-				result.addWarning(null, 1000000, parameter, allowedParameterWithNearStringDistance);
-			    }
-			} else {
-			    if (reportInvalidParameterAsError) {
-				result.addError(null, 1000001, parameter);
-			    } else {
-				result.addWarning(null, 1000001, parameter);
-			    }
-			}
-		    }
-		}
-	    }
-	}
-
-	return !reportInvalidParameterAsError || allParametersValid;
     }
 
     @Override

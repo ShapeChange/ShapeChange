@@ -94,7 +94,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    SqlConstants.PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS, SqlConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE,
 	    SqlConstants.PARAM_SIZE, SqlConstants.PARAM_SRID, SqlConstants.PARAM_STATUS, SqlConstants.PARAM_TVS_TO_KEEP)
 	    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private ProcessConfiguration config = null;

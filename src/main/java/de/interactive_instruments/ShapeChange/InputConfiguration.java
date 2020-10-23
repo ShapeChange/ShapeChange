@@ -33,31 +33,12 @@ package de.interactive_instruments.ShapeChange;
 
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class InputConfiguration {
-
-    public static final SortedSet<String> inputParameters = new TreeSet<>(Stream.of("addTaggedValues", "addStereotypes",
-	    "applyDescriptorSourcesWhenLoadingScxml", "appSchemaName", "appSchemaNameRegex", "appSchemaNamespaceRegex",
-	    "checkingConstraints", "constraintLoading", "classTypesToCreateConstraintsFor", "codeAbsenceInModelAllowed",
-	    "constraintCreationForProperties", "constraintExcelFile", "dontConstructAssociationNames",
-	    "excludedPackages", "extractSeparator", "folConstraintTypeRegex", "id", "ignoreEncodingRuleTaggedValues",
-	    "inputFile", "inputModelType", "isAIXM", "kmlReferenceType", "language",
-	    "loadConstraintsForSelectedSchemasOnly", "loadLinkedDocuments", "mainAppSchema",
-	    "navigatingNonNavigableAssociationsWhenParsingOcl", "oclConstraintTypeRegex", "onlyDeferrableOutputWrite",
-	    "prohibitLoadingClassesWithStatusTaggedValue", "publicOnly", "representTaggedValues",
-	    "repositoryFileNameOrConnectionString", "scxmlXsdLocation",
-	    "skipSemanticValidationOfShapeChangeConfiguration", "sortedOutput", "sortedSchemaOutput",
-	    "taggedValueImplementation", "tmpDirectory", "transformer", "username and password", "useStringInterning",
-	    "loadDiagrams", "sortDiagramsByName", "packageDiagramRegex", "classDiagramRegex")
-	    .collect(Collectors.toSet()));
 
     /**
      * Default defined in ShapeChangeConfiguration XSD

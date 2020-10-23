@@ -61,7 +61,7 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 		    GeoPackageConstants.PARAM_GPKGM, GeoPackageConstants.PARAM_GPKGZ,
 		    GeoPackageConstants.PARAM_ID_COLUMN_NAME, GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID,
 		    GeoPackageConstants.PARAM_SRS_ORGANIZATION).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration config = null;

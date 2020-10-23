@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Definitions;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class DefinitionsConfigurationValidator extends AbstractConfigurationVali
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(Definitions.PARAM_STYLE, Definitions.PARAM_INSTANCE_VIEW, Definitions.PARAM_NAMING_AUTHORITY)
 		    .collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

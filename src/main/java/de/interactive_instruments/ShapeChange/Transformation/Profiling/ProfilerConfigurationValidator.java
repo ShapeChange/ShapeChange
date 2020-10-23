@@ -1,5 +1,6 @@
 package de.interactive_instruments.ShapeChange.Transformation.Profiling;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -19,7 +20,7 @@ public class ProfilerConfigurationValidator extends AbstractConfigurationValidat
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(Profiler.PARAM_CONSTRAINTHANDLING, Profiler.PARAM_PROFILES,
 		    Profiler.PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.KML;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -54,7 +55,8 @@ public class XSLTConfigurationValidator extends AbstractConfigurationValidator {
 		    XSLT.PARAM_MAX_FOLDER_LEVEL, XSLT.PARAM_MIN_LOD_PIXELS, XSLT.PARAM_NORTH, XSLT.PARAM_NS_DEF,
 		    XSLT.PARAM_PORTRAYAL_RULE_DOC, XSLT.PARAM_PROP_NAME_CASE, XSLT.PARAM_SOUTH, XSLT.PARAM_WEST,
 		    XSLT.PARAM_WITH_EMPTY_PROPS, XSLT.PARAM_WITH_SCHEMA).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = Pattern.compile("(defaultStyleUrl|kmlName)\\(.+\\)");;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream
+	    .of(Pattern.compile("(defaultStyleUrl|kmlName)\\(.+\\)")).collect(Collectors.toList());
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {

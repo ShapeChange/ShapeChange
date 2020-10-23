@@ -58,7 +58,7 @@ public class TaggedValueTransformerConfigurationValidator extends AbstractConfig
 		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
 		    TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
 		    TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST).collect(Collectors.toSet()));
-    protected Pattern regexForAllowedParametersWithDynamicNames = null;
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
