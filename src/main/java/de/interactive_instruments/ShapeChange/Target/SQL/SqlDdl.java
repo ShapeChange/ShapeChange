@@ -1078,9 +1078,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    File outputWithoutEmptyLines = new File(outputDirectory, fileName + ".tmp");
 
 	    try (BufferedReader originalDdlReader = new BufferedReader(
-		    new InputStreamReader(new FileInputStream(outputFile)));
-		    BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(
-			    new OutputStreamWriter(new FileOutputStream(outputWithoutEmptyLines), "UTF-8"));) {
+		    new InputStreamReader(new FileInputStream(outputFile), StandardCharsets.UTF_8));
+		    BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(new OutputStreamWriter(
+			    new FileOutputStream(outputWithoutEmptyLines), StandardCharsets.UTF_8));) {
 
 		String aLine = null;
 		while ((aLine = originalDdlReader.readLine()) != null) {
