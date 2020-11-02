@@ -2495,7 +2495,7 @@ public class OntologyModel implements MessageSource {
 
 	String[] qnamePars = qname.split(":");
 
-	if (qnamePars.length != 2) {
+	if (qnamePars.length != 2 || StringUtils.isBlank(qnamePars[0]) || StringUtils.isBlank(qnamePars[1])) {
 
 	    rdfNs = OWLISO19150.NS_QNAME_ERROR;
 	    location = null;
@@ -2547,7 +2547,7 @@ public class OntologyModel implements MessageSource {
 
 	String[] qnamePars = qname.split(":", 2);
 
-	if (qnamePars.length != 2) {
+	if (qnamePars.length != 2 || StringUtils.isBlank(qnamePars[0]) || StringUtils.isBlank(qnamePars[1])) {
 
 	    rdfNs = OWLISO19150.NS_QNAME_ERROR;
 	    location = null;
@@ -2603,7 +2603,7 @@ public class OntologyModel implements MessageSource {
 
 	String[] qnamePars = qname.split(":");
 
-	if (qnamePars.length != 2) {
+	if (qnamePars.length != 2 || StringUtils.isBlank(qnamePars[0]) || StringUtils.isBlank(qnamePars[1])) {
 
 	    rdfNs = OWLISO19150.NS_QNAME_ERROR;
 	    location = null;
@@ -2630,16 +2630,20 @@ public class OntologyModel implements MessageSource {
 		String pURI = rdfNs + propertyName;
 		p = om.getOntProperty(pURI);
 
-	    } else if (config.hasNamespaceWithAbbreviation(prefix)) {
+	    } else {
 
-		// identify rdf namespace based upon prefix and standard namespaces
-		rdfNs = config.fullNamespace(prefix);
-		location = config.locationOfNamespace(rdfNs);
+		if (config.hasNamespaceWithAbbreviation(prefix)) {
+		    // identify rdf namespace based upon prefix and standard namespaces
+		    rdfNs = config.fullNamespace(prefix);
+		    location = config.locationOfNamespace(rdfNs);
 
-		String uri = rdfNs + propertyName;
-		p = refmodel.getProperty(uri);
-		if (p == null)
-		    p = refmodel.createProperty(uri);
+		    String uri = rdfNs + propertyName;
+		    p = refmodel.getProperty(uri);
+		    if (p == null)
+			p = refmodel.createProperty(uri);
+		} else {
+		    result.addError(this, 55, prefix, qname);
+		}
 	    }
 	}
 
@@ -2803,7 +2807,7 @@ public class OntologyModel implements MessageSource {
 
 	    String[] qnamePars = qname.split(":");
 
-	    if (qnamePars.length != 2) {
+	    if (qnamePars.length != 2 || StringUtils.isBlank(qnamePars[0]) || StringUtils.isBlank(qnamePars[1])) {
 
 		rdfNs = OWLISO19150.NS_QNAME_ERROR;
 		location = null;
@@ -3267,7 +3271,7 @@ public class OntologyModel implements MessageSource {
 
 	String reference;
 
-	if (parts.length != 2) {
+	if (parts.length != 2 || StringUtils.isBlank(parts[0]) || StringUtils.isBlank(parts[1])) {
 
 	    reference = OWLISO19150.NS_QNAME_ERROR + qname;
 
@@ -3522,6 +3526,8 @@ public class OntologyModel implements MessageSource {
 	    return "Domain of general property '$1$' shall be defined as a union of the domains of its direct and indirect sub properties. No sub property was found, therefore no domain will be specified for '$1$'";
 	case 54:
 	    return "??Expected QName, but found '$1$'. Mapping to '$2$'. Fix the QName (typically in the configuration, but potentially also in a tagged value). Check configuration entries and tagged values where a QName is expected (search for '$1$'). Look in the output for occurrences of '$2$' (keep in mind that this URI may have been turned into a QName itself when searching for it in the output files); that may give you a hint on the origin of the non-QName '$1$'.";
+	case 55:
+	    return "??Could not find a namespace for prefix '$1$' of QName '$2$'. Fix the QName. Check configuration entries and tagged values where a QName is expected (search for '$2$').";
 
 	case 10000:
 	    return "--- Context - Class: $1$";

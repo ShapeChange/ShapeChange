@@ -280,7 +280,7 @@ public class Options {
     public static final String DEFAULT_TMP_DIR_PATH = "temp";
     public static final String TMP_DIR_PATH_PARAM = "tmpDirectory";
     protected File tmpDir = null;
-    
+
     private boolean reportUnrecognizedParametersAsWarnings = false;
 
     /**
@@ -2250,7 +2250,7 @@ public class Options {
 			Map<String, List<PropertyConversionParameter>> propertyConversionParameters = parsePropertyConversionParameters(
 				tgtE);
 			List<DescriptorTarget> descriptorTargets = parseDescriptorTargets(tgtE);
-			Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
+			SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 				tgtE);
 
 			List<RdfGeneralProperty> generalProperties = parseGeneralProperties(tgtE);
@@ -2263,8 +2263,6 @@ public class Options {
 				advancedProcessConfigurations, rdfTypeMapEntries, rdfPropertyMapEntries,
 				stereotypeConversionParameters, typeConversionParameters, propertyConversionParameters,
 				descriptorTargets, constraintMappings, generalProperties);
-
-			owlConfig.validate();
 
 			tgtConfig = owlConfig;
 
@@ -2414,7 +2412,8 @@ public class Options {
 		    String wellknown = scpE.getAttribute("wellknown").toLowerCase();
 
 		    String subClassOf_tmp = scpE.getAttribute("subClassOf").trim();
-		    Set<String> subClassOf = new TreeSet<String>(Arrays.asList(StringUtils.split(subClassOf_tmp)));
+		    SortedSet<String> subClassOf = new TreeSet<String>(
+			    Arrays.asList(StringUtils.split(subClassOf_tmp)));
 
 		    String rule = scpE.hasAttribute("rule") ? scpE.getAttribute("rule").trim() : "*";
 
@@ -2666,13 +2665,14 @@ public class Options {
      * @return map (can be empty but not <code>null</code>), with key: constraint
      *         type, and value: mapping defined for the constraint type
      */
-    private Map<ConstraintMapping.ConstraintType, ConstraintMapping> parseConstraintMappings(Element targetElement) {
+    private SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> parseConstraintMappings(
+	    Element targetElement) {
 
 	NodeList cmNl = targetElement.getElementsByTagName("ConstraintMapping");
 	Node cmN;
 	Element cmE;
 
-	Map<ConstraintMapping.ConstraintType, ConstraintMapping> result = new HashMap<ConstraintMapping.ConstraintType, ConstraintMapping>();
+	SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> result = new TreeMap<ConstraintMapping.ConstraintType, ConstraintMapping>();
 
 	if (cmNl != null && cmNl.getLength() != 0) {
 

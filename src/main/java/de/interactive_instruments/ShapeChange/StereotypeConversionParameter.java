@@ -31,51 +31,49 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class StereotypeConversionParameter {
 
-	private String wellknown;
-	private Set<String> subClassOf;
-	private String rule;
+    private String wellknown;
+    private SortedSet<String> subClassOf;
+    private String rule;
 
-	public StereotypeConversionParameter(String wellknown,
-			Set<String> subClassOf, String rule) {
-		super();
-		this.wellknown = wellknown;
-		this.subClassOf = subClassOf;
-		this.rule = rule;
-	}
+    public StereotypeConversionParameter(String wellknown, SortedSet<String> subClassOf, String rule) {
+	super();
+	this.wellknown = wellknown;
+	this.subClassOf = subClassOf;
+	this.rule = rule;
+    }
 
-	/**
-	 * @return Stereotype that is well-known to ShapeChange
-	 */
-	public String getWellknown() {
-		return wellknown;
-	}
+    /**
+     * @return Stereotype that is well-known to ShapeChange
+     */
+    public String getWellknown() {
+	return wellknown;
+    }
 
-	/**
-	 * @return IRIs of classes of which UML types with this stereotype shall be
-	 *         subClassOf. May be empty but not <code>null</code>. Note: the
-	 *         values are given as (trimmed) QName-like strings, with the
-	 *         namespace prefixes matching the namespace abbreviations of the
-	 *         namespaces declared in the configuration.
-	 */
-	public Set<String> getSubClassOf() {
-		return subClassOf;
-	}
+    /**
+     * @return IRIs of classes of which UML types with this stereotype shall be
+     *         subClassOf. May be empty but not <code>null</code>. Note: the values
+     *         are given as (trimmed) QName-like strings, with the namespace
+     *         prefixes matching the namespace abbreviations of the namespaces
+     *         declared in the configuration.
+     */
+    public SortedSet<String> getSubClassOf() {
+	return subClassOf;
+    }
 
-	/**
-	 * @return The encoding rule to which this parameter applies. May be “*” to
-	 *         indicate that the parameter applies to all encoding rules.
-	 */
-	public String getRule() {
-		return rule;
-	}
+    /**
+     * @return The encoding rule to which this parameter applies. May be “*” to
+     *         indicate that the parameter applies to all encoding rules.
+     */
+    public String getRule() {
+	return rule;
+    }
 
 }
