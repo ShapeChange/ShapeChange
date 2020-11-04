@@ -1,5 +1,50 @@
 # Changelog
 
+## [2.10.0](https://github.com/ShapeChange/ShapeChange/tree/2.10.0) (2020-11-04)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.9.1...2.10.0)
+
+**Implemented enhancements:**
+
+- OpenAPI target - add minimal, extendable OpenAPI target [\#231](https://github.com/ShapeChange/ShapeChange/issues/231)
+- General - check input, transformer, and target parameters during semantic validation of ShapeChange configuration [\#262](https://github.com/ShapeChange/ShapeChange/issues/262)
+- SqlDdl target - Suffix for fields that represent attributes with stereotype "identifier" [\#261](https://github.com/ShapeChange/ShapeChange/issues/261)
+- SqlDdl target - Apply foreign key column suffix in associative tables [\#260](https://github.com/ShapeChange/ShapeChange/issues/260)
+- SqlDdl target - Support length restrictions of database names for upper- and lower-case name normalization [\#255](https://github.com/ShapeChange/ShapeChange/issues/255)
+- SqlDdl target - New rule to support database schemas for PostgreSQL \(DDL\) [\#254](https://github.com/ShapeChange/ShapeChange/issues/254)
+- Flattener transformation - New rule to handle feature types with multiple geometric properties [\#252](https://github.com/ShapeChange/ShapeChange/issues/252)
+- Flattener transformation - add a rule to reverse inheritance [\#251](https://github.com/ShapeChange/ShapeChange/issues/251)
+- Flattener transformation - add a rule to convert a temporal property to two properties that explicitly represent the boundaries of a time interval [\#250](https://github.com/ShapeChange/ShapeChange/issues/250)
+- Flattener transformation - add a rule to flatten measure typed properties [\#249](https://github.com/ShapeChange/ShapeChange/issues/249)
+- General - Revise the JSON Schema target [\#248](https://github.com/ShapeChange/ShapeChange/issues/248)
+- TypeConverter - Add rule to create a nilReason property for a nillable property [\#247](https://github.com/ShapeChange/ShapeChange/issues/247)
+- TypeConverter - New rule to switch the type of a property to a different type [\#245](https://github.com/ShapeChange/ShapeChange/issues/245)
+- SqlDdl target - Add reflexiveRelationshipFieldSuffix parameter [\#244](https://github.com/ShapeChange/ShapeChange/issues/244)
+- UmlModel target - preserve UML package hierarchy [\#241](https://github.com/ShapeChange/ShapeChange/issues/241)
+- XmlSchema target / Schematron - Segmentation of generated Schematron file [\#229](https://github.com/ShapeChange/ShapeChange/issues/229)
+- Xml Schema target - forced imports [\#228](https://github.com/ShapeChange/ShapeChange/issues/228)
+- OCL parsing - support navigating non-navigable association roles [\#227](https://github.com/ShapeChange/ShapeChange/issues/227)
+- General - treat process flow related log messages separate from process specific log messages [\#166](https://github.com/ShapeChange/ShapeChange/issues/166)
+
+**Fixed bugs:**
+
+- SqlDdl target - Fix rule-sql-cls-data-types-oneToMany-severalTables [\#256](https://github.com/ShapeChange/ShapeChange/issues/256)
+- SqlDdl target - foreignKeyColumnDatatype ignored while updating foreign key column data type during postprocessing [\#253](https://github.com/ShapeChange/ShapeChange/issues/253)
+- XmlSchema target - anonymous property type not correctly encoded if value type has mixin subtypes [\#230](https://github.com/ShapeChange/ShapeChange/issues/230)
+
+**Closed issues:**
+
+- Default id column name in GeoPackage should be something else than \_id [\#259](https://github.com/ShapeChange/ShapeChange/issues/259)
+- UML to RDF/TTL warning: cannot find application schema in UML file by schema name [\#258](https://github.com/ShapeChange/ShapeChange/issues/258)
+- Sample reference results return an error on the website [\#243](https://github.com/ShapeChange/ShapeChange/issues/243)
+
+**Merged pull requests:**
+
+- Json [\#264](https://github.com/ShapeChange/ShapeChange/pull/264) ([jechterhoff](https://github.com/jechterhoff))
+- Allow more than one spatial reference system in the configuration [\#257](https://github.com/ShapeChange/ShapeChange/pull/257) ([heidivanparys](https://github.com/heidivanparys))
+- SqlDdl target - Add reflexiveRelationshipFieldSuffix parameter [\#246](https://github.com/ShapeChange/ShapeChange/pull/246) ([jechterhoff](https://github.com/jechterhoff))
+- Ignore code list values in GeoPackage generation [\#242](https://github.com/ShapeChange/ShapeChange/pull/242) ([heidivanparys](https://github.com/heidivanparys))
+
 ## [2.9.1](https://github.com/ShapeChange/ShapeChange/tree/2.9.1) (2020-04-29)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.9.0...2.9.1)
